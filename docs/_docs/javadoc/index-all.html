@@ -257,8 +257,8 @@
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/monitor/ActivityMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">ActivityMonitor</span></a> - Interface in <a href="com/centurylink/mdw/monitor/package-summary.html">com.centurylink.mdw.monitor</a></dt>
 <dd>
-<div class="block">Activity monitors can be registered through @RegisteredService annotations to get
- called whenever an MDW workflow activity is invoked.</div>
+<div class="block">Activity monitors can be registered through @Monitor annotations to get
+ (optionally) called whenever an MDW workflow activity is invoked.</div>
 </dd>
 <dt><a href="com/centurylink/mdw/provider/ActivityProvider.html" title="interface in com.centurylink.mdw.provider"><span class="typeNameLink">ActivityProvider</span></a> - Interface in <a href="com/centurylink/mdw/provider/package-summary.html">com.centurylink.mdw.provider</a></dt>
 <dd>
@@ -292,9 +292,7 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/ActivityStubResponse.html#ActivityStubResponse-org.json.JSONObject-">ActivityStubResponse(JSONObject)</a></span> - Constructor for class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/ActivityStubResponse.html" title="class in com.centurylink.mdw.model.workflow">ActivityStubResponse</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/centurylink/mdw/monitor/impl/ActivityTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl"><span class="typeNameLink">ActivityTraceMonitor</span></a> - Class in <a href="com/centurylink/mdw/monitor/impl/package-summary.html">com.centurylink.mdw.monitor.impl</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/ActivityTraceMonitor.html#ActivityTraceMonitor--">ActivityTraceMonitor()</a></span> - Constructor for class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/ActivityTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl">ActivityTraceMonitor</a></dt>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/OwnerType.html#ADAPTER">ADAPTER</a></span> - Static variable in interface com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/OwnerType.html" title="interface in com.centurylink.mdw.constant">OwnerType</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/test/TestCaseScript.html#adapter-groovy.lang.Closure-groovy.lang.Closure-">adapter(Closure&lt;Boolean&gt;, Closure&lt;?&gt;)</a></span> - Method in class com.centurylink.mdw.services.test.<a href="com/centurylink/mdw/services/test/TestCaseScript.html" title="class in com.centurylink.mdw.services.test">TestCaseScript</a></dt>
 <dd>&nbsp;</dd>
@@ -334,7 +332,7 @@
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/monitor/AdapterMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">AdapterMonitor</span></a> - Interface in <a href="com/centurylink/mdw/monitor/package-summary.html">com.centurylink.mdw.monitor</a></dt>
 <dd>
-<div class="block">AdapterMonitors can be registered through @RegisteredService annotations to intercept
+<div class="block">AdapterMonitors can be registered through @Monitor annotations to intercept
  external service calls originating from MDW workflow adapter activities.</div>
 </dd>
 <dt><a href="com/centurylink/mdw/model/event/AdapterStubRequest.html" title="class in com.centurylink.mdw.model.event"><span class="typeNameLink">AdapterStubRequest</span></a> - Class in <a href="com/centurylink/mdw/model/event/package-summary.html">com.centurylink.mdw.model.event</a></dt>
@@ -348,10 +346,6 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/event/AdapterStubResponse.html#AdapterStubResponse-java.lang.String-">AdapterStubResponse(String)</a></span> - Constructor for class com.centurylink.mdw.model.event.<a href="com/centurylink/mdw/model/event/AdapterStubResponse.html" title="class in com.centurylink.mdw.model.event">AdapterStubResponse</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/event/AdapterStubResponse.html#AdapterStubResponse-org.json.JSONObject-">AdapterStubResponse(JSONObject)</a></span> - Constructor for class com.centurylink.mdw.model.event.<a href="com/centurylink/mdw/model/event/AdapterStubResponse.html" title="class in com.centurylink.mdw.model.event">AdapterStubResponse</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/centurylink/mdw/monitor/impl/AdapterTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl"><span class="typeNameLink">AdapterTraceMonitor</span></a> - Class in <a href="com/centurylink/mdw/monitor/impl/package-summary.html">com.centurylink.mdw.monitor.impl</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/AdapterTraceMonitor.html#AdapterTraceMonitor--">AdapterTraceMonitor()</a></span> - Constructor for class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/AdapterTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl">AdapterTraceMonitor</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/file/GitDiffs.html#add-com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType-java.lang.String-">add(GitDiffs.DiffType, String)</a></span> - Method in class com.centurylink.mdw.dataaccess.file.<a href="com/centurylink/mdw/dataaccess/file/GitDiffs.html" title="class in com.centurylink.mdw.dataaccess.file">GitDiffs</a></dt>
 <dd>&nbsp;</dd>
@@ -486,6 +480,8 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#addValues0-java.lang.String-java.lang.String-java.util.Map-">addValues0(String, String, Map&lt;String, String&gt;)</a></span> - Method in class com.centurylink.mdw.dataaccess.db.<a href="com/centurylink/mdw/dataaccess/db/CommonDataAccess.html" title="class in com.centurylink.mdw.dataaccess.db">CommonDataAccess</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/Pagelet.Widget.html#addWidget-com.centurylink.mdw.model.asset.Pagelet.Widget-">addWidget(Pagelet.Widget)</a></span> - Method in class com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/Pagelet.Widget.html" title="class in com.centurylink.mdw.model.asset">Pagelet.Widget</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/Pagelet.html#addWidgetProvider-com.centurylink.mdw.model.asset.WidgetProvider-">addWidgetProvider(WidgetProvider)</a></span> - Method in class com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/Pagelet.html" title="class in com.centurylink.mdw.model.asset">Pagelet</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/dataaccess/file/AggregateDataAccessVcs.html" title="class in com.centurylink.mdw.dataaccess.file"><span class="typeNameLink">AggregateDataAccessVcs</span></a> - Class in <a href="com/centurylink/mdw/dataaccess/file/package-summary.html">com.centurylink.mdw.dataaccess.file</a></dt>
 <dd>
@@ -1449,10 +1445,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/task/TaskAction.html#CLAIM">CLAIM</a></span> - Static variable in class com.centurylink.mdw.model.task.<a href="com/centurylink/mdw/model/task/TaskAction.html" title="class in com.centurylink.mdw.model.task">TaskAction</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/WorkAttributeConstant.html#CLASS_NAME">CLASS_NAME</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/WorkAttributeConstant.html" title="class in com.centurylink.mdw.constant">WorkAttributeConstant</a></dt>
-<dd>
-<div class="block">attribute name for class name of activity implementor</div>
-</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/service/api/MdwScanner.html#classes--">classes()</a></span> - Method in class com.centurylink.mdw.service.api.<a href="com/centurylink/mdw/service/api/MdwScanner.html" title="class in com.centurylink.mdw.service.api">MdwScanner</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/util/ClasspathUtil.html" title="class in com.centurylink.mdw.util"><span class="typeNameLink">ClasspathUtil</span></a> - Class in <a href="com/centurylink/mdw/util/package-summary.html">com.centurylink.mdw.util</a></dt>
@@ -1771,8 +1763,6 @@
 <dt><a href="com/centurylink/mdw/model/workflow/package-summary.html">com.centurylink.mdw.model.workflow</a> - package com.centurylink.mdw.model.workflow</dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/monitor/package-summary.html">com.centurylink.mdw.monitor</a> - package com.centurylink.mdw.monitor</dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/centurylink/mdw/monitor/impl/package-summary.html">com.centurylink.mdw.monitor.impl</a> - package com.centurylink.mdw.monitor.impl</dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/observer/package-summary.html">com.centurylink.mdw.observer</a> - package com.centurylink.mdw.observer</dt>
 <dd>&nbsp;</dd>
@@ -2189,8 +2179,6 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/util/file/FileHelper.html#copy-java.io.File-java.io.File-boolean-">copy(File, File, boolean)</a></span> - Static method in class com.centurylink.mdw.util.file.<a href="com/centurylink/mdw/util/file/FileHelper.html" title="class in com.centurylink.mdw.util.file">FileHelper</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/xml/DomHelper.html#copyDomDocument-org.w3c.dom.Document-">copyDomDocument(Document)</a></span> - Static method in class com.centurylink.mdw.xml.<a href="com/centurylink/mdw/xml/DomHelper.html" title="class in com.centurylink.mdw.xml">DomHelper</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/ProcessInstance.html#copyFrom-com.centurylink.mdw.model.workflow.ProcessInstance-">copyFrom(ProcessInstance)</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/file/LoaderPersisterVcs.html#copyPkg-java.io.File-java.io.File-">copyPkg(File, File)</a></span> - Method in class com.centurylink.mdw.dataaccess.file.<a href="com/centurylink/mdw/dataaccess/file/LoaderPersisterVcs.html" title="class in com.centurylink.mdw.dataaccess.file">LoaderPersisterVcs</a></dt>
 <dd>
@@ -4114,8 +4102,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/StatusResponse.html#forCode-int-">forCode(int)</a></span> - Static method in class com.centurylink.mdw.model.<a href="com/centurylink/mdw/model/StatusResponse.html" title="class in com.centurylink.mdw.model">StatusResponse</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/WorkAttributeConstant.html#FORM">FORM</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/WorkAttributeConstant.html" title="class in com.centurylink.mdw.constant">WorkAttributeConstant</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/TaskAttributeConstant.html#FORM_NAME">FORM_NAME</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/TaskAttributeConstant.html" title="class in com.centurylink.mdw.constant">TaskAttributeConstant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/util/StringHelper.html#formatDate-java.util.Date-">formatDate(Date)</a></span> - Static method in class com.centurylink.mdw.util.<a href="com/centurylink/mdw/util/StringHelper.html" title="class in com.centurylink.mdw.util">StringHelper</a></dt>
@@ -4501,8 +4487,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/RuntimeDataAccess.html#getActivityInstanceList-com.centurylink.mdw.common.service.Query-">getActivityInstanceList(Query)</a></span> - Method in interface com.centurylink.mdw.dataaccess.<a href="com/centurylink/mdw/dataaccess/RuntimeDataAccess.html" title="interface in com.centurylink.mdw.dataaccess">RuntimeDataAccess</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/ProcessInstance.html#getActivityInstances-java.lang.Long-">getActivityInstances(Long)</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/service/data/process/EngineDataAccess.html#getActivityInstances-java.lang.Long-java.lang.Long-boolean-boolean-">getActivityInstances(Long, Long, boolean, boolean)</a></span> - Method in interface com.centurylink.mdw.service.data.process.<a href="com/centurylink/mdw/service/data/process/EngineDataAccess.html" title="interface in com.centurylink.mdw.service.data.process">EngineDataAccess</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/service/data/process/EngineDataAccessCache.html#getActivityInstances-java.lang.Long-java.lang.Long-boolean-boolean-">getActivityInstances(Long, Long, boolean, boolean)</a></span> - Method in class com.centurylink.mdw.service.data.process.<a href="com/centurylink/mdw/service/data/process/EngineDataAccessCache.html" title="class in com.centurylink.mdw.service.data.process">EngineDataAccessCache</a></dt>
@@ -4528,7 +4512,13 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/test/TestCaseProcess.html#getActivityLogicalId--">getActivityLogicalId()</a></span> - Method in class com.centurylink.mdw.test.<a href="com/centurylink/mdw/test/TestCaseProcess.html" title="class in com.centurylink.mdw.test">TestCaseProcess</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/MonitorRegistry.html#getActivityMonitors--">getActivityMonitors()</a></span> - Method in class com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/MonitorRegistry.html" title="class in com.centurylink.mdw.monitor">MonitorRegistry</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns all activity monitors.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/MonitorRegistry.html#getActivityMonitors-com.centurylink.mdw.model.workflow.RuntimeContext-">getActivityMonitors(RuntimeContext)</a></span> - Method in class com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/MonitorRegistry.html" title="class in com.centurylink.mdw.monitor">MonitorRegistry</a></dt>
+<dd>
+<div class="block">Returns only enabled monitors.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/ActivityCount.html#getActivityName--">getActivityName()</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/ActivityCount.html" title="class in com.centurylink.mdw.model.workflow">ActivityCount</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/process/BaseActivity.html#getActivityName--">getActivityName()</a></span> - Method in class com.centurylink.mdw.services.process.<a href="com/centurylink/mdw/services/process/BaseActivity.html" title="class in com.centurylink.mdw.services.process">BaseActivity</a></dt>
@@ -4572,7 +4562,13 @@
  a decent error message.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/MonitorRegistry.html#getAdapterMonitors--">getAdapterMonitors()</a></span> - Method in class com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/MonitorRegistry.html" title="class in com.centurylink.mdw.monitor">MonitorRegistry</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns all adapter monitors.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/MonitorRegistry.html#getAdapterMonitors-com.centurylink.mdw.model.workflow.RuntimeContext-">getAdapterMonitors(RuntimeContext)</a></span> - Method in class com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/MonitorRegistry.html" title="class in com.centurylink.mdw.monitor">MonitorRegistry</a></dt>
+<dd>
+<div class="block">Returns only enabled monitors.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/workflow/activity/template/VelocityTemplateActivity.html#getAdditionalScriptBindings--">getAdditionalScriptBindings()</a></span> - Method in class com.centurylink.mdw.workflow.activity.template.<a href="com/centurylink/mdw/workflow/activity/template/VelocityTemplateActivity.html" title="class in com.centurylink.mdw.workflow.activity.template">VelocityTemplateActivity</a></dt>
 <dd>
 <div class="block">Gets additional bindings for script execution, adding the velocity
@@ -5571,6 +5567,8 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/DatabaseAccess.html#getDatabaseTime--">getDatabaseTime()</a></span> - Method in class com.centurylink.mdw.dataaccess.<a href="com/centurylink/mdw/dataaccess/DatabaseAccess.html" title="class in com.centurylink.mdw.dataaccess">DatabaseAccess</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDatabaseTime--">getDatabaseTime()</a></span> - Method in class com.centurylink.mdw.dataaccess.db.<a href="com/centurylink/mdw/dataaccess/db/CommonDataAccess.html" title="class in com.centurylink.mdw.dataaccess.db">CommonDataAccess</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/cli/Setup.html#getDatabaseUrl--">getDatabaseUrl()</a></span> - Method in class com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Setup.html" title="class in com.centurylink.mdw.cli">Setup</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/cli/Setup.html#getDatabaseUser--">getDatabaseUser()</a></span> - Method in class com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Setup.html" title="class in com.centurylink.mdw.cli">Setup</a></dt>
@@ -6485,6 +6483,12 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/cli/Test.html#getIgnore--">getIgnore()</a></span> - Method in class com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Test.html" title="class in com.centurylink.mdw.cli">Test</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/ActivityImplementor.html#getImageIcon--">getImageIcon()</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/ActivityImplementor.html" title="class in com.centurylink.mdw.model.workflow">ActivityImplementor</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/asset/AssetServicesImpl.html#getImplAsset-java.lang.String-">getImplAsset(String)</a></span> - Method in class com.centurylink.mdw.services.asset.<a href="com/centurylink/mdw/services/asset/AssetServicesImpl.html" title="class in com.centurylink.mdw.services.asset">AssetServicesImpl</a></dt>
+<dd>
+<div class="block">Returns either Java or Kotlin asset implementor for a class.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/AssetServices.html#getImplAsset-java.lang.String-">getImplAsset(String)</a></span> - Method in interface com.centurylink.mdw.services.<a href="com/centurylink/mdw/services/AssetServices.html" title="interface in com.centurylink.mdw.services">AssetServices</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/Activity.html#getImplementor--">getImplementor()</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a></dt>
 <dd>&nbsp;</dd>
@@ -8203,6 +8207,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/WorkflowServices.html#getProcessDefinitions-com.centurylink.mdw.common.service.Query-">getProcessDefinitions(Query)</a></span> - Method in interface com.centurylink.mdw.services.<a href="com/centurylink/mdw/services/WorkflowServices.html" title="interface in com.centurylink.mdw.services">WorkflowServices</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getProcessElapsedTime0-java.lang.Long-">getProcessElapsedTime0(Long)</a></span> - Method in class com.centurylink.mdw.dataaccess.db.<a href="com/centurylink/mdw/dataaccess/db/CommonDataAccess.html" title="class in com.centurylink.mdw.dataaccess.db">CommonDataAccess</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/request/Request.html#getProcessEnd--">getProcessEnd()</a></span> - Method in class com.centurylink.mdw.model.request.<a href="com/centurylink/mdw/model/request/Request.html" title="class in com.centurylink.mdw.model.request">Request</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/listener/jms/ConfigurationEventListener.html#getProcesser-javax.jms.TextMessage-">getProcesser(TextMessage)</a></span> - Method in class com.centurylink.mdw.listener.jms.<a href="com/centurylink/mdw/listener/jms/ConfigurationEventListener.html" title="class in com.centurylink.mdw.listener.jms">ConfigurationEventListener</a></dt>
@@ -8427,7 +8433,13 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/DataAccess.html#getProcessLoader--">getProcessLoader()</a></span> - Static method in class com.centurylink.mdw.dataaccess.<a href="com/centurylink/mdw/dataaccess/DataAccess.html" title="class in com.centurylink.mdw.dataaccess">DataAccess</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/MonitorRegistry.html#getProcessMonitors--">getProcessMonitors()</a></span> - Method in class com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/MonitorRegistry.html" title="class in com.centurylink.mdw.monitor">MonitorRegistry</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns all process monitors.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/MonitorRegistry.html#getProcessMonitors-com.centurylink.mdw.model.workflow.RuntimeContext-">getProcessMonitors(RuntimeContext)</a></span> - Method in class com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/MonitorRegistry.html" title="class in com.centurylink.mdw.monitor">MonitorRegistry</a></dt>
+<dd>
+<div class="block">Returns only enabled monitors.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/event/ExternalEventInstance.html#getProcessName--">getProcessName()</a></span> - Method in class com.centurylink.mdw.model.event.<a href="com/centurylink/mdw/model/event/ExternalEventInstance.html" title="class in com.centurylink.mdw.model.event">ExternalEventInstance</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/request/Request.html#getProcessName--">getProcessName()</a></span> - Method in class com.centurylink.mdw.model.request.<a href="com/centurylink/mdw/model/request/Request.html" title="class in com.centurylink.mdw.model.request">Request</a></dt>
@@ -8526,8 +8538,6 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/config/PropertyManager.html#getProperty-java.lang.String-java.lang.String-">getProperty(String, String)</a></span> - Static method in class com.centurylink.mdw.config.<a href="com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config">PropertyManager</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getProperty-java.lang.String-">getProperty(String)</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/Monitor.html#getProperty-java.lang.String-">getProperty(String)</a></span> - Method in class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/Monitor.html" title="class in com.centurylink.mdw.monitor.impl">Monitor</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/provider/Provider.html#getProperty-java.lang.String-">getProperty(String)</a></span> - Method in interface com.centurylink.mdw.provider.<a href="com/centurylink/mdw/provider/Provider.html" title="interface in com.centurylink.mdw.provider">Provider</a></dt>
 <dd>
@@ -8712,6 +8722,10 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/request/RequestServicesImpl.html#getRequestBreakdown-com.centurylink.mdw.common.service.Query-">getRequestBreakdown(Query)</a></span> - Method in class com.centurylink.mdw.services.request.<a href="com/centurylink/mdw/services/request/RequestServicesImpl.html" title="class in com.centurylink.mdw.services.request">RequestServicesImpl</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/RequestServices.html#getRequestBreakdown-com.centurylink.mdw.common.service.Query-">getRequestBreakdown(Query)</a></span> - Method in interface com.centurylink.mdw.services.<a href="com/centurylink/mdw/services/RequestServices.html" title="interface in com.centurylink.mdw.services">RequestServices</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getRequestCompletionTime-java.lang.String-java.lang.Long-">getRequestCompletionTime(String, Long)</a></span> - Method in class com.centurylink.mdw.dataaccess.db.<a href="com/centurylink/mdw/dataaccess/db/CommonDataAccess.html" title="class in com.centurylink.mdw.dataaccess.db">CommonDataAccess</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getRequestCompletionTime0-java.lang.String-java.lang.Long-">getRequestCompletionTime0(String, Long)</a></span> - Method in class com.centurylink.mdw.dataaccess.db.<a href="com/centurylink/mdw/dataaccess/db/CommonDataAccess.html" title="class in com.centurylink.mdw.dataaccess.db">CommonDataAccess</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/workflow/activity/event/PublishEventMessageRest.html#getRequestData--">getRequestData()</a></span> - Method in class com.centurylink.mdw.workflow.activity.event.<a href="com/centurylink/mdw/workflow/activity/event/PublishEventMessageRest.html" title="class in com.centurylink.mdw.workflow.activity.event">PublishEventMessageRest</a></dt>
 <dd>&nbsp;</dd>
@@ -9177,6 +9191,10 @@
 <div class="block">Returns a workgroup routing strategy instance based on an attribute value and bundle spec
   which can consist of either the routing strategy logical name, or an xml document.</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/MonitorAttributes.html#getRow-java.lang.String-">getRow(String)</a></span> - Method in class com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/MonitorAttributes.html" title="class in com.centurylink.mdw.monitor">MonitorAttributes</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/MonitorAttributes.html#getRowDefault-com.centurylink.mdw.model.asset.AssetInfo-java.lang.Class-">getRowDefault(AssetInfo, Class&lt;? extends Monitor&gt;)</a></span> - Static method in class com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/MonitorAttributes.html" title="class in com.centurylink.mdw.monitor">MonitorAttributes</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/cache/impl/AssetCache.html#getRuleNames-java.lang.String-">getRuleNames(String)</a></span> - Static method in class com.centurylink.mdw.cache.impl.<a href="com/centurylink/mdw/cache/impl/AssetCache.html" title="class in com.centurylink.mdw.cache.impl">AssetCache</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/service/rest/Rules.html#getRulesAsset-java.lang.String-">getRulesAsset(String)</a></span> - Method in class com.centurylink.mdw.service.rest.<a href="com/centurylink/mdw/service/rest/Rules.html" title="class in com.centurylink.mdw.service.rest">Rules</a></dt>
@@ -9291,7 +9309,7 @@
 </dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/MonitorRegistry.html#getServiceMonitors--">getServiceMonitors()</a></span> - Method in class com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/MonitorRegistry.html" title="class in com.centurylink.mdw.monitor">MonitorRegistry</a></dt>
 <dd>
-<div class="block">TODO: handle specified or alpha ordering of monitor chains</div>
+<div class="block">Returns all service monitors.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/common/service/ServiceRegistry.html#getServices-java.lang.Class-">getServices(Class&lt;T&gt;)</a></span> - Method in class com.centurylink.mdw.common.service.<a href="com/centurylink/mdw/common/service/ServiceRegistry.html" title="class in com.centurylink.mdw.common.service">ServiceRegistry</a></dt>
 <dd>&nbsp;</dd>
@@ -9873,6 +9891,14 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/task/TaskRuntimeContext.html#getTaskLogicalId--">getTaskLogicalId()</a></span> - Method in class com.centurylink.mdw.model.task.<a href="com/centurylink/mdw/model/task/TaskRuntimeContext.html" title="class in com.centurylink.mdw.model.task">TaskRuntimeContext</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/MonitorRegistry.html#getTaskMonitors--">getTaskMonitors()</a></span> - Method in class com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/MonitorRegistry.html" title="class in com.centurylink.mdw.monitor">MonitorRegistry</a></dt>
+<dd>
+<div class="block">Returns all task monitors.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/MonitorRegistry.html#getTaskMonitors-com.centurylink.mdw.model.workflow.RuntimeContext-">getTaskMonitors(RuntimeContext)</a></span> - Method in class com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/MonitorRegistry.html" title="class in com.centurylink.mdw.monitor">MonitorRegistry</a></dt>
+<dd>
+<div class="block">Returns only enabled monitors.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/task/TaskInstance.html#getTaskName--">getTaskName()</a></span> - Method in class com.centurylink.mdw.model.task.<a href="com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/task/TaskRuntimeContext.html#getTaskName--">getTaskName()</a></span> - Method in class com.centurylink.mdw.model.task.<a href="com/centurylink/mdw/model/task/TaskRuntimeContext.html" title="class in com.centurylink.mdw.model.task">TaskRuntimeContext</a></dt>
@@ -10218,8 +10244,6 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/event/InternalEvent.html#getTransitionInstanceId--">getTransitionInstanceId()</a></span> - Method in class com.centurylink.mdw.model.event.<a href="com/centurylink/mdw/model/event/InternalEvent.html" title="class in com.centurylink.mdw.model.event">InternalEvent</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/TransitionInstance.html#getTransitionInstanceID--">getTransitionInstanceID()</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/TransitionInstance.html" title="class in com.centurylink.mdw.model.workflow">TransitionInstance</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/ProcessInstance.html#getTransitionInstances-java.lang.Long-">getTransitionInstances(Long)</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/drawio/MxGraphParser.html#getTransitions--">getTransitions()</a></span> - Method in class com.centurylink.mdw.drawio.<a href="com/centurylink/mdw/drawio/MxGraphParser.html" title="class in com.centurylink.mdw.drawio">MxGraphParser</a></dt>
 <dd>&nbsp;</dd>
@@ -10719,6 +10743,10 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/Pagelet.html#getWidgets--">getWidgets()</a></span> - Method in class com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/Pagelet.html" title="class in com.centurylink.mdw.model.asset">Pagelet</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/Pagelet.Widget.html#getWidgets--">getWidgets()</a></span> - Method in class com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/Pagelet.Widget.html" title="class in com.centurylink.mdw.model.asset">Pagelet.Widget</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/PrePostWidgetProvider.html#getWidgets-java.lang.String-">getWidgets(String)</a></span> - Method in class com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/PrePostWidgetProvider.html" title="class in com.centurylink.mdw.model.asset">PrePostWidgetProvider</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/WidgetProvider.html#getWidgets-java.lang.String-">getWidgets(String)</a></span> - Method in interface com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/WidgetProvider.html" title="interface in com.centurylink.mdw.model.asset">WidgetProvider</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/common/service/AbstractRoutingStrategy.html#getWorkerInstances--">getWorkerInstances()</a></span> - Method in class com.centurylink.mdw.common.service.<a href="com/centurylink/mdw/common/service/AbstractRoutingStrategy.html" title="class in com.centurylink.mdw.common.service">AbstractRoutingStrategy</a></dt>
 <dd>&nbsp;</dd>
@@ -11847,8 +11875,6 @@
 <dd>
 <div class="block">Checks if a string is empty - null strings, "", and "  " are considered empty.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/common/service/RegisteredService.html#isEnabled--">isEnabled()</a></span> - Method in interface com.centurylink.mdw.common.service.<a href="com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/common/service/ServiceRegistry.html#isEnabled-com.centurylink.mdw.common.service.RegisteredService-">isEnabled(RegisteredService)</a></span> - Method in class com.centurylink.mdw.common.service.<a href="com/centurylink/mdw/common/service/ServiceRegistry.html" title="class in com.centurylink.mdw.common.service">ServiceRegistry</a></dt>
 <dd>
 <div class="block">Default is true</div>
@@ -11856,6 +11882,12 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/db/DocumentDb.html#isEnabled--">isEnabled()</a></span> - Method in interface com.centurylink.mdw.dataaccess.db.<a href="com/centurylink/mdw/dataaccess/db/DocumentDb.html" title="interface in com.centurylink.mdw.dataaccess.db">DocumentDb</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/listener/file/FileListenerRegistration.html#isEnabled--">isEnabled()</a></span> - Method in class com.centurylink.mdw.listener.file.<a href="com/centurylink/mdw/listener/file/FileListenerRegistration.html" title="class in com.centurylink.mdw.listener.file">FileListenerRegistration</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/Monitor.html#isEnabled-com.centurylink.mdw.model.workflow.RuntimeContext-">isEnabled(RuntimeContext)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor">Monitor</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/MonitorAttributes.html#isEnabled-java.lang.String-">isEnabled(String)</a></span> - Method in class com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/MonitorAttributes.html" title="class in com.centurylink.mdw.monitor">MonitorAttributes</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/startup/StartupService.html#isEnabled--">isEnabled()</a></span> - Method in interface com.centurylink.mdw.startup.<a href="com/centurylink/mdw/startup/StartupService.html" title="interface in com.centurylink.mdw.startup">StartupService</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/util/log/log4j/Log4JStandardLoggerImpl.html#isEnabledFor-com.centurylink.mdw.util.log.StandardLogger.LogLevel-">isEnabledFor(StandardLogger.LogLevel)</a></span> - Method in class com.centurylink.mdw.util.log.log4j.<a href="com/centurylink/mdw/util/log/log4j/Log4JStandardLoggerImpl.html" title="class in com.centurylink.mdw.util.log.log4j">Log4JStandardLoggerImpl</a></dt>
 <dd>&nbsp;</dd>
@@ -12049,6 +12081,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/DatabaseAccess.html#isMySQL--">isMySQL()</a></span> - Method in class com.centurylink.mdw.dataaccess.<a href="com/centurylink/mdw/dataaccess/DatabaseAccess.html" title="class in com.centurylink.mdw.dataaccess">DatabaseAccess</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/Monitor.html#isOffline--">isOffline()</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor">Monitor</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/test/TestCaseScript.html#isOnServer--">isOnServer()</a></span> - Method in class com.centurylink.mdw.services.test.<a href="com/centurylink/mdw/services/test/TestCaseScript.html" title="class in com.centurylink.mdw.services.test">TestCaseScript</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/util/HttpAltConnection.html#isOpen--">isOpen()</a></span> - Method in class com.centurylink.mdw.util.<a href="com/centurylink/mdw/util/HttpAltConnection.html" title="class in com.centurylink.mdw.util">HttpAltConnection</a></dt>
@@ -12094,8 +12128,6 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/service/api/ResourceReaderExtension.html#isReadable-io.swagger.servlet.ReaderContext-">isReadable(ReaderContext)</a></span> - Method in class com.centurylink.mdw.service.api.<a href="com/centurylink/mdw/service/api/ResourceReaderExtension.html" title="class in com.centurylink.mdw.service.api">ResourceReaderExtension</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/variable/XPathELResolver.html#isReadOnly-javax.el.ELContext-java.lang.Object-java.lang.Object-">isReadOnly(ELContext, Object, Object)</a></span> - Method in class com.centurylink.mdw.model.variable.<a href="com/centurylink/mdw/model/variable/XPathELResolver.html" title="class in com.centurylink.mdw.model.variable">XPathELResolver</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/ProcessInstance.html#isRemote--">isRemote()</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/task/TaskAction.html#isRequireComment--">isRequireComment()</a></span> - Method in class com.centurylink.mdw.model.task.<a href="com/centurylink/mdw/model/task/TaskAction.html" title="class in com.centurylink.mdw.model.task">TaskAction</a></dt>
 <dd>&nbsp;</dd>
@@ -12574,6 +12606,8 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/util/file/FileLister.html#list--">list()</a></span> - Method in class com.centurylink.mdw.util.file.<a href="com/centurylink/mdw/util/file/FileLister.html" title="class in com.centurylink.mdw.util.file">FileLister</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/listener/file/FileListener.html#listen-java.util.Properties-">listen(Properties)</a></span> - Method in class com.centurylink.mdw.listener.file.<a href="com/centurylink/mdw/listener/file/FileListener.html" title="class in com.centurylink.mdw.listener.file">FileListener</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/OwnerType.html#LISTENER">LISTENER</a></span> - Static variable in interface com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/OwnerType.html" title="interface in com.centurylink.mdw.constant">OwnerType</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/model/listener/Listener.html" title="interface in com.centurylink.mdw.model.listener"><span class="typeNameLink">Listener</span></a> - Interface in <a href="com/centurylink/mdw/model/listener/package-summary.html">com.centurylink.mdw.model.listener</a></dt>
 <dd>
@@ -13706,15 +13740,21 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/test/MockRuntimeContext.html#MockRuntimeContext-java.lang.String-com.centurylink.mdw.dataaccess.BaselineData-">MockRuntimeContext(String, BaselineData)</a></span> - Constructor for class com.centurylink.mdw.test.<a href="com/centurylink/mdw/test/MockRuntimeContext.html" title="class in com.centurylink.mdw.test">MockRuntimeContext</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/centurylink/mdw/monitor/impl/Monitor.html" title="class in com.centurylink.mdw.monitor.impl"><span class="typeNameLink">Monitor</span></a> - Class in <a href="com/centurylink/mdw/monitor/impl/package-summary.html">com.centurylink.mdw.monitor.impl</a></dt>
+<dt><a href="com/centurylink/mdw/annotations/Monitor.html" title="annotation in com.centurylink.mdw.annotations"><span class="typeNameLink">Monitor</span></a> - Annotation Type in <a href="com/centurylink/mdw/annotations/package-summary.html">com.centurylink.mdw.annotations</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/Monitor.html#Monitor--">Monitor()</a></span> - Constructor for class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/Monitor.html" title="class in com.centurylink.mdw.monitor.impl">Monitor</a></dt>
+<dt><a href="com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">Monitor</span></a> - Interface in <a href="com/centurylink/mdw/monitor/package-summary.html">com.centurylink.mdw.monitor</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/centurylink/mdw/monitor/MonitorAttributes.html" title="class in com.centurylink.mdw.monitor"><span class="typeNameLink">MonitorAttributes</span></a> - Class in <a href="com/centurylink/mdw/monitor/package-summary.html">com.centurylink.mdw.monitor</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/MonitorAttributes.html#MonitorAttributes-java.lang.String-">MonitorAttributes(String)</a></span> - Constructor for class com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/MonitorAttributes.html" title="class in com.centurylink.mdw.monitor">MonitorAttributes</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/monitor/MonitorRegistry.html" title="class in com.centurylink.mdw.monitor"><span class="typeNameLink">MonitorRegistry</span></a> - Class in <a href="com/centurylink/mdw/monitor/package-summary.html">com.centurylink.mdw.monitor</a></dt>
 <dd>
-<div class="block">Registry for MDW workflow monitoring services.</div>
+<div class="block">Registry for MDW monitoring services.</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/MonitorRegistry.html#MonitorRegistry-java.util.List-">MonitorRegistry(List&lt;Class&lt;? extends RegisteredService&gt;&gt;)</a></span> - Constructor for class com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/MonitorRegistry.html" title="class in com.centurylink.mdw.monitor">MonitorRegistry</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/WorkAttributeConstant.html#MONITORS">MONITORS</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/WorkAttributeConstant.html" title="class in com.centurylink.mdw.constant">WorkAttributeConstant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/MonitorRegistry.html#monitorServices">monitorServices</a></span> - Static variable in class com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/MonitorRegistry.html" title="class in com.centurylink.mdw.monitor">MonitorRegistry</a></dt>
 <dd>&nbsp;</dd>
@@ -13998,6 +14038,27 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/system/Bulletin.html#on--">on()</a></span> - Method in class com.centurylink.mdw.model.system.<a href="com/centurylink/mdw/model/system/Bulletin.html" title="class in com.centurylink.mdw.model.system">Bulletin</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/TaskMonitor.html#onAlert-com.centurylink.mdw.model.task.TaskRuntimeContext-">onAlert(TaskRuntimeContext)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/TaskMonitor.html" title="interface in com.centurylink.mdw.monitor">TaskMonitor</a></dt>
+<dd>
+<div class="block">Called when a task instance reaches alert status (scheduled
+ completion date is drawing near).</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/TaskMonitor.html#onAssign-com.centurylink.mdw.model.task.TaskRuntimeContext-">onAssign(TaskRuntimeContext)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/TaskMonitor.html" title="interface in com.centurylink.mdw.monitor">TaskMonitor</a></dt>
+<dd>
+<div class="block">Called when a task instance is assigned.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/TaskMonitor.html#onCancel-com.centurylink.mdw.model.task.TaskRuntimeContext-">onCancel(TaskRuntimeContext)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/TaskMonitor.html" title="interface in com.centurylink.mdw.monitor">TaskMonitor</a></dt>
+<dd>
+<div class="block">Called when a task instance is cancelled.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/TaskMonitor.html#onComplete-com.centurylink.mdw.model.task.TaskRuntimeContext-">onComplete(TaskRuntimeContext)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/TaskMonitor.html" title="interface in com.centurylink.mdw.monitor">TaskMonitor</a></dt>
+<dd>
+<div class="block">Called when a task instance is completed.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/TaskMonitor.html#onCreate-com.centurylink.mdw.model.task.TaskRuntimeContext-">onCreate(TaskRuntimeContext)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/TaskMonitor.html" title="interface in com.centurylink.mdw.monitor">TaskMonitor</a></dt>
+<dd>
+<div class="block">Called when a task instance is created.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/common/service/WebSocketMessenger.html#onError-javax.websocket.Session-java.lang.Throwable-">onError(Session, Throwable)</a></span> - Method in class com.centurylink.mdw.common.service.<a href="com/centurylink/mdw/common/service/WebSocketMessenger.html" title="class in com.centurylink.mdw.common.service">WebSocketMessenger</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/ActivityMonitor.html#onError-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">onError(ActivityRuntimeContext)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/ActivityMonitor.html" title="interface in com.centurylink.mdw.monitor">ActivityMonitor</a></dt>
@@ -14008,12 +14069,6 @@
 <dd>
 <div class="block">Called when an error is encountered.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/ActivityTraceMonitor.html#onError-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">onError(ActivityRuntimeContext)</a></span> - Method in class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/ActivityTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl">ActivityTraceMonitor</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/AdapterTraceMonitor.html#onError-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Throwable-">onError(ActivityRuntimeContext, Throwable)</a></span> - Method in class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/AdapterTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl">AdapterTraceMonitor</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/ServiceTraceMonitor.html#onError-java.lang.Throwable-java.util.Map-">onError(Throwable, Map&lt;String, String&gt;)</a></span> - Method in class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/ServiceTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl">ServiceTraceMonitor</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/OfflineMonitor.html#onError-T-">onError(T)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/OfflineMonitor.html" title="interface in com.centurylink.mdw.monitor">OfflineMonitor</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/ServiceMonitor.html#onError-java.lang.Throwable-java.util.Map-">onError(Throwable, Map&lt;String, String&gt;)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/ServiceMonitor.html" title="interface in com.centurylink.mdw.monitor">ServiceMonitor</a></dt>
@@ -14022,8 +14077,6 @@
 <dd>
 <div class="block">Non-null means bypass execution with the returned result code.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/ActivityTraceMonitor.html#onExecute-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">onExecute(ActivityRuntimeContext)</a></span> - Method in class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/ActivityTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl">ActivityTraceMonitor</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/adapter/TextAdapter.html#onFailure-java.lang.Throwable-">onFailure(Throwable)</a></span> - Method in interface com.centurylink.mdw.adapter.<a href="com/centurylink/mdw/adapter/TextAdapter.html" title="interface in com.centurylink.mdw.adapter">TextAdapter</a></dt>
 <dd>
 <div class="block">Handle failure response.</div>
@@ -14036,10 +14089,6 @@
 <dd>
 <div class="block">Called when an activity instance is successfully completed.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/ActivityTraceMonitor.html#onFinish-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">onFinish(ActivityRuntimeContext)</a></span> - Method in class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/ActivityTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl">ActivityTraceMonitor</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/ProcessTraceMonitor.html#onFinish-com.centurylink.mdw.model.workflow.ProcessRuntimeContext-">onFinish(ProcessRuntimeContext)</a></span> - Method in class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/ProcessTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl">ProcessTraceMonitor</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/OfflineMonitor.html#onFinish-T-">onFinish(T)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/OfflineMonitor.html" title="interface in com.centurylink.mdw.monitor">OfflineMonitor</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/ProcessMonitor.html#onFinish-com.centurylink.mdw.model.workflow.ProcessRuntimeContext-">onFinish(ProcessRuntimeContext)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/ProcessMonitor.html" title="interface in com.centurylink.mdw.monitor">ProcessMonitor</a></dt>
@@ -14051,18 +14100,28 @@
 <div class="block">This method is a hook for custom processing, to be called
  when subprocesses are completed.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/ServiceTraceMonitor.html#onHandle-java.lang.Object-java.util.Map-">onHandle(Object, Map&lt;String, String&gt;)</a></span> - Method in class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/ServiceTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl">ServiceTraceMonitor</a></dt>
-<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/TaskMonitor.html#onForward-com.centurylink.mdw.model.task.TaskRuntimeContext-">onForward(TaskRuntimeContext)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/TaskMonitor.html" title="interface in com.centurylink.mdw.monitor">TaskMonitor</a></dt>
+<dd>
+<div class="block">Called when a task instance is forwarded from one workgroup to another.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/ServiceMonitor.html#onHandle-java.lang.Object-java.util.Map-">onHandle(Object, Map&lt;String, String&gt;)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/ServiceMonitor.html" title="interface in com.centurylink.mdw.monitor">ServiceMonitor</a></dt>
 <dd>
 <div class="block">Called after onRequest(), but before the appropriate handler is determined.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/TaskMonitor.html#onInProgress-com.centurylink.mdw.model.task.TaskRuntimeContext-">onInProgress(TaskRuntimeContext)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/TaskMonitor.html" title="interface in com.centurylink.mdw.monitor">TaskMonitor</a></dt>
+<dd>
+<div class="block">Called when a task instance assumes the optional state of in-progress
+ (meaning the assignee has begun work on the task).</div>
 </dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/AdapterMonitor.html#onInvoke-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Object-java.util.Map-">onInvoke(ActivityRuntimeContext, Object, Map&lt;String, String&gt;)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/AdapterMonitor.html" title="interface in com.centurylink.mdw.monitor">AdapterMonitor</a></dt>
 <dd>
 <div class="block">Called after onRequest(), but before the service is actually invoked.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/AdapterTraceMonitor.html#onInvoke-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Object-java.util.Map-">onInvoke(ActivityRuntimeContext, Object, Map&lt;String, String&gt;)</a></span> - Method in class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/AdapterTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl">AdapterTraceMonitor</a></dt>
-<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/TaskMonitor.html#onJeopardy-com.centurylink.mdw.model.task.TaskRuntimeContext-">onJeopardy(TaskRuntimeContext)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/TaskMonitor.html" title="interface in com.centurylink.mdw.monitor">TaskMonitor</a></dt>
+<dd>
+<div class="block">Called when a task instance reaches jeopardy status (scheduled
+ completion date has passed).</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/listener/jms/ExternalEventMessageListener.html#onMessage-javax.jms.Message-javax.jms.Session-">onMessage(Message, Session)</a></span> - Method in class com.centurylink.mdw.listener.jms.<a href="com/centurylink/mdw/listener/jms/ExternalEventMessageListener.html" title="class in com.centurylink.mdw.listener.jms">ExternalEventMessageListener</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/listener/jms/InternalEventMessageListener.html#onMessage-javax.jms.Message-">onMessage(Message)</a></span> - Method in class com.centurylink.mdw.listener.jms.<a href="com/centurylink/mdw/listener/jms/InternalEventMessageListener.html" title="class in com.centurylink.mdw.listener.jms">InternalEventMessageListener</a></dt>
@@ -14073,10 +14132,6 @@
 <dd>
 <div class="block">Called when the request is created.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/AdapterTraceMonitor.html#onRequest-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Object-java.util.Map-">onRequest(ActivityRuntimeContext, Object, Map&lt;String, String&gt;)</a></span> - Method in class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/AdapterTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl">AdapterTraceMonitor</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/ServiceTraceMonitor.html#onRequest-java.lang.Object-java.util.Map-">onRequest(Object, Map&lt;String, String&gt;)</a></span> - Method in class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/ServiceTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl">ServiceTraceMonitor</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/ServiceMonitor.html#onRequest-java.lang.Object-java.util.Map-">onRequest(Object, Map&lt;String, String&gt;)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/ServiceMonitor.html" title="interface in com.centurylink.mdw.monitor">ServiceMonitor</a></dt>
 <dd>
 <div class="block">Called when the request comes in.</div>
@@ -14085,10 +14140,6 @@
 <dd>
 <div class="block">Called when the response is received.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/AdapterTraceMonitor.html#onResponse-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Object-java.util.Map-">onResponse(ActivityRuntimeContext, Object, Map&lt;String, String&gt;)</a></span> - Method in class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/AdapterTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl">AdapterTraceMonitor</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/ServiceTraceMonitor.html#onResponse-java.lang.Object-java.util.Map-">onResponse(Object, Map&lt;String, String&gt;)</a></span> - Method in class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/ServiceTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl">ServiceTraceMonitor</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/ServiceMonitor.html#onResponse-java.lang.Object-java.util.Map-">onResponse(Object, Map&lt;String, String&gt;)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/ServiceMonitor.html" title="interface in com.centurylink.mdw.monitor">ServiceMonitor</a></dt>
 <dd>
 <div class="block">Called before the response is sent out from the MDW event handler or camel route.</div>
@@ -14114,10 +14165,6 @@
 <dd>
 <div class="block">Called when an activity instance is to be started.</div>
 </dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/ActivityTraceMonitor.html#onStart-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">onStart(ActivityRuntimeContext)</a></span> - Method in class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/ActivityTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl">ActivityTraceMonitor</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/ProcessTraceMonitor.html#onStart-com.centurylink.mdw.model.workflow.ProcessRuntimeContext-">onStart(ProcessRuntimeContext)</a></span> - Method in class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/ProcessTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl">ProcessTraceMonitor</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/OfflineMonitor.html#onStart-T-">onStart(T)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/OfflineMonitor.html" title="interface in com.centurylink.mdw.monitor">OfflineMonitor</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/ProcessMonitor.html#onStart-com.centurylink.mdw.model.workflow.ProcessRuntimeContext-">onStart(ProcessRuntimeContext)</a></span> - Method in interface com.centurylink.mdw.monitor.<a href="com/centurylink/mdw/monitor/ProcessMonitor.html" title="interface in com.centurylink.mdw.monitor">ProcessMonitor</a></dt>
@@ -14720,6 +14767,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/DatabaseAccess.html#prepareStatement-java.lang.String-">prepareStatement(String)</a></span> - Method in class com.centurylink.mdw.dataaccess.<a href="com/centurylink/mdw/dataaccess/DatabaseAccess.html" title="class in com.centurylink.mdw.dataaccess">DatabaseAccess</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/centurylink/mdw/model/asset/PrePostWidgetProvider.html" title="class in com.centurylink.mdw.model.asset"><span class="typeNameLink">PrePostWidgetProvider</span></a> - Class in <a href="com/centurylink/mdw/model/asset/package-summary.html">com.centurylink.mdw.model.asset</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/PrePostWidgetProvider.html#PrePostWidgetProvider--">PrePostWidgetProvider()</a></span> - Constructor for class com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/PrePostWidgetProvider.html" title="class in com.centurylink.mdw.model.asset">PrePostWidgetProvider</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/html/HtmlExportHelper.html#printImage-java.lang.String-com.centurylink.mdw.model.workflow.Process-">printImage(String, Process)</a></span> - Method in class com.centurylink.mdw.html.<a href="com/centurylink/mdw/html/HtmlExportHelper.html" title="class in com.centurylink.mdw.html">HtmlExportHelper</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/image/ImageExportHelper.html#printImage-com.centurylink.mdw.model.workflow.Process-">printImage(Process)</a></span> - Method in class com.centurylink.mdw.image.<a href="com/centurylink/mdw/image/ImageExportHelper.html" title="class in com.centurylink.mdw.image">ImageExportHelper</a></dt>
@@ -14943,7 +14994,7 @@
 </dd>
 <dt><a href="com/centurylink/mdw/monitor/ProcessMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">ProcessMonitor</span></a> - Interface in <a href="com/centurylink/mdw/monitor/package-summary.html">com.centurylink.mdw.monitor</a></dt>
 <dd>
-<div class="block">Process monitors can be registered through @RegisteredService annotations to get
+<div class="block">Process monitors can be registered through @Monitor annotations to get
  notified during the lifecycle of an MDW workflow process.</div>
 </dd>
 <dt><a href="com/centurylink/mdw/cli/ProcessNamer.html" title="class in com.centurylink.mdw.cli"><span class="typeNameLink">ProcessNamer</span></a> - Class in <a href="com/centurylink/mdw/cli/package-summary.html">com.centurylink.mdw.cli</a></dt>
@@ -15040,10 +15091,6 @@
 <dd>
 <div class="block">This method is invoked when timer expires.</div>
 </dd>
-<dt><a href="com/centurylink/mdw/monitor/impl/ProcessTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl"><span class="typeNameLink">ProcessTraceMonitor</span></a> - Class in <a href="com/centurylink/mdw/monitor/impl/package-summary.html">com.centurylink.mdw.monitor.impl</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/ProcessTraceMonitor.html#ProcessTraceMonitor--">ProcessTraceMonitor()</a></span> - Constructor for class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/ProcessTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl">ProcessTraceMonitor</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/event/EventServicesImpl.html#processUnscheduledEvent-java.lang.String-">processUnscheduledEvent(String)</a></span> - Method in class com.centurylink.mdw.services.event.<a href="com/centurylink/mdw/services/event/EventServicesImpl.html" title="class in com.centurylink.mdw.services.event">EventServicesImpl</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/EventServices.html#processUnscheduledEvent-java.lang.String-">processUnscheduledEvent(String)</a></span> - Method in interface com.centurylink.mdw.services.<a href="com/centurylink/mdw/services/EventServices.html" title="interface in com.centurylink.mdw.services">EventServices</a></dt>
@@ -15724,6 +15771,8 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/user/UserServicesImpl.html#removeUserFromWorkgroup-java.lang.String-java.lang.String-">removeUserFromWorkgroup(String, String)</a></span> - Method in class com.centurylink.mdw.services.user.<a href="com/centurylink/mdw/services/user/UserServicesImpl.html" title="class in com.centurylink.mdw.services.user">UserServicesImpl</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/UserServices.html#removeUserFromWorkgroup-java.lang.String-java.lang.String-">removeUserFromWorkgroup(String, String)</a></span> - Method in interface com.centurylink.mdw.services.<a href="com/centurylink/mdw/services/UserServices.html" title="interface in com.centurylink.mdw.services">UserServices</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/Pagelet.html#removeWidgetProvider-com.centurylink.mdw.model.asset.WidgetProvider-">removeWidgetProvider(WidgetProvider)</a></span> - Method in class com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/Pagelet.html" title="class in com.centurylink.mdw.model.asset">Pagelet</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/file/LoaderPersisterVcs.html#rename-java.io.File-java.io.File-">rename(File, File)</a></span> - Method in class com.centurylink.mdw.dataaccess.file.<a href="com/centurylink/mdw/dataaccess/file/LoaderPersisterVcs.html" title="class in com.centurylink.mdw.dataaccess.file">LoaderPersisterVcs</a></dt>
 <dd>&nbsp;</dd>
@@ -16753,7 +16802,7 @@
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/monitor/ServiceMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">ServiceMonitor</span></a> - Interface in <a href="com/centurylink/mdw/monitor/package-summary.html">com.centurylink.mdw.monitor</a></dt>
 <dd>
-<div class="block">ServiceMonitors can be registered through @RegisteredService annotations to intercept
+<div class="block">ServiceMonitors can be registered through @Monitor annotations to intercept
  service calls handled by the MDW framework.</div>
 </dd>
 <dt><a href="com/centurylink/mdw/common/service/ServiceRegistry.html" title="class in com.centurylink.mdw.common.service"><span class="typeNameLink">ServiceRegistry</span></a> - Class in <a href="com/centurylink/mdw/common/service/package-summary.html">com.centurylink.mdw.common.service</a></dt>
@@ -16775,10 +16824,6 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/hub/servlet/ServiceServlet.html#ServiceServlet--">ServiceServlet()</a></span> - Constructor for class com.centurylink.mdw.hub.servlet.<a href="com/centurylink/mdw/hub/servlet/ServiceServlet.html" title="class in com.centurylink.mdw.hub.servlet">ServiceServlet</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/util/StringHelper.html#serviceStringToDate-java.lang.String-">serviceStringToDate(String)</a></span> - Static method in class com.centurylink.mdw.util.<a href="com/centurylink/mdw/util/StringHelper.html" title="class in com.centurylink.mdw.util">StringHelper</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/centurylink/mdw/monitor/impl/ServiceTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl"><span class="typeNameLink">ServiceTraceMonitor</span></a> - Class in <a href="com/centurylink/mdw/monitor/impl/package-summary.html">com.centurylink.mdw.monitor.impl</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/ServiceTraceMonitor.html#ServiceTraceMonitor--">ServiceTraceMonitor()</a></span> - Constructor for class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/ServiceTraceMonitor.html" title="class in com.centurylink.mdw.monitor.impl">ServiceTraceMonitor</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/model/variable/ServiceValuesAccess.html" title="class in com.centurylink.mdw.model.variable"><span class="typeNameLink">ServiceValuesAccess</span></a> - Class in <a href="com/centurylink/mdw/model/variable/package-summary.html">com.centurylink.mdw.model.variable</a></dt>
 <dd>
@@ -17345,6 +17390,10 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/task/TaskInstance.html#setDue-java.time.Instant-">setDue(Instant)</a></span> - Method in class com.centurylink.mdw.model.task.<a href="com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/cli/Init.html#setEclipse-boolean-">setEclipse(boolean)</a></span> - Method in class com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Init.html" title="class in com.centurylink.mdw.cli">Init</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setElapsedTime-java.lang.String-java.lang.Long-java.lang.Long-">setElapsedTime(String, Long, Long)</a></span> - Method in class com.centurylink.mdw.dataaccess.db.<a href="com/centurylink/mdw/dataaccess/db/CommonDataAccess.html" title="class in com.centurylink.mdw.dataaccess.db">CommonDataAccess</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setElapsedTime0-java.lang.String-java.lang.Long-java.lang.Long-">setElapsedTime0(String, Long, Long)</a></span> - Method in class com.centurylink.mdw.dataaccess.db.<a href="com/centurylink/mdw/dataaccess/db/CommonDataAccess.html" title="class in com.centurylink.mdw.dataaccess.db">CommonDataAccess</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/CommitInfo.html#setEmail-java.lang.String-">setEmail(String)</a></span> - Method in class com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/CommitInfo.html" title="class in com.centurylink.mdw.model.asset">CommitInfo</a></dt>
 <dd>&nbsp;</dd>
@@ -18138,8 +18187,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/ProcessInstance.html#setProcessVersion-java.lang.String-">setProcessVersion(String)</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/monitor/impl/Monitor.html#setProperty-java.lang.String-java.lang.String-">setProperty(String, String)</a></span> - Method in class com.centurylink.mdw.monitor.impl.<a href="com/centurylink/mdw/monitor/impl/Monitor.html" title="class in com.centurylink.mdw.monitor.impl">Monitor</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/provider/Provider.html#setProperty-java.lang.String-java.lang.String-">setProperty(String, String)</a></span> - Method in interface com.centurylink.mdw.provider.<a href="com/centurylink/mdw/provider/Provider.html" title="interface in com.centurylink.mdw.provider">Provider</a></dt>
 <dd>
 <div class="block">Property value associated when the service is registered.</div>
@@ -18189,14 +18236,6 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/ProcessInstance.html#setRemoteServer-java.lang.String-">setRemoteServer(String)</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/AppSummary.html#setRepository-com.centurylink.mdw.model.Repository-">setRepository(Repository)</a></span> - Method in class com.centurylink.mdw.model.<a href="com/centurylink/mdw/model/AppSummary.html" title="class in com.centurylink.mdw.model">AppSummary</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/service/data/process/EngineDataAccess.html#setReqCompletionTime-java.lang.String-java.lang.Long-">setReqCompletionTime(String, Long)</a></span> - Method in interface com.centurylink.mdw.service.data.process.<a href="com/centurylink/mdw/service/data/process/EngineDataAccess.html" title="interface in com.centurylink.mdw.service.data.process">EngineDataAccess</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/service/data/process/EngineDataAccessCache.html#setReqCompletionTime-java.lang.String-java.lang.Long-">setReqCompletionTime(String, Long)</a></span> - Method in class com.centurylink.mdw.service.data.process.<a href="com/centurylink/mdw/service/data/process/EngineDataAccessCache.html" title="class in com.centurylink.mdw.service.data.process">EngineDataAccessCache</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#setReqCompletionTime-java.lang.String-java.lang.Long-">setReqCompletionTime(String, Long)</a></span> - Method in class com.centurylink.mdw.service.data.process.<a href="com/centurylink/mdw/service/data/process/EngineDataAccessDB.html" title="class in com.centurylink.mdw.service.data.process">EngineDataAccessDB</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/process/ProcessExecutor.html#setReqCompletionTime-java.lang.String-java.lang.Long-">setReqCompletionTime(String, Long)</a></span> - Method in class com.centurylink.mdw.services.process.<a href="com/centurylink/mdw/services/process/ProcessExecutor.html" title="class in com.centurylink.mdw.services.process">ProcessExecutor</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/workflow/adapter/http/HttpServiceAdapter.html#setRequestHeaders-java.util.Map-">setRequestHeaders(Map&lt;String, String&gt;)</a></span> - Method in class com.centurylink.mdw.workflow.adapter.http.<a href="com/centurylink/mdw/workflow/adapter/http/HttpServiceAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.http">HttpServiceAdapter</a></dt>
 <dd>&nbsp;</dd>
@@ -18845,8 +18884,6 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/cli/Install.html#setWebappsDir-java.io.File-">setWebappsDir(File)</a></span> - Method in class com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Install.html" title="class in com.centurylink.mdw.cli">Install</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/hub/context/Mdw.html#setWebSocketUrl-java.lang.String-">setWebSocketUrl(String)</a></span> - Method in class com.centurylink.mdw.hub.context.<a href="com/centurylink/mdw/hub/context/Mdw.html" title="class in com.centurylink.mdw.hub.context">Mdw</a></dt>
-<dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/Pagelet.html#setWidgets-java.util.List-">setWidgets(List&lt;Pagelet.Widget&gt;)</a></span> - Method in class com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/Pagelet.html" title="class in com.centurylink.mdw.model.asset">Pagelet</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/Pagelet.Widget.html#setWidgets-java.util.List-">setWidgets(List&lt;Pagelet.Widget&gt;)</a></span> - Method in class com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/Pagelet.Widget.html" title="class in com.centurylink.mdw.model.asset">Pagelet.Widget</a></dt>
 <dd>&nbsp;</dd>
@@ -19908,6 +19945,11 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/task/types/TaskList.html#TaskList--">TaskList()</a></span> - Constructor for class com.centurylink.mdw.task.types.<a href="com/centurylink/mdw/task/types/TaskList.html" title="class in com.centurylink.mdw.task.types">TaskList</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/centurylink/mdw/monitor/TaskMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">TaskMonitor</span></a> - Interface in <a href="com/centurylink/mdw/monitor/package-summary.html">com.centurylink.mdw.monitor</a></dt>
+<dd>
+<div class="block">Activity monitors can be registered through @Monitor annotations to get
+ (optionally) called whenever an MDW workflow activity is invoked.</div>
+</dd>
 <dt><a href="com/centurylink/mdw/observer/task/TaskNotifier.html" title="interface in com.centurylink.mdw.observer.task"><span class="typeNameLink">TaskNotifier</span></a> - Interface in <a href="com/centurylink/mdw/observer/task/package-summary.html">com.centurylink.mdw.observer.task</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/model/task/TaskRuntimeContext.html" title="class in com.centurylink.mdw.model.task"><span class="typeNameLink">TaskRuntimeContext</span></a> - Class in <a href="com/centurylink/mdw/model/task/package-summary.html">com.centurylink.mdw.model.task</a></dt>
@@ -20570,7 +20612,9 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/WorkTransitionAttributeConstant.html#TRANSITION_RETRY_DELAY">TRANSITION_RETRY_DELAY</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/WorkTransitionAttributeConstant.html" title="class in com.centurylink.mdw.constant">WorkTransitionAttributeConstant</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/WorkAttributeConstant.html#TRANSITION_WITH_NO_LABEL">TRANSITION_WITH_NO_LABEL</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/WorkAttributeConstant.html" title="class in com.centurylink.mdw.constant">WorkAttributeConstant</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">attribute name for class name of activity implementor</div>
+</dd>
 <dt><a href="com/centurylink/mdw/model/workflow/TransitionDisplay.html" title="class in com.centurylink.mdw.model.workflow"><span class="typeNameLink">TransitionDisplay</span></a> - Class in <a href="com/centurylink/mdw/model/workflow/package-summary.html">com.centurylink.mdw.model.workflow</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/TransitionDisplay.html#TransitionDisplay--">TransitionDisplay()</a></span> - Constructor for class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/TransitionDisplay.html" title="class in com.centurylink.mdw.model.workflow">TransitionDisplay</a></dt>
@@ -21396,8 +21440,6 @@ the order they are declared.</div>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/AssetVersionSpec.html#VERSION_PATTERN">VERSION_PATTERN</a></span> - Static variable in class com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/AssetVersionSpec.html" title="class in com.centurylink.mdw.model.asset">AssetVersionSpec</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/WorkAttributeConstant.html#VERSION_TAG">VERSION_TAG</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/WorkAttributeConstant.html" title="class in com.centurylink.mdw.constant">WorkAttributeConstant</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/dataaccess/VersionControl.html" title="interface in com.centurylink.mdw.dataaccess"><span class="typeNameLink">VersionControl</span></a> - Interface in <a href="com/centurylink/mdw/dataaccess/package-summary.html">com.centurylink.mdw.dataaccess</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/dataaccess/file/VersionControlGit.html" title="class in com.centurylink.mdw.dataaccess.file"><span class="typeNameLink">VersionControlGit</span></a> - Class in <a href="com/centurylink/mdw/dataaccess/file/package-summary.html">com.centurylink.mdw.dataaccess.file</a></dt>
@@ -21500,6 +21542,8 @@ the order they are declared.</div>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/asset/Pagelet.Widget.html#Widget-org.json.JSONObject-">Widget(JSONObject)</a></span> - Constructor for class com.centurylink.mdw.model.asset.<a href="com/centurylink/mdw/model/asset/Pagelet.Widget.html" title="class in com.centurylink.mdw.model.asset">Pagelet.Widget</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/model/asset/WidgetAdapter.html" title="interface in com.centurylink.mdw.model.asset"><span class="typeNameLink">WidgetAdapter</span></a> - Interface in <a href="com/centurylink/mdw/model/asset/package-summary.html">com.centurylink.mdw.model.asset</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/centurylink/mdw/model/asset/WidgetProvider.html" title="interface in com.centurylink.mdw.model.asset"><span class="typeNameLink">WidgetProvider</span></a> - Interface in <a href="com/centurylink/mdw/model/asset/package-summary.html">com.centurylink.mdw.model.asset</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/util/file/WildcardFilenameFilter.html" title="class in com.centurylink.mdw.util.file"><span class="typeNameLink">WildcardFilenameFilter</span></a> - Class in <a href="com/centurylink/mdw/util/file/package-summary.html">com.centurylink.mdw.util.file</a></dt>
 <dd>

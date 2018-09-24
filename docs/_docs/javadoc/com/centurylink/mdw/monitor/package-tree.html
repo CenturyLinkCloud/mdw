@@ -42,7 +42,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/centurylink/mdw/model/workflow/package-tree.html">Prev</a></li>
-<li><a href="../../../../com/centurylink/mdw/monitor/impl/package-tree.html">Next</a></li>
+<li><a href="../../../../com/centurylink/mdw/observer/package-tree.html">Next</a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/centurylink/mdw/monitor/package-tree.html" target="_top">Frames</a></li>
@@ -79,6 +79,7 @@
 <ul>
 <li type="circle">java.lang.Object
 <ul>
+<li type="circle">com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/MonitorAttributes.html" title="class in com.centurylink.mdw.monitor"><span class="typeNameLink">MonitorAttributes</span></a></li>
 <li type="circle">com.centurylink.mdw.common.service.<a href="../../../../com/centurylink/mdw/common/service/ServiceRegistry.html" title="class in com.centurylink.mdw.common.service"><span class="typeNameLink">ServiceRegistry</span></a>
 <ul>
 <li type="circle">com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/MonitorRegistry.html" title="class in com.centurylink.mdw.monitor"><span class="typeNameLink">MonitorRegistry</span></a></li>
@@ -89,13 +90,23 @@
 </ul>
 <h2 title="Interface Hierarchy">Interface Hierarchy</h2>
 <ul>
+<li type="circle">com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">Monitor</span></a>
+<ul>
+<li type="circle">com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/ActivityMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">ActivityMonitor</span></a> (also extends com.centurylink.mdw.common.service.<a href="../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a>)</li>
+<li type="circle">com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/AdapterMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">AdapterMonitor</span></a> (also extends com.centurylink.mdw.common.service.<a href="../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a>)</li>
+<li type="circle">com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/ProcessMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">ProcessMonitor</span></a> (also extends com.centurylink.mdw.common.service.<a href="../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a>)</li>
+<li type="circle">com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/ServiceMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">ServiceMonitor</span></a> (also extends com.centurylink.mdw.common.service.<a href="../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a>)</li>
+<li type="circle">com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/TaskMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">TaskMonitor</span></a> (also extends com.centurylink.mdw.common.service.<a href="../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a>)</li>
+</ul>
+</li>
 <li type="circle">com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/OfflineMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">OfflineMonitor</span></a>&lt;T&gt;</li>
 <li type="circle">com.centurylink.mdw.common.service.<a href="../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service"><span class="typeNameLink">RegisteredService</span></a>
 <ul>
-<li type="circle">com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/ActivityMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">ActivityMonitor</span></a></li>
-<li type="circle">com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/AdapterMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">AdapterMonitor</span></a></li>
-<li type="circle">com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/ProcessMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">ProcessMonitor</span></a></li>
-<li type="circle">com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/ServiceMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">ServiceMonitor</span></a></li>
+<li type="circle">com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/ActivityMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">ActivityMonitor</span></a> (also extends com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor">Monitor</a>)</li>
+<li type="circle">com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/AdapterMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">AdapterMonitor</span></a> (also extends com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor">Monitor</a>)</li>
+<li type="circle">com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/ProcessMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">ProcessMonitor</span></a> (also extends com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor">Monitor</a>)</li>
+<li type="circle">com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/ServiceMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">ServiceMonitor</span></a> (also extends com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor">Monitor</a>)</li>
+<li type="circle">com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/TaskMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">TaskMonitor</span></a> (also extends com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor">Monitor</a>)</li>
 </ul>
 </li>
 </ul>
@@ -121,7 +132,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/centurylink/mdw/model/workflow/package-tree.html">Prev</a></li>
-<li><a href="../../../../com/centurylink/mdw/monitor/impl/package-tree.html">Next</a></li>
+<li><a href="../../../../com/centurylink/mdw/observer/package-tree.html">Next</a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/centurylink/mdw/monitor/package-tree.html" target="_top">Frames</a></li>

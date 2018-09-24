@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":9,"i3":10,"i4":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":9,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -47,7 +47,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../com/centurylink/mdw/monitor/AdapterMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../com/centurylink/mdw/monitor/MonitorAttributes.html" title="class in com.centurylink.mdw.monitor"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../com/centurylink/mdw/monitor/OfflineMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -114,7 +114,7 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">MonitorRegistry</span>
 extends <a href="../../../../com/centurylink/mdw/common/service/ServiceRegistry.html" title="class in com.centurylink.mdw.common.service">ServiceRegistry</a></pre>
-<div class="block">Registry for MDW workflow monitoring services.</div>
+<div class="block">Registry for MDW monitoring services.</div>
 </li>
 </ul>
 </div>
@@ -173,24 +173,60 @@ extends <a href="../../../../com/centurylink/mdw/common/service/ServiceRegistry.
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/ActivityMonitor.html" title="interface in com.centurylink.mdw.monitor">ActivityMonitor</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/MonitorRegistry.html#getActivityMonitors--">getActivityMonitors</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/MonitorRegistry.html#getActivityMonitors--">getActivityMonitors</a></span>()</code>
+<div class="block">Returns all activity monitors.</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/AdapterMonitor.html" title="interface in com.centurylink.mdw.monitor">AdapterMonitor</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/MonitorRegistry.html#getAdapterMonitors--">getAdapterMonitors</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/ActivityMonitor.html" title="interface in com.centurylink.mdw.monitor">ActivityMonitor</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/MonitorRegistry.html#getActivityMonitors-com.centurylink.mdw.model.workflow.RuntimeContext-">getActivityMonitors</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a>&nbsp;context)</code>
+<div class="block">Returns only enabled monitors.</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/AdapterMonitor.html" title="interface in com.centurylink.mdw.monitor">AdapterMonitor</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/MonitorRegistry.html#getAdapterMonitors--">getAdapterMonitors</a></span>()</code>
+<div class="block">Returns all adapter monitors.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/AdapterMonitor.html" title="interface in com.centurylink.mdw.monitor">AdapterMonitor</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/MonitorRegistry.html#getAdapterMonitors-com.centurylink.mdw.model.workflow.RuntimeContext-">getAdapterMonitors</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a>&nbsp;context)</code>
+<div class="block">Returns only enabled monitors.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../com/centurylink/mdw/monitor/MonitorRegistry.html" title="class in com.centurylink.mdw.monitor">MonitorRegistry</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/MonitorRegistry.html#getInstance--">getInstance</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/ProcessMonitor.html" title="interface in com.centurylink.mdw.monitor">ProcessMonitor</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/MonitorRegistry.html#getProcessMonitors--">getProcessMonitors</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/MonitorRegistry.html#getProcessMonitors--">getProcessMonitors</a></span>()</code>
+<div class="block">Returns all process monitors.</div>
+</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/ProcessMonitor.html" title="interface in com.centurylink.mdw.monitor">ProcessMonitor</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/MonitorRegistry.html#getProcessMonitors-com.centurylink.mdw.model.workflow.RuntimeContext-">getProcessMonitors</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a>&nbsp;context)</code>
+<div class="block">Returns only enabled monitors.</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/ServiceMonitor.html" title="interface in com.centurylink.mdw.monitor">ServiceMonitor</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/MonitorRegistry.html#getServiceMonitors--">getServiceMonitors</a></span>()</code>
-<div class="block">TODO: handle specified or alpha ordering of monitor chains</div>
+<div class="block">Returns all service monitors.</div>
+</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/TaskMonitor.html" title="interface in com.centurylink.mdw.monitor">TaskMonitor</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/MonitorRegistry.html#getTaskMonitors--">getTaskMonitors</a></span>()</code>
+<div class="block">Returns all task monitors.</div>
+</td>
+</tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/TaskMonitor.html" title="interface in com.centurylink.mdw.monitor">TaskMonitor</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/MonitorRegistry.html#getTaskMonitors-com.centurylink.mdw.model.workflow.RuntimeContext-">getTaskMonitors</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a>&nbsp;context)</code>
+<div class="block">Returns only enabled monitors.</div>
 </td>
 </tr>
 </table>
@@ -272,6 +308,17 @@ extends <a href="../../../../com/centurylink/mdw/common/service/ServiceRegistry.
 <li class="blockList">
 <h4>getProcessMonitors</h4>
 <pre>public&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/ProcessMonitor.html" title="interface in com.centurylink.mdw.monitor">ProcessMonitor</a>&gt;&nbsp;getProcessMonitors()</pre>
+<div class="block">Returns all process monitors.</div>
+</li>
+</ul>
+<a name="getProcessMonitors-com.centurylink.mdw.model.workflow.RuntimeContext-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getProcessMonitors</h4>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/ProcessMonitor.html" title="interface in com.centurylink.mdw.monitor">ProcessMonitor</a>&gt;&nbsp;getProcessMonitors(<a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a>&nbsp;context)</pre>
+<div class="block">Returns only enabled monitors.</div>
 </li>
 </ul>
 <a name="getActivityMonitors--">
@@ -281,6 +328,17 @@ extends <a href="../../../../com/centurylink/mdw/common/service/ServiceRegistry.
 <li class="blockList">
 <h4>getActivityMonitors</h4>
 <pre>public&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/ActivityMonitor.html" title="interface in com.centurylink.mdw.monitor">ActivityMonitor</a>&gt;&nbsp;getActivityMonitors()</pre>
+<div class="block">Returns all activity monitors.</div>
+</li>
+</ul>
+<a name="getActivityMonitors-com.centurylink.mdw.model.workflow.RuntimeContext-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getActivityMonitors</h4>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/ActivityMonitor.html" title="interface in com.centurylink.mdw.monitor">ActivityMonitor</a>&gt;&nbsp;getActivityMonitors(<a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a>&nbsp;context)</pre>
+<div class="block">Returns only enabled monitors.</div>
 </li>
 </ul>
 <a name="getAdapterMonitors--">
@@ -290,6 +348,37 @@ extends <a href="../../../../com/centurylink/mdw/common/service/ServiceRegistry.
 <li class="blockList">
 <h4>getAdapterMonitors</h4>
 <pre>public&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/AdapterMonitor.html" title="interface in com.centurylink.mdw.monitor">AdapterMonitor</a>&gt;&nbsp;getAdapterMonitors()</pre>
+<div class="block">Returns all adapter monitors.</div>
+</li>
+</ul>
+<a name="getAdapterMonitors-com.centurylink.mdw.model.workflow.RuntimeContext-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAdapterMonitors</h4>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/AdapterMonitor.html" title="interface in com.centurylink.mdw.monitor">AdapterMonitor</a>&gt;&nbsp;getAdapterMonitors(<a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a>&nbsp;context)</pre>
+<div class="block">Returns only enabled monitors.</div>
+</li>
+</ul>
+<a name="getTaskMonitors--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTaskMonitors</h4>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/TaskMonitor.html" title="interface in com.centurylink.mdw.monitor">TaskMonitor</a>&gt;&nbsp;getTaskMonitors()</pre>
+<div class="block">Returns all task monitors.</div>
+</li>
+</ul>
+<a name="getTaskMonitors-com.centurylink.mdw.model.workflow.RuntimeContext-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTaskMonitors</h4>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/TaskMonitor.html" title="interface in com.centurylink.mdw.monitor">TaskMonitor</a>&gt;&nbsp;getTaskMonitors(<a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a>&nbsp;context)</pre>
+<div class="block">Returns only enabled monitors.</div>
 </li>
 </ul>
 <a name="getServiceMonitors--">
@@ -299,7 +388,7 @@ extends <a href="../../../../com/centurylink/mdw/common/service/ServiceRegistry.
 <li class="blockList">
 <h4>getServiceMonitors</h4>
 <pre>public&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/monitor/ServiceMonitor.html" title="interface in com.centurylink.mdw.monitor">ServiceMonitor</a>&gt;&nbsp;getServiceMonitors()</pre>
-<div class="block">TODO: handle specified or alpha ordering of monitor chains</div>
+<div class="block">Returns all service monitors.</div>
 </li>
 </ul>
 </li>
@@ -329,7 +418,7 @@ extends <a href="../../../../com/centurylink/mdw/common/service/ServiceRegistry.
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../com/centurylink/mdw/monitor/AdapterMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../com/centurylink/mdw/monitor/MonitorAttributes.html" title="class in com.centurylink.mdw.monitor"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../com/centurylink/mdw/monitor/OfflineMonitor.html" title="interface in com.centurylink.mdw.monitor"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">

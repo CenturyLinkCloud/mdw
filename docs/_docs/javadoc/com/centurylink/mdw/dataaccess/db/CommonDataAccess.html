@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":9,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":9,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":10,"i54":10,"i55":10,"i56":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -273,96 +273,114 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i17" class="rowColor">
+<td class="colFirst"><code>long</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDatabaseTime--">getDatabaseTime</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDatabaseVersion--">getDatabaseVersion</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>protected static java.text.DateFormat</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDateFormat--">getDateFormat</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">Document</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDocument-java.lang.Long-">getDocument</a></span>(java.lang.Long&nbsp;documentId)</code>
 <div class="block">Not for update.</div>
 </td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">Document</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDocument-java.lang.Long-boolean-">getDocument</a></span>(java.lang.Long&nbsp;documentId,
            boolean&nbsp;forUpdate)</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/dataaccess/DocumentDbAccess.html" title="class in com.centurylink.mdw.dataaccess">DocumentDbAccess</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDocumentDbAccess--">getDocumentDbAccess</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>protected java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getNextId-java.lang.String-">getNextId</a></span>(java.lang.String&nbsp;sequenceName)</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getProcessBase0-java.lang.String-int-">getProcessBase0</a></span>(java.lang.String&nbsp;processName,
                int&nbsp;version)</code>&nbsp;</td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i25" class="rowColor">
+<td class="colFirst"><code>protected java.lang.Long</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getProcessElapsedTime0-java.lang.Long-">getProcessElapsedTime0</a></span>(java.lang.Long&nbsp;processInstanceId)</code>&nbsp;</td>
+</tr>
+<tr id="i26" class="altColor">
+<td class="colFirst"><code>java.lang.Long</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getRequestCompletionTime-java.lang.String-java.lang.Long-">getRequestCompletionTime</a></span>(java.lang.String&nbsp;ownerType,
+                        java.lang.Long&nbsp;ownerId)</code>&nbsp;</td>
+</tr>
+<tr id="i27" class="rowColor">
+<td class="colFirst"><code>protected java.lang.Long</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getRequestCompletionTime0-java.lang.String-java.lang.Long-">getRequestCompletionTime0</a></span>(java.lang.String&nbsp;ownerType,
+                         java.lang.Long&nbsp;ownerId)</code>&nbsp;</td>
+</tr>
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getSupportedVersion--">getSupportedVersion</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValue-java.lang.String-java.lang.String-java.lang.String-">getValue</a></span>(java.lang.String&nbsp;ownerType,
         java.lang.String&nbsp;ownerId,
         java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValue0-java.lang.String-java.lang.String-java.lang.String-">getValue0</a></span>(java.lang.String&nbsp;ownerType,
          java.lang.String&nbsp;ownerId,
          java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValueNames-java.lang.String-">getValueNames</a></span>(java.lang.String&nbsp;ownerType)</code>&nbsp;</td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValueOwnerIds-java.lang.String-java.lang.String-">getValueOwnerIds</a></span>(java.lang.String&nbsp;valueName,
                 java.lang.String&nbsp;valuePattern)</code>&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValueOwnerIds-java.lang.String-java.lang.String-java.lang.String-">getValueOwnerIds</a></span>(java.lang.String&nbsp;ownerType,
                 java.lang.String&nbsp;valueName,
                 java.lang.String&nbsp;valuePattern)</code>&nbsp;</td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValues-java.lang.String-java.lang.String-">getValues</a></span>(java.lang.String&nbsp;ownerType,
          java.lang.String&nbsp;ownerId)</code>&nbsp;</td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValues0-java.lang.String-java.lang.String-">getValues0</a></span>(java.lang.String&nbsp;ownerType,
           java.lang.String&nbsp;ownerId)</code>&nbsp;</td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#isDocument-java.lang.Long-">isDocument</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">Document</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#loadDocument-java.lang.Long-boolean-">loadDocument</a></span>(java.lang.Long&nbsp;documentId,
             boolean&nbsp;forUpdate)</code>&nbsp;</td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#now--">now</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#nowPrecision--">nowPrecision</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code>protected java.util.List&lt;java.lang.String[]&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#queryRows-java.lang.String-java.lang.String:A-java.lang.String-java.lang.String-int-int-">queryRows</a></span>(java.lang.String&nbsp;tableName,
          java.lang.String[]&nbsp;fields,
@@ -371,75 +389,87 @@ extends java.lang.Object</pre>
          int&nbsp;startIndex,
          int&nbsp;endIndex)</code>&nbsp;</td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#rollbackTransaction-com.centurylink.mdw.util.TransactionWrapper-">rollbackTransaction</a></span>(<a href="../../../../../com/centurylink/mdw/util/TransactionWrapper.html" title="class in com.centurylink.mdw.util">TransactionWrapper</a>&nbsp;transaction)</code>&nbsp;</td>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setAttribute-java.lang.String-java.lang.Long-java.lang.String-java.lang.String-">setAttribute</a></span>(java.lang.String&nbsp;ownerType,
             java.lang.Long&nbsp;ownerId,
             java.lang.String&nbsp;attrName,
             java.lang.String&nbsp;attrValue)</code>&nbsp;</td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setAttribute0-java.lang.String-java.lang.Long-java.lang.String-java.lang.String-">setAttribute0</a></span>(java.lang.String&nbsp;ownerType,
              java.lang.Long&nbsp;ownerId,
              java.lang.String&nbsp;attrName,
              java.lang.String&nbsp;attrValue)</code>&nbsp;</td>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setAttributes-java.lang.String-java.lang.Long-java.util.Map-">setAttributes</a></span>(java.lang.String&nbsp;ownerType,
              java.lang.Long&nbsp;ownerId,
              java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;attributes)</code>&nbsp;</td>
 </tr>
-<tr id="i41" class="rowColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setAttributes0-java.lang.String-java.lang.Long-java.util.Map-">setAttributes0</a></span>(java.lang.String&nbsp;ownerType,
               java.lang.Long&nbsp;ownerId,
               java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;attributes)</code>&nbsp;</td>
 </tr>
-<tr id="i42" class="altColor">
+<tr id="i46" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setElapsedTime-java.lang.String-java.lang.Long-java.lang.Long-">setElapsedTime</a></span>(java.lang.String&nbsp;ownerType,
+              java.lang.Long&nbsp;instanceId,
+              java.lang.Long&nbsp;elapsedTime)</code>&nbsp;</td>
+</tr>
+<tr id="i47" class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setElapsedTime0-java.lang.String-java.lang.Long-java.lang.Long-">setElapsedTime0</a></span>(java.lang.String&nbsp;ownerType,
+               java.lang.Long&nbsp;instanceId,
+               java.lang.Long&nbsp;elapsedTime)</code>&nbsp;</td>
+</tr>
+<tr id="i48" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setValue-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">setValue</a></span>(java.lang.String&nbsp;ownerType,
         java.lang.String&nbsp;ownerId,
         java.lang.String&nbsp;name,
         java.lang.String&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i49" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setValue0-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">setValue0</a></span>(java.lang.String&nbsp;ownerType,
          java.lang.String&nbsp;ownerId,
          java.lang.String&nbsp;name,
          java.lang.String&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i50" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setValues-java.lang.String-java.lang.String-java.util.Map-">setValues</a></span>(java.lang.String&nbsp;ownerType,
          java.lang.String&nbsp;ownerId,
          java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;values)</code>&nbsp;</td>
 </tr>
-<tr id="i45" class="rowColor">
+<tr id="i51" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setValues0-java.lang.String-java.lang.String-java.util.Map-">setValues0</a></span>(java.lang.String&nbsp;ownerType,
           java.lang.String&nbsp;ownerId,
           java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;values)</code>&nbsp;</td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i52" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/util/TransactionWrapper.html" title="class in com.centurylink.mdw.util">TransactionWrapper</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#startTransaction--">startTransaction</a></span>()</code>
 <div class="block">Should only be used with MDW data source</div>
 </td>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i53" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#stopTransaction-com.centurylink.mdw.util.TransactionWrapper-">stopTransaction</a></span>(<a href="../../../../../com/centurylink/mdw/util/TransactionWrapper.html" title="class in com.centurylink.mdw.util">TransactionWrapper</a>&nbsp;transaction)</code>
 <div class="block">Should only be used with MDW data source</div>
 </td>
 </tr>
-<tr id="i48" class="altColor">
+<tr id="i54" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#updateMembersById-java.lang.Long-java.lang.Long:A-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">updateMembersById</a></span>(java.lang.Long&nbsp;id,
                  java.lang.Long[]&nbsp;members,
@@ -448,11 +478,11 @@ extends java.lang.Object</pre>
                  java.lang.String&nbsp;insertQuery,
                  java.lang.String&nbsp;errmsg)</code>&nbsp;</td>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i55" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#updateVariable-com.centurylink.mdw.model.variable.VariableInstance-">updateVariable</a></span>(<a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&nbsp;variableInstance)</code>&nbsp;</td>
 </tr>
-<tr id="i50" class="altColor">
+<tr id="i56" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#updateVariable0-com.centurylink.mdw.model.variable.VariableInstance-">updateVariable0</a></span>(<a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&nbsp;variableInstance)</code>&nbsp;</td>
 </tr>
@@ -1268,6 +1298,82 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
+<a name="setElapsedTime-java.lang.String-java.lang.Long-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setElapsedTime</h4>
+<pre>public&nbsp;void&nbsp;setElapsedTime(java.lang.String&nbsp;ownerType,
+                           java.lang.Long&nbsp;instanceId,
+                           java.lang.Long&nbsp;elapsedTime)
+                    throws java.sql.SQLException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.sql.SQLException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="setElapsedTime0-java.lang.String-java.lang.Long-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setElapsedTime0</h4>
+<pre>protected&nbsp;void&nbsp;setElapsedTime0(java.lang.String&nbsp;ownerType,
+                               java.lang.Long&nbsp;instanceId,
+                               java.lang.Long&nbsp;elapsedTime)
+                        throws java.sql.SQLException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.sql.SQLException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getProcessElapsedTime0-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getProcessElapsedTime0</h4>
+<pre>protected&nbsp;java.lang.Long&nbsp;getProcessElapsedTime0(java.lang.Long&nbsp;processInstanceId)
+                                         throws java.sql.SQLException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.sql.SQLException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getRequestCompletionTime-java.lang.String-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRequestCompletionTime</h4>
+<pre>public&nbsp;java.lang.Long&nbsp;getRequestCompletionTime(java.lang.String&nbsp;ownerType,
+                                               java.lang.Long&nbsp;ownerId)
+                                        throws java.sql.SQLException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.sql.SQLException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getRequestCompletionTime0-java.lang.String-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRequestCompletionTime0</h4>
+<pre>protected&nbsp;java.lang.Long&nbsp;getRequestCompletionTime0(java.lang.String&nbsp;ownerType,
+                                                   java.lang.Long&nbsp;ownerId)
+                                            throws java.sql.SQLException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.sql.SQLException</code></dd>
+</dl>
+</li>
+</ul>
 <a name="buildProcessInstance-java.sql.ResultSet-">
 <!--   -->
 </a>
@@ -1286,10 +1392,24 @@ extends java.lang.Object</pre>
 <a name="getDateFormat--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getDateFormat</h4>
 <pre>protected static&nbsp;java.text.DateFormat&nbsp;getDateFormat()</pre>
+</li>
+</ul>
+<a name="getDatabaseTime--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getDatabaseTime</h4>
+<pre>public&nbsp;long&nbsp;getDatabaseTime()
+                     throws java.sql.SQLException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.sql.SQLException</code></dd>
+</dl>
 </li>
 </ul>
 </li>
