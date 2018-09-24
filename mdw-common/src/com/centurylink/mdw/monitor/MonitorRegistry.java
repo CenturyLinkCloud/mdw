@@ -18,12 +18,14 @@ package com.centurylink.mdw.monitor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.centurylink.mdw.common.service.RegisteredService;
 import com.centurylink.mdw.common.service.ServiceRegistry;
+import com.centurylink.mdw.model.workflow.RuntimeContext;
 
 /**
- * Registry for MDW workflow monitoring services.
+ * Registry for MDW monitoring services.
  */
 public class MonitorRegistry extends ServiceRegistry {
 
@@ -47,26 +49,68 @@ public class MonitorRegistry extends ServiceRegistry {
         return instance;
     }
 
+    /**
+     * Returns all process monitors.
+     */
     public List<ProcessMonitor> getProcessMonitors() {
-        List<ProcessMonitor> processMonitors = new ArrayList<ProcessMonitor>();
-        processMonitors.addAll(super.getDynamicServices(ProcessMonitor.class));
-        return processMonitors;
+        return getDynamicServices(ProcessMonitor.class);
     }
-
-    public List<ActivityMonitor> getActivityMonitors() {
-        List<ActivityMonitor> activityMonitors = new ArrayList<ActivityMonitor>();
-        activityMonitors.addAll(super.getDynamicServices(ActivityMonitor.class));
-        return activityMonitors;
-    }
-
-    public List<AdapterMonitor> getAdapterMonitors() {
-        List<AdapterMonitor> adapterMonitors =  new ArrayList<AdapterMonitor>();
-        adapterMonitors.addAll(super.getDynamicServices(AdapterMonitor.class));
-        return adapterMonitors;
+    /**
+     * Returns only enabled monitors.
+     */
+    public List<ProcessMonitor> getProcessMonitors(RuntimeContext context) {
+        return getProcessMonitors().stream().filter(monitor ->
+            monitor.isEnabled(context)
+        ).collect(Collectors.toList());
     }
 
     /**
-     * TODO: handle specified or alpha ordering of monitor chains
+     * Returns all activity monitors.
+     */
+    public List<ActivityMonitor> getActivityMonitors() {
+        return getDynamicServices(ActivityMonitor.class);
+    }
+    /**
+     * Returns only enabled monitors.
+     */
+    public List<ActivityMonitor> getActivityMonitors(RuntimeContext context) {
+        return getActivityMonitors().stream().filter(monitor ->
+            monitor.isEnabled(context)
+        ).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns all adapter monitors.
+     */
+    public List<AdapterMonitor> getAdapterMonitors() {
+        return getDynamicServices(AdapterMonitor.class);
+    }
+    /**
+     * Returns only enabled monitors.
+     */
+    public List<AdapterMonitor> getAdapterMonitors(RuntimeContext context) {
+        return getAdapterMonitors().stream().filter(monitor ->
+            monitor.isEnabled(context)
+        ).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns all task monitors.
+     */
+    public List<TaskMonitor> getTaskMonitors() {
+        return getDynamicServices(TaskMonitor.class);
+    }
+    /**
+     * Returns only enabled monitors.
+     */
+    public List<TaskMonitor> getTaskMonitors(RuntimeContext context) {
+        return getTaskMonitors().stream().filter(monitor ->
+            monitor.isEnabled(context)
+        ).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns all service monitors.
      */
     public List<ServiceMonitor> getServiceMonitors() {
         List<ServiceMonitor> serviceMonitors = new ArrayList<ServiceMonitor>();

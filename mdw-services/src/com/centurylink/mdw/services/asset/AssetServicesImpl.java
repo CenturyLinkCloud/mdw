@@ -524,6 +524,30 @@ public class AssetServicesImpl implements AssetServices {
     }
 
     /**
+     * Returns either Java or Kotlin asset implementor for a class.  Null if not found.
+     */
+    public AssetInfo getImplAsset(String className) {
+        int lastDot = className.lastIndexOf('.');
+        if (lastDot > 0 && lastDot < className.length() - 1) {
+            String assetRoot = className.substring(0, lastDot) + "/" + className.substring(lastDot + 1);
+            try {
+                // TODO asset service should return null if not found instead of throwing
+                return getAsset(assetRoot + ".java");
+            }
+            catch (ServiceException ex) {
+                try {
+                    return getAsset(assetRoot + ".kt");
+                }
+                catch (ServiceException ex2) {
+                    logger.debugException(ex.getMessage(), ex);
+                    logger.debugException(ex2.getMessage(), ex2);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * Create a new asset (version 1) on the file system.
      */
     public void createAsset(String path) throws ServiceException {

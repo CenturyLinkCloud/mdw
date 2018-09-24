@@ -265,13 +265,6 @@ public class ProcessInstance implements Serializable, Jsonable {
     public List<TransitionInstance> getTransitions() { return transitions; }
     public void setTransitions(List<TransitionInstance> t) { this.transitions = t; }
 
-    // for run time information display only
-    @ApiModelProperty(hidden=true)
-    public boolean isRemote() {
-        return remoteServer!=null;
-    }
-
-    // for designer run time information display only
     @ApiModelProperty(hidden=true)
     public VariableInstance getVariable(String name) {
         for (VariableInstance v : variables) {
@@ -280,7 +273,7 @@ public class ProcessInstance implements Serializable, Jsonable {
         return null;
     }
 
-    // for tester expressions only
+    // for tester expressions
     @ApiModelProperty(hidden=true)
     private Map<String,Object> varMap;
     public Map<String,Object> getVariable() {
@@ -292,45 +285,16 @@ public class ProcessInstance implements Serializable, Jsonable {
         return varMap;
     }
 
-    // for designer run time information display only
-    public void copyFrom(ProcessInstance copy) {
-        this.activities = copy.activities;
-        this.transitions = copy.transitions;
-        this.variables = copy.variables;
-    }
-
-    // for designer run time information display only
-    public List<TransitionInstance> getTransitionInstances(Long transId) {
-        List<TransitionInstance> ret = new ArrayList<TransitionInstance>();
-        for (TransitionInstance one : this.transitions) {
-            if (one.getTransitionID().equals(transId)) ret.add(one);
-        }
-        return ret;
-    }
-
-    // for designer run time information display only
-    public List<ActivityInstance> getActivityInstances(Long actId) {
-        List<ActivityInstance> ret = new ArrayList<ActivityInstance>();
-        for (ActivityInstance one : this.activities) {
-            if (one.getActivityId().equals(actId)) ret.add(one);
-        }
-        return ret;
-    }
-
-    // for designer run time information display only
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof ProcessInstance) {
-            ProcessInstance procInstVO = (ProcessInstance)obj;
-            return procInstVO.id.equals(id)
-               && (remoteServer==null&&procInstVO.remoteServer==null
-                   ||remoteServer!=null&&remoteServer.equals(procInstVO.remoteServer));
-        } else {
+            return ((ProcessInstance)obj).id.equals(id);
+        }
+        else {
             return false;
         }
     }
 
-    // for designer run time information display only
     public int hashCode() {
         return id.hashCode();
     }

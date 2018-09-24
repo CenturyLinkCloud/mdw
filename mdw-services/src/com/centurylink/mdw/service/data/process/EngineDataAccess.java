@@ -142,9 +142,6 @@ public interface EngineDataAccess {
     void updateDocumentInfo(Document docvo)
     throws SQLException;
 
-    void setReqCompletionTime(String ownerType, Long ownerId)
-    throws SQLException;
-
     /////// events
 
     void removeEventWaitForActivityInstance(Long activityInstanceId, String reason)

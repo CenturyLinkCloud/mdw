@@ -1073,12 +1073,9 @@ public abstract class BaseActivity implements GeneralActivity {
     String notifyMonitors(String event) {
         ActivityRuntimeContext runtimeContext = null;
 
-        for (ActivityMonitor monitor : MonitorRegistry.getInstance().getActivityMonitors()) {
-            try {
+        try {
+            for (ActivityMonitor monitor : MonitorRegistry.getInstance().getActivityMonitors(_runtimeContext)) {
                 Map<String, Object> updates = null;
-
-                //TODO Implement a way to determine if the monitor applies, before we even update the runtimeContext to avoid
-                // needless processing, which includes variable serialization
 
                 // Since there is no guaranteed order to the multiple monitors at this point, there cannot be an expectation to keep
                 // the runtimeContext process variables map up-to-date from one monitor to the next.  Only update map once
@@ -1091,7 +1088,7 @@ public abstract class BaseActivity implements GeneralActivity {
                         runtimeContext = getRuntimeContext();
                 }
 
-                if (monitor instanceof OfflineMonitor) {
+                if (monitor.isOffline()) {
                     @SuppressWarnings("unchecked")
                     OfflineMonitor<ActivityRuntimeContext> activityOfflineMonitor = (OfflineMonitor<ActivityRuntimeContext>) monitor;
                     new OfflineMonitorTrigger<ActivityRuntimeContext>(activityOfflineMonitor, runtimeContext).fire(event);
@@ -1121,9 +1118,9 @@ public abstract class BaseActivity implements GeneralActivity {
                     }
                 }
             }
-            catch (Exception ex) {
-                logexception(ex.getMessage(), ex);
-            }
+        }
+        catch (Exception ex) {
+            logexception(ex.getMessage(), ex);
         }
         return null;
     }

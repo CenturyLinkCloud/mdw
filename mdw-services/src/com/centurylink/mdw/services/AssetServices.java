@@ -88,6 +88,8 @@ public interface AssetServices {
      */
     public AssetInfo getAsset(String assetPath) throws ServiceException;
 
+    public AssetInfo getImplAsset(String className);
+
     public void createPackage(String packageName) throws ServiceException;
     public void deletePackage(String packageName) throws ServiceException;
 

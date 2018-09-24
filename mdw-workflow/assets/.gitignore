@@ -5,3 +5,4 @@ com/centurylink/mdw/tests/ibmmq
 com/centurylink/mdw/tibco
 com/centurylink/mdw/tests/tibco
 com/centurylink/mdw/oracle
+com/centurylink/mdw/internal
