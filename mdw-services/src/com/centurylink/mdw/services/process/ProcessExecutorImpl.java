@@ -1843,7 +1843,7 @@ class ProcessExecutorImpl {
         Package pkg = PackageCache.getProcessPackage(processVO.getId());
         // runtime context for enablement does not contain hydrated variables map (too expensive)
         List<ProcessMonitor> monitors = MonitorRegistry.getInstance()
-                .getProcessMonitors(new ProcessRuntimeContext(pkg, processVO, processInstance, processInstance.getVariable()));
+                .getProcessMonitors(new ProcessRuntimeContext(pkg, processVO, processInstance, new HashMap<String,Object>()));
         if (!monitors.isEmpty()) {
             Map<String, Object> vars = new HashMap<>();
             if (processInstance.getVariables() != null) {
