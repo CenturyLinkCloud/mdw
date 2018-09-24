@@ -38,6 +38,7 @@ import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Response;
@@ -456,7 +457,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
                     handleRetry(-1, errorCause);
                 }
             }
-            for (AdapterMonitor monitor : MonitorRegistry.getInstance().getAdapterMonitors()) {
+            for (AdapterMonitor monitor : MonitorRegistry.getInstance().getAdapterMonitors(getRuntimeContext())) {
                 String errResult = (String)monitor.onError(getRuntimeContext(), errorCause);
                 if (errResult != null) {
                     this.setReturnCode(errResult);
@@ -550,7 +551,11 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
                 if (meta != null && meta.length() > 0)
                     createDocument(JSONObject.class.getName(), meta, OwnerType.ADAPTER_RESPONSE_META, docref.getDocumentId());
             }
-            getEngine().setReqCompletionTime(OwnerType.ADAPTER_RESPONSE, getActivityInstanceId());
+            if (getPerformanceLevel() <= 5) {
+                CommonDataAccess dataAccess = new CommonDataAccess();
+                Long elapsedTime = dataAccess.getRequestCompletionTime(OwnerType.ADAPTER, getActivityInstanceId());
+                dataAccess.setElapsedTime(OwnerType.ADAPTER, getActivityInstanceId(), elapsedTime);
+            }
             return docref.getDocumentId();
         } catch (Exception ex) {
             logexception(ex.getMessage(), ex);
@@ -717,7 +722,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         // TODO change method signature in MDW 6 to avoid try/catch
         try {
             ActivityRuntimeContext runtimeContext = getRuntimeContext();
-            List<AdapterMonitor> monitors = MonitorRegistry.getInstance().getAdapterMonitors();
+            List<AdapterMonitor> monitors = MonitorRegistry.getInstance().getAdapterMonitors(runtimeContext);
 
             String altRequest = null;
             for (AdapterMonitor monitor : monitors) {

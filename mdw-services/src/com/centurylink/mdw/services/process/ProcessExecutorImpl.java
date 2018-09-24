@@ -229,13 +229,6 @@ class ProcessExecutorImpl {
         }
     }
 
-    void setReqCompletionTime(String ownerType, Long ownerId)throws DataAccessException{
-        try{
-            edao.setReqCompletionTime(ownerType, ownerId);
-        }catch (Exception e) {
-            throw new DataAccessException(0, e.getMessage(), e);
-        }
-     }
     /**
      * Does not work for remote documents
      */
@@ -1846,11 +1839,13 @@ class ProcessExecutorImpl {
      */
     public void notifyMonitors(ProcessInstance processInstance, String event) throws SQLException, DataAccessException {
         // notify registered monitors
-        List<ProcessMonitor> monitors = MonitorRegistry.getInstance().getProcessMonitors();
+        Process processVO = getMainProcessDefinition(processInstance);
+        Package pkg = PackageCache.getProcessPackage(processVO.getId());
+        // runtime context for enablement does not contain hydrated variables map (too expensive)
+        List<ProcessMonitor> monitors = MonitorRegistry.getInstance()
+                .getProcessMonitors(new ProcessRuntimeContext(pkg, processVO, processInstance, processInstance.getVariable()));
         if (!monitors.isEmpty()) {
-            Process processVO = getMainProcessDefinition(processInstance);
-            Package pkg = PackageCache.getProcessPackage(processVO.getId());
-            Map<String, Object> vars = new HashMap<String, Object>();
+            Map<String, Object> vars = new HashMap<>();
             if (processInstance.getVariables() != null) {
                 for (VariableInstance var : processInstance.getVariables()) {
                     Object value = var.getData();

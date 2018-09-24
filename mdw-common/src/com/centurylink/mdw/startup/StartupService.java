@@ -25,4 +25,6 @@ public interface StartupService extends RegisteredService {
     public void onStartup() throws StartupException;
 
     public void onShutdown();
+
+    default public boolean isEnabled() { return true; }
 }

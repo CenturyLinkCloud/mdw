@@ -881,6 +881,94 @@ public class CommonDataAccess {
         db.runUpdate(query, variableInstance.getInstanceId());
     }
 
+    public void setElapsedTime(String ownerType, Long instanceId, Long elapsedTime) throws SQLException {
+        try {
+            db.openConnection();
+            setElapsedTime0(ownerType, instanceId, elapsedTime);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    protected void setElapsedTime0(String ownerType, Long instanceId, Long elapsedTime) throws SQLException{
+        String query = "insert into INSTANCE_TIMING " +
+                "(INSTANCE_ID, OWNER_TYPE, ELAPSED_MS) "+
+                 "values (?, ?, ?)";
+        Object[] args = new Object[3];
+        args[0] = instanceId;
+        args[1] = ownerType;
+        args[2] = elapsedTime;
+        db.runUpdate(query, args);
+    }
+
+    protected Long getProcessElapsedTime0(Long processInstanceId) throws SQLException {
+        String query;
+        if (db.isOracle()) {
+            query = "select (CAST(" + nowPrecision()
+                    + " AS DATE) - CAST(START_DT AS DATE)) * 86400*1000 AS ELAPSED_MS "
+                    + " from PROCESS_INSTANCE where PROCESS_INSTANCE_ID=?";
+        }
+        else {
+            query = "select TIMESTAMPDIFF(MICROSECOND,START_DT," + nowPrecision() + ")/1000"
+                    + " from PROCESS_INSTANCE where PROCESS_INSTANCE_ID=? ";
+        }
+        Object[] args = new Object[1];
+        args[0] = processInstanceId;
+        ResultSet rs = db.runSelect(query, args);
+        if (rs.next()) {
+            return rs.getLong(1);
+        }
+        else {
+            throw new SQLException("Cannot find START_DT for process instance: " + processInstanceId);
+        }
+    }
+
+    public Long getRequestCompletionTime(String ownerType, Long ownerId) throws SQLException {
+        try {
+            db.openConnection();
+            return getRequestCompletionTime0(ownerType, ownerId);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    protected Long getRequestCompletionTime0(String ownerType, Long ownerId) throws SQLException {
+        String responseOwner = ownerType + "_RESPONSE";
+        String requestOwner = ownerType + "_REQUEST";
+        String query;
+        if (db.isOracle()) {
+            query="SELECT  (CAST(t2.CREATE_DT as DATE)-CAST(t1.CREATE_DT as DATE))*86400*1000 "+
+              "  as ELAPSED_MS"+
+              " from  DOCUMENT t1"+
+              " left join DOCUMENT t2"+
+              " on t2.OWNER_ID=t1.OWNER_ID"+
+              " and t2.OWNER_TYPE='" + requestOwner + "'"+
+              " and t1.OWNER_TYPE='" + responseOwner + "'"+
+              " where t1.OWNER_ID=?";
+          }
+        else {
+          query="select TIMESTAMPDIFF(MICROSECOND,(select t2.CREATE_DT"+
+            " from DOCUMENT t2"+
+            " where OWNER_TYPE='" + requestOwner + "'"+
+            " and t2.OWNER_ID=t1.OWNER_ID),t1.CREATE_DT)/1000"+
+            " from DOCUMENT t1 where t1.OWNER_ID=?"+
+            " and t1.OWNER_TYPE='" + responseOwner + "' ";
+        }
+        Object[] args = new Object[1];
+        args[0] = ownerId;
+        ResultSet rs = db.runSelect(query, args);
+        if (rs.next()) {
+            return rs.getLong(1);
+        }
+        else {
+            throw new SQLException("Unable to find CREATE_DT for " + ownerType + ": " + ownerId);
+        }
+    }
+
+
+
     /**
      * Assumes pi.* table prefix.
      */
@@ -921,4 +1009,7 @@ public class CommonDataAccess {
         return dateFormat;
     }
 
-}
+    public long getDatabaseTime() throws SQLException {
+        return db.getDatabaseTime();
+    }
+ }

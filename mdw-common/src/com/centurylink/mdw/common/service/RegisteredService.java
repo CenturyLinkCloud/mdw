@@ -21,7 +21,4 @@ package com.centurylink.mdw.common.service;
  */
 public interface RegisteredService {
 
-    default public boolean isEnabled() {
-        return true;
-    }
 }

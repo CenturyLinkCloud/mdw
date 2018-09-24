@@ -29,7 +29,6 @@ import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.activity.types.TaskActivity;
-import com.centurylink.mdw.annotations.Monitor;
 import com.centurylink.mdw.app.Templates;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.asset.AssetInfo;
@@ -42,9 +41,11 @@ import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.monitor.ActivityMonitor;
 import com.centurylink.mdw.monitor.AdapterMonitor;
+import com.centurylink.mdw.monitor.MonitorAttributes;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.TaskMonitor;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
@@ -117,23 +118,27 @@ public class Implementors extends JsonRestService {
                             try {
                                 Widget monitoringWidget = new Widget(new JSONObject(Templates.get("configurator/monitors.json")));
                                 widgets.add(monitoringWidget);
+                                AssetServices assetServices = ServiceLocator.getAssetServices();
                                 JSONArray rows = new JSONArray();
                                 for (ActivityMonitor activityMonitor : MonitorRegistry.getInstance().getActivityMonitors()) {
-                                    JSONArray row = getRowDefault(activityMonitor.getClass());
+                                    AssetInfo implAsset = assetServices.getImplAsset(activityMonitor.getClass().getName());
+                                    JSONArray row = MonitorAttributes.getRowDefault(implAsset, activityMonitor.getClass());
                                     if (row != null) {
                                         rows.put(row);
                                     }
                                 }
                                 if (AdapterActivity.class.getName().equals(implCategory)) {
                                     for (AdapterMonitor adapterMonitor : MonitorRegistry.getInstance().getAdapterMonitors()) {
-                                        JSONArray row = getRowDefault(adapterMonitor.getClass());
+                                        AssetInfo implAsset = assetServices.getImplAsset(adapterMonitor.getClass().getName());
+                                        JSONArray row = MonitorAttributes.getRowDefault(implAsset, adapterMonitor.getClass());
                                         if (row != null)
                                             rows.put(row);
                                     }
                                 }
                                 else if (TaskActivity.class.getName().equals(implCategory)) {
                                     for (TaskMonitor taskMonitor : MonitorRegistry.getInstance().getTaskMonitors()) {
-                                        JSONArray row = getRowDefault(taskMonitor.getClass());
+                                        AssetInfo implAsset = assetServices.getImplAsset(taskMonitor.getClass().getName());
+                                        JSONArray row = MonitorAttributes.getRowDefault(implAsset, taskMonitor.getClass());
                                         if (row != null)
                                             rows.put(row);
                                     }
@@ -162,22 +167,5 @@ public class Implementors extends JsonRestService {
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
-    }
-
-    public JSONArray getRowDefault(Class<? extends com.centurylink.mdw.monitor.Monitor> monitorClass) {
-        Monitor monitorAnnotation = monitorClass.getAnnotation(Monitor.class);
-        if (monitorAnnotation == null)
-            return null;
-        JSONArray cols = new JSONArray();
-        cols.put(String.valueOf(monitorAnnotation.defaultEnabled()));
-        cols.put(monitorAnnotation.value());
-        String className = monitorClass.getName();
-        AssetInfo implAsset = ServiceLocator.getAssetServices().getImplAsset(className);
-        if (implAsset == null)
-            cols.put("");
-        else
-            cols.put(className.substring(0, className.lastIndexOf(".")) + "/" + implAsset.getName());
-        cols.put(monitorAnnotation.defaultOptions());
-        return cols;
     }
 }

@@ -77,11 +77,7 @@ public class WorkAttributeConstant  {
      /**
       * attribute name for class name of activity implementor
       */
-     public static final String CLASS_NAME = "classname";
-
      public static final String TRANSITION_WITH_NO_LABEL = "Transition with no Label";
-
-     public static final String FORM = "FORM";
 
      public static final String SLA = "SLA";
      public static final String SLA_UNIT = "SLA_UNIT";    // this is for old $+SLA, seems
@@ -113,13 +109,13 @@ public class WorkAttributeConstant  {
       */
      public static final String VARIABLE_MAPPING = "Variable Mapping";
 
-     //Attributes for setting pre-script and post-script in adapter activities
+     // Attributes for setting pre-script and post-script in adapter activities
      public static final String PRE_SCRIPT = "PreScript";
      public static final String PRE_SCRIPT_LANGUAGE = "PreScriptLang";
      public static final String POST_SCRIPT = "PostScript";
      public static final String POST_SCRIPT_LANGUAGE = "PostScriptLang";
 
-     public static final String VERSION_TAG = "VersionTag";
+     public static final String MONITORS = "Monitors";
 
      // Override Attributes
      public static final String SIMULATION_ATTR_PREFIX = "SIMUL";

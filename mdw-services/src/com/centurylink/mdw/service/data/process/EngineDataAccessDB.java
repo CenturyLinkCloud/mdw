@@ -161,6 +161,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         args[1] = act.getActivityId();
         args[2] = act.getProcessInstanceId();
         args[3] = act.getStatusCode();
+        act.setStartDate(new Date(getDatabaseTime()));
         if (db.isMySQL())
             actInstId = db.runInsertReturnId(query, args);
         else
@@ -263,69 +264,13 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         pi.setId(procInstId);
         return procInstId;
     }
-    private Long getProcessElapsedTime(Long instanceId)throws SQLException{
-        Long elapsedTime=null;
-            String query=null;
-            if(db.isMySQL() || db.isMariaDB()){
-                query ="select TIMESTAMPDIFF(SECOND,START_DT,NOW())*1000 "+
-                       " from PROCESS_INSTANCE where PROCESS_INSTANCE_ID=? ";
-            }else if(db.isOracle()){
-                query="select (CAST("+nowPrecision()+" AS DATE) - CAST(START_DT AS DATE)) * 86400*1000 AS ELAPSED_MS "+
-                       " from PROCESS_INSTANCE where PROCESS_INSTANCE_ID=?";
-            }
-            Object[] args = new Object[1];
-            args[0] = instanceId;
-            ResultSet rs = db.runSelect(query,args);
-            if(rs.next()){
-                elapsedTime=rs.getLong(1);
-            }
-        return elapsedTime;
-    }
-    private void setElapsedTime(Long instanceId,String ownerType,Long elapsedTime)throws SQLException{
-        String query = "insert into INSTANCE_TIMING " +
-                "(INSTANCE_ID, OWNER_TYPE, ELAPSED_MS) "+
-                 "values (?, ?, ?)";
-        Object[] args = new Object[3];
-        args[0] = instanceId;
-        args[1] = ownerType;
-        args[2] = elapsedTime;
-        db.runUpdate(query, args);
-    }
 
     public void setProcessCompletionTime(ProcessInstance pi) throws SQLException {
-        Long elapsedTime=getProcessElapsedTime(pi.getId());
-        setElapsedTime(pi.getId(),OwnerType.PROCESS_INSTANCE,elapsedTime);
+        Long elapsedTime = getProcessElapsedTime0(pi.getId());
+        setElapsedTime0(OwnerType.PROCESS_INSTANCE, pi.getId(), elapsedTime);
         pi.setCompletionTime(elapsedTime);
     }
 
-    public void setReqCompletionTime(String ownerType, Long ownerId)throws SQLException{
-        Long elapsedTime=null;
-        String query=null;
-        if(db.isMySQL() || db.isMariaDB()){
-          query="select TIMESTAMPDIFF(SECOND,(select t2.CREATE_DT"+
-            " from DOCUMENT t2"+
-            " where OWNER_TYPE='ADAPTER_REQUEST'"+
-            " and t2.OWNER_ID=t1.OWNER_ID),t1.CREATE_DT)*1000"+
-            " from DOCUMENT t1 where t1.OWNER_ID=?"+
-            " and t1.OWNER_TYPE='ADAPTER_RESPONSE' ";
-        }else if(db.isOracle()){
-          query="SELECT  (CAST(t2.CREATE_DT as DATE)-CAST(t1.CREATE_DT as DATE))*86400*1000 "+
-            "  as ELAPSED_MS"+
-            " from  DOCUMENT t1"+
-            " left join DOCUMENT t2"+
-            " on t2.OWNER_ID=t1.OWNER_ID"+
-            " and t2.OWNER_TYPE='ADAPTER_REQUEST'"+
-            " and t1.OWNER_TYPE='ADAPTER_RESPONSE'"+
-            " where t1.OWNER_ID=?";
-        }
-        Object[] args = new Object[1];
-        args[0] = ownerId;
-        ResultSet rs = db.runSelect(query,args);
-        if(rs.next()){
-            elapsedTime=rs.getLong(1);
-        }
-        setElapsedTime(ownerId,ownerType,elapsedTime);
-    }
     public void setProcessInstanceStatus(Long procInstId, Integer status)
         throws SQLException {
         String query;

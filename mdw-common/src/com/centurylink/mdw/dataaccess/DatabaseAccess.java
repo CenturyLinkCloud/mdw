@@ -155,10 +155,7 @@ public class DatabaseAccess {
             isEmbedded = dbprop != null && isMariaDB && isEmbeddedDb(dbprop);
         }
 
-        if ("true".equalsIgnoreCase(PropertyManager.getProperty(PropertyNames.MDW_DB_MICROSECOND_PRECISION)))
-            precisionSupport = true;
-        else
-            precisionSupport = false;
+        precisionSupport = PropertyManager.getBooleanProperty(PropertyNames.MDW_DB_MICROSECOND_PRECISION, isMySQL);
 
         if (isEmbedded) {
             try {

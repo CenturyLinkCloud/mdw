@@ -27,10 +27,10 @@ import com.centurylink.mdw.model.workflow.RuntimeContext;
  */
 public interface OfflineMonitor<T extends RuntimeContext> {
 
-    public boolean handlesEvent(T runtimeContext, String event);
+    public boolean handlesEvent(T context, String event);
 
-    public Map<String,Object> onStart(T runtimeContext);
-    public Map<String,Object> onFinish(T runtimeContext);
-    public void onError(T runtimeContext);
+    public Map<String,Object> onStart(T context);
+    public Map<String,Object> onFinish(T context);
+    public void onError(T context);
 
 }

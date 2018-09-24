@@ -31,7 +31,7 @@ public interface ProcessMonitor extends RegisteredService, Monitor {
      * Variables should be defined in the process as INPUT mode.
      * Return null if no variable updates are required.
      */
-    default public Map<String,Object> onStart(ProcessRuntimeContext runtimeContext) {
+    default public Map<String,Object> onStart(ProcessRuntimeContext context) {
         return null;
     }
 
@@ -39,7 +39,7 @@ public interface ProcessMonitor extends RegisteredService, Monitor {
      * Invoked on process completion.
      * Return map is currently not used.
      */
-    default public Map<String,Object> onFinish(ProcessRuntimeContext runtimeContext) {
+    default public Map<String,Object> onFinish(ProcessRuntimeContext context) {
         return null;
     }
 

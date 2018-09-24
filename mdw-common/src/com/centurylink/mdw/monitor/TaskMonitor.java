@@ -28,29 +28,29 @@ public interface TaskMonitor extends RegisteredService, Monitor {
 
     /**
      * Called when a task instance is created.
-     * @param runtimeContext the task runtime context
+     * @param context the task runtime context
      * @return optional map containing new or updated values
      */
-    default public Map<String,Object> onCreate(TaskRuntimeContext runtimeContext) {
+    default public Map<String,Object> onCreate(TaskRuntimeContext context) {
         return null;
     }
 
     /**
      * Called when a task instance is assigned.
-     * @param runtimeContext the task runtime context
+     * @param context the task runtime context
      * @return optional map containing new or updated values
      */
-    default public Map<String,Object> onAssign(TaskRuntimeContext runtimeContext) {
+    default public Map<String,Object> onAssign(TaskRuntimeContext context) {
         return null;
     }
 
     /**
      * Called when a task instance assumes the optional state of in-progress
      * (meaning the assignee has begun work on the task).
-     * @param runtimeContext the task runtime context
+     * @param context the task runtime context
      * @return optional map containing new or updated values
      */
-    default public Map<String,Object> onInProgress(TaskRuntimeContext runtimeContext) {
+    default public Map<String,Object> onInProgress(TaskRuntimeContext context) {
         return null;
     }
 
@@ -67,33 +67,33 @@ public interface TaskMonitor extends RegisteredService, Monitor {
     /**
      * Called when a task instance reaches jeopardy status (scheduled
      * completion date has passed).
-     * @param runtimeContext the task runtime context
+     * @param context the task runtime context
      * @return optional map containing new or updated values
      */
-    default public Map<String,Object> onJeopardy(TaskRuntimeContext runtimeContext) {
+    default public Map<String,Object> onJeopardy(TaskRuntimeContext context) {
         return null;
     }
 
     /**
      * Called when a task instance is forwarded from one workgroup to another.
-     * @param runtimeContext the task runtime context
+     * @param context the task runtime context
      * @return optional map containing new or updated values
      */
-    default public Map<String,Object> onForward(TaskRuntimeContext runtimeContext) {
+    default public Map<String,Object> onForward(TaskRuntimeContext context) {
         return null;
     }
 
     /**
      * Called when a task instance is completed.
-     * @param runtimeContext the task runtime context
+     * @param context the task runtime context
      */
-    default public void onComplete(TaskRuntimeContext runtimeContext) {
+    default public void onComplete(TaskRuntimeContext context) {
     }
 
     /**
      * Called when a task instance is cancelled.
-     * @param runtimeContext the task runtime context
+     * @param context the task runtime context
      */
-    default public void onCancel(TaskRuntimeContext runtimeContext) {
+    default public void onCancel(TaskRuntimeContext context) {
     }
 }
