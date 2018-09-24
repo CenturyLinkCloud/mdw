@@ -59,6 +59,9 @@ public class Pagelet implements Jsonable {
     private String implCategory;
 
     private List<Widget> widgets = new ArrayList<Widget>();
+    public void addWidget(Widget widget) {
+        widgets.add(widget);
+    }
     public List<Widget> getWidgets() {
         List<Widget> allWidgets = new ArrayList<>(widgets);
         if (widgetProviders != null) {
