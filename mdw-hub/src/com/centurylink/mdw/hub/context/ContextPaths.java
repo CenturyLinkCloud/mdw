@@ -41,6 +41,7 @@ public class ContextPaths {
         DEFAULT_NON_HUB_ROOTS.add("/asset");
         DEFAULT_NON_HUB_ROOTS.add("/attach");
         DEFAULT_NON_HUB_ROOTS.add("/customContent");
+        DEFAULT_NON_HUB_ROOTS.add("/template");
         DEFAULT_NON_HUB_ROOTS.add("/testCase");
         DEFAULT_NON_HUB_ROOTS.add("/testResult");
         DEFAULT_NON_HUB_ROOTS.add("/login");

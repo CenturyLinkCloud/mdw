@@ -414,7 +414,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
           if (wdgRow[0].value) {
             var valRow = [];
             for (let j = 0; j < wdgRow.length; j++) {
-              if (wdgRow[j].source === 'proc' || wdgRow[j].type === 'asset') {
+              if ((wdgRow[j].source === 'proc' || wdgRow[j].type === 'asset') && tblWdg.name !== 'Monitors') {
                 var assetVer = this.getAssetVersion(wdgRow[j].value, true);
                 if (assetVer) {
                   valRow.push(assetVer.asset);
@@ -475,7 +475,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
           if (widgetRow[0].value) {
             var valueRow = [];
             for (let j = 0; j < widgetRow.length; j++) {
-              if (widgetRow[j].source === 'proc' || widgetRow[j].type === 'asset') {
+              if ((widgetRow[j].source === 'proc' || widgetRow[j].type === 'asset') && tblWidget.name !== 'Monitors') {
                 var assetVersion = this.getAssetVersion(widgetRow[j].value, true);
                 if (assetVersion) {
                   valueRow.push(assetVersion.asset);

@@ -4,9 +4,8 @@ import com.centurylink.mdw.annotations.Monitor;
 import com.centurylink.mdw.monitor.ProcessMonitor;
 
 /**
- * TODO: Implement this ().
+ * TODO: https://github.com/CenturyLinkCloud/mdw/issues/516
  */
-
-@Monitor(value="Due Date Monitor", category=ProcessMonitor.class, defaultOptions="24 hours")
-public class ProcessDueDateMonitor {
+@Monitor(value="Due Date Monitor", category=ProcessMonitor.class)
+public class ProcessDueDateMonitor implements ProcessMonitor {
 }
