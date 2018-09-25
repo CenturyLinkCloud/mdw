@@ -44,6 +44,7 @@ public class HttpServiceAdapter extends TextAdapterActivity {
     public static final String READ_TIMEOUT = "ReadTimeout";
     public static final String RETRY_HTTP_CODES = "RetryHttpCodes";
     public static final int DEFAULT_RETRY_HTTP_CODE = Status.INTERNAL_ERROR.getCode();
+    public static final String ERROR_HTTP_CODES = "ErrorHttpCodes";
     public static final int DEFAULT_ERROR_HTTP_CODE = Status.MOVED_PERMANENTLY.getCode();  // 301
 
     private Map<String,String> requestHeaders = null;
