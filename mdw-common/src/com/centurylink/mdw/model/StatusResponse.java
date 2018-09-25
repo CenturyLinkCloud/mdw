@@ -37,6 +37,10 @@ public class StatusResponse implements Jsonable {
         this.status = new Status(code, message);
     }
 
+    public StatusResponse(int code) {
+        this.status = new Status(code, getMessage(code));
+    }
+
     public StatusResponse(JSONObject json) throws JSONException {
         this.status = new Status(json.getJSONObject("status"));
     }

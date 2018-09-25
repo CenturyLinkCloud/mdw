@@ -1,0 +1,20 @@
+package {{packageName}}
+
+import com.centurylink.mdw.model.Status
+import com.centurylink.mdw.model.StatusResponse
+import com.centurylink.mdw.services.rest.JsonRestService
+import org.json.JSONObject
+{{annotationsImports}}
+{{annotations}}class {{className}} : JsonRestService() {
+
+    @Path("/{id}")
+    override fun get(path: String, headers: Map<String,String>): JSONObject {
+        // TODO retrieve by {id}
+        return StatusResponse(Status.OK).json
+    }
+
+    override fun post(path: String, content: JSONObject, headers: Map<String,String>): JSONObject {
+        // TODO call invokeServiceProcess() and return result
+        return StatusResponse(Status.CREATED).json
+    }
+}
