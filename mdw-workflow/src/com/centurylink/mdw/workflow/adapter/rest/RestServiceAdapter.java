@@ -193,8 +193,8 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
             }
 
             if (response != null) {
+                // HTTP code threshold for retries
                 int codeThreshold = DEFAULT_RETRY_HTTP_CODE;
-                int errorCodeThreshold = DEFAULT_ERROR_HTTP_CODE;
                 String retryCodes = getAttributeValueSmart(RETRY_HTTP_CODES);
                 if (retryCodes != null) {
                     try {
@@ -202,7 +202,15 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                     }
                     catch (NumberFormatException ex) {} // Use default in this case
                 }
-
+                // HTTP code threshold for error
+                int errorCodeThreshold = DEFAULT_ERROR_HTTP_CODE;
+                String errorCodes = getAttributeValueSmart(ERROR_HTTP_CODES);
+                if (errorCodes != null) {
+                    try {
+                        errorCodeThreshold = Integer.parseInt(errorCodes);
+                    }
+                    catch (NumberFormatException ex) {} // Use default in this case
+                }
                 Response httpResponse = super.getResponse(conn, response);
                 if (httpResponse.getStatusCode() >= codeThreshold)
                     throw new IOException("Server returned HTTP response code: " + httpResponse.getStatusCode());  // Retryable
