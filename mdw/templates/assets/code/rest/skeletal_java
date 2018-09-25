@@ -1,0 +1,29 @@
+package {{packageName}};
+
+import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.Status;
+import com.centurylink.mdw.model.StatusResponse;
+import com.centurylink.mdw.services.rest.JsonRestService;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Map;
+{{annotationsImports}}
+{{annotations}}public class {{className}} extends JsonRestService {
+
+    @Override
+    @Path("/{id}")
+    public JSONObject get(String path, Map<String,String> headers) 
+            throws ServiceException, JSONException {
+        // TODO retrieve by {id}
+        return new StatusResponse(Status.OK).getJson();
+    }
+    
+    @Override
+    public JSONObject post(String path, JSONObject content, Map<String,String> headers)
+            throws ServiceException, JSONException {
+        // TODO call invokeServiceProcess() and return result
+        return new StatusResponse(Status.CREATED).getJson();
+    }
+    
+}
