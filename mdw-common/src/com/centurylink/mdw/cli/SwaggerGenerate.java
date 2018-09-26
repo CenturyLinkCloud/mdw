@@ -296,15 +296,14 @@ public class SwaggerGenerate extends io.swagger.codegen.cmd.Generate {
             configurator.setRemoveOperationIdPrefix(removeOperationIdPrefix);
         }
 
+        Map<String,Object> addlProps = new LinkedHashMap<>();
         if (generatedFlowBasePackage != null) {
-            Map<String,Object> addlProps = new LinkedHashMap<>();
             addlProps.put(GENERATED_FLOW_BASE_PACKAGE, generatedFlowBasePackage);
-            configurator.setAdditionalProperties(addlProps);
         }
-
         if (inputApiPackage != null) {
-            Map<String,Object> addlProps = new LinkedHashMap<>();
             addlProps.put(INPUT_API_PACKAGE, inputApiPackage);
+        }
+        if (!addlProps.isEmpty()) {
             configurator.setAdditionalProperties(addlProps);
         }
 
