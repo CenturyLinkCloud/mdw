@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":9,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":9,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -218,13 +218,21 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 </tr>
 <tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Codegen.html#setInputSpec-java.lang.String-">setInputSpec</a></span>(java.lang.String&nbsp;spec)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Codegen.html#setConfig-java.lang.String-">setConfig</a></span>(java.lang.String&nbsp;config)</code>&nbsp;</td>
 </tr>
 <tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Codegen.html#setVmArgs-java.util.List-">setVmArgs</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;args)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Codegen.html#setGenerateOrchestrationFlows-boolean-">setGenerateOrchestrationFlows</a></span>(boolean&nbsp;generate)</code>&nbsp;</td>
 </tr>
 <tr id="i14" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Codegen.html#setInputSpec-java.lang.String-">setInputSpec</a></span>(java.lang.String&nbsp;spec)</code>&nbsp;</td>
+</tr>
+<tr id="i15" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Codegen.html#setVmArgs-java.util.List-">setVmArgs</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;args)</code>&nbsp;</td>
+</tr>
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Codegen.html#swaggerGen-java.lang.String-">swaggerGen</a></span>(java.lang.String&nbsp;basePath)</code>&nbsp;</td>
 </tr>
@@ -319,6 +327,15 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <pre>public&nbsp;java.lang.String&nbsp;getConfig()</pre>
 </li>
 </ul>
+<a name="setConfig-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setConfig</h4>
+<pre>public&nbsp;void&nbsp;setConfig(java.lang.String&nbsp;config)</pre>
+</li>
+</ul>
 <a name="isGenerateOrchestrationFlows--">
 <!--   -->
 </a>
@@ -326,6 +343,15 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <li class="blockList">
 <h4>isGenerateOrchestrationFlows</h4>
 <pre>public&nbsp;boolean&nbsp;isGenerateOrchestrationFlows()</pre>
+</li>
+</ul>
+<a name="setGenerateOrchestrationFlows-boolean-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setGenerateOrchestrationFlows</h4>
+<pre>public&nbsp;void&nbsp;setGenerateOrchestrationFlows(boolean&nbsp;generate)</pre>
 </li>
 </ul>
 <a name="getSwaggerCodegenArgs--">
