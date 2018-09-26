@@ -71,11 +71,17 @@ public class Codegen extends Setup {
     public String getConfig() {
         return config;
     }
+    public void setConfig(String config) {
+        this.config = config;
+    }
 
     @Parameter(names="--generate-orchestration-flows", description="create a process for each endpoint")
     private boolean generateOrchestrationFlows;
     public boolean isGenerateOrchestrationFlows() {
         return generateOrchestrationFlows;
+    }
+    public void setGenerateOrchestrationFlows(boolean generate) {
+        this.generateOrchestrationFlows = generate;
     }
 
     @Parameter(names="--swagger-codegen-args", description="Swagger codegen passthrough arguments (enclose in quotes)",
@@ -147,6 +153,8 @@ public class Codegen extends Setup {
 
             // package name comes from service path
             Swagger swagger = new SwaggerParser().read(inputSpec);
+            if (swagger == null)
+                throw new IOException("Unparseable swagger: " + inputSpec);
             swaggerGen(swagger.getBasePath());
             if (generateOrchestrationFlows) {
                 Path templatePath = Paths.get(new File(getTemplateDir() + "/assets/service.proc").getPath());

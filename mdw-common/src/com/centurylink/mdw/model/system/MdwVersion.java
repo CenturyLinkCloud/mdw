@@ -76,6 +76,10 @@ public class MdwVersion {
                 : Integer.parseInt(version.substring(idxFirstDot + 1, idxSecondDot));
     }
 
+    public boolean isSnapshot() {
+        return version.endsWith("-SNAPSHOT");
+    }
+
     public int getBuildId() {
         int idxFirstDot = version.indexOf('.');
         int idxSecondDot = version.indexOf('.', idxFirstDot + 1);
@@ -86,5 +90,9 @@ public class MdwVersion {
             return Integer.parseInt(version.substring(idxSecondDot + 1));
         else // trim -SNAPSHOT
             return Integer.parseInt(version.substring(idxSecondDot + 1, lastDash));
+    }
+
+    public String toString() {
+        return version;
     }
 }

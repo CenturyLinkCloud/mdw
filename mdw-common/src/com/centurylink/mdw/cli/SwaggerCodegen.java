@@ -97,9 +97,9 @@ public class SwaggerCodegen extends io.limberest.api.codegen.SwaggerCodegen {
                 "com.centurylink.mdw.common.service.ServiceException");
         importMapping.put("Map", "java.util.Map");
         importMapping.put("SwaggerValidator",
-                "com.centurylink.mdw.service.api.validator.SwaggerModelValidator");
+                "com.centurylink.mdw.service.api.SwaggerModelValidator");
         importMapping.put("ValidationException",
-                "com.centurylink.mdw.service.api.validator.ValidationException");
+                "io.limberest.validate.ValidationException");
         importMapping.put("JsonList", "com.centurylink.mdw.model.JsonList");
     }
 
