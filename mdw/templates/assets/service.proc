@@ -21,7 +21,7 @@
     {
       "attributes": {
         "Output Documents": "[\"response\"]",
-        "Rule": "// TODO generated code\r\nresponse = new com.centurylink.mdw.model.StatusResponse(202, \"Ok\")",
+        "Rule": "// TODO generated code\r\nresponse = new com.centurylink.mdw.model.StatusResponse(200, \"OK\")",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=245,y=127,w=100,h=60"
       },
