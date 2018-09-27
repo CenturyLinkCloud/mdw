@@ -247,7 +247,7 @@ public class Checkpoint extends Setup {
     }
 
     public void updateRefValue() throws SQLException, IOException {
-        String select = "select name from value where name = ? and owner_type = ? and owner_id = ?";
+        String select = "select value from value where name = ? and owner_type = ? and owner_id = ?";
         try (Connection conn = getDbConnection();
                 PreparedStatement stmt = conn.prepareStatement(select)) {
             stmt.setString(1, "CommitID");
@@ -255,15 +255,17 @@ public class Checkpoint extends Setup {
             stmt.setString(3, "0");
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    String update = "update value set value = ?, mod_dt = ? where name = ? and owner_type = ? and owner_id = ?";
-                    try (PreparedStatement updateStmt = conn.prepareStatement(update)) {
-                        updateStmt.setString(1, commit);
-                        updateStmt.setDate(2, (java.sql.Date) new Date());
-                        updateStmt.setString(3, "CommitID");
-                        updateStmt.setString(4, "AssetImport");
-                        updateStmt.setString(5, "0");
-                        updateStmt.executeUpdate();
-                        if (!conn.getAutoCommit()) conn.commit();
+                    if (!commit.equals(rs.getString("value"))) {
+                        String update = "update value set value = ?, mod_dt = ? where name = ? and owner_type = ? and owner_id = ?";
+                        try (PreparedStatement updateStmt = conn.prepareStatement(update)) {
+                            updateStmt.setString(1, commit);
+                            updateStmt.setDate(2, (java.sql.Date) new Date());
+                            updateStmt.setString(3, "CommitID");
+                            updateStmt.setString(4, "AssetImport");
+                            updateStmt.setString(5, "0");
+                            updateStmt.executeUpdate();
+                            if (!conn.getAutoCommit()) conn.commit();
+                        }
                     }
                 }
                 else {
