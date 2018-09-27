@@ -223,10 +223,11 @@ public class Import extends Setup {
             // Clear cached previous asset revisions
             versionControl.clear();
 
-            // Capture new Refs in ASSET_REF after import (Git pull)
+            // Capture new Refs in ASSET_REF after import (Git pull) and insert/update VALUE table
             Checkpoint checkpoint = new Checkpoint(new File(getProjectDir() + "/" + getAssetLoc()), versionControl, versionControl.getCommit(), pooledConn);
             try {
                 checkpoint.updateRefs();
+                checkpoint.updateRefValue();
             }
             catch (SQLException ex) {
                 throw new IOException(ex.getMessage(), ex);

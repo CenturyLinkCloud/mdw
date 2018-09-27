@@ -16,8 +16,8 @@
 package com.centurylink.mdw.timer.startup;
 
 import java.io.File;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.Date;
 
 import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.config.PropertyManager;
@@ -96,39 +96,34 @@ public class AssetImportMonitor implements StartupService {
                     Thread.sleep(interval);
 
                     // Check if it needs to trigger an asset import to sync up this instance's assets
-                    // Exclude if head commit in local repo is missing from ASSET_REF DB table (means new local commit - asset saved)
+                    // Exclude if head commit in local repo is newer than commit from VALUE DB table (means new local commit - asset saved)
                     try (DbAccess dbAccess = new DbAccess()) {
-                        String select = "select ref from asset_ref where archive_dt= (select max(archive_dt) from asset_ref)";
-                        String latestRefCommit = null;
+                        String select = "select value, mod_dt from value where name='CommitID' and owner_type='AssetImport' and owner_id='0'";
+                        String latestCommit = null;
+                        Date lastImportTime = null;
                         try (ResultSet rs = dbAccess.runSelect(select)) {
-                            if (rs.next())
-                                latestRefCommit = rs.getString("ref");
-                        }
-                        // Proceed if latest commit (Ref) from ASSET_REF doesn't match current local Git commit (Potential import done in other instance)
-                        if (!vcs.getCommit().equals(latestRefCommit)) {
-                            boolean commitExists = false;
-                            select = "select ref from asset_ref where ref = ?";
-                            try (PreparedStatement stmt = dbAccess.getConnection().prepareStatement(select)) {
-                                stmt.setString(1,  vcs.getCommit());
-                                try (ResultSet rs = stmt.executeQuery()) {
-                                    if (rs.next()) {
-                                        commitExists = true;
-                                    }
-                                }
+                            if (rs.next()) {
+                                latestCommit = rs.getString("value");
+                                lastImportTime = rs.getDate("mod_dt");
                             }
-                            // Perform import if current local Git commit exists in ASSET_REF table
-                            if (commitExists) {
-                                    logger.info("Detected Asset Import in cluster.  Performing Asset Import...");
-                                    bulletin = SystemMessages.bulletinOn("Asset import in progress...");
-                                    Import importer = new Import(gitRoot, vcs, branch, gitHardReset, dbAccess.getConnection());
-                                    importer.setAssetLoc(vcs.getRelativePath(assetDir));
-                                    importer.importMDWGit();
-                                    SystemMessages.bulletinOff(bulletin, "Asset import completed");
-                                    bulletin = null;
-                                    CacheRegistration.getInstance().refreshCaches(null);
+                        }
+                        // Proceed if latest commit from VALUE table doesn't match current local Git commit (Potential import done in other instance)
+                        if (latestCommit != null && !vcs.getCommit().equals(latestCommit)) {
+                            Date currentCommitTime = new Date(vcs.getCommitTime(vcs.getCommit()));
+                            // Check if import was done after the current local commit was created - Otherwise, means new local commit - asset saved
+                            if (currentCommitTime.getTime() < lastImportTime.getTime()) {
+                                logger.info("Detected Asset Import in cluster.  Performing Asset Import...");
+                                bulletin = SystemMessages.bulletinOn("Asset import in progress...");
+                                Import importer = new Import(gitRoot, vcs, branch, gitHardReset, dbAccess.getConnection());
+                                importer.setAssetLoc(vcs.getRelativePath(assetDir));
+                                importer.importMDWGit();
+                                SystemMessages.bulletinOff(bulletin, "Asset import completed");
+                                bulletin = null;
+                                CacheRegistration.getInstance().refreshCaches(null);
                             }
                         }
                     }
+
                 }
                 catch (InterruptedException e) {
                     if (!_terminating) throw e;
