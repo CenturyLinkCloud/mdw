@@ -350,9 +350,9 @@ public class VersionControlGit implements VersionControl {
             return null;
     }
 
-    public int getCommitTime(String commitId) throws Exception {
+    public long getCommitTime(String commitId) throws Exception {
         try (RevWalk revWalk = new RevWalk(localRepo)) {
-            return revWalk.parseCommit(ObjectId.fromString(commitId)).getCommitTime();
+            return revWalk.parseCommit(ObjectId.fromString(commitId)).getCommitterIdent().getWhen().getTime();
         }
     }
 
