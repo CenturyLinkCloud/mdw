@@ -12,6 +12,7 @@ import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
 
 /**
@@ -113,14 +114,17 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
      * If no variable is defined, fallback is the 'microservice' design attribute.
      */
     protected String getMicroservice() throws ActivityException {
-        String microservice = null;
-        String microserviceVarName = getAttribute("microserviceVariable", "microservice");
-        if (getMainProcessDefinition().getVariable(microserviceVarName) == null) {
-            // configured through attribute
-            microservice = getAttributeValueSmart("microservice");
-        }
-        else {
-            microservice = getParameterStringValue(microserviceVarName);
+        // configured through attribute - attribute default is supposed to be $microservice
+        String microservice = getAttributeValueSmart("Microservice");
+        if (StringHelper.isEmpty(microservice)) {
+            String microserviceVarName = getAttribute("microserviceVariable", "microservice");
+            if (getMainProcessDefinition().getVariable(microserviceVarName) == null) {
+                // configured through activity name/label
+                microservice = getActivityName();
+            }
+            else {
+                microservice = getParameterStringValue(microserviceVarName);
+            }
         }
         if (microservice == null)
             throw new ActivityException("Cannot discern microservice");
