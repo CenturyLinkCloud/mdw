@@ -241,6 +241,48 @@ public class Checkpoint extends Setup {
         }
     }
 
+    public void updateRefValue() throws SQLException, IOException {
+        String select = "select name from value where name = ? and owner_type = ? and owner_id = ?";
+        try (Connection conn = getDbConnection();
+                PreparedStatement stmt = conn.prepareStatement(select)) {
+            stmt.setString(1, "CommitID");
+            stmt.setString(2, "AssetImport");
+            stmt.setString(3, "0");
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String update = "update value set value = ?, mod_dt = ? where name = ? and owner_type = ? and owner_id = ?";
+                    try (PreparedStatement updateStmt = conn.prepareStatement(update)) {
+                        updateStmt.setString(1, commit);
+                        updateStmt.setDate(2, (java.sql.Date) new Date());
+                        updateStmt.setString(3, "CommitID");
+                        updateStmt.setString(4, "AssetImport");
+                        updateStmt.setString(5, "0");
+                        updateStmt.executeUpdate();
+                        if (!conn.getAutoCommit()) conn.commit();
+                    }
+                }
+                else {
+                    String insert = "insert into value (value, name, owner_type, owner_id, create_dt, create_usr, mod_dt, mod_usr, comments) "
+                            + "values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    try (PreparedStatement insertStmt = conn.prepareStatement(insert)) {
+                        insertStmt.setString(1, commit);
+                        insertStmt.setString(2, "CommitID");
+                        insertStmt.setString(3, "AssetImport");
+                        insertStmt.setString(4, "0");
+                        insertStmt.setDate(5, (java.sql.Date) new Date());
+                        insertStmt.setString(6, "MDWEngine");
+                        insertStmt.setDate(7, (java.sql.Date) new Date());
+                        insertStmt.setString(8, "MDWEngine");
+                        insertStmt.setString(9, "Represents the last time assets were imported");
+                        insertStmt.executeUpdate();
+                        if (!conn.getAutoCommit()) conn.commit();
+                    }
+                }
+            }
+        }
+    }
+
+
     private void loadDbDriver() throws IOException {
         try {
             Class.forName(DbInfo.getDatabaseDriver(dbInfo.getUrl()));
