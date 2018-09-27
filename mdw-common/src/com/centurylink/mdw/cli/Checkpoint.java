@@ -254,12 +254,13 @@ public class Checkpoint extends Setup {
             stmt.setString(2, "AssetImport");
             stmt.setString(3, "0");
             try (ResultSet rs = stmt.executeQuery()) {
+                java.sql.Date currentDate = new java.sql.Date(new Date().getTime());
                 if (rs.next()) {
                     if (!commit.equals(rs.getString("value"))) {
                         String update = "update value set value = ?, mod_dt = ? where name = ? and owner_type = ? and owner_id = ?";
                         try (PreparedStatement updateStmt = conn.prepareStatement(update)) {
                             updateStmt.setString(1, commit);
-                            updateStmt.setDate(2, (java.sql.Date) new Date());
+                            updateStmt.setDate(2, currentDate);
                             updateStmt.setString(3, "CommitID");
                             updateStmt.setString(4, "AssetImport");
                             updateStmt.setString(5, "0");
@@ -276,9 +277,9 @@ public class Checkpoint extends Setup {
                         insertStmt.setString(2, "CommitID");
                         insertStmt.setString(3, "AssetImport");
                         insertStmt.setString(4, "0");
-                        insertStmt.setDate(5, (java.sql.Date) new Date());
+                        insertStmt.setDate(5, currentDate);
                         insertStmt.setString(6, "MDWEngine");
-                        insertStmt.setDate(7, (java.sql.Date) new Date());
+                        insertStmt.setDate(7, currentDate);
                         insertStmt.setString(8, "MDWEngine");
                         insertStmt.setString(9, "Represents the last time assets were imported");
                         insertStmt.executeUpdate();
