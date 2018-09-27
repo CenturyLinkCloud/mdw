@@ -178,10 +178,13 @@ public class Checkpoint extends Setup {
         return assetRefList;
     }
 
+    public void updateRefs() throws SQLException, IOException {
+        updateRefs(false);
+    }
     /**
      * Update refs in db.
      */
-    public void updateRefs() throws SQLException, IOException {
+    public void updateRefs(boolean assetImport) throws SQLException, IOException {
         List<AssetRef> refs = getCurrentRefs();
         if (refs == null || refs.isEmpty())
             System.out.println("Skipping ASSET_REF table insert/update due to empty current assets");
@@ -207,6 +210,8 @@ public class Checkpoint extends Setup {
                         }
                     }
                 }
+                if (assetImport)
+                    updateRefValue();
             }
         }
     }
