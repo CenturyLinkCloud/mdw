@@ -15,6 +15,9 @@
  */
 package com.centurylink.mdw.service.data.task;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,10 +28,13 @@ import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.service.data.user.UserDataAccess;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 
 /**
@@ -37,6 +43,8 @@ import com.centurylink.mdw.util.timer.CodeTimer;
 public class UserGroupCache implements PreloadableCache {
 
     private static UserGroupCache instance;
+
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     // these are loaded initially (and users are shallow)
     private List<User> users;
@@ -51,15 +59,20 @@ public class UserGroupCache implements PreloadableCache {
     private volatile Map<String,Workgroup> groupsByName = new HashMap<String,Workgroup>(); // includes (shallow) users
     private volatile Map<String,Role> rolesByName = new HashMap<String,Role>();
 
+    // used to determine if a user/group/role change has happened in another instance of cluster
+    private long lastUserSync = 0;
+
     public void initialize(Map<String,String> params) {
     }
 
     public void loadCache() throws CachingException {
         instance = this;
+        lastUserSync = System.currentTimeMillis();
         load();
     }
 
     public void clearCache() {
+        lastUserSync = System.currentTimeMillis();
         synchronized(usersByCuid) {
             usersByCuid.clear();
             usersById.clear();
@@ -92,18 +105,22 @@ public class UserGroupCache implements PreloadableCache {
         instance.workgroups.remove(workgroup);
         instance.workgroups.add(workgroup);
         Collections.sort(instance.workgroups); // in case new or name changed
+        instance.updateLastUpdateValue();
         instance.clearCache();
     }
 
     public static void remove(Workgroup workgroup) {
         instance.workgroups.remove(workgroup);
+        instance.updateLastUpdateValue();
         instance.clearCache();
     }
 
     /**
      * Clears only the relationships (not the base data).
+     * Should only be called if there were data changes performed in DB
      */
     public static void clear() {
+        instance.updateLastUpdateValue();
         instance.clearCache();
     }
 
@@ -111,11 +128,13 @@ public class UserGroupCache implements PreloadableCache {
         instance.roles.remove(role);
         instance.roles.add(role);
         Collections.sort(instance.roles); // in case new or name changed
+        instance.updateLastUpdateValue();
         instance.clearCache();
     }
 
     public static void remove(Role role) {
         instance.roles.remove(role);
+        instance.updateLastUpdateValue();
         instance.clearCache();
     }
 
@@ -188,12 +207,18 @@ public class UserGroupCache implements PreloadableCache {
         instance.users.remove(user);
         instance.users.add(user);
         Collections.sort(instance.users); // in case new or name changed
+        instance.updateLastUpdateValue();
         instance.clearCache();
     }
 
     public static void remove(User user) {
         instance.users.remove(user);
+        instance.updateLastUpdateValue();
         instance.clearCache();
+    }
+
+    public static long getLastUserSync() {
+        return instance.lastUserSync;
     }
 
     public static List<String> getUserAttributeNames() {
@@ -370,6 +395,48 @@ public class UserGroupCache implements PreloadableCache {
         }
         catch (Exception ex) {
             throw new CachingException(ex.getMessage(), ex);
+        }
+    }
+
+    private void updateLastUpdateValue() {
+        String select = "select value from value where name = ? and owner_type = ? and owner_id = ?";
+        try (DbAccess dbAccess = new DbAccess(); PreparedStatement stmt = dbAccess.getConnection().prepareStatement(select)) {
+            stmt.setString(1, "LastUserGroupChange");
+            stmt.setString(2, "UserGroupAdmin");
+            stmt.setString(3, "0");
+            try (ResultSet rs = stmt.executeQuery()) {
+                Timestamp currentDate = new Timestamp(System.currentTimeMillis());
+                if (rs.next()) {
+                    String update = "update value set value = ?, mod_dt = ? where name = ? and owner_type = ? and owner_id = ?";
+                    try (PreparedStatement updateStmt = dbAccess.getConnection().prepareStatement(update)) {
+                        updateStmt.setString(1, ((Long)currentDate.getTime()).toString());
+                        updateStmt.setTimestamp(2, currentDate);
+                        updateStmt.setString(3, "LastUserGroupChange");
+                        updateStmt.setString(4, "UserGroupAdmin");
+                        updateStmt.setString(5, "0");
+                        updateStmt.executeUpdate();
+                    }
+                }
+                else {
+                    String insert = "insert into value (value, name, owner_type, owner_id, create_dt, create_usr, mod_dt, mod_usr, comments) "
+                            + "values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    try (PreparedStatement insertStmt = dbAccess.getConnection().prepareStatement(insert)) {
+                        insertStmt.setString(1, ((Long)currentDate.getTime()).toString());
+                        insertStmt.setString(2, "LastUserGroupChange");
+                        insertStmt.setString(3, "UserGroupAdmin");
+                        insertStmt.setString(4, "0");
+                        insertStmt.setTimestamp(5, currentDate);
+                        insertStmt.setString(6, "MDWEngine");
+                        insertStmt.setTimestamp(7, currentDate);
+                        insertStmt.setString(8, "MDWEngine");
+                        insertStmt.setString(9, "Represents the last time user/group/role changes were made in MDW Hub");
+                        insertStmt.executeUpdate();
+                    }
+                }
+            }
+        }
+        catch (Exception e) {
+            logger.severeException("Exception attempting to update last user group change timestamp in Values table", e);
         }
     }
 }

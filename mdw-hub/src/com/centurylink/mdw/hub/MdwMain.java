@@ -41,6 +41,7 @@ import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.startup.StartupService;
 import com.centurylink.mdw.timer.startup.AssetImportMonitor;
 import com.centurylink.mdw.timer.startup.TimerTaskRegistration;
+import com.centurylink.mdw.timer.startup.UserGroupMonitor;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -140,6 +141,9 @@ public class MdwMain {
 
             logger.info("Initialize " + AssetImportMonitor.class.getName());
             (new AssetImportMonitor()).onStartup();
+
+            logger.info("Initialize " + UserGroupMonitor.class.getName());
+            (new UserGroupMonitor()).onStartup();
 
             logger.info("MDW initialization completed after " + (System.currentTimeMillis() - before) + " ms");
         }
