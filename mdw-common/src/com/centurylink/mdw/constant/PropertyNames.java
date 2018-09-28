@@ -187,4 +187,6 @@ public class PropertyNames {
 
     public static final String MDW_LISTENER_KAFKA = "mdw.listener.kafka";
 
+    public static final String MDW_USERGROUP_MONITOR_INTERVAL = "mdw.usergroupmonitor.interval";
+
 }
