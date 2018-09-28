@@ -254,7 +254,7 @@ public class Checkpoint extends Setup {
             stmt.setString(2, "AssetImport");
             stmt.setString(3, "0");
             try (ResultSet rs = stmt.executeQuery()) {
-                java.sql.Date currentDate = new java.sql.Date(new Date().getTime());
+                java.sql.Date currentDate = new java.sql.Date(System.currentTimeMillis());
                 if (rs.next()) {
                     if (!commit.equals(rs.getString("value"))) {
                         String update = "update value set value = ?, mod_dt = ? where name = ? and owner_type = ? and owner_id = ?";
