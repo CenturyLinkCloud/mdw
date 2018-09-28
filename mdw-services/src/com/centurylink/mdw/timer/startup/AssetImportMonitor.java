@@ -16,7 +16,9 @@
 package com.centurylink.mdw.timer.startup;
 
 import java.io.File;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.Date;
 
 import com.centurylink.mdw.common.service.SystemMessages;
@@ -96,22 +98,24 @@ public class AssetImportMonitor implements StartupService {
                     Thread.sleep(interval);
 
                     // Check if it needs to trigger an asset import to sync up this instance's assets
-                    // Exclude if head commit in local repo is newer than commit from VALUE DB table (means new local commit - asset saved)
-                    try (DbAccess dbAccess = new DbAccess()) {
-                        String select = "select value, mod_dt from value where name='CommitID' and owner_type='AssetImport' and owner_id='0'";
-                        String latestCommit = null;
-                        Date lastImportTime = null;
-                        try (ResultSet rs = dbAccess.runSelect(select)) {
+                    // If head commit in local repo is newer than commit from VALUE DB table, update VALUE DB table entry (means new local commit - asset saved, or new instance spun up)
+                    String select = "select value from value where name= ? and owner_type= ? and owner_id= ?";
+                    try (DbAccess dbAccess = new DbAccess(); PreparedStatement stmt = dbAccess.getConnection().prepareStatement(select)) {
+                        stmt.setString(1, "CommitID");
+                        stmt.setString(2, "AssetImport");
+                        stmt.setString(3, "0");
+                        String latestImportCommit = null;
+                        try (ResultSet rs = stmt.executeQuery()) {
                             if (rs.next()) {
-                                latestCommit = rs.getString("value");
-                                lastImportTime = rs.getDate("mod_dt");
+                                latestImportCommit = rs.getString("value");
                             }
                         }
                         // Proceed if latest commit from VALUE table doesn't match current local Git commit (Potential import done in other instance)
-                        if (latestCommit != null && !vcs.getCommit().equals(latestCommit)) {
-                            Date currentCommitTime = new Date(vcs.getCommitTime(vcs.getCommit()));
-                            // Check if import was done after the current local commit was created - Otherwise, means new local commit - asset saved
-                            if (currentCommitTime.getTime() < lastImportTime.getTime()) {
+                        if (latestImportCommit != null && !vcs.getCommit().equals(latestImportCommit)) {
+                            Date localCommitTime = new Date(vcs.getCommitTime(vcs.getCommit()));
+                            Date lastImportTime = new Date(vcs.getCommitTime(latestImportCommit));
+                            // Check if import commit is newer than the current local commit - Otherwise, means new local commit - asset saved, or new instance spun up
+                            if (localCommitTime.getTime() < lastImportTime.getTime()) {
                                 logger.info("Detected Asset Import in cluster.  Performing Asset Import...");
                                 bulletin = SystemMessages.bulletinOn("Asset import in progress...");
                                 Import importer = new Import(gitRoot, vcs, branch, gitHardReset, dbAccess.getConnection());
@@ -120,6 +124,17 @@ public class AssetImportMonitor implements StartupService {
                                 SystemMessages.bulletinOff(bulletin, "Asset import completed");
                                 bulletin = null;
                                 CacheRegistration.getInstance().refreshCaches(null);
+                            }
+                            else {  // Update VALUE DB entry to trigger import on other instances to this newer commit
+                                String update = "update value set value = ?, mod_dt = ? where name = ? and owner_type = ? and owner_id = ?";
+                                try (PreparedStatement updateStmt = dbAccess.getConnection().prepareStatement(update)) {
+                                    updateStmt.setString(1, vcs.getCommit());
+                                    updateStmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+                                    updateStmt.setString(3, "CommitID");
+                                    updateStmt.setString(4, "AssetImport");
+                                    updateStmt.setString(5, "0");
+                                    updateStmt.executeUpdate();
+                                }
                             }
                         }
                     }
