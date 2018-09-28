@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -218,9 +218,17 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Checkpoint.html#updateRefs--">updateRefs</a></span>()</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Checkpoint.html#updateRefs--">updateRefs</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Checkpoint.html#updateRefs-boolean-">updateRefs</a></span>(boolean&nbsp;assetImport)</code>
 <div class="block">Update refs in db.</div>
 </td>
+</tr>
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Checkpoint.html#updateRefValue--">updateRefValue</a></span>()</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -402,6 +410,22 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <pre>public&nbsp;void&nbsp;updateRefs()
                 throws java.sql.SQLException,
                        java.io.IOException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.sql.SQLException</code></dd>
+<dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="updateRefs-boolean-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>updateRefs</h4>
+<pre>public&nbsp;void&nbsp;updateRefs(boolean&nbsp;assetImport)
+                throws java.sql.SQLException,
+                       java.io.IOException</pre>
 <div class="block">Update refs in db.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -413,12 +437,28 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <a name="updateRef-com.centurylink.mdw.dataaccess.AssetRef-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>updateRef</h4>
 <pre>public&nbsp;void&nbsp;updateRef(<a href="../../../../com/centurylink/mdw/dataaccess/AssetRef.html" title="class in com.centurylink.mdw.dataaccess">AssetRef</a>&nbsp;ref)
                throws java.sql.SQLException,
                       java.io.IOException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.sql.SQLException</code></dd>
+<dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="updateRefValue--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>updateRefValue</h4>
+<pre>public&nbsp;void&nbsp;updateRefValue()
+                    throws java.sql.SQLException,
+                           java.io.IOException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.sql.SQLException</code></dd>
