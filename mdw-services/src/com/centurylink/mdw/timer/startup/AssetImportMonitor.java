@@ -19,7 +19,6 @@ import java.io.File;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-import java.util.Date;
 
 import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.config.PropertyManager;
@@ -112,10 +111,11 @@ public class AssetImportMonitor implements StartupService {
                         }
                         // Proceed if latest commit from VALUE table doesn't match current local Git commit (Potential import done in other instance)
                         if (latestImportCommit != null && !vcs.getCommit().equals(latestImportCommit)) {
-                            Long localCommitTime = vcs.getCommitTime(vcs.getCommit());
-                            Long lastImportTime = vcs.getCommitTime(latestImportCommit);
+                            vcs.fetch();  // Do a fetch so we know about newer commits since instance last started
+                            long localCommitTime = vcs.getCommitTime(vcs.getCommit());
+                            long lastImportTime = vcs.getCommitTime(latestImportCommit);
                             // Check if import commit is newer than the current local commit - Otherwise, means new local commit - asset saved, or new instance spun up
-                            if (lastImportTime == null || localCommitTime < lastImportTime) {
+                            if (localCommitTime < lastImportTime) {
                                 logger.info("Detected Asset Import in cluster.  Performing Asset Import...");
                                 bulletin = SystemMessages.bulletinOn("Asset import in progress...");
                                 Import importer = new Import(gitRoot, vcs, branch, gitHardReset, dbAccess.getConnection());
