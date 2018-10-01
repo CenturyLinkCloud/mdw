@@ -112,10 +112,10 @@ public class AssetImportMonitor implements StartupService {
                         }
                         // Proceed if latest commit from VALUE table doesn't match current local Git commit (Potential import done in other instance)
                         if (latestImportCommit != null && !vcs.getCommit().equals(latestImportCommit)) {
-                            Date localCommitTime = new Date(vcs.getCommitTime(vcs.getCommit()));
-                            Date lastImportTime = new Date(vcs.getCommitTime(latestImportCommit));
+                            Long localCommitTime = vcs.getCommitTime(vcs.getCommit());
+                            Long lastImportTime = vcs.getCommitTime(latestImportCommit);
                             // Check if import commit is newer than the current local commit - Otherwise, means new local commit - asset saved, or new instance spun up
-                            if (localCommitTime.getTime() < lastImportTime.getTime()) {
+                            if (lastImportTime == null || localCommitTime < lastImportTime) {
                                 logger.info("Detected Asset Import in cluster.  Performing Asset Import...");
                                 bulletin = SystemMessages.bulletinOn("Asset import in progress...");
                                 Import importer = new Import(gitRoot, vcs, branch, gitHardReset, dbAccess.getConnection());
