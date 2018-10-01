@@ -109,8 +109,26 @@ public class AssetImportMonitor implements StartupService {
                                 latestImportCommit = rs.getString("value");
                             }
                         }
+                        // If no row found in DB, create it
+                        if (latestImportCommit == null) {
+                            String insert = "insert into value (value, name, owner_type, owner_id, create_dt, create_usr, mod_dt, mod_usr, comments) "
+                                    + "values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                            Timestamp currentDate = new Timestamp(System.currentTimeMillis());
+                            try (PreparedStatement insertStmt = dbAccess.getConnection().prepareStatement(insert)) {
+                                insertStmt.setString(1, vcs.getCommit());
+                                insertStmt.setString(2, "CommitID");
+                                insertStmt.setString(3, "AssetImport");
+                                insertStmt.setString(4, "0");
+                                insertStmt.setTimestamp(5, currentDate);
+                                insertStmt.setString(6, "MDWEngine");
+                                insertStmt.setTimestamp(7, currentDate);
+                                insertStmt.setString(8, "MDWEngine");
+                                insertStmt.setString(9, "Represents the last time assets were imported");
+                                insertStmt.executeUpdate();
+                            }
+                        }
                         // Proceed if latest commit from VALUE table doesn't match current local Git commit (Potential import done in other instance)
-                        if (latestImportCommit != null && !vcs.getCommit().equals(latestImportCommit)) {
+                        else if (!vcs.getCommit().equals(latestImportCommit)) {
                             vcs.fetch();  // Do a fetch so we know about newer commits since instance last started
                             long localCommitTime = vcs.getCommitTime(vcs.getCommit());
                             long lastImportTime = vcs.getCommitTime(latestImportCommit);
