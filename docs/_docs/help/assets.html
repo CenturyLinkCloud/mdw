@@ -41,15 +41,13 @@ All of these assets can be managed in the same way, with the following built-in 
 </ul>
 <br/>
 <h3>Managing Workflow Assets</h3>
-Workflow assets can be managed by developers or end-users via MDW Designer, as long as they belong to the role ProcessAdmin for the target project.
-To create a brand new instance of an asset, right-click on a workflow package in Process Explorer, and selecting New, and then the type of asset desired.
-Assuming that you have appropriate permissions, updates can be accomplished by double-clicking the asset to edit it in place, or by right clicking and selecting Import > New Version.
-Either way, the version will be incremented and you'll be prompted for a comment to accompany the new version. 
+Workflow assets are designed in MDW Studio or (as long as the user has AssetAdmin role for the target environment) MDWHub.
+To create a brand new instance of an asset, right-click on an asset package in the project tree, select New, and then the type of asset desired.
 <br/><br/>
 <img src="images/newAsset.jpg" />
 <br/><br/>
 The style of editor and default document contents will differ according to the type of asset created, but managing the assets is the same regardless of type.
-The lifecycle management aspects of workflow assets are viewed and controlled using the Tabbed Properties in Designer.
+The lifecycle management aspects of workflow assets are viewed and controlled using the Configurator tabs in MDW Studio.
 To display the Tabbed Properties, right-click on the asset to be managed and select Show Properties from the menu.
 You can also use an external editor if that's more appropriate.  To save a workflow asset to the file system right-click on it and select Export > Export to File.
 Then after updating the asset in an external editor, import your changes by right-clicking on the asset and selecting Import > New Version (make sure you've got it locked first as described below).
@@ -58,14 +56,14 @@ Then after updating the asset in an external editor, import your changes by righ
 <h3><a id="assetImport">Asset Import</a></h3>
 MDW applications need to be able to version their assets and propagate them from one environment to another (dev to test, test to prod, etc.).
 Asset versioning is achieved by integrating with GitHub (see <a href="assetPersistence.html">Asset Persistence</a>).
-Importing assets from GitHub can be done through Designer, or through a command-line interface to support automation and continuous integration.
+Importing assets from GitHub can be done through MDWHub, or through the <a href="../getting-started/cli/">MDW CLI</a> to support automation and continuous integration.
 <br/><br/>
-TODO: screenshots for Designer import from Git, and examples of command-line import scripts
+TODO: screenshots for MDWHub import from Git, and examples of command-line import shell/build scripts
 <br/><br/>
 
 <h3><a id="discovery">Asset Discovery</a></h3>
 Beyond environmental migrations, <a href="assets.html">assets</a> are meant to be shared and reused
-across applications.  For this purpose Designer provides a discovery mechanism to locate and import assets from a central repository.
+across applications.  For this purpose MDWHub and the CLI provide a discovery mechanism to locate and import assets from a central repository.
 The MDW base, db and hub packages are examples of asset collections that can be reused in this way.
 To discover and import these packages, right-click on your project in Process Explorer view and select 
 Import > Package(s) > Discover.

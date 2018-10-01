@@ -18,7 +18,6 @@ Commonly used terms in MDW.
   [Transition]() | A link between **activities** indicating direction of flow. 
   [Variable](http://centurylinkcloud.github.io/mdw/docs/help/variable.html) | A named value in a **process** design which holds individual runtime data. 
   [Document]() | A specialized variable for large values (such as a JSON request).  Document variables are passed by reference, so updates are reflected everywhere thoughout a workflow. 
-  [Implementor]() | The template for an activity in the Designer toolbox.  Specifies its Java class and attribute options.
   [Handler]() | Responds to incoming requests from external systems (service implementation).
   [Process Instance]() | One particular execution of a workflow process, with its unique runtime values.
   

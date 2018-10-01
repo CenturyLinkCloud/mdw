@@ -26,7 +26,7 @@ And you'd be able to drill in to Invoke Bug Workflow to investigate this subflow
 
 This is the essential ingredient provided by workflow: a visual representation of what's taking place.
 
-Under the hood, every activity equates to a Java class.  It appears in the Designer toolbox by virtue of its
+Under the hood, every activity equates to a Java class.  It appears in the MDW Studio toolbox by virtue of its
 declaration in an asset (specifically, its .impl file -- an [activity implementor](../help/implementor.html) in MDW's lexicon).
 Along with the implementing Java class, an .impl asset's JSON specifies an activity's toolbox label and
 any [attributes]() it supports.  Attributes are configurable aspects of an activity (picture dragging a REST
@@ -70,13 +70,13 @@ this equivalent to *Deploy* permission.
 Assets are bundled into [packages]() for distribution and discovery.  For Java, Groovy and Kotlin source code assets,
 the package also provides Java-standard namespace resolution.  Every package is technically optional,
 but to derive much benefit from MDW you'll want to include at least `com.centurylink.mdw.base`.
-The best way to visualize asset packages is through Designer or MDWHub. But in case you're curious, the raw resources live here:
+The best way to visualize asset packages is through MDW Studio or MDWHub. But in case you're curious, the raw resources live here:
   - Source in GitHub:
     https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-workflow/assets
   - Published builds in Maven Central:
     http://repo1.maven.org/maven2/com/centurylink/mdw/assets/
     
-Designer, MDWHub and the CLI all include asset discovery/import features that can grab selected packages from Maven Central.
+MDW Studio, MDWHub and the CLI all include asset discovery/import features that can grab selected packages from Maven Central.
 App teams can publish their own asset libraries and make them discoverable through this standard MDW distribution mechanism.
     
 ### MDW Components
@@ -84,10 +84,10 @@ App teams can publish their own asset libraries and make them discoverable throu
 The MDW stack is aligned into these major components:
  - Engine 
  -- The behind-the-scenes nerve center in the cloud that executes all your workflow processes.   
- - Designer 
- -- Eclipse plugin for building processes, tasks, and other assets; with a graphical runtime view.  
+ - MDW Studio
+ -- IntelliJ IDEA plugin for building processes, tasks, and other assets.
  - MDWHub 
- -- The end-user webapp featuring a dashboard, runtime UI, task management, supervisor tools and asset editor. 
+ -- The end-user webapp featuring a dashboard, graphical runtime view, task management, supervisor tools and asset editor.
  - Microservices
  -- The extensible orchestration component for consuming and producing microservices. 
  - Intelligence 

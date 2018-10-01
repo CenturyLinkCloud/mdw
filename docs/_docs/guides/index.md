@@ -35,11 +35,11 @@ permalink: /docs/guides/
       <a href="docker/">Docker Guide &rarr;</a>
     </div>
     <div class="unit one-fourth">
-      <h2>Cloud Foundry</h2>
+      <h2>Kubernetes</h2>
       <p>
-        Push your MDW app to a Cloud Foundry space
+        Coming soon
       </p>
-      <a href="cloud-foundry/">Cloud Foundry &rarr;</a>
+      <a href="kubernetes/">Kubernetes &rarr;</a>
     </div>
     <div class="clear"></div>
   </div>

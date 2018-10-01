@@ -43,12 +43,6 @@ The following attributes are used by both implementors, new and old:
       <code>#{props['my.bus.topic']}</code>.</li>
   <li>Response Timeout. This is the time out value, in seconds, for waiting for responses.</li>
   <li>Override Inbox. This is used to pass the BUS policy option <code>OverrideInbox</code>.</li>
-  <li>Request XSD. This is for documentation purpose only. If a valid URL is specified,
-      you can open the request XSD directly from the designer by clicking the "Open Link" button 
-      on the right side of the attribute specification.</li>
-  <li>Response XSD. This is for documentation purpose only. If a valid URL is specified,
-      you can open the response XSD directly from the designer by clicking the "Open Link" button 
-      on the right side of the attribute specification.</li>
 </ul>
 <p>The following additional attributes are supported by the new implementor only:</p>
 <ul>
@@ -81,10 +75,10 @@ Using Adapter Activities</a> for documentation on extending adapter in general.<
   	throw <code>ConnectionException</code> or <code>AdapterException</code>
   	accordingly.</li>
   <li>Obtaining request data from a place other than a variable configured in
-    the designer: this can be achieved by overriding the <code>getRequestData</code>
+    MDW Studio: this can be achieved by overriding the <code>getRequestData</code>
     method.</li>
-  <li>Saving the response to a place other than a variable configured through the 
-    designer, and/or performing other post processing business logic:
+  <li>Saving the response to a place other than a variable configured through MDW Studio,
+    and/or performing other post processing business logic:
     this can be achieved by overriding <code>onSuccess</code>.</li>
   <li>Performing custom retry logic and other business logic in case of failure:
     you can override <code>onFailure</code>.</li>

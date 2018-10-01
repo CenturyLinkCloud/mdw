@@ -55,7 +55,7 @@ should be set when a timeout situation occurs. There are 3 statuses possible:
 <ul>
   <li>Canceled. The activity instance will be canceled.</li>
   <li>Hold. The activity instance will be put on a hold status (showing cyan color
-  		in the designer's process instance view). The activity instance in hold status
+  		in the MDWHub's process instance view). The activity instance in hold status
   		will not react to external messages received until it is resumed waiting
   		(discussed below).</li>
   <li>Waiting. The activity instance continues waiting (i.e. still actively listening for
@@ -108,7 +108,7 @@ The valid statuses include:
 The default method <code>processMessage(String)</code> does nothing if Received Message Variable is not defined and returns <code>WorkStatus.STATUS_COMPLETED</code>.
 <p>
 If you do not have a need to override the method but would like to leave the activity in a status 
-other than Completed, you can configure the completion code in designer by prepending "<code>Waiting::</code>", "<code>Hold::</code>", 
+other than Completed, you can configure the completion code in MDW Studio by prepending "<code>Waiting::</code>", "<code>Hold::</code>",
 or "<code>Cancelled::</code>" to regular completion code. Examples include "<code>Hold::CORRECT</code>" and "<code>Waiting::</code>".
 
 <br><br>Following table  compares 2 different types  of activities  and how to set the completion code with activity status = Hold. You can replace Hold with Waiting and Cancelled if that is what you want.<br><table
@@ -237,11 +237,11 @@ statuses:
 <tr><td><a href="InvokeMultipleSubprocesses.html">Invoke Multiple Subprocesses</a></td>
   		<td>hold on checking for all subprocess termination until the activity instance is resumed waiting</td>
   		<td>continue responding to subprocess termination in parallel</td>
-  		<td>not allowed (designer does not give the option)</td></tr>
+  		<td>not allowed (MDW Studio does not give the option)</td></tr>
 <tr><td><a href="synchronization.html">Synchronization Activity</a></td>
   		<td>hold on checking for synchronization until the activity instance is resumed waiting</td>
   		<td>continue checking synchronization as incoming transitions arrive, in parallel</td>
-  		<td>not allowed (designer does not give the option)</td></tr>
+  		<td>not allowed (MDW Studio does not give the option)</td></tr>
 </table>
 To customize event processing, you will need to override <code>TimerWaitActivity.processOtherMessage(String message)</code>
 (not <code>processMessage()</code> which is for event wait). The method does not return anything, the default method does nothing.

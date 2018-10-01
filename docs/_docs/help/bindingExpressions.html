@@ -8,7 +8,7 @@
 
 <p>Binding expressions are everywhere in MDW.  For example, when a workflow process uses a <a href="InvokeSubProcessActivity.html">subprocess activity</a> 
 to invoke another process, it can assign values for the subprocess's input variables through binding expressions.  Generally, for activity attributes
-in Designer, binding expressions can be used where a dynamic value is required from the runtime environment.  Other examples where expressions are
+in MDW Studio, binding expressions can be used where a dynamic value is required from the runtime environment.  Other examples where expressions are
 used to embed dynamic values include:</p>
 <ul>
   <li><a href="customWeb.html">Custom Web Pages</a></li>
@@ -44,7 +44,7 @@ as <i>context</i>, so through this you can access any values described by the ja
   <li><a href="../javadoc/com/centurylink/mdw/test/MockRuntimeContext.html">MockRuntimeContext</a></li>
 </ul>
 <p>As an example, if for whatever reason in your <a href="DocWebServiceAdapter.html">document web service adapter</a> you wanted to point the URL
-to the Employee.wsdl endpoint hosted in the same MDW environment, on the Design tab for this activity in Designer you could specify:
+to the Employee.wsdl endpoint hosted in the same MDW environment, on the Design tab for this activity in MDW Studio you could specify:
 </p>
 <pre>
   #{context.servicesUrl}/SOAP/Employee.wsdl
@@ -60,7 +60,7 @@ file as <i>employee.service.url</i>.  In that case you can take advantage of the
 <h3>Document Variables</h3>
 <p>
 MDW <a href="variable.html#documents">document variables</a> are available as full-blown objects in your expressions.  For instance,
-if you have a JAXBElement variable named <i>order</i> in your workflow based on the DesignerOrder XML, 
+if you have a JAXBElement variable named <i>order</i> in your workflow based on the DesignOrder XML,
 you can access the orderNumber element as follows:
 </p>
 <pre>

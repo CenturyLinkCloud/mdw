@@ -12,10 +12,6 @@ readily adopted by developers.  But in addition, MDW test case scripting offers 
 <a href="http://en.wikipedia.org/wiki/Domain-specific_language">DSL</a> syntax that makes it easy for anyone with a 
 technical background to quickly build and run automated tests.</p>
 
-<p><span style="text-decoration:underline">Note:</span> To run Groovy test cases in Eclipse you'll need to follow this link 
-<a href="http://centurylinkcloud.github.io/mdw/docs/getting-started/install-designer/">Recommended Plug-Ins</a> to install Groovy Plug-In.  This will
-make the following examples more readable since they'll appear syntax-highlighted in the editor.</p>
-
 <h3>Sections in This Guide</h3>
 
 <ul>
@@ -41,7 +37,7 @@ make the following examples more readable since they'll appear syntax-highlighte
 such as comments, the Groovy <a href="http://groovy-lang.org/semantics.html">Statements</a> and 
 <a href="http://groovy-lang.org/operators.html">Operators</a> reference pages are helpful.</p> 
 
-<p>STDOUT is directed to the test results execute.log file, and is also visible in Designer's Test Exec view output pane.
+<p>STDOUT is directed to the test results execute.log file, and is also visible in MDW Studio's Test Exec view output pane.
 Standard Groovy variable substitutions are applied to double-quoted strings, so the following lines both display the master request id for a run:</p> 
 <pre>
 println "masterRequestId: " + masterRequestId
@@ -142,7 +138,7 @@ server-side placeholders, which will be substituted with the appropriate runtime
 <code>${&lt;variable_name&gt;}</code>.</p>
 <p><span style="text-decoration:underline">Note:</span> Although the syntax looks the same as the general
 variable substitution syntax, this special usage involves substitution on the server (the raw placeholders are passed
-in Designer's message to the server, and substitution happens on that side).  In this usage, only the specific expressions
+in the test runner's message to the server, and substitution happens on that side).  In this usage, only the specific expressions
 above are supported.  Unlike the general mechanism, your custom Groovy script bindings cannot be substituted.</p>   
 <p>In order for <code>${processInstanceId}</code> to be correctly substituted, you'll need to specify processName 
 for your event, and for <code>${activityInstanceId}</code> you'll also need to specify activityLogicalId:</p>

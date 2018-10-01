@@ -20,7 +20,7 @@ as well as bindings to the input/output parameters of the subprocess.</p>
 
 <h3><a id="smartProcessVersion">Smart Subprocess Versioning</a></h3>
 With MDW 6 you can use Smart Subprocess Versioning to support greater modularity and encapsulation.
-By default Designer automatically infers a Smart Subprocess Version, even if you select a specific version when
+By default MDW Studio automatically infers a Smart Subprocess Version, even if you select a specific version when
 configuring the caller (although you can turn this off through Window > Preferences > MDW > Process Design > Infer Smart Subprocess/Asset Version Spec).</p>
 <p>
 Here's the way smart versioning works: instead of an exact version you can specify a <i>range</i> of versions that are acceptable to the caller.
@@ -32,8 +32,8 @@ The syntax is modeled on the OSGi version specifier syntax.  Specifically, there
       denoting version 1.2 and any version after this, up to, but not including, version 2.0.</li>
   <li>An 'unbounded' version range -- such as [1.2 -- denotes version 1.2 and all later versions.</li>    
 </ul>
-If the default smart versioning inference is enabled in Designer, MDW uses the third format behind-the-scenes.
-So, for example, if you choose process "SmartProcessChild v1.0" from the Asset Selector widget as illustrated below, 
+MDW Studio by default uses the third format behind the scenes.
+So, for example, if you choose process "SmartProcessChild" and it happens to be version 1.0 as illustrated below,
 the attribute will be saved as [1.0,2 -- defaulting to an exclusive upper limit of the next major version number. 
 <br/><br/>
 <img src="images/subprocess_select.jpg" />
@@ -42,8 +42,8 @@ At runtime the latest process version falling within the designated range will b
  If you want to override the default MDW smart version spec, you can type directly into the Asset Selector widget
 (say, "SmartProcessChild v[1.0" to designate the fourth, or unbounded, version range syntax.
 
-<h3><a id="subprocessVariableBindings">Subprocess Variable Bindings</h3>
-Designer automatically inspects the parameters defined
+<h3><a id="subprocessVariableBindings">Subprocess Variable Bindings</a></h3>
+MDW Studio automatically inspects the parameters defined
 by the subprocess and pre-populates the variable binding
 table with parameter names and their modes.
 Note that the parameter table does not include those

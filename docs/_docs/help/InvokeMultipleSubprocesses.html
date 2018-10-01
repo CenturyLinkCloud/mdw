@@ -22,7 +22,7 @@ for a description of these concepts, which are the same for single and multiple 
 aspects specific to multiple subprocess invocation, especially the syntax and semantics involved in creating an execution plan.</p>
 
 <h3>Activity Configuration</h3>
-Here's a shot of the Designer property tab for configuring Multiple Subprocess Invoke:
+Here's a shot of the configurator tab for Multiple Subprocess Invoke:
 <br/><br/>
 <img src="images/multiple_subprocesses.jpg" />
 <br/><br/>
@@ -140,7 +140,7 @@ void addParameter(SubprocessInstance subprocinst, String name, String value) {
 <p>The following points need to be emphasized:</p>
 <ul>
   <li>The subprocess names in the execution plan are logical names (not necessarily real process names),
-     and you will need to map the logical names to real process names in the designer (attribute configuration).</li>
+     and you will need to map the logical names to real process names in the configurator tab.</li>
   <li>For each parameter passed to subprocesses, the parameter name must be the name of
       an input and/or output variable for the corresponding subprocess.</li>
   <li>For each process to launch, you must set the status code to <code>WorkStatus.STATUS_PENDING_PROCESS</code>,
@@ -231,7 +231,7 @@ it can be left in one of the 2 statuses:
 
 <ul>
   <li>Hold. The activity instance will be put on a hold status (showing cyan color
-  		in the designer's process instance view). While the activity instance in hold status,
+  		in MDWHub's process instance view). While the activity instance in hold status,
   		subprocess termination will be recorded but the activity will remain in hold
   		status, without being completed. When the
   		activity is put back on waiting status (see <a href="EventWaitActivity.html">this link</a>
@@ -251,7 +251,7 @@ To provide custom code handling unsolicited events, you will need to override
 <code>TimerWaitActivity.processOtherMessage(String message)</code>. 
 The method is passed in with one argument, which is the entire message. The default
 method does nothing. The completion code after processing the message is configured
-in the designer, but you can override it in the code by invoking <code>setReturnCode()</code>.
+in the MDW Studio, but you can override it in the code by invoking <code>setReturnCode()</code>.
 
 </body>
 </html>

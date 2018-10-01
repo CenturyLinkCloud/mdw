@@ -23,7 +23,9 @@ title: Spring Boot
   ```
   mdw init --spring-boot
   ```
-  This creates a starter build.gradle (or pom.xml if you add the --maven option). 
+  This creates a starter project with these extra artifacts:
+  
+  - **build.gradle** (or pom.xml with the --maven option): 
 
   Here's a snippet from a simple Gradle build script created in this way: 
   ```gradle

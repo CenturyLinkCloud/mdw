@@ -12,7 +12,7 @@ MDW users can belong to one or more Workgroups (sometimes referred to simply as 
 Task instances can be dynamically routed to appropriate workgroups based on based on runtime criteria such as Due Date and Priority.
 The starting point for this routing is the task/workgroup relationships specified in the task definition (or Task Template).
 By default task instances are associated with the group(s) spelled out in the template.
-However, this default behavior can be overridden by specifying a Task Routing Strategy on the Workgroups property tab for a task activity in Designer:
+However, this default behavior can be overridden by specifying a Task Routing Strategy on the Workgroups tab for a task in MDW Studio:
 <br/>
 <img src="images/taskRouting.jpg" />
 <br/><br/>
@@ -30,7 +30,7 @@ Task template attributes and indexed process variable values are also available 
 <a name="assignment"><h2>Assignment</h2></a>
 After workgroup routing, the next stage in the manual task lifecycle is usually <i>assignment</i>, whereby a task instance is assigned to a particular individual for completion (see flow diagram below).
 The Task Manager webapp provides a user interface for users to manually assign or claim tasks individually or in bulk.
-However, the assignment step can be automated as well by specifying an Auto-Assign Strategy (see Designer screenshot above).
+However, the assignment step can be automated as well by specifying an Auto-Assign Strategy (see screenshot above).
 As with routing, the strategy implementor for auto-assign can be a custom Java class, or one of the MDW built-in options:
 <ul>
   <li style="margin-top:15px;">Round Robin:<br/>Cycles through each member of the workgroup(s), assigning to the next user in alphabetical order.<br/></li> 
