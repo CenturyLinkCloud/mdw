@@ -15,6 +15,7 @@
   - guides/tomcat
   - guides/spring-boot
   - guides/docker
+  - guides/kubernetes
   - guides/cloud-foundry
   - guides/configuration
   - guides/mdw-mobile

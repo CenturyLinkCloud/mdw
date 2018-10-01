@@ -7,12 +7,12 @@
 <h1>Custom Web</h1>
 
 In your workflow you can create individual web pages or an entire custom webapp to supplement or replace standard MDWHub.
-Using Eclipse Designer you can create custom pages, templates, stylesheets, images, etc. through the workflow asset wizards.
+Using MDW Studio you can create custom pages, templates, stylesheets, images, etc. through the workflow asset wizards.
 <br/><br/>
 <h3>Individual Pages</h3>
 Individual custom pages are commonly associated with a manual task for data entry, or used to <a href="#processStartPages">start a process</a>.  
-To create a new custom page in Designer, right-click on your workflow package in Process Explorer and select New &gt; Page.
-For the page type choose Facelet.  The new page will open in the editor you have configured in Eclipse for the selected page type.
+To create a new custom page in Studio, right-click on your workflow package in Process Explorer and select New &gt; Page.
+For the page type choose Facelet.  The new page will open in the editor you have configured in IntelliJ/Eclipse for the selected page type.
 To associate a custom page with a manual task in your workflow, select it in the dropdown on the Design property tab for the manual task
 activity (Note: to use a custom page you must choose the Custom Manual Task implementor in the Toolbox view).
 <br/><br/>
@@ -105,7 +105,7 @@ If you've configured a Custom Page on the Design tab for a Manual Task activity,
 <pre>http://localhost:8080/mdw/page.jsf?pageName=myCustomPage</pre>
 Pages and other resources are cached on the server, but during development you'll probably want to test your changes iteratively.  In this case you can force a refresh by appending the "refresh" parameter to your URL:
 <pre>http://localhost:8080/mdw/page.jsf?pageName=myCustomPage&amp;refresh=true</pre>
-In MDW Designer, if you right-click on a page in Process Explorer view, the Run... option will automatically launch the page with refresh=true.
+In MDW Studio, if you right-click on a page in project tree view, the Run... option will automatically launch the page with refresh=true.
 <br/><br/>
 <h3>Navigation Outcomes</h3>
 Just as in regular JSF pages, navigation outcomes in your custom pages are specified by associating an action attribute with your command elements.

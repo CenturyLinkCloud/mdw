@@ -24,7 +24,7 @@ and most activities extend this base class directly.</p>
 it to itself) as typically used with old implementors.
 In order to keep backward compatibility, we introduced a new
 base class, <code>PoolableAdapterBase</code>, to support the new functionalities. This is a new implementation of JMS Adapter which can be 
-configured through Designer and does not implement ControlledAdapterActivity interface.
+configured through MDW Studio and does not implement ControlledAdapterActivity interface.
 
 <p>MDW provides a set of common adapters for common protocols such
 as SOAP based MDW web services, JMS, as well as the adapter activity, mentioned above.
@@ -69,7 +69,7 @@ Here is a list of common reasons:</p>
 The following methods may be overridden less commonly:</p>
 <ul>
 <li><code>getRequestData()</code>: this method returns the request message. The default
-implementation reads it from a variable configured in the designer. You can override it
+implementation reads it from a variable configured in MDW Studio. You can override it
 to get the message from elsewhere.</li>
 <li><code>onSuccess(String response)</code>: the method is invoked when the external system
 returns a successful response. The method may convert external-system-detected errors into failure
@@ -80,7 +80,7 @@ Throwing an exception here
 also triggers the method <code>onFailure</code> to be called.
 This method is also the place to translate external responses
 into internal format and persist them somewhere, if these are needed.
-The default implementation stores the message in a variable configured in the designer.
+The default implementation stores the message in a variable configured in MDW Studio.
 </li>
 <li><code>onFailure(int tryCount, int maxTries, Throwable errorCause)</code>: 
 The method is invoked on the failure of each try.
@@ -99,7 +99,7 @@ The default implementation does the following:
     <li>if <var>errorCause</var> is a ConnectionException:
         <ul>
           <li>if <var>tryCount</var> (the number of tries already made) is less than 
-          	<var>maxTries</var> (maximum allowed tries, as configured in the designer), throws it</li>
+          	<var>maxTries</var> (maximum allowed tries, as configured in MDW Studio), throws it</li>
           <li>otherwise throws AdapterException with error code 
           	<code>AdapterConnectionPool.EXCEPTION_EXCEED_MAXTRIES</code>
         </ul></li>

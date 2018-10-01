@@ -7,9 +7,9 @@
 <h1>Asset Persistence</h1>
 
 In MDW, the process definitions and other design-time resources <a href="assets.html">assets</a> are saved in a version control repository (GitHub) and 
-the runtime data is stored in a MySQL or Oracle database. This persistence model has the key advantage for delivering flexible, powerful branching and merging capabilities. 
+the runtime data is stored in a MySQL, Oracle or MongoDB database. This persistence model has the key advantage for delivering flexible, powerful branching and merging capabilities.
 This is especially important to ensure the integrity of in-flight processes when multiple versions of an MDW workflow coexist in a production environment. The VCS Assets option 
-also offers dramatically improved performance in Designer project access, as well as reduced server startup times.
+also offers dramatically improved performance in MDW Studio project access, as well as reduced server startup times.
 <br/>
 <h3>Motivation</h3>
 As more and more of an application's business value moves into workflow, it's imperative that users have the tools to:
@@ -32,7 +32,7 @@ the details of the workflow package is kept in a file named <span style="font-st
 <p>
 While users are working on their own, MDW saves asset version information in a special file (specifically &quot;versions&quot;).
 When it comes time to share their output, users collaborate through a central, remote GitHub repository by <a href="http://git-scm.com/docs/git-commit">committing</a>
-and <a href="http://git-scm.com/docs/git-push">pushing</a> their changes.  They can do this using the GitHub tooling built into Eclipse.
+and <a href="http://git-scm.com/docs/git-push">pushing</a> their changes.  They can do this using the Git tooling built into IntelliJ or Eclipse.
 </p>
 <p>
 To make use of shared assets you'll continue to leverage the MDW <a href="assets.html#discovery">Asset Discovery</a> mechanism.
@@ -59,14 +59,14 @@ with VCS-based assets.  Your assets are checked into the VCS tool of your choice
 Runtime transactional data is stored in an Oracle or MySQL database.  Every instance-level record has a definition ID field
 to associate it with the corresponding design-time asset (the PROCESS_INSTANCE.PROCESS_ID column, for example).
 This asset ID is computed using the Git SHA hash algorithm based on its logical place in the workflow hierarchy,
-(eg: com.centurylink.mdw.demo.intro/Handle Order v0.19 - same as the asset path Designer's property tab label).  So every
+(eg: com.centurylink.mdw.demo.intro/Handle Order v0.19 - same as the asset path in MDW Studio's Assets tree view).  So every
 asset has a repeatable, unique ID that's constant across every environment.
 For compatibility with the existing data model, computed IDs are abbreviated to fit in a Java <span style="font-style:italic;">long</span> native type.
 However, the chances of a collision in any real-world project is still so unlikely as to be non-existent. 
-These IDs are displayed in Designer with both their decimal and native hex values.
+These IDs are displayed in MDW Studio with both their decimal and native hex values.
 </p>
 
-<h3>Remote Projects</h3>
+<h3>Remote Projects <s>(Deprecated)</s></h3>
 One of the strengths of MDW has always been the runtime view it provides, which overlays the process design with runtime instance information.
 This is still the case with VCS asset persistence, but this information is now retrieved through a REST service call to the server rather
 than directly from the database.  In fact, with the latest MDW and VCS-based persistence, Designer no longer makes any direct JDBC connections to the database.

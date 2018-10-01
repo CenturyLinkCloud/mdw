@@ -15,9 +15,9 @@ based on process variable values.  Process variables perform fine for displaying
 functions benefit by using task indexes.
 </p>
 
-<h3>Configuring in Designer</h3>
+<h3>Configuring in MDW Studio</h3>
 <p>
-Task index values are generally derived from process variables.  For AutoForm manual tasks, the Variables tab in Designer
+Task index values are generally derived from process variables.  For AutoForm manual tasks, the Variables tab in MDW Studio
 has a column for entering an Index Key that will automatically be populated with the associated variable:
 </p>
 <img src="images/autoFormTaskIndexes.jpg" style="border:2px solid gray" />
@@ -31,7 +31,7 @@ For Custom manual Tasks, a <a href="bindingExpressions.html">Value Expression</a
 <p>
 The <a href="../javadoc/com/centurylink/mdw/observer/task/TaskIndexProvider.html">TaskIndexProvider</a> interface provide an extensibility
 mechanism to support custom logic for setting index values based on the <a href="../javadoc/com/centurylink/mdw/model/value/task/TaskRuntimeContext.html">TaskRuntimeContext</a>.
-In Designer a custom TaskIndexProvider implementation can be specified instead of the default behavior provided by MDW. 
+In MDW Studio a custom TaskIndexProvider implementation can be specified instead of the default behavior provided by MDW.
 </p>
 
 </body>

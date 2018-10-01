@@ -19,7 +19,7 @@ Run MDW on Apache Tomcat.
   ```
   That's it.  The war is located under project_dir/deploy/webapps/.
   If you want to install the MDW war to a different location, use the `--webapps-dir` CLI option.
-  The best way to debug your project's Java assets is through Eclipse.  Read on to the next section to set that up.
+  The best way to debug your project's Java assets is through IntelliJ or Eclipse.  Read on to the next section to set that up.
   Otherwise, if you're **installing on a server** or just want to run Tomcat from the command line:
   ```
     mdw install --webapps-dir=/var/lib/tomcat8/webapps --mdw-version=6.1.05
@@ -33,7 +33,11 @@ Run MDW on Apache Tomcat.
   ```xml
   <Context sessionCookiePath="/">
   ``` 
-  
+
+### Use IntelliJ IDEA (Recommended for MDW 6.1+)
+
+#### TODO
+
 ### Use Eclipse
 
 #### 1. Get Designer 

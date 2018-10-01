@@ -38,7 +38,7 @@ Let's say the document content looks like this:
 </pre>
 <br/>
 You would like to transform the vacationPlan document into a ManagerApprovalRequest which will be sent via some interface downstream in your process.
-In the Designer configuration for your activity, you select your vacationPlanner variable as the input document.
+In the MDW Studio configurator for your activity, you select your vacationPlanner variable as the input document.
 For a GPath transform with an output document variable called gpathOutput, your transform declaration would be as follows:
 <pre>
 def managerName = vacationPlan.Traveler.Supervisor.Name =~ /(.*)\s(.*)/

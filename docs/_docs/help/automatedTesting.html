@@ -24,8 +24,8 @@
   <li>Verify that outcome data values (process variables) are populated as expected.</li>
 </ol>
 
-<p>Using Designer you can create repeatable test cases to automate these and other actions.
-   Your test cases can be executed on demand in Designer
+<p>Using MDW Studio you can create repeatable test cases to automate these and other actions.
+   Your test cases can be executed on demand in MDW Studio
    or from your build server as part of a continuous integration lifecycle using the 
    <a href="#runningTestsUsingAnt">Ant Automated Test task</a>.
    MDW also supports load testing to exercise your workflow processes and capture performance metrics.<p>   
@@ -60,8 +60,8 @@
    number indicating the <i>n</i>-th instance of the process with this name.
    The content of this expected results YAML for each process specifies the sequence of activity instances to be executed,
    and the expected values of all variables at the end of execution.  The easiest way to get a first
-   iteration of this file is to launch the test and click the "Create/Replace Results" checkbox in the Designer dialog.
-   Running test cases in Designer is described below.  For load tests the expected result files are not required or evaluated since this
+   iteration of this file is to launch the test and click the "Create/Replace Results" checkbox in the MDW Studio dialog.
+   Running test cases in MDW Studio is described below.  For load tests the expected result files are not required or evaluated since this
    could consume resources and distort the generated performance metrics.</li>
    
    <li><code>(test input files)</code> (optional) - Input/payload values can be declared inside your test script,
@@ -78,7 +78,7 @@ By default these are written to a subdirectory under testResults with the same p
 This test case result directory may contain the following files:
 <ul>
    <li><code>execute.log</code> - This is the log file for the tester thread.  This output can also
-   be viewed in real time during execution in the Designer Test Exec view.</li>
+   be viewed in real time during execution in the MDW Studio Test Exec view.</li>
    <li><code>&lt;<i>test_case_name></i>.yaml</code> - For each test case, a results file with the 
    same name as the expected results YAML asset is generated.  Success or failure of function tests
    is determined by comparing each of these files</li>
@@ -116,17 +116,14 @@ verify process
 
   <img src="images/start-stop-launch.jpg" />
 
-  <p>As your test case executes the Test Exec view in Designer shows a green bar to indicate progress and displays the test
+  <p>As your test case executes the Test Exec view in MDW Studio shows a green bar to indicate progress and displays the test
   output in its console pane on the right side.  The test should succeed since the expected results YAML asset is generated from
   the actual outcome.  And on completion the results asset start-stop.yaml should appear in your workflow package in Process Explorer.</p>
      
-  <p><span style="text-decoration:underline">Note:</span> Test cases run on the client in Designer and interact with the
-  server through built-in REST services.  Since test scripts are run on the client, this means that you need the Groovy Plugin 
-  installed to run test cases in Eclipse. Follow this link
-  <a href="http://centurylinkcloud.github.io/mdw/docs/getting-started/install-designer/">Recommended Plug-Ins</a> to install Groovy Plugin. 
-  In Designer RCP, Groovy is already included so no additional plugin is necessary.</p>
+  <p><span style="text-decoration:underline">Note:</span> Test cases run on the client in MDW Studio and interact with the
+  server through built-in REST services.</p>
 
-  There are three main ways to launch automated tests in Designer:
+  There are three main ways to launch automated tests in MDW Studio:
   <ul>
     <li><span style="font-weight:bold">Run an individual test case:</span><br/>
     This is handy to run a single test as in the scenario we just walked through.</span></li>
@@ -138,7 +135,7 @@ verify process
     to make sure you haven't broken anything prior to pushing your commits to a remote Git repository.</li>
   </ul>
   
-  <p>The automated test launch dialog supports the options summarized below.  These are saved as an Eclipse launch configuration,
+  <p>The automated test launch dialog supports the options summarized below.  These are saved as IntelliJ/Eclipse run configurations,
   which is a named setup that remembers these settings as well as the list of test cases to run.  The launch configuration dialog contains separate tabs
   for Function Testing and Load Testing.  For Load Testing, next to each selected case a Count column appears to specify the number of
   executions for that test.</p>
@@ -164,7 +161,7 @@ verify process
   </ul>
 
 <h3><a id="testResultsAndOutput">Test Results and Output</a></h3>
-  <p>The green bar in Test Exec view will be familar to developers who've used the JUnit runner in Eclipse.
+  <p>The green bar in Test Exec view will be familar to developers who've used the JUnit runner in IntelliJ/Eclipse.
   The Test Exec tree pane shows which cases are scheduled to run, along with their statuses.
   While a test is running its tree icon displays an arrow symbol indicating that it is in progress, and
   when it's completed, the icon is updated to to indicate success or failure.  The same status indication appears on the
@@ -179,7 +176,7 @@ verify process
    
   <p>Now that your start-stop test is complete,
   you can right-click on the start-stop.yaml results in Test Exec and select Compare Results and
-  the Eclipse Text Compare editor should show the differences, with the expected results on the left and the
+  the IntelliJ/Eclipse Text Compare editor should show the differences, with the expected results on the left and the
   actual results on the right.  Using the merge-left center icon, or simply by cutting and pasting, you can copy the
   actual results into the expected results file and hit ctrl-s to save.  This is another way you can overwrite an existing results
   asset once you've had a good test case run.</p>
@@ -197,7 +194,7 @@ verify process
   </p>
   <p>
   With <a href="assetPersistence.html">VCS Assets</a>, the XSL stylesheet for transforming raw test results into HTML
-  in Designer can be customized by creating any workflow package ending in ".testing" and within that creating an XSL
+  in MDW Studio can be customized by creating any asset package ending in ".testing" and within that creating an XSL
   asset named function-test-results.xsl (for function testing) and/or load-test-results.xsl (for load testing).
   The default stylesheets with these names are available in the com.centurylink.mdw.testing package as a starting point.   
   </p>
@@ -208,7 +205,7 @@ verify process
   </p>
 
 <h3><a id="loadTesting">Load Testing</a></h3>
-<p>Load tests are similar to automated function tests, and in Designer they're launched using the same
+<p>Load tests are similar to automated function tests, and in MDW Studio they're launched using the same
 dialog.  On the Load Testing tab there's a Count column in the Test Case table where you'll enter the desired
 number of executions for each selected test.</p>
 <p>The loader tester can run most test cases defined for function testing, but any
@@ -293,7 +290,7 @@ Blue,March
 &lt;/target>  
 </pre>
 <p>
-There is good way to get a good pom.xml sample to start with is to use Test Case import feature in eclipse and select a gherkin test case from standard out of the box tests provided by MDW team. 
+There is good way to get a good pom.xml sample to start with is to use Test Case import feature in Intellij/Eclipse and select a gherkin test case from standard out of the box tests provided by MDW team.
 </p>
 <p>The test results XML can be transformed into friendlier HTML and e-mailed to a distribution
 using the test report task:</p> 

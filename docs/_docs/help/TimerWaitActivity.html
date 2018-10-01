@@ -24,7 +24,7 @@ to calculate the value dynamically.
 Alternatively, you can subclass this implementor 
 and override the method <code>int getWaitPeriodInSeconds()</code>
 to achieve the desired customization. If you do go this way,
-you may need to customize the implementor descriptor in the designer
+you may need to customize the activity pagelet in MDW Studio
 so that the two attributes are not shown.
 <p>
 To wait for a particular date and time, you can calculate the
@@ -64,7 +64,7 @@ it can be left in one of the 3 statuses:
 <ul>
   <li>Canceled. The activity instance will be canceled.</li>
   <li>Hold. The activity instance will be put on a hold status (showing cyan color
-  		in the designer's process instance view). While the activity instance in hold status,
+  		in MDWHub's process instance view). While the activity instance in hold status,
   		timer expiration will be ignored. When the
   		activity is put back on waiting status (see <a href="EventWaitActivity.html">this link</a>
   		for discussion on how this can happen), if the timer is already expired, or
@@ -83,7 +83,7 @@ To provide custom code handling unsolicited events, you will need to override
 <code>processOtherMessage(String message)</code>. 
 The method is passed in with one argument, which is the entire message. The default
 method does nothing. The completion code after processing the message is configured
-in the designer, but you can override it in the code by invoking <code>setReturnCode()</code>.
+in MDW Studio, but you can override it in the code by invoking <code>setReturnCode()</code>.
 <p>
 <font color='red'><b>A word of caution</b></font>: the wait is implemented
 via delayed JMS resume messages, so it depends on the persistence of 

@@ -22,21 +22,16 @@ MDW has built-in support for these scripting languages:
 In addition, you can implement support for any arbitrary scripting language as described <a href="#CustomScriptingLanguages">below</a>.
 <br/><br/>
 When you drag the general scripting activity onto your process canvas, the first configuration attribute you'll specify is the the language to use.
-In Eclipse Designer, this appears as a dropdown on the Script tab in the properties view for an "Execute Script" activity, or on the Expression tab for a "Script Expression Evaluator". 
+In MDW Studio, this appears as a dropdown on the Script tab in the properties view for an "Execute Script" activity, or on the Expression tab for a "Script Expression Evaluator".
 <br/><br/>
-Groovy is the recommended general-purpose scripting language for MDW.  With Groovy scripting you have the ability to reference classes and closures declared in separate libraries, leading to greater power and flexibility.
-<p>Also, if you have the Groovy Plug-In installed in your Eclipse, you can set breakpoints and debug your scripts and libraries in Eclipse. 
-If you have not installed the Groovy Plug-In in your Eclipse, follow <a href="http://centurylinkcloud.github.io/mdw/docs/getting-started/install-designer/">this link</a> to installed it. 
-</p>
-Kotlin and JavaScript are supported via the Java 8 generic ScriptEngine mechanism.
+Kotlin is the recommended general-purpose scripting language for MDW.
+Kotlin, Groovy and JavaScript are all supported out-of-the-box via the Java 8 generic ScriptEngine mechanism.
 Check the <a href="https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-workflow/assets/com/centurylink/mdw/tests/script">scripting automated tests</a> for detailed working examples of all three scripting languages.
 Kotlin specifics are described here: <a href="https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/kotlin/readme.md">https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/kotlin/readme.md</a>.
 <br/><br/>
 Whichever scripting language you choose, the activities behave similarly, with the main difference being the syntax of the script itself.
 The script content is stored as an attribute of your activity, so it is maintained and versioned along with your process definition.
-To edit your script, you can right click on the activity and select "Edit Script" from the context menu, or click on the "Edit Script" link in the properties view "Script" tab.
-When you open a script for editing in Eclipse, the contents are saved to a temporary file in your workspace and are saved in VCS when the process definition is saved.
-This is important to remember since you'll want to reflect the latest changes when testing your processes.  There is a preference option in Eclipse to disable the nag dialog so that you aren't reminded of this fact every time you save your scripts.
+To edit your script, you can right click on the activity and select "Edit Script" from the context menu, or click on the "Open" link in the configurator "Script" tab.
 <br/><br/>
 In your script you have implicit access to all of your process variables, as well as "runtimeContext" (which represents the containing activity's workflow
 state).  The runtimeContext binding is an instance of 
@@ -105,15 +100,16 @@ To access this functionality from a script activity, you might include the follo
 <br/>
 Script library artifacts are cached in the MDW runtime engine.  They are compiled on-demand by the GroovyScriptEngine.
 The first time any Groovy script is accessed, all script libraries are loaded and initialized.  So the first execution may be slow, but subsequent executions should be very fast since the code has been pre-loaded and pre-compiled.
-If you change a script or library and save it in Eclipse, the cache is automatically reloaded, and the next access will re-initialize the libraries.
+If you change a script or library and save it and sync the server cache, the next access will re-initialize the libraries.
 
 <br/>
 <h3>Debugging Groovy Scripts</h3>
-If you have the Groovy Plug-In http://dist.springsource.org/snapshot/GRECLIPSE/e4.6 installed on your eclipse, you can debug your script activity or library by opening the contents and setting a breakpoint according to the usual procedure in Eclipse.
+IntelliJ has Groovy support built in.
+If you have the Groovy Plug-In http://dist.springsource.org/snapshot/GRECLIPSE/e4.6 installed on your Eclipse, you can debug your script activity or library by opening the contents and setting a breakpoint according to the usual procedure in Eclipse.
 This only works for local (not remote) workflow projects, and the server must be running in debug mode.
-When a breakpoint is encountered, you can evaluate variables and change values just as you would when debugging Java code in Eclipse.
+When a breakpoint is encountered, you can evaluate variables and change values just as you would when debugging Java code in IntelliJ/Eclipse.
 Note that in the context of a script activity, there is a wrapper class that contains your process variable bind values.
-You can evaluate or watch a process variable value by entering the following expression in the Eclipse Display view:<br/>
+You can evaluate or watch a process variable value by entering the following expression in IntelliJ/Eclipse:<br/>
 <pre>
 this.getBinding().getVariable("myVariable")
 this.binding.getVariables().get("modifiedXmlBean")
