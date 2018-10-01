@@ -49,6 +49,7 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 import org.eclipse.jgit.dircache.DirCacheIterator;
+import org.eclipse.jgit.errors.MissingObjectException;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
@@ -350,9 +351,12 @@ public class VersionControlGit implements VersionControl {
             return null;
     }
 
-    public long getCommitTime(String commitId) throws Exception {
+    public Long getCommitTime(String commitId) throws Exception {
         try (RevWalk revWalk = new RevWalk(localRepo)) {
             return revWalk.parseCommit(ObjectId.fromString(commitId)).getCommitterIdent().getWhen().getTime();
+        }
+        catch (MissingObjectException e) {  // Means commit is not known to local repo (need a fetch)
+            return null;
         }
     }
 
