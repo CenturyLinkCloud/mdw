@@ -9,7 +9,7 @@ start process("TaskIndexTesting") {
                   dateVar: today,
                   stringListVar: '["one", "two", "three"]' ]
 }
-sleep 30
+sleep 40
 def taskInst = action task("A Custom Task") {
     outcome = "Claim"
 }
@@ -36,7 +36,7 @@ action task("A Custom Task") {
                  stringListVar: '["four", "five", "six"]' ]
 }
 
-sleep 30
+sleep 40
 
 println 'verifying updated for task instance id: ' + taskInst.getId()
 resp = get http("Services/Tasks/" + taskInst.getId() + "/indexes?format=json")
