@@ -764,9 +764,6 @@ public class TestCaseRun implements Runnable {
     }
 
     void performTaskAction(TestCaseTask task) throws TestException {
-        if (isVerbose())
-            log.println("performing " + task.getOutcome() + " on task '" + task.getName() + "'");
-
         Query query = getTaskQuery(task.getName());
         try {
             TaskList taskList = taskServices.getTasks(query, user);
@@ -775,6 +772,8 @@ public class TestCaseRun implements Runnable {
                 throw new TestException("Cannot find task instances: " + query);
 
             TaskInstance taskInstance = taskInstances.get(0); // latest
+            if (isVerbose())
+                log.println("performing: " + task.getOutcome() + " on task '" + task.getName() + "' (" + taskInstance.getId() + ")");
             task.setId(taskInstance.getTaskInstanceId());
 
             UserTaskAction taskAction = new UserTaskAction();

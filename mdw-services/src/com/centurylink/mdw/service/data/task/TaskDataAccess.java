@@ -199,8 +199,11 @@ public class TaskDataAccess extends CommonDataAccess {
         try {
             db.openConnection();
             String query = "select " + getTaskInstanceSelect() +
-                " from TASK_INSTANCE ti where TASK_INST_SECONDARY_OWNER_ID=?";
-            ResultSet rs = db.runSelect(query, masterTaskInstId);
+                " from TASK_INSTANCE ti where TASK_INST_SECONDARY_OWNER = ? and TASK_INST_SECONDARY_OWNER_ID = ?";
+            Object[] args = new Object[2];
+            args[0] = OwnerType.TASK_INSTANCE;
+            args[1] = masterTaskInstId;
+            ResultSet rs = db.runSelect(query, args);
             List<TaskInstance> taskInsts = new ArrayList<TaskInstance>();
             while (rs.next()) {
                 taskInsts.add(getTaskInstanceSub(rs, false));
