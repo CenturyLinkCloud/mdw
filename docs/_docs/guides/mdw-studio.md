@@ -28,9 +28,12 @@ that enables you to create workflow processes and other assets.
     The [Community Edition](https://www.jetbrains.com/idea/download/) works fine for MDW Studio.  If you happen to have IntelliJ Ultimate, WebStorm, etc; 
     you can use one of these instead.
   - **Install the MDW Studio plugin**
-    - Stable Release  
-      **TODO**
-    - Snapshot Release
+    - Stable release (recommended)
+      - Preferences/Settings > Plugins > Search for "MDW" > Click link "Search in Repositories"
+      - Select "MDW Studio":
+        ![Install](../images/studio/install.png)
+      - Click Install and then Restart
+    - Snapshot release
       - Add the Beta plugin repository in IntelliJ
         - Preferences/Settings > Plugins > Browse Repositories > Manage Repositories > + > {% include copyToClipboard.html text="https://plugins.jetbrains.com/plugins/Beta/list" %}
         - Search for "MDW" and click Install
