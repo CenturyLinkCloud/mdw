@@ -26,9 +26,19 @@ import com.beust.jcommander.Parameters;
 @Parameters(commandNames="init", commandDescription="Initialize an MDW project", separators="=")
 public class Init extends Setup {
 
+    /**
+     * Existing project directory is okay (mdw-studio wizard).
+     */
+    private boolean allowExisting = false;
+
+    private boolean runUpdate = true;
+    public boolean isRunUpdate() { return runUpdate; }
+    public void setRunUpdate(boolean runUpdate) { this.runUpdate = runUpdate; }
+
     public Init(File projectDir) {
         super(projectDir);
         project = projectDir.getName();
+        allowExisting = true;
     }
 
     Init() {
@@ -59,7 +69,7 @@ public class Init extends Setup {
     public void setCloudFoundry(boolean cloudFoundry) { this.cloudFoundry = cloudFoundry; }
 
     @Parameter(names="--spring-boot", description="Generate Spring Boot build artifacts")
-    private boolean springBoot = false;
+    private boolean springBoot = true;
     public boolean isSpringBoot() { return springBoot; }
     public void setSpringBoot(boolean springBoot) { this.springBoot = springBoot; }
 
@@ -74,14 +84,14 @@ public class Init extends Setup {
         if (slashIndex > 0)
             project = project.substring(slashIndex + 1);
 
-        if (getProjectDir().exists()) {
+        if (getProjectDir().exists() && !allowExisting) {
             if (!getProjectDir().isDirectory() || getProjectDir().list().length > 0) {
                 System.err.println(getProjectDir() + " already exists and is not an empty directory");
                 return this;
             }
         }
         else {
-            if (!getProjectDir().mkdirs())
+            if (!getProjectDir().isDirectory() && !getProjectDir().mkdirs())
                 throw new IOException("Unable to create destination: " + getProjectDir());
         }
 
@@ -100,13 +110,15 @@ public class Init extends Setup {
         deleteDynamicTemplates();
         System.out.println("Writing: ");
         subst(getProjectDir());
-        if(isSnapshots())
+        if (isSnapshots())
             updateBuildFile();
         new File(getProjectDir() + "/src/main/java").mkdirs();
-        Update update = new Update(getProjectDir());
-        update.setSnapshots(isSnapshots());
-        update.setMdwVersion(getMdwVersion());
-        update.run(progressMonitors);
+        if (runUpdate) {
+            Update update = new Update(getProjectDir());
+            update.setSnapshots(isSnapshots());
+            update.setMdwVersion(getMdwVersion());
+            update.run(progressMonitors);
+        }
         return this;
     }
 

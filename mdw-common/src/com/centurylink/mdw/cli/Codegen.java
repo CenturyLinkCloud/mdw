@@ -223,6 +223,14 @@ public class Codegen extends Setup {
                 args.add(arg);
         }
 
+        if (isDebug()) {
+            System.out.print("\nCodegen: ");
+            for (String arg : args) {
+                System.out.print(arg + " ");
+            }
+            System.out.println("\n");
+        }
+
         String version = Version.readVersionFromResources();
         @SuppressWarnings("unchecked")
         Cli.CliBuilder<Runnable> builder = Cli.<Runnable> builder("swagger-codegen-cli")
