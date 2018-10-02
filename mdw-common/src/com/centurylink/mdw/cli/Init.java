@@ -92,7 +92,7 @@ public class Init extends Setup {
         }
         else {
             if (!getProjectDir().isDirectory() && !getProjectDir().mkdirs())
-                throw new IOException("Unable to create destination: " + getProjectDir());
+                throw new IOException("Unable to create project dir: " + getProjectDir());
         }
 
         findMdwVersion();
@@ -118,6 +118,12 @@ public class Init extends Setup {
             update.setSnapshots(isSnapshots());
             update.setMdwVersion(getMdwVersion());
             update.run(progressMonitors);
+        }
+        else {
+            // just create asset dir
+            if (!getAssetRoot().isDirectory() && !getAssetRoot().mkdirs()) {
+                throw new IOException("Unable to create asset root: " + getAssetRoot());
+            }
         }
         return this;
     }

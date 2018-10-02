@@ -8,7 +8,6 @@ title: Code Format
 1. Java, Kotlin, Groovy, JavaScript and JSON:
      The IntelliJ and Eclipse code formatters are version-controlled,
      so as long as you're up-to-date with Git you should automatically have the correct settings. 
-     If you want to use them for another project, you can download and import them from these formatter files:
      - Please note that we use **spaces instead of tabs** for indenting all source code.  Java, Kotlin and Groovy
        are indented four spaces, whereas JavaScript, JSON, HTML and XML are indented two spaces.
 2. **Action Required**: XML, HTML, CSS and YAML:
