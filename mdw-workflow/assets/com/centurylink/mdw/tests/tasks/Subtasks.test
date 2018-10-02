@@ -5,23 +5,23 @@ start process("Subtasks") {
 
 }
 
-sleep 30
+sleep 20
 
 action task("Subtask A") {
     outcome = "Claim"
 }
-sleep 35
+sleep 25
 action task("Subtask A") {
     outcome = "Complete"
 }
-sleep 35
+sleep 25
 action task("Subtask B") {
     outcome = "Claim"
 }
-sleep 35
+sleep 25
 action task("Subtask B") {
     outcome = "Complete"
 }
-sleep 35
+sleep 25
 
 verify process
