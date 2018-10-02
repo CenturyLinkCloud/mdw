@@ -13,13 +13,13 @@ title: Code Format
        are indented four spaces, whereas JavaScript, JSON, HTML and XML are indented two spaces.
 2. **Action Required**: XML, HTML, CSS and YAML:
      These have to be configured manually in IntelliJ/Eclipse.  For all formats we use **spaces instead of tabs**.
-     The following screenshots illustrate how to set these:  
+     The following screenshots illustrate how to set these (TODO IntelliJ):  
      - XML:                                                    
-      ![alt text](./images/xmlformat.png "xmlformat")
+      ![alt text](../images/xmlformat.png)
      - HTML:                                                           
-      ![alt text](./images/htmlformat.png "htmlformat")
+      ![alt text](../images/htmlformat.png)
      - CSS:                                      
-      ![alt text](./images/cssformat.png "cssformat")
+      ![alt text](../images/cssformat.png)
      - YAML:                                      
-      ![alt text](./images/yamlformat.png "yamlformat")
+      ![alt text](../images/yamlformat.png)
 3. As of MDW 6.1 the no-tabs rule is enforced by the build. 
