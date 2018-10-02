@@ -235,35 +235,35 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
             Process procdef = getMainProcessDefinition();
             for (String varname : params.keySet()) {
                 String para = getActualParameterVariable(map, varname);
-                if (para == null)
-                    return;
-                Variable var = procdef.getVariable(para);
-                if (var == null)
-                    throw new ActivityException("Bound variable: '" + para + "' not found in process definition " + procdef.getLabel());
-                String varvalue = params.get(varname);
-                Object value;
-                if (passDocContent && VariableTranslator.isDocumentReferenceVariable(getPackage(), var.getType())) {
-                    if (StringHelper.isEmpty(varvalue)) value = null;
-                    else if (varvalue.startsWith("DOCUMENT:"))
+                if (para != null) {
+                    Variable var = procdef.getVariable(para);
+                    if (var == null)
+                        throw new ActivityException("Bound variable: '" + para + "' not found in process definition " + procdef.getLabel());
+                    String varvalue = params.get(varname);
+                    Object value;
+                    if (passDocContent && VariableTranslator.isDocumentReferenceVariable(getPackage(), var.getType())) {
+                        if (StringHelper.isEmpty(varvalue)) value = null;
+                        else if (varvalue.startsWith("DOCUMENT:"))
+                            value = VariableTranslator.toObject(var.getType(), varvalue);
+                        else {
+                            DocumentReference docref = super.createDocument(var.getType(),
+                                    varvalue, OwnerType.PROCESS_INSTANCE, this.getProcessInstanceId());
+                            value = new DocumentReference(docref.getDocumentId());
+                        }
+                    } else {
                         value = VariableTranslator.toObject(var.getType(), varvalue);
-                    else {
-                        DocumentReference docref = super.createDocument(var.getType(),
-                                varvalue, OwnerType.PROCESS_INSTANCE, this.getProcessInstanceId());
-                        value = new DocumentReference(docref.getDocumentId());
                     }
-                } else {
-                    value = VariableTranslator.toObject(var.getType(), varvalue);
-                }
 
-                this.setParameterValue(para, value);
+                    this.setParameterValue(para, value);
 
-                // Clear from this engine's documentCache map (forces getting from DB when next needed)
-                if (refreshDocCache && value instanceof DocumentReference) {
-                    try {
-                        getEngine().loadDocument((DocumentReference)value, false);
-                    }
-                    catch (DataAccessException e) {
-                        throw new ActivityException(e.getMessage(), e);
+                    // Clear from this engine's documentCache map (forces getting from DB when next needed)
+                    if (refreshDocCache && value instanceof DocumentReference) {
+                        try {
+                            getEngine().loadDocument((DocumentReference)value, false);
+                        }
+                        catch (DataAccessException e) {
+                            throw new ActivityException(e.getMessage(), e);
+                        }
                     }
                 }
             }
