@@ -465,9 +465,6 @@
 - Issue when legacy recurring event is unregistered once the process completes [\#245](https://github.com/CenturyLinkCloud/mdw/issues/245)
 - Process Values Autoform Fixes [\#236](https://github.com/CenturyLinkCloud/mdw/issues/236)
 
-## [v6.0.09-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.09-SNAPSHOT) (2017-10-30)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.08...v6.0.09-SNAPSHOT)
-
 ## [v6.0.08](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.08) (2017-10-27)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.08-SNAPSHOT...v6.0.08)
 
@@ -487,9 +484,6 @@
 - Gradle custom task plugin changes prevent publishing mdw-templates zip artifact [\#184](https://github.com/CenturyLinkCloud/mdw/issues/184)
 - Process updates not reflected after cache refresh [\#118](https://github.com/CenturyLinkCloud/mdw/issues/118)
 - Newly-added user sometimes not reflected in user list [\#26](https://github.com/CenturyLinkCloud/mdw/issues/26)
-
-## [v6.0.08-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.08-SNAPSHOT) (2017-10-23)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.07...v6.0.08-SNAPSHOT)
 
 ## [v6.0.07](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.07) (2017-10-13)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.07-SNAPSHOT...v6.0.07)
@@ -550,9 +544,6 @@
 - Fix Chart Type selection [\#163](https://github.com/CenturyLinkCloud/mdw/issues/163)
 - Runtime UI can overlook subprocess instances for superseded definitions [\#161](https://github.com/CenturyLinkCloud/mdw/issues/161)
 - Postman autotests fail on Cloud Foundry \(at least AppFog\) [\#154](https://github.com/CenturyLinkCloud/mdw/issues/154)
-
-## [v6.0.06-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.06-SNAPSHOT) (2017-08-12)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.05...v6.0.06-SNAPSHOT)
 
 ## [v6.0.05](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.05) (2017-08-11)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v6.0.05-SNAPSHOT...v6.0.05)
@@ -622,7 +613,6 @@
 - Swagger and Browser issues [\#57](https://github.com/CenturyLinkCloud/mdw/issues/57)
 
 ## [v6.0.03](https://github.com/CenturyLinkCloud/mdw/tree/v6.0.03) (2017-05-05)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/v9.1.5...v6.0.03)
 
 ## [v9.1.5](https://github.com/CenturyLinkCloud/mdw/tree/v9.1.5) (2017-05-05)
 **Implemented enhancements:**
