@@ -89,7 +89,9 @@
 ### Documentation
 1. Source
    - Documentation is in the docs directory of the master branch on GitHub
-   - Optionally you can import the docs project into your Eclipse workspace for editing these artifacts.
+   - **Important:** When editing .md files in IntelliJ, to preserve trailing whitespace characters, install the Markdown plugin:
+     - https://plugins.jetbrains.com/plugin/7793-markdown-support
+     Do not commit changes to markdown files that remove trailing whitespace.
 2. Local GitHub Pages
    - To test doc access before pushing, and to make changes to default layouts and styles, you can build through [Jekyll](https://help.github.com/articles/about-github-pages-and-jekyll/) locally.
    - Install Ruby 2.3.3 or higher and add its bin directory to your PATH.
