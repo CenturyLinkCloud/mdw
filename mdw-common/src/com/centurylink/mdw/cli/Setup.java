@@ -23,9 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,7 +31,7 @@ import org.json.JSONObject;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.converters.CommaParameterSplitter;
-import com.centurylink.mdw.util.file.MdwIgnore;
+import com.centurylink.mdw.util.file.Packages;
 
 public abstract class Setup implements Operation {
 
@@ -557,40 +555,18 @@ public abstract class Setup implements Operation {
         }
     }
 
-    protected Map<String,File> getAssetPackageDirs() throws IOException {
-        List<File> packageDirs = new ArrayList<>();
-        findAssetPackageDirs(getAssetRoot(), packageDirs);
-        Map<String,File> assetPackageDirs = new HashMap<>();
-        for (File packageDir : packageDirs) {
-            String packageName = getAssetPath(packageDir).replace('/', '.').replace('\\', '.');
-            assetPackageDirs.put(packageName, packageDir);
+    private Packages assetPackageDirs;
+    protected Packages getAssetPackageDirs() throws IOException {
+        if (assetPackageDirs == null) {
+            assetPackageDirs = new Packages(getAssetRoot());
         }
         return assetPackageDirs;
     }
 
-    private void findAssetPackageDirs(File from, List<File> into) throws IOException {
-        for (File file : from.listFiles()) {
-            if (file.isDirectory() && !file.getName().equals(META_DIR) && !file.getName().equals("Archive")) {
-                if (new File(file + "/" + META_DIR).isDirectory()) {
-                    MdwIgnore mdwIgnore = new MdwIgnore(from);
-                    if (!mdwIgnore.isIgnore(file))
-                        into.add(file);
-                }
-                findAssetPackageDirs(file, into);
-            }
-        }
+    protected List<File> getAssetFiles(String packageName) throws IOException {
+        return getAssetPackageDirs().getAssetFiles(packageName);
     }
 
-    protected List<File> getAssetFiles(String packageName) throws IOException {
-        List<File> assetFiles = new ArrayList<>();
-        File packageDir = new File(getAssetRoot() + "/" + packageName.replace('.', '/'));
-        MdwIgnore mdwIgnore = new MdwIgnore(packageDir);
-        for (File file : packageDir.listFiles()) {
-            if (file.isFile() && !mdwIgnore.isIgnore(file))
-                assetFiles.add(file);
-        }
-        return assetFiles;
-    }
 
     protected void updateBuildFile() throws IOException {
         final Pattern repositoryPattern = Pattern.compile("maven\\s*\\{\\s*url\\s+\\w+\\s*}");

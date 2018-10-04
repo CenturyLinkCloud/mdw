@@ -139,6 +139,7 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/config/OrderedProperties.class"
         include "com/centurylink/mdw/yaml/YamlLoader.class"
         include "com/centurylink/mdw/util/file/MdwIgnore.class"
+        include "com/centurylink/mdw/util/file/Packages.class"
         include "com/centurylink/mdw/util/file/VersionProperties.class"
         include "com/centurylink/mdw/model/Project.class"
         include "com/centurylink/mdw/model/system/Server.class"

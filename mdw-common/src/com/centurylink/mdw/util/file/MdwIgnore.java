@@ -46,7 +46,7 @@ public class MdwIgnore {
     }
 
     public boolean isIgnore(File file) {
-        return excludes.contains(file);
+        return excludes.contains(file) || ".DS_Store".equals(file.getName());
     }
 
     /**
