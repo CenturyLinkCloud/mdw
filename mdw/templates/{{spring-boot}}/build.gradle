@@ -3,6 +3,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
+        classpath("com.centurylink.mdw:mdw-common:${mdwVersion}")
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
 }
@@ -15,6 +16,15 @@ version = '1.0.1-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
+sourceSets {
+    main {
+        java {
+            srcDirs "src/main/java"
+            srcDirs assetLoc
+        }
+    }
+}
+
 repositories {
     mavenCentral()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
@@ -23,7 +33,15 @@ repositories {
 dependencies {
     compile group: 'com.centurylink.mdw', name: 'mdw-spring-boot', version: mdwVersion
     compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: springBootVersion
-    
     // asset package dependencies
     compileOnly fileTree(dir: "${assetLoc}", includes: ["**/*.jar"])
+}
+
+bootJar {
+    // Exclude assets from packaging to preserve mdw dynamicism
+    // (do not overlap packages between src/main/java and assets).
+    def packages = new com.centurylink.mdw.util.file.Packages(file(assetLoc))
+    exclude {
+        packages.isAssetOutput(it.relativePath.toString())
+    }
 }
