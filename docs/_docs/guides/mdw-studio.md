@@ -26,7 +26,7 @@ that enables you to create workflow processes and other assets.
 ### 1.1 Installation
   - **Get IntelliJ IDEA**  
     The [Community Edition](https://www.jetbrains.com/idea/download/) works fine for MDW Studio.  If you happen to have IntelliJ Ultimate, WebStorm, etc; 
-    you can use one of these instead.
+    you can use one of those instead.
   - **Requires Git**  
     IntelliJ's Git integration requires a local installation:
     [https://git-scm.com/downloads](https://git-scm.com/downloads)

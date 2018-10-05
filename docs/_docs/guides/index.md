@@ -1,13 +1,13 @@
 ---
 layout: default
-title: Getting Started
+title: Guides
 permalink: /docs/guides/
 ---
 
 <section class="intro">
   <div class="grid">
     <div class="unit whole center-on-mobiles">
-      <p class="first">Guides</p>
+      <p class="first">Containers</p>
     </div>
   </div>
 </section>
