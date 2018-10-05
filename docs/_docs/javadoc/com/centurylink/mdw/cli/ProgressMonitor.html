@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
+var methods = {"i0":18,"i1":6,"i2":6};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -97,14 +97,9 @@ var activeTableTab = "activeTableTab";
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
-<dl>
-<dt>Functional Interface:</dt>
-<dd>This is a functional interface and can therefore be used as the assignment target for a lambda expression or method reference.</dd>
-</dl>
 <hr>
 <br>
-<pre>@FunctionalInterface
-public interface <span class="typeNameLabel">ProgressMonitor</span></pre>
+<pre>public interface <span class="typeNameLabel">ProgressMonitor</span></pre>
 </li>
 </ul>
 </div>
@@ -118,12 +113,20 @@ public interface <span class="typeNameLabel">ProgressMonitor</span></pre>
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t5" class="tableTab"><span><a href="javascript:show(16);">Default Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>default boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html#isCanceled--">isCanceled</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html#message-java.lang.String-">message</a></span>(java.lang.String&nbsp;msg)</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html#progress-int-">progress</a></span>(int&nbsp;percent)</code>
 <div class="block">Must be idempotent.</div>
@@ -144,14 +147,32 @@ public interface <span class="typeNameLabel">ProgressMonitor</span></pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="message-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>message</h4>
+<pre>void&nbsp;message(java.lang.String&nbsp;msg)</pre>
+</li>
+</ul>
 <a name="progress-int-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>progress</h4>
 <pre>void&nbsp;progress(int&nbsp;percent)</pre>
 <div class="block">Must be idempotent.</div>
+</li>
+</ul>
+<a name="isCanceled--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>isCanceled</h4>
+<pre>default&nbsp;boolean&nbsp;isCanceled()</pre>
 </li>
 </ul>
 </li>
