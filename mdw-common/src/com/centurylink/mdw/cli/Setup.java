@@ -39,16 +39,6 @@ public abstract class Setup implements Operation {
     protected static final String MDW_COMMON_PATH = "/com/centurylink/mdw/mdw-templates/";
     protected static final String SONATYPE_URL = "https://oss.sonatype.org/service/local/artifact/maven";
 
-    protected static final List<String> DEFAULT_BASE_PACKAGES = new ArrayList<>();
-    static {
-        DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.base");
-        DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.db");
-        DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.node");
-        DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.react");
-        DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.task");
-        DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.testing");
-    }
-
     Setup() {
     }
 
@@ -244,7 +234,7 @@ public abstract class Setup implements Operation {
         baseAssetPackages = new ArrayList<>();
         addBasePackages(getAssetRoot(), getAssetRoot());
         if (baseAssetPackages.isEmpty())
-            baseAssetPackages = DEFAULT_BASE_PACKAGES;
+            baseAssetPackages = Packages.DEFAULT_BASE_PACKAGES;
     }
 
     private void addBasePackages(File assetDir, File dir) throws IOException {
@@ -255,7 +245,7 @@ public abstract class Setup implements Operation {
 
         if (new File(dir + "/.mdw/package.json").isFile() || new File(dir + "/.mdw/package.yaml").isFile()) {
             String pkg = getAssetPath(dir).replace('/', '.');
-            if (pkg.startsWith("com.centurylink.mdw."))
+            if (Packages.isMdwPackage(pkg))
                 baseAssetPackages.add(pkg);
         }
         for (File child : dir.listFiles()) {
