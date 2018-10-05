@@ -52,11 +52,15 @@ public class Update extends Setup {
             initBaseAssetPackages();
         }
 
+        Import mport = new Import();
+        mport.setAssetLoc(getAssetLoc());
+        mport.setSnapshots(isSnapshots());
+        mport.setMdwVersion(getMdwVersion());
+        mport.setConfigLoc(getConfigLoc());
+
         if (isSnapshots()) {
-            Import mport = new Import();
             for (String pkg : getBaseAssetPackages()) {
                 System.out.println("Import asset packages:");
-                mport.setAssetLoc(getProjectDir() + "/" + getAssetLoc());
                 mport.importSnapshotPackage(pkg, monitors);
             }
         }
@@ -106,14 +110,11 @@ public class Update extends Setup {
                 System.out.println(" - no packages selected");
             }
             else {
-                Import mport = new Import();
-                mport.setAssetLoc(getProjectDir() + "/" + getAssetLoc());
                 if (isMdw) {
                     mport.importPackagesFromMdw(discoveryUrl, toDownload, monitors);
                 }
                 else {
-                    mport.importPackagesFromMaven("com.centurylink.mdw.assets", toDownload,
-                            monitors);
+                    mport.importPackagesFromMaven("com.centurylink.mdw.assets", toDownload, monitors);
                 }
             }
         }

@@ -41,18 +41,33 @@ public class Download implements Operation {
     private long size; // if known, in bytes
     public long getSize() { return size; }
 
+    private String message;
+
     public Download(URL from, File to) {
-        this.from = from;
-        this.to = to;
+        this(from, to, null);
+    }
+
+    public Download(URL from, File to, String message) {
+        this(from, to, 0, message);
     }
 
     public Download(URL from, File to, long size) {
+        this(from, to, size, null);
+    }
+
+    public Download(URL from, File to, long size, String message) {
         this.from = from;
         this.to = to;
         this.size = size;
+        this.message = message;
     }
 
     public Download run(ProgressMonitor... progressMonitors) throws IOException {
+        if (message != null) {
+            for (ProgressMonitor progressMonitor : progressMonitors)
+                progressMonitor.message(message);
+        }
+
         URLConnection connection = from.openConnection();
         if (size == 0 && connection.getContentLength() > 0)
           size = connection.getContentLength();

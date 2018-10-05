@@ -3,6 +3,9 @@ permalink: /docs/guides/configuration/
 title: MDW Configuration
 ---
 
+## location
+  - Specify your config directory via the `-Dmdw.config.location` system property.
+  
 ## mdw.yaml
   - To convert from old-style mdw.properties to mdw.yaml, run the [CLI](../../getting-started/cli/) command `mdw convert`.
   - Here's an annotated example describing MDW's configuration options:   

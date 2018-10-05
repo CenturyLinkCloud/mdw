@@ -183,19 +183,29 @@ public class Main {
      * Every call with >= 100% progress will print a new line.
      */
     static ProgressMonitor getMonitor() {
-        return prog -> {
-            if ("\\".equals(System.getProperty("file.separator"))) {
-                System.out.print("\b\b\b\b\b\b\b\b\b");
+        return new ProgressMonitor() {
+
+            @Override
+            public void message(String msg) {
+                System.out.println(msg + "...");
             }
-            else {
-                System.out.print("\r         \r");
+
+            @Override
+            public void progress(int prog) {
+                if ("\\".equals(System.getProperty("file.separator"))) {
+                    System.out.print("\b\b\b\b\b\b\b\b\b");
+                }
+                else {
+                    System.out.print("\r         \r");
+                }
+                if (prog >= 100)
+                    System.out.println(" --> Done");
+                else if (prog <= 0) // don't report zero progress since it may indicate unknown
+                    System.out.print(" ... ");
+                else
+                    System.out.printf(" --> %3d%%", prog);
             }
-            if (prog >= 100)
-                System.out.println(" --> Done");
-            else if (prog <= 0) // don't report zero progress since it may indicate unknown
-                System.out.print(" ... ");
-            else
-                System.out.printf(" --> %3d%%", prog);
+
         };
     }
 }

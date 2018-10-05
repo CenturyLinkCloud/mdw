@@ -144,6 +144,7 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/model/Project.class"
         include "com/centurylink/mdw/model/system/Server.class"
         include "com/centurylink/mdw/model/system/ServerList.class"
+        include "com/centurylink/mdw/model/system/MdwVersion.class"
         include "com/centurylink/mdw/model/workflow/*.class"
         include "com/centurylink/mdw/constant/WorkAttributeConstant.class"
         include "com/centurylink/mdw/constant/WorkTransitionAttributeConstant.class"

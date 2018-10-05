@@ -15,7 +15,7 @@
  */
 package com.centurylink.mdw.model.system;
 
-public class MdwVersion {
+public class MdwVersion implements Comparable<MdwVersion> {
     private String version;
 
     public MdwVersion(String mdwVersion) {
@@ -94,5 +94,23 @@ public class MdwVersion {
 
     public String toString() {
         return version;
+    }
+
+    @Override
+    public int compareTo(MdwVersion other) {
+        if (this.getMajorVersion() != other.getMajorVersion())
+            return this.getMajorVersion() - other.getMajorVersion();
+        if (this.getMinorVersion() != other.getMinorVersion())
+            return this.getMinorVersion() - other.getMinorVersion();
+        if (this.getBuildId() != other.getBuildId())
+            return this.getBuildId() - other.getBuildId();
+        if (this.isSnapshot() != other.isSnapshot())
+            return this.isSnapshot() ? -1 : 1;
+        return 0;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof MdwVersion && ((MdwVersion)obj).version.equals(version);
     }
 }

@@ -176,13 +176,15 @@ public class Import extends Setup {
         else
             importPackagesFromMaven(groupId, artifacts, monitors);
     }
+
     public void importPackagesFromMaven(String groupId, List<String> packages, ProgressMonitor... monitors) throws IOException {
         for (String pkg : packages) {
-            int index = pkg.lastIndexOf('-');
-            importPackageFromMaven(groupId, pkg.substring(0, index), pkg.substring(index + 1), monitors);
+            if (!Arrays.asList(monitors).stream().anyMatch(mon -> mon.isCanceled())) {
+                int index = pkg.lastIndexOf('-');
+                importPackageFromMaven(groupId, pkg.substring(0, index), pkg.substring(index + 1), monitors);
+            }
         }
     }
-
 
     public void importMdw(ProgressMonitor... monitors) throws IOException {
         List<String> pkgs = Arrays.asList(packageNames.trim().split("\\s*,\\s*"));
@@ -224,7 +226,7 @@ public class Import extends Setup {
             versionControl.clear();
 
             // Capture new Refs in ASSET_REF after import (Git pull) and insert/update VALUE table
-            Checkpoint checkpoint = new Checkpoint(new File(getProjectDir() + "/" + getAssetLoc()), versionControl, versionControl.getCommit(), pooledConn);
+            Checkpoint checkpoint = new Checkpoint(new File(getAssetLoc()), versionControl, versionControl.getCommit(), pooledConn);
             try {
                 checkpoint.updateRefs(true);
             }
@@ -266,16 +268,6 @@ public class Import extends Setup {
             }
 
             System.out.println("Importing from Git into: " + getProjectDir() + "...");
-
-            // Capture current Refs in ASSET_REF before import
-    //        DbInfo dbInfo = new DbInfo(props);
-    //        Checkpoint checkpoint = new Checkpoint(getReleasesUrl(), vcInfo, getAssetRoot(), dbInfo);
-    //        try {
-    //            checkpoint.run(monitors).updateRefs();
-    //        }
-    //        catch (SQLException ex) {
-    //            throw new IOException(ex.getMessage(), ex);
-    //        }
 
             // Check Asset inconsistencies
             Git git = new Git(getReleasesUrl(), vcInfo, "checkVersionConsistency", vcInfo.getBranch(), getAssetLoc());
@@ -324,27 +316,8 @@ public class Import extends Setup {
         }
     }
 
-    protected void importPackageFromMaven(String groupId, String artifactId, String version,
-            ProgressMonitor... monitors) throws IOException {
-        File assetDir = new File(getAssetLoc());
-        String url = "http://search.maven.org/remotecontent?filepath=";
-        List<String> pkgs = new ArrayList<>();
-        pkgs.add(groupId.replace("assets", "") + artifactId.replace('-', '.'));
-        File tempZip = Files.createTempFile("central-discovery", ".zip").toFile();
-        System.out.println("Importing " + artifactId + "/" + version + " from Maven into: " + assetDir + "...");
-        new Download(new URL(url + groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/"
-                + artifactId + "-" + version + ".zip"), tempZip).run(monitors);
-
-        System.out.println("Unzipping " + artifactId + "/" + version + " into: " + assetDir);
-        new Unzip(tempZip, assetDir, true).run();
-        if (!tempZip.delete())
-            throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
-    }
-
     protected void importPackagesFromMdw(String url, List<String> packages, ProgressMonitor... monitors) throws IOException {
          // download packages temp zip
-        System.out.println("Downloading packages...");
-
         File tempZip = Files.createTempFile("mdw-discovery", ".zip").toFile();
 
         String pkgsParam = "[";
@@ -354,7 +327,8 @@ public class Import extends Setup {
                 pkgsParam += ",";
         }
         pkgsParam += "]";
-        new Download(new URL(url + "/asset/packages?recursive=false&packages=" + pkgsParam), tempZip).run(monitors);
+
+        new Download(new URL(url + "/asset/packages?recursive=false&packages=" + pkgsParam), tempZip, "Downloading packages").run(monitors);
 
         // import packages
         File assetDir = getAssetRoot();
@@ -364,17 +338,36 @@ public class Import extends Setup {
             throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
     }
 
-    protected void importSnapshotPackage(String pkg, ProgressMonitor... monitors) {
+    protected void importPackageFromMaven(String groupId, String artifactId, String version,
+            ProgressMonitor... monitors) throws IOException {
         File assetDir = new File(getAssetLoc());
-        System.out.println("Importing " + pkg + " from Maven into: " + assetDir + "...");
+        String url = "http://search.maven.org/remotecontent?filepath=";
+        String pkg = groupId.replace("assets", "") + artifactId.replace('-', '.');
+        File tempZip = Files.createTempFile("central-discovery", ".zip").toFile();
+        url += groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/" + artifactId + "-" + version + ".zip";
+        try {
+            String msg = "Importing " + pkg + " v" + version;
+            new Download(new URL(url), tempZip, msg).run(monitors);
+            System.out.println("Unzipping " + artifactId + "/" + version + " into: " + assetDir);
+            new Unzip(tempZip, assetDir, true).run();
+            if (!tempZip.delete())
+                throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
+        }
+        catch (FileNotFoundException e) {
+            System.err.println("  - " + url + " not found for import");
+        }
+    }
+
+    protected void importSnapshotPackage(String pkg, ProgressMonitor... monitors) throws IOException {
+        File assetDir = new File(getAssetLoc());
         String url = SONATYPE_URL + "/redirect?r=snapshots&g=com.centurylink.mdw.assets&a="
                 + pkg.replace("com.centurylink.mdw.", "").replace('.', '-') + "&v=LATEST&p=zip";
         List<String> pkgs = new ArrayList<>();
         pkgs.add(pkg);
+        File tempZip = Files.createTempFile("sonatype-discovery", ".zip").toFile();
         try {
-            File tempZip = Files.createTempFile("sonatype-discovery", ".zip").toFile();
-            new Download(new URL(url), tempZip).run(monitors);
-
+            String msg = "Importing " + pkg;
+            new Download(new URL(url), tempZip, msg).run(monitors);
             System.out.println("Unzipping into: " + assetDir);
             new Unzip(tempZip, assetDir, true).run();
             if (!tempZip.delete())
@@ -382,9 +375,6 @@ public class Import extends Setup {
         }
         catch (FileNotFoundException e) {
             System.err.println("  - " + pkg + " not found for import");
-        }
-        catch (IOException e) {
-            System.err.println("Unable to import  - " + pkg );
         }
     }
 
