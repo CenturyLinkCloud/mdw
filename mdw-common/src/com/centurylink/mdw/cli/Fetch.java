@@ -29,6 +29,10 @@ public class Fetch implements Operation {
     private String data;
     public String getData() { return data; }
 
+    private String contentType;
+    public String getContentType() { return contentType; }
+    public void setContentType(String contentType) { this.contentType = contentType; }
+
     public Fetch(URL from) {
         this.from = from;
     }
@@ -71,6 +75,10 @@ public class Fetch implements Operation {
         HttpURLConnection connection = (HttpURLConnection) from.openConnection();
         connection.setRequestMethod(method);
         connection.setDoOutput(true);
+        if (contentType == null)
+            contentType = "text/plain; charset=utf8";
+        connection.setRequestProperty("Content-Type", contentType);
+
         try (OutputStream urlOut = connection.getOutputStream()) {
             urlOut.write(request.getBytes());
             urlOut.flush();
