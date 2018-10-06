@@ -38,8 +38,9 @@ public class PropertyNames {
     // If true, then will save datetime/timestamp using microsecond precision - Depends on declaring table columns correctly
     public static final String MDW_DB_MICROSECOND_PRECISION = "mdw.database.microsecond.precision";
     // for embedded db
-    public static final String MDW_DB_BASE_LOC = "mdw.db.base.location";
-    public static final String MDW_DB_DATA_LOC = "mdw.db.data.location";
+    public static final String MDW_EMBEDDED_DB_BASE_LOC = "mdw.db.base.location";
+    public static final String MDW_EMBEDDED_DB_DATA_LOC = "mdw.db.data.location";
+    public static final String MDW_EMBEDDED_DB_STARTUP = "mdw.db.startup";
 
     // thread pool
     public static final String MDW_THREADPOOL_CORE_THREADS = "mdw.threadpool.core_threads";
