@@ -45,10 +45,12 @@ title: MDW Configuration
       # log all queries and timings 
       trace: false  # default=false
     
-    # embedded database
-    db.embedded.server: localhost:8080
+    # embedded db
     db.base.location: ../data  # default=assetLoc + "/../data/db"
     db.data.location: ../data/mdw  # default=assetLoc + "/../data/mdw"
+    db.startup:  # extra startup params (default = none)
+      - --general_log=1
+      - --general_log_file=/var/log/mysql-queries.log
     
     # optional mongodb (requires asset package com.centurylink.mdw.mongo)
     mongodb:

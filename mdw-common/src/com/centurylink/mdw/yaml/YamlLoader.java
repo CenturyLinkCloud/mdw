@@ -70,7 +70,7 @@ public class YamlLoader {
     }
 
     public List getList(String name, Map source) {
-        Object obj = name.isEmpty() ? source : ((Map)source).get(name);
+        Object obj = name.isEmpty() ? source : source.get(name);
         if (obj == null)
             return null;
         if (!(obj instanceof List))

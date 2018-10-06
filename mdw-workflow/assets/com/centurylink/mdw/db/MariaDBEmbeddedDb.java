@@ -15,27 +15,24 @@
  */
 package com.centurylink.mdw.db;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.Scanner;
-
+import ch.vorburger.mariadb4j.DB;
+import ch.vorburger.mariadb4j.DBConfiguration;
+import ch.vorburger.mariadb4j.DBConfigurationBuilder;
+import ch.vorburger.mariadb4j.Util;
 import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.container.EmbeddedDb;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.util.file.ZipHelper;
 
-import ch.vorburger.mariadb4j.DB;
-import ch.vorburger.mariadb4j.DBConfiguration;
-import ch.vorburger.mariadb4j.DBConfigurationBuilder;
-import ch.vorburger.mariadb4j.Util;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.sql.*;
+import java.util.List;
+import java.util.Scanner;
 
 public class MariaDBEmbeddedDb implements EmbeddedDb {
 
@@ -69,6 +66,12 @@ public class MariaDBEmbeddedDb implements EmbeddedDb {
         binariesSubLoc = DBConfigurationBuilder.class.getPackage().getName().replace('.', '/') + "/" + dbVer + "/" + os;
         configBuilder.setUnpackingFromClasspath(false); // we'll unpack it ourselves
         configBuilder.addArg("--lower-case-table-names=1");
+        List<String> addlParams = PropertyManager.getInstance().getListProperty(PropertyNames.MDW_EMBEDDED_DB_STARTUP);
+        if (addlParams != null) {
+            for (String param : addlParams) {
+                configBuilder.addArg(param);
+            }
+        }
         config = configBuilder.build();
     }
 

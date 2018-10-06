@@ -121,9 +121,6 @@ public class DatabaseAccess {
      * @param database_name either a data source name
      *         or JDBC URL. It can also be null, in which
      *         case the default MDW data source is used
-     * @param context EJB context. When it is not null,
-     *         transaction is handled by the EJB, which must
-     *         be configured with container managed transactions
      */
     public DatabaseAccess(String database_name) {
         if (database_name == null) {
@@ -187,10 +184,10 @@ public class DatabaseAccess {
             String assetLoc = PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION);
             if (assetLoc == null)
                 throw new SQLException("Missing property required for embedded db: " + PropertyNames.MDW_ASSET_LOCATION);
-            String baseLoc = PropertyManager.getProperty(PropertyNames.MDW_DB_BASE_LOC);
+            String baseLoc = PropertyManager.getProperty(PropertyNames.MDW_EMBEDDED_DB_BASE_LOC);
             if (baseLoc == null)
                 baseLoc = assetLoc + "/../data/db";
-            String dataLoc = PropertyManager.getProperty(PropertyNames.MDW_DB_DATA_LOC);
+            String dataLoc = PropertyManager.getProperty(PropertyNames.MDW_EMBEDDED_DB_DATA_LOC);
             if (dataLoc == null)
                 dataLoc = assetLoc + "/../data/mdw";
             embedded = new EmbeddedDataAccess();
