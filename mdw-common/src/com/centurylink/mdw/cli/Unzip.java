@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 CenturyLink, Inc.
+ * Copyright (C) 2018 CenturyLink, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,15 +59,16 @@ public class Unzip implements Operation {
         try (ZipFile zip = new ZipFile(zipFile)) {
             Enumeration<? extends ZipEntry> entries = zip.entries();
             List<String> cleanedUpDirEntries = new ArrayList<>();
-
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
                 String entryName = entry.getName();
                 boolean overwriteEntry = overwrite;
                 int curlyStart = entryName.indexOf("{{");
+                boolean hasOption = false;
                 if (curlyStart >= 0 && entryName.length() > curlyStart + 2) {
                     int curlyEnd = entryName.indexOf("}}", curlyStart + 2);
                     if (curlyEnd >= curlyStart) {
+                        hasOption = true;
                         String option = entryName.substring(curlyStart + 2, curlyEnd);
                         // if entryName consists only of option then its dir will have already been created
                         if (entryName.equals("{{" + option + "}}/") || optionsCheck == null || !optionsCheck.test(option)) {
@@ -75,7 +76,7 @@ public class Unzip implements Operation {
                         }
                         else {
                             entryName = entryName.substring(0, curlyStart) + entryName.substring(curlyEnd + 3);
-                            overwriteEntry = true; // allow options to overwrite previously-created files (TODO: okay?)
+                            overwriteEntry = true; // allow options to overwrite previously-created templated files
                         }
                     }
                 }
@@ -87,12 +88,14 @@ public class Unzip implements Operation {
                     Files.createDirectories(Paths.get(outfile.getPath()));
                 }
                 else {
-                    // delete parent directory's files if any (only once per dir)
-                    if (overwriteEntry && entryName.contains("/")) {
-                        String parentEntry = entryName.substring(0, entryName.lastIndexOf('/') + 1);
-                        if (!cleanedUpDirEntries.contains(parentEntry)) {
-                            deleteFiles(outfile.getParentFile());
-                            cleanedUpDirEntries.add(parentEntry);
+                    if (!hasOption) {
+                        // delete parent directory's files if any (only once per dir)
+                        if (overwriteEntry && entryName.contains("/")) {
+                            String parentEntry = entryName.substring(0, entryName.lastIndexOf('/') + 1);
+                            if (!cleanedUpDirEntries.contains(parentEntry)) {
+                                deleteFiles(outfile.getParentFile());
+                                cleanedUpDirEntries.add(parentEntry);
+                            }
                         }
                     }
                     InputStream is = null;

@@ -40,7 +40,8 @@ Get up and running with MDW in a hurry.
   [spin up your own](http://centurylinkcloud.github.io/mdw/docs/guides/mdw-cookbook/).  
   To host these services MDW relies on a Java Servlet container.  Your options are:
   1. Use the self-contained [MDW Spring Boot jar](../../guides/spring-boot/#1-self-contained-boot-jar)
-  2. Build your own [Custom Spring Boot jar](../../guides/spring-boot/#2-mdw-as-a-spring-boot-dependency)
+  2. Build your own [Custom Spring Boot jar](../../guides/spring-boot/#2-mdw-as-a-spring-boot-dependency)  
+     Note: To create a project that works this way, rerun `mdw init` with the `--spring-boot` option.
   3. Install [Apache Tomcat (or Jetty)](../../guides/tomcat)
   4. Use the prebuilt MDW [Docker image](../../guides/docker).
   

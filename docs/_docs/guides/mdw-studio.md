@@ -35,11 +35,19 @@ that enables you to create workflow processes and other assets.
       - Preferences/Settings > Plugins > Search for "MDW" > Click link "Search in Repositories"
       - Select "MDW Studio":
         ![Install](../images/studio/install.png)
-      - Click Install and then Restart
+      - Lastly, click Install and then Restart
     - Snapshot release
       - Add the Beta plugin repository in IntelliJ
         - Preferences/Settings > Plugins > Browse Repositories > Manage Repositories > + > {% include copyToClipboard.html text="https://plugins.jetbrains.com/plugins/Beta/list" %}
         - Search for "MDW" and click Install
   
 ### 1.2 Create and open a project
-  - 
+  - **Run the New Project wizard**
+    - Launch IntelliJ.
+    - From the welcome screen, select Create New Project (or from the menu: File > New > Project).
+    - Select the MDW project type and optionally add Groovy and/or Kotlin support.  At least Kotlin is recommended.
+      ![New Project](../images/studio/new-project.png)
+    - Click Next and enter your MDW initialization options
+      ![New Project MDW](../images/studio/new-project-mdw.png)
+    - On the last wizard page, enter your project name and location and click Finish.
+      ![New Project Name](../images/studio/new-project-name.png)

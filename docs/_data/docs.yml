@@ -10,6 +10,10 @@
   - getting-started/cli
   - guides/mdw-cookbook
   
+- title: MDW Studio
+  docs:
+  - guides/mdw-studio
+
 - title: Guides
   docs:
   - guides/tomcat
@@ -21,15 +25,6 @@
   - guides/mdw-mobile
   - guides/dashboard
   
-- title: MDW Studio
-  docs:
-  - guides/mdw-studio
-
-- title: Designer
-  docs:
-  - getting-started/install-designer
-  - designer/user-guide
-
 - title: Workflow
   docs:
   - workflow/terminology
@@ -43,6 +38,11 @@
   - link-to-demo
   - guides/tuning
   - releases
+
+- title: Designer
+  docs:
+  - getting-started/install-designer
+  - designer/user-guide
 
 - title: Presentations
   docs:

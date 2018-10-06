@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 CenturyLink, Inc.
+ * Copyright (C) 2018 CenturyLink, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,10 +31,6 @@ public class Init extends Setup {
      */
     private boolean allowExisting = false;
 
-    private boolean runUpdate = true;
-    public boolean isRunUpdate() { return runUpdate; }
-    public void setRunUpdate(boolean runUpdate) { this.runUpdate = runUpdate; }
-
     public Init(File projectDir) {
         super(projectDir);
         project = projectDir.getName();
@@ -54,24 +50,29 @@ public class Init extends Setup {
     public void setUser(String user) { this.user = user; }
 
     @Parameter(names="--eclipse", description="Generate Eclipse workspace artifacts")
-    private boolean eclipse = false;
+    private boolean eclipse;
     public boolean isEclipse() { return eclipse; }
     public void setEclipse(boolean eclipse) { this.eclipse = eclipse; }
 
     @Parameter(names="--maven", description="Generate a Maven pom.xml build file")
-    private boolean maven = false;
+    private boolean maven;
     public boolean isMaven() { return maven; }
     public void setMaven(boolean maven) { this.maven = maven; }
 
     @Parameter(names="--cloud-foundry", description="Generate a Cloud Foundry manifest.yml file")
-    private boolean cloudFoundry = false;
+    private boolean cloudFoundry;
     public boolean isCloudFoundry() { return cloudFoundry; }
     public void setCloudFoundry(boolean cloudFoundry) { this.cloudFoundry = cloudFoundry; }
 
-    @Parameter(names="--spring-boot", description="Generate Spring Boot build artifacts")
-    private boolean springBoot = true;
+    @Parameter(names="--spring-boot", description="Spring Boot artifact generation")
+    private boolean springBoot;
     public boolean isSpringBoot() { return springBoot; }
     public void setSpringBoot(boolean springBoot) { this.springBoot = springBoot; }
+
+    @Parameter(names="--no-update", description="Suppress base asset download")
+    private boolean noUpdate;
+    public boolean isNoUpdate() { return noUpdate; }
+    public void setNoUpdate(boolean noUpdate) { this.noUpdate = noUpdate; }
 
     @Override
     public File getProjectDir() {
@@ -99,10 +100,18 @@ public class Init extends Setup {
         if (sourceGroup == null)
             sourceGroup = "com.example." + getProjectDir().getName();
 
-        String templatesUrl = getTemplatesUrl();
-        System.out.println("Retrieving templates: " + templatesUrl);
         File tempZip = Files.createTempFile("mdw-templates", ".zip").toFile();
-        new Download(new URL(templatesUrl), tempZip).run(progressMonitors);
+        tempZip.deleteOnExit();
+        if (templateDir == null) {
+            String templatesUrl = getTemplatesUrl();
+            System.out.println("Retrieving templates: " + templatesUrl);
+            new Download(new URL(templatesUrl), tempZip).run(progressMonitors);
+        }
+        else {
+            System.out.println("Using templates from: " + templateDir);
+            System.out.println("TEMP ZIP: " + tempZip);
+            new Zip(new File(templateDir), tempZip).run(progressMonitors);
+        }
         new Unzip(tempZip, getProjectDir(), false, opt -> {
             Object value = getValue(opt);
             return value == null ? false : Boolean.valueOf(value.toString());
@@ -113,10 +122,12 @@ public class Init extends Setup {
         if (isSnapshots())
             updateBuildFile();
         new File(getProjectDir() + "/src/main/java").mkdirs();
-        if (runUpdate) {
+        if (!isNoUpdate()) {
             Update update = new Update(getProjectDir());
             update.setSnapshots(isSnapshots());
             update.setMdwVersion(getMdwVersion());
+            if (!new File(getAssetLoc()).isAbsolute())
+                update.setAssetLoc(getProjectDir().getName() + "/" + getAssetLoc());
             update.run(progressMonitors);
         }
         else {
