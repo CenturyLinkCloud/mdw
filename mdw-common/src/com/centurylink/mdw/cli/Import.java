@@ -341,6 +341,8 @@ public class Import extends Setup {
     protected void importPackageFromMaven(String groupId, String artifactId, String version,
             ProgressMonitor... monitors) throws IOException {
         File assetDir = new File(getAssetLoc());
+        if (!assetDir.exists() && !assetDir.mkdirs())
+            throw new IOException("Cannot create asset dir: " + assetDir);
         String url = "http://search.maven.org/remotecontent?filepath=";
         String pkg = groupId.replace("assets", "") + artifactId.replace('-', '.');
         File tempZip = Files.createTempFile("central-discovery", ".zip").toFile();
@@ -360,6 +362,8 @@ public class Import extends Setup {
 
     protected void importSnapshotPackage(String pkg, ProgressMonitor... monitors) throws IOException {
         File assetDir = new File(getAssetLoc());
+        if (!assetDir.exists() && !assetDir.mkdirs())
+            throw new IOException("Cannot create asset dir: " + assetDir);
         String url = SONATYPE_URL + "/redirect?r=snapshots&g=com.centurylink.mdw.assets&a="
                 + pkg.replace("com.centurylink.mdw.", "").replace('.', '-') + "&v=LATEST&p=zip";
         List<String> pkgs = new ArrayList<>();
