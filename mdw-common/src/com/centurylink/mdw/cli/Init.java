@@ -136,6 +136,16 @@ public class Init extends Setup {
                 throw new IOException("Unable to create asset root: " + getAssetRoot());
             }
         }
+        if (isMaven()) {
+            File buildGradle = new File(getProjectDir() + "/build.gradle");
+            if (buildGradle.exists())
+                buildGradle.delete();
+        }
+        else {
+            File pomXml = new File(getProjectDir() + "/pom.xml");
+            if (pomXml.exists())
+                pomXml.delete();
+        }
         return this;
     }
 

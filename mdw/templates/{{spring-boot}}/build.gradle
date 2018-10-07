@@ -1,3 +1,5 @@
+import com.centurylink.mdw.util.file.Packages
+
 buildscript {
     repositories {
         mavenCentral()
@@ -40,8 +42,8 @@ dependencies {
 bootJar {
     // Exclude assets from packaging to preserve mdw dynamicism
     // (do not overlap packages between src/main/java and assets).
-    def packages = new com.centurylink.mdw.util.file.Packages(file(assetLoc))
+    def assetPackages = Packages(file(assetLoc))
     exclude {
-        packages.isAssetOutput(it.relativePath.toString())
+        assetPackages.isAssetOutput(it.relativePath.toString())
     }
 }
