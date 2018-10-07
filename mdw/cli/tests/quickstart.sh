@@ -23,12 +23,12 @@ NO_UPDATE="--no-update"
   [ "$status" -ne 0 ]
 }
 
-@test "install" {
-  rm -rf install-mdw
-  mdw init install-mdw --mdw-version=6.1.09 $NO_UPDATE $TEMPLATE_DIR
-  cd install-mdw
-  mdw install
-  ls mdw-boot-6.1.09.jar
+@test "maven" {
+  rm -rf maven-mdw
+  mdw init maven-mdw --maven $NO_UPDATE $TEMPLATE_DIR
+  ls maven-mdw/pom.xml
+  run ls maven-mdw/build.gradle
+  [ "$status" -ne 0 ]
 }
 
 @test "spring boot init" {
@@ -38,5 +38,15 @@ NO_UPDATE="--no-update"
   ls spring-boot-mdw/config/application.yml
   ls spring-boot-mdw/config/mdw.yaml
   cat spring-boot-mdw/build.gradle | grep "compile group: 'com.centurylink.mdw', name: 'mdw-spring-boot', version: mdwVersion"
+  run ls spring-boot-mdw/pom.xml
+  [ "$status" -ne 0 ]
+}
+
+@test "install" {
+  rm -rf install-mdw
+  mdw init install-mdw --mdw-version=6.1.09 $NO_UPDATE $TEMPLATE_DIR
+  cd install-mdw
+  mdw install
+  ls mdw-boot-6.1.09.jar
 }
 

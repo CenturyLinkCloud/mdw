@@ -3,10 +3,27 @@ permalink: /docs/guides/configuration/
 title: MDW Configuration
 ---
 
-## location
-  - Specify your config directory via the `-Dmdw.config.location` system property.
-  
+## project.yaml
+  - Used at design-time by [MDW Studio](../mdw-studio/) and the [CLI](../../getting-started/cli/).
+  - Belongs in the root directory of your project (or root module for multi-module builds).
+  - Contains bootstrap information to locate [mdw.yaml](#mdw-yaml) and project assets.
+  - Not used at runtime.   
+    ```yaml
+    # paths are relative to the location of this file
+    mdw:
+      version: 6.1.10
+    
+    asset:
+      location: assets
+    
+    config:
+      location: config
+    
+    ```
+
 ## mdw.yaml
+  - Used at runtime by the MDW server.
+  - Specify your config directory via the `-Dmdw.config.location` system property.
   - To convert from old-style mdw.properties to mdw.yaml, run the [CLI](../../getting-started/cli/) command `mdw convert`.
   - Here's an annotated example describing MDW's configuration options:   
     (**Please** do not use this as a starting point as it contains inappropriate/non-default values for illustration.  
