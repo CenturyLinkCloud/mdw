@@ -25,7 +25,7 @@ permalink: /docs/guides/
       <p>
         MDW as a standalone executable jar
        </p>
-      <a href="spring-boot/">Spring Boot Guide &rarr;</a>
+      <a href="spring-boot/">Spring Boot &rarr;</a>
     </div>
     <div class="unit one-fourth">
       <h2>Docker</h2>
