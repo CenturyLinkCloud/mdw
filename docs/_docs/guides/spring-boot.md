@@ -58,3 +58,9 @@ title: Spring Boot
       compileOnly fileTree(dir: "${assetLoc}", includes: ["**/*.jar"])
   }
   ```  
+  
+  Notice the compileOnly `fileTree` dependency on jar files among your assets.  This is to enable IDE code completion and syntax highlighting
+  for classes in your asset jars (assuming your IDE bases its dependency resolution on Gradle or Maven).  The reason for **compileOnly** is so
+  that these jars do not get bundled into your generated boot jar, which would defeat the purpose of treating them as dynamic assets.
+  
+   
