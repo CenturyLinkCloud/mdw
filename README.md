@@ -33,7 +33,7 @@
 4a. Build in IntelliJ IDEA
    - Run IntelliJ IDEA Community Edition
    - Select Open Project and browse to mdw/mdw
-   - Build > Rebuild Project
+   - In the Gradle tool window, execute the buildDev task.
 
 4b. Build in Eclipse
    - Window > Show View > Other > Gradle  > Gradle Tasks.
