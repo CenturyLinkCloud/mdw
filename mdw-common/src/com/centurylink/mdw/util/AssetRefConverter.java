@@ -26,8 +26,12 @@ import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 public class AssetRefConverter {
+
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     public static Process getProcess(AssetRef assetRef) throws Exception {
         Process proc = null;
@@ -83,9 +87,10 @@ public class AssetRefConverter {
         return taskVO;
     }
 
-    private static byte[] readAsset(AssetRef assetRef) throws Exception {
+    private static byte[] readAsset(AssetRef assetRef) {
         byte[] contentBytes = null;
         if (assetRef != null) {
+            try {
             LoaderPersisterVcs lp = (LoaderPersisterVcs)DataAccess.getProcessLoader();
             VersionControlGit vc = (VersionControlGit)lp.getVersionControl();
             String tempName = assetRef.getName().substring(0, assetRef.getName().lastIndexOf(" v"));
@@ -93,6 +98,10 @@ public class AssetRefConverter {
             tempName = tempName.substring(0, fileExtIdx).replace('.', '/');
             String path = getMissingPath(lp.getStorageDir(), "") + tempName + assetRef.getName().substring(0, assetRef.getName().lastIndexOf(" v")).substring(fileExtIdx);
             contentBytes = vc.readFromCommit(assetRef.getRef(), path);
+            }
+            catch (Throwable ex) {
+                logger.severeException("Exception trying to read asset from Git: " + assetRef.getName(), ex);
+            }
         }
         return contentBytes;
     }
