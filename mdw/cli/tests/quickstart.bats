@@ -49,10 +49,11 @@ NO_UPDATE="--no-update"
 }
 
 @test "install" {
+  MDW_VERSION="6.1.09"
   rm -rf install-mdw
-  mdw init install-mdw --mdw-version=6.1.09 $NO_UPDATE $TEMPLATE_DIR
+  mdw init install-mdw --mdw-version=${MDW_VERSION} $NO_UPDATE $TEMPLATE_DIR
   cd install-mdw
   mdw install
-  ls mdw-boot-6.1.09.jar
+  ls mdw-boot-${MDW_VERSION}.jar
 }
 

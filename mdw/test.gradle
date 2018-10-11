@@ -42,10 +42,7 @@ task cliTests(type: Exec) {
     }
     environment << [MDW_HOME: '../', PATH: "${environment.PATH}:../bin:../bats/bin"]
     workingDir './cli/tests'
-    def cmd = file('./cli/tests').list().findAll { it.endsWith('.sh') }.inject('') { acc, val ->
-        acc == '' ? './' + val : acc + ';./' + val
-    }
-    commandLine 'sh', '-c', cmd
+    commandLine 'bats', '.'
 }
 
 task runTests(type: Exec) {
