@@ -35,23 +35,31 @@ task stop(type: Exec) {
     }
 }
 
+// CLI tests do not cover 'mdw run' or 'mdw test' as these are exercised by runTests.
+task cliTests(type: Exec) {
+    doFirst {
+        println 'Running CLI Tests...'
+    }
+    environment << [MDW_HOME: '../']
+    workingDir './cli/tests'
+    def cmd = file('./cli/tests').list().findAll { it.endsWith('.sh') }.inject('') { acc, val ->
+        acc == '' ? './' + val : acc + ';./' + val
+    }
+    commandLine 'sh', '-c', cmd
+}
+
 task runTests(type: Exec) {
-    def cmds = [getMdwCmd(), 'test', '--stubbing', '--threads=10']
-    
-    if (project.hasProperty('include'))
-        cmds.add('--include=' + include)
-    if (project.hasProperty('exclude'))
-        cmds.add('--exclude=' + exclude)
-    if (project.hasProperty('ignore'))
-        cmds.add('--ignore=' + ignore)
-    
-    commandLine cmds
+    def cmd = [getMdwCmd(), 'test', '--stubbing', '--threads=10',
+        '--include="**/*.test"',
+        '--exclude="com/centurylink/mdw/kafka/KafkaProducer.test,com/centurylink/mdw/tests/workflow/LdapAdapter.test,com/centurylink/mdw/tests/services/InflightHandling.test"'
+    ]
+    commandLine = cmd
     ignoreExitValue true
     doLast {
         testSuccess = (execResult.exitValue == 0)
     }
 }
-task test(dependsOn: [start, runTests, stop]) {
+task test(dependsOn: [cliTests, start, runTests, stop]) {
 }
 runTests.mustRunAfter start
 stop.mustRunAfter runTests

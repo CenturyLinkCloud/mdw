@@ -3,8 +3,25 @@
 # Tests the quickstart steps:
 # http://centurylinkcloud.github.io/mdw/docs/getting-started/quick-start/
 
+setup() {
+    if [ "${BATS_TEST_NUMBER}" = 1 ];then
+        echo "# $(basename ${BATS_TEST_FILENAME})" >&3
+    fi
+}
+
 TEMPLATE_DIR="--template-dir=../../templates"
 NO_UPDATE="--no-update"
+
+@test "spring boot init" {
+  rm -rf spring-boot-mdw
+  mdw init spring-boot-mdw --spring-boot $NO_UPDATE $TEMPLATE_DIR
+  ls spring-boot-mdw/src/main/java/com/example/MyApplication.java
+  ls spring-boot-mdw/config/application.yml
+  ls spring-boot-mdw/config/mdw.yaml
+  cat spring-boot-mdw/build.gradle | grep "compile group: 'com.centurylink.mdw', name: 'mdw-spring-boot', version: mdwVersion"
+  run ls spring-boot-mdw/pom.xml
+  [ "$status" -ne 0 ]
+}
 
 @test "plain init" {
   rm -rf plain-mdw
@@ -28,17 +45,6 @@ NO_UPDATE="--no-update"
   mdw init maven-mdw --maven $NO_UPDATE $TEMPLATE_DIR
   ls maven-mdw/pom.xml
   run ls maven-mdw/build.gradle
-  [ "$status" -ne 0 ]
-}
-
-@test "spring boot init" {
-  rm -rf spring-boot-mdw
-  mdw init spring-boot-mdw --spring-boot $NO_UPDATE $TEMPLATE_DIR
-  ls spring-boot-mdw/src/main/java/com/example/MyApplication.java
-  ls spring-boot-mdw/config/application.yml
-  ls spring-boot-mdw/config/mdw.yaml
-  cat spring-boot-mdw/build.gradle | grep "compile group: 'com.centurylink.mdw', name: 'mdw-spring-boot', version: mdwVersion"
-  run ls spring-boot-mdw/pom.xml
   [ "$status" -ne 0 ]
 }
 

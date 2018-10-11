@@ -40,29 +40,24 @@ import com.centurylink.mdw.model.workflow.Process;
 public class Export extends Setup {
     @Parameter(names = "--process", description = "Process to be exported.")
     private String process;
-
     public String getProcess() {
         return process;
     }
-
     public void setProcess(String proc) {
         this.process = proc;
     }
 
     @Parameter(names = "--format", description = "Format to be exported (bpmn, png or html)")
-    private String format = "bpmn";
-
+    private String format;
     public String getFormat() {
         return format;
     }
-
     public void setFormat(String format) {
         this.format = format;
     }
 
     @Parameter(names = "--output", description = "Filename of the exported output")
     private File output;
-
     public File getOutput() {
         return output;
     }
@@ -73,13 +68,6 @@ public class Export extends Setup {
 
     public Export run(ProgressMonitor... monitors) throws IOException {
 
-        ProcessExporter exporter = getProcessExporter();
-        List<Dependency> dependencies = exporter.getDependencies();
-        if (dependencies != null) {
-            for (Dependency dependency : dependencies) {
-                dependency.run(monitors);
-            }
-        }
         int index = process.lastIndexOf('/');
         String pkg = process.substring(0, index);
         String pkgFile = getAssetRoot() + "/" + pkg.replace('.', '/') + "/";
@@ -89,13 +77,29 @@ public class Export extends Setup {
         proc.setName(procName.substring(0, procName.length() - 5));
 
         if (output == null) {
-            output = new File(
-                    pkgFile + procName.substring(0, procName.length() - 5) + "." + format);
+            output = new File(pkgFile + procName.substring(0, procName.length() - 5) + "." + format);
         }
         else {
+            if (format == null) {
+                int lastDot = output.getName().lastIndexOf('.');
+                if (lastDot > 0 && lastDot < output.getName().length() - 1) {
+                    format = output.getName().substring(lastDot + 1);
+                }
+                else {
+                    format = "bpmn";
+                }
+            }
             File fileDir = output.getParentFile();
-            if (!fileDir.mkdirs())
+            if (!fileDir.exists() && !fileDir.mkdirs())
                 throw new IOException("Unable to create directory: " + fileDir);
+        }
+
+        ProcessExporter exporter = getProcessExporter();
+        List<Dependency> dependencies = exporter.getDependencies();
+        if (dependencies != null) {
+            for (Dependency dependency : dependencies) {
+                dependency.run(monitors);
+            }
         }
 
         if (exporter instanceof HtmlProcessExporter) {

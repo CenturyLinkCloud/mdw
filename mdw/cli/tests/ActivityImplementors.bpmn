@@ -1,0 +1,230 @@
+<definitions targetNamespace="http://www.omg.org/spec/BPMN/20100524/MODEL" typeLanguage="http://www.java.com/javaTypes" xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:di="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di1="http://www.omg.org/spec/DD/20100524/DI">
+  <process id="MainProcess" name="ActivityImplementors" isExecutable="true">
+    <extensionElements>
+      <mdw:ProcessExtensions xmlns:mdw="http://mdw.centurylink.com/bpm">
+        <mdw:Attribute name="NodeStyle">BoxIcon</mdw:Attribute>
+        <mdw:Attribute name="ArrowStyle">ArrowEnd</mdw:Attribute>
+        <mdw:Attribute name="WORK_DISPLAY_INFO">x=39,y=79,w=202,h=26</mdw:Attribute>
+        <mdw:Attribute name="PROCESS_VISIBILITY">PUBLIC</mdw:Attribute>
+        <mdw:Variable category="LOCAL" dispaySequence="0" name="updated">
+          <mdw:type name="java.lang.String"/>
+        </mdw:Variable>
+        <mdw:Variable category="LOCAL" dispaySequence="0" name="invader">
+          <mdw:type name="java.lang.String"/>
+        </mdw:Variable>
+        <mdw:Variable category="INPUT" dispaySequence="0" name="testCase">
+          <mdw:type name="java.lang.String"/>
+        </mdw:Variable>
+      </mdw:ProcessExtensions>
+    </extensionElements>
+    <startEvent id="A1" name="Start">
+      <extensionElements>
+        <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
+          <mdw:Attribute name="Implementor">com.centurylink.mdw.workflow.activity.process.ProcessStartActivity</mdw:Attribute>
+        </mdw:Attributes>
+      </extensionElements>
+    </startEvent>
+    <serviceTask id="A3" name="Which?">
+      <extensionElements>
+        <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
+          <mdw:Attribute name="Implementor">com.centurylink.mdw.tests.cloud.WhichActivity</mdw:Attribute>
+        </mdw:Attributes>
+      </extensionElements>
+    </serviceTask>
+    <serviceTask id="A4" name="Java
+Activity">
+      <extensionElements>
+        <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
+          <mdw:Attribute name="Implementor">com.centurylink.mdw.tests.cloud.JavaActivity</mdw:Attribute>
+        </mdw:Attributes>
+      </extensionElements>
+    </serviceTask>
+    <serviceTask id="A5" name="Kotlin
+Activity">
+      <extensionElements>
+        <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
+          <mdw:Attribute name="Implementor">com.centurylink.mdw.tests.cloud.KotlinActivity</mdw:Attribute>
+        </mdw:Attributes>
+      </extensionElements>
+    </serviceTask>
+    <serviceTask id="A6" name="Java Invader">
+      <extensionElements>
+        <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
+          <mdw:Attribute name="Implementor">com.centurylink.mdw.tests.cloud.JavaInvader</mdw:Attribute>
+          <mdw:Attribute name="Invader">Dr. Soran</mdw:Attribute>
+          <mdw:Attribute name="Planet">Neptune</mdw:Attribute>
+        </mdw:Attributes>
+      </extensionElements>
+    </serviceTask>
+    <serviceTask id="A7" name="Kotlin Invader">
+      <extensionElements>
+        <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
+          <mdw:Attribute name="Implementor">com.centurylink.mdw.tests.cloud.KotlinInvader</mdw:Attribute>
+          <mdw:Attribute name="Invader">Gul Dukat</mdw:Attribute>
+          <mdw:Attribute name="Planet">Jupiter</mdw:Attribute>
+        </mdw:Attributes>
+      </extensionElements>
+    </serviceTask>
+    <endEvent id="A8" name="Stop">
+      <extensionElements>
+        <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
+          <mdw:Attribute name="Implementor">com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity</mdw:Attribute>
+        </mdw:Attributes>
+      </extensionElements>
+    </endEvent>
+    <endEvent id="A9" name="Stop">
+      <extensionElements>
+        <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
+          <mdw:Attribute name="Implementor">com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity</mdw:Attribute>
+        </mdw:Attributes>
+      </extensionElements>
+    </endEvent>
+    <sequenceFlow id="T1" name="" sourceRef="A1" targetRef="A3">
+      <extensionElements>
+        <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
+          <mdw:Attribute name="Event">2</mdw:Attribute>
+          <mdw:Attribute name="TRANSITION_DISPLAY_INFO">type=Elbow,lx=314</mdw:Attribute>
+          <mdw:Attribute name="TransitionDelayUnit">m</mdw:Attribute>
+        </mdw:Attributes>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="T2" name="java" sourceRef="A3" targetRef="A4">
+      <extensionElements>
+        <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
+          <mdw:Attribute name="Event">2</mdw:Attribute>
+          <mdw:Attribute name="TRANSITION_DISPLAY_INFO">type=Elbow,lx=155</mdw:Attribute>
+          <mdw:Attribute name="TransitionDelayUnit">m</mdw:Attribute>
+        </mdw:Attributes>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="T3" name="java pagelet" sourceRef="A3" targetRef="A6">
+      <extensionElements>
+        <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
+          <mdw:Attribute name="Event">2</mdw:Attribute>
+          <mdw:Attribute name="TRANSITION_DISPLAY_INFO">type=Elbow,lx=228</mdw:Attribute>
+          <mdw:Attribute name="TransitionDelayUnit">m</mdw:Attribute>
+        </mdw:Attributes>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="T4" name="kotlin" sourceRef="A3" targetRef="A5">
+      <extensionElements>
+        <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
+          <mdw:Attribute name="Event">2</mdw:Attribute>
+          <mdw:Attribute name="TRANSITION_DISPLAY_INFO">type=Elbow,lx=461</mdw:Attribute>
+          <mdw:Attribute name="TransitionDelayUnit">m</mdw:Attribute>
+        </mdw:Attributes>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="T5" name="kotlin pagelet" sourceRef="A3" targetRef="A7">
+      <extensionElements>
+        <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
+          <mdw:Attribute name="Event">2</mdw:Attribute>
+          <mdw:Attribute name="TRANSITION_DISPLAY_INFO">type=Elbow,lx=339</mdw:Attribute>
+          <mdw:Attribute name="TransitionDelayUnit">m</mdw:Attribute>
+        </mdw:Attributes>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="T7" name="" sourceRef="A4" targetRef="A8">
+      <extensionElements>
+        <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
+          <mdw:Attribute name="Event">2</mdw:Attribute>
+          <mdw:Attribute name="TRANSITION_DISPLAY_INFO">type=Elbow,lx=67</mdw:Attribute>
+          <mdw:Attribute name="TransitionDelayUnit">m</mdw:Attribute>
+        </mdw:Attributes>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="T9" name="" sourceRef="A5" targetRef="A9">
+      <extensionElements>
+        <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
+          <mdw:Attribute name="Event">2</mdw:Attribute>
+          <mdw:Attribute name="TRANSITION_DISPLAY_INFO">type=Elbow,lx=600</mdw:Attribute>
+          <mdw:Attribute name="TransitionDelayUnit">m</mdw:Attribute>
+        </mdw:Attributes>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="T6" name="Neptune" sourceRef="A6" targetRef="A8">
+      <extensionElements>
+        <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
+          <mdw:Attribute name="Event">2</mdw:Attribute>
+          <mdw:Attribute name="TRANSITION_DISPLAY_INFO">type=Elbow,lx=112</mdw:Attribute>
+          <mdw:Attribute name="TransitionDelayUnit">m</mdw:Attribute>
+        </mdw:Attributes>
+      </extensionElements>
+    </sequenceFlow>
+    <sequenceFlow id="T8" name="Jupiter" sourceRef="A7" targetRef="A9">
+      <extensionElements>
+        <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
+          <mdw:Attribute name="Event">2</mdw:Attribute>
+          <mdw:Attribute name="TRANSITION_DISPLAY_INFO">type=Elbow,lx=524</mdw:Attribute>
+          <mdw:Attribute name="TransitionDelayUnit">m</mdw:Attribute>
+        </mdw:Attributes>
+      </extensionElements>
+    </sequenceFlow>
+  </process>
+  <di:BPMNDiagram>
+    <di:BPMNPlane bpmnElement="MainProcess">
+      <di:BPMNShape bpmnElement="A1">
+        <dc:Bounds x="284.0" y="28.0" width="60.0" height="40.0"/>
+      </di:BPMNShape>
+      <di:BPMNShape bpmnElement="A3">
+        <dc:Bounds x="284.0" y="133.0" width="60.0" height="40.0"/>
+      </di:BPMNShape>
+      <di:BPMNShape bpmnElement="A4">
+        <dc:Bounds x="36.0" y="204.0" width="60.0" height="40.0"/>
+      </di:BPMNShape>
+      <di:BPMNShape bpmnElement="A5">
+        <dc:Bounds x="572.0" y="192.0" width="60.0" height="40.0"/>
+      </di:BPMNShape>
+      <di:BPMNShape bpmnElement="A6">
+        <dc:Bounds x="181.0" y="318.0" width="100.0" height="60.0"/>
+      </di:BPMNShape>
+      <di:BPMNShape bpmnElement="A7">
+        <dc:Bounds x="375.0" y="384.0" width="100.0" height="60.0"/>
+      </di:BPMNShape>
+      <di:BPMNShape bpmnElement="A8">
+        <dc:Bounds x="38.0" y="323.0" width="60.0" height="40.0"/>
+      </di:BPMNShape>
+      <di:BPMNShape bpmnElement="A9">
+        <dc:Bounds x="569.0" y="310.0" width="60.0" height="40.0"/>
+      </di:BPMNShape>
+      <di:BPMNEdge bpmnElement="T1">
+        <di1:waypoint x="314.0" y="71.0"/>
+        <di1:waypoint x="314.0" y="129.0"/>
+      </di:BPMNEdge>
+      <di:BPMNEdge bpmnElement="T2">
+        <di1:waypoint x="280.0" y="153.0"/>
+        <di1:waypoint x="101.0" y="224.0"/>
+      </di:BPMNEdge>
+      <di:BPMNEdge bpmnElement="T3">
+        <di1:waypoint x="314.0" y="177.0"/>
+        <di1:waypoint x="230.0" y="314.0"/>
+      </di:BPMNEdge>
+      <di:BPMNEdge bpmnElement="T4">
+        <di1:waypoint x="348.0" y="153.0"/>
+        <di1:waypoint x="567.0" y="212.0"/>
+      </di:BPMNEdge>
+      <di:BPMNEdge bpmnElement="T5">
+        <di1:waypoint x="329.0" y="164.0"/>
+        <di1:waypoint x="329.0" y="350.0"/>
+        <di1:waypoint x="416.0" y="350.0"/>
+        <di1:waypoint x="416.0" y="379.0"/>
+      </di:BPMNEdge>
+      <di:BPMNEdge bpmnElement="T7">
+        <di1:waypoint x="67.0" y="248.0"/>
+        <di1:waypoint x="67.0" y="319.0"/>
+      </di:BPMNEdge>
+      <di:BPMNEdge bpmnElement="T9">
+        <di1:waypoint x="600.0" y="236.0"/>
+        <di1:waypoint x="600.0" y="306.0"/>
+      </di:BPMNEdge>
+      <di:BPMNEdge bpmnElement="T6">
+        <di1:waypoint x="176.0" y="343.0"/>
+        <di1:waypoint x="102.0" y="343.0"/>
+      </di:BPMNEdge>
+      <di:BPMNEdge bpmnElement="T8">
+        <di1:waypoint x="479.0" y="414.0"/>
+        <di1:waypoint x="564.0" y="330.0"/>
+      </di:BPMNEdge>
+    </di:BPMNPlane>
+  </di:BPMNDiagram>
+</definitions>

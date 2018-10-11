@@ -46,6 +46,7 @@ public abstract class Setup implements Operation {
         this.projectDir = projectDir;
     }
 
+    @Parameter(names="--project-dir", description="Project directory (default = ./)")
     protected File projectDir;
     public File getProjectDir() {
         return projectDir == null ? new File(".") : projectDir;
