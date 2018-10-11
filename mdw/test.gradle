@@ -38,7 +38,7 @@ task stop(type: Exec) {
 // CLI tests do not cover 'mdw run' or 'mdw test' as these are exercised by runTests.
 task cliTests(type: Exec) {
     doFirst {
-        println 'Running CLI Tests...'
+        println '\nRunning CLI Tests...'
     }
     environment << [MDW_HOME: '../', PATH: "${environment.PATH}:../bin:../bats/bin"]
     workingDir './cli/tests'
