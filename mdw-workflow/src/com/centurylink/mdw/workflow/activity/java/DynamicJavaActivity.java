@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 CenturyLink, Inc.
+ * Copyright (C) 2018 CenturyLink, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     public static final String JAVA_CODE = "Java";
+    public static final String CLASS_NAME = "ClassName";
 
     private Package tempPkg;
 
@@ -149,14 +150,14 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
     }
 
     protected String getClassName() throws ActivityException {
-        String raw = getActivityName() + "_" + getAttributeValue("LOGICAL_ID");
-        return getPackageName() + JavaNaming.getValidClassName(raw);
+        String className = getAttributeValue(CLASS_NAME);
+        if (className == null) {
+            // old logic based on activity name can lead to collisions
+            className = JavaNaming.getValidClassName(getActivityName() + "_" + getAttributeValue("LOGICAL_ID"));
+        }
+        return getPackageName() + className;
     }
 
-    /**
-     * Uses design-time package name.
-     * Runtime package is mainly for classloader
-     */
     protected String getPackageName() throws ActivityException {
         Package pkg = PackageCache.getProcessPackage(getMainProcessDefinition().getId());
         if (pkg.isDefaultPackage()) {
