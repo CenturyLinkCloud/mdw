@@ -239,7 +239,7 @@ public class Import extends Setup {
             versionControl.clear();
 
             // Capture new Refs in ASSET_REF after import (Git pull) and insert/update VALUE table
-            Checkpoint checkpoint = new Checkpoint(new File(getAssetLoc()), versionControl, versionControl.getCommit(), pooledConn);
+            Checkpoint checkpoint = new Checkpoint(getAssetRoot(), versionControl, versionControl.getCommit(), pooledConn);
             try {
                 checkpoint.updateRefs(true);
             }

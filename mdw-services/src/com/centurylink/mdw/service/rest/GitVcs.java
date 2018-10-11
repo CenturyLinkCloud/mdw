@@ -28,6 +28,7 @@ import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cli.Checkpoint;
 import com.centurylink.mdw.cli.Import;
 import com.centurylink.mdw.common.service.Query;
@@ -190,7 +191,7 @@ public class GitVcs extends JsonRestService {
 
                         // Update ASSET_REF with new commit (will trigger automatic import in other instances)
                         try (DbAccess dbAccess = new DbAccess()) {
-                            Checkpoint cp = new Checkpoint(new File(assetPath), vcGit, vcGit.getCommit(), dbAccess.getConnection());
+                            Checkpoint cp = new Checkpoint(ApplicationContext.getAssetRoot(), vcGit, vcGit.getCommit(), dbAccess.getConnection());
                             cp.updateRefs();
                         }
                     }
