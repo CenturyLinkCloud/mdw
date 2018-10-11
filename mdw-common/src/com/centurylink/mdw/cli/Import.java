@@ -134,8 +134,19 @@ public class Import extends Setup {
     public Import run(ProgressMonitor... monitors) throws IOException {
         if (file != null) {
             // process import
+            if (format == null) {
+                // try and infer from file ext
+                int lastDot = file.getName().lastIndexOf('.');
+                if (lastDot > 0 && lastDot < file.getName().length() - 1) {
+                    String ext = file.getName().substring(lastDot + 1);
+                    if (ext.equals("bpmn"))
+                        format = "bpmn";
+                    else if (ext.equals("xml"))
+                        format = "draw.io";
+                }
+            }
             if (format == null)
-                throw new IOException("--format is required");
+                throw new IOException("--format not determined from file extension; must be specified");
             ProcessImporter importer = getProcessImporter(format);
             File outFile;
             if (process == null) {
@@ -146,6 +157,8 @@ public class Import extends Setup {
                 outFile = getAssetFile(process);
             }
             Process proc = importer.importProcess(file);
+            if (!outFile.getParentFile().isDirectory() && !outFile.getParentFile().mkdirs())
+                throw new IOException("Unable to create directory: " + outFile.getParentFile().getAbsolutePath());
             Files.write(outFile.toPath(), proc.getJson().toString(2).getBytes());
         }
         else {

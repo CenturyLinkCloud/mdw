@@ -209,6 +209,8 @@ task cliZip(type: Zip) {
     from ("../mdw/cli") {
         exclude ".gitignore"
         exclude "lib/"
+        exclude "bats/"
+        exclude "tests/"
     }
 }
 
