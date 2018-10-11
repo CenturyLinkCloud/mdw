@@ -22,12 +22,12 @@ before_script:
 script: gradle --no-daemon publishAll publishAssets -DPUBLISHING_TO_MAVEN_CENTRAL=true
 after_failure:
 - cat ../testResults/mdw-function-test-results.json
-- cat ../testResults/com.centurylink.mdw.tests.tasks/TaskIndexCustom.log
-- cat ../testResults/com.centurylink.mdw.tests.tasks/TaskAutoassign.log
-- cat ../testResults/com.centurylink.mdw.tests.tasks/Subtasks.log
+#- cat ../testResults/com.centurylink.mdw.tests.tasks/TaskIndexCustom.log
+#- cat ../testResults/com.centurylink.mdw.tests.tasks/TaskAutoassign.log
+#- cat ../testResults/com.centurylink.mdw.tests.tasks/Subtasks.log
 # - cat ../testResults/com.centurylink.mdw.tests.cloud/ActivityImplementors.log
 - cat mdw.log
-- sleep 50s
+- sleep 10s
 notifications:
   slack:
     rooms:
