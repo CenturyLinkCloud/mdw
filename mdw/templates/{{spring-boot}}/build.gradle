@@ -40,7 +40,7 @@ dependencies {
 }
 
 bootJar {
-    // Exclude assets from packaging to preserve mdw dynamicism
+    // Exclude assets from packaging to avoid NoClassDefFoundErrors
     // (do not overlap packages between src/main/java and assets).
     def assetPackages = Packages(file(assetLoc))
     exclude {

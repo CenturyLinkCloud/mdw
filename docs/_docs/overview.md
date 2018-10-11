@@ -46,7 +46,7 @@ We've touched on processes, activities, and variables.  Some of the other freque
  - [Variable Types](../workflow/built-in-variables)
 
 ### Assets
-A process in MDW is one type of [asset](../help/assets.html).  There are many others.  In fact, **everything**
+A process in MDW is one type of [asset](../help/assets.html).  There are many others.  In fact, most everything
 you develop is some form of asset.  Rules, scripts, templates, pages, test cases: they're all assets to MDW.
 More importantly if you're a developer: your Java, Groovy or Kotlin source files are assets (or they're
 bundled into JAR assets).  The significance of this is in how they're deployed.  Assets are versioned in Git.
