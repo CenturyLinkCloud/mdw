@@ -45,7 +45,13 @@ public class Packages extends TreeMap<String,File> {
     public static boolean isMdwPackage(String packageName) {
         return packageName.startsWith("com.centurylink.mdw.") &&
                 !packageName.startsWith("com.centurylink.mdw.demo") &&
-                !packageName.startsWith("com.centurylink.mdw.internal");
+                !packageName.startsWith("com.centurylink.mdw.oracle") &&
+                !packageName.startsWith("com.centurylink.mdw.ibmmq") &&
+                !packageName.startsWith("com.centurylink.mdw.tibco") &&
+                !packageName.startsWith("com.centurylink.mdw.tests.ibmmq") &&
+                !packageName.startsWith("com.centurylink.mdw.tests.tibco") &&
+                !packageName.startsWith("com.centurylink.mdw.internal") &&
+                !packageName.startsWith("com.centurylink.mdw.node.node_modules");
     }
 
     private File assetRoot;
