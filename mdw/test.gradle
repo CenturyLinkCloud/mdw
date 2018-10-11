@@ -40,7 +40,7 @@ task cliTests(type: Exec) {
     doFirst {
         println 'Running CLI Tests...'
     }
-    environment << [MDW_HOME: '../', PATH: "${environment.PATH}:../bin:../bats/bin"]
+    environment << [MDW_HOME: '../', PATH: "${environment.PATH}:../bin:../bats/bin:${environment.PWD}/../bin"]
     workingDir './cli/tests'
     commandLine 'bats', '.'
 }
