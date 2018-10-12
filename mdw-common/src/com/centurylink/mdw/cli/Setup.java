@@ -215,8 +215,8 @@ public abstract class Setup implements Operation {
         return version != null && version.endsWith("-SNAPSHOT");
     }
 
-    @Parameter(names="--config-loc", description="Config location (default is ./config)")
-    private String configLoc;
+    @Parameter(names="--config-loc", description="Config location (default is 'config')")
+    protected String configLoc;
     public String getConfigLoc() throws IOException {
         if (configLoc == null) {
             YamlProperties yaml = getProjectYaml();
@@ -224,7 +224,7 @@ public abstract class Setup implements Operation {
                 configLoc = yaml.getString(Props.ProjectYaml.CONFIG_LOC);
             }
             if (configLoc == null) {
-                configLoc = "config";
+                configLoc = projectDir == null ? "config" : projectDir + "/config";
             }
         }
         return configLoc;
@@ -234,8 +234,8 @@ public abstract class Setup implements Operation {
     /**
      * Asset loc is taken from project.yaml, falling back to mdw.yaml, and finally "assets"
      */
-    @Parameter(names="--asset-loc", description="Asset location (default is ./assets)")
-    private String assetLoc;
+    @Parameter(names="--asset-loc", description="Asset location (default is 'assets')")
+    protected String assetLoc;
     public String getAssetLoc() throws IOException {
         if (assetLoc == null) {
             YamlProperties yaml = getProjectYaml();
@@ -246,7 +246,7 @@ public abstract class Setup implements Operation {
                 assetLoc = new Props(this).get(Props.ASSET_LOC, false);
             }
             if (assetLoc == null) {
-                assetLoc = "assets";
+                assetLoc = projectDir == null ? "assets" : projectDir + "/assets";
             }
         }
         return assetLoc;
@@ -410,11 +410,7 @@ public abstract class Setup implements Operation {
     }
 
     public File getAssetRoot() throws IOException {
-        File assetRoot = new File(getAssetLoc());
-        if (assetRoot.isAbsolute())
-            return assetRoot;
-        else
-            return new File(getProjectDir() + "/" + assetLoc);
+        return new File(getAssetLoc());
     }
 
     public File getGitRoot() throws IOException {
@@ -490,15 +486,6 @@ public abstract class Setup implements Operation {
         if (needsConfig() && getMdwConfig() == null) {
             throw new IOException("Error: Missing config (mdw.yaml or mdw.properties)");
         }
-
-        String projPath = getProjectDir().getCanonicalPath();
-        String assetPath = getAssetRoot().getCanonicalPath();
-
-        if (!assetPath.startsWith(projPath)) {
-            System.err.println("Error: Asset root (" + assetPath + ") is not a subdirectory of Project (" + projPath + ")");
-            return false;
-        }
-
         return true;
     }
 

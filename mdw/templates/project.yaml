@@ -6,4 +6,4 @@ asset:
   location: {{asset-loc}}
 
 config:
-  location: config
+  location: {{config-loc}}

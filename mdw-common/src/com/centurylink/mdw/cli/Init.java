@@ -109,6 +109,10 @@ public class Init extends Setup {
 
         if (mdwVersion == null)
             mdwVersion = findMdwVersion(isSnapshots());
+        if (configLoc == null)
+            configLoc = "config";
+        if (assetLoc == null)
+            assetLoc = "assets";
         if (sourceGroup == null)
             sourceGroup = "com.example." + getProjectDir().getName();
 
