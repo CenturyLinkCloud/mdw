@@ -54,7 +54,6 @@ public class Update extends Setup {
 
         Import mport = new Import();
         mport.setAssetLoc(getAssetLoc());
-        mport.setSnapshots(isSnapshots());
         mport.setMdwVersion(getMdwVersion());
         mport.setConfigLoc(getConfigLoc());
 

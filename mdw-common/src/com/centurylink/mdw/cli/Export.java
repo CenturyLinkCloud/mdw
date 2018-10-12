@@ -137,7 +137,12 @@ public class Export extends Setup {
                     }
                 }
                 public MdwVersion getMdwVersion() {
-                    return new MdwVersion(setup.getMdwVersion());
+                    try {
+                        return new MdwVersion(setup.getMdwVersion());
+                    }
+                    catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             };
             if ("html".equals(format))

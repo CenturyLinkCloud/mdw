@@ -66,8 +66,14 @@ public class Install extends Setup {
     public String getBootJarLoc() { return bootJarLoc; }
     public void setBootJarLoc(String loc) { this.bootJarLoc = loc; }
 
+    @Parameter(names="--mdw-version", description="MDW Version")
+    private String mdwVersion;
+    @Override
+    public String getMdwVersion() throws IOException { return mdwVersion; }
+    public void setMdwVersion(String version) { this.mdwVersion = version; }
+
     public Install run(ProgressMonitor... progressMonitors) throws IOException {
-        String mdwVer = new Props(this).get(Props.Gradle.MDW_VERSION);
+        String mdwVer = getMdwVersion();
         Download[] downloads = null;
 
         if (webapp && webappsDir == null) {

@@ -33,6 +33,12 @@ public class Props {
     public static Prop SERVICES_URL;
     public static Prop HUB_URL;
 
+    public static class ProjectYaml {
+        public static final String MDW_VERSION = "project.mdw.version";
+        public static final String ASSET_LOC = "project.asset.location";
+        public static final String CONFIG_LOC = "project.config.location";
+    }
+
     public static class Git {
         public static Prop REMOTE_URL;
         public static Prop BRANCH;
@@ -48,7 +54,6 @@ public class Props {
     }
 
     public static class Gradle {
-        public static Prop MDW_VERSION;
         public static Prop SPRING_VERSION;
         public static Prop MAVEN_REPO_URL;
         public static Prop SOURCE_GROUP;
@@ -97,14 +102,12 @@ public class Props {
 
         // gradle (TODO: maven support)
         String GRADLE = "gradle.properties";
-        Gradle.MDW_VERSION = new Prop("mdw-version", GRADLE, "mdwVersion", true);
         Gradle.SPRING_VERSION = new Prop("spring-version", GRADLE, "springVersion", true);
         Gradle.MAVEN_REPO_URL = new Prop("releases-url", GRADLE, "repositoryUrl", true);
         Gradle.SOURCE_GROUP = new Prop("source-group", GRADLE, "sourceGroup", true);
         Gradle.SONATYPE_REPO_URL = new Prop("snapshots-url", GRADLE, "snapshotsUrl", true);
 
 
-        ALL_PROPS.add(Gradle.MDW_VERSION);
         ALL_PROPS.add(Gradle.SPRING_VERSION);
         ALL_PROPS.add(Gradle.MAVEN_REPO_URL);
         ALL_PROPS.add(Gradle.SOURCE_GROUP);

@@ -36,10 +36,6 @@ public class Main {
                 Git.main(cmdArgs);
                 return;
             }
-            else if (cmdArgs[0].equals("archive")) {
-                Archive.main(cmdArgs);
-                return;
-            }
         }
 
         // TODO: user reflection to instantiate appropriate command
@@ -52,7 +48,6 @@ public class Main {
         Run run = new Run();
         Stop stop = new Stop();
         Git git = new Git();
-        Archive archive = new Archive(false);
         Test test = new Test();
         Status status = new Status();
         Version version = new Version();
@@ -74,7 +69,6 @@ public class Main {
             .addCommand("version", version)
             .addCommand("git", git)
             .addCommand("status", status)
-            .addCommand("archive", archive)
             .addCommand("test", test)
             .addCommand("convert", convert)
             .addCommand("codegen", codegen)

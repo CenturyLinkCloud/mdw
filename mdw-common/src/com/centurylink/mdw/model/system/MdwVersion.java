@@ -15,6 +15,13 @@
  */
 package com.centurylink.mdw.model.system;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+
+import com.centurylink.mdw.util.ClasspathUtil;
+
 public class MdwVersion implements Comparable<MdwVersion> {
     private String version;
 
@@ -112,5 +119,29 @@ public class MdwVersion implements Comparable<MdwVersion> {
     @Override
     public boolean equals(Object obj) {
         return obj instanceof MdwVersion && ((MdwVersion)obj).version.equals(version);
+    }
+
+    /**
+     * Includes build timestamp.
+     * Finds info from META-INF/manifest.mf via classloader.  Does not work from
+     * within certain containers.  For comprehensive lookup, use ApplicationContext.getMdwVersion().
+     */
+    public static String getRuntimeVersion() throws IOException {
+        String classLoc = ClasspathUtil.locate(MdwVersion.class.getName());
+        int dotJarBang = classLoc.lastIndexOf(".jar!");
+        if (dotJarBang > 0) {
+            String jarFilePath = classLoc.substring(0, dotJarBang + 4);
+            if (jarFilePath.startsWith("file:/"))
+                jarFilePath = jarFilePath.substring(6);
+            if (!jarFilePath.startsWith("/"))
+                jarFilePath = "/" + jarFilePath;
+            try (JarFile jarFile = new JarFile(new File(jarFilePath))) {
+                Manifest manifest = jarFile.getManifest();
+                String version = manifest.getMainAttributes().getValue("MDW-Version");
+                String buildTimestamp = manifest.getMainAttributes().getValue("MDW-Build");
+                return version + " " + buildTimestamp;
+            }
+        }
+        return null;
     }
 }
