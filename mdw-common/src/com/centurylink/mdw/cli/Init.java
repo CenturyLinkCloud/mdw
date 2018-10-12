@@ -44,6 +44,17 @@ public class Init extends Setup {
     @Parameter(description="<project>", required=true)
     private String project;
 
+    @Parameter(names="--mdw-version", description="MDW Version")
+    private String mdwVersion;
+    @Override
+    public String getMdwVersion() throws IOException { return mdwVersion; }
+    public void setMdwVersion(String version) { this.mdwVersion = version; }
+
+    @Parameter(names="--snapshots", description="Whether to include snapshot builds")
+    private boolean snapshots;
+    public boolean isSnapshots() throws IOException { return snapshots; }
+    public void setSnapshots(boolean snapshots) { this.snapshots = snapshots; }
+
     @Parameter(names="--user", description="Dev user")
     private String user = System.getProperty("user.name");
     public String getUser() { return user; }
@@ -96,7 +107,8 @@ public class Init extends Setup {
                 throw new IOException("Unable to create project dir: " + getProjectDir());
         }
 
-        findMdwVersion();
+        if (mdwVersion == null)
+            mdwVersion = findMdwVersion(isSnapshots());
         if (sourceGroup == null)
             sourceGroup = "com.example." + getProjectDir().getName();
 
@@ -124,8 +136,6 @@ public class Init extends Setup {
         new File(getProjectDir() + "/src/main/java").mkdirs();
         if (!isNoUpdate()) {
             Update update = new Update(getProjectDir());
-            update.setSnapshots(isSnapshots());
-            update.setMdwVersion(getMdwVersion());
             if (!new File(getAssetLoc()).isAbsolute())
                 update.setAssetLoc(getProjectDir().getName() + "/" + getAssetLoc());
             update.run(progressMonitors);

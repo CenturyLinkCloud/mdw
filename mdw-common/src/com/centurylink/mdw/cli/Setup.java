@@ -15,6 +15,11 @@
  */
 package com.centurylink.mdw.cli;
 
+import com.beust.jcommander.Parameter;
+import com.centurylink.mdw.config.YamlProperties;
+import com.centurylink.mdw.util.file.Packages;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -27,12 +32,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.json.JSONObject;
-
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.converters.CommaParameterSplitter;
-import com.centurylink.mdw.util.file.Packages;
-
+@SuppressWarnings("unused")
 public abstract class Setup implements Operation {
 
     protected static final String META_DIR = ".mdw";
@@ -52,37 +52,10 @@ public abstract class Setup implements Operation {
         return projectDir == null ? new File(".") : projectDir;
     }
 
-    @Parameter(names="--mdw-version", description="MDW Version")
-    private String mdwVersion;
-    public String getMdwVersion() { return mdwVersion; }
-    public void setMdwVersion(String version) {
-        this.mdwVersion = version;
-        if (Props.Gradle.MDW_VERSION != null)
-            Props.Gradle.MDW_VERSION.specified = true;
-    }
-    public String findMdwVersion() throws IOException {
-        if (getMdwVersion() == null) {
-            URL url = new URL(getReleasesUrl() + MDW_COMMON_PATH);
-            if (isSnapshots())
-                url = new URL(getSnapshotsUrl() + MDW_COMMON_PATH);
-            Crawl crawl = new Crawl(url, isSnapshots());
-            crawl.run();
-            if (crawl.getReleases().size() == 0)
-                throw new IOException("Unable to locate MDW releases: " + url);
-            mdwVersion = crawl.getReleases().get(crawl.getReleases().size() - 1);
-        }
-        return mdwVersion;
-    }
-
     @Parameter(names="--debug", description="Display CLI debug information")
     private boolean debug;
     public boolean isDebug() { return debug; }
     public void setDebug(boolean debug) { this.debug = debug; }
-
-    @Parameter(names="--snapshots", description="Whether to include snapshot builds")
-    private boolean snapshots;
-    public boolean isSnapshots() { return snapshots; }
-    public void setSnapshots(boolean snapshots) { this.snapshots = snapshots; }
 
     @Parameter(names="--discovery-url", description="Asset Discovery URL")
     private String discoveryUrl = "http://repo.maven.apache.org/maven2";
@@ -114,22 +87,7 @@ public abstract class Setup implements Operation {
         Props.SERVICES_URL.specified = true;
     }
 
-    @Parameter(names="--config-loc", description="Config location (when outside project dir)")
-    private String configLoc;
-    public String getConfigLoc() { return configLoc; }
-    public void setConfigLoc(String configLoc) { this.configLoc = configLoc; }
-
-    @Parameter(names="--asset-loc", description="Asset location")
-    private String assetLoc = "assets";
-    public String getAssetLoc() { return assetLoc; }
-    public void setAssetLoc(String assetLoc) {
-        this.assetLoc = assetLoc;
-        if (Props.ASSET_LOC != null)
-            Props.ASSET_LOC.specified = true;
-    }
-
-    @Parameter(names="--base-asset-packages", description="MDW Base Asset Packages (comma-separated)",
-            splitter=CommaParameterSplitter.class)
+    @Parameter(names="--base-asset-packages", description="MDW Base Asset Packages (comma-separated)")
     private List<String> baseAssetPackages;
     public List<String> getBaseAssetPackages() { return baseAssetPackages; }
     public void setBaseAssetPackages(List<String> packages) { this.baseAssetPackages = packages; }
@@ -210,10 +168,6 @@ public abstract class Setup implements Operation {
 
     @Parameter(names="--template-dir", description="Template Directory")
     protected String templateDir;
-
-    /**
-     * @param templateDir the templateDir to set
-     */
     public void setTemplateDir(String templateDir) {
         this.templateDir = templateDir;
     }
@@ -226,6 +180,95 @@ public abstract class Setup implements Operation {
     public void setSnapshotsUrl(String url) {
         this.snapshotsUrl = url;
         Props.Gradle.SONATYPE_REPO_URL.specified = true;
+    }
+
+    private YamlProperties projectYaml;
+    public YamlProperties getProjectYaml() throws IOException {
+        if (projectYaml == null) {
+            File yamlFile = new File(getProjectDir() + "/project.yaml");
+            if (yamlFile.isFile())
+                projectYaml = new YamlProperties(yamlFile);
+        }
+        return projectYaml;
+    }
+
+    private String mdwVersion;
+    /**
+     * Reads from project.yaml
+     */
+    public String getMdwVersion() throws IOException {
+        if (mdwVersion == null) {
+            YamlProperties yaml = getProjectYaml();
+            if (yaml != null) {
+                mdwVersion = yaml.getString(Props.ProjectYaml.MDW_VERSION);
+            }
+        }
+        return mdwVersion;
+    }
+    public void setMdwVersion(String version) { this.mdwVersion = version; }
+
+    /**
+     * Reads from project.yaml
+     */
+    public boolean isSnapshots() throws IOException {
+        String version = getMdwVersion();
+        return version != null && version.endsWith("-SNAPSHOT");
+    }
+
+    @Parameter(names="--config-loc", description="Config location (default is ./config)")
+    private String configLoc;
+    public String getConfigLoc() throws IOException {
+        if (configLoc == null) {
+            YamlProperties yaml = getProjectYaml();
+            if (yaml != null) {
+                configLoc = yaml.getString(Props.ProjectYaml.CONFIG_LOC);
+            }
+            if (configLoc == null) {
+                configLoc = "config";
+            }
+        }
+        return configLoc;
+    }
+    public void setConfigLoc(String configLoc) { this.configLoc = configLoc; }
+
+    /**
+     * Asset loc is taken from project.yaml, falling back to mdw.yaml, and finally "assets"
+     */
+    @Parameter(names="--asset-loc", description="Asset location (default is ./assets)")
+    private String assetLoc;
+    public String getAssetLoc() throws IOException {
+        if (assetLoc == null) {
+            YamlProperties yaml = getProjectYaml();
+            if (yaml != null) {
+                assetLoc = yaml.getString(Props.ProjectYaml.ASSET_LOC);
+            }
+            if (assetLoc == null) {
+                assetLoc = new Props(this).get(Props.ASSET_LOC, false);
+            }
+            if (assetLoc == null) {
+                assetLoc = "assets";
+            }
+        }
+        return assetLoc;
+    }
+    public void setAssetLoc(String assetLoc) {
+        this.assetLoc = assetLoc;
+        if (Props.ASSET_LOC != null)
+            Props.ASSET_LOC.specified = true;
+    }
+
+    /**
+     * Crawls to find the latest stable version.
+     */
+    public String findMdwVersion(boolean snapshots) throws IOException {
+        URL url = new URL(getReleasesUrl() + MDW_COMMON_PATH);
+        if (snapshots)
+            url = new URL(getSnapshotsUrl() + MDW_COMMON_PATH);
+        Crawl crawl = new Crawl(url, snapshots);
+        crawl.run();
+        if (crawl.getReleases().size() == 0)
+            throw new IOException("Unable to locate MDW releases: " + url);
+        return crawl.getReleases().get(crawl.getReleases().size() - 1);
     }
 
     /**
@@ -367,12 +410,7 @@ public abstract class Setup implements Operation {
     }
 
     public File getAssetRoot() throws IOException {
-        String assetLoc;
-        if (Props.ASSET_LOC != null)
-            assetLoc = new Props(this).get(Props.ASSET_LOC, false);
-        else
-            assetLoc = getAssetLoc();
-        File assetRoot = new File(assetLoc);
+        File assetRoot = new File(getAssetLoc());
         if (assetRoot.isAbsolute())
             return assetRoot;
         else
@@ -424,8 +462,6 @@ public abstract class Setup implements Operation {
 
     public String getTemplatesUrl() throws IOException {
         String mdwVer = getMdwVersion();
-        if (mdwVer == null)
-            mdwVer = new Props(this).get(Props.Gradle.MDW_VERSION);
         String templates = "mdw-templates-" + mdwVer + ".zip";
         String templatesUrl;
         String templatesLoc = System.getProperty("mdw.templates.url");
@@ -520,8 +556,7 @@ public abstract class Setup implements Operation {
         if (templateDir != null)
             return new File(templateDir);
         else {
-            String mdwVer = new Props(this).get(Props.Gradle.MDW_VERSION);
-            return new File(getMdwHome() + "/lib/" + mdwVer);
+            return new File(getMdwHome() + "/lib/" + getMdwVersion());
         }
     }
 
