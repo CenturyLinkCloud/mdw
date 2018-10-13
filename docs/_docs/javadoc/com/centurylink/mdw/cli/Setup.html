@@ -111,7 +111,7 @@ var activeTableTab = "activeTableTab";
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../com/centurylink/mdw/cli/Archive.html" title="class in com.centurylink.mdw.cli">Archive</a>, <a href="../../../../com/centurylink/mdw/cli/BpmnImport.html" title="class in com.centurylink.mdw.cli">BpmnImport</a>, <a href="../../../../com/centurylink/mdw/cli/Checkpoint.html" title="class in com.centurylink.mdw.cli">Checkpoint</a>, <a href="../../../../com/centurylink/mdw/cli/Codegen.html" title="class in com.centurylink.mdw.cli">Codegen</a>, <a href="../../../../com/centurylink/mdw/cli/Convert.html" title="class in com.centurylink.mdw.cli">Convert</a>, <a href="../../../../com/centurylink/mdw/cli/Discover.html" title="class in com.centurylink.mdw.cli">Discover</a>, <a href="../../../../com/centurylink/mdw/cli/Export.html" title="class in com.centurylink.mdw.cli">Export</a>, <a href="../../../../com/centurylink/mdw/cli/Import.html" title="class in com.centurylink.mdw.cli">Import</a>, <a href="../../../../com/centurylink/mdw/cli/Init.html" title="class in com.centurylink.mdw.cli">Init</a>, <a href="../../../../com/centurylink/mdw/cli/Install.html" title="class in com.centurylink.mdw.cli">Install</a>, <a href="../../../../com/centurylink/mdw/cli/Status.html" title="class in com.centurylink.mdw.cli">Status</a>, <a href="../../../../com/centurylink/mdw/cli/Test.html" title="class in com.centurylink.mdw.cli">Test</a>, <a href="../../../../com/centurylink/mdw/cli/Update.html" title="class in com.centurylink.mdw.cli">Update</a>, <a href="../../../../com/centurylink/mdw/cli/Vercheck.html" title="class in com.centurylink.mdw.cli">Vercheck</a></dd>
+<dd><a href="../../../../com/centurylink/mdw/cli/BpmnImport.html" title="class in com.centurylink.mdw.cli">BpmnImport</a>, <a href="../../../../com/centurylink/mdw/cli/Checkpoint.html" title="class in com.centurylink.mdw.cli">Checkpoint</a>, <a href="../../../../com/centurylink/mdw/cli/Codegen.html" title="class in com.centurylink.mdw.cli">Codegen</a>, <a href="../../../../com/centurylink/mdw/cli/Convert.html" title="class in com.centurylink.mdw.cli">Convert</a>, <a href="../../../../com/centurylink/mdw/cli/Discover.html" title="class in com.centurylink.mdw.cli">Discover</a>, <a href="../../../../com/centurylink/mdw/cli/Export.html" title="class in com.centurylink.mdw.cli">Export</a>, <a href="../../../../com/centurylink/mdw/cli/Import.html" title="class in com.centurylink.mdw.cli">Import</a>, <a href="../../../../com/centurylink/mdw/cli/Init.html" title="class in com.centurylink.mdw.cli">Init</a>, <a href="../../../../com/centurylink/mdw/cli/Install.html" title="class in com.centurylink.mdw.cli">Install</a>, <a href="../../../../com/centurylink/mdw/cli/Status.html" title="class in com.centurylink.mdw.cli">Status</a>, <a href="../../../../com/centurylink/mdw/cli/Test.html" title="class in com.centurylink.mdw.cli">Test</a>, <a href="../../../../com/centurylink/mdw/cli/Update.html" title="class in com.centurylink.mdw.cli">Update</a>, <a href="../../../../com/centurylink/mdw/cli/Vercheck.html" title="class in com.centurylink.mdw.cli">Vercheck</a></dd>
 </dl>
 <hr>
 <br>
@@ -135,6 +135,16 @@ implements <a href="../../../../com/centurylink/mdw/cli/Operation.html" title="i
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#assetLoc">assetLoc</a></span></code>
+<div class="block">Asset loc is taken from project.yaml, falling back to mdw.yaml, and finally "assets"</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#configLoc">configLoc</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected static java.lang.String</code></td>
@@ -213,7 +223,9 @@ implements <a href="../../../../com/centurylink/mdw/cli/Operation.html" title="i
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#findMdwVersion--">findMdwVersion</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#findMdwVersion-boolean-">findMdwVersion</a></span>(boolean&nbsp;snapshots)</code>
+<div class="block">Crawls to find the latest stable version.</div>
+</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>java.io.File</code></td>
@@ -305,7 +317,9 @@ implements <a href="../../../../com/centurylink/mdw/cli/Operation.html" title="i
 </tr>
 <tr id="i26" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#getMdwVersion--">getMdwVersion</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#getMdwVersion--">getMdwVersion</a></span>()</code>
+<div class="block">Reads from project.yaml</div>
+</td>
 </tr>
 <tr id="i27" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
@@ -316,135 +330,137 @@ implements <a href="../../../../com/centurylink/mdw/cli/Operation.html" title="i
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#getProjectDir--">getProjectDir</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i29" class="rowColor">
+<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/config/YamlProperties.html" title="class in com.centurylink.mdw.config">YamlProperties</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#getProjectYaml--">getProjectYaml</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#getRelativePath-java.io.File-java.io.File-">getRelativePath</a></span>(java.io.File&nbsp;from,
                java.io.File&nbsp;to)</code>
 <div class="block">Returns 'to' file or dir path relative to 'from' dir.</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#getReleasesUrl--">getReleasesUrl</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#getServicesUrl--">getServicesUrl</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#getSnapshotsUrl--">getSnapshotsUrl</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#getSourceGroup--">getSourceGroup</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>protected java.io.File</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#getTemplateDir--">getTemplateDir</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#getTemplatesUrl--">getTemplatesUrl</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#getValue-java.lang.String-">getValue</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#gitExists--">gitExists</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#initBaseAssetPackages--">initBaseAssetPackages</a></span>()</code>
 <div class="block">Checks for any existing packages.</div>
 </td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#isDebug--">isDebug</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i40" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#isSnapshots--">isSnapshots</a></span>()</code>&nbsp;</td>
-</tr>
 <tr id="i41" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#isSnapshots--">isSnapshots</a></span>()</code>
+<div class="block">Reads from project.yaml</div>
+</td>
+</tr>
+<tr id="i42" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#mkPackage-java.lang.String-">mkPackage</a></span>(java.lang.String&nbsp;name)</code>
 <div class="block">Creates a package if it doesn't exist.</div>
 </td>
 </tr>
-<tr id="i42" class="altColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#needsConfig--">needsConfig</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#setAssetLoc-java.lang.String-">setAssetLoc</a></span>(java.lang.String&nbsp;assetLoc)</code>&nbsp;</td>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#setBaseAssetPackages-java.util.List-">setBaseAssetPackages</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;packages)</code>&nbsp;</td>
 </tr>
-<tr id="i45" class="rowColor">
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#setConfigLoc-java.lang.String-">setConfigLoc</a></span>(java.lang.String&nbsp;configLoc)</code>&nbsp;</td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i47" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#setDatabaseDriver-java.lang.String-">setDatabaseDriver</a></span>(java.lang.String&nbsp;driver)</code>&nbsp;</td>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i48" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#setDatabasePassword-java.lang.String-">setDatabasePassword</a></span>(java.lang.String&nbsp;password)</code>&nbsp;</td>
 </tr>
-<tr id="i48" class="altColor">
+<tr id="i49" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#setDatabaseUrl-java.lang.String-">setDatabaseUrl</a></span>(java.lang.String&nbsp;url)</code>&nbsp;</td>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i50" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#setDatabaseUser-java.lang.String-">setDatabaseUser</a></span>(java.lang.String&nbsp;user)</code>&nbsp;</td>
 </tr>
-<tr id="i50" class="altColor">
+<tr id="i51" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#setDebug-boolean-">setDebug</a></span>(boolean&nbsp;debug)</code>&nbsp;</td>
 </tr>
-<tr id="i51" class="rowColor">
+<tr id="i52" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#setDiscoveryUrl-java.lang.String-">setDiscoveryUrl</a></span>(java.lang.String&nbsp;url)</code>&nbsp;</td>
 </tr>
-<tr id="i52" class="altColor">
+<tr id="i53" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#setGitBranch-java.lang.String-">setGitBranch</a></span>(java.lang.String&nbsp;branch)</code>&nbsp;</td>
 </tr>
-<tr id="i53" class="rowColor">
+<tr id="i54" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#setGitPassword-java.lang.String-">setGitPassword</a></span>(java.lang.String&nbsp;password)</code>&nbsp;</td>
 </tr>
-<tr id="i54" class="altColor">
+<tr id="i55" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#setGitRemoteUrl-java.lang.String-">setGitRemoteUrl</a></span>(java.lang.String&nbsp;url)</code>&nbsp;</td>
 </tr>
-<tr id="i55" class="rowColor">
+<tr id="i56" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#setGitUser-java.lang.String-">setGitUser</a></span>(java.lang.String&nbsp;user)</code>&nbsp;</td>
 </tr>
-<tr id="i56" class="altColor">
+<tr id="i57" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#setMdwVersion-java.lang.String-">setMdwVersion</a></span>(java.lang.String&nbsp;version)</code>&nbsp;</td>
 </tr>
-<tr id="i57" class="rowColor">
+<tr id="i58" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#setReleasesUrl-java.lang.String-">setReleasesUrl</a></span>(java.lang.String&nbsp;url)</code>&nbsp;</td>
 </tr>
-<tr id="i58" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#setServicesUrl-java.lang.String-">setServicesUrl</a></span>(java.lang.String&nbsp;url)</code>&nbsp;</td>
-</tr>
 <tr id="i59" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#setSnapshots-boolean-">setSnapshots</a></span>(boolean&nbsp;snapshots)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Setup.html#setServicesUrl-java.lang.String-">setServicesUrl</a></span>(java.lang.String&nbsp;url)</code>&nbsp;</td>
 </tr>
 <tr id="i60" class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -569,10 +585,29 @@ implements <a href="../../../../com/centurylink/mdw/cli/Operation.html" title="i
 <a name="templateDir">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>templateDir</h4>
 <pre>protected&nbsp;java.lang.String templateDir</pre>
+</li>
+</ul>
+<a name="configLoc">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>configLoc</h4>
+<pre>protected&nbsp;java.lang.String configLoc</pre>
+</li>
+</ul>
+<a name="assetLoc">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>assetLoc</h4>
+<pre>protected&nbsp;java.lang.String assetLoc</pre>
+<div class="block">Asset loc is taken from project.yaml, falling back to mdw.yaml, and finally "assets"</div>
 </li>
 </ul>
 </li>
@@ -609,38 +644,6 @@ implements <a href="../../../../com/centurylink/mdw/cli/Operation.html" title="i
 <pre>public&nbsp;java.io.File&nbsp;getProjectDir()</pre>
 </li>
 </ul>
-<a name="getMdwVersion--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getMdwVersion</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getMdwVersion()</pre>
-</li>
-</ul>
-<a name="setMdwVersion-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setMdwVersion</h4>
-<pre>public&nbsp;void&nbsp;setMdwVersion(java.lang.String&nbsp;version)</pre>
-</li>
-</ul>
-<a name="findMdwVersion--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>findMdwVersion</h4>
-<pre>public&nbsp;java.lang.String&nbsp;findMdwVersion()
-                                throws java.io.IOException</pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd>
-</dl>
-</li>
-</ul>
 <a name="isDebug--">
 <!--   -->
 </a>
@@ -657,24 +660,6 @@ implements <a href="../../../../com/centurylink/mdw/cli/Operation.html" title="i
 <li class="blockList">
 <h4>setDebug</h4>
 <pre>public&nbsp;void&nbsp;setDebug(boolean&nbsp;debug)</pre>
-</li>
-</ul>
-<a name="isSnapshots--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isSnapshots</h4>
-<pre>public&nbsp;boolean&nbsp;isSnapshots()</pre>
-</li>
-</ul>
-<a name="setSnapshots-boolean-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setSnapshots</h4>
-<pre>public&nbsp;void&nbsp;setSnapshots(boolean&nbsp;snapshots)</pre>
 </li>
 </ul>
 <a name="getDiscoveryUrl--">
@@ -729,42 +714,6 @@ implements <a href="../../../../com/centurylink/mdw/cli/Operation.html" title="i
 <li class="blockList">
 <h4>setServicesUrl</h4>
 <pre>public&nbsp;void&nbsp;setServicesUrl(java.lang.String&nbsp;url)</pre>
-</li>
-</ul>
-<a name="getConfigLoc--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getConfigLoc</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getConfigLoc()</pre>
-</li>
-</ul>
-<a name="setConfigLoc-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setConfigLoc</h4>
-<pre>public&nbsp;void&nbsp;setConfigLoc(java.lang.String&nbsp;configLoc)</pre>
-</li>
-</ul>
-<a name="getAssetLoc--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getAssetLoc</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getAssetLoc()</pre>
-</li>
-</ul>
-<a name="setAssetLoc-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setAssetLoc</h4>
-<pre>public&nbsp;void&nbsp;setAssetLoc(java.lang.String&nbsp;assetLoc)</pre>
 </li>
 </ul>
 <a name="getBaseAssetPackages--">
@@ -945,10 +894,6 @@ implements <a href="../../../../com/centurylink/mdw/cli/Operation.html" title="i
 <li class="blockList">
 <h4>setTemplateDir</h4>
 <pre>public&nbsp;void&nbsp;setTemplateDir(java.lang.String&nbsp;templateDir)</pre>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>templateDir</code> - the templateDir to set</dd>
-</dl>
 </li>
 </ul>
 <a name="getSnapshotsUrl--">
@@ -967,6 +912,120 @@ implements <a href="../../../../com/centurylink/mdw/cli/Operation.html" title="i
 <li class="blockList">
 <h4>setSnapshotsUrl</h4>
 <pre>public&nbsp;void&nbsp;setSnapshotsUrl(java.lang.String&nbsp;url)</pre>
+</li>
+</ul>
+<a name="getProjectYaml--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getProjectYaml</h4>
+<pre>public&nbsp;<a href="../../../../com/centurylink/mdw/config/YamlProperties.html" title="class in com.centurylink.mdw.config">YamlProperties</a>&nbsp;getProjectYaml()
+                              throws java.io.IOException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getMdwVersion--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMdwVersion</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getMdwVersion()
+                               throws java.io.IOException</pre>
+<div class="block">Reads from project.yaml</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="setMdwVersion-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setMdwVersion</h4>
+<pre>public&nbsp;void&nbsp;setMdwVersion(java.lang.String&nbsp;version)</pre>
+</li>
+</ul>
+<a name="isSnapshots--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isSnapshots</h4>
+<pre>public&nbsp;boolean&nbsp;isSnapshots()
+                    throws java.io.IOException</pre>
+<div class="block">Reads from project.yaml</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getConfigLoc--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getConfigLoc</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getConfigLoc()
+                              throws java.io.IOException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="setConfigLoc-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setConfigLoc</h4>
+<pre>public&nbsp;void&nbsp;setConfigLoc(java.lang.String&nbsp;configLoc)</pre>
+</li>
+</ul>
+<a name="getAssetLoc--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAssetLoc</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getAssetLoc()
+                             throws java.io.IOException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="setAssetLoc-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setAssetLoc</h4>
+<pre>public&nbsp;void&nbsp;setAssetLoc(java.lang.String&nbsp;assetLoc)</pre>
+</li>
+</ul>
+<a name="findMdwVersion-boolean-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findMdwVersion</h4>
+<pre>public&nbsp;java.lang.String&nbsp;findMdwVersion(boolean&nbsp;snapshots)
+                                throws java.io.IOException</pre>
+<div class="block">Crawls to find the latest stable version.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
 </li>
 </ul>
 <a name="initBaseAssetPackages--">
