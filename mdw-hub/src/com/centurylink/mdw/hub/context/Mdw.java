@@ -16,6 +16,7 @@
 package com.centurylink.mdw.hub.context;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -83,6 +84,33 @@ public class Mdw {
     private String customRoutes;
     public String getCustomRoutes() { return customRoutes; }
     public void setCustomRoutes(String customRoutes) { this.customRoutes = customRoutes; }
+
+    public File getDevOverrideRoot() {
+        String devOverrideRoot = System.getProperty("mdw.hub.dev.override.root");
+        return devOverrideRoot == null ? null : new File(devOverrideRoot);
+    }
+
+    public boolean isDev() {
+        return "dev".equalsIgnoreCase(System.getProperty("mdw.runtime.env"));
+    }
+
+    /**
+     * Finds overridden hub artifacts among assets.
+     * Core dev override is also supported for vanilla hub development.
+     */
+    public File getHubOverride(String path) throws IOException {
+        if (getOverrideRoot() != null) {
+            File hubOverride = new File(getOverrideRoot() + path);
+            if (hubOverride.isFile())
+                return hubOverride;
+        }
+        if (getDevOverrideRoot() != null && isDev()) {
+            File devOverride = new File(getDevOverrideRoot() + path);
+            if (devOverride.isFile())
+                return devOverride;
+        }
+        return null;
+    }
 
     /**
      * Custom service paths for a spring boot app.
