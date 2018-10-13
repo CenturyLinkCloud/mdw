@@ -15,25 +15,20 @@
  */
 package com.centurylink.mdw.hub.servlet;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import com.centurylink.mdw.common.MdwException;
+import com.centurylink.mdw.hub.context.Mdw;
+import com.centurylink.mdw.hub.context.WebAppContext;
+import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.util.ExpressionUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.centurylink.mdw.common.MdwException;
-import com.centurylink.mdw.hub.context.Mdw;
-import com.centurylink.mdw.hub.context.WebAppContext;
-import com.centurylink.mdw.model.asset.AssetInfo;
-import com.centurylink.mdw.util.ExpressionUtil;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Serves up custom content from user-override mdw-hub package.
@@ -42,12 +37,15 @@ import com.centurylink.mdw.util.ExpressionUtil;
 public class CustomContentServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String path = request.getPathInfo().substring(1);
+        String path = request.getPathInfo();
         Mdw mdw = WebAppContext.getMdw();
-        AssetInfo asset = new AssetInfo(mdw.getAssetRoot(), mdw.getOverridePackage() + "/" + path);
-        response.setContentType(asset.getContentType());
+        File file = mdw.getHubOverride(path);
+        AssetInfo asset = new AssetInfo(mdw.getAssetRoot(), mdw.getOverridePackage() + path);
+        String contentType = asset.exists() ? asset.getContentType() : Files.probeContentType(file.toPath());
+        if (contentType != null)
+            response.setContentType(contentType);
 
-        if (path.equals("index.html")) {
+        if (path.equals("/index.html")) {
             try {
                 String html = new String(Files.readAllBytes(
                         Paths.get(mdw.getOverrideRoot() + "/index.html")));
@@ -63,7 +61,6 @@ public class CustomContentServlet extends HttpServlet {
             }
             else {
                 response.setHeader("ETag", asset.getETag());
-                File file = new File(mdw.getAssetRoot() + "/" + mdw.getOverridePackage().replace('.', '/') + "/" + request.getPathInfo());
                 InputStream in = null;
                 OutputStream out = response.getOutputStream();
                 try {

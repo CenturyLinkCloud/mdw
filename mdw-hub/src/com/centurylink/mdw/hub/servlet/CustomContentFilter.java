@@ -15,21 +15,15 @@
  */
 package com.centurylink.mdw.hub.servlet;
 
-import java.io.File;
-import java.io.IOException;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.hub.context.WebAppContext;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.hub.context.WebAppContext;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Forwards requests to custom content servlet if override asset exists.
@@ -42,27 +36,22 @@ public class CustomContentFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
     throws IOException, ServletException {
-        if (WebAppContext.getMdw().getOverrideRoot() != null) {
-            HttpServletRequest httpRequest = (HttpServletRequest) request;
-            String path = httpRequest.getServletPath();
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        String path = httpRequest.getServletPath();
+        if (WebAppContext.getMdw().getHubOverride(path) != null) {
             // forward to override servlet
-            if (new File(WebAppContext.getMdw().getOverrideRoot() + path).isFile()) {
-                // if authUser is null, redirect to avoid bypassing AccessFilter
-                if (httpRequest.getSession().getAttribute("authenticatedUser") == null) {
-                    String hubRoot = ApplicationContext.getMdwHubContextRoot();
-                    if (!hubRoot.isEmpty())
-                        hubRoot = "/" + hubRoot;
-                    String redirect = hubRoot + "/customContent" + path;
-                    if (httpRequest.getQueryString() != null)
-                        redirect += "?" + httpRequest.getQueryString();
-                    ((HttpServletResponse)response).sendRedirect(redirect);
-                }
-                else {
-                    request.getRequestDispatcher("/customContent" + path).forward(request, response);
-                }
+            // however, if authUser is null redirect to avoid bypassing AccessFilter
+            if (httpRequest.getSession().getAttribute("authenticatedUser") == null) {
+                String hubRoot = ApplicationContext.getMdwHubContextRoot();
+                if (!hubRoot.isEmpty())
+                    hubRoot = "/" + hubRoot;
+                String redirect = hubRoot + "/customContent" + path;
+                if (httpRequest.getQueryString() != null)
+                    redirect += "?" + httpRequest.getQueryString();
+                ((HttpServletResponse)response).sendRedirect(redirect);
             }
             else {
-                chain.doFilter(request, response);
+                request.getRequestDispatcher("/customContent" + path).forward(request, response);
             }
         }
         else {
