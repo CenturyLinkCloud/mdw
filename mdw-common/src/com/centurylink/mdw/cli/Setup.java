@@ -416,8 +416,13 @@ public abstract class Setup implements Operation {
     public File getGitRoot() throws IOException {
         Props props = new Props(this);
         String gitLocalPath = props.get("mdw.git.local.path");
-        if (gitLocalPath != null)
-            return new File(gitLocalPath);
+        if (gitLocalPath != null) {
+            File gitRoot = new File(gitLocalPath);
+            if (gitRoot.isAbsolute() || getProjectDir() == null)
+                return gitRoot;
+            else
+                return new File(getProjectDir() + "/" + gitLocalPath);
+        }
         return getProjectDir();
     }
 
