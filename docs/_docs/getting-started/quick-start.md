@@ -53,6 +53,7 @@ Get up and running with MDW in a hurry.
   - Install the MDW binaries  
     On the command line, cd into the project directory created by `mdw init`.  Then type
     ```
+    cd my-mdw
     mdw install
     ```
     This downloads the self-contained MDW Spring-Bootable jar file that matches mdwVersion in gradle.properties or pom.xml.  

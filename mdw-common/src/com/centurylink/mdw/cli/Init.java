@@ -144,16 +144,13 @@ public class Init extends Setup {
                 update.setAssetLoc(getProjectDir().getName() + "/" + getAssetLoc());
             update.run(progressMonitors);
         }
-        else {
-            // just create asset dir
-            if (!getAssetRoot().isDirectory() && !getAssetRoot().mkdirs()) {
-                throw new IOException("Unable to create asset root: " + getAssetRoot());
-            }
-        }
         if (isMaven()) {
             File buildGradle = new File(getProjectDir() + "/build.gradle");
             if (buildGradle.exists())
                 buildGradle.delete();
+            File gradleProperties = new File(getProjectDir() + "/gradle.properties");
+            if (gradleProperties.exists())
+                gradleProperties.delete();
         }
         else {
             File pomXml = new File(getProjectDir() + "/pom.xml");

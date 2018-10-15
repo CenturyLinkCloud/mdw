@@ -26,10 +26,15 @@ Components
 
 Building MDW
 ------------
-  - Requires Java 8 and Gradle
+  - Requires Java 8, Gradle and NodeJS
   - Clone this project:
     ```
     git clone https://github.com/CenturyLinkCloud/mdw.git
+    ```
+  - Install Node packages:
+    ```
+    cd mdw/mdw-hub
+    npm install
     ```
   - Build using Gradle:
     ```
@@ -40,6 +45,11 @@ Building MDW
     ```
     gradle testAll
     ```
+
+Running MDW
+-----------
+  - Ordinarily MDW is run through a client app.  Check out the [Quick Start Guide](http://centurylinkcloud.github.io/mdw/docs/getting-started/quick-start/).
+  - For core framework development, you can run MDW standalone as described below in Contributing.
 
 Contributing to MDW
 -------------------

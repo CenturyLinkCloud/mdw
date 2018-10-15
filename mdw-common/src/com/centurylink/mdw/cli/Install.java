@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
+import com.centurylink.mdw.config.YamlProperties;
 
 /**
  * Handle War download.  TODO: Allow specify war name
@@ -68,8 +69,18 @@ public class Install extends Setup {
 
     @Parameter(names="--mdw-version", description="MDW Version")
     private String mdwVersion;
-    @Override
-    public String getMdwVersion() throws IOException { return mdwVersion; }
+    /**
+     * Reads from project.yaml
+     */
+    public String getMdwVersion() throws IOException {
+        if (mdwVersion == null) {
+            YamlProperties yaml = getProjectYaml();
+            if (yaml != null) {
+                mdwVersion = yaml.getString(Props.ProjectYaml.MDW_VERSION);
+            }
+        }
+        return mdwVersion;
+    }
     public void setMdwVersion(String version) { this.mdwVersion = version; }
 
     public Install run(ProgressMonitor... progressMonitors) throws IOException {
@@ -182,11 +193,8 @@ public class Install extends Setup {
         if (!super.validate())
             return false;
         if (getMdwVersion() == null) {
-            File gradleProps = new File(getProjectDir() + "/gradle.properties");
-            if (!gradleProps.isFile()) {
-                System.err.println("Option --mdw-version required or should be readable from: " + gradleProps.getAbsolutePath());
-                return false;
-            }
+            System.err.println("Option --mdw-version required or should be readable from project.yaml");
+            return false;
         }
         return true;
     }
