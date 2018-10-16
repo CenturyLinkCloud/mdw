@@ -17,6 +17,7 @@ package com.centurylink.mdw.system.filepanel;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -87,7 +88,7 @@ public class FileView implements Jsonable {
             }
 
             // one-pass forward
-            try (Stream<String> stream = Files.lines(path)) {
+            try (Stream<String> stream = Files.lines(path, StandardCharsets.ISO_8859_1)) {
                 if (lineIndex > 0) {
                     bufferStart = lineIndex - bufferSize/2;
                     if (bufferStart < 0)
