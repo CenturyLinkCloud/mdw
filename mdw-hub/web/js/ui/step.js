@@ -113,7 +113,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
 
     // title
     var diagram = this.diagram;
-    diagram.context.font = DC.DEFAULT_FONT;
+    diagram.context.font = DC.DEFAULT_FONT.FONT;
     this.title.lines.forEach(function(line) {
       diagram.context.fillText(line.text, line.x, line.y + yAdjust);
     });

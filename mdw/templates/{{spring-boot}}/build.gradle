@@ -42,7 +42,7 @@ dependencies {
 bootJar {
     // Exclude assets from packaging to avoid NoClassDefFoundErrors
     // (do not overlap packages between src/main/java and assets).
-    def assetPackages = Packages(file(assetLoc))
+    def assetPackages = new Packages(file(assetLoc))
     exclude {
         assetPackages.isAssetOutput(it.relativePath.toString())
     }
