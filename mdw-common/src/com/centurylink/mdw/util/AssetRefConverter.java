@@ -96,7 +96,7 @@ public class AssetRefConverter {
             String tempName = assetRef.getName().substring(0, assetRef.getName().lastIndexOf(" v"));
             int fileExtIdx = tempName.lastIndexOf(".");
             tempName = tempName.substring(0, fileExtIdx).replace('.', '/');
-            String path = getMissingPath(lp.getStorageDir(), "") + tempName + assetRef.getName().substring(0, assetRef.getName().lastIndexOf(" v")).substring(fileExtIdx);
+            String path = getMissingPath(lp.getStorageDir().getAbsoluteFile(), "") + tempName + assetRef.getName().substring(0, assetRef.getName().lastIndexOf(" v")).substring(fileExtIdx);
             contentBytes = vc.readFromCommit(assetRef.getRef(), path);
             }
             catch (Throwable ex) {
