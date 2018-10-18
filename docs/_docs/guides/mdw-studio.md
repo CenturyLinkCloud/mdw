@@ -10,18 +10,19 @@ that enables you to create workflow processes and other assets.
   1. [Install and Run MDW Studio](#1-install-and-run-mdw-studio)
      - 1.1 [Installation](#11-installation) 
      - 1.2 [Create and open a project](#12-create-and-open-a-project)
-  2. [Design a Workflow Process](#2-create-a-workflow-process)
+  2. [Design a Workflow Process](#2-design-a-workflow-process)
      - 2.1 [Create an asset package](#21-create-an-asset-package)
      - 2.2 [Create a workflow process](#22-create-a-workflow-process)
-     - 2.3 [Drag an Activity from the Toolbox](#23-drag-an-activity-from-the-toolbox)
+     - 2.3 [Drag an activity from the Toolbox](#23-drag-an-activity-from-the-toolbox)
      - 2.4 [Configure an Activity](#24-configure-an-activity)
   3. [Run and View Processes](#3-run-and-view-processes)
-     - 3.1 [Build the Spring Boot Jar](#31-build-the-spring-boot-jar)
+     - 3.1 [Build the Spring Boot jar](#31-build-the-spring-boot-jar)
      - 3.2 [Create a Run Configuration](#32-create-a-run-configuration)
-     - 3.3 [Run a flow through MDWHub](#33-run-a-flow-through-mdwhub)
-     - 3.4 [View the runtime instance](#34-view-the-runtime-instance)
-  4. [Create a Custom Activity](#4-create-a-custom-activity)
-  5. [Create a REST Service](#5-create-a-rest-service)
+     - 3.3 [Start the MDW server](#33-start-the-mdw-server)
+     - 3.4 [Run a process through MDWHub](#34-run-a-process-through-mdwhub)
+  4. [Add a Process Variable](#4-add-a-process-variable)
+  5. [Create a Custom Activity](#4-create-a-custom-activity)
+  6. [Create a REST Service](#5-create-a-rest-service)
 
 ## 1. Install and Run MDW Studio
 
@@ -68,13 +69,62 @@ that enables you to create workflow processes and other assets.
       considered an MDW package.
       
 ## 2. Design a Workflow Process
-  - **Create an asset package**
-    - Asset packages are like Java packages, except that they contain a lot more than just .java files.  Unlike code under src/main/java, everything in an 
-      asset package is dynamic and can be reloaded/recompiled at runtime without a build or even a server bounce.  In IntelliJ you create an asset package as
-      you would a standard Java or Kotlin package.
-    - In the project tree, right-click on the assets directory and select New > Package.  Enter a qualified name like this:
-      <img src="../images/studio/new-package.png" alt="New Package" style="width:600px" /><br/>
-  - **Create a workflow process**
-    - Right-click on your new package and select New MDW Process and give it a name:
-      <img src="../images/studio/new-process.png" alt="New Process" style="width:600px" /><br/>
+
+### 2.1 Create an asset package
+  - Asset packages are like Java packages, except that they contain a lot more than just .java files.  Unlike code under src/main/java, everything in an
+    asset package is dynamic and can be reloaded/recompiled at runtime without a build or even a server bounce.  In IntelliJ you create an asset package as
+    you would a standard Java or Kotlin package.
+  - In the project tree, right-click on the assets directory and select New > Package.  Enter a qualified name like this:
+    <img src="../images/studio/new-package.png" alt="New Package" style="width:600px" /><br/>
+
+### 2.2 Create a workflow process
+  - Right-click on your new package and select New MDW Process and give it a name:
+    <img src="../images/studio/new-process.png" alt="New Process" style="width:600px" /><br/>
+    
+### 2.3 Drag an activity from the Toolbox
+  - **Drag from the Toolbox**
+    - Expand the Toolbox by clicking its window button along the right-hand side of the design canvas.
+    - Find the Kotlin Script activity, and use your mouse to drag it onto the canvas somewhere beneath the link connecting Start and Stop.  
+      ![Drag from Toolbox](../images/studio/drag-from-toolbox.png)
+  - **Connect inbound transition**
+    - Select the link connecting Start and Stop by clicking on it.  Hover over the red dot where the link joins Stop.  This should display the crosshair cursor.
+    - Click and drag this red dot to anywhere within the New Kotlin Script activity.
+      ![Move link](../images/studio/move-link.png)
+    - Now select New Kotlin Script and drag it upwards to between Start and Stop.  Notice that the inbound link's endpoint adjusts automatically.
+  - **Connect outbound transition**
+    - To draw a new link, the trick to remember is Shift-Click-Drag.  Select New Kotlin Script again, hold down the Shift key, click and hold the left mouse button,
+      and drag a new line to somewhere within the Stop activity.  When you release the mouse button the transition is anchored.
+    - Note: Transitions are always directional, so they're drawn with an arrow indicating the direction of flow.
+      ![Connected links](../images/studio/connected-links.png)
+    
+### 2.4 Configure an activity
+  - Since the same activity may be used in multiple places, it needs to be configured for the specific location where it lives in a process.
+    Double-click New Kotlin Script activity to open the Configurator window.
+  - On the Definition tab, change the activity name to "Greeting Script".
+  - Select the Design tab, and click the Edit link.  Type some code like this:
+    ```kotlin
+    runtimeContext.logInfo("Hello, World")
+    ```
+  - Close the script dialog and save the process.
+  
+## 3. Run and View Processes
+
+### 3.1 Build the Spring Boot jar
+  - Open the Gradle (or Maven) tool window in IntellJ.  Run the "build" task in Gradle (or the "package" goal in Maven) to create the boot jar.
+  - Check the console output for any build errors.
+  
+### 3.2 Create a Run Configuration
+  - From the menu: Run > Edit Configurations...
+  - Click the `+` icon and select "Jar Application" from the dropdown.
+  - Name the configuration "my-mdw jar", and browse to the boot jar output file.
+  - Enter these vm options: `-Dmdw.runtime.env=dev -Dmdw.config.location=config`
+  - Make sure the Working directory is your project directory.
+    ![Run configuration](../images/studio/run-configuration.png)
+  
+### 3.3 Start the MDW server
+  - From the menu: Run > Debug... > select "my-mdw jar".  Server output appears in the console.
+
+### 3.4 Run a process through MDWHub
+  - Right-click on My First Process in the project tree and select Run Process.
+  - This should open the MDWHub run process page.  Click the run button to execute your flow.
       
