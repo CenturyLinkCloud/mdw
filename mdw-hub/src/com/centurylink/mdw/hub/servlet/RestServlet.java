@@ -120,7 +120,7 @@ public class RestServlet extends ServiceServlet {
                         && "application/json".equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE))) {
                     responseString = WebAppContext.addContextInfo(responseString, request);
                 }
-                response.getOutputStream().print(responseString);
+                response.getOutputStream().write(responseString.getBytes());
             }
         }
         catch (ServiceException ex) {

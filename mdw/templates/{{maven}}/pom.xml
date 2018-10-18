@@ -9,7 +9,7 @@
   <name>{{project}}</name>
   <properties>
     <mdw.version>{{mdw-version}}</mdw.version>
-    <spring.version>4.3.9.RELEASE</spring.version>
+    <spring.version>5.0.8.RELEASE</spring.version>
     <asset.loc>{{asset-loc}}</asset.loc>
   </properties>
   <repositories>
