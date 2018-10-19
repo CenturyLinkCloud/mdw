@@ -1,0 +1,77 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=63,y=107,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=150,ly=127,xs=127&173,ys=127&127"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "runtimeContext.logInfo(\"Before\")\nvariables[\"whereAmI\"] = \"Before\"",
+        "SCRIPT": "Kotlin Script",
+        "WORK_DISPLAY_INFO": "x=177,y=104,w=92,h=55"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
+      "name": "Before",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=297,ly=130,xs=273&322,ys=130&130"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=326,y=111,w=60,h=40"},
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessPauseActivity",
+      "name": "Pause",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=417,ly=131,xs=390&444,ys=131&131"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "runtimeContext.logInfo(\"After\")\nvariables[\"whereAmI\"] = \"After\"",
+        "SCRIPT": "Kotlin Script",
+        "WORK_DISPLAY_INFO": "x=448,y=107,w=92,h=52"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
+      "name": "After",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=576,ly=133,xs=544&608,ys=133&133"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=611,y=113,w=60,h=40"},
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "PerformanceLevel": "0",
+    "WORK_DISPLAY_INFO": "x=39,y=37,w=129,h=26"
+  },
+  "variables": {"whereAmI": {
+    "category": "LOCAL",
+    "type": "java.lang.String"
+  }}
+}

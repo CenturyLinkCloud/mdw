@@ -84,10 +84,13 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
       var yAdjust = -2;
       if (shape) {
         if ('start' == shape) {
-          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, null, 'green', 'white');
+          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, null, '#98fb98', 0.8);
         }
         else if ('stop' == shape) {
-          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, null, 'red', 'white');
+          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, null, '#ff8c86', 0.8);
+        }
+        else if ('pause' == shape) {
+          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, null, '#fdfd96');
         }
         else if ('decision' == shape) {
           this.diagram.drawDiamond(this.display.x, this.display.y, this.display.w, this.display.h);

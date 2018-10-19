@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.EventWaitActivity",
+  "icon": "shape:pause",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.process.ProcessPauseActivity",
+  "label": "Process Pause",
+  "pagelet": "<PAGELET>\n  <HYPERLINK URL='help/ProcessPauseActivity.html'>Pause Activity Help<\/HYPERLINK>\n<\/PAGELET>"
+}
