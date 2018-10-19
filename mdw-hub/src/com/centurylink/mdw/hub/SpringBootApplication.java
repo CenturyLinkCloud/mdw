@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.hub;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.services.util.InitialRequest;
@@ -143,6 +144,7 @@ public class SpringBootApplication {
                     if (!bootJar.exists())
                         throw new StartupException("No Spring Boot jar: " + mainLoc);
                     System.out.println("Spring Boot Jar => " + bootJar.getAbsolutePath());
+                    ApplicationContext.setBootJar(bootJar);
                     ZipHelper.unzip(bootJar, bootDir);
                 }
                 else  // PCF deployment explodes the JAR already
