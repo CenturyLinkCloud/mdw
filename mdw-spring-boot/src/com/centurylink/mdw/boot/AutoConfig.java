@@ -75,6 +75,7 @@ public class AutoConfig {
                     if (!bootJar.exists())
                         throw new StartupException("No Spring Boot jar: " + classLoc);
                     System.out.println("Spring Boot Jar => " + bootJar.getAbsolutePath());
+                    ApplicationContext.setBootJar(bootJar);
                     ZipHelper.unzip(bootJar, bootDir);
                 }
                 else  {
