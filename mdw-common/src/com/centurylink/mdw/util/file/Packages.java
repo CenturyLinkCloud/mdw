@@ -36,6 +36,7 @@ public class Packages extends TreeMap<String,File> {
     static {
         DEFAULT_BASE_PACKAGES.add(MDW_BASE);
         DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.db");
+        DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.kotlin");
         DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.node");
         DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.react");
         DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.task");

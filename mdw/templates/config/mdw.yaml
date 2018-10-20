@@ -1,3 +1,4 @@
+# https://centurylinkcloud.github.io/mdw/docs/guides/configuration/
 app:
   id: {{project}}
 
@@ -10,12 +11,6 @@ database:
   poolMaxIdle: 3
   validationQuery: select 1 from dual
 
-# optional mongodb (requires asset package com.centurylink.mdw.mongo)
-# mongodb:
-#   host: localhost
-#   port: 27017
-
-# asset location info (use absolute paths when running thru eclipse wtp) 
 asset:
   location: {{asset-loc}}
 
@@ -24,11 +19,9 @@ git:
   remote.url: {{git-remote-url}}
   branch: {{git-branch}}
 
-temp.dir: {{asset-loc}}/../temp
+temp.dir: ./temp
 
 hub.url: http://localhost:8080/mdw
-services.url: http://localhost:8080/mdw
-discovery.url: {{discovery-url}}
 
 logging:
   level: DEBUG

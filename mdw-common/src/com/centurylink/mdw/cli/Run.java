@@ -197,8 +197,14 @@ public class Run implements Operation {
     }
 
     protected String getBootJar() throws IOException {
-        String mdwVersion = new Version().getMdwVersion(getProjectDir());
-        return getBootJarLoc() + File.separator + "mdw-boot-" + mdwVersion + ".jar";
+        String bootJarLoc = getBootJarLoc();
+        if (bootJarLoc.endsWith(".jar")) {
+            return bootJarLoc;
+        }
+        else {
+            String mdwVersion = new Version().getMdwVersion(getProjectDir());
+            return bootJarLoc + File.separator + "mdw-boot-" + mdwVersion + ".jar";
+        }
     }
 
     protected File getLogDir() {
