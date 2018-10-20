@@ -324,6 +324,10 @@ public class SystemServicesImpl implements SystemServices {
         systemInfos.add(new SysInfo("Server name", ApplicationContext.getServer().toString()));
         systemInfos.add(new SysInfo("Runtime env", ApplicationContext.getRuntimeEnvironment()));
         systemInfos.add(new SysInfo("Startup dir", System.getProperty("user.dir")));
+        File bootJar = ApplicationContext.getBootJar();
+        if (bootJar != null)
+            systemInfos.add(new SysInfo("Boot jar", bootJar.getAbsolutePath()));
+
         systemInfos.add(new SysInfo("App user", System.getProperty("user.name")));
         systemInfos.add(new SysInfo("System time", String.valueOf(new Date(System.currentTimeMillis()))));
         systemInfos.add(new SysInfo("Startup time", String.valueOf(ApplicationContext.getStartupTime())));

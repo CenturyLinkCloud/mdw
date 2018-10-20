@@ -530,6 +530,10 @@ public class ApplicationContext {
         return "org.springframework.boot.loader".equals(System.getProperty("java.protocol.handler.pkgs"));
     }
 
+    private static File bootJar;
+    public static File getBootJar() { return bootJar; }
+    public static void setBootJar(File jar) { bootJar = jar; }
+
     private static String deployPath;
     public static String getDeployPath() {
         return deployPath;
