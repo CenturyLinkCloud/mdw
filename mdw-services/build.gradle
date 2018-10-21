@@ -15,7 +15,7 @@ dependencies {
     
     // swagger
     compile group: "javax.servlet", name: "javax.servlet-api", version: "3.1.0"
-    compile group: "io.swagger", name: "swagger-servlet", version: "1.5.13"
+    compile group: "io.swagger", name: "swagger-servlet", version: "1.5.19"
     
     // markdown
     compile group: "com.vladsch.flexmark", name: "flexmark", version: "0.32.22"
