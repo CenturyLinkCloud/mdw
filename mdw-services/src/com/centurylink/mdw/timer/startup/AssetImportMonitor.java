@@ -72,19 +72,21 @@ public class AssetImportMonitor implements StartupService {
     public void start() {
         Bulletin bulletin = null;
         try {
-            Long interval = PropertyManager.getLongProperty(PropertyNames.MDW_ASSET_SYNC_INTERVAL, 60000); //Defaults to checking every 60 seconds
+            long interval = PropertyManager.getLongProperty(PropertyNames.MDW_ASSET_SYNC_INTERVAL, 60000); //Defaults to checking every 60 seconds
             boolean gitHardReset = PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_SYNC_GITRESET, false);
             File assetDir = PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION) == null ? null : new File(PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION));
+            String user = PropertyManager.getProperty(PropertyNames.MDW_GIT_USER);
             String branch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
             File gitRoot = PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH) == null ? null : new File(PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH));
             AssetServices assetServices = ServiceLocator.getAssetServices();
             VersionControlGit vcs = (VersionControlGit)assetServices.getVersionControl();
-            if (vcs == null || vcs.getCommit() == null || assetDir == null || gitRoot == null || branch == null) {
+            if (vcs == null || vcs.getCommit() == null || assetDir == null || gitRoot == null || branch == null || user ==  null) {
                 _terminating = true;
                 String message = "Failed to start Asset Import Monitor due to: ";
                 message += assetDir == null ? "Missing mdw.asset.location property" : "";
                 message += gitRoot == null ? message.length() > 0 ? ", missing mdw.git.local.path property" : "Missing mdw.git.local.path property" : "";
                 message += branch == null ? message.length() > 0 ? ", missing mdw.git.branch property" : "Missing mdw.git.branch property" : "";
+                message += user == null ? message.length() > 0 ? ", missing mdw.git.user property" : "Missing mdw.git.user property" : "";
                 message += (vcs == null || vcs.getCommit() == null) ? message.length() > 0 ? ", missing Git repository" : "missing Git repository" : "";
                 logger.warn(message);
             }
