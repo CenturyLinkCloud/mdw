@@ -10,6 +10,7 @@ that enables you to create workflow processes and other assets.
   1. [Install and Run MDW Studio](#1-install-and-run-mdw-studio)
      - 1.1 [Installation](#11-installation) 
      - 1.2 [Create and open a project](#12-create-and-open-a-project)
+     - 1.3 [Open an existing project](#13-open-an-existing-project)
   2. [Design a Workflow Process](#2-design-a-workflow-process)
      - 2.1 [Create an asset package](#21-create-an-asset-package)
      - 2.2 [Create a workflow process](#22-create-a-workflow-process)
@@ -68,6 +69,12 @@ that enables you to create workflow processes and other assets.
     - Your asset base directory is usually ./assets, and is configured as a source folder for the project.  Any asset package whose name begins with com.centurylink.mdw. is
       considered an MDW package.
       
+### 1.3 Open an existing project
+  - Launch IntelliJ and from the welcome screen select Open Project.
+  - Browse for the directory that contains the MDW project.yaml file.  Select that directory.
+  - You may see a notification that the Gradle or Maven project needs to be imported.  For your dependencies to be resolved and project structure to be correct,
+    you must perform the import action suggested in the notification.
+
 ## 2. Design a Workflow Process
 
 ### 2.1 Create an asset package
