@@ -823,7 +823,7 @@ diagramMod.factory('Diagram',
     this.context.strokeStyle = DC.DEFAULT_COLOR;
   };
 
-  Diagram.prototype.drawOval = function(x, y, w, h, color, fill, fadeTo) {
+  Diagram.prototype.drawOval = function(x, y, w, h, color, fill, alpha) {
     var kappa = 0.5522848;
     var ox = (w / 2) * kappa; // control point offset horizontal
     var oy = (h / 2) * kappa; // control point offset vertical
@@ -844,16 +844,12 @@ diagramMod.factory('Diagram',
     this.context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
     this.context.closePath(); // not used correctly? (use to close off open path)
     if (fill) {
-      if (fadeTo) {
-        var gradient = this.context.createLinearGradient(x, y, x + w, y + h);
-        gradient.addColorStop(0, fill);
-        gradient.addColorStop(1, 'white');
-        this.context.fillStyle = gradient;
-      }
-      else {
         this.context.fillStyle = fill;
+      if (alpha) {
+        this.context.globalAlpha = alpha;
       }
       this.context.fill();
+      this.context.globalAlpha = 1.0;
       this.context.stroke();
     }
     else {

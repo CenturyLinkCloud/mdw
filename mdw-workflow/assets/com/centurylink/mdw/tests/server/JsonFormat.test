@@ -1,0 +1,27 @@
+package com.centurylink.mdw.tests.server
+
+import com.centurylink.mdw.config.PropertyManager
+import com.centurylink.mdw.model.JsonObject
+import com.centurylink.mdw.tests.workflow.Person
+
+assert onServer
+
+def hemingway = new Person("Ernest", "Hemingway")
+def fiction = new Book("A Farewell to Arms", hemingway, 332, true)
+assert fiction.getJson().toString() == fiction.toJson().toString()
+assert fiction.getJson().toString(2) == asset('fiction.json').textNormalized
+
+// test false boolean output
+def berendt = new Person("John", "Berendt")
+def origFalseValuesOutput = JsonObject.getFormat()
+
+JsonObject.getFormat().falseValuesOutput = false
+def nonfiction = new Book("Midnight in the Garden of Good and Evil", berendt, 388, false)
+assert nonfiction.getJson().toString() == nonfiction.toJson().toString()
+assert nonfiction.getJson().toString(2) == asset('nonfiction1.json').textNormalized
+
+JsonObject.getFormat().falseValuesOutput = true
+println("NONFICTION:\n" + nonfiction.getJson().toString(2))
+assert nonfiction.getJson().toString(2) == asset('nonfiction2.json').textNormalized
+
+JsonObject.getFormat().falseValuesOutput = origFalseValuesOutput
