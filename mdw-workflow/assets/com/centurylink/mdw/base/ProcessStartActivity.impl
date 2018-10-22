@@ -3,5 +3,5 @@
   "icon": "shape:start",
   "implementorClass": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
   "label": "Process Start",
-  "pagelet": "<PAGELET>\n  <MAPPING NAME='Parameters' LABEL='Bindings' VX='160'/>\n  <HYPERLINK URL='help/ProcessStartActivity.html'>Process Start Activity Help<\/HYPERLINK>\n<\/PAGELET>"
+  "pagelet": "<PAGELET>\n  <MAPPING NAME='Parameters' LABEL='Bindings' VX='160'/>\n  <HYPERLINK URL='help/ProcessStartActivity.html'>Start Activity Help<\/HYPERLINK>\n<\/PAGELET>"
 }

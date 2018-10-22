@@ -1,4 +1,9 @@
+Book.java=1
+JsonFormat.test=1
 VersionSpec.test=3
 YamlConfig.test=2
+fiction.json=1
 mdw.yaml=2
+nonfiction1.json=1
+nonfiction2.json=1
 readme.md=5

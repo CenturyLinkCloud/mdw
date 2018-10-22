@@ -24,6 +24,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
   
   Step.START_IMPL = 'com.centurylink.mdw.workflow.activity.process.ProcessStartActivity';
   Step.STOP_IMPL = 'com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity';
+  Step.PAUSE_IMPL = 'com.centurylink.mdw.workflow.activity.process.ProcessPauseActivity';
   Step.TASK_IMPL = 'com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity';
   Step.TASK_PAGELET = 'com.centurylink.mdw.base/CustomManualTask.pagelet';
   
@@ -54,6 +55,8 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
       name = 'Start';
     else if (implementor.implementorClass == Step.STOP_IMPL)
       name = 'Stop';
+    else if (implementor.implementorClass == Step.PAUSE_IMPL)
+      name = 'Pause';
     else
       name = 'New ' + name;
     var activity = {
@@ -75,19 +78,22 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
     // runtime state first
     if (this.instances) {
       var adj = 0;
-      if (shape == 'start' || shape == 'stop')
+      if (shape == 'start' || shape == 'stop' || shape == 'pause')
         adj = 2;
       this.diagram.drawState(this.display, this.instances, !this.diagram.drawBoxes, adj, animationTimeSlice);
     }
     
+    var yAdjust = -2;
     if (this.implementor.icon) {
-      var yAdjust = -2;
       if (shape) {
         if ('start' == shape) {
-          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, null, 'green', 'white');
+          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, null, '#98fb98', 0.8);
         }
         else if ('stop' == shape) {
-          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, null, 'red', 'white');
+          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, null, '#ff8c86', 0.8);
+        }
+        else if ('pause' == shape) {
+          this.diagram.drawOval(this.display.x, this.display.y, this.display.w, this.display.h, null, '#fffd87', 0.8);
         }
         else if ('decision' == shape) {
           this.diagram.drawDiamond(this.display.x, this.display.y, this.display.w, this.display.h);
@@ -95,6 +101,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
         }
         else if ('activity' == shape) {
           this.diagram.roundedRect(this.display.x, this.display.y, this.display.w, this.display.h, DC.BOX_OUTLINE_COLOR);
+          yAdjust = -8;
         }
       }
       else {
@@ -104,7 +111,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
         var iconX = this.display.x + this.display.w / 2 - 12;
         var iconY = this.display.y + 5;
         this.diagram.drawImage(iconSrc, iconX, iconY);
-        yAdjust = +4; 
+        yAdjust = this.title.lines.length == 1 ? 10 : 4;
       }
     }
     else {

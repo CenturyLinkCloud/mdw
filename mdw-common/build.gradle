@@ -64,14 +64,14 @@ dependencies {
     compile group: "dom4j", name: "dom4j", version: "1.6.1"
     compile group: "org.glassfish", name: "javax.el", version: "3.0.0"
     compile group: "org.apache.commons", name: "commons-dbcp2", version: "2.1.1"
-    compile group: "io.limberest", name: "limberest", version: "1.2.4"
+    compile group: "io.limberest", name: "limberest", version: "1.2.5"
     compile group: "com.auth0", name: "java-jwt", version: "3.3.0"
     compile group: "org.mariadb.jdbc", name: "mariadb-java-client", version: "2.2.3"
     
     // swagger
-    compile group: "io.swagger", name: "swagger-annotations", version: "1.5.13"
-    compile group: "io.swagger", name: "swagger-core", version: "1.5.13"
-    compile group: "io.swagger", name: "swagger-models", version: "1.5.13"
+    compile group: "io.swagger", name: "swagger-annotations", version: "1.5.19"
+    compile group: "io.swagger", name: "swagger-core", version: "1.5.19"
+    compile group: "io.swagger", name: "swagger-models", version: "1.5.19"
     
     compile group: "com.fasterxml.jackson.core", name: "jackson-core", version: "2.4.5"
     compile group: "com.fasterxml.jackson.core", name: "jackson-annotations", version: "2.4.5"
@@ -91,7 +91,7 @@ dependencies {
     // codegen
     compileOnly group: "io.swagger", name: "swagger-codegen-cli", version: "2.3.1"
     codegen group: "io.swagger", name: "swagger-codegen-cli", version: "2.3.1"
-    codegen group: "io.limberest", name: "limberest", version: "1.2.4"
+    codegen group: "io.limberest", name: "limberest", version: "1.2.5"
     
     // bpmn
     compileOnly fileTree(dir: "../mdw/libs", include: "bpmn-schemas.jar")

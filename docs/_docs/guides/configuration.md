@@ -185,7 +185,13 @@ title: MDW Configuration
     performance:
       level.service: 5  # default=3
       level.regular: 5  # default=3
-      
+
+    # formatting options for json output
+    json:
+      pretty.indent: 2 # pretty-print output with this indent level
+      ordered.keys: true # property and object names are sorted (default=true)
+      false.values.output: false # include false booleans when serializing output (default=false)
+
     engine:
       use.transaction: false  # default=false
       
