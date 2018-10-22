@@ -15,12 +15,6 @@
  */
 package com.centurylink.mdw.cli;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
-
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.bpmn.BpmnProcessExporter;
@@ -31,6 +25,12 @@ import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Project;
 import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.workflow.Process;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * Exports process into specific format. If --format is specified with html/png,
@@ -73,8 +73,6 @@ public class Export extends Setup {
         String pkgFile = getAssetRoot() + "/" + pkg.replace('.', '/') + "/";
         String procName = process.substring(index + 1);
         String content = new String(Files.readAllBytes(Paths.get(pkgFile + procName)));
-        Process proc = new Process(new JsonObject(content));
-        proc.setName(procName.substring(0, procName.length() - 5));
 
         if (output == null) {
             output = new File(pkgFile + procName.substring(0, procName.length() - 5) + "." + format);
@@ -101,6 +99,9 @@ public class Export extends Setup {
                 dependency.run(monitors);
             }
         }
+
+        Process proc = new Process(new JsonObject(content));
+        proc.setName(procName.substring(0, procName.length() - 5));
 
         if (exporter instanceof HtmlProcessExporter) {
             ((HtmlProcessExporter) exporter).setOutputDir(output.getParentFile());
