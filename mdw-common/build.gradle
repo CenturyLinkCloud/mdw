@@ -185,7 +185,11 @@ task cliJar(type: Jar) {
             include "io/swagger/codegen/languages/AbstractJavaCodegen.class"
             include "io/swagger/codegen/languages/features/BeanValidationFeatures.class"
             include "io/limberest/api/codegen/*.class"
+            include "io/limberest/config/*.class"
             include "io/limberest/json/*.class"
+            include "io/limberest/provider/*.class"
+            include "io/limberest/service/registry/*.class"
+            include "io/limberest/util/YamlLoader.class"
             include "version.properties"
         }
     }
