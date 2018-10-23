@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import com.centurylink.mdw.cli.Decrypt;
 import com.centurylink.mdw.yaml.YamlLoader;
 
 /**
@@ -85,7 +86,23 @@ public class YamlProperties {
      * @return
      */
     public String getString(String name) {
-        return (String)get(name, PropType.string);
+        String value = (String)get(name, PropType.string);
+        if (value != null && value.startsWith("~[") && value.endsWith("]")) {
+            try {
+                Decrypt decrypter = new Decrypt();
+                decrypter.setInput(value.substring(2, value.length() - 1));
+                value = decrypter.decrypt();
+            }
+            catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return value;
+    }
+
+    public boolean isEncrypted(String name) {
+        String value = (String)get(name, PropType.string);
+        return value != null && value.startsWith("~[") && value.endsWith("]");
     }
 
     @SuppressWarnings("unchecked")

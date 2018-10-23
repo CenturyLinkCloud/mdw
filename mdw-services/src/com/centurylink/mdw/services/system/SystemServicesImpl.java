@@ -433,7 +433,7 @@ public class SystemServicesImpl implements SystemServices {
             Collections.sort(propNames);
             for (String propName : propNames) {
                 try {
-                    if (propName.toLowerCase().indexOf("password") == -1)
+                    if (propName.toLowerCase().indexOf("password") == -1 && !propMgr.isEncrypted(propName))
                         mdwPropInfos.add(new SysInfo(propName, properties.getProperty(propName)));
                     else
                         mdwPropInfos.add(new SysInfo(propName, "********"));

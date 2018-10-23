@@ -35,7 +35,6 @@ public abstract class PropertyManager {
 
     private static PropertyManager instance = null;
     private Map<String, String> sources = new HashMap<String, String>();
-
     protected Map<String, String> getSources() {
         return sources;
     }
@@ -49,6 +48,9 @@ public abstract class PropertyManager {
     public abstract void setStringProperty(String name, String value);
 
     public abstract Properties getAllProperties();
+    public boolean isEncrypted(String propName) {
+        return false;
+    }
 
     public String get(String name) {
         return getStringProperty(name);
@@ -207,18 +209,6 @@ public abstract class PropertyManager {
         return instance;
     }
 
-    public String getPropertySource(String propname) {
-        return sources.get(propname);
-    }
-
-    public void putPropertySource(String propname, String src) {
-        sources.put(propname, src);
-    }
-
-    public boolean isDbConfigEnabled() {
-        return true;
-    }
-
     final protected void loadFromStream(Properties properties, InputStream stream, String source)
             throws XmlException, IOException {
         try {
@@ -244,7 +234,6 @@ public abstract class PropertyManager {
                 catch (Exception e) {
                 }
             }
-            ;
         }
     }
 

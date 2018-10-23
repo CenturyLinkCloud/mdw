@@ -31,18 +31,20 @@ public class Decrypt implements Operation {
     public void setInput(String input) { this.input = input; }
 
     public Decrypt run(ProgressMonitor... progressMonitors) throws IOException {
+        System.out.println(decrypt());
+        return this;
+    }
+
+    public String decrypt() throws IOException {
         String appToken = System.getenv(Encrypt.MDW_APP_TOKEN);
         if (appToken == null)
             throw new IOException("Missing environment variable: " + Encrypt.MDW_APP_TOKEN);
 
         try {
-            System.out.println(MiniCrypter.decrypt(input, appToken));
+            return MiniCrypter.decrypt(input, appToken);
         }
         catch (GeneralSecurityException ex) {
             throw new IOException(ex.getMessage(), ex);
         }
-
-        return this;
     }
-
 }
