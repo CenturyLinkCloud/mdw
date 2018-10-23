@@ -26,6 +26,7 @@ title: MDW Configuration
   - Specify your config directory via the `-Dmdw.config.location` system property.
   - To convert from old-style mdw.properties to mdw.yaml, run the [CLI](../../getting-started/cli/) command `mdw convert`.
   - Encrypted values (via `mdw encrypt`) start with `~[` and end with `]`.  Only string values support encryption (not lists).
+    Requires MDW_APP_TOKEN environment variable.
   - Here's an annotated example describing MDW's configuration options:   
     (**Please** do not use this as a starting point as it contains inappropriate/non-default values for illustration.  
       Instead run the `mdw init` CLI command to generate from the latest template).   
