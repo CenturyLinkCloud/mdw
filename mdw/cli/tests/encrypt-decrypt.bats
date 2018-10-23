@@ -6,6 +6,7 @@ setup() {
     if [ "${BATS_TEST_NUMBER}" = 1 ];then
         echo "# $(basename ${BATS_TEST_FILENAME})" >&3
     fi
+    mkdir -p output
 }
 
 TO_ENCRYPT="Top secret phrase"

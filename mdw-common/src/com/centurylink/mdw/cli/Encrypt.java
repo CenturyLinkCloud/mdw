@@ -33,17 +33,21 @@ public class Encrypt implements Operation {
     public void setInput(String input) { this.input = input; }
 
     public Encrypt run(ProgressMonitor... progressMonitors) throws IOException {
+        System.out.println(encrypt());
+        return this;
+    }
+
+    public String encrypt() throws IOException {
         String appToken = System.getenv(MDW_APP_TOKEN);
         if (appToken == null)
             throw new IOException("Missing environment variable: " + MDW_APP_TOKEN);
 
         try {
-            System.out.println(MiniCrypter.encrypt(input, appToken));
+            return MiniCrypter.encrypt(input, appToken);
         }
         catch (GeneralSecurityException ex) {
             throw new IOException(ex.getMessage(), ex);
         }
 
-        return this;
     }
 }
