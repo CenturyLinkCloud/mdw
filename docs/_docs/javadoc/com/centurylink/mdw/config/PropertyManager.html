@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":6,"i6":9,"i7":9,"i8":9,"i9":10,"i10":9,"i11":9,"i12":6,"i13":9,"i14":9,"i15":10,"i16":10,"i17":10,"i18":6,"i19":9,"i20":10,"i21":9,"i22":10,"i23":10,"i24":6};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":6,"i6":9,"i7":9,"i8":9,"i9":10,"i10":9,"i11":9,"i12":6,"i13":9,"i14":9,"i15":10,"i16":10,"i17":6,"i18":9,"i19":10,"i20":9,"i21":10,"i22":6};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -256,41 +256,32 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getPropertyFileLocation--">getPropertyFileLocation</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i16" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getPropertySource-java.lang.String-">getPropertySource</a></span>(java.lang.String&nbsp;propname)</code>&nbsp;</td>
-</tr>
-<tr id="i17" class="rowColor">
 <td class="colFirst"><code>protected java.util.Map&lt;java.lang.String,java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getSources--">getSources</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>abstract java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getStringProperty-java.lang.String-">getStringProperty</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config">PropertyManager</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#initializeMockPropertyManager--">initializeMockPropertyManager</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#isDbConfigEnabled--">isDbConfigEnabled</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#isEncrypted-java.lang.String-">isEncrypted</a></span>(java.lang.String&nbsp;propName)</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#isYaml--">isYaml</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#loadFromStream-java.util.Properties-java.io.InputStream-java.lang.String-">loadFromStream</a></span>(java.util.Properties&nbsp;properties,
               java.io.InputStream&nbsp;stream,
               java.lang.String&nbsp;source)</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#putPropertySource-java.lang.String-java.lang.String-">putPropertySource</a></span>(java.lang.String&nbsp;propname,
-                 java.lang.String&nbsp;src)</code>&nbsp;</td>
-</tr>
-<tr id="i24" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#setStringProperty-java.lang.String-java.lang.String-">setStringProperty</a></span>(java.lang.String&nbsp;name,
                  java.lang.String&nbsp;value)</code>&nbsp;</td>
@@ -446,6 +437,15 @@ extends java.lang.Object</pre>
 <pre>public abstract&nbsp;java.util.Properties&nbsp;getAllProperties()</pre>
 </li>
 </ul>
+<a name="isEncrypted-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isEncrypted</h4>
+<pre>public&nbsp;boolean&nbsp;isEncrypted(java.lang.String&nbsp;propName)</pre>
+</li>
+</ul>
 <a name="get-java.lang.String-">
 <!--   -->
 </a>
@@ -592,34 +592,6 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>initializeMockPropertyManager</h4>
 <pre>public static&nbsp;<a href="../../../../com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config">PropertyManager</a>&nbsp;initializeMockPropertyManager()</pre>
-</li>
-</ul>
-<a name="getPropertySource-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getPropertySource</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getPropertySource(java.lang.String&nbsp;propname)</pre>
-</li>
-</ul>
-<a name="putPropertySource-java.lang.String-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>putPropertySource</h4>
-<pre>public&nbsp;void&nbsp;putPropertySource(java.lang.String&nbsp;propname,
-                              java.lang.String&nbsp;src)</pre>
-</li>
-</ul>
-<a name="isDbConfigEnabled--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isDbConfigEnabled</h4>
-<pre>public&nbsp;boolean&nbsp;isDbConfigEnabled()</pre>
 </li>
 </ul>
 <a name="loadFromStream-java.util.Properties-java.io.InputStream-java.lang.String-">
