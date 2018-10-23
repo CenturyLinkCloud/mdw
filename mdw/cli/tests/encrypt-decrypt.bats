@@ -21,5 +21,5 @@ TO_ENCRYPT="Top secret phrase"
 @test "decrypt" {
   encrypted=`cat output/encrypted.txt`
   mdw decrypt --input="$encrypted" > output/decrypted.txt
-  diff output/ToEncrypt.txt output/decrypted.txt
+  diff output/toEncrypt.txt output/decrypted.txt
 }
