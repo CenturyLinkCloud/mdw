@@ -210,3 +210,8 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
     }
   });  
 }]);
+
+editMod.controller('InstanceEditorController', ['$scope', '$routeParams', 'mdw', 'util', 'Assets', 'Asset',
+                                         function($scope, $routeParams, mdw, util, Assets, Asset) {
+
+}]);

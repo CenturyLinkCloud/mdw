@@ -327,7 +327,11 @@ processMod.controller('ProcessController',
   $scope.asException = function(value) {
     return util.asException(value);
   };
-  
+
+  $scope.instanceEditAllowed = function() {
+    return $scope.authUser.hasRole('Process Execution');
+  };
+
 }]);
 
 processMod.factory('Process', ['$resource', 'mdw', function($resource, mdw) {
