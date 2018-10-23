@@ -24,16 +24,16 @@ public class ProcessPauseActivity extends DefaultActivityImpl implements Suspend
 
     @Override
     public boolean needSuspend() throws ActivityException {
-        return false;
+        return true;
     }
 
     @Override
     public boolean resume(InternalEvent eventMessageDoc) throws ActivityException {
-        return false;
+        return true;
     }
 
     @Override
     public boolean resumeWaiting(InternalEvent event) throws ActivityException {
-        return false;
+        return true;
     }
 }

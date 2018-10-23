@@ -47,10 +47,14 @@ public class MiniCrypter {
      * @param strkey a default key will be used when passing null in
      * @return encrypted string
      */
-    protected static String encrypt(String input, String strkey)
+    public static String encrypt(String input, String strkey)
     throws GeneralSecurityException {
         SecretKey key;
-        if (strkey!=null) key = new SecretKeySpec(strkey.getBytes(), algorithm);
+        if (strkey != null) {
+            if (strkey.length() > 56)
+                strkey = strkey.substring(0, 55);
+            key = new SecretKeySpec(strkey.getBytes(), algorithm);
+        }
         else {
             if (defaultKey==null) defaultKey =
                 new SecretKeySpec(defaultKeyString.getBytes(), algorithm);
@@ -83,10 +87,14 @@ public class MiniCrypter {
      * @param strkey a default key will be used when passing null in
      * @return decrypted original data
      */
-    protected static String decrypt(String encrypted, String strkey)
+    public static String decrypt(String encrypted, String strkey)
     throws GeneralSecurityException {
         SecretKey key;
-        if (strkey!=null) key = new SecretKeySpec(strkey.getBytes(), algorithm);
+        if (strkey != null) {
+            if (strkey.length() > 56)
+                strkey = strkey.substring(0, 55);
+            key = new SecretKeySpec(strkey.getBytes(), algorithm);
+        }
         else {
             if (defaultKey==null) defaultKey =
                 new SecretKeySpec(defaultKeyString.getBytes(), algorithm);
