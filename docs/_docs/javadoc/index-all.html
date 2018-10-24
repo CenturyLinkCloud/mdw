@@ -260,6 +260,12 @@
 <div class="block">Activity monitors can be registered through @Monitor annotations to get
  (optionally) called whenever an MDW workflow activity is invoked.</div>
 </dd>
+<dt><a href="com/centurylink/mdw/model/workflow/ActivityNodeSequencer.html" title="class in com.centurylink.mdw.model.workflow"><span class="typeNameLink">ActivityNodeSequencer</span></a> - Class in <a href="com/centurylink/mdw/model/workflow/package-summary.html">com.centurylink.mdw.model.workflow</a></dt>
+<dd>
+<div class="block">Assigns geographical sequence numbers to activities and subprocesses for a process.</div>
+</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/ActivityNodeSequencer.html#ActivityNodeSequencer-com.centurylink.mdw.model.workflow.Process-">ActivityNodeSequencer(Process)</a></span> - Constructor for class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/ActivityNodeSequencer.html" title="class in com.centurylink.mdw.model.workflow">ActivityNodeSequencer</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/provider/ActivityProvider.html" title="interface in com.centurylink.mdw.provider"><span class="typeNameLink">ActivityProvider</span></a> - Interface in <a href="com/centurylink/mdw/provider/package-summary.html">com.centurylink.mdw.provider</a></dt>
 <dd>
 <div class="block">Provides instances of GeneralActivity implementor to the MDW runtime engine.</div>
@@ -794,6 +800,8 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/task/TaskAction.html#ASSIGN">ASSIGN</a></span> - Static variable in class com.centurylink.mdw.model.task.<a href="com/centurylink/mdw/model/task/TaskAction.html" title="class in com.centurylink.mdw.model.task">TaskAction</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/constant/TaskAttributeConstant.html#ASSIGNEE_VAR">ASSIGNEE_VAR</a></span> - Static variable in class com.centurylink.mdw.constant.<a href="com/centurylink/mdw/constant/TaskAttributeConstant.html" title="class in com.centurylink.mdw.constant">TaskAttributeConstant</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/ActivityNodeSequencer.html#assignNodeSequenceIds--">assignNodeSequenceIds()</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/ActivityNodeSequencer.html" title="class in com.centurylink.mdw.model.workflow">ActivityNodeSequencer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/centurylink/mdw/model/Attachment.html" title="class in com.centurylink.mdw.model"><span class="typeNameLink">Attachment</span></a> - Class in <a href="com/centurylink/mdw/model/package-summary.html">com.centurylink.mdw.model</a></dt>
 <dd>&nbsp;</dd>
@@ -4109,6 +4117,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/task/TaskAction.html#fixCase-java.lang.String-">fixCase(String)</a></span> - Static method in class com.centurylink.mdw.model.task.<a href="com/centurylink/mdw/model/task/TaskAction.html" title="class in com.centurylink.mdw.model.task">TaskAction</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/centurylink/mdw/html/FlexmarkInstances.html" title="class in com.centurylink.mdw.html"><span class="typeNameLink">FlexmarkInstances</span></a> - Class in <a href="com/centurylink/mdw/html/package-summary.html">com.centurylink.mdw.html</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/util/log/log4j/LoggingOutputStream.html#flush--">flush()</a></span> - Method in class com.centurylink.mdw.util.log.log4j.<a href="com/centurylink/mdw/util/log/log4j/LoggingOutputStream.html" title="class in com.centurylink.mdw.util.log.log4j">LoggingOutputStream</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/common/service/ServiceException.html#FORBIDDEN">FORBIDDEN</a></span> - Static variable in exception com.centurylink.mdw.common.service.<a href="com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></dt>
@@ -4412,6 +4422,8 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/workflow/WorkflowServicesImpl.html#getActivities-com.centurylink.mdw.common.service.Query-">getActivities(Query)</a></span> - Method in class com.centurylink.mdw.services.workflow.<a href="com/centurylink/mdw/services/workflow/WorkflowServicesImpl.html" title="class in com.centurylink.mdw.services.workflow">WorkflowServicesImpl</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/WorkflowServices.html#getActivities-com.centurylink.mdw.common.service.Query-">getActivities(Query)</a></span> - Method in interface com.centurylink.mdw.services.<a href="com/centurylink/mdw/services/WorkflowServices.html" title="interface in com.centurylink.mdw.services">WorkflowServices</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/Process.html#getActivitiesOrderBySeq--">getActivitiesOrderBySeq()</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/ActivityList.html#getActivity-java.lang.Long-">getActivity(Long)</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/ActivityList.html" title="class in com.centurylink.mdw.model.workflow">ActivityList</a></dt>
 <dd>&nbsp;</dd>
@@ -8076,6 +8088,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/process/BaseActivity.html#getParentProcessId--">getParentProcessId()</a></span> - Method in class com.centurylink.mdw.services.process.<a href="com/centurylink/mdw/services/process/BaseActivity.html" title="class in com.centurylink.mdw.services.process">BaseActivity</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/html/FlexmarkInstances.html#getParser-com.vladsch.flexmark.util.options.MutableDataSet-">getParser(MutableDataSet)</a></span> - Static method in class com.centurylink.mdw.html.<a href="com/centurylink/mdw/html/FlexmarkInstances.html" title="class in com.centurylink.mdw.html">FlexmarkInstances</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/test/TestCaseMessage.html#getPassword--">getPassword()</a></span> - Method in class com.centurylink.mdw.test.<a href="com/centurylink/mdw/test/TestCaseMessage.html" title="class in com.centurylink.mdw.test">TestCaseMessage</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/common/service/Query.html#getPath--">getPath()</a></span> - Method in class com.centurylink.mdw.common.service.<a href="com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a></dt>
@@ -8563,8 +8577,6 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/cli/Init.html#getProjectDir--">getProjectDir()</a></span> - Method in class com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Init.html" title="class in com.centurylink.mdw.cli">Init</a></dt>
 <dd>&nbsp;</dd>
-<dt><span class="memberNameLink"><a href="com/centurylink/mdw/cli/Install.html#getProjectDir--">getProjectDir()</a></span> - Method in class com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Install.html" title="class in com.centurylink.mdw.cli">Install</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/cli/Run.html#getProjectDir--">getProjectDir()</a></span> - Method in class com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Run.html" title="class in com.centurylink.mdw.cli">Run</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/cli/Setup.html#getProjectDir--">getProjectDir()</a></span> - Method in class com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Setup.html" title="class in com.centurylink.mdw.cli">Setup</a></dt>
@@ -8751,6 +8763,8 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getRemoteContentString-java.lang.String-java.lang.String-">getRemoteContentString(String, String)</a></span> - Method in class com.centurylink.mdw.dataaccess.file.<a href="com/centurylink/mdw/dataaccess/file/VersionControlGit.html" title="class in com.centurylink.mdw.dataaccess.file">VersionControlGit</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/ProcessInstance.html#getRemoteServer--">getRemoteServer()</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/html/FlexmarkInstances.html#getRenderer-com.vladsch.flexmark.util.options.MutableDataSet-">getRenderer(MutableDataSet)</a></span> - Static method in class com.centurylink.mdw.html.<a href="com/centurylink/mdw/html/FlexmarkInstances.html" title="class in com.centurylink.mdw.html">FlexmarkInstances</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/services/asset/AssetServicesImpl.html#getRenderer-java.lang.String-java.lang.String-">getRenderer(String, String)</a></span> - Method in class com.centurylink.mdw.services.asset.<a href="com/centurylink/mdw/services/asset/AssetServicesImpl.html" title="class in com.centurylink.mdw.services.asset">AssetServicesImpl</a></dt>
 <dd>&nbsp;</dd>
@@ -9339,6 +9353,8 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/util/log/StandardLogger.html#getSentryMark--">getSentryMark()</a></span> - Method in interface com.centurylink.mdw.util.log.<a href="com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/Value.html#getSequence--">getSequence()</a></span> - Method in class com.centurylink.mdw.model.<a href="com/centurylink/mdw/model/Value.html" title="class in com.centurylink.mdw.model">Value</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/Activity.html#getSequenceId--">getSequenceId()</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/Process.html#getSequenceId--">getSequenceId()</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a></dt>
 <dd>&nbsp;</dd>
@@ -18528,6 +18544,8 @@
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/adapter/SimulationResponse.html#setSelected-java.lang.Boolean-">setSelected(Boolean)</a></span> - Method in class com.centurylink.mdw.adapter.<a href="com/centurylink/mdw/adapter/SimulationResponse.html" title="class in com.centurylink.mdw.adapter">SimulationResponse</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/Value.html#setSequence-int-">setSequence(int)</a></span> - Method in class com.centurylink.mdw.model.<a href="com/centurylink/mdw/model/Value.html" title="class in com.centurylink.mdw.model">Value</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/Activity.html#setSequenceId-int-">setSequenceId(int)</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/centurylink/mdw/model/workflow/Process.html#setSequenceId-int-">setSequenceId(int)</a></span> - Method in class com.centurylink.mdw.model.workflow.<a href="com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a></dt>
 <dd>&nbsp;</dd>
