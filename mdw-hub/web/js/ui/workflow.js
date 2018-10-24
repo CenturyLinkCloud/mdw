@@ -2,10 +2,10 @@
 
 var workflowMod = angular.module('mdwWorkflow', ['mdw', 'mdwDiagram', 'mdwSelection', 'drawingConstants']);
 
-workflowMod.controller('MdwWorkflowController', 
+workflowMod.controller('MdwWorkflowController',
     ['$scope', '$http', '$document', 'mdw', 'util', 'uiUtil', 'mdwImplementors', 'Diagram', 'Inspector', 'Toolbox',
     function($scope, $http, $document, mdw, util, uiUtil, mdwImplementors, Diagram, Inspector, Toolbox) {
-  
+
   $scope.init = function(canvas) {
     if ($scope.serviceBase.endsWith('/'))
       $scope.serviceBase = $scope.serviceBase.substring(0, $scope.serviceBase.length - 1);
@@ -16,7 +16,7 @@ workflowMod.controller('MdwWorkflowController',
     else {
       $scope.hubBase = $scope.serviceBase.substring(0, $scope.serviceBase.length - 9);
     }
-    
+
     $scope.canvas = canvas;
     if ($scope.process.$promise) {
       // wait until resolved
@@ -29,8 +29,9 @@ workflowMod.controller('MdwWorkflowController',
         $scope.canvas.bind('mouseover', $scope.mouseOver);
         $scope.canvas.bind('mouseout', $scope.mouseOut);
         $scope.canvas.bind('dblclick', $scope.mouseDoubleClick);
+        $scope.canvas.bind('contextmenu', $scope.contextMenu);
         if ($scope.editable)
-          $document.bind('keydown', $scope.keyDown);        
+          $document.bind('keydown', $scope.keyDown);
       }, function(error) {
         mdw.messages = error;
       });
@@ -43,11 +44,12 @@ workflowMod.controller('MdwWorkflowController',
       $scope.canvas.bind('mouseover', $scope.mouseOver);
       $scope.canvas.bind('mouseout', $scope.mouseOut);
       $scope.canvas.bind('dblclick', $scope.mouseDoubleClick);
+      $scope.canvas.bind('contextmenu', $scope.contextMenu);
       if ($scope.editable)
-        $document.bind('keydown', $scope.keyDown);        
+        $document.bind('keydown', $scope.keyDown);
     }
   };
-  
+
   $scope.dest = function() {
     $scope.canvas.unbind('mousemove', $scope.mouseMove);
     $scope.canvas.unbind('mousedown', $scope.mouseDown);
@@ -55,10 +57,11 @@ workflowMod.controller('MdwWorkflowController',
     $scope.canvas.unbind('mouseover', $scope.mouseOver);
     $scope.canvas.unbind('mouseout', $scope.mouseOut);
     $scope.canvas.unbind('dblclick', $scope.mouseDoubleClick);
+    $scope.canvas.unbind('contextmenu', $scope.contextMenu);
     if ($scope.editable)
-      $document.unbind('keydown', $scope.keyDown);        
+      $document.unbind('keydown', $scope.keyDown);
   };
-  
+
   $scope.renderProcess = function() {
     var template = $scope.process.template;
     var packageName = template && $scope.process.templatePackage ? $scope.process.templatePackage : $scope.process.packageName;
@@ -66,6 +69,7 @@ workflowMod.controller('MdwWorkflowController',
     var processVersion = $scope.process.archived ? (template ? $scope.process.template.version : $scope.process.version) : null;
     var instanceId = $scope.process.id;
     var masterRequestId = $scope.process.masterRequestId;
+    var processStatus = $scope.process.status;
     var workflowUrl = $scope.serviceBase + '/Workflow/' + packageName + '/' + processName;
     if (processVersion)
       workflowUrl += '/v' + processVersion;
@@ -78,6 +82,7 @@ workflowMod.controller('MdwWorkflowController',
         // restore summary instance data
         $scope.process.id = instanceId;
         $scope.process.masterRequestId = masterRequestId;
+        $scope.process.status = processStatus;
         $scope.process.template = template;
         $scope.implementors = mdwImplementors.get();
         if ($scope.implementors) {
@@ -95,13 +100,13 @@ workflowMod.controller('MdwWorkflowController',
         }
     });
   };
-  
+
   $scope.doRender = function() {
     if (typeof $scope.renderState === 'string')
       $scope.renderState = 'true' == $scope.renderState.toLowerCase();
     if (typeof $scope.animate === 'string')
       $scope.animate = 'true' == $scope.animate.toLowerCase();
-    
+
     if ($scope.renderState && $scope.process.id) {
       $http({ method: 'GET', url: $scope.serviceBase + '/Processes/' + $scope.process.id })
         .then(function success(response) {
@@ -121,7 +126,7 @@ workflowMod.controller('MdwWorkflowController',
       }
     }
   };
-  
+
   $scope.down = false;
   $scope.dragging = false;
   $scope.dragIn = null;
@@ -197,12 +202,27 @@ workflowMod.controller('MdwWorkflowController',
         Inspector.setObj(selObj, true);
     }
   };
+  $scope.contextMenu = function(e) {
+    e.preventDefault();
+    var items = $scope.diagram.getContextMenuItems(e);
+    if (items && items.length) {
+      var menu = $document[0].getElementById('mdw-canvas-menu');
+      menu.style.display = 'block';
+      menu.style.top = '500px';
+      menu.style.left = '500px';
+    }
+    e.stopPropagation();
+  };
+  $scope.onContextMenuSelect = function(action) {
+
+
+  };
   $scope.keyDown = function(e) {
     if (e.keyCode == 46 && $scope.diagram && $scope.editable) {
       $scope.diagram.onDelete(e, $scope.handleChange);
     }
   };
-  
+
   $scope.handleChange = function() {
     if ($scope.onChange)
       $scope.onChange($scope.process);
