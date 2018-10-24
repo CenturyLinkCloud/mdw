@@ -151,18 +151,19 @@ workflowMod.controller('MdwWorkflowController',
   };
   $scope.mouseDown = function(e) {
     $scope.down = true;
+    $scope.closeContextMenu();
     if ($scope.diagram) {
       $scope.diagram.onMouseDown(e);
       var selObj = $scope.diagram.selection.getSelectObj();
       if (selObj && selObj.isLabel)
         selObj = selObj.owner;
       if (selObj) {
-        Inspector.setObj(selObj, !$scope.editable);
+        Inspector.setObj(selObj, !$scope.editable && e.button !== 2);
       }
       else {
         var bgObj = $scope.diagram.getBackgroundObj(e);
         if (bgObj)
-          Inspector.setObj(bgObj, !$scope.editable);
+          Inspector.setObj(bgObj, !$scope.editable && e.button !== 2);
       }
     }
   };
@@ -204,20 +205,33 @@ workflowMod.controller('MdwWorkflowController',
   };
   $scope.contextMenu = function(e) {
     e.preventDefault();
-    var items = $scope.diagram.getContextMenuItems(e);
-    if (items && items.length) {
-      var menu = $document[0].getElementById('mdw-canvas-menu');
-      menu.style.display = 'block';
-      menu.style.top = '500px';
-      menu.style.left = '500px';
+    if ($scope.$parent.authUser.hasRole('Process Execution')) {
+      var items = $scope.diagram.getContextMenuItems(e);
+      if (items && items.length) {
+        var menu = $document[0].getElementById('mdw-canvas-menu');
+        var lis = menu.getElementsByTagName('li');
+        for (var i = 0; i < lis.length; i++) {
+          lis[i].style.display = items.includes(lis[i].id) ? 'block' : 'none';
+        }
+        menu.style.display = 'block';
+        menu.style.top = e.clientY + 'px';
+        menu.style.left = e.clientX + 'px';
+      }
     }
     e.stopPropagation();
   };
   $scope.onContextMenuSelect = function(action) {
-
-
+    console.log("ACTION: " + action);
+    $scope.closeContextMenu();
+  };
+  $scope.closeContextMenu = function() {
+    var menu = $document[0].getElementById('mdw-canvas-menu');
+    if (menu) {
+      menu.style.display = 'none';
+    }
   };
   $scope.keyDown = function(e) {
+    $scope.closeContextMenu();
     if (e.keyCode == 46 && $scope.diagram && $scope.editable) {
       $scope.diagram.onDelete(e, $scope.handleChange);
     }

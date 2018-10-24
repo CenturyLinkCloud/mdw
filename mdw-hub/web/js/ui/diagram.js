@@ -1240,20 +1240,20 @@ diagramMod.factory('Diagram',
     var y = e.clientY - rect.top;
     var selObj = this.getHoverObj(x, y);
     if (selObj) {
-      if (selObj.isLabel && selObj.owner.workflowType == 'process') {
-        if (this.instance && this.instance.status) {
+      if (selObj.isLabel && selObj.owner.workflowType === 'process') {
+        if (this.instance && (this.instance.status === 'In Progress' || this.instance.status == 'Waiting')) {
           return ['cancel'];
         }
       }
       else if (selObj.instances && selObj.instances.length) {
         var instance = selObj.instances[selObj.instances.length - 1];
         var actions = [];
-        if (selObj.workflowType == 'activity' && instance.status) {
-          if (instance.status == 'Failed') {
+        if (selObj.workflowType === 'activity' && instance.status) {
+          if (instance.status === 'Failed') {
             actions.push('retry');
             actions.push('proceed');
           }
-          else if (instance.status == 'Waiting') {
+          else if (instance.status === 'Waiting') {
             actions.push('proceed');
           }
         }

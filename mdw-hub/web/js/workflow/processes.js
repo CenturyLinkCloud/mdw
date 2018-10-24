@@ -328,6 +328,10 @@ processMod.controller('ProcessController',
     return util.asException(value);
   };
 
+  $scope.instanceCancelAllowed = function() {
+    return $scope.authUser.hasRole('Process Execution') && $scope.process &&
+        ($scope.process.status == 'In Progress' || $scope.process.status == "Waiting");
+  };
   $scope.instanceEditAllowed = function() {
     return $scope.authUser.hasRole('Process Execution') && $scope.process &&
         ($scope.process.status == 'In Progress' || $scope.process.status == "Waiting");
