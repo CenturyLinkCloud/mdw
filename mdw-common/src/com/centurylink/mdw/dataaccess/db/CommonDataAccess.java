@@ -882,12 +882,16 @@ public class CommonDataAccess {
     }
 
     public void setElapsedTime(String ownerType, Long instanceId, Long elapsedTime) throws SQLException {
-        try {
-            db.openConnection();
+        if (db.connectionIsOpen()) {
             setElapsedTime0(ownerType, instanceId, elapsedTime);
         }
-        finally {
-            db.closeConnection();
+        else {
+            try {
+                db.openConnection();
+                setElapsedTime0(ownerType, instanceId, elapsedTime);
+            } finally {
+                db.closeConnection();
+            }
         }
     }
 
@@ -905,9 +909,12 @@ public class CommonDataAccess {
     protected Long getProcessElapsedTime0(Long processInstanceId) throws SQLException {
         String query;
         if (db.isOracle()) {
-            query = "select (CAST(" + nowPrecision()
-                    + " AS DATE) - CAST(START_DT AS DATE)) * 86400*1000 AS ELAPSED_MS "
-                    + " from PROCESS_INSTANCE where PROCESS_INSTANCE_ID=?";
+            query = "SELECT EXTRACT(day FROM DIFF)*24*60*60*1000 + "+
+                    "EXTRACT(hour FROM DIFF)*60*60*1000 + "+
+                    "EXTRACT(minute FROM DIFF)*60*1000 + "+
+                    "EXTRACT(second FROM DIFF)*1000 as ELAPSED_MS"+
+                    " FROM (SELECT (" + nowPrecision() + " - START_DT) AS DIFF"+
+                    " from PROCESS_INSTANCE where PROCESS_INSTANCE_ID=?)";
         }
         else {
             query = "select TIMESTAMPDIFF(MICROSECOND,START_DT," + nowPrecision() + ")/1000"
@@ -925,12 +932,15 @@ public class CommonDataAccess {
     }
 
     public Long getRequestCompletionTime(String ownerType, Long ownerId) throws SQLException {
-        try {
-            db.openConnection();
+        if (db.connectionIsOpen())
             return getRequestCompletionTime0(ownerType, ownerId);
-        }
-        finally {
-            db.closeConnection();
+        else {
+            try {
+                db.openConnection();
+                return getRequestCompletionTime0(ownerType, ownerId);
+            } finally {
+                db.closeConnection();
+            }
         }
     }
 
@@ -939,15 +949,18 @@ public class CommonDataAccess {
         String requestOwner = ownerType + "_REQUEST";
         String query;
         if (db.isOracle()) {
-            query="SELECT  (CAST(t2.CREATE_DT as DATE)-CAST(t1.CREATE_DT as DATE))*86400*1000 "+
-              "  as ELAPSED_MS"+
-              " from  DOCUMENT t1"+
-              " left join DOCUMENT t2"+
-              " on t2.OWNER_ID=t1.OWNER_ID"+
-              " and t2.OWNER_TYPE='" + requestOwner + "'"+
-              " and t1.OWNER_TYPE='" + responseOwner + "'"+
-              " where t1.OWNER_ID=?";
-          }
+            query="SELECT EXTRACT(day FROM DIFF)*24*60*60*1000 + "+
+                    "EXTRACT(hour FROM DIFF)*60*60*1000 + "+
+                    "EXTRACT(minute FROM DIFF)*60*1000 + "+
+                    "EXTRACT(second FROM DIFF)*1000 as ELAPSED_MS"+
+                    " FROM (SELECT (t1.CREATE_DT - t2.CREATE_DT) as DIFF"+
+                    " from  DOCUMENT t1"+
+                    " left join DOCUMENT t2"+
+                    " on t2.OWNER_ID=t1.OWNER_ID"+
+                    " and t2.OWNER_TYPE='" + requestOwner + "'"+
+                    " and t1.OWNER_TYPE='" + responseOwner + "'"+
+                    " where t1.OWNER_ID=?)";
+        }
         else {
           query="select TIMESTAMPDIFF(MICROSECOND,(select t2.CREATE_DT"+
             " from DOCUMENT t2"+

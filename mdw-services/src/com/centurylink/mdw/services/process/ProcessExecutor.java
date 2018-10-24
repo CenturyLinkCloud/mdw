@@ -473,6 +473,40 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
+    public Long getRequestCompletionTime(String ownerType, Long ownerId) throws DataAccessException {
+        TransactionWrapper transaction=null;
+        try {
+            transaction = startTransaction();
+            return engineImpl.getDataAccess().getRequestCompletionTime(ownerType, ownerId);
+        } catch (SQLException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).getRequestCompletionTime(ownerType, ownerId);
+            }
+            else
+                throw new DataAccessException(0, "Failed to get request completion time", e);
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
+
+    public void setElapsedTime(String ownerType, Long instanceId, Long elapsedTime) throws DataAccessException {
+        TransactionWrapper transaction=null;
+        try {
+            transaction = startTransaction();
+            engineImpl.getDataAccess().setElapsedTime(ownerType, instanceId, elapsedTime);
+        } catch (SQLException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).setElapsedTime(ownerType, instanceId, elapsedTime);
+            }
+            else
+                throw new DataAccessException(0, "Failed to set elapsed time", e);
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
+
     public void setActivityInstanceStatus(ActivityInstance actInst,
             Integer status, String status_message) throws DataAccessException {
         TransactionWrapper transaction=null;
@@ -556,7 +590,7 @@ public class ProcessExecutor implements RetryableTransaction {
     /**
      * Creates a new instance of the WorkTransationInstance entity
      *
-     * @param pWokTransId
+     * @param transition
      * @param pProcessInstId
      * @return WorkTransitionInstance object
      */
@@ -1105,7 +1139,7 @@ public class ProcessExecutor implements RetryableTransaction {
 
     /**
      * this method must be called within the same transaction scope (namely engine is already started
-     * @param actInstId
+     * @param procInstId
      * @throws DataAccessException
      */
     public Integer lockProcessInstance(Long procInstId)

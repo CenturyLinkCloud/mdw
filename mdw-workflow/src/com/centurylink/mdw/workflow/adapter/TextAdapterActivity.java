@@ -402,7 +402,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
 
     /**
      * Added so retry in executed for certain exceptions.
-     * @param pErrorCause
+     * @param errorCode
      * @throws ActivityException
      */
     protected void handleRetry(int errorCode, Throwable originalCause)
@@ -413,7 +413,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
     /**
      * Typically you should not override this method. ConnectionPoolAdapter
      * does override this with internal MDW logic.
-     * @param pErrorCause
+     * @param errorCode
      * @throws ActivityException
      */
     protected void handleConnectionException(int errorCode, Throwable originalCause)
@@ -551,11 +551,11 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
                 if (meta != null && meta.length() > 0)
                     createDocument(JSONObject.class.getName(), meta, OwnerType.ADAPTER_RESPONSE_META, docref.getDocumentId());
             }
-            if (getPerformanceLevel() <= 5) {
-                CommonDataAccess dataAccess = new CommonDataAccess();
-                Long elapsedTime = dataAccess.getRequestCompletionTime(OwnerType.ADAPTER, getActivityInstanceId());
-                dataAccess.setElapsedTime(OwnerType.ADAPTER, getActivityInstanceId(), elapsedTime);
-            }
+
+            Long elapsedTime = getEngine().getRequestCompletionTime(OwnerType.ADAPTER, getActivityInstanceId());
+            if (elapsedTime != null)
+                getEngine().setElapsedTime(OwnerType.ADAPTER, getActivityInstanceId(), elapsedTime);
+
             return docref.getDocumentId();
         } catch (Exception ex) {
             logexception(ex.getMessage(), ex);

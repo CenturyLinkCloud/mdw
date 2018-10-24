@@ -153,8 +153,8 @@ public class EngineDataAccessCache implements EngineDataAccess {
      * Update the content (actual document object) bound to the given
      * document reference object.
      *
-     * @param docref
-     * @param doc
+     * @param docid
+     * @param content
      * @throws DataAccessException
      */
     public synchronized void updateDocumentContent(Long docid, String content) throws SQLException {
@@ -173,14 +173,8 @@ public class EngineDataAccessCache implements EngineDataAccess {
     /**
      * Update document information (everything but document content itself).
      * The method will update only the arguments that have non-null values.
-     * @param docref
-     * @param processInstId
-     * @param documentType
-     * @param ownerType
-     * @param ownerId
-     * @param searchKey1
-     * @param searchKey2
-     * @throws DataAccessException
+     * @param docvo
+     * @throws SQLException
      */
     public synchronized void updateDocumentInfo(Document docvo) throws SQLException {
         if (cache_document==CACHE_OFF) {
@@ -772,6 +766,14 @@ public class EngineDataAccessCache implements EngineDataAccess {
 
     public int deleteEventInstance(String eventName) throws SQLException {
         return edadb.deleteEventInstance(eventName);
+    }
+
+    public Long getRequestCompletionTime(String ownerType, Long ownerId) throws SQLException {
+        return edadb == null ? null : edadb.getRequestCompletionTime(ownerType, ownerId);
+    }
+
+    public void setElapsedTime(String ownerType, Long instanceId, Long elapsedTime) throws SQLException {
+        if (edadb != null) edadb.setElapsedTime(ownerType, instanceId, elapsedTime);
     }
 
     public TransactionWrapper startTransaction() throws DataAccessException {

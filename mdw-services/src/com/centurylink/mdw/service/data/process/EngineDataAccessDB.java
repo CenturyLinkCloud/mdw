@@ -1111,7 +1111,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     /**
      * Load all internal events start at the specified age and scheduled jobs before cutoff time.
      * If cutoff time is null, load only unscheduled events
-     * @param cutofftime a date or null
+     * @param cutoffTime a date or null
      * @return
      * @throws SQLException
      */
@@ -1345,5 +1345,13 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 
     public void setAttributes(String ownerType, Long ownerId, Map<String,String> attributes) throws SQLException {
         super.setAttributes0(ownerType, ownerId, attributes);
+    }
+
+    public Long getRequestCompletionTime(String ownerType, Long ownerId) throws SQLException {
+        return super.getRequestCompletionTime0(ownerType, ownerId);
+    }
+
+    public void setElapsedTime(String ownerType, Long instanceId, Long elapsedTime) throws SQLException {
+        super.setElapsedTime0(ownerType, instanceId, elapsedTime);
     }
 }
