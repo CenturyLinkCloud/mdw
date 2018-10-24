@@ -64,14 +64,14 @@ dependencies {
     compile group: "dom4j", name: "dom4j", version: "1.6.1"
     compile group: "org.glassfish", name: "javax.el", version: "3.0.0"
     compile group: "org.apache.commons", name: "commons-dbcp2", version: "2.1.1"
-    compile group: "io.limberest", name: "limberest", version: "1.2.4"
+    compile group: "io.limberest", name: "limberest", version: "1.2.5"
     compile group: "com.auth0", name: "java-jwt", version: "3.3.0"
     compile group: "org.mariadb.jdbc", name: "mariadb-java-client", version: "2.2.3"
     
     // swagger
-    compile group: "io.swagger", name: "swagger-annotations", version: "1.5.13"
-    compile group: "io.swagger", name: "swagger-core", version: "1.5.13"
-    compile group: "io.swagger", name: "swagger-models", version: "1.5.13"
+    compile group: "io.swagger", name: "swagger-annotations", version: "1.5.19"
+    compile group: "io.swagger", name: "swagger-core", version: "1.5.19"
+    compile group: "io.swagger", name: "swagger-models", version: "1.5.19"
     
     compile group: "com.fasterxml.jackson.core", name: "jackson-core", version: "2.4.5"
     compile group: "com.fasterxml.jackson.core", name: "jackson-annotations", version: "2.4.5"
@@ -91,7 +91,15 @@ dependencies {
     // codegen
     compileOnly group: "io.swagger", name: "swagger-codegen-cli", version: "2.3.1"
     codegen group: "io.swagger", name: "swagger-codegen-cli", version: "2.3.1"
-    codegen group: "io.limberest", name: "limberest", version: "1.2.4"
+    codegen group: "io.limberest", name: "limberest", version: "1.2.5"
+    
+    // markdown
+    compile group: "com.vladsch.flexmark", name: "flexmark", version: "0.32.22"
+    compile group: "com.vladsch.flexmark", name: "flexmark-ext-anchorlink", version: "0.32.22"
+    compile group: "com.vladsch.flexmark", name: "flexmark-ext-autolink", version: "0.32.22"
+    compile group: "com.vladsch.flexmark", name: "flexmark-ext-superscript", version: "0.32.22"
+    compile group: "com.vladsch.flexmark", name: "flexmark-ext-tables", version: "0.32.22"
+    compile group: "com.vladsch.flexmark", name: "flexmark-ext-typographic", version: "0.32.22"
     
     // bpmn
     compileOnly fileTree(dir: "../mdw/libs", include: "bpmn-schemas.jar")
@@ -121,7 +129,10 @@ task cliJar(type: Jar) {
               + " ./lib/swagger-core-1.5.17.jar ./lib/swagger-models-1.5.17.jar ./lib/swagger-parser-1.0.33.jar"
               + " ./lib/jackson-core-2.8.9.jar ./lib/jackson-databind-2.8.9.jar ./lib/jackson-dataformat-yaml-2.9.4.jar"
               + " ./lib/jackson-annotations-2.8.9.jar ./lib/commons-lang3-3.4.jar ./lib/lambdaj-2.3.3.jar ./lib/cglib-2.2.2.jar"
-              + " ./lib/joda-time-2.9.9.jar ./lib/commons-io-2.4.jar ./lib/bpmn-schemas.jar ./lib/xmlbeans-2.4.0.jar ./lib/kotlin-stdlib-1.2.61.jar");
+              + " ./lib/joda-time-2.9.9.jar ./lib/commons-io-2.4.jar ./lib/bpmn-schemas.jar ./lib/xmlbeans-2.4.0.jar ./lib/kotlin-stdlib-1.2.61.jar"
+              + " ./lib/flexmark-0.32.22.jar ./lib/flexmark-util-0.32.22.jar ./lib/flexmark-ext-anchorlink-0.32.22.jar ./lib/flexmark-ext-autolink-0.32.22.jar"
+              + " ./lib/flexmark-ext-superscript-0.32.22.jar ./lib/flexmark-ext-tables-0.32.22.jar ./lib/flexmark-ext-typographic-0.32.22.jar"
+              + " ./lib/flexmark-formatter-0.32.22.jar ./lib/autolink-0.9.0.jar");
     }
     
     from("build/classes") {
@@ -162,6 +173,7 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/image/*.class"
         include "com/centurylink/mdw/activity/types/*.class"
         include "com/centurylink/mdw/drawio/*.class"
+        include "com/centurylink/mdw/util/MiniCrypter.class"
     }
     
     from configurations.cli.asFileTree.files.collect {
@@ -185,7 +197,11 @@ task cliJar(type: Jar) {
             include "io/swagger/codegen/languages/AbstractJavaCodegen.class"
             include "io/swagger/codegen/languages/features/BeanValidationFeatures.class"
             include "io/limberest/api/codegen/*.class"
+            include "io/limberest/config/*.class"
             include "io/limberest/json/*.class"
+            include "io/limberest/provider/*.class"
+            include "io/limberest/service/registry/*.class"
+            include "io/limberest/util/YamlLoader.class"
             include "version.properties"
         }
     }

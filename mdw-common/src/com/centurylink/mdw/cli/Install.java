@@ -15,6 +15,12 @@
  */
 package com.centurylink.mdw.cli;
 
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+import com.centurylink.mdw.config.YamlProperties;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,25 +28,14 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-import com.centurylink.mdw.config.YamlProperties;
-
 /**
  * Handle War download.  TODO: Allow specify war name
  */
 @Parameters(commandNames="install", commandDescription="Install MDW", separators="=")
 public class Install extends Setup {
 
-    private File projectDir;
-    public File getProjectDir() { return projectDir; }
-
     Install() {
         // cli only
-        this.projectDir = new File(".");
     }
 
     public Install(File projectDir) {
@@ -133,17 +128,6 @@ public class Install extends Setup {
                 Files.createDirectories(Paths.get(bootJarDir.getPath()));
             }
 
-           /* if (jarFile.exists() && !mdwVer.endsWith("-SNAPSHOT")) {
-                System.out.println("Already up-to-date: " + jarFile.getAbsolutePath());
-                return this;
-            }
-            for (File file : getProjectDir().listFiles()) {
-                if (file.isFile() && file.getName().startsWith("mdw-") && file.getName().endsWith(".jar")) {
-                    // remove any mdw jars
-                    Files.delete(Paths.get(file.getPath()));
-                }
-            }*/
-
             if (binariesUrl.startsWith("https://github.com/")) {
                 // use the github api to find the boot jar size
                 URL releasesApiUrl = new URL("https://api.github.com/repos/" + binariesUrl.substring(19));
@@ -172,7 +156,10 @@ public class Install extends Setup {
                 }
             }
             else {
-                downloads = new Download[]{new Download(new URL(getBinariesUrl() + "/download/v" + mdwVer + "/mdw-boot-" + mdwVer + ".jar"), jarFile)};
+                String url = getBinariesUrl();
+                if (!url.endsWith("/"))
+                    url += "/";
+                downloads = new Download[]{new Download(new URL(url + "mdw-boot-" + mdwVer + ".jar"), jarFile)};
             }
             if (downloads == null) {
                 throw new FileNotFoundException("Release artifact not found: " + jarFile.getName());

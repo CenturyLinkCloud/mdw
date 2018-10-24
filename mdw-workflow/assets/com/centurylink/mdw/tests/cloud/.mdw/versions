@@ -1,5 +1,5 @@
 Acknowledger.java=5
-ActivityImplementors.proc=2
+ActivityImplementors.proc=3
 ActivityImplementors.test=1
 ActivityImplementors.yaml=2
 ChildProcessDocUpdate.test=2
@@ -21,6 +21,7 @@ KotlinActivity.kt=1
 KotlinInvader.kt=1
 MyBaselineData.java=1
 MyFloatTranslator.java=1
+PauseActivity.proc=1
 ReflectChildDocUpdate.proc=4
 SimpleDynamicJava.proc=7
 SimpleDynamicJava.test=2

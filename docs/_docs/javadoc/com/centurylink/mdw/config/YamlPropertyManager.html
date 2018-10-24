@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -131,7 +131,7 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <!--   -->
 </a>
 <h3>Fields inherited from class&nbsp;com.centurylink.mdw.config.<a href="../../../../com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config">PropertyManager</a></h3>
-<code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#APPLICATION_PROPERTIES_FILE_NAME">APPLICATION_PROPERTIES_FILE_NAME</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#DB_CONFIG_ENABLED">DB_CONFIG_ENABLED</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#MDW_CONFIG_LOCATION">MDW_CONFIG_LOCATION</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#MDW_PROPERTIES_FILE_NAME">MDW_PROPERTIES_FILE_NAME</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#MDW_PROPERTY_MANAGER">MDW_PROPERTY_MANAGER</a></code></li>
+<code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#APPLICATION_PROPERTIES_FILE_NAME">APPLICATION_PROPERTIES_FILE_NAME</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#MDW_CONFIG_LOCATION">MDW_CONFIG_LOCATION</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#MDW_PROPERTIES_FILE_NAME">MDW_PROPERTIES_FILE_NAME</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#MDW_PROPERTY_MANAGER">MDW_PROPERTY_MANAGER</a></code></li>
 </ul>
 </li>
 </ul>
@@ -192,7 +192,7 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>java.util.Properties</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlPropertyManager.html#getProperties-java.lang.String-">getProperties</a></span>(java.lang.String&nbsp;group)</code>
-<div class="block">returns the properties for group</div>
+<div class="block">Properties for group</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
@@ -200,10 +200,14 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlPropertyManager.html#getStringProperty-java.lang.String-">getStringProperty</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlPropertyManager.html#isEncrypted-java.lang.String-">isEncrypted</a></span>(java.lang.String&nbsp;propName)</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlPropertyManager.html#refreshCache--">refreshCache</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlPropertyManager.html#setStringProperty-java.lang.String-java.lang.String-">setStringProperty</a></span>(java.lang.String&nbsp;name,
                  java.lang.String&nbsp;value)</code>&nbsp;</td>
@@ -214,7 +218,7 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.centurylink.mdw.config.<a href="../../../../com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config">PropertyManager</a></h3>
-<code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getBooleanProperty-java.lang.String-boolean-">getBooleanProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getInstance--">getInstance</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getIntegerProperty-java.lang.String-int-">getIntegerProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getListProperty-java.lang.String-">getListProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getLongProperty-java.lang.String-long-">getLongProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getProperty-java.lang.String-">getProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getProperty-java.lang.String-java.lang.String-">getProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getPropertyFileLocation--">getPropertyFileLocation</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getPropertySource-java.lang.String-">getPropertySource</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getSources--">getSources</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#initializeMockPropertyManager--">initializeMockPropertyManager</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#isDbConfigEnabled--">isDbConfigEnabled</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#isYaml--">isYaml</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#loadFromStream-java.util.Properties-java.io.InputStream-java.lang.String-">loadFromStream</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#putPropertySource-java.lang.String-java.lang.String-">putPropertySource</a></code></li>
+<code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#get-java.lang.String-">get</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#get-java.lang.String-boolean-">get</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#get-java.lang.String-int-">get</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#get-java.lang.String-long-">get</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#get-java.lang.String-java.lang.String-">get</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getBooleanProperty-java.lang.String-boolean-">getBooleanProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getInstance--">getInstance</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getIntegerProperty-java.lang.String-int-">getIntegerProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getListProperty-java.lang.String-">getListProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getLongProperty-java.lang.String-long-">getLongProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getProperty-java.lang.String-">getProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getProperty-java.lang.String-java.lang.String-">getProperty</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getPropertyFileLocation--">getPropertyFileLocation</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getSources--">getSources</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#initializeMockPropertyManager--">initializeMockPropertyManager</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#isYaml--">isYaml</a>, <a href="../../../../com/centurylink/mdw/config/PropertyManager.html#loadFromStream-java.util.Properties-java.io.InputStream-java.lang.String-">loadFromStream</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -306,12 +310,10 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <pre>public&nbsp;java.util.Properties&nbsp;getProperties(java.lang.String&nbsp;group)
                                    throws <a href="../../../../com/centurylink/mdw/config/PropertyException.html" title="class in com.centurylink.mdw.config">PropertyException</a></pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getProperties-java.lang.String-">PropertyManager</a></code></span></div>
-<div class="block">returns the properties for group</div>
+<div class="block">Properties for group</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#getProperties-java.lang.String-">getProperties</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config">PropertyManager</a></code></dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>Properties for the group</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/config/PropertyException.html" title="class in com.centurylink.mdw.config">PropertyException</a></code></dd>
 </dl>
@@ -376,11 +378,24 @@ extends <a href="../../../../com/centurylink/mdw/config/PropertyManager.html" ti
 <a name="getLoader-java.lang.String-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getLoader</h4>
 <pre>public&nbsp;<a href="../../../../com/centurylink/mdw/yaml/YamlLoader.html" title="class in com.centurylink.mdw.yaml">YamlLoader</a>&nbsp;getLoader(java.lang.String&nbsp;name)</pre>
 <div class="block">Returns the YAML loader containing the given root name (if any).</div>
+</li>
+</ul>
+<a name="isEncrypted-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>isEncrypted</h4>
+<pre>public&nbsp;boolean&nbsp;isEncrypted(java.lang.String&nbsp;propName)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html#isEncrypted-java.lang.String-">isEncrypted</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/centurylink/mdw/config/PropertyManager.html" title="class in com.centurylink.mdw.config">PropertyManager</a></code></dd>
+</dl>
 </li>
 </ul>
 </li>

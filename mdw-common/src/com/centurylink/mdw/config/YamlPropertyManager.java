@@ -15,17 +15,12 @@
  */
 package com.centurylink.mdw.config;
 
+import com.centurylink.mdw.yaml.YamlLoader;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import com.centurylink.mdw.yaml.YamlLoader;
+import java.util.*;
 
 public class YamlPropertyManager extends PropertyManager {
 
@@ -221,6 +216,22 @@ public class YamlPropertyManager extends PropertyManager {
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean isEncrypted(String propName) {
+        for (YamlProperties yamlProp : yamlProps) {
+            if (yamlProp.isEncrypted(propName))
+                return true;
+        }
+        if (javaProps != null) {
+            for (Properties javaProp : javaProps) {
+                String value = javaProp.getProperty(propName);
+                if (value != null && value.startsWith("~[") && value.endsWith("]"))
+                    return true;
+            }
+        }
+        return false;
     }
 
     private List<String> getListValue(String name) {

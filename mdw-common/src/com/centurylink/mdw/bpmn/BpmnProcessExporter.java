@@ -38,6 +38,8 @@ public class BpmnProcessExporter implements ProcessExporter {
                 "./bpmn-schemas.jar", 2011745L));
         dependencies.add(new Dependency("http://repo.maven.apache.org/maven2",
                 "org/apache/xmlbeans/xmlbeans/2.4.0/xmlbeans-2.4.0.jar", 2694049L));
+        dependencies.add(new Dependency("http://repo.maven.apache.org/maven2",
+                "org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar", 41203L));
         return dependencies;
     }
 

@@ -15,38 +15,23 @@
  */
 package com.centurylink.mdw.model;
 
-import java.util.Comparator;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
+import io.limberest.config.LimberestConfig;
 
-import org.json.JSONObject;
+public class JsonObject extends io.limberest.json.JsonObject {
 
-/**
- * Extends org.json.JSONObject to offer predictable ordering of object keys.
- * This is especially useful for comparing expected versus actual stringified JSON results
- * (for either automated or eyeball comparisons).
- */
-public class JsonObject extends JSONObject {
+    public static void configure(PropertyManager propertyManager) {
+        LimberestConfig.JsonFormat format = io.limberest.json.JsonObject.getFormat();
+        format.prettyIndent = propertyManager.get(PropertyNames.MDW_JSON_PRETTY_INDENT, 2);
+        format.orderedKeys = propertyManager.get(PropertyNames.MDW_JSON_ORDERED_KEYS, true);
+        format.falseValuesOutput = propertyManager.get(PropertyNames.MDW_JSON_FALSE_VALUES_OUTPUT, false);
+    }
 
     public JsonObject() {
     }
 
     public JsonObject(String source) {
         super(source);
-    }
-
-    public Set<String> keySet() {
-        return new TreeSet<String>(super.keySet());
-    }
-
-    protected Set<Entry<String,Object>> entrySet() {
-        Set<Entry<String,Object>> entries = new TreeSet<Entry<String,Object>>(new Comparator<Entry<String,Object>>() {
-            public int compare(Entry<String,Object> e1, Entry<String,Object> e2) {
-                return e1.getKey().compareTo(e2.getKey());
-            }
-        });
-        entries.addAll(super.entrySet());
-        return entries;
     }
 }

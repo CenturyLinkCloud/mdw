@@ -1,0 +1,61 @@
+<html>
+<head>
+<title>Process AppConfig</title>
+<style>
+body {font-family: Arial; font-size: smaller; padding:5px; }
+em { color: #a52a2a; }
+</style>
+</head>
+<body>
+<h1>Workflow: "AppConfig"</h1>
+<img src='AppConfig_0_ch0.jpg'/>
+<br/><p>Scenario:</p>
+<ol>
+<li>In mdw.yaml, the following appears under <code>application</code>:</li>
+</ol>
+<pre><code class="language-yaml">application:
+  name: my-mdw
+  configs:
+    - one.properties
+    - two.properties
+    - three.yaml
+</code></pre>
+<ol start="2">
+<li>The following files exist in the location pointed to by -Dmdw.config.location.<br />
+<strong>one.properties</strong></li>
+</ol>
+<pre><code>one.prop=oneValue
+</code></pre>
+<p><strong>two.properties</strong></p>
+<pre><code>two.prop=twoValue
+</code></pre>
+<p><strong>three.yaml</strong></p>
+<pre><code class="language-yaml">flat.config: threeFlatValue
+structured:
+  config: threeStructuredValue
+</code></pre>
+<ol start="3">
+<li>The <code>Log Props</code> activity produces this output:</li>
+</ol>
+<pre><code>one: oneValue
+two: twoValue
+three.flat: threeFlatValue
+three.structured: threeStructuredValue
+</code></pre>
+<br/><h2>Activity A1: "Start"</h2>
+<h3>Activity Attributes</h3>
+<ul>
+</ul><br/><h2>Activity A3: "Log Props"</h2>
+<h3>Activity Attributes</h3>
+<ul>
+<li>Code:<pre style='border:1px solid black;font-size:12px;'>import com.centurylink.mdw.config.PropertyManager
+
+println 'one: ' + PropertyManager.getProperty("one.prop")
+println 'two: ' + runtimeContext.getProperty("two.prop")
+
+println 'three.flat: ' + PropertyManager.getProperty("three.flat.config")
+println 'three.structured: ' + runtimeContext.getProperty("three.structured.config")
+</pre></li><li>SCRIPT = Groovy</li></ul><br/><h2>Activity A2: "Stop"</h2>
+<h3>Activity Attributes</h3>
+<ul>
+</ul><br/></body></html>
