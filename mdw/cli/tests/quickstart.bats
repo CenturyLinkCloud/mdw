@@ -49,10 +49,9 @@ NO_UPDATE="--no-update"
 }
 
 @test "install" {
-  MDW_VERSION="6.1.09"
   rm -rf install-mdw
-  mdw init install-mdw --mdw-version=${MDW_VERSION} $NO_UPDATE $TEMPLATE_DIR
-  mdw install --mdw-version=${MDW_VERSION} --project-dir=../.. --boot-jar-loc=./install-mdw
-  ls install-mdw/mdw-boot-${MDW_VERSION}.jar
+  mdw init install-mdw --snapshots $NO_UPDATE $TEMPLATE_DIR
+  mdw install --project-dir=./install-mdw --boot-jar-loc=./install-mdw --binaries-url="file://$PWD/../../deploy/app"
+  ls install-mdw/mdw-boot-*.jar
 }
 
