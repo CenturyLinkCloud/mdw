@@ -16,6 +16,7 @@
 package com.centurylink.mdw.model.workflow;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -180,6 +181,16 @@ public class Process extends Asset implements Jsonable {
      */
     public List<Activity> getActivities() {
         return activities;
+    }
+
+    /**
+     * @return the activities order by sequence id
+     */
+    public List<Activity> getActivitiesOrderBySeq() {
+        List<Activity> sorted = new ArrayList<>(activities);
+        Collections.sort(sorted, (act1, act2) -> Integer.compare(act1.getSequenceId(),
+                act2.getSequenceId()));
+        return sorted;
     }
 
     /**

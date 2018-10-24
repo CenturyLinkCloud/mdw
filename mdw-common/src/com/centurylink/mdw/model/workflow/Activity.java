@@ -177,4 +177,9 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
     private String processName;
     public String getProcessName() { return processName; }
     public void setProcessName(String processName) { this.processName = processName; }
+
+    private int sequenceId;
+    public int getSequenceId() { return sequenceId; }
+    public void setSequenceId(int sequenceId) { this.sequenceId = sequenceId; }
+
 }
