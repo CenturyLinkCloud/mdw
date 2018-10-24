@@ -749,4 +749,11 @@ public class Asset implements Comparable<Asset>, Jsonable {
     public String text() throws IOException {
         return getStringContent();
     }
+
+    /**
+     * Removes windows newlines
+     */
+    public String getTextNormalized() throws IOException {
+        return text().replace("\r", "");
+    }
 }

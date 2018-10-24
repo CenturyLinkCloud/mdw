@@ -15,20 +15,16 @@
  */
 package com.centurylink.mdw.config;
 
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.startup.StartupException;
+import com.centurylink.mdw.util.file.FileHelper;
+import org.apache.xmlbeans.XmlException;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.xmlbeans.XmlException;
-
-import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.startup.StartupException;
-import com.centurylink.mdw.util.file.FileHelper;
+import java.util.*;
 
 public abstract class PropertyManager {
 
@@ -36,29 +32,65 @@ public abstract class PropertyManager {
     public static final String APPLICATION_PROPERTIES_FILE_NAME = "application.properties";
     public static final String MDW_CONFIG_LOCATION = "mdw.config.location";
     public static final String MDW_PROPERTY_MANAGER = "mdw.property.manager";
-    public static final String DB_CONFIG_ENABLED = "mdw.database.config.enabled";
 
     private static PropertyManager instance = null;
     private Map<String, String> sources = new HashMap<String, String>();
-
     protected Map<String, String> getSources() {
         return sources;
     }
 
     /**
-     * returns the properties for group
-     *
-     * @param group
-     * @return Properties for the group
-     * @throws PropertyException
+     * Properties for group
      */
     public abstract Properties getProperties(String group) throws PropertyException;
 
     public abstract String getStringProperty(String name);
-
     public abstract void setStringProperty(String name, String value);
 
     public abstract Properties getAllProperties();
+    public boolean isEncrypted(String propName) {
+        return false;
+    }
+
+    public String get(String name) {
+        return getStringProperty(name);
+    }
+
+    public String get(String name, String defaultValue) {
+        String v = get(name);
+        return v == null ? defaultValue : v;
+    }
+
+    public int get(String name, int defaultValue) {
+        String v = get(name);
+        if (v == null)
+            return defaultValue;
+        try {
+            return Integer.parseInt(v);
+        }
+        catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    public long get(String name, long defaultValue) {
+        String v = get(name);
+        if (v == null)
+            return defaultValue;
+        try {
+            return Long.parseLong(v);
+        }
+        catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    public boolean get(String name, boolean defaultValue) {
+        String v = get(name);
+        if (v == null)
+            return defaultValue;
+        return v.equalsIgnoreCase("true");
+    }
 
     private String propertyFileLocation;
 
@@ -105,34 +137,15 @@ public abstract class PropertyManager {
     }
 
     public static int getIntegerProperty(String name, int defaultValue) {
-        String v = getInstance().getStringProperty(name);
-        if (v == null)
-            return defaultValue;
-        try {
-            return Integer.parseInt(v);
-        }
-        catch (NumberFormatException e) {
-            return defaultValue;
-        }
+        return getInstance().get(name, defaultValue);
     }
 
     public static long getLongProperty(String name, long defaultValue) {
-        String v = getInstance().getStringProperty(name);
-        if (v == null)
-            return defaultValue;
-        try {
-            return Long.parseLong(v);
-        }
-        catch (NumberFormatException e) {
-            return defaultValue;
-        }
+        return getInstance().get(name, defaultValue);
     }
 
     public static boolean getBooleanProperty(String name, boolean defaultValue) {
-        String v = getInstance().getStringProperty(name);
-        if (v == null)
-            return defaultValue;
-        return v.equalsIgnoreCase("true");
+        return getInstance().get(name, defaultValue);
     }
 
     public static List<String> getListProperty(String name) {
@@ -167,7 +180,6 @@ public abstract class PropertyManager {
                 }
                 else {
                     instance = (PropertyManager) cls.newInstance();
-
                 }
             }
             catch (Exception e) {
@@ -191,19 +203,10 @@ public abstract class PropertyManager {
                 instance = new JavaPropertyManager();
             }
         }
+        // override limberest json formatting
+        JsonObject.configure(instance);
+
         return instance;
-    }
-
-    public String getPropertySource(String propname) {
-        return sources.get(propname);
-    }
-
-    public void putPropertySource(String propname, String src) {
-        sources.put(propname, src);
-    }
-
-    public boolean isDbConfigEnabled() {
-        return true;
     }
 
     final protected void loadFromStream(Properties properties, InputStream stream, String source)
@@ -231,7 +234,6 @@ public abstract class PropertyManager {
                 catch (Exception e) {
                 }
             }
-            ;
         }
     }
 

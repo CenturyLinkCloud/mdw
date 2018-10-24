@@ -56,6 +56,8 @@ public class Main {
         Vercheck vercheck = new Vercheck();
         Export export = new Export();
         BpmnImport bpmnimport = new BpmnImport();
+        Encrypt encrypt = new Encrypt();
+        Decrypt decrypt = new Decrypt();
 
         JCommander cmd = JCommander.newBuilder()
             .addObject(main)
@@ -75,6 +77,8 @@ public class Main {
             .addCommand("vercheck", vercheck)
             .addCommand("export", export)
             .addCommand("bpmnimport", bpmnimport)
+            .addCommand("encrypt", encrypt)
+            .addCommand("decrypt", decrypt)
             .build();
 
         cmd.setProgramName("mdw");
@@ -130,7 +134,12 @@ public class Main {
                 else if (command.equals("bpmnimport")) {
                     op = bpmnimport;
                 }
-
+                else if (command.equals("encrypt")) {
+                    op = encrypt;
+                }
+                else if (command.equals("decrypt")) {
+                    op = decrypt;
+                }
 
                 if (op == null) {
                     cmd.usage();

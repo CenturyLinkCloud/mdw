@@ -25,6 +25,8 @@ title: MDW Configuration
   - Used at runtime by the MDW server.
   - Specify your config directory via the `-Dmdw.config.location` system property.
   - To convert from old-style mdw.properties to mdw.yaml, run the [CLI](../../getting-started/cli/) command `mdw convert`.
+  - Encrypted values (via `mdw encrypt`) start with `~[` and end with `]`.  Only string values support encryption (not lists).
+    Requires MDW_APP_TOKEN environment variable.
   - Here's an annotated example describing MDW's configuration options:   
     (**Please** do not use this as a starting point as it contains inappropriate/non-default values for illustration.  
       Instead run the `mdw init` CLI command to generate from the latest template).   
@@ -53,7 +55,7 @@ title: MDW Configuration
       driver: org.mariadb.jdbc.Driver  # required
       url: jdbc:mariadb://localhost:3308/mdw  # required
       username: mdw  # required
-      password: mdw  # required
+      password: mdw  # or encrypted form: ~[HDIGDNBIDJCCNHOB]
       poolsize: 10  # default=5
       poolMaxIdle: 3  # default=5
       validationQuery: select 1 from dual  # required
@@ -185,7 +187,13 @@ title: MDW Configuration
     performance:
       level.service: 5  # default=3
       level.regular: 5  # default=3
-      
+
+    # formatting options for json output
+    json:
+      pretty.indent: 2 # pretty-print output with this indent level
+      ordered.keys: true # property and object names are sorted (default=true)
+      false.values.output: false # include false booleans when serializing output (default=false)
+
     engine:
       use.transaction: false  # default=false
       

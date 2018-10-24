@@ -190,4 +190,8 @@ public class PropertyNames {
 
     public static final String MDW_USERGROUP_MONITOR_INTERVAL = "mdw.usergroupmonitor.interval";
 
+    public static final String MDW_JSON_FALSE_VALUES_OUTPUT = "mdw.json.false.values.output";
+    public static final String MDW_JSON_PRETTY_INDENT = "mdw.json.pretty.indent";
+    public static final String MDW_JSON_ORDERED_KEYS = "mdw.json.ordered.keys";
+
 }

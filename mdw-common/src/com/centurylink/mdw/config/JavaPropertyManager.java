@@ -15,17 +15,19 @@
  */
 package com.centurylink.mdw.config;
 
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cli.Decrypt;
+import com.centurylink.mdw.startup.StartupException;
+import com.centurylink.mdw.util.MiniCrypter;
+
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.startup.StartupException;
-import com.centurylink.mdw.util.MiniCrypter;
 
 public class JavaPropertyManager extends PropertyManager {
 
@@ -153,9 +155,24 @@ public class JavaPropertyManager extends PropertyManager {
     }
 
     public String getStringProperty(String name) {
-        return (String)properties.get(name);
+        String value = properties.getProperty(name);
+        if (value != null && value.startsWith("~[") && value.endsWith("]")) {
+            try {
+                Decrypt decrypt = new Decrypt();
+                decrypt.setInput(value.substring(2, value.length() - 1));
+                value = decrypt.decrypt();
+            }
+            catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+        return value;
     }
 
+    public boolean isEncrypted(String propName) {
+        String value = properties.getProperty(propName);
+        return value != null && value.startsWith("~[") && value.endsWith("]");
+    }
 
     final protected void loadFromFile(Properties properties, String filename)
     throws PropertyException {
