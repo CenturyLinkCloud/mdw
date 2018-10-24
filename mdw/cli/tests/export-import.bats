@@ -36,3 +36,10 @@ STD_ARGS="$PROJECT_DIR $ASSET_LOC $CONFIG_LOC"
   ls output/ActivityImplementors_0_ch0.jpg
   diff ActivityImplementors.html output/ActivityImplementors.html
 }
+
+@test "export html markdown" {
+  mdw export --process=com.centurylink.mdw.tests.workflow/AppConfig.proc --output=output/AppConfig.html $STD_ARGS
+  ls output/AppConfig.html
+  ls output/AppConfig_0_ch0.jpg
+  diff AppConfig.html output/AppConfig.html
+}
