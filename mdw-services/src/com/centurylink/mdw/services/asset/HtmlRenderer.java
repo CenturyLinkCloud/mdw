@@ -22,21 +22,15 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.html.FlexmarkInstances;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.vladsch.flexmark.ast.Node;
-import com.vladsch.flexmark.ext.anchorlink.AnchorLinkExtension;
-import com.vladsch.flexmark.ext.autolink.AutolinkExtension;
-import com.vladsch.flexmark.ext.tables.TablesExtension;
-import com.vladsch.flexmark.ext.typographic.TypographicExtension;
 import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.superscript.SuperscriptExtension;
-import com.vladsch.flexmark.util.options.MutableDataSet;
 
 /**
  * TODO: cached output based on file timestamp
@@ -72,21 +66,10 @@ public class HtmlRenderer implements Renderer {
                 return Files.readAllBytes(filePath);
             }
             else if (asset.getExtension().equals("md")) {
-                MutableDataSet renderOptions = new MutableDataSet();
 
-                // Extensions: https://github.com/vsch/flexmark-java/wiki/Extensions
-                // Gradle dependencies as in: https://github.com/vsch/flexmark-java/blob/master/flexmark-all/pom.xml
-                renderOptions.set(Parser.EXTENSIONS,
-                        Arrays.asList(AnchorLinkExtension.create(),
-                                AutolinkExtension.create(),
-                                SuperscriptExtension.create(),
-                                TablesExtension.create(),
-                                TypographicExtension.create()));
+                Parser parser = FlexmarkInstances.getParser(null);
+                com.vladsch.flexmark.html.HtmlRenderer renderer = FlexmarkInstances.getRenderer(null);
 
-                Parser parser = Parser.builder(renderOptions).build();
-                com.vladsch.flexmark.html.HtmlRenderer renderer = com.vladsch.flexmark.html.HtmlRenderer.builder(renderOptions).build();
-
-                // TODO: re-use parser and renderer instances
                 StringBuilder html = new StringBuilder();
                 boolean withStyles = "true".equalsIgnoreCase(options.get(STYLES));
                 if (withStyles) {

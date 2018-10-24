@@ -34,8 +34,12 @@ import com.centurylink.mdw.model.Project;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Activity;
+import com.centurylink.mdw.model.workflow.ActivityNodeSequencer;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.StringHelper;
+import com.vladsch.flexmark.ast.Node;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.parser.Parser;
 
 public class HtmlExportHelper {
 
@@ -88,9 +92,10 @@ public class HtmlExportHelper {
         textboxAttributes.put("PostScript", "Post-Script");
     }
 
-    public String exportProcess(Process processVO, File outputDir) throws IOException {
-        StringBuilder sb = printPrologHtml("Process " + processVO.getName());
-        printProcessHtml(sb, 0, processVO, outputDir);
+    public String exportProcess(Process process, File outputDir) throws IOException {
+        new ActivityNodeSequencer(process).assignNodeSequenceIds();
+        StringBuilder sb = printPrologHtml("Process " + process.getName());
+        printProcessHtml(sb, 0, process, outputDir);
         printEpilogHtml(sb);
         return sb.toString();
     }
@@ -110,7 +115,7 @@ public class HtmlExportHelper {
     private void printProcessBodyHtml(StringBuilder sb, Process subproc) {
         String tmp = null;
         if (subproc.isEmbeddedProcess()) {
-            tmp = "Subprocess " + subproc.getId() + " - " + subproc.getName().replace('\n', ' ');
+            tmp = "Subprocess " + subproc.getAttribute(WorkAttributeConstant.LOGICAL_ID) + " - " + subproc.getName().replace('\n', ' ');
             sb.append("<h2>").append(tmp).append("</h2>\n");
         }
         String summary = subproc.getDescription();
@@ -128,39 +133,11 @@ public class HtmlExportHelper {
     private void printParagraphsHtml(StringBuilder sb, String content) {
         if (content == null || content.length() == 0)
             return;
-        String vContent = content;
-        if (vContent.contains(HTMLTAG)) {
-            int k1 = vContent.indexOf(HTMLTAG);
-            int k2 = vContent.indexOf("<body>");
-            int k3 = vContent.indexOf("</body>");
-            int k4 = vContent.indexOf("</html>");
-            if (k2 > 0) {
-                if (k3 > 0)
-                    vContent = vContent.substring(k2 + 6, k3);
-                else if (k4 > 0)
-                    vContent = vContent.substring(k2 + 6, k4);
-                else
-                    vContent = vContent.substring(k2 + 6);
-            }
-            else {
-                if (k3 > 0)
-                    vContent = vContent.substring(k1 + 6, k3);
-                else if (k4 > 0)
-                    vContent = vContent.substring(k1 + 6, k4);
-                else
-                    vContent = vContent.substring(k1 + 6);
-            }
-            sb.append(vContent);
-        }
-        else {
-            String[] details = vContent.split("\n");
-            for (int j = 0; j < details.length; j++) {
-                if (details[j].length() == 0)
-                    sb.append("<br/>\n");
-                else
-                    sb.append(escapeXml(details[j])).append("\n");
-            }
-        }
+        Parser parser = FlexmarkInstances.getParser(null);
+        HtmlRenderer renderer = FlexmarkInstances.getRenderer(null);
+
+        Node document = parser.parse(content);
+        sb.append(renderer.render(document));
     }
 
     private String escapeXml(String str) {
@@ -255,12 +232,12 @@ public class HtmlExportHelper {
         // print documentation text
         sb.append(BR);
         printProcessBodyHtml(sb, process);
-        for (Activity act : process.getActivities()) {
+        for (Activity act : process.getActivitiesOrderBySeq()) {
             printActivityHtml(sb, act);
         }
         for (Process subproc : process.getSubprocesses()) {
             printProcessBodyHtml(sb, subproc);
-            for (Activity act : subproc.getActivities()) {
+            for (Activity act : subproc.getActivitiesOrderBySeq()) {
                 printActivityHtml(sb, act);
             }
         }
@@ -289,8 +266,7 @@ public class HtmlExportHelper {
     }
 
     private void printActivityHtml(StringBuilder sb, Activity act) {
-        Long id = act.getId();
-        String tmp = ACTIVITY + id + ": \"" + act.getName().replace('\n', ' ') + "\"";
+        String tmp = ACTIVITY + act.getLogicalId() + ": \"" + act.getName().replace('\n', ' ') + "\"";
         sb.append("<h2>").append(tmp).append("</h2>\n");
         String summary = act.getAttribute(WorkAttributeConstant.DESCRIPTION);
         if (summary != null && summary.length() > 0)
