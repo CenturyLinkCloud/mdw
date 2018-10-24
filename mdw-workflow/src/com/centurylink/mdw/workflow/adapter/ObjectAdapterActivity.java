@@ -323,11 +323,11 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
         try {
             DocumentReference docref = createDocument(String.class.getName(), message,
                     OwnerType.ADAPTER_RESPONSE, getActivityInstanceId());
-            if (getPerformanceLevel() <= 5) {
-                CommonDataAccess dataAccess = new CommonDataAccess();
-                Long elapsedTime = dataAccess.getRequestCompletionTime(OwnerType.ADAPTER, getActivityInstanceId());
-                dataAccess.setElapsedTime(OwnerType.ADAPTER, getActivityInstanceId(), elapsedTime);
-            }
+
+            Long elapsedTime = getEngine().getRequestCompletionTime(OwnerType.ADAPTER, getActivityInstanceId());
+            if (elapsedTime != null)
+                getEngine().setElapsedTime(OwnerType.ADAPTER, getActivityInstanceId(), elapsedTime);
+
             return docref.getDocumentId();
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -339,11 +339,11 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
         try {
             DocumentReference docref = createDocument(String.class.getName(), response.getContent(),
                     OwnerType.ADAPTER_RESPONSE, getActivityInstanceId(), response.getStatusCode(), response.getStatusMessage());
-            if (getPerformanceLevel() <= 5) {
-                CommonDataAccess dataAccess = new CommonDataAccess();
-                Long elapsedTime = dataAccess.getRequestCompletionTime(OwnerType.ADAPTER, getActivityInstanceId());
-                dataAccess.setElapsedTime(OwnerType.ADAPTER, getActivityInstanceId(), elapsedTime);
-            }
+
+            Long elapsedTime = getEngine().getRequestCompletionTime(OwnerType.ADAPTER, getActivityInstanceId());
+            if (elapsedTime != null)
+                getEngine().setElapsedTime(OwnerType.ADAPTER, getActivityInstanceId(), elapsedTime);
+
             return docref.getDocumentId();
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -391,7 +391,7 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
     }
 
     /**
-     * @deprecated Use {@link #getStubbedResponse(String) getStubbedResponse}
+     * @deprecated Use {@link #getStubResponse(String) getStubbedResponse}
      */
     @Deprecated
     protected String getStubResponse(String requestData) {
@@ -602,7 +602,7 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
      * If you have implemented your connection pool, then
      * this method should return the connection instance
      * to the pool.
-     * @param conneciton
+     * @param connection
      */
     protected abstract void closeConnection(Object connection);
 
@@ -610,8 +610,6 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
      * This method is used for directly invoke the adapter activity
      * from code, rather than as part of process execution flow.
      * If logging is desired, extenders should override logMessage().
-     *
-     * @param attrs    attributes to be passed to configure the activity.
      *
      * @param request request message
      * @return response message
