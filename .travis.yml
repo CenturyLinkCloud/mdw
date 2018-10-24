@@ -3,7 +3,7 @@ git:
   depth: 250
 branches:
   only:
-  - issue-512
+  - master
 env:
 - LD_LIBRARY_PATH=/home/travis/build/CenturyLinkCloud/mdw/mdw-workflow/assets/com/centurylink/mdw/node
 before_install:
