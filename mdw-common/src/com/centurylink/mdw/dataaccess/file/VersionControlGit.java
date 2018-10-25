@@ -46,6 +46,8 @@ import org.eclipse.jgit.api.ResetCommand.ResetType;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.StatusCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.JGitInternalException;
+import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 import org.eclipse.jgit.dircache.DirCacheIterator;
@@ -138,6 +140,13 @@ public class VersionControlGit implements VersionControl {
         String idLengthProp = System.getProperty("com.centurylink.mdw.abbreviated.id.length");
         if (idLengthProp != null)
             ABBREVIATED_ID_LENGTH = Integer.parseInt(idLengthProp);
+    }
+
+    public synchronized void reconnect() throws IOException {
+        Repository newLocalRepo = new FileRepository(new File(localDir + "/.git"));
+        git = new Git(newLocalRepo);
+        localRepo.close();
+        localRepo = newLocalRepo;
     }
 
     public String toString() {
@@ -450,7 +459,14 @@ public class VersionControlGit implements VersionControl {
         FetchCommand fetchCommand = git.fetch();
         if (credentialsProvider != null)
             fetchCommand.setCredentialsProvider(credentialsProvider);
-        fetchCommand.call();
+        try {
+            fetchCommand.call();
+        }
+        catch (JGitInternalException | TransportException ex) {
+            // LocalRepo object might be out of sync with actual local repo, so recreate objects for next time
+            reconnect();
+            throw ex;
+        }
     }
 
     public void cloneRepo() throws Exception {
