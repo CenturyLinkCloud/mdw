@@ -1234,31 +1234,26 @@ diagramMod.factory('Diagram',
     }
   };
 
+  Diagram.prototype.getLatestInstance = function() {
+    var instances = this.selection.getSelectObj().instances;
+    if (instances && instances.length) {
+      return instances[instances.length - 1];
+    }
+  };
+
   Diagram.prototype.getContextMenuItems = function(e) {
-    var rect = this.canvas.getBoundingClientRect();
-    var x = e.clientX - rect.left;
-    var y = e.clientY - rect.top;
-    var selObj = this.getHoverObj(x, y);
-    if (selObj) {
-      if (selObj.isLabel && selObj.owner.workflowType === 'process') {
-        if (this.instance && (this.instance.status === 'In Progress' || this.instance.status == 'Waiting')) {
-          return ['cancel'];
-        }
+    var selObj = this.selection.getSelectObj();
+    if (selObj && selObj.workflowType == 'activity') {
+      var actions = [];
+      var instance = this.getLatestInstance();
+      if (instance.status === 'Failed') {
+        actions.push('retry');
+        actions.push('proceed');
       }
-      else if (selObj.instances && selObj.instances.length) {
-        var instance = selObj.instances[selObj.instances.length - 1];
-        var actions = [];
-        if (selObj.workflowType === 'activity' && instance.status) {
-          if (instance.status === 'Failed') {
-            actions.push('retry');
-            actions.push('proceed');
-          }
-          else if (instance.status === 'Waiting') {
-            actions.push('proceed');
-          }
-        }
-        return actions;
+      else if (instance.status === 'Waiting') {
+        actions.push('proceed');
       }
+      return actions;
     }
   };
 

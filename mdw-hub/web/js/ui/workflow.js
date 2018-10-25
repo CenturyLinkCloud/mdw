@@ -3,8 +3,8 @@
 var workflowMod = angular.module('mdwWorkflow', ['mdw', 'mdwDiagram', 'mdwSelection', 'drawingConstants']);
 
 workflowMod.controller('MdwWorkflowController',
-    ['$scope', '$http', '$document', 'mdw', 'util', 'uiUtil', 'mdwImplementors', 'Diagram', 'Inspector', 'Toolbox',
-    function($scope, $http, $document, mdw, util, uiUtil, mdwImplementors, Diagram, Inspector, Toolbox) {
+    ['$scope', '$http', '$document', '$uibModal', 'mdw', 'util', 'uiUtil', 'mdwImplementors', 'Diagram', 'Inspector', 'Toolbox',
+    function($scope, $http, $document, $uibModal, mdw, util, uiUtil, mdwImplementors, Diagram, Inspector, Toolbox) {
 
   $scope.init = function(canvas) {
     if ($scope.serviceBase.endsWith('/'))
@@ -214,15 +214,25 @@ workflowMod.controller('MdwWorkflowController',
           lis[i].style.display = items.includes(lis[i].id) ? 'block' : 'none';
         }
         menu.style.display = 'block';
-        menu.style.top = e.clientY + 'px';
-        menu.style.left = e.clientX + 'px';
+        menu.style.top = e.pageY + 'px';
+        menu.style.left = e.pageX + 'px';
       }
     }
     e.stopPropagation();
   };
   $scope.onContextMenuSelect = function(action) {
-    console.log("ACTION: " + action);
+    $scope.action = action;
     $scope.closeContextMenu();
+    $scope.activityInstanceId = $scope.diagram.getLatestInstance().id;
+    var modalInstance = $uibModal.open({
+      scope: $scope,
+      templateUrl: 'workflow/activityActionConfirm.html',
+      controller: 'ActivityController',
+      size: 'sm'
+    });
+  };
+  $scope.closePopover = function() {
+    $scope.$parent.closePopover();
   };
   $scope.closeContextMenu = function() {
     var menu = $document[0].getElementById('mdw-canvas-menu');
