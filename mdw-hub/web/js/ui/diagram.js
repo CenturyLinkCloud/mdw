@@ -1245,6 +1245,7 @@ diagramMod.factory('Diagram',
     var selObj = this.selection.getSelectObj();
     if (selObj && selObj.workflowType == 'activity') {
       var actions = [];
+      if (this.instance && (this.instance.status === 'In Progress' || this.instance.status === 'Waiting'))
       var instance = this.getLatestInstance();
       if (instance.status === 'Failed') {
         actions.push('retry');
