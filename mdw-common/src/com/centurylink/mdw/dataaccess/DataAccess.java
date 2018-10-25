@@ -176,18 +176,6 @@ public class DataAccess {
                                             + "\n(" + gitLocal.getAbsolutePath() + ")");
                                     logger.info("Differences:\n============\n" + diffs);
                                 }
-
-                                boolean gitAutoPull = "true".equalsIgnoreCase(PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL));
-                                if (gitAutoPull) {
-                                    // force checkout all assets (equivalent to doing an asset import)
-                                    boolean gitHardReset = PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_SYNC_GITRESET, false);
-                                    try (DbAccess dbAccess = new DbAccess()) {
-                                        logger.severe("**** Performing Git Auto-Pull (Overwrites existing assets): " + vcGit + " (branch: " + branch + ")");
-                                        Import importer = new Import(gitLocal, vcGit, branch, gitHardReset, dbAccess.getConnection());
-                                        importer.setAssetLoc(assetPath);
-                                        importer.importMDWGit();
-                                    }
-                                }
                             }
                         }
                         else {
