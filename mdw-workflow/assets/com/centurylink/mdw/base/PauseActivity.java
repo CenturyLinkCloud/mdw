@@ -4,13 +4,15 @@ import com.centurylink.mdw.activity.types.SuspendibleActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.workflow.activity.event.EventWaitActivity;
 
+import java.util.List;
+
 @Activity(value="Process Pause", icon="shape:pause",
         category=com.centurylink.mdw.activity.types.PauseActivity.class,
         pagelet="{\n" +
                 "  \"widgets\": [\n" +
                 "    {\n" +
                 "      \"name\": \"SLA\",\n" +
-                "      \"label\": \"Timeout\",\n" +
+                "      \"label\": \"Optional Timeout\",\n" +
                 "      \"type\": \"datetime\",\n" +
                 "      \"units\": \"Minutes,Hours,Days\"\n" +
                 "    },\n" +
@@ -57,6 +59,13 @@ import com.centurylink.mdw.workflow.activity.event.EventWaitActivity;
                 "  ]\n" +
                 "}")
 public class PauseActivity extends EventWaitActivity implements SuspendibleActivity {
+
+    @Override
+    public List<String[]> getWaitEventSpecs() {
+        List<String[]> specs = super.getWaitEventSpecs();
+        specs.add(new String[] { "mdw.Resume-" + getActivityInstanceId(), ""});
+        return specs;
+    }
 
     @Override
     protected boolean isEventRecurring(String completionCode) {
