@@ -1130,7 +1130,12 @@ diagramMod.factory('Diagram',
         if (y > rect.bottom - Diagram.BOUNDARY_DIM)
           this.canvas.height = this.canvas.height + Diagram.BOUNDARY_DIM;
 
-        if (this.selection.getSelectObj()) {
+        var selObj = this.selection.getSelectObj();
+        if (selObj) {
+          if (this.instanceEdit && (!selObj.workflowObj || !this.isInstanceEditable(selObj.workflowObj.id))) {
+            return;
+          }
+
           var diagram = this;
           if (this.shiftDrag) {
             if (this.selection.getSelectObj().isStep) {
