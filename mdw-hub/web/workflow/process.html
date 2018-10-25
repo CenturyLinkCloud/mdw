@@ -11,7 +11,7 @@
           <a class="mdw-id" href="#/workflow/processes/{{process.id}}">{{process.id}}</a>
         </div>
         <div class="mdw-heading-actions">
-          <a ng-href="#/edit/{{process.id}}" ng-if="instanceEditAllowed()"
+          <a ng-href="#/edit/{{process.packageName}}/{{process.name}}.proc/{{process.id}}" ng-if="instanceEditAllowed()"
              class="btn btn-primary mdw-btn" style="font-size:14px;font-weight:normal;" title="Edit">
             <span class="glyphicon glyphicon-pencil mdw-icon-btn"></span>
             Edit

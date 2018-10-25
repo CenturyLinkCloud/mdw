@@ -111,14 +111,18 @@ workflowMod.controller('MdwWorkflowController',
       $http({ method: 'GET', url: $scope.serviceBase + '/Processes/' + $scope.process.id })
         .then(function success(response) {
           $scope.instance = response.data;
-          $scope.diagram = new Diagram($scope.canvas[0], uiUtil, $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance, $scope.activity);
+          $scope.diagram = new Diagram($scope.canvas[0], uiUtil, $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance, $scope.activity, $scope.instanceEdit);
           $scope.diagram.draw($scope.animate);
+          if ($scope.instanceEdit) {
+            $scope.toolbox = Toolbox.getToolbox();
+            $scope.toolbox.init($scope.implementors, $scope.hubBase);
+          }
         }, function error(response) {
           mdw.messages = response.statusText;
       });
     }
     else {
-      $scope.diagram = new Diagram($scope.canvas[0], uiUtil, $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance, $scope.activity);
+      $scope.diagram = new Diagram($scope.canvas[0], uiUtil, $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance, $scope.activity, $scope.instanceEdit);
       $scope.diagram.draw($scope.animate);
       if ($scope.editable) {
         $scope.toolbox = Toolbox.getToolbox();
@@ -290,6 +294,7 @@ workflowMod.directive('mdwWorkflow', [function() {
       onChange: '=onProcessChange',
       renderState: '@renderState',
       editable: '@editable',
+      instanceEdit: '@instanceEdit',
       serviceBase: '@serviceBase',
       hubBase: '@hubBase',
       animate: '@animate',

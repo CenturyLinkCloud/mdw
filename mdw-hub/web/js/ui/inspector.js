@@ -4,29 +4,30 @@ var inspectMod = angular.module('mdwInspector', ['mdw']);
 
 inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'mdw', 'util', 'Inspector', 'InspectorTabs', 'Configurator',
                                                  function($scope, $http, $parse, mdw, util, Inspector, InspectorTabs, Configurator) {
-  
+
   $scope.setWorkflow = function(obj) {
     $scope.diagramObject = obj;
     $scope.workflowType = obj.workflowType;
     $scope.workflowObject = obj[obj.workflowType];
     $scope.runtimeInfo = null;  // can be object or array
     $scope.editable = $scope.diagramObject.diagram.editable;
-    
+    $scope.instanceEdit = $scope.diagramObject.diagram.instanceEdit;
+
     if ($scope.workflowType == 'process')
       $scope.runtimeInfo = $scope.diagramObject.instance;
     else
       $scope.runtimeInfo = $scope.diagramObject.instances;
-    
-    if ($scope.runtimeInfo)
+
+    if ($scope.runtimeInfo && !$scope.instanceEdit)
       $scope.tabs = InspectorTabs.instance[$scope.workflowType];
     else
       $scope.tabs = InspectorTabs.definition[$scope.workflowType];
-    
-    
+
+
     var filteredTabs = {};
     util.getProperties($scope.tabs).forEach(function(tabName) {
       var tab = $scope.tabs[tabName];
-      
+
       // editable tabs require a template property
       if (!$scope.editable || ($scope.editable && tab._template)) {
         if (typeof tab === 'object') {
@@ -57,7 +58,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
       }
     });
     $scope.tabs = filteredTabs;
-    
+
     var sameActiveTab = $scope.tabs[$scope.activeTabName];
     if (sameActiveTab) {
       $scope.setActiveTab($scope.activeTabName);
@@ -67,7 +68,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
       $scope.setActiveTab(util.getProperties($scope.tabs)[0]);
     }
   };
-  
+
   $scope.setActiveTab = function(tabName) {
     $scope.drilledValue = null;
     $scope.configurator = null;
@@ -86,9 +87,9 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
       });
       return;
     }
-      
+
     var tabInfo = $scope.runtimeInfo ? $scope.runtimeInfo : $scope.workflowObject;
-    
+
     // check for array type
     var tabArr;
     if ($scope.activeTab instanceof Array) {
@@ -115,7 +116,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
             // array is first prop, function is second (eg: instance.activities.Subprocesses)
             var listName = tabProps[0];
             tabArr = $scope.activeTab[listName];
-            var passedTabArr = [{}]; 
+            var passedTabArr = [{}];
             var itsObj = $scope.activeTab[tabProps[0]][0];
             var itsProps = util.getProperties(itsObj);
             var promise = $scope.activeTab[tabProps[1]]($scope.diagramObject, $scope.workflowObject, $scope.runtimeInfo);
@@ -228,7 +229,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
         }
       }
     }
-    
+
     if (tabArr) {
       $scope.applyTabArray(tabArr, tabInfo);
     }
@@ -297,15 +298,15 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
               // asset attrs
               if (prop.endsWith('_assetVersion')) {
                 val.name = prop.substring(0, prop.length - 13);
-                val.asset = { 
-                  path: tabInfo[val.name], 
+                val.asset = {
+                  path: tabInfo[val.name],
                   version: 'v' + tabInfo[prop]
                 };
               }
               else if (prop == 'processname') {
                 val.name = 'Process';
                 val.asset = {
-                  path: val.value + '.proc', 
+                  path: val.value + '.proc',
                   version: 'v' + tabInfo.processversion
                 };
               }
@@ -327,18 +328,18 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
             }
             if (!tabInfo[prop + '_assetVersion'] && prop != 'processversion' && !prop.startsWith('_'))
               $scope.activeTabValues.push(val);
-          }          
+          }
         }
       }
     }
   };
-  
+
   $scope.applyTabArray = function(tabArr, tabInfo, maxWidth) {
     // indicates columnar display and tabInfo is array
     var maxColWidth = maxWidth ? maxWidth : 50;
     var colSpacing = 3;
     var props = util.getProperties(tabArr[0]);
-    
+
     var colWidths = [];
     var labels = [];
     props.forEach(function(prop) {
@@ -366,7 +367,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
       values.push(valueRow);
     });
 
-    
+
     // column labels
     var names = [];
     for (var k = 0; k < labels.length; k++) {
@@ -401,7 +402,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
         $scope.activeTabValues.push({values: fields});
     }
   };
-  
+
   $scope.drillIn = function(tabValue) {
     $scope.drilledValue = tabValue;
     if (tabValue && tabValue.value) {
@@ -431,13 +432,13 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
       }
     }
   };
-  
+
   $scope.edit = function(widget) {
     var lang = widget.name === 'Java' ? 'java' : (widget.language ? widget.language.toLowerCase() : 'groovy');
     if ($scope.editable) {
       $scope.editing = widget;
       $scope.editOptions = {
-        theme: 'eclipse', 
+        theme: 'eclipse',
         mode: lang,
         onChange: function() {
           // first call happens on load
@@ -460,12 +461,12 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
       };
     }
   };
-  
+
   $scope.valueChanged = function(widget, evt) {
     if ($scope.configurator.valueChanged(widget, evt)) {
       $scope.onChange($scope.process);
     }
-  };  
+  };
 }]);
 
 inspectMod.factory('Inspector', ['mdw', 'util', function(mdw, util) {
@@ -488,13 +489,13 @@ inspectMod.factory('Inspector', ['mdw', 'util', function(mdw, util) {
   };
 }]);
 
-inspectMod.directive('mdwInspector', ['$window', '$document', 'Inspector', 
+inspectMod.directive('mdwInspector', ['$window', '$document', 'Inspector',
                                       function($window, $document, Inspector) {
   return {
     restrict: 'A',
     controller: 'MdwInspectorController',
     link: function link(scope, elem, attrs, ctrls) {
-      
+
       var workflowElem = elem.parent();
       var canvasElem = angular.element(workflowElem[0].getElementsByClassName('mdw-canvas'));
       var panelElem = angular.element(elem[0].getElementsByClassName('mdw-inspector-panel'));
@@ -514,20 +515,20 @@ inspectMod.directive('mdwInspector', ['$window', '$document', 'Inspector',
         workflowElem[0].style.height = canvasElem[0].offsetHeight + 'px';
       };
       scope.maxInspector = function() {
-        contentElem[0].style.height = '100%';        
+        contentElem[0].style.height = '100%';
         elem[0].style.height = '80%';
         elem[0].style.top = '100px';
         panelElem[0].style.height = '90%';
       };
       // removes extra styling added by max or close
       scope.initInspector = function() {
-        contentElem[0].style.height = '';        
+        contentElem[0].style.height = '';
         elem[0].style.height = '';
         elem[0].style.top = '';
         panelElem[0].style.height = '';
-        contentHeight = 168;  // must agree with mdw-inspector-content        
+        contentHeight = 168;  // must agree with mdw-inspector-content
       };
-      
+
       var mouseDown = function(e) {
         var y = e.clientY - elem[0].getBoundingClientRect().top;
         scope.resizing = y <= 3;
@@ -561,27 +562,27 @@ inspectMod.directive('mdwInspector', ['$window', '$document', 'Inspector',
             $document[0].body.style.cursor = 'ns-resize';
         }
       };
-      
+
       elem.bind('mousedown', mouseDown);
       elem.bind('mouseup', mouseUp);
       elem.bind('mouseout', mouseOut);
       workflowElem.bind('mousemove', mouseMove);
       workflowElem.bind('mouseup', mouseUp);
-      
+
       // show
       Inspector.listen(function(obj, show) {
         scope.setWorkflow(obj);
-                
+
         scope.$apply();
 
         if (show) {
           if (elem[0].style.display == 'none') {
             scope.openInspector();
           }
-          
+
           // set workflow element height to accommodate inspector
           workflowElem[0].style.height = (canvasElem[0].offsetHeight + panelElem[0].offsetHeight - 50) + 'px';
-  
+
           if (obj.workflowType != 'process') {
             // scroll into view
             var objBtmY = canvasElem[0].getBoundingClientRect().top + obj.display.y + obj.display.h;
@@ -591,12 +592,12 @@ inspectMod.directive('mdwInspector', ['$window', '$document', 'Inspector',
           }
         }
       });
-      
+
       scope.$on('$destroy', function() {
         Inspector.unlisten();
         elem.unbind('mousedown', mouseDown);
-        elem.unbind('mouseup', mouseUp);        
-        elem.unbind('mouseout', mouseOut);        
+        elem.unbind('mouseup', mouseUp);
+        elem.unbind('mouseout', mouseOut);
         workflowElem.unbind('mousemove', mouseMove);
         workflowElem.unbind('mouseup', mouseUp);
       });

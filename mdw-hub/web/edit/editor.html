@@ -26,9 +26,10 @@
           ng-model="asset.content" class="mdw-editor">
       </div>
       <mdw-workflow ng-if="process" process="process" editable="true" on-process-change="onProcessChange"
-          service-base="{{mdw.roots.services}}/services" hub-base="{{mdw.roots.hub}}">
+          service-base="{{mdw.roots.services}}/services" hub-base="{{mdw.roots.hub}}"
+          render-state="{{instanceId > 0}}" instance-edit="{{instanceId > 0}}">
       </mdw-workflow>
-      <mdw-task-template ng-if="assetName.endsWith('.task')" task-asset="{{packageName + '/' + assetName}}" 
+      <mdw-task-template ng-if="assetName.endsWith('.task')" task-asset="{{packageName + '/' + assetName}}"
           editable="true" class="mdw-task-editor">
       </mdw-task-template>
       <mdw-markdown ng-if="assetName.endsWith('.md')" markdown-asset="{{packageName + '/' + assetName}}"

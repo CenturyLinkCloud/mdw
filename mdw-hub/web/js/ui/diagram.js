@@ -6,7 +6,7 @@ diagramMod.factory('Diagram',
     ['$document', 'mdw', 'util', 'Label', 'Shape', 'Step', 'Link', 'Subflow', 'Note', 'Marquee', 'Selection', 'Toolbox', 'DC',
      function($document, mdw, util, Label, Shape, Step, Link, Subflow, Note, Marquee, Selection, Toolbox, DC) {
 
-    var Diagram = function(canvas, dialog, process, implementors, imgBase, editable, instance, activity) {
+    var Diagram = function(canvas, dialog, process, implementors, imgBase, editable, instance, activity, instanceEdit) {
     Shape.call(this, this, process);
     this.canvas = canvas;
     this.dialog = dialog;
@@ -27,6 +27,7 @@ diagramMod.factory('Diagram',
       else
         this.activityId = activity;
     }
+    this.instanceEdit = instanceEdit;
   };
 
   Diagram.prototype = new Shape();
@@ -534,6 +535,18 @@ diagramMod.factory('Diagram',
       return this.getSubflow(id);
     else if (id.startsWith('N'))
       return this.getNote(id);
+  };
+
+  // Whether the obj can be edited at instance level.
+  // Cannot have instances and must be reachable downstream of a currently paused activity.
+  Diagram.prototype.isInstanceEditable = function(id) {
+    if (this.instanceEdit) {
+      var obj = this.get(id);
+      if (obj && (!obj.instances || !obj.instances.length)) {
+        // TODO: must be reachable downstream of a currently paused activity
+        return true;
+      }
+    }
   };
 
   Diagram.prototype.getImplementor = function(className) {
@@ -1245,14 +1258,15 @@ diagramMod.factory('Diagram',
     var selObj = this.selection.getSelectObj();
     if (selObj && selObj.workflowType == 'activity') {
       var actions = [];
-      if (this.instance && (this.instance.status === 'In Progress' || this.instance.status === 'Waiting'))
-      var instance = this.getLatestInstance();
-      if (instance.status === 'Failed') {
-        actions.push('retry');
-        actions.push('proceed');
-      }
-      else if (instance.status === 'Waiting') {
-        actions.push('proceed');
+      if (this.instance && (this.instance.status === 'In Progress' || this.instance.status === 'Waiting')) {
+        var inst = this.getLatestInstance();
+        if (inst.status === 'Failed') {
+          actions.push('retry');
+          actions.push('proceed');
+        }
+        else if (inst.status === 'Waiting') {
+          actions.push('proceed');
+        }
       }
       return actions;
     }
