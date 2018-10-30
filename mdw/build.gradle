@@ -2,7 +2,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 configurations {
-    assets { 
+    assets {
         extendsFrom archives
     }
 }
@@ -21,15 +21,8 @@ task env {
 
 subprojects {
     apply plugin: "java"
-    apply plugin: "eclipse-wtp"
     apply plugin: 'maven'
     apply plugin: 'signing'
-
-    eclipse {
-        classpath {
-            defaultOutputDir = file("build/classes")
-        }
-    }
 
     sourceCompatibility = 1.8
     version = "${mdwVersion}"
@@ -367,7 +360,7 @@ task configureUploadAssets {
                             scm.appendNode('developerConnection ', 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git')
                             scm.appendNode('url', 'https://github.com/CenturyLinkCloud/mdw.git')
                         }
-                    }                    
+                    }
                 }
             }
         }

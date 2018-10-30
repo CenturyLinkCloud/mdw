@@ -1,4 +1,5 @@
 ${StandardInvoke}.proc=4
+.mdwignore=1
 CombiningConsolidator.java=2
 Consolidator.java=1
 DependenciesWaitActivity.java=7
@@ -19,9 +20,9 @@ ServiceSummaryApi.java=4
 StatusResponseMapper.groovy=1
 Update.java=2
 WorstCaseConsolidator.java=1
-buildKt.gradle=2
+buildKt.gradle=3
 collector.png=1
 orchestrator.png=1
 plan.png=1
 readme.md=1
-service-plan.jar=2
+service-plan.jar=3
