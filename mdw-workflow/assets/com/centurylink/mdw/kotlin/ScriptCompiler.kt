@@ -98,7 +98,7 @@ class ScriptCompiler(disposable: Disposable,
 
         val generationState = GenerationState.Builder(
                 psiFile.project,
-                ClassBuilderFactories.binaries(false),
+                ClassBuilderFactories.BINARIES,
                 analyzerEngine.module,
                 analyzerEngine.trace.bindingContext,
                 listOf(psiFile),
