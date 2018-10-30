@@ -1,5 +1,5 @@
 .gitignore=2
-.mdwignore=1
+.mdwignore=2
 KotlinAccess.java=7
 KotlinClasspath.kt=3
 KotlinEvaluator.java=6
