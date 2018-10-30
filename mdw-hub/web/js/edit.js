@@ -226,4 +226,51 @@ editMod.controller('InstanceEditorController', ['$scope', '$routeParams', 'mdw',
     id: $scope.instanceId
   };
 
+  $scope.onProcessChange = function(proc) {
+    var wasDirty = $scope.procDirty;
+    $scope.procDirty = true;
+    if (!wasDirty) {
+      var phase = this.$root.$$phase;
+      if (phase !== '$apply' && phase !== '$digest')
+        $scope.$digest();
+    }
+    $scope.process = proc;
+  };
+
+  $scope.asset = Assets.get({
+      packageName: $routeParams.packageName,
+      assetName: $routeParams.assetName
+    },
+    function(assetData) {
+      $scope.asset.language = util.getLanguage($scope.asset.name);
+
+      $scope.aceOptions = {
+        theme: 'eclipse',
+        mode: $scope.asset.language,
+        onChange: function() {
+          // first call happens on load
+          if ($scope.aceDirty === undefined)
+            $scope.aceDirty = false;
+          else
+            $scope.aceDirty = true;
+        },
+        basePath: '/mdw/lib/ace-builds/src-min-noconflict'
+      };
+
+      $scope.asset.url = mdw.roots.hub + '/asset/' + $scope.packageName + '/' +  $scope.asset.name + '/' + $scope.instanceId;
+      $scope.asset.view = 'content';
+      $scope.asset.packageName = $scope.packageName;
+
+      Asset.get({
+        packageName: $scope.packageName,
+        assetName: $scope.asset.name,
+        instanceId: $scope.instanceId
+      },
+      function(assetData) {
+        $scope.asset.content = assetData.rawResponse;
+      });
+    }
+  );
+
+
 }]);

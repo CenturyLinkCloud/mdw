@@ -1,12 +1,12 @@
 {
   "activities": [
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=31,y=105,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=63,y=107,w=60,h=40"},
       "id": "A1",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Start",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=112,ly=125,xs=95&129,ys=125&125"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=150,ly=127,xs=127&173,ys=127&127"},
         "event": "FINISH",
         "id": "T1",
         "to": "A3"
@@ -16,31 +16,25 @@
       "attributes": {
         "Rule": "runtimeContext.logInfo(\"Before\")\nvariables[\"whereAmI\"] = \"Before\"",
         "SCRIPT": "Kotlin Script",
-        "WORK_DISPLAY_INFO": "x=132,y=106,w=92,h=55"
+        "WORK_DISPLAY_INFO": "x=177,y=104,w=92,h=55"
       },
       "id": "A3",
       "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
       "name": "Before",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=250,ly=134,xs=228&273,ys=134&134"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=297,ly=130,xs=273&322,ys=130&130"},
         "event": "FINISH",
         "id": "T2",
-        "to": "A8"
+        "to": "A4"
       }]
     },
     {
-      "attributes": {
-        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"]]",
-        "SLA_UNITS": "Hours",
-        "STATUS_AFTER_TIMEOUT": "Cancelled",
-        "WORK_DISPLAY_INFO": "x=418,y=116,w=60,h=40",
-        "implementor_assetVersion": "[0.1,1)"
-      },
+      "attributes": {"WORK_DISPLAY_INFO": "x=326,y=111,w=60,h=40"},
       "id": "A4",
-      "implementor": "com.centurylink.mdw.base.PauseActivity",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessPauseActivity",
       "name": "Pause",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=517,ly=173,xs=482&553,ys=136&211"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=417,ly=131,xs=390&444,ys=131&131"},
         "event": "FINISH",
         "id": "T3",
         "to": "A5"
@@ -50,61 +44,23 @@
       "attributes": {
         "Rule": "runtimeContext.logInfo(\"After\")\nvariables[\"whereAmI\"] = \"After\"",
         "SCRIPT": "Kotlin Script",
-        "WORK_DISPLAY_INFO": "x=557,y=184,w=92,h=52"
+        "WORK_DISPLAY_INFO": "x=448,y=107,w=92,h=52"
       },
       "id": "A5",
       "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
       "name": "After",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=684,ly=212,xs=653&716,ys=212&212"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=576,ly=133,xs=544&608,ys=133&133"},
         "event": "FINISH",
         "id": "T4",
         "to": "A6"
       }]
     },
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=719,y=192,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=611,y=113,w=60,h=40"},
       "id": "A6",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
       "name": "Stop"
-    },
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=266,y=209,w=100,h=60"},
-      "id": "A7",
-      "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
-      "name": "Wait",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=461,ly=223,xs=370&553,ys=223&223"},
-        "event": "FINISH",
-        "id": "T7",
-        "to": "A5"
-      }]
-    },
-    {
-      "attributes": {
-        "Expression": "testCase",
-        "SCRIPT": "Groovy",
-        "WORK_DISPLAY_INFO": "x=277,y=108,w=70,h=53"
-      },
-      "id": "A8",
-      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
-      "name": "Test\nCase",
-      "transitions": [
-        {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=361,ly=114,xs=351&414,ys=136&136"},
-          "event": "FINISH",
-          "id": "T5",
-          "resultCode": "pause",
-          "to": "A4"
-        },
-        {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=313,ly=173,xs=312&312,ys=165&206"},
-          "event": "FINISH",
-          "id": "T6",
-          "resultCode": "wait",
-          "to": "A7"
-        }
-      ]
     }
   ],
   "attributes": {
@@ -114,14 +70,8 @@
     "PerformanceLevel": "0",
     "WORK_DISPLAY_INFO": "x=39,y=37,w=129,h=26"
   },
-  "variables": {
-    "testCase": {
-      "category": "INPUT",
-      "type": "java.lang.String"
-    },
-    "whereAmI": {
-      "category": "LOCAL",
-      "type": "java.lang.String"
-    }
-  }
+  "variables": {"whereAmI": {
+    "category": "LOCAL",
+    "type": "java.lang.String"
+  }}
 }
