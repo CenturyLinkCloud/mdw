@@ -7,3 +7,8 @@ asset:
 
 config:
   location: config
+
+data:
+  workgroups:
+    - Developers
+    - MDW Support

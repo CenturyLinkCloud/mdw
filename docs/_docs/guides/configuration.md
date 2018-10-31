@@ -4,9 +4,10 @@ title: MDW Configuration
 ---
 
 ## project.yaml
-  - Used at design-time by [MDW Studio](../mdw-studio/) and the [CLI](../../getting-started/cli/).
+  - Used at design time by [MDW Studio](../mdw-studio/) and the [CLI](../../getting-started/cli/).
   - Belongs in the root directory of your project (or root module for multi-module builds).
   - Contains bootstrap information to locate [mdw.yaml](#mdw-yaml) and project assets.
+  - Also may include custom values (like workgroups) that are needed at design time.
   - Not used at runtime.   
     ```yaml
     # paths are relative to the location of this file
@@ -18,7 +19,11 @@ title: MDW Configuration
     
     config:
       location: config
-    
+
+    data:
+      workgroups:
+        - Developers
+        - MDW Support
     ```
 
 ## mdw.yaml
