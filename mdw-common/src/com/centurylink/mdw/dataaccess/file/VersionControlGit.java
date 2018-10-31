@@ -15,36 +15,16 @@
  */
 package com.centurylink.mdw.dataaccess.file;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import org.eclipse.jgit.api.AddCommand;
-import org.eclipse.jgit.api.CloneCommand;
-import org.eclipse.jgit.api.CommitCommand;
-import org.eclipse.jgit.api.CreateBranchCommand;
+import com.centurylink.mdw.cli.Delete;
+import com.centurylink.mdw.dataaccess.AssetRevision;
+import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
+import com.centurylink.mdw.model.asset.CommitInfo;
+import com.centurylink.mdw.util.file.VersionProperties;
+import com.google.common.io.Files;
+import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
-import org.eclipse.jgit.api.DiffCommand;
-import org.eclipse.jgit.api.FetchCommand;
-import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.PullCommand;
-import org.eclipse.jgit.api.PushCommand;
 import org.eclipse.jgit.api.ResetCommand.ResetType;
-import org.eclipse.jgit.api.Status;
-import org.eclipse.jgit.api.StatusCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.api.errors.TransportException;
@@ -52,15 +32,7 @@ import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
 import org.eclipse.jgit.dircache.DirCacheIterator;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
-import org.eclipse.jgit.lib.Constants;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.ObjectLoader;
-import org.eclipse.jgit.lib.ObjectReader;
-import org.eclipse.jgit.lib.ObjectStream;
-import org.eclipse.jgit.lib.PersonIdent;
-import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.lib.Repository;
-import org.eclipse.jgit.lib.TextProgressMonitor;
+import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.pgm.Main;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
@@ -73,13 +45,11 @@ import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.eclipse.jgit.treewalk.filter.PathFilterGroup;
 
-import com.centurylink.mdw.cli.Delete;
-import com.centurylink.mdw.dataaccess.AssetRevision;
-import com.centurylink.mdw.dataaccess.VersionControl;
-import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
-import com.centurylink.mdw.model.asset.CommitInfo;
-import com.centurylink.mdw.util.file.VersionProperties;
-import com.google.common.io.Files;
+import java.io.*;
+import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 
 public class VersionControlGit implements VersionControl {
 
@@ -572,15 +542,20 @@ public class VersionControlGit implements VersionControl {
     }
 
     /**
-     * TODO: More thorough path normalization.
-     * see Repository.stripWorkDir()
+     * @deprecated use {@link #getRelativePath(Path)}
+     * this has issues with relative git local paths like ../
      */
+    @Deprecated
     public String getRelativePath(File file) {
         String localPath = localDir.getAbsolutePath();
         if (localPath.endsWith("\\.") || localPath.endsWith("/."))
             localPath = localPath.substring(0, localPath.length() - 2);
 
         return file.getAbsolutePath().substring(localPath.length() + 1).replace('\\', '/');
+    }
+
+    public String getRelativePath(Path path) {
+        return localDir.toPath().normalize().relativize(path.normalize()).toString().replace('\\', '/');
     }
 
     /**
