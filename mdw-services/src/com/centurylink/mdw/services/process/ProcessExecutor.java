@@ -328,6 +328,42 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
+    public DocumentReference createActivityExceptionDocument(ProcessInstance processInst, ActivityInstance actInstVO, BaseActivity activityImpl, Throwable cause) throws DataAccessException {
+        TransactionWrapper transaction=null;
+        try {
+            transaction = startTransaction();
+            return engineImpl.createActivityExceptionDocument(processInst, actInstVO, activityImpl, cause);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper) initTransactionRetry(transaction);
+                return ((ProcessExecutor) getTransactionRetrier()).createActivityExceptionDocument(processInst, actInstVO, activityImpl, cause);
+            }
+            else {
+                throw e;
+            }
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
+
+    public DocumentReference createProcessExceptionDocument(ProcessInstance processInst, Throwable cause) throws DataAccessException {
+        TransactionWrapper transaction=null;
+        try {
+            transaction = startTransaction();
+            return engineImpl.createProcessExceptionDocument(processInst, cause);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper) initTransactionRetry(transaction);
+                return ((ProcessExecutor) getTransactionRetrier()).createProcessExceptionDocument(processInst, cause);
+            }
+            else {
+                throw e;
+            }
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
+
     public ActivityRuntime prepareActivityInstance(
             InternalEvent event, ProcessInstance procInst)
             throws ProcessException, DataAccessException, ServiceLocatorException {
