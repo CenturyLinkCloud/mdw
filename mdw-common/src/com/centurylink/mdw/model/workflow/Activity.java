@@ -95,7 +95,7 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
         if (unit == null || unit.isEmpty())
             unit = this.getAttribute(WorkAttributeConstant.SLA_UNIT);
         if (unit == null || unit.isEmpty())
-            unit = ServiceLevelAgreement.INTERVAL_HOURS;
+            unit = ServiceLevelAgreement.INTERVAL_SECONDS;
         return ServiceLevelAgreement.unitsToSeconds(sla, unit);
     }
 
@@ -111,7 +111,7 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
         if (unit == null || unit.isEmpty())
             getAttribute(WorkAttributeConstant.SLA_UNIT);
         if (unit == null || unit.isEmpty()) {
-            unit = ServiceLevelAgreement.INTERVAL_MINUTES;
+            unit = ServiceLevelAgreement.INTERVAL_SECONDS;
             setAttribute(WorkAttributeConstant.SLA_UNIT, unit);
         }
         setAttribute(WorkAttributeConstant.SLA, ServiceLevelAgreement.secondsToUnits(slaSeconds, unit));
