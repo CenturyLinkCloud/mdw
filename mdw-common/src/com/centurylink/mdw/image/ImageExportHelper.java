@@ -20,19 +20,15 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.util.List;
 
-import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.export.ExportHelper;
 import com.centurylink.mdw.model.Project;
-import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.Process;
 
-public class ImageExportHelper {
-
-    private Project project;
+public class ImageExportHelper extends ExportHelper {
 
     public ImageExportHelper(Project project) {
-        this.project = project;
+        super(project);
     }
 
     public BufferedImage printImage(Process process) {
@@ -55,40 +51,4 @@ public class ImageExportHelper {
         r.gc();
         return image;
     }
-
-    public Dimension getGraphSize(Process process) {
-        int w = 0;
-        int h = 0;
-        List<Activity> activities = process.getActivities();
-        for (Activity act : activities) {
-            String[] attrs = act.getAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO).split(",");
-            w = getWidth(attrs, w);
-            h = getHeight(attrs, h);
-        }
-        List<Process> subProcesses = process.getSubprocesses();
-        for (Process subProc : subProcesses) {
-            String[] attrs = subProc.getAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO)
-                    .split(",");
-            w = getWidth(attrs, w);
-            h = getHeight(attrs, h);
-        }
-        return new Dimension(w, h);
-    }
-
-    private int getWidth(String[] attrs, int w) {
-        int localW = Integer.parseInt(attrs[0].substring(2))
-                + Integer.parseInt(attrs[2].substring(2));
-        if (localW > w)
-            w = localW;
-        return w;
-    }
-
-    private int getHeight(String[] attrs, int h) {
-        int localH = Integer.parseInt(attrs[1].substring(2))
-                + Integer.parseInt(attrs[3].substring(2));
-        if (localH > h)
-            h = localH;
-        return h;
-    }
-
 }

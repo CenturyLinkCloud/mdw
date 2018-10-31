@@ -98,6 +98,9 @@ dependencies {
     //mdw-draw
     compileOnly fileTree(dir: "../mdw/libs", include: "mdw-draw.jar")
     draw fileTree(dir: "../mdw/libs", include: "mdw-draw.jar")
+
+    compileOnly group: 'com.itextpdf', name: 'itextpdf', version: '5.5.13'
+    compileOnly group: 'com.itextpdf.tool', name: 'xmlworker', version: '5.5.13'
 }
 
 clean {
@@ -123,7 +126,7 @@ task cliJar(type: Jar) {
               + " ./lib/joda-time-2.9.9.jar ./lib/commons-io-2.4.jar ./lib/bpmn-schemas.jar ./lib/xmlbeans-2.4.0.jar ./lib/kotlin-stdlib-1.2.61.jar"
               + " ./lib/flexmark-0.32.22.jar ./lib/flexmark-util-0.32.22.jar ./lib/flexmark-ext-anchorlink-0.32.22.jar ./lib/flexmark-ext-autolink-0.32.22.jar"
               + " ./lib/flexmark-ext-superscript-0.32.22.jar ./lib/flexmark-ext-tables-0.32.22.jar ./lib/flexmark-ext-typographic-0.32.22.jar"
-              + " ./lib/flexmark-formatter-0.32.22.jar ./lib/autolink-0.9.0.jar");
+              + " ./lib/flexmark-formatter-0.32.22.jar ./lib/autolink-0.9.0.jar ./lib/itextpdf-5.5.13.jar ./lib/xmlworker-5.5.13.jar");
     }
 
     from("build/classes") {
@@ -161,6 +164,7 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/export/*.class"
         include "com/centurylink/mdw/procimport/*.class"
         include "com/centurylink/mdw/html/*.class"
+        include "com/centurylink/mdw/pdf/*.class"
         include "com/centurylink/mdw/image/*.class"
         include "com/centurylink/mdw/activity/types/*.class"
         include "com/centurylink/mdw/drawio/*.class"
