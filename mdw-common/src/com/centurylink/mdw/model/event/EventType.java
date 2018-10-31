@@ -79,10 +79,11 @@ public class EventType  {
         switch (event) {
           case 4:
               return "Error";
+          case 3:
+              return "Delay";
           default:
               return null;
         }
-
     }
 
 }

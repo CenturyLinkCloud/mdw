@@ -156,6 +156,17 @@ public class InternalEvent {
         return event;
     }
 
+    public static InternalEvent createProcessDelayMessage(ProcessInstance procInst) {
+        InternalEvent event = new InternalEvent();
+        event.isProcess = true;
+        event.eventType = EventType.DELAY;
+        event.workId = procInst.getProcessId();
+        event.workInstanceId = procInst.getId();
+        event.ownerType = OwnerType.SLA;
+        event.ownerId = 0L;
+        return event;
+    }
+
     public static InternalEvent createActivityDelayMessage(ActivityInstance actInst,
             String masterRequestId) {
         InternalEvent event = new InternalEvent();

@@ -35,6 +35,7 @@ import javax.el.VariableMapper;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
 import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.ServiceValuesAccess;
@@ -42,13 +43,16 @@ import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.variable.XPathELResolver;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.util.JsonUtil;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.variable.VariableTranslator;
 import com.sun.el.ExpressionFactoryImpl;
 import com.sun.el.ValueExpressionLiteral;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
+public class ProcessRuntimeContext extends ELContext implements RuntimeContext, Jsonable {
 
     protected static StandardLogger logger = LoggerUtil.getStandardLogger();
 
@@ -389,5 +393,41 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext {
         if (serviceValues == null)
             serviceValues = new ServiceValuesAccess(this);
         return serviceValues;
+    }
+
+    public ProcessRuntimeContext(JSONObject json) throws JSONException {
+        String procPath = json.getString("process");
+        int slash = procPath.indexOf("/");
+        if (slash > 0) {
+            pkg = new Package();
+            pkg.setName(procPath.substring(0, slash));
+            process = new Process();
+            process.setName(procPath.substring(slash + 1));
+            process.setPackageName(pkg.getName());
+        }
+        else {
+            process = new Process();
+            process.setName(procPath);
+        }
+        this.processInstance = new ProcessInstance(json.getJSONObject("processInstance"));
+        if (json.has("variables")) {
+            variables = new HashMap<String,Object>();
+            Map<String,String> varMap = JsonUtil.getMap(json.getJSONObject("variables"));
+            for (String name : varMap.keySet()) {
+                String val = varMap.get(name);
+                getVariables().put(name, getValueForString(name, val));
+            }
+        }
+    }
+
+    public JSONObject getJson() throws JSONException {
+        JSONObject json = create();
+        json.put("process", getPackage().getName() + "/" + getProcess().getName());
+        json.put("processInstance", getProcessInstance().getJson());
+        return json;
+    }
+
+    public String getJsonName() {
+        return "processRuntimeContext";
     }
 }
