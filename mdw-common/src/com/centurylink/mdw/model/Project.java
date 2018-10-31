@@ -15,9 +15,11 @@
  */
 package com.centurylink.mdw.model;
 
-import java.io.File;
-
 import com.centurylink.mdw.model.system.MdwVersion;
+
+import java.io.File;
+import java.util.List;
+import java.util.SortedMap;
 
 public interface Project {
 
@@ -26,4 +28,16 @@ public interface Project {
     String getHubRootUrl();
 
     MdwVersion getMdwVersion();
+
+    default String readData(String name) {
+        return null;
+    }
+
+    default List<String> readDataList(String name) {
+        return null;
+    }
+
+    default SortedMap<String,String> readDataMap(String name) {
+        return null;
+    }
 }

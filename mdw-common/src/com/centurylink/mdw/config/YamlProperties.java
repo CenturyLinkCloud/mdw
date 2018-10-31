@@ -15,16 +15,12 @@
  */
 package com.centurylink.mdw.config;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
 import com.centurylink.mdw.cli.Decrypt;
 import com.centurylink.mdw.yaml.YamlLoader;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Reads and writes yaml configuration settings as if they were properties.
@@ -120,10 +116,32 @@ public class YamlProperties {
         if (groupMap != null) {
             map = new HashMap<>();
             for (String groupKey : groupMap.keySet()) {
-                Map<String,Object> innerMap = loader.getMap(groupKey, groupMap);
-                for (String innerKey : innerMap.keySet()) {
-                    map.put(groupKey + "." + innerKey, innerMap.get(innerKey).toString());
+                if (groupMap.get(groupKey) instanceof String) {
+                    map.put(groupKey, (String)groupMap.get(groupKey));
                 }
+                else {
+                    Map<String, Object> innerMap = loader.getMap(groupKey, groupMap);
+                    for (String innerKey : innerMap.keySet()) {
+                        map.put(groupKey + "." + innerKey, innerMap.get(innerKey).toString());
+                    }
+                }
+            }
+        }
+        return map;
+    }
+
+    /**
+     * Finds a single-depth prop map for the given name (prefix omitted).
+     */
+    @SuppressWarnings("unchecked")
+    public Map<String,String> getMap(String name) {
+        Map<String,String> map = null;
+        Map<String,Object> groupMap = (Map<String,Object>)get(name, PropType.group);
+        if (groupMap != null) {
+            map = new HashMap<>();
+            for (String groupKey : groupMap.keySet()) {
+                String value = groupMap.get(groupKey).toString();
+                map.put(groupKey.substring(name.length() + 1), value);
             }
         }
         return map;
