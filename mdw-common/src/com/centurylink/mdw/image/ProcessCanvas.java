@@ -48,7 +48,7 @@ public class ProcessCanvas extends JPanel {
         this.process = process;
         this.zoom = 100;
         Display.Companion.setDEFAULT_COLOR(UIManager.getColor("EditorPane.foreground"));
-        Display.Companion.setGRID_COLOR(Color.LIGHT_GRAY);
+        Display.Companion.setGRID_COLOR(Color.WHITE);
         Display.Companion.setOUTLINE_COLOR(UIManager.getColor("EditorPane.foreground"));
         Display.Companion.setSHADOW_COLOR(new Color(0, 0, 0, 50));
         Display.Companion.setMETA_COLOR(Color.GRAY);

@@ -25,6 +25,7 @@ import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Project;
 import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.pdf.PdfProcessExporter;
 
 import java.io.File;
 import java.io.IOException;
@@ -103,7 +104,9 @@ public class Export extends Setup {
         Process proc = new Process(new JsonObject(content));
         proc.setName(procName.substring(0, procName.length() - 5));
 
-        if (exporter instanceof HtmlProcessExporter) {
+        if (exporter instanceof PdfProcessExporter) {
+            ((PdfProcessExporter) exporter).setOutputDir(output);
+        }else if (exporter instanceof HtmlProcessExporter) {
             ((HtmlProcessExporter) exporter).setOutputDir(output.getParentFile());
         }
 
@@ -150,6 +153,8 @@ public class Export extends Setup {
                 return new HtmlProcessExporter(project);
             else if ("png".equals(format))
                 return new PngProcessExporter(project);
+            else if ("pdf".equals(format))
+                return new PdfProcessExporter(project);
         }
 
         return null;
