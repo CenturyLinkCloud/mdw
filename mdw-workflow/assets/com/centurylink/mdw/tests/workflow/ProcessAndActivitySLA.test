@@ -1,0 +1,10 @@
+package com.centurylink.mdw.tests.workflow
+
+today = new Date().format("YYYY-MM-dd");
+println 'today: ' + today
+start process("ProcessSLA")
+wait process {
+    timeout = 120
+}
+verify processes("com.centurylink.mdw.tests.workflow/ProcessSLA",
+                 "com.centurylink.mdw.tests.workflow/ProcessSLASub")
