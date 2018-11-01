@@ -1,5 +1,15 @@
 <input type="number" ng-disabled="widget.readonly" 
   ng-model="widget.value" ng-change="valueChanged(widget)" style="width:50px;">
+<label ng-if="widget.name === 'TIMER_WAIT'">
+  <input type="radio" ng-model="widget.units" value="Seconds"
+         ng-disabled="widget.readonly" ng-change="valueChanged(widget)">
+  Seconds
+</label>
+<label>
+  <input type="radio" ng-model="widget.units" value="Minutes"
+         ng-disabled="widget.readonly" ng-change="valueChanged(widget)">
+  Minutes
+</label>
 <label>
   <input type="radio" ng-model="widget.units" value="Hours" 
     ng-disabled="widget.readonly" ng-change="valueChanged(widget)">

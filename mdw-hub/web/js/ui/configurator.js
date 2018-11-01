@@ -132,7 +132,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       }
       else if (widget.type === 'datetime') {
         if (widget.value) {
-          widget.units = this.workflowObj.attributes[widget.name + '_UNITS'];
+          widget.units = this.workflowObj.attributes[widget.name + '_DISPLAY_UNITS'];
           if (!widget.units)
             widget.units = 'Hours';
           if (widget.units == 'Minutes')
@@ -546,13 +546,15 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
     else {
       if (widget.type === 'datetime') {
         if (widget.value) {
-          this.workflowObj.attributes[widget.name + '_UNITS'] = widget.units;
+          this.workflowObj.attributes[widget.name + '_DISPLAY_UNITS'] = widget.units;
           if (widget.units == 'Minutes')
             this.workflowObj.attributes[widget.name] = '' + (widget.value * 60);
           else if (widget.units == 'Hours')
             this.workflowObj.attributes[widget.name] = '' + (widget.value * 3600);
           else if (widget.units == 'Days')
             this.workflowObj.attributes[widget.name] = '' + (widget.value * 86400);
+          else
+            this.workflowObj.attributes[widget.name] = '' + (widget.value);
         }
       }
       else {
