@@ -17,6 +17,12 @@
     catch(err) {
     }
 //-->
+var methods = {"i0":10,"i1":10,"i2":10};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var altColor = "altColor";
+var rowColor = "rowColor";
+var tableTab = "tableTab";
+var activeTableTab = "activeTableTab";
 </script>
 <noscript>
 <div>JavaScript is disabled on your browser.</div>
@@ -69,13 +75,13 @@
 <li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#methods.inherited.from.class.com.centurylink.mdw.common.MdwException">Method</a></li>
+<li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
-<li>Method</li>
+<li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
 <a name="skip.navbar.top">
@@ -153,9 +159,12 @@ extends <a href="../../../../com/centurylink/mdw/common/MdwException.html" title
                 java.lang.Throwable&nbsp;cause)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/ProcessException.html#ProcessException-java.lang.String-">ProcessException</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/ProcessException.html#ProcessException-org.json.JSONObject-">ProcessException</a></span>(org.json.JSONObject&nbsp;json)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/ProcessException.html#ProcessException-java.lang.String-">ProcessException</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/ProcessException.html#ProcessException-java.lang.String-java.lang.Throwable-">ProcessException</a></span>(java.lang.String&nbsp;message,
                 java.lang.Throwable&nbsp;cause)</code>&nbsp;</td>
 </tr>
@@ -168,12 +177,31 @@ extends <a href="../../../../com/centurylink/mdw/common/MdwException.html" title
 <!--   -->
 </a>
 <h3>Method Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr id="i0" class="altColor">
+<td class="colFirst"><code>org.json.JSONObject</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/ProcessException.html#getJson--">getJson</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/ProcessException.html#getRuntimeContext--">getRuntimeContext</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/ProcessException.html#setRuntimeContext-com.centurylink.mdw.model.workflow.ProcessRuntimeContext-">setRuntimeContext</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a>&nbsp;context)</code>&nbsp;</td>
+</tr>
+</table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.common.MdwException">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.centurylink.mdw.common.<a href="../../../../com/centurylink/mdw/common/MdwException.html" title="class in com.centurylink.mdw.common">MdwException</a></h3>
-<code><a href="../../../../com/centurylink/mdw/common/MdwException.html#equals-java.lang.Object-">equals</a>, <a href="../../../../com/centurylink/mdw/common/MdwException.html#findCause--">findCause</a>, <a href="../../../../com/centurylink/mdw/common/MdwException.html#findCause-java.lang.Throwable-">findCause</a>, <a href="../../../../com/centurylink/mdw/common/MdwException.html#getCode--">getCode</a>, <a href="../../../../com/centurylink/mdw/common/MdwException.html#getJson--">getJson</a>, <a href="../../../../com/centurylink/mdw/common/MdwException.html#getJsonName--">getJsonName</a>, <a href="../../../../com/centurylink/mdw/common/MdwException.html#getStackTrace-java.lang.Throwable-">getStackTrace</a>, <a href="../../../../com/centurylink/mdw/common/MdwException.html#getStackTraceDetails--">getStackTraceDetails</a>, <a href="../../../../com/centurylink/mdw/common/MdwException.html#toString--">toString</a></code></li>
+<code><a href="../../../../com/centurylink/mdw/common/MdwException.html#equals-java.lang.Object-">equals</a>, <a href="../../../../com/centurylink/mdw/common/MdwException.html#findCause--">findCause</a>, <a href="../../../../com/centurylink/mdw/common/MdwException.html#findCause-java.lang.Throwable-">findCause</a>, <a href="../../../../com/centurylink/mdw/common/MdwException.html#getCode--">getCode</a>, <a href="../../../../com/centurylink/mdw/common/MdwException.html#getJsonName--">getJsonName</a>, <a href="../../../../com/centurylink/mdw/common/MdwException.html#getStackTrace-java.lang.Throwable-">getStackTrace</a>, <a href="../../../../com/centurylink/mdw/common/MdwException.html#getStackTraceDetails--">getStackTraceDetails</a>, <a href="../../../../com/centurylink/mdw/common/MdwException.html#toString--">toString</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Throwable">
@@ -250,11 +278,67 @@ extends <a href="../../../../com/centurylink/mdw/common/MdwException.html" title
 <a name="ProcessException-java.lang.String-java.lang.Throwable-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>ProcessException</h4>
 <pre>public&nbsp;ProcessException(java.lang.String&nbsp;message,
                         java.lang.Throwable&nbsp;cause)</pre>
+</li>
+</ul>
+<a name="ProcessException-org.json.JSONObject-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>ProcessException</h4>
+<pre>public&nbsp;ProcessException(org.json.JSONObject&nbsp;json)
+                 throws org.json.JSONException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>org.json.JSONException</code></dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method.detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="getRuntimeContext--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRuntimeContext</h4>
+<pre>public&nbsp;<a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a>&nbsp;getRuntimeContext()</pre>
+</li>
+</ul>
+<a name="setRuntimeContext-com.centurylink.mdw.model.workflow.ProcessRuntimeContext-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setRuntimeContext</h4>
+<pre>public&nbsp;void&nbsp;setRuntimeContext(<a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a>&nbsp;context)</pre>
+</li>
+</ul>
+<a name="getJson--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getJson</h4>
+<pre>public&nbsp;org.json.JSONObject&nbsp;getJson()
+                            throws org.json.JSONException</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/MdwException.html#getJson--">getJson</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/centurylink/mdw/common/MdwException.html" title="class in com.centurylink.mdw.common">MdwException</a></code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>org.json.JSONException</code></dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -312,13 +396,13 @@ extends <a href="../../../../com/centurylink/mdw/common/MdwException.html" title
 <li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#methods.inherited.from.class.com.centurylink.mdw.common.MdwException">Method</a></li>
+<li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
-<li>Method</li>
+<li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
 <a name="skip.navbar.bottom">
