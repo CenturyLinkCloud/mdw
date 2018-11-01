@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10};
+var methods = {"i0":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -73,7 +73,7 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#fields.inherited.from.class.com.centurylink.mdw.export.ExportHelper">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
@@ -98,7 +98,12 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
+<li><a href="../../../../com/centurylink/mdw/export/ExportHelper.html" title="class in com.centurylink.mdw.export">com.centurylink.mdw.export.ExportHelper</a></li>
+<li>
+<ul class="inheritance">
 <li>com.centurylink.mdw.image.ImageExportHelper</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -108,13 +113,28 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">ImageExportHelper</span>
-extends java.lang.Object</pre>
+extends <a href="../../../../com/centurylink/mdw/export/ExportHelper.html" title="class in com.centurylink.mdw.export">ExportHelper</a></pre>
 </li>
 </ul>
 </div>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="fields.inherited.from.class.com.centurylink.mdw.export.ExportHelper">
+<!--   -->
+</a>
+<h3>Fields inherited from class&nbsp;com.centurylink.mdw.export.<a href="../../../../com/centurylink/mdw/export/ExportHelper.html" title="class in com.centurylink.mdw.export">ExportHelper</a></h3>
+<code><a href="../../../../com/centurylink/mdw/export/ExportHelper.html#excludedAttributes">excludedAttributes</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#excludedAttributesForSpecificValues">excludedAttributesForSpecificValues</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#project">project</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#tabularAttributes">tabularAttributes</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#textboxAttributes">textboxAttributes</a></code></li>
+</ul>
+</li>
+</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.summary">
@@ -145,14 +165,17 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>java.awt.Dimension</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/image/ImageExportHelper.html#getGraphSize-com.centurylink.mdw.model.workflow.Process-">getGraphSize</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process)</code>&nbsp;</td>
-</tr>
-<tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.awt.image.BufferedImage</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/image/ImageExportHelper.html#printImage-com.centurylink.mdw.model.workflow.Process-">printImage</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process)</code>&nbsp;</td>
 </tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.export.ExportHelper">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;com.centurylink.mdw.export.<a href="../../../../com/centurylink/mdw/export/ExportHelper.html" title="class in com.centurylink.mdw.export">ExportHelper</a></h3>
+<code><a href="../../../../com/centurylink/mdw/export/ExportHelper.html#escapeXml-java.lang.String-">escapeXml</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#excludeAttribute-java.lang.String-java.lang.String-">excludeAttribute</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#getGraphSize-com.centurylink.mdw.model.workflow.Process-">getGraphSize</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#getHtmlContent-java.lang.String-">getHtmlContent</a></code></li>
+</ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
@@ -194,19 +217,10 @@ extends java.lang.Object</pre>
 <a name="printImage-com.centurylink.mdw.model.workflow.Process-">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>printImage</h4>
 <pre>public&nbsp;java.awt.image.BufferedImage&nbsp;printImage(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process)</pre>
-</li>
-</ul>
-<a name="getGraphSize-com.centurylink.mdw.model.workflow.Process-">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>getGraphSize</h4>
-<pre>public&nbsp;java.awt.Dimension&nbsp;getGraphSize(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process)</pre>
 </li>
 </ul>
 </li>
@@ -262,7 +276,7 @@ extends java.lang.Object</pre>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#fields.inherited.from.class.com.centurylink.mdw.export.ExportHelper">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":9};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -193,10 +193,16 @@ extends java.lang.Object</pre>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlProperties.html#getLoader--">getLoader</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
+<td class="colFirst"><code>java.util.Map&lt;java.lang.String,java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlProperties.html#getMap-java.lang.String-">getMap</a></span>(java.lang.String&nbsp;name)</code>
+<div class="block">Finds a single-depth prop map for the given name (prefix omitted).</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.util.Map&lt;?,?&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlProperties.html#getRoot--">getRoot</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlProperties.html#getString-java.lang.String-">getString</a></span>(java.lang.String&nbsp;name)</code>
 <div class="block">Examples:
@@ -204,11 +210,11 @@ extends java.lang.Object</pre>
  (in mdw.yaml):</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlProperties.html#isEncrypted-java.lang.String-">isEncrypted</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../com/centurylink/mdw/config/YamlBuilder.html" title="class in com.centurylink.mdw.config">YamlBuilder</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/config/YamlProperties.html#translate-java.lang.String-java.util.Properties-java.util.Properties-">translate</a></span>(java.lang.String&nbsp;prefix,
          java.util.Properties&nbsp;properties,
@@ -368,6 +374,16 @@ extends java.lang.Object</pre>
 <h4>getGroup</h4>
 <pre>public&nbsp;java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;getGroup(java.lang.String&nbsp;name)</pre>
 <div class="block">Returns a flattened value map with full-path keys (including prefix).</div>
+</li>
+</ul>
+<a name="getMap-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMap</h4>
+<pre>public&nbsp;java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;getMap(java.lang.String&nbsp;name)</pre>
+<div class="block">Finds a single-depth prop map for the given name (prefix omitted).</div>
 </li>
 </ul>
 <a name="get-java.lang.String-com.centurylink.mdw.config.YamlProperties.PropType-">
