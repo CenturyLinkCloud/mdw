@@ -2,5 +2,5 @@
   class="mdw-widget-dropdown">
   <option ng-repeat="option in widget.options" value="{{option}}">{{option}}</option>
 </select>
-<a href="{{widget.assetUrl}}" ng-if="widget.value" target="_blank" style="top:0;">{{widget.readonly ? widget.value : 'Open'}}</a>
+<a href="{{widget.assetUrl}}" ng-if="widget.value" target="_blank" style="top:2px;">{{widget.readonly ? widget.value : 'Open'}}</a>
 <a href="" ng-if="!widget.readonly && !widget.value" ng-click="newAsset(widget.source)" target="_blank" style="top:0;">New...</a>
