@@ -398,7 +398,7 @@ testingMod.filter('assetLinks', function($sce) {
             var slash = path.lastIndexOf('/');
             if (slash < 0)
               path = pkg + '/' + path;
-            if (match[2] == 'process')
+            if (match[2] == 'process' && !path.endsWith('.proc'))
               path += '.proc';
             var quot = regex == regex2 ? '"' : "'";
             output += match[1] + match[2] + '(' + start + quot + '<a href="#/asset/' + path + '">' + match[3] + '</a>' + quot + end + ')';

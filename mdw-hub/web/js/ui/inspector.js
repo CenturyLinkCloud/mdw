@@ -305,7 +305,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
               else if (prop == 'processname') {
                 val.name = 'Process';
                 val.asset = {
-                  path: val.value + '.proc', 
+                  path: val.value + (val.value.endsWith('.proc') ? '' : '.proc'),
                   version: 'v' + tabInfo.processversion
                 };
               }

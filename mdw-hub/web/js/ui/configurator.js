@@ -206,10 +206,6 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
   };
   
   Configurator.prototype.initSubprocBindings = function(widget, subproc) {
-    var spaceV = subproc.lastIndexOf(' v');
-    if (spaceV > 0)
-      subproc = subproc(0, spaceV);
-
     var configurator = this;
     $http.get(mdw.roots.services + '/services/Workflow/' + subproc + "?app=mdw-admin").then(function(res) {
       if (res.data.variables) {
@@ -292,11 +288,13 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       var selectAsset = null;
       if (widget.value) {
         var spaceV = widget.value.lastIndexOf(' v');
-        if (spaceV > 0)
+        if (spaceV > 0 && spaceV < widget.value.length - 2 && !isNaN(parseFloat(widget.value.substring(spaceV + 2)))) {
           selectAsset = widget.value.substring(0, spaceV);
-        else
+        }
+        else {
           selectAsset = widget.value;
-        if (widget.source == 'proc')
+        }
+        if (widget.source == 'proc' && !selectAsset.endsWith('.proc'))
           selectAsset += '.proc';  // process attrs saved without ext
       }
       selectAssets.push(selectAsset);
@@ -584,7 +582,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       var asset = value;
       var version;
       var spaceV = value.lastIndexOf(' v');
-      if (spaceV > 0) {
+      if (spaceV > 0 && spaceV < value.length - 2 && !isNaN(parseFloat(value.substring(spaceV + 2)))) {
         var minVer = asset.substring(spaceV + 2);
         var dot = minVer.indexOf('.');
         var major = dot > 0 ? parseInt(minVer.substring(0, dot)) : 0;
