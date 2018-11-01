@@ -174,9 +174,9 @@
     useJmx="true"
     schedulerSupport="true"
     useShutdownHook="false"
-    dataDirectory="../activemq-data">
+    dataDirectory="./#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.activemq.location', '../activemq-data')}">
     <amq:transportConnectors>
-      <amq:transportConnector name="tcpConnector" uri="tcp://0.0.0.0:61618?daemon=true" />
+      <amq:transportConnector name="tcpConnector" uri="tcp://0.0.0.0:#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.activemq.port', '61618')}?daemon=true" />
     </amq:transportConnectors>
   </amq:broker>
     
@@ -189,7 +189,7 @@
   
   <!-- pooled vm connection factory -->
   <bean id="pooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" destroy-method="stop">
-    <property name="maxConnections" value="8" />
+    <property name="maxConnections" value="#{T(com.centurylink.mdw.config.PropertyManager).getIntegerProperty('mdw.activemq.maxConnections', 8)}" />
     <property name="connectionFactory" ref="localConnectionFactory" />
   </bean>  
   
