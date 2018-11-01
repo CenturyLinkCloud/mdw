@@ -54,6 +54,12 @@ title: MDW Configuration
       messenger: jms  # required
       jms.provider: ActiveMQ  # required 
       threadpool.provider: MDW  # required
+
+    # optional settings for activemq settings (leave
+    activemq:
+      location: activemq-data   # Has to be relative to startup directory - default=../activemq-data
+      port: 61619   # default=61618
+      maxConnections: 10   # Max connections in JMS pool - default=8
     
     # database connection information (below is typical for embedded db)
     database:
