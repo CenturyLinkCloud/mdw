@@ -7,7 +7,7 @@ plugins {
 nexusStaging {
     ext.ossrhUsername = System.getenv("OSSRH_JIRA_USERNAME")
     ext.ossrhPassword = System.getenv("OSSRH_JIRA_PASSWORD")
-    delayBetweenRetriesInMillis = 20000
+    delayBetweenRetriesInMillis = 30000
     packageGroup = "com.centurylink"
     serverUrl = "https://oss.sonatype.org/service/local"
     username = ossrhUsername
@@ -80,19 +80,19 @@ task uploadAssetsToMavenCentral(type: GradleBuild) {
   
 task publishToMavenCentral(type: GradleBuild) {
     dependsOn uploadToMavenCentral
-//    if (!mdwVersion.endsWith("-SNAPSHOT"))
-//        dependsOn closeAndReleaseRepository
+    if (!mdwVersion.endsWith("-SNAPSHOT"))
+        dependsOn closeAndReleaseRepository
 }
 
 task publishAssetsToMavenCentral(type: GradleBuild) {
     dependsOn uploadAssetsToMavenCentral
-//    if (!mdwVersion.endsWith("-SNAPSHOT"))
-//        dependsOn closeAndReleaseRepository
+    if (!mdwVersion.endsWith("-SNAPSHOT"))
+        dependsOn closeAndReleaseRepository
 }
 
-// closeAndReleaseRepository.mustRunAfter uploadToMavenCentral
+closeAndReleaseRepository.mustRunAfter uploadToMavenCentral
 
-// closeAndReleaseRepository.mustRunAfter uploadAssetsToMavenCentral
+closeAndReleaseRepository.mustRunAfter uploadAssetsToMavenCentral
 
 
 task updateJson {
