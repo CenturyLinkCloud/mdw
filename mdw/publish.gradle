@@ -95,22 +95,6 @@ closeAndReleaseRepository.mustRunAfter uploadToMavenCentral
 closeAndReleaseRepository.mustRunAfter uploadAssetsToMavenCentral
 
 
-task updatePlugInFile {
-      description = "Update plugin file with Version number"
-  
-      fileTree(dir: "../mdw-workflow/.settings", include:'com.centurylink.mdw.plugin.xml').each { pkgFile ->
-          println "Updating file  " + pkgFile.name + " with version= " + mdwVersion
-          
-          doLast {
-              pkgFile.setWritable(true)
-              def pkgJson = pkgFile.text
-              pkgFile.withWriter { w ->
-                  w << pkgJson.replaceAll("mdwFramework version=\\\".*?\\\"", "mdwFramework version=\"${mdwVersion}\"");
-              }
-          }
-      }
-}
-  
 task updateJson {
       description = "Update mdw-hub/package.json with version number"
       
@@ -130,10 +114,8 @@ task updateJson {
       }
 }
 
-// update MDW version  all the packages in the mdw-workflow/assets directory
 task updateMDWVerInAssetPackages {
     description = "Update Asset Package Version" + mdwVersion
-    
     def assetRootPath = file("../${mdwAssetRoot}").toString()
     def mdwPkgVer = mdwVersion;
     if (mdwVersion.endsWith("-SNAPSHOT"))
@@ -153,5 +135,5 @@ task updateMDWVerInAssetPackages {
 }
 
 task updateMdwVerInFiles {
-      dependsOn(updateJson, updatePlugInFile, updateRestApiDefinition, updateMDWVerInAssetPackages)
+    dependsOn(updateJson, updateRestApiDefinition, updateMDWVerInAssetPackages)
 }

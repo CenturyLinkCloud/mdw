@@ -37,8 +37,8 @@ dependencies {
     compile group: "org.springframework", name: "spring-aop", version: springVersion
     compile group: "aopalliance", name: "aopalliance", version: "1.0"
     compile group: "org.codehaus.groovy", name: "groovy-all", version: "2.4.10"
-	compile group: "org.apache.activemq", name: "activemq-spring", version: "5.15.4"
-	compile group: "org.apache.activemq", name: "activemq-kahadb-store", version: "5.15.4"
+    compile group: "org.apache.activemq", name: "activemq-spring", version: "5.15.4"
+    compile group: "org.apache.activemq", name: "activemq-kahadb-store", version: "5.15.4"
     compile group: "org.apache.poi", name: "poi", version: "3.15"
     compile group: "org.apache.poi", name: "poi-ooxml", version: "3.15"
     compile group: "org.apache.httpcomponents", name: "httpclient", version: "4.5.3"

@@ -8,7 +8,6 @@
       - mdw version
     
 2 - Run Gradle task updateMdwVerInFiles to update these files: 
-  - mdw-workflow/.settings/com.centurylink.mdw.plugin.xml
   - mdw-hub/package.json
   - RestApiDefinition.java
   - **/.mdw/package.json
@@ -21,7 +20,7 @@
   - Delete SNAPSHOT release and tag
   - git pull
   
-5 - Commit and push all the above changes to Git (normally plugin.xml, gradle.properties and project.yaml).
+5 - Commit and push all the above changes to Git (normally gradle.properties and project.yaml).
   - Travis CI will run the build, tests and publish to maven-central or sonatype.
   - Compilation or testing errors will prevent the build from being published.
 
@@ -49,7 +48,7 @@
   - git push (pushes generated CHANGELOG.md to GitHub)
   - Update the new release on GitHub, copy the notes from updated CHANGELOG.md
 
-9 - Run task 1,2 & 5 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
+9 - Run task 1, 2 & 5 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
 
 10 - Create and publish Docker image
     - Log into 143 server and sudo su - mdwapp, then go to directory with cloned Git repo (/app/prod/jack/mdw/mdw).
@@ -61,10 +60,7 @@
     - Publish image to Docker repository with command
         docker push mdwcore/mdw:6.1.0X   (update with actual MDW version)
         
-11 - Internal Assets
-   - TODO
-
-12 - Upgrade mdw-demo (** Need to wait until asset zips are queryable on Maven Central):
+11 - Upgrade mdw-demo (** Need to wait until asset zips are queryable on Maven Central):
    - Update mdw version in the following files:
        - mdw-demo/gradle.properties
        - mdw-demo/pom.xml
