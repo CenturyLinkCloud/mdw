@@ -26,6 +26,8 @@
 
 6 - After success, verify repository contains artifacts.
   6a. (Formal Build)
+    - Log in to Nexus staging repository: https://oss.sonatype.org/#stagingRepositories
+    - Manually Close and then Release the repository bundle.
     - Formal build repo : http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (10 min)
     - Assets: http://repo.maven.apache.org/maven2/com/centurylink/mdw/assets/tests-workflow/  (15 min)
 
