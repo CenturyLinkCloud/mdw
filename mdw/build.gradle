@@ -69,14 +69,12 @@ subprojects {
     def packaging = 'jar'
 
     task javadocJar(type: Jar) {
-        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
         classifier = 'javadoc'
         from javadoc
     }
 }
 
 task cleanJavadocs(type: Delete) {
-    enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
     delete "../docs/_docs/javadoc"
 }
 
@@ -93,7 +91,6 @@ allprojects {
 }
 
 task javadocs(type: Javadoc) {
-    enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
     dependsOn "cleanJavadocs"
     source subprojects.collect {project -> project.sourceSets.main.java }
     classpath = files(subprojects.collect {project -> project.sourceSets.main.compileClasspath})
@@ -133,15 +130,15 @@ allprojects {
     ext.ossrhUsername = System.getenv("OSSRH_JIRA_USERNAME")
     ext.ossrhPassword = System.getenv("OSSRH_JIRA_PASSWORD")
 
-    if("true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))) {
+    if("true".equalsIgnoreCase(System.getProperty("PUBLISHING"))) {
         signing {
-            required = { "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
+            required = { "true".equalsIgnoreCase(System.getProperty("PUBLISHING"))}
             sign configurations.archives
          }
     }
 
     uploadArchives {
-        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
+        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING"))
         repositories {
             mavenDeployer {
                 beforeDeployment {
@@ -375,15 +372,19 @@ task cleanAll(type: GradleBuild) {
     tasks = ["clean"]
 }
 
-task publishAll(type: GradleBuild) {
-    dependsOn buildAll // testAll
+task publishArtifacts(type: GradleBuild) {
+    dependsOn testAll
     buildFile = "publish.gradle"
     tasks = ["publishToMavenCentral"]
 }
 
 // to be run standalone, after successful publish
 task publishAssets(type: GradleBuild) {
-    dependsOn javadocs
     buildFile = "publish.gradle"
     tasks = ["publishAssetsToMavenCentral"]
 }
+
+task publishAll {
+    dependsOn(publishArtifacts, publishAssets)
+}
+publishAssets.mustRunAfter(publishArtifacts)
