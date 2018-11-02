@@ -239,7 +239,7 @@ public class Import extends Setup {
             versionControl.clear();
 
             // Capture new Refs in ASSET_REF after import (Git pull) and insert/update VALUE table
-            Checkpoint checkpoint = new Checkpoint(getAssetRoot(), versionControl, versionControl.getCommit(), pooledConn);
+            Checkpoint checkpoint = new Checkpoint(getEngineAssetRoot(), versionControl, versionControl.getCommit(), pooledConn);
             try {
                 checkpoint.updateRefs(true);
             }
@@ -402,5 +402,13 @@ public class Import extends Setup {
             return new DrawIoProcessImporter();
         else
             throw new IOException("Unsupported format: " + format);
+    }
+
+    private File getEngineAssetRoot() throws IOException {
+        File assetRoot = getAssetRoot();
+        if (assetRoot.isAbsolute())
+            return assetRoot;
+        else
+            return new File(getProjectDir() + "/" + getAssetLoc());
     }
 }
