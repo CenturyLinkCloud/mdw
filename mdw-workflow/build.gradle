@@ -1,12 +1,8 @@
-plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.3.0'
-}
-
 sourceSets {
     main {
         java {
             srcDirs "src"
-            srcDirs "assets"
+            // srcDirs "assets"
         }
         output.classesDir = "build/classes"
     }
@@ -56,10 +52,4 @@ jar {
 archivesBaseName = "mdw-workflow"
 artifacts {
     archives jar, javadocJar, sourcesJar
-}
-
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
 }

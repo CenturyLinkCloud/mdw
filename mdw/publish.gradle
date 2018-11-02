@@ -7,7 +7,7 @@ plugins {
 nexusStaging {
     ext.ossrhUsername = System.getenv("OSSRH_JIRA_USERNAME")
     ext.ossrhPassword = System.getenv("OSSRH_JIRA_PASSWORD")
-    delayBetweenRetriesInMillis = 30000
+    delayBetweenRetriesInMillis = 5000
     packageGroup = "com.centurylink"
     serverUrl = "https://oss.sonatype.org/service/local"
     username = ossrhUsername
