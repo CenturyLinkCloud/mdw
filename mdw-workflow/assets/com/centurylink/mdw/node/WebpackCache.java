@@ -15,16 +15,6 @@
  */
 package com.centurylink.mdw.node;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.annotations.Parameter;
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.ApplicationContext;
@@ -44,6 +34,16 @@ import com.eclipsesource.v8.JavaCallback;
 import com.eclipsesource.v8.NodeJS;
 import com.eclipsesource.v8.V8Array;
 import com.eclipsesource.v8.V8Object;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Customize these annotations for preload options by extending WebpackCache in a custom
@@ -60,18 +60,30 @@ public class WebpackCache implements PreloadableCache {
 
     @Override
     public void initialize(Map<String,String> params) {
-        File nodeDir = new File(ApplicationContext.getAssetRoot() + "/" + NODE_PACKAGE.replace('.', '/'));
+        File assetRoot = ApplicationContext.getAssetRoot();
+        File nodeDir = new File(assetRoot + "/" + NODE_PACKAGE.replace('.', '/'));
         if (!nodeDir.exists())
             throw new CachingException("Node dir not found: " + nodeDir);
 
         try {
-            // unzip node_modules
-            File modulesZip = new File(nodeDir + "/node_modules.zip");
-            long before = System.currentTimeMillis();
-            logger.info("Unzipping node_modules...");
-            ZipHelper.unzip(modulesZip, nodeDir, null, null, Exist.Ignore);
-            if (logger.isDebugEnabled())
-                logger.debug("  - node_modules unzipped in " + (System.currentTimeMillis() - before) + " ms");
+            unzipNodeModules(nodeDir);
+
+            try {
+                // also unzip any custom node_modules
+                Map<String, List<AssetInfo>> zipAssets = ServiceLocator.getAssetServices().getAssetsOfType("zip");
+                for (String pkg : zipAssets.keySet()) {
+                    for (AssetInfo zipAsset : zipAssets.get(pkg)) {
+                        if (zipAsset.getName().equals("node_modules.zip") && !pkg.equals(NODE_PACKAGE)) {
+                            File pkgDir = new File(assetRoot + "/" + pkg.replace('.', '/'));
+                            unzipNodeModules(pkgDir);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) {
+                // but don't let any exceptions stop main processing
+                logger.severeException(ex.getMessage(), ex);
+            }
 
             // nothing is precompiled in dev mode (keep server startup quick)
             if (!isDevMode()) {
@@ -89,6 +101,15 @@ public class WebpackCache implements PreloadableCache {
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
         }
+    }
+
+    private void unzipNodeModules(File pkgDir) throws IOException {
+        File modulesZip = new File(pkgDir + "/node_modules.zip");
+        long before = System.currentTimeMillis();
+        logger.info("Unzipping " + pkgDir + "/node_modules...");
+        ZipHelper.unzip(modulesZip, pkgDir, null, null, Exist.Ignore);
+        if (logger.isDebugEnabled())
+            logger.debug("  - node_modules unzipped in " + (System.currentTimeMillis() - before) + " ms");
     }
 
     @Override
