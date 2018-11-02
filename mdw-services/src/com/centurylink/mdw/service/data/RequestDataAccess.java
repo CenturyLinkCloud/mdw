@@ -238,7 +238,6 @@ public class RequestDataAccess extends CommonDataAccess {
                     }
                     boolean foundInDocDb = false;
                     if (getDocumentDbAccess().hasDocumentDb()) {
-
                         String docContent = getDocumentDbAccess().getDocumentContent(ownerType, id);
                         if (docContent != null) {
                             request.setContent(docContent);
@@ -329,6 +328,20 @@ public class RequestDataAccess extends CommonDataAccess {
                     }
 
                     request.setResponse(response);
+                }
+            }
+
+            if (ownerId != null && ownerId > 0 && (withContent || withResponseContent)) {
+                if (OwnerType.ADAPTER_REQUEST.equals(ownerType)) {
+                    query = "select activity_instance_id, process_instance_id from activity_instance where activity_instance_id = ?";
+                    rs = db.runSelect(query, ownerId);
+                    if (rs.next()) {
+                        request.setActivityInstanceId(rs.getLong("activity_instance_id"));
+                        request.setProcessInstanceId(rs.getLong("process_instance_id"));
+                    }
+                }
+                else if (OwnerType.LISTENER_REQUEST.equals(ownerType)) {
+                    request.setProcessInstanceId(ownerId);
                 }
             }
 

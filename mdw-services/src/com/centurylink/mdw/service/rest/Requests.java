@@ -88,19 +88,39 @@ public class Requests extends JsonRestService implements JsonExportable {
                     try {
                         if (query.getBooleanFilter("master")) {
                             String masterRequestId = segOne;
-                            if (query.getBooleanFilter("response"))
-                                return requestServices.getMasterRequestResponse(masterRequestId).getJson();
-                            else
-                                return requestServices.getMasterRequest(masterRequestId).getJson();
+                            if (query.getBooleanFilter("response")) {
+                                Request masterRequest = requestServices.getMasterRequestResponse(masterRequestId);
+                                if (masterRequest == null)
+                                    throw new ServiceException(ServiceException.NOT_FOUND, "Master request not found: " + masterRequestId);
+                                return masterRequest.getJson();
+                            }
+                            else {
+                                Request masterRequest = requestServices.getMasterRequest(masterRequestId);
+                                if (masterRequest == null)
+                                    throw new ServiceException(ServiceException.NOT_FOUND, "Master request not found: " + masterRequestId);
+                                return masterRequest.getJson();
+                            }
                         }
                         else {
                             Long requestId = Long.valueOf(segOne);
-                            if (query.getBooleanFilter("request") && query.getBooleanFilter("response"))
-                                return requestServices.getRequestAndResponse(requestId).getJson();
-                            else if (query.getBooleanFilter("response"))
-                                return requestServices.getRequestResponse(requestId).getJson();
-                            else
-                                return requestServices.getRequest(requestId).getJson();
+                            if (query.getBooleanFilter("request") && query.getBooleanFilter("response")) {
+                                Request request = requestServices.getRequestAndResponse(requestId);
+                                if (request == null)
+                                    throw new ServiceException(ServiceException.NOT_FOUND, "Request not found: " + requestId);
+                                return request.getJson();
+                            }
+                            else if (query.getBooleanFilter("response")) {
+                                Request request = requestServices.getRequestResponse(requestId);
+                                if (request == null)
+                                    throw new ServiceException(ServiceException.NOT_FOUND, "Request not found: " + requestId);
+                                return request.getJson();
+                            }
+                            else {
+                                Request request = requestServices.getRequest(requestId);
+                                if (request == null)
+                                    throw new ServiceException(ServiceException.NOT_FOUND, "Request not found: " + requestId);
+                                return request.getJson();
+                            }
                         }
                     }
                     catch (NumberFormatException ex) {

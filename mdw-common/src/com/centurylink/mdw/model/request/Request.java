@@ -46,7 +46,6 @@ public class Request implements Jsonable {
     public Long getResponseId() { return responseId; }
     public void setResponseId(Long responseId) { this.responseId = responseId; }
 
-    // these fields are for master requests
     private String masterRequestId;
     public String getMasterRequestId() { return masterRequestId; }
     public void setMasterRequestId(String masterRequestId) { this.masterRequestId = masterRequestId; }
@@ -54,6 +53,10 @@ public class Request implements Jsonable {
     private Long processInstanceId;
     public Long getProcessInstanceId() { return processInstanceId; }
     public void setProcessInstanceId(Long instanceId) { this.processInstanceId = instanceId; }
+
+    private Long activityInstanceId;
+    public Long getActivityInstanceId() { return activityInstanceId; }
+    public void setActivityInstanceId(Long instanceId) { this.activityInstanceId = instanceId; }
 
     private Long processId;
     public Long getProcessId() { return processId; }
@@ -126,6 +129,8 @@ public class Request implements Jsonable {
             masterRequestId = json.getString("masterRequestId");
         if (json.has("processInstanceId"))
             processInstanceId = json.getLong("processInstanceId");
+        if (json.has("activityInstanceId"))
+            activityInstanceId = json.getLong("activityInstanceId");
         if (json.has("processId"))
             processId = json.getLong("processId");
         if (json.has("processName"))
@@ -166,6 +171,8 @@ public class Request implements Jsonable {
             json.put("masterRequestId", masterRequestId);
         if (processInstanceId != null)
             json.put("processInstanceId", processInstanceId);
+        if (activityInstanceId != null)
+            json.put("activityInstanceId", activityInstanceId);
         if (processId != null)
             json.put("processId", processId);
         if (processName != null)
