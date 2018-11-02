@@ -1,6 +1,6 @@
 # paths are relative to the location of this file
 mdw:
-  version: 6.1.11-SNAPSHOT
+  version: 6.1.11
 
 asset:
   location: ../mdw-workflow/assets
