@@ -36,6 +36,8 @@ import com.itextpdf.tool.xml.XMLWorkerHelper;
 
 import java.awt.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 public class PdfExportHelper extends ExportHelper {
@@ -59,17 +61,18 @@ public class PdfExportHelper extends ExportHelper {
         fixedWidthFont = FontFactory.getFont(FontFactory.COURIER, 11, Font.NORMAL);
     }
 
-    public byte[] exportProcess(Process process, File outputDir) throws Exception {
+    public byte[] exportProcess(Process process, File outputFile) throws Exception {
         new ActivityNodeSequencer(process).assignNodeSequenceIds();
         Document document = new Document();
-        DocWriter writer = PdfWriter.getInstance(document, new FileOutputStream(outputDir));
+        DocWriter writer = PdfWriter.getInstance(document, new FileOutputStream(outputFile));
         document.open();
         document.setPageSize(PageSize.LETTER);
         Rectangle pageSize = document.getPageSize();
         Chapter chapter = printProcessPdf(writer, 1, process, pageSize);
         document.add(chapter);
         document.close();
-        return null;
+
+        return Files.readAllBytes(Paths.get(outputFile.getPath()));
     }
 
     private Chapter printProcessPdf(DocWriter writer, int chapterNumber, Process process,
