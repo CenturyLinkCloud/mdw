@@ -55,7 +55,7 @@ title: MDW Configuration
       jms.provider: ActiveMQ  # required 
       threadpool.provider: MDW  # required
 
-    # optional settings for activemq settings (leave
+    # optional settings for activemq (For overriding values in application-context.xml)
     activemq:
       location: activemq-data   # Has to be relative to startup directory - default=../activemq-data
       port: 61619   # default=61618
