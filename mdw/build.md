@@ -24,11 +24,14 @@
   - Travis CI will run the build, tests and publish to maven-central or sonatype.
   - Compilation or testing errors will prevent the build from being published.
 
-6 - After success, verify release artifacts are published to Maven Central (https://oss.sonatype.org/#stagingRepositories)
-  - Formal build: http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (10 min)
-  - SNAPSHOT: https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/ 
-  - Assets: http://repo.maven.apache.org/maven2/com/centurylink/mdw/assets/tests-workflow/  (15 min)
- 
+6 - After success, verify repository contains artifacts.
+  6a. (Formal Build)
+    - Formal build repo : http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (10 min)
+    - Assets: http://repo.maven.apache.org/maven2/com/centurylink/mdw/assets/tests-workflow/  (15 min)
+
+  6b. (Snapshot Build)
+    - Snapshot repo: https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/
+
 7 - (Formal builds only) On GitHub:
   - Make sure all the closed issues have milestone assigned otherwise they will not be reported in release notes.
   - Create a milestone marker for the next build. (https://github.com/CenturyLinkCloud/mdw/milestones/new)

@@ -49,7 +49,6 @@ NO_UPDATE="--no-update"
 }
 
 @test "install" {
-  skip 'temporarily skip until formal build available'
   rm -rf install-mdw
   mdw init install-mdw $NO_UPDATE $TEMPLATE_DIR
   mdw install --project-dir=./install-mdw --boot-jar-loc=./install-mdw --binaries-url="file://$PWD/../../deploy/app"

@@ -19,7 +19,7 @@ before_script:
 - npm install
 - cd ../mdw
 - export  mdwVersion=`cat gradle.properties  | grep mdwVersion | cut -d'=' -f2`
-script: gradle --no-daemon publishAll publishAssets -DPUBLISHING_TO_MAVEN_CENTRAL=true
+script: gradle --no-daemon publishAll publishAssets -DPUBLISHING=true
 after_failure:
 - cat ../testResults/mdw-function-test-results.json
 #- cat ../testResults/com.centurylink.mdw.tests.tasks/TaskIndexCustom.log
