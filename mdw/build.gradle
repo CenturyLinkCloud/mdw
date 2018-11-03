@@ -373,7 +373,7 @@ task cleanAll(type: GradleBuild) {
 }
 
 task publishArtifacts(type: GradleBuild) {
-    dependsOn buildAll // testAll
+    dependsOn testAll
     buildFile = "publish.gradle"
     tasks = ["publishToMavenCentral"]
 }

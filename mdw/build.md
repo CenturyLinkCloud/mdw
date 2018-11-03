@@ -5,7 +5,7 @@
       - mdwVersion
       - mdwPrevTag
     mdw/project.yaml:
-      - mdw version
+      - mdw.version
     
 2 - Run Gradle task updateMdwVerInFiles to update these files: 
   - mdw-hub/package.json
@@ -26,11 +26,8 @@
 
 6 - After success, verify repository contains artifacts.
   6a. (Formal Build)
-    - Log in to Nexus staging repository: https://oss.sonatype.org/#stagingRepositories
-    - Manually Close and then Release the repository bundle.
     - Formal build repo : http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (10 min)
     - Assets: http://repo.maven.apache.org/maven2/com/centurylink/mdw/assets/tests-workflow/  (15 min)
-
   6b. (Snapshot Build)
     - Snapshot repo: https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/
 
