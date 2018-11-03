@@ -1,4 +1,16 @@
 // publishes build output to a maven repository
+plugins {
+    id "io.codearte.nexus-staging" version "0.12.0"
+}
+
+nexusStaging {
+    delayBetweenRetriesInMillis = 5000
+    packageGroup = "com.centurylink"
+    stagingProfileId = "20378d64ebd7b6"
+    serverUrl = "https://oss.sonatype.org/service/local"
+    username = System.getenv("OSSRH_JIRA_USERNAME")
+    password = System.getenv("OSSRH_JIRA_PASSWORD")
+}
 
 task updateRestApiDefinition {
     description = "Update RestApiDefinition with Version number"
@@ -66,11 +78,19 @@ task uploadAssetsToMavenCentral(type: GradleBuild) {
   
 task publishToMavenCentral(type: GradleBuild) {
     dependsOn uploadToMavenCentral
+    if (!mdwVersion.endsWith("-SNAPSHOT"))
+        dependsOn closeAndReleaseRepository
 }
 
 task publishAssetsToMavenCentral(type: GradleBuild) {
     dependsOn uploadAssetsToMavenCentral
+    if (!mdwVersion.endsWith("-SNAPSHOT"))
+        dependsOn closeAndReleaseRepository
 }
+
+closeAndReleaseRepository.mustRunAfter uploadToMavenCentral
+closeAndReleaseRepository.mustRunAfter uploadAssetsToMavenCentral
+
 
 task updateJson {
       description = "Update mdw-hub/package.json with version number"

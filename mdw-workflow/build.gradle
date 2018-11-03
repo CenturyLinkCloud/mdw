@@ -2,7 +2,7 @@ sourceSets {
     main {
         java {
             srcDirs "src"
-            // srcDirs "assets"
+            srcDirs "assets"
         }
         output.classesDir = "build/classes"
     }
