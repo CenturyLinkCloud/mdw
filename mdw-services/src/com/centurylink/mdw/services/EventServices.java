@@ -92,6 +92,9 @@ public interface EventServices {
     public Long createDocument(String type, String ownerType, Long ownerId, Object doc, Package pkg)
     throws DataAccessException;
 
+    public Long createDocument(String type, String ownerType, Long ownerId, Object doc, Package pkg, String path)
+            throws DataAccessException;
+
     public void sendDelayEventsToWaitActivities(String masterRequestId)
     throws DataAccessException, ProcessException;
 

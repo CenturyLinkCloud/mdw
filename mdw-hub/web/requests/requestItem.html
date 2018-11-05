@@ -8,6 +8,7 @@
         <a class="mdw-item-link mdw-item-nowrap" ng-if="!item.masterRequestId" href="#/{{listModel.context}}/requests/{{item.id}}">
           {{item.id}}
         </a>
+        <span ng-if="item.path" class="mdw-item-path">{{item.path}}</span>
         <div class="mdw-item-sub" ng-if="item.masterRequestId">
           {{item.packageName}}/<a class="mdw-link mdw-item-nowrap" href="" mdw-route="#/workflow/processes/{{item.processInstanceId}}">
             {{item.processName}} v{{item.processVersion}} &nbsp;{{item.processInstanceId}}</a>

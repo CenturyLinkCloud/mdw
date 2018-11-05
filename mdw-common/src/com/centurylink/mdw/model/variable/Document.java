@@ -31,6 +31,7 @@ public class Document implements Serializable {
     private Long ownerId;
     private Integer statusCode;
     private String statusMessage;
+    private String path;
     private String content;        // content in string format
     private Object object;        // content in object format
 
@@ -108,9 +109,9 @@ public class Document implements Serializable {
     public String getStatusMessage() {
         return statusMessage;
     }
-    public void setStatusMessage(String message) {
-        this.statusMessage = message;
-    }
+    public void setStatusMessage(String message) { this.statusMessage = message; }
+    public String getPath() { return path; }
+    public void setPath(String path) { this.path = path; }
 
     @Deprecated
     public String getContent() {

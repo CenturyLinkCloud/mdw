@@ -15,9 +15,6 @@
  */
 package com.centurylink.mdw.workflow.adapter.http;
 
-import java.io.IOException;
-import java.util.Map;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
@@ -29,6 +26,9 @@ import com.centurylink.mdw.util.HttpConnection;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.workflow.adapter.TextAdapterActivity;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * Provides a base implementation for SOAP and Rest adapters
@@ -160,5 +160,4 @@ public class HttpServiceAdapter extends TextAdapterActivity {
             throw new ActivityException(-1, ex.getMessage(), ex);
         }
     }
-
 }
