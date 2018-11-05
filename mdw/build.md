@@ -6,20 +6,20 @@
       - mdwPrevTag
     mdw/project.yaml:
       - mdw.version
-    
-2 - Run Gradle task updateMdwVerInFiles to update these files: 
+
+2 - Run Gradle task updateMdwVerInFiles to update these files:
   - mdw-hub/package.json
   - RestApiDefinition.java
-  - **/.mdw/package.json
+  - all package.yaml files
 
 3 - (Brand new point-release -- eg: moving from 6.1 to 6.2):
-  - Clean out schemaUpgradeQueries in mdw-common/src/META-INF/mdw/db/mysql.json and oracle.json. 
+  - Clean out schemaUpgradeQueries in mdw-common/src/META-INF/mdw/db/mysql.json and oracle.json.
 
 4 - (Formal builds only) Clean Tag
   - Go to https://github.com/CenturyLinkCloud/mdw/tags
   - Delete SNAPSHOT release and tag
   - git pull
-  
+
 5 - Commit and push all the above changes to Git (normally gradle.properties and project.yaml).
   - Travis CI will run the build, tests and publish to maven-central or sonatype.
   - Compilation or testing errors will prevent the build from being published.
@@ -36,9 +36,9 @@
   - Create a milestone marker for the next build. (https://github.com/CenturyLinkCloud/mdw/milestones/new)
   - Assign any un-delivered issues and pull request for current build's milestone to the next build's milestone.
   - Close this build's milestone in GitHub.
-    
+
 8 - Release Notes
-  - If you are doing it first time then install ruby (https://github.com/CenturyLinkCloud/mdw#documentation) and do following in root of your workspace dir 
+  - If you are doing it first time then install ruby (https://github.com/CenturyLinkCloud/mdw#documentation) and do following in root of your workspace dir
     `gem install github_changelog_generator`
   - Set the CHANGELOG_GITHUB_TOKEN environment variable to your 40 digit token from GitHub
   - Run following command in root of your workspace
@@ -46,7 +46,7 @@
     github_changelog_generator --no-pull-request  --filter-by-milestone --future-release '6.1.xx' --exclude-labels designer,internal,wontfix,duplicate,documentation
     ```
   - git pull
-  - Review/Update CHANGELOG.md and then: `git commit CHANGELOG.md -m "Release notes [skip ci]"` 
+  - Review/Update CHANGELOG.md and then: `git commit CHANGELOG.md -m "Release notes [skip ci]"`
   - git push (pushes generated CHANGELOG.md to GitHub)
   - Update the new release on GitHub, copy the notes from updated CHANGELOG.md
 
@@ -61,12 +61,11 @@
         docker login
     - Publish image to Docker repository with command
         docker push mdwcore/mdw:6.1.0X   (update with actual MDW version)
-        
-11 - Upgrade mdw-demo (** Need to wait until asset zips are queryable on Maven Central):
+
+11 - Upgrade mdw-demo (Need to wait until asset zips are queryable on Maven Central):
    - Update mdw version in the following files:
        - mdw-demo/gradle.properties
        - mdw-demo/pom.xml
-       - mdw-demo/.settings/com.centurylink.mdw.plugin.xml
        - mdw-demo/project.yaml
    - Update the framework assets:
      ```
@@ -74,4 +73,3 @@
      mdw update (--snapshots)
      ```
   - Commit and push changes
-
