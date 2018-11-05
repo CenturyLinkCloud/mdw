@@ -47,10 +47,11 @@ import com.centurylink.mdw.workflow.activity.AbstractWait;
 @Tracked(LogLevel.TRACE)
 public class TimerWaitActivity extends AbstractWait {
 
-    protected static final int DEFAULT_WAIT = 30;
+    protected static final int DEFAULT_WAIT = 60;
     private static final String WAIT_UNIT = "Unit";
     private static final String MINUTES = "Minutes";
     private static final String HOURS = "Hours";
+    private static final String DAYS = "Days";
 
     /**
      * The method is used to schedule sending an activity resume message
@@ -134,9 +135,10 @@ public class TimerWaitActivity extends AbstractWait {
     protected int getWaitPeriodInSeconds() throws ActivityException {
         String unit = super.getAttributeValue(WAIT_UNIT);
         int factor;
-        if (unit==null || unit.equals(MINUTES)) factor = 60;
+        if (unit.equals(MINUTES)) factor = 60;
         else if (unit.equals(HOURS)) factor = 3600;
-        else factor = 1;
+        else if (unit.equals(DAYS)) factor = 86400;
+        else factor = 1;  // Means specified value is already in seconds
         int retTime;
         String timeAttr;
         try {

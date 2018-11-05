@@ -93,7 +93,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
         if (StringHelper.isEmpty(unit))
             unit = getAttributeValue(WorkAttributeConstant.SLA_UNIT);
         if (StringHelper.isEmpty(unit))
-            unit = ServiceLevelAgreement.INTERVAL_HOURS;
+            unit = ServiceLevelAgreement.INTERVAL_SECONDS;
         return ServiceLevelAgreement.unitsToSeconds(sla, unit);
     }
 
@@ -135,10 +135,10 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
     }
 
     /**
-     * You cannot override this method. Override {@link processMessage(String,String)} instead.
+     * You cannot override this method. Override {@link processMessage(String)} instead.
      *
      * This method is called when the message is received after registration. It extracts the message,
-     * records the message in ADAPTER_INSTANCE table, and invoke {@link processMessage(String,String)}.
+     * records the message in ADAPTER_INSTANCE table, and invoke {@link processMessage(String)}.
      */
     public final boolean resume(InternalEvent eventMessageDoc) throws ActivityException {
         boolean toFinish;

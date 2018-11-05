@@ -15,7 +15,10 @@
         </div>
       </div>
       <div class="mdw-section">
-        <div ng-if="request.masterRequestId" style="margin-bottom:5px">
+        <div ng-if="request.activityInstanceId">
+          Activity: <a class="mdw-item-highlight" href="#/workflow/activities/{{request.activityInstanceId}}">{{request.activityInstanceId}}</a>
+        </div>
+        <div ng-if="request.processInstanceId" style="margin-bottom:3px">
           Process ID: <a class="mdw-item-highlight" href="#/workflow/processes/{{request.processInstanceId}}">{{request.processInstanceId}}</a>
         </div>
         <div class="mdw-resource-info">

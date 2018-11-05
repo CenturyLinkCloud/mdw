@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.centurylink.mdw.activity.ActivityException;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
@@ -123,9 +124,13 @@ public class ProcessEngineDriver {
       throws ProcessException {
         try {
             if (logger.isInfoEnabled()) {
-                logger.info(logtag(processVO.getId(), processInstVO.getId(),
-                    messageDoc.getWorkId(), messageDoc.getWorkInstanceId()), "Inherited Event - type="
-                    + eventType + ", compcode=" + messageDoc.getCompletionCode());
+                if (messageDoc.isProcess())  // Process SLA (Delay handler)
+                    logger.info(logtag(processVO.getId(), processInstVO.getId(), processInstVO.getMasterRequestId()), "Inherited Event - type="
+                            + eventType + ", compcode=" + messageDoc.getCompletionCode());
+                else
+                    logger.info(logtag(processVO.getId(), processInstVO.getId(),
+                            messageDoc.getWorkId(), messageDoc.getWorkInstanceId()), "Inherited Event - type="
+                            + eventType + ", compcode=" + messageDoc.getCompletionCode());
             }
             String compCode = messageDoc.getCompletionCode();
             ProcessInstance originatingInstance = processInstVO;
@@ -144,12 +149,15 @@ public class ProcessEngineDriver {
                     Long secondaryOwnerId = null;
                     String secondaryOwnerType = null;
                     if (!eventType.equals(EventType.ABORT)) {
-                        long secondOwnerId = messageDoc.getWorkInstanceId();
-                        if (secondOwnerId > 0) {
-                            secondaryOwnerId = secondOwnerId;
-                            secondaryOwnerType = OwnerType.ACTIVITY_INSTANCE;
+                        Long secondOwnerId = messageDoc.getWorkInstanceId();
+                        if (secondOwnerId != null && secondOwnerId > 0) {
+                            if (!messageDoc.isProcess()) {
+                                secondaryOwnerId = secondOwnerId;
+                                secondaryOwnerType = OwnerType.ACTIVITY_INSTANCE;
+                            }
                             // Update the Process Variable "exception" with the exception handler's triggering Activity exception
-                            if (processVO.getVariable("exception") != null && messageDoc.getSecondaryOwnerId() > 0) {
+                            if (processVO.getVariable("exception") != null &&
+                                    messageDoc.getSecondaryOwnerId() != null && messageDoc.getSecondaryOwnerId() > 0) {
                                 VariableInstance exceptionVar = processInstVO.getVariable("exception");
                                 if (exceptionVar == null)
                                     engine.createVariableInstance(processInstVO, "exception", new DocumentReference(messageDoc.getSecondaryOwnerId()));
@@ -200,11 +208,11 @@ public class ProcessEngineDriver {
                         invokeService(packageHandlerProc.getId(), OwnerType.ERROR,
                                 messageDoc.getSecondaryOwnerId(),
                                 originatingInstance.getMasterRequestId(), null, params, null, 0,
-                                OwnerType.ACTIVITY_INSTANCE, messageDoc.getWorkInstanceId(), null);
+                                messageDoc.isProcess() ? OwnerType.PROCESS_INSTANCE : OwnerType.ACTIVITY_INSTANCE, messageDoc.getWorkInstanceId(), null);
                     }
                     else {
                         startProcess(packageHandlerProc.getId(), originatingInstance.getMasterRequestId(), OwnerType.ERROR,
-                                messageDoc.getSecondaryOwnerId(), params, OwnerType.ACTIVITY_INSTANCE, messageDoc.getWorkInstanceId(), null);
+                                messageDoc.getSecondaryOwnerId(), params, messageDoc.isProcess() ? OwnerType.PROCESS_INSTANCE : OwnerType.ACTIVITY_INSTANCE, messageDoc.getWorkInstanceId(), null);
                     }
                 }
                 else if (eventType.equals(EventType.ABORT)) {
@@ -403,10 +411,11 @@ public class ProcessEngineDriver {
     {
         if (!processInstanceIsActive(processInstance)) return;
 
+        ActivityInstance ai = null;
         if (OwnerType.SLA.equals(event.getSecondaryOwnerType())) {
             // new way to handle SLA through JMS message delay rather than timer demon
             Long actInstId = event.getWorkInstanceId();
-            ActivityInstance ai = engine.getActivityInstance(actInstId);
+            ai = engine.getActivityInstance(actInstId);
             if (ai.getStatusCode() != WorkStatus.STATUS_WAITING) {
                 // ignore the message when the status is not waiting.
                 return;
@@ -438,7 +447,6 @@ public class ProcessEngineDriver {
             } else if (actInstStatus.equals(WorkStatus.STATUS_HOLD)) {
                 engine.holdActivityInstance(ai, processInstance.getProcessId());
             } // else keep in WAITING status
-
         }
 
         Process processVO = getProcessDefinition(processInstance);
@@ -448,6 +456,11 @@ public class ProcessEngineDriver {
             engine.createTransitionInstances(processInstance, workTransitionVOs,
                     event.isProcess()?null:event.getWorkInstanceId());
         } else {
+            if (ai != null) {
+                // This creates the exception document used by Package level Delay handler
+                event.setSecondaryOwnerType(OwnerType.ERROR);
+                event.setSecondaryOwnerId(engine.createActivityExceptionDocument(processInstance, ai, null, new ActivityException("Activity timeout")).getDocumentId());
+            }
             handleInheritedEvent(engine, processInstance, processVO, event, EventType.DELAY);
         }
     }
@@ -596,6 +609,11 @@ public class ProcessEngineDriver {
                 } else if (event.getEventType().equals(EventType.ABORT)) {
                     if (!processInstanceIsActive(procInst)) return;
                     engine.abortProcessInstance(event);
+                } else if (event.getEventType().equals(EventType.DELAY)) {
+                    if (!processInstanceIsActive(procInst)) return;
+                    event.setSecondaryOwnerType(OwnerType.ERROR);
+                    event.setSecondaryOwnerId(engine.createProcessExceptionDocument(procInst, new ProcessException("Process SLA timeout")).getDocumentId());
+                    handleInheritedEvent(engine, procInst, getProcessDefinition(procInst), event, EventType.DELAY);
                 }
             } else {
                 if (!processInstanceIsActive(procInst)) return;

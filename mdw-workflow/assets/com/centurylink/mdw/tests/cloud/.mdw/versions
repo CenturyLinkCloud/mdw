@@ -8,7 +8,6 @@ CustomBaseData.proc=5
 CustomBaseData.test=2
 CustomBaseData.yaml=1 Renamed from c:gitMDW2mdw-workflowassetscomcenturylinkmdw	estscloudcustom-base-data.yaml
 JavaActivity.java=1
-JavaGeneral.java=1
 JavaInvader.java=2
 JaxbAsset.java=4
 JaxbAsset.xsd=1

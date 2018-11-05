@@ -16,6 +16,8 @@
 package com.centurylink.mdw.timer.startup;
 
 import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -35,6 +37,7 @@ import com.centurylink.mdw.startup.StartupService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.cli.Import;
+import org.eclipse.jgit.api.errors.CheckoutConflictException;
 
 /**
  * Checks for asset imports performed on other instances
@@ -46,7 +49,7 @@ public class AssetImportMonitor implements StartupService {
     private static boolean _terminating;
     private static AssetImportMonitor monitor = null;
     private static Thread thread = null;
-
+    private static boolean gitHardResetOverride = false;
     /**
      * Invoked when the server starts up.
      */
@@ -74,6 +77,7 @@ public class AssetImportMonitor implements StartupService {
         try {
             long interval = PropertyManager.getLongProperty(PropertyNames.MDW_ASSET_SYNC_INTERVAL, 60000); //Defaults to checking every 60 seconds
             boolean gitHardReset = PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_SYNC_GITRESET, false);
+            boolean gitAutoPull = PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_AUTO_PULL, false);
             File assetDir = PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION) == null ? null : new File(PropertyManager.getProperty(PropertyNames.MDW_ASSET_LOCATION));
             String user = PropertyManager.getProperty(PropertyNames.MDW_GIT_USER);
             String branch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
@@ -99,66 +103,71 @@ public class AssetImportMonitor implements StartupService {
                     Thread.sleep(interval);
 
                     // Check if it needs to trigger an asset import to sync up this instance's assets
-                    // If head commit in local repo is newer than commit from VALUE DB table, update VALUE DB table entry (means new local commit - asset saved, or new instance spun up)
                     String select = "select value from value where name= ? and owner_type= ? and owner_id= ?";
                     try (DbAccess dbAccess = new DbAccess(); PreparedStatement stmt = dbAccess.getConnection().prepareStatement(select)) {
-                        stmt.setString(1, "CommitID");
-                        stmt.setString(2, "AssetImport");
-                        stmt.setString(3, "0");
-                        String latestImportCommit = null;
-                        try (ResultSet rs = stmt.executeQuery()) {
-                            if (rs.next()) {
-                                latestImportCommit = rs.getString("value");
-                            }
+                        // Always trigger import if there's a newer remote commit or branch switching and auto pull is enabled
+                        if (gitAutoPull && (!branch.equals(vcs.getBranch()) || vcs.getCommitTime(vcs.getCommit()) < vcs.getCommitTime(vcs.getRemoteCommit(branch)))) {
+                            if (!branch.equals(vcs.getBranch()))
+                                logger.info("Switching to branch " + branch + " with Git Auto Pull ENABLED.  Performing Asset Import...");
+                            else
+                                logger.info("New commit found on remote branch " + branch + " with Git Auto Pull ENABLED.  Performing Asset Import...");
+
+                            performImport(gitRoot, assetDir, vcs, branch, gitHardReset, dbAccess.getConnection());
                         }
-                        // If no row found in DB, create it
-                        if (latestImportCommit == null) {
-                            String insert = "insert into value (value, name, owner_type, owner_id, create_dt, create_usr, mod_dt, mod_usr, comments) "
-                                    + "values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                            Timestamp currentDate = new Timestamp(System.currentTimeMillis());
-                            try (PreparedStatement insertStmt = dbAccess.getConnection().prepareStatement(insert)) {
-                                insertStmt.setString(1, vcs.getCommit());
-                                insertStmt.setString(2, "CommitID");
-                                insertStmt.setString(3, "AssetImport");
-                                insertStmt.setString(4, "0");
-                                insertStmt.setTimestamp(5, currentDate);
-                                insertStmt.setString(6, "MDWEngine");
-                                insertStmt.setTimestamp(7, currentDate);
-                                insertStmt.setString(8, "MDWEngine");
-                                insertStmt.setString(9, "Represents the last time assets were imported");
-                                insertStmt.executeUpdate();
+                        // Git Auto Pull is not enabled
+                        else if (!gitAutoPull) {
+                            // If head commit in local repo is newer than commit from VALUE DB table, update VALUE DB table entry (means new local commit - asset saved, or new instance spun up)
+                            stmt.setString(1, "CommitID");
+                            stmt.setString(2, "AssetImport");
+                            stmt.setString(3, "0");
+                            String latestImportCommit = null;
+                            try (ResultSet rs = stmt.executeQuery()) {
+                                if (rs.next()) {
+                                    latestImportCommit = rs.getString("value");
+                                }
                             }
-                        }
-                        // Proceed if latest commit from VALUE table doesn't match current local Git commit (Potential import done in other instance)
-                        else if (!vcs.getCommit().equals(latestImportCommit)) {
-                            vcs.fetch();  // Do a fetch so we know about newer commits since instance last started
-                            long localCommitTime = vcs.getCommitTime(vcs.getCommit());
-                            long lastImportTime = vcs.getCommitTime(latestImportCommit);
-                            // Check if import commit is newer than the current local commit - Otherwise, means new local commit - asset saved, or new instance spun up
-                            if (localCommitTime < lastImportTime) {
-                                logger.info("Detected Asset Import in cluster.  Performing Asset Import...");
-                                bulletin = SystemMessages.bulletinOn("Asset import in progress...");
-                                Import importer = new Import(gitRoot, vcs, branch, gitHardReset, dbAccess.getConnection());
-                                importer.setAssetLoc(vcs.getRelativePath(assetDir));
-                                importer.importMDWGit();
-                                SystemMessages.bulletinOff(bulletin, "Asset import completed");
-                                bulletin = null;
-                                CacheRegistration.getInstance().refreshCaches(null);
+
+                            // If no row found in DB, create it
+                            if (latestImportCommit == null) {
+                                String insert = "insert into value (value, name, owner_type, owner_id, create_dt, create_usr, mod_dt, mod_usr, comments) "
+                                        + "values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                                Timestamp currentDate = new Timestamp(System.currentTimeMillis());
+                                try (PreparedStatement insertStmt = dbAccess.getConnection().prepareStatement(insert)) {
+                                    insertStmt.setString(1, vcs.getCommit());
+                                    insertStmt.setString(2, "CommitID");
+                                    insertStmt.setString(3, "AssetImport");
+                                    insertStmt.setString(4, "0");
+                                    insertStmt.setTimestamp(5, currentDate);
+                                    insertStmt.setString(6, "MDWEngine");
+                                    insertStmt.setTimestamp(7, currentDate);
+                                    insertStmt.setString(8, "MDWEngine");
+                                    insertStmt.setString(9, "Represents the last time assets were imported");
+                                    insertStmt.executeUpdate();
+                                }
                             }
-                            else {  // Update VALUE DB entry to trigger import on other instances to this newer commit
-                                String update = "update value set value = ?, mod_dt = ? where name = ? and owner_type = ? and owner_id = ?";
-                                try (PreparedStatement updateStmt = dbAccess.getConnection().prepareStatement(update)) {
-                                    updateStmt.setString(1, vcs.getCommit());
-                                    updateStmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
-                                    updateStmt.setString(3, "CommitID");
-                                    updateStmt.setString(4, "AssetImport");
-                                    updateStmt.setString(5, "0");
-                                    updateStmt.executeUpdate();
+                            // Proceed if latest commit from VALUE table doesn't match current local Git commit (Potential import done in other instance)
+                            else if (!latestImportCommit.equals(vcs.getCommit())) {
+                                vcs.fetch();  // Do a fetch so we know about newer commits since instance last started
+                                long localCommitTime = vcs.getCommitTime(vcs.getCommit());
+                                long lastImportTime = vcs.getCommitTime(latestImportCommit);
+                                // Check if import commit is newer than the current local commit - Otherwise, means new local commit - asset saved, or new instance spun up
+                                if (localCommitTime < lastImportTime) {
+                                    logger.info("Detected Asset Import in cluster.  Performing Asset Import...");
+                                    performImport(gitRoot, assetDir, vcs, branch, gitHardReset, dbAccess.getConnection());
+                                } else {  // Update VALUE DB entry to trigger import on other instances to this newer commit
+                                    String update = "update value set value = ?, mod_dt = ? where name = ? and owner_type = ? and owner_id = ?";
+                                    try (PreparedStatement updateStmt = dbAccess.getConnection().prepareStatement(update)) {
+                                        updateStmt.setString(1, vcs.getCommit());
+                                        updateStmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+                                        updateStmt.setString(3, "CommitID");
+                                        updateStmt.setString(4, "AssetImport");
+                                        updateStmt.setString(5, "0");
+                                        updateStmt.executeUpdate();
+                                    }
                                 }
                             }
                         }
                     }
-
                 }
                 catch (InterruptedException e) {
                     if (!_terminating) throw e;
@@ -169,9 +178,24 @@ public class AssetImportMonitor implements StartupService {
         catch (Exception e) {
             logger.severeException(e.getMessage(), e);
             SystemMessages.bulletinOff(bulletin, Level.Error, "Asset import failed: " + ((e.getMessage() == null && e.getCause() != null) ? e.getCause().getMessage() : e.getMessage()));
+            // Check if we need to try next time with a hard reset
+            Throwable ex = e instanceof IOException && e.getCause() != null ? e.getCause() : e;
+            if (ex instanceof CheckoutConflictException)
+                gitHardResetOverride = true;   // Next import attempt will try git hard reset
         }
         finally {
             if (!_terminating) this.start();  // Restart if a failure occurred, besides instance is shutting down
         }
+    }
+
+    private void performImport(File gitRoot, File assetDir, VersionControlGit vcs, String branch, boolean gitHardReset, Connection conn) throws IOException {
+        Bulletin bulletin = SystemMessages.bulletinOn("Asset import in progress...");
+        Import importer = new Import(gitRoot, vcs, branch, gitHardResetOverride ? gitHardResetOverride : gitHardReset, conn);
+        importer.setAssetLoc(vcs.getRelativePath(assetDir));
+        importer.importMDWGit();
+        SystemMessages.bulletinOff(bulletin, "Asset import completed");
+        gitHardResetOverride = false;   // Import successful, so reset back to use gitHardReset property
+        bulletin = null;
+        CacheRegistration.getInstance().refreshCaches(null);
     }
 }

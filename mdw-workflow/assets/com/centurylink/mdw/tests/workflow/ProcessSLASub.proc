@@ -1,0 +1,77 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=60,y=260,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=150,ly=280,xs=124&177,ys=280&280"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=361,y=258,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "SLA": "60",
+        "SLA_UNITS": "Minutes",
+        "STATUS_AFTER_TIMEOUT": "Hold",
+        "WORK_DISPLAY_INFO": "x=181,y=248,w=100,h=60"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
+      "name": "Event Wait Activity\nwith timeout",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=321,ly=278,xs=285&357,ys=278&278"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=0,h=0"
+  },
+  "subprocesses": [{
+    "activities": [
+      {
+        "attributes": {"WORK_DISPLAY_INFO": "x=373,y=86,w=60,h=40"},
+        "id": "A6",
+        "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+        "name": "Start",
+        "transitions": [{
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=553,ly=106,xs=437&669,ys=106&106"},
+          "event": "FINISH",
+          "id": "T3",
+          "to": "A7"
+        }]
+      },
+      {
+        "attributes": {
+          "TerminationAction": "Complete Process",
+          "WORK_DISPLAY_INFO": "x=673,y=86,w=60,h=40"
+        },
+        "id": "A7",
+        "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+        "name": "Stop"
+      }
+    ],
+    "attributes": {
+      "EMBEDDED_PROCESS_TYPE": "Delay Handler",
+      "PROCESS_VISIBILITY": "EMBEDDED",
+      "WORK_DISPLAY_INFO": "x=333,y=46,w=440,h=120"
+    },
+    "id": "P1",
+    "name": "Delay Handler"
+  }]
+}

@@ -1,0 +1,49 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=60,y=181,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=180,ly=201,xs=125&236,ys=201&201"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=480,y=181,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "ClassName": "Delay_A4",
+        "Java": "package com.centurylink.mdw.tests.workflow;\n\nimport java.util.Map;\n\nimport com.centurylink.mdw.common.service.ServiceException;\nimport com.centurylink.mdw.java.JavaExecutionException;\nimport com.centurylink.mdw.java.JavaExecutor;\nimport com.centurylink.mdw.java.MdwJavaException;\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\nimport com.centurylink.mdw.model.workflow.ProcessRuntimeContext;\nimport com.centurylink.mdw.services.ProcessException;\nimport com.centurylink.mdw.services.ServiceLocator;\nimport com.centurylink.mdw.services.WorkflowServices;\n\npublic class Delay_A4 implements JavaExecutor {\n    private ActivityRuntimeContext context;\n\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\n        this.context = context;\n    }\n\n    public Object execute(Map<String,Object> variables) throws JavaExecutionException  {\n        context.logDebug(\"Executing \" + context.getActivity().getName());\n        ProcessException triggeringException = (ProcessException) variables.get(\"exception\");\n        if (triggeringException != null) {\n            ProcessRuntimeContext triggerContext = triggeringException.getRuntimeContext();\n            WorkflowServices wfs = ServiceLocator.getWorkflowServices();\n            try {\n                String event = \"ProcessSLAEvent-\" + triggerContext.getProcessInstanceId();\n                context.logInfo(\"Publishing event: \" + event);\n                wfs.notify(event, \"Empty\", 2);\n            } catch (ServiceException e) {\n                throw new JavaExecutionException(\"Exception sending event\", e);\n            }\n        }\n            \n        return null;\n    }\n}\n",
+        "WORK_DISPLAY_INFO": "x=239,y=173,w=100,h=60"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+      "name": "Resume Triggering\nProcess Instance",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=410,ly=201,xs=344&477,ys=201&201"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "PerformanceLevel": "0",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=0,h=0"
+  },
+  "variables": {"exception": {
+    "category": "INPUT",
+    "type": "java.lang.Exception"
+  }}
+}

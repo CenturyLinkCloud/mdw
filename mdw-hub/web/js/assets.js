@@ -302,7 +302,8 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
   $scope.assetName = $routeParams.assetName;
   if ($scope.assetName.endsWith('.proc')) {
     $scope.process = {packageName: $scope.packageName, name: $scope.assetName.substring(0, $scope.assetName.length - 5)};
-  }else if($scope.assetName.endsWith('.task')){
+  }
+  else if($scope.assetName.endsWith('.task')){
     $scope.task = true;
   }
  

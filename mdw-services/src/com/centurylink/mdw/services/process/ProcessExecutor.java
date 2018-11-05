@@ -328,6 +328,42 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
+    public DocumentReference createActivityExceptionDocument(ProcessInstance processInst, ActivityInstance actInstVO, BaseActivity activityImpl, Throwable cause) throws DataAccessException {
+        TransactionWrapper transaction=null;
+        try {
+            transaction = startTransaction();
+            return engineImpl.createActivityExceptionDocument(processInst, actInstVO, activityImpl, cause);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper) initTransactionRetry(transaction);
+                return ((ProcessExecutor) getTransactionRetrier()).createActivityExceptionDocument(processInst, actInstVO, activityImpl, cause);
+            }
+            else {
+                throw e;
+            }
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
+
+    public DocumentReference createProcessExceptionDocument(ProcessInstance processInst, Throwable cause) throws DataAccessException {
+        TransactionWrapper transaction=null;
+        try {
+            transaction = startTransaction();
+            return engineImpl.createProcessExceptionDocument(processInst, cause);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper) initTransactionRetry(transaction);
+                return ((ProcessExecutor) getTransactionRetrier()).createProcessExceptionDocument(processInst, cause);
+            }
+            else {
+                throw e;
+            }
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
+
     public ActivityRuntime prepareActivityInstance(
             InternalEvent event, ProcessInstance procInst)
             throws ProcessException, DataAccessException, ServiceLocatorException {
@@ -473,6 +509,40 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
+    public Long getRequestCompletionTime(String ownerType, Long ownerId) throws DataAccessException {
+        TransactionWrapper transaction=null;
+        try {
+            transaction = startTransaction();
+            return engineImpl.getDataAccess().getRequestCompletionTime(ownerType, ownerId);
+        } catch (SQLException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                return ((ProcessExecutor)getTransactionRetrier()).getRequestCompletionTime(ownerType, ownerId);
+            }
+            else
+                throw new DataAccessException(0, "Failed to get request completion time", e);
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
+
+    public void setElapsedTime(String ownerType, Long instanceId, Long elapsedTime) throws DataAccessException {
+        TransactionWrapper transaction=null;
+        try {
+            transaction = startTransaction();
+            engineImpl.getDataAccess().setElapsedTime(ownerType, instanceId, elapsedTime);
+        } catch (SQLException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).setElapsedTime(ownerType, instanceId, elapsedTime);
+            }
+            else
+                throw new DataAccessException(0, "Failed to set elapsed time", e);
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
+
     public void setActivityInstanceStatus(ActivityInstance actInst,
             Integer status, String status_message) throws DataAccessException {
         TransactionWrapper transaction=null;
@@ -556,7 +626,7 @@ public class ProcessExecutor implements RetryableTransaction {
     /**
      * Creates a new instance of the WorkTransationInstance entity
      *
-     * @param pWokTransId
+     * @param transition
      * @param pProcessInstId
      * @return WorkTransitionInstance object
      */
@@ -759,15 +829,20 @@ public class ProcessExecutor implements RetryableTransaction {
     }
 
     public DocumentReference createDocument(String type, String ownerType, Long ownerId, Integer statusCode, String statusMessage, Object doc)
+            throws DataAccessException {
+        return createDocument(type, ownerType, ownerId, statusCode, statusMessage, null, doc);
+    }
+
+    public DocumentReference createDocument(String type, String ownerType, Long ownerId, Integer statusCode, String statusMessage, String path, Object doc)
     throws DataAccessException {
-        TransactionWrapper transaction=null;
+        TransactionWrapper transaction = null;
         try {
             transaction = startTransaction();
-            return engineImpl.createDocument(type, ownerType, ownerId, statusCode, statusMessage, doc);
+            return engineImpl.createDocument(type, ownerType, ownerId, statusCode, statusMessage, path, doc);
         } catch (DataAccessException e) {
             if (canRetryTransaction(e)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                return ((ProcessExecutor)getTransactionRetrier()).createDocument(type, ownerType, ownerId, statusCode, statusMessage, doc);
+                return ((ProcessExecutor)getTransactionRetrier()).createDocument(type, ownerType, ownerId, statusCode, statusMessage, path, doc);
             }
             else
                 throw e;
@@ -1105,7 +1180,7 @@ public class ProcessExecutor implements RetryableTransaction {
 
     /**
      * this method must be called within the same transaction scope (namely engine is already started
-     * @param actInstId
+     * @param procInstId
      * @throws DataAccessException
      */
     public Integer lockProcessInstance(Long procInstId)

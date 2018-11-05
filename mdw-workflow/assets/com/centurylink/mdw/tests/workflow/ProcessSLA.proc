@@ -1,0 +1,101 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=60,y=260,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=158,ly=280,xs=124&193,ys=280&280"},
+        "event": "FINISH",
+        "id": "T7",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=685,y=269,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=330,y=339,w=110,h=58",
+        "processname": "com.centurylink.mdw.tests.workflow/ProcessSLASub.proc",
+        "processversion": "[0.1,1)",
+        "synchronous": "true"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke Subprocess",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=370,ly=364,xs=440&556&556,ys=368&368&318"},
+        "event": "FINISH",
+        "id": "T10",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {
+        "SLA_UNITS": "Minutes",
+        "STATUS_AFTER_TIMEOUT": "Cancelled",
+        "WAIT_EVENT_NAMES": "[[\"ProcessSLAEvent-{$ProcessInstanceID}\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=334,y=179,w=100,h=60"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
+      "name": "Event Wait Activity",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=371,ly=205,xs=439&553&553,ys=209&209&257"},
+        "event": "FINISH",
+        "id": "T5",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=490,y=261,w=133,h=57"},
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity",
+      "name": "Synchronization Activity",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=653,ly=288,xs=627&680,ys=288&288"},
+        "event": "FINISH",
+        "id": "T6",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "return null",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=196,y=257,w=78,h=53"
+      },
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Branch",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=ElbowV,lx=237,ly=233,xs=235&235&334,ys=257&209&209"},
+          "event": "FINISH",
+          "id": "T8",
+          "to": "A5"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=ElbowV,lx=237,ly=339,xs=235&235&330,ys=310&368&368"},
+          "event": "FINISH",
+          "id": "T9",
+          "to": "A4"
+        }
+      ]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "Monitors": "[[\"true\",\"Due Date Monitor\",\"com.centurylink.mdw.base/ProcessDueDateMonitor.java\",\"30\"]]",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "PerformanceLevel": "0",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=0,h=0"
+  },
+  "description": "Specifying 30 second process SLA (ProcessDueDateMonitor) which launches package level Delay handler, and also invokes sub process which trigger activity timeout with embedded delay handler that cancels sub flow"
+}

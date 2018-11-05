@@ -15,13 +15,6 @@
  */
 package com.centurylink.mdw.services.process;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.app.ApplicationContext;
@@ -43,22 +36,13 @@ import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.workflow.Activity;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
-import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
-import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.monitor.ActivityMonitor;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.OfflineMonitor;
-import com.centurylink.mdw.script.ExecutionException;
-import com.centurylink.mdw.script.ExecutorRegistry;
-import com.centurylink.mdw.script.ScriptEvaluator;
-import com.centurylink.mdw.script.ScriptExecutor;
-import com.centurylink.mdw.script.ScriptNaming;
+import com.centurylink.mdw.script.*;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
@@ -69,6 +53,13 @@ import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.TrackingTimer;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Base class that implements the Controlled Activity.
@@ -155,8 +146,6 @@ public abstract class BaseActivity implements GeneralActivity {
     /**
      * This version is used to initialize adapter activities to be called
      * from API (not from runtime engine) -- mainly for unit testing
-     *
-     * @param attrs
      */
     public void prepare(ActivityRuntimeContext runtimeContext) {
         if (logger == null)
@@ -347,28 +336,15 @@ public abstract class BaseActivity implements GeneralActivity {
     protected String getReturnCode() {
         return this.returnCode;
     }
-
     protected final String getEntryCode() {
         return entryCode;
     }
-
-    /**
-     * @param message
-     */
     protected void setReturnMessage(String pMessage) {
         this.returnMessage = pMessage;
     }
-
-    /**
-     * @return the evaluation result code
-     */
     protected String getReturnMessage() {
         return this.returnMessage;
     }
-
-    /**
-     * @param code the evaluation result code
-     */
     protected void setReturnCode(String code) {
         this.returnCode = code;
     }
@@ -941,8 +917,13 @@ public abstract class BaseActivity implements GeneralActivity {
     }
 
     protected DocumentReference createDocument(String docType, Object document, String ownerType,
-            Long ownerId) throws ActivityException {
-        return createDocument(docType, document, ownerType, ownerId, null, null);
+                                               Long ownerId) throws ActivityException {
+        return createDocument(docType, document, ownerType, ownerId, null, null, null);
+    }
+
+    protected DocumentReference createDocument(String docType, Object document, String ownerType,
+            Long ownerId, String path) throws ActivityException {
+        return createDocument(docType, document, ownerType, ownerId, null, null, path);
     }
 
     /**
@@ -960,7 +941,12 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return document reference
      */
     protected DocumentReference createDocument(String docType, Object document, String ownerType,
-            Long ownerId, Integer statusCode, String statusMessage) throws ActivityException {
+                                               Long ownerId, Integer statusCode, String statusMessage) throws ActivityException {
+        return createDocument(docType, document, ownerType, ownerId, statusCode, statusMessage, null);
+    }
+
+    protected DocumentReference createDocument(String docType, Object document, String ownerType,
+            Long ownerId, Integer statusCode, String statusMessage, String path) throws ActivityException {
         DocumentReference docref;
         try {
             if (!(document instanceof String)) {
@@ -968,7 +954,7 @@ public abstract class BaseActivity implements GeneralActivity {
                 document = VariableTranslator.realToString(getPackage(), docType, document);
             }
 
-            docref = engine.createDocument(docType, ownerType, ownerId, statusCode, statusMessage, document);
+            docref = engine.createDocument(docType, ownerType, ownerId, statusCode, statusMessage, path, document);
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);

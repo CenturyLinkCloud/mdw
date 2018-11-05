@@ -2,7 +2,7 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 configurations {
-    assets { 
+    assets {
         extendsFrom archives
     }
 }
@@ -21,15 +21,8 @@ task env {
 
 subprojects {
     apply plugin: "java"
-    apply plugin: "eclipse-wtp"
     apply plugin: 'maven'
     apply plugin: 'signing'
-
-    eclipse {
-        classpath {
-            defaultOutputDir = file("build/classes")
-        }
-    }
 
     sourceCompatibility = 1.8
     version = "${mdwVersion}"
@@ -76,14 +69,12 @@ subprojects {
     def packaging = 'jar'
 
     task javadocJar(type: Jar) {
-        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
         classifier = 'javadoc'
         from javadoc
     }
 }
 
 task cleanJavadocs(type: Delete) {
-    enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
     delete "../docs/_docs/javadoc"
 }
 
@@ -100,7 +91,6 @@ allprojects {
 }
 
 task javadocs(type: Javadoc) {
-    enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
     dependsOn "cleanJavadocs"
     source subprojects.collect {project -> project.sourceSets.main.java }
     classpath = files(subprojects.collect {project -> project.sourceSets.main.compileClasspath})
@@ -140,15 +130,15 @@ allprojects {
     ext.ossrhUsername = System.getenv("OSSRH_JIRA_USERNAME")
     ext.ossrhPassword = System.getenv("OSSRH_JIRA_PASSWORD")
 
-    if("true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))) {
+    if("true".equalsIgnoreCase(System.getProperty("PUBLISHING"))) {
         signing {
-            required = { "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
+            required = { "true".equalsIgnoreCase(System.getProperty("PUBLISHING"))}
             sign configurations.archives
          }
     }
 
     uploadArchives {
-        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))
+        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING"))
         repositories {
             mavenDeployer {
                 beforeDeployment {
@@ -367,7 +357,7 @@ task configureUploadAssets {
                             scm.appendNode('developerConnection ', 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git')
                             scm.appendNode('url', 'https://github.com/CenturyLinkCloud/mdw.git')
                         }
-                    }                    
+                    }
                 }
             }
         }
@@ -382,7 +372,7 @@ task cleanAll(type: GradleBuild) {
     tasks = ["clean"]
 }
 
-task publishAll(type: GradleBuild) {
+task publishArtifacts(type: GradleBuild) {
     dependsOn testAll
     buildFile = "publish.gradle"
     tasks = ["publishToMavenCentral"]
@@ -390,7 +380,12 @@ task publishAll(type: GradleBuild) {
 
 // to be run standalone, after successful publish
 task publishAssets(type: GradleBuild) {
-    dependsOn javadocs
+    dependsOn publishArtifacts
     buildFile = "publish.gradle"
     tasks = ["publishAssetsToMavenCentral"]
 }
+
+task publishAll {
+    dependsOn(publishArtifacts, publishAssets)
+}
+publishAssets.mustRunAfter(publishArtifacts)

@@ -15,15 +15,22 @@
         </div>
       </div>
       <div class="mdw-section">
-        <div ng-if="request.masterRequestId" style="margin-bottom:5px">
-          Process ID: <a class="mdw-item-highlight" href="#/workflow/processes/{{request.processInstanceId}}">{{request.processInstanceId}}</a>
+        <div ng-if="request.activityInstanceId">
+          Activity: <a class="mdw-item-highlight" href="#/workflow/activities/{{request.activityInstanceId}}">{{request.activityInstanceId}}</a>
+        </div>
+        <div ng-if="request.masterRequestId">
+          Request: <a class="mdw-item-highlight" href="#/workflow/requests/{{request.id}}">{{request.id}}</a>
+        </div>
+        <div ng-if="request.processInstanceId" style="margin-bottom:3px">
+          Process: <a class="mdw-item-highlight" href="#/workflow/processes/{{request.processInstanceId}}">{{request.processInstanceId}}</a>
         </div>
         <div class="mdw-resource-info">
+          <div ng-if="request.path" class="mdw-resource-value" style="font-size:14px;">{{request.path}}</div>
           <div ng-if="!request.outbound">Received: <span class="mdw-resource-value">{{request.created}}</span></div>
           <div ng-if="request.outbound">Sent: <span class="mdw-resource-value">{{request.created}}</span></div>
           <div ng-if="request.responseId">Responded: <span class="mdw-resource-value">{{request.responded}}</span></div>
           <div ng-if="request.statusCode">Status Code: <span class="mdw-resource-value">{{request.statusCode}}</span></div>          
-          <div ng-if="request.statusMessage">Status Message: <span class="mdw-resource-value">{{request.statusMessage}}</span></div>          
+          <div ng-if="request.statusMessage">Status Message: <span class="mdw-resource-value">{{request.statusMessage}}</span></div>
         </div>
         <pre class="mdw-resource-content" ng-if="view.request != 'Formatted'"><code class="mdw-code" ng-bind-html="request.content | highlight:request.format | unsafe"></code></pre>
         <pre class="mdw-resource-content" ng-if="view.request == 'Formatted'"><code class="mdw-code" ng-bind-html="request.formattedContent | highlight:request.format | unsafe"></code></pre>

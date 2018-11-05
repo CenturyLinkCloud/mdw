@@ -4,9 +4,10 @@ title: MDW Configuration
 ---
 
 ## project.yaml
-  - Used at design-time by [MDW Studio](../mdw-studio/) and the [CLI](../../getting-started/cli/).
+  - Used at design time by [MDW Studio](../mdw-studio/) and the [CLI](../../getting-started/cli/).
   - Belongs in the root directory of your project (or root module for multi-module builds).
   - Contains bootstrap information to locate [mdw.yaml](#mdw-yaml) and project assets.
+  - Also may include custom values (like workgroups) that are needed at design time.
   - Not used at runtime.   
     ```yaml
     # paths are relative to the location of this file
@@ -18,7 +19,11 @@ title: MDW Configuration
     
     config:
       location: config
-    
+
+    data:
+      workgroups:
+        - Developers
+        - MDW Support
     ```
 
 ## mdw.yaml
@@ -49,6 +54,12 @@ title: MDW Configuration
       messenger: jms  # required
       jms.provider: ActiveMQ  # required 
       threadpool.provider: MDW  # required
+
+    # optional settings for activemq (For overriding values in application-context.xml)
+    activemq:
+      location: activemq-data   # Has to be relative to startup directory - default=../activemq-data
+      port: 61619   # default=61618
+      maxConnections: 10   # Max connections in JMS pool - default=8
     
     # database connection information (below is typical for embedded db)
     database:

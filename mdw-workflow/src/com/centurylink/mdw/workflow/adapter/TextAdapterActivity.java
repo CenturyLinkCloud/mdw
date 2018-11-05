@@ -15,16 +15,6 @@
  */
 package com.centurylink.mdw.workflow.adapter;
 
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
-import org.json.JSONObject;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.adapter.AdapterInvocationError;
@@ -38,7 +28,6 @@ import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Response;
@@ -47,6 +36,7 @@ import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.event.AdapterStubResponse;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
+import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
@@ -63,6 +53,11 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.util.*;
 
 /**
  * Adapter activity for services with text-based request/response content.
@@ -351,8 +346,9 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         boolean logging = doLogging();
         try {
             init();
-            if (requestData != null && doLogging())
-                logRequest(requestData);
+            if (requestData != null && doLogging()) {
+                logRequest(new Request(requestData));
+            }
             if (isStubbing) {
                 loginfo("Adapter is running in StubMode");
                 if (stubber.isStubbing()) {
@@ -402,7 +398,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
 
     /**
      * Added so retry in executed for certain exceptions.
-     * @param pErrorCause
+     * @param errorCode
      * @throws ActivityException
      */
     protected void handleRetry(int errorCode, Throwable originalCause)
@@ -413,7 +409,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
     /**
      * Typically you should not override this method. ConnectionPoolAdapter
      * does override this with internal MDW logic.
-     * @param pErrorCause
+     * @param errorCode
      * @throws ActivityException
      */
     protected void handleConnectionException(int errorCode, Throwable originalCause)
@@ -518,11 +514,10 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         return do_logging==null||do_logging.equalsIgnoreCase("true");
     }
 
-
-    protected Long logRequest(String message) {
+    protected Long logRequest(Request request) {
         try {
-            DocumentReference docref = createDocument(String.class.getName(), message,
-                    OwnerType.ADAPTER_REQUEST, getActivityInstanceId());
+            DocumentReference docref = createDocument(String.class.getName(), request.getContent(),
+                    OwnerType.ADAPTER_REQUEST, getActivityInstanceId(), request.getPath());
 
             if (docref.getDocumentId() > 0L) {
                 JSONObject meta = getRequestMeta();
@@ -535,6 +530,10 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
             logger.severeException(ex.getMessage(), ex);
             return null;
         }
+    }
+
+    protected Long logRequest(String message) {
+        return logRequest(new Request(message));
     }
 
     protected Long logResponse(String message) {
@@ -551,11 +550,11 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
                 if (meta != null && meta.length() > 0)
                     createDocument(JSONObject.class.getName(), meta, OwnerType.ADAPTER_RESPONSE_META, docref.getDocumentId());
             }
-            if (getPerformanceLevel() <= 5) {
-                CommonDataAccess dataAccess = new CommonDataAccess();
-                Long elapsedTime = dataAccess.getRequestCompletionTime(OwnerType.ADAPTER, getActivityInstanceId());
-                dataAccess.setElapsedTime(OwnerType.ADAPTER, getActivityInstanceId(), elapsedTime);
-            }
+
+            Long elapsedTime = getEngine().getRequestCompletionTime(OwnerType.ADAPTER, getActivityInstanceId());
+            if (elapsedTime != null)
+                getEngine().setElapsedTime(OwnerType.ADAPTER, getActivityInstanceId(), elapsedTime);
+
             return docref.getDocumentId();
         } catch (Exception ex) {
             logexception(ex.getMessage(), ex);

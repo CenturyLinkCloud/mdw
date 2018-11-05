@@ -133,7 +133,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       }
       else if (widget.type === 'datetime') {
         if (widget.value) {
-          widget.units = this.workflowObj.attributes[widget.name + '_UNITS'];
+          widget.units = this.workflowObj.attributes[widget.name + '_DISPLAY_UNITS'];
           if (!widget.units)
             widget.units = 'Hours';
           if (widget.units == 'Minutes')
@@ -207,10 +207,6 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
   };
 
   Configurator.prototype.initSubprocBindings = function(widget, subproc) {
-    var spaceV = subproc.lastIndexOf(' v');
-    if (spaceV > 0)
-      subproc = subproc(0, spaceV);
-
     var configurator = this;
     $http.get(mdw.roots.services + '/services/Workflow/' + subproc + "?app=mdw-admin").then(function(res) {
       if (res.data.variables) {
@@ -293,11 +289,13 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       var selectAsset = null;
       if (widget.value) {
         var spaceV = widget.value.lastIndexOf(' v');
-        if (spaceV > 0)
+        if (spaceV > 0 && spaceV < widget.value.length - 2 && !isNaN(parseFloat(widget.value.substring(spaceV + 2)))) {
           selectAsset = widget.value.substring(0, spaceV);
-        else
+        }
+        else {
           selectAsset = widget.value;
-        if (widget.source == 'proc')
+        }
+        if (widget.source == 'proc' && !selectAsset.endsWith('.proc'))
           selectAsset += '.proc';  // process attrs saved without ext
       }
       selectAssets.push(selectAsset);
@@ -547,13 +545,15 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
     else {
       if (widget.type === 'datetime') {
         if (widget.value) {
-          this.workflowObj.attributes[widget.name + '_UNITS'] = widget.units;
+          this.workflowObj.attributes[widget.name + '_DISPLAY_UNITS'] = widget.units;
           if (widget.units == 'Minutes')
             this.workflowObj.attributes[widget.name] = '' + (widget.value * 60);
           else if (widget.units == 'Hours')
             this.workflowObj.attributes[widget.name] = '' + (widget.value * 3600);
           else if (widget.units == 'Days')
             this.workflowObj.attributes[widget.name] = '' + (widget.value * 86400);
+          else
+            this.workflowObj.attributes[widget.name] = '' + (widget.value);
         }
       }
       else {
@@ -583,7 +583,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       var asset = value;
       var version;
       var spaceV = value.lastIndexOf(' v');
-      if (spaceV > 0) {
+      if (spaceV > 0 && spaceV < value.length - 2 && !isNaN(parseFloat(value.substring(spaceV + 2)))) {
         var minVer = asset.substring(spaceV + 2);
         var dot = minVer.indexOf('.');
         var major = dot > 0 ? parseInt(minVer.substring(0, dot)) : 0;

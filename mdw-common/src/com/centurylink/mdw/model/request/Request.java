@@ -46,7 +46,6 @@ public class Request implements Jsonable {
     public Long getResponseId() { return responseId; }
     public void setResponseId(Long responseId) { this.responseId = responseId; }
 
-    // these fields are for master requests
     private String masterRequestId;
     public String getMasterRequestId() { return masterRequestId; }
     public void setMasterRequestId(String masterRequestId) { this.masterRequestId = masterRequestId; }
@@ -54,6 +53,10 @@ public class Request implements Jsonable {
     private Long processInstanceId;
     public Long getProcessInstanceId() { return processInstanceId; }
     public void setProcessInstanceId(Long instanceId) { this.processInstanceId = instanceId; }
+
+    private Long activityInstanceId;
+    public Long getActivityInstanceId() { return activityInstanceId; }
+    public void setActivityInstanceId(Long instanceId) { this.activityInstanceId = instanceId; }
 
     private Long processId;
     public Long getProcessId() { return processId; }
@@ -101,6 +104,10 @@ public class Request implements Jsonable {
     public String getStatusMessage() { return statusMessage; }
     public void setStatusMessage(String message) { this.statusMessage = message; }
 
+    private String path;
+    public String getPath() { return path; }
+    public void setPath(String path) { this.path = path; }
+
     private JSONObject meta;
     public JSONObject getMeta() { return meta; }
     public void setMeta(JSONObject info) { meta = info; }
@@ -111,6 +118,10 @@ public class Request implements Jsonable {
 
     public Request(Long id) {
         this.id = id;
+    }
+
+    public Request(String content) {
+        this.content = content;
     }
 
     public Request(JSONObject json) throws JSONException {
@@ -126,6 +137,8 @@ public class Request implements Jsonable {
             masterRequestId = json.getString("masterRequestId");
         if (json.has("processInstanceId"))
             processInstanceId = json.getLong("processInstanceId");
+        if (json.has("activityInstanceId"))
+            activityInstanceId = json.getLong("activityInstanceId");
         if (json.has("processId"))
             processId = json.getLong("processId");
         if (json.has("processName"))
@@ -150,6 +163,8 @@ public class Request implements Jsonable {
             statusCode = json.getInt("statusCode");
         if (json.has("statusMessage"))
             statusMessage = json.getString("statusMessage");
+        if (json.has("path"))
+            path = json.getString("path");
     }
 
     public JSONObject getJson() throws JSONException {
@@ -166,6 +181,8 @@ public class Request implements Jsonable {
             json.put("masterRequestId", masterRequestId);
         if (processInstanceId != null)
             json.put("processInstanceId", processInstanceId);
+        if (activityInstanceId != null)
+            json.put("activityInstanceId", activityInstanceId);
         if (processId != null)
             json.put("processId", processId);
         if (processName != null)
@@ -194,6 +211,8 @@ public class Request implements Jsonable {
             json.put("statusCode", statusCode);
         if (statusMessage != null)
             json.put("statusMessage", statusMessage);
+        if (path != null)
+            json.put("path", path);
         return json;
     }
 

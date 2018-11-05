@@ -1,17 +1,15 @@
 // publishes build output to a maven repository
-// eg: mdw repo or maven central
 plugins {
-    id 'io.codearte.nexus-staging' version '0.9.0'
+    id "io.codearte.nexus-staging" version "0.12.0"
 }
 
 nexusStaging {
-    ext.ossrhUsername = System.getenv("OSSRH_JIRA_USERNAME")
-    ext.ossrhPassword = System.getenv("OSSRH_JIRA_PASSWORD")
-    delayBetweenRetriesInMillis = 4000
+    delayBetweenRetriesInMillis = 5000
     packageGroup = "com.centurylink"
+    stagingProfileId = "20378d64ebd7b6"
     serverUrl = "https://oss.sonatype.org/service/local"
-    username = ossrhUsername
-    password = ossrhPassword
+    username = System.getenv("OSSRH_JIRA_USERNAME")
+    password = System.getenv("OSSRH_JIRA_PASSWORD")
 }
 
 task updateRestApiDefinition {
@@ -91,26 +89,9 @@ task publishAssetsToMavenCentral(type: GradleBuild) {
 }
 
 closeAndReleaseRepository.mustRunAfter uploadToMavenCentral
-
 closeAndReleaseRepository.mustRunAfter uploadAssetsToMavenCentral
 
 
-task updatePlugInFile {
-      description = "Update plugin file with Version number"
-  
-      fileTree(dir: "../mdw-workflow/.settings", include:'com.centurylink.mdw.plugin.xml').each { pkgFile ->
-          println "Updating file  " + pkgFile.name + " with version= " + mdwVersion
-          
-          doLast {
-              pkgFile.setWritable(true)
-              def pkgJson = pkgFile.text
-              pkgFile.withWriter { w ->
-                  w << pkgJson.replaceAll("mdwFramework version=\\\".*?\\\"", "mdwFramework version=\"${mdwVersion}\"");
-              }
-          }
-      }
-}
-  
 task updateJson {
       description = "Update mdw-hub/package.json with version number"
       
@@ -130,10 +111,8 @@ task updateJson {
       }
 }
 
-// update MDW version  all the packages in the mdw-workflow/assets directory
-task updateMDWVerInAssetPackages {
+task updateMdwVerInAssetPackages {
     description = "Update Asset Package Version" + mdwVersion
-    
     def assetRootPath = file("../${mdwAssetRoot}").toString()
     def mdwPkgVer = mdwVersion;
     if (mdwVersion.endsWith("-SNAPSHOT"))
@@ -153,5 +132,5 @@ task updateMDWVerInAssetPackages {
 }
 
 task updateMdwVerInFiles {
-      dependsOn(updateJson, updatePlugInFile, updateRestApiDefinition, updateMDWVerInAssetPackages)
+    dependsOn(updateJson, updateRestApiDefinition, updateMdwVerInAssetPackages)
 }

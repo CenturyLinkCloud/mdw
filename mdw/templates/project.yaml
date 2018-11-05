@@ -7,3 +7,8 @@ asset:
 
 config:
   location: {{config-loc}}
+
+data:
+  workgroups:
+    - Developers
+    - MDW Support
