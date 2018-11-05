@@ -200,7 +200,12 @@ class ProcessExecutorImpl {
     }
 
     DocumentReference createDocument(String type, String ownerType, Long ownerId,
-            Integer statusCode, String statusMessage, Object doc) throws DataAccessException {
+                                     Integer statusCode, String statusMessage, Object doc) throws DataAccessException {
+        return createDocument(type, ownerType, ownerId, statusCode, statusMessage, null, doc);
+    }
+
+    DocumentReference createDocument(String type, String ownerType, Long ownerId,
+            Integer statusCode, String statusMessage, String path, Object doc) throws DataAccessException {
         DocumentReference docref = null;
         try {
             Document docvo = new Document();
@@ -213,6 +218,7 @@ class ProcessExecutorImpl {
             docvo.setOwnerId(ownerId);
             docvo.setStatusCode(statusCode);
             docvo.setStatusMessage(statusMessage);
+            docvo.setPath(path);
             edao.createDocument(docvo);
             docref = new DocumentReference(docvo.getDocumentId());
         } catch (Exception e) {

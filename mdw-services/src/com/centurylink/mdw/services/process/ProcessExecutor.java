@@ -829,15 +829,20 @@ public class ProcessExecutor implements RetryableTransaction {
     }
 
     public DocumentReference createDocument(String type, String ownerType, Long ownerId, Integer statusCode, String statusMessage, Object doc)
+            throws DataAccessException {
+        return createDocument(type, ownerType, ownerId, statusCode, statusMessage, null, doc);
+    }
+
+    public DocumentReference createDocument(String type, String ownerType, Long ownerId, Integer statusCode, String statusMessage, String path, Object doc)
     throws DataAccessException {
-        TransactionWrapper transaction=null;
+        TransactionWrapper transaction = null;
         try {
             transaction = startTransaction();
-            return engineImpl.createDocument(type, ownerType, ownerId, statusCode, statusMessage, doc);
+            return engineImpl.createDocument(type, ownerType, ownerId, statusCode, statusMessage, path, doc);
         } catch (DataAccessException e) {
             if (canRetryTransaction(e)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                return ((ProcessExecutor)getTransactionRetrier()).createDocument(type, ownerType, ownerId, statusCode, statusMessage, doc);
+                return ((ProcessExecutor)getTransactionRetrier()).createDocument(type, ownerType, ownerId, statusCode, statusMessage, path, doc);
             }
             else
                 throw e;

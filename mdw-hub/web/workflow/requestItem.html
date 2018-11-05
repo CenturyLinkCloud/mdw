@@ -4,6 +4,7 @@
       <div>
         <a class="mdw-item-link mdw-item-nowrap" href="">
           {{item.masterRequestId ? item.masterRequestId : item.id}}
+          {{item.path}}
         </a>
         <div class="mdw-item-sub" ng-if="item.masterRequestId">
           {{item.packageName}}/<a class="mdw-link mdw-item-nowrap" href="#/workflow/masterRequests/{{item.masterRequestId}}">

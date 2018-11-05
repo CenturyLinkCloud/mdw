@@ -552,6 +552,11 @@ public class EventServicesImpl implements EventServices {
     }
 
     public Long createDocument(String type, String ownerType, Long ownerId, Object doc, Package pkg)
+            throws DataAccessException {
+        return createDocument(type, ownerType, ownerId, doc, pkg, null);
+    }
+
+    public Long createDocument(String type, String ownerType, Long ownerId, Object doc, Package pkg, String path)
     throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
@@ -571,6 +576,7 @@ public class EventServicesImpl implements EventServices {
             docvo.setDocumentType(type);
             docvo.setOwnerType(ownerType);
             docvo.setOwnerId(ownerId);
+            docvo.setPath(path);
             Long docid = edao.createDocument(docvo, pkg);
             return docid;
         } catch (SQLException e) {

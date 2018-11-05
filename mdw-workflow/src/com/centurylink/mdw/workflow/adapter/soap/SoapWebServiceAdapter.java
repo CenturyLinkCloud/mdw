@@ -31,6 +31,7 @@ import javax.xml.soap.SOAPHeaderElement;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.TransformerException;
 
+import com.centurylink.mdw.model.request.Request;
 import org.json.JSONObject;
 import org.w3c.dom.Node;
 
@@ -133,7 +134,7 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
      *
      * @param connection
      *            the connection object created in openConnection()
-     * @param requestData
+     * @param request
      *            the requestData populated in getRequestData()
      * @return object representing the service response
      */
@@ -380,5 +381,10 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
         json.put(Listener.METAINFO_REQUEST_URL, getWsdlUrl());
 
         return json;
+    }
+
+    protected Long logRequest(Request request) {
+        request.setPath(getWsdlUrl());
+        return super.logRequest(request);
     }
 }

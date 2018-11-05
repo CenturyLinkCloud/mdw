@@ -104,6 +104,10 @@ public class Request implements Jsonable {
     public String getStatusMessage() { return statusMessage; }
     public void setStatusMessage(String message) { this.statusMessage = message; }
 
+    private String path;
+    public String getPath() { return path; }
+    public void setPath(String path) { this.path = path; }
+
     private JSONObject meta;
     public JSONObject getMeta() { return meta; }
     public void setMeta(JSONObject info) { meta = info; }
@@ -114,6 +118,10 @@ public class Request implements Jsonable {
 
     public Request(Long id) {
         this.id = id;
+    }
+
+    public Request(String content) {
+        this.content = content;
     }
 
     public Request(JSONObject json) throws JSONException {
@@ -155,6 +163,8 @@ public class Request implements Jsonable {
             statusCode = json.getInt("statusCode");
         if (json.has("statusMessage"))
             statusMessage = json.getString("statusMessage");
+        if (json.has("path"))
+            path = json.getString("path");
     }
 
     public JSONObject getJson() throws JSONException {
@@ -201,6 +211,8 @@ public class Request implements Jsonable {
             json.put("statusCode", statusCode);
         if (statusMessage != null)
             json.put("statusMessage", statusMessage);
+        if (path != null)
+            json.put("path", path);
         return json;
     }
 

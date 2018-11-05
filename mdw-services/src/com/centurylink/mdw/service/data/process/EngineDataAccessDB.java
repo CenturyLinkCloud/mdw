@@ -15,14 +15,6 @@
  */
 package com.centurylink.mdw.service.data.process;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.cache.impl.VariableTypeCache;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccess;
@@ -40,15 +32,13 @@ import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.Transition;
-import com.centurylink.mdw.model.workflow.TransitionInstance;
-import com.centurylink.mdw.model.workflow.TransitionStatus;
-import com.centurylink.mdw.model.workflow.WorkStatus;
-import com.centurylink.mdw.model.workflow.WorkStatuses;
 import com.centurylink.mdw.util.StringHelper;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 /**
  * TODO: Remove non-engine-related data access from this class.
@@ -300,21 +290,16 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     public Long createDocument(Document doc, Package pkg) throws SQLException {
         Long docId = db.isMySQL() ? null : getNextId("MDW_COMMON_INST_ID_SEQ");
         String query = "insert into DOCUMENT " +
-            "(DOCUMENT_ID, CREATE_DT, DOCUMENT_TYPE, OWNER_TYPE, OWNER_ID, STATUS_CODE, STATUS_MESSAGE) " +
-            "values (?, " + nowPrecision() + ", ?, ?, ?, ?, ?)";
-        Object[] args = new Object[6];
+            "(DOCUMENT_ID, CREATE_DT, DOCUMENT_TYPE, OWNER_TYPE, OWNER_ID, STATUS_CODE, STATUS_MESSAGE, PATH) " +
+            "values (?, " + nowPrecision() + ", ?, ?, ?, ?, ?, ?)";
+        Object[] args = new Object[7];
         args[0] = docId;
         args[1] = doc.getDocumentType();
         args[2] = doc.getOwnerType();
         args[3] = doc.getOwnerId();
-        if (doc.getStatusCode() == null)
-            args[4] = 0;
-        else
-            args[4] = doc.getStatusCode();
-        if (doc.getStatusMessage() == null)
-            args[5] = "";
-        else
-            args[5] = doc.getStatusMessage();
+        args[4] = doc.getStatusCode();
+        args[5] = doc.getStatusMessage();
+        args[6] = doc.getPath() == null ? null : (doc.getPath().length() > 1000 ? doc.getPath().substring(0, 999) : doc.getPath());
 
         if (db.isMySQL())
             docId = db.runInsertReturnId(query, args);

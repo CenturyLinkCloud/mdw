@@ -15,14 +15,6 @@
  */
 package com.centurylink.mdw.workflow.adapter.rest;
 
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONObject;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.adapter.HeaderAwareAdapter;
 import com.centurylink.mdw.auth.AuthTokenProvider;
@@ -33,6 +25,7 @@ import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.HttpAltConnection;
@@ -42,6 +35,13 @@ import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.adapter.http.BasicAuthProvider;
 import com.centurylink.mdw.workflow.adapter.http.HttpServiceAdapter;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 @Tracked(LogLevel.TRACE)
 public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwareAdapter {
@@ -154,7 +154,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
 
     /**
      * Returns the endpoint URL for the RESTful service.  Supports property specifiers
-     * via the syntax for {@link #AdapterActivityBase.getAttributeValueSmart(String)}.
+     * via the syntax for {@link #getAttributeValueSmart(String)}.
      */
     protected String getEndpointUri() throws PropertyException {
         return getAttributeValueSmart(ENDPOINT_URI);
@@ -427,4 +427,8 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
         return meta;
     }
 
+    protected Long logRequest(Request request) {
+        request.setPath(getEndpointUri());
+        return super.logRequest(request);
+    }
 }

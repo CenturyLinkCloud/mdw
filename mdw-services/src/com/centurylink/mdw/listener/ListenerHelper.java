@@ -15,17 +15,6 @@
  */
 package com.centurylink.mdw.listener;
 
-import java.util.HashSet;
-//import java.io.StringReader;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.StartActivity;
 import com.centurylink.mdw.app.ApplicationContext;
@@ -65,6 +54,17 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 import com.centurylink.mdw.xml.XmlPath;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+//import java.io.StringReader;
 
 public class ListenerHelper {
 
@@ -226,7 +226,7 @@ public class ListenerHelper {
             }
 
             if (!StringHelper.isEmpty(request) && persistMessage(metaInfo)) {
-                eeid = createRequestDocument(request, 0L);
+                eeid = createRequestDocument(request, 0L, metaInfo.get(Listener.METAINFO_REQUEST_PATH));
                 requestDoc.setId(eeid);
             }
 
@@ -495,8 +495,12 @@ public class ListenerHelper {
     }
 
     private Long createRequestDocument(String request, Long handlerId) throws EventHandlerException {
+        return createRequestDocument(request, handlerId, null);
+    }
+
+    private Long createRequestDocument(String request, Long handlerId, String path) throws EventHandlerException {
         String docType = isJson(request) ? JSONObject.class.getName() : XmlObject.class.getName();
-        return createDocument(docType, request, OwnerType.LISTENER_REQUEST, handlerId).getDocumentId();
+        return createDocument(docType, request, null, OwnerType.LISTENER_REQUEST, handlerId, path).getDocumentId();
     }
 
     private Long createResponseDocument(Response response, Long ownerId) throws EventHandlerException {
@@ -530,7 +534,7 @@ public class ListenerHelper {
 
         meta.put("headers", headers);
 
-        createDocument(JSONObject.class.getName(), meta, OwnerType.LISTENER_REQUEST_META, ownerId);
+        createDocument(JSONObject.class.getName(), meta, null, OwnerType.LISTENER_REQUEST_META, ownerId, metaInfo.get(Listener.METAINFO_REQUEST_PATH));
         return meta;
     }
 
@@ -680,10 +684,15 @@ public class ListenerHelper {
      *            LISTENER_REQUEST and request document ID for LISTENER_RESPONSE
      */
     public DocumentReference createDocument(String docType, Object document, Package pkg,
-            String ownerType, Long ownerId) throws EventHandlerException {
+                                            String ownerType, Long ownerId) throws EventHandlerException {
+        return createDocument(docType, document, pkg, ownerType, ownerId, null);
+    }
+
+    public DocumentReference createDocument(String docType, Object document, Package pkg,
+            String ownerType, Long ownerId, String path) throws EventHandlerException {
         try {
             EventServices eventMgr = ServiceLocator.getEventServices();
-            Long docid = eventMgr.createDocument(docType, ownerType, ownerId, document, pkg);
+            Long docid = eventMgr.createDocument(docType, ownerType, ownerId, document, pkg, path);
             return new DocumentReference(docid);
         }
         catch (Exception ex) {

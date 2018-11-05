@@ -65,8 +65,8 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
      * TODO: Do we really have to save requestId var?  Or can we get it from db?
      */
     @Override
-    protected Long logRequest(String message) {
-        Long requestId = super.logRequest(message);
+    protected Long logRequest(Request request) {
+        Long requestId = super.logRequest(request);
         try {
             Variable requestIdVar = getProcessDefinition().getVariable("requestId");
             if (requestIdVar != null && Long.class.getName().equals(requestIdVar.getType()))
