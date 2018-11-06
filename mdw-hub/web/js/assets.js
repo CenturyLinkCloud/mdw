@@ -408,7 +408,7 @@ assetMod.factory('Assets', ['$resource', 'mdw', function($resource, mdw) {
 }]);
 
 assetMod.factory('Asset', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.hub + '/asset/:packageName/:assetName', mdw.hubParams(), {
+  return $resource(mdw.roots.hub + '/asset/:packageName/:assetName/:instanceId', mdw.hubParams(), {
     get: { 
       method: 'GET', 
       transformResponse: function(data, headers) {

@@ -272,5 +272,55 @@ editMod.controller('InstanceEditorController', ['$scope', '$routeParams', 'mdw',
     }
   );
 
+  $scope.isDirty = function() {
+    if ($scope.process)
+      return $scope.procDirty;
+    else
+      return $scope.aceDirty;
+  };
+
+  $scope.setDirty = function(dirty) {
+    if ($scope.process)
+      $scope.procDirty = dirty;
+    else
+      $scope.aceDirty = dirty;
+  };
+
+  $scope.isSaveEnabled = function() {
+    return $scope.isDirty();
+  };
+
+  $scope.cancelSave = function() {
+    $scope.closePopover();
+    $scope.message = null;
+  };
+
+  $scope.save = function(andClose) {
+    console.log('saving: ' + $scope.asset.packageName + '/' + $scope.asset.name + '/' + $scope.instanceId);
+    Asset.put({
+      packageName: $scope.asset.packageName,
+      assetName: $scope.asset.name,
+      instanceId: $scope.instanceId
+    },
+    $scope.process ? JSON.stringify($scope.process, null, 2) : $scope.asset.content,
+    function success(response) {
+      $scope.message = null;
+      $scope.aceDirty = false;
+      $scope.procDirty = false;
+      $scope.closePopover();
+      if (andClose) {
+        window.location = '#/workflow/processes/' + $scope.instanceId;
+      }
+    },
+    function error(response) {
+      if (response.data.status)
+        $scope.message = response.data.status.message;
+      else if (response.statusText)
+        $scope.message = response.status + ': ' + response.statusText;
+      else
+        $scope.message = "Error saving asset instance";
+    });
+  };
+
 
 }]);

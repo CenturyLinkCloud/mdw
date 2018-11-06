@@ -27,6 +27,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -250,7 +252,7 @@ public class AssetContentServlet extends HttpServlet {
             try {
                 VersionControlGit vcs = (VersionControlGit) assetServices.getVersionControl();
                 if ("packages".equals(path)) {
-                    authorizeForUpdate(request.getSession(), Action.Import, Entity.Package, "Package zip");
+                    authorizeForUpdate(request.getSession(), Action.Import, Entity.Package, "Package zip", false);
                     String contentType = request.getContentType();
                     boolean isZip = "application/zip".equals(contentType);
                     if (!isZip && !"application/json".equals(contentType))
@@ -263,12 +265,6 @@ public class AssetContentServlet extends HttpServlet {
                     logger.info("Saving package import temporary file: " + tempFile);
                     FileHelper.writeToFile(request.getInputStream(), tempFile);
                     ProgressMonitor progressMonitor = new LoggerProgressMonitor(logger);
-                    //        progressMonitor.start("Archive existing assets");
-                    //        if (VcsArchiver.setInProgress()) {
-                    //            bulletin = SystemMessages.bulletinOn("Asset import in progress...");
-                    //            VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs,
-                    //                    progressMonitor);
-                    //            archiver.backup();
                     if (isZip) {
                         progressMonitor.start("Unzipping " + tempFile + " into: " + assetRoot);
                         logger.info("Unzipping " + tempFile + " into: " + assetRoot);
@@ -293,8 +289,6 @@ public class AssetContentServlet extends HttpServlet {
                             pkgDir.parse(); // sync
                         }
                     }
-                    //            archiver.archive();
-                    //            SystemMessages.bulletinOff(bulletin, "Asset import completed");
                     bulletin = null;
                     Thread thread = new Thread() {
                         @Override
@@ -304,125 +298,132 @@ public class AssetContentServlet extends HttpServlet {
                         }
                     };
                     thread.start();
-                    //       }
-                    //       else {
-                    //           throw new ServiceException(ServiceException.CONFLICT,
-                    //                   "Asset import was NOT performed since an import was already in progress...");
-                    //       }
                     progressMonitor.done();
                 }
                 else {
+                    int slashes = 0;
+                    Matcher matcher = Pattern.compile("/").matcher(path);
+                    while (matcher.find())
+                        slashes++;
+                    boolean isInstance = slashes > 1;
+
+                    authorizeForUpdate(request.getSession(), Action.Change, Entity.Asset, path, isInstance);
+
                     // If not Development, asset change will have to be committed, so check if on latest commit
-                    if (!ApplicationContext.isDevelopment() && vcs.getCommit() != vcs.getRemoteCommit(vcs.getBranch())) {
+                    if (!isInstance && !ApplicationContext.isDevelopment() && vcs.getCommit() != vcs.getRemoteCommit(vcs.getBranch())) {
                         throw new ServiceException(ServiceException.NOT_ALLOWED, "Asset save was NOT performed - local commit out of sync with remote");
                     }
 
-                    authorizeForUpdate(request.getSession(), Action.Change, Entity.Asset, path);
-
-                    int lastSlash = path.lastIndexOf('/');
-                    if (lastSlash == -1 || lastSlash > path.length() - 2)
-                        throw new ServiceException(ServiceException.BAD_REQUEST,
-                                "Bad path: " + path);
-                    String pkgName = path.substring(0, lastSlash);
+                    int firstSlash = path.indexOf('/');
+                    if (firstSlash == -1 || firstSlash > path.length() - 2)
+                        throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + path);
+                    String pkgName = path.substring(0, firstSlash);
                     Package pkg = persisterVcs.getPackage(pkgName);
                     if (pkg == null)
-                        throw new ServiceException(ServiceException.NOT_FOUND,
-                                "Package not found: " + pkgName);
-
-                    String assetName = path.substring(lastSlash + 1);
-                    String version = request.getParameter("version");
-                    boolean verChange = false;
-                    Asset asset = null;
-                    PackageDir pkgDir = persisterVcs.getTopLevelPackageDir(pkgName);
-
-                    // TODO event handler and implementors
-                    if (assetName.endsWith(".proc")) {
-                        asset = persisterVcs.getProcessBase(
-                                pkgName + "/" + assetName.substring(0, assetName.length() - 5), 0);
-                    }
-                    else if (assetName.endsWith(".task")) {
-                        asset = persisterVcs.loadTaskTemplate(pkgDir, pkgDir.getAssetFile(new File(
-                                assetRoot + "/" + pkgName.replace('.', '/') + "/" + assetName)));
+                        throw new ServiceException(ServiceException.NOT_FOUND, "Package not found: " + pkgName);
+                    if (isInstance) {
+                        int lastSlash = path.lastIndexOf('/');
+                        String assetName = path.substring(firstSlash + 1, lastSlash);
+                        try {
+                            int instanceId = Integer.parseInt(path.substring(lastSlash + 1));
+                            System.out.println("SAVING INSTANCE: " + assetName + "/" + instanceId);
+                        }
+                        catch (NumberFormatException ex) {
+                            throw new ServiceException(ServiceException.BAD_REQUEST, "Bad instance id: " + path.substring(lastSlash + 1));
+                        }
                     }
                     else {
-                        asset = persisterVcs.getAsset(pkg.getId(), assetName);
-                    }
+                        String assetName = path.substring(firstSlash + 1);
+                        String version = request.getParameter("version");
+                        boolean verChange = false;
+                        Asset asset = null;
+                        PackageDir pkgDir = persisterVcs.getTopLevelPackageDir(pkgName);
 
-                    if (asset == null)
-                        throw new ServiceException(ServiceException.NOT_FOUND,
-                                "Asset not found: " + pkgName + "/" + assetName);
+                        // TODO event handler and implementors
+                        if (assetName.endsWith(".proc")) {
+                            asset = persisterVcs.getProcessBase(
+                                    pkgName + "/" + assetName.substring(0, assetName.length() - 5), 0);
+                        } else if (assetName.endsWith(".task")) {
+                            asset = persisterVcs.loadTaskTemplate(pkgDir, pkgDir.getAssetFile(new File(
+                                    assetRoot + "/" + pkgName.replace('.', '/') + "/" + assetName)));
+                        } else {
+                            asset = persisterVcs.getAsset(pkg.getId(), assetName);
+                        }
 
-                    if (version == null)
-                        version = asset.getVersionString();
+                        if (asset == null)
+                            throw new ServiceException(ServiceException.NOT_FOUND,
+                                    "Asset not found: " + pkgName + "/" + assetName);
 
-                    logger.info("Saving asset: " + pkgName + "/" + assetName + " v" + version);
+                        if (version == null)
+                            version = asset.getVersionString();
 
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    InputStream is = request.getInputStream();
-                    int read = 0;
-                    byte[] bytes = new byte[1024];
-                    while ((read = is.read(bytes)) != -1)
-                        baos.write(bytes, 0, read);
-                    byte[] content = baos.toByteArray();
+                        logger.info("Saving asset: " + pkgName + "/" + assetName + " v" + version);
 
-                    int ver = asset.getVersion();
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        InputStream is = request.getInputStream();
+                        int read = 0;
+                        byte[] bytes = new byte[1024];
+                        while ((read = is.read(bytes)) != -1)
+                            baos.write(bytes, 0, read);
+                        byte[] content = baos.toByteArray();
 
-                    if (asset instanceof Process) {
-                        asset = new Process(new JsonObject(new String(content)));
-                        asset.setName(assetName.substring(0, assetName.length() - 5));
-                        asset.setPackageName(pkgName);
-                    }
-                    else {
-                        asset.setRawContent(content);
-                    }
+                        int ver = asset.getVersion();
 
-                    int newVer = Asset.parseVersion(version);
-                    if (newVer < ver)
-                        throw new ServiceException(ServiceException.BAD_REQUEST,
-                                "Invalid asset version: v" + version);
+                        if (asset instanceof Process) {
+                            asset = new Process(new JsonObject(new String(content)));
+                            asset.setName(assetName.substring(0, assetName.length() - 5));
+                            asset.setPackageName(pkgName);
+                        } else {
+                            asset.setRawContent(content);
+                        }
 
-                    // update ASSET_REF with current info before saving
-                    verChange = newVer != ver;
-                    if (verChange) {
-                        VersionControlGit vc = (VersionControlGit) assetServices
-                                .getVersionControl();
-                        if (vc != null && vc.getCommit() != null) {
-                            String curPath = pkgName + "/" + assetName + " v"
-                                    + Asset.formatVersion(ver);
-                            AssetRef curRef = new AssetRef(curPath, vc.getId(new File(curPath)),
-                                    vc.getCommit());
-                            try (DbAccess dbAccess = new DbAccess()) {
-                                Checkpoint cp = new Checkpoint(assetServices.getAssetRoot(), vc,
-                                        curRef.getRef(), dbAccess.getConnection());
-                                cp.updateRef(curRef);
+                        int newVer = Asset.parseVersion(version);
+                        if (newVer < ver)
+                            throw new ServiceException(ServiceException.BAD_REQUEST,
+                                    "Invalid asset version: v" + version);
+
+                        // update ASSET_REF with current info before saving
+                        verChange = newVer != ver;
+                        if (verChange) {
+                            VersionControlGit vc = (VersionControlGit) assetServices
+                                    .getVersionControl();
+                            if (vc != null && vc.getCommit() != null) {
+                                String curPath = pkgName + "/" + assetName + " v"
+                                        + Asset.formatVersion(ver);
+                                AssetRef curRef = new AssetRef(curPath, vc.getId(new File(curPath)),
+                                        vc.getCommit());
+                                try (DbAccess dbAccess = new DbAccess()) {
+                                    Checkpoint cp = new Checkpoint(assetServices.getAssetRoot(), vc,
+                                            curRef.getRef(), dbAccess.getConnection());
+                                    cp.updateRef(curRef);
+                                }
                             }
                         }
-                    }
 
-                    asset.setVersion(newVer);
-                    if (asset instanceof Process) {
-                        persisterVcs.save((Process) asset, pkgDir);
-                        persisterVcs.updateProcess((Process) asset);
-                    }
-                    else {
-                        persisterVcs.save(asset, pkgDir);
-                        persisterVcs.updateAsset(asset);
-                    }
-
-                    if (verChange) {
-                        persisterVcs.persistPackage(pkg, PersistType.NEW_VERSION);
-                    }
-                    logger.info("Asset saved: " + path + " v" + version);
-
-                    // Refresh cache
-                    Thread thread = new Thread() {
-                        @Override
-                        public void run() {
-                            this.setName("AssetSaveCacheRefresh-thread");
-                            CacheRegistration.getInstance().refreshCaches(null);
+                        asset.setVersion(newVer);
+                        if (asset instanceof Process) {
+                            persisterVcs.save((Process) asset, pkgDir);
+                            persisterVcs.updateProcess((Process) asset);
+                        } else {
+                            persisterVcs.save(asset, pkgDir);
+                            persisterVcs.updateAsset(asset);
                         }
-                    };
-                    thread.start();
+
+                        if (verChange) {
+                            persisterVcs.persistPackage(pkg, PersistType.NEW_VERSION);
+                        }
+                        logger.info("Asset saved: " + path + " v" + version);
+
+                        // Refresh cache
+                        Thread thread = new Thread() {
+                            @Override
+                            public void run() {
+                                this.setName("AssetSaveCacheRefresh-thread");
+                                CacheRegistration.getInstance().refreshCaches(null);
+                            }
+                        };
+                        thread.start();
+                    }
 
                     response.getWriter().write(new StatusResponse(200, "OK").getJson().toString(2));
                 }
@@ -458,7 +459,7 @@ public class AssetContentServlet extends HttpServlet {
      * Also audit logs (if not distributed propagation).
      */
     private void authorizeForUpdate(HttpSession session, Action action, Entity entity,
-            String includes) throws AuthorizationException, DataAccessException {
+            String includes, boolean isInstance) throws AuthorizationException, DataAccessException {
         AuthenticatedUser user = (AuthenticatedUser) session.getAttribute("authenticatedUser");
         if (user == null && ApplicationContext.getServiceUser() != null) {
             String cuid = ApplicationContext.getServiceUser();
@@ -467,9 +468,17 @@ public class AssetContentServlet extends HttpServlet {
 
         if (user == null)
             throw new AuthorizationException(AuthorizationException.NOT_AUTHORIZED, "Authentication failure");
-        if (!user.hasRole(Role.ASSET_DESIGN) && !user.hasRole(Workgroup.SITE_ADMIN_GROUP)) {
-            throw new AuthorizationException(AuthorizationException.FORBIDDEN,
-                    "User " + user.getCuid() + " not authorized for this action");
+
+        if (isInstance) {
+            if (!user.hasRole(Role.PROCESS_EXECUTION) && !user.hasRole(Workgroup.SITE_ADMIN_GROUP))
+                throw new AuthorizationException(AuthorizationException.FORBIDDEN,
+                        "User " + user.getCuid() + " not authorized for this action");
+        }
+        else {
+            if (!user.hasRole(Role.ASSET_DESIGN) && !user.hasRole(Workgroup.SITE_ADMIN_GROUP)) {
+                throw new AuthorizationException(AuthorizationException.FORBIDDEN,
+                        "User " + user.getCuid() + " not authorized for this action");
+            }
         }
 
         logger.info("Asset mod request received from user: " + user.getCuid() + " for: " + includes);

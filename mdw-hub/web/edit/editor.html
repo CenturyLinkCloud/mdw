@@ -14,12 +14,15 @@
         </div>
         <div class="mdw-heading-actions mdw-edit-actions">
           <a class="btn btn-default" href="" ng-disabled="!isDirty()"
-            uib-popover-template="'edit/savePop.html'" popover-placement="bottom" pop-click>
+            uib-popover-template="instanceId ? 'edit/saveInstPop.html' : 'edit/savePop.html'" popover-placement="bottom" pop-click>
             Save
           </a>            
-          <a class="btn btn-default" ng-href="#/asset/{{asset.packageName}}/{{asset.name}}" >
+          <a ng-if="!instanceId" class="btn btn-default" ng-href="#/asset/{{asset.packageName}}/{{asset.name}}" >
             Cancel
-          </a>  
+          </a>
+          <a ng-if="instanceId" class="btn btn-default" ng-href="#/workflow/processes/{{instanceId}}" >
+            Cancel
+          </a>
         </div>
       </div>
       <div mdw-editor="aceOptions" ng-if="!process && !assetName.endsWith('.task') && !assetName.endsWith('.md')"
