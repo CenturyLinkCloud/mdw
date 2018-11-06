@@ -185,6 +185,8 @@ diagramMod.factory('Diagram',
     var label = this.instance && this.instance.template ? this.instance.packageName + '/' + this.instance.processName : this.process.name;
     var font = this.instance && this.instance.template ? DC.TEMPLATE_FONT : DC.TITLE_FONT;
     diagram.label = new Label(this, label, this.getDisplay(), font);
+    if (this.process.instanceId)
+      diagram.label.subtext = this.process.instanceId;
     diagram.makeRoom(canvasDisplay, diagram.label.prepareDisplay());
 
     // activities

@@ -118,23 +118,30 @@ public class Workflow extends JsonRestService {
             }
             else {
                 String assetPath = segments[1] + "/" + segments[2];
-                Process process;
+                Process process = null;
+                Long instanceId = null;
                 if (segments.length == 4) {
                     if (segments[3].startsWith("v")) {
                         query.setFilter("version", Asset.parseVersion(segments[3]));
-                        process = workflowServices.getProcessDefinition(assetPath, query);
                     }
                     else {
-                        process = workflowServices.getInstanceDefinition(assetPath, Long.parseLong(segments[3]));
+                        instanceId = Long.parseLong(segments[3]);
+                        process = workflowServices.getInstanceDefinition(assetPath, instanceId);
+                        if (process == null)
+                            instanceId = null;  // to indicate instance override below
                     }
                 }
-                else {
+                if (process == null)
                     process = workflowServices.getProcessDefinition(assetPath, query);
-                }
+                if (process == null)
+                    throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + path);
                 JSONObject json = process.getJson(); // does not include name, package or id
                 json.put("name", process.getName());
                 json.put("id", process.getId());
                 json.put("packageName", process.getPackageName());
+                if (instanceId != null) {
+                    json.put("instanceId", instanceId);
+                }
                 String startPage = process.getAttribute(WorkAttributeConstant.PROCESS_START_PAGE);
                 if (startPage != null) {
                     String assetSpec = startPage;
