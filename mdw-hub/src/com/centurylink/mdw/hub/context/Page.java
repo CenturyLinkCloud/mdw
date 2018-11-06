@@ -40,9 +40,7 @@ public class Page {
     private AssetInfo asset;
     public AssetInfo getAsset() {
         if (asset == null) {
-            int lastSlash = path.lastIndexOf('/');
-            String assetPath = path.substring(0, lastSlash).replace('/', '.') + path.substring(lastSlash);
-            asset = new AssetInfo(mdw.getAssetRoot(), assetPath);
+            asset = new AssetInfo(mdw.getAssetRoot(), path);
         }
         return asset;
     }

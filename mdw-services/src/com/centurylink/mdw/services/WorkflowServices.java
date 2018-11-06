@@ -207,4 +207,11 @@ public interface WorkflowServices {
 
     public void createProcess(String assetPath, Query query) throws ServiceException, IOException;
 
+    /**
+     * Retrieve process definition for a specific instance from the document table.
+     * Quickly returns null if no such definition exists.
+     */
+    public Process getInstanceDefinition(String assetPath, Long instanceId) throws ServiceException;
+
+    public void saveInstanceDefinition(String assetPath, Long instanceId, Process process) throws ServiceException;
 }

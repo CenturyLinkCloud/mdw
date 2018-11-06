@@ -15,19 +15,6 @@
  */
 package com.centurylink.mdw.dataaccess.db;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.sql.XAConnection;
-import javax.transaction.Status;
-import javax.transaction.TransactionManager;
-
 import com.centurylink.mdw.cache.impl.VariableTypeCache;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -45,6 +32,18 @@ import com.centurylink.mdw.util.TransactionUtil;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+
+import javax.sql.XAConnection;
+import javax.transaction.Status;
+import javax.transaction.TransactionManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CommonDataAccess {
 
@@ -475,6 +474,39 @@ public class CommonDataAccess {
         finally {
             db.closeConnection();
         }
+    }
+
+    public Long getDocumentId(String ownerType, Long ownerId) throws SQLException {
+        String query = "select DOCUMENT_ID from DOCUMENT where OWNER_TYPE = ? and OWNER_ID = ?";
+        try {
+            db.openConnection();
+            Object[] args = { ownerType, ownerId };
+            ResultSet rs = db.runSelect(query, args);
+            if (rs.next()) {
+                return rs.getLong("DOCUMENT_ID");
+            }
+        }
+        finally {
+            db.closeConnection();
+        }
+        return null;
+    }
+
+    public Document getDocument(String ownerType, Long ownerId) throws SQLException {
+        String query = "select DOCUMENT_ID from DOCUMENT where OWNER_TYPE = ? and OWNER_ID = ?";
+        try {
+            db.openConnection();
+            Object[] args = { ownerType, ownerId };
+            ResultSet rs = db.runSelect(query, args);
+            if (rs.next()) {
+                Long documentId = rs.getLong("DOCUMENT_ID");
+                return documentId == null ? null : loadDocument(documentId, false);
+            }
+        }
+        finally {
+            db.closeConnection();
+        }
+        return null;
     }
 
     public Document loadDocument(Long documentId, boolean forUpdate)

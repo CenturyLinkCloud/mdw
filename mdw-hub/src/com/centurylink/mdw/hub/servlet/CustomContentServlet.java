@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Serves up custom content from user-override mdw-hub package.
@@ -39,11 +40,15 @@ public class CustomContentServlet extends HttpServlet {
         String path = request.getPathInfo();
         Mdw mdw = WebAppContext.getMdw();
         File file = mdw.getHubOverride(path);
+        AssetInfo asset = new AssetInfo(mdw.getAssetRoot(), mdw.getOverridePackage() + path);
+        String contentType = asset.exists() ? asset.getContentType() : Files.probeContentType(file.toPath());
+        if (contentType != null)
+            response.setContentType(contentType);
 
         if (path.equals("/index.html")) {
             try {
-                String html = new String(Files.readAllBytes(file.toPath()));
-                response.setContentType("text/html");
+                String html = new String(Files.readAllBytes(
+                        Paths.get(mdw.getOverrideRoot() + "/index.html")));
                 response.getOutputStream().print(ExpressionUtil.substitute(html, mdw, true));
             }
             catch (MdwException ex) {
@@ -51,12 +56,6 @@ public class CustomContentServlet extends HttpServlet {
             }
         }
         else {
-            int lastSlash = path.lastIndexOf('/');
-            String assetPath = path.substring(0, lastSlash).replace('/', '.') + path.substring(lastSlash);
-            AssetInfo asset = new AssetInfo(mdw.getAssetRoot(), mdw.getOverridePackage() + assetPath);
-            String contentType = asset.exists() ? asset.getContentType() : Files.probeContentType(file.toPath());
-            if (contentType != null)
-                response.setContentType(contentType);
             if (asset.shouldCache(request.getHeader("If-None-Match"))) {
                 response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             }

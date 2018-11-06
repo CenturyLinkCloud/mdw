@@ -90,9 +90,6 @@ public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
     private File file;
     public File getFile() { return file; }
 
-    private Long instanceId;
-    public Long getInstanceId() { return instanceId; }
-
     public boolean exists() {
         return file != null && file.isFile();
     }
@@ -109,11 +106,6 @@ public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
         int slash = path.indexOf('/');
         String pkg = path.substring(0, slash);
         String asset = path.substring(slash + 1);
-        slash = asset.indexOf('/');
-        if (slash > 0) {
-            instanceId = Long.parseLong(asset.substring(slash + 1));
-            asset = asset.substring(0, slash);
-        }
         this.file = new File(root + "/" + pkg.replace('.', '/') + "/" + asset);
     }
 

@@ -1180,7 +1180,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             eventMgr.updateDocumentInfo(docId, type, OwnerType.VARIABLE_INSTANCE, varInst.getInstanceId());
         }
         catch (DataAccessException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error creating document for process: " + procInstId);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error creating document for process: " + procInstId, ex);
         }
     }
 
@@ -1395,4 +1395,47 @@ public class WorkflowServicesImpl implements WorkflowServices {
         ServiceLocator.getAssetServices().createAsset(assetPath, content);
     }
 
+    public Process getInstanceDefinition(String assetPath, Long instanceId) throws ServiceException {
+
+        try {
+            WorkflowDataAccess dataAccess = new WorkflowDataAccess();
+            Document instanceDoc = dataAccess.getDocument(OwnerType.PROCESS_INSTANCE_DEF, instanceId);
+            if (instanceDoc == null) {
+                return null;
+            }
+            else {
+                int slash = assetPath.indexOf('/');
+                String pkg = assetPath.substring(0, slash);
+                String name = assetPath.substring(slash + 1);
+                Process process = (Process) instanceDoc.getObject(Jsonable.class.getName(), PackageCache.getPackage(pkg));
+                process.setName(name);
+                process.setPackageName(pkg);
+                return process;
+            }
+        }
+        catch (SQLException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error retrieving instance document "
+                    + assetPath + ": " + instanceId);
+        }
+    }
+
+    public void saveInstanceDefinition(String assetPath, Long instanceId, Process process)
+            throws ServiceException {
+        try {
+            Long docId = new WorkflowDataAccess().getDocumentId(OwnerType.PROCESS_INSTANCE_DEF, instanceId);
+            EventServices eventServices = ServiceLocator.getEventServices();
+            if (docId == null) {
+                eventServices.createDocument(Jsonable.class.getName(), OwnerType.PROCESS_INSTANCE_DEF,
+                        instanceId, process, PackageCache.getPackage(process.getPackageName()));
+            }
+            else {
+                eventServices.updateDocumentContent(docId, process, Jsonable.class.getName(),
+                        PackageCache.getPackage(process.getPackageName()));
+            }
+        }
+        catch (DataAccessException | SQLException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error creating process instance definition " +
+                    assetPath + ": " + instanceId, ex);
+        }
+    }
 }

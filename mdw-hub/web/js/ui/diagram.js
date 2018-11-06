@@ -729,7 +729,7 @@ diagramMod.factory('Diagram',
     }
   };
 
-  Diagram.prototype.drawState = function(display, instances, ext, adj, animationSlice /* not used */) {
+  Diagram.prototype.drawState = function(display, instances, ext, adj, animationSlice /* not used */, color) {
     if (instances) {
       var count = instances.length > Step.MAX_INSTS ? Step.MAX_INSTS : instances.length;
       for (var i = 0; i < count; i++) {
@@ -738,6 +738,7 @@ diagramMod.factory('Diagram',
         if (instance.statusCode) {
           var status = Step.STATUSES[instance.statusCode];
           instance.status = status.status;
+          var statusColor = color ? color : status.color;
           var del = Step.INST_W - Step.OLD_INST_W;
           if (ext) {
             var rem = count - i;
@@ -747,7 +748,7 @@ diagramMod.factory('Diagram',
                   display.y - Step.OLD_INST_W * rem - del,
                   display.w + Step.OLD_INST_W * 2* rem + 2 * del,
                   display.h + Step.OLD_INST_W * 2 * rem + 2 * del,
-                  status.color, status.color, rounding);
+                  statusColor, statusColor, rounding);
             }
             else {
               this.rect(
@@ -755,7 +756,7 @@ diagramMod.factory('Diagram',
                   display.y - Step.OLD_INST_W * rem,
                   display.w + Step.OLD_INST_W * 2 * rem,
                   display.h + Step.OLD_INST_W * 2 * rem,
-                  status.color, status.color, 0);
+                  statusColor, statusColor, 0);
             }
             rem--;
             this.context.clearRect(
@@ -772,7 +773,7 @@ diagramMod.factory('Diagram',
                   display.y - adj,
                   display.w + 2 * adj,
                   display.h + 2* adj,
-                  status.color, status.color, rounding);
+                  statusColor, statusColor, rounding);
               x1 = display.x + del;
               y1 = display.y + del;
               w1 = display.w - 2 * del;
@@ -784,7 +785,7 @@ diagramMod.factory('Diagram',
               w1 = display.w - Step.OLD_INST_W * 2 * i - 2 * del;
               h1 = display.h - Step.OLD_INST_W * 2 * i - 2 * del;
               if (w1 > 0 && h1 > 0)
-                this.rect(x1, y1, w1, h1, status.color, status.color);
+                this.rect(x1, y1, w1, h1, statusColor, statusColor);
             }
             x1 += Step.OLD_INST_W - 1;
             y1 += Step.OLD_INST_W - 1;

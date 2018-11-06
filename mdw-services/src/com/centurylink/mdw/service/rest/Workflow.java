@@ -118,9 +118,19 @@ public class Workflow extends JsonRestService {
             }
             else {
                 String assetPath = segments[1] + "/" + segments[2];
-                if (segments.length == 4)
-                    query.setFilter("version", Asset.parseVersion(segments[3]));
-                Process process = workflowServices.getProcessDefinition(assetPath, query);
+                Process process;
+                if (segments.length == 4) {
+                    if (segments[3].startsWith("v")) {
+                        query.setFilter("version", Asset.parseVersion(segments[3]));
+                        process = workflowServices.getProcessDefinition(assetPath, query);
+                    }
+                    else {
+                        process = workflowServices.getInstanceDefinition(assetPath, Long.parseLong(segments[3]));
+                    }
+                }
+                else {
+                    process = workflowServices.getProcessDefinition(assetPath, query);
+                }
                 JSONObject json = process.getJson(); // does not include name, package or id
                 json.put("name", process.getName());
                 json.put("id", process.getId());

@@ -925,4 +925,9 @@ public class Process extends Asset implements Jsonable {
         }
         return objects;
     }
+
+    @Override
+    public String getContentType() {
+        return "application/json";
+    }
 }

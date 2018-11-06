@@ -80,7 +80,10 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
       var adj = 0;
       if (shape == 'start' || shape == 'stop' || shape == 'pause')
         adj = 2;
-      this.diagram.drawState(this.display, this.instances, !this.diagram.drawBoxes, adj, animationTimeSlice);
+      var color = null;
+      if (shape == 'pause')
+        color = '#ffea00';
+      this.diagram.drawState(this.display, this.instances, !this.diagram.drawBoxes, adj, animationTimeSlice, color);
     }
 
     var yAdjust = -2;
