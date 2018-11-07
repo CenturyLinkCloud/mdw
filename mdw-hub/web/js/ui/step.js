@@ -24,7 +24,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
 
   Step.START_IMPL = 'com.centurylink.mdw.workflow.activity.process.ProcessStartActivity';
   Step.STOP_IMPL = 'com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity';
-  Step.PAUSE_IMPL = 'com.centurylink.mdw.workflow.activity.process.ProcessPauseActivity';
+  Step.PAUSE_IMPL = 'com.centurylink.mdw.base.PauseActivity';
   Step.TASK_IMPL = 'com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity';
   Step.TASK_PAGELET = 'com.centurylink.mdw.base/CustomManualTask.pagelet';
 

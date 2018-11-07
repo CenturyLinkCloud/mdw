@@ -1135,7 +1135,7 @@ diagramMod.factory('Diagram',
 
         var selObj = this.selection.getSelectObj();
         if (selObj) {
-          if (this.instanceEdit && (!selObj.workflowObj || !this.isInstanceEditable(selObj.workflowObj.id))) {
+          if (this.instanceEdit && (!selObj.workflowItem || !this.isInstanceEditable(selObj.workflowItem.id))) {
             return;
           }
 
@@ -1268,12 +1268,18 @@ diagramMod.factory('Diagram',
       var actions = [];
       if (this.instance && (this.instance.status === 'In Progress' || this.instance.status === 'Waiting')) {
         var inst = this.getLatestInstance();
-        if (inst.status === 'Failed') {
-          actions.push('retry');
-          actions.push('proceed');
-        }
-        else if (inst.status === 'Waiting') {
-          actions.push('proceed');
+        if (inst && inst.status) {
+          if (inst.status === 'Failed') {
+            actions.push('retry');
+            actions.push('proceed');
+          }
+          else if (inst.status === 'Waiting') {
+            actions.push('proceed');
+            var impl = selObj.implementor;
+            if (impl && impl.category && impl.category === 'com.centurylink.mdw.activity.types.PauseActivity') {
+              actions.push('resume');
+            }
+          }
         }
       }
       return actions;

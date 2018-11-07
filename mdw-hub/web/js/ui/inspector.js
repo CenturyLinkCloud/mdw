@@ -23,7 +23,6 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
     else
       $scope.tabs = InspectorTabs.definition[$scope.workflowType];
 
-
     var filteredTabs = {};
     util.getProperties($scope.tabs).forEach(function(tabName) {
       var tab = $scope.tabs[tabName];
@@ -34,7 +33,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
           var tabProps = util.getProperties(tab);
           // when _template is only prop (eg: Design tab)
           var onlyShowForDef = tabProps.length === 1 && tabProps[0] === '_template';
-          if (!$scope.runtimeInfo || !onlyShowForDef) {
+          if (!$scope.runtimeInfo || $scope.instanceEdit || !onlyShowForDef) {
             if (tabProps[0] && typeof tab[tabProps[1]] == 'function') {
               if (tab[tabProps[1]]($scope.diagramObject, $scope.workflowObject))
                 filteredTabs[tabName] = tab;

@@ -47,6 +47,7 @@ import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.system.SysInfo;
 import com.centurylink.mdw.model.system.SysInfoCategory;
 import com.centurylink.mdw.model.task.TaskInstance;
+import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.DocumentReference;
@@ -259,14 +260,23 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     @Override
-    public void actionActivity(String activityInstanceId, String action, String completionCode) throws ServiceException {
+    public void actionActivity(Long activityInstanceId, String action, String completionCode, String user) throws ServiceException {
         try {
-            if (action != null && (action.equalsIgnoreCase(Action.Proceed.toString()))){
-                ServiceLocator.getEventServices().skipActivity(null, new Long(activityInstanceId).longValue(), completionCode);
+            UserAction userAction = auditLog(action, UserAction.Entity.ActivityInstance, activityInstanceId, user, completionCode);
+            if (Action.Proceed.toString().equalsIgnoreCase(action)) {
+                ServiceLocator.getEventServices().skipActivity(null, activityInstanceId, completionCode);
             }
-            else if (action != null && (action.equalsIgnoreCase(Action.Retry.toString()))){
-                ActivityInstance activityVo = ServiceLocator.getEventServices().getActivityInstance(new Long(activityInstanceId).longValue());
-                ServiceLocator.getEventServices().retryActivity(activityVo.getActivityId(), new Long(activityInstanceId).longValue());
+            else if (Action.Retry.toString().equalsIgnoreCase(action)) {
+                ActivityInstance activityVo = ServiceLocator.getEventServices().getActivityInstance(activityInstanceId);
+                ServiceLocator.getEventServices().retryActivity(activityVo.getActivityId(), activityInstanceId);
+            }
+            else if (Action.Resume.toString().equalsIgnoreCase(action)) {
+                String eventName = "mdw.Resume-" + activityInstanceId;
+                JSONObject messageJson = new JSONObject();
+                notify(eventName, userAction.getJson().toString(), 0);
+            }
+            else {
+                throw new ServiceException("Unsupported action: '" + action + "' for activity " + activityInstanceId);
             }
         }
         catch (Exception ex) {
@@ -1438,4 +1448,22 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     assetPath + ": " + instanceId, ex);
         }
     }
+
+    protected UserAction auditLog(String action, UserAction.Entity entity, Long entityId, String user, String completionCode) throws ServiceException {
+        UserAction userAction = new UserAction(user, UserAction.getAction(action), entity, entityId, null);
+        userAction.setSource("Workflow Services");
+        userAction.setDestination(completionCode);
+        if (userAction.getAction().equals(UserAction.Action.Other)) {
+            userAction.setExtendedAction(action);
+        }
+        try {
+            EventServices eventManager = ServiceLocator.getEventServices();
+            eventManager.createAuditLog(userAction);
+            return userAction;
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException("Failed to create audit log: " + userAction, ex);
+        }
+    }
+
 }

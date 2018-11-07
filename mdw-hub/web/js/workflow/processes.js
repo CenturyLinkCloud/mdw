@@ -336,6 +336,9 @@ processMod.controller('ProcessController',
     return $scope.authUser.hasRole('Process Execution') && $scope.process &&
         ($scope.process.status == 'In Progress' || $scope.process.status == "Waiting");
   };
+  $scope.definitionEditAllowed = function() {
+    return $scope.authUser.hasRole('Process Design');
+  };
 }]);
 
 processMod.factory('Process', ['$resource', 'mdw', function($resource, mdw) {

@@ -45,6 +45,7 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
         Delete,
         Retry,
         Proceed,
+        Resume,
         Refresh,
         Rename,
         Import,

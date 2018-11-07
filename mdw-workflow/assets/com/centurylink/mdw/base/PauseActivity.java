@@ -63,12 +63,12 @@ public class PauseActivity extends EventWaitActivity implements SuspendibleActiv
     @Override
     public List<String[]> getWaitEventSpecs() {
         List<String[]> specs = super.getWaitEventSpecs();
-        specs.add(new String[] { "mdw.Resume-" + getActivityInstanceId(), ""});
+        specs.add(new String[] { "mdw.Resume-" + getActivityInstanceId(), "", null});
         return specs;
     }
 
     @Override
-    protected boolean isEventRecurring(String completionCode) {
+    protected final boolean isEventRecurring(String completionCode) {
         return false;
     }
 

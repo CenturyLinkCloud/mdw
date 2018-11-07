@@ -36,13 +36,13 @@ import com.centurylink.mdw.util.StringHelper;
  * This class will be extended by the custom activity
  * that do not want a completion event raised.
  * This will act as a stopper for the workflow
- * In cases where in case of an error or a maual task creation,
+ * In cases where in case of an error or a manual task creation,
  * we can use this activity to pause the flow and the flow can be
- * re started from an external event.
+ * restarted from an event.
  */
 public abstract class AbstractWait extends DefaultActivityImpl implements SuspendibleActivity {
 
-    private List<String[]> getWaitEventSpecs() {
+    public List<String[]> getWaitEventSpecs() {
         String attVal = this.getAttributeValue(WorkAttributeConstant.WAIT_EVENT_NAMES);
         if (attVal==null) return new ArrayList<String[]>();
         return StringHelper.parseTable(attVal, ',', ';', 3);

@@ -108,7 +108,6 @@ public interface WorkflowServices {
     /**
      * @param taskInstanceId (Task Instance Id for Task)
      * @param eventName
-     * @param recurring
      * @param completionCode null for default outcome
      * @return
      * @throws ServiceException
@@ -120,7 +119,7 @@ public interface WorkflowServices {
      * @param action
      * @param completionCode
      */
-    public void actionActivity(String activityInstanceId, String action, String completionCode)
+    public void actionActivity(Long activityInstanceId, String action, String completionCode, String uer)
             throws ServiceException;
 
     ProcessInstance getProcess(Long instanceId) throws ServiceException;
