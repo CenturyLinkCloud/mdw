@@ -24,6 +24,8 @@ import java.util.Map;
 import javax.jms.JMSException;
 import javax.naming.NamingException;
 
+import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.services.*;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
@@ -69,11 +71,6 @@ import com.centurylink.mdw.monitor.OfflineMonitor;
 import com.centurylink.mdw.monitor.ProcessMonitor;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.ProcessCache;
-import com.centurylink.mdw.services.EventException;
-import com.centurylink.mdw.services.OfflineMonitorTrigger;
-import com.centurylink.mdw.services.ProcessException;
-import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.translator.VariableTranslator;
@@ -420,6 +417,14 @@ class ProcessExecutorImpl {
 
     protected Process getProcessDefinition(ProcessInstance procinst) {
         Process procdef = ProcessCache.getProcess(procinst.getProcessId());
+        try {
+            WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+            Process procinstDef = workflowServices.getInstanceDefinition(procdef.getPackageName() + "/" + procdef.getName(), procinst.getId());
+            if (procinstDef != null)
+                procdef = procinstDef;
+        } catch (ServiceException e) {
+            logger.severeException("Unable to retrieve process instance definition document", e);
+        }
         if (procinst.isEmbedded())
             procdef = procdef.getSubProcessVO(new Long(procinst.getComment()));
         return procdef;

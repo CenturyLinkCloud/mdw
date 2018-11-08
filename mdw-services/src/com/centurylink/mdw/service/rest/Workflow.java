@@ -120,12 +120,12 @@ public class Workflow extends JsonRestService {
                 String assetPath = segments[1] + "/" + segments[2];
                 Process process = null;
                 Long instanceId = null;
-                if (segments.length == 4) {
+                if (segments.length >= 4) {
                     if (segments[3].startsWith("v")) {
                         query.setFilter("version", Asset.parseVersion(segments[3]));
                     }
-                    else {
-                        instanceId = Long.parseLong(segments[3]);
+                    if (segments.length == 5 || !segments[3].startsWith("v")) {
+                        instanceId = Long.parseLong(segments.length == 5 ? segments[4] : segments[3]);
                         process = workflowServices.getInstanceDefinition(assetPath, instanceId);
                         if (process == null)
                             instanceId = null;  // to indicate instance override below

@@ -71,10 +71,10 @@ workflowMod.controller('MdwWorkflowController',
     var masterRequestId = $scope.process.masterRequestId;
     var processStatus = $scope.process.status;
     var workflowUrl = $scope.serviceBase + '/Workflow/' + packageName + '/' + processName;
+    if (processVersion)
+      workflowUrl += '/v' + processVersion;
     if (instanceId)
       workflowUrl += '/' + instanceId;
-    else if (processVersion)
-      workflowUrl += '/v' + processVersion;
     if ($scope.editable)
       workflowUrl += '?forUpdate=true'; // TODO: honor forUpdate
     $http({ method: 'GET', url: workflowUrl })
