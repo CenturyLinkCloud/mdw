@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.service.data.process;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +27,10 @@ import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
 import com.centurylink.mdw.services.cache.CacheRegistration;
@@ -80,6 +83,10 @@ public class ProcessCache implements CacheService {
         return getSingleton().getProcess0(processId);
     }
 
+    public static Process getProcessInstanceDefiniton(Long processId, Long processInstId) {
+        return getSingleton().getProcessInstanceDefinition0(processId, processInstId);
+    }
+
     public static Process getProcess(String procname, int version) {
         return getSingleton().getProcess0(procname, version, true);
     }
@@ -105,6 +112,26 @@ public class ProcessCache implements CacheService {
         vl.add(process);
         if (versionZero)
             procNameLatest.put(process.getQualifiedName(), process);
+    }
+
+    private Process getProcessInstanceDefinition0(Long processId, Long processInstId) {
+        Process procdef = getProcess0(processId);
+        if (procdef != null) {
+            try {
+                Document instanceDoc = getWorkflowDao().getDocument(OwnerType.PROCESS_INSTANCE_DEF, processInstId);
+                if (instanceDoc == null) {
+                    return null;
+                } else {
+                    Process process = (Process) instanceDoc.getObject(Jsonable.class.getName(), null);
+                    process.setName(procdef.getName());
+                    process.setPackageName(procdef.getPackageName());
+                    return process;
+                }
+            } catch (SQLException ex) {
+                logger.severeException("Error retrieving instance document", ex);
+            }
+        }
+        return null;
     }
 
     private Process getProcess0(Long processId) {

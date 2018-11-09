@@ -21,9 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.WorkflowServices;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
@@ -1033,15 +1030,11 @@ public class ProcessEngineDriver {
     }
 
     private Process getProcessDefinition(ProcessInstance procinst) {
-        Process procdef = ProcessCache.getProcess(procinst.getProcessId());
-        try {
-            WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-            Process procinstDef = workflowServices.getInstanceDefinition(procdef.getPackageName() + "/" + procdef.getName(), procinst.getId());
-            if (procinstDef != null)
-                procdef = procinstDef;
-        } catch (ServiceException e) {
-            logger.severeException("Unable to retrieve process instance definition document", e);
-        }
+        Process procdef = null;
+        if (procinst.hasProcessInstDef())
+            procdef = ProcessCache.getProcessInstanceDefiniton(procinst.getProcessId(), procinst.getId());
+        if (procdef == null)
+            procdef = ProcessCache.getProcess(procinst.getProcessId());
         if (procinst.isEmbedded())
             procdef = procdef.getSubProcessVO(new Long(procinst.getComment()));
         return procdef;

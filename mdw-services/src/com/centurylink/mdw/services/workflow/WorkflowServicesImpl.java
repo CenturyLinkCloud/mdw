@@ -1406,37 +1406,48 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     public Process getInstanceDefinition(String assetPath, Long instanceId) throws ServiceException {
-
+        EngineDataAccessDB dataAccess = new EngineDataAccessDB();
         try {
-            WorkflowDataAccess dataAccess = new WorkflowDataAccess();
             Document instanceDoc = dataAccess.getDocument(OwnerType.PROCESS_INSTANCE_DEF, instanceId);
             if (instanceDoc == null) {
                 return null;
             }
             else {
-                int slash = assetPath.indexOf('/');
-                String pkg = assetPath.substring(0, slash);
-                String name = assetPath.substring(slash + 1);
-                Process process = (Process) instanceDoc.getObject(Jsonable.class.getName(), PackageCache.getPackage(pkg));
-                process.setName(name);
-                process.setPackageName(pkg);
-                return process;
+                dataAccess.getDatabaseAccess().openConnection();
+                ProcessInstance procInst = dataAccess.getProcessInstance(instanceId); // We need the processID
+                Process process = ProcessCache.getProcessInstanceDefiniton(procInst.getProcessId(), instanceId);
+                if (process.getQualifiedName().equals(assetPath)) // Make sure instanceId is for requested assetPath
+                    return process;
+                return null;
             }
         }
         catch (SQLException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error retrieving instance document "
                     + assetPath + ": " + instanceId);
         }
+        finally {
+            if (dataAccess.getDatabaseAccess().connectionIsOpen())
+                dataAccess.getDatabaseAccess().closeConnection();
+        }
     }
 
     public void saveInstanceDefinition(String assetPath, Long instanceId, Process process)
             throws ServiceException {
+        EngineDataAccessDB dataAccess = new EngineDataAccessDB();
         try {
-            Long docId = new WorkflowDataAccess().getDocumentId(OwnerType.PROCESS_INSTANCE_DEF, instanceId);
+            Long docId = dataAccess.getDocumentId(OwnerType.PROCESS_INSTANCE_DEF, instanceId);
             EventServices eventServices = ServiceLocator.getEventServices();
             if (docId == null) {
                 eventServices.createDocument(Jsonable.class.getName(), OwnerType.PROCESS_INSTANCE_DEF,
                         instanceId, process, PackageCache.getPackage(process.getPackageName()));
+                dataAccess.getDatabaseAccess().openConnection();
+                ProcessInstance procInst = dataAccess.getProcessInstance(instanceId);
+                if (procInst != null) {
+                    String[] fields = new String[] {"COMMENTS"};
+                    String comment = procInst.getComment() == null ? "" : procInst.getComment();
+                    Object[] args = new Object[] {comment + "|HasInstanceDef", null};
+                    dataAccess.updateTableRow("process_instance", "process_instance_id", instanceId, fields, args);
+                }
             }
             else {
                 eventServices.updateDocumentContent(docId, process, Jsonable.class.getName(),
@@ -1446,6 +1457,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
         catch (DataAccessException | SQLException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error creating process instance definition " +
                     assetPath + ": " + instanceId, ex);
+        }
+        finally {
+            if (dataAccess.getDatabaseAccess().connectionIsOpen())
+                dataAccess.getDatabaseAccess().closeConnection();
         }
     }
 

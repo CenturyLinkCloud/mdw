@@ -62,9 +62,9 @@ public class Workflow extends JsonRestService {
     }
 
     @Override
-    @Path("/{packageName}/{processName}/{processVersion}")
+    @Path("/{packageName}/{processName}/{processVersion}/{processInstanceId}")
     @ApiOperation(value="Retrieve a process definition JSON.",
-        notes="Path segments {packageName} and {processName} are required, while {processVersion} is optional.",
+        notes="Path segments {packageName} and {processName} are required, while {processVersion} and {processInstanceId} are optional.",
         response=Process.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name="version", paramType="query", dataType="string"),
@@ -131,10 +131,11 @@ public class Workflow extends JsonRestService {
                             instanceId = null;  // to indicate instance override below
                     }
                 }
-                if (process == null)
+                if (process == null) {
                     process = workflowServices.getProcessDefinition(assetPath, query);
-                if (process == null)
-                    throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + path);
+                    if (process == null)
+                        throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + path);
+                }
                 JSONObject json = process.getJson(); // does not include name, package or id
                 json.put("name", process.getName());
                 json.put("id", process.getId());
