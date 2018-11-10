@@ -83,8 +83,8 @@ public class ProcessCache implements CacheService {
         return getSingleton().getProcess0(processId);
     }
 
-    public static Process getProcessInstanceDefiniton(Long processId, Long processInstId) {
-        return getSingleton().getProcessInstanceDefinition0(processId, processInstId);
+    public static Process getProcessInstanceDefiniton(Long processId, Long processInstDefId) {
+        return getSingleton().getProcessInstanceDefinition0(processId, processInstDefId);
     }
 
     public static Process getProcess(String procname, int version) {
@@ -114,20 +114,16 @@ public class ProcessCache implements CacheService {
             procNameLatest.put(process.getQualifiedName(), process);
     }
 
-    private Process getProcessInstanceDefinition0(Long processId, Long processInstId) {
+    private Process getProcessInstanceDefinition0(Long processId, Long processInstDefId) {
         Process procdef = getProcess0(processId);
         if (procdef != null) {
             try {
-                Document instanceDoc = getWorkflowDao().getDocument(OwnerType.PROCESS_INSTANCE_DEF, processInstId);
-                if (instanceDoc == null) {
-                    return null;
-                } else {
-                    Process process = (Process) instanceDoc.getObject(Jsonable.class.getName(), null);
-                    process.setName(procdef.getName());
-                    process.setPackageName(procdef.getPackageName());
-                    return process;
-                }
-            } catch (SQLException ex) {
+                Document instanceDoc = getWorkflowDao().getDocument(processInstDefId);
+                Process process = (Process) instanceDoc.getObject(Jsonable.class.getName(), null);
+                process.setName(procdef.getName());
+                process.setPackageName(procdef.getPackageName());
+                return process;
+            } catch (DataAccessException ex) {
                 logger.severeException("Error retrieving instance document", ex);
             }
         }
@@ -164,7 +160,7 @@ public class ProcessCache implements CacheService {
 
     /**
      * Either a specific version number can be specified, or a Smart Version can be specified which designates an allowable range.
-     * @see Asset.meetsVersionSpec().
+     * @see com.centurylink.mdw.model.asset.Asset#meetsVersionSpec(String)
      */
     public static Process getProcessSmart(AssetVersionSpec spec) throws DataAccessException {
         if (spec.getPackageName() == null)

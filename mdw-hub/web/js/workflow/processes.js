@@ -443,7 +443,8 @@ processMod.controller('ProcessDefController',
 
   var summary = ProcessSummary.get();
   if (summary) {
-    $scope.process.id = summary.id;
+    if (!$routeParams.version || $routeParams.version.indexOf(".") < 0)
+      $scope.process.id = summary.id;
     $scope.process.masterRequestId = summary.masterRequestId;
     $scope.process.status = summary.status;
     $scope.process.definitionId = summary.definitionId;

@@ -416,8 +416,8 @@ class ProcessExecutorImpl {
 
     protected Process getProcessDefinition(ProcessInstance procinst) {
         Process procdef = null;
-        if (procinst.hasProcessInstDef())
-            procdef = ProcessCache.getProcessInstanceDefiniton(procinst.getProcessId(), procinst.getId());
+        if (procinst.getProcessInstDefId() > 0L)
+            procdef = ProcessCache.getProcessInstanceDefiniton(procinst.getProcessId(), procinst.getProcessInstDefId());
         if (procdef == null)
             procdef = ProcessCache.getProcess(procinst.getProcessId());
         if (procinst.isEmbedded())
@@ -428,8 +428,8 @@ class ProcessExecutorImpl {
     protected Process getMainProcessDefinition(ProcessInstance procinst)
         throws DataAccessException, SQLException {
         Process procdef = null;
-        if (procinst.hasProcessInstDef())
-            procdef = ProcessCache.getProcessInstanceDefiniton(procinst.getProcessId(), procinst.getId());
+        if (procinst.getProcessInstDefId() > 0L)
+            procdef = ProcessCache.getProcessInstanceDefiniton(procinst.getProcessId(), procinst.getProcessInstDefId());
         if (procdef == null)
             procdef = ProcessCache.getProcess(procinst.getProcessId());
         if (procinst.isEmbedded()) {

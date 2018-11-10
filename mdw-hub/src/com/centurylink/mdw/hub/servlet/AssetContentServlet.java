@@ -163,11 +163,12 @@ public class AssetContentServlet extends HttpServlet {
                                 try {
                                     Process process = workflowServices.getInstanceDefinition(pkgName + "/" + assetName, instanceId);
                                     if (process == null)
-                                        throw new ServiceException("Instance definition not found: " + path);
+                                        throw new ServiceException(ServiceException.NOT_FOUND, "Instance definition not found: " + path);
                                     response.setContentType(process.getContentType());
                                     response.getOutputStream().print(process.getJson().toString(2));
                                 } catch (ServiceException ex) {
-                                    logger.severeException(ex.getMessage(), ex);
+                                    if (ex.getCode() != ServiceException.NOT_FOUND)
+                                        logger.severeException(ex.getMessage(), ex);
                                     StatusResponse sr = new StatusResponse(ex.getCode(), ex.getMessage());
                                     response.setStatus(sr.getStatus().getCode());
                                     response.getWriter().println(sr.getJson().toString(2));

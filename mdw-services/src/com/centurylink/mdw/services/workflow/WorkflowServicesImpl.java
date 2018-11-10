@@ -1408,18 +1408,14 @@ public class WorkflowServicesImpl implements WorkflowServices {
     public Process getInstanceDefinition(String assetPath, Long instanceId) throws ServiceException {
         EngineDataAccessDB dataAccess = new EngineDataAccessDB();
         try {
-            Document instanceDoc = dataAccess.getDocument(OwnerType.PROCESS_INSTANCE_DEF, instanceId);
-            if (instanceDoc == null) {
-                return null;
-            }
-            else {
-                dataAccess.getDatabaseAccess().openConnection();
-                ProcessInstance procInst = dataAccess.getProcessInstance(instanceId); // We need the processID
-                Process process = ProcessCache.getProcessInstanceDefiniton(procInst.getProcessId(), instanceId);
+            dataAccess.getDatabaseAccess().openConnection();
+            ProcessInstance procInst = dataAccess.getProcessInstance(instanceId); // We need the processID
+            if (procInst.getProcessInstDefId() > 0L) {
+                Process process = ProcessCache.getProcessInstanceDefiniton(procInst.getProcessId(), procInst.getProcessInstDefId());
                 if (process.getQualifiedName().equals(assetPath)) // Make sure instanceId is for requested assetPath
                     return process;
-                return null;
             }
+            return null;
         }
         catch (SQLException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error retrieving instance document "
@@ -1435,19 +1431,17 @@ public class WorkflowServicesImpl implements WorkflowServices {
             throws ServiceException {
         EngineDataAccessDB dataAccess = new EngineDataAccessDB();
         try {
-            Long docId = dataAccess.getDocumentId(OwnerType.PROCESS_INSTANCE_DEF, instanceId);
             EventServices eventServices = ServiceLocator.getEventServices();
-            if (docId == null) {
-                eventServices.createDocument(Jsonable.class.getName(), OwnerType.PROCESS_INSTANCE_DEF,
+            dataAccess.getDatabaseAccess().openConnection();
+            ProcessInstance procInst = dataAccess.getProcessInstance(instanceId);
+            Long docId = procInst.getProcessInstDefId();
+            if (docId == null || docId == 0L) {
+                docId = eventServices.createDocument(Jsonable.class.getName(), OwnerType.PROCESS_INSTANCE_DEF,
                         instanceId, process, PackageCache.getPackage(process.getPackageName()));
-                dataAccess.getDatabaseAccess().openConnection();
-                ProcessInstance procInst = dataAccess.getProcessInstance(instanceId);
-                if (procInst != null) {
-                    String[] fields = new String[] {"COMMENTS"};
-                    String comment = procInst.getComment() == null ? "" : procInst.getComment();
-                    Object[] args = new Object[] {comment + "|HasInstanceDef", null};
-                    dataAccess.updateTableRow("process_instance", "process_instance_id", instanceId, fields, args);
-                }
+                String[] fields = new String[]{"COMMENTS"};
+                String comment = procInst.getComment() == null ? "" : procInst.getComment();
+                Object[] args = new Object[]{comment + "|HasInstanceDef|" + docId, null};
+                dataAccess.updateTableRow("process_instance", "process_instance_id", instanceId, fields, args);
             }
             else {
                 eventServices.updateDocumentContent(docId, process, Jsonable.class.getName(),

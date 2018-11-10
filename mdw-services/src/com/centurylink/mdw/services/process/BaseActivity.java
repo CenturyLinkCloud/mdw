@@ -384,7 +384,10 @@ public abstract class BaseActivity implements GeneralActivity {
     private Process procDef;
     protected Process getProcessDefinition() {
         if (procDef == null) {
-            procDef = ProcessCache.getProcess(processInst.getProcessId());
+            if (processInst.getProcessInstDefId() > 0L)
+                procDef = ProcessCache.getProcessInstanceDefiniton(processInst.getProcessId(), processInst.getProcessInstDefId());
+            if (procDef == null)
+                procDef = ProcessCache.getProcess(processInst.getProcessId());
             if (processInst.isEmbedded())
                 procDef = procDef.getSubProcessVO(new Long(processInst.getComment()));
         }
@@ -394,11 +397,18 @@ public abstract class BaseActivity implements GeneralActivity {
     private Process mainProcDef;
     protected Process getMainProcessDefinition() throws ActivityException {
         if (mainProcDef == null) {
-            Process procdef = ProcessCache.getProcess(processInst.getProcessId());
+            Process procdef = null;
+            if (processInst.getProcessInstDefId() > 0L)
+                procdef = ProcessCache.getProcessInstanceDefiniton(processInst.getProcessId(), processInst.getProcessInstDefId());
+            if (procdef == null)
+                procdef = ProcessCache.getProcess(processInst.getProcessId());
             mainProcDef = procdef;
             if (processInst.isEmbedded()) {
                 Long parentOwnerID = getParentProcessId();
-                mainProcDef = ProcessCache.getProcess(parentOwnerID);
+                if (processInst.getProcessInstDefId() > 0L)
+                    mainProcDef = ProcessCache.getProcessInstanceDefiniton(parentOwnerID, processInst.getProcessInstDefId());
+                if (mainProcDef == null)
+                    mainProcDef = ProcessCache.getProcess(parentOwnerID);
             }
         }
         return mainProcDef;

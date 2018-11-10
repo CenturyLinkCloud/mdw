@@ -492,23 +492,6 @@ public class CommonDataAccess {
         return null;
     }
 
-    public Document getDocument(String ownerType, Long ownerId) throws SQLException {
-        String query = "select DOCUMENT_ID from DOCUMENT where OWNER_TYPE = ? and OWNER_ID = ?";
-        try {
-            db.openConnection();
-            Object[] args = { ownerType, ownerId };
-            ResultSet rs = db.runSelect(query, args);
-            if (rs.next()) {
-                Long documentId = rs.getLong("DOCUMENT_ID");
-                return documentId == null ? null : loadDocument(documentId, false);
-            }
-        }
-        finally {
-            db.closeConnection();
-        }
-        return null;
-    }
-
     public Document loadDocument(Long documentId, boolean forUpdate)
             throws SQLException {
         String query = "select CREATE_DT, MODIFY_DT, DOCUMENT_TYPE, OWNER_TYPE, OWNER_ID " +
