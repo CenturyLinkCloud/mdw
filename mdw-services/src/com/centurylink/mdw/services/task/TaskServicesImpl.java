@@ -172,21 +172,28 @@ public class TaskServicesImpl implements TaskServices {
     throws DataAccessException {
         TaskList filteredList = new TaskList();
         List<TaskInstance> taskInstances = new ArrayList<TaskInstance>();
+        Process process = null;
+ //       if (processInstance.getProcessInstDefId() > 0L)
+ //           process = ProcessCache.getProcessInstanceDefiniton(processInstance.getProcessId(), processInstance.getProcessInstDefId());
+ //       if (process == null)
+            process = ProcessCache.getProcess(processInstance.getProcessId());
         for (TaskInstance taskInstance : taskList.getItems()) {
-            Process process = ProcessCache.getProcess(processInstance.getProcessId());
             for (Long activityInstanceId : activityInstanceIds) {
+                ProcessInstance procInstTemp = processInstance;
                 ActivityInstance activityInstance = processInstance.getActivity(activityInstanceId);
                 if (activityInstance == null && processInstance.getSubprocessInstances() != null) {
                     for (ProcessInstance subproc : processInstance.getSubprocessInstances()) {
                         activityInstance = subproc.getActivity(activityInstanceId);
-                        if (activityInstance != null)
+                        if (activityInstance != null) {
+                            procInstTemp = subproc;
                             break;
+                        }
                     }
                 }
                 if (activityInstance != null) {
                     Long activityId = activityInstance.getActivityId();
                     Long workTransInstId = taskInstance.getSecondaryOwnerId();
-                    for (TransitionInstance transitionInstance : processInstance.getTransitions()) {
+                    for (TransitionInstance transitionInstance : procInstTemp.getTransitions()) {
                         if (transitionInstance.getTransitionInstanceID().equals(workTransInstId)) {
                             Long transitionId = transitionInstance.getTransitionID();
                             Transition workTrans = process.getTransition(transitionId);

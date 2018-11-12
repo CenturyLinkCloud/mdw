@@ -26,8 +26,7 @@ import java.util.Map;
 
 import javax.ws.rs.Path;
 
-import com.centurylink.mdw.model.workflow.*;
-import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.constant.OwnerType;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,6 +49,12 @@ import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.LinkedProcessInstance;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.ProcessCount;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.ProcessList;
+import com.centurylink.mdw.model.workflow.ProcessRun;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ProcessServices;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -263,6 +268,10 @@ public class Processes extends JsonRestService implements JsonExportable {
                         // retrieving summary for activity instance
                         if (processList.getCount() == 0)
                             throw new ServiceException(ServiceException.NOT_FOUND, "Process instance not found: " + query);
+                        else if (OwnerType.MAIN_PROCESS_INSTANCE.equals(processList.getProcesses().get(0).getOwner())) {
+                            return getSummaryJson(workflowServices.getProcess(processList.getProcesses().get(0).getOwnerId(), true));
+                         //   json.put("retrieveDate", StringHelper.serviceDateToString(DatabaseAccess.getDbDate()));
+                        }
                         return getSummaryJson(processList.getProcesses().get(0));
                     }
                     else {
