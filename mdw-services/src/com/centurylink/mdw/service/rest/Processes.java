@@ -270,7 +270,6 @@ public class Processes extends JsonRestService implements JsonExportable {
                             throw new ServiceException(ServiceException.NOT_FOUND, "Process instance not found: " + query);
                         else if (OwnerType.MAIN_PROCESS_INSTANCE.equals(processList.getProcesses().get(0).getOwner())) {
                             return getSummaryJson(workflowServices.getProcess(processList.getProcesses().get(0).getOwnerId(), true));
-                         //   json.put("retrieveDate", StringHelper.serviceDateToString(DatabaseAccess.getDbDate()));
                         }
                         return getSummaryJson(processList.getProcesses().get(0));
                     }
