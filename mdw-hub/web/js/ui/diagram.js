@@ -567,13 +567,32 @@ diagramMod.factory('Diagram',
   Diagram.prototype.addStep = function(impl, x, y) {
     var implementor = this.getImplementor(impl);
     var step = Step.create(this, this.genId(this.steps, 'activity'), implementor, x, y);
-    this.process.activities.push(step.activity);
-    this.steps.push(step);
+    var hoverObj = this.getHoverObj(x, y);
+    if (hoverObj && hoverObj.isSubflow) {
+      hoverObj.subprocess.activities.push(step.activity);
+      hoverObj.steps.push(step);
+    }
+    else {
+      this.process.activities.push(step.activity);
+      this.steps.push(step);
+    }
   };
 
   Diagram.prototype.addLink = function(from, to) {
     var link = Link.create(this, this.genId(this.links, 'transition'), from, to);
-    this.links.push(link);
+    var destSubflow = null;
+    if (this.subflows) {
+      for (var i = 0; i < this.subflows.length; i++) {
+        if (this.subflows[i].get(to.activity.id))
+          destSubflow = this.subflows[i];
+      }
+    }
+    if (destSubflow) {
+      destSubflow.links.push(link);
+    }
+    else {
+      this.links.push(link);
+    }
   };
 
   Diagram.prototype.addSubflow = function(type, x, y) {
@@ -1296,22 +1315,27 @@ diagramMod.factory('Diagram',
         return subflow;
       if (subflow.isHover(x, y)) {
         for (j = 0; j < subflow.links.length; j++) {
-          if (subflow.links[j].isHover(x, y))
+          if (subflow.links[j].isHover(x, y)) {
             return subflow.links[j];
+          }
         }
         for (var j = 0; j < subflow.steps.length; j++) {
-          if (subflow.steps[j].isHover(x, y))
+          if (subflow.steps[j].isHover(x, y)) {
             return subflow.steps[j];
+          }
         }
+        return subflow;
       }
     }
     for (i = 0; i < this.links.length; i++) {
-      if (this.links[i].isHover(x, y))
+      if (this.links[i].isHover(x, y)) {
         return this.links[i];
+      }
     }
     for (var i = 0; i < this.steps.length; i++) {
-      if (this.steps[i].isHover(x, y))
+      if (this.steps[i].isHover(x, y)) {
         return this.steps[i];
+      }
     }
     for (i = 0; i < this.notes.length; i++) {
       if (this.notes[i].isHover(x, y))

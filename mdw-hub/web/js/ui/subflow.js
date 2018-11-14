@@ -16,7 +16,7 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
 
   Subflow.BOX_OUTLINE_COLOR = '#337ab7';
   Subflow.HIT_WIDTH = 7;
-  
+
   Subflow.create = function(diagram, idNum, startActivityId, startTransitionId, type, x, y) {
 
     var subprocess = Subflow.newSubprocess(diagram, idNum, type, x, y);
