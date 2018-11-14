@@ -56,7 +56,8 @@ task zipAssetPackages {
             include "${pkgName}/**"
             doLast {
                 ant.zip(destfile: "../${mdwAssetOutputDir}/${pkgCat}-${mdwVersion}.zip") {
-                    fileset(dir: "../${mdwAssetRoot}", includes: "${pkgName}/**", defaultexcludes: "no", excludes: "com/centurylink/mdw/node/node_modules/")
+                    fileset(dir: "../${mdwAssetRoot}", includes: "${pkgName}/**", defaultexcludes: "no", 
+                            excludes: "com/centurylink/mdw/node/node_modules/,**/build/,**/.gradle/")
                 }
             }
         }
