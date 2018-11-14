@@ -80,7 +80,7 @@ public class EventServicesImpl implements EventServices {
      * Method that creates the event log based on the passed in params
      *
      * @param pEventName
-     * @param pEventCat
+     * @param pEventCategory
      * @param pEventSource
      * @param pEventOwner
      * @param pEventOwnerId
@@ -152,7 +152,12 @@ public class EventServicesImpl implements EventServices {
                 edao.updateVariableInstance(varInst);
             } else {
                 if (value != null) {
-                    Process process = ProcessCache.getProcess(edao.getProcessInstance(procInstId).getProcessId());
+                    ProcessInstance procInst = edao.getProcessInstance(procInstId);
+                    Process process = null;
+                    if (procInst.getProcessInstDefId() > 0L)
+                        process = ProcessCache.getProcessInstanceDefiniton(procInst.getProcessId(), procInst.getProcessInstDefId());
+                    if (process == null)
+                        process = ProcessCache.getProcess(procInst.getProcessId());
                     Variable variable = process.getVariable(name);
                     if (variable == null) {
                         throw new DataAccessException("Variable " + name + " is not defined for process " + process.getId());
@@ -373,7 +378,7 @@ public class EventServicesImpl implements EventServices {
     /**
      * Returns the ProcessInstance identified by the passed in Id
      *
-     * @param pProcInstId
+     * @param procInstId
      * @return ProcessInstance
      */
     public ProcessInstance getProcessInstance(Long procInstId)
@@ -864,7 +869,13 @@ public class EventServicesImpl implements EventServices {
         if (processInst.isEmbedded()) {
             processInst = getProcessInstance(processInst.getOwnerId());
         }
-        Process process = processInst != null ? ProcessCache.getProcess(processInst.getProcessId()) : null;
+        Process process = null;
+        if (processInst != null) {
+            if (processInst.getProcessInstDefId() > 0L)
+                process = ProcessCache.getProcessInstanceDefiniton(processInst.getProcessId(), processInst.getProcessInstDefId());
+            if (process == null)
+                process = ProcessCache.getProcess(processInst.getProcessId());
+        }
         return process;
     }
 }

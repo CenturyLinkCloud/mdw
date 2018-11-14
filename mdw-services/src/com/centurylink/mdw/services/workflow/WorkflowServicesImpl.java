@@ -351,7 +351,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     public Map<String,Value> getProcessValues(Long instanceId, boolean includeEmpty) throws ServiceException {
         ProcessRuntimeContext runtimeContext = getContext(instanceId);
         Map<String,Value> values = new HashMap<String,Value>();
-        Map<String,Variable> varDefs = getVariableDefinitions(runtimeContext.getProcessId());
+        Map<String,Variable> varDefs = getVariableDefinitions(runtimeContext.getProcess().getVariables());
 
         Map<String,Object> variables = runtimeContext.getVariables();
         if (variables != null) {
@@ -389,6 +389,15 @@ public class WorkflowServicesImpl implements WorkflowServices {
         return varDefs;
     }
 
+    protected Map<String,Variable> getVariableDefinitions(List<Variable> varList) {
+        Map<String,Variable> varDefs = new HashMap<String,Variable>();
+        if (varList != null) {
+            for (Variable var : varList)
+                varDefs.put(var.getName(), var);
+        }
+        return varDefs;
+    }
+
     public Value getProcessValue(Long instanceId, String name) throws ServiceException {
         ProcessRuntimeContext runtimeContext = getContext(instanceId);
         Variable var = runtimeContext.getProcess().getVariable(name);
@@ -406,7 +415,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
         if (stringVal == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "No value '" + name + "' found for instance: " + instanceId);
-        Variable varDef = getVariableDefinitions(runtimeContext.getProcessId()).get(name);
+        Variable varDef = getVariableDefinitions(runtimeContext.getProcess().getVariables()).get(name);
         Value value;
         if (varDef != null)
             value = varDef.toValue();
@@ -418,7 +427,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public ProcessRuntimeContext getContext(Long instanceId) throws ServiceException {
         ProcessInstance instance = getProcess(instanceId);
-        Process process = ProcessCache.getProcess(instance.getProcessId());
+        Process process = null;
+        if (instance.getProcessInstDefId() > 0L)
+            process = ProcessCache.getProcessInstanceDefiniton(instance.getProcessId(), instance.getProcessInstDefId());
+        if (process == null)
+            process = ProcessCache.getProcess(instance.getProcessId());
         Package pkg = PackageCache.getProcessPackage(instance.getProcessId());
         if (process == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found for id: " + instance.getProcessId());
