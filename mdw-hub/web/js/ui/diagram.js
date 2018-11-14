@@ -13,7 +13,7 @@ diagramMod.factory('Diagram',
     this.process = process;
     this.implementors = implementors;
     this.imgBase = imgBase;
-    this.editable = editable;
+    this.editable = editable && editable.toString() === 'true';
     this.instance = instance;
     this.workflowType = 'process';
     this.isDiagram = true;
@@ -27,7 +27,7 @@ diagramMod.factory('Diagram',
       else
         this.activityId = activity;
     }
-    this.instanceEdit = instanceEdit;
+    this.instanceEdit = instanceEdit && instanceEdit.toString() === 'true';
   };
 
   Diagram.prototype = new Shape();

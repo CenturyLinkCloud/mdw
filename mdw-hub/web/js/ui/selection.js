@@ -102,13 +102,19 @@ selectionMod.factory('Selection', ['mdw', function(mdw) {
       var selObj = this.getSelectObj();
       var id = selObj.workflowItem ? selObj.workflowItem.id : null;
       if (id && typeof id === 'string') {
-        this.setSelectObj(this.diagram.get(id));
-        if (!this.getSelectObj()) {
-          for (var i = 0; i < this.diagram.subflows.length; i++) {
-            this.setSelectObj(this.diagram.subflows[i].get(id));
-            if (this.getSelectObj())
-              break;
+        var obj = this.diagram.get(id);
+        if (obj) {
+          this.setSelectObj(obj);
+          if (!this.getSelectObj()) {
+            for (var i = 0; i < this.diagram.subflows.length; i++) {
+              this.setSelectObj(this.diagram.subflows[i].get(id));
+              if (this.getSelectObj())
+                break;
+            }
           }
+        }
+        else {
+          this.setSelectObj(this.diagram.label);
         }
       }
       else {

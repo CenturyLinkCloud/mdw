@@ -32,8 +32,13 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       widget.configurator = this;
 
       var diagram = this.diagramObj.diagram;
-      if (!diagram.editable || !diagram.isInstanceEditable(this.workflowObj.id))
+      if (!diagram.editable) {
         widget.readonly = true;
+      }
+      else if (diagram.instanceEdit) {
+        if (this.tab !== 'Variables' && !diagram.isInstanceEditable(this.workflowObj.id))
+          widget.readonly = true;
+      }
 
       // label
       if (!widget.label)

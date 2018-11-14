@@ -113,7 +113,9 @@ adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$tim
   // for programmatic access
   $scope.closePopover = function() {
     if ($scope.popElem !== null) {
-      $scope.popElem[0].click();
+      if ($scope.popElem[0] && $scope.popElem[0].click) {
+        $scope.popElem[0].click();
+      }
       $scope.popElem = null;
     }
   };
