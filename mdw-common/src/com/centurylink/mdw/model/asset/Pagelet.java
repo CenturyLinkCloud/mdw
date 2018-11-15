@@ -111,17 +111,44 @@ public class Pagelet implements Jsonable {
             private Stack<Widget> widgs = new Stack<>();
             private Map<String,String> widgNameToElem = new HashMap<>();
             private boolean inOpt;
+            private boolean hasParam;
 
             // attributes for workflow project
             public void startElement(String uri, String localName, String name, Attributes attrs)
-            throws SAXException {
+                    throws SAXException {
                 if (name.equals("PAGELET")) {
                     for (int i = 0; i < attrs.getLength(); i++) {
                         setAttribute(attrs.getQName(i).toLowerCase(), attrs.getValue(i));
                     }
                 }
                 else if (name.equals("OPTION")) {
-                    inOpt = true;
+                    Map<String,String> attrMap = new HashMap<>();
+                    for (int i = 0; i < attrs.getLength(); i++) {
+                        attrMap.put(attrs.getQName(i).toLowerCase(), attrs.getValue(i));
+                    }
+                    if (!attrMap.containsKey("parameter"))
+                        inOpt = true;
+                    else {
+                        hasParam = true;
+                        String widgName = attrMap.get("parameter");
+                        String translatedType;
+                        if (attrMap.size() == 1) {
+                            translatedType = "text";
+                            attrMap.put("vw" , "100");
+                        }
+                        else {
+                            translatedType = translateType(widgName, attrMap);
+                        }
+                        Widget widget = new Widget(widgName, translatedType);
+                        attrMap.put("label" , widgName);
+                        widgNameToElem.put(widget.getName(), name);
+                        if (widgs.isEmpty())
+                            widgets.add(widget);
+                        else
+                            widgs.peek().addWidget(widget);
+                        widget.setAttributes(attrMap);
+                        widgs.push(widget);
+                    }
                 }
                 else {
                     Map<String,String> attrsMap = new HashMap<>();
@@ -145,7 +172,7 @@ public class Pagelet implements Jsonable {
 
             @Override
             public void endElement(String uri, String localName, String name) throws SAXException {
-                if (name.equals("OPTION")) {
+                if (name.equals("OPTION") && this.inOpt) {
                     inOpt = false;
                 }
                 else {
@@ -162,6 +189,14 @@ public class Pagelet implements Jsonable {
                 if (!widgs.isEmpty()) {
                     if (inOpt) {
                         widgs.peek().addOption(new String(ch).substring(start, start + length).trim());
+                    }
+                    else if (hasParam) {
+                        String option = new String(ch).substring(start, start + length).trim();
+                        if (!option.isEmpty()) {
+                            widgets.get(widgets.size() - 1).addOption(option);
+                            widgs.peek().setAttribute("parentValue", option);
+                        }
+                        hasParam = false;
                     }
                     else if (widgs.peek().getName() == null) {
                         widgs.peek().setName(new String(ch).substring(start, start + length).trim());
@@ -320,6 +355,8 @@ public class Pagelet implements Jsonable {
 
         private String type;
         public String getType() { return type; }
+        public void setType(String type) { this.type = type; }
+
 
         private String name;
         public String getName() { return name; }
