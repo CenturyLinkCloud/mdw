@@ -409,7 +409,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                 throw new IOException("Unable to create metadata directory under: " + pkgDir);
         }
 
-        String pkgContent = new YamlBuilder(packageVO.getJson(false)).toString();
+        String pkgContent = new YamlBuilder(packageVO.getJson()).toString();
 
         write(pkgContent.getBytes(), pkgDir.getMetaFile());
 
@@ -505,7 +505,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         asset.setRevisionComment(assetFile.getRevision().getComment());
         asset.setRawFile(assetFile);
         if (deep) {
-            asset.setRaw(true);
             // do not load jar assets into memory
             if (!Asset.excludedFromMemoryCache(assetFile.getName()))
                 asset.setRawContent(read(assetFile));

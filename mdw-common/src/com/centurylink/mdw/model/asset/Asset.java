@@ -15,24 +15,13 @@
  */
 package com.centurylink.mdw.model.asset;
 
+import com.centurylink.mdw.model.attribute.Attribute;
+
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.attribute.Attribute;
-import com.centurylink.mdw.util.MiniCrypter;
-
-public class Asset implements Comparable<Asset>, Jsonable {
+public class Asset implements Comparable<Asset> {
 
     public static final String GROOVY = "GROOVY";
     public static final String KOTLIN = "KOTLIN";
@@ -75,8 +64,6 @@ public class Asset implements Comparable<Asset>, Jsonable {
     public static final String YAML = "YAML";
     public static final String TASK = "TASK";
     public static final String MARKDOWN = "MARKDOWN";
-    public static final String GENERAL_ALPHA = "GENERAL_ALPHA";
-    public static final String GENERAL_BINARY = "GENERAL_BINARY";
 
     public static final String[] FORMATS = {
         GROOVY,
@@ -117,9 +104,7 @@ public class Asset implements Comparable<Asset>, Jsonable {
         POSTMAN,
         FEATURE,
         YAML,
-        TASK,
-        GENERAL_ALPHA,
-        GENERAL_BINARY
+        TASK
     };
 
     private static Map<String,String> contentTypes;
@@ -138,7 +123,6 @@ public class Asset implements Comparable<Asset>, Jsonable {
     private String ownerType;
     private String packageName;
     private String revisionComment;
-    private boolean raw;
     private File rawFile;
 
     public Asset() {
@@ -164,7 +148,6 @@ public class Asset implements Comparable<Asset>, Jsonable {
         this.loadDate = cloneFrom.loadDate;
         this.packageName = cloneFrom.packageName;
         this.revisionComment = cloneFrom.revisionComment;
-        this.raw = cloneFrom.raw;
         this.rawFile = cloneFrom.rawFile;
     }
 
@@ -190,13 +173,6 @@ public class Asset implements Comparable<Asset>, Jsonable {
         this.content = string == null ? null : string.getBytes();
     }
 
-    public boolean isRaw() {
-        return raw;
-    }
-    public void setRaw(boolean raw) {
-        this.raw = raw;
-    }
-
     public byte[] getRawContent() {
         return content;
     }
@@ -207,7 +183,6 @@ public class Asset implements Comparable<Asset>, Jsonable {
     public File getRawFile() {
         return rawFile;
     }
-
     public void setRawFile(File rawFile) {
         this.rawFile = rawFile;
     }
@@ -306,26 +281,7 @@ public class Asset implements Comparable<Asset>, Jsonable {
         }
     }
 
-    public static byte[] decode(String inputString) {
-        return MiniCrypter.decodeAlpha(inputString);
-    }
-
-    public static String encode(byte[] inputBytes) {
-        return MiniCrypter.encodeAlpha(inputBytes);
-    }
-
-    public byte[] getContent() {
-        if (content == null)
-            return null;
-        else if (isBinary()) {
-            if (isRaw())
-                return content;
-            else
-                return decode(getStringContent());
-        }
-        else
-            return content;
-    }
+    public byte[] getContent() { return content; }
 
     public boolean isEmpty() {
         return content == null || content.length == 0;
@@ -334,10 +290,7 @@ public class Asset implements Comparable<Asset>, Jsonable {
     public String getContentType() {
         String type = getContentType(language);
         if (type == null) {
-            if (isBinary())
-                return "application/octet-stream";
-            else
-                return "text/plain";
+            return "application/octet-stream";
         }
         return type;
     }
@@ -384,18 +337,12 @@ public class Asset implements Comparable<Asset>, Jsonable {
                 || format.equals(XLSX)
                 || format.equals(EXCEL_2007)
                 || format.equals(MS_WORD)
-                || format.equals(JAR)
-                || format.equals(GENERAL_BINARY);
-    }
-
-    public boolean isGeneralBinary() {
-        return language != null && language.equals(GENERAL_BINARY);
+                || format.equals(JAR);
     }
 
     public boolean isExcel() {
         return language != null && language.equals(EXCEL);
     }
-
     public boolean isExcel2007() {
         return language != null && language.equals(EXCEL_2007);
     }
@@ -687,51 +634,6 @@ public class Asset implements Comparable<Asset>, Jsonable {
         if (lang == null)
             lang = fileExtension.toUpperCase().substring(1);
         return lang;
-    }
-
-    /**
-     * Only for VCS Assets.
-     */
-    public Asset(JSONObject json) throws JSONException {
-        if (json.has("name")) {
-            this.name = json.getString("name");
-            this.language = getFormat(name);
-        }
-        if (json.has("version"))
-            this.version = parseVersion(json.getString("version"));
-        if (json.has("content"))
-            this.setStringContent(json.getString("content"));
-    }
-
-    /**
-     * JSON name = getName(), so not included.
-     */
-    public JSONObject getJson() throws JSONException {
-        JSONObject json = create();
-        json.put("version", getVersionString());
-        if (isBinary()) {
-            if (excludedFromMemoryCache(getName())) {
-                try {
-                    if (getRawFile() != null)
-                      setRawContent(Files.readAllBytes(Paths.get(getRawFile().getPath())));
-                }
-                catch (IOException ex) {
-                    throw new JSONException(ex);
-                }
-            }
-            if (getContent() != null)
-                json.put("content", encode(getContent()));
-        }
-        else {
-            if (getStringContent() != null)
-                json.put("content", getStringContent());
-        }
-
-        return json;
-    }
-
-    public String getJsonName() {
-        return getName();
     }
 
     /**

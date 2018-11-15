@@ -72,7 +72,8 @@ public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
         if (isImage())
             return true;
         String ext = getExtension();
-        return "xlsx".equals(ext) || "word".equals(ext) || "jar".equals(ext);
+        return "xlsx".equals(ext) || "docx".equals(ext) || "jar".equals(ext) || "class".equals(ext)
+            || "zip".equals(ext) || "eot".equals(ext) || "ttf".equals(ext) || "woff".equals(ext) || "woof2".equals(ext);
     }
 
     /**
@@ -80,7 +81,7 @@ public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
      */
     public boolean isImage() {
         String ext = getExtension();
-        return "png".equals(ext) || "jpg".equals(ext) || "gif".equals(ext);
+        return "png".equals(ext) || "jpg".equals(ext) || "gif".equals(ext) || "svg".equals(ext);
     }
 
     public boolean isMarkdown() {
