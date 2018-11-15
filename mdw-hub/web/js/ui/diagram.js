@@ -540,7 +540,7 @@ diagramMod.factory('Diagram',
   };
 
   // Whether the obj can be edited at instance level.
-  // Cannot have instances and must be reachable downstream of a currently paused activity.
+  // Cannot have instances and (TODO) must be reachable downstream of a currently paused activity.
   Diagram.prototype.isInstanceEditable = function(id) {
     if (this.instanceEdit) {
       var obj = this.get(id);
@@ -551,9 +551,13 @@ diagramMod.factory('Diagram',
             break;
         }
       }
-      if (obj && (!obj.instances || !obj.instances.length)) {
-        // TODO: must be reachable downstream of a currently paused activity
-        return true;
+      if (obj) {
+        if (obj.isSubflow && obj.instances && obj.instances.length === 1 && obj.instances[0].status === 'In Progress') {
+          return true;
+        }
+        if (!obj.instances || !obj.instances.length) {
+          return true;
+        }
       }
     }
   };
