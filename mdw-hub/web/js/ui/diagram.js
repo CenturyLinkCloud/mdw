@@ -544,6 +544,13 @@ diagramMod.factory('Diagram',
   Diagram.prototype.isInstanceEditable = function(id) {
     if (this.instanceEdit) {
       var obj = this.get(id);
+      if (!obj && this.subflows) {
+        for (let i = 0; i < this.subflows.length; i++) {
+          obj = this.subflows[i].get(id);
+          if (obj)
+            break;
+        }
+      }
       if (obj && (!obj.instances || !obj.instances.length)) {
         // TODO: must be reachable downstream of a currently paused activity
         return true;
