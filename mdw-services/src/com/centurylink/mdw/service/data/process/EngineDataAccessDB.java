@@ -317,7 +317,10 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             args = new Object[2];
             args[0] = docId;
             args[1] = doc.getContent(pkg);
-            db.runUpdate(query, args);
+            if (db.isOracle() && "".equals(args[1]))
+                return docId; // empty string same as null in oracle
+            else
+                db.runUpdate(query, args);
         }
         return docId;
     }
