@@ -141,7 +141,7 @@ requestMod.controller('RequestController', ['$scope', '$location', '$route', '$r
       }
     }
     else {
-      trimmed = $scope.request.content.trim();
+      trimmed = $scope.request.content ? $scope.request.content.trim() : '';
       if (trimmed.startsWith('{')) {
         $scope.request.format = 'json';
         try {
