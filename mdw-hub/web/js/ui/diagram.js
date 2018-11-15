@@ -566,7 +566,13 @@ diagramMod.factory('Diagram',
 
   Diagram.prototype.addStep = function(impl, x, y) {
     var implementor = this.getImplementor(impl);
-    var step = Step.create(this, this.genId(this.steps, 'activity'), implementor, x, y);
+    var steps = this.steps.slice(0);
+    if (this.subflows) {
+      for (let i = 0; i < this.subflows.length; i++) {
+        steps = steps.concat(this.subflows[i].steps);
+      }
+    }
+    var step = Step.create(this, this.genId(steps, 'activity'), implementor, x, y);
     var hoverObj = this.getHoverObj(x, y);
     if (hoverObj && hoverObj.isSubflow) {
       hoverObj.subprocess.activities.push(step.activity);
@@ -579,7 +585,13 @@ diagramMod.factory('Diagram',
   };
 
   Diagram.prototype.addLink = function(from, to) {
-    var link = Link.create(this, this.genId(this.links, 'transition'), from, to);
+    var links = this.links.slice(0);
+    if (this.subflows) {
+      for (let i = 0; i < this.subflows.length; i++) {
+        links = links.concat(this.subflows[i].links);
+      }
+    }
+    var link = Link.create(this, this.genId(links, 'transition'), from, to);
     var destSubflow = null;
     if (this.subflows) {
       for (var i = 0; i < this.subflows.length; i++) {
@@ -636,11 +648,16 @@ diagramMod.factory('Diagram',
     if (idx >= 0) {
       this.process.activities.splice(idx, 1);
       this.steps.splice(idx, 1);
+      for (let i = 0; i < this.links.length; i++) {
+        var link = this.links[i];
+        if (link.to.activity.id === step.activity.id) {
+          this.deleteLink(link);
+        }
+      }
     }
-    for (let i = 0; i < this.links.length; i++) {
-      var link = this.links[i];
-      if (link.to.activity.id === step.activity.id) {
-        this.deleteLink(link);
+    else if (this.subflows) {
+      for (let i = 0; i < this.subflows.length; i++) {
+        this.subflows[i].deleteStep(step);
       }
     }
   };
@@ -665,6 +682,11 @@ diagramMod.factory('Diagram',
       }
       if (tidx >= 0) {
         link.from.activity.transitions.splice(tidx, 1);
+      }
+    }
+    else if (this.subflows) {
+      for (let i = 0; i < this.subflows.length; i++) {
+        this.subflows[i].deleteLink(link);
       }
     }
   };
