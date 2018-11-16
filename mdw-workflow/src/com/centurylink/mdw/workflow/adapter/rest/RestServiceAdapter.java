@@ -38,6 +38,7 @@ import com.centurylink.mdw.workflow.adapter.http.HttpServiceAdapter;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.Proxy;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -59,11 +60,15 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
         return openConnection(null, 0);
     }
 
+    public Object openConnection(String proxyHost, int proxyPort) throws ConnectionException {
+        return openConnection(proxyHost, proxyPort, null);
+    }
+
     /**
      * Returns an HttpConnection based on the configured endpoint, which
      * includes the resource path. Override for HTTPS or other connection type.
      */
-    public Object openConnection(String proxyHost, int proxyPort) throws ConnectionException {
+    public Object openConnection(String proxyHost, int proxyPort, Proxy.Type proxyType) throws ConnectionException {
         try {
             String endpointUri = getEndpointUri();
             if (endpointUri == null)
@@ -95,6 +100,8 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                 httpConnection.setProxyHost(proxyHost);
             if (proxyPort > 0)
                 httpConnection.setProxyPort(proxyPort);
+            if (proxyType != null)
+                httpConnection.setProxyType(proxyType);
 
             httpConnection.open();
             return httpConnection;

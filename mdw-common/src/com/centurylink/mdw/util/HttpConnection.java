@@ -3,6 +3,8 @@
  */
 package com.centurylink.mdw.util;
 
+import org.apache.commons.codec.binary.Base64;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,8 +15,6 @@ import java.net.Proxy;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * Wraps an HttpURLConnection to support non-standard methods like PATCH.
@@ -68,14 +68,14 @@ public class HttpConnection {
     public int getProxyPort() { return proxyPort; }
     public void setProxyPort(int port) { this.proxyPort = port; }
 
-    private String proxyProtocol = "http";
-    public String getProxyProtocol() { return proxyProtocol; }
-    public void setProxyProtocol(String protocol) { this.proxyProtocol = protocol; }
-
     public void setProxy(String host, int port) {
         this.proxyHost = host;
         this.proxyPort = port;
     }
+
+    private Proxy.Type proxyType = Proxy.Type.SOCKS;
+    public Proxy.Type getProxyType() { return proxyType; }
+    public void setProxyType(Proxy.Type proxyType) { this.proxyType = proxyType; }
 
     private long maxBytes = -1;
     public long getMaxBytes() { return maxBytes; }
@@ -123,7 +123,7 @@ public class HttpConnection {
     public void open() throws IOException {
         if (proxyHost != null) {
             int port = proxyPort == 0 ? url.getPort() : proxyPort;
-            open(new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxyHost, port)));
+            open(new Proxy(proxyType, new InetSocketAddress(proxyHost, port)));
         }
         else {
             connection = (HttpURLConnection)url.openConnection();

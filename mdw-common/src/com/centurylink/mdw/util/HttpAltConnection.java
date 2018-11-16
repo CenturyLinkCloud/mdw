@@ -41,6 +41,10 @@ public class HttpAltConnection extends HttpConnection {
     private HttpRequestBase methodRequest;
     private CloseableHttpResponse httpResponse;
 
+    private String proxyProtocol = "http";
+    public String getProxyProtocol() { return proxyProtocol; }
+    public void setProxyProtocol(String protocol) { this.proxyProtocol = protocol; }
+
     public HttpAltConnection(URL url) {
         super(url);
     }
