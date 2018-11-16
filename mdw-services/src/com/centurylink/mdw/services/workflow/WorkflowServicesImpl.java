@@ -1460,6 +1460,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 eventServices.updateDocumentContent(docId, process, Jsonable.class.getName(),
                         PackageCache.getPackage(process.getPackageName()));
             }
+            // Update any embedded Sub processes to indicate they have instance definition
+            for (ProcessInstance inst : dataAccess.getProcessInstances(procInst.getProcessId(), OwnerType.MAIN_PROCESS_INSTANCE, procInst.getId())) {
+                String[] fields = new String[]{"COMMENTS"};
+                String comment = inst.getComment() == null ? "" : inst.getComment();
+                Object[] args = new Object[]{comment + "|HasInstanceDef|" + docId, null};
+                dataAccess.updateTableRow("process_instance", "process_instance_id", inst.getId(), fields, args);
+            }
         }
         catch (DataAccessException | SQLException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error creating process instance definition " +

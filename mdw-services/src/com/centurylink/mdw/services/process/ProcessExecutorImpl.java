@@ -183,7 +183,7 @@ class ProcessExecutorImpl {
             var.setStringValue((String)value);
         else
             var.setData(value);
-        if (pi.isEmbedded() || !pi.getProcessId().equals(processVO.getId()))
+        if (pi.isEmbedded() || (!pi.getProcessId().equals(processVO.getId()) && pi.getProcessInstDefId() <= 0))
             edao.createVariableInstance(var, pi.getOwnerId());
         else
             edao.createVariableInstance(var, pi.getId());
@@ -308,7 +308,10 @@ class ProcessExecutorImpl {
                 Process parentProcdef = ProcessCache.getProcess(parentPi.getProcessId());
                 processVO = parentProcdef.getSubProcessVO(processId);
                 pi = new ProcessInstance(parentPi.getProcessId(), processVO.getName());
-                pi.setComment(processId.toString());
+                String comment = processId.toString();
+                if (parentPi.getProcessInstDefId() > 0L)  // Indicates instance definition
+                    comment += "|HasInstanceDef|" + parentPi.getProcessInstDefId();
+                pi.setComment(comment);
             } else {
                 processVO = ProcessCache.getProcess(processId);
                 pi = new ProcessInstance(processId, processVO.getName());
@@ -432,10 +435,6 @@ class ProcessExecutorImpl {
             procdef = ProcessCache.getProcessInstanceDefiniton(procinst.getProcessId(), procinst.getProcessInstDefId());
         if (procdef == null)
             procdef = ProcessCache.getProcess(procinst.getProcessId());
-        if (procinst.isEmbedded()) {
-            procinst = edao.getProcessInstance(procinst.getOwnerId());
-            procdef = ProcessCache.getProcess(procinst.getProcessId());
-        }
         return procdef;
     }
 

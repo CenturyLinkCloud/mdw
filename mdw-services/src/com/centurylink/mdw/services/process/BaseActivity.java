@@ -397,19 +397,10 @@ public abstract class BaseActivity implements GeneralActivity {
     private Process mainProcDef;
     protected Process getMainProcessDefinition() throws ActivityException {
         if (mainProcDef == null) {
-            Process procdef = null;
             if (processInst.getProcessInstDefId() > 0L)
-                procdef = ProcessCache.getProcessInstanceDefiniton(processInst.getProcessId(), processInst.getProcessInstDefId());
-            if (procdef == null)
-                procdef = ProcessCache.getProcess(processInst.getProcessId());
-            mainProcDef = procdef;
-            if (processInst.isEmbedded()) {
-                Long parentOwnerID = getParentProcessId();
-                if (processInst.getProcessInstDefId() > 0L)
-                    mainProcDef = ProcessCache.getProcessInstanceDefiniton(parentOwnerID, processInst.getProcessInstDefId());
-                if (mainProcDef == null)
-                    mainProcDef = ProcessCache.getProcess(parentOwnerID);
-            }
+                mainProcDef = ProcessCache.getProcessInstanceDefiniton(processInst.getProcessId(), processInst.getProcessInstDefId());
+            if (mainProcDef == null)
+                mainProcDef = ProcessCache.getProcess(processInst.getProcessId());
         }
         return mainProcDef;
     }
