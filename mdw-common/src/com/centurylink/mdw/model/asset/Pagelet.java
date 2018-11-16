@@ -355,8 +355,6 @@ public class Pagelet implements Jsonable {
 
         private String type;
         public String getType() { return type; }
-        public void setType(String type) { this.type = type; }
-
 
         private String name;
         public String getName() { return name; }
