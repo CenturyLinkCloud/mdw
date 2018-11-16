@@ -63,7 +63,6 @@ public class AssetRefConverter {
             asset.setVersion(Asset.parseVersion(assetRef.getName().substring(endIdx+1)));
             asset.setPackageName(assetRef.getName().substring(0, startIdx-1));
             asset.setLoadDate(new Date());
-            asset.setRaw(true);
             // do not load jar assets into memory
             if (!Asset.excludedFromMemoryCache(asset.getName()))
                 asset.setRawContent(contentBytes);
@@ -112,6 +111,5 @@ public class AssetRefConverter {
             return path;
 
         return getMissingPath(new File(assetLoc.getParent()), assetLoc.getName() + "/" + path);
-
     }
 }

@@ -29,7 +29,6 @@ import com.centurylink.mdw.model.event.ExternalEvent;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.spring.SpringAppContext;
-import com.centurylink.mdw.util.JsonUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.yaml.snakeyaml.Yaml;
@@ -441,61 +440,9 @@ public class Package implements Serializable, Jsonable {
         if (json.has("attributes")) {
             this.attributes = Attribute.getAttributes(json.getJSONObject("attributes"));
         }
-        // many places don't check for null arrays, so we must instantiate
-        this.implementors = new ArrayList<ActivityImplementor>();
-        if (json.has("activityImplementors")) {
-            JSONObject implementorsJson = json.getJSONObject("activityImplementors");
-            for (JSONObject implementorJson : JsonUtil.getJsonObjects(implementorsJson).values())
-                this.implementors.add(new ActivityImplementor(implementorJson));
-        }
-        this.externalEvents = new ArrayList<ExternalEvent>();
-        if (json.has("eventHandlers")) {
-            JSONObject eventHandlersJson = json.getJSONObject("eventHandlers");
-            Map<String, JSONObject> objects = JsonUtil.getJsonObjects(eventHandlersJson);
-            for (String name : objects.keySet()) {
-                ExternalEvent externalEvent = new ExternalEvent(objects.get(name));
-                externalEvent.setEventName(name);
-                this.externalEvents.add(externalEvent);
-            }
-        }
-        this.processes = new ArrayList<Process>();
-        if (json.has("processes")) {
-            JSONObject processesJson = json.getJSONObject("processes");
-            Map<String,JSONObject> objects = JsonUtil.getJsonObjects(processesJson);
-            for (String name : objects.keySet()) {
-                Process process = new Process(objects.get(name));
-                process.setName(name);
-                this.processes.add(process);
-            }
-        }
-        this.assets = new ArrayList<Asset>();
-        if (json.has("assets")) {
-            JSONObject assetsJson = json.getJSONObject("assets");
-            Map<String,JSONObject> objects = JsonUtil.getJsonObjects(assetsJson);
-            for (String name : objects.keySet()) {
-                Asset asset = new Asset(objects.get(name));
-                asset.setName(name);
-                asset.setLanguage(Asset.getFormat(name));
-                this.assets.add(asset);
-            }
-        }
-        this.taskTemplates = new ArrayList<TaskTemplate>();
-        if (json.has("taskTemplates")) {
-            JSONObject taskTemplatesJson = json.getJSONObject("taskTemplates");
-            Map<String,JSONObject> objects = JsonUtil.getJsonObjects(taskTemplatesJson);
-            for (String name : objects.keySet()) {
-                TaskTemplate taskTemplate = new TaskTemplate(objects.get(name));
-                taskTemplate.setName(name);
-                this.taskTemplates.add(taskTemplate);
-            }
-        }
     }
 
     public JSONObject getJson() throws JSONException {
-        return getJson(true);
-    }
-
-    public JSONObject getJson(boolean deep) throws JSONException {
         JSONObject json = create();
         json.put("version", getVersionString());
         json.put("schemaVersion", Asset.formatVersion(getSchemaVersion()));
@@ -504,42 +451,7 @@ public class Package implements Serializable, Jsonable {
         if (attributes != null && !attributes.isEmpty()) {
             json.put("attributes", Attribute.getAttributesJson(attributes, true));
         }
-        if (deep) {
-            // name is not included since it's the JSON name.
-            if (implementors != null && !implementors.isEmpty()) {
-                JSONObject implementorsJson = create();
-                for (ActivityImplementor implementor : implementors)
-                    implementorsJson.put(implementor.getJsonName(), implementor.getJson());
-                json.put("activityImplementors", implementorsJson);
-            }
-            if (externalEvents != null && !externalEvents.isEmpty()) {
-                JSONObject eventHandlersJson = create();
-                for (ExternalEvent eventHandler : externalEvents)
-                    eventHandlersJson.put(eventHandler.getJsonName(), eventHandler.getJson());
-                json.put("eventHandlers", eventHandlersJson);
-            }
-            if (processes != null && !processes.isEmpty()) {
-                JSONObject processesJson = create();
-                for (Process process : processes)
-                    processesJson.put(process.getJsonName(), process.getJson());
-                json.put("processes", processesJson);
-            }
-            if (assets != null && !assets.isEmpty()) {
-                JSONObject assetsJson = create();
-                for (Asset asset : assets)
-                    assetsJson.put(asset.getJsonName(), asset.getJson());
-                json.put("assets", assetsJson);
-            }
-            if (taskTemplates != null && !taskTemplates.isEmpty()) {
-                JSONObject taskTemplatesJson = create();
-                for (TaskTemplate taskTemplate : taskTemplates)
-                    taskTemplatesJson.put(taskTemplate.getJsonName(), taskTemplate.getJson());
-                json.put("taskTemplates", taskTemplatesJson);
-            }
-        }
-        else {
-            json.put("name", getName());
-        }
+        json.put("name", getName());
 
         return json;
     }
