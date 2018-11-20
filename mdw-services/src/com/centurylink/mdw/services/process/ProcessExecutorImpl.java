@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.jms.JMSException;
 import javax.naming.NamingException;
 
+import com.centurylink.mdw.services.*;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
@@ -69,11 +70,6 @@ import com.centurylink.mdw.monitor.OfflineMonitor;
 import com.centurylink.mdw.monitor.ProcessMonitor;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.ProcessCache;
-import com.centurylink.mdw.services.EventException;
-import com.centurylink.mdw.services.OfflineMonitorTrigger;
-import com.centurylink.mdw.services.ProcessException;
-import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.translator.VariableTranslator;
@@ -187,7 +183,7 @@ class ProcessExecutorImpl {
             var.setStringValue((String)value);
         else
             var.setData(value);
-        if (pi.isEmbedded() || !pi.getProcessId().equals(processVO.getId()))
+        if (pi.isEmbedded() || (!pi.getProcessId().equals(processVO.getId()) && pi.getProcessInstDefId() <= 0))
             edao.createVariableInstance(var, pi.getOwnerId());
         else
             edao.createVariableInstance(var, pi.getId());
@@ -312,7 +308,10 @@ class ProcessExecutorImpl {
                 Process parentProcdef = ProcessCache.getProcess(parentPi.getProcessId());
                 processVO = parentProcdef.getSubProcessVO(processId);
                 pi = new ProcessInstance(parentPi.getProcessId(), processVO.getName());
-                pi.setComment(processId.toString());
+                String comment = processId.toString();
+                if (parentPi.getProcessInstDefId() > 0L)  // Indicates instance definition
+                    comment += "|HasInstanceDef|" + parentPi.getProcessInstDefId();
+                pi.setComment(comment);
             } else {
                 processVO = ProcessCache.getProcess(processId);
                 pi = new ProcessInstance(processId, processVO.getName());
@@ -419,7 +418,11 @@ class ProcessExecutorImpl {
     }
 
     protected Process getProcessDefinition(ProcessInstance procinst) {
-        Process procdef = ProcessCache.getProcess(procinst.getProcessId());
+        Process procdef = null;
+        if (procinst.getProcessInstDefId() > 0L)
+            procdef = ProcessCache.getProcessInstanceDefiniton(procinst.getProcessId(), procinst.getProcessInstDefId());
+        if (procdef == null)
+            procdef = ProcessCache.getProcess(procinst.getProcessId());
         if (procinst.isEmbedded())
             procdef = procdef.getSubProcessVO(new Long(procinst.getComment()));
         return procdef;
@@ -427,11 +430,11 @@ class ProcessExecutorImpl {
 
     protected Process getMainProcessDefinition(ProcessInstance procinst)
         throws DataAccessException, SQLException {
-        Process procdef = ProcessCache.getProcess(procinst.getProcessId());
-        if (procinst.isEmbedded()) {
-            procinst = edao.getProcessInstance(procinst.getOwnerId());
+        Process procdef = null;
+        if (procinst.getProcessInstDefId() > 0L)
+            procdef = ProcessCache.getProcessInstanceDefiniton(procinst.getProcessId(), procinst.getProcessInstDefId());
+        if (procdef == null)
             procdef = ProcessCache.getProcess(procinst.getProcessId());
-        }
         return procdef;
     }
 

@@ -15,13 +15,6 @@
  */
 package com.centurylink.mdw.services.event;
 
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
@@ -42,13 +35,9 @@ import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.workflow.Activity;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.TransitionInstance;
-import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.service.data.process.ProcessCache;
@@ -63,6 +52,13 @@ import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
+
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class EventServicesImpl implements EventServices {
 
@@ -84,7 +80,7 @@ public class EventServicesImpl implements EventServices {
      * Method that creates the event log based on the passed in params
      *
      * @param pEventName
-     * @param pEventCat
+     * @param pEventCategory
      * @param pEventSource
      * @param pEventOwner
      * @param pEventOwnerId
@@ -156,7 +152,12 @@ public class EventServicesImpl implements EventServices {
                 edao.updateVariableInstance(varInst);
             } else {
                 if (value != null) {
-                    Process process = ProcessCache.getProcess(edao.getProcessInstance(procInstId).getProcessId());
+                    ProcessInstance procInst = edao.getProcessInstance(procInstId);
+                    Process process = null;
+                    if (procInst.getProcessInstDefId() > 0L)
+                        process = ProcessCache.getProcessInstanceDefiniton(procInst.getProcessId(), procInst.getProcessInstDefId());
+                    if (process == null)
+                        process = ProcessCache.getProcess(procInst.getProcessId());
                     Variable variable = process.getVariable(name);
                     if (variable == null) {
                         throw new DataAccessException("Variable " + name + " is not defined for process " + process.getId());
@@ -377,7 +378,7 @@ public class EventServicesImpl implements EventServices {
     /**
      * Returns the ProcessInstance identified by the passed in Id
      *
-     * @param pProcInstId
+     * @param procInstId
      * @return ProcessInstance
      */
     public ProcessInstance getProcessInstance(Long procInstId)
@@ -868,7 +869,13 @@ public class EventServicesImpl implements EventServices {
         if (processInst.isEmbedded()) {
             processInst = getProcessInstance(processInst.getOwnerId());
         }
-        Process process = processInst != null ? ProcessCache.getProcess(processInst.getProcessId()) : null;
+        Process process = null;
+        if (processInst != null) {
+            if (processInst.getProcessInstDefId() > 0L)
+                process = ProcessCache.getProcessInstanceDefiniton(processInst.getProcessId(), processInst.getProcessInstDefId());
+            if (process == null)
+                process = ProcessCache.getProcess(processInst.getProcessId());
+        }
         return process;
     }
 }

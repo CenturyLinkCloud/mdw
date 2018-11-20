@@ -121,7 +121,7 @@ var activeTableTab = "activeTableTab";
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../../com/centurylink/mdw/camel/CamelRouteAdapter.html" title="class in com.centurylink.mdw.camel">CamelRouteAdapter</a>, <a href="../../../../../com/centurylink/mdw/workflow/adapter/file/FileWriterAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.file">FileWriterAdapter</a>, <a href="../../../../../com/centurylink/mdw/workflow/adapter/db/JdbcSqlAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.db">JdbcSqlAdapter</a>, <a href="../../../../../com/centurylink/mdw/workflow/adapter/jms/JmsAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.jms">JmsAdapter</a>, <a href="../../../../../com/centurylink/mdw/workflow/adapter/ldap/LdapAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.ldap">LdapAdapter</a></dd>
+<dd><a href="../../../../../com/centurylink/mdw/workflow/adapter/file/FileWriterAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.file">FileWriterAdapter</a>, <a href="../../../../../com/centurylink/mdw/workflow/adapter/db/JdbcSqlAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.db">JdbcSqlAdapter</a>, <a href="../../../../../com/centurylink/mdw/workflow/adapter/jms/JmsAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.jms">JmsAdapter</a>, <a href="../../../../../com/centurylink/mdw/workflow/adapter/ldap/LdapAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.ldap">LdapAdapter</a></dd>
 </dl>
 <hr>
 <br>
@@ -327,7 +327,7 @@ implements <a href="../../../../../com/centurylink/mdw/activity/types/AdapterAct
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#getStubResponse-java.lang.String-">getStubResponse</a></span>(java.lang.String&nbsp;requestData)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use <a href="../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#getStubResponse-java.lang.String-"><code>getStubbedResponse</code></a></span></div>
+<div class="block"><span class="deprecationComment">Use <code>getStubbedResponse</code></span></div>
 </div>
 </td>
 </tr>
@@ -811,7 +811,7 @@ implements <a href="../../../../../com/centurylink/mdw/activity/types/AdapterAct
 <h4>getStubResponse</h4>
 <pre>@Deprecated
 protected&nbsp;java.lang.String&nbsp;getStubResponse(java.lang.String&nbsp;requestData)</pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use <a href="../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#getStubResponse-java.lang.String-"><code>getStubbedResponse</code></a></span></div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use <code>getStubbedResponse</code></span></div>
 </li>
 </ul>
 <a name="getStubbedResponse-java.lang.Object-">
@@ -939,7 +939,7 @@ protected&nbsp;java.lang.String&nbsp;getStubResponse(java.lang.String&nbsp;reque
  to the pool.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>connection</code> - </dd>
+<dd><code>conneciton</code> - </dd>
 </dl>
 </li>
 </ul>
@@ -958,6 +958,7 @@ protected&nbsp;java.lang.String&nbsp;getStubResponse(java.lang.String&nbsp;reque
  If logging is desired, extenders should override logMessage().</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>attrs</code> - attributes to be passed to configure the activity.</dd>
 <dd><code>request</code> - request message</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>response message</dd>

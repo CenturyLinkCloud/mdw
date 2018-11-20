@@ -17,7 +17,7 @@ git:
   local.path: ../
   remote.url: https://github.com/CenturyLinkCloud/mdw.git
   branch: master
-  user: anonymous
+#  user: anonymous
 
 temp.dir: ./temp
 

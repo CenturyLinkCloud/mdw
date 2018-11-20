@@ -47,6 +47,7 @@ import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.system.SysInfo;
 import com.centurylink.mdw.model.system.SysInfoCategory;
 import com.centurylink.mdw.model.task.TaskInstance;
+import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.DocumentReference;
@@ -259,14 +260,23 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     @Override
-    public void actionActivity(String activityInstanceId, String action, String completionCode) throws ServiceException {
+    public void actionActivity(Long activityInstanceId, String action, String completionCode, String user) throws ServiceException {
         try {
-            if (action != null && (action.equalsIgnoreCase(Action.Proceed.toString()))){
-                ServiceLocator.getEventServices().skipActivity(null, new Long(activityInstanceId).longValue(), completionCode);
+            UserAction userAction = auditLog(action, UserAction.Entity.ActivityInstance, activityInstanceId, user, completionCode);
+            if (Action.Proceed.toString().equalsIgnoreCase(action)) {
+                ServiceLocator.getEventServices().skipActivity(null, activityInstanceId, completionCode);
             }
-            else if (action != null && (action.equalsIgnoreCase(Action.Retry.toString()))){
-                ActivityInstance activityVo = ServiceLocator.getEventServices().getActivityInstance(new Long(activityInstanceId).longValue());
-                ServiceLocator.getEventServices().retryActivity(activityVo.getActivityId(), new Long(activityInstanceId).longValue());
+            else if (Action.Retry.toString().equalsIgnoreCase(action)) {
+                ActivityInstance activityVo = ServiceLocator.getEventServices().getActivityInstance(activityInstanceId);
+                ServiceLocator.getEventServices().retryActivity(activityVo.getActivityId(), activityInstanceId);
+            }
+            else if (Action.Resume.toString().equalsIgnoreCase(action)) {
+                String eventName = "mdw.Resume-" + activityInstanceId;
+                JSONObject messageJson = new JSONObject();
+                notify(eventName, userAction.getJson().toString(), 0);
+            }
+            else {
+                throw new ServiceException("Unsupported action: '" + action + "' for activity " + activityInstanceId);
             }
         }
         catch (Exception ex) {
@@ -341,7 +351,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     public Map<String,Value> getProcessValues(Long instanceId, boolean includeEmpty) throws ServiceException {
         ProcessRuntimeContext runtimeContext = getContext(instanceId);
         Map<String,Value> values = new HashMap<String,Value>();
-        Map<String,Variable> varDefs = getVariableDefinitions(runtimeContext.getProcessId());
+        Map<String,Variable> varDefs = getVariableDefinitions(runtimeContext.getProcess().getVariables());
 
         Map<String,Object> variables = runtimeContext.getVariables();
         if (variables != null) {
@@ -379,6 +389,15 @@ public class WorkflowServicesImpl implements WorkflowServices {
         return varDefs;
     }
 
+    protected Map<String,Variable> getVariableDefinitions(List<Variable> varList) {
+        Map<String,Variable> varDefs = new HashMap<String,Variable>();
+        if (varList != null) {
+            for (Variable var : varList)
+                varDefs.put(var.getName(), var);
+        }
+        return varDefs;
+    }
+
     public Value getProcessValue(Long instanceId, String name) throws ServiceException {
         ProcessRuntimeContext runtimeContext = getContext(instanceId);
         Variable var = runtimeContext.getProcess().getVariable(name);
@@ -396,7 +415,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
         if (stringVal == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "No value '" + name + "' found for instance: " + instanceId);
-        Variable varDef = getVariableDefinitions(runtimeContext.getProcessId()).get(name);
+        Variable varDef = getVariableDefinitions(runtimeContext.getProcess().getVariables()).get(name);
         Value value;
         if (varDef != null)
             value = varDef.toValue();
@@ -408,7 +427,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public ProcessRuntimeContext getContext(Long instanceId) throws ServiceException {
         ProcessInstance instance = getProcess(instanceId);
-        Process process = ProcessCache.getProcess(instance.getProcessId());
+        Process process = null;
+        if (instance.getProcessInstDefId() > 0L)
+            process = ProcessCache.getProcessInstanceDefiniton(instance.getProcessId(), instance.getProcessInstDefId());
+        if (process == null)
+            process = ProcessCache.getProcess(instance.getProcessId());
         Package pkg = PackageCache.getProcessPackage(instance.getProcessId());
         if (process == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found for id: " + instance.getProcessId());
@@ -1180,7 +1203,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             eventMgr.updateDocumentInfo(docId, type, OwnerType.VARIABLE_INSTANCE, varInst.getInstanceId());
         }
         catch (DataAccessException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error creating document for process: " + procInstId);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error creating document for process: " + procInstId, ex);
         }
     }
 
@@ -1393,6 +1416,83 @@ public class WorkflowServicesImpl implements WorkflowServices {
         if (content == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Template not found: " + template);
         ServiceLocator.getAssetServices().createAsset(assetPath, content);
+    }
+
+    public Process getInstanceDefinition(String assetPath, Long instanceId) throws ServiceException {
+        EngineDataAccessDB dataAccess = new EngineDataAccessDB();
+        try {
+            dataAccess.getDatabaseAccess().openConnection();
+            ProcessInstance procInst = dataAccess.getProcessInstance(instanceId); // We need the processID
+            if (procInst.getProcessInstDefId() > 0L) {
+                Process process = ProcessCache.getProcessInstanceDefiniton(procInst.getProcessId(), procInst.getProcessInstDefId());
+                if (process.getQualifiedName().equals(assetPath)) // Make sure instanceId is for requested assetPath
+                    return process;
+            }
+            return null;
+        }
+        catch (SQLException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error retrieving instance document "
+                    + assetPath + ": " + instanceId);
+        }
+        finally {
+            if (dataAccess.getDatabaseAccess().connectionIsOpen())
+                dataAccess.getDatabaseAccess().closeConnection();
+        }
+    }
+
+    public void saveInstanceDefinition(String assetPath, Long instanceId, Process process)
+            throws ServiceException {
+        EngineDataAccessDB dataAccess = new EngineDataAccessDB();
+        try {
+            EventServices eventServices = ServiceLocator.getEventServices();
+            dataAccess.getDatabaseAccess().openConnection();
+            ProcessInstance procInst = dataAccess.getProcessInstance(instanceId);
+            Long docId = procInst.getProcessInstDefId();
+            if (docId == null || docId == 0L) {
+                docId = eventServices.createDocument(Jsonable.class.getName(), OwnerType.PROCESS_INSTANCE_DEF,
+                        instanceId, process, PackageCache.getPackage(process.getPackageName()));
+                String[] fields = new String[]{"COMMENTS"};
+                String comment = procInst.getComment() == null ? "" : procInst.getComment();
+                Object[] args = new Object[]{comment + "|HasInstanceDef|" + docId, null};
+                dataAccess.updateTableRow("process_instance", "process_instance_id", instanceId, fields, args);
+            }
+            else {
+                eventServices.updateDocumentContent(docId, process, Jsonable.class.getName(),
+                        PackageCache.getPackage(process.getPackageName()));
+            }
+            // Update any embedded Sub processes to indicate they have instance definition
+            for (ProcessInstance inst : dataAccess.getProcessInstances(procInst.getProcessId(), OwnerType.MAIN_PROCESS_INSTANCE, procInst.getId())) {
+                String[] fields = new String[]{"COMMENTS"};
+                String comment = inst.getComment() == null ? "" : inst.getComment();
+                Object[] args = new Object[]{comment + "|HasInstanceDef|" + docId, null};
+                dataAccess.updateTableRow("process_instance", "process_instance_id", inst.getId(), fields, args);
+            }
+        }
+        catch (DataAccessException | SQLException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error creating process instance definition " +
+                    assetPath + ": " + instanceId, ex);
+        }
+        finally {
+            if (dataAccess.getDatabaseAccess().connectionIsOpen())
+                dataAccess.getDatabaseAccess().closeConnection();
+        }
+    }
+
+    protected UserAction auditLog(String action, UserAction.Entity entity, Long entityId, String user, String completionCode) throws ServiceException {
+        UserAction userAction = new UserAction(user, UserAction.getAction(action), entity, entityId, null);
+        userAction.setSource("Workflow Services");
+        userAction.setDestination(completionCode);
+        if (userAction.getAction().equals(UserAction.Action.Other)) {
+            userAction.setExtendedAction(action);
+        }
+        try {
+            EventServices eventManager = ServiceLocator.getEventServices();
+            eventManager.createAuditLog(userAction);
+            return userAction;
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException("Failed to create audit log: " + userAction, ex);
+        }
     }
 
 }

@@ -11,11 +11,17 @@
           <a class="mdw-id" href="#/workflow/processes/{{process.id}}">{{process.id}}</a>
         </div>
         <div class="mdw-heading-actions">
-          <a ng-href="#/edit/{{process.id}}" ng-if="instanceEditAllowed() && false"
-             class="btn btn-primary mdw-btn" style="margin-left:5px;margin-right:5px;font-size:14px;font-weight:normal;" title="Edit">
+          <button type="button" class="btn btn-primary mdw-btn"
+            ng-if="definitionEditAllowed() || instanceEditAllowed()"
+            uib-popover-template="'workflow/processEditMenu.html'"
+            popover-placement="left" title="Edit">
             <span class="glyphicon glyphicon-pencil mdw-icon-btn"></span>
             Edit
-          </a>
+          </button>
+          <button type="button" class="btn btn-primary mdw-btn" ng-if="instanceCancelAllowed()">
+            <span class="glyphicon glyphicon-remove"></span>
+            Cancel
+          </button>
           <button type="button" class="btn btn-primary mdw-btn"
             uib-popover-template="'workflow/legend.html'"
             popover-placement="left-top" pop-click title="Info">

@@ -13,18 +13,22 @@
           <a ng-if="!process.startPageUrl" ng-href="#/workflow/run/{{process.packageName}}/{{process.name}}" 
             class="btn btn-primary mdw-btn" title="Run">
             <span class="glyphicon glyphicon-play mdw-icon-btn"></span>
+            Run
           </a>            
           <a ng-if="process.startPageUrl" ng-href="{{process.startPageUrl}}" 
             class="btn btn-primary mdw-btn" title="Run">
             <span class="glyphicon glyphicon-play mdw-icon-btn"></span>
+            Run
           </a>            
           <a ng-href="#/workflow/processes" ng-click="setProcessFilter()"
             class="btn btn-primary mdw-btn" style="margin-left:5px;" title="Instances">
             <span class="glyphicon glyphicon-align-justify mdw-icon-btn"></span>
+            List
           </a>            
           <a ng-href="#/edit/{{process.packageName}}/{{process.name}}.proc" ng-if="authUser.hasRole('Process Design')"
             class="btn btn-primary mdw-btn" style="margin-left:5px;margin-right:5px;" title="Edit">
             <span class="glyphicon glyphicon-pencil mdw-icon-btn"></span>
+            Edit
           </a>            
         </div>        
       </div>

@@ -240,7 +240,7 @@ public class TaskWorkflowHelper {
      * @param taskId
      * @param masterOwnerId
      * @param comment optional
-     * @param dueDate optional
+     * @param due optional
      * @param userId
      * @param secondaryOwner (optional)
      * @return TaskInstance
@@ -1189,7 +1189,11 @@ public class TaskWorkflowHelper {
                         standardTaskActions.remove(retryAction);
                 }
 
-                Process processVO = ProcessCache.getProcess(processInstance.getProcessId());
+                Process processVO = null;
+                if (processInstance.getProcessInstDefId() > 0L)
+                    processVO = ProcessCache.getProcessInstanceDefiniton(processInstance.getProcessId(), processInstance.getProcessInstDefId());
+                if (processVO == null)
+                    processVO = ProcessCache.getProcess(processInstance.getProcessId());
                 if (processInstance.isEmbedded())
                     processVO = processVO.getSubProcessVO(new Long(processInstance.getComment()));
                 List<Transition> outgoingWorkTransVOs = processVO.getAllTransitions(activityInstance.getActivityId());
@@ -1230,7 +1234,6 @@ public class TaskWorkflowHelper {
      * the result codes for the possible outgoing work transitions from the associated
      * activity.
      *
-     * @param taskInstanceId
      * @return the list of task actions
      */
     public List<TaskAction> getCustomActions()
@@ -1245,8 +1248,11 @@ public class TaskWorkflowHelper {
             if (activityInstance != null) {
                 Long processInstanceId = activityInstance.getProcessInstanceId();
                 ProcessInstance processInstance = ServiceLocator.getWorkflowServices().getProcess(processInstanceId);
-
-                Process processVO = ProcessCache.getProcess(processInstance.getProcessId());
+                Process processVO = null;
+                if (processInstance.getProcessInstDefId() > 0L)
+                    processVO = ProcessCache.getProcessInstanceDefiniton(processInstance.getProcessId(), processInstance.getProcessInstDefId());
+                if (processVO == null)
+                    processVO = ProcessCache.getProcess(processInstance.getProcessId());
                 if (processInstance.isEmbedded())
                     processVO = processVO.getSubProcessVO(new Long(processInstance.getComment()));
                 List<Transition> outgoingWorkTransVOs = processVO.getAllTransitions(activityInstance.getActivityId());

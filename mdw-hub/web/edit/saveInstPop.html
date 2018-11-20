@@ -1,0 +1,12 @@
+<div>
+  <div style="font-weight:bold">
+    <div style="color:#a94442;">{{message}}</div>
+    <div ng-if="!message">Save {{asset.name}} {{instanceId}}</div>
+  </div>
+  <hr style="margin-top:8px;margin-bottom:5px;">
+  <div>
+    <button type="button" class="btn btn-default mdw-edit-btn" ng-disabled="!isSaveEnabled()" ng-click="save()">Save</button>
+    <button type="button" class="btn btn-default mdw-edit-btn" ng-disabled="!isSaveEnabled()" ng-click="save(true)">Save & Close</button>
+    <button type="button" class="btn btn-default mdw-edit-btn" ng-click="cancelSave()">Cancel</button>
+  </div>
+</div>

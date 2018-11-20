@@ -62,9 +62,9 @@ public class Workflow extends JsonRestService {
     }
 
     @Override
-    @Path("/{packageName}/{processName}/{processVersion}")
+    @Path("/{packageName}/{processName}/{processVersion}/{processInstanceId}")
     @ApiOperation(value="Retrieve a process definition JSON.",
-        notes="Path segments {packageName} and {processName} are required, while {processVersion} is optional.",
+        notes="Path segments {packageName} and {processName} are required, while {processVersion} and {processInstanceId} are optional.",
         response=Process.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name="version", paramType="query", dataType="string"),
@@ -118,13 +118,31 @@ public class Workflow extends JsonRestService {
             }
             else {
                 String assetPath = segments[1] + "/" + segments[2];
-                if (segments.length == 4)
-                    query.setFilter("version", Asset.parseVersion(segments[3]));
-                Process process = workflowServices.getProcessDefinition(assetPath, query);
+                Process process = null;
+                Long instanceId = null;
+                if (segments.length >= 4) {
+                    if (segments[3].startsWith("v")) {
+                        query.setFilter("version", Asset.parseVersion(segments[3]));
+                    }
+                    if (segments.length == 5 || !segments[3].startsWith("v")) {
+                        instanceId = Long.parseLong(segments.length == 5 ? segments[4] : segments[3]);
+                        process = workflowServices.getInstanceDefinition(assetPath, instanceId);
+                        if (process == null)
+                            instanceId = null;  // to indicate instance override below
+                    }
+                }
+                if (process == null) {
+                    process = workflowServices.getProcessDefinition(assetPath, query);
+                    if (process == null)
+                        throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + path);
+                }
                 JSONObject json = process.getJson(); // does not include name, package or id
                 json.put("name", process.getName());
                 json.put("id", process.getId());
                 json.put("packageName", process.getPackageName());
+                if (instanceId != null) {
+                    json.put("instanceId", instanceId);
+                }
                 String startPage = process.getAttribute(WorkAttributeConstant.PROCESS_START_PAGE);
                 if (startPage != null) {
                     String assetSpec = startPage;

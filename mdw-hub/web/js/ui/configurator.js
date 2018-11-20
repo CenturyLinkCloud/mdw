@@ -4,7 +4,7 @@ var configMod = angular.module('mdwConfigurator', ['mdw']);
 
 configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets', 'Workgroups', 'Compatibility', 'DOCUMENT_TYPES',
                   function($injector, $http, mdw, util, Assets, Workgroups, Compatibility, DOCUMENT_TYPES) {
-  
+
   var Configurator = function(tab, workflowType, workflowObj, diagramObj, template) {
     this.tab = tab;
     this.workflowType = workflowType;
@@ -14,26 +14,32 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       this.process = diagramObj.diagram.process;
     this.template = template;
   };
-  
+
   Configurator.prototype.initValues = function(editCallback) {
 
     // we need workgroups populated
     if (!Workgroups.groupList)
       Workgroups.groupList = Workgroups.get();
-    
+
     // help link
     this.helpLink = this.getHelpLink();
-    
+
     this.filterWidgets();
-    
+
     var labelWidth = 10;
     for (let i = 0; i < this.template.pagelet.widgets.length; i++) {
       var widget = this.template.pagelet.widgets[i];
       widget.configurator = this;
-      
-      if (!this.diagramObj.diagram.editable)
+
+      var diagram = this.diagramObj.diagram;
+      if (!diagram.editable) {
         widget.readonly = true;
-      
+      }
+      else if (diagram.instanceEdit) {
+        if (this.tab !== 'Variables' && !diagram.isInstanceEditable(this.workflowObj.id))
+          widget.readonly = true;
+      }
+
       // label
       if (!widget.label)
         widget.label = widget.name;
@@ -51,7 +57,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
         // asset options are handled after setting value
         // TODO: parameterized
       }
-      
+
       // value
       if (this.template.category === 'object') {
         if (widget.converter) {
@@ -99,7 +105,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
         if (implName.startsWith('com.centurylink.mdw.workflow.')) {
           // mdw built-in (GitHub)
           var filePath = implName.replace(/\./g,"/");
-          widget.url = mdw.sourceRepoUrl + '/blob/master/mdw-workflow/src/' + filePath + '.java';     
+          widget.url = mdw.sourceRepoUrl + '/blob/master/mdw-workflow/src/' + filePath + '.java';
         }
         else {
           // hopefully a java asset
@@ -143,7 +149,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
             widget.value = parseInt(widget.value) / 86400;
         }
       }
-      
+
       // width && height
       widget.width = widget.vw;
       if (!widget.width)
@@ -156,7 +162,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
         }
       }
     }
-    
+
     // padding
     this.template.pagelet.widgets.forEach(function(widget) {
       widget.pad = util.padTrailing('', labelWidth - widget.label.length);
@@ -166,11 +172,11 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
   Configurator.prototype.getTemplate = function() {
     return this.template;
   };
-  
+
   Configurator.prototype.getWidgets = function() {
     return this.template.pagelet.widgets;
   };
-  
+
   Configurator.prototype.getVariableNames = function(onlyDoc) {
     var varNames = [];
     var varsObj = this.process.variables;
@@ -181,7 +187,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
     });
     return varNames;
   };
-  
+
   Configurator.prototype.getWorkgroups = function() {
     var groups = [];
     Workgroups.groupList.workgroups.forEach(function(workgroup) {
@@ -189,7 +195,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
     });
     return groups;
   };
-  
+
   // init the unselected options based on value
   Configurator.prototype.setUnselected = function(widget) {
     if (!widget.value) {
@@ -204,7 +210,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       }
     }
   };
-  
+
   Configurator.prototype.initSubprocBindings = function(widget, subproc) {
     var configurator = this;
     $http.get(mdw.roots.services + '/services/Workflow/' + subproc + "?app=mdw-admin").then(function(res) {
@@ -213,7 +219,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       }
     });
   };
-  
+
   // init bindings
   Configurator.prototype.initBindings = function(widget, vars, includeOuts) {
     widget.bindingVars = [];
@@ -234,7 +240,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       return v1.name.localeCompare(v2.name);
     });
   };
-  
+
   Configurator.prototype.initTableValues = function(tblWidget, assetOptions) {
     tblWidget.widgetRows = [];
     var assetWidgets = []; // must be uniform source
@@ -262,7 +268,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
           if (widget.readonly)
             rowWidget.readonly = widget.readonly;
           else if (tblWidget.readonly)
-            rowWidget.readonly = tblWidget.readonly;          
+            rowWidget.readonly = tblWidget.readonly;
           if (widget.type === 'asset') {
             rowWidget.source = widget.source;
             assetWidgets.push(rowWidget);
@@ -340,11 +346,11 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       });
     }
   };
-  
+
   Configurator.prototype.filterWidgets = function() {
     if (this.template.category === 'object' || this.template.category === 'attributes')
       return;
-    
+
     var widgets = [];
     var tab = this.tab;
     this.template.pagelet.widgets.forEach(function(widget) {
@@ -356,18 +362,18 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
     });
     this.template.pagelet.widgets = widgets;
   };
-  
+
   Configurator.prototype.getHelpLink = function() {
     var helpWidgetIndex = -1;
     for (let i = 0; i < this.template.pagelet.widgets.length; i++) {
       var widget = this.template.pagelet.widgets[i];
-      if (widget.type == 'link' && widget.url && (widget.url.startsWith('/MDWWeb/doc') || widget.url.startsWith('help/')) && 
+      if (widget.type == 'link' && widget.url && (widget.url.startsWith('/MDWWeb/doc') || widget.url.startsWith('help/')) &&
           ((!widget.section && (this.tab == 'Design' || this.tab == 'General')) || this.tab === widget.section)) {
         helpWidgetIndex = i;
         break;
       }
     }
-    
+
     if (helpWidgetIndex > -1) {
       var widg = this.template.pagelet.widgets[helpWidgetIndex];
       this.template.pagelet.widgets.splice(helpWidgetIndex, 1);
@@ -380,7 +386,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       return null;
     }
   };
-  
+
   Configurator.prototype.valueChanged = function(widget, evt) {
     if (this.template.category === 'object' && !widget.parent && widget.type !== 'table') {
       if (widget.converter) {
@@ -421,7 +427,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
                 }
               }
               else {
-                valRow.push(wdgRow[j].value ? wdgRow[j].value : '');  
+                valRow.push(wdgRow[j].value ? wdgRow[j].value : '');
               }
             }
             tblWdg.value.push(valRow);
@@ -482,7 +488,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
                 }
               }
               else {
-                valueRow.push(widgetRow[j].value ? widgetRow[j].value : '');  
+                valueRow.push(widgetRow[j].value ? widgetRow[j].value : '');
               }
             }
             tblWidget.value.push(valueRow);
@@ -561,7 +567,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
     }
     return true;
   };
-  
+
   // avoid re-retrieving asset select options
   Configurator.prototype.getAssetOptions = function(widget) {
     if (widget.type === 'table' && widget.widgetRows) {
@@ -575,7 +581,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       }
     }
   };
-  
+
   // returns an obj with asset, version props
   Configurator.prototype.getAssetVersion = function(value, stripProc) {
     if (value) {
@@ -589,17 +595,17 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
         version = '[' + minVer + ',' + (++major) + ")";
         asset = asset.substring(0, spaceV);
       }
-  
+
       if (stripProc && asset.endsWith('.proc'))
         asset = asset.substring(0, asset.length - 5);
-  
+
       var assetVersion = { asset: asset};
       if (version)
         assetVersion.version = version;
       return assetVersion;
     }
   };
-  
+
   Configurator.prototype.setAssetValue = function(widget) {
     var assetVersion = this.getAssetVersion(widget.value, true);
     this.workflowObj.attributes[widget.name] = assetVersion.asset;
@@ -610,7 +616,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
         this.workflowObj.attributes[widget.name + '_assetVersion'] = assetVersion.version;
     }
   };
-  
+
   Configurator.prototype.removeEmptyRows = function(tableValue) {
     if (tableValue) {
       var ret = [];
@@ -629,6 +635,6 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
         return ret;
     }
   };
-  
+
   return Configurator;
 }]);

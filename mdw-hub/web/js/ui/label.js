@@ -21,7 +21,7 @@ labelMod.factory('Label', ['$document', 'mdw', 'util', 'Shape', 'DC',
   Label.SEL_COLOR = '#e91e63';
   Label.SEL_PAD = 4;
   Label.SEL_ROUNDING_RADIUS = 4;
-  
+
   Label.prototype.draw = function(color) {
     if (this.font)
       this.diagram.context.font = this.font.FONT;
@@ -29,6 +29,10 @@ labelMod.factory('Label', ['$document', 'mdw', 'util', 'Shape', 'DC',
     this.diagram.context.clearRect(this.display.x, this.display.y, this.display.w, this.display.h);
     this.diagram.context.fillText(this.text, this.display.x, this.display.y + this.display.h / 1.33);
     this.diagram.context.font = DC.DEFAULT_FONT.FONT;
+    if (this.subtext) {
+      this.diagram.context.fillStyle = DC.META_COLOR;
+      this.diagram.context.fillText(this.subtext, this.display.x, this.display.y + this.display.h * 1.33);
+    }
     this.diagram.context.fillStyle = DC.DEFAULT_COLOR;
   };
   

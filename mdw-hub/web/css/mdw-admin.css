@@ -938,6 +938,9 @@
   -webkit-user-select: none;
   -ms-user-select: none;
 }
+.mdw-action-glyph {
+  margin-right: 5px;
+}
 .mdw-legend {
   list-style-type: none;
   position: relative;

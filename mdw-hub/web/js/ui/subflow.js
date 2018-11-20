@@ -16,7 +16,7 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
 
   Subflow.BOX_OUTLINE_COLOR = '#337ab7';
   Subflow.HIT_WIDTH = 7;
-  
+
   Subflow.create = function(diagram, idNum, startActivityId, startTransitionId, type, x, y) {
 
     var subprocess = Subflow.newSubprocess(diagram, idNum, type, x, y);
@@ -224,7 +224,52 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
     else if (id.startsWith('T'))
       return this.getLink(id);
   };
-  
+
+  Subflow.prototype.deleteStep = function(step) {
+    var idx = -1;
+    for (let i = 0; i < this.steps.length; i++) {
+      var s = this.steps[i];
+      if (step.activity.id === s.activity.id) {
+        idx = i;
+        break;
+      }
+    }
+    if (idx >= 0) {
+      this.subprocess.activities.splice(idx, 1);
+      this.steps.splice(idx, 1);
+      for (let i = 0; i < this.links.length; i++) {
+        var link = this.links[i];
+        if (link.to.activity.id === step.activity.id) {
+          this.deleteLink(link);
+        }
+      }
+    }
+  };
+
+  Subflow.prototype.deleteLink = function(link) {
+    var idx = -1;
+    for (let i = 0; i < this.links.length; i++) {
+      var l = this.links[i];
+      if (l.transition.id === link.transition.id) {
+        idx = i;
+        break;
+      }
+    }
+    if (idx >= 0) {
+      this.links.splice(idx, 1);
+      var tidx = -1;
+      for (let i = 0; i < link.from.activity.transitions.length; i++) {
+        if (link.from.activity.transitions[i].id === link.transition.id) {
+          tidx = i;
+          break;
+        }
+      }
+      if (tidx >= 0) {
+        link.from.activity.transitions.splice(tidx, 1);
+      }
+    }
+  };
+
   Subflow.prototype.getActivityInstances = function(id) {
     if (this.instances) {
       var actInsts = [];

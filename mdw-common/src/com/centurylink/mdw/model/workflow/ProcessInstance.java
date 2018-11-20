@@ -235,8 +235,26 @@ public class ProcessInstance implements Serializable, Jsonable {
     }
 
     private String comment;
-    public String getComment() { return comment; }
+    public String getComment() {
+        if (comment != null && comment.indexOf("|HasInstanceDef|") >= 0) {
+            int index = comment.indexOf("|HasInstanceDef|");
+            String origComment = comment;
+            if (index == 0)
+                comment = null;
+            else
+                comment = origComment.split("\\|")[0];
+            processInstanceDefId = Long.parseLong(origComment.split("\\|")[2]);
+        }
+        return comment;
+    }
     public void setComment(String s) { comment = s; }
+
+    private long processInstanceDefId = 0L;
+    public long getProcessInstDefId() {
+        if (processInstanceDefId == 0L)
+            getComment();  // This parses the comment for instance definition
+        return processInstanceDefId;
+    }
 
     // for run time information display only
     @ApiModelProperty(hidden=true)
@@ -307,6 +325,8 @@ public class ProcessInstance implements Serializable, Jsonable {
         JSONObject json = create();
         // summary info (for ProcessLists)
         json.put("id", this.id);
+        if (getProcessInstDefId() > 0L)
+            json.put("instanceDefinitionId", getProcessInstDefId());
         if (masterRequestId != null)
             json.put("masterRequestId", masterRequestId);
         if (solutionId != null)
