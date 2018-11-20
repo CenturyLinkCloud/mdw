@@ -1,5 +1,5 @@
 ${StandardInvoke}.proc=4
-.mdwignore=1
+.mdwignore=2
 CombiningConsolidator.java=2
 Consolidator.java=1
 DependenciesWaitActivity.java=7
