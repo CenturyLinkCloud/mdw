@@ -112,6 +112,8 @@ public class Pagelet implements Jsonable {
             private Map<String,String> widgNameToElem = new HashMap<>();
             private boolean inOpt;
             private boolean hasParam;
+            private String type;
+            private String widgName;
 
             // attributes for workflow project
             public void startElement(String uri, String localName, String name, Attributes attrs)
@@ -121,52 +123,42 @@ public class Pagelet implements Jsonable {
                         setAttribute(attrs.getQName(i).toLowerCase(), attrs.getValue(i));
                     }
                 }
-                else if (name.equals("OPTION")) {
-                    Map<String,String> attrMap = new HashMap<>();
+                else {
+                    Map<String, String> attrsMap = new HashMap<>();
                     for (int i = 0; i < attrs.getLength(); i++) {
-                        attrMap.put(attrs.getQName(i).toLowerCase(), attrs.getValue(i));
+                        attrsMap.put(attrs.getQName(i).toLowerCase(), attrs.getValue(i));
                     }
-                    if (!attrMap.containsKey("parameter"))
-                        inOpt = true;
-                    else {
-                        hasParam = true;
-                        String widgName = attrMap.get("parameter");
-                        String translatedType;
-                        if (attrMap.size() == 1) {
-                            translatedType = "text";
-                            attrMap.put("vw" , "100");
-                        }
+                    if (name.equals("OPTION")) {
+                        if (!attrsMap.containsKey("parameter"))
+                            inOpt = true;
                         else {
-                            translatedType = translateType(widgName, attrMap);
+                            hasParam = true;
+                            widgName = attrsMap.get("parameter");
+                            if (attrsMap.size() == 1) {
+                                type = "text";
+                                attrsMap.put("vw", "100");
+                            } else {
+                                type = translateType(widgName, attrsMap);
+                            }
+                            attrsMap.put("label", widgName);
                         }
-                        Widget widget = new Widget(widgName, translatedType);
-                        attrMap.put("label" , widgName);
-                        widgNameToElem.put(widget.getName(), name);
+                    } else {
+                        type = translateType(name.toLowerCase(), attrsMap);
+                        widgName = attrsMap.get("name");
+                        attrsMap.remove("name");
+                        attrsMap.remove("type");
+                    }
+                    if (!inOpt) {
+                        Widget widget = new Widget(widgName, type);
+                        if (widget.getName() != null)
+                            widgNameToElem.put(widget.getName(), name);
                         if (widgs.isEmpty())
                             widgets.add(widget);
                         else
                             widgs.peek().addWidget(widget);
-                        widget.setAttributes(attrMap);
+                        widget.setAttributes(attrsMap);
                         widgs.push(widget);
                     }
-                }
-                else {
-                    Map<String,String> attrsMap = new HashMap<>();
-                    for (int i = 0; i < attrs.getLength(); i++) {
-                        attrsMap.put(attrs.getQName(i).toLowerCase(), attrs.getValue(i));
-                    }
-                    String type = translateType(name.toLowerCase(), attrsMap);
-                    Widget widget = new Widget(attrsMap.get("name"), type);
-                    attrsMap.remove("name");
-                    attrsMap.remove("type");
-                    widget.setAttributes(attrsMap);
-                    if (widget.getName() != null)
-                        widgNameToElem.put(widget.getName(), name);
-                    if (widgs.isEmpty())
-                        widgets.add(widget);
-                    else
-                        widgs.peek().addWidget(widget);
-                    widgs.push(widget);
                 }
             }
 
