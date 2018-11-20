@@ -111,7 +111,7 @@ selectionMod.factory('Selection', ['mdw', function(mdw) {
           }
         }
       }
-      else {
+      if (!this.getSelectObj()) {
         this.setSelectObj(this.diagram.label);
       }
     }

@@ -1,0 +1,12 @@
+<ul class="dropdown-menu mdw-popover-menu">
+  <li ng-if="instanceEditAllowed()" >
+    <a ng-href="#/edit/{{process.packageName}}/{{process.name}}.proc/{{process.id}}">
+      Instance
+    </a>
+  </li>
+  <li ng-if="definitionEditAllowed()" >
+    <a ng-href="#/edit/{{process.packageName}}/{{process.name}}.proc">
+      Definition
+    </a>
+  </li>
+</ul>

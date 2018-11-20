@@ -1,7 +1,33 @@
 <div class="mdw-workflow">
   <div>
-    <canvas class="mdw-canvas"></canvas> 
+    <canvas class="mdw-canvas"></canvas>
   </div>
+  <ul id="mdw-canvas-menu" class="dropdown-menu mdw-dropdown-menu">
+    <li id="proceed">
+      <a href="" ng-click="onContextMenuSelect('Proceed')">
+        <i class="glyphicon mdw-action-glyph glyphicon-arrow-right"></i>
+        Proceed
+      </a>
+    </li>
+    <li id="resume">
+      <a href="" ng-click="onContextMenuSelect('Resume')">
+        <i class="glyphicon mdw-action-glyph glyphicon-play"></i>
+        Resume
+      </a>
+    </li>
+    <li id="retry">
+      <a href="" ng-click="onContextMenuSelect('Retry')">
+        <i class="glyphicon mdw-action-glyph glyphicon-repeat"></i>
+        Retry
+      </a>
+    </li>
+    <li id="cancel">
+      <a href="" ng-click="onContextMenuSelect('Cancel')">
+        <i class="glyphicon mdw-action-glyph glyphicon-remove"></i>
+        Cancel
+      </a>
+    </li>
+  </ul>
   <div class="mdw-toolbox" mdw-toolbox ng-if="editable" style="bottom:10px;">
     <div class="panel-heading mdw-heading">
       <div class="mdw-heading-label">Toolbox</div>

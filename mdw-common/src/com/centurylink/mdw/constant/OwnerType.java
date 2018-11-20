@@ -47,7 +47,6 @@ public interface OwnerType {
     public static final String VARIABLE_INSTANCE = "VARIABLE_INSTANCE";
 
     public static final String ADAPTER = "ADAPTER"; // owner ID is activity instance ID
-    public static final String LISTENER = "LISTENER"; // owner ID is processInstanceId (if present)
     public static final String ADAPTER_REQUEST = "ADAPTER_REQUEST"; // owner ID is activity instance ID
     public static final String ADAPTER_RESPONSE = "ADAPTER_RESPONSE"; // owner ID is activity instance ID
     public static final String ADAPTER_REQUEST_META = "ADAPTER_REQUEST_META"; // owner ID is document ID of ADAPTER_REQUEST
@@ -57,18 +56,17 @@ public interface OwnerType {
     public static final String LISTENER_REQUEST_META = "LISTENER_REQUEST_META"; // owner ID is the document ID of the LISTENER_REQUEST
     public static final String LISTENER_RESPONSE_META = "LISTENER_RESPONSE_META"; // owner ID is the document ID of the LISTENER_RESPONSE
 
-    public static final String NOTIFICATION_ACTIVITY = "NOTIFICATION_ACTIVITY"; // owner ID is activity instance ID
-
     public static final String PACKAGE = "PACKAGE";
 
     public static final String DOCUMENT = "DOCUMENT";
     public static final String ERROR = "ERROR";
     public static final String SLA = "SLA";
 
-    public static final String MASTER_REQUEST = "MASTER_REQUEST";
     public static final String SOLUTION = "SOLUTION";
 
     public static final String PROCESS_RUN = "PROCESS_RUN";
+
+    public static final String PROCESS_INSTANCE_DEF = "PROCESS_INSTANCE_DEF";
 
     public static final String COMMENT = "COMMENT";
 }

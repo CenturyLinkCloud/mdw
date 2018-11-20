@@ -10,7 +10,7 @@
     </a>
   </li>
   <li nav-link="workflow/definition" full-width="process-nav" ng-if="!process.template">
-    <a href="#/workflow/definitions/{{process.packageName}}/{{processVersion ? process.name + '/v' + process.version : process.name}}">
+    <a href="#/workflow/definitions/{{process.packageName}}/{{processVersion ? process.name + '/v' + process.version : process.name}}/{{process.instanceId ? process.instanceId : ''}}">
       Definition
     </a>
   </li>

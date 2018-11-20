@@ -4,7 +4,7 @@ var editMod = angular.module('edit', ['ngResource', 'mdw']);
 
 editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams', 'mdw', 'util', 'Assets', 'Asset', 'WorkflowCache', 'GitVcs',
                                          function($scope, $cookieStore, $routeParams, mdw, util, Assets, Asset, WorkflowCache, GitVcs) {
-  
+
   $scope.setFullWidth(true);
 
   $scope.packageName = $routeParams.packageName;
@@ -29,9 +29,9 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
     },
     function(assetData) {
       $scope.asset.language = util.getLanguage($scope.asset.name);
-      
+
       $scope.aceOptions = {
-        theme: 'eclipse', 
+        theme: 'eclipse',
         mode: $scope.asset.language,
         onChange: function() {
           // first call happens on load
@@ -42,16 +42,16 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
         },
         basePath: '/mdw/lib/ace-builds/src-min-noconflict'
       };
-      
+
       $scope.initVersion();
       $scope.initOptions();
       $scope.initGitCredentials();
-      
+
       $scope.asset.url = mdw.roots.hub + '/asset/' + $scope.packageName + '/' +  $scope.asset.name;
-      
+
       $scope.asset.view = 'content';
       $scope.asset.packageName = $scope.packageName;
-      
+
       Asset.get({
         packageName: $scope.packageName,
         assetName: $scope.asset.name
@@ -61,7 +61,7 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
       });
     }
   );
-  
+
   $scope.initVersion = function() {
     $scope.version = {
       current: $scope.asset.version,
@@ -71,18 +71,18 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
       comment: null
     };
   };
-  
+
   $scope.initOptions = function() {
     $scope.options = {
       distributedSave: false,
       commitAndPush: true
-    };    
+    };
   };
-  
+
   $scope.initGitCredentials = function() {
     // for transient values
     $scope.git = {};
-    
+
     // gitCredentials populated from cookie values
     var user = $cookieStore.get('gitUser');
     var password = $cookieStore.get('gitPassword');
@@ -96,21 +96,21 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
       $scope.gitCredentials = null;
     }
   };
-  
+
   $scope.isDirty = function() {
     if ($scope.process)
       return $scope.procDirty;
     else
       return $scope.aceDirty;
   };
-  
+
   $scope.setDirty = function(dirty) {
     if ($scope.process)
       $scope.procDirty = dirty;
     else
       $scope.aceDirty = dirty;
   };
-  
+
   $scope.isSaveEnabled = function() {
     if (!$scope.isDirty())
       return false;
@@ -119,17 +119,17 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
     }
     return true;
   };
-  
+
   $scope.cancelSave = function() {
     $scope.closePopover();
     $scope.initVersion();
     $scope.message = null;
   };
-  
+
   $scope.isShowGitCredentials = function() {
-    return $scope.options.commitAndPush && !$scope.gitCredentials;    
+    return $scope.options.commitAndPush && !$scope.gitCredentials;
   };
-  
+
   $scope.save = function(andClose) {
     console.log('saving: ' + $scope.asset.packageName + '/' + $scope.asset.name + ' v' + $scope.version.selected);
     if ($scope.options.commitAndPush && $scope.git.user && $scope.git.password) {
@@ -144,8 +144,8 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
       version: $scope.version.selected,
       comment: $scope.version.comment,
       distributedSave: $scope.options.distributedSave
-    }, 
-    $scope.process ? JSON.stringify($scope.process, null, 2) : $scope.asset.content, 
+    },
+    $scope.process ? JSON.stringify($scope.process, null, 2) : $scope.asset.content,
     function success(response) {
       $scope.message = null;
       $scope.aceDirty = false;
@@ -155,22 +155,22 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
       var commitMsg = $scope.version.comment;
       if (metaChange)
         $scope.initVersion();
-      
+
       if ($scope.options.commitAndPush) {
         GitVcs.push({
           pkgPath: $scope.asset.packageName,
           asset: $scope.asset.name,
           gitAction: 'push',
           includeMeta: metaChange
-        }, { 
-          comment: commitMsg, 
+        }, {
+          comment: commitMsg,
           user: $scope.gitCredentials.user,
           password: $scope.gitCredentials.password
         },
         function success(response) {
           $scope.setPopElem(null);  // in anticipation of having been closed by POST
           if (andClose) {
-            window.location = '#/asset/' + $scope.asset.packageName + '/' + $scope.asset.name;            
+            window.location = '#/asset/' + $scope.asset.packageName + '/' + $scope.asset.name;
           }
         },
         function error(response) {
@@ -188,7 +188,7 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
           window.location = '#/asset/' + $scope.asset.packageName + '/' + $scope.asset.name;
         }
       }
-    }, 
+    },
     function error(response) {
       if (response.data.status)
         $scope.message = response.data.status.message;
@@ -198,20 +198,129 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
         $scope.message = "Error saving asset";
     });
   };
-  
+
   $scope.refreshCaches = function() {
     WorkflowCache.refresh({}, { distributed: $scope.options.distributedSave });
   };
-  
+
   $scope.$on('$locationChangeStart', function(event) {
     if ($scope.isDirty()) {
       if (!confirm('Your changes will be lost.\nClick OK to confirm you want to leave this page.'))
         event.preventDefault();
     }
-  });  
+  });
 }]);
 
 editMod.controller('InstanceEditorController', ['$scope', '$routeParams', 'mdw', 'util', 'Assets', 'Asset',
                                          function($scope, $routeParams, mdw, util, Assets, Asset) {
+  $scope.setFullWidth(true);
+
+  // TODO previous versions
+  $scope.packageName = $routeParams.packageName;
+  $scope.assetName = $routeParams.assetName;
+  $scope.instanceId = $routeParams.instanceId;
+
+  $scope.process = {
+    packageName: $scope.packageName,
+    name: $scope.assetName.substring(0, $scope.assetName.length - 5),
+    id: $scope.instanceId
+  };
+
+  $scope.onProcessChange = function(proc) {
+    var wasDirty = $scope.procDirty;
+    $scope.procDirty = true;
+    if (!wasDirty) {
+      var phase = this.$root.$$phase;
+      if (phase !== '$apply' && phase !== '$digest')
+        $scope.$digest();
+    }
+    $scope.process = proc;
+  };
+
+  $scope.asset = Assets.get({
+      packageName: $routeParams.packageName,
+      assetName: $routeParams.assetName
+    },
+    function(assetData) {
+      $scope.asset.language = util.getLanguage($scope.asset.name);
+
+      $scope.aceOptions = {
+        theme: 'eclipse',
+        mode: $scope.asset.language,
+        onChange: function() {
+          // first call happens on load
+          if ($scope.aceDirty === undefined)
+            $scope.aceDirty = false;
+          else
+            $scope.aceDirty = true;
+        },
+        basePath: '/mdw/lib/ace-builds/src-min-noconflict'
+      };
+
+      $scope.asset.url = mdw.roots.hub + '/asset/' + $scope.packageName + '/' +  $scope.asset.name + '/' + $scope.instanceId;
+      $scope.asset.view = 'content';
+      $scope.asset.packageName = $scope.packageName;
+
+      Asset.get({
+        packageName: $scope.packageName,
+        assetName: $scope.asset.name,
+        instanceId: $scope.instanceId
+      },
+      function(assetData) {
+        $scope.asset.content = assetData.rawResponse;
+      });
+    }
+  );
+
+  $scope.isDirty = function() {
+    if ($scope.process)
+      return $scope.procDirty;
+    else
+      return $scope.aceDirty;
+  };
+
+  $scope.setDirty = function(dirty) {
+    if ($scope.process)
+      $scope.procDirty = dirty;
+    else
+      $scope.aceDirty = dirty;
+  };
+
+  $scope.isSaveEnabled = function() {
+    return $scope.isDirty();
+  };
+
+  $scope.cancelSave = function() {
+    $scope.closePopover();
+    $scope.message = null;
+  };
+
+  $scope.save = function(andClose) {
+    console.log('saving: ' + $scope.asset.packageName + '/' + $scope.asset.name + '/' + $scope.instanceId);
+    Asset.put({
+      packageName: $scope.asset.packageName,
+      assetName: $scope.asset.name,
+      instanceId: $scope.instanceId
+    },
+    $scope.process ? JSON.stringify($scope.process, null, 2) : $scope.asset.content,
+    function success(response) {
+      $scope.message = null;
+      $scope.aceDirty = false;
+      $scope.procDirty = false;
+      $scope.closePopover();
+      if (andClose) {
+        window.location = '#/workflow/processes/' + $scope.instanceId;
+      }
+    },
+    function error(response) {
+      if (response.data.status)
+        $scope.message = response.data.status.message;
+      else if (response.statusText)
+        $scope.message = response.status + ': ' + response.statusText;
+      else
+        $scope.message = "Error saving asset instance";
+    });
+  };
+
 
 }]);

@@ -24,7 +24,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
 
   Step.START_IMPL = 'com.centurylink.mdw.workflow.activity.process.ProcessStartActivity';
   Step.STOP_IMPL = 'com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity';
-  Step.PAUSE_IMPL = 'com.centurylink.mdw.workflow.activity.process.ProcessPauseActivity';
+  Step.PAUSE_IMPL = 'com.centurylink.mdw.base.PauseActivity';
   Step.TASK_IMPL = 'com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity';
   Step.TASK_PAGELET = 'com.centurylink.mdw.base/CustomManualTask.pagelet';
 
@@ -80,7 +80,10 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
       var adj = 0;
       if (shape == 'start' || shape == 'stop' || shape == 'pause')
         adj = 2;
-      this.diagram.drawState(this.display, this.instances, !this.diagram.drawBoxes, adj, animationTimeSlice);
+      var color = null;
+      if (shape == 'pause')
+        color = '#ffea00';
+      this.diagram.drawState(this.display, this.instances, !this.diagram.drawBoxes, adj, animationTimeSlice, color);
     }
 
     var yAdjust = -2;

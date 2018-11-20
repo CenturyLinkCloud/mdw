@@ -126,7 +126,7 @@ var activeTableTab = "activeTableTab";
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../../../com/centurylink/mdw/microservice/DependenciesWaitActivity.html" title="class in com.centurylink.mdw.microservice">DependenciesWaitActivity</a>, <a href="../../../../../../com/centurylink/mdw/workflow/activity/event/EventCheckActivity.html" title="class in com.centurylink.mdw.workflow.activity.event">EventCheckActivity</a></dd>
+<dd><a href="../../../../../../com/centurylink/mdw/workflow/activity/event/EventCheckActivity.html" title="class in com.centurylink.mdw.workflow.activity.event">EventCheckActivity</a></dd>
 </dl>
 <hr>
 <br>
@@ -443,10 +443,10 @@ implements <a href="../../../../../../com/centurylink/mdw/activity/types/EventWa
 <h4>resume</h4>
 <pre>public final&nbsp;boolean&nbsp;resume(<a href="../../../../../../com/centurylink/mdw/model/event/InternalEvent.html" title="class in com.centurylink.mdw.model.event">InternalEvent</a>&nbsp;eventMessageDoc)
                      throws <a href="../../../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a></pre>
-<div class="block">You cannot override this method. Override <a href="../../../../../../com/centurylink/mdw/workflow/activity/event/EventWaitActivity.html#processMessage-java.lang.String-"><code>processMessage(String)</code></a> instead.
+<div class="block">You cannot override this method. Override <code>processMessage(String,String)</code> instead.
 
  This method is called when the message is received after registration. It extracts the message,
- records the message in ADAPTER_INSTANCE table, and invoke <a href="../../../../../../com/centurylink/mdw/workflow/activity/event/EventWaitActivity.html#processMessage-java.lang.String-"><code>processMessage(String)</code></a>.</div>
+ records the message in ADAPTER_INSTANCE table, and invoke <code>processMessage(String,String)</code>.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../../com/centurylink/mdw/activity/types/SuspendibleActivity.html#resume-com.centurylink.mdw.model.event.InternalEvent-">resume</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/activity/types/SuspendibleActivity.html" title="interface in com.centurylink.mdw.activity.types">SuspendibleActivity</a></code></dd>

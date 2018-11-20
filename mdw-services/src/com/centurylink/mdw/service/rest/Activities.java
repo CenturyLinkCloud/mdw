@@ -15,25 +15,13 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.Path;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.JsonExportable;
 import com.centurylink.mdw.model.JsonListMap;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
@@ -44,9 +32,18 @@ import com.centurylink.mdw.model.workflow.ActivityList;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.Path;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Path("/Activities")
 @Api("Runtime activity")
@@ -166,23 +163,28 @@ public class Activities extends JsonRestService implements JsonExportable {
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         Map<String,String> parameters = getParameters(headers);
-        String activityInstanceId = getSegment(path, 1);
-        if (activityInstanceId == null)
-            activityInstanceId = parameters.get("activityInstanceId");
-        if (activityInstanceId == null)
+        String instId = getSegment(path, 1);
+        if (instId == null)
+            instId = parameters.get("activityInstanceId");
+        if (instId == null)
             throw new ServiceException("Missing parameter: activityInstanceId");
-        String action = getSegment(path, 2);
-        if (action == null)
-            action = parameters.get("action");
-        if (action == null)
-            throw new ServiceException("Missing parameter: action");
-        String completionCode = getSegment(path, 3);
-        if (completionCode == null)
-            completionCode = parameters.get("completionCode");
-        WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-        workflowServices.actionActivity(activityInstanceId, action, completionCode);
-
-        return null;
+        try {
+            Long activityInstanceId = Long.parseLong(instId);
+            String action = getSegment(path, 2);
+            if (action == null)
+                action = parameters.get("action");
+            if (action == null)
+                throw new ServiceException("Missing parameter: action");
+            String completionCode = getSegment(path, 3);
+            if (completionCode == null)
+                completionCode = parameters.get("completionCode");
+            WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+            workflowServices.actionActivity(activityInstanceId, action, completionCode, getAuthUser(headers));
+            return null;
+        }
+        catch (NumberFormatException ex) {
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + path);
+        }
 
     }
 

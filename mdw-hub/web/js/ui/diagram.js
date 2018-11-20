@@ -2,18 +2,18 @@
 
 var diagramMod = angular.module('mdwDiagram', ['mdw', 'drawingConstants']);
 
-diagramMod.factory('Diagram', 
+diagramMod.factory('Diagram',
     ['$document', 'mdw', 'util', 'Label', 'Shape', 'Step', 'Link', 'Subflow', 'Note', 'Marquee', 'Selection', 'Toolbox', 'DC',
      function($document, mdw, util, Label, Shape, Step, Link, Subflow, Note, Marquee, Selection, Toolbox, DC) {
 
-    var Diagram = function(canvas, dialog, process, implementors, imgBase, editable, instance, activity) {
+    var Diagram = function(canvas, dialog, process, implementors, imgBase, editable, instance, activity, instanceEdit) {
     Shape.call(this, this, process);
     this.canvas = canvas;
     this.dialog = dialog;
     this.process = process;
     this.implementors = implementors;
     this.imgBase = imgBase;
-    this.editable = editable;
+    this.editable = editable && editable.toString() === 'true';
     this.instance = instance;
     this.workflowType = 'process';
     this.isDiagram = true;
@@ -27,6 +27,7 @@ diagramMod.factory('Diagram',
       else
         this.activityId = activity;
     }
+    this.instanceEdit = instanceEdit && instanceEdit.toString() === 'true';
   };
 
   Diagram.prototype = new Shape();
@@ -74,7 +75,7 @@ diagramMod.factory('Diagram',
           timeSlice = nextSlice;
         }
         else if (highlighted) {
-          diagram.scrollIntoView(highlighted, nonLinkSlice);          
+          diagram.scrollIntoView(highlighted, nonLinkSlice);
         }
       };
       s();
@@ -170,22 +171,24 @@ diagramMod.factory('Diagram',
     if (this.marquee) {
       this.marquee.draw();
     }
-    
+
   };
 
   // sets display fields and returns a display with w and h for canvas size
   // (for performance reasons, also initializes steps/links arrays and activity impls)
   Diagram.prototype.prepareDisplay = function() {
     var canvasDisplay = { w: 640, h: 480 };
-    
+
     var diagram = this; // forEach inner access
-    
+
     // label
     var label = this.instance && this.instance.template ? this.instance.packageName + '/' + this.instance.processName : this.process.name;
     var font = this.instance && this.instance.template ? DC.TEMPLATE_FONT : DC.TITLE_FONT;
     diagram.label = new Label(this, label, this.getDisplay(), font);
+    if (this.process.instanceId)
+      diagram.label.subtext = this.process.instanceId;
     diagram.makeRoom(canvasDisplay, diagram.label.prepareDisplay());
-    
+
     // activities
     diagram.steps = [];
     if (this.process.activities) {
@@ -196,7 +199,7 @@ diagramMod.factory('Diagram',
         diagram.steps.push(step);
       });
     }
-    
+
     // transitions
     diagram.links = [];
     diagram.steps.forEach(function(step) {
@@ -208,7 +211,7 @@ diagramMod.factory('Diagram',
         });
       }
     });
-    
+
     // embedded subprocesses
     diagram.subflows = [];
     if (this.process.subprocesses) {
@@ -228,15 +231,15 @@ diagramMod.factory('Diagram',
         diagram.notes.push(note);
       });
     }
-    
+
     // marquee
     if (this.marquee)
       diagram.makeRoom(canvasDisplay, this.marquee.prepareDisplay());
-    
+
     // allow extra room
     canvasDisplay.w += Diagram.BOUNDARY_DIM;
     canvasDisplay.h += Diagram.BOUNDARY_DIM;
-    
+
     if (this.editable) {
       var toolbox = Toolbox.getToolbox();
       // fill available
@@ -248,7 +251,7 @@ diagramMod.factory('Diagram',
       if (toolbox && canvasDisplay.h < toolbox.getHeight())
         canvasDisplay.h = toolbox.getHeight();
     }
-    
+
     var dpRatio = 1;
     if (window.devicePixelRatio) {
       dpRatio = window.devicePixelRatio;
@@ -271,13 +274,13 @@ diagramMod.factory('Diagram',
   // post-animation callback is the only way to prevent notes from screwing up context font (why?)
   Diagram.prototype.applyState = function(animate, callback) {
     var diagram = this; // forEach inner access
-    
+
     if (this.process.activities) {
       this.process.activities.forEach(function(activity) {
         diagram.getStep(activity.id).instances = diagram.getActivityInstances(activity.id);
       });
     }
-    
+
     diagram.steps.forEach(function(step) {
       if (step.activity.transitions) {
         step.activity.transitions.forEach(function(transition) {
@@ -285,12 +288,12 @@ diagramMod.factory('Diagram',
         });
       }
     });
-    
+
     if (this.process.subprocesses) {
       this.process.subprocesses.forEach(function(subproc) {
-        var subflow = diagram.getSubflow(subproc.id); 
+        var subflow = diagram.getSubflow(subproc.id);
         subflow.instances = diagram.getSubprocessInstances(subproc.id);
-        // needed for subprocess & task instance retrieval       
+        // needed for subprocess & task instance retrieval
         subflow.mainProcessInstanceId = diagram.instance.id;
         if (subflow.subprocess.activities) {
           subflow.subprocess.activities.forEach(function(activity) {
@@ -306,7 +309,7 @@ diagramMod.factory('Diagram',
         });
       });
     }
-    
+
     var highlighted = null;
     var sequence = this.getSequence(true);
     if (sequence) {
@@ -331,7 +334,7 @@ diagramMod.factory('Diagram',
           highlighted = it;
         }
       };
-  
+
       if (animate) {
         var linkCt = 0;
         var nonLinkCt = 0;
@@ -369,7 +372,7 @@ diagramMod.factory('Diagram',
       }
     }
   };
-  
+
   Diagram.prototype.getSequence = function(runtime) {
     var seq = [];
     var start = this.getStart();
@@ -381,7 +384,7 @@ diagramMod.factory('Diagram',
         if (Math.abs(sf1.display.y - sf2.display.y) > 100)
           return sf1.y - sf2.y;
         // otherwise closest to top-left of canvas
-        return Math.sqrt(Math.pow(sf1.display.x,2) + Math.pow(sf1.display.y,2)) - 
+        return Math.sqrt(Math.pow(sf1.display.x,2) + Math.pow(sf1.display.y,2)) -
             Math.sqrt(Math.pow(sf2.display.x,2) + Math.pow(sf2.display.y,2));
       });
       var diagram = this;
@@ -398,7 +401,7 @@ diagramMod.factory('Diagram',
     }
     return seq;
   };
-  
+
   Diagram.prototype.addSequence = function(step, sequence, runtime) {
     var outSteps = [];
     var activityIdToInLinks = {};
@@ -415,7 +418,7 @@ diagramMod.factory('Diagram',
         }
       }
     });
-    
+
     outSteps.sort(function(s1, s2) {
       if (runtime) {
         if (!s1.instances[0]) {
@@ -425,17 +428,17 @@ diagramMod.factory('Diagram',
           return -1;
         }
         else if (s1.instances[0].startDate !== s2.instances[0].startDate) {
-          // ordered based on first instance occurrence 
+          // ordered based on first instance occurrence
           return s1.instances[0].startDate.localeCompare(s2.instances[0].startDate);
         }
       }
       if (Math.abs(s1.display.y - s2.display.y) > 100)
         return s1.y - s2.y;
       // otherwise closest to top-left of canvas
-      return Math.sqrt(Math.pow(s1.display.x,2) + Math.pow(s1.display.y,2)) - 
+      return Math.sqrt(Math.pow(s1.display.x,2) + Math.pow(s1.display.y,2)) -
           Math.sqrt(Math.pow(s2.display.x,2) + Math.pow(s2.display.y,2));
     });
-    
+
     var diagram = this;
     var proceedSteps = [];  // those not already covered
     outSteps.forEach(function(step) {
@@ -461,14 +464,14 @@ diagramMod.factory('Diagram',
       diagram.addSequence(step, sequence, runtime);
     });
   };
-  
+
   Diagram.prototype.getStart = function() {
     for (var i = 0; i < this.steps.length; i++) {
       if (this.steps[i].activity.implementor == Step.START_IMPL)
         return this.steps[i];
     }
   };
-  
+
   Diagram.prototype.makeRoom = function(canvasDisplay, display) {
     if (display.w > canvasDisplay.w)
       canvasDisplay.w = display.w;
@@ -482,7 +485,7 @@ diagramMod.factory('Diagram',
         return this.steps[i];
     }
   };
-  
+
   Diagram.prototype.getLink = function(transitionId) {
     for (var i = 0; i < this.links.length; i++) {
       if (this.links[i].transition.id == transitionId)
@@ -510,7 +513,7 @@ diagramMod.factory('Diagram',
     });
     return links;
   };
-  
+
   Diagram.prototype.getSubflow = function(subprocessId) {
     for (var i = 0; i < this.subflows.length; i++) {
       if (this.subflows[i].subprocess.id == subprocessId)
@@ -536,6 +539,29 @@ diagramMod.factory('Diagram',
       return this.getNote(id);
   };
 
+  // Whether the obj can be edited at instance level.
+  // Cannot have instances and (TODO) must be reachable downstream of a currently paused activity.
+  Diagram.prototype.isInstanceEditable = function(id) {
+    if (this.instanceEdit) {
+      var obj = this.get(id);
+      if (!obj && this.subflows) {
+        for (let i = 0; i < this.subflows.length; i++) {
+          obj = this.subflows[i].get(id);
+          if (obj)
+            break;
+        }
+      }
+      if (obj) {
+        if (obj.isSubflow && obj.instances && obj.instances.length === 1 && obj.instances[0].status === 'In Progress') {
+          return true;
+        }
+        if (!obj.instances || !obj.instances.length) {
+          return true;
+        }
+      }
+    }
+  };
+
   Diagram.prototype.getImplementor = function(className) {
     if (this.implementors) {
       for (var i = 0; i < this.implementors.length; i++) {
@@ -551,14 +577,45 @@ diagramMod.factory('Diagram',
 
   Diagram.prototype.addStep = function(impl, x, y) {
     var implementor = this.getImplementor(impl);
-    var step = Step.create(this, this.genId(this.steps, 'activity'), implementor, x, y);
-    this.process.activities.push(step.activity);
-    this.steps.push(step);
+    var steps = this.steps.slice(0);
+    if (this.subflows) {
+      for (let i = 0; i < this.subflows.length; i++) {
+        steps = steps.concat(this.subflows[i].steps);
+      }
+    }
+    var step = Step.create(this, this.genId(steps, 'activity'), implementor, x, y);
+    var hoverObj = this.getHoverObj(x, y);
+    if (hoverObj && hoverObj.isSubflow) {
+      hoverObj.subprocess.activities.push(step.activity);
+      hoverObj.steps.push(step);
+    }
+    else {
+      this.process.activities.push(step.activity);
+      this.steps.push(step);
+    }
   };
 
   Diagram.prototype.addLink = function(from, to) {
-    var link = Link.create(this, this.genId(this.links, 'transition'), from, to);
-    this.links.push(link);
+    var links = this.links.slice(0);
+    if (this.subflows) {
+      for (let i = 0; i < this.subflows.length; i++) {
+        links = links.concat(this.subflows[i].links);
+      }
+    }
+    var link = Link.create(this, this.genId(links, 'transition'), from, to);
+    var destSubflow = null;
+    if (this.subflows) {
+      for (var i = 0; i < this.subflows.length; i++) {
+        if (this.subflows[i].get(to.activity.id))
+          destSubflow = this.subflows[i];
+      }
+    }
+    if (destSubflow) {
+      destSubflow.links.push(link);
+    }
+    else {
+      this.links.push(link);
+    }
   };
 
   Diagram.prototype.addSubflow = function(type, x, y) {
@@ -602,11 +659,16 @@ diagramMod.factory('Diagram',
     if (idx >= 0) {
       this.process.activities.splice(idx, 1);
       this.steps.splice(idx, 1);
+      for (let i = 0; i < this.links.length; i++) {
+        var link = this.links[i];
+        if (link.to.activity.id === step.activity.id) {
+          this.deleteLink(link);
+        }
+      }
     }
-    for (let i = 0; i < this.links.length; i++) {
-      var link = this.links[i];
-      if (link.to.activity.id === step.activity.id) {
-        this.deleteLink(link);
+    else if (this.subflows) {
+      for (let i = 0; i < this.subflows.length; i++) {
+        this.subflows[i].deleteStep(step);
       }
     }
   };
@@ -631,6 +693,11 @@ diagramMod.factory('Diagram',
       }
       if (tidx >= 0) {
         link.from.activity.transitions.splice(tidx, 1);
+      }
+    }
+    else if (this.subflows) {
+      for (let i = 0; i < this.subflows.length; i++) {
+        this.subflows[i].deleteLink(link);
       }
     }
   };
@@ -716,7 +783,7 @@ diagramMod.factory('Diagram',
     }
   };
 
-  Diagram.prototype.drawState = function(display, instances, ext, adj, animationSlice /* not used */) {
+  Diagram.prototype.drawState = function(display, instances, ext, adj, animationSlice /* not used */, color) {
     if (instances) {
       var count = instances.length > Step.MAX_INSTS ? Step.MAX_INSTS : instances.length;
       for (var i = 0; i < count; i++) {
@@ -725,24 +792,25 @@ diagramMod.factory('Diagram',
         if (instance.statusCode) {
           var status = Step.STATUSES[instance.statusCode];
           instance.status = status.status;
+          var statusColor = color ? color : status.color;
           var del = Step.INST_W - Step.OLD_INST_W;
           if (ext) {
             var rem = count - i;
             if (i === 0) {
               this.rect(
-                  display.x - Step.OLD_INST_W * rem - del, 
+                  display.x - Step.OLD_INST_W * rem - del,
                   display.y - Step.OLD_INST_W * rem - del,
                   display.w + Step.OLD_INST_W * 2* rem + 2 * del,
                   display.h + Step.OLD_INST_W * 2 * rem + 2 * del,
-                  status.color, status.color, rounding);
-            } 
+                  statusColor, statusColor, rounding);
+            }
             else {
               this.rect(
                   display.x - Step.OLD_INST_W * rem,
                   display.y - Step.OLD_INST_W * rem,
                   display.w + Step.OLD_INST_W * 2 * rem,
                   display.h + Step.OLD_INST_W * 2 * rem,
-                  status.color, status.color, 0);
+                  statusColor, statusColor, 0);
             }
             rem--;
             this.context.clearRect(
@@ -755,23 +823,23 @@ diagramMod.factory('Diagram',
             var x1, y1, w1, h1;
             if (i === 0) {
               this.rect(
-                  display.x - adj, 
-                  display.y - adj, 
-                  display.w + 2 * adj, 
-                  display.h + 2* adj, 
-                  status.color, status.color, rounding);
+                  display.x - adj,
+                  display.y - adj,
+                  display.w + 2 * adj,
+                  display.h + 2* adj,
+                  statusColor, statusColor, rounding);
               x1 = display.x + del;
               y1 = display.y + del;
               w1 = display.w - 2 * del;
               h1 = display.h - 2 * del;
-            } 
+            }
             else {
               x1 = display.x + Step.OLD_INST_W * i + del;
               y1 = display.y + Step.OLD_INST_W * i + del;
               w1 = display.w - Step.OLD_INST_W * 2 * i - 2 * del;
               h1 = display.h - Step.OLD_INST_W * 2 * i - 2 * del;
               if (w1 > 0 && h1 > 0)
-                this.rect(x1, y1, w1, h1, status.color, status.color);
+                this.rect(x1, y1, w1, h1, statusColor, statusColor);
             }
             x1 += Step.OLD_INST_W - 1;
             y1 += Step.OLD_INST_W - 1;
@@ -813,12 +881,12 @@ diagramMod.factory('Diagram',
       this.context.lineTo(x, y + r);
       this.context.quadraticCurveTo(x, y, x + r, y);
       this.context.closePath();
-      
+
       this.context.stroke();
       if (fill)
         this.context.fill();
     }
-    
+
     this.context.fillStyle = DC.DEFAULT_COLOR;
     this.context.strokeStyle = DC.DEFAULT_COLOR;
   };
@@ -925,7 +993,7 @@ diagramMod.factory('Diagram',
     };
     d();
   };
-  
+
   Diagram.prototype.drawDiamond = function(x, y, w, h) {
     var xh = x + w / 2;
     var yh = y + h / 2;
@@ -963,16 +1031,16 @@ diagramMod.factory('Diagram',
   Diagram.prototype.scrollIntoView = function(shape, timeSlice) {
     var centerX = shape.display.x + shape.display.w/2;
     var centerY = shape.display.y + shape.display.h/2;
-    
+
     var container = document.body;
     if (this.containerId) {
       container = document.getElementById(this.containerId);
     }
-    
+
     var clientRect = this.canvas.getBoundingClientRect();
     var canvasLeftX = clientRect.left;
     var canvasTopY = clientRect.top;
-    
+
     if (container.scrollHeight > container.clientHeight) {
       var maxVScroll = container.scrollHeight - container.clientHeight;
       var centeringVScroll = centerY - container.clientHeight/2;
@@ -1002,7 +1070,7 @@ diagramMod.factory('Diagram',
       }
     }
   };
-  
+
   Diagram.prototype.onMouseDown = function(e) {
     var rect = this.canvas.getBoundingClientRect();
     var x = e.clientX - rect.left;
@@ -1010,9 +1078,9 @@ diagramMod.factory('Diagram',
     // starting points for drag
     this.dragX = x;
     this.dragY = y;
-    
+
     var selObj = this.getHoverObj(x, y);
-    
+
     if (this.editable && e.ctrlKey) {
       if (selObj) {
         if (this.selection.includes(selObj))
@@ -1050,7 +1118,7 @@ diagramMod.factory('Diagram',
       }
     }
     this.shiftDrag = false;
-    
+
     if (this.marquee) {
       this.selection.setSelectObj(null);
       var selObjs = this.marquee.getSelectObjs();
@@ -1111,13 +1179,18 @@ diagramMod.factory('Diagram',
       var deltaY = y - this.dragY;
 
       if (Math.abs(deltaX) > DC.MIN_DRAG || Math.abs(deltaY) > DC.MIN_DRAG) {
-        
+
         if (x > rect.right - Diagram.BOUNDARY_DIM)
           this.canvas.width = this.canvas.width + Diagram.BOUNDARY_DIM;
         if (y > rect.bottom - Diagram.BOUNDARY_DIM)
           this.canvas.height = this.canvas.height + Diagram.BOUNDARY_DIM;
 
-        if (this.selection.getSelectObj()) {
+        var selObj = this.selection.getSelectObj();
+        if (selObj) {
+          if (this.instanceEdit && (!selObj.workflowItem || !this.isInstanceEditable(selObj.workflowItem.id))) {
+            return;
+          }
+
           var diagram = this;
           if (this.shiftDrag) {
             if (this.selection.getSelectObj().isStep) {
@@ -1234,6 +1307,37 @@ diagramMod.factory('Diagram',
     }
   };
 
+  Diagram.prototype.getLatestInstance = function() {
+    var instances = this.selection.getSelectObj().instances;
+    if (instances && instances.length) {
+      return instances[instances.length - 1];
+    }
+  };
+
+  Diagram.prototype.getContextMenuItems = function(e) {
+    var selObj = this.selection.getSelectObj();
+    if (selObj && selObj.workflowType == 'activity') {
+      var actions = [];
+      if (this.instance && (this.instance.status === 'In Progress' || this.instance.status === 'Waiting')) {
+        var inst = this.getLatestInstance();
+        if (inst && inst.status) {
+          if (inst.status === 'Failed') {
+            actions.push('retry');
+            actions.push('proceed');
+          }
+          else if (inst.status === 'Waiting') {
+            actions.push('proceed');
+            var impl = selObj.implementor;
+            if (impl && impl.category && impl.category === 'com.centurylink.mdw.activity.types.PauseActivity') {
+              actions.push('resume');
+            }
+          }
+        }
+      }
+      return actions;
+    }
+  };
+
   Diagram.prototype.getHoverObj = function(x, y) {
     if (this.label.isHover(x, y))
       return this.label;
@@ -1244,22 +1348,27 @@ diagramMod.factory('Diagram',
         return subflow;
       if (subflow.isHover(x, y)) {
         for (j = 0; j < subflow.links.length; j++) {
-          if (subflow.links[j].isHover(x, y))
+          if (subflow.links[j].isHover(x, y)) {
             return subflow.links[j];
+          }
         }
         for (var j = 0; j < subflow.steps.length; j++) {
-          if (subflow.steps[j].isHover(x, y))
+          if (subflow.steps[j].isHover(x, y)) {
             return subflow.steps[j];
+          }
         }
+        return subflow;
       }
     }
     for (i = 0; i < this.links.length; i++) {
-      if (this.links[i].isHover(x, y))
+      if (this.links[i].isHover(x, y)) {
         return this.links[i];
+      }
     }
     for (var i = 0; i < this.steps.length; i++) {
-      if (this.steps[i].isHover(x, y))
+      if (this.steps[i].isHover(x, y)) {
         return this.steps[i];
+      }
     }
     for (i = 0; i < this.notes.length; i++) {
       if (this.notes[i].isHover(x, y))
@@ -1295,12 +1404,12 @@ diagramMod.factory('Diagram',
         break;
       }
     }
-    
+
     if (bgObj == this)
       this.label.select();
     else
       bgObj.select();
-    
+
     return bgObj;
   };
 
@@ -1312,6 +1421,6 @@ diagramMod.factory('Diagram',
   Diagram.prototype.getAnchor = function(x, y) {
     return -1; // not applicable
   };
-  
-  return Diagram;  
+
+  return Diagram;
 }]);

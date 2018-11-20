@@ -129,7 +129,7 @@ public class Process extends Asset implements Jsonable {
      * @param id
      */
     public Process getSubProcessVO(Long id) {
-        if (this.getId().equals(id))
+        if (this.getId() != null && this.getId().equals(id)) // Id field is null for instance definitions
             return this;
         if (this.subprocesses == null)
             return null;
@@ -924,5 +924,10 @@ public class Process extends Asset implements Jsonable {
             objects.put(key, json.getJSONObject(key));
         }
         return objects;
+    }
+
+    @Override
+    public String getContentType() {
+        return "application/json";
     }
 }

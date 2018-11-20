@@ -173,9 +173,9 @@ public class TaskServicesImpl implements TaskServices {
         TaskList filteredList = new TaskList();
         List<TaskInstance> taskInstances = new ArrayList<TaskInstance>();
         Process process = null;
- //       if (processInstance.getProcessInstDefId() > 0L)
- //           process = ProcessCache.getProcessInstanceDefiniton(processInstance.getProcessId(), processInstance.getProcessInstDefId());
- //       if (process == null)
+        if (processInstance.getProcessInstDefId() > 0L)
+            process = ProcessCache.getProcessInstanceDefiniton(processInstance.getProcessId(), processInstance.getProcessInstDefId());
+        if (process == null)
             process = ProcessCache.getProcess(processInstance.getProcessId());
         for (TaskInstance taskInstance : taskList.getItems()) {
             for (Long activityInstanceId : activityInstanceIds) {

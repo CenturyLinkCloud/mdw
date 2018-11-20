@@ -1030,7 +1030,11 @@ public class ProcessEngineDriver {
     }
 
     private Process getProcessDefinition(ProcessInstance procinst) {
-        Process procdef = ProcessCache.getProcess(procinst.getProcessId());
+        Process procdef = null;
+        if (procinst.getProcessInstDefId() > 0L)
+            procdef = ProcessCache.getProcessInstanceDefiniton(procinst.getProcessId(), procinst.getProcessInstDefId());
+        if (procdef == null)
+            procdef = ProcessCache.getProcess(procinst.getProcessId());
         if (procinst.isEmbedded())
             procdef = procdef.getSubProcessVO(new Long(procinst.getComment()));
         return procdef;

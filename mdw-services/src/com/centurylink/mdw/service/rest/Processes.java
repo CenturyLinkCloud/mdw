@@ -27,7 +27,6 @@ import java.util.Map;
 import javax.ws.rs.Path;
 
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.model.workflow.Process;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -271,7 +270,6 @@ public class Processes extends JsonRestService implements JsonExportable {
                             throw new ServiceException(ServiceException.NOT_FOUND, "Process instance not found: " + query);
                         else if (OwnerType.MAIN_PROCESS_INSTANCE.equals(processList.getProcesses().get(0).getOwner())) {
                             return getSummaryJson(workflowServices.getProcess(processList.getProcesses().get(0).getOwnerId(), true));
-                         //   json.put("retrieveDate", StringHelper.serviceDateToString(DatabaseAccess.getDbDate()));
                         }
                         return getSummaryJson(processList.getProcesses().get(0));
                     }
@@ -297,6 +295,7 @@ public class Processes extends JsonRestService implements JsonExportable {
         summary.put("version", process.getProcessVersion());
         summary.put("masterRequestId", process.getMasterRequestId());
         summary.put("definitionId", process.getProcessId());
+        summary.put("status", process.getStatus());
         summary.put("template", process.getTemplate());
         if (process.getTemplate() != null) {
             summary.put("templatePackage", process.getTemplatePackage());

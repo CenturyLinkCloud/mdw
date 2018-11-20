@@ -14,21 +14,25 @@
         </div>
         <div class="mdw-heading-actions mdw-edit-actions">
           <a class="btn btn-default" href="" ng-disabled="!isDirty()"
-            uib-popover-template="'edit/savePop.html'" popover-placement="bottom" pop-click>
+            uib-popover-template="instanceId ? 'edit/saveInstPop.html' : 'edit/savePop.html'" popover-placement="bottom" pop-click>
             Save
           </a>            
-          <a class="btn btn-default" ng-href="#/asset/{{asset.packageName}}/{{asset.name}}" >
+          <a ng-if="!instanceId" class="btn btn-default" ng-href="#/asset/{{asset.packageName}}/{{asset.name}}" >
             Cancel
-          </a>  
+          </a>
+          <a ng-if="instanceId" class="btn btn-default" ng-href="#/workflow/processes/{{instanceId}}" >
+            Cancel
+          </a>
         </div>
       </div>
       <div mdw-editor="aceOptions" ng-if="!process && !assetName.endsWith('.task') && !assetName.endsWith('.md')"
           ng-model="asset.content" class="mdw-editor">
       </div>
       <mdw-workflow ng-if="process" process="process" editable="true" on-process-change="onProcessChange"
-          service-base="{{mdw.roots.services}}/services" hub-base="{{mdw.roots.hub}}">
+          service-base="{{mdw.roots.services}}/services" hub-base="{{mdw.roots.hub}}"
+          render-state="{{instanceId > 0}}" instance-edit="{{instanceId > 0}}">
       </mdw-workflow>
-      <mdw-task-template ng-if="assetName.endsWith('.task')" task-asset="{{packageName + '/' + assetName}}" 
+      <mdw-task-template ng-if="assetName.endsWith('.task')" task-asset="{{packageName + '/' + assetName}}"
           editable="true" class="mdw-task-editor">
       </mdw-task-template>
       <mdw-markdown ng-if="assetName.endsWith('.md')" markdown-asset="{{packageName + '/' + assetName}}"

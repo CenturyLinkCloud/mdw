@@ -2,7 +2,7 @@
 
 var processMod = angular.module('processes', ['mdw']);
 
-processMod.controller('ProcessesController', 
+processMod.controller('ProcessesController',
     ['$scope', '$http', 'mdw', 'util', 'PROCESS_STATUSES',
     function($scope, $http, mdw, util, PROCESS_STATUSES) {
 
@@ -14,15 +14,15 @@ processMod.controller('ProcessesController',
       procFilter = {};
     return procFilter;
   };
-  
+
   $scope.setFilter = function(procFilter) {
     if (procFilter) {
         sessionStorage.setItem('processFilter', JSON.stringify(procFilter));
     }
   };
-  
+
   $scope.resetFilter = function() {
-    $scope.processFilter = { 
+    $scope.processFilter = {
         master: true,
         status: '[Active]',
         sort: 'startDate',
@@ -30,7 +30,7 @@ processMod.controller('ProcessesController',
         values: null
     };
   };
-    
+
   // definitionId and processSpec passed in query params
   // (from mdw-studio, for example)
   var definitionIdParam = util.urlParams().definitionId;
@@ -59,10 +59,10 @@ processMod.controller('ProcessesController',
     window.location = mdw.roots.hub + '#/workflow/processes';
     return;
   }
-  
+
   // two-way bound to/from directive
   $scope.processList = {};
-  
+
   var processFilter = sessionStorage.getItem('processFilter');
   if (!processFilter) {
     $scope.resetFilter();
@@ -76,25 +76,25 @@ processMod.controller('ProcessesController',
     if ($scope.processFilter.startDate)
       $scope.processFilter.startDate = util.serviceDate(new Date($scope.processFilter.startDate));
   }
-  
+
   // pseudo-status [Active] means non-final
   $scope.allStatuses = ['[Active]','[Any]'].concat(PROCESS_STATUSES);
-  
+
   // preselected procDef
   if ($scope.processFilter.processId) {
     $scope.typeaheadMatchSelection = sessionStorage.getItem('processSpec');
   }
   else {
-    sessionStorage.removeItem('processSpec'); 
+    sessionStorage.removeItem('processSpec');
   }
-  
+
   $scope.getValueFilters = function() {
     if ($scope.processFilter.values) {
       // translate param string to object
       return util.toValuesObject($scope.processFilter.values);
     }
   };
-  
+
   $scope.setValueFilter = function(name, value) {
     if (name) {
       if (value || value === '') {
@@ -110,7 +110,7 @@ processMod.controller('ProcessesController',
       }
     }
   };
-  
+
   $scope.removeValueFilter = function(name) {
     if ($scope.processFilter.values) {
       var valuesObject = util.toValuesObject($scope.processFilter.values);
@@ -118,7 +118,7 @@ processMod.controller('ProcessesController',
       $scope.processFilter.values = util.toParamString(valuesObject);
     }
   };
-  
+
   $scope.$on('page-retrieved', function(event, processList) {
     // start date and end date, adjusted for db offset
     var dbDate = new Date(processList.retrieveDate);
@@ -147,7 +147,7 @@ processMod.controller('ProcessesController',
     }
     sessionStorage.setItem('processFilter', JSON.stringify($scope.processFilter));
   });
-  
+
   // instanceId, masterRequestId, processName, packageName
   $scope.findTypeaheadMatches = function(typed) {
     return $http.get(mdw.roots.services + '/services/Processes' + '?app=mdw-admin&find=' + typed).then(function(response) {
@@ -188,11 +188,11 @@ processMod.controller('ProcessesController',
             });
             return matches2;
           }
-        });                     
+        });
       }
     });
   };
-  
+
   $scope.clearTypeaheadFilters = function() {
     // check if defined to avoid triggering evaluation
     if ($scope.processFilter.instanceId)
@@ -202,12 +202,12 @@ processMod.controller('ProcessesController',
     if ($scope.processFilter.processId)
       $scope.processFilter.processId = null;
   };
-  
+
   $scope.typeaheadChange = function() {
     if ($scope.typeaheadMatchSelection === null)
       $scope.clearTypeaheadFilters();
   };
-  
+
   $scope.typeaheadSelect = function() {
     $scope.clearTypeaheadFilters();
     if ($scope.typeaheadMatchSelection.id)
@@ -215,37 +215,37 @@ processMod.controller('ProcessesController',
     else
       $scope.processFilter[$scope.typeaheadMatchSelection.type] = $scope.typeaheadMatchSelection.value;
   };
-  
+
   $scope.clearTypeahead = function() {
     $scope.typeaheadMatchSelection = null;
     $scope.clearTypeaheadFilters();
-    sessionStorage.removeItem('processSpec'); 
+    sessionStorage.removeItem('processSpec');
   };
-  
+
   $scope.goChart = function() {
     window.location = '#/dashboard/processes?chart=list';
   };
 }]);
 
-processMod.controller('ProcessController', 
+processMod.controller('ProcessController',
     ['$scope', '$route', '$routeParams', '$filter', 'mdw', 'util', 'Process', 'ProcessSummary', 'DOCUMENT_TYPES', 'WORKFLOW_STATUSES',
      function($scope, $route, $routeParams, $filter, mdw, util, Process, ProcessSummary, DOCUMENT_TYPES, WORKFLOW_STATUSES) {
-  
+
   $scope.activity = util.urlParams().activity; // (will be highlighted in rendering)
-  
+
   $scope.retrieveProcess = function() {
     if ($routeParams.triggerId) {
       $scope.process = Process.retrieve({triggerId: $routeParams.triggerId}, function() {
         ProcessSummary.set($scope.process);
-      });    
+      });
     }
     else {
       $scope.process = Process.retrieve({instanceId: $routeParams.instanceId, extra: 'summary'}, function() {
         ProcessSummary.set($scope.process);
-      });    
+      });
     }
   };
-  
+
   $scope.workflowStatuses = WORKFLOW_STATUSES;
   $scope.valuesEdit = false;
   $scope.editValues = function(edit) {
@@ -264,7 +264,7 @@ processMod.controller('ProcessController',
         if (value.type === 'java.util.Date' && value.value) {
             var timezoneAbbr = 'MST'; // TODO
             newValues[value.name] = $filter('date')(value.value, 'EEE MMM dd HH:mm:ss ') + timezoneAbbr + $filter('date')(value.value, ' yyyy');
-        }    
+        }
         else {
           newValues[value.name] = value.value === null ? '' : value.value;
         }
@@ -278,13 +278,13 @@ processMod.controller('ProcessController',
         else {
           $route.reload();
         }
-      }, 
+      },
       function(error) {
         mdw.messages = error.data.status.message;
       }
     );
   };
-  
+
   if ($route.current.originalPath.endsWith('/values') || $routeParams.name) {
     if ($routeParams.name) {
       $scope.value = Process.retrieve({instanceId: $routeParams.instanceId, extra: 'values', valueName: $routeParams.name}, function() {
@@ -310,7 +310,7 @@ processMod.controller('ProcessController',
         $scope.values = $scope.populatedValues;
       });
     }
-    
+
     $scope.process = ProcessSummary.get();
     if (!$scope.process) {
       $scope.retrieveProcess();
@@ -319,19 +319,26 @@ processMod.controller('ProcessController',
   else {
     $scope.retrieveProcess();
   }
-  
+
   $scope.isException = function(value) {
     return value.type == 'java.lang.Exception';
   };
-  
+
   $scope.asException = function(value) {
     return util.asException(value);
   };
 
-  $scope.instanceEditAllowed = function() {
-    return $scope.authUser.hasRole('Process Execution');
+  $scope.instanceCancelAllowed = function() {
+    return $scope.authUser.hasRole('Process Execution') && $scope.process &&
+        ($scope.process.status == 'In Progress' || $scope.process.status == "Waiting");
   };
-
+  $scope.instanceEditAllowed = function() {
+    return $scope.authUser.hasRole('Process Execution') && $scope.process &&
+        ($scope.process.status == 'In Progress' || $scope.process.status == "Waiting");
+  };
+  $scope.definitionEditAllowed = function() {
+    return $scope.authUser.hasRole('Process Design');
+  };
 }]);
 
 processMod.factory('Process', ['$resource', 'mdw', function($resource, mdw) {
@@ -352,7 +359,7 @@ processMod.controller('ProcessDefsController', ['$scope', 'mdw', 'util', 'Proces
       $scope.applyPkgCollapsedState();
     });
   });
-  
+
   // TODO: copied from tests.js, consider refactoring
   $scope.collapse = function(pkg) {
     pkg.collapsed = true;
@@ -401,19 +408,19 @@ processMod.controller('ProcessDefsController', ['$scope', 'mdw', 'util', 'Proces
   };
 }]);
 
-processMod.controller('ProcessDefController', 
+processMod.controller('ProcessDefController',
     ['$scope', '$routeParams', '$route', '$location', '$filter', 'mdw', 'util', 'ProcessDef', 'ProcessSummary',
     function($scope, $routeParams, $route, $location, $filter, mdw, util, ProcessDef, ProcessSummary) {
-      
+
   $scope.activity = util.urlParams().activity; // (will be highlighted in rendering)
-      
-  $scope.process = { 
+
+  $scope.process = {
     packageName: $routeParams.packageName,
     name: $routeParams.processName,
     version: $routeParams.version
   };
-  $scope.definitionId = null;  // stored at scope level due to vagaries in $scope.process 
-  
+  $scope.definitionId = null;  // stored at scope level due to vagaries in $scope.process
+
   $scope.setProcessFilter = function() {
     var procFilter = sessionStorage.getItem('processFilter');
     if (procFilter)
@@ -433,11 +440,13 @@ processMod.controller('ProcessDefController',
       sessionStorage.setItem('processSpec', procSpec);
     }
   };
-  
+
   var summary = ProcessSummary.get();
   if (summary) {
-    $scope.process.id = summary.id;
+    if (!$routeParams.version || $routeParams.version.indexOf(".") < 0)
+      $scope.process.id = summary.id;
     $scope.process.masterRequestId = summary.masterRequestId;
+    $scope.process.status = summary.status;
     $scope.process.definitionId = summary.definitionId;
     $scope.process.template = summary.template;
     $scope.process.archived = summary.archived;
@@ -451,7 +460,7 @@ processMod.controller('ProcessDefController',
         $scope.definitionId = $scope.process.definitionId;
         $scope.template = $scope.process.template;
     });
-  }  
+  }
 }]);
 
 // retains state for nav
