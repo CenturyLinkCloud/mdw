@@ -13,6 +13,7 @@ Refer to the [Kubernetes documentation](https://kubernetes.io/docs/user-journeys
   2. [Stipulate your Docker Image](#2-stipulate-your-docker-image)
   3. [Create a Config Map](#3-create-a-config-map)
   4. [Create a Pod](#4-create-a-pod)
+  5. [Filepanel](#5-filepanel)
 
 ## 1. Build a Spring Boot Jar
   - The [mdw-demo](https://github.com/CenturyLinkCloud/mdw-demo) project has a build.gradle file that illustrates how to include mdw-spring-boot
@@ -113,4 +114,8 @@ Refer to the [Kubernetes documentation](https://kubernetes.io/docs/user-journeys
               emptyDir: {}
     ```
   - Note how the config map from step 3 is referenced in the volumeMounts and volume sections.
+
+## 5. FilePanel
+  - To set up FilePanel log viewing for MDW on Kubernetes, follow the steps under the Kubernetes section here:
+    https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/system/filepanel/readme.md
 
