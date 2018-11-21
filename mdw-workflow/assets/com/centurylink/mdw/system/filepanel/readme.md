@@ -37,4 +37,32 @@ Configuration for filepanel:
             - /var/lib/tomcat8/logs
             - /var/lib/tomcat8/mdw/config
     
-    ```    
+    ```
+
+3. Kubernetes
+  - Requires asset package com.centurylink.mdw.kubernetes
+  - Environment variables:
+    - K8S_NAMESPACE = Kubernetes namespace
+    - K8S_SERVICE_TOKEN = Secret service token with permissions to view pods in $K8S_NAMESPACE
+      Example from deployment.yaml:
+      ```yaml
+        env:
+        - name: K8S_SERVICE_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: my-service-token-name
+              key: token
+      ```
+  - mdw.yaml:
+  ```yaml
+  # (no servers section)
+
+  filepanel:
+    root.dirs:
+      - /opt/mdw/config
+      - /opt/mdw/logs
+  ```
+  - One log per pod will be visible in FilePanel if configured correctly.
+  - TODO:
+    - allow overriding rolling 1GB size limit
+    - configurable location (default=/opt/mdw/logs)
