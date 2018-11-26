@@ -50,4 +50,9 @@ public class Startup implements StartupService {
             }
         }
     }
+
+    @Override
+    public boolean isEnabled() {
+        return Context.getNamespace() != null;
+    }
 }
