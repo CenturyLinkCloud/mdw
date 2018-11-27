@@ -169,6 +169,9 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/activity/types/*.class"
         include "com/centurylink/mdw/drawio/*.class"
         include "com/centurylink/mdw/util/MiniCrypter.class"
+        include "com/centurylink/mdw/util/MiniCrypter.class"
+        include "com/centurylink/mdw/model/asset/Pagelet.class"
+        include "com/centurylink/mdw/model/asset/Pagelet\$*.class"
     }
 
     from configurations.cli.asFileTree.files.collect {

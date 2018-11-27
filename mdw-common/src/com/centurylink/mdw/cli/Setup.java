@@ -29,6 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -585,7 +586,6 @@ public abstract class Setup implements Operation {
         return getAssetPackageDirs().getAssetFiles(packageName);
     }
 
-
     protected void updateBuildFile() throws IOException {
         final Pattern repositoryPattern = Pattern.compile("maven\\s*\\{\\s*url\\s+\\w+\\s*}");
         String contents = new String(
@@ -599,5 +599,23 @@ public abstract class Setup implements Operation {
             Files.write(Paths.get(getProjectDir() + "/build.gradle"),
                     newContents.toString().getBytes());
         }
+    }
+
+    /**
+     * Simple substitution mechanism.  Missing values substituted with empty string.
+     */
+    public static String substitute(String input, Map<String,Object> values) {
+        StringBuilder output = new StringBuilder(input.length());
+        int index = 0;
+        Matcher matcher = SUBST_PATTERN.matcher(input);
+        while (matcher.find()) {
+            String match = matcher.group();
+            output.append(input.substring(index, matcher.start()));
+            Object value = values.get(match.substring(2, match.length() - 2));
+            output.append(value == null ? "" : String.valueOf(value));
+            index = matcher.end();
+        }
+        output.append(input.substring(index));
+        return output.toString();
     }
 }
