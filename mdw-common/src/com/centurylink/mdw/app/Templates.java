@@ -88,6 +88,4 @@ public class Templates {
         output.append(input.substring(index));
         return output.toString();
     }
-
-
 }
