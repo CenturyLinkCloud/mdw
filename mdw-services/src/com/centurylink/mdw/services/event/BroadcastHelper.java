@@ -47,7 +47,6 @@ public class BroadcastHelper  {
             String value = json.getString("VALUE");
             PropertyManager propMgr = PropertyManager.getInstance();
             propMgr.setStringProperty(name, StringHelper.isEmpty(value)?null:value);
-            LoggerUtil.getStandardLogger().refreshCache();
         } else if (action.equals("REFRESH_CACHES")) {
             CacheRegistration cacheRegister = new CacheRegistration();
             if (json.has("CACHE_NAMES")) {

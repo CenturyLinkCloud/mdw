@@ -15,14 +15,13 @@
  */
 package com.centurylink.mdw.services;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.Serializable;
-
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.ApplicationCacheDocument;
 import com.centurylink.mdw.services.cache.CacheRegistration;
-import com.centurylink.mdw.util.log.LoggerUtil;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.Serializable;
 
 public class ConfigurationHelper implements Serializable{
 
@@ -58,10 +57,6 @@ public class ConfigurationHelper implements Serializable{
 
      if (APPLICATION_CACHE.equals(pFileName)) {
         CacheRegistration.getInstance().refreshCaches();
-     }
-     else {
-//       PropertyManager.getInstance().refreshCache();
-       LoggerUtil.getStandardLogger().refreshCache();  // in case log props have changed
      }
 
      return true;

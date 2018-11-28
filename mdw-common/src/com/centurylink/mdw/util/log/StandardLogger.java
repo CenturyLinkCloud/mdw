@@ -15,157 +15,66 @@
  */
 package com.centurylink.mdw.util.log;
 
-import java.io.PrintStream;
-import java.io.Serializable;
-
-public interface StandardLogger extends Serializable
+public interface StandardLogger
 {
     public enum LogLevel { INFO, WARN, DEBUG, ERROR, TRACE };
 
-    /**
-     * Logs messages which are of level INFO.
-     * INFO is a message level for informational messages.
-     * Typically INFO messages will be written to the console
-     * or its equivalent.  So the INFO level should only be
-     * used for reasonably significant messages that will
-     * make sense to end users and system admins.
-     *
-     * @param message the message to be logged
-     */
-    void info(java.lang.String logtodisplay);
+    void info(String msg);
 
-    /**
-      * Logs messages which are of level WARN.
-     * WARN is a message level indicating a potential problem.
-     * In general WARNING messages should describe events that will
-     * be of interest to end users or system managers, or which
-     * indicate potential problems.
-     *
-     * @param message the message to be logged
-     */
-    void warn(java.lang.String logtodisplay);
+    void warn(String msg);
 
-    /**
-      * Logs messages which are of level SEVERE.
-      * SEVERE is a message level indicating a serious failure.
-      * In general SEVERE messages should describe events that are
-      * of considerable importance and which will prevent normal
-      * program execution.   They should be reasonably intelligible
-      * to end users and to system administrators.
-      *
-      * @param message the message to be logged
-      */
-    void severe(java.lang.String logtodisplay);
+    default void error(String msg) {
+        severe(msg);
+    }
+    void severe(String msg);
 
-    void trace(String logtoDisplay);
+    void debug(String msg);
 
-    void traceException(String msg, Throwable t);
-
-    /**
-     * INFO is a message level for informational messages.
-     * Typically INFO messages will be written to the console
-     * or its equivalent.  So the INFO level should only be
-     * used for reasonably significant messages that will
-     * make sense to end users and system admins.
-     * The message of the Throwable [getMessage()] is attached to the log message.
-     *
-     * @param message   the message to be logged
-     * @param throwable the throwable to be looged
-     */
-    void infoException(java.lang.String logtodisplay,
-        java.lang.Throwable throwable);
-
-    /**
-      * Logs messages which are of level SEVERE.
-      * SEVERE is a message level indicating a serious failure.
-      * In general SEVERE messages should describe events that are
-      * of considerable importance and which will prevent normal
-      * program execution.   They should be reasonably intelligible
-      * to end users and to system administrators.
-      *
-      * @param message    the message to be logged.
-      * @param throwable  the throwable to be logged.
-      */
-    void severeException(java.lang.String message,
-        java.lang.Throwable throwable);
-
-    /**
-      * Logs messages which are of level WARN.
-      * WARN is a message level indicating a potential problem.
-      * In general WARNING messages should describe events that will
-      * be of interest to end users or system managers, or which
-      * indicate potential problems.
-      * The message of the Throwable [getMessage()] is attached to the log message.
-      *
-      * @param message   the message to be logged
-      * @param throwable the throwable to be logged
-      */
-    void warnException(java.lang.String logtodisplay,
-        java.lang.Throwable throwable);
-
-
-
-    /**
-      * Logs messages which are of level DEBUG.
-      * DEBUG is a message level providing tracing information..
-      * Typically used for debugging purposes.
-      *
-      * @param message the message to be logged
-      */
-    void debug(java.lang.String logtodisplay);
-
-    /**
-      * Logs messages which are of level Debug.
-      * DEBUG is a message level providing tracing information..
-      * Typically used for debugging purposes.
-      * The message of the Throwable [getMessage()] is attached to the log message.
-      *
-      * @param message    the message to be logged
-      * @param throwable  the throwable to be logged
-    */
-    void debugException(java.lang.String msg, java.lang.Throwable throwable);
-
-    /**
-     * Checks if the debug log vele is set or not
-     * @return boolean status
-     */
-    boolean isDebugEnabled();
-
-     /**
-     * Checks if the info log vele is set or not
-     * @return boolean status
-     */
-    boolean isInfoEnabled();
-
-    boolean isMdwDebugEnabled();
-
-    boolean isTraceEnabled();
+    void trace(String msg);
 
     void mdwDebug(String message);
+
+    default void info(String msg, Throwable t) {
+        infoException(msg, t);
+    }
+    void infoException(String msg, Throwable t);
+
+    default void warn(String msg, Throwable t) {
+        warnException(msg, t);
+    }
+    void warnException(String msg, Throwable t);
+
+    default void error(String msg, Throwable t) {
+        severeException(msg, t);
+    }
+    void severeException(String msg, Throwable t);
+
+    default void debug(String msg, Throwable t) {
+        debugException(msg, t);
+    }
+    void debugException(String msg, Throwable t);
+
+    default void trace(String msg, Throwable t) {
+        traceException(msg, t);
+    }
+    void traceException(String msg, Throwable t);
+
+    boolean isInfoEnabled();
+    boolean isDebugEnabled();
+    boolean isTraceEnabled();
+    boolean isMdwDebugEnabled();
 
     public boolean isEnabledFor(LogLevel level);
 
     public void log(LogLevel level, String message);
 
-    public void refreshCache();
-
-    public void exception(String tag, String message, Throwable e);
-
     public void info(String tag, String message);
-
-    public void debug(String tag, String message);
-
     public void warn(String tag, String message);
-
+    public void exception(String tag, String message, Throwable e);
     public void severe(String tag, String message);
-
+    public void debug(String tag, String message);
     public void trace(String tag, String message);
 
     public String getDefaultHost();
-
     public String getDefaultPort();
-
-    public String getSentryMark();
-
-    public PrintStream getPrintStream();
 }

@@ -15,17 +15,6 @@
  */
 package com.centurylink.mdw.util.log;
 
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.common.service.WebSocketMessenger;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -33,6 +22,16 @@ import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.workflow.TransitionStatus;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.soccom.SoccomClient;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class AbstractStandardLoggerBase implements StandardLogger {
 
@@ -181,4 +180,98 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
         WebSocketMessenger.getInstance().send(topic, message.toString());
     }
 
+    @Override
+    public boolean isInfoEnabled() {
+        return isEnabledFor(LogLevel.INFO);
+    }
+
+    @Override
+    public boolean isDebugEnabled() {
+        return isEnabledFor(LogLevel.DEBUG);
+    }
+
+    @Override
+    public boolean isTraceEnabled() {
+        return isEnabledFor(LogLevel.TRACE);
+    }
+
+    @Override
+    public boolean isMdwDebugEnabled() {
+        return isEnabledFor(LogLevel.TRACE);
+    }
+
+    protected void logIt(LogLevel level, String message, Throwable t) {
+        switch (level.toString()) {
+            case "INFO":
+                if (t == null)
+                    info(message);
+                else
+                    info(message, t);
+                break;
+            case "ERROR":
+                if (t == null)
+                    error(message);
+                else
+                    error(message, t);
+                break;
+            case "DEBUG":
+                if (t == null)
+                    debug(message);
+                else
+                    debug(message, t);
+                break;
+            case "WARN":
+                if (t == null)
+                    warn(message);
+                else
+                    warn(message, t);
+                break;
+            case "TRACE":
+                if (t == null)
+                    trace(message);
+                else
+                    trace(message, t);
+                break;
+            default: break;
+        }
+
+        sendToWatchers(message);
+    }
+
+    @Override
+    public void exception(String tag, String message, Throwable e) {
+        String line = generate_log_line('e', tag, message);
+        logIt(LogLevel.ERROR, line, e);
+    }
+
+    public void info(String tag, String message) {
+        if (isInfoEnabled()) {
+            String line = generate_log_line('i', tag, message);
+            logIt(LogLevel.INFO, line, null);
+        }
+    }
+
+    public void debug(String tag, String message) {
+        if (isDebugEnabled()) {
+            String line = generate_log_line('d', tag, message);
+            logIt(LogLevel.DEBUG, line, null);
+        }
+    }
+
+    public void warn(String tag, String message) {
+        String line = generate_log_line('w', tag, message);
+        logIt(LogLevel.WARN, line, null);
+    }
+
+    public void severe(String tag, String message) {
+        String line = generate_log_line('w', tag, message);
+        logIt(LogLevel.ERROR, line, null);
+    }
+
+    public void trace(String tag, String message) {
+        if (isTraceEnabled()) {
+            String line = generate_log_line('t', tag, message);
+            logIt(LogLevel.TRACE, line, null);
+        }
+    }
 }

@@ -18,6 +18,7 @@ package com.centurylink.mdw.util.log;
 import java.io.Serializable;
 
 import com.centurylink.mdw.util.log.log4j.Log4JStandardLoggerImpl;
+import com.centurylink.mdw.util.log.slf4j.Slf4JStandardLoggerImpl;
 
 public class LoggerUtil implements Serializable {
 
@@ -56,6 +57,9 @@ public class LoggerUtil implements Serializable {
         }
         else if (Log4JStandardLoggerImpl.class.getName().equals(loggerImplClass) || org.apache.log4j.Logger.class.getName().equals(loggerImplClass)) {
             return new Log4JStandardLoggerImpl();
+        }
+        else if (Slf4JStandardLoggerImpl.class.getName().equals(loggerImplClass) || org.slf4j.Logger.class.getName().equals(loggerImplClass)) {
+            return new Slf4JStandardLoggerImpl();
         }
         else {
             try {
