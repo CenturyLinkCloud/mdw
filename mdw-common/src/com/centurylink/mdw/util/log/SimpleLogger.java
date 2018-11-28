@@ -15,13 +15,13 @@
  */
 package com.centurylink.mdw.util.log;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 
+/**
+ * Logs to standard out.
+ */
 public class SimpleLogger extends AbstractStandardLoggerBase {
-
-    private static final String MDW_LOG_LOCATION = "mdw.log.location";
 
     private static final int WARN_LEVEL = 1;
     private static final int INFO_LEVEL = 2;
@@ -31,22 +31,17 @@ public class SimpleLogger extends AbstractStandardLoggerBase {
 
     private static SimpleLogger singleton = null;
 
-    private int loglevel = INFO_LEVEL;
-    private PrintStream logfile = null;
+    private int loglevel;
 
     private SimpleLogger() {
-        String logLoc = System.getProperty(MDW_LOG_LOCATION);
-        if (logLoc != null) {
-            File logDir = new File(logLoc);
-            try {
-                if (!logDir.isDirectory())
-                    throw new FileNotFoundException(MDW_LOG_LOCATION + " is not a directory: " + logDir.getAbsolutePath());
-                logfile = new PrintStream(new File(logDir + "/mdw.log"));
-            }
-            catch (FileNotFoundException ex) {
-                ex.printStackTrace();
-            }
-        }
+        String v = PropertyManager.getProperty(PropertyNames.MDW_LOGGING_LEVEL);
+        if (v == null) loglevel = INFO_LEVEL;
+        else if (v.equalsIgnoreCase("DEBUG") || v.equals("3")) loglevel = DEBUG_LEVEL;
+        else if (v.equalsIgnoreCase("INFO") || v.equals("2")) loglevel = INFO_LEVEL;
+        else if (v.equalsIgnoreCase("MDW_DEBUG") || v.equals("4")) loglevel = MDW_DEBUG_LEVEL;
+        else if (v.equalsIgnoreCase("TRACE") || v.equals("5")) loglevel = TRACE_LEVEL;
+        else if (v.equalsIgnoreCase("WARN") || v.equals("1")) loglevel = WARN_LEVEL;
+        else loglevel = INFO_LEVEL;
     }
 
     public static SimpleLogger getSingleton() {
@@ -58,9 +53,6 @@ public class SimpleLogger extends AbstractStandardLoggerBase {
     private void logline(char type, String tag, String message) {
         String line = generate_log_line(type, tag, message);
         System.out.println(line);
-        if (logfile != null) {
-            logfile.println(line);
-        }
         sendToWatchers(line);
     }
 
@@ -68,10 +60,6 @@ public class SimpleLogger extends AbstractStandardLoggerBase {
         String line = generate_log_line(type, tag, message);
         System.out.println(line);
         throwable.printStackTrace(System.out);
-        if (logfile!=null) {
-            logfile.print(line);
-            throwable.printStackTrace(logfile);
-        }
         sendToWatchers(line);
     }
 

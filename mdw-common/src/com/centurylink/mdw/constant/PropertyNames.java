@@ -18,8 +18,7 @@ package com.centurylink.mdw.constant;
 public class PropertyNames {
 
     // logging
-    public static final String MDW_LOGGING_LEVEL = "mdw.logging.level";
-    public static final String MDW_LOGGING_FILE = "mdw.logging.file";
+    public static final String MDW_LOGGING_LEVEL = "mdw.logging.level";  // for SimpleLogger only
     public static final String MDW_LOGGING_WATCHER = "mdw.logging.watcher"; // set by regression tester "<host>:<port>:<timeout>";
     // container service providers
     public static final String MDW_CONTAINER_DATASOURCE_PROVIDER = "mdw.container.datasource.provider";
