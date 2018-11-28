@@ -20,6 +20,7 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.YamlProperties;
 import com.centurylink.mdw.util.log.log4j.Log4JStandardLoggerImpl;
 import com.centurylink.mdw.util.log.slf4j.Slf4JStandardLoggerImpl;
+import org.slf4j.helpers.Util;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +57,7 @@ public class LoggerUtil implements Serializable {
             if (mdwLogLevel != null) {
                 if (mdwLogLevel.equals("MDW_DEBUG"))
                     mdwLogLevel = "TRACE";
-                System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", mdwLogLevel.toLowerCase());
+                System.setProperty("org.slf4j.simpleLogger.log.com.centurylink.mdw", mdwLogLevel.toLowerCase());
             }
         }
     }
@@ -70,7 +71,7 @@ public class LoggerUtil implements Serializable {
         // avoid reflection for known impls
         if (loggerImplClass == null) {
             if (ApplicationContext.isSpringBoot()) {
-                return new Slf4JStandardLoggerImpl();
+                return new Slf4JStandardLoggerImpl(Util.getCallingClass().getName());
             }
             else {
                 return SimpleLogger.getSingleton();
@@ -83,7 +84,7 @@ public class LoggerUtil implements Serializable {
             return new Log4JStandardLoggerImpl();
         }
         else if (Slf4JStandardLoggerImpl.class.getName().equals(loggerImplClass) || org.slf4j.Logger.class.getName().equals(loggerImplClass)) {
-            return new Slf4JStandardLoggerImpl();
+            return new Slf4JStandardLoggerImpl(Util.getCallingClass().getName());
         }
         else {
             try {
