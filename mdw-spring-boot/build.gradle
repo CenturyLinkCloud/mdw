@@ -45,6 +45,15 @@ jar {
     }
 }
 
+sourcesJar {
+    from("src") {
+        include "**/*.java"
+    }
+    from("../mdw-hub/src") {
+        include "**/*.java"
+    }
+}
+
 artifacts {
     archives jar, javadocJar, sourcesJar
 }
