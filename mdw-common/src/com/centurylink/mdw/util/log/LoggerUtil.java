@@ -15,15 +15,19 @@
  */
 package com.centurylink.mdw.util.log;
 
-import java.io.Serializable;
-
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.config.YamlProperties;
 import com.centurylink.mdw.util.log.log4j.Log4JStandardLoggerImpl;
 import com.centurylink.mdw.util.log.slf4j.Slf4JStandardLoggerImpl;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Serializable;
 
 public class LoggerUtil implements Serializable {
 
     public static final String MDW_LOGGER_IMPL = "mdw.logger.impl";
-
 
     private static LoggerUtil util = new LoggerUtil();
 
@@ -36,6 +40,27 @@ public class LoggerUtil implements Serializable {
 
     private static boolean accessed;
 
+
+    /**
+     * For Spring Boot app, an opportunity to initialize logging before Spring starts logging.
+     * Otherwise for slf4j, properties have already been defaulted before we have a chance to set them.
+     */
+    public static void initializeLogging() throws IOException {
+        System.setProperty("org.slf4j.simpleLogger.logFile", "System.out");
+        // Peek at mdw.yaml to find default logging level, but do not initialize PropertyManager
+        // which could initialize slf4j prematurely.  (Works only with yaml config file).
+        File mdwYaml = getConfigurationFile("mdw.yaml");
+        if (mdwYaml.exists()) {
+            YamlProperties yamlProps = new YamlProperties("mdw", mdwYaml);
+            String mdwLogLevel = yamlProps.getString("mdw.logging.level");
+            if (mdwLogLevel != null) {
+                if (mdwLogLevel.equals("MDW_DEBUG"))
+                    mdwLogLevel = "TRACE";
+                System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", mdwLogLevel.toLowerCase());
+            }
+        }
+    }
+
     public static StandardLogger getStandardLogger() {
         String loggerImplClass = System.getProperty(MDW_LOGGER_IMPL);
         if (!accessed && loggerImplClass != null) {
@@ -43,7 +68,15 @@ public class LoggerUtil implements Serializable {
             accessed = true;
         }
         // avoid reflection for known impls
-        if (loggerImplClass == null || SimpleLogger.class.getName().equals(loggerImplClass)) {
+        if (loggerImplClass == null) {
+            if (ApplicationContext.isSpringBoot()) {
+                return new Slf4JStandardLoggerImpl();
+            }
+            else {
+                return SimpleLogger.getSingleton();
+            }
+        }
+        else if (SimpleLogger.class.getName().equals(loggerImplClass)) {
             return SimpleLogger.getSingleton();
         }
         else if (Log4JStandardLoggerImpl.class.getName().equals(loggerImplClass) || org.apache.log4j.Logger.class.getName().equals(loggerImplClass)) {
@@ -93,4 +126,15 @@ public class LoggerUtil implements Serializable {
             }
         }
     }
+
+    public static File getConfigurationFile(String filepath) {
+        String configDir = System.getProperty(PropertyManager.MDW_CONFIG_LOCATION);
+        if (configDir == null)
+            return new File(filepath);
+        else if (configDir.endsWith("/"))
+            return new File(configDir + filepath);
+        else
+            return new File(configDir + "/" + filepath);
+    }
+
 }

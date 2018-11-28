@@ -15,17 +15,14 @@
  */
 package com.centurylink.mdw.util.log.log4j;
 
-import java.io.PrintStream;
+import com.centurylink.mdw.util.log.AbstractStandardLoggerBase;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
-import com.centurylink.mdw.cache.CacheService;
-import com.centurylink.mdw.util.log.AbstractStandardLoggerBase;
 
 public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase {
 
     private Logger selfLogger = Logger.getLogger(Log4JStandardLoggerImpl.class);
-    private Logger logger = null;
+    private Logger logger;
 
     // avoid missed logging messages due to missing appender registration
     public static final String DEFAULT_LOGGER_NAME = "com.centurylink.mdw.logging";
@@ -44,63 +41,29 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase {
         logger = Logger.getLogger(className);
     }
 
-    /**
-    * Logs messages at the debug level
-    */
     public void debug(String logtodisplay) {
-
-        if (isDebugEnabled()) {
-         //   logger.debug(logtodisplay);
-            logIt(LogLevel.DEBUG, logtodisplay, null);
-        }
+        logIt(LogLevel.DEBUG, logtodisplay, null);
     }
 
-
-   /**
-    * Logs messages at the debug level with the exception
-    */
-    public void debugException(String msg, Throwable throwable) {
-        if (isDebugEnabled()) {
-          //  logger.debug(msg, throwable);
-            logIt(LogLevel.DEBUG, msg, throwable);
-        }
+    public void debugException(String msg, Throwable t) {
+        logIt(LogLevel.DEBUG, msg, t);
     }
 
-   /**
-    * Logs messages at the info level
-    */
-    public void info(String logtodisplay) {
-        if (isInfoEnabled()) {
-          //  logger.info(logtodisplay);
-            logIt(LogLevel.INFO, logtodisplay, null);
-        }
+    public void info(String msg) {
+        logIt(LogLevel.INFO, msg, null);
     }
 
-    public void trace(String logtodisplay) {
-        if (isTraceEnabled()) {
-        //    logger.trace(logtodisplay);
-            logIt(LogLevel.TRACE, logtodisplay, null);
-        }
+    public void trace(String msg) {
+        logIt(LogLevel.TRACE, msg, null);
     }
 
     public void traceException(String msg, Throwable t) {
-
-        if (isTraceEnabled()) {
-         //   logger.info(msg, t);
-            logIt(LogLevel.TRACE, msg, t);
-        }
+        logIt(LogLevel.TRACE, msg, t);
      }
 
-    /**
-     * Logs messages at the info level with the exception
-     */
-    public void infoException(String logtodisplay, Throwable throwable) {
-
-        if (isInfoEnabled()) {
-         //   logger.info(logtodisplay, throwable);
-            logIt(LogLevel.INFO, logtodisplay, throwable);
-        }
-     }
+    public void infoException(String msg, Throwable t) {
+        logIt(LogLevel.INFO, msg, t);
+    }
 
     public boolean isDebugEnabled() {
         return (logger.isDebugEnabled());
@@ -114,20 +77,20 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase {
         return logger.isEnabledFor(Level.toLevel(Level.TRACE_INT));
     }
 
-    public void severe(String logtodisplay) {
-        logIt(LogLevel.ERROR, logtodisplay, null);
+    public void severe(String msg) {
+        logIt(LogLevel.ERROR, msg, null);
     }
 
-    public void severeException(String message, Throwable throwable) {
-        logIt(LogLevel.ERROR, message, throwable);
+    public void severeException(String msg, Throwable t) {
+        logIt(LogLevel.ERROR, msg, t);
     }
 
-    public void warn(String logtodisplay) {
-        logIt(LogLevel.WARN, logtodisplay, null);
+    public void warn(String msg) {
+        logIt(LogLevel.WARN, msg, null);
     }
 
-    public void warnException(String logtodisplay, Throwable throwable) {
-        logIt(LogLevel.WARN, logtodisplay, throwable);
+    public void warnException(String msg, Throwable t) {
+        logIt(LogLevel.WARN, msg, t);
     }
 
    /**

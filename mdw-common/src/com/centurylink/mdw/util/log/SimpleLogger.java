@@ -19,7 +19,7 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 
 /**
- * Logs to standard out.
+ * Logs to standard out and to the watcher.
  */
 public class SimpleLogger extends AbstractStandardLoggerBase {
 
