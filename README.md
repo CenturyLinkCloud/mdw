@@ -23,6 +23,8 @@ Components
   - Extensible orchestration component for consuming and producing microservices.
 #### Intelligence
   - Web dashboard for tracking trends and milestones and creating custom reports.
+### Command Line Interface
+  - The [MDW CLI](http://centurylinkcloud.github.io/mdw/docs/getting-started/cli/) has commands for installing, running and testing your workflow.
 
 Building MDW
 ------------
