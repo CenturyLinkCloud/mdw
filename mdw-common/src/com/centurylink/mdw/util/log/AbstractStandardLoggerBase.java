@@ -15,6 +15,16 @@
  */
 package com.centurylink.mdw.util.log;
 
+import com.centurylink.mdw.common.service.WebSocketMessenger;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.workflow.TransitionStatus;
+import com.centurylink.mdw.model.workflow.WorkStatus;
+import com.centurylink.mdw.soccom.SoccomClient;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -23,23 +33,10 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.centurylink.mdw.common.service.WebSocketMessenger;
-import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.workflow.TransitionStatus;
-import com.centurylink.mdw.model.workflow.WorkStatus;
-import com.centurylink.mdw.soccom.SoccomClient;
-
 public abstract class AbstractStandardLoggerBase implements StandardLogger {
 
     public static final String DEFAULT_HOST = "localhost";
-    public static final String DEFAULT_PORT = "7181";
-
-    private static final String SENTRY_MARK = "[SENTRY-MARK] ";
+    public static final int DEFAULT_PORT = 7181;
 
     private static final String MESSAGE_REG_EX = "\\[\\(.\\)([0-9.:]+) p([0-9]+)\\.([0-9]+) ([a-z])([0-9]+)?\\.([^\\]]+)\\] (.*)";
 
@@ -53,15 +50,11 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
         return DEFAULT_HOST;
     }
 
-    public String getDefaultPort() {
+    public int getDefaultPort() {
         return DEFAULT_PORT;
     }
 
-    public String getSentryMark() {
-        return SENTRY_MARK;
-    }
-
-    public void refreshCache() {
+    public void refreshWatcher() {
         watcher = PropertyManager.getProperty(PropertyNames.MDW_LOGGING_WATCHER);
     }
 
@@ -140,7 +133,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
     }
 
     protected void sendToWatchers(String message) {
-        if (watching())  // Designer
+        if (watching())
             sendToWatcher(message);
 
         try {
@@ -164,8 +157,8 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
         SoccomClient client = null;
         try {
             String[] spec = watcher.split(":");
-            String host = spec.length>0?spec[0]:getDefaultHost();
-            String port = spec.length>1?spec[1]:getDefaultPort();
+            String host = spec.length > 0 ? spec[0] : getDefaultHost();
+            int port = spec.length > 1 ? Integer.parseInt(spec[1]) : getDefaultPort();
             client = new SoccomClient(host, port, null);
             client.putreq(message);
         } catch (Exception e) {
@@ -181,4 +174,98 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
         WebSocketMessenger.getInstance().send(topic, message.toString());
     }
 
+    @Override
+    public boolean isInfoEnabled() {
+        return isEnabledFor(LogLevel.INFO);
+    }
+
+    @Override
+    public boolean isDebugEnabled() {
+        return isEnabledFor(LogLevel.DEBUG);
+    }
+
+    @Override
+    public boolean isTraceEnabled() {
+        return isEnabledFor(LogLevel.TRACE);
+    }
+
+    @Override
+    public boolean isMdwDebugEnabled() {
+        return isEnabledFor(LogLevel.TRACE);
+    }
+
+    protected void logIt(LogLevel level, String message, Throwable t) {
+        switch (level.toString()) {
+            case "INFO":
+                if (t == null)
+                    info(message);
+                else
+                    info(message, t);
+                break;
+            case "ERROR":
+                if (t == null)
+                    error(message);
+                else
+                    error(message, t);
+                break;
+            case "DEBUG":
+                if (t == null)
+                    debug(message);
+                else
+                    debug(message, t);
+                break;
+            case "WARN":
+                if (t == null)
+                    warn(message);
+                else
+                    warn(message, t);
+                break;
+            case "TRACE":
+                if (t == null)
+                    trace(message);
+                else
+                    trace(message, t);
+                break;
+            default: break;
+        }
+
+        sendToWatchers(message);
+    }
+
+    @Override
+    public void exception(String tag, String message, Throwable e) {
+        String line = generate_log_line('e', tag, message);
+        logIt(LogLevel.ERROR, line, e);
+    }
+
+    public void info(String tag, String message) {
+        if (isInfoEnabled()) {
+            String line = generate_log_line('i', tag, message);
+            logIt(LogLevel.INFO, line, null);
+        }
+    }
+
+    public void debug(String tag, String message) {
+        if (isDebugEnabled()) {
+            String line = generate_log_line('d', tag, message);
+            logIt(LogLevel.DEBUG, line, null);
+        }
+    }
+
+    public void warn(String tag, String message) {
+        String line = generate_log_line('w', tag, message);
+        logIt(LogLevel.WARN, line, null);
+    }
+
+    public void severe(String tag, String message) {
+        String line = generate_log_line('w', tag, message);
+        logIt(LogLevel.ERROR, line, null);
+    }
+
+    public void trace(String tag, String message) {
+        if (isTraceEnabled()) {
+            String line = generate_log_line('t', tag, message);
+            logIt(LogLevel.TRACE, line, null);
+        }
+    }
 }

@@ -35,7 +35,7 @@ public interface AdapterActivity extends GeneralActivity {
     String COMPCODE_AUTO_RETRY = "Automatic Retry";
 
     String MAKE_ACTUAL_CALL = "(MAKE_ACTUAL_CALL)";
-    String DEFAULT_STUBBER_PORT = "7182";
+    int DEFAULT_STUBBER_PORT = 7182;
     int DEFAULT_STUBBER_TIMEOUT = 120;
 
     /**

@@ -19,8 +19,10 @@ package com.centurylink.mdw.soccom;
 // need to set timeout
 // need to check msg ID in client_getresp
 
-import java.net.*;
 import java.io.*;
+import java.net.ConnectException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.StringTokenizer;
 
 /**
@@ -86,12 +88,12 @@ public class SoccomClient
      *          <li>Failed to create the socket</li>
      *               </ul>
      */
-    public SoccomClient(String host, String port, PrintStream log)
+    public SoccomClient(String host, int port, PrintStream log)
     throws SoccomException
     {
     _log = log;
     try {
-        _socket = new Socket(host, Integer.parseInt(port));
+        _socket = new Socket(host, port);
 
         logline("Client connect on host " + host +
                    ", port " + port);
@@ -122,7 +124,7 @@ public class SoccomClient
      *          <li>Failed to create the socket</li>
      *               </ul>
      */
-    public SoccomClient(String host, String port)
+    public SoccomClient(String host, int port)
     throws SoccomException
     {
     this(host, port, System.out);
@@ -545,14 +547,15 @@ public class SoccomClient
                   int timeout, PrintStream log)
     throws SoccomException
     {
-    String host, port;
+    String host;
+    int port;
     int k = serverspec.indexOf(':');
-    if (k>=0) {
+    if (k >= 0) {
         host = serverspec.substring(0,k);
-        port = serverspec.substring(k+1);
+        port = Integer.parseInt(serverspec.substring(k+1));
     } else {
         host = serverspec;
-        port = "4001";
+        port = 4001;
     }
     SoccomClient soccom = new SoccomClient(host, port, log);
     String reply;
@@ -654,40 +657,6 @@ public class SoccomClient
     private static void printUsage()
     {
     System.err.println("Usage: java soccom.SoccomClient host port msg");
-    }
-
-    /**
-     * This method allows to send a message from the command line.
-     * As an example:
-     * <pre>
-     *    java com.qwest.magic.soccom.SoccomClient magicdevl 4001 "test msg"
-     * </pre>
-     */
-    public static void main(String argv[])
-    throws Exception
-    {
-
-    if (argv.length!=3) {
-        printUsage();
-        System.exit(1);
-    }
-    String host = argv[0];
-    String port = argv[1];
-    String msg = argv[2];
-    try {
-        SoccomClient client = new SoccomClient(host, port);
-        String resp;
-        if (msg.length()>=6 && msg.substring(0,6).equals("_TEST_")) {
-        resp = client.tests(msg);
-        } else {
-        client.putreq(msg);
-        resp = client.getresp();
-        }
-        System.out.println("response: " + resp);
-        client.close();
-    } catch (SoccomException e) {
-        System.out.println("ERROR: " + e);
-    }
     }
 
     private InputStream _in;

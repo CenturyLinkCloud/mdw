@@ -23,6 +23,7 @@ import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.util.ClasspathUtil;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.file.ZipHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
 import org.apache.catalina.Context;
 import org.apache.tomcat.util.descriptor.web.ErrorPage;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
@@ -48,7 +49,10 @@ import java.net.URISyntaxException;
 public class SpringBootApplication {
 
     public static void main(String[] args) {
+
         try {
+            // must be called before Spring Boot starts logging
+            LoggerUtil.initializeLogging();
             SpringApplication.run(SpringBootApplication.class, args);
             new InitialRequest().submit();
         }
