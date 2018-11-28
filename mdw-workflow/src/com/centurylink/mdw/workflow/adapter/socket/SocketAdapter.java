@@ -74,7 +74,7 @@ public class SocketAdapter extends TextAdapterActivity {
         try {
             int k = hostport.indexOf(':');
             if (k<0) throw new AdapterException("Invalid host:port specification - " + hostport);
-            connection = new SoccomClient(hostport.substring(0,k), hostport.substring(k+1));
+            connection = new SoccomClient(hostport.substring(0,k), Integer.parseInt(hostport.substring(k+1)));
             return connection;
         } catch (SoccomException e) {
             if (e.getErrorCode()==SoccomException.CONNECT)

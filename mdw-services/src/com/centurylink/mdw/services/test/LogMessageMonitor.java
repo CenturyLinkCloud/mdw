@@ -15,6 +15,11 @@
  */
 package com.centurylink.mdw.services.test;
 
+import com.centurylink.mdw.model.workflow.WorkStatus;
+import com.centurylink.mdw.soccom.SoccomException;
+import com.centurylink.mdw.soccom.SoccomServer;
+import com.centurylink.mdw.util.log.LoggerUtil;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -22,11 +27,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.centurylink.mdw.model.workflow.WorkStatus;
-import com.centurylink.mdw.soccom.SoccomException;
-import com.centurylink.mdw.soccom.SoccomServer;
-import com.centurylink.mdw.util.log.LoggerUtil;
 
 public class LogMessageMonitor extends SoccomServer {
 
@@ -36,7 +36,7 @@ public class LogMessageMonitor extends SoccomServer {
     private Map<String,String> procInstMasterRequestMap;
 
     public LogMessageMonitor() throws IOException {
-        this(Integer.parseInt(LoggerUtil.getStandardLogger().getDefaultPort()));
+        this(LoggerUtil.getStandardLogger().getDefaultPort());
     }
 
     public LogMessageMonitor(int port) throws IOException {

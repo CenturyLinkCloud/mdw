@@ -15,26 +15,6 @@
  */
 package com.centurylink.mdw.kotlin;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.FileVisitOption;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.jetbrains.kotlin.cli.common.ExitCode;
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
-
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CacheService;
@@ -48,6 +28,14 @@ import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.util.file.MdwIgnore;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.jetbrains.kotlin.cli.common.ExitCode;
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
 
 @RegisteredService(CacheService.class)
 public class KotlinAccess implements CacheService, PreloadableCache {
@@ -140,7 +128,7 @@ public class KotlinAccess implements CacheService, PreloadableCache {
                 }
                 args.add("-classpath");
                 args.add(classpath);
-                ExitCode exitCode = new K2JVMCompiler().exec(logger.getPrintStream(), args.toArray(new String[0]));
+                ExitCode exitCode = new K2JVMCompiler().exec(System.out, args.toArray(new String[0]));
                 if (exitCode.getCode() != 0) {
                     CompilationException ex = new CompilationException("Kotlin compiler error: " + exitCode);
                     logger.severeException(ex.getMessage(), ex);
