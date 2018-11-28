@@ -49,6 +49,13 @@ jar {
     }
 }
 
+sourcesJar {
+    // exclude assets
+    files { file("../${mdwAssetRoot}/com/centurylink/mdw").listFiles() }.each() {
+        exclude "com/centurylink/mdw/${it.name}/"
+    }
+}
+
 archivesBaseName = "mdw-workflow"
 artifacts {
     archives jar, javadocJar, sourcesJar
