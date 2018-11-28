@@ -9,10 +9,6 @@ public class Slf4JStandardLoggerImpl extends AbstractStandardLoggerBase {
 
     private Logger logger;
 
-    public Slf4JStandardLoggerImpl() {
-        logger = LoggerFactory.getLogger(Util.getCallingClass());
-    }
-
     public Slf4JStandardLoggerImpl(String name) {
         logger = LoggerFactory.getLogger(name);
     }
