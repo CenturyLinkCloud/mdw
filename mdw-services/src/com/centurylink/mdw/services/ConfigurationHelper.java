@@ -45,19 +45,18 @@ public class ConfigurationHelper implements Serializable {
         if (!react)
             return true;
         else
-            return reactToConfigChange(fileName, contents);
+            return reactToConfigChange(fileName);
     }
 
-    public static boolean reactToConfigChange(String pFileName, String pContents)
-            throws Exception {
+    public static boolean reactToConfigChange(String fileName) throws Exception {
 
-        if (APPLICATION_CACHE.equals(pFileName)) {
+        if (APPLICATION_CACHE.equals(fileName)) {
             CacheRegistration.getInstance().refreshCaches();
-        } else {
+        }
+        else {
             LoggerUtil.getStandardLogger().refreshWatcher();
         }
 
         return true;
-
     }
 }
