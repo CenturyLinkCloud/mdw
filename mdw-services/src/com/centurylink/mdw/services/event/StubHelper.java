@@ -15,10 +15,6 @@
  */
 package com.centurylink.mdw.services.event;
 
-import java.net.InetAddress;
-
-import org.json.JSONObject;
-
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.connector.adapter.AdapterException;
@@ -29,6 +25,9 @@ import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.event.AdapterStubResponse;
 import com.centurylink.mdw.model.workflow.ActivityStubResponse;
 import com.centurylink.mdw.soccom.SoccomClient;
+import org.json.JSONObject;
+
+import java.net.InetAddress;
 
 public class StubHelper {
 
@@ -48,7 +47,7 @@ public class StubHelper {
         try {
             String[] spec = stubServerSpec.split(":");
             String host = spec.length > 0 ? spec[0] : InetAddress.getLocalHost().getHostAddress();
-            String port = spec.length > 1 ? spec[1] : AdapterActivity.DEFAULT_STUBBER_PORT;
+            int port = spec.length > 1 ? Integer.parseInt(spec[1]) : AdapterActivity.DEFAULT_STUBBER_PORT;
             int timeoutSecs = spec.length > 2 ? Integer.parseInt(spec[2]) : AdapterActivity.DEFAULT_STUBBER_TIMEOUT;
             client = new SoccomClient(host, port, null);
             client.putreq(request);

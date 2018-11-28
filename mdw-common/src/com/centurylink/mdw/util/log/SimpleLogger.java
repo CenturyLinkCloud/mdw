@@ -19,11 +19,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
-import com.centurylink.mdw.cache.CacheService;
-import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.PropertyNames;
-
-public class SimpleLogger extends AbstractStandardLoggerBase implements CacheService {
+public class SimpleLogger extends AbstractStandardLoggerBase {
 
     private static final String MDW_LOG_LOCATION = "mdw.log.location";
 
@@ -54,35 +50,9 @@ public class SimpleLogger extends AbstractStandardLoggerBase implements CacheSer
     }
 
     public static SimpleLogger getSingleton() {
-        if (singleton==null) singleton = new SimpleLogger();
+        if (singleton == null)
+            singleton = new SimpleLogger();
         return singleton;
-    }
-
-    public void clearCache() {
-    }
-
-    // set loglevel, logfile and watcher
-    public void refreshCache() {
-        super.refreshCache();
-        String v = PropertyManager.getProperty(PropertyNames.MDW_LOGGING_LEVEL);
-        if (v==null) loglevel = INFO_LEVEL;
-        else if (v.equalsIgnoreCase("DEBUG")||v.equals("3")) loglevel = DEBUG_LEVEL;
-        else if (v.equalsIgnoreCase("INFO")||v.equals("2")) loglevel = INFO_LEVEL;
-        else if (v.equalsIgnoreCase("MDW_DEBUG")||v.equals("4")) loglevel = MDW_DEBUG_LEVEL;
-        else if (v.equalsIgnoreCase("TRACE")||v.equals("5")) loglevel = TRACE_LEVEL;
-        else if (v.equalsIgnoreCase("WARN")||v.equals("1")) loglevel = WARN_LEVEL;
-        else loglevel = INFO_LEVEL;
-        v = PropertyManager.getProperty(PropertyNames.MDW_LOGGING_FILE);
-        if (v!=null && v.length()>0) {
-            try {
-                if (logfile!=null) logfile.close();
-                logfile = new PrintStream(new File(v));  // TODO lose existing log file
-            } catch (FileNotFoundException e) {
-                System.out.println("+++MDW ERROR+++ Cannot open log file " + v);
-                logfile = null;
-            }
-        }
-
     }
 
     private void logline(char type, String tag, String message) {
@@ -235,9 +205,4 @@ public class SimpleLogger extends AbstractStandardLoggerBase implements CacheSer
             break;
       }
     }
-
-    public PrintStream getPrintStream() {
-        return System.out;
-    }
-
 }

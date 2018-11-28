@@ -17,7 +17,7 @@ package com.centurylink.mdw.util.log;
 
 public interface StandardLogger
 {
-    public enum LogLevel { INFO, WARN, DEBUG, ERROR, TRACE };
+    enum LogLevel { INFO, WARN, DEBUG, ERROR, TRACE };
 
     void info(String msg);
 
@@ -32,7 +32,7 @@ public interface StandardLogger
 
     void trace(String msg);
 
-    void mdwDebug(String message);
+    void mdwDebug(String msg);
 
     default void info(String msg, Throwable t) {
         infoException(msg, t);
@@ -64,17 +64,19 @@ public interface StandardLogger
     boolean isTraceEnabled();
     boolean isMdwDebugEnabled();
 
-    public boolean isEnabledFor(LogLevel level);
+    boolean isEnabledFor(LogLevel level);
 
-    public void log(LogLevel level, String message);
+    void log(LogLevel level, String message);
 
-    public void info(String tag, String message);
-    public void warn(String tag, String message);
-    public void exception(String tag, String message, Throwable e);
-    public void severe(String tag, String message);
-    public void debug(String tag, String message);
-    public void trace(String tag, String message);
+    void info(String tag, String message);
+    void warn(String tag, String message);
+    void exception(String tag, String message, Throwable e);
+    void severe(String tag, String message);
+    void debug(String tag, String message);
+    void trace(String tag, String message);
 
-    public String getDefaultHost();
-    public String getDefaultPort();
+    String getDefaultHost();
+    int getDefaultPort();
+
+    void refreshWatcher();
 }

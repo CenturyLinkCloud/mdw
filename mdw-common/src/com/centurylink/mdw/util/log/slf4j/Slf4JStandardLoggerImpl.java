@@ -13,6 +13,10 @@ public class Slf4JStandardLoggerImpl extends AbstractStandardLoggerBase {
         logger = LoggerFactory.getLogger(Util.getCallingClass());
     }
 
+    public Slf4JStandardLoggerImpl(String name) {
+        logger = LoggerFactory.getLogger(name);
+    }
+
     @Override
     public void info(String msg) {
         logger.info(msg);

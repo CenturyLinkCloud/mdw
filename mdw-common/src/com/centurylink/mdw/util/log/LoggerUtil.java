@@ -27,24 +27,15 @@ public class LoggerUtil implements Serializable {
 
     private static LoggerUtil util = new LoggerUtil();
 
-    /**
-     * Private method to restrict the instance to be a single one only.
-     */
     private LoggerUtil() {
     }
 
-    /**
-     * Static method to get instance
-     */
     public static LoggerUtil getInstance() {
         return util;
     }
 
     private static boolean accessed;
 
-    /**
-     * Get a standard logger.
-     */
     public static StandardLogger getStandardLogger() {
         String loggerImplClass = System.getProperty(MDW_LOGGER_IMPL);
         if (!accessed && loggerImplClass != null) {
@@ -87,6 +78,9 @@ public class LoggerUtil implements Serializable {
         }
         else if (Log4JStandardLoggerImpl.class.getName().equals(loggerImplClass) || org.apache.log4j.Logger.class.getName().equals(loggerImplClass)) {
             return new Log4JStandardLoggerImpl(className);
+        }
+        else if (Slf4JStandardLoggerImpl.class.getName().equals(loggerImplClass) || org.slf4j.Logger.class.getName().equals(loggerImplClass)) {
+            return new Slf4JStandardLoggerImpl(className);
         }
         else {
             try {

@@ -36,9 +36,7 @@ import java.util.regex.Pattern;
 public abstract class AbstractStandardLoggerBase implements StandardLogger {
 
     public static final String DEFAULT_HOST = "localhost";
-    public static final String DEFAULT_PORT = "7181";
-
-    private static final String SENTRY_MARK = "[SENTRY-MARK] ";
+    public static final int DEFAULT_PORT = 7181;
 
     private static final String MESSAGE_REG_EX = "\\[\\(.\\)([0-9.:]+) p([0-9]+)\\.([0-9]+) ([a-z])([0-9]+)?\\.([^\\]]+)\\] (.*)";
 
@@ -52,15 +50,11 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
         return DEFAULT_HOST;
     }
 
-    public String getDefaultPort() {
+    public int getDefaultPort() {
         return DEFAULT_PORT;
     }
 
-    public String getSentryMark() {
-        return SENTRY_MARK;
-    }
-
-    public void refreshCache() {
+    public void refreshWatcher() {
         watcher = PropertyManager.getProperty(PropertyNames.MDW_LOGGING_WATCHER);
     }
 
@@ -139,7 +133,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
     }
 
     protected void sendToWatchers(String message) {
-        if (watching())  // Designer
+        if (watching())
             sendToWatcher(message);
 
         try {
@@ -163,8 +157,8 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
         SoccomClient client = null;
         try {
             String[] spec = watcher.split(":");
-            String host = spec.length>0?spec[0]:getDefaultHost();
-            String port = spec.length>1?spec[1]:getDefaultPort();
+            String host = spec.length > 0 ? spec[0] : getDefaultHost();
+            int port = spec.length > 1 ? Integer.parseInt(spec[1]) : getDefaultPort();
             client = new SoccomClient(host, port, null);
             client.putreq(message);
         } catch (Exception e) {
