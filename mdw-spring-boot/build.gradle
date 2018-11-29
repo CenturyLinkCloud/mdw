@@ -1,7 +1,13 @@
 dependencies {
     // hub is compileOnly -- otherwise war ends up in client jar
-    compileOnly(project(":mdw-hub")) { exclude(module: "mariaDB4j-core") }
-    compile(project(":mdw-workflow")) { exclude(module: "mariaDB4j-core") }
+    compileOnly(project(":mdw-hub")) { 
+        exclude(module: "mariaDB4j-core")
+        exclude(module: "slf4j-simple")
+    }
+    compile(project(":mdw-workflow")) { 
+        exclude(module: "mariaDB4j-core")
+        exclude(module: "slf4j-simple") 
+    }
     // put back this mariaDB4j transitive
     compile group: "commons-io", name: "commons-io", version: "2.5"
     
