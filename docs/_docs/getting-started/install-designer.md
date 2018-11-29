@@ -25,14 +25,9 @@ Install the MDW Designer Eclipse Plugin
   - Eclipse Oxygen for JavaEE Developers:<br>
     <https://www.eclipse.org/downloads/packages/eclipse-ide-java-ee-developers/oxygen3a>  
   
-### Install Designer from Eclipse Marketplace
-  - Launch Eclipse and from the menu select Help > Eclipse Marketplace...
-  - Type "MDW Designer for Eclipse" in the find text box and do search
-  - Click on the install button of the displayed result
-
 ### Install Designer from our Update Site
   - Launch Eclipse and from the menu select Help > Install New Software...
-  - Add the update site URL: {% include copyToClipboard.html text="http://centurylinkcloud.github.io/mdw/designer/updateSite" %}
+  - Add the internal update site URL
   ![install designer plugin](../images/designerPlugin.png "designerPlugin")
 
 ### Recommended Plugins
