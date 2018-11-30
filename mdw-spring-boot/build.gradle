@@ -25,6 +25,9 @@ dependencies {
     // indirect tomcat    
     compile group: "javax.validation", name: "validation-api", version: "2.0.1.Final"
     compile group: "org.hibernate.validator", name: "hibernate-validator", version: "6.0.11.Final"
+
+    compile group: "ch.qos.logback", name: "logback-core", version: "1.2.3"
+    compile group: "ch.qos.logback", name: "logback-classic", version: "1.2.3"
 }
 
 jar {

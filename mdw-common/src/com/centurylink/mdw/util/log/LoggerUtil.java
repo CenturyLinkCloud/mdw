@@ -43,23 +43,27 @@ public class LoggerUtil implements Serializable {
 
 
     /**
-     * For Spring Boot app, an opportunity to initialize logging before Spring starts logging.
+     * For Spring Boot with slf4j SimpleLoggger, an opportunity to initialize logging before Spring starts logging.
      * Otherwise for slf4j, properties have already been defaulted before we have a chance to set them.
+     *
+     * See mdw-spring-boot AutoConfig for initialization of logback for pure Spring Boot apps.
      */
-    public static void initializeLogging() throws IOException {
+    public static String initializeLogging() throws IOException {
         System.setProperty("org.slf4j.simpleLogger.logFile", "System.out");
         // Peek at mdw.yaml to find default logging level, but do not initialize PropertyManager
         // which could initialize slf4j prematurely.  (Works only with yaml config file).
+        String mdwLogLevel = null;
         File mdwYaml = getConfigurationFile("mdw.yaml");
         if (mdwYaml.exists()) {
             YamlProperties yamlProps = new YamlProperties("mdw", mdwYaml);
-            String mdwLogLevel = yamlProps.getString("mdw.logging.level");
+            mdwLogLevel = yamlProps.getString("mdw.logging.level");
             if (mdwLogLevel != null) {
                 if (mdwLogLevel.equals("MDW_DEBUG"))
                     mdwLogLevel = "TRACE";
                 System.setProperty("org.slf4j.simpleLogger.log.com.centurylink.mdw", mdwLogLevel.toLowerCase());
             }
         }
+        return mdwLogLevel;
     }
 
     public static StandardLogger getStandardLogger() {
