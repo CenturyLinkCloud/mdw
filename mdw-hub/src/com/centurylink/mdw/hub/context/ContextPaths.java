@@ -54,14 +54,7 @@ public class ContextPaths {
     private static final String MDW_ADMIN_JS = "<script src=\"js/admin.js\"></script>";
     private static final String MDW_ADMIN_CSS = "<link rel=\"stylesheet\" href=\"css/mdw-admin.css\">";
 
-    private static List<String> nonHubRoots;
-    public static void initNonHubRoots() throws IOException {
-        nonHubRoots = DEFAULT_NON_HUB_ROOTS;
-        List<String> customPaths = WebAppContext.getMdw().getCustomPaths();
-        if (customPaths != null) {
-            nonHubRoots.addAll(customPaths);
-        }
-    }
+    private static volatile List<String> nonHubRoots;
 
     /**
      * Root paths that aren't part of MDWHub UI.
@@ -69,7 +62,20 @@ public class ContextPaths {
      * Values prefixed with * match by extension.
      * Customize in access.yaml.
      */
-    public List<String> getNonHubRoots() {
+    public List<String> getNonHubRoots() throws IOException {
+        List<String> nonHubRootsTemp = nonHubRoots;
+        if (nonHubRootsTemp == null) {
+            synchronized(ContextPaths.class) {
+                nonHubRootsTemp = nonHubRoots;
+                if (nonHubRootsTemp == null) {
+                    nonHubRoots = DEFAULT_NON_HUB_ROOTS;
+                    List<String> customPaths = WebAppContext.getMdw().getCustomPaths();
+                    if (customPaths != null) {
+                        nonHubRoots.addAll(customPaths);
+                    }
+                }
+            }
+        }
         return nonHubRoots;
     }
 
