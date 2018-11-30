@@ -40,13 +40,7 @@ public class WebContentFilter  implements Filter {
     private ContextPaths contextPaths;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        try {
-            contextPaths.initNonHubRoots();
-        }
-        catch (IOException ex) {
-            throw new ServletException(ex.getMessage(), ex);
-        }
+    public void init(FilterConfig filterConfig) {
     }
 
     @Override
