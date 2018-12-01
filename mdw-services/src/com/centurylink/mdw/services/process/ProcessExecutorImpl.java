@@ -351,23 +351,35 @@ class ProcessExecutorImpl {
     void updateDocumentInfo(DocumentReference docref, String documentType, String ownerType,
             Long ownerId, Integer statusCode, String statusMessage) throws DataAccessException {
         try {
+            boolean dirty = false;
             Document docvo = edao.getDocument(docref.getDocumentId(), false);
-            if (documentType != null)
+            if (documentType != null && !documentType.equalsIgnoreCase(docvo.getDocumentType())) {
                 docvo.setDocumentType(documentType);
-            if (ownerType != null) {
-                if (!ownerType.equalsIgnoreCase(docvo.getOwnerType())) {
-                    if (edao.getDocumentDbAccess() != null)
-                        edao.getDocumentDbAccess().updateDocumentDbOwnerType(docvo, ownerType);
-                }
-                docvo.setOwnerType(ownerType);
+                dirty = true;
             }
-            if (ownerId != null)
-                docvo.setOwnerId(ownerId);
-            if (statusCode != null)
+            if (ownerId != null && !ownerId.equals(docvo.getOwnerId())) {
+                // DO NOT UPDATE THE OWNER_ID IF IT'S A PROCESS VARIABLE ALREADY OWNED BY DIFFERENT PROCESS INSTANCE
+                if (!("VARIABLE_INSTANCE".equalsIgnoreCase(ownerType) && ownerType.equalsIgnoreCase(docvo.getOwnerType()) && docvo.getOwnerId() > 0L)) {
+                    docvo.setOwnerId(ownerId);
+                    dirty = true;
+                }
+            }
+            if (ownerType != null && !ownerType.equalsIgnoreCase(docvo.getOwnerType())) {
+                if (edao.getDocumentDbAccess() != null)
+                    edao.getDocumentDbAccess().updateDocumentDbOwnerType(docvo, ownerType);
+                docvo.setOwnerType(ownerType);
+                dirty = true;
+            }
+            if (statusCode != null && !statusCode.equals(docvo.getStatusCode())) {
                 docvo.setStatusCode(statusCode);
-            if (statusMessage != null)
+                dirty = true;
+            }
+            if (statusMessage != null && !statusMessage.equals(docvo.getStatusMessage())) {
                 docvo.setStatusMessage(statusMessage);
-            edao.updateDocumentInfo(docvo);
+                dirty = true;
+            }
+            if (dirty)
+                edao.updateDocumentInfo(docvo);
         } catch (SQLException e) {
             throw new DataAccessException(-1, e.getMessage(), e);
         }
