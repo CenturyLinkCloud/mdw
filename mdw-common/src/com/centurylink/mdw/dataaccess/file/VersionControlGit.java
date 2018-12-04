@@ -352,6 +352,11 @@ public class VersionControlGit implements VersionControl {
         }
     }
 
+    public void checkoutTag(String tag) throws Exception {
+        if (localRepo.getTags().get(tag) != null)
+            git.checkout().setName(localRepo.getTags().get(tag).getName()).call();
+    }
+
     /**
      * Actually a workaround since JGit does not support sparse checkout:
      * https://bugs.eclipse.org/bugs/show_bug.cgi?id=383772.
@@ -375,6 +380,10 @@ public class VersionControlGit implements VersionControl {
         hardCheckout(branch, false);
     }
 
+    public void hardTagCheckout(String tag) throws Exception {
+        hardTagCheckout(tag, false);
+    }
+
     /**
      * Performs a HARD reset and FORCED checkout.
      * Only to be used on server (not Designer).
@@ -386,6 +395,13 @@ public class VersionControlGit implements VersionControl {
             hardReset();
         checkout(branch);
         pull(branch);  // pull before delete or next pull may add non-path items back
+    }
+
+    public void hardTagCheckout(String tag, Boolean hard) throws Exception {
+        fetch(); // in case the tag is not known locally
+        if (hard)
+            hardReset();
+        checkoutTag(tag);
     }
 
     public void hardReset() throws Exception {

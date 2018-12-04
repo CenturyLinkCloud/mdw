@@ -124,7 +124,8 @@ public class DataAccess {
                 try {
                     String url = PropertyManager.getProperty(PropertyNames.MDW_GIT_REMOTE_URL);
                     String branch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
-                    if (url != null && branch != null) {
+                    String tag = branch == null ? PropertyManager.getProperty(PropertyNames.MDW_GIT_TAG) : null;
+                    if (url != null && (branch != null || tag != null)) {
                         String user = PropertyManager.getProperty(PropertyNames.MDW_GIT_USER);
                         String password = PropertyManager.getProperty(PropertyNames.MDW_GIT_PASSWORD);
                         if (user != null) {
@@ -146,35 +147,50 @@ public class DataAccess {
                             if (!vcGit.localRepoExists()) {
                                 logger.severe("**** WARNING: Git location " + gitLocalPath + " does not contain a repository.  Cloning: " + url);
                                 vcGit.cloneNoCheckout();
-                                if (PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_AUTO_CHECKOUT, true)) {
-                                    logger.info("Performing checkout...");
-                                    vcGit.hardCheckout(branch);
+                                if (branch == null || PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_AUTO_CHECKOUT, true)) {
+                                    if (branch != null) {
+                                        logger.info("Performing branch checkout...");
+                                        vcGit.hardCheckout(branch);
+                                    }
+                                    else {  // tag != null
+                                        logger.info("Performing tag checkout...");
+                                        vcGit.hardTagCheckout(tag);
+                                    }
                                 }
                             }
 
                             // sanity checks
-                            String gitBranch = vcGit.getBranch();
-                            if (!branch.equals(gitBranch)) {
-                                String warning = "\n****************************************\n" +
-                                        "** WARNING: Git branch: " + gitBranch + " does not match " + PropertyNames.MDW_GIT_BRANCH + ": " + branch + "\n" +
-                                        "** Please perform an Import to sync with branch " + branch + "\n" +
-                                        "******************************************\n";
-                                LoggerUtil.getStandardLogger().severe(warning);
-                            }
-                            else {
-                                String localCommit = vcGit.getCommit();
-                                if (localCommit != null) {
-                                    String remoteCommit = vcGit.getRemoteCommit(branch);
-                                    if (!localCommit.equals(remoteCommit))
-                                        LoggerUtil.getStandardLogger().severe("**** WARNING: Git commit: " + localCommit + " does not match remote HEAD commit: " + remoteCommit);
-                                }
+                            if (branch != null) {
+                                String gitBranch = vcGit.getBranch();
+                                if (!branch.equals(gitBranch)) {
+                                    String warning = "\n****************************************\n" +
+                                            "** WARNING: Git branch: " + gitBranch + " does not match " + PropertyNames.MDW_GIT_BRANCH + ": " + branch + "\n" +
+                                            "** Please perform an Import to sync with branch " + branch + "\n" +
+                                            "******************************************\n";
+                                    LoggerUtil.getStandardLogger().severe(warning);
+                                } else {
+                                    String localCommit = vcGit.getCommit();
+                                    if (localCommit != null) {
+                                        String remoteCommit = vcGit.getRemoteCommit(branch);
+                                        if (!localCommit.equals(remoteCommit))
+                                            LoggerUtil.getStandardLogger().severe("**** WARNING: Git commit: " + localCommit + " does not match remote HEAD commit: " + remoteCommit);
+                                    }
 
-                                // log actual diffs at debug level
-                                GitDiffs diffs = vcGit.getDiffs(branch, assetPath);
-                                if (!diffs.isEmpty()) {
-                                    logger.warn("**** WARNING: Local Git repository is out-of-sync with respect to remote branch: " + branch
-                                            + "\n(" + gitLocal.getAbsolutePath() + ")");
-                                    logger.info("Differences:\n============\n" + diffs);
+                                    // log actual diffs at debug level
+                                    GitDiffs diffs = vcGit.getDiffs(branch, assetPath);
+                                    if (!diffs.isEmpty()) {
+                                        logger.warn("**** WARNING: Local Git repository is out-of-sync with respect to remote branch: " + branch
+                                                + "\n(" + gitLocal.getAbsolutePath() + ")");
+                                        logger.info("Differences:\n============\n" + diffs);
+                                    }
+                                }
+                            }
+                            else {   // Tag != null
+                                String localCommit = vcGit.getCommit();
+                                String tagCommit = vcGit.getCommitForTag(tag);
+                                if (localCommit != null && tagCommit != null && !localCommit.equals(tagCommit)) {
+                                    logger.info("Current commit does not match commit for tag " + tag + ". Performing tag checkout...");
+                                    vcGit.hardTagCheckout(tag);
                                 }
                             }
                         }
