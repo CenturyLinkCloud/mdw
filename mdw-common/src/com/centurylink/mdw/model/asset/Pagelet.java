@@ -15,17 +15,8 @@
  */
 package com.centurylink.mdw.model.asset;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,8 +25,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.util.JsonUtil;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.ByteArrayInputStream;
+import java.util.*;
 
 public class Pagelet implements Jsonable {
 
@@ -317,13 +310,13 @@ public class Pagelet implements Jsonable {
                 widgets.add(new Widget(widgetsJson.getJSONObject(i)));
             }
             if (json.has("attributes"))
-                attributes = JsonUtil.getMap(json.getJSONObject("attributes"));
+                attributes = getMap(json.getJSONObject("attributes"));
         }
     }
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
-        JSONObject attrsJson = JsonUtil.getJson(attributes);
+        JSONObject attrsJson = getJson(attributes);
         if (attrsJson != null)
             json.put("attributes", attrsJson);
         JSONArray widgetsJson = new JSONArray();
@@ -455,8 +448,29 @@ public class Pagelet implements Jsonable {
         public String getJsonName() {
             return "widget";
         }
+    }
 
 
+    public static final Map<String,String> getMap(JSONObject jsonObj) throws JSONException {
+        Map<String,String> map = new HashMap<String,String>();
+        String[] names =  JSONObject.getNames(jsonObj);
+        if (names != null) {
+            for (String name : names)
+                map.put(name, jsonObj.getString(name));
+        }
+        return map;
+    }
+
+    public static final JSONObject getJson(Map<String,String> map) throws JSONException {
+        if (map == null)
+            return null;
+        JSONObject jsonObj = new JsonObject();
+        for (String key : map.keySet()) {
+            String value = map.get(key);
+            if (value != null)
+                jsonObj.put(key, value);
+        }
+        return jsonObj;
     }
 
 }

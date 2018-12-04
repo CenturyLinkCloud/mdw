@@ -15,17 +15,14 @@
  */
 package com.centurylink.mdw.util.log.log4j;
 
-import java.io.PrintStream;
+import com.centurylink.mdw.util.log.AbstractStandardLoggerBase;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import com.centurylink.mdw.cache.CacheService;
-import com.centurylink.mdw.util.log.AbstractStandardLoggerBase;
-
-public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase implements CacheService {
+public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase {
 
     private Logger selfLogger = Logger.getLogger(Log4JStandardLoggerImpl.class);
-    private Logger logger = null;
+    private Logger logger;
 
     // avoid missed logging messages due to missing appender registration
     public static final String DEFAULT_LOGGER_NAME = "com.centurylink.mdw.logging";
@@ -44,139 +41,56 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase implemen
         logger = Logger.getLogger(className);
     }
 
-    /**
-    * Logs messages at the debug level
-    */
     public void debug(String logtodisplay) {
-
-        if (isDebugEnabled()) {
-         //   logger.debug(logtodisplay);
-            logIt(LogLevel.DEBUG, logtodisplay, null);
-        }
+        logIt(LogLevel.DEBUG, logtodisplay, null);
     }
 
-
-   /**
-    * Logs messages at the debug level with the exception
-    */
-    public void debugException(String msg, Throwable throwable) {
-        if (isDebugEnabled()) {
-          //  logger.debug(msg, throwable);
-            logIt(LogLevel.DEBUG, msg, throwable);
-        }
+    public void debugException(String msg, Throwable t) {
+        logIt(LogLevel.DEBUG, msg, t);
     }
 
-   /**
-    * Logs messages at the info level
-    */
-    public void info(String logtodisplay) {
-        if (isInfoEnabled()) {
-          //  logger.info(logtodisplay);
-            logIt(LogLevel.INFO, logtodisplay, null);
-        }
+    public void info(String msg) {
+        logIt(LogLevel.INFO, msg, null);
     }
 
-    public void trace(String logtodisplay) {
-        if (isTraceEnabled()) {
-        //    logger.trace(logtodisplay);
-            logIt(LogLevel.TRACE, logtodisplay, null);
-        }
+    public void trace(String msg) {
+        logIt(LogLevel.TRACE, msg, null);
     }
 
     public void traceException(String msg, Throwable t) {
-
-        if (isTraceEnabled()) {
-         //   logger.info(msg, t);
-            logIt(LogLevel.TRACE, msg, t);
-        }
+        logIt(LogLevel.TRACE, msg, t);
      }
 
-    /**
-     * Logs messages at the info level with the exception
-     */
-    public void infoException(String logtodisplay, Throwable throwable) {
+    public void infoException(String msg, Throwable t) {
+        logIt(LogLevel.INFO, msg, t);
+    }
 
-        if (isInfoEnabled()) {
-         //   logger.info(logtodisplay, throwable);
-            logIt(LogLevel.INFO, logtodisplay, throwable);
-        }
-     }
-
-   /**
-    * Check whether debug level is enabled
-    */
     public boolean isDebugEnabled() {
         return (logger.isDebugEnabled());
     }
 
-   /**
-    * Check whether info level is enabled
-    */
     public boolean isInfoEnabled() {
         return (logger.isInfoEnabled());
-    }
-
-   /**
-    * Check whether Sever level is enabled
-    */
-    public boolean isSevereEnabled() {
-        return (logger.isEnabledFor(Level.toLevel((Level.ERROR_INT))));
-    }
-
-    /**
-    * Check whether Warn level is enabled
-    */
-    public boolean isWarnEnabled() {
-        return (logger.isEnabledFor(Level.toLevel(Level.WARN_INT)));
     }
 
     public boolean isTraceEnabled() {
         return logger.isEnabledFor(Level.toLevel(Level.TRACE_INT));
     }
 
-
-    /**
-    * Logs messages at the severe level
-    */
-    public void severe(String logtodisplay) {
-
-        if (isSevereEnabled()) {
-       //     logger.error(logtodisplay);
-            logIt(LogLevel.ERROR, logtodisplay, null);
-        }
+    public void severe(String msg) {
+        logIt(LogLevel.ERROR, msg, null);
     }
 
-    /**
-    * Logs messages at the severe level with the exception
-    */
-    public void severeException(String message, Throwable throwable) {
-
-        if (isSevereEnabled()) {
-       //     logger.error(message, throwable);
-            logIt(LogLevel.ERROR, message, throwable);
-        }
+    public void severeException(String msg, Throwable t) {
+        logIt(LogLevel.ERROR, msg, t);
     }
 
-    /**
-      * Logs messages at the warn level
-      */
-  public void warn(String logtodisplay) {
-
-        if (isWarnEnabled()) {
-       //     logger.warn(logtodisplay);
-            logIt(LogLevel.WARN, logtodisplay, null);
-        }
+    public void warn(String msg) {
+        logIt(LogLevel.WARN, msg, null);
     }
 
-     /**
-    * Logs messages at the warn level with the exception
-    */
-    public void warnException(String logtodisplay, Throwable throwable) {
-
-        if (isWarnEnabled()) {
-     //       logger.warn(logtodisplay, throwable);
-            logIt(LogLevel.WARN, logtodisplay, throwable);
-        }
+    public void warnException(String msg, Throwable t) {
+        logIt(LogLevel.WARN, msg, t);
     }
 
    /**
@@ -204,7 +118,6 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase implemen
     public void mdwDebug(String message) {
         if (isTraceEnabled()) {
              String line = generate_log_line('d', null, message);
-      //       logger.trace(line);
              logIt(LogLevel.TRACE, line, null);
         }
     }
@@ -216,110 +129,6 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase implemen
     public void log(LogLevel level, String message) {
         if (isEnabledFor(level)) {
             logger.log(Level.toLevel(level.toString()), message);
-
         }
-    }
-
-    @Override
-    public void refreshCache() {
-        super.refreshCache();
-        // TODO refresh Log4J props on demand
-    }
-
-    @Override
-    public void exception(String tag, String message, Throwable e) {
-        if (isSevereEnabled()) {
-            String line = generate_log_line('e', tag, message);
-     //       logger.error(line, e);
-            logIt(LogLevel.ERROR, line, e);
-        }
-    }
-
-    public void info(String tag, String message) {
-        if (isInfoEnabled()) {
-            String line = generate_log_line('i', tag, message);
-      //      logger.info(line);
-            logIt(LogLevel.INFO, line, null);
-        }
-    }
-
-    public void debug(String tag, String message) {
-         if (isDebugEnabled()) {
-             String line = generate_log_line('d', tag, message);
-  //           logger.debug(line);
-             logIt(LogLevel.DEBUG, line, null);
-         }
-    }
-
-    public void warn(String tag, String message) {
-        if (isWarnEnabled()) {
-            String line = generate_log_line('w', tag, message);
-  //          logger.warn(line);
-            logIt(LogLevel.WARN, line, null);
-        }
-    }
-
-    public void severe(String tag, String message) {
-        if (isSevereEnabled()) {
-            String line = generate_log_line('w', tag, message);
- //           logger.error(line);
-            logIt(LogLevel.ERROR, line, null);
-        }
-    }
-
-    public void trace(String tag, String message) {
-        if (isTraceEnabled()) {
-            String line = generate_log_line('t', tag, message);
-      //      logger.trace(line);
-            logIt(LogLevel.TRACE, line, null);
-        }
-    }
-
-    public void clearCache() {
-    }
-
-    private PrintStream printStream;
-    public PrintStream getPrintStream() {
-        if (printStream == null)
-            printStream = new PrintStream(new LoggingOutputStream(logger), true);
-        return printStream;
-    }
-
-    private void logIt(LogLevel level, String message, Throwable t) {
-        switch (level.toString()) {
-        case "INFO":
-            if (t == null)
-                logger.info(message);
-            else
-                logger.info(message, t);
-            break;
-        case "ERROR":
-            if (t == null)
-                logger.error(message);
-            else
-                logger.error(message, t);
-            break;
-        case "DEBUG":
-            if (t == null)
-                logger.debug(message);
-            else
-                logger.debug(message, t);
-            break;
-        case "WARN":
-            if (t == null)
-                logger.warn(message);
-            else
-                logger.warn(message, t);
-            break;
-        case "TRACE":
-            if (t == null)
-                logger.trace(message);
-            else
-                logger.trace(message, t);
-            break;
-        default: break;
-        }
-
-        sendToWatchers(message);
     }
 }

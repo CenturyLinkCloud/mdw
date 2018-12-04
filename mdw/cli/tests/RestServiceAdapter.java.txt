@@ -1,0 +1,22 @@
+package com.centurylink.mdw.workflow.adapter.rest;
+
+import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
+import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+import com.centurylink.mdw.annotations.Activity;
+import com.centurylink.mdw.activity.types.AdapterActivity;
+
+@Activity(value="RESTful Service Adapter", category=AdapterActivity.class, icon="adapter.png",
+                pagelet="{\"widgets\":[{\"default\":\"GET\",\"label\":\"HTTP Method\",\"name\":\"HttpMethod\",\"options\":[\"GET\",\"POST\",\"PUT\",\"DELETE\",\"PATCH\"],\"type\":\"dropdown\",\"vw\":\"100\"},{\"label\":\"Resource URL\",\"name\":\"EndpointUri\",\"type\":\"text\"},{\"label\":\"Request Variable\",\"name\":\"REQUEST_VARIABLE\",\"source\":\"DocumentVariables\",\"type\":\"dropdown\",\"vw\":\"200\"},{\"label\":\"Response Variable\",\"name\":\"RESPONSE_VARIABLE\",\"source\":\"DocumentVariables\",\"type\":\"dropdown\",\"vw\":\"200\"},{\"label\":\"Coerce Response to Type\",\"name\":\"ResponseType\",\"source\":\"java,kt\",\"type\":\"asset\",\"vw\":\"350\"},{\"label\":\"Headers Variable\",\"name\":\"HeadersVariable\",\"source\":\"DocumentVariables\",\"type\":\"dropdown\",\"vw\":\"200\"},{\"label\":\"Connect Timeout (ms)\",\"name\":\"ConnectTimeout\",\"type\":\"text\",\"vw\":\"100\"},{\"label\":\"Read Timeout (ms)\",\"name\":\"ReadTimeout\",\"type\":\"text\",\"vw\":\"100\"},{\"label\":\"Max tries\",\"name\":\"max_tries\",\"type\":\"text\",\"vw\":\"60\"},{\"label\":\"Retry Interval (sec)\",\"name\":\"retry_interval\",\"type\":\"text\",\"vw\":\"80\"},{\"label\":\"Auth Provider\",\"name\":\"AuthProvider\",\"options\":[\"com.centurylink.mdw.workflow.adapter.MdwAuthProvider\",\"com.centurylink.mdw.workflow.adapter.http.BasicAuthProvider\"],\"section\":\"Authentication\",\"type\":\"dropdown\"},{\"default\":\"${props['mdw.remoteapp.id']}\",\"label\":\"App ID\",\"name\":\"AuthAppId\",\"section\":\"Authentication\",\"type\":\"text\",\"vw\":\"200\"},{\"default\":\"${props['mdw.app.user']}\",\"label\":\"User\",\"name\":\"AuthUser\",\"section\":\"Authentication\",\"type\":\"text\",\"vw\":\"200\"},{\"default\":\"${env['mdw.app.password']}\",\"label\":\"Password\",\"name\":\"AuthPassword\",\"section\":\"Authentication\",\"type\":\"text\",\"vw\":\"200\"},{\"name\":\"Do not store app.password in config.\",\"section\":\"Authentication\",\"type\":\"note\",\"vh\":\"65\"},{\"name\":\"REST Adapter Help\",\"type\":\"link\",\"url\":\"help/RestfulAdapter.html\"}]}")
+public class RestServiceAdapter extends DefaultActivityImpl {
+
+    /**
+     * Here's where the main processing for the activity is performed.
+     * @return activity result (or null for default)
+     */
+    @Override
+    public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
+        // TODO generated
+        return null;
+    }
+}

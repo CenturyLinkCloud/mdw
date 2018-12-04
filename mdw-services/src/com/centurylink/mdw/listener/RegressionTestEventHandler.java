@@ -242,7 +242,8 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
         String server=getParameter(xmlbean, "Server", false);
         String mode=getParameter(xmlbean, "Mode", true);
         if (mode.equals("on")) {
-            if (server==null) throw new Exception("Need Server specified");
+            if (server == null)
+                throw new Exception("Need Server specified");
             setPropertyGlobally(PropertyNames.MDW_LOGGING_WATCHER, server);
         } else {
             setPropertyGlobally(PropertyNames.MDW_LOGGING_WATCHER, null);

@@ -15,24 +15,25 @@
  */
 package com.centurylink.mdw.cli;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-
-import org.json.JSONObject;
-
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.config.OrderedProperties;
 import com.centurylink.mdw.config.YamlBuilder;
 import com.centurylink.mdw.config.YamlProperties;
 import com.centurylink.mdw.dataaccess.AssetRevision;
+import com.centurylink.mdw.model.asset.Pagelet;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 @Parameters(commandNames="convert", commandDescription="Convert mdw/app property files, or package.json files to yaml", separators="=")
 public class Convert extends Setup {
@@ -42,7 +43,7 @@ public class Convert extends Setup {
     public boolean isPackages() { return packages; }
     public void setPackages(boolean packages) { this.packages = packages; }
 
-    @Parameter(names="--input", description="Input property file")
+    @Parameter(names="--input", description="Input property file or impl file")
     private File input;
     public File getInput() {
         return input;
@@ -57,6 +58,12 @@ public class Convert extends Setup {
     @Parameter(names="--prefix", description="Optional common prop prefix")
     private String prefix;
     public String getPrefix() {
+        return prefix;
+    }
+
+    @Parameter(names="--language", description="Output language for impls")
+    private String language;
+    public String getLanguage() {
         return prefix;
     }
 
@@ -75,7 +82,12 @@ public class Convert extends Setup {
             convertPackages();
         }
         else {
-            convertProperties();
+            if (input != null && input.getName().endsWith(".impl")) {
+                convertImplementor();
+            }
+            else {
+                convertProperties();
+            }
         }
 
         return this;
@@ -154,6 +166,64 @@ public class Convert extends Setup {
         catch (ReflectiveOperationException ex) {
             throw new IOException(ex.getMessage(), ex);
         }
+    }
+
+    protected void convertImplementor() throws IOException {
+        JSONObject implJson = new JSONObject(new String(Files.readAllBytes(input.toPath())));
+        String implClass = implJson.getString("implementorClass");
+        String outPath = getAssetRoot() + "/" + implClass.replace(".", "/");
+        String suffix = "kotlin".equals(language) || "kt".equals(language) ? "kt" : "java";
+        File outFile = new File(outPath += "." + suffix);
+        if (outFile.isFile()) {
+            throw new IOException("Asset file already exists: " + outFile);
+        }
+        if (!outFile.getParentFile().isDirectory() && !outFile.getParentFile().mkdirs()) {
+            throw new IOException("Asset path cannot be created: " + outFile);
+        }
+
+        System.out.println("Creating: " + outFile);
+
+        String label = implJson.getString("label");
+        String imports = "import com.centurylink.mdw.annotations.Activity" + (suffix.equals("kt") ? "" : ";") + "\n";
+        String annotations = "@Activity(value=\"" + label + "\"";
+
+        String category = "com.centurylink.mdw.activity.types.GeneralActivity";
+        if (implJson.has("category")) {
+            category = implJson.getString("category");
+            imports += "import " + category + (suffix.equals("kt") ? "" : ";") + "\n";
+        }
+        String categoryClass = category.substring(category.lastIndexOf('.') + 1);
+        annotations += ", category=" + categoryClass + (suffix.equals("kt") ?  "::class" : ".class");
+
+        String icon = "shape:activity";
+        if (implJson.has("icon"))
+            icon = implJson.getString("icon");
+        annotations += ", icon=\"" + icon + "\"";
+
+        String pageletXml = implJson.has("pagelet") ? implJson.getString("pagelet") : null;
+        if (pageletXml != null) {
+            try {
+                JSONObject pagelet = new Pagelet(pageletXml).getJson();
+                System.out.println("pagelet for formatted pasting: " + pagelet.toString(2));
+                annotations += ",\n                pagelet=" + JSONObject.quote(pagelet.toString());
+            }
+            catch (Exception ex) {
+                throw new IOException(ex);
+            }
+        }
+
+        annotations += ")\n";
+
+        downloadTemplates();
+        File templateFile = new File(getTemplateDir() + "/assets/code/activity/general_" + suffix);
+        String template = new String(Files.readAllBytes(templateFile.toPath()));
+        Map<String,Object> values = new HashMap<>();
+        values.put("packageName", implClass.substring(0, implClass.lastIndexOf(".")));
+        values.put("className", implClass.substring(implClass.lastIndexOf(".") + 1));
+        values.put("annotationsImports", imports);
+        values.put("annotations", annotations);
+        String source = substitute(template, values);
+        Files.write(outFile.toPath(), source.getBytes(), StandardOpenOption.CREATE_NEW);
     }
 
 }

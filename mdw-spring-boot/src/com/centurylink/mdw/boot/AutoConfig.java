@@ -15,19 +15,8 @@
  */
 package com.centurylink.mdw.boot;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -37,6 +26,20 @@ import com.centurylink.mdw.util.ClasspathUtil;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.file.ZipHelper;
 import com.centurylink.mdw.util.file.ZipHelper.Exist;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 @Configuration
 @ComponentScan
@@ -55,6 +58,7 @@ public class AutoConfig {
     private static File bootDir;
     private static synchronized File getBootDir() throws StartupException {
         if (bootDir == null) {
+            initializeLogging();
             String bootLoc = System.getProperty("mdw.boot.dir");
             if (bootLoc == null) {
                 String tempLoc = PropertyManager.getProperty(PropertyNames.MDW_TEMP_DIR);
@@ -100,5 +104,21 @@ public class AutoConfig {
             }
         }
         return bootDir;
+    }
+
+    /**
+     * Make zero-config logback logging honor mdw.logging.level in mdw.yaml.
+     */
+    private static void initializeLogging() {
+        try {
+            String mdwLogLevel = LoggerUtil.initializeLogging();
+            if (mdwLogLevel != null) {
+                LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+                loggerContext.getLogger("com.centurylink.mdw").setLevel(Level.toLevel(mdwLogLevel.toLowerCase()));
+            }
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 }

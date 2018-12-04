@@ -575,6 +575,16 @@ diagramMod.factory('Diagram',
     return { implementorClass: className, category: 'com.centurylink.mdw.activity.types.GeneralActivity', icon: 'shape:activity', label: 'Unknown Implementer' };
   };
 
+  Diagram.prototype.findInSubflows = function(x, y) {
+    if (this.subflows) {
+      for (let i = 0; i < this.subflows.length; i++) {
+        if (this.subflows[i].isHover(x, y)) {
+          return this.subflows[i];
+        }
+      }
+    }
+  };
+
   Diagram.prototype.addStep = function(impl, x, y) {
     var implementor = this.getImplementor(impl);
     var steps = this.steps.slice(0);
@@ -590,8 +600,15 @@ diagramMod.factory('Diagram',
       hoverObj.steps.push(step);
     }
     else {
-      this.process.activities.push(step.activity);
-      this.steps.push(step);
+      var subflow = this.findInSubflows(x, y);
+      if (subflow) {
+        subflow.subprocess.activities.push(step.activity);
+        subflow.steps.push(step);
+      }
+      else {
+        this.process.activities.push(step.activity);
+        this.steps.push(step);
+      }
     }
   };
 
