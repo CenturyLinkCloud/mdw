@@ -557,7 +557,7 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
             }
 
             for (AdapterMonitor monitor : monitors) {
-                altResponse = monitor.onResponse(getRuntimeContext(), response, responseHeaders);
+                altResponse = monitor.onResponse(getRuntimeContext(), response, responseHeaders, connection);
                 if (altResponse != null) {
                     // TODO monitor full Response
                     response = altResponse;
