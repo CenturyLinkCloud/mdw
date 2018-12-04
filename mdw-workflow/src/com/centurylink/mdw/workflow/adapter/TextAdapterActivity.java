@@ -740,7 +740,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
             String responseStr = invoke(connection, request, timeout, headers);
 
             for (AdapterMonitor monitor : monitors) {
-                altResponse = (String)monitor.onResponse(runtimeContext, responseStr, getResponseHeaders());
+                altResponse = (String)monitor.onResponse(runtimeContext, responseStr, getResponseHeaders(), connection);
                 if (altResponse != null)
                     responseStr = altResponse; // TODO monitor full Response
             }

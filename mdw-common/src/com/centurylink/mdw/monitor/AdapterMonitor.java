@@ -61,6 +61,19 @@ public interface AdapterMonitor extends RegisteredService, Monitor {
      * @param context The workflow runtime context of the adapter activity
      * @param response The response that was received from the external system. (String, XMLBean, JAXB Element, JSONObject, etc).
      * @param headers Protocol headers for the incoming response.  New headers can be injected by the monitor.
+     * @param connection Connection used in adapter
+     * @return Null unless the monitor wants to change the response contents.  In that case, return the alternative response.
+     */
+    default public Object onResponse(ActivityRuntimeContext context, Object response, Map<String,String> headers, Object connection) {
+        return onResponse(context, response, headers);
+    }
+
+    /**
+     * Called when the response is received.
+     * @deprecated
+     * @param context The workflow runtime context of the adapter activity
+     * @param response The response that was received from the external system. (String, XMLBean, JAXB Element, JSONObject, etc).
+     * @param headers Protocol headers for the incoming response.  New headers can be injected by the monitor.
      * @return Null unless the monitor wants to change the response contents.  In that case, return the alternative response.
      */
     default public Object onResponse(ActivityRuntimeContext context, Object response, Map<String,String> headers) {
@@ -71,7 +84,7 @@ public interface AdapterMonitor extends RegisteredService, Monitor {
     /**
      * Called when an error is encountered.
      * @param context adapter workflow context
-     * @param ex error that was encountered
+     * @param t error that was encountered
      * @return null, or activity result code
      */
     default public String onError(ActivityRuntimeContext context, Throwable t) {
