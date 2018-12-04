@@ -375,9 +375,18 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         currentSummary = summary.findCurrent(getActivityInstanceId());
         boolean hasFailedSubprocess = false;
         for (SubprocessRunner runner : allRunners) {
+            MicroserviceInstance instance = null;
             // Update Microservice with child's ProcInstId in case in never happened in child
-            currentSummary.getMicroservice(runner.getService().getName(), runner.getProcInstId());
-            if (!runner.isSuccess())
+            if (runner.getProcInstId() != null) {
+                instance = currentSummary.getMicroservice(runner.getService().getName(), runner.getProcInstId());
+                if (runner.isSuccess())
+                    instance.setStatus(WorkStatus.STATUSNAME_COMPLETED);
+                else {
+                    hasFailedSubprocess = true;
+                    instance.setStatus(WorkStatus.STATUSNAME_FAILED);
+                }
+            }
+            else
                 hasFailedSubprocess = true;
         }
         setVariableValue(getServiceSummaryVariableName(), summary);
@@ -386,14 +395,14 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         onFinish();
     }
 
-    protected class SubprocessRunner implements Runnable {
+    private class SubprocessRunner implements Runnable {
         private Microservice service;
         private List<SubprocessRunner> runners;
         private Long procInstId = null;
         private boolean success;
         private int index;
 
-        public SubprocessRunner(int index, Microservice service, List<SubprocessRunner> runners) {
+        private SubprocessRunner(int index, Microservice service, List<SubprocessRunner> runners) {
             this.index = index;
             this.runners = runners;
             this.service = service;

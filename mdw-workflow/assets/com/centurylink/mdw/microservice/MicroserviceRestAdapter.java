@@ -56,6 +56,9 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
         Status status = new Status(code, response.getStatusMessage());
         try {
             updateServiceSummary(status, responseId);
+            // For mySQL, now we need to restore  isolation level back to default
+            if (getEngine().getDatabaseAccess().isMySQL())
+                getEngine().getDatabaseAccess().runUpdate("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
         }
         catch (ActivityException | SQLException ex) {
             logexception(ex.getMessage(), ex);
@@ -112,6 +115,11 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
 
             setVariableValue(getServiceSummaryVariableName(), serviceSummary);
             getEngine().getDatabaseAccess().commit();
+            // For mySQL, we need to change the isolation level so that the next read (once we have response)
+            // is not using the DB snapshot that got created when we were in here first for the request.
+            // Otherwise, we risk overwriting any service summary updates performed by a different thread.
+            if (status == null && getEngine().getDatabaseAccess().isMySQL())
+                getEngine().getDatabaseAccess().runUpdate("SET TRANSACTION ISOLATION LEVEL READ COMMITTED");
             if (status != null) // Only notify after performing invocation
                 notifyServiceSummaryUpdate(serviceSummary);
         }
