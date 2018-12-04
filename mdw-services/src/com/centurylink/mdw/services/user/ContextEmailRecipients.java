@@ -89,7 +89,7 @@ public class ContextEmailRecipients {
             }
         }
         else if (recip instanceof List) {
-            for (Object email : recips) {
+            for (Object email : (List)recip) {
                 Workgroup group = UserGroupCache.getWorkgroup(email.toString());
                 if (group != null) {
                     for (String groupEmail : getGroupEmails(Arrays.asList(new String[]{group.getName()}))) {

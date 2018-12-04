@@ -113,8 +113,7 @@ title: MDW Configuration
     # for SimpleLogger (see also mdw.log4j.properties)
     logging:
       level: DEBUG  # default=INFO
-      file: mdw.log  # DEPRECATED: use -Dmdw.log.location
-    
+
     # scripting support (custom executors should implement ScriptExecutor)
     script:
       executors:

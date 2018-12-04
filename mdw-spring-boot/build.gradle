@@ -1,7 +1,13 @@
 dependencies {
     // hub is compileOnly -- otherwise war ends up in client jar
-    compileOnly(project(":mdw-hub")) { exclude(module: "mariaDB4j-core") }
-    compile(project(":mdw-workflow")) { exclude(module: "mariaDB4j-core") }
+    compileOnly(project(":mdw-hub")) { 
+        exclude(module: "mariaDB4j-core")
+        exclude(module: "slf4j-simple")
+    }
+    compile(project(":mdw-workflow")) { 
+        exclude(module: "mariaDB4j-core")
+        exclude(module: "slf4j-simple") 
+    }
     // put back this mariaDB4j transitive
     compile group: "commons-io", name: "commons-io", version: "2.5"
     
@@ -19,6 +25,9 @@ dependencies {
     // indirect tomcat    
     compile group: "javax.validation", name: "validation-api", version: "2.0.1.Final"
     compile group: "org.hibernate.validator", name: "hibernate-validator", version: "6.0.11.Final"
+
+    compile group: "ch.qos.logback", name: "logback-core", version: "1.2.3"
+    compile group: "ch.qos.logback", name: "logback-classic", version: "1.2.3"
 }
 
 jar {
@@ -42,6 +51,15 @@ jar {
     }
     from("../mdw-workflow/src") {
         include "META-INF/mdw/**/*"
+    }
+}
+
+sourcesJar {
+    from("src") {
+        include "**/*.java"
+    }
+    from("../mdw-hub/src") {
+        include "**/*.java"
     }
 }
 

@@ -15,12 +15,6 @@
  */
 package com.centurylink.mdw.hub;
 
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.JMSDestinationNames;
@@ -45,6 +39,12 @@ import com.centurylink.mdw.timer.startup.UserGroupMonitor;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.List;
 
 public class MdwMain {
 
@@ -80,8 +80,6 @@ public class MdwMain {
                 // set db time difference so that later call does not go to db
                 long dbtime = db.getDatabaseTime();
                 System.out.println("Database time: " + StringHelper.dateToString(new Date(dbtime)));
-
-                logger.refreshCache();    // now update based on properties loaded from database
 
                 // automatically update the ASSET_REF table as a safety check
                 DataAccess.updateAssetRefs();

@@ -40,13 +40,12 @@ public class WebContentFilter  implements Filter {
     private ContextPaths contextPaths;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig) {
     }
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
             throws IOException, ServletException {
-
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         String path = request.getServletPath();
         if (request.getPathInfo() != null)
