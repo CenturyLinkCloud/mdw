@@ -1,5 +1,6 @@
 package com.centurylink.mdw.microservice;
 
+import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,7 +50,20 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
 
     public void execute() throws ActivityException {
         servicePlan = getServicePlan();
-        ServiceSummary serviceSummary = new ServiceSummary(getMasterRequestId());
+        ServiceSummary serviceSummary = getServiceSummary(true);
+        ServiceSummary subServiceSummary = null;
+        if (serviceSummary == null)
+            subServiceSummary = serviceSummary = new ServiceSummary(getMasterRequestId(), getActivityInstanceId());
+        else {
+            // Find correct parent service summary to add new child to
+            subServiceSummary = serviceSummary.findParent(getProcessInstanceId());
+            if (subServiceSummary == null)
+                subServiceSummary = serviceSummary;
+
+            subServiceSummary.addServiceSummary(
+                    subServiceSummary.getMasterRequestId() + "-" + (subServiceSummary.getChildServiceSummaryList() == null ? "1" : (subServiceSummary.getChildServiceSummaryList().size()+1))
+                    , getActivityInstanceId());
+        }
         String serviceSummaryVar = getServiceSummaryVariableName();
         setVariableValue(serviceSummaryVar, serviceSummary);
         // update bindings with serviceSummary value
@@ -115,7 +129,9 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
     }
 
     protected ServiceSummary getServiceSummary(boolean forUpdate) throws ActivityException {
-        DocumentReference docRef = (DocumentReference)getParameterValue(getServiceSummaryVariableName());
+        DocumentReference docRef = (DocumentReference) getParameterValue(getServiceSummaryVariableName());
+        if (docRef == null)
+            return null;
         if (forUpdate)
             return (ServiceSummary) getDocumentForUpdate(docRef, Jsonable.class.getName());
         else
@@ -145,7 +161,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         }
     }
 
-    private ProcessInstance createProcessInstance(int index, Microservice service)
+    protected ProcessInstance createProcessInstance(int index, Microservice service)
             throws ActivityException, DataAccessException, ProcessException {
         Process process = getSubflow(service);
         // create bindings
@@ -199,8 +215,11 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
             ServicePlan servicePlan = getServicePlan();
             done = true;
             ServiceSummary summary = getServiceSummary(true);
+            ServiceSummary currentSummary = summary.findCurrent(getActivityInstanceId());
+            if (currentSummary == null)
+                currentSummary = summary;
             for (Microservice service : servicePlan.getServices()) {
-                for (MicroserviceInstance instance : summary.getMicroservices(service.getName()).getInstances()) {
+                for (MicroserviceInstance instance : currentSummary.getMicroservices(service.getName()).getInstances()) {
                     if (instance.getId().equals(procInstId)) {
                         instance.setStatus(WorkStatus.STATUSNAME_COMPLETED);
                     }
@@ -229,8 +248,11 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
     protected boolean allSubProcessCompleted() throws ActivityException, XmlException {
         ServicePlan plan = getServicePlan();
         ServiceSummary summary = getServiceSummary(false);
+        ServiceSummary currentSummary = summary.findCurrent(getActivityInstanceId());
+        if (currentSummary == null)
+            currentSummary = summary;
         for (Microservice service : plan.getServices()) {
-            for (MicroserviceInstance instance : summary.getMicroservices(service.getName()).getInstances()) {
+            for (MicroserviceInstance instance : currentSummary.getMicroservices(service.getName()).getInstances()) {
                 if (!instance.getStatus().equals(WorkStatus.STATUSNAME_COMPLETED)
                         && !instance.getStatus().equals(WorkStatus.STATUSNAME_CANCELED)) {
                     return false;
@@ -240,9 +262,10 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         return true;
     }
 
-    private void executeServiceSubflowsInSequence(ServicePlan servicePlan) throws ActivityException {
+    protected void executeServiceSubflowsInSequence(ServicePlan servicePlan) throws ActivityException {
         List<ProcessInstance> procInstList = new ArrayList<ProcessInstance>();
         ServiceSummary summary = getServiceSummary(true);
+        ServiceSummary currentSummary = summary.findCurrent(getActivityInstanceId());
         try {
             for (Microservice service : servicePlan.getServices()) {
                 if (service.getEnabled()) {
@@ -250,11 +273,11 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
                     for (int i = 0 ; i < service.getCount(); i++) {
                         try {
                             ProcessInstance processInstance = createProcessInstance(i, service);
-                            instance = summary.addMicroservice(service.getName(), processInstance.getId());
-                            instance.setTriggered(Instant.now());
+                            instance = currentSummary.addMicroservice(service.getName(), processInstance.getId());
                             procInstList.add(processInstance);
                             instance.setId(processInstance.getId());
                             instance.setStatus(WorkStatus.STATUSNAME_IN_PROGRESS);
+                            instance.setTriggered(Instant.now());
                         }
                         catch (Exception ex) {
                             if (instance != null)
@@ -292,18 +315,33 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         }
     }
 
-    private void executeServiceSubflowsInParallel(ServicePlan servicePlan) throws ActivityException {
+    protected void executeServiceSubflowsInParallel(ServicePlan servicePlan) throws ActivityException {
         // create runners and service summary
         List<SubprocessRunner> allRunners = new ArrayList<>();
         List<SubprocessRunner> activeRunners = new ArrayList<>();
+        ServiceSummary summary = getServiceSummary(true);
+        ServiceSummary currentSummary = summary.findCurrent(getActivityInstanceId());
         for (Microservice service : servicePlan.getServices()) {
             if (service.getEnabled()) {
+                MicroserviceInstance instance = null;
                 for (int i = 0; i < service.getCount(); i++) {
                     SubprocessRunner runner = new SubprocessRunner(i, service, activeRunners);
                     allRunners.add(runner);
                     activeRunners.add(runner);
+                    // Add with id of 0, will get updated by microserviceRestAdapter in child
+                    instance = currentSummary.addMicroservice(service.getName(), 0L);
+                    instance.setId(0L);
+                    instance.setStatus(WorkStatus.STATUSNAME_IN_PROGRESS);
+                    instance.setTriggered(Instant.now());
                 }
             }
+        }
+
+        setVariableValue(getServiceSummaryVariableName(), summary);
+        try { // Need to commit the changes to serviceSummary to release DB lock - Only when running parallel
+            this.getEngine().getDatabaseAccess().commit();
+        } catch (SQLException e) {
+            logexception("Error while committing Service Summary changes", e);
         }
 
         // spawn runner threads
@@ -333,22 +371,14 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
             }
         }
 
-        ServiceSummary summary = getServiceSummary(true);
+        summary = getServiceSummary(true);
+        currentSummary = summary.findCurrent(getActivityInstanceId());
         boolean hasFailedSubprocess = false;
         for (SubprocessRunner runner : allRunners) {
-            Microservice service = runner.service;
-            MicroserviceInstance instance = summary.getMicroservice(service.getName(), runner.procInstId);
-            if (instance == null) {
-                instance = summary.addMicroservice(service.getName(), runner.procInstId);
-                instance.setTriggered(runner.procInstTriggered);
-            }
-            if (runner.success) {
-                instance.setStatus(WorkStatus.STATUSNAME_COMPLETED);
-            }
-            else {
+            // Update Microservice with child's ProcInstId in case in never happened in child
+            currentSummary.getMicroservice(runner.getService().getName(), runner.getProcInstId());
+            if (!runner.isSuccess())
                 hasFailedSubprocess = true;
-                instance.setStatus(WorkStatus.STATUSNAME_FAILED);
-            }
         }
         setVariableValue(getServiceSummaryVariableName(), summary);
         if (hasFailedSubprocess)
@@ -356,15 +386,14 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         onFinish();
     }
 
-    private class SubprocessRunner implements Runnable {
+    protected class SubprocessRunner implements Runnable {
         private Microservice service;
         private List<SubprocessRunner> runners;
         private Long procInstId = null;
-        private Instant procInstTriggered = null;
         private boolean success;
         private int index;
 
-        private SubprocessRunner(int index, Microservice service, List<SubprocessRunner> runners) {
+        public SubprocessRunner(int index, Microservice service, List<SubprocessRunner> runners) {
             this.index = index;
             this.runners = runners;
             this.service = service;
@@ -380,7 +409,6 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
                 List<Variable> childVars = process.getVariables();
                 int perfLevel = getEngine().getPerformanceLevel();
                 Map<String,String> parameters = createBindings(childVars, index, service, perfLevel >= 5);
-                procInstTriggered = Instant.now();
                 success = engineDriver.invokeServiceAsSubprocess(process.getId(),
                         getProcessInstanceId(), getMasterRequestId(), parameters, perfLevel) != null;
                 procInstId = engineDriver.getMainProcessInstanceId();
@@ -398,5 +426,9 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
                 }
             }
         }
+
+        public Microservice getService() {return service;}
+        public boolean isSuccess() {return success;}
+        public Long getProcInstId() {return procInstId;}
     }
 }

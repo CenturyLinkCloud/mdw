@@ -93,7 +93,7 @@ public class DependenciesWaitActivity extends EventWaitActivity {
     }
 
     public boolean dependenciesMet() throws ActivityException {
-        ServiceSummary serviceSummary = getServiceSummary(true);
+        ServiceSummary serviceSummary = getServiceSummary(true); // Force read from DB to have latest
         if (serviceSummary == null) {
             // No service Summary, so throw exception since we shouldn't proceed
             // if we can't determine if dependencies are met
@@ -168,7 +168,7 @@ public class DependenciesWaitActivity extends EventWaitActivity {
      *
      * @param microservice
      *            to check for successful completion
-     * @param ServiceSummary
+     * @param serviceSummary
      *            object to check for successful completions
      * @see ServiceSummary
      * @return a Jsonable as a future-proof in case we need to know which
@@ -194,11 +194,21 @@ public class DependenciesWaitActivity extends EventWaitActivity {
                 }
             }
         }
+        // Now check all children ServiceSummaries
+        if (serviceSummary.getChildServiceSummaryList() != null) {
+            for (ServiceSummary child : serviceSummary.getChildServiceSummaryList()) {
+                Jsonable match = microServiceSuccess(microservice, child);
+                if (match != null)
+                    return match;
+            }
+        }
         return null;
     }
 
     protected ServiceSummary getServiceSummary(boolean forUpdate) throws ActivityException {
         DocumentReference docRef = (DocumentReference)getParameterValue(getServiceSummaryVariableName());
+        if (docRef == null)
+            return null;
         if (forUpdate)
             return (ServiceSummary) getDocumentForUpdate(docRef, Jsonable.class.getName());
         else

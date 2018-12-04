@@ -33,9 +33,16 @@ public class MicroserviceList implements Jsonable {
     }
 
     public MicroserviceInstance getInstance(Long id) {
+        MicroserviceInstance zeroIdInst = null;  // Used when microservice was created prior to child procInst
         for (MicroserviceInstance instance : instances) {
             if (id.equals(instance.getId()))
                 return instance;
+            else if (zeroIdInst == null && instance.getId() == 0L)
+                zeroIdInst = instance;
+        }
+        if (zeroIdInst != null) {   // Didn't match, but did find entry with id of 0, so use that
+            zeroIdInst.setId(id);
+            return zeroIdInst;
         }
         return null;
     }

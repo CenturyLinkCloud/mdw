@@ -135,9 +135,9 @@ public class TimerWaitActivity extends AbstractWait {
     protected int getWaitPeriodInSeconds() throws ActivityException {
         String unit = super.getAttributeValue(WAIT_UNIT);
         int factor;
-        if (unit.equals(MINUTES)) factor = 60;
-        else if (unit.equals(HOURS)) factor = 3600;
-        else if (unit.equals(DAYS)) factor = 86400;
+        if (MINUTES.equals(unit)) factor = 60;
+        else if (HOURS.equals(unit)) factor = 3600;
+        else if (DAYS.equals(unit)) factor = 86400;
         else factor = 1;  // Means specified value is already in seconds
         int retTime;
         String timeAttr;
