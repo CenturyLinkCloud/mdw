@@ -19,6 +19,15 @@ public class ServiceSummary implements Jsonable {
     private String masterRequestId;
     public String getMasterRequestId() { return masterRequestId; }
 
+    private Long instanceId;  // ActivityInstanceId that created this service summary
+    public Long getInstanceId() { return instanceId; }
+
+    private JSONObject attributes;  // General purpose
+    public JSONObject getAttributes() { return attributes; }
+    public void setAttributes(JSONObject attr) {
+        this.attributes = attr;
+    }
+
     private Map<String,MicroserviceList> microservices = new LinkedHashMap<>();
     public Map<String,MicroserviceList> getMicroservices() { return microservices; }
     public void setMicroservices(Map<String,MicroserviceList> microservices) {
@@ -31,6 +40,15 @@ public class ServiceSummary implements Jsonable {
 
     public MicroserviceInstance getMicroservice(String name, Long instanceId) {
         MicroserviceList instances = getMicroservices(name);
+        if (instances == null && childServiceSummaryList != null) {
+            MicroserviceInstance instance = null;
+            int i = 0;
+            while (instance == null && i < childServiceSummaryList.size()) {
+                instance = childServiceSummaryList.get(i).getMicroservice(name, instanceId);
+                i++;
+            }
+            return instance;
+        }
         return instances == null ? null : instances.getInstance(instanceId);
     }
 
@@ -71,16 +89,11 @@ public class ServiceSummary implements Jsonable {
     }
 
     public void addInvocation(String microserviceName, Long instanceId, Invocation invocation) {
-        MicroserviceList instances = microservices.get(microserviceName);
-        if (instances == null) {
-            instances = new MicroserviceList(microserviceName);
-            microservices.put(microserviceName, instances);
-        }
-        MicroserviceInstance instance = instances.getInstance(instanceId);
+        MicroserviceInstance instance = getMicroservice(microserviceName, instanceId);
         if (instance == null) {
             instance = addMicroservice(microserviceName, instanceId);
         }
-        List<Invocation> invocations = getInvocations(microserviceName, instanceId);
+        List<Invocation> invocations = instance.getInvocations();
         invocations.add(invocation);
     }
 
@@ -102,12 +115,70 @@ public class ServiceSummary implements Jsonable {
         updates.add(update);
     }
 
+    private List<ServiceSummary> childServiceSummaryList = null;
+    public List<ServiceSummary> getChildServiceSummaryList() { return childServiceSummaryList; }
+    public ServiceSummary addServiceSummary(String masterRequestId, Long instanceId) {
+        if (childServiceSummaryList == null)
+            childServiceSummaryList = new ArrayList<>();
+
+        ServiceSummary childServiceSummary = new ServiceSummary(masterRequestId, instanceId);
+        childServiceSummaryList.add(childServiceSummary);
+        return childServiceSummary;
+    }
+
+    /**
+     * Find the ServiceSummary that contains a microservice with ID matching procInstId
+     */
+    public ServiceSummary findParent(Long procInstId) {
+        ServiceSummary parent = null;
+        for (MicroserviceList list : getMicroservices().values()) {
+            for (MicroserviceInstance instance : list.getInstances()) {
+                if (procInstId.equals(instance.getId()))
+                    return this;
+            }
+        }
+        if (childServiceSummaryList != null) {
+            for (ServiceSummary child : childServiceSummaryList) {
+                parent = child.findParent(procInstId);
+                if (parent != null)
+                    return parent;
+            }
+        }
+        return parent;
+    }
+
+    /**
+     * Find the ServiceSummary that was created by activity with activityInstanceId matching instanceId
+     */
+    public ServiceSummary findCurrent(Long instanceId) {
+        ServiceSummary current = null;
+
+        if (instanceId.equals(this.instanceId))
+            return this;
+
+        if (childServiceSummaryList != null) {
+            for (ServiceSummary child : childServiceSummaryList) {
+                current = child.findCurrent(instanceId);
+                if (current != null)
+                    return current;
+            }
+        }
+        return current;
+    }
+
     public ServiceSummary(String masterRequestId) {
         this.masterRequestId = masterRequestId;
     }
 
+    public ServiceSummary(String masterRequestId, Long instanceId) {
+        this.masterRequestId = masterRequestId;
+        this.instanceId = instanceId;
+    }
+
     public ServiceSummary(JSONObject json) {
         this.masterRequestId = json.getString("masterRequestId");
+        this.instanceId = json.optLong("instanceId");
+        this.attributes = json.optJSONObject("attributes");
         if (json.has("microservices")) {
             JSONArray microservicesArr = json.getJSONArray("microservices");
             for (int i = 0; i < microservicesArr.length(); i++) {
@@ -125,11 +196,19 @@ public class ServiceSummary implements Jsonable {
                 }
             }
         }
+        if (json.has("subServiceSummaries")) {
+            JSONArray serviceSummariesArr = json.getJSONArray("subServiceSummaries");
+            childServiceSummaryList = new ArrayList<>();
+            for (int i = 0; i < serviceSummariesArr.length(); i++)
+                childServiceSummaryList.add(new ServiceSummary(serviceSummariesArr.getJSONObject(i)));
+        }
     }
 
     public JSONObject getJson() {
         JSONObject json = create();
         json.put("masterRequestId", masterRequestId);
+        if (instanceId != null && instanceId > 0L)
+            json.put("instanceId", instanceId);
         JSONArray microservicesArr = new JSONArray();
         json.put("microservices", microservicesArr);
         for (String microserviceName : microservices.keySet()) {
@@ -146,6 +225,15 @@ public class ServiceSummary implements Jsonable {
                     instancesArr.put(instanceObj);
                 }
             }
+        }
+        if (attributes != null)
+            json.put("attributes", attributes);
+        if (childServiceSummaryList != null) {
+            JSONArray arr = new JSONArray();
+            for (ServiceSummary child : childServiceSummaryList) {
+                arr.put(child.getJson());
+            }
+            json.put("subServiceSummaries", arr);
         }
         return json;
     }

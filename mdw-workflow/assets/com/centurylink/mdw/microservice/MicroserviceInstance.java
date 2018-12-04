@@ -41,6 +41,13 @@ public class MicroserviceInstance implements Jsonable {
     public void setStatus(String status) { this.status = status; }
 
     /**
+     * Microservice correlationID (transactionID from StatusMgr)
+     */
+    private String transactionId;
+    public String getTransactionId() { return this.transactionId; }
+    public void setTransactionId(String transactionId) { this.transactionId = transactionId; }
+
+    /**
      * Calls to the microservice.
      */
     private List<Invocation> invocations;

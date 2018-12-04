@@ -1,5 +1,6 @@
 package com.centurylink.mdw.microservice;
 
+import java.sql.SQLException;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +22,7 @@ import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
  */
 public class MicroserviceRestAdapter extends RestServiceAdapter {
 
+    protected Long requestId = null;
     /**
      * Overridden to append JSON headers.
      */
@@ -55,7 +57,7 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
         try {
             updateServiceSummary(status, responseId);
         }
-        catch (ActivityException ex) {
+        catch (ActivityException | SQLException ex) {
             logexception(ex.getMessage(), ex);
         }
         return responseId;
@@ -66,7 +68,7 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
      */
     @Override
     protected Long logRequest(Request request) {
-        Long requestId = super.logRequest(request);
+        requestId = super.logRequest(request);
         try {
             Variable requestIdVar = getProcessDefinition().getVariable("requestId");
             if (requestIdVar != null && Long.class.getName().equals(requestIdVar.getType()))
@@ -75,31 +77,43 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
         catch (ActivityException ex) {
             logexception(ex.getMessage(), ex);
         }
+        try { // Add microservice, or Update microservice if it has id=0 (when executing in parallel from OrchestratorActivity)
+            updateServiceSummary(null, null);
+        }
+        catch (ActivityException | SQLException ex) {
+            logexception(ex.getMessage(), ex);
+        }
         return requestId;
     }
 
     public void updateServiceSummary(Status status, Long responseId)
-            throws ActivityException {
+            throws ActivityException, SQLException {
 
         ServiceSummary serviceSummary = getServiceSummary(true);
         if (serviceSummary != null) {
-            String microservice = getMicroservice();
-            List<Invocation> invocations = serviceSummary.getInvocations(microservice, getProcessInstanceId());
+            ServiceSummary currentSummary = serviceSummary.findParent(getProcessInstanceId());
+            if (currentSummary == null)
+                currentSummary = serviceSummary;
+
+            String microservice = getMicroservice(serviceSummary);
+            List<Invocation> invocations = currentSummary.getInvocations(microservice, getProcessInstanceId());
             if (invocations == null)
                 throw new ActivityException("No invocations for: " + microservice);
 
             // if last invocation does not have a response, add it there
-            if (invocations.size() > 0
-                    && invocations.get(invocations.size() - 1).getStatus() == null) {
+            if (invocations.size() > 0 && invocations.get(invocations.size() - 1).getStatus() == null) {
                 invocations.get(invocations.size() - 1).setStatus(status);
+                invocations.get(invocations.size() - 1).setResponseId(responseId);
             }
             else {
                 Invocation invocation = new Invocation(getRequestId(), status, Instant.now(), responseId);
-                serviceSummary.addInvocation(microservice, getProcessInstanceId(), invocation);
+                invocations.add(invocation);
             }
 
             setVariableValue(getServiceSummaryVariableName(), serviceSummary);
-            notifyServiceSummaryUpdate(serviceSummary);
+            getEngine().getDatabaseAccess().commit();
+            if (status != null) // Only notify after performing invocation
+                notifyServiceSummaryUpdate(serviceSummary);
         }
     }
 
@@ -113,14 +127,22 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
      * Standard behavior is to read from a String variable (defaultName='microservice').
      * If no variable is defined, fallback is the 'microservice' design attribute.
      */
-    protected String getMicroservice() throws ActivityException {
+    protected String getMicroservice(ServiceSummary summary) throws ActivityException {
         // configured through attribute - attribute default is supposed to be $microservice
         String microservice = getAttributeValueSmart("Microservice");
         if (StringHelper.isEmpty(microservice)) {
             String microserviceVarName = getAttribute("microserviceVariable", "microservice");
             if (getMainProcessDefinition().getVariable(microserviceVarName) == null) {
-                // configured through activity name/label
-                microservice = getActivityName();
+                microservice = getMicroserviceById(summary);
+                if (microservice == null && summary.getChildServiceSummaryList() != null) {
+                    for (ServiceSummary child : summary.getChildServiceSummaryList()) {
+                        microservice = getMicroserviceById(child);
+                        if (microservice != null)
+                            break;
+                    }
+                }
+                if (microservice == null) // configured through activity name/label
+                    microservice = getActivityName();
             }
             else {
                 microservice = getParameterStringValue(microserviceVarName);
@@ -129,6 +151,17 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
         if (microservice == null)
             throw new ActivityException("Cannot discern microservice");
         return microservice;
+    }
+
+    protected String getMicroserviceById(ServiceSummary summary) {
+        // Get it from service summary based on procInstId
+        for (String microserviceName : summary.getMicroservices().keySet()) {
+            for (MicroserviceInstance instance : summary.getMicroservices(microserviceName).getInstances()) {
+                if (getProcessInstanceId().equals(instance.getId()))
+                    return instance.getMicroservice();
+            }
+        }
+        return null;
     }
 
     protected ServiceSummary getServiceSummary(boolean forUpdate) throws ActivityException {
@@ -153,6 +186,9 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
      * @return requestId used to populate the serviceSummary
      */
     public Long getRequestId() throws ActivityException {
+
+        if (requestId != null)
+            return requestId;
 
         String requestIdVarName = getAttribute("requestIdVariable", "requestId");
 

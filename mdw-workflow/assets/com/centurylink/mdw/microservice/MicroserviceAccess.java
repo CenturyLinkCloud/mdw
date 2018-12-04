@@ -30,7 +30,13 @@ public class MicroserviceAccess {
         for (String microserviceName : serviceSummary.getMicroservices().keySet()) {
             for (MicroserviceInstance instance : serviceSummary.getMicroservices(microserviceName).getInstances()) {
                 Long instanceId = instance.getId();
-                processList.addProcess(ServiceLocator.getWorkflowServices().getProcess(instanceId));
+                if (instanceId > 0L)
+                    processList.addProcess(ServiceLocator.getWorkflowServices().getProcess(instanceId));
+            }
+        }
+        if (serviceSummary.getChildServiceSummaryList() != null) {
+            for (ServiceSummary childServiceSummary : serviceSummary.getChildServiceSummaryList()) {
+                processList.getItems().addAll(getProcessList(childServiceSummary).getItems());
             }
         }
         return processList;
@@ -42,8 +48,12 @@ public class MicroserviceAccess {
         if (serviceSummary == null && !parentInstance.getChildren().isEmpty()) {
             for (LinkedProcessInstance childInstance : parentInstance.getChildren()) {
                 serviceSummary = findServiceSummary(childInstance);
-                if (serviceSummary != null)
-                    return serviceSummary;
+                if (serviceSummary != null) {
+                    if (serviceSummary.findParent(runtimeContext.getProcessInstanceId()) != null)
+                        return serviceSummary.findParent(runtimeContext.getProcessInstanceId());
+                    else
+                        return serviceSummary;
+                }
             }
         }
         return serviceSummary;
@@ -58,8 +68,12 @@ public class MicroserviceAccess {
         }
         if (var == null)
             return null;
-        else
-            return (ServiceSummary) runtimeContext.getVariables().get(variableName);
+        else {
+            if (((ServiceSummary) runtimeContext.getVariables().get(variableName)).findParent(runtimeContext.getProcessInstanceId()) != null)
+                return ((ServiceSummary) runtimeContext.getVariables().get(variableName)).findParent(runtimeContext.getProcessInstanceId());
+            else
+                return (ServiceSummary) runtimeContext.getVariables().get(variableName);
+        }
     }
 
     /**
