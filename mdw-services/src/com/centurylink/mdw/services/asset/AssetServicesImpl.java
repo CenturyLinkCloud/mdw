@@ -429,7 +429,7 @@ public class AssetServicesImpl implements AssetServices {
     private void addVersionControlInfo(PackageAssets pkgAssets) throws ServiceException {
         try {
             VersionControlGit versionControl = (VersionControlGit) getVersionControl();
-            if (versionControl != null && getGitUser() != null) {
+            if (versionControl != null && getGitUser() != null && getGitBranch() != null) {
                 PackageDir pkgDir = pkgAssets.getPackageDir();
                 String pkgVcPath = versionControl.getRelativePath(pkgDir);
                 GitDiffs diffs = versionControl.getDiffs(getGitBranch(), pkgVcPath);
@@ -614,7 +614,7 @@ public class AssetServicesImpl implements AssetServices {
         CodeTimer timer = new CodeTimer("addVersionControlInfo(AssetInfo)", true);
         try {
             VersionControlGit versionControl = (VersionControlGit) getVersionControl();
-            if (versionControl != null && getGitUser() != null) {
+            if (versionControl != null && getGitUser() != null && getGitBranch() != null) {
                 String assetVcPath = versionControl.getRelativePath(asset.getFile());
                 asset.setCommitInfo(versionControl.getCommitInfo(assetVcPath));
                 GitDiffs diffs = versionControl.getDiffs(getGitBranch(), assetVcPath);
@@ -633,7 +633,7 @@ public class AssetServicesImpl implements AssetServices {
         PackageDir pkgDir = null;
         String pkgPath = pkgName.replace('.', '/');
         VersionControlGit gitVc = (VersionControlGit) getVersionControl();
-        if (gitVc != null && getGitUser() != null) {
+        if (gitVc != null && getGitUser() != null && getGitBranch() != null) {
             String pkgMetaFilePath = getAssetPath() + "/" + pkgPath + "/" + PackageDir.PACKAGE_JSON_PATH;
             GitDiffs diffs = gitVc.getDiffs(getGitBranch(), pkgMetaFilePath);
             if (DiffType.MISSING.equals(diffs.getDiffType(pkgMetaFilePath))) {
@@ -668,7 +668,7 @@ public class AssetServicesImpl implements AssetServices {
     private AssetInfo getGhostAsset(PackageDir pkgDir, String assetName) throws Exception {
         AssetInfo asset = null;
         VersionControlGit gitVc = (VersionControlGit) getVersionControl();
-        if (gitVc != null && getGitUser() != null) {
+        if (gitVc != null && getGitUser() != null && getGitBranch() != null) {
             String path = getAssetPath() + "/" + pkgDir.getPackageName().replace('.', '/') + "/" + assetName;
             GitDiffs diffs = gitVc.getDiffs(getGitBranch(), path);
             if (DiffType.MISSING.equals(diffs.getDiffType(path))) {
