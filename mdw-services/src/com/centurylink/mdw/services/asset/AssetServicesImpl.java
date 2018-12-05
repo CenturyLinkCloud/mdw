@@ -380,7 +380,7 @@ public class AssetServicesImpl implements AssetServices {
 
                 pkgList.setGitBranch(versionControl.getBranch());
 
-                if (versionControl != null && !pkgList.getPackageDirs().isEmpty() && getGitUser() != null) {
+                if (versionControl != null && !pkgList.getPackageDirs().isEmpty() && getGitUser() != null && getGitBranch() != null) {
                     GitDiffs diffs = versionControl.getDiffs(getGitBranch(), getAssetPath());
 
                     for (PackageDir pkgDir : pkgList.getPackageDirs()) {
