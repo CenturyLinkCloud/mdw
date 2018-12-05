@@ -147,7 +147,7 @@ public class DataAccess {
                             if (!vcGit.localRepoExists()) {
                                 logger.severe("**** WARNING: Git location " + gitLocalPath + " does not contain a repository.  Cloning: " + url);
                                 vcGit.cloneNoCheckout();
-                                if (branch == null || PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_AUTO_CHECKOUT, true)) {
+                                if (PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_AUTO_CHECKOUT, true)) {
                                     if (branch != null) {
                                         logger.info("Performing branch checkout...");
                                         vcGit.hardCheckout(branch);
@@ -157,6 +157,8 @@ public class DataAccess {
                                         vcGit.hardTagCheckout(tag);
                                     }
                                 }
+                                else
+                                    logger.warn("Git Auto Checkout is set to false!  No assets will be pulled from Git...");
                             }
 
                             // sanity checks
@@ -189,8 +191,13 @@ public class DataAccess {
                                 String localCommit = vcGit.getCommit();
                                 String tagCommit = vcGit.getCommitForTag(tag);
                                 if (localCommit != null && tagCommit != null && !localCommit.equals(tagCommit)) {
-                                    logger.info("Current commit does not match commit for tag " + tag + ". Performing tag checkout...");
+                                    logger.info("Current commit " + localCommit + " does not match commit for tag " + tag + ". Performing tag checkout...");
                                     vcGit.hardTagCheckout(tag);
+                                }
+                                else if (localCommit == null)
+                                    logger.warn("Could not find local commit!");
+                                else if (tagCommit == null) {
+                                    logger.warn("Git Tag named " + tag + " was NOT found!");
                                 }
                             }
                         }

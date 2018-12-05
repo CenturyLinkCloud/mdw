@@ -308,6 +308,7 @@ public class VersionControlGit implements VersionControl {
     }
 
     public String getCommitForTag(String tag) throws Exception {
+        fetch();
         List<Ref> tagRefs = git.tagList().call();
         for (Ref tagRef : tagRefs) {
             if (tagRef.getName().equals("refs/tags/" + tag))
