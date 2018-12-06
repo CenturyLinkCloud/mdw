@@ -1,11 +1,3 @@
-sourceSets {
-    main {
-        resources {
-            srcDirs "../mdw/classes"
-        }
-    }
-}
-
 configurations {
     cli
     codegen
