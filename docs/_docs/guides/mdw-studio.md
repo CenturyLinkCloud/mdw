@@ -8,7 +8,7 @@ that enables you to create workflow processes and other assets.
 
 ## Sections in this Guide
   1. [Install and Run MDW Studio](#1-install-and-run-mdw-studio)
-     - 1.1 [Installation](#11-installation) 
+     - 1.1 [Installation](#11-installation)
      - 1.2 [Create and open a project](#12-create-and-open-a-project)
      - 1.3 [Open an existing project](#13-open-an-existing-project)
   2. [Design a Workflow Process](#2-design-a-workflow-process)
@@ -29,7 +29,7 @@ that enables you to create workflow processes and other assets.
 
 ### 1.1 Installation
   - **Get IntelliJ IDEA**  
-    The [Community Edition](https://www.jetbrains.com/idea/download/) works fine for MDW Studio.  If you happen to have IntelliJ Ultimate, WebStorm, 
+    Install version 2018.2.x of the [Community Edition](https://www.jetbrains.com/idea/download/previous.html), until [this bug](https://youtrack.jetbrains.com/issue/IDEA-203751) is fixed in the 2018.3 stream.  If you happen to have IntelliJ Ultimate, WebStorm,
     or any other IDE built on the IntelliJ platform, you can use that as well.
   - **Requires Git**  
     IntelliJ's Git integration requires a local installation:
@@ -44,7 +44,7 @@ that enables you to create workflow processes and other assets.
       - Add the Beta plugin repository in IntelliJ
         - Preferences/Settings > Plugins > Browse Repositories > Manage Repositories > + > {% include copyToClipboard.html text="https://plugins.jetbrains.com/plugins/Beta/list" %}
         - Search for "MDW" and click Install
-  
+
 ### 1.2 Create and open a project
   - **Run the New Project wizard**
     - Launch IntelliJ, and from the welcome screen select Create New Project (or from the menu: File > New > Project).
@@ -68,7 +68,7 @@ that enables you to create workflow processes and other assets.
     - Other configuration files are in the ./config directory.  Detailed information on these is available in the [Configuration Guide](../configuration/).
     - Your asset base directory is usually ./assets, and is configured as a source folder for the project.  Any asset package whose name begins with com.centurylink.mdw. is
       considered an MDW package.
-      
+
 ### 1.3 Open an existing project
   - Launch IntelliJ and from the welcome screen select Open Project.
   - Browse for the directory that contains the MDW project.yaml file.  Select that directory.
@@ -87,7 +87,7 @@ that enables you to create workflow processes and other assets.
 ### 2.2 Create a workflow process
   - Right-click on your new package and select New MDW Process and give it a name:
     <img src="../images/studio/new-process.png" alt="New Process" style="width:600px" /><br/>
-    
+
 ### 2.3 Drag an activity from the Toolbox
   - **Drag from the Toolbox**
     - Expand the Toolbox by clicking its window button along the right-hand side of the design canvas.
@@ -103,7 +103,7 @@ that enables you to create workflow processes and other assets.
       and drag a new line to somewhere within the Stop activity.  When you release the mouse button the transition is anchored.
     - Note: Transitions are always directional, so they're drawn with an arrow indicating the direction of flow.
       ![Connected links](../images/studio/connected-links.png)
-    
+
 ### 2.4 Configure an activity
   - Since the same activity may be used in multiple places, it needs to be configured for the specific location where it lives in a process.
     Double-click New Kotlin Script activity to open the Configurator window.
@@ -113,13 +113,13 @@ that enables you to create workflow processes and other assets.
     runtimeContext.logInfo("Hello, World")
     ```
   - Close the script dialog and save the process.
-  
+
 ## 3. Run and View Processes
 
 ### 3.1 Build the Spring Boot jar
   - Open the Gradle (or Maven) tool window in IntellJ.  Run the "build" task in Gradle (or the "package" goal in Maven) to create the boot jar.
   - Check the console output for any build errors.
-  
+
 ### 3.2 Create a Run Configuration
   - From the menu: Run > Edit Configurations...
   - Click the `+` icon and select "Jar Application" from the dropdown.
@@ -127,11 +127,10 @@ that enables you to create workflow processes and other assets.
   - Enter these vm options: `-Dmdw.runtime.env=dev -Dmdw.config.location=config`
   - Make sure the Working directory is your project directory.
     ![Run configuration](../images/studio/run-configuration.png)
-  
+
 ### 3.3 Start the MDW server
   - From the menu: Run > Debug... > select "my-mdw jar".  Server output appears in the console.
 
 ### 3.4 Run a process through MDWHub
   - Right-click on My First Process in the project tree and select Run Process.
   - This should open the MDWHub run process page.  Click the run button to execute your flow.
-      
