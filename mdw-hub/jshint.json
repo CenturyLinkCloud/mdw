@@ -25,6 +25,8 @@
     "$mdwWebSocketUrl": false,
     "$mdwDiscoveryUrl": false,
     "$mdwCustomRoutes": false,
+    "$mdwGitBranch": false,
+    "$mdwGitTag": false,
     "$mdwMessages": true,
     "MdwMessages": true,
     "$mdwUi": true,

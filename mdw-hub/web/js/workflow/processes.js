@@ -337,7 +337,7 @@ processMod.controller('ProcessController',
         ($scope.process.status == 'In Progress' || $scope.process.status == "Waiting");
   };
   $scope.definitionEditAllowed = function() {
-    return $scope.authUser.hasRole('Process Design');
+    return $scope.authUser.hasRole('Process Design') && !mdw.git.tag;
   };
 }]);
 
@@ -461,6 +461,10 @@ processMod.controller('ProcessDefController',
         $scope.template = $scope.process.template;
     });
   }
+
+  $scope.isEditAllowed = function() {
+    return $scope.authUser.hasRole('Process Design') && !mdw.git.tag;
+  };
 }]);
 
 // retains state for nav

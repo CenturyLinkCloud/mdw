@@ -6,10 +6,12 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
                                            function($scope, $location, $route, $http, $cookieStore, $uibModal, mdw, uiUtil, Assets, GitVcs, WorkflowCache, JSON_DOWNLOAD) {
   $scope.pkgList = Assets.get({}, 
     function(data) {
-      if (!$scope.pkgList.packages || $scope.pkgList.packages.length === 0)
+      if (!$scope.pkgList.packages || $scope.pkgList.packages.length === 0) {
         mdw.messages = 'No packages found in Asset Root: ' + $scope.pkgList.assetRoot;
-      else if ($scope.pkgList.vcsBranch !== $scope.pkgList.gitBranch)
-        mdw.messages = 'VCS branch: "' + $scope.pkgList.vcsBranch + '" does not match Git branch: "' + $scope.pkgList.gitBranch + "'"; 
+      }
+      else if ($scope.pkgList.vcsBranch !== $scope.pkgList.gitBranch && !$scope.pkgList.vcsTag) {
+        mdw.messages = 'VCS branch: "' + $scope.pkgList.vcsBranch + '" does not match Git branch: "' + $scope.pkgList.gitBranch + "'";
+      }
       else {
         $scope.pkgList.selectedState = { all: false };
         $scope.pkgList.toggleAll = function() {
@@ -245,6 +247,10 @@ assetMod.controller('PackageController', ['$scope', '$routeParams', '$route', '$
   $scope.getAssetTypes = function() {
     return ASSET_TYPES;    
   };
+
+  $scope.isEditAllowed = function() {
+    return $scope.authUser.hasRole('Process Design') && !mdw.git.tag;
+  };
   
   $scope.newAsset = function(type) {
     var ext = ASSET_TYPES[type];
@@ -347,7 +353,11 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
       }
     }
   );
-  
+
+  $scope.isEditAllowed = function() {
+    return $scope.authUser.hasRole('Process Design') && !$scope.asset.isBinary && !mdw.git.tag;
+  };
+
   $scope.viewInstances=function(){
     $cookieStore.put('taskId', $scope.asset.id);
     $location.path('/tasks/');

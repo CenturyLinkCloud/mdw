@@ -24,7 +24,7 @@
             uib-popover-template="'assets/importMenu.html'" popover-placement="left" pop-click>
             <span class="glyphicon glyphicon-download-alt" style="transform:rotate(180deg)"></span> Import
           </button>
-          <button type="button" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Process Design')" ng-click="createPackage()">
+          <button type="button" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Process Design') && !pkgList.vcsTag" ng-click="createPackage()">
             <span class="glyphicon glyphicon-plus"></span> New
           </button>
         </div>

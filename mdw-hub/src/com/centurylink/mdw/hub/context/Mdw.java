@@ -85,6 +85,14 @@ public class Mdw {
     public String getCustomRoutes() { return customRoutes; }
     public void setCustomRoutes(String customRoutes) { this.customRoutes = customRoutes; }
 
+    private String gitBranch;
+    public String getGitBranch() { return gitBranch; }
+    public void setGitBranch(String branch) { this.gitBranch = branch; }
+
+    private String gitTag;
+    public String getGitTag() { return gitTag; }
+    public void setGitTag(String tag) { this.gitTag = tag; }
+
     public File getDevOverrideRoot() {
         String devOverrideRoot = System.getProperty("mdw.hub.dev.override.root");
         return devOverrideRoot == null ? null : new File(devOverrideRoot);

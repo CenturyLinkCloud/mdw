@@ -49,6 +49,10 @@ public class PackageList implements Jsonable {
     public String getVcsBranch() { return vcsBranch; }
     public void setVcsBranch(String branch) { this.vcsBranch = branch; }
 
+    private String vcsTag;
+    public String getVcsTag() { return vcsTag; }
+    public void setVcsTag(String tag) { this.vcsTag = tag; }
+
     /**
      * In case different from vcsBranch (switch scenario).
      */
@@ -78,6 +82,8 @@ public class PackageList implements Jsonable {
             pkgs.put("vcsRoot", vcsRoot);
         if (vcsBranch != null)
             pkgs.put("vcsBranch", vcsBranch);
+        if (vcsTag != null)
+            pkgs.put("vcsTag", vcsTag);
         if (gitBranch != null)
             pkgs.put("gitBranch", gitBranch);
         if (vcsRemoteUrl != null)

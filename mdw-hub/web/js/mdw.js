@@ -19,6 +19,10 @@ mdwMod.factory('mdw', function() {
       docs: $mdwDocsRoot,
       central: $mdwCentralRoot
     },
+    git: {
+      branch: $mdwGitBranch && $mdwGitBranch != '${mdw.gitBranch}' ? $mdwGitBranch : null,
+      tag: $mdwGitTag && $mdwGitTag != '${mdw.gitTag}' ? $mdwGitBranch : null
+    },
     serviceParams: function() {
       return { 
         app: 'mdw-admin'
