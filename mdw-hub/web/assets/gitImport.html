@@ -47,7 +47,7 @@
         <div class="mdw-form-footer">
           <div class="mdw-message mdw-form-message">{{gitImportMessage}}</div>
           <div class="mdw-buttons">
-            <button class="btn btn-success mdw-btn" type="submit" ng-disabled="!authUser.hasRole('Process Design') || !pkgList.assetRoot" ng-click="gitImport()">
+            <button class="btn btn-success mdw-btn" type="submit" ng-disabled="!authUser.hasRole('Process Design') || !pkgList.assetRoot || !pkgList.vcsBranch" ng-click="gitImport()">
               <span class="glyphicon glyphicon-download-alt" style="transform:rotate(180deg)"></span> Import
             </button>
             <button class="btn mdw-btn mdw-cancel-btn" type="button" ng-click="cancel()">Cancel</button>

@@ -21,7 +21,7 @@ mdwMod.factory('mdw', function() {
     },
     git: {
       branch: $mdwGitBranch && $mdwGitBranch != '${mdw.gitBranch}' ? $mdwGitBranch : null,
-      tag: $mdwGitTag && $mdwGitTag != '${mdw.gitTag}' ? $mdwGitBranch : null
+      tag: $mdwGitTag && $mdwGitTag != '${mdw.gitTag}' ? $mdwGitTag : null
     },
     serviceParams: function() {
       return { 
