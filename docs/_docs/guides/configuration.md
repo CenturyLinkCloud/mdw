@@ -151,10 +151,20 @@ title: MDW Configuration
     timer.ThresholdForDelay: 30  # (minutes) default=60
     
     # Custom JWT Provider    
-    jwt.custom:
-      issuer: example.com # issuer of token
-      userClaim: userid # claim containing the authenticated user
-      key: # actual public rsa encryption key to decrypt JWT
+    jwt:
+      preserve: true   # Passes JWT to service in headers Map object - default is false
+      custom:   # Example of a custom JWT provider
+        issuer: example.com # issuer of token
+        userClaim: userid # claim containing the authenticated user
+        key: # actual public rsa encryption key to decrypt JWT
+        algorithm: # Optional constraint to verify against JWT
+        subject:  # Optional constraint to verify against JWT
+      provider2:  # Example of second custom JWT provider
+        issuer: example.com # issuer of token
+        userClaim: userid # claim containing the authenticated user
+        key: # actual public rsa encryption key to decrypt JWT
+        algorithm: # Optional constraint to verify against JWT
+        subject:  # Optional constraint to verify against JWT
          
     # https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/system/filepanel/readme.md
     filepanel:
