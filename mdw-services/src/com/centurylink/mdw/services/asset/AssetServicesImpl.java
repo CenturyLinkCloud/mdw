@@ -90,6 +90,10 @@ public class AssetServicesImpl implements AssetServices {
         return PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
     }
 
+    private static String getGitTag() {
+        return PropertyManager.getProperty(PropertyNames.MDW_GIT_TAG);
+    }
+
     private static String getGitRemoteUrl() {
         return PropertyManager.getProperty(PropertyNames.MDW_GIT_REMOTE_URL);
     }
@@ -375,6 +379,8 @@ public class AssetServicesImpl implements AssetServices {
             if (versionControl != null) {
                 if (getGitBranch() != null)
                     pkgList.setVcsBranch(getGitBranch());
+                if (getGitTag() != null)
+                    pkgList.setVcsTag(getGitTag());
                 if (getGitRemoteUrl() != null)
                     pkgList.setVcsRemoteUrl(getGitRemoteUrl());
 

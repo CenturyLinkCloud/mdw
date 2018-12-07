@@ -80,6 +80,9 @@ public class WebAppContext {
                 discoveryUrl = "https://mdw-dev.useast.appfog.ctl.io/mdw";
             mdw.setDiscoveryUrl(discoveryUrl);
 
+            mdw.setGitBranch(PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH));
+            mdw.setGitTag(PropertyManager.getProperty(PropertyNames.MDW_GIT_TAG));
+
             try {
                 JSONArray routes = CustomPageLookup.getUiRoutes();
                 if (routes != null)

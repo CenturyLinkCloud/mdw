@@ -27,10 +27,10 @@
           <a ng-href="{{asset.url}}?download=true" class="btn btn-default">
             <span class="glyphicon glyphicon-download-alt"></span> Download
           </a>            
-          <a ng-href="#/edit/{{asset.packageName}}/{{asset.name}}" class="btn btn-default" ng-if="authUser.hasRole('Process Design') && !asset.isBinary">
+          <a ng-href="#/edit/{{asset.packageName}}/{{asset.name}}" class="btn btn-default" ng-if="isEditAllowed()">
             <span class="glyphicon glyphicon-pencil"></span> Edit
           </a>            
-          <a href="" class="btn btn-default" ng-if="authUser.hasRole('Site Admin')" ng-click="deleteAsset()">
+          <a href="" class="btn btn-default" ng-if="isEditAllowed()" ng-click="deleteAsset()">
             <span class="glyphicon glyphicon-remove"></span> Delete
           </a>  
           <a ng-if="task" href="" class="btn btn-default" ng-click="viewInstances()">
