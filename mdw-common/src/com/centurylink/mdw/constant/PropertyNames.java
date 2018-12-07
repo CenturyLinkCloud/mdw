@@ -155,12 +155,13 @@ public class PropertyNames {
     public static final String MDW_CENTRAL_AUTH_URL = "mdw.central.auth.url";
     public static final String MDW_CENTRAL_ROUTING_URL = "mdw.central.routing.url";
 
-    // Authentication / Custom JWT provider
-    public static final String MDW_JWT_CUSTOM_ISSUER = "mdw.jwt.custom.issuer";  // Required if using a JWT provider other than MDW
-    public static final String MDW_JWT_CUSTOM_KEY = "mdw.jwt.custom.key";  // Required if using a JWT provider other than MDW
-    public static final String MDW_JWT_CUSTOM_USER_CLAIM = "mdw.jwt.custom.userClaim";  // Required if using a JWT provider other than MDW - name of Claim containing authenticated user
-    public static final String MDW_JWT_CUSTOM_SUBJECT = "mdw.jwt.custom.subject";  // Optional JWT field to verify
-    public static final String MDW_JWT_CUSTOM_ALGORITHM = "mdw.jwt.custom.algorithm"; // Optional for additional safety check
+    // Authentication / Custom JWT providers
+    public static final String MDW_JWT = "mdw.jwt"; // Group name (i.e mdw.jwt.myissuer1.(issuer|key|userClaim,etc))
+    public static final String MDW_JWT_ISSUER = "issuer";  // Required if using a JWT provider other than MDW
+    public static final String MDW_JWT_KEY = "key";  // Required if using a JWT provider other than MDW
+    public static final String MDW_JWT_USER_CLAIM = "userClaim";  // Required if using a JWT provider other than MDW - name of Claim containing authenticated user
+    public static final String MDW_JWT_SUBJECT = "subject"; // Optional JWT field to verify
+    public static final String MDW_JWT_ALGORITHM = "algorithm";  // Optional for additional safety check
 
     public static final String MDW_JWT_PRESERVE = "mdw.jwt.preserve";  // Set to true for setting header with Authenticated/verified JWT, for use by services
 
