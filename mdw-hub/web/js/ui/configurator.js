@@ -108,11 +108,11 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
           widget.url = mdw.sourceRepoUrl + '/blob/master/mdw-workflow/src/' + filePath + '.java';
         }
         else {
-          // hopefully a java asset
+          // hopefully a java asset (TODO: kotlin)
           var lastSlash = implName.lastIndexOf('.');
           var pkgName = implName.substring(0, lastSlash);
           var assetName = implName.substring(lastSlash + 1);
-          widget.url = mdw.roots.hub + '/#/asset/' + pkgName + "/" + assetName + '.java';
+          widget.url = mdw.roots.hub + '/#/asset/' + pkgName + '/' + assetName + '.java';
         }
       }
       else if (widget.type === 'picklist') {

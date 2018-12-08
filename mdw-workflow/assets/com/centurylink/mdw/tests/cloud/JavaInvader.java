@@ -6,12 +6,7 @@ import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 import com.centurylink.mdw.annotations.Activity;
 
 @Activity(value="Java Invader", icon="com.centurylink.mdw.tests.cloud/invader.png",
-    pagelet="{\n" +
-            "  \"widgets\": [\n" +
-            "    { \"name\": \"Planet\", \"type\": \"dropdown\", \"options\": [\"Jupiter\",\"Mars\",\"Neptune\",\"Venus\"] },\n" +
-            "    { \"name\": \"Invader\", \"type\": \"text\"}\n" +
-            "  ]\n" +
-            "}\n")
+    pagelet="com.centurylink.mdw.tests.cloud/JavaInvader.pagelet")
 public class JavaInvader extends DefaultActivityImpl {
 
     @Override
