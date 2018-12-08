@@ -1,5 +1,5 @@
 Acknowledger.java=5
-ActivityImplementors.proc=3
+ActivityImplementors.proc=4
 ActivityImplementors.test=1
 ActivityImplementors.yaml=2
 ChildProcessDocUpdate.test=2
@@ -8,7 +8,8 @@ CustomBaseData.proc=5
 CustomBaseData.test=2
 CustomBaseData.yaml=1 Renamed from c:gitMDW2mdw-workflowassetscomcenturylinkmdw	estscloudcustom-base-data.yaml
 JavaActivity.java=1
-JavaInvader.java=2
+JavaInvader.java=3
+JavaInvader.pagelet=1
 JaxbAsset.java=4
 JaxbAsset.xsd=1
 JaxbDocument.proc=8
