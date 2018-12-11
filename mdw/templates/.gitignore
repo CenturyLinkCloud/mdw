@@ -13,4 +13,6 @@ testResults
 mdw-boot-*.jar
 **/.idea/workspace.xml
 **/.idea/tasks.xml
+**/.idea/uiDesigner.xml
+.idea/**/libraries
 mdw.log

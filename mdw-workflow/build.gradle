@@ -12,7 +12,7 @@ dependencies {
     compile project(":mdw-common")
     compile project(":mdw-services")
     
-    // build-time-only dependencies (exluded from mdw-hub)
+    // build-time-only dependencies (excluded from mdw-hub)
     compile fileTree(dir: "assets/com/centurylink/mdw/drools", includes: ["*.jar"])   
     compile fileTree(dir: "assets/com/centurylink/mdw/camel", includes: ["*.jar"])
     compile fileTree(dir: "assets/com/centurylink/mdw/node", includes: ["*.jar"])
