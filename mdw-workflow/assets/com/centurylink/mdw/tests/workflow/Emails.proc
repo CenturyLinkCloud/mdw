@@ -48,7 +48,7 @@
       "attributes": {
         "CCGroups": "[\"MDW Support\"]",
         "NoticeGroups": "[\"Developers\"]",
-        "RecipientsExpression": "${recipientList ? recipientList : recipient}",
+        "RecipientsExpression": "${recipientList != null ? recipientList : recipient}",
         "WORK_DISPLAY_INFO": "x=154,y=236,w=100,h=60",
         "from": "mdwdev@centurylink.com",
         "noticeType": "SMTP",
