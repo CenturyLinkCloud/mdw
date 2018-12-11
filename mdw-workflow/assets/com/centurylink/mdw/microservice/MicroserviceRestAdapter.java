@@ -57,7 +57,7 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
         try {
             updateServiceSummary(status, responseId);
             // For mySQL, now we need to restore  isolation level back to default
-            if (getEngine().getDatabaseAccess().isMySQL())
+            if (getEngine().getDatabaseAccess().isMySQL() && getEngine().getDatabaseAccess().connectionIsOpen())
                 getEngine().getDatabaseAccess().runUpdate("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
         }
         catch (ActivityException | SQLException ex) {
