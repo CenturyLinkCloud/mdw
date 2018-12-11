@@ -96,7 +96,8 @@ title: MDW Configuration
     git:
       local.path: .  # required
       remote.url: https://github.com/CenturyLinkCloud/mdw-demo.git  # required
-      branch: master  # required
+      branch: master  # required (unless using tag below - tag is ignored if branch is specified)
+      tag: dec_2018_release  # optional (used instead of branch above)
       auto.pull: false  # default=false
       user: anonymous
       password: onlyifrequired
@@ -150,10 +151,10 @@ title: MDW Configuration
     timer.InitialDelay: 120  # (seconds) default=120
     timer.CheckInterval: 60  # (seconds) default=60
     timer.ThresholdForDelay: 30  # (minutes) default=60
-
-    # Custom JWT Provider    
+    
+    # Custom JWT Providers   
     jwt:
-      preserve: true   # Passes JWT to service in headers Map object - default is false
+      preserve: true   # Passes JWT to service in headers Map object - default=false
       custom:   # Example of a custom JWT provider
         issuer: example.com # issuer of token
         userClaim: userid # claim containing the authenticated user
@@ -161,7 +162,7 @@ title: MDW Configuration
         algorithm: # Optional constraint to verify against JWT
         subject:  # Optional constraint to verify against JWT
       provider2:  # Example of second custom JWT provider
-        issuer: example.com # issuer of token
+        issuer: example.test.com # issuer of token
         userClaim: userid # claim containing the authenticated user
         key: # actual public rsa encryption key to decrypt JWT
         algorithm: # Optional constraint to verify against JWT
