@@ -3,6 +3,7 @@ import com.centurylink.mdw.util.file.Packages
 buildscript {
     repositories {
         mavenCentral()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     }
     dependencies {
         classpath("com.centurylink.mdw:mdw-common:${mdwVersion}")

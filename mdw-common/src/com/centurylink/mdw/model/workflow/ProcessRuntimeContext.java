@@ -90,6 +90,8 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         return processInstance.getMasterRequestId();
     }
 
+    public String getAppId() { return ApplicationContext.getAppId(); }
+
     private Map<String,String> attributes;
     public Map<String,String> getAttributes() {
         if (attributes == null) {

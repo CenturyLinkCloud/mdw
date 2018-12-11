@@ -13,10 +13,10 @@ title: MDW Configuration
     # paths are relative to the location of this file
     mdw:
       version: 6.1.10
-    
+
     asset:
       location: assets
-    
+
     config:
       location: config
 
@@ -31,28 +31,29 @@ title: MDW Configuration
   - Specify your config directory via the `-Dmdw.config.location` system property.
   - To convert from old-style mdw.properties to mdw.yaml, run the [CLI](../../getting-started/cli/) command `mdw convert`.
   - Encrypted values (via `mdw encrypt`) start with `~[` and end with `]`.  Only string values support encryption (not lists).
-    Requires MDW_APP_TOKEN environment variable.
+    Requires MDW_APP_TOKEN environment variable.  Note: when running the CLI command `mdw encrypt --input=my_value_to_encrypt`,
+    the MDW_APP_TOKEN value must be defined in the shell where the command is executed.
   - Here's an annotated example describing MDW's configuration options:   
     (**Please** do not use this as a starting point as it contains inappropriate/non-default values for illustration.  
       Instead run the `mdw init` CLI command to generate from the latest template).   
-    
+
     ```yaml
     app:
       id: my-project  # required
       configs:
       - myconfig.yaml
-      
+
     # clustered server instances (required -- at least one)
     servers:
       localhost:
         ports:
         - 8080
-    
+
     # container settings (leave these properties as shown except for unusual scenarios)    
     container:
       datasource.provider: Tomcat  # required
       messenger: jms  # required
-      jms.provider: ActiveMQ  # required 
+      jms.provider: ActiveMQ  # required
       threadpool.provider: MDW  # required
 
     # optional settings for activemq (For overriding values in application-context.xml)
@@ -60,7 +61,7 @@ title: MDW Configuration
       location: activemq-data   # Has to be relative to startup directory - default=../activemq-data
       port: 61619   # default=61618
       maxConnections: 10   # Max connections in JMS pool - default=8
-    
+
     # database connection information (below is typical for embedded db)
     database:
       driver: org.mariadb.jdbc.Driver  # required
@@ -72,25 +73,25 @@ title: MDW Configuration
       validationQuery: select 1 from dual  # required
       # save datetime/timestamp using microsecond precision
       microsecond.precision: true  # default=false
-      # log all queries and timings 
+      # log all queries and timings
       trace: false  # default=false
-    
+
     # embedded db
     db.base.location: ../data  # default=assetLoc + "/../data/db"
     db.data.location: ../data/mdw  # default=assetLoc + "/../data/mdw"
     db.startup:  # extra startup params (default = none)
       - --general_log=1
       - --general_log_file=/var/log/mysql-queries.log
-    
+
     # optional mongodb (requires asset package com.centurylink.mdw.mongo)
     mongodb:
       host: localhost
       port: 27017
-    
-    # asset location info (use absolute paths when running thru eclipse wtp) 
+
+    # asset location info (use absolute paths when running thru eclipse wtp)
     asset:
       location: assets  # required
-    
+
     # git repository
     git:
       local.path: .  # required
@@ -100,16 +101,16 @@ title: MDW Configuration
       user: anonymous
       password: onlyifrequired
       trusted.host: mytrustedhost.com  # blindly trust https certificate
-    
+
     temp.dir: mdw/.temp  # default=mdw/.temp
     attachments.dir: mdw/attach  # default=mdw/attachments
-    
+
     hub.url: http://localhost:8080/mdw  # required
     services.url: http://localhost:8080/mdw  # required
     websocket.url: none # 'none' to use polling; otherwise don't set
     discovery.url: http://repo.maven.apache.org/maven2  # default=http://repo.maven.apache.org/maven2
     docs.url: https://centurylinkcloud.github.io/mdw/docs  # default=https://centurylinkcloud.github.io/mdw/docs
-    
+
     # for SimpleLogger (see also mdw.log4j.properties)
     logging:
       level: DEBUG  # default=INFO
@@ -119,7 +120,7 @@ title: MDW Configuration
       executors:
         groovy: com.centurylink.mdw.script.GroovyExecutor
         javascript: com.centurylink.mdw.script.JavaScriptExecutor
-    
+
     # JavaMail notifications
     mail:
       smtp.host: mymailhost
@@ -128,13 +129,13 @@ title: MDW Configuration
       smtp.timeout: 10000
       user: smtpuser
       password: smtppass
-    
+
     # for LDAP adapter activity
     ldap:
       host: ldap.myorg.com
       port: 1636
       base.dn: dc=mydc,dc=example
-    
+
     # process cleanup scheduled job registration    
     timer.task:
       ProcessCleanup: # run daily at 2:30 am
@@ -145,11 +146,11 @@ title: MDW Configuration
       ExternalEventExpirationAgeInDays: 180
       MaximumProcessExpiration: 10000
       CommitInterval: 10000
-    
+
     timer.InitialDelay: 120  # (seconds) default=120
     timer.CheckInterval: 60  # (seconds) default=60
     timer.ThresholdForDelay: 30  # (minutes) default=60
-    
+
     # Custom JWT Provider    
     jwt:
       preserve: true   # Passes JWT to service in headers Map object - default is false
@@ -165,13 +166,13 @@ title: MDW Configuration
         key: # actual public rsa encryption key to decrypt JWT
         algorithm: # Optional constraint to verify against JWT
         subject:  # Optional constraint to verify against JWT
-         
+
     # https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/system/filepanel/readme.md
     filepanel:
       root.dirs: ./logs,./config
       exclude.patterns: **/temp/*
       masked.lines: 'password:'  # default=mdw.database.password=,LDAP-AppPassword=,password:
-      
+
     # https://centurylinkcloud.github.io/mdw/docs/guides/tuning/
     threadpool:
       max_threads: 10  # default=10
@@ -180,29 +181,29 @@ title: MDW Configuration
       keep_alive: 300  # default=300
       termination_timeout: 120  # default=120
       # prefix, add worker_name.min_threads/max_threads
-      worker: my-worker 
-      
+      worker: my-worker
+
     jms:
       listener:
         poll.interval: 10  # (ms) default=5
         receive.timeout: 180  # (ms) default=300
-        
+
     java:
       compiler.options: '-deprecation -nowarn'
       compiler.classpath: '/opt/important/impl.jar'
       library.path: '/opt/custom:/opt/other'
       runtime.classpath: '/opt/important/impl.jar'
-      
+
     services:
       http.basic.auth: true  # default=false
-        
+
     activity:
       resume.delay: 3  # (seconds) default=2
       active.max.retry: 10  # default=5
-      
+
     process:
       launch.delay: 3  # (seconds) default=2
-   
+
     # https://centurylinkcloud.github.io/mdw/docs/guides/tuning/#performance-levels
     performance:
       level.service: 5  # default=3
@@ -216,38 +217,38 @@ title: MDW Configuration
 
     engine:
       use.transaction: false  # default=false
-      
+
     transaction:
       retry.interval: 500  # (ms) default=1000
       retry.max: 5  # default=3
-    
+
     internal.event:
       consume.retry.sleep: 3  # (seconds) default=2
       dev.cleanup: true  # default=true
-      
+
     scheduled.events:
       max.batch.size: 500  # default=1000
       memory.range: 2880  # (minutes) default=1440
-      
+
     unscheduled.events
       check.delay: 120  # (seconds) default=90
       check.interval: 180  # (seconds) default=300
       max.batch.size: 500  # default=1000
       # (WARNING: Never set lower than mdw.timer.ThresholdForDelay which is in minutes)
       min.age: 3600  # default=3600, min=300
- 
+
     hub:
       override.package: my-hub  # default=mdw-hub
-      action.definition: my-task-actions.xml  # default=mdw-task-actions.xml 
+      action.definition: my-task-actions.xml  # default=mdw-task-actions.xml
 
     translator:
       xmlbeans.load.options:  # for XmlOptions.put()
       xmlbeans.save.options:  # for XmlOptions.put()
-      
+
     test:
       results.location: ./mytestresults  # default=git/local.path+"/testResults"
       summary.file: myfile.json  # default=mdw-function-test-results.json
-    
+
     routing.servers:
       localhost:
         ports:
@@ -259,36 +260,36 @@ title: MDW Configuration
       default.strategy: com.centurylink.mdw.routing.LoadBasedRoutingStrategy
       active.server.interval: 20  # (seconds) default=15
       timeout: 180  # (seconds) default=300
-      
+
     ```
-    
+
 ## access.yaml
   - Controls access to MDWHub and the services API
   - Here's an annotated example:
-  
+
     ```yaml
     # If upstreamHosts is populated then access is restricted to this list
     # unless running in dev mode (-Dmdw.runtime.env=dev).
     upstreamHosts:
       - 127.0.0.1
       - 0:0:0:0:0:0:0:1
-      
-    # Auth methods supported include ct (ClearTrust Web Agent) 
+
+    # Auth methods supported include ct (ClearTrust Web Agent)
     # or mdw (or other JWT provider).  Default is mdw.
     # If using other JWT provider, must configure via properties (mdw.yml)
     authMethod: mdw
-    
+
     # This is the header we trust to specify the authenticated user id.
     # NOTE: This is only secure when upstreamHosts is enforced.
     #authUserHeader: remote-user
-    
+
     # Allows access to all UI functions and Service APIs permitted for this
     # user without authenticating.  Requires "-Dmdw.runtime.env=dev" system property.
     devUser: mdwapp
-    
+
     # Auth exclusions are patterns that can be accessed directly
-    # without authentication even when running with protection 
-    # (upstreamHosts != null & not in dev mode). 
+    # without authentication even when running with protection
+    # (upstreamHosts != null & not in dev mode).
     # In the cases where the pattern accesses a service, it falls to
     # the specific service to handle access (i.e. based on HTTP method and/or path)
     authExclusions:
@@ -304,17 +305,17 @@ title: MDW Configuration
       - '/services/System/sysInfo'
       - '/services/com/centurylink/mdw/slack'
       - '/services/com/centurylink/mdw/slack/event'
-      
+
     # Headers appended to all HTTP servlet responses.
     responseHeaders:
       X-UA-Compatible: IE=Edge
-      
+
     # Session timeout in seconds (if not specified, container will govern).
     sessionTimeout: 3600
-    
+
     # Allowing any authenticated user means even those not in mdw's db.
     allowAnyAuthenticatedUser: false
-    
+
     # Special options for logging
     loggingOptions:
       logResponseTimes: false
@@ -323,7 +324,7 @@ title: MDW Configuration
     ```
 
 ## seed_users.json
-  - With [Embedded DB](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/db/readme.md), 
+  - With [Embedded DB](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/db/readme.md),
     designated users are inserted when db is created (no effect once db exists -- delete data directory to recreate with different users).
   - Here's an example:
     ```json
@@ -349,4 +350,3 @@ title: MDW Configuration
       ]
     }    
     ```
-    
