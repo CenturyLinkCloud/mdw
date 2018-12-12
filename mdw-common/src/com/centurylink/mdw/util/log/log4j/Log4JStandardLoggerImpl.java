@@ -41,28 +41,28 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase {
         logger = Logger.getLogger(className);
     }
 
-    public void debug(String logtodisplay) {
-        logIt(LogLevel.DEBUG, logtodisplay, null);
+    public void debug(String msg) {
+        logger.debug(msg);
     }
 
     public void debugException(String msg, Throwable t) {
-        logIt(LogLevel.DEBUG, msg, t);
+        logger.debug(msg, t);
     }
 
     public void info(String msg) {
-        logIt(LogLevel.INFO, msg, null);
+        logger.info(msg);
     }
 
     public void trace(String msg) {
-        logIt(LogLevel.TRACE, msg, null);
+        logger.trace(msg);
     }
 
     public void traceException(String msg, Throwable t) {
-        logIt(LogLevel.TRACE, msg, t);
+        logger.trace(msg, t);
      }
 
     public void infoException(String msg, Throwable t) {
-        logIt(LogLevel.INFO, msg, t);
+        logger.info(msg, t);
     }
 
     public boolean isDebugEnabled() {
@@ -78,19 +78,19 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase {
     }
 
     public void severe(String msg) {
-        logIt(LogLevel.ERROR, msg, null);
+        logger.error(msg);
     }
 
     public void severeException(String msg, Throwable t) {
-        logIt(LogLevel.ERROR, msg, t);
+        logger.error(msg, t);
     }
 
     public void warn(String msg) {
-        logIt(LogLevel.WARN, msg, null);
+        logger.warn(msg, null);
     }
 
     public void warnException(String msg, Throwable t) {
-        logIt(LogLevel.WARN, msg, t);
+        logger.warn(msg, t);
     }
 
    /**
@@ -118,7 +118,7 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase {
     public void mdwDebug(String message) {
         if (isTraceEnabled()) {
              String line = generate_log_line('d', null, message);
-             logIt(LogLevel.TRACE, line, null);
+             logger.trace(line);
         }
     }
 
