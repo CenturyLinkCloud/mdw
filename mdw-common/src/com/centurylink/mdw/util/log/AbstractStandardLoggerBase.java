@@ -194,7 +194,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
         return isEnabledFor(LogLevel.TRACE);
     }
 
-    protected void logIt(LogLevel level, String message, Throwable t) {
+    private void logIt(LogLevel level, String message, Throwable t) {
         switch (level.toString()) {
             case "INFO":
                 if (t == null)
