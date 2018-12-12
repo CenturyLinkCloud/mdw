@@ -154,7 +154,6 @@ title: MDW Configuration
     
     # Custom JWT Providers   
     jwt:
-      preserve: true   # Passes JWT to service in headers Map object - default=false
       custom:   # Example of a custom JWT provider
         issuer: example.com # issuer of token
         userClaim: userid # claim containing the authenticated user
@@ -167,6 +166,8 @@ title: MDW Configuration
         key: # actual public rsa encryption key to decrypt JWT
         algorithm: # Optional constraint to verify against JWT
         subject:  # Optional constraint to verify against JWT
+
+    jwt.preserve: true   # Passes JWT to service in headers Map object - default=false
 
     # https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/system/filepanel/readme.md
     filepanel:
