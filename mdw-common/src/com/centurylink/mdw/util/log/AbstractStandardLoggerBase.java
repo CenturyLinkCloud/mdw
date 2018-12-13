@@ -38,11 +38,10 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
     public static final String DEFAULT_HOST = "localhost";
     public static final int DEFAULT_PORT = 7181;
 
-    private static final String MESSAGE_REG_EX = "\\[\\(.\\)([0-9.:]+) p([0-9]+)\\.([0-9]+) ([a-z])([0-9]+)?\\.([^\\]]+)\\] (.*)";
+    protected static DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd.HH:mm:ss.SSS");
 
+    private static final String MESSAGE_REG_EX = "\\[\\(.\\)([0-9.:]+) p([0-9]+)\\.([0-9]+) ([a-z])([0-9]+)?\\.([^]]+)] (.*)";
     private static Pattern pattern = Pattern.compile(MESSAGE_REG_EX, Pattern.DOTALL);
-
-    private static DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd.HH:mm:ss.SSS");
 
     protected static String watcher = null;
 
@@ -58,7 +57,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
         watcher = PropertyManager.getProperty(PropertyNames.MDW_LOGGING_WATCHER);
     }
 
-    protected String generate_log_line(char type, String tag, String message) {
+    protected String generateLogLine(char type, String tag, String message) {
         StringBuffer sb = new StringBuffer();
         sb.append("[(");
         sb.append(type);
@@ -234,37 +233,37 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
 
     @Override
     public void exception(String tag, String message, Throwable e) {
-        String line = generate_log_line('e', tag, message);
+        String line = generateLogLine('e', tag, message);
         logIt(LogLevel.ERROR, line, e);
     }
 
     public void info(String tag, String message) {
         if (isInfoEnabled()) {
-            String line = generate_log_line('i', tag, message);
+            String line = generateLogLine('i', tag, message);
             logIt(LogLevel.INFO, line, null);
         }
     }
 
     public void debug(String tag, String message) {
         if (isDebugEnabled()) {
-            String line = generate_log_line('d', tag, message);
+            String line = generateLogLine('d', tag, message);
             logIt(LogLevel.DEBUG, line, null);
         }
     }
 
     public void warn(String tag, String message) {
-        String line = generate_log_line('w', tag, message);
+        String line = generateLogLine('w', tag, message);
         logIt(LogLevel.WARN, line, null);
     }
 
     public void severe(String tag, String message) {
-        String line = generate_log_line('w', tag, message);
+        String line = generateLogLine('w', tag, message);
         logIt(LogLevel.ERROR, line, null);
     }
 
     public void trace(String tag, String message) {
         if (isTraceEnabled()) {
-            String line = generate_log_line('t', tag, message);
+            String line = generateLogLine('t', tag, message);
             logIt(LogLevel.TRACE, line, null);
         }
     }

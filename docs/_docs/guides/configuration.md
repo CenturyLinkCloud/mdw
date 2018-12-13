@@ -139,14 +139,14 @@ title: MDW Configuration
 
     # process cleanup scheduled job registration    
     timer.task:
-      ProcessCleanup: # run daily at 2:30 am
-      TimerClass: com.centurylink.mdw.timer.cleanup.ProcessCleanup
-      Schedule: 30 2 * * ? *
-      RuntimeCleanupScript: Cleanup-Runtime.sql
-      ProcessExpirationAgeInDays: 180
-      ExternalEventExpirationAgeInDays: 180
-      MaximumProcessExpiration: 10000
-      CommitInterval: 10000
+      ProcessCleanup: 
+        TimerClass: com.centurylink.mdw.timer.cleanup.ProcessCleanup
+        Schedule: 30 2 * * ? * # run daily at 2:30 am
+        RuntimeCleanupScript: Cleanup-Runtime.sql
+        ProcessExpirationAgeInDays: 180
+        ExternalEventExpirationAgeInDays: 180
+        MaximumProcessExpiration: 10000
+        CommitInterval: 10000
 
     timer.InitialDelay: 120  # (seconds) default=120
     timer.CheckInterval: 60  # (seconds) default=60

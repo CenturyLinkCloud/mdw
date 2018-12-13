@@ -15,29 +15,9 @@
  */
 package com.centurylink.mdw.java;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-import javax.tools.Diagnostic;
-import javax.tools.DiagnosticCollector;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaCompiler.CompilationTask;
-import javax.tools.JavaFileManager;
-import javax.tools.JavaFileObject;
-import javax.tools.ToolProvider;
-import javax.ws.rs.Path;
-
 import com.centurylink.mdw.annotations.Monitor;
 import com.centurylink.mdw.annotations.RegisteredService;
+import com.centurylink.mdw.annotations.ScheduledJob;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
@@ -59,6 +39,14 @@ import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
+import javax.tools.*;
+import javax.tools.JavaCompiler.CompilationTask;
+import javax.ws.rs.Path;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
+
 /**
  * Compiles and caches java asset classes, and provides a class-loading mechanism to allow these assets
  * to reference Jar classes as well.
@@ -67,7 +55,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private static Map<ClassCacheKey,Class<?>> compiledCache = new HashMap<ClassCacheKey,Class<?>>();
+    private static Map<ClassCacheKey,Class<?>> compiledCache = new HashMap<>();
 
     public CompiledJavaCache() {
 
@@ -103,8 +91,11 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
         try {
             for (Asset javaAsset : AssetCache.getAssets(Asset.JAVA)) {
                 // process RegisteredService-annotated classes
-                if (javaAsset.getStringContent().indexOf("@RegisteredService") > 0 || javaAsset.getStringContent().indexOf("@Monitor") > 0 ||
-                        javaAsset.getStringContent().indexOf("@Path") > 0 || javaAsset.getStringContent().indexOf("@Api") > 0) {
+                if (javaAsset.getStringContent().indexOf("@RegisteredService") > 0 ||
+                        javaAsset.getStringContent().indexOf("@Monitor") > 0 ||
+                        javaAsset.getStringContent().indexOf("@Path") > 0 ||
+                        javaAsset.getStringContent().indexOf("@Api") > 0 ||
+                        javaAsset.getStringContent().indexOf("@ScheduledJob") > 0) {
                     String className = JavaNaming.getValidClassName(javaAsset.getName());
                     Package javaAssetPackage = PackageCache.getAssetPackage(javaAsset.getId());
                     if (javaAssetPackage == null) {
@@ -152,6 +143,21 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                                 logger.info("Monitor Service: " + monitorAnnotation.value() + " --> '" + clazz + "'");
                                 String monitorCategory = monitorAnnotation.category().getName();
                                 MonitorRegistry.getInstance().addDynamicService(monitorCategory, clazz.getName());
+                            }
+                            // ScheduledJob annotation
+                            ScheduledJob scheduledJobAnnotation = clazz.getAnnotation(ScheduledJob.class);
+                            if (scheduledJobAnnotation != null) {
+                                boolean enabled = scheduledJobAnnotation.enabled();
+                                if (enabled) {
+                                    String enabledProp = scheduledJobAnnotation.enabledProp();
+                                    if (!enabledProp.isEmpty()) {
+                                        enabled = PropertyManager.getBooleanProperty(enabledProp, false);
+                                    }
+                                    if (enabled) {
+                                        logger.info("Scheduled Job: " + scheduledJobAnnotation.value() + " --> '" + clazz + "'");
+                                        DynamicJavaServiceRegistry.addRegisteredService(com.centurylink.mdw.model.monitor.ScheduledJob.class.getName(), clazz.getName());
+                                    }
+                                }
                             }
                         }
                         else {

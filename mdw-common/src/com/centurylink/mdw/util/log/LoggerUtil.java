@@ -43,13 +43,15 @@ public class LoggerUtil implements Serializable {
 
 
     /**
-     * For Spring Boot with slf4j SimpleLoggger, an opportunity to initialize logging before Spring starts logging.
+     * For Spring Boot with slf4j SimpleLogger, an opportunity to initialize logging before Spring starts logging.
      * Otherwise for slf4j, properties have already been defaulted before we have a chance to set them.
      *
      * See mdw-spring-boot AutoConfig for initialization of logback for pure Spring Boot apps.
      */
     public static String initializeLogging() throws IOException {
         System.setProperty("org.slf4j.simpleLogger.logFile", "System.out");
+        System.setProperty("org.slf4j.simpleLogger.showDateTime", "true");
+        System.setProperty("org.slf4j.simpleLogger.dateTimeFormat", "yyyyMMdd.HH:mm:ss.SSS");
         // Peek at mdw.yaml to find default logging level, but do not initialize PropertyManager
         // which could initialize slf4j prematurely.  (Works only with yaml config file).
         String mdwLogLevel = null;
@@ -74,12 +76,7 @@ public class LoggerUtil implements Serializable {
         }
         // avoid reflection for known impls
         if (loggerImplClass == null) {
-            if (ApplicationContext.isSpringBoot()) {
-                return new Slf4JStandardLoggerImpl(Util.getCallingClass().getName());
-            }
-            else {
-                return SimpleLogger.getSingleton();
-            }
+            return new Slf4JStandardLoggerImpl(Util.getCallingClass().getName());
         }
         else if (SimpleLogger.class.getName().equals(loggerImplClass)) {
             return SimpleLogger.getSingleton();
