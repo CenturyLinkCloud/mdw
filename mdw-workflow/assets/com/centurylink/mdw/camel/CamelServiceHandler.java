@@ -53,7 +53,7 @@ public class CamelServiceHandler extends CamelHandler implements ServiceHandler 
             logger.severeException(ex.getMessage(), ex);
 
             // build the response as a string for now as this is fastest
-            if (ListenerHelper.isJson(request)) {
+            if (request == null || request.isEmpty() || ListenerHelper.isJson(request)) {
                 return jsonResponse(ex);
             }
             else {

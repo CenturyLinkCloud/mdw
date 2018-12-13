@@ -10,6 +10,7 @@ response:
     message: OK
   headers:
     content-type: application/json
+    mdw-request-id: ${~.*}
   body: |-
     {
       "definitionId": ${process-id},

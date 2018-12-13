@@ -11,6 +11,7 @@ response:
     message: OK
   headers:
     content-type: application/json
+    mdw-request-id: ${~.*}
   body: |-
     {
       "id": ${process-id},

@@ -10,6 +10,7 @@ response:
     message: Bad Request
   headers:
     content-type: application/json
+    mdw-request-id: ${~.*}
   body: |-
     {
       "status": {
