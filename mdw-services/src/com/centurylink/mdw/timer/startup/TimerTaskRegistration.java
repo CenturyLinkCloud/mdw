@@ -15,26 +15,19 @@
  */
 package com.centurylink.mdw.timer.startup;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Timer;
-
-import org.apache.xmlbeans.XmlException;
-
+import com.centurylink.mdw.common.service.MdwServiceRegistry;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
+import com.centurylink.mdw.model.monitor.ScheduledJob;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.startup.StartupService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+
+import java.util.*;
 
 /**
  * Registers all the application timers.
@@ -55,7 +48,7 @@ public class TimerTaskRegistration implements StartupService {
      * Invoked when the server starts up.
      */
     public void onStartup() throws StartupException {
-        _timers = new ArrayList<Timer>();
+        _timers = new ArrayList<>();
         configureTimers();
     }
 
@@ -100,37 +93,52 @@ public class TimerTaskRegistration implements StartupService {
     }
 
     public void onShutdown() {
-//        logger.info("methodEntry-->TimerTaskRegistration.shutdown()");
         if (_timers == null || _timers.isEmpty()) {
             return;
         }
         Iterator<Timer> it = _timers.iterator();
         while (it.hasNext()) {
-            Timer aTimer = (Timer) it.next();
+            Timer aTimer = it.next();
             aTimer.cancel();
         }
-//        logger.info("methodExit-->TimerTaskRegistration.shutdown()");
-
     }
 
-    private Map<String, Properties> getAllScheduledEvents() throws IOException, XmlException, PropertyException {
+    private Map<String, Properties> getAllScheduledEvents() throws PropertyException {
 
-        Map<String, Properties> timerTasks = new HashMap<String, Properties>();
+        Map<String, Properties> timerTasks = new HashMap<>();
+
+        // old-style property driven
         Properties timerTasksProperties = PropertyManager.getInstance().getProperties(PropertyNames.MDW_TIMER_TASK);
         for (String pn : timerTasksProperties.stringPropertyNames()) {
             String[] pnParsed = pn.split("\\.");
-            if (pnParsed.length==5) {
+            if (pnParsed.length == 5) {
                 String name = pnParsed[3];
                 String attrname = pnParsed[4];
-                Properties procspec = timerTasks.get(name);
-                if (procspec==null) {
-                    procspec = new Properties();
-                    timerTasks.put(name, procspec);
+                Properties spec = timerTasks.get(name);
+                if (spec == null) {
+                    spec = new Properties();
+                    timerTasks.put(name, spec);
                 }
                 String value = timerTasksProperties.getProperty(pn);
-                procspec.put(attrname, value);
+                spec.put(attrname, value);
             }
         }
+
+        // new-style @ScheduledJob annotations
+        for (ScheduledJob scheduledJob : MdwServiceRegistry.getInstance().getDynamicServices(ScheduledJob.class)) {
+            com.centurylink.mdw.annotations.ScheduledJob annotation =
+                    scheduledJob.getClass().getAnnotation(com.centurylink.mdw.annotations.ScheduledJob.class);
+            if (annotation != null) {
+                String name = annotation.value();
+                if (!timerTasks.containsKey(name)) {
+                    Properties spec = new Properties();
+                    spec.put("TimerClass", scheduledJob.getClass().getName());
+                    spec.put("Schedule", annotation.schedule());
+                    timerTasks.put(name, spec);
+                }
+            }
+        }
+
         return timerTasks;
     }
 }

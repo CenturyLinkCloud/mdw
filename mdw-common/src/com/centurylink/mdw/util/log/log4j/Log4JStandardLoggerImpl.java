@@ -117,7 +117,7 @@ public class Log4JStandardLoggerImpl extends AbstractStandardLoggerBase {
 
     public void mdwDebug(String message) {
         if (isTraceEnabled()) {
-             String line = generate_log_line('d', null, message);
+             String line = generateLogLine('d', null, message);
              logger.trace(line);
         }
     }

@@ -18,6 +18,10 @@ package com.centurylink.mdw.util.log;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Logs to standard out and to the watcher.
  */
@@ -51,13 +55,13 @@ public class SimpleLogger extends AbstractStandardLoggerBase {
     }
 
     private void logline(char type, String tag, String message) {
-        String line = generate_log_line(type, tag, message);
+        String line = generateLogLine(type, tag, message);
         System.out.println(line);
         sendToWatchers(line);
     }
 
     private void logexception(char type, String tag, String message, Throwable throwable) {
-        String line = generate_log_line(type, tag, message);
+        String line = generateLogLine(type, tag, message);
         System.out.println(line);
         throwable.printStackTrace(System.out);
         sendToWatchers(line);
