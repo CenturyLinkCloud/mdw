@@ -41,4 +41,5 @@ public interface RequestServices {
 
     public Map<Date,List<RequestCount>> getRequestBreakdown(Query query) throws ServiceException;
 
+    public void setElapsedTime(String ownerType, Long instanceId, Long elapsedTime) throws ServiceException;
 }

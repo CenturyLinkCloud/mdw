@@ -74,11 +74,6 @@ public class ListenerHelper {
      * Status code 0, often used to designate success.
      */
     public static final int RETURN_STATUS_SUCCESS = 0;
-    /**
-     * Status code -1, often used to designate general failure without specific
-     * code.
-     */
-    public static final int RETURN_STATUS_FAILURE = -1;
 
     /**
      * Status code -2, used to indicate the error that the input data cannot be
@@ -217,6 +212,7 @@ public class ListenerHelper {
         Long eeid = 0L;
         Request requestDoc = new Request(eeid);
         Set<String> reqMetaInfo = new HashSet<String>(metaInfo.keySet());
+        long requestTime = System.currentTimeMillis();
 
         try {
             for (ServiceMonitor monitor : MonitorRegistry.getInstance().getServiceMonitors()) {
@@ -225,7 +221,7 @@ public class ListenerHelper {
                     request = altRequest;
             }
 
-            if (!StringHelper.isEmpty(request) && persistMessage(metaInfo)) {
+            if (persistMessage(metaInfo)) {
                 eeid = createRequestDocument(request, 0L, metaInfo.get(Listener.METAINFO_REQUEST_PATH));
                 requestDoc.setId(eeid);
             }
@@ -271,8 +267,9 @@ public class ListenerHelper {
 
                     if (persistMessage(metaInfo)) {
                         Long ownerId = createResponseDocument(altResponse, eeid);
-                        if (persistMeta(metaInfo))
-                            altResponse.setMeta(createResponseMetaDocument(metaInfo, reqMetaInfo, ownerId));
+                        if (persistMeta(metaInfo)) {
+                            altResponse.setMeta(createResponseMeta(metaInfo, reqMetaInfo, ownerId, requestTime));
+                        }
                     }
                     return altResponse.getContent();
                 }
@@ -295,8 +292,9 @@ public class ListenerHelper {
 
                 if (persistMessage(metaInfo) && !StringHelper.isEmpty(response.getContent())) {
                     Long ownerId = createResponseDocument(response, eeid);
-                    if (persistMeta(metaInfo))
-                        response.setMeta(createResponseMetaDocument(metaInfo, reqMetaInfo, ownerId));
+                    if (persistMeta(metaInfo)) {
+                        response.setMeta(createResponseMeta(metaInfo, reqMetaInfo, ownerId, requestTime));
+                    }
                 }
 
                 return response.getContent();
@@ -306,7 +304,7 @@ public class ListenerHelper {
             logger.severeException(ex.getMessage(), ex);
             Response response = createErrorResponse(request, metaInfo, ex);
             try {
-                createResponseMetaDocument(metaInfo, reqMetaInfo, createResponseDocument(response, eeid));
+                createResponseMeta(metaInfo, reqMetaInfo, createResponseDocument(response, eeid), requestTime);
             }
             catch (Throwable e) {
                 logger.severeException("Failed to persist response", e);
@@ -333,8 +331,7 @@ public class ListenerHelper {
                 response = createErrorResponse(request, metaInfo, new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage()));
 
             try {
-                createResponseMetaDocument(metaInfo, reqMetaInfo, createResponseDocument(response, eeid));
-
+                createResponseMeta(metaInfo, reqMetaInfo, createResponseDocument(response, eeid), requestTime);
             }
             catch (Throwable e) {
                 logger.severeException("Failed to persist response", e);
@@ -422,7 +419,7 @@ public class ListenerHelper {
             if (persistMessage(metaInfo) && !StringHelper.isEmpty(response.getContent())) {
                 Long ownerId = createResponseDocument(response, eeid);
                 if (persistMeta(metaInfo))
-                    response.setMeta(createResponseMetaDocument(metaInfo, reqMetaInfo, ownerId));
+                    response.setMeta(createResponseMeta(metaInfo, reqMetaInfo, ownerId, requestTime));
             }
             return response.getContent();
         }
@@ -430,7 +427,7 @@ public class ListenerHelper {
             logger.severeException(ex.getMessage(), ex);
             Response response = createErrorResponse(request, metaInfo, ex);
             try {
-                createResponseMetaDocument(metaInfo, reqMetaInfo, createResponseDocument(response, eeid));
+                createResponseMeta(metaInfo, reqMetaInfo, createResponseDocument(response, eeid), requestTime);
             }
             catch (Throwable e) {
                 logger.severeException("Failed to persist response", e);
@@ -459,7 +456,7 @@ public class ListenerHelper {
             if (response.getStatusCode() == null)
                 response.setStatusCode(getResponseCode(metaInfo));
             try {
-                createResponseMetaDocument(metaInfo, reqMetaInfo, createResponseDocument(response, eeid));
+                createResponseMeta(metaInfo, reqMetaInfo, createResponseDocument(response, eeid), requestTime);
             }
             catch (Throwable ex) {
                 logger.severeException("Failed to persist response", ex);
@@ -494,12 +491,8 @@ public class ListenerHelper {
                 && !Listener.CONTENT_TYPE_DOWNLOAD.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE));
     }
 
-    private Long createRequestDocument(String request, Long handlerId) throws EventHandlerException {
-        return createRequestDocument(request, handlerId, null);
-    }
-
     private Long createRequestDocument(String request, Long handlerId, String path) throws EventHandlerException {
-        String docType = isJson(request) ? JSONObject.class.getName() : XmlObject.class.getName();
+        String docType = request == null || request.isEmpty() || isJson(request) ? JSONObject.class.getName() : XmlObject.class.getName();
         return createDocument(docType, request, null, OwnerType.LISTENER_REQUEST, handlerId, path).getDocumentId();
     }
 
@@ -538,7 +531,11 @@ public class ListenerHelper {
         return meta;
     }
 
-    private JSONObject createResponseMetaDocument(Map<String,String> metaInfo, Set<String> reqMetaInfo, Long ownerId) throws EventHandlerException, JSONException{
+    /**
+     * Inserts the response meta DOCUMENT, as well as INSTANCE_TIMING.
+     */
+    private JSONObject createResponseMeta(Map<String,String> metaInfo, Set<String> reqMetaInfo, Long ownerId, long requestTime)
+            throws EventHandlerException, JSONException, ServiceException {
         JSONObject meta = new JsonObject();
         JSONObject headers = new JsonObject();
 
@@ -548,10 +545,8 @@ public class ListenerHelper {
                     && !Listener.METAINFO_ACCEPT.equals(key)
                     && !Listener.METAINFO_DOWNLOAD_FORMAT.equals(key)
                     && !Listener.METAINFO_MDW_REQUEST_ID.equals(key)
-                    && !reqMetaInfo.contains(key))
+                    && !reqMetaInfo.contains(key)) {
                 headers.put(key, metaInfo.get(key));
-            else {
-              //  meta.put(key, metaInfo.get(key)); // Do we want all the request header info also in response??
             }
         }
 
@@ -571,6 +566,11 @@ public class ListenerHelper {
         meta.put("headers", headers);
 
         createDocument(JSONObject.class.getName(), meta, OwnerType.LISTENER_RESPONSE_META, ownerId);
+
+
+        ServiceLocator.getRequestServices().setElapsedTime(OwnerType.LISTENER_RESPONSE, ownerId,
+                System.currentTimeMillis() - requestTime);
+
         return meta;
     }
 
@@ -691,9 +691,8 @@ public class ListenerHelper {
     public DocumentReference createDocument(String docType, Object document, Package pkg,
             String ownerType, Long ownerId, String path) throws EventHandlerException {
         try {
-            EventServices eventMgr = ServiceLocator.getEventServices();
-            Long docid = eventMgr.createDocument(docType, ownerType, ownerId, document, pkg, path);
-            return new DocumentReference(docid);
+            Long docId = ServiceLocator.getEventServices().createDocument(docType, ownerType, ownerId, document, pkg, path);
+            return new DocumentReference(docId);
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);

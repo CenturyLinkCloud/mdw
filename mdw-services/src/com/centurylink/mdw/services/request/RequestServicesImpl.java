@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.services.request;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -129,4 +130,13 @@ public class RequestServicesImpl implements RequestServices {
         }
     }
 
+    @Override
+    public void setElapsedTime(String ownerType, Long instanceId, Long elapsedTime) throws ServiceException {
+        try {
+            getDAO().setElapsedTime(ownerType, instanceId, elapsedTime);
+        }
+        catch (SQLException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
 }
