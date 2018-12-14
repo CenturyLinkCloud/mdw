@@ -71,16 +71,25 @@ public class ServiceSummaryApi extends JsonRestService {
             return serviceSummary.getJson();
         }
         else if (segments.length == 6 || segments.length == 7) {
-            String id = segments[5];
+            String id = segments[5];  // ServiceSummary Document_ID
+            Long relatedId = null;  // Either ActivityInstanceId of Orchestrator or ProcessInstanceId of microservice
             try {
+                int index = id.indexOf("-");
+                if (index > 0) {
+                    relatedId = Long.parseLong(id.substring(index + 1));
+                    id = id.substring(0, index);
+                }
                 Long docId = Long.parseLong(id);
                 ServiceSummary serviceSummary = serviceAccess.getServiceSummary(docId);
 
-                if (segments.length == 7 && segments[6].equals("subflows")) {
-                    return serviceAccess.getProcessList(serviceSummary).getJson();
+                if (segments.length == 7 && segments[6].equals("subflows")) {  // ActivityInstanceId
+                    return serviceAccess.getProcessList(serviceSummary, relatedId).getJson();
                 }
-                else {
-                    return serviceSummary.getJson();
+                else {  // ProcessInstanceId
+                    if (relatedId != null && serviceSummary.findParent(relatedId) != null)
+                        return serviceSummary.findParent(relatedId).getJson();
+                    else
+                        return serviceSummary.getJson();
                 }
             }
             catch (NumberFormatException ex) {
