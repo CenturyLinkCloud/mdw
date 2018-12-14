@@ -246,7 +246,7 @@ public class ListenerHelper {
                 String path = metaInfo.get(Listener.METAINFO_REQUEST_PATH);
                 if (path != null)
                     reqMsg.append("on path '").append(path).append("'");
-                if (eeid > 0)
+                if (eeid > 0 && !"AppSummary".equals(path)) // don't log health/ping
                     logger.debug(reqMsg.toString());
                 else
                     logger.mdwDebug(reqMsg.toString());
