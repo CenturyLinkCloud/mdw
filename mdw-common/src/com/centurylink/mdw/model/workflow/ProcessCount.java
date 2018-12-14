@@ -15,11 +15,10 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.model.InstanceCount;
 import com.centurylink.mdw.model.Jsonable;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Aggregated process instance count for a particular definition or status.
@@ -50,10 +49,6 @@ public class ProcessCount implements InstanceCount, Jsonable {
     public long getCount() { return count; }
     public void setCount(long count) { this.count = count; }
 
-    private long meanCompletionTime = -1;
-    public long getMeanCompletionTime() { return meanCompletionTime; }
-    public void setMeanCompletionTime(long meanCompletionTime) { this.meanCompletionTime = meanCompletionTime; }
-
     private boolean definitionMissing;
     public boolean isDefinitionMissing() { return definitionMissing; }
     public void setDefinitionMissing(boolean missing) { this.definitionMissing = missing; }
@@ -64,7 +59,6 @@ public class ProcessCount implements InstanceCount, Jsonable {
 
     public ProcessCount(JSONObject json) throws JSONException {
         count = json.getLong("count");
-        meanCompletionTime = json.getLong("meanCompletionTime");
         if (json.has("id"))
             id = json.getLong("id");
         if (json.has("name"))
@@ -86,7 +80,6 @@ public class ProcessCount implements InstanceCount, Jsonable {
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
         json.put("count", count);
-        json.put("meanCompletionTime", meanCompletionTime);
         if (id >= 0)
             json.put("id", id);
         if (name != null)

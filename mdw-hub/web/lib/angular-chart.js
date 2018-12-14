@@ -128,12 +128,6 @@
           scope.$watch('chartOptions', resetChart, true);
           scope.$watch('chartColors', resetChart, true);
 
-          scope.$watch('chartType', function (newVal, oldVal) {
-            if (isEmpty(newVal)) return;
-            if (angular.equals(newVal, oldVal)) return;
-            createChart(newVal);
-          });
-
           scope.$on('$destroy', function () {
             destroyChart(chart, scope);
           });
