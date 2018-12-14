@@ -25,18 +25,20 @@ public class MicroserviceAccess {
                 PackageCache.getPackage(this.getClass().getPackage().getName()));
     }
 
-    public ProcessList getProcessList(ServiceSummary serviceSummary) throws ServiceException {
+    public ProcessList getProcessList(ServiceSummary serviceSummary, Long instanceId) throws ServiceException {
         ProcessList processList = new ProcessList("processInstances", new ArrayList<>());
+        if (instanceId != null && serviceSummary.findCurrent(instanceId) != null)
+            serviceSummary = serviceSummary.findCurrent(instanceId);
         for (String microserviceName : serviceSummary.getMicroservices().keySet()) {
             for (MicroserviceInstance instance : serviceSummary.getMicroservices(microserviceName).getInstances()) {
-                Long instanceId = instance.getId();
-                if (instanceId > 0L)
-                    processList.addProcess(ServiceLocator.getWorkflowServices().getProcess(instanceId));
+                Long serviceInstanceId = instance.getId();
+                if (serviceInstanceId > 0L)
+                    processList.addProcess(ServiceLocator.getWorkflowServices().getProcess(serviceInstanceId));
             }
         }
-        if (serviceSummary.getChildServiceSummaryList() != null) {
+        if (instanceId == null && serviceSummary.getChildServiceSummaryList() != null) {
             for (ServiceSummary childServiceSummary : serviceSummary.getChildServiceSummaryList()) {
-                processList.getItems().addAll(getProcessList(childServiceSummary).getItems());
+                processList.getItems().addAll(getProcessList(childServiceSummary, null).getItems());
             }
         }
         return processList;

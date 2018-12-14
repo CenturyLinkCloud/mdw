@@ -172,7 +172,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
               });
               if (!serviceSummary)
                 return null;
-              var url = mdw.roots.services + '/services/com/centurylink/mdw/microservice/summary/' + serviceSummary.value.substring(9);
+              var url = mdw.roots.services + '/services/com/centurylink/mdw/microservice/summary/' + serviceSummary.value.substring(9) + '-' + runtimeInfo.id;
               return $http.get(url).then(function(response) {
                 if (response.status !== 200)
                   return null;
@@ -183,9 +183,6 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
                       serviceList: []
                     }
                 };
-                // populate the serviceList pseudo array
-                var serviceSummary = response.data;
-                var microservices = serviceSummary.microservices;
                 var formatDate = function(date) {
                   let now = new Date();
                   let str = (date.getMonth() + 1) + '/' + date.getDate();
@@ -195,40 +192,56 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
                   str += ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '.' + date.getMilliseconds(); 
                   return str;
                 };
-                microservices.forEach(function(microservice) {
-                  if (microservice.instances) {
-                    microservice.instances.forEach(function(instance) {
-                      result.data.serviceList.push({
-                        name: microservice.name,
-                        id: instance.id,
-                        url: '#/workflow/processes/' + instance.id,
-                        started: instance.triggered ? formatDate(new Date(instance.triggered)) : null,
-                        status: instance.status,
-                        thisFlag: instance.id === runtimeInfo.id ? '*' : '' 
-                      });
-                      instance.invocations.forEach(function(invocation) {
-                        result.data.serviceList.push({
-                          name: '  invocation',
-                          id: invocation.requestId,
-                          url: '#/workflow/requests/' + invocation.requestId,
-                          started: invocation.sent ? formatDate(new Date(invocation.sent)) : null,
-                          status: invocation.status ? (invocation.status.code + ": " + invocation.status.message) : null
-                        });
-                      });
-                      if (instance.updates) {
-                        instance.updates.forEach(function(update) {
-                          result.data.serviceList.push({
-                            name: '  update',
-                            id: update.requestId,
-                            url: '#/workflow/requests/' + update.requestId,
-                            started: update.received ? formatDate(new Date(update.received)) : null,
-                            status: update.status ? (update.status.code + ": " + update.status.message) : null
+                var parseMicroservices = function(serviceSummary) {
+                  var microservices = serviceSummary.microservices;
+                  var subServiceSummaries = serviceSummary.subServiceSummaries;
+                  var list = [];
+                  if (microservices) {
+                    microservices.forEach(function(microservice) {
+                      if (microservice.instances) {
+                        microservice.instances.forEach(function(instance) {
+                          list.push({
+                            name: microservice.name,
+                            id: instance.id,
+                            url: '#/workflow/processes/' + instance.id,
+                            started: instance.triggered ? formatDate(new Date(instance.triggered)) : null,
+                            status: instance.status,
+                            thisFlag: instance.id === runtimeInfo.id ? '*' : ''
                           });
+                          instance.invocations.forEach(function(invocation) {
+                            list.push({
+                              name: '  invocation',
+                              id: invocation.requestId,
+                              url: '#/workflow/requests/' + invocation.requestId,
+                              started: invocation.sent ? formatDate(new Date(invocation.sent)) : null,
+                              status: invocation.status ? (invocation.status.code + ": " + invocation.status.message) : null
+                            });
+                          });
+                          if (instance.updates) {
+                            instance.updates.forEach(function(update) {
+                              list.push({
+                                name: '  update',
+                                id: update.requestId,
+                                url: '#/workflow/requests/' + update.requestId,
+                                started: update.received ? formatDate(new Date(update.received)) : null,
+                                status: update.status ? (update.status.code + ": " + update.status.message) : null
+                              });
+                            });
+                          }
                         });
                       }
                     });
                   }
-                });
+                  if (subServiceSummaries) {
+                    subServiceSummaries.forEach(function(subSummary) {
+                      list = list.concat(parseMicroservices(subSummary));
+                    });
+                  }
+                  return list;
+                };
+                // populate the serviceList pseudo array
+                var serviceSummary = response.data;
+                result.data.serviceList = parseMicroservices(serviceSummary);
                 return result;
               });
             }
@@ -371,7 +384,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
                   return variable.name === serviceSummaryVarName;
                 });
                 if (serviceSummary) {
-                  gets.push($http.get(mdw.roots.services + '/services/com/centurylink/mdw/microservice/summary/' + serviceSummary.value.substring(9) + '/subflows'));
+                  gets.push($http.get(mdw.roots.services + '/services/com/centurylink/mdw/microservice/summary/' + serviceSummary.value.substring(9) + '-' + runtimeInfo[0].id + '/subflows'));
                 }
               }
               return $q.all(gets);

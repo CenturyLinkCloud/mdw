@@ -61,8 +61,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
                 subServiceSummary = serviceSummary;
 
             subServiceSummary.addServiceSummary(
-                    subServiceSummary.getMasterRequestId() + "-" + (subServiceSummary.getChildServiceSummaryList() == null ? "1" : (subServiceSummary.getChildServiceSummaryList().size()+1))
-                    , getActivityInstanceId());
+                    subServiceSummary.getMasterRequestId(), getActivityInstanceId());
         }
         String serviceSummaryVar = getServiceSummaryVariableName();
         setVariableValue(serviceSummaryVar, serviceSummary);
