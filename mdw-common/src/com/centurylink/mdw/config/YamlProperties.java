@@ -116,8 +116,8 @@ public class YamlProperties {
         if (groupMap != null) {
             map = new HashMap<>();
             for (String groupKey : groupMap.keySet()) {
-                if (groupMap.get(groupKey) instanceof String) {
-                    map.put(groupKey, (String)groupMap.get(groupKey));
+                if (groupMap.get(groupKey) instanceof String || groupMap.get(groupKey) instanceof Boolean) {
+                    map.put(groupKey, groupMap.get(groupKey).toString());
                 }
                 else {
                     Map<String, Object> innerMap = loader.getMap(groupKey, groupMap);
