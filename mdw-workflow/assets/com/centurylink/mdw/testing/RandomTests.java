@@ -1,10 +1,9 @@
 package com.centurylink.mdw.testing;
 
 import com.centurylink.mdw.annotations.ScheduledJob;
-import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
-import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -16,9 +15,6 @@ import com.centurylink.mdw.test.TestExecConfig;
 import com.centurylink.mdw.util.CallURL;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import groovy.lang.Binding;
-import groovy.lang.GroovyShell;
-import groovy.lang.Script;
 
 import java.io.File;
 import java.util.*;
@@ -37,6 +33,10 @@ public class RandomTests implements com.centurylink.mdw.model.monitor.ScheduledJ
 
     @Override
     public void run(CallURL args) {
+        if (!PropertyManager.getBooleanProperty("mdw.random.tests.enabled", false)) {
+            return;
+        }
+
         logger.info("Running random tests...");
 
         try {
@@ -99,21 +99,6 @@ public class RandomTests implements com.centurylink.mdw.model.monitor.ScheduledJ
             pkgCases.add(asset);
         }
         return randomCases;
-    }
-
-    protected void runTest(String testAssetPath) throws ServiceException {
-
-        TestingServices testingServices = getTestingServices();
-        TestCase testCase = testingServices.getTestCase(testAssetPath);
-
-
-        Asset testAsset = AssetCache.getAsset(testAssetPath);
-        Binding binding = new Binding();
-        binding.setVariable("unitTest", this);
-        binding.setVariable("onServer", true);
-        GroovyShell shell = new GroovyShell(this.getClass().getClassLoader(), binding);
-        Script gScript = shell.parse(testAsset.getStringContent());
-        gScript.run();
     }
 
     private AssetServices assetServices;
