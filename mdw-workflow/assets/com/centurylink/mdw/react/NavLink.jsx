@@ -6,12 +6,10 @@ function NavLink(props, context) {
   var path = window.location.pathname;
   if (!path.startsWith('/'))
     path = '/' + path; // ie 11
-  var dest = props.root ? props.root : '/';
-  if (props.to != '/')
-    dest += props.to;
   var cl = '';
-  if (path == dest || (path == context.hubRoot + '/' && props.to == '/'))
+  if (path == props.to || (path == context.hubRoot + '/' && props.to == props.match))
     cl = 'mdw-active';
+  const dest = props.to;
   return (
     <li className={cl}>
       <Link to={dest}>

@@ -9,15 +9,20 @@ class Nav extends Component {
   }
 
   render() {
-    const id = this.props.task.id;
+    var root = this.context.hubRoot + '/tasks/';
+    if (this.props.task.id) {
+      root += this.props.task.id + '/';
+    }
+    console.log("ID: " + this.props.task.id);
+    //console.log("ROOT: " + root);
     return (
       <div>
         <ul className="nav mdw-nav">
-          <NavLink root={this.context.hubRoot + '/tasks/' + id} to="/">Task</NavLink>
-          <NavLink root={this.context.hubRoot + '/tasks/' + id} to="/values">Values</NavLink>
-          <NavLink root={this.context.hubRoot + '/tasks/' + id} to="/discussion">Discussion</NavLink>
-          <NavLink root={this.context.hubRoot + '/tasks/' + id} to="/subtasks">Subtasks</NavLink>
-          <NavLink root={this.context.hubRoot + '/tasks/' + id} to="/history">History</NavLink>
+          <NavLink to={root} match={root}>Task</NavLink>
+          <NavLink to={root + 'values'}>Values</NavLink>
+          <NavLink to={root + 'discussion'}>Discussion</NavLink>
+          <NavLink to={root + 'subtasks'}>Subtasks</NavLink>
+          <NavLink to={root + 'history'}>History</NavLink>
         </ul>
         <ul className="nav mdw-nav">
           <li><a href={this.context.hubRoot + '/#/tasks'} target="_self">Task List</a></li>

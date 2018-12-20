@@ -6,8 +6,6 @@ class Requests extends Component {
 
   constructor(...args) {
     super(...args);
-    console.log('PROPS: ' + JSON.stringify(this.props, null, 2));
-    
   }
 
   componentDidMount() {
