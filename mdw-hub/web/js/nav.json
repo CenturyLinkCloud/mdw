@@ -52,7 +52,7 @@
     "id": "dashboardTab",
     "label": "Dashboard",
     "icon": "dashboard.png",
-    "url": "/dashboard/processes",
+    "url": "dashboard/processes",
     "navs": [
       {
         "links": [

@@ -10,7 +10,6 @@ class Nav extends Component {
   }
 
   componentDidMount() {
-    $mdwUi.clearMessage();
     fetch(new Request(this.context.hubRoot + '/js/nav.json', {
       method: 'GET',
       headers: { Accept: 'application/json'},
