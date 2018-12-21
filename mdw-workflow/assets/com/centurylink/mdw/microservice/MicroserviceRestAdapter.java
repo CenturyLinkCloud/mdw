@@ -23,6 +23,7 @@ import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
 public class MicroserviceRestAdapter extends RestServiceAdapter {
 
     protected Long requestId = null;
+    protected boolean changedIsolation = false;
     /**
      * Overridden to append JSON headers.
      */
@@ -57,7 +58,7 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
         try {
             updateServiceSummary(status, responseId);
             // For mySQL, now we need to restore  isolation level back to default
-            if (getEngine().getDatabaseAccess().isMySQL() && getEngine().getDatabaseAccess().connectionIsOpen())
+            if (changedIsolation && getEngine().getDatabaseAccess().connectionIsOpen())
                 getEngine().getDatabaseAccess().runUpdate("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
         }
         catch (ActivityException | SQLException ex) {
@@ -118,8 +119,10 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
             // For mySQL, we need to change the isolation level so that the next read (once we have response)
             // is not using the DB snapshot that got created when we were in here first for the request.
             // Otherwise, we risk overwriting any service summary updates performed by a different thread.
-            if (status == null && getEngine().getDatabaseAccess().isMySQL())
+            if (status == null && getEngine().getDatabaseAccess().isMySQL()) {
                 getEngine().getDatabaseAccess().runUpdate("SET TRANSACTION ISOLATION LEVEL READ COMMITTED");
+                changedIsolation = true;
+            }
             if (status != null) // Only notify after performing invocation
                 notifyServiceSummaryUpdate(serviceSummary);
         }
