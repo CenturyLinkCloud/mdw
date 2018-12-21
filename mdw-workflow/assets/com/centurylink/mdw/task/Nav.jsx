@@ -13,8 +13,6 @@ class Nav extends Component {
     if (this.props.task.id) {
       root += this.props.task.id + '/';
     }
-    console.log("ID: " + this.props.task.id);
-    //console.log("ROOT: " + root);
     return (
       <div>
         <ul className="nav mdw-nav">

@@ -1,4 +1,4 @@
-import React, {Component} from '../node/node_modules/react';
+import React from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import {Link} from '../node/node_modules/react-router-dom';
 

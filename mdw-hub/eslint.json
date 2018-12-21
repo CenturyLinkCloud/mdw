@@ -24,6 +24,7 @@
     "$mdwHubRoot": false,
     "$mdwServicesRoot": false,
     "$mdwWebSocketUrl": false,
+    "$mdwVersion": false,
     "$mdwMessages": true,
     "require": false,
     "location": true,

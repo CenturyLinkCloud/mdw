@@ -2,6 +2,7 @@ import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import { BrowserRouter as Router} from '../node/node_modules/react-router-dom';
 import Header from '../react/Header.jsx';
+import Footer from '../react/Footer.jsx';
 import Nav from './Nav.jsx';
 // To add custom charts, override Routes.jsx and Index.jsx in custom UI package.
 import Routes from './Routes.jsx';
@@ -32,18 +33,23 @@ class Index extends Component {
   }
 
   render() {
-    var hub = this.getChildContext().hubRoot + '/';
     return (
       <div>
-        <Header />
-        <Router>
-          <div>
-            <div className="col-md-2 mdw-sidebar">
-              <Nav />
+        <Header activeTab="dashboardTab" />
+        { /* TODO: mdw-mobile-content instead of mdw-content if mobile */ }
+        <div id="mdw-main" className="content container mdw-content">
+          <Router>
+            <div className="row">
+              <div className="col-md-2 mdw-sidebar">
+                <Nav />
+              </div>
+              <div className="col-md-10">
+                <Routes />
+              </div>
             </div>
-            <Routes />
-          </div>
-        </Router>
+          </Router>
+        </div>
+        <Footer />
       </div>
     );
   }

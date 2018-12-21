@@ -34,7 +34,7 @@ class FileView extends Component {
     this.doUpdate(this.props);
   }
   
-  componentWillReceiveProps(props) {
+  componentWillReceiveProps(props) { // eslint-disable-line react/no-deprecated
     this.doUpdate(props);
   }
   

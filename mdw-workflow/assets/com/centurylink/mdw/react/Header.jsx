@@ -5,41 +5,65 @@ import PropTypes from '../node/node_modules/prop-types';
 class Header extends Component {
   constructor(...args) {
     super(...args);
-    this.state = {
-      tabs: [
-        {
-          index: 0,
-          label: 'Processes',
-          url: this.context.hubRoot + '/#/workflow/processes',
-          classes: 'mdw_tab_inactive mdw_tab_first',
-          active: false
-        },
-        {
-          index: 1,
-          label: 'Dashboard',
-          url: this.context.hubRoot + '/dashboard/processes',
-          classes: 'mdw_tab_active',
-          active: true
-        },
-        {
-          index: 2,
-          label: 'Services',
-          url: this.context.hubRoot + '/#/serviceApi',
-          classes: 'mdw_tab_inactive mdw_tab_last',
-          active: false
+    this.state = { navTabs: [] };
+  }
+
+  componentDidMount() {
+    fetch(new Request(this.context.hubRoot + '/js/nav.json', {
+      method: 'GET',
+      headers: { Accept: 'application/json'},
+      credentials: 'same-origin'
+    }))
+    .then(response => {
+      return response.json();
+    })
+    .then(navTabs => {
+      this.setState({
+        navTabs: navTabs
+      });
+    });
+  }
+
+  getUserTabs() {
+    var userTabs = [];
+    if (this.context.authUser.roles) {
+      const roles = this.context.authUser.roles.slice();
+      if (this.context.authUser.workgroups && this.context.authUser.workgroups.includes('Site Admin')) {
+        roles.push('Site Admin');
+      }
+      const user = { // eslint-disable-line no-unused-vars
+        hasRole: function(role) {
+          return roles.includes(role);
         }
-      ]
-    };
+      };
+      for (let i = 0; i < this.state.navTabs.length; i++) {
+        const navTab = this.state.navTabs[i];
+        const active = this.props.activeTab === navTab.id;
+        if (!navTab.condition || eval(navTab.condition)) {
+            userTabs.push({
+              index: i,
+              label: navTab.label,
+              url: this.context.hubRoot + '/' + navTab.url,
+              classes: '' + (active ? 'mdw_tab_active' : 'mdw_tab_inactive') + (i === 0 ? ' mdw_tab_first' : ''),
+              active: active
+            });
+        }
+      }
+      userTabs[userTabs.length - 1].classes += ' mdw_tab_last';
+    }
+    return userTabs;
   }
 
   render() {
+    const userTabs = this.getUserTabs();
+
     return(
       <div>
         <div id="mdw-header" className="mdw-normalize">
           <div className="mdw_banner">
             <div className="mdw_bannerLeft">
-             <img src={this.context.hubRoot + '/images/mdw.png'} alt="MDW" style={{cursor:'pointer'}} onClick={() => window.location.href = this.context.hubRoot} />
-             <img src={this.context.hubRoot + '/images/hub.png'} alt="Hub" style={{marginLeft:'1px',cursor:'pointer'}} onClick={() => window.location.href = this.context.hubRoot} />
+             <img src={this.context.hubRoot + '/images/mdw.png'} alt="MDW" style={{cursor:'pointer',paddingRight:'4px'}} onClick={() => window.location.href = this.context.hubRoot} />
+             <img src={this.context.hubRoot + '/images/hub.png'} alt="Hub" style={{cursor:'pointer',marginLeft:'1px',paddingRight:'4px'}} onClick={() => window.location.href = this.context.hubRoot} />
              <img id="hub_logo" src={this.context.hubRoot + '/images/hub_logo.png'} alt="Hub Logo" style={{marginLeft:'1px'}} />
              <img id="hub_loading" src={this.context.hubRoot + '/images/hub_loading.gif'} alt="Hub Loading" style={{display:'none',marginLeft:'1px'}} />
             </div>
@@ -75,20 +99,24 @@ class Header extends Component {
             <tbody>
               <tr>
               {
-                this.state.tabs.map(tab => {
+                userTabs.map(tab => {
                   return (
                     <td key={tab.index} className={tab.classes}>
-                      <div className="mdw_tab">
-                        <div>
-                          <a tabIndex="{tab.index}" href="{tab.url}">{tab.label}</a>
+                      <div style={{display:'flex'}}>
+                        <div className="mdw_tab">
+                          <div>
+                            <a tabIndex="{tab.index}" href={tab.url}>{tab.label}</a>
+                          </div>
+                          {tab.active &&
+                            <img className="mdw_tab_active_image" src={this.context.hubRoot + '/images/tab_sel.png'}></img>
+                          }
                         </div>
-                        {tab.active &&
-                          <img className="mdw_tab_active_image" src={this.context.hubRoot + '/images/tab_sel.png'}></img>
-                        }
+                        <div>
+                          {tab.index < userTabs.length - 1 &&
+                            <img src={this.context.hubRoot + '/images/tab_spacer.png'} style={{height:'36px'}}></img>
+                          }
+                        </div>
                       </div>
-                      {tab.index < this.state.tabs.length &&
-                        <img src={this.context.hubRoot + '/images/tab_spacer.png'}></img>
-                      }
                     </td>
                   );
                 })

@@ -1,12 +1,9 @@
-import React, {Component} from '../node/node_modules/react';
+import React from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
-import {
-  BrowserRouter as Router, Route
-} from '../node/node_modules/react-router-dom';
+import {Route} from '../node/node_modules/react-router-dom';
 // To add custom charts, override Routes.jsx and Index.jsx in custom UI package.
 import Processes from './Processes.jsx';
 import Requests from './Requests.jsx';
-import Something from './Something.jsx';
 
 function Routes(props, context) {
   // Routes should match nav.json dashboard entries
