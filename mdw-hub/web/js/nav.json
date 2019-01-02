@@ -78,6 +78,11 @@
             "label": "Activities",
             "path": "dashboard/activities",
             "href": "/dashboard/activities"
+          },
+          {
+            "label": "Temp",
+            "path": "dashboard/temp",
+            "href": "/dashboard/temp"
           }
         ]
       },

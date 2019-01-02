@@ -7,7 +7,7 @@ function Footer(props) { // eslint-disable-line no-unused-vars
       <div className="mdw_footer">
         MDW {$mdwVersion}
         <br/>
-        Copyright &#169; 2018 CenturyLink, Inc.
+        Copyright &#169; 2019 CenturyLink, Inc.
       </div>
     </div>
   );

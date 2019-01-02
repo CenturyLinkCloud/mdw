@@ -16,7 +16,7 @@ class Requests extends Component {
       <div>
         <Heading title="Requests" />
         <div className="mdw-section">
-          <div>HELLO, REQUEST</div>
+          <div>HELLO, REQUESTS</div>
         </div>
       </div>
     );

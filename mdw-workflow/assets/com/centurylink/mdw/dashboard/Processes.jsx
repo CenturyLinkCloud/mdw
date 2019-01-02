@@ -2,7 +2,7 @@ import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import Heading from './Heading.jsx';
 
-class Requests extends Component {
+class Processes extends Component {
 
   constructor(...args) {
     super(...args);
@@ -23,9 +23,9 @@ class Requests extends Component {
   }
 }
 
-Requests.contextTypes = {
+Processes.contextTypes = {
   hubRoot: PropTypes.string,
   serviceRoot: PropTypes.string
 };
 
-export default Requests;
+export default Processes;
