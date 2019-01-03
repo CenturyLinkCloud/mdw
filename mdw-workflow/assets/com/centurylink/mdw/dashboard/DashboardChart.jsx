@@ -1,8 +1,8 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
-import PanelHeading from '../react/PanelHeading.jsx';
+import ChartHeader from './ChartHeader.jsx';
 
-class Requests extends Component {
+class DashboardChart extends Component {
 
   constructor(...args) {
     super(...args);
@@ -14,18 +14,21 @@ class Requests extends Component {
   render() {
     return (
       <div>
-        <PanelHeading title="Requests" />
+        <ChartHeader title={this.props.title}
+          breakdownConfig={this.props.breakdownConfig}
+          breakdown="Master"
+          timespan="Week" />
         <div className="mdw-section">
-          <div>HELLO, REQUESTS</div>
+            HERE'S A CHART
         </div>
       </div>
     );
   }
 }
 
-Requests.contextTypes = {
+DashboardChart.contextTypes = {
   hubRoot: PropTypes.string,
   serviceRoot: PropTypes.string
 };
 
-export default Requests;
+export default DashboardChart;

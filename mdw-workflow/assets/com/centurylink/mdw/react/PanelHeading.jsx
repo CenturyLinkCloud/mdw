@@ -1,7 +1,7 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 
-class Heading extends Component {
+class PanelHeading extends Component {
 
   constructor(...args) {
     super(...args);
@@ -18,8 +18,8 @@ class Heading extends Component {
   }
 }
 
-Heading.contextTypes = {
+PanelHeading.contextTypes = {
   hubRoot: PropTypes.string
 };
 
-export default Heading;
+export default PanelHeading;

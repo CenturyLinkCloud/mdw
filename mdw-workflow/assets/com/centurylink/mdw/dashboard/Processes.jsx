@@ -1,6 +1,7 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
-import Heading from './Heading.jsx';
+import PanelHeading from '../react/PanelHeading.jsx';
+import DashboardChart from './DashboardChart.jsx';
 
 class Processes extends Component {
 
@@ -12,13 +13,37 @@ class Processes extends Component {
   }
 
   render() {
+
+    const breakdownConfig = {
+      instanceCounts: '/services/Processes/instanceCounts',
+      breakdowns: [
+        {
+          name: 'Master',
+          selectField: 'id',
+          selectLabel: 'Master Processes',
+          throughput: '/services/Processes/topThroughput?master=true', // returns top asset InstanceCounts
+          instancesParam: 'processIds'  // service parameter for selected instances
+        },
+        {
+          name: 'Process',
+          selectField: 'id',
+          selectLabel: 'Processes',
+          throughput: '/services/Processes/topThroughput',
+          instancesParam: 'processIds'
+        },
+        {
+          name: 'Status',
+          selectField: 'status',
+          selectLabel: 'Statuses',
+          throughput: ['Pending', 'In Progress', 'Failed', 'Completed', 'Canceled', 'Waiting'],
+          instancesParam: 'statuses'
+        }
+      ]
+    };
+
     return (
-      <div>
-        <Heading title="Processes" />
-        <div className="mdw-section">
-          <div>HELLO, PROCESS</div>
-        </div>
-      </div>
+      <DashboardChart title="Processes"
+        breakdownConfig={breakdownConfig} list="#/workflow/processes" />
     );
   }
 }
