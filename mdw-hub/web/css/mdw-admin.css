@@ -177,7 +177,14 @@
   height: 28px;
   font-weight: normal;
 }
-.mdw-inner-addon { 
+.mdw-heading-dropdown {
+  display: flex;
+  padding: 5px;
+  padding-top: 0;
+  padding-left: 0;
+  height: 32px;
+}
+.mdw-inner-addon {
   position: relative;
 }
 .mdw-inner-addon .glyphicon {
