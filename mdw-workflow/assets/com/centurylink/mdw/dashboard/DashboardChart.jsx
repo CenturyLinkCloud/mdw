@@ -19,7 +19,7 @@ class DashboardChart extends Component {
           breakdown="Master"
           timespan="Week" />
         <div className="mdw-section">
-            HERE'S A CHART
+            HERE IS A CHART
         </div>
       </div>
     );

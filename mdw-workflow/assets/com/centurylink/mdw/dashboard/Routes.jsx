@@ -4,7 +4,7 @@ import {Route} from '../node/node_modules/react-router-dom';
 // To add custom charts, override Routes.jsx and Index.jsx in a custom UI package.
 import Processes from './Processes.jsx';
 import Requests from './Requests.jsx';
-import Temp from './Temp.jsx'
+import Temp from './Temp.jsx';
 
 function Routes(props, context) {
   // Routes should match nav.json dashboard entries

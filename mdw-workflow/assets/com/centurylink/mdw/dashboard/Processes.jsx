@@ -1,6 +1,5 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
-import PanelHeading from '../react/PanelHeading.jsx';
 import DashboardChart from './DashboardChart.jsx';
 
 class Processes extends Component {
