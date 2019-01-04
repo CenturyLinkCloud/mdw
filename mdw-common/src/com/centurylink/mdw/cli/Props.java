@@ -32,6 +32,8 @@ public class Props {
     public static Prop DISCOVERY_URL;
     public static Prop SERVICES_URL;
     public static Prop HUB_URL;
+    public static Prop CENTRAL_URL;
+    public static Prop APP_ID;
 
     public static class ProjectYaml {
         public static final String MDW_VERSION = "project.mdw.version";
@@ -72,11 +74,15 @@ public class Props {
         DISCOVERY_URL = new Prop("discovery-url", MDW, "mdw.discovery.url");
         SERVICES_URL = new Prop("services-url", MDW, "mdw.services.url");
         HUB_URL = new Prop("hub-url", MDW, "mdw.hub.url");
+        CENTRAL_URL = new Prop("central-url", MDW, "mdw.central.url");
+        APP_ID = new Prop("app-id", MDW, "mdw.app.id");
 
         ALL_PROPS.add(ASSET_LOC);
         ALL_PROPS.add(DISCOVERY_URL);
         ALL_PROPS.add(SERVICES_URL);
         ALL_PROPS.add(HUB_URL);
+        ALL_PROPS.add(CENTRAL_URL);
+        ALL_PROPS.add(APP_ID);
 
         // mdw git
         Git.REMOTE_URL = new Prop("git-remote-url", MDW, "mdw.git.remote.url");

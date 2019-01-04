@@ -120,7 +120,9 @@ task cliJar(type: Jar) {
               + " ./lib/joda-time-2.9.9.jar ./lib/commons-io-2.4.jar ./lib/bpmn-schemas.jar ./lib/xmlbeans-2.4.0.jar ./lib/kotlin-stdlib-1.2.61.jar"
               + " ./lib/flexmark-0.32.22.jar ./lib/flexmark-util-0.32.22.jar ./lib/flexmark-ext-anchorlink-0.32.22.jar ./lib/flexmark-ext-autolink-0.32.22.jar"
               + " ./lib/flexmark-ext-superscript-0.32.22.jar ./lib/flexmark-ext-tables-0.32.22.jar ./lib/flexmark-ext-typographic-0.32.22.jar"
-              + " ./lib/flexmark-formatter-0.32.22.jar ./lib/autolink-0.9.0.jar ./lib/itextpdf-5.5.13.jar ./lib/xmlworker-5.5.13.jar");
+              + " ./lib/flexmark-formatter-0.32.22.jar ./lib/autolink-0.9.0.jar ./lib/itextpdf-5.5.13.jar ./lib/xmlworker-5.5.13.jar"
+              + " ./lib/java-jwt-3.3.0.jar ./lib/jackson-core-2.9.5.jar ./lib/jackson-databind-2.9.5.jar ./lib/jackson-annotations-2.9.5.jar"
+              + " ./lib/commons-codec-1.11.jar");
     }
 
     from("build/classes") {
