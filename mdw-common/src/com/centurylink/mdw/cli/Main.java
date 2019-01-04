@@ -58,6 +58,7 @@ public class Main {
         BpmnImport bpmnimport = new BpmnImport();
         Encrypt encrypt = new Encrypt();
         Decrypt decrypt = new Decrypt();
+        Token token = new Token();
 
         JCommander cmd = JCommander.newBuilder()
             .addObject(main)
@@ -79,6 +80,7 @@ public class Main {
             .addCommand("bpmnimport", bpmnimport)
             .addCommand("encrypt", encrypt)
             .addCommand("decrypt", decrypt)
+            .addCommand("token", token)
             .build();
 
         cmd.setProgramName("mdw");
@@ -139,6 +141,9 @@ public class Main {
                 }
                 else if (command.equals("decrypt")) {
                     op = decrypt;
+                }
+                else if (command.equals("token")) {
+                    op = token;
                 }
 
                 if (op == null) {
