@@ -1,6 +1,6 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
-import PanelHeading from '../react/PanelHeading.jsx';
+import PanelHeader from '../react/PanelHeader.jsx';
 
 class Requests extends Component {
 
@@ -14,7 +14,7 @@ class Requests extends Component {
   render() {
     return (
       <div>
-        <PanelHeading title="Requests" />
+        <PanelHeader title="Requests" />
         <div className="mdw-section">
           <div>HELLO, REQUESTS</div>
         </div>

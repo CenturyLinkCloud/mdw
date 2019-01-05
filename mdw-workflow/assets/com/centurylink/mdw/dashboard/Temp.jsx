@@ -1,6 +1,6 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
-import PanelHeading from '../react/PanelHeading.jsx';
+import PanelHeader from '../react/PanelHeader.jsx';
 import {Line} from '../node/node_modules/react-chartjs-2';
 
 class Temp extends Component {
@@ -33,7 +33,7 @@ class Temp extends Component {
 
     return (
       <div>
-        <PanelHeading title="Temp" />
+        <PanelHeader title="Temp" />
         <div className="mdw-section">
           <div>
             <Line data={chartData} />

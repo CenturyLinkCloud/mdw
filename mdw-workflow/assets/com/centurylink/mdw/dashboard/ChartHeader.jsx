@@ -1,8 +1,13 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
-import {Button, Dropdown, Glyphicon, MenuItem, OverlayTrigger, Popover} from '../node/node_modules/react-bootstrap';
+import {Popover} from '../node/node_modules/react-bootstrap';
+import PanelHeader from '../react/PanelHeader.jsx';
+import HeaderLabel from '../react/HeaderLabel.jsx';
+import HeaderDropdown from '../react/HeaderDropdown.jsx';
+import HeaderButtons from '../react/HeaderButtons.jsx';
+import HeaderPopButton from '../react/HeaderPopButton.jsx';
 
-class ChartHeading extends Component {
+class ChartHeader extends Component {
 
   constructor(...args) {
     super(...args);
@@ -24,55 +29,30 @@ class ChartHeading extends Component {
     );
 
     return (
-      <div className="panel-heading mdw-heading">
-        <div className="mdw-heading-label">{this.props.title} for the:</div>
-        <div className="mdw-heading-input">
-          <Dropdown id="timespan-dropdown" className="mdw-heading-dropdown">
-            <Dropdown.Menu style={{marginTop:'-3px'}}>
-              <MenuItem active={this.state.timespan === 'Week'}>Week</MenuItem>
-              <MenuItem active={this.state.timespan === 'Month'}>Month</MenuItem>
-            </Dropdown.Menu>
-            <Dropdown.Toggle noCaret={true} style={{padding:'5px',width:'140px',textAlign:'left'}}>
-              <span style={{position:'relative',top:'-3px'}}>{this.state.timespan}</span>
-              <Glyphicon glyph="chevron-down" style={{color:'#9e9e9e',float:'right'}} />
-            </Dropdown.Toggle>
-          </Dropdown>
-        </div>
+      <PanelHeader>
+        <HeaderLabel title={this.props.title + ' for the:'} />
+        <HeaderDropdown id="timespan-dropdown"
+          items={['Week','Month']}
+          selected={this.state.timespan} />
 
-        <span className="mdw-heading-label mdw-med-indent">by:</span>
-        {
-        // <div className="mdw-heading-input">
-        //   <DropdownButton id="breakdownDropdown" title={this.props.breakdown}>
-        //     {
-        //       this.props.breakdownConfig.breakdowns.map(breakdown => {
-        //         return (
-        //           <MenuItem key={breakdown.name} active={this.state.breakdown === breakdown.name}>
-        //             {breakdown.name}
-        //           </MenuItem>
-        //         );
-        //       })
-        //     }
-        //   </DropdownButton>
-        // </div>
-        }
+        <HeaderLabel title="by:"  style={{marginLeft:'10px'}}/>
+        <HeaderDropdown id="breakdown-dropdown"
+          items={this.props.breakdownConfig.breakdowns.map(bd => bd.name)}
+          selected={this.state.breakdown} />
 
-        <div className="mdw-buttons">
-          <OverlayTrigger trigger="click" placement="left" overlay={selectPopover} rootClose>
-            <Button bsStyle="primary" className="mdw-btn">
-              <Glyphicon glyph="ok" />
-              <span style={{marginLeft:'4px'}}>Select</span>
-            </Button>
-          </OverlayTrigger>
-        </div>
+        <HeaderButtons>
+          <HeaderPopButton label="Select" glyph="ok"
+            popover={selectPopover} />
+        </HeaderButtons>
 
-      </div>
+      </PanelHeader>
     );
   }
 }
 
-ChartHeading.contextTypes = {
+ChartHeader.contextTypes = {
   hubRoot: PropTypes.string,
   serviceRoot: PropTypes.string
 };
 
-export default ChartHeading;
+export default ChartHeader;
