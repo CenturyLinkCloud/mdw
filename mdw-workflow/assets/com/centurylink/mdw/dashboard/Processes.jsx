@@ -20,14 +20,14 @@ class Processes extends Component {
           name: 'Master',
           selectField: 'id',
           selectLabel: 'Master Processes',
-          throughput: '/services/Processes/topThroughput?master=true', // returns top asset InstanceCounts
+          throughput: '/Processes/topThroughput?master=true', // returns top asset InstanceCounts
           instancesParam: 'processIds'  // service parameter for selected instances
         },
         {
           name: 'Process',
           selectField: 'id',
           selectLabel: 'Processes',
-          throughput: '/services/Processes/topThroughput',
+          throughput: '/Processes/topThroughput',
           instancesParam: 'processIds'
         },
         {

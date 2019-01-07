@@ -11,7 +11,10 @@ class HeaderPopButton extends Component {
   render() {
     let left = this.props.glyph ? '4px' : null;
     return (
-      <OverlayTrigger trigger="click" placement="left" overlay={this.props.popover} rootClose>
+      <OverlayTrigger trigger="click"
+        placement="left"
+        overlay={this.props.popover}
+        rootClose>
         <Button bsStyle="primary" className="mdw-btn">
           {this.props.glyph &&
             <Glyphicon glyph={this.props.glyph} />

@@ -19,6 +19,7 @@ import java.sql.ResultSet;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -166,7 +167,8 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
     }
 
     protected String getProcessWhereClause(Query query) throws ParseException, DataAccessException {
-        Date start = query.getDateFilter("startDate");
+        Instant instant = query.getInstantFilter("startDt");
+        Date start = instant == null ? query.getDateFilter("startDate") : Date.from(instant);
         if (start == null)
             throw new DataAccessException("Parameter startDate is required");
         String startStr = getDateFormat().format(start);

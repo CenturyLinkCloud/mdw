@@ -19,6 +19,7 @@ import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -236,6 +237,12 @@ public class Query {
     public Date getDateFilter(String key) throws ParseException {
         return getDate(filters.get(key));
     }
+
+    public Instant getInstantFilter(String key) {
+        String value = filters.get(key);
+        return value == null ? null : Instant.parse(value);
+    }
+
     public Query setFilter(String key, Date date) {
         String value = getString(date);
         if (value == null)
