@@ -1030,11 +1030,8 @@ public class CommonDataAccess {
         return pi;
     }
 
-    private static DateFormat dateFormat;
     protected static DateFormat getDateFormat() {
-        if (dateFormat == null)
-            dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
-        return dateFormat;
+        return new SimpleDateFormat("dd-MMM-yyyy");
     }
 
     public long getDatabaseTime() throws SQLException {

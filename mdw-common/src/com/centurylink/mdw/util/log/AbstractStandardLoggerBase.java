@@ -38,7 +38,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
     public static final String DEFAULT_HOST = "localhost";
     public static final int DEFAULT_PORT = 7181;
 
-    protected static DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd.HH:mm:ss.SSS");
+    protected static String dateFormat = "yyyyMMdd.HH:mm:ss.SSS";
 
     private static final String MESSAGE_REG_EX = "\\[\\(.\\)([0-9.:]+) p([0-9]+)\\.([0-9]+) ([a-z])([0-9]+)?\\.([^]]+)] (.*)";
     private static Pattern pattern = Pattern.compile(MESSAGE_REG_EX, Pattern.DOTALL);
@@ -62,7 +62,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
         sb.append("[(");
         sb.append(type);
         sb.append(")");
-        sb.append(dateFormat.format(new Date()));
+        sb.append(new SimpleDateFormat(dateFormat).format(new Date()));
         if (tag!=null) {
             sb.append(" ");
             sb.append(tag);
@@ -88,7 +88,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
             obj = new JsonObject();
             obj.put("name", "LogWatcher");
             String t = matcher.group(1);
-            obj.put("time", dateFormat.parse(t).toInstant());
+            obj.put("time", new SimpleDateFormat(dateFormat).parse(t).toInstant());
             obj.put("procId", new Long(matcher.group(2)));
             obj.put("procInstId", new Long(matcher.group(3)));
             subtype = matcher.group(4);
@@ -194,6 +194,10 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
     }
 
     private void logIt(LogLevel level, String message, Throwable t) {
+        String origMsg = message;
+        int index = message.indexOf(" ");
+        if (index > 0 && message.startsWith("[("))
+            message = "[" + message.substring(index+1);
         switch (level.toString()) {
             case "INFO":
                 if (t == null)
@@ -228,7 +232,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
             default: break;
         }
 
-        sendToWatchers(message);
+        sendToWatchers(origMsg);
     }
 
     @Override
@@ -257,7 +261,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
     }
 
     public void severe(String tag, String message) {
-        String line = generateLogLine('w', tag, message);
+        String line = generateLogLine('s', tag, message);
         logIt(LogLevel.ERROR, line, null);
     }
 

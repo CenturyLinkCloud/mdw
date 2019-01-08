@@ -80,18 +80,17 @@ public class CommitInfo { // implements Jsonable (removed for CLI)
         return "commitInfo";
     }
 
-    // TODO: use an Instant
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     public static String dateToString(Date d) {
-        return d == null ? null : DATE_FORMAT.format(d);
+        return d == null ? null : new SimpleDateFormat(DATE_FORMAT).format(d);  // TODO: use an Instant
     }
 
     public static Date stringToDate(String s) {
         if (s == null)
             return null;
         try {
-            return DATE_FORMAT.parse(s);
+            return new SimpleDateFormat(DATE_FORMAT).parse(s);   // TODO: use an Instant
         }
         catch (ParseException e) {
             return null;
