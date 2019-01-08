@@ -26,21 +26,19 @@ import com.centurylink.mdw.translator.TranslationException;
 import com.centurylink.mdw.translator.VariableTranslator;
 
 public class DateTranslator extends VariableTranslator {
-    private static DateFormat dateFormat;
-    static {
-        dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
-    }
+
+    private static final String dateFormat = "EEE MMM dd HH:mm:ss zzz yyyy";
 
     public String toString(Object obj){
         if (obj instanceof Instant)
             return obj.toString();
         else
-            return dateFormat.format((Date)obj);
+            return new SimpleDateFormat(dateFormat).format((Date) obj);
     }
 
     public Object toObject(String str) throws TranslationException {
         try {
-            return dateFormat.parse(str);
+            return new SimpleDateFormat(dateFormat).parse(str);
         }
         catch (ParseException ex) {
             try {

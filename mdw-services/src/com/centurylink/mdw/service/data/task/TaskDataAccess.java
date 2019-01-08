@@ -924,13 +924,6 @@ public class TaskDataAccess extends CommonDataAccess {
         }
     }
 
-    private static DateFormat dateFormat;
-    protected static DateFormat getDateFormat() {
-        if (dateFormat == null)
-            dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
-        return dateFormat;
-    }
-
     public String getCategoryCode(int categoryId) throws DataAccessException {
         return DataAccess.getBaselineData().getTaskCategoryCodes().get(categoryId);
     }

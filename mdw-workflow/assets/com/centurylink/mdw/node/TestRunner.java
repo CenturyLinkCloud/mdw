@@ -231,10 +231,9 @@ public class TestRunner {
             item.setEnd(parseIso(resultObj.getString("end")));
     }
 
-    private static DateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
     private Date parseIso(String iso) {
         try {
-            return isoDateFormat.parse(iso);
+            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").parse(iso);
         }
         catch (ParseException ex) {
             return null;
