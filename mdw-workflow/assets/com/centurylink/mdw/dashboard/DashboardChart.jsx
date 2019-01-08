@@ -16,8 +16,10 @@ class DashboardChart extends Component {
       <div>
         <ChartHeader title={this.props.title}
           breakdownConfig={this.props.breakdownConfig}
+          statuses={this.props.statuses}
           breakdown="Master"
-          timespan="Week" />
+          timespan="Week"
+          list={this.props.list} />
         <div className="mdw-section">
             HERE IS A CHART
         </div>

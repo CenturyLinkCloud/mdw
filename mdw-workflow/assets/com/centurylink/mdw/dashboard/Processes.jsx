@@ -13,6 +13,15 @@ class Processes extends Component {
 
   render() {
 
+    const statuses = [
+      'Pending',
+      'In Progress',
+      'Failed',
+      'Completed',
+      'Canceled',
+      'Waiting'
+    ];
+
     const breakdownConfig = {
       instanceCounts: '/services/Processes/instanceCounts',
       breakdowns: [
@@ -34,7 +43,7 @@ class Processes extends Component {
           name: 'Status',
           selectField: 'status',
           selectLabel: 'Statuses',
-          throughput: ['Pending', 'In Progress', 'Failed', 'Completed', 'Canceled', 'Waiting'],
+          throughput: statuses,
           instancesParam: 'statuses'
         }
       ]
@@ -42,7 +51,9 @@ class Processes extends Component {
 
     return (
       <DashboardChart title="Processes"
-        breakdownConfig={breakdownConfig} list="#/workflow/processes" />
+        breakdownConfig={breakdownConfig}
+        list="#/workflow/processes"
+        statuses={statuses} />
     );
   }
 }

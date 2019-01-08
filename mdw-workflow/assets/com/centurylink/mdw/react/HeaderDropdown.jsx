@@ -20,7 +20,7 @@ class HeaderDropdown extends Component {
   render() {
     return (
       <div className="mdw-heading-input">
-        <Dropdown id="{this.props.id}" className="mdw-heading-dropdown"
+        <Dropdown id="{this.props.id}" className="mdw-dropdown"
           onSelect={this.handleSelect}>
           <Dropdown.Menu style={{marginTop:'-3px'}}>
             {

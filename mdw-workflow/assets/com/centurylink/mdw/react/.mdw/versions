@@ -1,12 +1,15 @@
 ButtonLink.jsx=3
 Comment.jsx=9
+DatePicker.jsx=1
+Dropdown.jsx=1
 Field.jsx=1
 Footer.jsx=2
 Header.jsx=2
+HeaderButton.jsx=1
 HeaderButtons.jsx=1
-HeaderDropdown.jsx=2
+HeaderDropdown.jsx=3
 HeaderLabel.jsx=1
-HeaderPopButton.jsx=2
+HeaderPopButton.jsx=3
 Inspector.jsx=1
 NavLink.jsx=3
 PanelHeader.jsx=1

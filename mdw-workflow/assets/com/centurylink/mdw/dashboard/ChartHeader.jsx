@@ -4,8 +4,10 @@ import PanelHeader from '../react/PanelHeader.jsx';
 import HeaderLabel from '../react/HeaderLabel.jsx';
 import HeaderDropdown from '../react/HeaderDropdown.jsx';
 import HeaderButtons from '../react/HeaderButtons.jsx';
+import HeaderButton from '../react/HeaderButton.jsx';
 import HeaderPopButton from '../react/HeaderPopButton.jsx';
 import SelectPop from './SelectPop.jsx';
+import FilterPop from './FilterPop.jsx';
 
 class ChartHeader extends Component {
 
@@ -15,10 +17,12 @@ class ChartHeader extends Component {
       timespan: 'Week',
       breakdown: this.props.breakdownConfig.breakdowns[0].name,
       tops: [],
-      selected: []
+      selected: [],
+      filters: {ending: new Date(), status: ''}
     };
     this.getBreakdown = this.getBreakdown.bind(this);
     this.handleDropdownSelect = this.handleDropdownSelect.bind(this);
+    this.handleFilterChange = this.handleFilterChange.bind(this);
   }
 
   // selected breakdown object from breakdownConfig
@@ -64,7 +68,8 @@ class ChartHeader extends Component {
           timespan: this.state.timespan,
           breakdown: this.state.breakdown,
           tops: topsJson,
-          selected: this.state.selected
+          selected: this.state.selected,
+          filters: this.state.filters
         });
       });
     }
@@ -76,7 +81,8 @@ class ChartHeader extends Component {
         timespan: eventKey,
         breakdown: this.state.breakdown,
         tops: [],
-        selected: []
+        selected: [],
+        filters: this.state.filters
       });
     }
     else if (dropdownId === 'breakdown-dropdown') {
@@ -84,20 +90,29 @@ class ChartHeader extends Component {
         timespan: this.state.timespan,
         breakdown: eventKey,
         tops: [],
-        selected: []
+        selected: [],
+        filters: this.state.filters
       });
     }
-    // TODO: render chart
+  }
+
+  handleFilterChange(filters) {
+    this.setState({
+      timespan: this.state.timespan,
+      breakdown: this.state.breakdown,
+      tops: [],
+      selected: [],
+      filters: filters
+    });
   }
 
   render() {
     const breakdown = this.getBreakdown();
-
     return (
       <PanelHeader>
         <HeaderLabel title={this.props.title + ' for the:'} />
         <HeaderDropdown id="timespan-dropdown"
-          items={['Week','Month']}
+          items={['Day','Week','Month']}
           selected={this.state.timespan}
           onSelect={this.handleDropdownSelect} />
 
@@ -110,6 +125,11 @@ class ChartHeader extends Component {
         <HeaderButtons>
           <HeaderPopButton label="Select" glyph="ok"
             popover={<SelectPop label={breakdown.selectLabel} tops={this.state.tops} selected={this.state.selected} />} />
+          <HeaderPopButton label="Filters" glyph="filter"
+            popover={<FilterPop filters={this.state.filters} statuses={this.props.statuses} onChange={this.handleFilterChange} />} />
+          <HeaderButton label="Export" glyph="download-alt" />
+          <HeaderButton label="List" glyph="menu-hamburger"
+            onClick={() => location = this.context.hubRoot + '/' + this.props.list} />
         </HeaderButtons>
 
       </PanelHeader>
