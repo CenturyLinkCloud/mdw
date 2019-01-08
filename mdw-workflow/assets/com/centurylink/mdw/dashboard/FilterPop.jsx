@@ -10,6 +10,7 @@ class FilterPop extends Component {
     this.state = {filters: this.props.filters};
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
     this.handleStatusChange = this.handleStatusChange.bind(this);
+    this.handleReset = this.handleReset.bind(this);
   }
 
   handleEndDateChange(endDate) {
@@ -38,6 +39,20 @@ class FilterPop extends Component {
     });
   }
 
+  handleReset() {
+    this.setState({
+      filters: {
+        ending: new Date(),
+        status: null
+      }
+    }, () => {
+      if (this.props.onChange) {
+        this.props.onChange(this.state.filters);
+      }
+    });
+    document.body.click();
+  }
+
   render() {
     const {filters, statuses, ...popProps} = this.props; // eslint-disable-line no-unused-vars
     return (
@@ -62,7 +77,7 @@ class FilterPop extends Component {
           }
           <div className="mdw-vmed-indent">
             <Button bsStyle="primary" className="mdw-btn"
-              onClick={() => { if (this.props.onReset) this.props.onReset(); }}>
+              onClick={this.handleReset}>
               Reset
             </Button>
           </div>
