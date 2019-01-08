@@ -194,6 +194,10 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
     }
 
     private void logIt(LogLevel level, String message, Throwable t) {
+        String origMsg = message;
+        int index = message.indexOf(" ");
+        if (index > 0 && message.startsWith("[("))
+            message = "[" + message.substring(index+1);
         switch (level.toString()) {
             case "INFO":
                 if (t == null)
@@ -228,7 +232,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
             default: break;
         }
 
-        sendToWatchers(message);
+        sendToWatchers(origMsg);
     }
 
     @Override
@@ -257,7 +261,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
     }
 
     public void severe(String tag, String message) {
-        String line = generateLogLine('w', tag, message);
+        String line = generateLogLine('s', tag, message);
         logIt(LogLevel.ERROR, line, null);
     }
 
