@@ -245,18 +245,12 @@ public class Query {
         return this;
     }
 
-    private static DateFormat dateTimeFormat;
     protected static DateFormat getDateTimeFormat() {
-        if (dateTimeFormat == null)
-            dateTimeFormat = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
-        return dateTimeFormat;
+        return new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss");
     }
 
-    private static DateFormat dateFormat;
     protected static DateFormat getDateFormat() {
-        if (dateFormat == null)
-            dateFormat = new SimpleDateFormat("yyyy-MMM-dd"); // does not require url-encoding
-        return dateFormat;
+        return new SimpleDateFormat("yyyy-MMM-dd"); // does not require url-encoding
     }
 
     public static Date getDate(String str) throws ParseException {
@@ -292,7 +286,7 @@ public class Query {
     }
     /**
      *
-     * @param str
+     * @param date
      * @return
      * @throws ParseException
      */

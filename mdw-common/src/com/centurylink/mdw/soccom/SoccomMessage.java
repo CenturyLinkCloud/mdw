@@ -46,7 +46,7 @@ class SoccomMessage
     if (_seqno==0) {
         if (hostname==null) setHostName();
         Random ran = new Random();
-        _randomId = nf6.format(ran.nextInt(1000000));
+        _randomId = new DecimalFormat(nf6).format(ran.nextInt(1000000));
     }
     if (msgid!=null) {
         sb.append(msgid);
@@ -54,10 +54,10 @@ class SoccomMessage
         sb.append("#@");
         sb.append(hostname);
         sb.append(_randomId);
-        sb.append(nf6.format(nextSeqNo()));
+        sb.append(new DecimalFormat(nf6).format(nextSeqNo()));
     }
-    sb.append(df.format(new Date()));
-    sb.append(nf8.format(length));
+    sb.append(new SimpleDateFormat(df).format(new Date()));
+    sb.append(new DecimalFormat(nf8).format(length));
     sb.append(msgbody);
     return sb.toString().getBytes();
     }
@@ -67,7 +67,7 @@ class SoccomMessage
     StringBuffer sb = new StringBuffer();
     if (_seqno==0) {
         Random ran = new Random();
-        _randomId = nf6.format(ran.nextInt(1000000));
+        _randomId = new DecimalFormat(nf6).format(ran.nextInt(1000000));
     }
     if (msgid!=null) {
         sb.append(msgid);
@@ -75,13 +75,12 @@ class SoccomMessage
         sb.append("#@");
         sb.append(hostname);
         sb.append(_randomId);
-        sb.append(nf6.format(nextSeqNo()));
+        sb.append(new DecimalFormat(nf6).format(nextSeqNo()));
     }
-    sb.append(df.format(new Date()));
+    sb.append(new SimpleDateFormat(df).format(new Date()));
     sb.append(special);
     return sb.toString().getBytes();
     }
-
 
     synchronized static int nextSeqNo()
     {
@@ -90,14 +89,8 @@ class SoccomMessage
 
     private static String _randomId;
     private static int _seqno = 0;
-    private static SimpleDateFormat df;
-    private static DecimalFormat nf6, nf8;
+    private static String df = "yyyyMMddHHmmss00";
+    private static String nf6 = "000000";
+    private static String nf8 = "00000000";
     private static String hostname = null;
-    
-    static {
-    df = new SimpleDateFormat("yyyyMMddHHmmss00");
-    nf6 = new DecimalFormat("000000");
-    nf8 = new DecimalFormat("00000000");
-    }
-
 }

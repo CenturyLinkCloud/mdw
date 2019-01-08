@@ -103,14 +103,16 @@ public class JsonUtil {
         return map;
     }
 
-    private static final DateFormat utcDateTime = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
-    static {
-        utcDateTime.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
+    private static final String utcDateTimeFormat = "MM-dd-yyyy HH:mm:ss";
+
     public static final String formatUtcDateTime(Date date) {
+        DateFormat utcDateTime = new SimpleDateFormat(utcDateTimeFormat);
+        utcDateTime.setTimeZone(TimeZone.getTimeZone("UTC"));
         return utcDateTime.format(date);
     }
     public static final Date parseUtcDateTime(String dt) throws java.text.ParseException {
+        DateFormat utcDateTime = new SimpleDateFormat(utcDateTimeFormat);
+        utcDateTime.setTimeZone(TimeZone.getTimeZone("UTC"));
         return utcDateTime.parse(dt);
     }
 

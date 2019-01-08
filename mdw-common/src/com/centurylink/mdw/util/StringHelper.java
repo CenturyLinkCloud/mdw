@@ -46,21 +46,10 @@ import com.centurylink.mdw.model.JsonObject;
  */
 public class StringHelper {
 
-    private static NumberFormat _f;
-    private static SimpleDateFormat _df;
-    private static SimpleDateFormat _serviceDateFormat;
-    private static SimpleDateFormat _filenameDateFormat;
-    private static SimpleDateFormat _isoDateFormat;
-
-    static {
-        _f = NumberFormat.getInstance();
-        _f.setMaximumFractionDigits(2);
-        _f.setMinimumFractionDigits(2);
-        _df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        _isoDateFormat=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        _serviceDateFormat = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
-        _filenameDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss");
-    }
+    private static final String _df = "yyyy-MM-dd HH:mm:ss";
+    private static final String _serviceDateFormat = "MM-dd-yyyy HH:mm:ss";
+    private static final String _filenameDateFormat = "yyyy-MM-dd'T'HH-mm-ss";
+    private static final String _isoDateFormat = "yyyy-MM-dd'T'HH:mm:ss";
 
     /**
      * Checks if a string is empty - null strings, "", and "  " are considered empty.
@@ -1439,24 +1428,24 @@ public class StringHelper {
     }
 
     public static String dateToString(Date d) {
-        return d==null?null:_df.format(d);
+        return d==null?null:new SimpleDateFormat(_df).format(d);
     }
 
     public static String dateToISOString(Date d){
-        return d==null?null:_isoDateFormat.format(d);
+        return d==null?null:new SimpleDateFormat(_isoDateFormat).format(d);
     }
 
     public static Date stringToDate(String s) {
         if (s==null) return null;
         try {
-            return _df.parse(s);
+            return new SimpleDateFormat(_df).parse(s);
         } catch (Exception e) {
             return null;
         }
     }
 
     public static String serviceDateToString(Date d) {
-        return d == null ? null : _serviceDateFormat.format(d);
+        return d == null ? null : new SimpleDateFormat(_serviceDateFormat).format(d);
     }
 
     public static Date serviceStringToDate(String s) {
@@ -1464,7 +1453,7 @@ public class StringHelper {
             return null;
 
         try {
-            return _serviceDateFormat.parse(s);
+            return new SimpleDateFormat(_serviceDateFormat).parse(s);
         }
         catch (Exception e) {
             return null;
@@ -1472,7 +1461,7 @@ public class StringHelper {
     }
 
     public static String filenameDateToString(Date d) {
-        return d == null ? null : _filenameDateFormat.format(d);
+        return d == null ? null : new SimpleDateFormat(_filenameDateFormat).format(d);
     }
 
     public static Date filenameStringToDate(String s) {
@@ -1480,7 +1469,7 @@ public class StringHelper {
             return null;
 
         try {
-            return _filenameDateFormat.parse(s);
+            return new SimpleDateFormat(_filenameDateFormat).parse(s);
         }
         catch (Exception e) {
             return null;
@@ -1576,16 +1565,17 @@ public class StringHelper {
             return row.length() - row.replace(",", "").length();
     }
 
-    private static DateFormat isoDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss:SSS'Z'");
-    static {
-        isoDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
+    private static final String isoDateFormat = "yyyy-MM-dd'T'HH:mm:ss:SSS'Z'";
 
     public static String formatIsoDate(Date date) {
-        return isoDateFormat.format(date);
+        DateFormat isoDate = new SimpleDateFormat(isoDateFormat);
+        isoDate.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return isoDate.format(date);
     }
     public static Date parseIsoDate(String iso) throws java.text.ParseException {
-        return isoDateFormat.parse(iso);
+        DateFormat isoDate = new SimpleDateFormat(isoDateFormat);
+        isoDate.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return isoDate.parse(iso);
     }
 
     public static class StringParseException extends RuntimeException {

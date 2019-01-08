@@ -43,13 +43,6 @@ import com.centurylink.mdw.model.workflow.WorkStatuses;
  */
 public class AggregateDataAccessVcs extends CommonDataAccess {
 
-    private static DateFormat dateFormat;
-    protected static DateFormat getDateFormat() {
-        if (dateFormat == null)
-            dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
-        return dateFormat;
-    }
-
     public List<ProcessCount> getTopThroughputProcessInstances(Query query) throws DataAccessException {
         try {
             StringBuilder sql = new StringBuilder();

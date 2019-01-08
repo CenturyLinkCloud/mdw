@@ -34,7 +34,6 @@ public class SoccomServer extends ServerSocket {
 
     private boolean shutdown;
     private Thread mainThread;
-    private SimpleDateFormat df;
     private PrintStream log;
     private int threadCount = 0;
     private Hashtable<String,ServerThread> threads;
@@ -46,14 +45,12 @@ public class SoccomServer extends ServerSocket {
     public SoccomServer(String port, PrintStream log) throws IOException {
         super(Integer.parseInt(port));
         this.log = log;
-        df = new SimpleDateFormat("HH:mm:ss");
         logline(null, "Server started on port " + port);
     }
 
     public SoccomServer(String port, String logname) throws IOException {
         super(Integer.parseInt(port));
         log = new PrintStream(new FileOutputStream(logname, true), true);
-        df = new SimpleDateFormat("HH:mm:ss");
         logline(null, "Server started on port " + port);
     }
 
@@ -70,9 +67,9 @@ public class SoccomServer extends ServerSocket {
     synchronized void logline(String tid, String msg) {
         if (log != null) {
             if (tid == null)
-                log.println(df.format(new Date()) + ": " + msg);
+                log.println(new SimpleDateFormat("HH:mm:ss").format(new Date()) + ": " + msg);
             else
-                log.println(df.format(new Date()) + " " + tid + ": " + msg);
+                log.println(new SimpleDateFormat("HH:mm:ss").format(new Date()) + " " + tid + ": " + msg);
         }
     }
 
