@@ -5,7 +5,6 @@ class SelectPop extends Component {
 
   constructor(...args) {
     super(...args);
-    this.state = { selected: this.props.selected };
     this.getLabel = this.getLabel.bind(this);
     this.getTitle = this.getTitle.bind(this);
     this.isSelected = this.isSelected.bind(this);
@@ -25,9 +24,7 @@ class SelectPop extends Component {
   }
 
   isSelected(top) {
-    // TODO
-    if (top)
-      return false;
+    return this.props.selected.find(sel => sel.id === top.id);
   }
 
   select(top) {

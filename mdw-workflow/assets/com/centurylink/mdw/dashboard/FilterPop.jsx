@@ -7,49 +7,33 @@ class FilterPop extends Component {
 
   constructor(...args) {
     super(...args);
-    this.state = {filters: this.props.filters};
     this.handleEndDateChange = this.handleEndDateChange.bind(this);
     this.handleStatusChange = this.handleStatusChange.bind(this);
     this.handleReset = this.handleReset.bind(this);
   }
 
   handleEndDateChange(endDate) {
-    this.setState({
-      filters: {
+    if (this.props.onChange) {
+      this.props.onChange({
         ending: endDate,
-        status: this.state.filters.status
-      }
-    }, () => {
-      if (this.props.onChange) {
-        this.props.onChange(this.state.filters);
-      }
-    });
+        status: this.props.status
+      });
+    }
   }
 
   handleStatusChange(status) {
-    this.setState({
-      filters: {
-        ending: this.state.filters.ending,
+    if (this.props.onChange) {
+      this.props.onChange({
+        ending: this.props.ending,
         status: status
-      }
-    }, () => {
-      if (this.props.onChange) {
-        this.props.onChange(this.state.filters);
-      }
-    });
+      });
+    }
   }
 
   handleReset() {
-    this.setState({
-      filters: {
-        ending: new Date(),
-        status: null
-      }
-    }, () => {
-      if (this.props.onChange) {
-        this.props.onChange(this.state.filters);
-      }
-    });
+    if (this.props.onReset) {
+      this.props.onReset();
+    }
     document.body.click();
   }
 
@@ -62,16 +46,16 @@ class FilterPop extends Component {
             <label className="mdw-label">Ending:</label>
             <div className="mdw-flex-item">
               <DatePicker id="end-date-picker"
-                date={this.state.filters.ending}
+                date={filters.ending}
                 onChange={this.handleEndDateChange} />
             </div>
           </div>
-          {this.props.statuses &&
+          {statuses &&
             <div className="mdw-vsm-indent">
               <label className="mdw-label">Status:</label>
               <Dropdown id="status-dropdown"
                 items={statuses}
-                selected={this.state.filters.status}
+                selected={filters.status}
                 onSelect={this.handleStatusChange} />
             </div>
           }

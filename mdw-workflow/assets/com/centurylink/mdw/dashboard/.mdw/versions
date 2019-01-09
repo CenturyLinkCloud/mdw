@@ -1,5 +1,5 @@
-ChartHeader.jsx=5
-DashboardChart.jsx=3
+ChartHeader.jsx=6
+DashboardChart.jsx=4
 FilterPop.jsx=2
 Heading.jsx=1
 Index.jsx=4
@@ -7,5 +7,5 @@ Nav.jsx=2
 Processes.jsx=7
 Requests.jsx=3
 Routes.jsx=4
-SelectPop.jsx=1
+SelectPop.jsx=2
 Temp.jsx=2
