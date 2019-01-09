@@ -38,7 +38,7 @@ start process("ManualTaskServices") {
 }''' ]
 }
 
-sleep 30
+sleep 20
 def taskInst = action task("AutoForm Task for Service Access") {
     outcome = "Claim"
 }
@@ -64,7 +64,7 @@ response.expected = asset("task-values-json-1.json").text
 
 // update some values through the REST API
 def values = [:]
-values["dateVar"] = "Fri Apr 01 15:36:00 MDT 2016"
+values["dateVar"] = Date.parse("MM-dd-yyyy HH:mm:ss", "04-01-2016 15:36:00")
 values["#{jaxbVar.elementOne}"] = "newElementOneValue"
 values["#{objectVar.taskmaster}"] = "dxoakes"
 values["docVar"] = "<empty/>"
