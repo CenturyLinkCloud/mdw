@@ -2,7 +2,7 @@ apply plugin: "eclipse-wtp"
 apply plugin: 'java'
 
 group = "${sourceGroup}"
-version = '1.0.01'
+version = '1.0.0'
 
 description = "{{project}}"
 
