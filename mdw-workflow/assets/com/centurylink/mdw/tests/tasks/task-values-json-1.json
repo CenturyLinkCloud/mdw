@@ -34,7 +34,7 @@
     "label": "Date",
     "sequence": 2,
     "type": "java.util.Date",
-    "value": "Fri Apr 01 14:36:00 MDT 2016"
+    "value": "Fri Apr 01 14:36:00 ${~.*} 2016"
   },
   "docVar": {
     "display": "Optional",
