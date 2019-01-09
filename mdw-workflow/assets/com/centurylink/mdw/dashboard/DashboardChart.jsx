@@ -1,15 +1,18 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
+import {Doughnut} from '../node/node_modules/react-chartjs-2';
 import ChartHeader from './ChartHeader.jsx';
 
 class DashboardChart extends Component {
 
   constructor(...args) {
     super(...args);
-    // constants (TODO: parameterize?)
+    // constants (TODO: parameterize)
     this.initialSelect = 5;
     this.maxTops = 50;
     this.defaultTimespan = 'Week';
+    this.chartColors = ['#3366CC','#DC3912','#FF9900','#109618','#990099','#3B3EAC','#0099C6','#DD4477','#66AA00','#B82E2E','#316395','#994499','#22AA99','#AAAA11','#6633CC','#E67300','#8B0707','#329262','#5574A6','#3B3EAC'];
+    this.chartOptions = {legend: {display: false, position: 'bottom'}, legendCallback: this.createLegend};
 
     this.state = {
       timespan: this.defaultTimespan,
@@ -31,6 +34,11 @@ class DashboardChart extends Component {
     this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleFilterReset = this.handleFilterReset.bind(this);
     this.retrieveTops = this.retrieveTops.bind(this);
+    this.retrieveData = this.retrieveData.bind(this);
+  }
+
+  createLegend(chart) { // eslint-disable-line no-unused-vars
+    return '<div>I AM LEGEND</div>';
   }
 
   // selected breakdown object from breakdownConfig
@@ -73,6 +81,12 @@ class DashboardChart extends Component {
         selected: selected ? selected : this.state.selected,
         filters: this.state.filters
       }, () => {
+        if (selected) {
+          this.previousSelected = this.state.selected;
+          if (this.refs.donut) {
+            this.refs.donut.chartInstance.generateLegend();
+          }
+        }
         resolve();
       });
     });
@@ -158,7 +172,10 @@ class DashboardChart extends Component {
       this.setTops(tops, tops.slice(0, this.initialSelect));
     })
     .then(() => {
-      this.previousSelected = this.state.selected;
+      this.retrieveData()
+      .then(data => {  // eslint-disable-line no-unused-vars
+        // console.log("DATA: " + JSON.stringify(data, null, 2));
+      });
     });
   }
 
@@ -195,7 +212,46 @@ class DashboardChart extends Component {
     });
   }
 
+  retrieveData() {
+    return new Promise(resolve => {
+      const breakdown = this.getBreakdown();
+      if (breakdown) {
+        // http://localhost:8080/mdw/services/Processes/instanceCounts?app=mdw-admin&startDate=2019-Jan-03&processIds=%5B129333521,258582064,256050789,197769568,194332112%5D
+        var dataUrl = this.context.serviceRoot + breakdown.data;
+        dataUrl += (breakdown.data.indexOf('?') >= 0 ? '&' : '?');
+        dataUrl += 'startDt=' + this.getStart().toISOString();
+        if (this.state.filters.status) {
+          dataUrl += '&status=' + this.state.filters.status;
+        }
+        if (breakdown.instancesParam) {
+          dataUrl += '&' + breakdown.instancesParam + '=%5B' + this.state.selected.map(sel => sel.id).join() + '%5D';
+        }
+        fetch(new Request(dataUrl, {
+          method: 'GET',
+          headers: { Accept: 'application/json'},
+          credentials: 'same-origin'
+        }))
+        .then(response => {
+          return response.json();
+        })
+        .then(data => {
+          resolve(data);
+        });
+      }
+      else {
+        resolve({});
+      }
+    });
+  }
+
   render() {
+    const donutData = {labels: [], datasets: [{data: [], backgroundColor: []}]};
+    this.state.selected.forEach((sel, i) => {
+      donutData.labels.push(sel.name);
+      donutData.datasets[0].data.push(sel.count);
+      donutData.datasets[0].backgroundColor.push(this.chartColors[i]);
+    });
+
     return (
       <div>
         <ChartHeader title={this.props.title}
@@ -215,7 +271,9 @@ class DashboardChart extends Component {
           onFilterChange={this.handleFilterChange}
           onFilterReset={this.handleFilterReset} />
         <div className="mdw-section">
-            CHART GOES HERE
+          <Doughnut ref="donut"
+            data={donutData}
+            options={this.chartOptions} />
         </div>
       </div>
     );

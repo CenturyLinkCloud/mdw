@@ -23,13 +23,13 @@ class Processes extends Component {
     ];
 
     const breakdownConfig = {
-      instanceCounts: '/services/Processes/instanceCounts',
       breakdowns: [
         {
           name: 'Master',
           selectField: 'id',
           selectLabel: 'Master Processes',
           throughput: '/Processes/topThroughput?master=true', // returns top asset InstanceCounts
+          data: '/Processes/instanceCounts',
           instancesParam: 'processIds'  // service parameter for selected instances
         },
         {
@@ -37,6 +37,7 @@ class Processes extends Component {
           selectField: 'id',
           selectLabel: 'Processes',
           throughput: '/Processes/topThroughput',
+          data: '/Processes/instanceCounts',
           instancesParam: 'processIds'
         },
         {
@@ -44,6 +45,7 @@ class Processes extends Component {
           selectField: 'status',
           selectLabel: 'Statuses',
           throughput: statuses,
+          data: '/Processes/instanceCounts',
           instancesParam: 'statuses'
         }
       ]
