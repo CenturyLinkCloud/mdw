@@ -526,8 +526,16 @@ public class ApplicationContext {
          return System.getenv("VCAP_APPLICATION") != null;
     }
 
+    private static Boolean springBoot = null;
     public static boolean isSpringBoot() {
-        return "org.springframework.boot.loader".equals(System.getProperty("java.protocol.handler.pkgs"));
+        if (springBoot == null) {
+            String protocolHandlerPkgs = System.getProperty("java.protocol.handler.pkgs");
+            if (protocolHandlerPkgs != null && protocolHandlerPkgs.contains("org.springframework.boot.loader"))
+                springBoot = Boolean.TRUE;
+            else
+                springBoot = Boolean.FALSE;
+        }
+        return springBoot;
     }
 
     private static File bootJar;
