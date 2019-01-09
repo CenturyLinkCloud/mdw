@@ -6,16 +6,22 @@ class HeaderPopButton extends Component {
 
   constructor(...args) {
     super(...args);
+    this.hide = this.hide.bind(this);
+  }
+
+  hide() {
+    this.refs.overlayTriggerRef.hide();
   }
 
   render() {
     const left = this.props.glyph ? '4px' : null;
-    const rootClose = this.props.rootClose !== false ? null : true;
+    const rootClose = this.props.rootClose !== false ? true : null;
     return (
       <OverlayTrigger trigger="click"
         placement="left"
         overlay={this.props.popover}
-        rootClose={rootClose}>
+        rootClose={rootClose}
+        ref="overlayTriggerRef">
         <Button bsStyle="primary" className="mdw-btn" style={{marginLeft:'4px'}}>
           {this.props.glyph &&
             <Glyphicon glyph={this.props.glyph} />

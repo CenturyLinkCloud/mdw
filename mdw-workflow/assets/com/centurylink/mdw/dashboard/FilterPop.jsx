@@ -16,7 +16,7 @@ class FilterPop extends Component {
     if (this.props.onChange) {
       this.props.onChange({
         ending: endDate,
-        status: this.props.status
+        status: this.props.filters.status
       });
     }
   }
@@ -24,7 +24,7 @@ class FilterPop extends Component {
   handleStatusChange(status) {
     if (this.props.onChange) {
       this.props.onChange({
-        ending: this.props.ending,
+        ending: this.props.filters.ending,
         status: status
       });
     }

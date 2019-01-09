@@ -855,11 +855,28 @@
   color: #333;
   white-space: nowrap;
 }
+.mdw-popover-menu > li span {
+  display: inline-block;
+  outline: none;
+  padding: 3px 10px;
+  clear: both;
+  font-weight: normal;
+  line-height: 1.1;
+  white-space: nowrap;
+  width: calc(100% - 5px);
+}
 .mdw-popover-menu > li a:hover {
   color: #262626;
   text-decoration: none;
   background-color: #bbdefb;
   border-radius: 3px;
+}
+.mdw-popover-menu > li span:hover {
+  color: #262626;
+  text-decoration: none;
+  background-color: #bbdefb;
+  border-radius: 3px;
+  cursor: pointer;
 }
 .mdw-bordered-menu {
   border: 1px solid #ccc;

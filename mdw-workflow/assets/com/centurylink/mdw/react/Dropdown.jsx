@@ -6,12 +6,10 @@ class Dropdown extends Component {
 
   constructor(...args) {
     super(...args);
-    this.state = { selected: this.props.selected || ''};
     this.handleSelect = this.handleSelect.bind(this);
   }
 
   handleSelect(eventKey) {
-    this.setState({ selected: eventKey });
     if (this.props.onSelect) {
       this.props.onSelect(eventKey, this.props.id);
     }
@@ -25,7 +23,7 @@ class Dropdown extends Component {
             this.props.items.map((item, i) => {
               return (
                 <MenuItem key={i} eventKey={item}
-                  active={this.state.selected === item}
+                  active={this.props.selected === item}
                   onClick={() => this.handleSelect(item)}>
                   {item}
                 </MenuItem>
@@ -42,7 +40,7 @@ class Dropdown extends Component {
         <div className="mdw-inner-addon mdw-right-addon">
           <i className="glyphicon glyphicon-chevron-down"></i>
           <input id={this.props.id} type="text" className="form-control mdw-inline mdw-dropfilter"
-            value={this.state.selected} readOnly />
+            value={this.props.selected} readOnly />
         </div>
       </OverlayTrigger>
     );

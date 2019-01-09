@@ -6,12 +6,10 @@ class HeaderDropdown extends Component {
 
   constructor(...args) {
     super(...args);
-    this.state = { selected: this.props.selected };
     this.handleSelect = this.handleSelect.bind(this);
   }
 
   handleSelect(eventKey) {
-    this.setState({ selected: eventKey });
     if (this.props.onSelect) {
       this.props.onSelect(eventKey, this.props.id);
     }
@@ -27,7 +25,7 @@ class HeaderDropdown extends Component {
               this.props.items.map((item, i) => {
                 return (
                   <MenuItem key={i} eventKey={item}
-                    active={this.state.selected === item}>
+                    active={this.props.selected === item}>
                     {item}
                   </MenuItem>
                 );
@@ -35,7 +33,7 @@ class HeaderDropdown extends Component {
             }
           </Dropdown.Menu>
           <Dropdown.Toggle noCaret={true} style={{padding:'5px',width:'140px',textAlign:'left'}}>
-            <span style={{position:'relative',top:'-3px'}}>{this.state.selected}</span>
+            <span style={{position:'relative',top:'-3px'}}>{this.props.selected}</span>
             <Glyphicon glyph="chevron-down" style={{color:'#9e9e9e',float:'right'}} />
           </Dropdown.Toggle>
         </Dropdown>

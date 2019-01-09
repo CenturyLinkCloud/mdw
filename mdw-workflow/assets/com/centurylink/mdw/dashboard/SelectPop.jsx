@@ -10,17 +10,26 @@ class SelectPop extends Component {
     this.isSelected = this.isSelected.bind(this);
     this.select = this.select.bind(this);
     this.deselect = this.deselect.bind(this);
+    this.cancel = this.cancel.bind(this);
     this.apply = this.apply.bind(this);
   }
 
   getLabel(top) {
-    // TODO
-    return top.name;
+    var label = top.name;
+    if (top.count) {
+      label += ' (' + top.count + ')';
+    }
+    return label;
   }
 
   getTitle(top) {
-    // TODO
-    return top.name;
+    if (top.packageName) {
+      var title = top.packageName + '/' + top.name;
+      if (top.version) {
+        title += ' v' + top.version;
+      }
+      return title;
+    }
   }
 
   isSelected(top) {
@@ -28,47 +37,59 @@ class SelectPop extends Component {
   }
 
   select(top) {
-    console.log("SELECT: " + JSON.stringify(top, null, 2)); // eslint-disable-line no-console
+    if (this.props.onSelect) {
+      this.props.onSelect(top, true);
+    }
   }
 
   deselect(top) {
-    console.log("DESELECT: " + JSON.stringify(top, null, 2)); // eslint-disable-line no-console
+    if (this.props.onSelect) {
+      this.props.onSelect(top, false);
+    }
+  }
+
+  cancel() {
+    if (this.props.onCancel) {
+      this.props.onCancel();
+    }
   }
 
   apply() {
-    console.log("APPLY"); // eslint-disable-line no-console
+    if (this.props.onApply) {
+      this.props.onApply();
+    }
   }
 
   render() {
-    const {tops, ...popProps} = this.props;
+    const {tops, onCancel, onApply, ...popProps} = this.props; // eslint-disable-line no-unused-vars
     return (
       <Popover {...popProps} id="select-pop">
         <div>
           <div>
             <label className="mdw-label">{this.props.label}:</label>
             <div className="mdw-bordered-menu" style={{display:'inline-flex',overflowX:'auto'}}>
-              <ul className="dropdown-menu mdw-popover-menu mdw-check-menu">
+              <ul className="dropdown-menu mdw-popover-menu mdw-check-menu" style={{marginRight:'10px'}}>
               {
                 tops.map((top, i) => {
                   const selected = this.isSelected(top);
                   return (
                     <li key={i}>
                       {selected &&
-                        <div className="mdw-checked">
+                        <div style={{whiteSpace:'nowrap'}}>
                           <i className="glyphicon glyphicon-ok"></i>
-                          <a className="mdw-drop-selected" href=""
+                          <span className="mdw-drop-selected" style={{marginLeft:'5px'}}
                             title={this.getTitle(top)}
                             onClick={() => this.deselect(top)}>
                             {this.getLabel(top)}
-                          </a>
+                          </span>
                         </div>
                       }
                       {!selected &&
-                        <a href=""
+                        <span style={{marginLeft:'18px'}}
                           title={this.getTitle(top)}
                           onClick={() => this.select(top)}>
                           {this.getLabel(top)}
-                        </a>
+                        </span>
                       }
                     </li>
                   );
@@ -83,7 +104,7 @@ class SelectPop extends Component {
               Apply
             </button>
             <button type="button" className="btn mdw-btn mdw-cancel-btn mdw-float-right"
-              onClick={() => document.body.click()}>
+              onClick={this.cancel}>
               Cancel
             </button>
           </div>
