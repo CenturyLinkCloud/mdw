@@ -38,7 +38,7 @@ start process("ManualTaskServices") {
 }''' ]
 }
 
-sleep 30
+sleep 20
 def taskInst = action task("AutoForm Task for Service Access") {
     outcome = "Claim"
 }
