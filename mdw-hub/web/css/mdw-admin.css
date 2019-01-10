@@ -1430,7 +1430,7 @@
 /* chart styles */
 .mdw-chart-legend {
   list-style-type: none;
-  margin-top: 5px;
+  margin: 15px 0 0 -50px;
   text-align: center;
   padding-left: 0;  
 }
@@ -1440,12 +1440,11 @@
 }
 .mdw-chart-legend-icon {
   display: block;
-  left: 0;
-  top: 0;
-  width: 20px;
-  height: 20px;
+  margin-top: 1px;
+  width: 30px;
+  height: 16px;
   border: 2px solid;
-  border-radius: 1px;
+  border-radius: 2px;
 }
 .mdw-chart-legend-text {
   display: inline-block;

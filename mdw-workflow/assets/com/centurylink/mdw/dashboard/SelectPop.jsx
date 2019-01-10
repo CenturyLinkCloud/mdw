@@ -5,8 +5,6 @@ class SelectPop extends Component {
 
   constructor(...args) {
     super(...args);
-    this.getLabel = this.getLabel.bind(this);
-    this.getTitle = this.getTitle.bind(this);
     this.isSelected = this.isSelected.bind(this);
     this.select = this.select.bind(this);
     this.deselect = this.deselect.bind(this);

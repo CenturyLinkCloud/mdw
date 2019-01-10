@@ -30,6 +30,7 @@ import java.util.Map;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.request.RequestCount;
 import com.centurylink.mdw.model.task.TaskCount;
@@ -164,8 +165,9 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
         Date start = instant == null ? query.getDateFilter("startDate") : Date.from(instant);
         if (start == null)
             throw new DataAccessException("Parameter startDate is required");
+        // adjust to db time
+        start = new Date(start.getTime() + DatabaseAccess.getDbTimeDiff());
         String startStr = getDateFormat().format(start);
-
 
         StringBuilder where = new StringBuilder();
         if (db.isMySQL())

@@ -14,7 +14,6 @@ class DashboardChart extends Component {
     this.defaultTimespan = 'Week';
     this.chartColors = ['#3366CC','#DC3912','#FF9900','#109618','#990099','#3B3EAC','#0099C6','#DD4477','#66AA00','#B82E2E','#316395','#994499','#22AA99','#AAAA11','#6633CC','#E67300','#8B0707','#329262','#5574A6','#3B3EAC'];
     this.chartOptions = {legend: {display: false, position: 'bottom'}, legendCallback: this.createLegend};
-    this.colors = {}; // relates selected ids to color
 
     this.state = {
       timespan: this.defaultTimespan,
@@ -38,10 +37,6 @@ class DashboardChart extends Component {
     this.handleFilterReset = this.handleFilterReset.bind(this);
     this.retrieveTops = this.retrieveTops.bind(this);
     this.retrieveData = this.retrieveData.bind(this);
-  }
-
-  createLegend(chart) { // eslint-disable-line no-unused-vars
-    return '<div>I AM LEGEND</div>';
   }
 
   // selected breakdown object from breakdownConfig
@@ -196,56 +191,11 @@ class DashboardChart extends Component {
       donutData.labels.push(sel.name);
       donutData.datasets[0].data.push(sel.count);
       donutData.datasets[0].backgroundColor.push(this.chartColors[i]);
+      // these are added to chart for access by createLegend()
+      donutData.mdwSelected = this.state.selected;
+      donutData.mdwTops = this.state.tops;
     }, this);
     return donutData;
-  }
-
-  getLineData() {
-    const lineData = {labels: [], datasets: []};
-    var datasets = {}; // id to dataset
-    this.state.selected.forEach((sel, i) => {
-      var dataset = {label: sel.name, borderColor: this.chartColors[i], data: [], fill: false};
-      datasets[sel.id] = dataset;
-      lineData.datasets.push(dataset);
-      Object.keys(this.state.data).forEach(key => {
-        if (i === 0) {
-          lineData.labels.push(key);
-        }
-        const counts = this.state.data[key];
-        const selCount = counts.find(ct => ct.id === sel.id);
-        dataset.data.push(selCount ? selCount.count : 0);
-      }, this);
-    }, this);
-    return lineData;
-  }
-
-  // updates state and then returns a promise
-  retrieveTops() {
-    return new Promise(resolve => {
-      const breakdown = this.getBreakdown();
-      if (breakdown) {
-        var topsUrl = this.context.serviceRoot + breakdown.throughput;
-        topsUrl += (breakdown.throughput.indexOf('?') >= 0 ? '&' : '?');
-        topsUrl += 'max=' + this.maxTops + '&startDt=' + this.getStart().toISOString();
-        if (this.state.filters.status) {
-          topsUrl += '&status=' + this.state.filters.status;
-        }
-        fetch(new Request(topsUrl, {
-          method: 'GET',
-          headers: { Accept: 'application/json'},
-          credentials: 'same-origin'
-        }))
-        .then(response => {
-          return response.json();
-        })
-        .then(tops => {
-          resolve(tops);
-        });
-      }
-      else {
-        resolve([]);
-      }
-    });
   }
 
   retrieveData() {
@@ -280,11 +230,105 @@ class DashboardChart extends Component {
     });
   }
 
+  getLineData() {
+    const lineData = {labels: [], datasets: []};
+    var datasets = {}; // id to dataset
+    this.state.selected.forEach((sel, i) => {
+      var dataset = {label: sel.name, borderColor: this.chartColors[i], data: [], fill: false};
+      datasets[sel.id] = dataset;
+      lineData.datasets.push(dataset);
+      Object.keys(this.state.data).forEach(key => {
+        if (i === 0) {
+          lineData.labels.push(key);
+        }
+        const counts = this.state.data[key];
+        const selCount = counts.find(ct => ct.id === sel.id);
+        dataset.data.push(selCount ? selCount.count : 0);
+      }, this);
+    }, this);
+    return lineData;
+  }
+
+  createLegend(chart) {
+    var text = [];
+    var label;
+    var title;
+    text.push('<ul class="mdw-chart-legend">');
+    if (chart.data.mdwSelected) {
+      for (var i = 0; i < chart.data.mdwSelected.length; i++) {
+        var sel = chart.data.mdwSelected[i];
+        let top = chart.data.mdwTops.find(t => t.id === sel.id);
+        if (top) {
+          label = top.name;
+          if (top.count) {
+            label += ' (' + top.count + ')';
+          }
+          if (top.packageName) {
+            title = top.packageName + '/' + top.name;
+            if (top.version) {
+              title += ' v' + top.version;
+            }
+          }
+        }
+        if (label) {
+          text.push('  <li>');
+          text.push('    <span class="mdw-chart-legend-icon" style="background-color:' +
+              chart.data.datasets[0].backgroundColor[i] + ';border-color:' + chart.data.datasets[0].backgroundColor[i] + '"></span>');
+          if (title) {
+            text.push('    <span class="mdw-chart-legend-text" title="' + title + '">' + label + '</span>');
+          }
+          else {
+            text.push('    <span class="mdw-chart-legend-text">' + label + '</span>');
+          }
+          text.push('  </li>');
+        }
+        else {
+          // total = true;
+          break;
+        }
+      }
+      // if (total) {
+      //   text.push('  <li>');
+      //   text.push('    <span class="mdw-chart-legend-text"> Total (' + chart.data.mdwTotal +') </span>');
+      //   text.push('  </li>');
+      // }
+    }
+    text.push('</ul>');
+
+    return text.join('\n  ');
+  }
+
+  // updates state and then returns a promise
+  retrieveTops() {
+    return new Promise(resolve => {
+      const breakdown = this.getBreakdown();
+      if (breakdown) {
+        var topsUrl = this.context.serviceRoot + breakdown.throughput;
+        topsUrl += (breakdown.throughput.indexOf('?') >= 0 ? '&' : '?');
+        topsUrl += 'max=' + this.maxTops + '&startDt=' + this.getStart().toISOString();
+        if (this.state.filters.status) {
+          topsUrl += '&status=' + this.state.filters.status;
+        }
+        fetch(new Request(topsUrl, {
+          method: 'GET',
+          headers: { Accept: 'application/json'},
+          credentials: 'same-origin'
+        }))
+        .then(response => {
+          return response.json();
+        })
+        .then(tops => {
+          resolve(tops);
+        });
+      }
+      else {
+        resolve([]);
+      }
+    });
+  }
+
   render() {
     const htmlParser = new HtmlToReactParser();
-    this.colors = {};
-    this.state.selected.forEach((sel, i) => this.colors[sel.id] = this.chartColors[i], this);
-
     return (
       <div>
         <ChartHeader title={this.props.title}
@@ -307,13 +351,13 @@ class DashboardChart extends Component {
           <div>
             <Doughnut ref="donut"
               data={this.getDonutData()}
-              options={this.chartOptions} />
+              options={this.chartOptions}
+              width={250} height={250}/>
               {this.refs.donut &&
                 htmlParser.parse(this.refs.donut.chartInstance.generateLegend())
               }
           </div>
-          <div>
-            Main Chart Here
+          <div style={{height:'100%',width:'100%'}}>
             <Line data={this.getLineData()} options={this.chartOptions} />
           </div>
         </div>
