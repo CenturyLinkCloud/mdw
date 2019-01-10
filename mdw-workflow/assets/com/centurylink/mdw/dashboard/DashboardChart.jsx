@@ -1,6 +1,7 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
-import {Doughnut} from '../node/node_modules/react-chartjs-2';
+import {Doughnut, Line} from '../node/node_modules/react-chartjs-2';
+import { Parser as HtmlToReactParser } from '../node/node_modules/html-to-react';
 import ChartHeader from './ChartHeader.jsx';
 
 class DashboardChart extends Component {
@@ -35,6 +36,8 @@ class DashboardChart extends Component {
     this.handleFilterReset = this.handleFilterReset.bind(this);
     this.retrieveTops = this.retrieveTops.bind(this);
     this.retrieveData = this.retrieveData.bind(this);
+    this.getDonutData = this.getDonutData.bind(this);
+    this.getLineData = this.getLineData.bind(this);
   }
 
   createLegend(chart) { // eslint-disable-line no-unused-vars
@@ -83,9 +86,6 @@ class DashboardChart extends Component {
       }, () => {
         if (selected) {
           this.previousSelected = this.state.selected;
-          if (this.refs.donut) {
-            this.refs.donut.chartInstance.generateLegend();
-          }
         }
         resolve();
       });
@@ -179,8 +179,19 @@ class DashboardChart extends Component {
     });
   }
 
-  redraw() {
+  getDonutData() {
+    const donutData = {labels: [], datasets: [{data: [], backgroundColor: []}]};
+    this.state.selected.forEach((sel, i) => {
+      donutData.labels.push(sel.name);
+      donutData.datasets[0].data.push(sel.count);
+      donutData.datasets[0].backgroundColor.push(this.chartColors[i]);
+    });
+    return donutData;
+  }
 
+  getLineData() {
+    const lineData = {labels: [], datasets: []};
+    return lineData;
   }
 
   // updates state and then returns a promise
@@ -245,13 +256,7 @@ class DashboardChart extends Component {
   }
 
   render() {
-    const donutData = {labels: [], datasets: [{data: [], backgroundColor: []}]};
-    this.state.selected.forEach((sel, i) => {
-      donutData.labels.push(sel.name);
-      donutData.datasets[0].data.push(sel.count);
-      donutData.datasets[0].backgroundColor.push(this.chartColors[i]);
-    });
-
+    const htmlParser = new HtmlToReactParser();
     return (
       <div>
         <ChartHeader title={this.props.title}
@@ -270,10 +275,19 @@ class DashboardChart extends Component {
           onSelectApply={this.handleSelectApply}
           onFilterChange={this.handleFilterChange}
           onFilterReset={this.handleFilterReset} />
-        <div className="mdw-section">
-          <Doughnut ref="donut"
-            data={donutData}
-            options={this.chartOptions} />
+        <div className="mdw-section" style={{display:'flex'}}>
+          <div>
+            <Doughnut ref="donut"
+              data={this.getDonutData()}
+              options={this.chartOptions} />
+              {this.refs.donut &&
+                htmlParser.parse(this.refs.donut.chartInstance.generateLegend())
+              }
+          </div>
+          <div>
+            Main Chart Here
+            <Line data={this.getLineData()} options={this.chartOptions} />
+          </div>
         </div>
       </div>
     );
