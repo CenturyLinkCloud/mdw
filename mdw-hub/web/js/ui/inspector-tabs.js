@@ -370,7 +370,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
                 subprocs.forEach(function(subproc) {
                   var url = mdw.roots.services + '/services/Processes?definition=' + encodeURIComponent(subproc) + '&owner=PROCESS_INSTANCE&ownerId=';
                   runtimeInfo.forEach(function(instance) {
-                    gets.push($http.get(url + instance.processInstanceId));
+                    gets.push($http.get(url + instance.processInstanceId + '&secondaryOwnerId=' + instance.id));
                   });
                 });
               }
