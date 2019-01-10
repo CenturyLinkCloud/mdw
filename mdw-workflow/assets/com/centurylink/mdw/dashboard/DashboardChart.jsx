@@ -14,13 +14,15 @@ class DashboardChart extends Component {
     this.defaultTimespan = 'Week';
     this.chartColors = ['#3366CC','#DC3912','#FF9900','#109618','#990099','#3B3EAC','#0099C6','#DD4477','#66AA00','#B82E2E','#316395','#994499','#22AA99','#AAAA11','#6633CC','#E67300','#8B0707','#329262','#5574A6','#3B3EAC'];
     this.chartOptions = {legend: {display: false, position: 'bottom'}, legendCallback: this.createLegend};
+    this.colors = {}; // relates selected ids to color
 
     this.state = {
       timespan: this.defaultTimespan,
       breakdown: this.props.breakdownConfig.breakdowns[0].name,
       tops: [],
       selected: [],
-      filters: {ending: this.getDefaultEnd(), status: ''}
+      filters: {ending: this.getDefaultEnd(), status: ''},
+      data: {}
     };
     this.getBreakdown = this.getBreakdown.bind(this);
     this.getDefaultEnd = this.getDefaultEnd.bind(this);
@@ -36,8 +38,6 @@ class DashboardChart extends Component {
     this.handleFilterReset = this.handleFilterReset.bind(this);
     this.retrieveTops = this.retrieveTops.bind(this);
     this.retrieveData = this.retrieveData.bind(this);
-    this.getDonutData = this.getDonutData.bind(this);
-    this.getLineData = this.getLineData.bind(this);
   }
 
   createLegend(chart) { // eslint-disable-line no-unused-vars
@@ -82,7 +82,8 @@ class DashboardChart extends Component {
         breakdown: this.state.breakdown,
         tops: tops,
         selected: selected ? selected : this.state.selected,
-        filters: this.state.filters
+        filters: this.state.filters,
+        data: {}
       }, () => {
         if (selected) {
           this.previousSelected = this.state.selected;
@@ -99,7 +100,8 @@ class DashboardChart extends Component {
         breakdown: this.state.breakdown,
         tops: this.state.tops,
         selected: selected,
-        filters: this.state.filters
+        filters: this.state.filters,
+        data: {}
       }, () => {
         resolve();
       });
@@ -112,7 +114,8 @@ class DashboardChart extends Component {
       breakdown: this.state.breakdown,
       tops: this.state.tops,
       selected: this.state.selected,
-      filters: this.state.filters
+      filters: this.state.filters,
+      data: {}
     });
   }
 
@@ -122,11 +125,11 @@ class DashboardChart extends Component {
       breakdown: breakdown,
       tops: this.state.tops,
       selected: this.state.selected,
-      filters: this.state.filters
+      filters: this.state.filters,
+      data: {}
     });
   }
 
-  // does not redraw charts
   handleTopSelect(top, isSelected) {
     var selected = this.state.selected.slice(0);
     if (isSelected) {
@@ -155,7 +158,8 @@ class DashboardChart extends Component {
       breakdown: this.state.breakdown,
       tops: this.state.tops,
       selected: this.state.selected,
-      filters: filters
+      filters: filters,
+      data: {}
     });
   }
 
@@ -173,8 +177,15 @@ class DashboardChart extends Component {
     })
     .then(() => {
       this.retrieveData()
-      .then(data => {  // eslint-disable-line no-unused-vars
-        // console.log("DATA: " + JSON.stringify(data, null, 2));
+      .then(data => {
+        this.setState({
+          timespan: this.state.timespan,
+          breakdown: this.state.breakdown,
+          tops: this.state.tops,
+          selected: this.state.selected,
+          filters: this.state.filters,
+          data: data
+        });
       });
     });
   }
@@ -185,12 +196,26 @@ class DashboardChart extends Component {
       donutData.labels.push(sel.name);
       donutData.datasets[0].data.push(sel.count);
       donutData.datasets[0].backgroundColor.push(this.chartColors[i]);
-    });
+    }, this);
     return donutData;
   }
 
   getLineData() {
     const lineData = {labels: [], datasets: []};
+    var datasets = {}; // id to dataset
+    this.state.selected.forEach((sel, i) => {
+      var dataset = {label: sel.name, borderColor: this.chartColors[i], data: [], fill: false};
+      datasets[sel.id] = dataset;
+      lineData.datasets.push(dataset);
+      Object.keys(this.state.data).forEach(key => {
+        if (i === 0) {
+          lineData.labels.push(key);
+        }
+        const counts = this.state.data[key];
+        const selCount = counts.find(ct => ct.id === sel.id);
+        dataset.data.push(selCount ? selCount.count : 0);
+      }, this);
+    }, this);
     return lineData;
   }
 
@@ -257,6 +282,9 @@ class DashboardChart extends Component {
 
   render() {
     const htmlParser = new HtmlToReactParser();
+    this.colors = {};
+    this.state.selected.forEach((sel, i) => this.colors[sel.id] = this.chartColors[i], this);
+
     return (
       <div>
         <ChartHeader title={this.props.title}
