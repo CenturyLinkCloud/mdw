@@ -134,6 +134,14 @@ public class WorkflowDataAccess extends CommonDataAccess {
                 sb.append(")\n");
             }
         }
+
+        // SecondaryOwnerId
+        long secondaryOwnerId = query.getLongFilter("secondaryOwnerId");
+        if (secondaryOwnerId > 0) {
+            sb.append(" and pi.secondary_owner_id =");
+            sb.append(secondaryOwnerId).append("\n");
+        }
+
         // activityInstanceId
         long activityInstanceId = query.getLongFilter("activityInstanceId");
         if (activityInstanceId > 0) {
