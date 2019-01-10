@@ -531,6 +531,14 @@ public class EngineDataAccessCache implements EngineDataAccess {
         }
     }
 
+    @Override
+    public List<ProcessInstance> getProcessInstancesByMasterRequestId(String masterRequestId) throws SQLException {
+        if (edadb != null)
+            return edadb.getProcessInstancesByMasterRequestId(masterRequestId, null);
+
+        return null;
+    }
+
     public synchronized EventInstance lockEventInstance(String eventName) throws SQLException {
         if (cache_event==CACHE_ONLY) {
             return eventInstCache.get(eventName);

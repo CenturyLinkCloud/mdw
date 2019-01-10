@@ -1205,6 +1205,11 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         throw new SQLException("Process instance does not exist: " + procInstId);
     }
 
+    @Override
+    public List<ProcessInstance> getProcessInstancesByMasterRequestId(String masterRequestId) throws SQLException {
+        return getProcessInstancesByMasterRequestId(masterRequestId, null);
+    }
+
     public void updateActivityInstanceEndTime(Long actInstId, Date endtime) throws SQLException {
         String query = "update ACTIVITY_INSTANCE set END_DT=? where ACTIVITY_INSTANCE_ID=?";
         Object[] args = new Object[2];

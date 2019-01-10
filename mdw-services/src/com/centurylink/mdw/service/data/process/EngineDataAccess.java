@@ -61,6 +61,9 @@ public interface EngineDataAccess {
     Integer lockProcessInstance(Long procInstId)
     throws SQLException;
 
+    List<ProcessInstance> getProcessInstancesByMasterRequestId(String masterRequestId)
+    throws SQLException;
+
     /////// activity methods
 
     ActivityInstance getActivityInstance(Long actInstId)
