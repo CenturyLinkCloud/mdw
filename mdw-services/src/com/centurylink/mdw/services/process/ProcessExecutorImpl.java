@@ -81,15 +81,14 @@ import com.centurylink.mdw.util.timer.TrackingTimer;
 
 class ProcessExecutorImpl {
 
-    protected static StandardLogger logger;
+    protected static StandardLogger logger = LoggerUtil.getStandardLogger();
+    private static boolean uniqueMasterRequestId = PropertyManager.getBooleanProperty("mdw.process.uniqueMasterRequestId", false);
 
     protected EngineDataAccess edao;
     private InternalMessenger internalMessenger;
     private final boolean inService;
 
-    ProcessExecutorImpl(EngineDataAccess edao,
-            InternalMessenger internalMessenger, boolean forServiceProcess) {
-        logger = LoggerUtil.getStandardLogger();
+    ProcessExecutorImpl(EngineDataAccess edao, InternalMessenger internalMessenger, boolean forServiceProcess) {
         this.edao = edao;
         inService = forServiceProcess;
         this.internalMessenger = internalMessenger;
@@ -303,7 +302,7 @@ class ProcessExecutorImpl {
         ProcessInstance pi;
         try {
             Process processVO;
-            if (ownerType.equals(OwnerType.MAIN_PROCESS_INSTANCE)) {
+            if (OwnerType.MAIN_PROCESS_INSTANCE.equals(ownerType)) {
                 ProcessInstance parentPi = getDataAccess().getProcessInstance(ownerId);
                 Process parentProcdef = ProcessCache.getProcess(parentPi.getProcessId());
                 processVO = parentProcdef.getSubProcessVO(processId);
@@ -313,6 +312,15 @@ class ProcessExecutorImpl {
                     comment += "|HasInstanceDef|" + parentPi.getProcessInstDefId();
                 pi.setComment(comment);
             } else {
+                if (uniqueMasterRequestId && !(OwnerType.PROCESS_INSTANCE.equals(ownerType) || OwnerType.ERROR.equals(ownerType))) {
+                    // Check for uniqueness of master request id before creating top level process instance, if enabled
+                    List<ProcessInstance> list = edao.getProcessInstancesByMasterRequestId(masterRequestId);
+                    if (list != null && list.size() > 0) {
+                        String msg = "Could not launch process instance for " + (label != null ? label : template) + " because Master Request ID " + masterRequestId + " is not unique";
+                        logger.error(msg);
+                        throw new ProcessException(msg);
+                    }
+                }
                 processVO = ProcessCache.getProcess(processId);
                 pi = new ProcessInstance(processId, processVO.getName());
             }
