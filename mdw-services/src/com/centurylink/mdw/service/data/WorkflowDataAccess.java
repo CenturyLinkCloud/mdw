@@ -133,8 +133,8 @@ public class WorkflowDataAccess extends CommonDataAccess {
         // SecondaryOwnerId
         long secondaryOwnerId = query.getLongFilter("secondaryOwnerId");
         if (secondaryOwnerId > 0) {
-            sb.append(" and pi.secondary_owner_id =");
-            sb.append(secondaryOwnerId).append("\n");
+            sb.append(" and (pi.secondary_owner_id is null or pi.secondary_owner_id = ");
+            sb.append(secondaryOwnerId).append(")\n");
         }
 
         // activityInstanceId

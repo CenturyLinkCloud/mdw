@@ -43,12 +43,6 @@ title: MDW Configuration
       configs:
       - myconfig.yaml
 
-    # clustered server instances (required -- at least one)
-    servers:
-      localhost:
-        ports:
-        - 8080
-
     # container settings (leave these properties as shown except for unusual scenarios)    
     container:
       datasource.provider: Tomcat  # required
@@ -205,6 +199,7 @@ title: MDW Configuration
 
     process:
       launch.delay: 3  # (seconds) default=2
+      uniqueMasterRequestId: true  # default=false
 
     # https://centurylinkcloud.github.io/mdw/docs/guides/tuning/#performance-levels
     performance:
