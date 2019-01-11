@@ -17,7 +17,6 @@ package com.centurylink.mdw.service.data.process;
 
 import com.centurylink.mdw.cache.impl.VariableTypeCache;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.TableSequenceName;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
@@ -56,11 +55,6 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         _ExternalEventInstanceQueryMap.put("processId", "pi.PROCESS_ID");
         _ExternalEventInstanceQueryMap.put("processInstanceStatus", "pi.STATUS_CD");
         _ExternalEventInstanceQueryMap.put("masterRequestId", "pi.MASTER_REQUEST_ID");
-    }
-
-    public EngineDataAccessDB() {
-        super(new DatabaseAccess(null), DataAccess.currentSchemaVersion,
-                DataAccess.supportedSchemaVersion);
     }
 
     public DatabaseAccess getDatabaseAccess() {

@@ -29,7 +29,7 @@ class Processes extends Component {
           selectField: 'id',
           selectLabel: 'Master Processes',
           throughput: '/Processes/topThroughput?master=true', // returns top asset InstanceCounts
-          data: '/Processes/instanceCounts',
+          data: '/Processes/instanceCounts?master=true',
           instancesParam: 'processIds'  // service parameter for selected instances
         },
         {

@@ -95,13 +95,6 @@ public class TaskDataAccess extends CommonDataAccess {
         return deep ? TASK_INSTANCE_SELECT : TASK_INSTANCE_SELECT_SHALLOW;
     }
 
-    public TaskDataAccess() {
-        this(new DatabaseAccess(null));
-    }
-
-    public TaskDataAccess(DatabaseAccess db) {
-        super(db, DataAccess.currentSchemaVersion, DataAccess.supportedSchemaVersion);
-    }
 
     protected Long getNextId(String sequenceName) throws SQLException {
         String query = "select " + sequenceName + ".NEXTVAL from dual";

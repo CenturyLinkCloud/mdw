@@ -15,19 +15,9 @@
  */
 package com.centurylink.mdw.service.data.user;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventLog;
@@ -37,26 +27,13 @@ import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.util.StringHelper;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+
 public class UserDataAccess extends CommonDataAccess {
 
     protected String USER_SELECT_FIELDS = "u.USER_INFO_ID, u.CUID, u.NAME, u.END_DATE, u.COMMENTS";
-
-    public UserDataAccess(DatabaseAccess db) {
-        super(db, DataAccess.currentSchemaVersion, DataAccess.supportedSchemaVersion);
-    }
-
-    public int countUsers(String whereCondition) throws DataAccessException {
-        try {
-            db.openConnection();
-            return countRows("USER_INFO", "USER_INFO_ID", whereCondition);
-        }
-        catch (Exception e) {
-            throw new DataAccessException(0, "failed to count users", e);
-        }
-        finally {
-            db.closeConnection();
-        }
-    }
 
     public List<User> queryUsers(String whereCondition, boolean withGroups, int startIndex,
             int endIndex, String sortOn) throws DataAccessException {

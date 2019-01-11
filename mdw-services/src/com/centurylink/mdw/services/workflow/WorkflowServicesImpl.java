@@ -560,9 +560,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public Map<Date,List<ProcessCount>> getProcessInstanceBreakdown(Query query) throws ServiceException {
+    public TreeMap<Date,List<ProcessCount>> getProcessInstanceBreakdown(Query query) throws ServiceException {
         try {
-            Map<Date,List<ProcessCount>> map = getAggregateDataAccess().getProcessInstanceBreakdown(query);
+            TreeMap<Date,List<ProcessCount>> map = getAggregateDataAccess().getProcessInstanceBreakdown(query);
             if (query.getFilters().get("processIds") != null) {
                 for (Date date : map.keySet())
                     populate(map.get(date));

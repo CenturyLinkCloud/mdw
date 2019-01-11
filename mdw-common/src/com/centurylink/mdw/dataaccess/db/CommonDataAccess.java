@@ -16,7 +16,6 @@
 package com.centurylink.mdw.dataaccess.db;
 
 import com.centurylink.mdw.cache.impl.VariableTypeCache;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.DocumentDbAccess;
@@ -40,14 +39,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CommonDataAccess {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
+    protected static final String MYSQL_DT_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     protected static final String PROC_INST_COLS = "pi.master_request_id, pi.process_instance_id, pi.process_id, pi.owner, pi.owner_id, " +
             "pi.status_cd, pi.start_dt, pi.end_dt, pi.compcode, pi.comments, pi.template";
@@ -56,32 +54,17 @@ public class CommonDataAccess {
     protected DocumentDbAccess documentDbAccess;
     public DocumentDbAccess getDocumentDbAccess() { return documentDbAccess; }
 
-    private int databaseVersion;
-    private int supportedVersion;
-
     public CommonDataAccess() {
-        this(null, DataAccess.currentSchemaVersion, DataAccess.supportedSchemaVersion);
+        this(null);
     }
 
-    protected CommonDataAccess(DatabaseAccess db, int databaseVersion, int supportedVersion) {
+    protected CommonDataAccess(DatabaseAccess db) {
         this.db = db == null ? new DatabaseAccess(null) : db;
         this.documentDbAccess = new DocumentDbAccess(DatabaseAccess.getDocumentDb());
-        this.databaseVersion = databaseVersion;
-        this.supportedVersion = supportedVersion;
-    }
-
-    public int getDatabaseVersion() {
-        return databaseVersion;
-    }
-
-    public int getSupportedVersion() {
-        return supportedVersion;
     }
 
     /**
      * Should only be used with MDW data source
-     * @return
-     * @throws DataAccessException
      */
     public TransactionWrapper startTransaction() throws DataAccessException {
         TransactionWrapper transaction = new TransactionWrapper();
@@ -128,7 +111,6 @@ public class CommonDataAccess {
     /**
      * Should only be used with MDW data source
      * @param transaction
-     * @throws DataAccessException
      */
     public void stopTransaction(TransactionWrapper transaction) throws DataAccessException {
         if (logger.isTraceEnabled()) {
@@ -196,14 +178,6 @@ public class CommonDataAccess {
         return db.isPrecisionSupport()?db.isMySQL()?"now(6)":"systimestamp":now();
     }
 
-    protected String dateConditionToMySQL(String value) {
-        value = value.replaceAll("to_date", "str_to_date");
-        value = value.replaceAll("mm/dd/yyyy hh24:mi:ss", "%m/%d/%Y %H:%i:%s");
-        value = value.replaceAll("mm/dd/yyyy", "%m/%d/%Y");
-        value = value.replaceAll("MON DD YYYY", "%M %D %Y");
-        return value;
-    }
-
     public Map<String,String> getAttributes(String ownerType, Long ownerId)
     throws SQLException {
         try {
@@ -239,8 +213,7 @@ public class CommonDataAccess {
      * Same as getAttribute1 but handles overflow values
      * @param ownerType
      * @param ownerId
-     * @return
-     * @throws SQLException
+     * @return list of Attributes
      */
     protected List<Attribute> getAttributes1(String ownerType, Long ownerId)
     throws SQLException {
@@ -259,24 +232,6 @@ public class CommonDataAccess {
             }
         }
         return attrs;
-    }
-
-    public Attribute getAttribute0(String ownerType, Long ownerId, String attrname)
-        throws SQLException
-    {
-        db.openConnection();
-        String query = "select ATTRIBUTE_ID, ATTRIBUTE_VALUE from ATTRIBUTE " +
-                "where ATTRIBUTE_OWNER=? and ATTRIBUTE_OWNER_ID=? and ATTRIBUTE_NAME=?";
-        Object[] args = new Object[3];
-        args[0] = ownerType;
-        args[1] = ownerId;
-        args[2] = attrname;
-        ResultSet rs = db.runSelect(query, args);
-        if (rs.next()) {
-            Attribute vo = new Attribute(attrname, rs.getString(2));
-            vo.setAttributeId(new Long(rs.getLong(1)));
-            return vo;
-        } else return null;
     }
 
     public void setAttributes(String ownerType, Long ownerId, Map<String,String> attributes)
@@ -1036,5 +991,13 @@ public class CommonDataAccess {
 
     public long getDatabaseTime() throws SQLException {
         return db.getDatabaseTime();
+    }
+
+    protected static DateFormat getMySqlDateFormat() {
+        return new SimpleDateFormat("yyyy-MM-dd");
+    }
+
+    protected static String getMySqlDt(Date date) {
+        return new SimpleDateFormat(MYSQL_DT_FORMAT).format(date);
     }
  }

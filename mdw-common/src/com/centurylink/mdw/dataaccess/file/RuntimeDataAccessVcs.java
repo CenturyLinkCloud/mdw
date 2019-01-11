@@ -57,8 +57,8 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
 
     private List<VariableType> variableTypes;
 
-    public RuntimeDataAccessVcs(DatabaseAccess db, int databaseVersion, int supportedVersion, BaselineData baselineData) {
-        super(db, databaseVersion, supportedVersion);
+    public RuntimeDataAccessVcs(DatabaseAccess db, BaselineData baselineData) {
+        super(db);
         this.variableTypes = baselineData.getVariableTypes();
     }
 

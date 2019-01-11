@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.json.JSONException;
 
@@ -145,7 +146,7 @@ public interface WorkflowServices {
 
     public List<ProcessCount> getTopThroughputProcesses(Query query) throws ServiceException;
 
-    public Map<Date,List<ProcessCount>> getProcessInstanceBreakdown(Query query) throws ServiceException;
+    public TreeMap<Date,List<ProcessCount>> getProcessInstanceBreakdown(Query query) throws ServiceException;
 
     public List<ActivityCount> getTopThroughputActivities(Query query) throws ServiceException;
 

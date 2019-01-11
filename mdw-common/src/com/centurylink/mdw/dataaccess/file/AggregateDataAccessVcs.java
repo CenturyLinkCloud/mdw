@@ -15,18 +15,6 @@
  */
 package com.centurylink.mdw.dataaccess.file;
 
-import java.sql.ResultSet;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -40,10 +28,17 @@ import com.centurylink.mdw.model.workflow.ProcessCount;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 
+import java.sql.ResultSet;
+import java.text.ParseException;
+import java.time.Instant;
+import java.util.*;
+
 /**
  * For MDW 6.2 we'll factor an interface from this.
  */
 public class AggregateDataAccessVcs extends CommonDataAccess {
+
+    public static final int DAY_MS = 24 * 60 * 60 * 1000;
 
     public List<ProcessCount> getTopThroughputProcessInstances(Query query) throws DataAccessException {
         try {
@@ -79,7 +74,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
         }
     }
 
-    public Map<Date,List<ProcessCount>> getProcessInstanceBreakdown(Query query) throws DataAccessException {
+    public TreeMap<Date,List<ProcessCount>> getProcessInstanceBreakdown(Query query) throws DataAccessException {
         try {
             // process ids
             Long[] processIdsArr = query.getLongArrayFilter("processIds");
@@ -104,7 +99,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 sql.append("select count(pi.st) as ct, pi.st\n");
 
             if (db.isMySQL())
-                sql.append("from (select DATE_FORMAT(start_dt,'%d-%M-%Y') as st");
+                sql.append("from (select DATE(start_dt) as st");
             else
                 sql.append("from (select to_char(start_dt,'DD-Mon-yyyy') as st");
             if (statusCodes != null)
@@ -125,19 +120,29 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
             else if (processIds != null)
                 sql.append(", process_id");
             if (db.isMySQL())
-                sql.append("\norder by STR_TO_DATE(st, '%d-%M-%Y') desc\n");
+                sql.append("\norder by st\n");
             else
-                sql.append("\norder by to_date(st, 'DD-Mon-yyyy') desc\n");
+                sql.append("\norder by to_date(st, 'DD-Mon-yyyy')\n");
 
             db.openConnection();
             ResultSet rs = db.runSelect(sql.toString(), null);
-            Map<Date,List<ProcessCount>> map = new HashMap<Date,List<ProcessCount>>();
+            TreeMap<Date,List<ProcessCount>> map = new TreeMap<>();
+            Date prevStartDate = getStartDate(query);
             while (rs.next()) {
                 String startDateStr = rs.getString("st");
-                Date startDate = getDateFormat().parse(startDateStr);
+                Date startDate;
+                if (db.isMySQL())
+                    startDate = getMySqlDateFormat().parse(startDateStr);
+                else
+                    startDate = getDateFormat().parse(startDateStr);
+                // fill in gaps
+                while (startDate.getTime() - prevStartDate.getTime() > DAY_MS) {
+                    prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
+                    map.put(prevStartDate, new ArrayList<>());
+                }
                 List<ProcessCount> processCounts = map.get(startDate);
                 if (processCounts == null) {
-                    processCounts = new ArrayList<ProcessCount>();
+                    processCounts = new ArrayList<>();
                     map.put(startDate, processCounts);
                 }
                 ProcessCount processCount = new ProcessCount(rs.getLong("ct"));
@@ -146,6 +151,17 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 else if (processIds != null)
                     processCount.setId(rs.getLong("process_id"));
                 processCounts.add(processCount);
+                prevStartDate = startDate;
+            }
+            // missing start date
+            Date startDate = getStartDate(query);
+            if (map.get(startDate) == null)
+                map.put(startDate, new ArrayList<>());
+            // gaps at end
+            Date endDate = getEndDate(query);
+            while (endDate.getTime() - prevStartDate.getTime() > DAY_MS) {
+                prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
+                map.put(prevStartDate, new ArrayList<>());
             }
             return map;
         }
@@ -161,19 +177,20 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
     }
 
     protected String getProcessWhereClause(Query query) throws ParseException, DataAccessException {
-        Instant instant = query.getInstantFilter("startDt");
-        Date start = instant == null ? query.getDateFilter("startDate") : Date.from(instant);
-        if (start == null)
-            throw new DataAccessException("Parameter startDate is required");
-        // adjust to db time
-        start = new Date(start.getTime() + DatabaseAccess.getDbTimeDiff());
-        String startStr = getDateFormat().format(start);
+        Date start = getStartDate(query);
 
         StringBuilder where = new StringBuilder();
         if (db.isMySQL())
-            where.append("where start_dt >= STR_TO_DATE('" + startStr + "','%d-%M-%Y') ");
+            where.append("where start_dt >= '" + getMySqlDt(start) + "' ");
         else
-            where.append("where start_dt >= '" + startStr + "' ");
+            where.append("where start_dt >= '" + getDateFormat().format(start) + "' ");
+        Date end = getEndDate(query);
+        if (end != null) {
+            if (db.isMySQL())
+                where.append("and start_dt <= '" + getMySqlDt(end) + "' ");
+            else
+                where.append("and start_dt <= '" + getDateFormat().format(end) + "' ");
+        }
         where.append("and owner not in ('MAIN_PROCESS_INSTANCE' ");
         if (query.getBooleanFilter("master"))
             where.append(", 'PROCESS_INSTANCE' ");
@@ -182,6 +199,32 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
         if (status != null)
             where.append("and STATUS_CD = " + WorkStatuses.getCode(status));
         return where.toString();
+    }
+
+    private Date getStartDate(Query query) throws ParseException, DataAccessException {
+        Instant instant = query.getInstantFilter("startDt");
+        Date start = instant == null ? query.getDateFilter("startDate") : Date.from(instant);
+        if (start == null)
+            throw new DataAccessException("Parameter startDate is required");
+        // adjust to db time
+        return new Date(start.getTime() + DatabaseAccess.getDbTimeDiff());
+    }
+
+    /**
+     * This is not completion date.  It's ending start date.
+     */
+    @SuppressWarnings("deprecation")
+    private Date getEndDate(Query query) {
+        Instant instant = query.getInstantFilter("endDt");
+        if (instant == null)
+            return null;
+        else {
+            Date end = new Date(Date.from(instant).getTime() + DatabaseAccess.getDbTimeDiff());
+            if (end.getHours() == 0) {
+                end = new Date(end.getTime() + DAY_MS);  // end of day
+            }
+            return end;
+        }
     }
 
     /**

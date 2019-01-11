@@ -1,8 +1,8 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import {Doughnut, Line} from '../node/node_modules/react-chartjs-2';
-import { Parser as HtmlToReactParser } from '../node/node_modules/html-to-react';
 import ChartHeader from './ChartHeader.jsx';
+import ChartLegend from './ChartLegend.jsx';
 
 class DashboardChart extends Component {
 
@@ -13,7 +13,7 @@ class DashboardChart extends Component {
     this.maxTops = 50;
     this.defaultTimespan = 'Week';
     this.chartColors = ['#3366CC','#DC3912','#FF9900','#109618','#990099','#3B3EAC','#0099C6','#DD4477','#66AA00','#B82E2E','#316395','#994499','#22AA99','#AAAA11','#6633CC','#E67300','#8B0707','#329262','#5574A6','#3B3EAC'];
-    this.chartOptions = {legend: {display: false, position: 'bottom'}, legendCallback: this.createLegend};
+    this.chartOptions = {legend: {display: false, position: 'bottom'}};
 
     this.state = {
       timespan: this.defaultTimespan,
@@ -36,7 +36,10 @@ class DashboardChart extends Component {
     this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleFilterReset = this.handleFilterReset.bind(this);
     this.retrieveTops = this.retrieveTops.bind(this);
+    this.update = this.update.bind(this);
     this.retrieveData = this.retrieveData.bind(this);
+    this.updateChart = this.updateChart.bind(this);
+    this.setDonutRef = this.setDonutRef.bind(this);
   }
 
   // selected breakdown object from breakdownConfig
@@ -111,7 +114,7 @@ class DashboardChart extends Component {
       selected: this.state.selected,
       filters: this.state.filters,
       data: {}
-    });
+    }, this.update);
   }
 
   handleBreakdownChange(breakdown) {
@@ -122,7 +125,7 @@ class DashboardChart extends Component {
       selected: this.state.selected,
       filters: this.state.filters,
       data: {}
-    });
+    }, this.update);
   }
 
   handleTopSelect(top, isSelected) {
@@ -144,10 +147,18 @@ class DashboardChart extends Component {
   }
 
   handleSelectApply() {
-    this.previousSelected = this.state.selected;
+    this.updateChart();
   }
 
   handleFilterChange(filters) {
+    if (filters.ending) {
+      if (this.state.timespan === 'Hours') {
+        filters.ending.setHours(new Date().getHours());
+      }
+      else {
+        filters.ending.setHours(0);
+      }
+    }
     this.setState({
       timespan: this.state.timespan,
       breakdown: this.state.breakdown,
@@ -155,7 +166,7 @@ class DashboardChart extends Component {
       selected: this.state.selected,
       filters: filters,
       data: {}
-    });
+    }, this.update);
   }
 
   handleFilterReset() {
@@ -166,46 +177,76 @@ class DashboardChart extends Component {
   }
 
   componentDidMount() {
+    this.update();
+  }
+
+  // retrieves tops, resets selected, then retrieves data and updates state
+  update() {
     this.retrieveTops()
     .then(tops => {
-      this.setTops(tops, tops.slice(0, this.initialSelect));
+      this.setTops(tops, tops.slice(0, (this.initialSelect > tops.length ? tops.length : this.initialSelect)));
     })
     .then(() => {
-      this.retrieveData()
-      .then(data => {
-        this.setState({
-          timespan: this.state.timespan,
-          breakdown: this.state.breakdown,
-          tops: this.state.tops,
-          selected: this.state.selected,
-          filters: this.state.filters,
-          data: data
-        });
+      this.updateChart();
+    });
+  }
+
+  updateChart() {
+    this.retrieveData()
+    .then(data => {
+      this.setState({
+        timespan: this.state.timespan,
+        breakdown: this.state.breakdown,
+        tops: this.state.tops,
+        selected: this.state.selected,
+        filters: this.state.filters,
+        data: data
       });
     });
   }
 
-  getDonutData() {
-    const donutData = {labels: [], datasets: [{data: [], backgroundColor: []}]};
-    this.state.selected.forEach((sel, i) => {
-      donutData.labels.push(sel.name);
-      donutData.datasets[0].data.push(sel.count);
-      donutData.datasets[0].backgroundColor.push(this.chartColors[i]);
-      // these are added to chart for access by createLegend()
-      donutData.mdwSelected = this.state.selected;
-      donutData.mdwTops = this.state.tops;
-    }, this);
-    return donutData;
+  // updates state and returns a promise
+  retrieveTops() {
+    return new Promise(resolve => {
+      const breakdown = this.getBreakdown();
+      if (breakdown) {
+        var topsUrl = this.context.serviceRoot + breakdown.throughput;
+        topsUrl += (breakdown.throughput.indexOf('?') >= 0 ? '&' : '?');
+        topsUrl += 'max=' + this.maxTops + '&startDt=' + this.getStart().toISOString();
+        if (this.state.filters.ending) {
+          topsUrl += '&endDt=' + this.state.filters.ending.toISOString();
+        }
+        if (this.state.filters.status) {
+          topsUrl += '&status=' + this.state.filters.status;
+        }
+        fetch(new Request(topsUrl, {
+          method: 'GET',
+          headers: { Accept: 'application/json'},
+          credentials: 'same-origin'
+        }))
+        .then(response => {
+          return response.json();
+        })
+        .then(tops => {
+          resolve(tops);
+        });
+      }
+      else {
+        resolve([]);
+      }
+    });
   }
 
   retrieveData() {
     return new Promise(resolve => {
       const breakdown = this.getBreakdown();
       if (breakdown) {
-        // http://localhost:8080/mdw/services/Processes/instanceCounts?app=mdw-admin&startDate=2019-Jan-03&processIds=%5B129333521,258582064,256050789,197769568,194332112%5D
         var dataUrl = this.context.serviceRoot + breakdown.data;
         dataUrl += (breakdown.data.indexOf('?') >= 0 ? '&' : '?');
         dataUrl += 'startDt=' + this.getStart().toISOString();
+        if (this.state.filters.ending) {
+          dataUrl += '&endDt=' + this.state.filters.ending.toISOString();
+        }
         if (this.state.filters.status) {
           dataUrl += '&status=' + this.state.filters.status;
         }
@@ -230,6 +271,16 @@ class DashboardChart extends Component {
     });
   }
 
+  getDonutData() {
+    const donutData = {labels: [], datasets: [{data: [], backgroundColor: []}]};
+    this.state.selected.forEach((sel, i) => {
+      donutData.labels.push(sel.name);
+      donutData.datasets[0].data.push(sel.count);
+      donutData.datasets[0].backgroundColor.push(this.chartColors[i]);
+    }, this);
+    return donutData;
+  }
+
   getLineData() {
     const lineData = {labels: [], datasets: []};
     var datasets = {}; // id to dataset
@@ -249,86 +300,11 @@ class DashboardChart extends Component {
     return lineData;
   }
 
-  createLegend(chart) {
-    var text = [];
-    var label;
-    var title;
-    text.push('<ul class="mdw-chart-legend">');
-    if (chart.data.mdwSelected) {
-      for (var i = 0; i < chart.data.mdwSelected.length; i++) {
-        var sel = chart.data.mdwSelected[i];
-        let top = chart.data.mdwTops.find(t => t.id === sel.id);
-        if (top) {
-          label = top.name;
-          if (top.count) {
-            label += ' (' + top.count + ')';
-          }
-          if (top.packageName) {
-            title = top.packageName + '/' + top.name;
-            if (top.version) {
-              title += ' v' + top.version;
-            }
-          }
-        }
-        if (label) {
-          text.push('  <li>');
-          text.push('    <span class="mdw-chart-legend-icon" style="background-color:' +
-              chart.data.datasets[0].backgroundColor[i] + ';border-color:' + chart.data.datasets[0].backgroundColor[i] + '"></span>');
-          if (title) {
-            text.push('    <span class="mdw-chart-legend-text" title="' + title + '">' + label + '</span>');
-          }
-          else {
-            text.push('    <span class="mdw-chart-legend-text">' + label + '</span>');
-          }
-          text.push('  </li>');
-        }
-        else {
-          // total = true;
-          break;
-        }
-      }
-      // if (total) {
-      //   text.push('  <li>');
-      //   text.push('    <span class="mdw-chart-legend-text"> Total (' + chart.data.mdwTotal +') </span>');
-      //   text.push('  </li>');
-      // }
-    }
-    text.push('</ul>');
-
-    return text.join('\n  ');
-  }
-
-  // updates state and then returns a promise
-  retrieveTops() {
-    return new Promise(resolve => {
-      const breakdown = this.getBreakdown();
-      if (breakdown) {
-        var topsUrl = this.context.serviceRoot + breakdown.throughput;
-        topsUrl += (breakdown.throughput.indexOf('?') >= 0 ? '&' : '?');
-        topsUrl += 'max=' + this.maxTops + '&startDt=' + this.getStart().toISOString();
-        if (this.state.filters.status) {
-          topsUrl += '&status=' + this.state.filters.status;
-        }
-        fetch(new Request(topsUrl, {
-          method: 'GET',
-          headers: { Accept: 'application/json'},
-          credentials: 'same-origin'
-        }))
-        .then(response => {
-          return response.json();
-        })
-        .then(tops => {
-          resolve(tops);
-        });
-      }
-      else {
-        resolve([]);
-      }
-    });
+  setDonutRef(ref) {
+    this.donutRef = ref;
   }
 
   render() {
-    const htmlParser = new HtmlToReactParser();
     return (
       <div>
         <ChartHeader title={this.props.title}
@@ -349,13 +325,14 @@ class DashboardChart extends Component {
           onFilterReset={this.handleFilterReset} />
         <div className="mdw-section" style={{display:'flex'}}>
           <div>
-            <Doughnut ref="donut"
+            <Doughnut ref={this.setDonutRef}
               data={this.getDonutData()}
               options={this.chartOptions}
               width={250} height={250}/>
-              {this.refs.donut &&
-                htmlParser.parse(this.refs.donut.chartInstance.generateLegend())
-              }
+            <ChartLegend
+              colors = {this.chartColors}
+              tops={this.state.tops}
+              selected={this.state.selected} />
           </div>
           <div style={{height:'100%',width:'100%'}}>
             <Line data={this.getLineData()} options={this.chartOptions} />

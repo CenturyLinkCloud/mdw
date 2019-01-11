@@ -74,8 +74,7 @@ public class TaskServicesImpl implements TaskServices {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private TaskDataAccess getTaskDAO() {
-        DatabaseAccess db = new DatabaseAccess(null);
-        return new TaskDataAccess(db);
+        return new TaskDataAccess();
     }
 
     protected AggregateDataAccessVcs getAggregateDataAccess() throws DataAccessException {

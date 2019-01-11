@@ -107,7 +107,7 @@ public class DataAccess {
     }
 
     protected static RuntimeDataAccess getVcsRuntimeDataAccess(DatabaseAccess db, File rootDir) throws DataAccessException {
-        return new RuntimeDataAccessVcs(db, currentSchemaVersion, supportedSchemaVersion, getBaselineData());
+        return new RuntimeDataAccessVcs(db, getBaselineData());
     }
 
     private static VersionControl assetVersionControl;
