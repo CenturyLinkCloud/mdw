@@ -6,8 +6,8 @@
       - mdwPrevTag
     mdw/project.yaml:
       - mdw.version
-    mdw/cli/tests/quickstart.bats (line 53)
-      - Add or remove --snapshots option according to whether this is a snapshot or formal build
+    mdw/cli/tests/quickstart.bats (line 53 -- formal builds only)
+      - add skip (formal)
         (TODO: better way of handling)
 
 2 - Run Gradle task updateMdwVerInFiles to update these files:
