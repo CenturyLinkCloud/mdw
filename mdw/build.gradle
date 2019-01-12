@@ -274,12 +274,12 @@ task cleanAll(type: GradleBuild) {
 }
 
 task publishAll(type: GradleBuild) {
-    dependsOn buildAll // testAll
+    dependsOn testAll
     buildFile = "publish.gradle"
     tasks = ["publishMdwBuild"]
 }
-publish.mustRunAfter(buildAll) // testAll
-publishAll.mustRunAfter(buildAll) // testAll
+publish.mustRunAfter(testAll)
+publishAll.mustRunAfter(testAll)
 
 publishing {
     // find asset zips
