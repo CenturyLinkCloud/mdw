@@ -4,7 +4,6 @@ sourceSets {
             srcDirs "src"
             srcDirs "assets"
         }
-        output.classesDir = "build/classes"
     }
 }
 

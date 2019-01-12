@@ -1,6 +1,7 @@
 // publishes build output to a maven repository
 plugins {
-    id "io.codearte.nexus-staging" version "0.12.0"
+    id "io.codearte.nexus-staging" version "0.20.0"
+    id "de.marcphilipp.nexus-publish" version "0.1.1"
 }
 
 nexusStaging {
@@ -63,37 +64,24 @@ task zipAssetPackages {
         }
     }
 }
+zipAssetPackages.mustRunAfter(cleanAssetZips)
 
 task zipAllAssets(dependsOn: tasks.matching { Task task -> task.name.startsWith("zipAsset")}) {
 }
 
-task uploadToMavenCentral(type: GradleBuild) {
+task uploadMdwBuild(type: GradleBuild) {
     buildFile = "build.gradle"
-    tasks = ["uploadArchives"]
+    tasks = ["publish"]
 }
 
-task uploadAssetsToMavenCentral(type: GradleBuild) {
-    buildFile = "build.gradle"
-    tasks = ["uploadAssets"]
-}
-  
-task publishToMavenCentral(type: GradleBuild) {
-    dependsOn uploadToMavenCentral
+task publishMdwBuild(type: GradleBuild) {
+    dependsOn uploadMdwBuild
     if (!mdwVersion.endsWith("-SNAPSHOT"))
         dependsOn closeAndReleaseRepository
 }
+closeAndReleaseRepository.mustRunAfter uploadMdwBuild
 
-task publishAssetsToMavenCentral(type: GradleBuild) {
-    dependsOn uploadAssetsToMavenCentral
-    if (!mdwVersion.endsWith("-SNAPSHOT"))
-        dependsOn closeAndReleaseRepository
-}
-
-closeAndReleaseRepository.mustRunAfter uploadToMavenCentral
-closeAndReleaseRepository.mustRunAfter uploadAssetsToMavenCentral
-
-
-task updateJson {
+task updateHubPackageJson {
       description = "Update mdw-hub/package.json with version number"
       
       def mdwPkgVer = mdwVersion;
@@ -118,7 +106,7 @@ task updateMdwVerInAssetPackages {
     def mdwPkgVer = mdwVersion;
     if (mdwVersion.endsWith("-SNAPSHOT"))
         mdwPkgVer = mdwPkgVer.substring(0, mdwPkgVer.length() - 9)
-    println "Update MDW version in asset packages in asstRoot: " + assetRootPath + ":"
+    println "Update MDW version in asset packages in asset root: " + assetRootPath + ":"
     fileTree(dir: "../${mdwAssetRoot}", include:'**/.mdw/package.yaml', exclude:'Archive/**/*').each { pkgFile ->
         doLast {
             def pkgName = pkgFile.parentFile.parent.substring(assetRootPath.length() + 1).replace('/','.').replace('\\','.')
@@ -133,5 +121,5 @@ task updateMdwVerInAssetPackages {
 }
 
 task updateMdwVerInFiles {
-    dependsOn(updateJson, updateRestApiDefinition, updateMdwVerInAssetPackages)
+    dependsOn(updateHubPackageJson, updateRestApiDefinition, updateMdwVerInAssetPackages)
 }
