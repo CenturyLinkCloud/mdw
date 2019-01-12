@@ -264,7 +264,7 @@ task cleanAll(type: GradleBuild) {
 }
 
 task publishAll(type: GradleBuild) {
-    // dependsOn testAll
+    dependsOn testAll
     buildFile = "publish.gradle"
     tasks = ["publishMdwBuild"]
 }
