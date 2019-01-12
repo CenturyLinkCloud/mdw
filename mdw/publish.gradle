@@ -69,6 +69,18 @@ zipAssetPackages.mustRunAfter(cleanAssetZips)
 task zipAllAssets(dependsOn: tasks.matching { Task task -> task.name.startsWith("zipAsset")}) {
 }
 
+task uploadMdwBuild(type: GradleBuild) {
+    buildFile = "build.gradle"
+    tasks = ["publish"]
+}
+
+task publishMdwBuild(type: GradleBuild) {
+    dependsOn uploadMdwBuild
+//    if (!mdwVersion.endsWith("-SNAPSHOT"))
+//        dependsOn closeAndReleaseRepository
+}
+closeAndReleaseRepository.mustRunAfter uploadMdwBuild
+
 task updateHubPackageJson {
       description = "Update mdw-hub/package.json with version number"
       
