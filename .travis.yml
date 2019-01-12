@@ -8,7 +8,6 @@ env:
 - LD_LIBRARY_PATH=/home/travis/build/CenturyLinkCloud/mdw/mdw-workflow/assets/com/centurylink/mdw/node
 before_install:
 - java -version
-- ./gradlew -version
 - openssl aes-256-cbc -K $encrypted_729e98813df3_key -iv $encrypted_729e98813df3_iv
   -in secrets.tar.enc -out secrets.tar -d
 - tar xvf secrets.tar
@@ -20,6 +19,7 @@ before_script:
 - cd ../mdw
 - export mdwVersion=`cat gradle.properties  | grep mdwVersion | cut -d'=' -f2`
 script:
+- ./gradlew -version
 - ./gradlew --no-daemon zipAssetPackages
 - ./gradlew --no-daemon publishAll
 after_failure:
