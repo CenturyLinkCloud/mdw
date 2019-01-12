@@ -113,6 +113,13 @@ task packageSources(type: GradleBuild) {
 }
 
 allprojects {
+    signing {
+        required {
+            !mdwVersion.endsWith('-SNAPSHOT')
+        }
+        sign publishing.publications
+    }
+
     tasks.withType(Javadoc) {
         options.addStringOption('Xdoclint:none', '-quiet')
         options.noTimestamp = "true"
@@ -266,12 +273,14 @@ task cleanAll(type: GradleBuild) {
     tasks = ["clean"]
 }
 
-task publishAll(type: GradleBuild) {
-    dependsOn testAll
-    buildFile = "publish.gradle"
-    tasks = ["publishMdwBuild"]
+task publishAll {
+    dependsOn(testAll,publishToNexus)
+    if (!mdwVersion.endsWith("-SNAPSHOT"))
+        dependsOn closeAndReleaseRepository
 }
+publishToNexus.mustRunAfter(testAll)
 publishAll.mustRunAfter(testAll)
+closeAndReleaseRepository.mustRunAfter(publishToNexus)
 
 publishing {
     // find asset zips
@@ -358,4 +367,5 @@ publishing {
         username = System.getenv("OSSRH_JIRA_USERNAME")
         password = System.getenv("OSSRH_JIRA_PASSWORD")
     }
+
 }
