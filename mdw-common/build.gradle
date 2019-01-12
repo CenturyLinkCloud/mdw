@@ -125,7 +125,7 @@ task cliJar(type: Jar) {
               + " ./lib/commons-codec-1.11.jar");
     }
 
-    from("build/classes") {
+    from("build/classes/java/main") {
         include "com/centurylink/mdw/cli/**/*.class"
         include "com/centurylink/mdw/dataaccess/AssetRevision.class"
         include "com/centurylink/mdw/dataaccess/VersionControl.class"
