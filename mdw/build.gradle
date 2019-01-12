@@ -274,13 +274,13 @@ task cleanAll(type: GradleBuild) {
 }
 
 task publishAll {
-    dependsOn(testAll,publishToNexus)
-    if (!mdwVersion.endsWith("-SNAPSHOT"))
-        dependsOn closeAndReleaseRepository
+    dependsOn(/*testAll,*/publish)
+//    if (!mdwVersion.endsWith("-SNAPSHOT"))
+//        dependsOn closeAndReleaseRepository
 }
 publishToNexus.mustRunAfter(testAll)
 publishAll.mustRunAfter(testAll)
-closeAndReleaseRepository.mustRunAfter(publishToNexus)
+closeAndReleaseRepository.mustRunAfter(publish)
 
 publishing {
     // find asset zips
