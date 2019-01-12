@@ -252,6 +252,7 @@ task testAll(type: GradleBuild) {
     buildFile = "test.gradle"
     tasks = ["test"]
 }
+testAll.mustRunAfter(buildAll)
 
 task test {
     dependsOn testAll
