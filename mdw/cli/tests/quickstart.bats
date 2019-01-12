@@ -51,7 +51,7 @@ NO_UPDATE="--no-update"
 @test "install" {
   # skip 'formal'
   rm -rf install-mdw
-  mdw init install-mdw $NO_UPDATE $TEMPLATE_DIR
+  mdw init install-mdw --snapshots $NO_UPDATE $TEMPLATE_DIR
   mdw install --project-dir=./install-mdw --boot-jar-loc=./install-mdw --binaries-url="file://$PWD/../../deploy/app"
   ls install-mdw/mdw-boot-*.jar
 }
