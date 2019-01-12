@@ -15,6 +15,7 @@ CONFIG_LOC="--config-loc=../../config"
 STD_ARGS="$PROJECT_DIR $ASSET_LOC $CONFIG_LOC"
 
 @test "convert impl" {
+  skip 'formal'
   mdw convert --input=$ASSETS/com/centurylink/mdw/base/RestServiceAdapter.impl $STD_ARGS
   diff $ASSETS/com/centurylink/mdw/workflow/adapter/rest/RestServiceAdapter.java RestServiceAdapter.java.txt
   rm -rf $ASSETS/com/centurylink/mdw/workflow
