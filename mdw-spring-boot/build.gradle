@@ -36,7 +36,7 @@ jar {
         attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
     }
 
-    from("../mdw-hub/build/classes") {
+    from("../mdw-hub/build/classes/java/main") {
         include "**/*"
     }
     into("hub") {
