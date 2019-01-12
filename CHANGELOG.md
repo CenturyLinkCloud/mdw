@@ -1,5 +1,46 @@
 # Change Log
 
+## [6.1.13](https://github.com/CenturyLinkCloud/mdw/tree/6.1.13) (2019-01-12)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.12...6.1.13)
+
+**Implemented enhancements:**
+
+- Ability to retrieve and verify MDW Auth tokens using CLI [\#574](https://github.com/CenturyLinkCloud/mdw/issues/574)
+- Redundant timestamp in workflow log line  [\#571](https://github.com/CenturyLinkCloud/mdw/issues/571)
+- Pagelet content in @Activity annotations can be externalized [\#570](https://github.com/CenturyLinkCloud/mdw/issues/570)
+- Support multiple/nested service orchestrations [\#569](https://github.com/CenturyLinkCloud/mdw/issues/569)
+- Integration with Status Manager [\#568](https://github.com/CenturyLinkCloud/mdw/issues/568)
+- Spring Sleuth and Zipkin Support [\#564](https://github.com/CenturyLinkCloud/mdw/issues/564)
+- CLI command to convert .impl file to annotated form [\#562](https://github.com/CenturyLinkCloud/mdw/issues/562)
+- Built-in StandardLogger for SLF4J [\#558](https://github.com/CenturyLinkCloud/mdw/issues/558)
+- Allow Proxy.Type = HTTP in HttpHelper and REST adapter activity [\#557](https://github.com/CenturyLinkCloud/mdw/issues/557)
+- Allow for configuring multiple custom JWT providers [\#556](https://github.com/CenturyLinkCloud/mdw/issues/556)
+- Include path info in MDWHub Requests display [\#551](https://github.com/CenturyLinkCloud/mdw/issues/551)
+- Instance-level process changes [\#537](https://github.com/CenturyLinkCloud/mdw/issues/537)
+- Support for asset import from Git tags as well as branches [\#492](https://github.com/CenturyLinkCloud/mdw/issues/492)
+- Enforce uniqueness for Master Request ID [\#468](https://github.com/CenturyLinkCloud/mdw/issues/468)
+- Listener and adapter requests created even for empty content [\#457](https://github.com/CenturyLinkCloud/mdw/issues/457)
+- Alternative multiserver configuration for FilePanel [\#402](https://github.com/CenturyLinkCloud/mdw/issues/402)
+- ScheduledJob via @RegisteredService [\#369](https://github.com/CenturyLinkCloud/mdw/issues/369)
+
+**Closed issues:**
+
+- Activity in Hub shows all subflows launched by all subflow-launching activities from a process [\#576](https://github.com/CenturyLinkCloud/mdw/issues/576)
+- Dynamic Java Classpath is missing MDW classes and JARs suddenly  [\#575](https://github.com/CenturyLinkCloud/mdw/issues/575)
+- Parsing exceptions due to slf4j logging [\#573](https://github.com/CenturyLinkCloud/mdw/issues/573)
+- YamlProperties cannot handle group/map properties with boolean values [\#572](https://github.com/CenturyLinkCloud/mdw/issues/572)
+- Process variable instances passed into children instances should not change ownership  [\#567](https://github.com/CenturyLinkCloud/mdw/issues/567)
+- Notification activity unable to parse email list [\#566](https://github.com/CenturyLinkCloud/mdw/issues/566)
+- MDWHub cannot edit embedded subprocess components of a process  [\#554](https://github.com/CenturyLinkCloud/mdw/issues/554)
+- MDWHub cannot properly select activity and task instances within an Embedded sub process [\#553](https://github.com/CenturyLinkCloud/mdw/issues/553)
+- mdw-spring-boot-sources.jar should include mdw-hub source files [\#552](https://github.com/CenturyLinkCloud/mdw/issues/552)
+- Publishing to Nexus from Travis CI is broken [\#550](https://github.com/CenturyLinkCloud/mdw/issues/550)
+- Handle empty but non-null request content in TextAdapterActivity [\#545](https://github.com/CenturyLinkCloud/mdw/issues/545)
+- Dashboard charts are broken [\#462](https://github.com/CenturyLinkCloud/mdw/issues/462)
+
+## 6.1.12
+This is a throwaway build due to Maven Central publishing issues.
+
 ## [6.1.11](https://github.com/CenturyLinkCloud/mdw/tree/6.1.11) (2018-11-02)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.09...6.1.11)
 
@@ -42,8 +83,6 @@
 - Workflow runtime rendering for specific activity/task instances uses latest process definition [\#504](https://github.com/CenturyLinkCloud/mdw/issues/504)
 - Manual task completion in package-level error handlers [\#484](https://github.com/CenturyLinkCloud/mdw/issues/484)
 
-## 6.1.10 Throwaway build
-
 ## [6.1.09](https://github.com/CenturyLinkCloud/mdw/tree/6.1.09) (2018-09-14)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.08...6.1.09)
 
@@ -64,7 +103,6 @@
 
 **Closed issues:**
 
-- Dashboard charts are broken [\#462](https://github.com/CenturyLinkCloud/mdw/issues/462)
 - Create Dashboard reports using MongoDB [\#148](https://github.com/CenturyLinkCloud/mdw/issues/148)
 - Create Process Heat Map [\#44](https://github.com/CenturyLinkCloud/mdw/issues/44)
 - Auto asset import is not triggered in certain cases in clustered envs [\#502](https://github.com/CenturyLinkCloud/mdw/issues/502)

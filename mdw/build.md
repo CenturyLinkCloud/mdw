@@ -6,8 +6,9 @@
       - mdwPrevTag
     mdw/project.yaml:
       - mdw.version
-    mdw/cli/tests/quickstart.bats (line 53 -- formal builds only)
-      - add skip (formal)
+    mdw/cli/tests/quickstart.bats (line 53 -- skip for formal builds, add back for snapshots)
+    mdw/cli/tests/convert.bats (line 18 -- skip formal builds, add back for snapshots)
+      - comment/uncomment skip (formal)
         (TODO: better way of handling)
 
 2 - Run Gradle task updateMdwVerInFiles to update these files:
