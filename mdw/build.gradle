@@ -253,6 +253,8 @@ task testAll(type: GradleBuild) {
     tasks = ["test"]
 }
 testAll.mustRunAfter(buildAll)
+codeFormat.mustRunAfter(buildAll)
+checkAssetVersions.mustRunAfter(buildAll)
 
 task test {
     dependsOn testAll
