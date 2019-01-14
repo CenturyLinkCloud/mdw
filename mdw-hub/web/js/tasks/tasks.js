@@ -438,6 +438,7 @@ tasksMod.factory('TaskUtil', ['$location', '$route', 'mdw', 'util', function($lo
       }
       var startDate = new Date(task.start);
       task.start = util.past(startDate);
+      task.startDate = startDate.toLocaleString();
       if (task.due) {
         if (task.end) {
           task.due = null;
@@ -447,10 +448,12 @@ tasksMod.factory('TaskUtil', ['$location', '$route', 'mdw', 'util', function($lo
           if (dueDate.getTime() >= Date.now()) {
             task.alert = false;
             task.due = util.future(dueDate);
+            task.dueDate = dueDate.toLocaleString();
           }
           else {
             task.alert = true;
             task.due = util.past(dueDate);
+            task.dueDate = dueDate.toLocaleString();
           }
         }
       }
@@ -459,7 +462,9 @@ tasksMod.factory('TaskUtil', ['$location', '$route', 'mdw', 'util', function($lo
         task.due = null;
       }
       if (task.end) {
-        task.end = util.past(new Date(task.end));
+        var endDate = new Date(task.end);
+        task.end = util.past(endDate);
+        task.endDate = endDate.toLocaleString();
       }
     }
   };
