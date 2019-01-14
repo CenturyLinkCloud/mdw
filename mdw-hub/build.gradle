@@ -216,9 +216,51 @@ war {
         attributes("MDW-Version": mdwVersion)
         attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
     }
+
+    destinationDir = file(mdwOutputDir)
 }
 
 archivesBaseName = "mdw"
-artifacts {
-    archives war, javadocJar, sourcesJar
+
+publishing {
+
+    def warFile = file("${mdwOutputDir}/mdw-${mdwVersion}.war")
+    def warArtifact = artifacts.add('archives', warFile) {
+        type 'war'
+        builtBy 'war'
+    }
+
+    publications {
+        war(MavenPublication) {
+            // main artifact: mdw.war
+            artifactId = 'mdw'
+            artifact warArtifact
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom {
+                name = 'MDW'
+                description = 'MDW is a workflow framework specializing in microservice orchestration'
+                url = 'http://centurylinkcloud.github.io/mdw/'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'mdw.development'
+                        name = 'MDW Development Team'
+                        email = 'mdw.development@centurylink.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/CenturyLinkCloud/mdw.git'
+                    developerConnection = 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git'
+                    url = 'https://github.com/CenturyLinkCloud/mdw.git'
+                }
+            }
+        }
+    }
 }
