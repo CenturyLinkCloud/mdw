@@ -9,10 +9,10 @@
             <a href="#/workflow/masterRequests/{{item.masterRequestId}}" class="mdw-link">{{item.masterRequestId}}</a>
           </span>
         </div>
-        <div class="mdw-item-sub">Created {{item.start}}<span ng-if="item.due">, &nbsp;Due <i class="mdw-item-highlight">{{item.due}}</i></span>
+        <div class="mdw-item-sub" title="{{item.startDate}}">Created {{item.start}}<span ng-if="item.due" title="{{item.dueDate}}">, &nbsp;Due <i class="mdw-item-highlight">{{item.due}}</i></span>
           <img class="mdw-item-alert" ng-if="item.alert" src="images/alert.png" alt="alert" />
         </div>
-        <div class="mdw-item-sub" ng-if="item.end">{{item.status}} {{item.end}}</div>
+        <div class="mdw-item-sub" ng-if="item.end" title="{{item.endDate}}">{{item.status}} {{item.end}}</div>
       </div>
     </div>
   </div>

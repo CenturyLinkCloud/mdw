@@ -60,5 +60,3 @@ task test(dependsOn: [cliTests, start, runTests, stop]) {
 }
 runTests.mustRunAfter start
 stop.mustRunAfter runTests
-
-// TODO: random tests

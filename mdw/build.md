@@ -1,13 +1,16 @@
 ## Publishing an mdw6 build
 
+### TODO: avoid signing snapshots?
+
 1 - Edit these files to set the new build number:
     mdw/gradle.properties:
       - mdwVersion
       - mdwPrevTag
     mdw/project.yaml:
       - mdw.version
-    mdw/cli/tests/quickstart.bats (line 53)
-      - Add or remove --snapshots option according to whether this is a snapshot or formal build
+    mdw/cli/tests/quickstart.bats (line 53 -- skip for formal builds, add back for snapshots)
+    mdw/cli/tests/convert.bats (line 18 -- skip formal builds, add back for snapshots)
+      - comment/uncomment skip (formal)
         (TODO: better way of handling)
 
 2 - Run Gradle task updateMdwVerInFiles to update these files:
@@ -27,7 +30,9 @@
   - Travis CI will run the build, tests and publish to maven-central or sonatype.
   - Compilation or testing errors will prevent the build from being published.
 
-6 - After success, verify repository contains artifacts.
+6 - After success:
+  Manually close/release from [Nexus Repository Manager](https://oss.sonatype.org/#welcome) (may revisit automating this)
+  Verify repository contains artifacts:
   6a. (Formal Build)
     - Formal build repo : http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (10 min)
     - Assets: http://repo.maven.apache.org/maven2/com/centurylink/mdw/assets/tests-workflow/  (15 min)
@@ -51,9 +56,10 @@
   - git pull
   - Review/Update CHANGELOG.md and then: `git commit CHANGELOG.md -m "Release notes [skip ci]"`
   - git push (pushes generated CHANGELOG.md to GitHub)
-  - Update the new release on GitHub, copy the notes from updated CHANGELOG.md
+  - Update the new release on GitHub (), copy the notes from updated CHANGELOG.md
 
 9 - Run task 1, 2 & 5 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
+    - Mark build as "This is a pre-release" on GitHub
 
 10 - Create and publish Docker image
     - Log into 143 server and sudo su - mdwapp, then go to directory with cloned Git repo (/app/prod/jack/mdw/mdw).

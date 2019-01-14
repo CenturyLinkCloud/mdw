@@ -1,5 +1,9 @@
-apply plugin: 'maven'
-apply plugin: 'signing'
+plugins {
+    id 'maven-publish'
+    id 'signing'
+    id 'io.codearte.nexus-staging' version '0.20.0'
+    id 'de.marcphilipp.nexus-publish' version '0.1.1'
+}
 
 configurations {
     assets {
@@ -20,9 +24,10 @@ task env {
 }
 
 subprojects {
-    apply plugin: "java"
-    apply plugin: 'maven'
+    apply plugin: 'java'
+    apply plugin: 'maven-publish'
     apply plugin: 'signing'
+    apply plugin: 'de.marcphilipp.nexus-publish'
 
     sourceCompatibility = 1.8
     version = "${mdwVersion}"
@@ -34,7 +39,6 @@ subprojects {
             java {
                 srcDir "src"
             }
-            output.classesDir = "build/classes"
         }
     }
 
@@ -42,20 +46,13 @@ subprojects {
         mavenCentral()
     }
 
-    // copy into output dir rather than including directly in jar
-    // this works better in local development where deployment happens from build/classes
-    task copyMeta(type: Copy) {
+    jar {
         from("src") {
             include "META-INF/mdw/**"
             include "META-INF/spring/**"
             exclude "META-INF/**/.metadata"
             exclude "META-INF/**/.*ignore"
         }
-        into sourceSets.main.output.classesDir
-    }
-
-    processResources {
-        dependsOn copyMeta
     }
 
     task sourcesJar(type: Jar, dependsOn: classes) {
@@ -66,11 +63,43 @@ subprojects {
         exclude "**/.*ignore"
     }
 
-    def packaging = 'jar'
-
     task javadocJar(type: Jar) {
         classifier = 'javadoc'
         from javadoc
+    }
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                from components.java
+                artifact sourcesJar
+                artifact javadocJar
+
+                pom {
+                    name = 'MDW'
+                    description = 'MDW is a workflow framework specializing in microservice orchestration'
+                    url = 'http://centurylinkcloud.github.io/mdw/'
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'mdw.development'
+                            name = 'MDW Development Team'
+                            email = 'mdw.development@centurylink.com'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:git://github.com/CenturyLinkCloud/mdw.git'
+                        developerConnection = 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git'
+                        url = 'https://github.com/CenturyLinkCloud/mdw.git'
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -84,6 +113,13 @@ task packageSources(type: GradleBuild) {
 }
 
 allprojects {
+    signing {
+        required {
+            !mdwVersion.endsWith('-SNAPSHOT')
+        }
+        sign publishing.publications
+    }
+
     tasks.withType(Javadoc) {
         options.addStringOption('Xdoclint:none', '-quiet')
         options.noTimestamp = "true"
@@ -97,7 +133,7 @@ task javadocs(type: Javadoc) {
     title = "MDW 6 API JavaDocs"
     maxMemory = "256m"
     options.links "http://docs.oracle.com/javase/8/docs/api/"
-    options.bottom "<i>Copyright &#169; 2018 CenturyLink, Inc.</i>"
+    options.bottom "<i>Copyright &#169; 2019 CenturyLink, Inc.</i>"
     destinationDir = file('../docs/_docs/javadoc')
 }
 
@@ -129,56 +165,6 @@ allprojects {
     version = "${mdwVersion}"
     ext.ossrhUsername = System.getenv("OSSRH_JIRA_USERNAME")
     ext.ossrhPassword = System.getenv("OSSRH_JIRA_PASSWORD")
-
-    if("true".equalsIgnoreCase(System.getProperty("PUBLISHING"))) {
-        signing {
-            required = { "true".equalsIgnoreCase(System.getProperty("PUBLISHING"))}
-            sign configurations.archives
-         }
-    }
-
-    uploadArchives {
-        enabled = "true".equalsIgnoreCase(System.getProperty("PUBLISHING"))
-        repositories {
-            mavenDeployer {
-                beforeDeployment {
-                    MavenDeployment deployment -> signing.signPom(deployment)
-                }
-                repository(url: mavenRepoUrl) {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
-                }
-                snapshotRepository(url: mavenSnapshotRepoUrl) {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
-                }
-                pom.project {
-                    name 'MDW framework'
-                    groupId 'com.centurylink.mdw'
-                    version = mdwVersion
-                    packaging = 'zip'
-                    description 'MDW is a microservices based workflow framework'
-                    url 'http://centurylinkcloud.github.io/mdw/'
-                    scm {
-                        connection 'scm:git:git://github.com/CenturyLinkCloud/mdw.git'
-                        developerConnection 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git'
-                        url 'https://github.com/CenturyLinkCloud/mdw.git'
-                    }
-                    licenses {
-                        license {
-                            name 'The Apache License, Version 2.0'
-                            url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        }
-                    }
-                    developers {
-                        developer {
-                            id 'mdw.development'
-                            name 'MDW Development Team'
-                            email 'mdw.development@centurylink.com'
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
 
 /**
@@ -193,6 +179,7 @@ task zipTemplates(type: Zip) {
     archiveName = "mdw-templates-${mdwVersion}.zip"
     from "templates"
     include "**/*"
+    exclude ".DS_Store"
     doLast {
         ant.zip(destfile: "../${mdwOutputDir}/mdw-templates-${mdwVersion}.zip") {
             fileset(dir: 'templates', defaultexcludes: "no")
@@ -202,16 +189,6 @@ task zipTemplates(type: Zip) {
 
 artifacts {
     archives zipTemplates
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            pom.project {
-                artifactId = "mdw-templates"
-            }
-        }
-    }
 }
 
 task buildAll(type: GradleBuild) {
@@ -282,89 +259,13 @@ task testAll(type: GradleBuild) {
     buildFile = "test.gradle"
     tasks = ["test"]
 }
+testAll.mustRunAfter(buildAll)
+codeFormat.mustRunAfter(buildAll)
+checkAssetVersions.mustRunAfter(buildAll)
 
 task test {
     dependsOn testAll
 }
-
-task archiveAssetZips {
-    dependsOn zipAssetPackages
-    doLast{
-        signing {
-            required = { "true".equalsIgnoreCase(System.getProperty("PUBLISHING_TO_MAVEN_CENTRAL"))}
-            sign configurations.assets
-        }
-        ext.discoveredFiles = []
-        fileTree(dir: "../${mdwAssetOutputDir}", include:'**/*.zip').each { file ->
-            def filterName = file.name - ".zip"
-            def artifactName = filterName - "-SNAPSHOT"
-            def versionStart = artifactName.lastIndexOf("-")
-            def artifactId = artifactName.substring(0, versionStart)
-            discoveredFiles.add(artifactId)
-            artifacts {
-                assets file:file, name:artifactId, type:"zip"
-            }
-        }
-        fileTree(dir: "../${mdwAssetOutputDir}", include:'**/*.asc').each { file ->
-            artifacts {
-                assets file:file, type:"asc"
-            }
-        }
-    }
-}
-
-task configureUploadAssets {
-    dependsOn archiveAssetZips
-    doLast {
-        uploadAssets {
-            ext.ossrhUsername = System.getenv("OSSRH_JIRA_USERNAME")
-            ext.ossrhPassword = System.getenv("OSSRH_JIRA_PASSWORD")
-            repositories {
-                mavenDeployer {
-                    beforeDeployment {
-                        MavenDeployment deployment -> signing.signPom(deployment)
-                    }
-                    repository(url: mavenRepoUrl) {
-                        authentication(userName: ossrhUsername, password: ossrhPassword)
-                    }
-                    snapshotRepository(url: mavenSnapshotRepoUrl) {
-                        authentication(userName: ossrhUsername, password: ossrhPassword)
-                    }
-                    archiveAssetZips.discoveredFiles.each { artifactId ->
-                        def filterName = artifactId
-                        addFilter(filterName) { artifact, file ->
-                            artifact.name == artifactId
-                        }
-                        pom(filterName).artifactId = artifactId
-                        pom(filterName).groupId = "com.centurylink.mdw.assets"
-                        pom(filterName).name = 'MDW Core Assets'
-                        pom(filterName).withXml { provider ->
-                            def node = provider.asNode()
-                            node.appendNode('description',
-                                'MDW is a microservices based workflow framework')
-                            node.appendNode('url', 'http://centurylinkcloud.github.io/mdw/')
-                            def licenses = node.appendNode('licenses')
-                            def license = licenses.appendNode('license')
-                            license.appendNode('name', 'The Apache License, Version 2.0')
-                            license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
-                            def developers = node.appendNode('developers')
-                            def developer  = developers.appendNode('developer')
-                            developer.appendNode('id', 'mdw.development')
-                            developer.appendNode('name', 'MDW Development Team')
-                            developer.appendNode('email', 'mdw.development@centurylink.com')
-                            def scm = node.appendNode('scm')
-                            scm.appendNode('connection', 'scm:git:git://github.com/CenturyLinkCloud/mdw.git')
-                            scm.appendNode('developerConnection ', 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git')
-                            scm.appendNode('url', 'https://github.com/CenturyLinkCloud/mdw.git')
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-uploadAssets.dependsOn configureUploadAssets
 
 task cleanAll(type: GradleBuild) {
     dependsOn cleanJavadocs
@@ -372,20 +273,98 @@ task cleanAll(type: GradleBuild) {
     tasks = ["clean"]
 }
 
-task publishArtifacts(type: GradleBuild) {
+task publishAll(type: GradleBuild) {
     dependsOn testAll
     buildFile = "publish.gradle"
-    tasks = ["publishToMavenCentral"]
+    tasks = ["publishMdwBuild"]
 }
+publish.mustRunAfter(testAll)
+publishAll.mustRunAfter(testAll)
 
-// to be run standalone, after successful publish
-task publishAssets(type: GradleBuild) {
-    dependsOn publishArtifacts
-    buildFile = "publish.gradle"
-    tasks = ["publishAssetsToMavenCentral"]
-}
+publishing {
+    // find asset zips
+    def assetArtifacts = [:]
+    fileTree(dir: "../${mdwAssetOutputDir}", include: '**/*.zip').each { assetZip ->
+        def baseName = (assetZip.name - '.zip') - '-SNAPSHOT'
+        def artifactName = baseName.substring(0, baseName.lastIndexOf('-'))  // remove version
+        def assetArtifact = artifacts.add('archives', assetZip) {
+            type 'zip'
+        }
+        assetArtifacts[artifactName] = assetArtifact
+    }
 
-task publishAll {
-    dependsOn(publishArtifacts, publishAssets)
+    publications {
+        templates(MavenPublication) {
+            // main artifact: templates
+            artifactId = 'mdw-templates'
+            artifact zipTemplates
+
+            pom {
+                name = 'MDW'
+                description = 'MDW is a workflow framework specializing in microservice orchestration'
+                url = 'http://centurylinkcloud.github.io/mdw/'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'mdw.development'
+                        name = 'MDW Development Team'
+                        email = 'mdw.development@centurylink.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/CenturyLinkCloud/mdw.git'
+                    developerConnection = 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git'
+                    url = 'https://github.com/CenturyLinkCloud/mdw.git'
+                }
+            }
+        }
+        // asset zip artifacts
+        assetArtifacts.each { artifactName, theArtifact ->
+            "${artifactName}"(MavenPublication) {
+                groupId = 'com.centurylink.mdw.assets'
+                artifactId = artifactName
+                artifact theArtifact
+
+                pom {
+                    name = 'MDW'
+                    description = 'MDW is a workflow framework specializing in microservice orchestration'
+                    url = 'http://centurylinkcloud.github.io/mdw/'
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'mdw.development'
+                            name = 'MDW Development Team'
+                            email = 'mdw.development@centurylink.com'
+                        }
+                    }
+                    scm {
+                        connection = 'scm:git:git://github.com/CenturyLinkCloud/mdw.git'
+                        developerConnection = 'scm:git:ssh://github.com:CenturyLinkCloud/mdw.git'
+                        url = 'https://github.com/CenturyLinkCloud/mdw.git'
+                    }
+                }
+
+            }
+        }
+    }
+
+    nexusStaging {
+        delayBetweenRetriesInMillis = 5000
+        packageGroup = "com.centurylink"
+        stagingProfileId = "20378d64ebd7b6"
+        serverUrl = "https://oss.sonatype.org/service/local"
+        username = System.getenv("OSSRH_JIRA_USERNAME")
+        password = System.getenv("OSSRH_JIRA_PASSWORD")
+    }
+
 }
-publishAssets.mustRunAfter(publishArtifacts)
