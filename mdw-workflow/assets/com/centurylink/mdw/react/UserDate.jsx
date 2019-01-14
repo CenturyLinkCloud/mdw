@@ -115,7 +115,7 @@ class UserDate extends Component {
   }
   
   render() {
-    var title = '', text = '';
+    var title = '', text = '', full='';
     var date = this.props.date;
     if (typeof date === 'string')
       date = new Date(date);
@@ -130,6 +130,7 @@ class UserDate extends Component {
       else {
         text = this.future(date);
       }
+      full = date.toLocaleString() + ' (' + date.getMilliseconds() + ' ms)';
     }
 
     const datePickerPopover = (
@@ -151,7 +152,7 @@ class UserDate extends Component {
           </label>
         }
         {date &&
-          <span className="mdw-item-value">{text}</span>
+          <span className="mdw-item-value" title={full}>{text}</span>
         }
         {this.props.alert && past &&
           <img className="mdw-item-alert mdw-space" src={this.context.hubRoot + '/images/alert.png'} alt="alert" />
