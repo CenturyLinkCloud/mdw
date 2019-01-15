@@ -46,10 +46,12 @@ class Processes extends Component {
           selectLabel: 'Processes',
           tops: '/Processes/tops?by=completionTime',
           data: '/Processes/breakdown?by=completionTime',
-          instancesParam: 'processIds'
+          instancesParam: 'processIds',
+          summaryChart: 'bar',
+          units: 'ms'
         },
         {
-          name: 'Total',
+          name: 'Total Throughput',
           data: '/Processes/breakdown?by=total'
         }
       ]

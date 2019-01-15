@@ -84,11 +84,15 @@ class ChartHeader extends Component {
           selected={this.props.breakdown}
           onSelect={this.handleDropdownSelect} />
 
+        {breakdown.units &&
+          <HeaderLabel title={'(' + breakdown.units + ')'} style={{marginLeft:'10px'}}/>
+        }
+
         <HeaderButtons>
           {breakdown.selectField &&
             <HeaderPopButton label="Select" glyph="ok" rootClose={false} ref="selectPopRef"
               popover={
-                <SelectPop label={breakdown.selectLabel}
+                <SelectPop label={breakdown.selectLabel} units={breakdown.units}
                   tops={this.props.tops}
                   selected={this.props.selected}
                   onSelect={this.handleTopSelect}

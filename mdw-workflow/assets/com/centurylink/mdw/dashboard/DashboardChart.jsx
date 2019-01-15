@@ -1,6 +1,6 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
-import {Doughnut, Line} from '../node/node_modules/react-chartjs-2';
+import {Doughnut, Bar, Line} from '../node/node_modules/react-chartjs-2';
 import ChartHeader from './ChartHeader.jsx';
 import ChartLegend from './ChartLegend.jsx';
 
@@ -39,7 +39,6 @@ class DashboardChart extends Component {
     this.update = this.update.bind(this);
     this.retrieveData = this.retrieveData.bind(this);
     this.updateChart = this.updateChart.bind(this);
-    this.setDonutRef = this.setDonutRef.bind(this);
   }
 
   // selected breakdown object from breakdownConfig
@@ -142,7 +141,7 @@ class DashboardChart extends Component {
 
   handleSelectCancel() {
     if (this.previousSelected) {
-      this.setSelected(this.previousSelected);
+      this.setSelected(this.previousSelected, this.updateChart());
     }
   }
 
@@ -273,14 +272,16 @@ class DashboardChart extends Component {
     });
   }
 
-  getDonutData() {
-    const donutData = {labels: [], datasets: [{data: [], backgroundColor: []}]};
+  getOverallData() {
+    const breakdown = this.getBreakdown();
+    const overallData = {labels: [], datasets: [{label: 'Overall', data: [], backgroundColor: []}]};
     this.state.selected.forEach((sel, i) => {
-      donutData.labels.push(sel.name);
-      donutData.datasets[0].data.push(sel.value);
-      donutData.datasets[0].backgroundColor.push(this.chartColors[i]);
+      let label = breakdown.summaryChart === 'bar' ? '' : sel.name;
+      overallData.labels.push(label);
+      overallData.datasets[0].data.push(sel.value);
+      overallData.datasets[0].backgroundColor.push(this.chartColors[i]);
     }, this);
-    return donutData;
+    return overallData;
   }
 
   getLineData() {
@@ -318,10 +319,6 @@ class DashboardChart extends Component {
     return lineData;
   }
 
-  setDonutRef(ref) {
-    this.donutRef = ref;
-  }
-
   render() {
     const breakdown = this.getBreakdown();
     return (
@@ -345,10 +342,18 @@ class DashboardChart extends Component {
         <div className="mdw-section" style={{display:'flex'}}>
           {breakdown.tops &&
             <div>
-              <Doughnut ref={this.setDonutRef}
-                data={this.getDonutData()}
-                options={this.chartOptions}
-                width={250} height={250}/>
+              {(!breakdown.summaryChart || breakdown.summaryChart === 'donut') &&
+                <Doughnut
+                  data={this.getOverallData()}
+                  options={this.chartOptions}
+                  width={250} height={250} />
+              }
+              {breakdown.summaryChart === 'bar' &&
+                <Bar
+                  data={this.getOverallData()}
+                  options={this.chartOptions}
+                  width={250} height={250} />
+              }
               <ChartLegend
                 colors = {this.chartColors}
                 tops={this.state.tops}

@@ -15,7 +15,7 @@ class SelectPop extends Component {
   getLabel(top) {
     var label = top.name;
     if (top.value) {
-      label += ' (' + top.value + ')';
+      label += ' (' + top.value + (this.props.units ? ' ' + this.props.units : '') + ')';
     }
     return label;
   }
@@ -59,7 +59,7 @@ class SelectPop extends Component {
   }
 
   render() {
-    const {tops, onCancel, onApply, ...popProps} = this.props; // eslint-disable-line no-unused-vars
+    const {tops, onCancel, onApply, units, ...popProps} = this.props; // eslint-disable-line no-unused-vars
     return (
       <Popover {...popProps} id="select-pop">
         <div>
