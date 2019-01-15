@@ -28,13 +28,13 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.variable.Document;
-import com.centurylink.mdw.model.workflow.ActivityCount;
+import com.centurylink.mdw.model.workflow.ActivityAggregate;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.ActivityList;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.ProcessCount;
+import com.centurylink.mdw.model.workflow.ProcessAggregate;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessList;
 import com.centurylink.mdw.model.workflow.ProcessRun;
@@ -144,13 +144,13 @@ public interface WorkflowServices {
 
     public ActivityList getActivities(Query query) throws ServiceException;
 
-    public List<ProcessCount> getTopThroughputProcesses(Query query) throws ServiceException;
+    public List<ProcessAggregate> getTopProcesses(Query query) throws ServiceException;
 
-    public TreeMap<Date,List<ProcessCount>> getProcessInstanceBreakdown(Query query) throws ServiceException;
+    public TreeMap<Date,List<ProcessAggregate>> getProcessBreakdown(Query query) throws ServiceException;
 
-    public List<ActivityCount> getTopThroughputActivities(Query query) throws ServiceException;
+    public List<ActivityAggregate> getTopThroughputActivities(Query query) throws ServiceException;
 
-    public Map<Date,List<ActivityCount>> getActivityInstanceBreakdown(Query query) throws ServiceException;
+    public Map<Date,List<ActivityAggregate>> getActivityInstanceBreakdown(Query query) throws ServiceException;
 
     public List<Process> getProcessDefinitions(Query query) throws ServiceException;
     public Process getProcessDefinition(String assetPath, Query query) throws ServiceException;

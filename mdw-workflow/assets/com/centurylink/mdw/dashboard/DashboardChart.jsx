@@ -210,8 +210,8 @@ class DashboardChart extends Component {
     return new Promise(resolve => {
       const breakdown = this.getBreakdown();
       if (breakdown) {
-        var topsUrl = this.context.serviceRoot + breakdown.throughput;
-        topsUrl += (breakdown.throughput.indexOf('?') >= 0 ? '&' : '?');
+        var topsUrl = this.context.serviceRoot + breakdown.tops;
+        topsUrl += (breakdown.tops.indexOf('?') >= 0 ? '&' : '?');
         topsUrl += 'max=' + this.maxTops + '&startDt=' + this.getStart().toISOString();
         if (this.state.filters.ending) {
           topsUrl += '&endDt=' + this.state.filters.ending.toISOString();
@@ -275,7 +275,7 @@ class DashboardChart extends Component {
     const donutData = {labels: [], datasets: [{data: [], backgroundColor: []}]};
     this.state.selected.forEach((sel, i) => {
       donutData.labels.push(sel.name);
-      donutData.datasets[0].data.push(sel.count);
+      donutData.datasets[0].data.push(sel.value);
       donutData.datasets[0].backgroundColor.push(this.chartColors[i]);
     }, this);
     return donutData;
@@ -294,7 +294,7 @@ class DashboardChart extends Component {
         }
         const counts = this.state.data[key];
         const selCount = counts.find(ct => ct.id === sel.id);
-        dataset.data.push(selCount ? selCount.count : 0);
+        dataset.data.push(selCount ? selCount.value : 0);
       }, this);
     }, this);
     return lineData;

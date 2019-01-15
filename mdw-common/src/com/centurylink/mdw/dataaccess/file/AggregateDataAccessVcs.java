@@ -23,8 +23,8 @@ import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.request.RequestCount;
 import com.centurylink.mdw.model.task.TaskCount;
 import com.centurylink.mdw.model.task.TaskStatuses;
-import com.centurylink.mdw.model.workflow.ActivityCount;
-import com.centurylink.mdw.model.workflow.ProcessCount;
+import com.centurylink.mdw.model.workflow.ActivityAggregate;
+import com.centurylink.mdw.model.workflow.ProcessAggregate;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 
@@ -40,24 +40,49 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
 
     public static final int DAY_MS = 24 * 60 * 60 * 1000;
 
-    public List<ProcessCount> getTopThroughputProcessInstances(Query query) throws DataAccessException {
+    public List<ProcessAggregate> getTopProcessInstances(Query query) throws DataAccessException {
+        String by = query.getFilter("by");
+        if (by == null)
+            throw new DataAccessException("Missing required filter: 'by'");
         try {
             StringBuilder sql = new StringBuilder();
-            sql.append("select count(pi.process_id) as ct, pi.process_id\n");
-            sql.append("from (select process_id from process_instance ");
-            sql.append(getProcessWhereClause(query));
-            sql.append(") pi\n");
-            sql.append("group by process_id\n");
-            sql.append("order by ct desc\n");
+            if (by.equals("status")) {
+                sql.append("select status_cd, count(status_cd) as agg from process_instance");
+            }
+            else {
+                sql.append("select process_id, ");
+                if (by.equals("throughput"))
+                    sql.append("count(process_id) as agg\n");
+                else if (by.equals("completionTime"))
+                    sql.append("avg(elapsed_ms) as agg, count(process_id) as ct\n");
+                sql.append("from process_instance");
+                if (by.equals("completionTime"))
+                    sql.append(", instance_timing ");
+            }
+            sql.append("\n");
+            sql.append(getProcessWhereClause(query)).append("\n");
+            if (by.equals("status"))
+                sql.append("group by status_cd\n");
+            else
+                sql.append("group by process_id\n");
+            sql.append("order by agg desc\n");
 
             db.openConnection();
             ResultSet rs = db.runSelect(sql.toString());
-            List<ProcessCount> list = new ArrayList<ProcessCount>();
+            List<ProcessAggregate> list = new ArrayList<ProcessAggregate>();
             int idx = 0;
             int limit = query.getIntFilter("limit");
             while (rs.next() && (limit == -1 || idx < limit)) {
-                ProcessCount procCount = new ProcessCount(rs.getLong("ct"));
-                procCount.setId(rs.getLong("process_id"));
+                Long agg = Math.round(rs.getDouble("agg"));
+                ProcessAggregate procCount = new ProcessAggregate(agg);
+                if (by.equals("throughput") || by.equals("status"))
+                    procCount.setCount(agg);
+                else if (by.equals("completionTime"))
+                    procCount.setCount(rs.getLong("ct"));
+                if (by.equals("status"))
+                    procCount.setId(rs.getInt("status_cd"));
+                else
+                    procCount.setId(rs.getLong("process_id"));
                 list.add(procCount);
                 idx++;
             }
@@ -74,7 +99,11 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
         }
     }
 
-    public TreeMap<Date,List<ProcessCount>> getProcessInstanceBreakdown(Query query) throws DataAccessException {
+    public TreeMap<Date,List<ProcessAggregate>> getProcessInstanceBreakdown(Query query) throws DataAccessException {
+        String by = query.getFilter("by");
+        if (by == null)
+            throw new DataAccessException("Missing required filter: 'by'");
+
         try {
             // process ids
             Long[] processIdsArr = query.getLongArrayFilter("processIds");
@@ -91,22 +120,29 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 throw new DataAccessException("Conflicting parameters: processIds and statuses");
 
             StringBuilder sql = new StringBuilder();
-            if (statusCodes != null)
-                sql.append("select count(pi.status_cd) as ct, pi.st, pi.status_cd\n");
-            else if (processIds != null)
-                sql.append("select count(pi.process_id) as ct, pi.st, pi.process_id\n");
-            else
-                sql.append("select count(pi.st) as ct, pi.st\n");
+            if (by.equals("status"))
+                sql.append("select count(pi.status_cd) as val, pi.st, pi.status_cd\n");
+            else if (by.equals("throughput"))
+                sql.append("select count(pi.process_id) as val, pi.st, pi.process_id\n");
+            else if (by.equals("completionTime"))
+                sql.append("select avg(pi.elapsed_ms) as val, pi.st, pi.process_id\n");
+            else if (by.equals("total"))
+                sql.append("select count(pi.st) as val, pi.st\n");
 
             if (db.isMySQL())
-                sql.append("from (select DATE(start_dt) as st");
+                sql.append("from (select date(start_dt) as st");
             else
                 sql.append("from (select to_char(start_dt,'DD-Mon-yyyy') as st");
-            if (statusCodes != null)
+            if (by.equals("status"))
                 sql.append(", status_cd ");
             else if (processIds != null)
                 sql.append(", process_id ");
-            sql.append("  from process_instance\n   ");
+            if (by.equals("completionTime"))
+                sql.append(", elapsed_ms");
+            sql.append("  from process_instance");
+            if (by.equals("completionTime"))
+                sql.append(", instance_timing");
+            sql.append("\n   ");
             sql.append(getProcessWhereClause(query));
             if (statusCodes != null)
                 sql.append("\n   and status_cd ").append(getInCondition(statusCodes));
@@ -126,7 +162,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
 
             db.openConnection();
             ResultSet rs = db.runSelect(sql.toString(), null);
-            TreeMap<Date,List<ProcessCount>> map = new TreeMap<>();
+            TreeMap<Date,List<ProcessAggregate>> map = new TreeMap<>();
             Date prevStartDate = getStartDate(query);
             while (rs.next()) {
                 String startDateStr = rs.getString("st");
@@ -138,30 +174,30 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 // fill in gaps
                 while (startDate.getTime() - prevStartDate.getTime() > DAY_MS) {
                     prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
-                    map.put(prevStartDate, new ArrayList<>());
+                    map.put(getRoundDate(prevStartDate), new ArrayList<>());
                 }
-                List<ProcessCount> processCounts = map.get(startDate);
-                if (processCounts == null) {
-                    processCounts = new ArrayList<>();
-                    map.put(startDate, processCounts);
+                List<ProcessAggregate> processAggregates = map.get(startDate);
+                if (processAggregates == null) {
+                    processAggregates = new ArrayList<>();
+                    map.put(startDate, processAggregates);
                 }
-                ProcessCount processCount = new ProcessCount(rs.getLong("ct"));
+                ProcessAggregate processAggregate = new ProcessAggregate(rs.getLong("val"));
                 if (statusCodes != null)
-                    processCount.setStatus(WorkStatuses.getName(rs.getInt("status_cd")));
+                    processAggregate.setName(WorkStatuses.getName(rs.getInt("status_cd")));
                 else if (processIds != null)
-                    processCount.setId(rs.getLong("process_id"));
-                processCounts.add(processCount);
+                    processAggregate.setId(rs.getLong("process_id"));
+                processAggregates.add(processAggregate);
                 prevStartDate = startDate;
             }
             // missing start date
-            Date startDate = getStartDate(query);
-            if (map.get(startDate) == null)
-                map.put(startDate, new ArrayList<>());
+            Date roundStartDate = getRoundDate(getStartDate(query));
+            if (map.get(roundStartDate) == null)
+                map.put(roundStartDate, new ArrayList<>());
             // gaps at end
             Date endDate = getEndDate(query);
             while (endDate.getTime() - prevStartDate.getTime() > DAY_MS) {
                 prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
-                map.put(prevStartDate, new ArrayList<>());
+                map.put(getRoundDate(prevStartDate), new ArrayList<>());
             }
             return map;
         }
@@ -177,19 +213,23 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
     }
 
     protected String getProcessWhereClause(Query query) throws ParseException, DataAccessException {
+        String by = query.getFilter("by");
         Date start = getStartDate(query);
 
         StringBuilder where = new StringBuilder();
+        if ("completionTime".equals(by))
+            where.append("where owner_type = 'PROCESS_INSTANCE' and instance_id = process_instance_id\n");
+        where.append(where.length() > 0 ? "and " : "where ");
         if (db.isMySQL())
-            where.append("where start_dt >= '" + getMySqlDt(start) + "' ");
+            where.append("start_dt >= '" + getMySqlDt(start) + "' ");
         else
-            where.append("where start_dt >= '" + getDateFormat().format(start) + "' ");
+            where.append("start_dt >= '" + getOracleDt(start) + "' ");
         Date end = getEndDate(query);
         if (end != null) {
             if (db.isMySQL())
                 where.append("and start_dt <= '" + getMySqlDt(end) + "' ");
             else
-                where.append("and start_dt <= '" + getDateFormat().format(end) + "' ");
+                where.append("and start_dt <= '" + getOracleDt(end) + "' ");
         }
         where.append("and owner not in ('MAIN_PROCESS_INSTANCE' ");
         if (query.getBooleanFilter("master"))
@@ -552,7 +592,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
         }
     }
 
-    public List<ActivityCount> getTopThroughputActivityInstances(Query query) throws DataAccessException {
+    public List<ActivityAggregate> getTopThroughputActivityInstances(Query query) throws DataAccessException {
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("select count(act_unique_id) as ct, act_unique_id\n");
@@ -567,11 +607,11 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
 
             db.openConnection();
             ResultSet rs = db.runSelect(sql.toString());
-            List<ActivityCount> list = new ArrayList<ActivityCount>();
+            List<ActivityAggregate> list = new ArrayList<ActivityAggregate>();
             int idx = 0;
             int limit = query.getIntFilter("limit");
             while (rs.next() && (limit == -1 || idx < limit)) {
-                ActivityCount actCount = new ActivityCount(rs.getLong("ct"));
+                ActivityAggregate actCount = new ActivityAggregate(rs.getLong("ct"));
                 String actId = rs.getString("act_unique_id");
                 actCount.setActivityId(actId);
                 int colon = actId.lastIndexOf(":");
@@ -616,7 +656,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
         return where.toString();
     }
 
-    public Map<Date,List<ActivityCount>> getActivityInstanceBreakdown(Query query) throws DataAccessException {
+    public Map<Date,List<ActivityAggregate>> getActivityInstanceBreakdown(Query query) throws DataAccessException {
         try {
             // activity ids (processid:logicalId)
             String[] actIdsArr = query.getArrayFilter("activityIds");
@@ -673,18 +713,18 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
 
             db.openConnection();
             ResultSet rs = db.runSelect(sql.toString());
-            Map<Date,List<ActivityCount>> map = new HashMap<Date,List<ActivityCount>>();
+            Map<Date,List<ActivityAggregate>> map = new HashMap<Date,List<ActivityAggregate>>();
             while (rs.next()) {
                 String startDateStr = rs.getString("st");
                 Date startDate = getDateFormat().parse(startDateStr);
-                List<ActivityCount> actCounts = map.get(startDate);
+                List<ActivityAggregate> actCounts = map.get(startDate);
                 if (actCounts == null) {
-                    actCounts = new ArrayList<ActivityCount>();
+                    actCounts = new ArrayList<ActivityAggregate>();
                     map.put(startDate, actCounts);
                 }
-                ActivityCount actCount = new ActivityCount(rs.getLong("ct"));
+                ActivityAggregate actCount = new ActivityAggregate(rs.getLong("ct"));
                 if (statusCodes != null)
-                    actCount.setStatus(WorkStatuses.getName(rs.getInt("status_cd")));
+                    actCount.setName(WorkStatuses.getName(rs.getInt("status_cd")));
                 else if (actIds != null) {
                     String actId = rs.getString("act_unique_id");
                     actCount.setActivityId(actId);

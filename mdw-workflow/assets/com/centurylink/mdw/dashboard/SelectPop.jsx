@@ -14,8 +14,8 @@ class SelectPop extends Component {
 
   getLabel(top) {
     var label = top.name;
-    if (top.count) {
-      label += ' (' + top.count + ')';
+    if (top.value) {
+      label += ' (' + top.value + ')';
     }
     return label;
   }

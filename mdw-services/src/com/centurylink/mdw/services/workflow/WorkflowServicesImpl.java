@@ -546,12 +546,17 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public List<ProcessCount> getTopThroughputProcesses(Query query) throws ServiceException {
+    public List<ProcessAggregate> getTopProcesses(Query query) throws ServiceException {
         try {
             CodeTimer timer = new CodeTimer(true);
-            List<ProcessCount> list = getAggregateDataAccess().getTopThroughputProcessInstances(query);
-            timer.logTimingAndContinue("AggregateDataAccessVcs.getTopThroughputProcessInstances()");
-            list = populate(list);
+            List<ProcessAggregate> list = getAggregateDataAccess().getTopProcessInstances(query);
+            timer.logTimingAndContinue("AggregateDataAccessVcs.getTopProcessInstances()");
+            if ("status".equals(query.getFilter("by"))) {
+                list = populateStatuses(list);
+            }
+            else {
+                list = populateProcesses(list);
+            }
             timer.stopAndLogTiming("WorkflowServicesImpl.populate()");
             return list;
         }
@@ -560,12 +565,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public TreeMap<Date,List<ProcessCount>> getProcessInstanceBreakdown(Query query) throws ServiceException {
+    public TreeMap<Date,List<ProcessAggregate>> getProcessBreakdown(Query query) throws ServiceException {
         try {
-            TreeMap<Date,List<ProcessCount>> map = getAggregateDataAccess().getProcessInstanceBreakdown(query);
+            TreeMap<Date,List<ProcessAggregate>> map = getAggregateDataAccess().getProcessInstanceBreakdown(query);
             if (query.getFilters().get("processIds") != null) {
                 for (Date date : map.keySet())
-                    populate(map.get(date));
+                    populateProcesses(map.get(date));
             }
             return map;
         }
@@ -577,9 +582,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
     /**
      * Fills in process header info, consulting latest instance comment if necessary.
      */
-    protected List<ProcessCount> populate(List<ProcessCount> processCounts) throws DataAccessException {
+    protected List<ProcessAggregate> populateProcesses(List<ProcessAggregate> processAggregates) throws DataAccessException {
         AggregateDataAccessVcs dataAccess = null;
-        for (ProcessCount pc : processCounts) {
+        for (ProcessAggregate pc : processAggregates) {
             Process process = ProcessCache.getProcess(pc.getId());
             if (process == null) {
                 logger.severe("Missing definition for process id: " + pc.getId());
@@ -607,7 +612,28 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 pc.setPackageName(process.getPackageName());
             }
         }
-        return processCounts;
+        return processAggregates;
+    }
+
+    protected List<ProcessAggregate> populateStatuses(List<ProcessAggregate> processAggregates) throws DataAccessException {
+        for (ProcessAggregate processAggregate : processAggregates) {
+            processAggregate.setName(WorkStatuses.getName((int)processAggregate.getId()));
+        }
+        // add any empty statuses
+        for (Integer statusCd : WorkStatuses.getWorkStatuses().keySet()) {
+            boolean found = processAggregates.stream().filter(agg -> {
+                return agg.getId() == statusCd;
+            }).findAny().isPresent();
+            if (!found) {
+                ProcessAggregate processAggregate = new ProcessAggregate(0);
+                processAggregate.setId(statusCd);
+                processAggregate.setCount(0);
+                processAggregate.setName(WorkStatuses.getWorkStatuses().get(statusCd));
+                processAggregates.add(processAggregate);
+            }
+        }
+        processAggregates.sort((agg1, agg2) -> (int)(agg1.getId() - agg2.getId()));
+        return processAggregates;
     }
 
     /**
@@ -679,9 +705,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
     /**
      * Fills in process header info, consulting latest instance comment if necessary.
      */
-    protected List<ActivityCount> populateAct(List<ActivityCount> activityCounts) throws DataAccessException {
+    protected List<ActivityAggregate> populateAct(List<ActivityAggregate> activityCounts) throws DataAccessException {
         AggregateDataAccessVcs dataAccess = null;
-        for (ActivityCount ac : activityCounts) {
+        for (ActivityAggregate ac : activityCounts) {
             Process process = ProcessCache.getProcess(ac.getProcessId());
             if (process == null) {
                 logger.severe("Missing definition for process id: " + ac.getProcessId());
@@ -726,10 +752,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
         return activityCounts;
     }
 
-    public List<ActivityCount> getTopThroughputActivities(Query query) throws ServiceException {
+    public List<ActivityAggregate> getTopThroughputActivities(Query query) throws ServiceException {
         try {
             CodeTimer timer = new CodeTimer(true);
-            List<ActivityCount> list = getAggregateDataAccess().getTopThroughputActivityInstances(query);
+            List<ActivityAggregate> list = getAggregateDataAccess().getTopThroughputActivityInstances(query);
             timer.logTimingAndContinue("AggregateDataAccessVcs.getTopThroughputActivityInstances()");
             list = populateAct(list);
             timer.stopAndLogTiming("WorkflowServicesImpl.populate()");
@@ -740,9 +766,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public Map<Date,List<ActivityCount>> getActivityInstanceBreakdown(Query query) throws ServiceException {
+    public Map<Date,List<ActivityAggregate>> getActivityInstanceBreakdown(Query query) throws ServiceException {
         try {
-            Map<Date,List<ActivityCount>> map = getAggregateDataAccess().getActivityInstanceBreakdown(query);
+            Map<Date,List<ActivityAggregate>> map = getAggregateDataAccess().getActivityInstanceBreakdown(query);
             if (query.getFilters().get("activityIds") != null) {
                 for (Date date : map.keySet())
                     populateAct(map.get(date));

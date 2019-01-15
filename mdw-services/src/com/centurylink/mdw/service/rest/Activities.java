@@ -26,7 +26,7 @@ import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
-import com.centurylink.mdw.model.workflow.ActivityCount;
+import com.centurylink.mdw.model.workflow.ActivityAggregate;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.ActivityList;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -93,18 +93,18 @@ public class Activities extends JsonRestService implements JsonExportable {
                 }
 
               else if (segOne.equals("topThroughput")) {
-                List<ActivityCount> list = workflowServices.getTopThroughputActivities(query);
+                List<ActivityAggregate> list = workflowServices.getTopThroughputActivities(query);
                 JSONArray actArr = new JSONArray();
                 int ct = 0;
-                ActivityCount other = null;
+                ActivityAggregate other = null;
                 long otherTot = 0;
-                for (ActivityCount actCount : list) {
+                for (ActivityAggregate actCount : list) {
                     if (ct >= query.getMax()) {
                         if (other == null) {
-                            other = new ActivityCount(0);
+                            other = new ActivityAggregate(0);
                             other.setName("Other");
                         }
-                        otherTot += actCount.getCount();
+                        otherTot += actCount.getValue();
                     }
                     else {
                         actArr.put(actCount.getJson());
@@ -112,26 +112,26 @@ public class Activities extends JsonRestService implements JsonExportable {
                     ct++;
                 }
                 if (other != null) {
-                    other.setCount(otherTot);
+                    other.setValue(otherTot);
                     actArr.put(other.getJson());
                 }
                 return new JsonArray(actArr).getJson();
 
               }
                 else if (segOne.equals("instanceCounts")) {
-                    Map<Date,List<ActivityCount>> dateMap = workflowServices.getActivityInstanceBreakdown(query);
+                    Map<Date,List<ActivityAggregate>> dateMap = workflowServices.getActivityInstanceBreakdown(query);
                     boolean isTotals = query.getFilters().get("activityIds") == null && query.getFilters().get("statuses") == null;
 
-                    Map<String,List<ActivityCount>> listMap = new HashMap<String,List<ActivityCount>>();
+                    Map<String,List<ActivityAggregate>> listMap = new HashMap<String,List<ActivityAggregate>>();
                     for (Date date : dateMap.keySet()) {
-                        List<ActivityCount> actCounts = dateMap.get(date);
+                        List<ActivityAggregate> actCounts = dateMap.get(date);
                         if (isTotals) {
-                            for (ActivityCount actCount : actCounts)
+                            for (ActivityAggregate actCount : actCounts)
                                 actCount.setName("Total");
                         }
                         listMap.put(Query.getString(date), actCounts);
                     }
-                    return new JsonListMap<ActivityCount>(listMap).getJson();
+                    return new JsonListMap<ActivityAggregate>(listMap).getJson();
                 }
                 else {
                     throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path segment: " + segOne);
@@ -193,7 +193,7 @@ public class Activities extends JsonRestService implements JsonExportable {
             if (json.has(ActivityList.ACTIVITY_INSTANCES))
                 return new ActivityList(ActivityList.ACTIVITY_INSTANCES, json);
             else if ("Activities/instanceCounts".equals(query.getPath()))
-                return new JsonListMap<ActivityCount>(json, ActivityCount.class);
+                return new JsonListMap<ActivityAggregate>(json, ActivityAggregate.class);
             else
                 throw new JSONException("Unsupported export type for query: " + query);
         }

@@ -45,7 +45,8 @@ public class CommonDataAccess {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    protected static final String MYSQL_DT_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String MYSQL_DT_FORMAT = "yyyy-MM-dd HH:mm:ss"; // 2018-12-08 00:00:00
+    private static final String ORACLE_DT_FORMAT = "dd-MMM-yyyy hh:mm:ss aa"; // 08-DEC-2018 12.00.00 AM
 
     protected static final String PROC_INST_COLS = "pi.master_request_id, pi.process_instance_id, pi.process_id, pi.owner, pi.owner_id, " +
             "pi.status_cd, pi.start_dt, pi.end_dt, pi.compcode, pi.comments, pi.template";
@@ -999,5 +1000,18 @@ public class CommonDataAccess {
 
     protected static String getMySqlDt(Date date) {
         return new SimpleDateFormat(MYSQL_DT_FORMAT).format(date);
+    }
+
+    protected static String getOracleDt(Date date) {
+        return new SimpleDateFormat(ORACLE_DT_FORMAT).format(date);
+    }
+
+    @SuppressWarnings("deprecation")
+    protected static Date getRoundDate(Date date) {
+        Date roundDate = new Date(date.getTime());
+        roundDate.setHours(0);
+        roundDate.setMinutes(0);
+        roundDate.setSeconds(0);
+        return roundDate;
     }
  }

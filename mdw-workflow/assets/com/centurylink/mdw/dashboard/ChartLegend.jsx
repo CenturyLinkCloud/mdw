@@ -7,8 +7,8 @@ function ChartLegend(props) {
     const top = props.tops.find(t => t.id === sel.id);
     if (top) {
       label += top.name;
-      if (top.count) {
-        label += ' (' + top.count + ')';
+      if (top.value) {
+        label += ' (' + top.value + ')';
       }
     }
     return label;

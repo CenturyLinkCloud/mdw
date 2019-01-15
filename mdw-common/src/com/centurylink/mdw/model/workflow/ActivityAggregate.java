@@ -23,7 +23,7 @@ import com.centurylink.mdw.util.StringHelper;
 /**
  * Aggregated activity instance count for a particular definition or status.
  */
-public class ActivityCount extends ProcessCount {
+public class ActivityAggregate extends ProcessAggregate {
 
     private long processId;
     public long getProcessId() { return processId; }
@@ -46,11 +46,11 @@ public class ActivityCount extends ProcessCount {
     public String getProcessName() { return processName; }
     public void setProcessName(String name) { this.processName = name; }
 
-    public ActivityCount(long count) {
+    public ActivityAggregate(long count) {
         super(count);
     }
 
-    public ActivityCount(JSONObject json) throws JSONException {
+    public ActivityAggregate(JSONObject json) throws JSONException {
         super(json.getLong("count"));
         if (json.has("id"))
             activityId = json.getString("id");
@@ -70,8 +70,6 @@ public class ActivityCount extends ProcessCount {
             setPackageName(json.getString("packageName"));
         if (json.has("definitionMissing"))
             setDefinitionMissing(json.getBoolean("definitionMissing"));
-        if (json.has("status"))
-            setStatus(json.getString("status"));
     }
 
     public String getJsonName() {
@@ -80,7 +78,7 @@ public class ActivityCount extends ProcessCount {
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
-        json.put("count", getCount());
+        json.put("count", getValue());
         if (!StringHelper.isEmpty(activityId))
             json.put("id", activityId);
         if (getName() != null)
@@ -99,8 +97,6 @@ public class ActivityCount extends ProcessCount {
             json.put("packageName", getPackageName());
         if (isDefinitionMissing())
             json.put("definitionMissing", true);
-        if (getStatus() != null)
-            json.put("status", getStatus());
         return json;
     }
 }
