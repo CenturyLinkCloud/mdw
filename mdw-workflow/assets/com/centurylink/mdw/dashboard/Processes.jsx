@@ -47,6 +47,10 @@ class Processes extends Component {
           tops: '/Processes/tops?by=completionTime',
           data: '/Processes/breakdown?by=completionTime',
           instancesParam: 'processIds'
+        },
+        {
+          name: 'Total',
+          data: '/Processes/breakdown?by=total'
         }
       ]
     };

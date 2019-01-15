@@ -85,15 +85,17 @@ class ChartHeader extends Component {
           onSelect={this.handleDropdownSelect} />
 
         <HeaderButtons>
-          <HeaderPopButton label="Select" glyph="ok" rootClose={false} ref="selectPopRef"
-            popover={
-              <SelectPop label={breakdown.selectLabel}
-                tops={this.props.tops}
-                selected={this.props.selected}
-                onSelect={this.handleTopSelect}
-                onCancel={this.handleSelectCancel}
-                onApply={this.handleSelectApply} />
-            } />
+          {breakdown.selectField &&
+            <HeaderPopButton label="Select" glyph="ok" rootClose={false} ref="selectPopRef"
+              popover={
+                <SelectPop label={breakdown.selectLabel}
+                  tops={this.props.tops}
+                  selected={this.props.selected}
+                  onSelect={this.handleTopSelect}
+                  onCancel={this.handleSelectCancel}
+                  onApply={this.handleSelectApply} />
+              } />
+          }
           <HeaderPopButton label="Filters" glyph="filter"
             popover={
               <FilterPop filters={this.props.filters}

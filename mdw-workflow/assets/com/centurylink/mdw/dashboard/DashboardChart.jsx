@@ -12,7 +12,7 @@ class DashboardChart extends Component {
     this.initialSelect = 5;
     this.maxTops = 50;
     this.defaultTimespan = 'Week';
-    this.chartColors = ['#3366CC','#DC3912','#FF9900','#109618','#990099','#3B3EAC','#0099C6','#DD4477','#66AA00','#B82E2E','#316395','#994499','#22AA99','#AAAA11','#6633CC','#E67300','#8B0707','#329262','#5574A6','#3B3EAC'];
+    this.chartColors = ['#3366CC','#FF9900','#DC3912','#109618','#990099','#3B3EAC','#0099C6','#DD4477','#66AA00','#B82E2E','#316395','#994499','#22AA99','#AAAA11','#6633CC','#E67300','#8B0707','#329262','#5574A6','#3B3EAC'];
     this.chartOptions = {legend: {display: false, position: 'bottom'}};
 
     this.state = {
@@ -209,7 +209,7 @@ class DashboardChart extends Component {
   retrieveTops() {
     return new Promise(resolve => {
       const breakdown = this.getBreakdown();
-      if (breakdown) {
+      if (breakdown && breakdown.tops) {
         var topsUrl = this.context.serviceRoot + breakdown.tops;
         topsUrl += (breakdown.tops.indexOf('?') >= 0 ? '&' : '?');
         topsUrl += 'max=' + this.maxTops + '&startDt=' + this.getStart().toISOString();
@@ -251,7 +251,9 @@ class DashboardChart extends Component {
           dataUrl += '&status=' + this.state.filters.status;
         }
         if (breakdown.instancesParam) {
-          dataUrl += '&' + breakdown.instancesParam + '=%5B' + this.state.selected.map(sel => sel.id).join() + '%5D';
+          dataUrl += '&' + breakdown.instancesParam + '=%5B' + this.state.selected.map(sel => {
+            return breakdown.instancesParam === 'statuses' ? sel.name : sel.id;
+          }).join() + '%5D';
         }
         fetch(new Request(dataUrl, {
           method: 'GET',
@@ -284,19 +286,35 @@ class DashboardChart extends Component {
   getLineData() {
     const lineData = {labels: [], datasets: []};
     var datasets = {}; // id to dataset
-    this.state.selected.forEach((sel, i) => {
-      var dataset = {label: sel.name, borderColor: this.chartColors[i], data: [], fill: false};
-      datasets[sel.id] = dataset;
+    if (this.state.selected.length > 0) {
+      this.state.selected.forEach((sel, i) => {
+        let dataset = {label: sel.name, borderColor: this.chartColors[i], data: [], fill: false};
+        datasets[sel.id] = dataset;
+        lineData.datasets.push(dataset);
+        Object.keys(this.state.data).forEach(key => {
+          if (i === 0) {
+            lineData.labels.push(key);
+          }
+          const aggs = this.state.data[key];
+          const selAgg = aggs.find(agg => agg.id === sel.id);
+          dataset.data.push(selAgg ? selAgg.value : 0);
+        }, this);
+      }, this);
+    }
+    else { // eg: total
+      let dataset = {borderColor: this.chartColors[0], data: [], fill: false};
       lineData.datasets.push(dataset);
       Object.keys(this.state.data).forEach(key => {
-        if (i === 0) {
-          lineData.labels.push(key);
+        lineData.labels.push(key);
+        let point = this.state.data[key][0];
+        if (point) {
+          dataset.data.push(point.value);
         }
-        const counts = this.state.data[key];
-        const selCount = counts.find(ct => ct.id === sel.id);
-        dataset.data.push(selCount ? selCount.value : 0);
+        else {
+          dataset.data.push(0);
+        }
       }, this);
-    }, this);
+    }
     return lineData;
   }
 
@@ -305,6 +323,7 @@ class DashboardChart extends Component {
   }
 
   render() {
+    const breakdown = this.getBreakdown();
     return (
       <div>
         <ChartHeader title={this.props.title}
@@ -324,16 +343,23 @@ class DashboardChart extends Component {
           onFilterChange={this.handleFilterChange}
           onFilterReset={this.handleFilterReset} />
         <div className="mdw-section" style={{display:'flex'}}>
-          <div>
-            <Doughnut ref={this.setDonutRef}
-              data={this.getDonutData()}
-              options={this.chartOptions}
-              width={250} height={250}/>
-            <ChartLegend
-              colors = {this.chartColors}
-              tops={this.state.tops}
-              selected={this.state.selected} />
-          </div>
+          {breakdown.tops &&
+            <div>
+              <Doughnut ref={this.setDonutRef}
+                data={this.getDonutData()}
+                options={this.chartOptions}
+                width={250} height={250}/>
+              <ChartLegend
+                colors = {this.chartColors}
+                tops={this.state.tops}
+                selected={this.state.selected} />
+            </div>
+          }
+          {!breakdown.tops &&
+            <div className="mdw-chart-title" style={{width:'320px'}}>
+              {breakdown.name}
+            </div>
+          }
           <div style={{height:'100%',width:'100%'}}>
             <Line data={this.getLineData()} options={this.chartOptions} />
           </div>

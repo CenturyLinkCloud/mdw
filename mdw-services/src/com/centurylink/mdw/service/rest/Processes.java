@@ -17,12 +17,7 @@ package com.centurylink.mdw.service.rest;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.ws.rs.Path;
 
@@ -209,20 +204,14 @@ public class Processes extends JsonRestService implements JsonExportable {
                         return new JsonArray(procArr).getJson();
                     }
                     else if (segOne.equals("breakdown")) {
-                        Map<Date,List<ProcessAggregate>> dateMap = workflowServices.getProcessBreakdown(query);
-                        boolean isTotals = query.getFilters().get("processIds") == null && query.getFilters().get("statuses") == null;
-
-                        Map<String,List<ProcessAggregate>> listMap = new HashMap<String,List<ProcessAggregate>>();
+                        TreeMap<Date,List<ProcessAggregate>> dateMap = workflowServices.getProcessBreakdown(query);
+                        LinkedHashMap<String,List<ProcessAggregate>> listMap = new LinkedHashMap<>();
                         for (Date date : dateMap.keySet()) {
                             List<ProcessAggregate> procCounts = dateMap.get(date);
-                            if (isTotals) {
-                                for (ProcessAggregate procCount : procCounts)
-                                    procCount.setName("Total");
-                            }
                             listMap.put(Query.getString(date), procCounts);
                         }
 
-                        return new JsonListMap<ProcessAggregate>(listMap).getJson();
+                        return new JsonListMap<>(listMap).getJson();
                     }
                     else {
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path segment: " + segOne);

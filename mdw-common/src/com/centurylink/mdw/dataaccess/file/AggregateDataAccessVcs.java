@@ -144,16 +144,16 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 sql.append(", instance_timing");
             sql.append("\n   ");
             sql.append(getProcessWhereClause(query));
-            if (statusCodes != null)
+            if (by.equals("status"))
                 sql.append("\n   and status_cd ").append(getInCondition(statusCodes));
-            else if (processIds != null)
+            else if (!by.equals("total"))
                 sql.append("\n   and process_id ").append(getInCondition(processIds));
             sql.append(") pi\n");
 
             sql.append("group by st");
-            if (statusCodes != null)
+            if (by.equals("status"))
                 sql.append(", status_cd");
-            else if (processIds != null)
+            else if (!by.equals("total"))
                 sql.append(", process_id");
             if (db.isMySQL())
                 sql.append("\norder by st\n");
@@ -182,10 +182,14 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                     map.put(startDate, processAggregates);
                 }
                 ProcessAggregate processAggregate = new ProcessAggregate(rs.getLong("val"));
-                if (statusCodes != null)
-                    processAggregate.setName(WorkStatuses.getName(rs.getInt("status_cd")));
-                else if (processIds != null)
+                if (by.equals("status")) {
+                    int statusCode = rs.getInt("status_cd");
+                    processAggregate.setName(WorkStatuses.getName(statusCode));
+                    processAggregate.setId(statusCode);
+                }
+                else if (!by.equals("total")) {
                     processAggregate.setId(rs.getLong("process_id"));
+                }
                 processAggregates.add(processAggregate);
                 prevStartDate = startDate;
             }
