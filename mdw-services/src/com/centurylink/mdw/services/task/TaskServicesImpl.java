@@ -15,43 +15,25 @@
  */
 package com.centurylink.mdw.services.task;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
+import com.centurylink.mdw.dataaccess.reports.AggregateDataAccess;
+import com.centurylink.mdw.dataaccess.reports.TaskAggregation;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetHeader;
 import com.centurylink.mdw.model.event.EventLog;
-import com.centurylink.mdw.model.task.TaskAction;
-import com.centurylink.mdw.model.task.TaskCount;
-import com.centurylink.mdw.model.task.TaskInstance;
-import com.centurylink.mdw.model.task.TaskRuntimeContext;
-import com.centurylink.mdw.model.task.TaskState;
-import com.centurylink.mdw.model.task.TaskStatus;
-import com.centurylink.mdw.model.task.TaskTemplate;
-import com.centurylink.mdw.model.task.UserTaskAction;
+import com.centurylink.mdw.model.task.*;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.Transition;
-import com.centurylink.mdw.model.workflow.TransitionInstance;
 import com.centurylink.mdw.observer.task.TaskValuesProvider;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.service.data.task.TaskDataAccess;
@@ -66,6 +48,9 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 
+import java.time.Instant;
+import java.util.*;
+
 /**
  * Services related to manual tasks.
  */
@@ -77,8 +62,8 @@ public class TaskServicesImpl implements TaskServices {
         return new TaskDataAccess();
     }
 
-    protected AggregateDataAccessVcs getAggregateDataAccess() throws DataAccessException {
-        return new AggregateDataAccessVcs();
+    protected TaskAggregation getAggregateDataAccess() throws DataAccessException {
+        return new TaskAggregation();
     }
 
     public TaskInstance createTask(Long taskId, String masterRequestId, Long procInstId,
@@ -416,7 +401,7 @@ public class TaskServicesImpl implements TaskServices {
         }
     }
 
-    public List<TaskCount> getTopThroughputTasks(String aggregateBy, Query query) throws ServiceException {
+    public List<TaskCount> getTopTasks(String aggregateBy, Query query) throws ServiceException {
         try {
             CodeTimer timer = new CodeTimer(true);
             if ("task".equals(aggregateBy)) {
@@ -445,9 +430,9 @@ public class TaskServicesImpl implements TaskServices {
         }
     }
 
-    public Map<Date,List<TaskCount>> getTaskInstanceBreakdown(Query query) throws ServiceException {
+    public TreeMap<Date,List<TaskCount>> getTaskBreakdown(Query query) throws ServiceException {
         try {
-            Map<Date,List<TaskCount>> map = getAggregateDataAccess().getTaskInstanceBreakdown(query);
+            TreeMap<Date,List<TaskCount>> map = getAggregateDataAccess().getBreakdown(query);
             if (query.getFilters().get("taskIds") != null) {
                 for (Date date : map.keySet())
                     populate(map.get(date));
@@ -565,7 +550,7 @@ public class TaskServicesImpl implements TaskServices {
      * Fills in task header info, consulting latest instance comment if necessary.
      */
     protected List<TaskCount> populate(List<TaskCount> taskCounts) throws DataAccessException {
-        AggregateDataAccessVcs dataAccess = null;
+        AggregateDataAccess dataAccess = null;
         for (TaskCount tc : taskCounts) {
             TaskTemplate taskTemplate = TaskTemplateCache.getTaskTemplate(tc.getId());
             if (taskTemplate == null) {
@@ -575,7 +560,7 @@ public class TaskServicesImpl implements TaskServices {
                 if (dataAccess == null)
                     dataAccess = getAggregateDataAccess();
                 CodeTimer timer = new CodeTimer(true);
-                String comments = dataAccess.getLatestTaskInstanceComments(tc.getId());
+                String comments = getTaskDAO().getLatestTaskInstanceComments(tc.getId());
                 timer.stopAndLogTiming("getLatestTaskInstanceComments()");
                 if (comments != null) {
                     AssetHeader assetHeader = new AssetHeader(comments);

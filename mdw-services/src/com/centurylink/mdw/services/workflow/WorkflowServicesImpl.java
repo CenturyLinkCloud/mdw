@@ -32,7 +32,9 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
+import com.centurylink.mdw.dataaccess.reports.ActivityAggregation;
+import com.centurylink.mdw.dataaccess.reports.AggregateDataAccess;
+import com.centurylink.mdw.dataaccess.reports.ProcessAggregation;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.StringDocument;
@@ -99,8 +101,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
         return DataAccess.getRuntimeDataAccess(new DatabaseAccess(null));
     }
 
-    protected AggregateDataAccessVcs getAggregateDataAccess() throws DataAccessException {
-        return new AggregateDataAccessVcs();
+    protected ProcessAggregation getProcessAggregation() {
+        return new ProcessAggregation();
+    }
+    protected ActivityAggregation getActivityAggregation() {
+        return new ActivityAggregation();
     }
 
     public Map<String,String> getAttributes(String ownerType, Long ownerId) throws ServiceException {
@@ -549,7 +554,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     public List<ProcessAggregate> getTopProcesses(Query query) throws ServiceException {
         try {
             CodeTimer timer = new CodeTimer(true);
-            List<ProcessAggregate> list = getAggregateDataAccess().getTopProcessInstances(query);
+            List<ProcessAggregate> list = getProcessAggregation().getTops(query);
             timer.logTimingAndContinue("AggregateDataAccessVcs.getTopProcessInstances()");
             if ("status".equals(query.getFilter("by"))) {
                 list = populateStatuses(list);
@@ -567,7 +572,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public TreeMap<Date,List<ProcessAggregate>> getProcessBreakdown(Query query) throws ServiceException {
         try {
-            TreeMap<Date,List<ProcessAggregate>> map = getAggregateDataAccess().getProcessInstanceBreakdown(query);
+            TreeMap<Date,List<ProcessAggregate>> map = getProcessAggregation().getBreakdown(query);
             if (query.getFilters().get("processIds") != null) {
                 for (Date date : map.keySet())
                     populateProcesses(map.get(date));
@@ -583,7 +588,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
      * Fills in process header info, consulting latest instance comment if necessary.
      */
     protected List<ProcessAggregate> populateProcesses(List<ProcessAggregate> processAggregates) throws DataAccessException {
-        AggregateDataAccessVcs dataAccess = null;
+        AggregateDataAccess dataAccess = null;
         for (ProcessAggregate pc : processAggregates) {
             Process process = ProcessCache.getProcess(pc.getId());
             if (process == null) {
@@ -591,9 +596,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 pc.setDefinitionMissing(true);
                 // may have been deleted -- infer from comments
                 if (dataAccess == null)
-                    dataAccess = getAggregateDataAccess();
+                    dataAccess = getProcessAggregation();
                 CodeTimer timer = new CodeTimer(true);
-                String comments = dataAccess.getLatestProcessInstanceComments(pc.getId());
+                String comments = getWorkflowDao().getLatestProcessInstanceComments(pc.getId());
                 timer.stopAndLogTiming("getLatestProcessInstanceComments()");
                 if (comments != null) {
                     AssetHeader assetHeader = new AssetHeader(comments);
@@ -641,7 +646,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
      * @param query
      */
     protected ActivityList populateActivities(ActivityList activityList, Query query) throws DataAccessException {
-        AggregateDataAccessVcs dataAccess = null;
+        AggregateDataAccess dataAccess = null;
         List<ActivityInstance> aList = activityList.getActivities();
         ArrayList<ActivityInstance> matchActivities = new ArrayList<>();
         for (ActivityInstance activityInstance : aList) {
@@ -651,9 +656,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 activityInstance.setDefinitionMissing(true);
                 // may have been deleted -- infer from comments
                 if (dataAccess == null)
-                    dataAccess = getAggregateDataAccess();
+                    dataAccess = getActivityAggregation();
                 CodeTimer timer = new CodeTimer(true);
-                String comments = dataAccess.getLatestProcessInstanceComments(activityInstance.getProcessId());
+                String comments = getWorkflowDao().getLatestProcessInstanceComments(activityInstance.getProcessId());
                 timer.stopAndLogTiming("getLatestProcessInstanceComments()");
                 if (comments != null) {
                     AssetHeader assetHeader = new AssetHeader(comments);
@@ -706,7 +711,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
      * Fills in process header info, consulting latest instance comment if necessary.
      */
     protected List<ActivityAggregate> populateAct(List<ActivityAggregate> activityCounts) throws DataAccessException {
-        AggregateDataAccessVcs dataAccess = null;
+        AggregateDataAccess dataAccess = null;
         for (ActivityAggregate ac : activityCounts) {
             Process process = ProcessCache.getProcess(ac.getProcessId());
             if (process == null) {
@@ -714,9 +719,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 ac.setDefinitionMissing(true);
                 // may have been deleted -- infer from comments
                 if (dataAccess == null)
-                    dataAccess = getAggregateDataAccess();
+                    dataAccess = getActivityAggregation();
                 CodeTimer timer = new CodeTimer(true);
-                String comments = dataAccess.getLatestProcessInstanceComments(ac.getProcessId());
+                String comments = getWorkflowDao().getLatestProcessInstanceComments(ac.getProcessId());
                 timer.stopAndLogTiming("getLatestProcessInstanceComments()");
                 if (comments != null) {
                     AssetHeader assetHeader = new AssetHeader(comments);
@@ -752,10 +757,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
         return activityCounts;
     }
 
-    public List<ActivityAggregate> getTopThroughputActivities(Query query) throws ServiceException {
+    public List<ActivityAggregate> getTopActivities(Query query) throws ServiceException {
         try {
             CodeTimer timer = new CodeTimer(true);
-            List<ActivityAggregate> list = getAggregateDataAccess().getTopThroughputActivityInstances(query);
+            List<ActivityAggregate> list = getActivityAggregation().getTops(query);
             timer.logTimingAndContinue("AggregateDataAccessVcs.getTopThroughputActivityInstances()");
             list = populateAct(list);
             timer.stopAndLogTiming("WorkflowServicesImpl.populate()");
@@ -766,9 +771,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public Map<Date,List<ActivityAggregate>> getActivityInstanceBreakdown(Query query) throws ServiceException {
+    public TreeMap<Date,List<ActivityAggregate>> getActivityBreakdown(Query query) throws ServiceException {
         try {
-            Map<Date,List<ActivityAggregate>> map = getAggregateDataAccess().getActivityInstanceBreakdown(query);
+            TreeMap<Date,List<ActivityAggregate>> map = getActivityAggregation().getBreakdown(query);
             if (query.getFilters().get("activityIds") != null) {
                 for (Date date : map.keySet())
                     populateAct(map.get(date));

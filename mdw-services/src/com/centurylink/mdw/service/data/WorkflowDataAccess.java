@@ -197,4 +197,29 @@ public class WorkflowDataAccess extends CommonDataAccess {
         sb.append("\n");
         return sb.toString();
     }
+
+    /**
+     * Useful for inferring process name and version without definition.
+     */
+    public String getLatestProcessInstanceComments(Long processId) throws DataAccessException {
+        StringBuilder query = new StringBuilder();
+        query.append("select process_instance_id, comments from process_instance\n");
+        query.append("where process_instance_id = (select max(process_instance_id) from process_instance ");
+        query.append("where process_id = ? and comments is not null)");
+
+        try {
+            db.openConnection();
+            ResultSet rs = db.runSelect(query.toString(), processId);
+            if (rs.next())
+                return rs.getString("comments");
+            else
+                return null;
+        }
+        catch (Exception ex) {
+            throw new DataAccessException(-1, ex.getMessage(), ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
 }

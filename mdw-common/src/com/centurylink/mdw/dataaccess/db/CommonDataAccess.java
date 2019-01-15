@@ -1014,4 +1014,23 @@ public class CommonDataAccess {
         roundDate.setSeconds(0);
         return roundDate;
     }
+
+    protected <T> String getInCondition(List<T> elements) {
+        StringBuilder in = new StringBuilder();
+        in.append("in (");
+        if (elements.isEmpty()) {
+            in.append("''");  // no match -- avoid malformed sql
+        }
+        else {
+            for (int i = 0; i < elements.size(); i++) {
+                T e = elements.get(i);
+                String tic = e instanceof String ? "'" : "";
+                in.append(tic).append(e).append(tic);
+                if (i < elements.size() - 1)
+                    in.append(",");
+            }
+        }
+        in.append(") ");
+        return in.toString();
+    }
  }

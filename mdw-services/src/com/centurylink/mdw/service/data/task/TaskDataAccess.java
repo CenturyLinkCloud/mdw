@@ -932,5 +932,28 @@ public class TaskDataAccess extends CommonDataAccess {
         return null;
     }
 
+    /**
+     * Useful for inferring task name and version without template.
+     */
+    public String getLatestTaskInstanceComments(Long taskId) throws DataAccessException {
+        StringBuilder query = new StringBuilder();
+        query.append("select task_instance_id, comments from task_instance\n");
+        query.append("where task_instance_id = (select max(task_instance_id) from task_instance ");
+        query.append("where task_id = ? and comments is not null)");
 
+        try {
+            db.openConnection();
+            ResultSet rs = db.runSelect(query.toString(), taskId);
+            if (rs.next())
+                return rs.getString("comments");
+            else
+                return null;
+        }
+        catch (Exception ex) {
+            throw new DataAccessException(-1, ex.getMessage(), ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
 }

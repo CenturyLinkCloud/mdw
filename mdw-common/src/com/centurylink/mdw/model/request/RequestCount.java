@@ -18,10 +18,10 @@ package com.centurylink.mdw.model.request;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.InstanceCount;
+import com.centurylink.mdw.model.Aggregate;
 import com.centurylink.mdw.model.Jsonable;
 
-public class RequestCount implements InstanceCount, Jsonable {
+public class RequestCount implements Aggregate, Jsonable {
 
     private long count = -1;
     public long getCount() { return count; }
@@ -35,6 +35,7 @@ public class RequestCount implements InstanceCount, Jsonable {
         this.count = count;
     }
 
+    @SuppressWarnings("unused")
     public RequestCount(JSONObject json) throws JSONException {
         count = json.getLong("count");
         if (json.has("type"))

@@ -50,6 +50,7 @@ public class ActivityAggregate extends ProcessAggregate {
         super(count);
     }
 
+    @SuppressWarnings("unused")
     public ActivityAggregate(JSONObject json) throws JSONException {
         super(json.getLong("count"));
         if (json.has("id"))

@@ -93,7 +93,7 @@ public class Activities extends JsonRestService implements JsonExportable {
                 }
 
               else if (segOne.equals("topThroughput")) {
-                List<ActivityAggregate> list = workflowServices.getTopThroughputActivities(query);
+                List<ActivityAggregate> list = workflowServices.getTopActivities(query);
                 JSONArray actArr = new JSONArray();
                 int ct = 0;
                 ActivityAggregate other = null;
@@ -119,7 +119,7 @@ public class Activities extends JsonRestService implements JsonExportable {
 
               }
                 else if (segOne.equals("instanceCounts")) {
-                    Map<Date,List<ActivityAggregate>> dateMap = workflowServices.getActivityInstanceBreakdown(query);
+                    Map<Date,List<ActivityAggregate>> dateMap = workflowServices.getActivityBreakdown(query);
                     boolean isTotals = query.getFilters().get("activityIds") == null && query.getFilters().get("statuses") == null;
 
                     Map<String,List<ActivityAggregate>> listMap = new HashMap<String,List<ActivityAggregate>>();

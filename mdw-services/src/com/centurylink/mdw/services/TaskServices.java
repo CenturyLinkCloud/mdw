@@ -19,6 +19,7 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -38,65 +39,65 @@ public interface TaskServices {
     /**
      * Returns tasks (optionally associated with the specified user's workgroups).
      */
-    public TaskList getTasks(Query query, String cuid) throws ServiceException;
-    public TaskList getTasks(Query query) throws ServiceException;
+    TaskList getTasks(Query query, String cuid) throws ServiceException;
+    TaskList getTasks(Query query) throws ServiceException;
 
-    public Map<String,String> getIndexes(Long taskInstanceId) throws ServiceException;
-    public void updateIndexes(Long taskInstanceId, Map<String,String> indexes) throws ServiceException;
+    Map<String,String> getIndexes(Long taskInstanceId) throws ServiceException;
+    void updateIndexes(Long taskInstanceId, Map<String,String> indexes) throws ServiceException;
 
-    public TaskInstance getInstance(Long instanceId) throws ServiceException;
+    TaskInstance getInstance(Long instanceId) throws ServiceException;
 
     /**
      * Returns a map of name to runtime Value.
      */
-    public Map<String,Value> getValues(Long instanceId) throws ServiceException;
+    Map<String,Value> getValues(Long instanceId) throws ServiceException;
 
-    public void applyValues(Long instanceId, Map<String,String> values) throws ServiceException;
+    void applyValues(Long instanceId, Map<String,String> values) throws ServiceException;
 
-    public TaskInstance createTask(Long taskId, String masterRequestId, Long procInstId,
+    TaskInstance createTask(Long taskId, String masterRequestId, Long procInstId,
             String secOwner, Long secOwnerId, String name, String comments) throws ServiceException, DataAccessException;
     /**
      * Create an ad-hoc manual task instance.
      * @return the newly-created instance
      */
-    public TaskInstance createTask(String logicalId, String userCuid, String title, String comments, Instant due) throws ServiceException;
+    TaskInstance createTask(String logicalId, String userCuid, String title, String comments, Instant due) throws ServiceException;
 
-    public void createSubTask(String subtaskLogicalId, Long masterTaskInstanceId)
+    void createSubTask(String subtaskLogicalId, Long masterTaskInstanceId)
     throws ServiceException, DataAccessException;
 
-    public TaskList getSubtasks(Long masterTaskInstanceId) throws ServiceException;
+    TaskList getSubtasks(Long masterTaskInstanceId) throws ServiceException;
 
-    public List<TaskTemplate> getTaskTemplates(Query query) throws ServiceException;
+    List<TaskTemplate> getTaskTemplates(Query query) throws ServiceException;
 
-    public List<TaskCount> getTopThroughputTasks(String aggregateBy, Query query) throws ServiceException;
+    List<TaskCount> getTopTasks(String aggregateBy, Query query) throws ServiceException;
 
-    public Map<Date,List<TaskCount>> getTaskInstanceBreakdown(Query query) throws ServiceException;
+    TreeMap<Date,List<TaskCount>> getTaskBreakdown(Query query) throws ServiceException;
 
-    public TaskRuntimeContext getContext(Long instanceId) throws ServiceException;
-    public TaskRuntimeContext getContext(TaskInstance taskInstance) throws ServiceException;
+    TaskRuntimeContext getContext(Long instanceId) throws ServiceException;
+    TaskRuntimeContext getContext(TaskInstance taskInstance) throws ServiceException;
 
-    public void performTaskAction(UserTaskAction taskAction) throws ServiceException;
-    public TaskInstance performAction(Long taskInstanceId, String action, String userCuid, String assigneeCuid, String comment,
+    void performTaskAction(UserTaskAction taskAction) throws ServiceException;
+    TaskInstance performAction(Long taskInstanceId, String action, String userCuid, String assigneeCuid, String comment,
             String destination, boolean notifyEngine) throws ServiceException;
 
-    public List<EventLog> getHistory(Long taskInstanceId) throws ServiceException;
+    List<EventLog> getHistory(Long taskInstanceId) throws ServiceException;
 
     /**
      * Update a task instance.
      */
-    public void updateTask(String userCuid, TaskInstance taskInstance) throws ServiceException;
+    void updateTask(String userCuid, TaskInstance taskInstance) throws ServiceException;
 
-    public List<TaskInstance> getTaskInstancesForProcess(Long processInstanceId)
+    List<TaskInstance> getTaskInstancesForProcess(Long processInstanceId)
             throws ServiceException, DataAccessException;
-    public void cancelTaskInstancesForProcess(Long processInstanceId)
-            throws ServiceException, DataAccessException;
-
-    public void cancelTaskForActivity(Long activityInstanceId) throws ServiceException, DataAccessException;
-
-    public TaskInstance getTaskInstanceForActivity(Long activityInstanceId)
+    void cancelTaskInstancesForProcess(Long processInstanceId)
             throws ServiceException, DataAccessException;
 
-    public List<String> getGroupsForTaskInstance(TaskInstance taskInstance)
+    void cancelTaskForActivity(Long activityInstanceId) throws ServiceException, DataAccessException;
+
+    TaskInstance getTaskInstanceForActivity(Long activityInstanceId)
+            throws ServiceException, DataAccessException;
+
+    List<String> getGroupsForTaskInstance(TaskInstance taskInstance)
             throws DataAccessException, ServiceException;
 
     /**
@@ -104,11 +105,11 @@ public interface TaskServices {
      * However, if query "custom" filter is true all custom actions are returned regardless of allowable.
      * TODO: custom actions should always be allowed unless they appear in mdw-task-actions.xml to restrict.
      */
-    public List<TaskAction> getActions(Long instanceId, String userCuid, Query query) throws ServiceException;
+    List<TaskAction> getActions(Long instanceId, String userCuid, Query query) throws ServiceException;
 
-    public void updateTaskInstanceState(Long taskInstId, boolean isAlert)
+    void updateTaskInstanceState(Long taskInstId, boolean isAlert)
             throws DataAccessException, ServiceException;
 
-    public Map<String, List<TaskTemplate>> getTaskTemplatesByPackage(Query query) throws ServiceException;
+    Map<String, List<TaskTemplate>> getTaskTemplatesByPackage(Query query) throws ServiceException;
 
 }

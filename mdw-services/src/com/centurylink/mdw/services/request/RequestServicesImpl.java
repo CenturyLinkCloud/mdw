@@ -19,11 +19,13 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
+import com.centurylink.mdw.dataaccess.reports.AggregateDataAccess;
+import com.centurylink.mdw.dataaccess.reports.RequestAggregation;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.request.RequestCount;
 import com.centurylink.mdw.model.request.RequestList;
@@ -36,8 +38,8 @@ public class RequestServicesImpl implements RequestServices {
         return new RequestDataAccess();
     }
 
-    protected AggregateDataAccessVcs getAggregateDataAccess() throws DataAccessException {
-        return new AggregateDataAccessVcs();
+    protected RequestAggregation getAggregateDataAccess() throws DataAccessException {
+        return new RequestAggregation();
     }
 
     public RequestList getRequests(Query query) throws ServiceException {
@@ -120,9 +122,9 @@ public class RequestServicesImpl implements RequestServices {
          }
     }
 
-    public Map<Date,List<RequestCount>> getRequestBreakdown(Query query) throws ServiceException {
+    public TreeMap<Date,List<RequestCount>> getRequestBreakdown(Query query) throws ServiceException {
         try {
-            Map<Date,List<RequestCount>> map = getAggregateDataAccess().getRequestBreakdown(query);
+            TreeMap<Date,List<RequestCount>> map = getAggregateDataAccess().getBreakdown(query);
             return map;
         }
         catch (DataAccessException ex) {

@@ -15,36 +15,27 @@
  */
 package com.centurylink.mdw.services;
 
+import com.centurylink.mdw.common.service.Query;
+import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.Value;
+import com.centurylink.mdw.model.event.Event;
+import com.centurylink.mdw.model.variable.Document;
+import com.centurylink.mdw.model.workflow.*;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.Process;
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.json.JSONException;
-
-import com.centurylink.mdw.common.service.Query;
-import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.Value;
-import com.centurylink.mdw.model.event.Event;
-import com.centurylink.mdw.model.variable.Document;
-import com.centurylink.mdw.model.workflow.ActivityAggregate;
-import com.centurylink.mdw.model.workflow.ActivityImplementor;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
-import com.centurylink.mdw.model.workflow.ActivityList;
-import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.ProcessAggregate;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.ProcessList;
-import com.centurylink.mdw.model.workflow.ProcessRun;
-import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
-
 public interface WorkflowServices {
 
-    public static final int PAGE_SIZE = 50; // must match Query.DEFAULT_MAX
+    static final int PAGE_SIZE = 50; // must match Query.DEFAULT_MAX
 
-    public Map<String,String> getAttributes(String ownerType, Long ownerId) throws ServiceException;
+    Map<String,String> getAttributes(String ownerType, Long ownerId) throws ServiceException;
     /**
      * Replace <b>all</b> attributes for this ownerId
      * @param ownerType
@@ -52,7 +43,7 @@ public interface WorkflowServices {
      * @param attributes new attributes to add
      * @throws ServiceException
      */
-    public void setAttributes(String ownerType, Long ownerId, Map<String,String> attributes) throws ServiceException;
+    void setAttributes(String ownerType, Long ownerId, Map<String,String> attributes) throws ServiceException;
     /**
      * <p>
      * Update specific attributes <b>without</b> clearing all attributes first
@@ -65,9 +56,9 @@ public interface WorkflowServices {
      * @param attributes
      * @throws ServiceException
      */
-    public void updateAttributes(String ownerType, Long ownerId, Map<String,String> attributes) throws ServiceException;
-    public Map<String,String> getValues(String ownerType, String ownerId) throws ServiceException;
-    public String getValue(String ownerType, String ownerId, String name) throws ServiceException;
+    void updateAttributes(String ownerType, Long ownerId, Map<String,String> attributes) throws ServiceException;
+    Map<String,String> getValues(String ownerType, String ownerId) throws ServiceException;
+    String getValue(String ownerType, String ownerId, String name) throws ServiceException;
     /**
      * Replace <b>all</b> values for this ownerId
      * @param ownerType
@@ -75,7 +66,7 @@ public interface WorkflowServices {
      * @param values new values to add
      * @throws ServiceException
      */
-    public void setValues(String ownerType, String ownerId, Map<String,String> values) throws ServiceException;
+    void setValues(String ownerType, String ownerId, Map<String,String> values) throws ServiceException;
     /**
      * Update specific values for this ownerId
      * @param ownerType
@@ -83,14 +74,14 @@ public interface WorkflowServices {
      * @param values new values to add
      * @throws ServiceException
      */
-    public void updateValues(String ownerType, String ownerId, Map<String,String> values) throws ServiceException;
+    void updateValues(String ownerType, String ownerId, Map<String,String> values) throws ServiceException;
 
     /**
      * Get ValueHolder IDs for the specified name and pattern
      * @param valueName
      * @param valuePattern can be a value or a patter with wildcards (*)
      */
-    public List<String> getValueHolderIds(String valueName, String valuePattern) throws ServiceException;
+    List<String> getValueHolderIds(String valueName, String valuePattern) throws ServiceException;
 
     /**
      * Get ValueHolder IDs for the specified name, pattern and ownerType
@@ -98,12 +89,12 @@ public interface WorkflowServices {
      * @param valuePattern can be a value or a patter with wildcards (*)
      * @param ownerType the value holder type
      */
-    public List<String> getValueHolderIds(String valueName, String valuePattern, String ownerType) throws ServiceException;
+    List<String> getValueHolderIds(String valueName, String valuePattern, String ownerType) throws ServiceException;
 
-    public void registerTaskWaitEvent(Long taskInstanceId, Event event)
+    void registerTaskWaitEvent(Long taskInstanceId, Event event)
             throws ServiceException;
 
-    public void registerTaskWaitEvent(Long taskInstanceId, String eventName)
+    void registerTaskWaitEvent(Long taskInstanceId, String eventName)
             throws ServiceException;
 
     /**
@@ -113,14 +104,14 @@ public interface WorkflowServices {
      * @return
      * @throws ServiceException
      */
-    public void registerTaskWaitEvent(Long taskInstanceId, String eventName,
+    void registerTaskWaitEvent(Long taskInstanceId, String eventName,
             String completionCode) throws ServiceException;
     /**
      * @param activityInstanceId
      * @param action
      * @param completionCode
      */
-    public void actionActivity(Long activityInstanceId, String action, String completionCode, String uer)
+    void actionActivity(Long activityInstanceId, String action, String completionCode, String uer)
             throws ServiceException;
 
     ProcessInstance getProcess(Long instanceId) throws ServiceException;
@@ -142,76 +133,76 @@ public interface WorkflowServices {
 
     ProcessList getProcesses(Query query) throws ServiceException;
 
-    public ActivityList getActivities(Query query) throws ServiceException;
+    ActivityList getActivities(Query query) throws ServiceException;
 
-    public List<ProcessAggregate> getTopProcesses(Query query) throws ServiceException;
+    List<ProcessAggregate> getTopProcesses(Query query) throws ServiceException;
 
-    public TreeMap<Date,List<ProcessAggregate>> getProcessBreakdown(Query query) throws ServiceException;
+    TreeMap<Date,List<ProcessAggregate>> getProcessBreakdown(Query query) throws ServiceException;
 
-    public List<ActivityAggregate> getTopThroughputActivities(Query query) throws ServiceException;
+    List<ActivityAggregate> getTopActivities(Query query) throws ServiceException;
 
-    public Map<Date,List<ActivityAggregate>> getActivityInstanceBreakdown(Query query) throws ServiceException;
+    TreeMap<Date,List<ActivityAggregate>> getActivityBreakdown(Query query) throws ServiceException;
 
-    public List<Process> getProcessDefinitions(Query query) throws ServiceException;
-    public Process getProcessDefinition(String assetPath, Query query) throws ServiceException;
-    public Process getProcessDefinition(Long id) throws ServiceException;
+    List<Process> getProcessDefinitions(Query query) throws ServiceException;
+    Process getProcessDefinition(String assetPath, Query query) throws ServiceException;
+    Process getProcessDefinition(Long id) throws ServiceException;
 
-    public ActivityList getActivityDefinitions(Query query) throws ServiceException;
+    ActivityList getActivityDefinitions(Query query) throws ServiceException;
 
-    public ActivityInstance getActivity(Long instanceId) throws ServiceException;
+    ActivityInstance getActivity(Long instanceId) throws ServiceException;
 
-    public List<ActivityImplementor> getImplementors() throws ServiceException;
-    public ActivityImplementor getImplementor(String className) throws ServiceException;
+    List<ActivityImplementor> getImplementors() throws ServiceException;
+    ActivityImplementor getImplementor(String className) throws ServiceException;
 
-    public Long launchProcess(String name, String masterRequestId, String ownerType,
+    Long launchProcess(String name, String masterRequestId, String ownerType,
             Long ownerId, Map<String,Object> params) throws ServiceException;
 
-    public Long launchProcess(Process process, String masterRequestId, String ownerType,
+    Long launchProcess(Process process, String masterRequestId, String ownerType,
             Long ownerId, Map<String,String> params) throws ServiceException;
 
-    public Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
+    Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
             Map<String,Object> parameters, Map<String,String> headers) throws ServiceException;
-    public String invokeServiceProcess(Process process, String masterRequestId, String ownerType,
+    String invokeServiceProcess(Process process, String masterRequestId, String ownerType,
             Long ownerId, Map<String,String> params, Map<String,String> headers) throws ServiceException;
     /**
      * responseHeaders will be populated from process variable, if any
      */
-    public Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
+    Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
             Map<String,Object> parameters, Map<String,String> headers, Map<String,String> responseHeaders) throws ServiceException;
-    public String invokeServiceProcess(Process process, String masterRequestId, String ownerType,
+    String invokeServiceProcess(Process process, String masterRequestId, String ownerType,
             Long ownerId, Map<String,String> params) throws ServiceException;
 
-    public Integer notify(String event, String message, int delay) throws ServiceException;
-    public Integer notify(Package runtimePackage, String eventName, Object eventMessage) throws ServiceException ;
-    public Integer notify(Package runtimePackage, String eventName, Object eventMessage, int delay) throws ServiceException;
+    Integer notify(String event, String message, int delay) throws ServiceException;
+    Integer notify(Package runtimePackage, String eventName, Object eventMessage) throws ServiceException ;
+    Integer notify(Package runtimePackage, String eventName, Object eventMessage, int delay) throws ServiceException;
 
-    public void setVariable(Long processInstanceId, String varName, Object value) throws ServiceException;
-    public void setVariable(ProcessRuntimeContext context, String varName, Object value) throws ServiceException;
-    public void setVariables(Long processInstanceId, Map<String,Object> values) throws ServiceException;
-    public void setVariables(ProcessRuntimeContext context, Map<String,Object> values) throws ServiceException;
-    public void setDocumentValue(ProcessRuntimeContext context, String varName, Object value) throws ServiceException;
-    public void createDocument(ProcessRuntimeContext context, String varName, Object value) throws ServiceException;
-    public void updateDocument(ProcessRuntimeContext context, String varName, Object value) throws ServiceException;
+    void setVariable(Long processInstanceId, String varName, Object value) throws ServiceException;
+    void setVariable(ProcessRuntimeContext context, String varName, Object value) throws ServiceException;
+    void setVariables(Long processInstanceId, Map<String,Object> values) throws ServiceException;
+    void setVariables(ProcessRuntimeContext context, Map<String,Object> values) throws ServiceException;
+    void setDocumentValue(ProcessRuntimeContext context, String varName, Object value) throws ServiceException;
+    void createDocument(ProcessRuntimeContext context, String varName, Object value) throws ServiceException;
+    void updateDocument(ProcessRuntimeContext context, String varName, Object value) throws ServiceException;
 
-    public Document getDocument(Long id) throws ServiceException;
+    Document getDocument(Long id) throws ServiceException;
 
     /**
      * Converts a document to a string, applying a consistent format for XML and JSON.
      * Use when comparing document values (such as in Automated Tests).
      */
-    public String getDocumentStringValue(Long id) throws ServiceException;
+    String getDocumentStringValue(Long id) throws ServiceException;
 
-    public String getDocType(Object docObj);
+    String getDocType(Object docObj);
 
-    public ProcessRun runProcess(ProcessRun runRequest) throws ServiceException, JSONException;
+    ProcessRun runProcess(ProcessRun runRequest) throws ServiceException, JSONException;
 
-    public void createProcess(String assetPath, Query query) throws ServiceException, IOException;
+    void createProcess(String assetPath, Query query) throws ServiceException, IOException;
 
     /**
      * Retrieve process definition for a specific instance from the document table.
      * Quickly returns null if no such definition exists.
      */
-    public Process getInstanceDefinition(String assetPath, Long instanceId) throws ServiceException;
+    Process getInstanceDefinition(String assetPath, Long instanceId) throws ServiceException;
 
-    public void saveInstanceDefinition(String assetPath, Long instanceId, Process process) throws ServiceException;
+    void saveInstanceDefinition(String assetPath, Long instanceId, Process process) throws ServiceException;
 }

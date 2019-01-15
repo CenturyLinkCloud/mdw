@@ -15,48 +15,21 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import static com.centurylink.mdw.constant.TaskAttributeConstant.LOGICAL_ID;
-
-import java.text.ParseException;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.Path;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.model.JsonArray;
-import com.centurylink.mdw.model.JsonExportable;
-import com.centurylink.mdw.model.JsonListMap;
-import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.Value;
+import com.centurylink.mdw.model.*;
 import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.task.TaskAction;
-import com.centurylink.mdw.model.task.TaskCategory;
-import com.centurylink.mdw.model.task.TaskCount;
-import com.centurylink.mdw.model.task.TaskIndexes;
-import com.centurylink.mdw.model.task.TaskInstance;
-import com.centurylink.mdw.model.task.TaskTemplate;
-import com.centurylink.mdw.model.task.UserTaskAction;
+import com.centurylink.mdw.model.task.*;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -68,12 +41,20 @@ import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.util.JsonUtil;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.model.workflow.Package;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.Path;
+import java.text.ParseException;
+import java.time.Instant;
+import java.util.*;
+
+import static com.centurylink.mdw.constant.TaskAttributeConstant.LOGICAL_ID;
 
 @Path("/Tasks")
 @Api("Task instances")
@@ -151,7 +132,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                 else if (segOne.equals("topThroughput")) {
                     // dashboard top throughput query
                     String breakdown = getSegment(path, 2);
-                    List<TaskCount> list = taskServices.getTopThroughputTasks(breakdown, query);
+                    List<TaskCount> list = taskServices.getTopTasks(breakdown, query);
                     JSONArray taskArr = new JSONArray();
                     int ct = 0;
                     TaskCount other = null;
@@ -176,8 +157,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                     return new JsonArray(taskArr).getJson();
                 }
                 else if (segOne.equals("instanceCounts")) {
-                    Map<Date, List<TaskCount>> dateMap = taskServices
-                            .getTaskInstanceBreakdown(query);
+                    TreeMap<Date, List<TaskCount>> dateMap = taskServices.getTaskBreakdown(query);
                     boolean isTotals = query.getFilters().get("taskIds") == null
                             && query.getFilters().get("workgroups") == null
                             && query.getFilters().get("users") == null

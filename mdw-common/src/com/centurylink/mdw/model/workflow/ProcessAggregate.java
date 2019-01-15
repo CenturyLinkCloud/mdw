@@ -15,7 +15,7 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import com.centurylink.mdw.model.InstanceCount;
+import com.centurylink.mdw.model.Aggregate;
 import com.centurylink.mdw.model.Jsonable;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,7 +23,7 @@ import org.json.JSONObject;
 /**
  * Aggregated process instances for a particular definition or status.
  */
-public class ProcessAggregate implements InstanceCount, Jsonable {
+public class ProcessAggregate implements Aggregate, Jsonable {
 
     private long id;
     public long getId() { return id; }
