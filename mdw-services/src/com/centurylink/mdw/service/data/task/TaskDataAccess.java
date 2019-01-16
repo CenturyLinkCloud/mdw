@@ -29,6 +29,7 @@ import java.util.Set;
 
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.Query;
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -594,7 +595,7 @@ public class TaskDataAccess extends CommonDataAccess {
         }
     }
 
-    public TaskList getTaskInstances(Query query) throws DataAccessException {
+    public TaskList getTaskInstances(Query query) throws DataAccessException, ServiceException {
         long start = System.currentTimeMillis();
         try {
             StringBuilder sql = new StringBuilder();
@@ -638,14 +639,16 @@ public class TaskDataAccess extends CommonDataAccess {
                     where = where + " and ui.user_info_id(+) = ti.task_claim_user_id\n";
             }
             else {
-                where = buildTaskInstanceWhere(query);
-            }
-
+                try {
+                    where = buildTaskInstanceWhere(query);
             if (!StringHelper.isEmpty(where)) {
                 sql.append(where);
                 countSql.append(where);
             }
-
+                } catch (ServiceException e) {
+                    throw new ServiceException(ServiceException.NOT_FOUND, e.getMessage(), e);
+                }
+            }
             String orderBy = buildTaskInstanceOrderBy(query);
             if (!StringHelper.isEmpty(orderBy))
                 sql.append(orderBy);
@@ -703,7 +706,7 @@ public class TaskDataAccess extends CommonDataAccess {
 
     }
 
-    private String buildTaskInstanceWhere(Query query) throws DataAccessException {
+    private String buildTaskInstanceWhere(Query query) throws DataAccessException,ServiceException {
 
         StringBuilder where = new StringBuilder();
         if (db.isMySQL())
@@ -726,7 +729,7 @@ public class TaskDataAccess extends CommonDataAccess {
                     if (!Workgroup.COMMON_GROUP.equals(workgroups[i])) {
                         Workgroup group = UserGroupCache.getWorkgroup(workgroups[i]);
                         if (group == null)
-                            throw new CachingException("Cannot find workgroup: " + workgroups[i]);
+                            throw new ServiceException("unable to find the workgroup: " + workgroups[i]);
                         where.append(group.getId());
                         if (i < workgroups.length - 1)
                           where.append(",");
