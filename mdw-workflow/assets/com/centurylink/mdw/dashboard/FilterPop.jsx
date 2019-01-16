@@ -7,57 +7,63 @@ class FilterPop extends Component {
 
   constructor(...args) {
     super(...args);
-    this.handleEndDateChange = this.handleEndDateChange.bind(this);
-    this.handleStatusChange = this.handleStatusChange.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.handleReset = this.handleReset.bind(this);
   }
 
-  handleEndDateChange(endDate) {
-    if (this.props.onChange) {
-      this.props.onChange({
-        ending: endDate,
-        status: this.props.filters.status
-      });
-    }
-  }
-
-  handleStatusChange(status) {
-    if (this.props.onChange) {
-      this.props.onChange({
-        ending: this.props.filters.ending,
-        status: status
-      });
+  handleChange(key, value) {
+    if (this.props.onFilterChange) {
+      var filters = Object.assign({}, this.props.filters);
+      filters[key] = value;
+      this.props.onFilterChange(filters);
     }
   }
 
   handleReset() {
-    if (this.props.onReset) {
-      this.props.onReset();
+    if (this.props.onFilterReset) {
+      this.props.onFilterReset();
     }
     document.body.click();
   }
 
   render() {
-    const {filters, statuses, ...popProps} = this.props; // eslint-disable-line no-unused-vars
+    const {filters, filterOptions, onFilterChange, onFilterReset, ...popProps} = this.props; // eslint-disable-line no-unused-vars
     return (
       <Popover {...popProps} id="filter-pop">
         <div style={{width:'150px'}}>
-          <div>
-            <label className="mdw-label">Ending:</label>
-            <div className="mdw-flex-item">
-              <DatePicker id="end-date-picker"
-                date={filters.ending}
-                onChange={this.handleEndDateChange} />
-            </div>
-          </div>
-          {statuses &&
-            <div className="mdw-vsm-indent">
-              <label className="mdw-label">Status:</label>
-              <Dropdown id="status-dropdown"
-                items={statuses}
-                selected={filters.status}
-                onSelect={this.handleStatusChange} />
-            </div>
+          {
+            Object.keys(filters).map(key => {
+              const id = key.replace(/\s+/g, '-').toLowerCase();
+              const value = filters[key];
+              const isCb = typeof(value) === 'boolean';
+              const isDate = value instanceof Date;
+              const isDropdown = this.props.filterOptions && this.props.filterOptions[key];
+              return (
+                <div key={key} className={isDate ? '' : 'mdw-vsm-indent'}
+                  style={{display:isCb ? 'flex' : 'block', marginTop:isCb ? '5px' : '3px'}}>
+                  <label className="mdw-label">{key + ':'}</label>
+                  {isDate &&
+                    <div className="mdw-flex-item">
+                      <DatePicker id={id}
+                        date={value}
+                        onChange={date => this.handleChange(key, date)} />
+                    </div>
+                  }
+                  {isDropdown &&
+                    <Dropdown id={id}
+                      items={this.props.filterOptions[key]}
+                      selected={filters[key]}
+                      onSelect={sel => this.handleChange(key, sel)} />
+                  }
+                  {isCb &&
+                    <input type="checkbox" id={id}
+                      style={{marginTop:'3px',marginLeft:'6px',fontSize:'24px'}}
+                      checked={filters[key]}
+                      onChange={event => {event.persist(); this.handleChange(key, event.target.checked)} } />
+                  }
+                </div>
+              );
+            })
           }
           <div className="mdw-vmed-indent">
             <Button bsStyle="primary" className="mdw-btn"

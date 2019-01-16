@@ -54,14 +54,21 @@ class Processes extends Component {
           name: 'Total Throughput',
           data: '/Processes/breakdown?by=total'
         }
-      ]
+      ],
+      filters: {
+        Ending: new Date(),
+        Status: '',
+        Master: false
+      },
+      filterOptions: {
+        Status: statuses
+      }
     };
 
     return (
       <DashboardChart title="Processes"
         breakdownConfig={breakdownConfig}
-        list="#/workflow/processes"
-        statuses={statuses} />
+        list="#/workflow/processes" />
     );
   }
 }

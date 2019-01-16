@@ -245,20 +245,20 @@ public class ProcessAggregation extends CommonDataAccess implements AggregateDat
                 where.append("and start_dt <= '").append(getOracleDt(end)).append("' ");
         }
         where.append("and owner not in ('MAIN_PROCESS_INSTANCE' ");
-        if (query.getBooleanFilter("master"))
+        if (query.getBooleanFilter("Master"))
             where.append(", 'PROCESS_INSTANCE' ");
         where.append(") ");
-        String status = query.getFilter("status");
+        String status = query.getFilter("Status");
         if (status != null)
             where.append("and STATUS_CD = ").append(WorkStatuses.getCode(status));
         return where.toString();
     }
 
     private Date getStartDate(Query query) throws ParseException, DataAccessException {
-        Instant instant = query.getInstantFilter("startDt");
+        Instant instant = query.getInstantFilter("Starting");
         Date start = instant == null ? query.getDateFilter("startDate") : Date.from(instant);
         if (start == null)
-            throw new DataAccessException("Parameter startDate is required");
+            throw new DataAccessException("Parameter Starting is required");
         // adjust to db time
         return new Date(start.getTime() + DatabaseAccess.getDbTimeDiff());
     }
@@ -268,7 +268,7 @@ public class ProcessAggregation extends CommonDataAccess implements AggregateDat
      */
     @SuppressWarnings("deprecation")
     private Date getEndDate(Query query) {
-        Instant instant = query.getInstantFilter("endDt");
+        Instant instant = query.getInstantFilter("Ending");
         if (instant == null)
             return null;
         else {

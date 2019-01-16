@@ -103,15 +103,14 @@ class ChartHeader extends Component {
           <HeaderPopButton label="Filters" glyph="filter"
             popover={
               <FilterPop filters={this.props.filters}
-                statuses={this.props.statuses}
-                onChange={this.handleFilterChange}
-                onReset={this.handleFilterReset} />
+                filterOptions={this.props.filterOptions}
+                onFilterChange={this.handleFilterChange}
+                onFilterReset={this.handleFilterReset} />
             } />
           <HeaderButton label="Export" glyph="download-alt" />
           <HeaderButton label="List" glyph="menu-hamburger"
             onClick={() => location = this.context.hubRoot + '/' + this.props.list} />
         </HeaderButtons>
-
       </PanelHeader>
     );
   }

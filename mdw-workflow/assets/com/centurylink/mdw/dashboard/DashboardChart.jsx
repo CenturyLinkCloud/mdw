@@ -20,9 +20,12 @@ class DashboardChart extends Component {
       breakdown: this.props.breakdownConfig.breakdowns[0].name,
       tops: [],
       selected: [],
-      filters: {ending: this.getDefaultEnd(), status: ''},
+      filters: this.props.breakdownConfig.filters || {},
       data: {}
     };
+    if (this.state.filters.Ending) {
+      this.state.filters.Ending = this.getDefaultEnd();
+    }
     this.getBreakdown = this.getBreakdown.bind(this);
     this.getDefaultEnd = this.getDefaultEnd.bind(this);
     this.getStart = this.getStart.bind(this);
@@ -69,7 +72,7 @@ class DashboardChart extends Component {
     else if (this.state.timespan === 'Month') {
       spanMs = spanMs * 29;
     }
-    return new Date(this.state.filters.ending.getTime() - spanMs);
+    return new Date(this.state.filters.Ending.getTime() - spanMs);
   }
 
   setTops(tops, selected) {
@@ -150,13 +153,14 @@ class DashboardChart extends Component {
   }
 
   handleFilterChange(filters) {
-    if (filters.ending) {
-      if (this.state.timespan === 'Hours') {
-        filters.ending.setHours(new Date().getHours());
-      }
-      else {
-        filters.ending.setHours(0);
-      }
+    if (!filters.Ending) {
+      filters.Ending = this.getDefaultEnd();
+    }
+    if (this.state.timespan === 'Hours') {
+      filters.Ending.setHours(new Date().getHours());
+    }
+    else {
+      filters.Ending.setHours(0);
     }
     this.setState({
       timespan: this.state.timespan,
@@ -169,10 +173,11 @@ class DashboardChart extends Component {
   }
 
   handleFilterReset() {
-    this.handleFilterChange({
-      ending: this.getDefaultEnd(),
-      status: ''
-    });
+    var filters = this.props.breakdownConfig.filters || {};
+    if (filters.Ending) {
+      filters.Ending = this.getDefaultEnd();
+    }
+    this.handleFilterChange(filters);
   }
 
   componentDidMount() {
@@ -211,13 +216,18 @@ class DashboardChart extends Component {
       if (breakdown && breakdown.tops) {
         var topsUrl = this.context.serviceRoot + breakdown.tops;
         topsUrl += (breakdown.tops.indexOf('?') >= 0 ? '&' : '?');
-        topsUrl += 'max=' + this.maxTops + '&startDt=' + this.getStart().toISOString();
-        if (this.state.filters.ending) {
-          topsUrl += '&endDt=' + this.state.filters.ending.toISOString();
-        }
-        if (this.state.filters.status) {
-          topsUrl += '&status=' + this.state.filters.status;
-        }
+        topsUrl += 'max=' + this.maxTops + '&Starting=' + this.getStart().toISOString();
+        Object.keys(this.state.filters).forEach(key => {
+          let val = this.state.filters[key];
+          if (val) {
+            if (val instanceof Date) {
+              topsUrl += '&' + key + '=' + val.toISOString();
+            }
+            else {
+              topsUrl += '&' + key + '=' + val;
+            }
+          }
+        });
         fetch(new Request(topsUrl, {
           method: 'GET',
           headers: { Accept: 'application/json'},
@@ -242,13 +252,18 @@ class DashboardChart extends Component {
       if (breakdown) {
         var dataUrl = this.context.serviceRoot + breakdown.data;
         dataUrl += (breakdown.data.indexOf('?') >= 0 ? '&' : '?');
-        dataUrl += 'startDt=' + this.getStart().toISOString();
-        if (this.state.filters.ending) {
-          dataUrl += '&endDt=' + this.state.filters.ending.toISOString();
-        }
-        if (this.state.filters.status) {
-          dataUrl += '&status=' + this.state.filters.status;
-        }
+        dataUrl += 'Starting=' + this.getStart().toISOString();
+        Object.keys(this.state.filters).forEach(key => {
+          let val = this.state.filters[key];
+          if (val) {
+            if (val instanceof Date) {
+              dataUrl += '&' + key + '=' + val.toISOString();
+            }
+            else {
+              dataUrl += '&' + key + '=' + val;
+            }
+          }
+        });
         if (breakdown.instancesParam) {
           dataUrl += '&' + breakdown.instancesParam + '=%5B' + this.state.selected.map(sel => {
             return breakdown.instancesParam === 'statuses' ? sel.name : sel.id;
@@ -325,13 +340,13 @@ class DashboardChart extends Component {
       <div>
         <ChartHeader title={this.props.title}
           breakdownConfig={this.props.breakdownConfig}
-          statuses={this.props.statuses}
           breakdown={this.state.breakdown}
           timespan={this.state.timespan}
           list={this.props.list}
           tops={this.state.tops}
           selected={this.state.selected}
           filters={this.state.filters}
+          filterOptions={this.props.breakdownConfig.filterOptions}
           onTimespanChange={this.handleTimespanChange}
           onBreakdownChange={this.handleBreakdownChange}
           onSelect={this.handleTopSelect}
