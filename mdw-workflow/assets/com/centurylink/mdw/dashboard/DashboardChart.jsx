@@ -38,10 +38,14 @@ class DashboardChart extends Component {
     this.handleSelectApply = this.handleSelectApply.bind(this);
     this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleFilterReset = this.handleFilterReset.bind(this);
-    this.retrieveTops = this.retrieveTops.bind(this);
+    this.handleDownload = this.handleDownload.bind(this);
+    this.buildUrl = this.buildUrl.bind(this);
     this.update = this.update.bind(this);
-    this.retrieveData = this.retrieveData.bind(this);
     this.updateChart = this.updateChart.bind(this);
+    this.retrieveTops = this.retrieveTops.bind(this);
+    this.retrieveData = this.retrieveData.bind(this);
+    this.handleOverallClick = this.handleOverallClick.bind(this);
+    this.handleDataClick = this.handleDataClick.bind(this);
   }
 
   // selected breakdown object from breakdownConfig
@@ -180,8 +184,39 @@ class DashboardChart extends Component {
     this.handleFilterChange(filters);
   }
 
+  handleDownload() {
+    const breakdown = this.getBreakdown();
+    if (breakdown) {
+      var downloadUrl = this.buildUrl(this.context.serviceRoot + breakdown.data);
+      if (breakdown.instancesParam) {
+        downloadUrl += '&' + breakdown.instancesParam + '=%5B' + this.state.selected.map(sel => {
+          return breakdown.instancesParam === 'statuses' ? sel.name : sel.id;
+        }).join() + '%5D';
+      }
+      location = downloadUrl + '&DownloadFormat=xlsx';
+    }
+  }
+
   componentDidMount() {
     this.update();
+  }
+
+  buildUrl(base) {
+    const breakdown = this.getBreakdown();
+    var url = base + (breakdown.data.indexOf('?') >= 0 ? '&' : '?');
+    url += 'Starting=' + this.getStart().toISOString();
+    Object.keys(this.state.filters).forEach(key => {
+      let val = this.state.filters[key];
+      if (val) {
+        if (val instanceof Date) {
+          url += '&' + key + '=' + val.toISOString();
+        }
+        else {
+          url += '&' + key + '=' + val;
+        }
+      }
+    });
+    return url;
   }
 
   // retrieves tops, resets selected, then retrieves data and updates state
@@ -214,20 +249,8 @@ class DashboardChart extends Component {
     return new Promise(resolve => {
       const breakdown = this.getBreakdown();
       if (breakdown && breakdown.tops) {
-        var topsUrl = this.context.serviceRoot + breakdown.tops;
-        topsUrl += (breakdown.tops.indexOf('?') >= 0 ? '&' : '?');
-        topsUrl += 'max=' + this.maxTops + '&Starting=' + this.getStart().toISOString();
-        Object.keys(this.state.filters).forEach(key => {
-          let val = this.state.filters[key];
-          if (val) {
-            if (val instanceof Date) {
-              topsUrl += '&' + key + '=' + val.toISOString();
-            }
-            else {
-              topsUrl += '&' + key + '=' + val;
-            }
-          }
-        });
+        var topsUrl = this.buildUrl(this.context.serviceRoot + breakdown.tops);
+        topsUrl += '&max=' + this.maxTops;
         fetch(new Request(topsUrl, {
           method: 'GET',
           headers: { Accept: 'application/json'},
@@ -250,20 +273,7 @@ class DashboardChart extends Component {
     return new Promise(resolve => {
       const breakdown = this.getBreakdown();
       if (breakdown) {
-        var dataUrl = this.context.serviceRoot + breakdown.data;
-        dataUrl += (breakdown.data.indexOf('?') >= 0 ? '&' : '?');
-        dataUrl += 'Starting=' + this.getStart().toISOString();
-        Object.keys(this.state.filters).forEach(key => {
-          let val = this.state.filters[key];
-          if (val) {
-            if (val instanceof Date) {
-              dataUrl += '&' + key + '=' + val.toISOString();
-            }
-            else {
-              dataUrl += '&' + key + '=' + val;
-            }
-          }
-        });
+        var dataUrl = this.buildUrl(this.context.serviceRoot + breakdown.data);
         if (breakdown.instancesParam) {
           dataUrl += '&' + breakdown.instancesParam + '=%5B' + this.state.selected.map(sel => {
             return breakdown.instancesParam === 'statuses' ? sel.name : sel.id;
@@ -334,6 +344,35 @@ class DashboardChart extends Component {
     return lineData;
   }
 
+  handleOverallClick(chartElements) {
+    if (chartElements && chartElements.length === 1) {
+      const sel = this.state.selected[chartElements[0]._index];
+      var procFilter = sessionStorage.getItem('processFilter');
+      if (procFilter)
+        procFilter = JSON.parse(procFilter);
+      else
+        procFilter = {};
+      procFilter.processId = sel.id;
+      if (procFilter.processId) {
+        var procSpec = sel.name;
+        procFilter.master = this.state.filters.Master ? this.state.filters.Master : false;
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const start = this.getStart();
+        procFilter.startDate = start.getFullYear().toString() + '-' + months[start.getMonth()] + '-' + start.getDate();
+        procFilter.status = this.state.filters.Status ? this.state.filters.Status : '[Any]';
+        sessionStorage.setItem('processFilter', JSON.stringify(procFilter));
+        sessionStorage.setItem('processSpec', procSpec);
+      }
+    }
+    location = this.context.hubRoot + '/' + this.props.list;
+  }
+
+  handleDataClick(chartElements) {
+    if (chartElements && chartElements.length === 1) {
+      // console.log("DATASET INDEX: " + chartElements[0]._datasetIndex);
+    }
+  }
+
   render() {
     const breakdown = this.getBreakdown();
     return (
@@ -353,7 +392,8 @@ class DashboardChart extends Component {
           onSelectCancel={this.handleSelectCancel}
           onSelectApply={this.handleSelectApply}
           onFilterChange={this.handleFilterChange}
-          onFilterReset={this.handleFilterReset} />
+          onFilterReset={this.handleFilterReset}
+          onDownload={this.handleDownload}/>
         <div className="mdw-section" style={{display:'flex'}}>
           {breakdown.tops &&
             <div>
@@ -361,13 +401,15 @@ class DashboardChart extends Component {
                 <Doughnut
                   data={this.getOverallData()}
                   options={this.chartOptions}
-                  width={250} height={250} />
+                  width={250} height={250}
+                  getElementAtEvent={this.handleOverallClick} />
               }
               {breakdown.summaryChart === 'bar' &&
                 <Bar
                   data={this.getOverallData()}
                   options={this.chartOptions}
-                  width={250} height={250} />
+                  width={250} height={250}
+                  getElementAtEvent={this.handleOverallClick} />
               }
               <ChartLegend
                 colors = {this.chartColors}
@@ -381,7 +423,10 @@ class DashboardChart extends Component {
             </div>
           }
           <div style={{height:'100%',width:'100%'}}>
-            <Line data={this.getLineData()} options={this.chartOptions} />
+            <Line
+              data={this.getLineData()}
+              options={this.chartOptions}
+              getElementAtEvent={this.handleDataClick} />
           </div>
         </div>
       </div>

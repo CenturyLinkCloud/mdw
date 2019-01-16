@@ -20,6 +20,7 @@ class ChartHeader extends Component {
     this.handleSelectApply = this.handleSelectApply.bind(this);
     this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleFilterReset = this.handleFilterReset.bind(this);
+    this.handleDownload = this.handleDownload.bind(this);
   }
 
   // selected breakdown object from breakdownConfig
@@ -68,6 +69,12 @@ class ChartHeader extends Component {
     }
   }
 
+  handleDownload() {
+    if (this.props.onDownload) {
+      this.props.onDownload();
+    }
+  }
+
   render() {
     const breakdown = this.getBreakdown();
     return (
@@ -107,7 +114,8 @@ class ChartHeader extends Component {
                 onFilterChange={this.handleFilterChange}
                 onFilterReset={this.handleFilterReset} />
             } />
-          <HeaderButton label="Export" glyph="download-alt" />
+          <HeaderButton label="Export" glyph="download-alt"
+            onClick={this.handleDownload} />
           <HeaderButton label="List" glyph="menu-hamburger"
             onClick={() => location = this.context.hubRoot + '/' + this.props.list} />
         </HeaderButtons>

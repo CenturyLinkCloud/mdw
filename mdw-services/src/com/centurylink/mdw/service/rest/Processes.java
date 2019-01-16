@@ -478,8 +478,8 @@ public class Processes extends JsonRestService implements JsonExportable {
         try {
             if (json.has(ProcessList.PROCESS_INSTANCES))
                 return new ProcessList(ProcessList.PROCESS_INSTANCES, json);
-            else if ("Processes/instanceCounts".equals(query.getPath()))
-                return new JsonListMap<ProcessAggregate>(json, ProcessAggregate.class);
+            else if ("Processes/breakdown".equals(query.getPath()))
+                return new JsonListMap<>(json, ProcessAggregate.class);
             else
                 throw new JSONException("Unsupported export type for query: " + query);
         }
