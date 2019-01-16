@@ -2,7 +2,7 @@ import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import PanelHeader from '../react/PanelHeader.jsx';
 
-class Requests extends Component {
+class InboundRequests extends Component {
 
   constructor(...args) {
     super(...args);
@@ -14,18 +14,18 @@ class Requests extends Component {
   render() {
     return (
       <div>
-        <PanelHeader title="Requests" />
+        <PanelHeader title="Inbound Requests" />
         <div className="mdw-section">
-          <div>HELLO, REQUESTS</div>
+          <div>INBOUND REQUESTS</div>
         </div>
       </div>
     );
   }
 }
 
-Requests.contextTypes = {
+InboundRequests.contextTypes = {
   hubRoot: PropTypes.string,
   serviceRoot: PropTypes.string
 };
 
-export default Requests;
+export default InboundRequests;

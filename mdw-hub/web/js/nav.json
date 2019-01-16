@@ -63,12 +63,6 @@
             "priority": 1
           },
           {
-            "label": "Requests",
-            "path": "dashboard/requests",
-            "href": "/dashboard/requests",
-            "priority": 1
-          },
-          {
             "label": "Tasks",
             "path": "dashboard/tasks",
             "href": "/dashboard/tasks",
@@ -78,20 +72,22 @@
             "label": "Activities",
             "path": "dashboard/activities",
             "href": "/dashboard/activities"
-          },
-          {
-            "label": "Temp",
-            "path": "dashboard/temp",
-            "href": "/dashboard/temp"
           }
         ]
       },
       {
         "links": [
           {
-            "label": "Something",
-            "path": "dashboard/something",
-            "href": "/dashboard/something"
+            "label": "Inbound Requests",
+            "path": "dashboard/inboundRequests",
+            "href": "/dashboard/inboundRequests",
+            "priority": 1
+          },
+          {
+            "label": "Outbound Requests",
+            "path": "dashboard/outboundRequests",
+            "href": "/dashboard/outboundRequests",
+            "priority": 1
           }
         ]
       }

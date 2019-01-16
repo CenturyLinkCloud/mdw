@@ -59,7 +59,7 @@ class FilterPop extends Component {
                     <input type="checkbox" id={id}
                       style={{marginTop:'3px',marginLeft:'6px',fontSize:'24px'}}
                       checked={filters[key]}
-                      onChange={event => {event.persist(); this.handleChange(key, event.target.checked)} } />
+                      onChange={event => this.handleChange(key, event.target.checked)} />
                   }
                 </div>
               );

@@ -13,15 +13,6 @@ class Processes extends Component {
 
   render() {
 
-    const statuses = [
-      'Pending',
-      'In Progress',
-      'Failed',
-      'Completed',
-      'Canceled',
-      'Waiting'
-    ];
-
     const breakdownConfig = {
       breakdowns: [
         {
@@ -61,7 +52,14 @@ class Processes extends Component {
         Master: false
       },
       filterOptions: {
-        Status: statuses
+        Status: [
+          'Pending',
+          'In Progress',
+          'Failed',
+          'Completed',
+          'Canceled',
+          'Waiting'
+        ]
       }
     };
 
