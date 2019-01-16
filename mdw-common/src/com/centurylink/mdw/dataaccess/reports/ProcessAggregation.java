@@ -3,18 +3,15 @@ package com.centurylink.mdw.dataaccess.reports;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.workflow.ProcessAggregate;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.time.Instant;
 import java.util.*;
 
-public class ProcessAggregation extends CommonDataAccess implements AggregateDataAccess<ProcessAggregate> {
+public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
 
     public List<ProcessAggregate> getTops(Query query) throws DataAccessException, ServiceException {
         String by = query.getFilter("by");
@@ -22,7 +19,6 @@ public class ProcessAggregation extends CommonDataAccess implements AggregateDat
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing required filter: 'by'");
         try {
             db.openConnection();
-
             if (by.equals("throughput"))
                 return getTopsByThroughput(query);
             else if (by.equals("status"))
@@ -53,11 +49,11 @@ public class ProcessAggregation extends CommonDataAccess implements AggregateDat
         int idx = 0;
         int limit = query.getIntFilter("limit");
         while (rs.next() && (limit == -1 || idx < limit)) {
-            long agg = Math.round(rs.getDouble("ct"));
-            ProcessAggregate procCount = new ProcessAggregate(agg);
-            procCount.setCount(agg);
-            procCount.setId(rs.getLong("process_id"));
-            list.add(procCount);
+            long ct = Math.round(rs.getDouble("ct"));
+            ProcessAggregate processAggregate = new ProcessAggregate(ct);
+            processAggregate.setCount(ct);
+            processAggregate.setId(rs.getLong("process_id"));
+            list.add(processAggregate);
             idx++;
         }
         return list;
@@ -74,11 +70,11 @@ public class ProcessAggregation extends CommonDataAccess implements AggregateDat
         int idx = 0;
         int limit = query.getIntFilter("limit");
         while (rs.next() && (limit == -1 || idx < limit)) {
-            long agg = Math.round(rs.getDouble("ct"));
-            ProcessAggregate procCount = new ProcessAggregate(agg);
-            procCount.setCount(agg);
-            procCount.setId(rs.getInt("status_cd"));
-            list.add(procCount);
+            long ct = Math.round(rs.getDouble("ct"));
+            ProcessAggregate processAggregate = new ProcessAggregate(ct);
+            processAggregate.setCount(ct);
+            processAggregate.setId(rs.getInt("status_cd"));
+            list.add(processAggregate);
             idx++;
         }
         return list;
@@ -98,20 +94,20 @@ public class ProcessAggregation extends CommonDataAccess implements AggregateDat
         int idx = 0;
         int limit = query.getIntFilter("limit");
         while (rs.next() && (limit == -1 || idx < limit)) {
-            Long agg = Math.round(rs.getDouble("elapsed"));
-            ProcessAggregate procCount = new ProcessAggregate(agg);
-            procCount.setCount(rs.getLong("ct"));
-            procCount.setId(rs.getLong("process_id"));
-            list.add(procCount);
+            Long elapsed = Math.round(rs.getDouble("elapsed"));
+            ProcessAggregate processAggregate = new ProcessAggregate(elapsed);
+            processAggregate.setCount(rs.getLong("ct"));
+            processAggregate.setId(rs.getLong("process_id"));
+            list.add(processAggregate);
             idx++;
         }
         return list;
     }
 
-    public TreeMap<Date,List<ProcessAggregate>> getBreakdown(Query query) throws DataAccessException {
+    public TreeMap<Date,List<ProcessAggregate>> getBreakdown(Query query) throws DataAccessException, ServiceException {
         String by = query.getFilter("by");
         if (by == null)
-            throw new DataAccessException("Missing required filter: 'by'");
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing required filter: 'by'");
 
         try {
             // process ids
@@ -252,31 +248,5 @@ public class ProcessAggregation extends CommonDataAccess implements AggregateDat
         if (status != null)
             where.append("and STATUS_CD = ").append(WorkStatuses.getCode(status));
         return where.toString();
-    }
-
-    private Date getStartDate(Query query) throws ParseException, DataAccessException {
-        Instant instant = query.getInstantFilter("Starting");
-        Date start = instant == null ? query.getDateFilter("startDate") : Date.from(instant);
-        if (start == null)
-            throw new DataAccessException("Parameter Starting is required");
-        // adjust to db time
-        return new Date(start.getTime() + DatabaseAccess.getDbTimeDiff());
-    }
-
-    /**
-     * This is not completion date.  It's ending start date.
-     */
-    @SuppressWarnings("deprecation")
-    private Date getEndDate(Query query) {
-        Instant instant = query.getInstantFilter("Ending");
-        if (instant == null)
-            return null;
-        else {
-            Date end = new Date(Date.from(instant).getTime() + DatabaseAccess.getDbTimeDiff());
-            if (end.getHours() == 0) {
-                end = new Date(end.getTime() + DAY_MS);  // end of day
-            }
-            return end;
-        }
     }
 }

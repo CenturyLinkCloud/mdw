@@ -18,7 +18,7 @@ package com.centurylink.mdw.services;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.request.Request;
-import com.centurylink.mdw.model.request.RequestCount;
+import com.centurylink.mdw.model.request.RequestAggregate;
 import com.centurylink.mdw.model.request.RequestList;
 
 import java.util.Date;
@@ -39,7 +39,7 @@ public interface RequestServices {
     Request getMasterRequest(String masterRequestId) throws ServiceException;
     Request getMasterRequestResponse(String masterReqeustId) throws ServiceException;
 
-    TreeMap<Date,List<RequestCount>> getRequestBreakdown(Query query) throws ServiceException;
+    TreeMap<Date,List<RequestAggregate>> getRequestBreakdown(Query query) throws ServiceException;
 
     void setElapsedTime(String ownerType, Long instanceId, Long elapsedTime) throws ServiceException;
 }

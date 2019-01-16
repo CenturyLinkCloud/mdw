@@ -27,7 +27,7 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.task.TaskAction;
-import com.centurylink.mdw.model.task.TaskCount;
+import com.centurylink.mdw.model.task.TaskAggregate;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.task.TaskTemplate;
@@ -69,9 +69,9 @@ public interface TaskServices {
 
     List<TaskTemplate> getTaskTemplates(Query query) throws ServiceException;
 
-    List<TaskCount> getTopTasks(String aggregateBy, Query query) throws ServiceException;
+    List<TaskAggregate> getTopTasks(String aggregateBy, Query query) throws ServiceException;
 
-    TreeMap<Date,List<TaskCount>> getTaskBreakdown(Query query) throws ServiceException;
+    TreeMap<Date,List<TaskAggregate>> getTaskBreakdown(Query query) throws ServiceException;
 
     TaskRuntimeContext getContext(Long instanceId) throws ServiceException;
     TaskRuntimeContext getContext(TaskInstance taskInstance) throws ServiceException;

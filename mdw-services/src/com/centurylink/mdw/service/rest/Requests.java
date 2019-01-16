@@ -32,7 +32,7 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.JsonExportable;
 import com.centurylink.mdw.model.JsonListMap;
 import com.centurylink.mdw.model.request.Request;
-import com.centurylink.mdw.model.request.RequestCount;
+import com.centurylink.mdw.model.request.RequestAggregate;
 import com.centurylink.mdw.model.request.RequestList;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
@@ -75,14 +75,14 @@ public class Requests extends JsonRestService implements JsonExportable {
             String segOne = getSegment(path, 1);
             if (segOne != null) {
                 if (segOne.equals("instanceCounts")) {
-                    Map<Date,List<RequestCount>> dateMap = requestServices.getRequestBreakdown(query);
-                    Map<String,List<RequestCount>> listMap = new HashMap<String,List<RequestCount>>();
+                    Map<Date,List<RequestAggregate>> dateMap = requestServices.getRequestBreakdown(query);
+                    Map<String,List<RequestAggregate>> listMap = new HashMap<String,List<RequestAggregate>>();
                     for (Date date : dateMap.keySet()) {
-                        List<RequestCount> reqCounts = dateMap.get(date);
+                        List<RequestAggregate> reqCounts = dateMap.get(date);
                         listMap.put(Query.getString(date), reqCounts);
                     }
 
-                    return new JsonListMap<RequestCount>(listMap).getJson();
+                    return new JsonListMap<RequestAggregate>(listMap).getJson();
                 }
                 else {
                     try {
@@ -157,7 +157,7 @@ public class Requests extends JsonRestService implements JsonExportable {
             else if (json.has("requests") && RequestList.OUTBOUND_REQUESTS.equals(query.getFilters().get("type")))
                 return new RequestList(RequestList.OUTBOUND_REQUESTS, json);
             else if ("Requests/instanceCounts".equals(query.getPath()))
-                return new JsonListMap<RequestCount>(json, RequestCount.class);
+                return new JsonListMap<RequestAggregate>(json, RequestAggregate.class);
             else
                 throw new JSONException("Unsupported export type for query: " + query);
         }

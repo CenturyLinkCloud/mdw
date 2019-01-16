@@ -132,21 +132,21 @@ public class Tasks extends JsonRestService implements JsonExportable {
                 else if (segOne.equals("topThroughput")) {
                     // dashboard top throughput query
                     String breakdown = getSegment(path, 2);
-                    List<TaskCount> list = taskServices.getTopTasks(breakdown, query);
+                    List<TaskAggregate> list = taskServices.getTopTasks(breakdown, query);
                     JSONArray taskArr = new JSONArray();
                     int ct = 0;
-                    TaskCount other = null;
+                    TaskAggregate other = null;
                     long otherTot = 0;
-                    for (TaskCount taskCount : list) {
+                    for (TaskAggregate taskAggregate : list) {
                         if (ct >= query.getMax()) {
                             if (other == null) {
-                                other = new TaskCount(0);
+                                other = new TaskAggregate(0);
                                 other.setName("Other");
                             }
-                            otherTot += taskCount.getCount();
+                            otherTot += taskAggregate.getCount();
                         }
                         else {
-                            taskArr.put(taskCount.getJson());
+                            taskArr.put(taskAggregate.getJson());
                         }
                         ct++;
                     }
@@ -157,22 +157,22 @@ public class Tasks extends JsonRestService implements JsonExportable {
                     return new JsonArray(taskArr).getJson();
                 }
                 else if (segOne.equals("instanceCounts")) {
-                    TreeMap<Date, List<TaskCount>> dateMap = taskServices.getTaskBreakdown(query);
+                    TreeMap<Date, List<TaskAggregate>> dateMap = taskServices.getTaskBreakdown(query);
                     boolean isTotals = query.getFilters().get("taskIds") == null
                             && query.getFilters().get("workgroups") == null
                             && query.getFilters().get("users") == null
                             && query.getFilters().get("statuses") == null;
 
-                    Map<String, List<TaskCount>> listMap = new HashMap<String, List<TaskCount>>();
+                    Map<String, List<TaskAggregate>> listMap = new HashMap<String, List<TaskAggregate>>();
                     for (Date date : dateMap.keySet()) {
-                        List<TaskCount> taskCounts = dateMap.get(date);
+                        List<TaskAggregate> taskAggregates = dateMap.get(date);
                         if (isTotals) {
-                            for (TaskCount taskCount : taskCounts)
-                                taskCount.setName("Total");
+                            for (TaskAggregate taskAggregate : taskAggregates)
+                                taskAggregate.setName("Total");
                         }
-                        listMap.put(Query.getString(date), taskCounts);
+                        listMap.put(Query.getString(date), taskAggregates);
                     }
-                    return new JsonListMap<TaskCount>(listMap).getJson();
+                    return new JsonListMap<TaskAggregate>(listMap).getJson();
                 }
                 else {
                     // must be instance id
@@ -434,7 +434,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
             if (json.has(TaskList.TASKS))
                 return new TaskList(TaskList.TASKS, json);
             else if ("Tasks/instanceCounts".equals(query.getPath()))
-                return new JsonListMap<TaskCount>(json, TaskCount.class);
+                return new JsonListMap<TaskAggregate>(json, TaskAggregate.class);
             else
                 throw new JSONException("Unsupported export type for query: " + query);
         }

@@ -40,10 +40,7 @@ import org.json.JSONObject;
 
 import javax.ws.rs.Path;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Path("/Activities")
 @Api("Runtime activity")
@@ -66,77 +63,69 @@ public class Activities extends JsonRestService implements JsonExportable {
      */
     @Override
     @Path("/{instanceId|special}")
-    @ApiOperation(value="Retrieve an activity, query many activity instances, or perform special queries",
-        notes="If instanceId and special are not present, returns a page of activities that meet query criteria.",
-        response=ActivityInstance.class, responseContainer="List")
-    public JSONObject get(String path, Map<String,String> headers)
-    throws ServiceException, JSONException {
+    @ApiOperation(value = "Retrieve an activity, query many activity instances, or perform special queries",
+            notes = "If instanceId and special are not present, returns a page of activities that meet query criteria.",
+            response = ActivityInstance.class, responseContainer = "List")
+    public JSONObject get(String path, Map<String, String> headers)
+            throws ServiceException, JSONException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
         try {
             String segOne = getSegment(path, 1);
             if (segOne != null) {
-              try {
-                long instanceId = Long.parseLong(segOne);
-                return workflowServices.getActivity(instanceId).getJson();
-            }
-              catch (NumberFormatException ex) {
-             // path must be special
-                Query query = getQuery(path, headers);
-                if (segOne.equals("definitions")) {
-                    ActivityList activityVOs = workflowServices.getActivityDefinitions(query);
-                    JSONArray jsonActivities = new JSONArray();
-                    for (ActivityInstance activityInstance : activityVOs.getActivities()) {
-                        jsonActivities.put(activityInstance.getJson());
-                    }
-                    //return new JsonArray(jsonActivities).toJson();
-                    return activityVOs.getJson();
+                try {
+                    long instanceId = Long.parseLong(segOne);
+                    return workflowServices.getActivity(instanceId).getJson();
                 }
-
-              else if (segOne.equals("topThroughput")) {
-                List<ActivityAggregate> list = workflowServices.getTopActivities(query);
-                JSONArray actArr = new JSONArray();
-                int ct = 0;
-                ActivityAggregate other = null;
-                long otherTot = 0;
-                for (ActivityAggregate actCount : list) {
-                    if (ct >= query.getMax()) {
-                        if (other == null) {
-                            other = new ActivityAggregate(0);
-                            other.setName("Other");
+                catch (NumberFormatException ex) {
+                    // path must be special
+                    Query query = getQuery(path, headers);
+                    if (segOne.equals("definitions")) {
+                        ActivityList activityVOs = workflowServices.getActivityDefinitions(query);
+                        JSONArray jsonActivities = new JSONArray();
+                        for (ActivityInstance activityInstance : activityVOs.getActivities()) {
+                            jsonActivities.put(activityInstance.getJson());
                         }
-                        otherTot += actCount.getValue();
+                        //return new JsonArray(jsonActivities).toJson();
+                        return activityVOs.getJson();
+                    }
+                    else if (segOne.equals("tops")) {
+                        List<ActivityAggregate> list = workflowServices.getTopActivities(query);
+                        JSONArray actArr = new JSONArray();
+                        int ct = 0;
+                        ActivityAggregate other = null;
+                        long otherTot = 0;
+                        for (ActivityAggregate actCount : list) {
+                            if (ct >= query.getMax()) {
+                                if (other == null) {
+                                    other = new ActivityAggregate(0);
+                                    other.setName("Other");
+                                }
+                                otherTot += actCount.getValue();
+                            } else {
+                                actArr.put(actCount.getJson());
+                            }
+                            ct++;
+                        }
+                        if (other != null) {
+                            other.setValue(otherTot);
+                            actArr.put(other.getJson());
+                        }
+                        return new JsonArray(actArr).getJson();
+
+                    }
+                    else if (segOne.equals("breakdown")) {
+                        TreeMap<Date, List<ActivityAggregate>> dateMap = workflowServices.getActivityBreakdown(query);
+                        LinkedHashMap<String, List<ActivityAggregate>> listMap = new LinkedHashMap<>();
+                        for (Date date : dateMap.keySet()) {
+                            List<ActivityAggregate> actCounts = dateMap.get(date);
+                            listMap.put(Query.getString(date), actCounts);
+                        }
+                        return new JsonListMap<>(listMap).getJson();
                     }
                     else {
-                        actArr.put(actCount.getJson());
+                        throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path segment: " + segOne);
                     }
-                    ct++;
                 }
-                if (other != null) {
-                    other.setValue(otherTot);
-                    actArr.put(other.getJson());
-                }
-                return new JsonArray(actArr).getJson();
-
-              }
-                else if (segOne.equals("instanceCounts")) {
-                    Map<Date,List<ActivityAggregate>> dateMap = workflowServices.getActivityBreakdown(query);
-                    boolean isTotals = query.getFilters().get("activityIds") == null && query.getFilters().get("statuses") == null;
-
-                    Map<String,List<ActivityAggregate>> listMap = new HashMap<String,List<ActivityAggregate>>();
-                    for (Date date : dateMap.keySet()) {
-                        List<ActivityAggregate> actCounts = dateMap.get(date);
-                        if (isTotals) {
-                            for (ActivityAggregate actCount : actCounts)
-                                actCount.setName("Total");
-                        }
-                        listMap.put(Query.getString(date), actCounts);
-                    }
-                    return new JsonListMap<ActivityAggregate>(listMap).getJson();
-                }
-                else {
-                    throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path segment: " + segOne);
-                }
-              }
             }
             else {
                 Query query = getQuery(path, headers);
@@ -159,10 +148,10 @@ public class Activities extends JsonRestService implements JsonExportable {
      */
     @Override
     @Path("/{activityInstanceId}/{action}/{completionCode}")
-    @ApiOperation(value="Take action on activity whose activity Instance ID is activityInstanceId, if completionCode is defined then take completionCode path", response=StatusMessage.class)
+    @ApiOperation(value = "Take action on activity whose activity Instance ID is activityInstanceId, if completionCode is defined then take completionCode path", response = StatusMessage.class)
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
-        Map<String,String> parameters = getParameters(headers);
+        Map<String, String> parameters = getParameters(headers);
         String instId = getSegment(path, 1);
         if (instId == null)
             instId = parameters.get("activityInstanceId");

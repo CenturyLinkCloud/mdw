@@ -401,23 +401,23 @@ public class TaskServicesImpl implements TaskServices {
         }
     }
 
-    public List<TaskCount> getTopTasks(String aggregateBy, Query query) throws ServiceException {
+    public List<TaskAggregate> getTopTasks(String aggregateBy, Query query) throws ServiceException {
         try {
             CodeTimer timer = new CodeTimer(true);
             if ("task".equals(aggregateBy)) {
-                List<TaskCount> list = getAggregateDataAccess().getTopTasks(query);
+                List<TaskAggregate> list = getAggregateDataAccess().getTopTasks(query);
                 timer.logTimingAndContinue("AggregateDataAccessVcs.getTopTasks()");
                 list = populate(list);
                 timer.stopAndLogTiming("TaskServicesImpl.populate()");
                 return list;
             }
             else if ("workgroup".equals(aggregateBy)) {
-                List<TaskCount> list = getAggregateDataAccess().getTopTaskWorkgroups(query);
+                List<TaskAggregate> list = getAggregateDataAccess().getTopTaskWorkgroups(query);
                 timer.stopAndLogTiming("AggregateDataAccessVcs.getTopTaskWorkgroups()");
                 return list;
             }
             else if ("assignee".equals(aggregateBy)) {
-                List<TaskCount> list = getAggregateDataAccess().getTopTaskAssignees(query);
+                List<TaskAggregate> list = getAggregateDataAccess().getTopTaskAssignees(query);
                 timer.stopAndLogTiming("AggregateDataAccessVcs.getTopTaskAssignees()");
                 return list;
             }
@@ -430,9 +430,9 @@ public class TaskServicesImpl implements TaskServices {
         }
     }
 
-    public TreeMap<Date,List<TaskCount>> getTaskBreakdown(Query query) throws ServiceException {
+    public TreeMap<Date,List<TaskAggregate>> getTaskBreakdown(Query query) throws ServiceException {
         try {
-            TreeMap<Date,List<TaskCount>> map = getAggregateDataAccess().getBreakdown(query);
+            TreeMap<Date,List<TaskAggregate>> map = getAggregateDataAccess().getBreakdown(query);
             if (query.getFilters().get("taskIds") != null) {
                 for (Date date : map.keySet())
                     populate(map.get(date));
@@ -549,9 +549,9 @@ public class TaskServicesImpl implements TaskServices {
     /**
      * Fills in task header info, consulting latest instance comment if necessary.
      */
-    protected List<TaskCount> populate(List<TaskCount> taskCounts) throws DataAccessException {
+    protected List<TaskAggregate> populate(List<TaskAggregate> taskAggregates) throws DataAccessException {
         AggregateDataAccess dataAccess = null;
-        for (TaskCount tc : taskCounts) {
+        for (TaskAggregate tc : taskAggregates) {
             TaskTemplate taskTemplate = TaskTemplateCache.getTaskTemplate(tc.getId());
             if (taskTemplate == null) {
                 logger.severe("Missing definition for task id: " + tc.getId());
@@ -579,7 +579,7 @@ public class TaskServicesImpl implements TaskServices {
                 tc.setPackageName(taskTemplate.getPackageName());
             }
         }
-        return taskCounts;
+        return taskAggregates;
     }
 
     @Override

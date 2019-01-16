@@ -3,21 +3,20 @@ package com.centurylink.mdw.dataaccess.reports;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.model.request.RequestCount;
+import com.centurylink.mdw.model.request.RequestAggregate;
 
 import java.sql.ResultSet;
 import java.text.ParseException;
 import java.util.*;
 
-public class RequestAggregation extends CommonDataAccess implements AggregateDataAccess {
+public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
 
     @Override
-    public List<RequestCount> getTops(Query query) throws DataAccessException {
+    public List<RequestAggregate> getTops(Query query) throws DataAccessException {
         return null;
     }
 
-    public TreeMap<Date,List<RequestCount>> getBreakdown(Query query) throws DataAccessException {
+    public TreeMap<Date,List<RequestAggregate>> getBreakdown(Query query) throws DataAccessException {
         try {
             // request types
             List<String> ownerTypes = null;
@@ -60,24 +59,24 @@ public class RequestAggregation extends CommonDataAccess implements AggregateDat
 
             db.openConnection();
             ResultSet rs = db.runSelect(sql.toString());
-            TreeMap<Date,List<RequestCount>> map = new TreeMap<>();
+            TreeMap<Date,List<RequestAggregate>> map = new TreeMap<>();
             while (rs.next()) {
                 String createDtStr = rs.getString("created");
                 Date createDate = getDateFormat().parse(createDtStr);
-                List<RequestCount> requestCounts = map.get(createDate);
-                if (requestCounts == null) {
-                    requestCounts = new ArrayList<>();
-                    map.put(createDate, requestCounts);
+                List<RequestAggregate> requestAggregates = map.get(createDate);
+                if (requestAggregates == null) {
+                    requestAggregates = new ArrayList<>();
+                    map.put(createDate, requestAggregates);
                 }
-                RequestCount requestCount = new RequestCount(rs.getLong("ct"));
+                RequestAggregate requestAggregate = new RequestAggregate(rs.getLong("ct"));
                 if (ownerTypes != null) {
                     String ownerType = rs.getString("owner_type");
                     if (OwnerType.LISTENER_REQUEST.equals(ownerType))
-                        requestCount.setType("Inbound Requests");
+                        requestAggregate.setType("Inbound Requests");
                     else if (OwnerType.ADAPTER_REQUEST.equals(ownerType))
-                        requestCount.setType("Outbound Requests");
+                        requestAggregate.setType("Outbound Requests");
                 }
-                requestCounts.add(requestCount);
+                requestAggregates.add(requestAggregate);
             }
             return map;
         }

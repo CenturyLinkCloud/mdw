@@ -25,6 +25,12 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(value="Aggregate", description="Identity and value info for a breakdown type")
 public interface Aggregate {
 
+    long getId();
+    String getName();
+
+    @ApiModelProperty(value="Value for an aggregate")
+    long getValue();
+
     @ApiModelProperty(value="Count for a particular aggregate")
-    public long getCount();
+    long getCount();
 }

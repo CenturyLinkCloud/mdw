@@ -1442,6 +1442,7 @@
   display: block;
   margin-top: 1px;
   width: 30px;
+  min-width: 30px;
   height: 16px;
   border: 2px solid;
   border-radius: 2px;

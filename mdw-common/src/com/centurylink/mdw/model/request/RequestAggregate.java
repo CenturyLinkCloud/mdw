@@ -15,13 +15,28 @@
  */
 package com.centurylink.mdw.model.request;
 
+import com.centurylink.mdw.model.Aggregate;
+import com.centurylink.mdw.model.Jsonable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.Aggregate;
-import com.centurylink.mdw.model.Jsonable;
+public class RequestAggregate implements Aggregate, Jsonable {
 
-public class RequestCount implements Aggregate, Jsonable {
+    private long id;
+    public long getId() { return id; }
+    public void setId(long id) { this.id = id; }
+
+    private String path;
+    public String getPath() { return path; }
+    public void setPath(String path) { this.path = path; }
+
+    public String getName() {
+        return getPath();
+    }
+
+    private long value;
+    public long getValue() { return value; }
+    public void setValue(long value) { this.value = value; }
 
     private long count = -1;
     public long getCount() { return count; }
@@ -31,12 +46,12 @@ public class RequestCount implements Aggregate, Jsonable {
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }
 
-    public RequestCount(long count) {
+    public RequestAggregate(long count) {
         this.count = count;
     }
 
     @SuppressWarnings("unused")
-    public RequestCount(JSONObject json) throws JSONException {
+    public RequestAggregate(JSONObject json) throws JSONException {
         count = json.getLong("count");
         if (json.has("type"))
             type = json.getString("type");

@@ -18,8 +18,6 @@ package com.centurylink.mdw.model.workflow;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.util.StringHelper;
-
 /**
  * Aggregated activity instance count for a particular definition or status.
  */
@@ -52,7 +50,7 @@ public class ActivityAggregate extends ProcessAggregate {
 
     @SuppressWarnings("unused")
     public ActivityAggregate(JSONObject json) throws JSONException {
-        super(json.getLong("count"));
+        super(json.getLong("value"));
         if (json.has("id"))
             activityId = json.getString("id");
         if (json.has("name"))
@@ -71,6 +69,8 @@ public class ActivityAggregate extends ProcessAggregate {
             setPackageName(json.getString("packageName"));
         if (json.has("definitionMissing"))
             setDefinitionMissing(json.getBoolean("definitionMissing"));
+        if (json.has("count"))
+           setCount(json.getLong("count"));
     }
 
     public String getJsonName() {
@@ -79,9 +79,11 @@ public class ActivityAggregate extends ProcessAggregate {
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
-        json.put("count", getValue());
-        if (!StringHelper.isEmpty(activityId))
+        json.put("value", getValue());
+        if (activityId != null)
             json.put("id", activityId);
+        else if (getId() > 0)
+            json.put("id", getId());
         if (getName() != null)
             json.put("name", getName());
         if (processId > 0)
@@ -98,6 +100,8 @@ public class ActivityAggregate extends ProcessAggregate {
             json.put("packageName", getPackageName());
         if (isDefinitionMissing())
             json.put("definitionMissing", true);
+        if (getCount() > -1)
+            json.put("count", getCount());
         return json;
     }
 }

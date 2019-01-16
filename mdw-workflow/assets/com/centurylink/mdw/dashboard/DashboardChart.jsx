@@ -396,7 +396,7 @@ class DashboardChart extends Component {
           onDownload={this.handleDownload}/>
         <div className="mdw-section" style={{display:'flex'}}>
           {breakdown.tops &&
-            <div>
+            <div style={{maxWidth:'303px',maxHeight:'303px'}}>
               {(!breakdown.summaryChart || breakdown.summaryChart === 'donut') &&
                 <Doughnut
                   data={this.getOverallData()}

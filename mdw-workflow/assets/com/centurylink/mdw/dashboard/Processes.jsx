@@ -8,9 +8,6 @@ class Processes extends Component {
     super(...args);
   }
 
-  componentDidMount() {
-  }
-
   render() {
 
     const breakdownConfig = {

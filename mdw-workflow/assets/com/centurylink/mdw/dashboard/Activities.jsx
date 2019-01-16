@@ -1,6 +1,6 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
-import PanelHeader from '../react/PanelHeader.jsx';
+import DashboardChart from './DashboardChart.jsx';
 
 class Activities extends Component {
 
@@ -8,17 +8,44 @@ class Activities extends Component {
     super(...args);
   }
 
-  componentDidMount() {
-  }
-
   render() {
+
+    const breakdownConfig = {
+      breakdowns: [
+        {
+          name: 'Throughput',
+          selectField: 'id',
+          selectLabel: 'Activities',
+          tops: '/Activities/tops?by=throughput',
+          data: '/Activities/breakdown?by=throughput',
+          instancesParam: 'activityIds'
+        },
+        {
+          name: 'Status',
+          selectField: 'status',
+          selectLabel: 'Statuses',
+          tops: '/Activities/tops?by=status',
+          data: '/Activities/breakdown?by=status',
+          instancesParam: 'statuses'
+        },
+        {
+          name: 'Total Throughput',
+          data: '/Activities/breakdown?by=total'
+        }
+      ],
+      filters: {
+        Ending: new Date(),
+        Status: ''
+      },
+      filterOptions: {
+        Status: ['In Progress', 'Failed', 'Waiting']
+      }
+    };
+
     return (
-      <div>
-        <PanelHeader title="Activities" />
-        <div className="mdw-section">
-          <div>ACTIVITIES</div>
-        </div>
-      </div>
+      <DashboardChart title="Stuck Activities"
+        breakdownConfig={breakdownConfig}
+        list="#/workflow/activities" />
     );
   }
 }

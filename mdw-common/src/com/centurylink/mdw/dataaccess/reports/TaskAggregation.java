@@ -2,22 +2,21 @@ package com.centurylink.mdw.dataaccess.reports;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.model.task.TaskCount;
+import com.centurylink.mdw.model.task.TaskAggregate;
 import com.centurylink.mdw.model.task.TaskStatuses;
 
 import java.sql.ResultSet;
 import java.text.ParseException;
 import java.util.*;
 
-public class TaskAggregation extends CommonDataAccess implements AggregateDataAccess {
+public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
 
     @Override
     public List getTops(Query query) throws DataAccessException {
         return null;
     }
 
-    public List<TaskCount> getTopTasks(Query query) throws DataAccessException {
+    public List<TaskAggregate> getTopTasks(Query query) throws DataAccessException {
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("select count(tii.task_id) as ct, tii.task_id\n");
@@ -29,13 +28,13 @@ public class TaskAggregation extends CommonDataAccess implements AggregateDataAc
 
             db.openConnection();
             ResultSet rs = db.runSelect(sql.toString());
-            List<TaskCount> list = new ArrayList<TaskCount>();
+            List<TaskAggregate> list = new ArrayList<TaskAggregate>();
             int idx = 0;
             int limit = query.getIntFilter("limit");
             while (rs.next() && (limit == -1 || idx < limit)) {
-                TaskCount taskCount = new TaskCount(rs.getLong("ct"));
-                taskCount.setId(rs.getLong("task_id"));
-                list.add(taskCount);
+                TaskAggregate taskAggregate = new TaskAggregate(rs.getLong("ct"));
+                taskAggregate.setId(rs.getLong("task_id"));
+                list.add(taskAggregate);
                 idx++;
             }
             return list;
@@ -51,7 +50,7 @@ public class TaskAggregation extends CommonDataAccess implements AggregateDataAc
         }
     }
 
-    public List<TaskCount> getTopTaskWorkgroups(Query query) throws DataAccessException {
+    public List<TaskAggregate> getTopTaskWorkgroups(Query query) throws DataAccessException {
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("select count(tii.group_name) as ct, tii.group_name\n");
@@ -65,13 +64,13 @@ public class TaskAggregation extends CommonDataAccess implements AggregateDataAc
 
             db.openConnection();
             ResultSet rs = db.runSelect(sql.toString());
-            List<TaskCount> list = new ArrayList<TaskCount>();
+            List<TaskAggregate> list = new ArrayList<TaskAggregate>();
             int idx = 0;
             int limit = query.getIntFilter("limit");
             while (rs.next() && (limit == -1 || idx < limit)) {
-                TaskCount taskCount = new TaskCount(rs.getLong("ct"));
-                taskCount.setWorkgroup(rs.getString("group_name"));
-                list.add(taskCount);
+                TaskAggregate taskAggregate = new TaskAggregate(rs.getLong("ct"));
+                taskAggregate.setWorkgroup(rs.getString("group_name"));
+                list.add(taskAggregate);
                 idx++;
             }
             return list;
@@ -87,7 +86,7 @@ public class TaskAggregation extends CommonDataAccess implements AggregateDataAc
         }
     }
 
-    public List<TaskCount> getTopTaskAssignees(Query query) throws DataAccessException {
+    public List<TaskAggregate> getTopTaskAssignees(Query query) throws DataAccessException {
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("select count(tii.cuid) as ct, tii.cuid, tii.name\n");
@@ -100,14 +99,14 @@ public class TaskAggregation extends CommonDataAccess implements AggregateDataAc
 
             db.openConnection();
             ResultSet rs = db.runSelect(sql.toString());
-            List<TaskCount> list = new ArrayList<TaskCount>();
+            List<TaskAggregate> list = new ArrayList<TaskAggregate>();
             int idx = 0;
             int limit = query.getIntFilter("limit");
             while (rs.next() && (limit == -1 || idx < limit)) {
-                TaskCount taskCount = new TaskCount(rs.getLong("ct"));
-                taskCount.setUserId(rs.getString("cuid"));
-                taskCount.setUserName(rs.getString("name"));
-                list.add(taskCount);
+                TaskAggregate taskAggregate = new TaskAggregate(rs.getLong("ct"));
+                taskAggregate.setUserId(rs.getString("cuid"));
+                taskAggregate.setUserName(rs.getString("name"));
+                list.add(taskAggregate);
                 idx++;
             }
             return list;
@@ -123,7 +122,7 @@ public class TaskAggregation extends CommonDataAccess implements AggregateDataAc
         }
     }
 
-    public TreeMap<Date,List<TaskCount>> getBreakdown(Query query) throws DataAccessException {
+    public TreeMap<Date,List<TaskAggregate>> getBreakdown(Query query) throws DataAccessException {
         try {
             List<String> params = new ArrayList<String>();
             // tasks
@@ -221,30 +220,30 @@ public class TaskAggregation extends CommonDataAccess implements AggregateDataAc
 
             db.openConnection();
             ResultSet rs = db.runSelect(sql.toString());
-            TreeMap<Date,List<TaskCount>> map = new TreeMap<>();
+            TreeMap<Date,List<TaskAggregate>> map = new TreeMap<>();
             while (rs.next()) {
                 String startDateStr = rs.getString("st");
                 Date startDate = getDateFormat().parse(startDateStr);
-                List<TaskCount> taskCounts = map.get(startDate);
-                if (taskCounts == null) {
-                    taskCounts = new ArrayList<>();
-                    map.put(startDate, taskCounts);
+                List<TaskAggregate> taskAggregates = map.get(startDate);
+                if (taskAggregates == null) {
+                    taskAggregates = new ArrayList<>();
+                    map.put(startDate, taskAggregates);
                 }
-                TaskCount taskCount = new TaskCount(rs.getLong("ct"));
+                TaskAggregate taskAggregate = new TaskAggregate(rs.getLong("ct"));
                 if (taskIds != null) {
-                    taskCount.setId(rs.getLong("task_id"));
+                    taskAggregate.setId(rs.getLong("task_id"));
                 }
                 else if (workgroups != null) {
-                    taskCount.setWorkgroup(rs.getString("group_name"));
+                    taskAggregate.setWorkgroup(rs.getString("group_name"));
                 }
                 else if (assignees != null) {
-                    taskCount.setUserId(rs.getString("cuid"));
-                    taskCount.setUserName(rs.getString("name"));
+                    taskAggregate.setUserId(rs.getString("cuid"));
+                    taskAggregate.setUserName(rs.getString("name"));
                 }
                 else if (statusCodes != null) {
-                    taskCount.setStatus(TaskStatuses.getName(rs.getInt("task_instance_status")));
+                    taskAggregate.setStatus(TaskStatuses.getName(rs.getInt("task_instance_status")));
                 }
-                taskCounts.add(taskCount);
+                taskAggregates.add(taskAggregate);
             }
             return map;
         }
