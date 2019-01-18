@@ -15,18 +15,6 @@
  */
 package com.centurylink.mdw.service.data.task;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -35,17 +23,18 @@ import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.model.task.TaskCategory;
-import com.centurylink.mdw.model.task.TaskInstance;
-import com.centurylink.mdw.model.task.TaskState;
-import com.centurylink.mdw.model.task.TaskStatus;
-import com.centurylink.mdw.model.task.TaskTemplate;
+import com.centurylink.mdw.model.task.*;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * Task-related data access.
@@ -83,7 +72,7 @@ public class TaskDataAccess extends CommonDataAccess {
             // need to check if task_title supported
             String q;
             if (db.isMySQL())
-                q = "SHOW COLUMNS FROM `task_instance` LIKE 'task_title'";
+                q = "SHOW COLUMNS FROM `TASK_INSTANCE` LIKE 'task_title'";
             else
                 q = "select column_name from all_tab_columns where table_name='TASK_INSTANCE' AND column_name='TASK_TITLE'";
             if (db.runSelect(q).next()) {
@@ -580,7 +569,7 @@ public class TaskDataAccess extends CommonDataAccess {
         try {
             Map<String, String> indices = new HashMap<String, String>();
             db.openConnection();
-            String sql = "select tii.index_key,tii.index_value from instance_index tii where tii.instance_id = ? and tii.owner_type='TASK_INSTANCE'";
+            String sql = "select tii.index_key,tii.index_value from INSTANCE_INDEX tii where tii.instance_id = ? and tii.owner_type='TASK_INSTANCE'";
             ResultSet rs = db.runSelect(sql, taskInstanceId);
             while (rs.next()) {
                 indices.put(rs.getString(1), rs.getString(2));
@@ -608,17 +597,17 @@ public class TaskDataAccess extends CommonDataAccess {
             countSql.append("select count(ti.task_instance_id)\n");
 
             if (db.isMySQL()) {
-                sql.append("from task_instance ti left join user_info ui on ui.user_info_id = ti.task_claim_user_id\n");
-                countSql.append("from task_instance ti left join user_info ui on ui.user_info_id = ti.task_claim_user_id\n");
+                sql.append("from TASK_INSTANCE ti left join USER_INFO ui on ui.user_info_id = ti.task_claim_user_id\n");
+                countSql.append("from TASK_INSTANCE ti left join USER_INFO ui on ui.user_info_id = ti.task_claim_user_id\n");
             }
             else {
-                sql.append("from task_instance ti, user_info ui\n");
-                countSql.append("from task_instance ti, user_info ui\n");
+                sql.append("from TASK_INSTANCE ti, USER_INFO ui\n");
+                countSql.append("from TASK_INSTANCE ti, USER_INFO ui\n");
             }
 
             String[] workgroups = query.getArrayFilter("workgroups");
             if (workgroups != null && workgroups.length > 0 && !containsSiteAdmin(workgroups)) {
-                String tigm = ", task_inst_grp_mapp tigm ";
+                String tigm = ", TASK_INST_GRP_MAPP tigm ";
                 sql.append(tigm);
                 countSql.append(tigm);
             }
@@ -639,14 +628,10 @@ public class TaskDataAccess extends CommonDataAccess {
                     where = where + " and ui.user_info_id(+) = ti.task_claim_user_id\n";
             }
             else {
-                try {
-                    where = buildTaskInstanceWhere(query);
-                    if (!StringHelper.isEmpty(where)) {
-                        sql.append(where);
-                        countSql.append(where);
-                    }
-                } catch (ServiceException e) {
-                    throw new ServiceException(e.getMessage(), e);
+                where = buildTaskInstanceWhere(query);
+                if (!StringHelper.isEmpty(where)) {
+                    sql.append(where);
+                    countSql.append(where);
                 }
             }
             String orderBy = buildTaskInstanceOrderBy(query);
@@ -851,15 +836,15 @@ public class TaskDataAccess extends CommonDataAccess {
             int eq = index.indexOf('=');
             if (eq == -1 || eq == index.length() - 1)
                 throw new DataAccessException("Invalid index criterion: " + index);
-            where.append(" and (select count(*) from instance_index tidx where tidx.instance_id = ti.task_instance_id and tidx.owner_type='TASK_INSTANCE' and index_key='"
+            where.append(" and (select count(*) from INSTANCE_INDEX tidx where tidx.instance_id = ti.task_instance_id and tidx.owner_type='TASK_INSTANCE' and index_key='"
                     + index.substring(0, eq) + "' and index_value='" + index.substring(eq + 1) + "') > 0\n");
         }
 
         Map<String,String> indexes = query.getMapFilter("indexes");
         if (indexes != null) {
             for (String varName : indexes.keySet()) {
-                where.append(" and (select count(*) from instance_index tidx where tidx.instance_id = ti.task_instance_id and tidx.owner_type='TASK_INSTANCE' and index_key='"
-                        + varName + "' and index_value='" + indexes.get(varName) + "') > 0\n");
+                where.append(" and (select count(*) from INSTANCE_INDEX tidx where tidx.instance_id = ti.task_instance_id and tidx.owner_type='TASK_INSTANCE' and index_key='"
+                    + varName + "' and index_value='" + indexes.get(varName) + "') > 0\n");
             }
         }
 

@@ -158,7 +158,7 @@ public class MariaDBEmbeddedDb implements EmbeddedDb {
             Class.forName(getDriverClass());
             connection = DriverManager.getConnection(url, user, password);
             statement = connection.createStatement();
-            resultSet = statement.executeQuery("check table process_instance");
+            resultSet = statement.executeQuery("check table PROCESS_INSTANCE");
             resultSet.next();
             String checkResult = resultSet.getString(4);
             return checkResult.equals("OK");
