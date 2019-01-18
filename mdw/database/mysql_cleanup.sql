@@ -72,7 +72,7 @@ SET foreign_key_checks=0;
    SELECT (CONCAT('Start Purging Event Records:' , ifnull(dt, '')));
 
    -- mdw tables that need to be cleaned up based on date range
-   DELETE FROM event_log
+   DELETE FROM EVENT_LOG
          WHERE create_dt < CURDATE() - eldaydiff 
          LIMIT rnum;
 
@@ -80,7 +80,7 @@ SET foreign_key_checks=0;
                         
     COMMIT;
   
-   DELETE FROM event_instance
+   DELETE FROM EVENT_INSTANCE
          WHERE create_dt < CURDATE() - eldaydiff 
          AND  event_name NOT LIKE 'ScheduledJob%'
      LIMIT rnum;
@@ -90,15 +90,15 @@ SET foreign_key_checks=0;
    
 
    -- delete the event wait instance table
-   DELETE    from   event_wait_instance 
+   DELETE    from   EVENT_WAIT_INSTANCE
          WHERE event_wait_instance_owner = 'ACTIVITY_INSTANCE'
            AND event_wait_instance_owner_id IN (
                   SELECT ai.activity_instance_id
-                    FROM activity_instance ai
+                    FROM ACTIVITY_INSTANCE ai
                    WHERE ai.process_instance_id IN (
                                                SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
                                                       process_instance_id
-                                                 FROM process_instance
+                                                 FROM PROCESS_INSTANCE
                                                 WHERE status_cd =
                                                                  purgestatusid));
 
@@ -112,10 +112,10 @@ SET foreign_key_checks=0;
       SELECT (CONCAT('Start Purging Process Instance Child Records:' , ifnull(dt, '')));
 
    -- delete all the activity instances
-   DELETE    ai from  activity_instance as ai
+   DELETE    ai from  ACTIVITY_INSTANCE as ai
          WHERE ai.process_instance_id IN (SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
                                                  process_instance_id
-                                            FROM process_instance
+                                            FROM PROCESS_INSTANCE
                                            WHERE status_cd = purgestatusid);
 
    SELECT (   CONCAT('Number of rows deleted from ACTIVITY_INSTANCE: ',ROW_COUNT()));
@@ -124,10 +124,10 @@ SET foreign_key_checks=0;
    
 
    -- delete all the work transition instances that belong to current process instance and child instanes
-   DELETE  wti from    work_transition_instance as wti
+   DELETE  wti from    WORK_TRANSITION_INSTANCE as wti
          WHERE wti.process_inst_id IN (SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
                                               process_instance_id
-                                         FROM process_instance
+                                         FROM PROCESS_INSTANCE
                                         WHERE status_cd = purgestatusid);
 
    SELECT(   CONCAT('Number of rows deleted from WORK_TRANSITION_INSTANCE: ',ROW_COUNT()));
@@ -136,10 +136,10 @@ SET foreign_key_checks=0;
 
 
    -- delete all the variable instances that belong to current process instance and child instanes
-   DELETE   vi from   variable_instance as  vi
+   DELETE   vi from   VARIABLE_INSTANCE as  vi
          WHERE vi.process_inst_id IN (SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
                                              process_instance_id
-                                        FROM process_instance
+                                        FROM PROCESS_INSTANCE
                                        WHERE status_cd = purgestatusid);
 
    SELECT (   CONCAT('Number of rows deleted from VARIABLE_INSTANCE: ',ROW_COUNT()));
@@ -152,15 +152,15 @@ SET foreign_key_checks=0;
    SELECT (CONCAT('Start Purging Task Instances and Related:' , ifnull(dt, ''))); 
 
    -- delete all the instance notes for the task instances
-   DELETE  from    instance_note
+   DELETE  from    INSTANCE_NOTE
          WHERE instance_note_owner_id IN (
                   SELECT task_instance_id
-                    FROM task_instance ti
+                    FROM TASK_INSTANCE ti
                    WHERE ti.task_instance_owner = 'PROCESS_INSTANCE'
                      AND ti.task_instance_owner_id IN (
                                                SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
                                                       process_instance_id
-                                                 FROM process_instance
+                                                 FROM PROCESS_INSTANCE
                                                 WHERE status_cd =
                                                                  purgestatusid));
 
@@ -169,22 +169,22 @@ SET foreign_key_checks=0;
            COMMIT;
   SELECT table_name
      INTO table_exist
-     FROM information_schema.tables
+     FROM information_schema.TABLES
     WHERE table_name = 'INSTANCE_INDEX';
     
    IF table_exist IS NOT NULL
    THEN
    
    -- delete all task instance indices
-      DELETE  from    instance_index
+      DELETE  from    INSTANCE_INDEX
          WHERE owner_type='TASK_INSTANCE' and instance_id IN (
                   SELECT task_instance_id
-                    FROM task_instance ti
+                    FROM TASK_INSTANCE ti
                    WHERE ti.task_instance_owner = 'PROCESS_INSTANCE'
                      AND ti.task_instance_owner_id IN (
                                                SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
                                                       process_instance_id
-                                                 FROM process_instance
+                                                 FROM PROCESS_INSTANCE
                                                 WHERE status_cd =
                                                                  purgestatusid));
       SELECT (   CONCAT('Number of rows deleted from INSTANCE_INDEX:',ROW_COUNT()));
@@ -192,15 +192,15 @@ SET foreign_key_checks=0;
        COMMIT;
       
    -- delete all task instance group mappings
-      DELETE  from    task_inst_grp_mapp
+      DELETE  from    TASK_INST_GRP_MAPP
          WHERE task_instance_id IN (
                   SELECT task_instance_id
-                    FROM task_instance ti
+                    FROM TASK_INSTANCE ti
                    WHERE ti.task_instance_owner = 'PROCESS_INSTANCE'
                      AND ti.task_instance_owner_id IN (
                                                SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
                                                       process_instance_id
-                                                 FROM process_instance
+                                                 FROM PROCESS_INSTANCE
                                                 WHERE status_cd =
                                                                  purgestatusid));
       SELECT (   CONCAT('Number of rows deleted from TASK_INST_GRP_MAPP: ',ROW_COUNT()));
@@ -209,11 +209,11 @@ SET foreign_key_checks=0;
    END IF;
 
    -- delete all the taskInstances that belong to current process instance and child instanes
-   DELETE   ti from   task_instance as ti
+   DELETE   ti from   TASK_INSTANCE as ti
          WHERE ti.task_instance_owner = 'PROCESS_INSTANCE'
            AND ti.task_instance_owner_id IN (SELECT /*+ index(process_instance PI_STATUS_CD_IDX) */
                                                     process_instance_id
-                                               FROM process_instance
+                                               FROM PROCESS_INSTANCE
                                               WHERE status_cd = purgestatusid);
 
    SELECT (   CONCAT('Number of rows deleted from TASK_INSTANCE: ',ROW_COUNT()));
@@ -227,13 +227,13 @@ SET foreign_key_checks=0;
 
    
    --deleting from document_content to avoid the integrity constraint issue
-    DELETE from document_content where document_id IN (
-   SELECT document_id FROM document doc
+    DELETE from DOCUMENT_CONTENT where document_id IN (
+   SELECT document_id FROM DOCUMENT doc
    WHERE   ( doc.owner_id != 0 AND doc.OWNER_TYPE = 'PROCESS_INSTANCE'  
                AND EXISTS (
                        SELECT /*+ index(pi PROCESS_INSTANCE_PK) */
                               process_instance_id
-                         FROM process_instance pi
+                         FROM PROCESS_INSTANCE pi
                         WHERE pi.process_instance_id = doc.owner_id
                           AND pi.status_cd = purgestatusid)
                )
@@ -265,7 +265,7 @@ SET foreign_key_checks=0;
    SELECT (CONCAT('Start Purging Document Records: ' , ifnull(dt, '')));
    
    -- delete DOCUMENT 
-   DELETE   from doc USING document as doc 
+   DELETE   from doc USING document as doc
        -- 1. all documents with process instance ID populated
          WHERE (
           doc.owner_id!= 0 AND doc.OWNER_TYPE = 'PROCESS_INSTANCE' 
@@ -273,7 +273,7 @@ SET foreign_key_checks=0;
                EXISTS (
                        SELECT /*+ index(pi PROCESS_INSTANCE_PK) */
                               process_instance_id
-                         FROM process_instance pi
+                         FROM PROCESS_INSTANCE pi
                          WHERE
                          pi.process_instance_id = doc.owner_id    
                           AND 
@@ -313,7 +313,7 @@ SET foreign_key_checks=0;
    SELECT (CONCAT('Start Purging Process Instances Themselves:' , ifnull(dt, '')));
 
    -- delete the process instance
-   DELETE  pi from    process_instance as pi
+   DELETE  pi from    PROCESS_INSTANCE as pi
          WHERE status_cd = purgestatusid;
 
    SELECT (   CONCAT('Number of rows deleted from PROCESS_INSTANCE: ',ROW_COUNT()));

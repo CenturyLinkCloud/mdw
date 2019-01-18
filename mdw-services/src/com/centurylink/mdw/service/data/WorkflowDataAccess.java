@@ -56,7 +56,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
             else {
                 where = buildWhere(query);
             }
-            String countSql = "select count(process_instance_id) from process_instance pi\n" + where;
+            String countSql = "select count(process_instance_id) from PROCESS_INSTANCE pi\n" + where;
             ResultSet rs = db.runSelect(countSql);
             if (rs.next())
                 count = rs.getLong(1);
@@ -65,7 +65,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
             StringBuilder sql = new StringBuilder();
             if (query.getMax() != Query.MAX_ALL)
               sql.append(db.pagingQueryPrefix());
-            sql.append("select ").append(PROC_INST_COLS).append(" from process_instance pi\n").append(where).append(orderBy);
+            sql.append("select ").append(PROC_INST_COLS).append(" from PROCESS_INSTANCE pi\n").append(where).append(orderBy);
             if (query.getMax() != Query.MAX_ALL)
                 sql.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
             rs = db.runSelect(sql.toString());
@@ -140,7 +140,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
         // activityInstanceId
         long activityInstanceId = query.getLongFilter("activityInstanceId");
         if (activityInstanceId > 0) {
-            sb.append(" and pi.process_instance_id in (select process_instance_id from activity_instance where activity_instance_id =");
+            sb.append(" and pi.process_instance_id in (select process_instance_id from ACTIVITY_INSTANCE where activity_instance_id =");
             sb.append(activityInstanceId).append(")\n");
         }
         // status
@@ -181,7 +181,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
         if (values != null) {
             for (String varName : values.keySet()) {
                 String varValue = values.get(varName);
-                sb.append("\n and exists (select vi.variable_inst_id from variable_instance vi ");
+                sb.append("\n and exists (select vi.variable_inst_id from VARIABLE_INSTANCE vi ");
                 sb.append(" where vi.process_inst_id = pi.process_instance_id and vi.variable_name = '").append(varName).append("'");
                 sb.append(" and vi.variable_value = '").append(varValue).append("')");
             }
