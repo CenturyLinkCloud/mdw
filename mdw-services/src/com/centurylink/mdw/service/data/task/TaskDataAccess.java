@@ -82,7 +82,7 @@ public class TaskDataAccess extends CommonDataAccess {
             // need to check if task_title supported
             String q;
             if (db.isMySQL())
-                q = "SHOW COLUMNS FROM `task_instance` LIKE 'task_title'";
+                q = "SHOW COLUMNS FROM `TASK_INSTANCE` LIKE 'task_title'";
             else
                 q = "select column_name from all_tab_columns where table_name='TASK_INSTANCE' AND column_name='TASK_TITLE'";
             if (db.runSelect(q).next()) {
@@ -579,7 +579,7 @@ public class TaskDataAccess extends CommonDataAccess {
         try {
             Map<String, String> indices = new HashMap<String, String>();
             db.openConnection();
-            String sql = "select tii.index_key,tii.index_value from instance_index tii where tii.instance_id = ? and tii.owner_type='TASK_INSTANCE'";
+            String sql = "select tii.index_key,tii.index_value from INSTANCE_INDEX tii where tii.instance_id = ? and tii.owner_type='TASK_INSTANCE'";
             ResultSet rs = db.runSelect(sql, taskInstanceId);
             while (rs.next()) {
                 indices.put(rs.getString(1), rs.getString(2));
@@ -607,17 +607,17 @@ public class TaskDataAccess extends CommonDataAccess {
             countSql.append("select count(ti.task_instance_id)\n");
 
             if (db.isMySQL()) {
-                sql.append("from task_instance ti left join user_info ui on ui.user_info_id = ti.task_claim_user_id\n");
-                countSql.append("from task_instance ti left join user_info ui on ui.user_info_id = ti.task_claim_user_id\n");
+                sql.append("from TASK_INSTANCE ti left join USER_INFO ui on ui.user_info_id = ti.task_claim_user_id\n");
+                countSql.append("from TASK_INSTANCE ti left join USER_INFO ui on ui.user_info_id = ti.task_claim_user_id\n");
             }
             else {
-                sql.append("from task_instance ti, user_info ui\n");
-                countSql.append("from task_instance ti, user_info ui\n");
+                sql.append("from TASK_INSTANCE ti, USER_INFO ui\n");
+                countSql.append("from TASK_INSTANCE ti, USER_INFO ui\n");
             }
 
             String[] workgroups = query.getArrayFilter("workgroups");
             if (workgroups != null && workgroups.length > 0 && !containsSiteAdmin(workgroups)) {
-                String tigm = ", task_inst_grp_mapp tigm ";
+                String tigm = ", TASK_INST_GRP_MAPP tigm ";
                 sql.append(tigm);
                 countSql.append(tigm);
             }
@@ -848,14 +848,14 @@ public class TaskDataAccess extends CommonDataAccess {
             int eq = index.indexOf('=');
             if (eq == -1 || eq == index.length() - 1)
                 throw new DataAccessException("Invalid index criterion: " + index);
-            where.append(" and (select count(*) from instance_index tidx where tidx.instance_id = ti.task_instance_id and tidx.owner_type='TASK_INSTANCE' and index_key='"
+            where.append(" and (select count(*) from INSTANCE_INDEX tidx where tidx.instance_id = ti.task_instance_id and tidx.owner_type='TASK_INSTANCE' and index_key='"
                     + index.substring(0, eq) + "' and index_value='" + index.substring(eq + 1) + "') > 0\n");
         }
 
         Map<String,String> indexes = query.getMapFilter("indexes");
         if (indexes != null) {
             for (String varName : indexes.keySet()) {
-                where.append(" and (select count(*) from instance_index tidx where tidx.instance_id = ti.task_instance_id and tidx.owner_type='TASK_INSTANCE' and index_key='"
+                where.append(" and (select count(*) from INSTANCE_INDEX tidx where tidx.instance_id = ti.task_instance_id and tidx.owner_type='TASK_INSTANCE' and index_key='"
                     + varName + "' and index_value='" + indexes.get(varName) + "') > 0\n");
             }
         }

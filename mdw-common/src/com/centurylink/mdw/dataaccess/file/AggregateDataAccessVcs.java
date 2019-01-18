@@ -47,7 +47,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("select count(pi.process_id) as ct, pi.process_id\n");
-            sql.append("from (select process_id from process_instance ");
+            sql.append("from (select process_id from PROCESS_INSTANCE ");
             sql.append(getProcessWhereClause(query));
             sql.append(") pi\n");
             sql.append("group by process_id\n");
@@ -109,7 +109,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 sql.append(", status_cd ");
             else if (processIds != null)
                 sql.append(", process_id ");
-            sql.append("  from process_instance\n   ");
+            sql.append("  from PROCESS_INSTANCE\n   ");
             sql.append(getProcessWhereClause(query));
             if (statusCodes != null)
                 sql.append("\n   and status_cd ").append(getInCondition(statusCodes));
@@ -185,8 +185,8 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
      */
     public String getLatestProcessInstanceComments(Long processId) throws DataAccessException {
         StringBuilder query = new StringBuilder();
-        query.append("select process_instance_id, comments from process_instance\n");
-        query.append("where process_instance_id = (select max(process_instance_id) from process_instance ");
+        query.append("select process_instance_id, comments from PROCESS_INSTANCE\n");
+        query.append("where process_instance_id = (select max(process_instance_id) from PROCESS_INSTANCE ");
         query.append("where process_id = ? and comments is not null)");
 
         try {
@@ -209,7 +209,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("select count(tii.task_id) as ct, tii.task_id\n");
-            sql.append("from (select task_id from task_instance ti ");
+            sql.append("from (select task_id from TASK_INSTANCE ti ");
             sql.append(getTaskWhereClause(query));
             sql.append(") tii\n");
             sql.append("group by task_id\n");
@@ -243,7 +243,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("select count(tii.group_name) as ct, tii.group_name\n");
-            sql.append("from (select ug.group_name from task_inst_grp_mapp tigm, task_instance ti, user_group ug\n   ");
+            sql.append("from (select ug.group_name from TASK_INST_GRP_MAPP tigm, TASK_INSTANCE ti, USER_GROUP ug\n   ");
             sql.append(getTaskWhereClause(query));
             sql.append("and tigm.task_instance_id = ti.task_instance_id\n   ");
             sql.append("and tigm.user_group_id = ug.user_group_id\n   ");
@@ -279,7 +279,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("select count(tii.cuid) as ct, tii.cuid, tii.name\n");
-            sql.append("from (select ui.cuid, ui.name from task_instance ti, user_info ui\n   ");
+            sql.append("from (select ui.cuid, ui.name from TASK_INSTANCE ti, USER_INFO ui\n   ");
             sql.append(getTaskWhereClause(query));
             sql.append("and ti.task_claim_user_id = ui.user_info_id\n   ");
             sql.append(") tii\n");
@@ -371,11 +371,11 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 sql.append(", ui.cuid, ui.name ");
             else if (statusCodes != null)
                 sql.append(", ti.task_instance_status ");
-            sql.append("\n   from task_instance ti ");
+            sql.append("\n   from TASK_INSTANCE ti ");
             if (workgroups != null)
-                sql.append(", task_inst_grp_mapp tigm, user_group ug ");
+                sql.append(", TASK_INST_GRP_MAPP tigm, USER_GROUP ug ");
             else if (assignees != null)
-                sql.append(", user_info ui ");
+                sql.append(", USER_INFO ui ");
             sql.append("\n   ");
             sql.append(getTaskWhereClause(query));
             if (taskIds != null)
@@ -485,8 +485,8 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
      */
     public String getLatestTaskInstanceComments(Long taskId) throws DataAccessException {
         StringBuilder query = new StringBuilder();
-        query.append("select task_instance_id, comments from task_instance\n");
-        query.append("where task_instance_id = (select max(task_instance_id) from task_instance ");
+        query.append("select task_instance_id, comments from TASK_INSTANCE\n");
+        query.append("where task_instance_id = (select max(task_instance_id) from TASK_INSTANCE ");
         query.append("where task_id = ? and comments is not null)");
 
         try {
@@ -510,9 +510,9 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
             StringBuilder sql = new StringBuilder();
             sql.append("select count(act_unique_id) as ct, act_unique_id\n");
             if (db.isMySQL())
-                sql.append("from (select CONCAT(pi.PROCESS_ID, ':A', ai.ACTIVITY_ID) as ACT_UNIQUE_ID from activity_instance ai, process_instance pi ");
+                sql.append("from (select CONCAT(pi.PROCESS_ID, ':A', ai.ACTIVITY_ID) as ACT_UNIQUE_ID from ACTIVITY_INSTANCE ai, PROCESS_INSTANCE pi ");
             else
-                sql.append("from (select pi.PROCESS_ID || ':A' || ai.ACTIVITY_ID as ACT_UNIQUE_ID from activity_instance ai, process_instance pi ");
+                sql.append("from (select pi.PROCESS_ID || ':A' || ai.ACTIVITY_ID as ACT_UNIQUE_ID from ACTIVITY_INSTANCE ai, PROCESS_INSTANCE pi ");
             sql.append(getActivityWhereClause(query));
             sql.append(") a1\n");
             sql.append("group by act_unique_id\n");
@@ -605,7 +605,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 else
                     sql.append(", pi.PROCESS_ID || ':A' || ai.ACTIVITY_ID as act_unique_id");
             }
-            sql.append("  from activity_instance ai, process_instance pi\n   ");
+            sql.append("  from ACTIVITY_INSTANCE ai, PROCESS_INSTANCE pi\n   ");
             sql.append(getActivityWhereClause(query));
             if (statusCodes != null)
                 sql.append("\n  and ai.status_cd ").append(getInCondition(statusCodes)).append(") a\n");
@@ -687,7 +687,7 @@ public class AggregateDataAccessVcs extends CommonDataAccess {
                 sql.append("from (select to_char(create_dt,'DD-Mon-yyyy') as created");
             if (ownerTypes != null)
                 sql.append(", owner_type ");
-            sql.append("  from document\n");
+            sql.append("  from DOCUMENT\n");
             sql.append(getRequestWhereClause(query));
             if (ownerTypes != null)
                 sql.append("\n   and owner_type ").append(getInCondition(ownerTypes));
