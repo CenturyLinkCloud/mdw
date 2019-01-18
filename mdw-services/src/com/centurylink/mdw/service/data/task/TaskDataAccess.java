@@ -646,7 +646,7 @@ public class TaskDataAccess extends CommonDataAccess {
                         countSql.append(where);
                     }
                 } catch (ServiceException e) {
-                    throw new ServiceException(ServiceException.NOT_FOUND, e.getMessage(), e);
+                    throw new ServiceException(e.getMessage(), e);
                 }
             }
             String orderBy = buildTaskInstanceOrderBy(query);
@@ -729,7 +729,7 @@ public class TaskDataAccess extends CommonDataAccess {
                     if (!Workgroup.COMMON_GROUP.equals(workgroups[i])) {
                         Workgroup group = UserGroupCache.getWorkgroup(workgroups[i]);
                         if (group == null)
-                            throw new ServiceException("unable to find the workgroup: " + workgroups[i]);
+                            throw new ServiceException(ServiceException.NOT_FOUND,"unable to find the workgroup: " + workgroups[i]);
                         where.append(group.getId());
                         if (i < workgroups.length - 1)
                             where.append(",");
