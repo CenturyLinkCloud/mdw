@@ -284,7 +284,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                 orderBy = " ORDER BY PROCESS_INSTANCE_ID DESC\n";
 
             String query = "SELECT pi.PROCESS_INSTANCE_ID, pi.PROCESS_ID, pi.OWNER_ID, pi.STATUS_CD, pi.START_DT, pi.END_DT, pi.CREATE_DT, r.rule_set_name, pi.MASTER_REQUEST_ID, pi.COMMENTS"
-                    + " FROM PROCESS_INSTANCE pi,  rule_set r WHERE pi.PROCESS_ID=r.RULE_SET_ID "
+                    + " FROM PROCESS_INSTANCE pi,  RULE_SET r WHERE pi.PROCESS_ID=r.RULE_SET_ID "
                     + " AND SECONDARY_OWNER_ID = " + secondaryOwnerId + " AND pi.OWNER = '" + owner + "' AND SECONDARY_OWNER = '" + secondaryOwner +"'";
             query = query + orderBy;
             ResultSet rs = db.runSelect(query);
@@ -464,7 +464,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
 
     protected String buildVariablesClause(Map<String,String> criteria, List<String> variables, Map<String,String> variableCriteria) {
         StringBuffer sqlBuff = new StringBuffer();
-        sqlBuff.append(" from process_instance pi\n");
+        sqlBuff.append(" from PROCESS_INSTANCE pi\n");
         sqlBuff.append(" where pi.process_id > 0\n"); // since common starts with AND
         buildQueryCommon(sqlBuff, criteria, null);
         if (variableCriteria != null) {
@@ -477,7 +477,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                     variableTypeId = VariableTypeCache.getTypeId("java.util.Date");
                 }
 
-                sqlBuff.append("\n and exists (select vi.variable_inst_id from variable_instance vi")
+                sqlBuff.append("\n and exists (select vi.variable_inst_id from VARIABLE_INSTANCE vi")
                 .append(" where vi.process_inst_id = pi.process_instance_id")
                 .append(" and vi.variable_name = '" + varName + "'");
 
@@ -487,7 +487,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                         sqlBuff.append("\n and (select concat(substr(ivi.VARIABLE_VALUE, 5, 7), substr(ivi.VARIABLE_VALUE, 25))");
                     else
                         sqlBuff.append("\n and (select substr(ivi.VARIABLE_VALUE, 5, 7) || substr(ivi.VARIABLE_VALUE, 25)");
-                    sqlBuff.append("\n     from variable_instance ivi  where ivi.variable_type_id = " + variableTypeId);
+                    sqlBuff.append("\n     from VARIABLE_INSTANCE ivi  where ivi.variable_type_id = " + variableTypeId);
                     sqlBuff.append("\n     and ivi.variable_inst_id = vi.variable_inst_id");
                     sqlBuff.append("\n     and ivi.variable_name = '" + varName + "') = '"+ varValue + "') ");
                 }
@@ -512,7 +512,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             sqlBuff.append("/*+ NO_USE_NL(pi r) */ ");
         sqlBuff.append("pi.PROCESS_INSTANCE_ID, pi.MASTER_REQUEST_ID, pi.STATUS_CD, pi.START_DT, ");
         sqlBuff.append("pi.END_DT, pi.OWNER, pi.OWNER_ID, pi.PROCESS_ID, '' as NAME, pi.COMMENTS\n");
-        sqlBuff.append("FROM process_instance pi\n");
+        sqlBuff.append("FROM PROCESS_INSTANCE pi\n");
         sqlBuff.append("where 1=1 ");
         if (!OwnerType.MAIN_PROCESS_INSTANCE.equals(criteria.get("owner")))
             sqlBuff.append(" and pi.OWNER!='" + OwnerType.MAIN_PROCESS_INSTANCE +"' ");
@@ -790,7 +790,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
     }
 
     protected void buildProcessQueryCommon(StringBuilder sqlBuff, Query query, Date start) {
-        sqlBuff.append(" FROM process_instance pi, activity_instance ai ");
+        sqlBuff.append(" FROM PROCESS_INSTANCE pi, activity_instance ai ");
         sqlBuff.append(" WHERE pi.process_instance_id = ai.process_instance_id  ");
         if (query.getFind() != null) {
             try {
@@ -830,7 +830,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
     protected String buildCountQuery(Map<String,String> pMap) {
         StringBuffer sqlBuff = new StringBuffer();
         sqlBuff.append("SELECT count(pi.process_instance_id) ");
-        sqlBuff.append("FROM process_instance pi ");
+        sqlBuff.append("FROM PROCESS_INSTANCE pi ");
         sqlBuff.append("WHERE pi.PROCESS_ID is not null "); // just to allow next condition to have "and"
         buildQueryCommon(sqlBuff, pMap, null);
         return sqlBuff.toString();

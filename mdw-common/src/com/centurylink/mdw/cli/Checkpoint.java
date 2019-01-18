@@ -123,7 +123,7 @@ public class Checkpoint extends Setup {
      * Finds an asset ref from the database by asset name.
      */
     public AssetRef retrieveRef(String name) throws IOException, SQLException {
-        String select = "select definition_id, name, ref from asset_ref where name = ?";
+        String select = "select definition_id, name, ref from ASSET_REF where name = ?";
         try (Connection conn = getDbConnection();
                 PreparedStatement stmt = conn.prepareStatement(select)) {
             stmt.setString(1, name);
@@ -140,7 +140,7 @@ public class Checkpoint extends Setup {
      * Finds an asset ref from the database by definitionID.
      */
     public AssetRef retrieveRef(Long id) throws IOException, SQLException {
-        String select = "select definition_id, name, ref from asset_ref where definition_id = ?";
+        String select = "select definition_id, name, ref from ASSET_REF where definition_id = ?";
         try (Connection conn = getDbConnection();
                 PreparedStatement stmt = conn.prepareStatement(select)) {
             stmt.setLong(1, id);
@@ -158,7 +158,7 @@ public class Checkpoint extends Setup {
      */
     public List<AssetRef> retrieveAllRefs(Date cutoffDate) throws IOException, SQLException {
         List<AssetRef> assetRefList = null;
-        String select = "select definition_id, name, ref from asset_ref ";
+        String select = "select definition_id, name, ref from ASSET_REF ";
         if (cutoffDate != null)
             select += "where ARCHIVE_DT >= ? ";
         select += "order by ARCHIVE_DT desc";
@@ -189,17 +189,17 @@ public class Checkpoint extends Setup {
         if (refs == null || refs.isEmpty())
             System.out.println("Skipping ASSET_REF table insert/update due to empty current assets");
         else {
-            String select = "select name, ref from asset_ref where definition_id = ?";
+            String select = "select name, ref from ASSET_REF where definition_id = ?";
             try (Connection conn = getDbConnection();
                     PreparedStatement stmt = conn.prepareStatement(select)) {
                 for (AssetRef ref : refs) {
                     stmt.setLong(1, ref.getDefinitionId());
                     try (ResultSet rs = stmt.executeQuery()) {
                         // DO NOT update existing refs with newer commitID
-                        // Doing so can obliterate previous commitID from asset_ref table
+                        // Doing so can obliterate previous commitID from ASSET_REF table
                         // which will prevent auto-import detection in cluster envs
                         if (!rs.next()) {
-                            String insert = "insert into asset_ref (definition_id, name, ref) values (?, ?, ?)";
+                            String insert = "insert into ASSET_REF (definition_id, name, ref) values (?, ?, ?)";
                             try (PreparedStatement insertStmt = conn.prepareStatement(insert)) {
                                 insertStmt.setLong(1, ref.getDefinitionId());
                                 insertStmt.setString(2, ref.getName());
@@ -217,13 +217,13 @@ public class Checkpoint extends Setup {
     }
 
     public void updateRef(AssetRef ref) throws SQLException, IOException {
-        String select = "select name, ref from asset_ref where name = ?";
+        String select = "select name, ref from ASSET_REF where name = ?";
         try (Connection conn = getDbConnection();
                 PreparedStatement stmt = conn.prepareStatement(select)) {
             stmt.setString(1, ref.getName());
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    String update = "update asset_ref set definition_id = ?, ref = ? where name = ?";
+                    String update = "update ASSET_REF set definition_id = ?, ref = ? where name = ?";
                     try (PreparedStatement updateStmt = conn.prepareStatement(update)) {
                         updateStmt.setLong(1, ref.getDefinitionId());
                         updateStmt.setString(2, ref.getRef());
@@ -233,7 +233,7 @@ public class Checkpoint extends Setup {
                     }
                 }
                 else {
-                    String insert = "insert into asset_ref (definition_id, name, ref) values (?, ?, ?)";
+                    String insert = "insert into ASSET_REF (definition_id, name, ref) values (?, ?, ?)";
                     try (PreparedStatement insertStmt = conn.prepareStatement(insert)) {
                         insertStmt.setLong(1, ref.getDefinitionId());
                         insertStmt.setString(2, ref.getName());
@@ -247,7 +247,7 @@ public class Checkpoint extends Setup {
     }
 
     public void updateRefValue() throws SQLException, IOException {
-        String select = "select value from value where name = ? and owner_type = ? and owner_id = ?";
+        String select = "select value from VALUE where name = ? and owner_type = ? and owner_id = ?";
         try (Connection conn = getDbConnection();
                 PreparedStatement stmt = conn.prepareStatement(select)) {
             stmt.setString(1, "CommitID");
@@ -257,7 +257,7 @@ public class Checkpoint extends Setup {
                 Timestamp currentDate = new Timestamp(System.currentTimeMillis());
                 if (rs.next()) {
                     if (!commit.equals(rs.getString("value"))) {
-                        String update = "update value set value = ?, mod_dt = ? where name = ? and owner_type = ? and owner_id = ?";
+                        String update = "update VALUE set value = ?, mod_dt = ? where name = ? and owner_type = ? and owner_id = ?";
                         try (PreparedStatement updateStmt = conn.prepareStatement(update)) {
                             updateStmt.setString(1, commit);
                             updateStmt.setTimestamp(2, currentDate);
@@ -270,7 +270,7 @@ public class Checkpoint extends Setup {
                     }
                 }
                 else {
-                    String insert = "insert into value (value, name, owner_type, owner_id, create_dt, create_usr, mod_dt, mod_usr, comments) "
+                    String insert = "insert into VALUE (value, name, owner_type, owner_id, create_dt, create_usr, mod_dt, mod_usr, comments) "
                             + "values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
                     try (PreparedStatement insertStmt = conn.prepareStatement(insert)) {
                         insertStmt.setString(1, commit);

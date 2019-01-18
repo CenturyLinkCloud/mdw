@@ -368,7 +368,7 @@ public class CommonDataAccess {
 
     protected void deleteValues0(String ownerType, String ownerId)
     throws SQLException {
-        String query = "delete from value " +
+        String query = "delete from VALUE " +
             " where OWNER_TYPE = '" + ownerType + "' and OWNER_ID = ?";
         db.runUpdate(query, ownerId);
     }
@@ -601,7 +601,7 @@ public class CommonDataAccess {
     }
 
     protected Long getNextId(String sequenceName) throws SQLException {
-        String query = "select " + sequenceName + ".NEXTVAL from dual";
+        String query = "select " + sequenceName + ".NEXTVAL from DUAL";
         ResultSet rs = db.runSelect(query);
         rs.next();
         return new Long(rs.getString(1));
@@ -611,7 +611,7 @@ public class CommonDataAccess {
         try {
             List<String> names = new ArrayList<String>();
             db.openConnection();
-            String sql = "select distinct name from value where owner_type = ?";
+            String sql = "select distinct name from VALUE where owner_type = ?";
             ResultSet rs = db.runSelect(sql, ownerType);
             while (rs.next())
                 names.add(rs.getString(1));
@@ -636,7 +636,7 @@ public class CommonDataAccess {
     }
 
     protected String getValue0(String ownerType, String ownerId, String name) throws SQLException {
-        String query = "select value from value where owner_type = ? and ownerId = ? and name = ?";
+        String query = "select value from VALUE where owner_type = ? and ownerId = ? and name = ?";
         Object[] args = new Object[3];
         args[0] = ownerType;
         args[1] = ownerId;
@@ -660,7 +660,7 @@ public class CommonDataAccess {
 
     public Map<String,String> getValues0(String ownerType, String ownerId) throws SQLException {
         Map<String,String> values = null;
-        String query = "select name, value from value where owner_type = ? and owner_id = ?";
+        String query = "select name, value from VALUE where owner_type = ? and owner_id = ?";
         Object[] args = new Object[2];
         args[0] = ownerType;
         args[1] = ownerId;
@@ -704,7 +704,7 @@ public class CommonDataAccess {
 
     protected void setValue0(String ownerType, String ownerId, String name, String value)
             throws SQLException {
-        String query = "select name from value where " +
+        String query = "select name from VALUE where " +
                     "OWNER_type=? and OWNER_ID=? and NAME=?";
         Object[] args = new Object[3];
         args[0] = ownerType;
@@ -713,10 +713,10 @@ public class CommonDataAccess {
         ResultSet rs = db.runSelect(query, args);
         if (rs.next()) {
             if (value==null) {
-                query = "delete value where " +
+                query = "delete VALUE where " +
                 "OWNER_TYPE=? and OWNER_ID=? and NAME=?";
             } else {
-                query = "update value set VALUE=? where OWNER_type=? and OWNER_ID=? and NAME=?";
+                query = "update VALUE set VALUE=? where OWNER_type=? and OWNER_ID=? and NAME=?";
                 args = new Object[4];
                 args[0] = value;
                 args[1] = ownerType;
@@ -724,7 +724,7 @@ public class CommonDataAccess {
                 args[3] = name;
             }
         } else {
-            query = "insert into value" +
+            query = "insert into VALUE" +
                 " (OWNER_TYPE,OWNER_ID,NAME,VALUE," +
                         "CREATE_DT,CREATE_USR)"
                 + " values (?,?,?,?," + now() + ",'MDWEngine')";
@@ -751,7 +751,7 @@ public class CommonDataAccess {
 
     protected void addValues0(String ownerType, String ownerId, Map<String,String> values)
     throws SQLException {
-        String query = "insert into value"
+        String query = "insert into VALUE"
             + " (owner_type, owner_id, name, value,"
             + " create_dt,create_usr) values (?,?,?,?,"+now()+",'MDWEngine')";
         db.prepareStatement(query);
@@ -775,16 +775,16 @@ public class CommonDataAccess {
             String q;
             Object[] args;
             if (valuePattern == null) {
-                q = "select owner_id from value where name = ?";
+                q = "select owner_id from VALUE where name = ?";
                 args = new Object[]{valueName};
             }
             else {
                 if (valuePattern.contains("*")) {
-                    q = "select owner_id from value where name = ? and value like '" + valuePattern.replace('*', '%') + "'";
+                    q = "select owner_id from VALUE where name = ? and value like '" + valuePattern.replace('*', '%') + "'";
                     args = new Object[]{valueName};
                 }
                 else {
-                    q = "select owner_id from value where name = ? and value = ?";
+                    q = "select owner_id from VALUE where name = ? and value = ?";
                     args = new Object[]{valueName, valuePattern};
                 }
             }
@@ -805,16 +805,16 @@ public class CommonDataAccess {
             String q;
             Object[] args;
             if (valuePattern == null) {
-                q = "select owner_id from value where owner_type = ? and name = ?";
+                q = "select owner_id from VALUE where owner_type = ? and name = ?";
                 args = new Object[]{ownerType, valueName};
             }
             else {
                 if (valuePattern.contains("*")) {
-                    q = "select owner_id from value where owner_type = ? and name = ? and value like '" + valuePattern.replace('*', '%') + "'";
+                    q = "select owner_id from VALUE where owner_type = ? and name = ? and value like '" + valuePattern.replace('*', '%') + "'";
                     args = new Object[]{ownerType, valueName};
                 }
                 else {
-                    q = "select owner_id from value where owner_type = ? and name = ? and value = ?";
+                    q = "select owner_id from VALUE where owner_type = ? and name = ? and value = ?";
                     args = new Object[]{ownerType, valueName, valuePattern};
                 }
             }
