@@ -5,11 +5,11 @@
   "devDependencies": {
     "eslint": "^4.19.1",
     "eslint-cli": "^1.1.1",
-    "eslint-plugin-react": "^7.4.0",
+    "eslint-plugin-react": "^7.11.1",
     "jshint": "^2.9.5"
   },
   "scripts": {
     "jshint": "jshint web/js --config jshint.json",
-    "eslint": "eslint ../mdw-workflow/assets/**/*.js ../mdw-workflow/assets/**/*.jsx -c eslint.json --ignore-pattern node_modules/"
+    "eslint": "eslint ../mdw-workflow/assets/com/centurylink/mdw/react/*.jsx ../mdw-workflow/assets/com/centurylink/mdw/react/*.js ../mdw-workflow/assets/com/centurylink/mdw/dashboard/*.jsx ../mdw-workflow/assets/com/centurylink/mdw/task/*.jsx ../mdw-workflow/assets/com/centurylink/mdw/system/filepanel/*.jsx -c eslint.json"
   }
 }

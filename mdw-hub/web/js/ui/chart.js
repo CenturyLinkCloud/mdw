@@ -62,41 +62,6 @@ chartMod.controller('MdwChartController', ['$scope','$cookieStore', '$http', '$l
       var title;
       var total=false;
       text.push('<ul class="mdw-chart-legend">');
-      if(chart.config.type ==='pie'){
-        for (var i = 0; i < chart.data.labels.length; i++) {
-          var selLabelValue = $scope.selected[i];
-          top = $scope.getTop(selLabelValue);
-            if (top) {
-                label = $scope.getLabel(top, true);
-                title = $scope.getTitle(top);
-              }
-              if (label) {
-                text.push('  <li>');
-                text.push('    <span class="mdw-chart-legend-icon" style="background-color:' + chart.config.data.datasets[0].backgroundColor[i] + ';' + 
-                          'border-color:' + chart.config.data.datasets[0].backgroundColor[i] + '"></span>');
-                           //As pie chart has only one dataset, fetcch the background color
-                if (title)
-                  text.push('    <span class="mdw-chart-legend-text" title="' + title + '">' + label + '</span>');
-                else
-                  text.push('    <span class="mdw-chart-legend-text">' + label + '</span>');
-                
-                text.push('  </li>');
-              }
-              else{
-                total=true;
-                break;
-              }      
-        }
-        if(total){
-          text.push('  <li>');
-          text.push('    <span class="mdw-chart-legend-text"> Total (' + $scope.total +') </span>');  
-          text.push('  </li>');
-        }
-        text.push('</ul>');
-
-          return text.join('\n  ');
-       
-      }
       for (var j = 0; j < chart.data.datasets.length; j++) {
         var selFieldValue = $scope.selected[j];
         top = $scope.getTop(selFieldValue);

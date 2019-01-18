@@ -160,7 +160,7 @@ public class JsonExport {
                 for (Jsonable jsonable : jsonableList) {
                     addNames(jsonable.getJson());
                 }
-                if (!"".equals(names.get(0))) {
+                if (!names.isEmpty() && !"".equals(names.get(0))) {
                     names.add(0, ""); // key column
                 }
                 for (Jsonable jsonable : jsonableList) {

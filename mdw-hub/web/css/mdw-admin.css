@@ -177,7 +177,14 @@
   height: 28px;
   font-weight: normal;
 }
-.mdw-inner-addon { 
+.mdw-dropdown {
+  display: flex;
+  padding: 5px;
+  padding-top: 0;
+  padding-left: 0;
+  height: 32px;
+}
+.mdw-inner-addon {
   position: relative;
 }
 .mdw-inner-addon .glyphicon {
@@ -848,11 +855,28 @@
   color: #333;
   white-space: nowrap;
 }
+.mdw-popover-menu > li span {
+  display: inline-block;
+  outline: none;
+  padding: 3px 10px;
+  clear: both;
+  font-weight: normal;
+  line-height: 1.1;
+  white-space: nowrap;
+  width: calc(100% - 5px);
+}
 .mdw-popover-menu > li a:hover {
   color: #262626;
   text-decoration: none;
   background-color: #bbdefb;
   border-radius: 3px;
+}
+.mdw-popover-menu > li span:hover {
+  color: #262626;
+  text-decoration: none;
+  background-color: #bbdefb;
+  border-radius: 3px;
+  cursor: pointer;
 }
 .mdw-bordered-menu {
   border: 1px solid #ccc;
@@ -1406,7 +1430,7 @@
 /* chart styles */
 .mdw-chart-legend {
   list-style-type: none;
-  margin-top: 5px;
+  margin: 15px 0 0 -50px;
   text-align: center;
   padding-left: 0;  
 }
@@ -1416,12 +1440,12 @@
 }
 .mdw-chart-legend-icon {
   display: block;
-  left: 0;
-  top: 0;
-  width: 20px;
-  height: 20px;
+  margin-top: 1px;
+  width: 30px;
+  min-width: 30px;
+  height: 16px;
   border: 2px solid;
-  border-radius: 1px;
+  border-radius: 2px;
 }
 .mdw-chart-legend-text {
   display: inline-block;
@@ -1432,6 +1456,12 @@
   font-size: smaller;
   font-weight: bold;
   cursor: default;
+}
+.mdw-chart-title {
+  text-align: center;
+  margin-top: 20px;
+  font-weight: bold;
+  font-size: 18px;
 }
 .mdw-modal-input {
   width: 268px;

@@ -32,7 +32,9 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.dataaccess.file.AggregateDataAccessVcs;
+import com.centurylink.mdw.dataaccess.reports.ActivityAggregation;
+import com.centurylink.mdw.dataaccess.reports.AggregateDataAccess;
+import com.centurylink.mdw.dataaccess.reports.ProcessAggregation;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.StringDocument;
@@ -99,8 +101,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
         return DataAccess.getRuntimeDataAccess(new DatabaseAccess(null));
     }
 
-    protected AggregateDataAccessVcs getAggregateDataAccess() throws DataAccessException {
-        return new AggregateDataAccessVcs();
+    protected ProcessAggregation getProcessAggregation() {
+        return new ProcessAggregation();
+    }
+    protected ActivityAggregation getActivityAggregation() {
+        return new ActivityAggregation();
     }
 
     public Map<String,String> getAttributes(String ownerType, Long ownerId) throws ServiceException {
@@ -166,7 +171,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         try {
             if (OwnerType.SYSTEM.equals(ownerType)) {
                 if ("mdwProperties".equals(ownerId)) {
-                    Map<String,String> mdwProps = new HashMap<String,String>();
+                    Map<String,String> mdwProps = new HashMap<>();
                     SysInfoCategory cat = ServiceLocator.getSystemServices().getMdwProperties();
                     for (SysInfo sysInfo : cat.getSysInfos()) {
                         mdwProps.put(sysInfo.getName(), sysInfo.getValue());
@@ -191,7 +196,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         try {
             if (OwnerType.SYSTEM.equals(ownerType)) {
                 if ("mdwProperties".equals(ownerId)) {
-                    Map<String,String> mdwProps = new HashMap<String,String>();
+                    Map<String,String> mdwProps = new HashMap<>();
                     SysInfoCategory cat = ServiceLocator.getSystemServices().getMdwProperties();
                     for (SysInfo sysInfo : cat.getSysInfos()) {
                         mdwProps.put(sysInfo.getName(), sysInfo.getValue());
@@ -272,7 +277,6 @@ public class WorkflowServicesImpl implements WorkflowServices {
             }
             else if (Action.Resume.toString().equalsIgnoreCase(action)) {
                 String eventName = "mdw.Resume-" + activityInstanceId;
-                JSONObject messageJson = new JSONObject();
                 notify(eventName, userAction.getJson().toString(), 0);
             }
             else {
@@ -311,13 +315,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 throw new ServiceException(ServiceException.NOT_FOUND, "Process instance not found: " + instanceId);
             if (withSubprocs) {
                 // embedded subprocs
-                Map<String,String> criteria = new HashMap<String,String>();
+                Map<String,String> criteria = new HashMap<>();
                 criteria.put("owner", OwnerType.MAIN_PROCESS_INSTANCE);
                 criteria.put("ownerId", process.getId().toString());
                 criteria.put("processId", process.getProcessId().toString());
                 ProcessList subprocList = runtimeDataAccess.getProcessInstanceList(criteria, 0, Query.MAX_ALL, "order by process_instance_id");
                 if (subprocList != null && subprocList.getItems() != null && subprocList.getItems().size() > 0) {
-                    List<ProcessInstance> subprocs = new ArrayList<ProcessInstance>();
+                    List<ProcessInstance> subprocs = new ArrayList<>();
                     for (ProcessInstance subproc : subprocList.getItems()) {
                         ProcessInstance fullsub = runtimeDataAccess.getProcessInstance(subproc.getId());
                         fullsub.setProcessId(Long.parseLong(subproc.getComment()));
@@ -350,7 +354,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public Map<String,Value> getProcessValues(Long instanceId, boolean includeEmpty) throws ServiceException {
         ProcessRuntimeContext runtimeContext = getContext(instanceId);
-        Map<String,Value> values = new HashMap<String,Value>();
+        Map<String,Value> values = new HashMap<>();
         Map<String,Variable> varDefs = getVariableDefinitions(runtimeContext.getProcess().getVariables());
 
         Map<String,Object> variables = runtimeContext.getVariables();
@@ -378,19 +382,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
         return values;
     }
 
-    protected Map<String,Variable> getVariableDefinitions(Long processId) {
-        Process processVo = ProcessCache.getProcess(processId);
-        Map<String,Variable> varDefs = new HashMap<String,Variable>();
-        List<Variable> varVos = processVo.getVariables();
-        if (varVos != null) {
-            for (Variable var : varVos)
-                varDefs.put(var.getName(), var);
-        }
-        return varDefs;
-    }
-
     protected Map<String,Variable> getVariableDefinitions(List<Variable> varList) {
-        Map<String,Variable> varDefs = new HashMap<String,Variable>();
+        Map<String,Variable> varDefs = new HashMap<>();
         if (varList != null) {
             for (Variable var : varList)
                 varDefs.put(var.getName(), var);
@@ -436,7 +429,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         if (process == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found for id: " + instance.getProcessId());
 
-        Map<String,Object> vars = new HashMap<String,Object>();
+        Map<String,Object> vars = new HashMap<>();
         try {
             if (instance.getVariables() != null) {
                 for (VariableInstance var : instance.getVariables()) {
@@ -500,7 +493,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             if (!json.has("runtimeContext"))
                 throw new ServiceException(ServiceException.NOT_FOUND, "Trigger document does not have RuntimeContext information: " + triggerId);
             JSONObject runtimeContext = json.getJSONObject("runtimeContext");
-            Long procInstId;
+            long procInstId;
             if (runtimeContext.has("activityInstance"))
                 procInstId = runtimeContext.getJSONObject("activityInstance").getLong("processInstanceId");
             else if (runtimeContext.has("processInstance"))
@@ -546,12 +539,17 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public List<ProcessCount> getTopThroughputProcesses(Query query) throws ServiceException {
+    public List<ProcessAggregate> getTopProcesses(Query query) throws ServiceException {
         try {
             CodeTimer timer = new CodeTimer(true);
-            List<ProcessCount> list = getAggregateDataAccess().getTopThroughputProcessInstances(query);
-            timer.logTimingAndContinue("AggregateDataAccessVcs.getTopThroughputProcessInstances()");
-            list = populate(list);
+            List<ProcessAggregate> list = getProcessAggregation().getTops(query);
+            timer.logTimingAndContinue("AggregateDataAccessVcs.getTopProcessInstances()");
+            if ("status".equals(query.getFilter("by"))) {
+                list = populateProcessStatuses(list);
+            }
+            else {
+                list = populateProcesses(list);
+            }
             timer.stopAndLogTiming("WorkflowServicesImpl.populate()");
             return list;
         }
@@ -560,12 +558,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public Map<Date,List<ProcessCount>> getProcessInstanceBreakdown(Query query) throws ServiceException {
+    public TreeMap<Date,List<ProcessAggregate>> getProcessBreakdown(Query query) throws ServiceException {
         try {
-            Map<Date,List<ProcessCount>> map = getAggregateDataAccess().getProcessInstanceBreakdown(query);
+            TreeMap<Date,List<ProcessAggregate>> map = getProcessAggregation().getBreakdown(query);
             if (query.getFilters().get("processIds") != null) {
                 for (Date date : map.keySet())
-                    populate(map.get(date));
+                    populateProcesses(map.get(date));
             }
             return map;
         }
@@ -577,18 +575,18 @@ public class WorkflowServicesImpl implements WorkflowServices {
     /**
      * Fills in process header info, consulting latest instance comment if necessary.
      */
-    protected List<ProcessCount> populate(List<ProcessCount> processCounts) throws DataAccessException {
-        AggregateDataAccessVcs dataAccess = null;
-        for (ProcessCount pc : processCounts) {
+    protected List<ProcessAggregate> populateProcesses(List<ProcessAggregate> processAggregates) throws DataAccessException {
+        AggregateDataAccess dataAccess = null;
+        for (ProcessAggregate pc : processAggregates) {
             Process process = ProcessCache.getProcess(pc.getId());
             if (process == null) {
                 logger.severe("Missing definition for process id: " + pc.getId());
                 pc.setDefinitionMissing(true);
                 // may have been deleted -- infer from comments
                 if (dataAccess == null)
-                    dataAccess = getAggregateDataAccess();
+                    dataAccess = getProcessAggregation();
                 CodeTimer timer = new CodeTimer(true);
-                String comments = dataAccess.getLatestProcessInstanceComments(pc.getId());
+                String comments = getWorkflowDao().getLatestProcessInstanceComments(pc.getId());
                 timer.stopAndLogTiming("getLatestProcessInstanceComments()");
                 if (comments != null) {
                     AssetHeader assetHeader = new AssetHeader(comments);
@@ -607,7 +605,26 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 pc.setPackageName(process.getPackageName());
             }
         }
-        return processCounts;
+        return processAggregates;
+    }
+
+    protected List<ProcessAggregate> populateProcessStatuses(List<ProcessAggregate> processAggregates) {
+        for (ProcessAggregate processAggregate : processAggregates) {
+            processAggregate.setName(WorkStatuses.getName((int)processAggregate.getId()));
+        }
+        // add any empty statuses
+        for (Integer statusCd : WorkStatuses.getWorkStatuses().keySet()) {
+            boolean found = processAggregates.stream().anyMatch(agg -> agg.getId() == statusCd);
+            if (!found) {
+                ProcessAggregate processAggregate = new ProcessAggregate(0);
+                processAggregate.setId(statusCd);
+                processAggregate.setCount(0);
+                processAggregate.setName(WorkStatuses.getWorkStatuses().get(statusCd));
+                processAggregates.add(processAggregate);
+            }
+        }
+        processAggregates.sort((agg1, agg2) -> (int)(agg1.getId() - agg2.getId()));
+        return processAggregates;
     }
 
     /**
@@ -615,7 +632,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
      * @param query
      */
     protected ActivityList populateActivities(ActivityList activityList, Query query) throws DataAccessException {
-        AggregateDataAccessVcs dataAccess = null;
+        AggregateDataAccess dataAccess = null;
         List<ActivityInstance> aList = activityList.getActivities();
         ArrayList<ActivityInstance> matchActivities = new ArrayList<>();
         for (ActivityInstance activityInstance : aList) {
@@ -625,9 +642,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 activityInstance.setDefinitionMissing(true);
                 // may have been deleted -- infer from comments
                 if (dataAccess == null)
-                    dataAccess = getAggregateDataAccess();
+                    dataAccess = getActivityAggregation();
                 CodeTimer timer = new CodeTimer(true);
-                String comments = dataAccess.getLatestProcessInstanceComments(activityInstance.getProcessId());
+                String comments = getWorkflowDao().getLatestProcessInstanceComments(activityInstance.getProcessId());
                 timer.stopAndLogTiming("getLatestProcessInstanceComments()");
                 if (comments != null) {
                     AssetHeader assetHeader = new AssetHeader(comments);
@@ -679,18 +696,18 @@ public class WorkflowServicesImpl implements WorkflowServices {
     /**
      * Fills in process header info, consulting latest instance comment if necessary.
      */
-    protected List<ActivityCount> populateAct(List<ActivityCount> activityCounts) throws DataAccessException {
-        AggregateDataAccessVcs dataAccess = null;
-        for (ActivityCount ac : activityCounts) {
+    protected List<ActivityAggregate> populateActivities(List<ActivityAggregate> activityCounts) throws DataAccessException {
+        AggregateDataAccess dataAccess = null;
+        for (ActivityAggregate ac : activityCounts) {
             Process process = ProcessCache.getProcess(ac.getProcessId());
             if (process == null) {
                 logger.severe("Missing definition for process id: " + ac.getProcessId());
                 ac.setDefinitionMissing(true);
                 // may have been deleted -- infer from comments
                 if (dataAccess == null)
-                    dataAccess = getAggregateDataAccess();
+                    dataAccess = getActivityAggregation();
                 CodeTimer timer = new CodeTimer(true);
-                String comments = dataAccess.getLatestProcessInstanceComments(ac.getProcessId());
+                String comments = getWorkflowDao().getLatestProcessInstanceComments(ac.getProcessId());
                 timer.stopAndLogTiming("getLatestProcessInstanceComments()");
                 if (comments != null) {
                     AssetHeader assetHeader = new AssetHeader(comments);
@@ -726,12 +743,39 @@ public class WorkflowServicesImpl implements WorkflowServices {
         return activityCounts;
     }
 
-    public List<ActivityCount> getTopThroughputActivities(Query query) throws ServiceException {
+    protected List<ActivityAggregate> populateActivityStatuses(List<ActivityAggregate> activityAggregates) {
+        for (ActivityAggregate activityAggregate : activityAggregates) {
+            activityAggregate.setName(WorkStatuses.getName((int)activityAggregate.getId()));
+        }
+        // add any empty statuses
+        int[] statusCds = new int[] {WorkStatus.STATUS_IN_PROGRESS, WorkStatus.STATUS_FAILED, WorkStatus.STATUS_WAITING};
+        for (int statusCd : statusCds) {
+            boolean found = activityAggregates.stream().anyMatch(agg -> {
+                return agg.getId() == statusCd;
+            });
+            if (!found) {
+                ActivityAggregate activityAggregate = new ActivityAggregate(0);
+                activityAggregate.setId(statusCd);
+                activityAggregate.setCount(0);
+                activityAggregate.setName(WorkStatuses.getWorkStatuses().get(statusCd));
+                activityAggregates.add(activityAggregate);
+            }
+        }
+        activityAggregates.sort((agg1, agg2) -> (int)(agg1.getId() - agg2.getId()));
+        return activityAggregates;
+    }
+
+    public List<ActivityAggregate> getTopActivities(Query query) throws ServiceException {
         try {
             CodeTimer timer = new CodeTimer(true);
-            List<ActivityCount> list = getAggregateDataAccess().getTopThroughputActivityInstances(query);
+            List<ActivityAggregate> list = getActivityAggregation().getTops(query);
             timer.logTimingAndContinue("AggregateDataAccessVcs.getTopThroughputActivityInstances()");
-            list = populateAct(list);
+            if ("status".equals(query.getFilter("by"))) {
+                list = populateActivityStatuses(list);
+            }
+            else {
+                list = populateActivities(list);
+            }
             timer.stopAndLogTiming("WorkflowServicesImpl.populate()");
             return list;
         }
@@ -740,12 +784,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public Map<Date,List<ActivityCount>> getActivityInstanceBreakdown(Query query) throws ServiceException {
+    public TreeMap<Date,List<ActivityAggregate>> getActivityBreakdown(Query query) throws ServiceException {
         try {
-            Map<Date,List<ActivityCount>> map = getAggregateDataAccess().getActivityInstanceBreakdown(query);
+            TreeMap<Date,List<ActivityAggregate>> map = getActivityAggregation().getBreakdown(query);
             if (query.getFilters().get("activityIds") != null) {
                 for (Date date : map.keySet())
-                    populateAct(map.get(date));
+                    populateActivities(map.get(date));
             }
             return map;
         }
@@ -793,7 +837,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 return ProcessCache.getAllProcesses();
             }
             else {
-                List<Process> found = new ArrayList<Process>();
+                List<Process> found = new ArrayList<>();
                 for (Process processVO : ProcessCache.getAllProcesses()) {
                     if (processVO.getName() != null && processVO.getName().startsWith(find))
                         found.add(processVO);
@@ -945,8 +989,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 GeneralActivity activity = pkg.getActivityImplementor(implClass);
                 com.centurylink.mdw.annotations.Activity annotation =
                         activity.getClass().getAnnotation(com.centurylink.mdw.annotations.Activity.class);
-                ActivityImplementor impl = new ActivityImplementor(implClass, annotation);
-                return impl;
+                return new ActivityImplementor(implClass, annotation);
             }
         }
         catch (Exception ex) {
@@ -997,7 +1040,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 docId = eventMgr.createDocument(docType, OwnerType.LISTENER_REQUEST, 0L, masterRequest, pkg);
                 request = VariableTranslator.realToString(pkg, docType, masterRequest);
                 if (headers == null)
-                    headers = new HashMap<String,String>();
+                    headers = new HashMap<>();
                 headers.put(Listener.METAINFO_DOCUMENT_ID, docId.toString());
             }
 
@@ -1071,7 +1114,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     public Integer notify(Package runtimePackage, String eventName, Object eventMessage) throws ServiceException {
-        Integer delay = PropertyManager.getIntegerProperty(PropertyNames.ACTIVITY_RESUME_DELAY, 2);
+        int delay = PropertyManager.getIntegerProperty(PropertyNames.ACTIVITY_RESUME_DELAY, 2);
         return notify(runtimePackage, eventName, eventMessage, delay);
     }
 
@@ -1447,8 +1490,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
             EventServices eventServices = ServiceLocator.getEventServices();
             dataAccess.getDatabaseAccess().openConnection();
             ProcessInstance procInst = dataAccess.getProcessInstance(instanceId);
-            Long docId = procInst.getProcessInstDefId();
-            if (docId == null || docId == 0L) {
+            long docId = procInst.getProcessInstDefId();
+            if (docId == 0L) {
                 docId = eventServices.createDocument(Jsonable.class.getName(), OwnerType.PROCESS_INSTANCE_DEF,
                         instanceId, process, PackageCache.getPackage(process.getPackageName()));
                 String[] fields = new String[]{"COMMENTS"};

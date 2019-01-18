@@ -15,17 +15,8 @@
  */
 package com.centurylink.mdw.service.data;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
@@ -34,11 +25,15 @@ import com.centurylink.mdw.model.workflow.ProcessList;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 
-public class WorkflowDataAccess extends CommonDataAccess {
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
-    public WorkflowDataAccess() {
-        super(null, DataAccess.currentSchemaVersion, DataAccess.supportedSchemaVersion);
-    }
+public class WorkflowDataAccess extends CommonDataAccess {
 
     public ProcessList getProcessInstances(Query query) throws DataAccessException {
         try {
@@ -201,5 +196,30 @@ public class WorkflowDataAccess extends CommonDataAccess {
             sb.append(" desc");
         sb.append("\n");
         return sb.toString();
+    }
+
+    /**
+     * Useful for inferring process name and version without definition.
+     */
+    public String getLatestProcessInstanceComments(Long processId) throws DataAccessException {
+        StringBuilder query = new StringBuilder();
+        query.append("select process_instance_id, comments from process_instance\n");
+        query.append("where process_instance_id = (select max(process_instance_id) from process_instance ");
+        query.append("where process_id = ? and comments is not null)");
+
+        try {
+            db.openConnection();
+            ResultSet rs = db.runSelect(query.toString(), processId);
+            if (rs.next())
+                return rs.getString("comments");
+            else
+                return null;
+        }
+        catch (Exception ex) {
+            throw new DataAccessException(-1, ex.getMessage(), ex);
+        }
+        finally {
+            db.closeConnection();
+        }
     }
 }

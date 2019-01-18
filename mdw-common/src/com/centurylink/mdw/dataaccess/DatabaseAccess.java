@@ -551,6 +551,10 @@ public class DatabaseAccess {
         return db_time_diff == null ? new Date() : new Date(getCurrentTime());
     }
 
+    public static long getDbTimeDiff() {
+        return db_time_diff == null ? 0 : db_time_diff;
+    }
+
     public String pagingQueryPrefix() {
         if (isMySQL)
             return "";

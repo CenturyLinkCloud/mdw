@@ -54,10 +54,10 @@ public class NotFoundServlet extends HttpServlet {
                 return;
             }
             if (path.endsWith("/mdw.ico")) {  // hack for nav back from Task UI
-                response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/mdw.ico");
+                response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/images/mdw.ico");
                 return;
             }
-            if (path.indexOf('.') == -1 && path.indexOf('#') == -1 && path.startsWith("/tasks")) {
+            if (path.indexOf('.') == -1 && path.indexOf('#') == -1 && (path.startsWith("/tasks"))) {
                 String redirectPath = path;
                 String[] pathSegs = path.substring(1).split("/");
                 if (pathSegs.length > 2)
@@ -65,6 +65,9 @@ public class NotFoundServlet extends HttpServlet {
                 response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/#" + redirectPath);
                 return;
             }
+
+            if (path.startsWith("/dashboard/"))
+                path = "/com/centurylink/mdw/dashboard/Index";
 
             Mdw mdw = WebAppContext.getMdw();
             Page page = findPage(mdw, path);

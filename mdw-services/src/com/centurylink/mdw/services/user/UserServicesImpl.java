@@ -15,34 +15,27 @@
  */
 package com.centurylink.mdw.services.user;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.user.Role;
-import com.centurylink.mdw.model.user.RoleList;
-import com.centurylink.mdw.model.user.User;
-import com.centurylink.mdw.model.user.UserAction;
-import com.centurylink.mdw.model.user.UserList;
-import com.centurylink.mdw.model.user.Workgroup;
-import com.centurylink.mdw.model.user.WorkgroupList;
+import com.centurylink.mdw.model.user.*;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.service.data.user.UserDataAccess;
 import com.centurylink.mdw.services.UserServices;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class UserServicesImpl implements UserServices {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private UserDataAccess getUserDAO() {
-        DatabaseAccess db = new DatabaseAccess(null);
-        return new UserDataAccess(db);
+        return new UserDataAccess();
     }
 
     public WorkgroupList getWorkgroups() throws DataAccessException {

@@ -4,10 +4,10 @@ import {Link} from '../node/node_modules/react-router-dom';
 import UserDate from '../react/UserDate.jsx';
 
 class TaskItem extends Component {
-    
+
   constructor(...args) {
     super(...args);
-  }  
+  }
   handleClick(task) {
       //this.props.updateTask(task);
       this.props.refreshTask(task.id);
@@ -28,7 +28,7 @@ class TaskItem extends Component {
               <div className="mdw-item-sub" style={{height:'16px'}}>
                 {task.masterRequestId &&
                   <span>
-                    <label>Master request:</label> 
+                    <label>Master request:</label>
                     <a className="mdw-link"
                         href={this.context.hubRoot + '/#/workflow/masterRequests/' + task.masterRequestId}>
                       {task.masterRequestId}
@@ -40,7 +40,7 @@ class TaskItem extends Component {
                 <UserDate label="Created" date={task.start} />
                 {task.due &&
                   <span>{',   '}
-                    <UserDate label="Due" date={task.due} alert={!task.end} 
+                    <UserDate label="Due" date={task.due} alert={!task.end}
                       editable={false} notLabel="No Due Date" />
                   </span>
                 }

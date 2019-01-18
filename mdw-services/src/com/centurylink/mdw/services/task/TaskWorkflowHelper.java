@@ -1281,7 +1281,7 @@ public class TaskWorkflowHelper {
     throws ServiceException, DataAccessException {
         String userCuid = null;
         if (userId != null) {
-            UserDataAccess uda = new UserDataAccess(new DatabaseAccess(null));
+            UserDataAccess uda = new UserDataAccess();
             User user = uda.getUser(userId);
             userCuid = user.getCuid();
         }

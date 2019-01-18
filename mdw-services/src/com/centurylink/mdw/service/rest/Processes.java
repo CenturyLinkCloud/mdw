@@ -17,12 +17,7 @@ package com.centurylink.mdw.service.rest;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.ws.rs.Path;
 
@@ -51,7 +46,7 @@ import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.LinkedProcessInstance;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.ProcessCount;
+import com.centurylink.mdw.model.workflow.ProcessAggregate;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessList;
 import com.centurylink.mdw.model.workflow.ProcessRun;
@@ -183,19 +178,19 @@ public class Processes extends JsonRestService implements JsonExportable {
                         processRun.setValues(getInputValues(procDef));
                         return processRun.getJson();
                     }
-                    else if (segOne.equals("topThroughput")) {
-                        List<ProcessCount> list = workflowServices.getTopThroughputProcesses(query);
+                    else if (segOne.equals("tops")) {
+                        List<ProcessAggregate> list = workflowServices.getTopProcesses(query);
                         JSONArray procArr = new JSONArray();
                         int ct = 0;
-                        ProcessCount other = null;
+                        ProcessAggregate other = null;
                         long otherTot = 0;
-                        for (ProcessCount procCount : list) {
+                        for (ProcessAggregate procCount : list) {
                             if (ct >= query.getMax()) {
                                 if (other == null) {
-                                    other = new ProcessCount(0);
+                                    other = new ProcessAggregate(0);
                                     other.setName("Other");
                                 }
-                                otherTot += procCount.getCount();
+                                otherTot += procCount.getValue();
                             }
                             else {
                                 procArr.put(procCount.getJson());
@@ -203,26 +198,20 @@ public class Processes extends JsonRestService implements JsonExportable {
                             ct++;
                         }
                         if (other != null) {
-                            other.setCount(otherTot);
+                            other.setValue(otherTot);
                             procArr.put(other.getJson());
                         }
                         return new JsonArray(procArr).getJson();
                     }
-                    else if (segOne.equals("instanceCounts")) {
-                        Map<Date,List<ProcessCount>> dateMap = workflowServices.getProcessInstanceBreakdown(query);
-                        boolean isTotals = query.getFilters().get("processIds") == null && query.getFilters().get("statuses") == null;
-
-                        Map<String,List<ProcessCount>> listMap = new HashMap<String,List<ProcessCount>>();
+                    else if (segOne.equals("breakdown")) {
+                        TreeMap<Date,List<ProcessAggregate>> dateMap = workflowServices.getProcessBreakdown(query);
+                        LinkedHashMap<String,List<ProcessAggregate>> listMap = new LinkedHashMap<>();
                         for (Date date : dateMap.keySet()) {
-                            List<ProcessCount> procCounts = dateMap.get(date);
-                            if (isTotals) {
-                                for (ProcessCount procCount : procCounts)
-                                    procCount.setName("Total");
-                            }
+                            List<ProcessAggregate> procCounts = dateMap.get(date);
                             listMap.put(Query.getString(date), procCounts);
                         }
 
-                        return new JsonListMap<ProcessCount>(listMap).getJson();
+                        return new JsonListMap<>(listMap).getJson();
                     }
                     else {
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path segment: " + segOne);
@@ -489,8 +478,8 @@ public class Processes extends JsonRestService implements JsonExportable {
         try {
             if (json.has(ProcessList.PROCESS_INSTANCES))
                 return new ProcessList(ProcessList.PROCESS_INSTANCES, json);
-            else if ("Processes/instanceCounts".equals(query.getPath()))
-                return new JsonListMap<ProcessCount>(json, ProcessCount.class);
+            else if ("Processes/breakdown".equals(query.getPath()))
+                return new JsonListMap<>(json, ProcessAggregate.class);
             else
                 throw new JSONException("Unsupported export type for query: " + query);
         }

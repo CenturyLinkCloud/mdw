@@ -15,18 +15,21 @@
  */
 package com.centurylink.mdw.model.task;
 
+import com.centurylink.mdw.model.Aggregate;
+import com.centurylink.mdw.model.Jsonable;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.centurylink.mdw.model.InstanceCount;
-import com.centurylink.mdw.model.Jsonable;
 
 /**
  * Aggregated task instance count for a particular definition, workgroup or user.
  */
-public class TaskCount implements InstanceCount, Jsonable {
+public class TaskAggregate implements Aggregate, Jsonable {
 
-    private long count;
+    private long value;
+    public long getValue() { return value; }
+    public void setValue(long value) { this.value = value; }
+
+    private long count = -1;
     public long getCount() { return count; }
     public void setCount(long count) { this.count = count; }
 
@@ -66,11 +69,12 @@ public class TaskCount implements InstanceCount, Jsonable {
     public boolean isDefinitionMissing() { return definitionMissing; }
     public void setDefinitionMissing(boolean missing) { this.definitionMissing = missing; }
 
-    public TaskCount(long count) {
+    public TaskAggregate(long count) {
         this.count = count;
     }
 
-    public TaskCount(JSONObject json) throws JSONException {
+    @SuppressWarnings("unused")
+    public TaskAggregate(JSONObject json) throws JSONException {
         count = json.getLong("count");
         if (json.has("id"))
             id = json.getLong("id");

@@ -52,33 +52,42 @@
     "id": "dashboardTab",
     "label": "Dashboard",
     "icon": "dashboard.png",
-    "url": "#/dashboard/processes",
-    "routes": ["/dashboard/processes", "dashboard/requests", "dashboard/tasks", "/dashboard/activities"],
+    "url": "dashboard/processes",
     "navs": [
       {
         "links": [
           {
             "label": "Processes",
             "path": "dashboard/processes",
-            "href": "#/dashboard/processes",
-            "priority": 1
-          },
-          {
-            "label": "Requests",
-            "path": "dashboard/requests",
-            "href": "#/dashboard/requests",
+            "href": "/dashboard/processes",
             "priority": 1
           },
           {
             "label": "Tasks",
             "path": "dashboard/tasks",
-            "href": "#/dashboard/tasks",
+            "href": "/dashboard/tasks",
             "priority": 1
           },
           {
-            "label": "Activities",
+            "label": "Stuck Activities",
             "path": "dashboard/activities",
-            "href": "#/dashboard/activities"
+            "href": "/dashboard/activities"
+          }
+        ]
+      },
+      {
+        "links": [
+          {
+            "label": "Inbound Requests",
+            "path": "dashboard/inboundRequests",
+            "href": "/dashboard/inboundRequests",
+            "priority": 1
+          },
+          {
+            "label": "Outbound Requests",
+            "path": "dashboard/outboundRequests",
+            "href": "/dashboard/outboundRequests",
+            "priority": 1
           }
         ]
       }

@@ -15,15 +15,15 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import com.centurylink.mdw.model.InstanceCount;
+import com.centurylink.mdw.model.Aggregate;
 import com.centurylink.mdw.model.Jsonable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Aggregated process instance count for a particular definition or status.
+ * Aggregated process instances for a particular definition or status.
  */
-public class ProcessCount implements InstanceCount, Jsonable {
+public class ProcessAggregate implements Aggregate, Jsonable {
 
     private long id;
     public long getId() { return id; }
@@ -41,9 +41,9 @@ public class ProcessCount implements InstanceCount, Jsonable {
     public String getPackageName() { return packageName; }
     public void setPackageName(String pkg) { this.packageName = pkg; }
 
-    private String status;
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    private long value;
+    public long getValue() { return value; }
+    public void setValue(long value) { this.value = value; }
 
     private long count = -1;
     public long getCount() { return count; }
@@ -53,12 +53,13 @@ public class ProcessCount implements InstanceCount, Jsonable {
     public boolean isDefinitionMissing() { return definitionMissing; }
     public void setDefinitionMissing(boolean missing) { this.definitionMissing = missing; }
 
-    public ProcessCount(long count) {
-        this.count = count;
+    public ProcessAggregate(long value) {
+        this.value = value;
     }
 
-    public ProcessCount(JSONObject json) throws JSONException {
-        count = json.getLong("count");
+    @SuppressWarnings("unused")
+    public ProcessAggregate(JSONObject json) throws JSONException {
+        value = json.getLong("value");
         if (json.has("id"))
             id = json.getLong("id");
         if (json.has("name"))
@@ -69,8 +70,8 @@ public class ProcessCount implements InstanceCount, Jsonable {
             packageName = json.getString("packageName");
         if (json.has("definitionMissing"))
             definitionMissing = json.getBoolean("definitionMissing");
-        if (json.has("status"))
-            status = json.getString("status");
+        if (json.has("count"))
+            count = json.getLong("count");
     }
 
     public String getJsonName() {
@@ -79,7 +80,7 @@ public class ProcessCount implements InstanceCount, Jsonable {
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
-        json.put("count", count);
+        json.put("value", value);
         if (id >= 0)
             json.put("id", id);
         if (name != null)
@@ -90,8 +91,8 @@ public class ProcessCount implements InstanceCount, Jsonable {
             json.put("packageName", packageName);
         if (definitionMissing)
             json.put("definitionMissing", true);
-        if (status != null)
-            json.put("status", status);
+        if (count > -1)
+            json.put("count", count);
         return json;
     }
 }
