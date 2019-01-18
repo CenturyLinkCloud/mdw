@@ -1,0 +1,37 @@
+process: # 11043
+  name: AttributeExpressions
+  instance: 1
+  activity: # 1 "2019-01-02 10:34:40"
+    name: Start
+    status: Completed
+  activity: # 3 "2019-01-02 10:34:40"
+    name: Retrieve App User
+    status: Completed
+  activity: # 2 "2019-01-02 10:34:40"
+    name: Stop
+    status: Completed
+  variable: # 12310
+    name: appUser
+    value: mdwapp
+  variable: # 12311
+    name: appUserResponse
+    value: |
+      {
+        "attributes": {
+          "Email": "mdwapp@centurylink.com",
+          "Phone": ""
+        },
+        "cuid": "mdwapp",
+        "name": "MDW Application",
+        "roles": [
+          "Process Design",
+          "Process Execution",
+          "Task Execution",
+          "User Admin"
+        ],
+        "workgroups": [
+          "Common",
+          "Developers",
+          "Site Admin"
+        ]
+      }

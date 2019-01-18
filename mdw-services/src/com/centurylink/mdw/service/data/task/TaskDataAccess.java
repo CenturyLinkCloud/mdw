@@ -85,13 +85,6 @@ public class TaskDataAccess extends CommonDataAccess {
         return deep ? TASK_INSTANCE_SELECT : TASK_INSTANCE_SELECT_SHALLOW;
     }
 
-    public TaskDataAccess() {
-        this(new DatabaseAccess(null));
-    }
-
-    public TaskDataAccess(DatabaseAccess db) {
-        super(db, DataAccess.currentSchemaVersion, DataAccess.supportedSchemaVersion);
-    }
 
     protected Long getNextId(String sequenceName) throws SQLException {
         String query = "select " + sequenceName + ".NEXTVAL from dual";
@@ -927,5 +920,28 @@ public class TaskDataAccess extends CommonDataAccess {
         return null;
     }
 
+    /**
+     * Useful for inferring task name and version without template.
+     */
+    public String getLatestTaskInstanceComments(Long taskId) throws DataAccessException {
+        StringBuilder query = new StringBuilder();
+        query.append("select task_instance_id, comments from task_instance\n");
+        query.append("where task_instance_id = (select max(task_instance_id) from task_instance ");
+        query.append("where task_id = ? and comments is not null)");
 
+        try {
+            db.openConnection();
+            ResultSet rs = db.runSelect(query.toString(), taskId);
+            if (rs.next())
+                return rs.getString("comments");
+            else
+                return null;
+        }
+        catch (Exception ex) {
+            throw new DataAccessException(-1, ex.getMessage(), ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
 }

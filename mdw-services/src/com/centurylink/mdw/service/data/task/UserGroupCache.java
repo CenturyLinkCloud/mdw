@@ -15,19 +15,9 @@
  */
 package com.centurylink.mdw.service.data.task;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
@@ -36,6 +26,11 @@ import com.centurylink.mdw.service.data.user.UserDataAccess;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.util.*;
 
 /**
  * Cache for MDW users/groups/roles (plus group relationships for tasks).
@@ -310,7 +305,7 @@ public class UserGroupCache implements PreloadableCache {
     }
 
     private UserDataAccess getUserDataAccess() {
-        return new UserDataAccess(new DatabaseAccess(null));
+        return new UserDataAccess();
     }
     private synchronized void load() throws CachingException {
         CodeTimer timer = null;

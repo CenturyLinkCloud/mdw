@@ -15,18 +15,8 @@
  */
 package com.centurylink.mdw.service.data;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
@@ -38,11 +28,12 @@ import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 
-public class RequestDataAccess extends CommonDataAccess {
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.*;
 
-    public RequestDataAccess() {
-        super(null, DataAccess.currentSchemaVersion, DataAccess.supportedSchemaVersion);
-    }
+public class RequestDataAccess extends CommonDataAccess {
 
     public RequestList getMasterRequests(Query query) throws DataAccessException {
 

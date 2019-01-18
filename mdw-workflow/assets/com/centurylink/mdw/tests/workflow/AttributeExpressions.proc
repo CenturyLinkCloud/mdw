@@ -1,0 +1,59 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=58,y=161,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=181,ly=181,xs=122&240,ys=181&181"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=505,y=163,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "EndpointUri": "${props['mdw.services.url']}/api/Users/${appUser}",
+        "HttpMethod": "GET",
+        "PostScriptLang": "Groovy",
+        "PreScript": "runtimeContext.logDebug(\"Executing \" + runtimeContext.getActivity().getName())",
+        "PreScriptLang": "Groovy",
+        "RESPONSE_VARIABLE": "appUserResponse",
+        "WORK_DISPLAY_INFO": "x=244,y=160,w=129,h=62"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter",
+      "name": "Retrieve App User",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=439,ly=183,xs=377&501,ys=183&183"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "PerformanceLevel": "0",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=0,h=0"
+  },
+  "variables": {
+    "appUser": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "appUserResponse": {
+      "category": "LOCAL",
+      "type": "org.json.JSONObject"
+    }
+  }
+}

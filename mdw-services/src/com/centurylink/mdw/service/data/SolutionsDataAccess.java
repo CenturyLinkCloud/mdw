@@ -54,10 +54,6 @@ public class SolutionsDataAccess extends CommonDataAccess {
             "ti.task_inst_secondary_owner, task_inst_secondary_owner_id, ti.task_claim_user_id, ti.task_start_dt, ti.task_end_dt, ti.comments, ti.task_instance_state, " +
             "ti.due_date, ti.priority, ti.master_request_id, ti.task_instance_referred_as";
 
-    public SolutionsDataAccess() {
-        super(null, DataAccess.currentSchemaVersion, DataAccess.supportedSchemaVersion);
-    }
-
     /**
      * TODO: pagination and filtering
      */
