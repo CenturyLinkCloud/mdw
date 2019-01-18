@@ -15,36 +15,26 @@
  */
 package com.centurylink.mdw.service.data.task;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.Query;
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.model.task.TaskCategory;
-import com.centurylink.mdw.model.task.TaskInstance;
-import com.centurylink.mdw.model.task.TaskState;
-import com.centurylink.mdw.model.task.TaskStatus;
-import com.centurylink.mdw.model.task.TaskTemplate;
+import com.centurylink.mdw.model.task.*;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * Task-related data access.
@@ -54,22 +44,22 @@ public class TaskDataAccess extends CommonDataAccess {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private static String TASK_INSTANCE_SELECT_SHALLOW =
-        " ti.TASK_INSTANCE_ID, " +
-        " ti.TASK_ID, " +
-        " ti.TASK_INSTANCE_STATUS, " +
-        " ti.TASK_INSTANCE_OWNER, " +
-        " ti.TASK_INSTANCE_OWNER_ID, " +
-        " ti.TASK_INST_SECONDARY_OWNER, " +
-        " ti.TASK_INST_SECONDARY_OWNER_ID, " +
-        " ti.TASK_CLAIM_USER_ID, " +
-        " ti.TASK_START_DT, " +
-        " ti.TASK_END_DT, " +
-        " ti.COMMENTS, " +
-        " ti.TASK_INSTANCE_STATE, " +
-        " ti.TASK_INSTANCE_REFERRED_AS, " +
-        " ti.DUE_DATE, " +
-        " ti.PRIORITY, " +
-        " ti.MASTER_REQUEST_ID";
+            " ti.TASK_INSTANCE_ID, " +
+                    " ti.TASK_ID, " +
+                    " ti.TASK_INSTANCE_STATUS, " +
+                    " ti.TASK_INSTANCE_OWNER, " +
+                    " ti.TASK_INSTANCE_OWNER_ID, " +
+                    " ti.TASK_INST_SECONDARY_OWNER, " +
+                    " ti.TASK_INST_SECONDARY_OWNER_ID, " +
+                    " ti.TASK_CLAIM_USER_ID, " +
+                    " ti.TASK_START_DT, " +
+                    " ti.TASK_END_DT, " +
+                    " ti.COMMENTS, " +
+                    " ti.TASK_INSTANCE_STATE, " +
+                    " ti.TASK_INSTANCE_REFERRED_AS, " +
+                    " ti.DUE_DATE, " +
+                    " ti.PRIORITY, " +
+                    " ti.MASTER_REQUEST_ID";
 
     private static String TASK_INSTANCE_SELECT;
     private static boolean hasTaskTitleColumn;
@@ -157,7 +147,7 @@ public class TaskDataAccess extends CommonDataAccess {
         if (isVOversion) {
             task.setAssigneeCuid(rs.getString("CUID"));
             if (template != null)
-              task.setDescription(template.getComment());
+                task.setDescription(template.getComment());
         }
 
         return task;
@@ -199,7 +189,7 @@ public class TaskDataAccess extends CommonDataAccess {
         try {
             db.openConnection();
             String query = "select " + getTaskInstanceSelect() +
-                " from TASK_INSTANCE ti where TASK_INST_SECONDARY_OWNER = ? and TASK_INST_SECONDARY_OWNER_ID = ?";
+                    " from TASK_INSTANCE ti where TASK_INST_SECONDARY_OWNER = ? and TASK_INST_SECONDARY_OWNER_ID = ?";
             Object[] args = new Object[2];
             args[0] = OwnerType.TASK_INSTANCE;
             args[1] = masterTaskInstId;
@@ -217,7 +207,7 @@ public class TaskDataAccess extends CommonDataAccess {
     }
 
     public TaskInstance getTaskInstanceByActivityInstanceId(Long activityInstanceId)
-        throws DataAccessException {
+            throws DataAccessException {
         try {
             db.openConnection();
             StringBuffer sql = new StringBuffer("select ");
@@ -234,24 +224,24 @@ public class TaskDataAccess extends CommonDataAccess {
                 return getTaskInstanceSub(rs, false);
             } else return null;
         } catch (Exception e) {
-             throw new DataAccessException(0, "failed to get task instance", e);
+            throw new DataAccessException(0, "failed to get task instance", e);
         } finally {
             db.closeConnection();
         }
     }
 
     public Long createTaskInstance(TaskInstance taskInst, Date dueDate)
-        throws DataAccessException {
+            throws DataAccessException {
         try {
             db.openConnection();
             Long id = db.isMySQL() ? null : this.getNextId("MDW_COMMON_INST_ID_SEQ");
             String query = "insert into TASK_INSTANCE " +
-                "(TASK_INSTANCE_ID, TASK_ID, TASK_INSTANCE_STATUS, " +
-                " TASK_INSTANCE_OWNER, TASK_INSTANCE_OWNER_ID, TASK_CLAIM_USER_ID, COMMENTS, " +
-                " TASK_START_DT, TASK_END_DT, TASK_INSTANCE_STATE, " +
-                " TASK_INST_SECONDARY_OWNER, TASK_INST_SECONDARY_OWNER_ID, " +
-                " TASK_INSTANCE_REFERRED_AS, DUE_DATE, PRIORITY, MASTER_REQUEST_ID, " +
-                " CREATE_DT, CREATE_USR";
+                    "(TASK_INSTANCE_ID, TASK_ID, TASK_INSTANCE_STATUS, " +
+                    " TASK_INSTANCE_OWNER, TASK_INSTANCE_OWNER_ID, TASK_CLAIM_USER_ID, COMMENTS, " +
+                    " TASK_START_DT, TASK_END_DT, TASK_INSTANCE_STATE, " +
+                    " TASK_INST_SECONDARY_OWNER, TASK_INST_SECONDARY_OWNER_ID, " +
+                    " TASK_INSTANCE_REFERRED_AS, DUE_DATE, PRIORITY, MASTER_REQUEST_ID, " +
+                    " CREATE_DT, CREATE_USR";
             if (taskInst.getTitle() != null)
                 query += ", TASK_TITLE";
             query += ") values (?, ?, ?, ?, ?, ?, ?, " + nowPrecision() + ", ?, ?, ?, ?, ?, ?, ?, ?, " + nowPrecision() + ", 'mdw'";
@@ -278,7 +268,7 @@ public class TaskDataAccess extends CommonDataAccess {
             args[13] = taskInst.getPriority() == null ? 0 : taskInst.getPriority();
             args[14] = taskInst.getMasterRequestId();
             if (taskInst.getTitle() != null)
-              args[15] = taskInst.getTitle();
+                args[15] = taskInst.getTitle();
             if (db.isMySQL())
                 id = db.runInsertReturnId(query, args);
             else
@@ -294,7 +284,7 @@ public class TaskDataAccess extends CommonDataAccess {
     }
 
     public void updateTaskInstance(Long taskInstId, Map<String,Object> changes, boolean setEndDate)
-        throws DataAccessException {
+            throws DataAccessException {
         try {
             db.openConnection();
             StringBuffer sb = new StringBuffer();
@@ -325,12 +315,12 @@ public class TaskDataAccess extends CommonDataAccess {
     }
 
     public void cancelTaskInstance(TaskInstance taskInst)
-        throws DataAccessException {
+            throws DataAccessException {
         try {
             db.openConnection();
             String query = "update TASK_INSTANCE" +
-                " set TASK_INSTANCE_STATE=?, TASK_INSTANCE_STATUS=?, TASK_END_DT="+nowPrecision()+
-                " where TASK_INSTANCE_ID=?";
+                    " set TASK_INSTANCE_STATE=?, TASK_INSTANCE_STATUS=?, TASK_END_DT="+nowPrecision()+
+                    " where TASK_INSTANCE_ID=?";
             Object[] args = new Object[3];
             args[0] = taskInst.getStateCode();
             args[1] = taskInst.getStatusCode();
@@ -371,12 +361,12 @@ public class TaskDataAccess extends CommonDataAccess {
     }
 
     public List<TaskInstance> getTaskInstancesForProcessInstance(Long procInstId)
-    throws DataAccessException {
+            throws DataAccessException {
         return getTaskInstancesForProcessInstance(procInstId, false);
     }
 
     public List<TaskInstance> getTaskInstancesForProcessInstance(Long procInstId, boolean includeInstanceGroups)
-    throws DataAccessException {
+            throws DataAccessException {
         try {
             db.openConnection();
             List<TaskInstance> taskInstances = new ArrayList<TaskInstance>();
@@ -392,7 +382,7 @@ public class TaskDataAccess extends CommonDataAccess {
                 if (assigneeId != null && assigneeId.longValue() != 0) {
                     User user = UserGroupCache.getUser(assigneeId);
                     if (user != null)
-                      taskInst.setAssigneeCuid(user.getCuid());
+                        taskInst.setAssigneeCuid(user.getCuid());
                 }
                 taskInstances.add(taskInst);
             }
@@ -419,7 +409,7 @@ public class TaskDataAccess extends CommonDataAccess {
 
     // new task instance group mapping
     public void setTaskInstanceGroups(Long taskInstId, String[] groups)
-        throws DataAccessException {
+            throws DataAccessException {
         try {
             db.openConnection();
             // get group IDs
@@ -447,7 +437,7 @@ public class TaskDataAccess extends CommonDataAccess {
             if (db.isMySQL()) db.commit(); // MySQL will lock even when no rows were deleted and using unique index, so commit so that multiple session inserts aren't deadlocked
             // insert groups
             query = "insert into TASK_INST_GRP_MAPP " +
-                "(TASK_INSTANCE_ID,USER_GROUP_ID,CREATE_DT) values (?,?,"+now()+")";
+                    "(TASK_INSTANCE_ID,USER_GROUP_ID,CREATE_DT) values (?,?,"+now()+")";
             db.prepareStatement(query);
             Object[] args = new Object[2];
             args[0] = taskInstId;
@@ -466,7 +456,7 @@ public class TaskDataAccess extends CommonDataAccess {
 
     // new task instance indices
     public void setTaskInstanceIndices(Long taskInstId, Map<String,String> indices)
-        throws DataAccessException {
+            throws DataAccessException {
         try {
             db.openConnection();
             // delete existing indices
@@ -474,7 +464,7 @@ public class TaskDataAccess extends CommonDataAccess {
             // insert new ones
             db.runUpdate(query, taskInstId);
             query = "insert into INSTANCE_INDEX " +
-                "(INSTANCE_ID,OWNER_TYPE,INDEX_KEY,INDEX_VALUE,CREATE_DT) values (?,'TASK_INSTANCE',?,?,"+now()+")";
+                    "(INSTANCE_ID,OWNER_TYPE,INDEX_KEY,INDEX_VALUE,CREATE_DT) values (?,'TASK_INSTANCE',?,?,"+now()+")";
             db.prepareStatement(query);
             Object[] args = new Object[3];
             args[0] = taskInstId;
@@ -493,7 +483,7 @@ public class TaskDataAccess extends CommonDataAccess {
     }
 
     public void setTaskInstancePriority(Long taskInstanceId, Integer priority)
-    throws DataAccessException {
+            throws DataAccessException {
         try {
             db.openConnection();
             Object[] args = new Object[2];
@@ -525,7 +515,7 @@ public class TaskDataAccess extends CommonDataAccess {
     }
 
     public void getTaskInstanceAdditionalInfoGeneral(TaskInstance taskInst)
-        throws DataAccessException {
+            throws DataAccessException {
         StringBuffer buff = new StringBuffer();
         if (db.isMySQL()) {
             buff.append("select ui.CUID\n");
@@ -594,7 +584,7 @@ public class TaskDataAccess extends CommonDataAccess {
         }
     }
 
-    public TaskList getTaskInstances(Query query) throws DataAccessException {
+    public TaskList getTaskInstances(Query query) throws DataAccessException, ServiceException {
         long start = System.currentTimeMillis();
         try {
             StringBuilder sql = new StringBuilder();
@@ -639,13 +629,11 @@ public class TaskDataAccess extends CommonDataAccess {
             }
             else {
                 where = buildTaskInstanceWhere(query);
+                if (!StringHelper.isEmpty(where)) {
+                    sql.append(where);
+                    countSql.append(where);
+                }
             }
-
-            if (!StringHelper.isEmpty(where)) {
-                sql.append(where);
-                countSql.append(where);
-            }
-
             String orderBy = buildTaskInstanceOrderBy(query);
             if (!StringHelper.isEmpty(orderBy))
                 sql.append(orderBy);
@@ -656,7 +644,7 @@ public class TaskDataAccess extends CommonDataAccess {
                 total = rs.getLong(1);
 
             if (query.getMax() != -1)
-              sql.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
+                sql.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
 
             if(logger.isDebugEnabled())
                 logger.mdwDebug("queryTaskInstances() Query-->"+query) ;
@@ -696,14 +684,14 @@ public class TaskDataAccess extends CommonDataAccess {
         finally {
             db.closeConnection();
             if (logger.isMdwDebugEnabled()) {
-              long elapsed = System.currentTimeMillis() - start;
-              logger.mdwDebug("queryTaskInstances() Elapsed-->" + elapsed + " ms");
+                long elapsed = System.currentTimeMillis() - start;
+                logger.mdwDebug("queryTaskInstances() Elapsed-->" + elapsed + " ms");
             }
         }
 
     }
 
-    private String buildTaskInstanceWhere(Query query) throws DataAccessException {
+    private String buildTaskInstanceWhere(Query query) throws DataAccessException,ServiceException {
 
         StringBuilder where = new StringBuilder();
         if (db.isMySQL())
@@ -726,10 +714,10 @@ public class TaskDataAccess extends CommonDataAccess {
                     if (!Workgroup.COMMON_GROUP.equals(workgroups[i])) {
                         Workgroup group = UserGroupCache.getWorkgroup(workgroups[i]);
                         if (group == null)
-                            throw new CachingException("Cannot find workgroup: " + workgroups[i]);
+                            throw new ServiceException(ServiceException.NOT_FOUND,"unable to find the workgroup: " + workgroups[i]);
                         where.append(group.getId());
                         if (i < workgroups.length - 1)
-                          where.append(",");
+                            where.append(",");
                     }
                 }
                 catch (CachingException ex) {
@@ -778,15 +766,15 @@ public class TaskDataAccess extends CommonDataAccess {
         if (status != null) {
             if (status.equals(TaskStatus.STATUSNAME_ACTIVE)) {
                 where.append(" and ti.task_instance_status not in (")
-                  .append(TaskStatus.STATUS_COMPLETED)
-                  .append(",").append(TaskStatus.STATUS_CANCELLED)
-                  .append(")\n");
+                        .append(TaskStatus.STATUS_COMPLETED)
+                        .append(",").append(TaskStatus.STATUS_CANCELLED)
+                        .append(")\n");
             }
             else if (status.equals(TaskStatus.STATUSNAME_CLOSED)) {
                 where.append(" and ti.task_instance_status in (")
-                  .append(TaskStatus.STATUS_COMPLETED)
-                  .append(",").append(TaskStatus.STATUS_CANCELLED)
-                  .append(")\n");
+                        .append(TaskStatus.STATUS_COMPLETED)
+                        .append(",").append(TaskStatus.STATUS_CANCELLED)
+                        .append(")\n");
             }
             else {
                 Long statusCode = getTaskStatusCode(status);
@@ -903,11 +891,11 @@ public class TaskDataAccess extends CommonDataAccess {
         try {
             db.openConnection();
             String query = "select ti.TASK_INSTANCE_ID" +
-                " from TASK_INSTANCE ti, PROCESS_INSTANCE pi" +
-                " where ti.TASK_INSTANCE_OWNER_ID = pi.PROCESS_INSTANCE_ID and" +
-                "   pi.MASTER_REQUEST_ID = ? and" +
-                "   ti.TASK_ID = ?" +
-                " order by ti.TASK_INSTANCE_ID desc";
+                    " from TASK_INSTANCE ti, PROCESS_INSTANCE pi" +
+                    " where ti.TASK_INSTANCE_OWNER_ID = pi.PROCESS_INSTANCE_ID and" +
+                    "   pi.MASTER_REQUEST_ID = ? and" +
+                    "   ti.TASK_ID = ?" +
+                    " order by ti.TASK_INSTANCE_ID desc";
             Object[] args = new Object[2];
             args[0] = masterRequestId;
             args[1] = taskId;
