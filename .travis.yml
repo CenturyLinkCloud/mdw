@@ -24,12 +24,7 @@ script:
 - ./gradlew --no-daemon publishAll
 after_failure:
 - cat ../testResults/mdw-function-test-results.json
-- cat ../testResults/com.century`link.mdw.tests.tasks/TaskResumeLocal.test
-- cat ../testResults/com.centurylink.mdw.tests.tasks/Subtasks.test
 #- cat ../testResults/com.centurylink.mdw.tests.tasks/TaskValuesService.log
-#- cat ../testResults/com.centurylink.mdw.tests.tasks/TaskAutoassign.log
-#- cat ../testResults/com.centurylink.mdw.tests.tasks/Subtasks.log
-# - cat ../testResults/com.centurylink.mdw.tests.cloud/ActivityImplementors.log
 - cat mdw.log
 - sleep 10s
 notifications:
