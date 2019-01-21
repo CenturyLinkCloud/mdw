@@ -30,6 +30,10 @@ public class RequestAggregate implements Aggregate, Jsonable {
     public String getPath() { return path; }
     public void setPath(String path) { this.path = path; }
 
+    private int status;
+    public int getStatus() { return status; }
+    public void setStatus(int status) { this.status = status; }
+
     public String getName() {
         return getPath();
     }
@@ -42,19 +46,17 @@ public class RequestAggregate implements Aggregate, Jsonable {
     public long getCount() { return count; }
     public void setCount(long count) { this.count = count; }
 
-    private String type;
-    public String getType() { return type; }
-    public void setType(String type) { this.type = type; }
-
-    public RequestAggregate(long count) {
-        this.count = count;
+    public RequestAggregate(long value) {
+        this.value = value;
     }
 
     @SuppressWarnings("unused")
     public RequestAggregate(JSONObject json) throws JSONException {
-        count = json.getLong("count");
-        if (json.has("type"))
-            type = json.getString("type");
+        value = json.getLong("value");
+        if (json.has("count"))
+            count = json.getLong("count");
+        if (json.has("path"))
+            path = json.getString("path");
     }
 
     public String getJsonName() {
@@ -63,9 +65,14 @@ public class RequestAggregate implements Aggregate, Jsonable {
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
-        json.put("count", count);
-        if (type != null)
-            json.put("type", type);
+        json.put("value", value);
+        if (count > -1)
+            json.put("count", count);
+        if (getPath() != null) {
+            json.put("path", getPath());
+            json.put("id", getPath());
+            json.put("name", getName());
+        }
         return json;
     }
 }

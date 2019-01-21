@@ -180,28 +180,28 @@ public class Processes extends JsonRestService implements JsonExportable {
                     }
                     else if (segOne.equals("tops")) {
                         List<ProcessAggregate> list = workflowServices.getTopProcesses(query);
-                        JSONArray procArr = new JSONArray();
-                        int ct = 0;
+                        JSONArray processArray = new JSONArray();
+                        int count = 0;
                         ProcessAggregate other = null;
-                        long otherTot = 0;
-                        for (ProcessAggregate procCount : list) {
-                            if (ct >= query.getMax()) {
+                        long otherTotal = 0;
+                        for (ProcessAggregate processAggregate : list) {
+                            if (count >= query.getMax()) {
                                 if (other == null) {
                                     other = new ProcessAggregate(0);
                                     other.setName("Other");
                                 }
-                                otherTot += procCount.getValue();
+                                otherTotal += processAggregate.getValue();
                             }
                             else {
-                                procArr.put(procCount.getJson());
+                                processArray.put(processAggregate.getJson());
                             }
-                            ct++;
+                            count++;
                         }
                         if (other != null) {
-                            other.setValue(otherTot);
-                            procArr.put(other.getJson());
+                            other.setValue(otherTotal);
+                            processArray.put(other.getJson());
                         }
-                        return new JsonArray(procArr).getJson();
+                        return new JsonArray(processArray).getJson();
                     }
                     else if (segOne.equals("breakdown")) {
                         TreeMap<Date,List<ProcessAggregate>> dateMap = workflowServices.getProcessBreakdown(query);

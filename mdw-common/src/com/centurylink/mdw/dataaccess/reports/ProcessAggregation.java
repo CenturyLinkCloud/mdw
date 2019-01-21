@@ -3,6 +3,7 @@ package com.centurylink.mdw.dataaccess.reports;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.model.workflow.ProcessAggregate;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 
@@ -17,6 +18,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
         String by = query.getFilter("by");
         if (by == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing required filter: 'by'");
+
         try {
             db.openConnection();
             if (by.equals("throughput"))
@@ -38,13 +40,14 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
 
     private List<ProcessAggregate> getTopsByThroughput(Query query)
             throws ParseException, DataAccessException, SQLException {
+        PreparedWhere preparedWhere = getProcessWhereClause(query);
         String sql = "select process_id, " +
                 "count(process_id) as ct\n" +
                 "from PROCESS_INSTANCE\n" +
-                getProcessWhereClause(query) + "\n" +
+                preparedWhere.getWhere() + " " +
                 "group by process_id\n" +
                 "order by ct desc\n";
-        ResultSet rs = db.runSelect(sql);
+        ResultSet rs = db.runSelect(sql, preparedWhere.getParams());
         List<ProcessAggregate> list = new ArrayList<>();
         int idx = 0;
         int limit = query.getIntFilter("limit");
@@ -61,11 +64,12 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
 
     private List<ProcessAggregate> getTopsByStatus(Query query)
             throws ParseException, DataAccessException, SQLException {
+        PreparedWhere preparedWhere = getProcessWhereClause(query);
         String sql = "select status_cd, count(status_cd) as ct from PROCESS_INSTANCE\n" +
-                getProcessWhereClause(query) + "\n" +
+                preparedWhere.getWhere() + " " +
                 "group by status_cd\n" +
                 "order by ct desc\n";
-        ResultSet rs = db.runSelect(sql);
+        ResultSet rs = db.runSelect(sql, preparedWhere.getParams());
         List<ProcessAggregate> list = new ArrayList<>();
         int idx = 0;
         int limit = query.getIntFilter("limit");
@@ -82,14 +86,15 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
 
     private List<ProcessAggregate> getTopsByCompletionTime(Query query)
             throws ParseException, DataAccessException, SQLException {
+        PreparedWhere preparedWhere = getProcessWhereClause(query);
         String sql = "select process_id, " +
                 "avg(elapsed_ms) as elapsed, count(process_id) as ct\n" +
                 "from PROCESS_INSTANCE" +
                 ", INSTANCE_TIMING\n" +
-                getProcessWhereClause(query) + "\n" +
+                preparedWhere.getWhere() + " " +
                 "group by process_id\n" +
                 "order by elapsed desc\n";
-        ResultSet rs = db.runSelect(sql);
+        ResultSet rs = db.runSelect(sql, preparedWhere.getParams());
         List<ProcessAggregate> list = new ArrayList<>();
         int idx = 0;
         int limit = query.getIntFilter("limit");
@@ -110,6 +115,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing required filter: 'by'");
 
         try {
+            PreparedWhere preparedWhere = getProcessWhereClause(query);
             // process ids
             Long[] processIdsArr = query.getLongArrayFilter("processIds");
             List<Long> processIds = processIdsArr == null ? null : Arrays.asList(processIdsArr);
@@ -147,12 +153,19 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
             sql.append("  from PROCESS_INSTANCE");
             if (by.equals("completionTime"))
                 sql.append(", INSTANCE_TIMING");
-            sql.append("\n   ");
-            sql.append(getProcessWhereClause(query));
-            if (by.equals("status"))
-                sql.append("\n   and status_cd ").append(getInCondition(statusCodes));
-            else if (!by.equals("total"))
-                sql.append("\n   and process_id ").append(getInCondition(processIds));
+            sql.append("\n  ");
+            sql.append(preparedWhere.getWhere()).append(" ");
+            List<Object> params = new ArrayList<>(Arrays.asList(preparedWhere.getParams()));
+            if (by.equals("status")) {
+                PreparedWhere inCondition = getInCondition(statusCodes);
+                sql.append("   and status_cd ").append(inCondition.getWhere());
+                params.addAll(Arrays.asList(inCondition.getParams()));
+            }
+            else if (!by.equals("total")) {
+                PreparedWhere inCondition = getInCondition(processIds);
+                sql.append("   and process_id ").append(inCondition.getWhere());
+                params.addAll(Arrays.asList(inCondition.getParams()));
+            }
             sql.append(") pi\n");
 
             sql.append("group by st");
@@ -166,7 +179,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
                 sql.append("\norder by to_date(st, 'DD-Mon-yyyy')\n");
 
             db.openConnection();
-            ResultSet rs = db.runSelect(sql.toString(), null);
+            ResultSet rs = db.runSelect(sql.toString(), params.toArray());
             TreeMap<Date,List<ProcessAggregate>> map = new TreeMap<>();
             Date prevStartDate = getStartDate(query);
             while (rs.next()) {
@@ -221,32 +234,40 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
         }
     }
 
-    protected String getProcessWhereClause(Query query) throws ParseException, DataAccessException {
+    protected PreparedWhere getProcessWhereClause(Query query) throws ParseException, DataAccessException {
         String by = query.getFilter("by");
         Date start = getStartDate(query);
 
         StringBuilder where = new StringBuilder();
-        if ("completionTime".equals(by))
-            where.append("where owner_type = 'PROCESS_INSTANCE' and instance_id = process_instance_id\n");
-        where.append(where.length() > 0 ? "and " : "where ");
-        if (db.isMySQL())
-            where.append("start_dt >= '").append(getMySqlDt(start)).append("' ");
-        else
-            where.append("start_dt >= '").append(getOracleDt(start)).append("' ");
+        List<Object> params = new ArrayList<>();
+        if ("completionTime".equals(by)) {
+            where.append("where owner_type = ? and instance_id = process_instance_id\n");
+            params.add("PROCESS_INSTANCE");
+        }
+        where.append(where.length() > 0 ? "  and " : "where ");
+
+        where.append("start_dt >= ?\n");
+        params.add(getDt(start));
+
         Date end = getEndDate(query);
         if (end != null) {
-            if (db.isMySQL())
-                where.append("and start_dt <= '").append(getMySqlDt(end)).append("' ");
-            else
-                where.append("and start_dt <= '").append(getOracleDt(end)).append("' ");
+            where.append("  and start_dt <= ?\n");
+            params.add(getDt(end));
         }
-        where.append("and owner not in ('MAIN_PROCESS_INSTANCE' ");
-        if (query.getBooleanFilter("Master"))
-            where.append(", 'PROCESS_INSTANCE' ");
-        where.append(") ");
+
+        where.append("  and owner not in (?");
+        params.add("MAIN_PROCESS_INSTANCE");
+        if (query.getBooleanFilter("Master")) {
+            where.append(", ? ");
+            params.add("PROCESS_INSTANCE");
+        }
+        where.append(")\n");
+
         String status = query.getFilter("Status");
-        if (status != null)
-            where.append("and STATUS_CD = ").append(WorkStatuses.getCode(status));
-        return where.toString();
+        if (status != null) {
+            where.append("  and status_cd = ?\n");
+            params.add(WorkStatuses.getCode(status));
+        }
+        return new PreparedWhere(where.toString(), params.toArray());
     }
 }

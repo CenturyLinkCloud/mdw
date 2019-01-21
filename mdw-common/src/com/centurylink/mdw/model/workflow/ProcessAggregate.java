@@ -60,6 +60,8 @@ public class ProcessAggregate implements Aggregate, Jsonable {
     @SuppressWarnings("unused")
     public ProcessAggregate(JSONObject json) throws JSONException {
         value = json.getLong("value");
+        if (json.has("count"))
+            count = json.getLong("count");
         if (json.has("id"))
             id = json.getLong("id");
         if (json.has("name"))
@@ -70,8 +72,6 @@ public class ProcessAggregate implements Aggregate, Jsonable {
             packageName = json.getString("packageName");
         if (json.has("definitionMissing"))
             definitionMissing = json.getBoolean("definitionMissing");
-        if (json.has("count"))
-            count = json.getLong("count");
     }
 
     public String getJsonName() {
@@ -81,6 +81,8 @@ public class ProcessAggregate implements Aggregate, Jsonable {
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
         json.put("value", value);
+        if (count > -1)
+            json.put("count", count);
         if (id >= 0)
             json.put("id", id);
         if (name != null)
@@ -91,8 +93,6 @@ public class ProcessAggregate implements Aggregate, Jsonable {
             json.put("packageName", packageName);
         if (definitionMissing)
             json.put("definitionMissing", true);
-        if (count > -1)
-            json.put("count", count);
         return json;
     }
 }
