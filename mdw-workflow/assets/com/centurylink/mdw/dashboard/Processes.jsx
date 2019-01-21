@@ -10,7 +10,7 @@ class Processes extends Component {
 
   render() {
 
-    const breakdownConfig = {
+   const breakdownConfig = {
       breakdowns: [
         {
           name: 'Throughput',
@@ -26,7 +26,7 @@ class Processes extends Component {
           selectLabel: 'Statuses',
           tops: '/Processes/tops?by=status',
           data: '/Processes/breakdown?by=status',
-          instancesParam: 'statuses'
+           instancesParam: 'statuses'
         },
         {
           name: 'Completion Time',

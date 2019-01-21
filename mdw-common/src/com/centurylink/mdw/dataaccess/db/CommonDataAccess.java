@@ -1006,31 +1006,7 @@ public class CommonDataAccess {
         return new SimpleDateFormat(ORACLE_DT_FORMAT).format(date);
     }
 
-    @SuppressWarnings("deprecation")
-    protected static Date getRoundDate(Date date) {
-        Date roundDate = new Date(date.getTime());
-        roundDate.setHours(0);
-        roundDate.setMinutes(0);
-        roundDate.setSeconds(0);
-        return roundDate;
+    protected String getDt(Date date) {
+        return db.isMySQL() ? getMySqlDt(date) : getOracleDt(date);
     }
-
-    protected <T> String getInCondition(List<T> elements) {
-        StringBuilder in = new StringBuilder();
-        in.append("in (");
-        if (elements.isEmpty()) {
-            in.append("''");  // no match -- avoid malformed sql
-        }
-        else {
-            for (int i = 0; i < elements.size(); i++) {
-                T e = elements.get(i);
-                String tic = e instanceof String ? "'" : "";
-                in.append(tic).append(e).append(tic);
-                if (i < elements.size() - 1)
-                    in.append(",");
-            }
-        }
-        in.append(") ");
-        return in.toString();
-    }
- }
+}

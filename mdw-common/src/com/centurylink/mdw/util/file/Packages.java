@@ -53,7 +53,8 @@ public class Packages extends TreeMap<String,File> {
                 !packageName.startsWith("com.centurylink.mdw.tests.tibco") &&
                 !packageName.startsWith("com.centurylink.mdw.internal") &&
                 !packageName.startsWith("com.centurylink.mdw.ignore") &&
-                !packageName.startsWith("com.centurylink.mdw.node.node_modules");
+                !packageName.startsWith("com.centurylink.mdw.node.node_modules") &&
+                !packageName.startsWith("com.centurylink.mdw.authCTL");
     }
 
     private File assetRoot;

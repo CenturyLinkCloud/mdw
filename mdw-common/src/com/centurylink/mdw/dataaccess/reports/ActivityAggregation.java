@@ -3,6 +3,7 @@ package com.centurylink.mdw.dataaccess.reports;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.model.workflow.ActivityAggregate;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
@@ -38,14 +39,14 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
 
     private List<ActivityAggregate> getTopsByStuck(Query query)
             throws ParseException, DataAccessException, SQLException {
-
+        PreparedWhere preparedWhere = getActivityWhereClause(query);
         String sql = "select count(act_unique_id) as ct, act_unique_id\n" +
                 getUniqueIdFrom() +
-                getActivityWhereClause(query) +
+                preparedWhere.getWhere() +
                 ") a1\n" +
                 "group by act_unique_id\n" +
                 "order by ct desc\n";
-        ResultSet rs = db.runSelect(sql);
+        ResultSet rs = db.runSelect(sql, preparedWhere.getParams());
         List<ActivityAggregate> list = new ArrayList<>();
         int idx = 0;
         int limit = query.getIntFilter("limit");
@@ -71,12 +72,13 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
 
     private List<ActivityAggregate> getTopsByStatus(Query query)
             throws ParseException, DataAccessException, SQLException {
+        PreparedWhere preparedWhere = getActivityWhereClause(query);
         String sql = "select status_cd, count(status_cd) as ct " +
                 "from ACTIVITY_INSTANCE ai\n" +
-                getActivityWhereClause(query) + "\n" +
+                preparedWhere.getWhere() +
                 "group by status_cd\n" +
                 "order by ct desc\n";
-        ResultSet rs = db.runSelect(sql);
+        ResultSet rs = db.runSelect(sql, preparedWhere.getParams());
         List<ActivityAggregate> list = new ArrayList<>();
         int idx = 0;
         int limit = query.getIntFilter("limit");
@@ -97,6 +99,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing required filter: 'by'");
 
         try {
+            PreparedWhere preparedWhere = getActivityWhereClause(query);
             // activity ids (processid:logicalId)
             String[] actIdsArr = query.getArrayFilter("activityIds");
             List<String> actIds = actIdsArr == null ? null : Arrays.asList(actIdsArr);
@@ -135,13 +138,21 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
             if (by.equals("throughput"))
                 sql.append(", PROCESS_INSTANCE pi");
             sql.append("\n");
-            sql.append(getActivityWhereClause(query));
-            if (by.equals("status"))
-                sql.append("\n  and ai.status_cd ").append(getInCondition(statusCodes)).append(") a\n");
-            else if (by.equals("throughput"))
-                sql.append("\n ) a  where act_unique_id ").append(getInCondition(actIds));
-            else if (by.equals("total"))
+            sql.append(preparedWhere.getWhere());
+            List<Object> params = new ArrayList<>(Arrays.asList(preparedWhere.getParams()));
+            if (by.equals("status")) {
+                PreparedWhere inCondition = getInCondition(statusCodes);
+                sql.append("   and ai.status_cd ").append(inCondition.getWhere()).append(") a\n");
+                params.addAll(Arrays.asList(inCondition.getParams()));
+            }
+            else if (by.equals("throughput")) {
+                PreparedWhere inCondition = getInCondition(actIds);
+                sql.append("\n ) a  where act_unique_id ").append(inCondition.getWhere());
+                params.addAll(Arrays.asList(inCondition.getParams()));
+            }
+            else if (by.equals("total")) {
                 sql.append("\n ) a");
+            }
 
             sql.append(" group by st");
             if (by.equals("status"))
@@ -154,7 +165,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
                 sql.append("\norder by to_date(st, 'DD-Mon-yyyy')");
 
             db.openConnection();
-            ResultSet rs = db.runSelect(sql.toString());
+            ResultSet rs = db.runSelect(sql.toString(), params.toArray());
             TreeMap<Date,List<ActivityAggregate>> map = new TreeMap<>();
             Date prevStartDate = getStartDate(query);
             while (rs.next()) {
@@ -216,35 +227,35 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
         }
     }
 
-    protected String getActivityWhereClause(Query query) throws ParseException, DataAccessException {
+    protected PreparedWhere getActivityWhereClause(Query query) throws ParseException, DataAccessException {
         String by = query.getFilter("by");
         Date start = getStartDate(query);
 
         StringBuilder where = new StringBuilder();
-
+        List<Object> params = new ArrayList<>();
         if (by.equals("throughput"))
             where.append(" where ai.process_instance_id = pi.process_instance_id ");
-        where.append(where.length() > 0 ? "and " : "where ");
-        if (db.isMySQL())
-            where.append("ai.start_dt >= '").append(getMySqlDt(start)).append("' ");
-        else
-            where.append("ai.start_dt >= '").append(getOracleDt(start)).append("' ");
+        where.append(where.length() > 0 ? "  and " : "where ");
+        where.append("ai.start_dt >= ? ");
+        params.add(getDt(start));
         Date end = getEndDate(query);
         if (end != null) {
-            if (db.isMySQL())
-                where.append("and ai.start_dt <= '").append(getMySqlDt(end)).append("' ");
-            else
-                where.append("and ai.start_dt <= '").append(getOracleDt(end)).append("' ");
+            where.append("  and ai.start_dt <= ?");
+            params.add(getDt(end));
         }
 
-        where.append(" and ai.status_cd in (").append(WorkStatus.STATUS_IN_PROGRESS).append(",")
-                .append(WorkStatus.STATUS_FAILED).append(",").append(WorkStatus.STATUS_WAITING).append(")");
-
         String status = query.getFilter("Status");
-        if (status != null)
-            where.append("and ai.STATUS_CD = ").append(WorkStatuses.getCode(status));
+        if (status != null) {
+            where.append("  and ai.status_cd = ?\n");
+            params.add(WorkStatuses.getCode(status));
+        }
 
-        return where.toString();
+        where.append(" and ai.status_cd in (?,?,?)");
+        params.add(WorkStatus.STATUS_IN_PROGRESS);
+        params.add(WorkStatus.STATUS_FAILED);
+        params.add(WorkStatus.STATUS_WAITING);
+
+        return new PreparedWhere(where.toString(), params.toArray());
     }
 
 }

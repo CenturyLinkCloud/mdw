@@ -341,6 +341,7 @@ class DashboardChart extends Component {
         }
       }, this);
     }
+    // console.log("DATA: " + JSON.stringify(lineData, null, 2));
     return lineData;
   }
 

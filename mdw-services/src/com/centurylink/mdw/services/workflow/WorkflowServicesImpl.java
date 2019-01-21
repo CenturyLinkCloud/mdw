@@ -543,7 +543,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         try {
             CodeTimer timer = new CodeTimer(true);
             List<ProcessAggregate> list = getProcessAggregation().getTops(query);
-            timer.logTimingAndContinue("AggregateDataAccessVcs.getTopProcessInstances()");
+            timer.logTimingAndContinue("WorkflowServicesImpl.getTopProcesses()");
             if ("status".equals(query.getFilter("by"))) {
                 list = populateProcessStatuses(list);
             }

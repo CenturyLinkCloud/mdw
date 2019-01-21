@@ -27,8 +27,10 @@ import com.centurylink.mdw.dataaccess.reports.RequestAggregation;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.request.RequestAggregate;
 import com.centurylink.mdw.model.request.RequestList;
+import com.centurylink.mdw.model.workflow.ProcessAggregate;
 import com.centurylink.mdw.service.data.RequestDataAccess;
 import com.centurylink.mdw.services.RequestServices;
+import com.centurylink.mdw.util.timer.CodeTimer;
 
 public class RequestServicesImpl implements RequestServices {
 
@@ -36,7 +38,7 @@ public class RequestServicesImpl implements RequestServices {
         return new RequestDataAccess();
     }
 
-    protected RequestAggregation getAggregateDataAccess() throws DataAccessException {
+    protected RequestAggregation getRequestAggregation() throws DataAccessException {
         return new RequestAggregation();
     }
 
@@ -120,9 +122,28 @@ public class RequestServicesImpl implements RequestServices {
          }
     }
 
+    public List<RequestAggregate> getTopRequests(Query query) throws ServiceException {
+        try {
+            CodeTimer timer = new CodeTimer(true);
+            List<RequestAggregate> list = getRequestAggregation().getTops(query);
+            timer.logTimingAndContinue("RequestServicesImpl.getTopRequests()");
+//            if ("status".equals(query.getFilter("by"))) {
+//                list = populateRequestStatuses(list);
+//            }
+//            else {
+//                list = populateProcesses(list);
+//            }
+            timer.stopAndLogTiming("RequestServicesImpl.populate()");
+            return list;
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(500, "Error retrieving top throughput requests: query=" + query, ex);
+        }
+    }
+
     public TreeMap<Date,List<RequestAggregate>> getRequestBreakdown(Query query) throws ServiceException {
         try {
-            TreeMap<Date,List<RequestAggregate>> map = getAggregateDataAccess().getBreakdown(query);
+            TreeMap<Date,List<RequestAggregate>> map = getRequestAggregation().getBreakdown(query);
             return map;
         }
         catch (DataAccessException ex) {

@@ -19,12 +19,13 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.Aggregate;
-import com.centurylink.mdw.model.workflow.ProcessAggregate;
 
 import java.text.ParseException;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
@@ -71,4 +72,31 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
         }
     }
 
+    @SuppressWarnings("deprecation")
+    protected static Date getRoundDate(Date date) {
+        Date roundDate = new Date(date.getTime());
+        roundDate.setHours(0);
+        roundDate.setMinutes(0);
+        roundDate.setSeconds(0);
+        return roundDate;
+    }
+
+    protected PreparedWhere getInCondition(List<?> elements) {
+        StringBuilder in = new StringBuilder();
+        List<Object> params = new ArrayList<>();
+        in.append("in (");
+        if (elements.isEmpty()) {
+            in.append("''");  // no match -- avoid malformed sql
+        }
+        else {
+            for (int i = 0; i < elements.size(); i++) {
+                in.append("?");
+                if (i < elements.size() - 1)
+                    in.append(",");
+                params.add(elements.get(i));
+            }
+        }
+        in.append(") ");
+        return new PreparedWhere(in.toString(), params.toArray());
+    }
 }

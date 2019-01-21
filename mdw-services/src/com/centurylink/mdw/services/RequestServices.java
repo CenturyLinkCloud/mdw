@@ -39,6 +39,7 @@ public interface RequestServices {
     Request getMasterRequest(String masterRequestId) throws ServiceException;
     Request getMasterRequestResponse(String masterReqeustId) throws ServiceException;
 
+    List<RequestAggregate> getTopRequests(Query query) throws ServiceException;
     TreeMap<Date,List<RequestAggregate>> getRequestBreakdown(Query query) throws ServiceException;
 
     void setElapsedTime(String ownerType, Long instanceId, Long elapsedTime) throws ServiceException;
