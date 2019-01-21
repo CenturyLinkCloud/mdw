@@ -64,9 +64,9 @@ public class SolutionsDataAccess extends CommonDataAccess {
             db.openConnection();
             String sql;
             if (StringHelper.isEmpty(solutionId))
-                sql = "select " + SOLUTION_COLS + " from solution s";
+                sql = "select " + SOLUTION_COLS + " from SOLUTION s";
             else
-                sql = "select " + SOLUTION_COLS + " from solution s where id like '" + solutionId + "%'";
+                sql = "select " + SOLUTION_COLS + " from SOLUTION s where id like '" + solutionId + "%'";
             ResultSet rs = db.runSelect(sql);
             while (rs.next())
                 solutions.add(buildSolution(rs, false, false));
@@ -87,7 +87,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
     public Solution getSolution(String id, boolean deep) throws DataAccessException {
         try {
             db.openConnection();
-            String sql = "select " + SOLUTION_COLS + " from solution s where s.id = ?";
+            String sql = "select " + SOLUTION_COLS + " from SOLUTION s where s.id = ?";
             ResultSet rs = db.runSelect(sql, id);
             if (rs.next())
                 return buildSolution(rs, deep, deep);
@@ -106,7 +106,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
 
         try {
             db.openConnection();
-            String sql = "select " + SOLUTION_COLS + " from solution s where s.solution_id = ?";
+            String sql = "select " + SOLUTION_COLS + " from SOLUTION s where s.solution_id = ?";
             ResultSet rs = db.runSelect(sql, solutionId);
             if (rs.next())
                 return buildSolution(rs, true, true);
@@ -176,7 +176,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
 
     private List<Jsonable> getMasterRequestMembers0(Long solutionId) throws SQLException {
         String query = "select " + SOLUTION_MAP_COLS + ", " + PROC_INST_COLS +
-                " from solution_map sm, process_instance pi" +
+                " from SOLUTION_MAP sm, PROCESS_INSTANCE pi" +
             "\n where sm.solution_id = ?" +
             "\n and sm.member_type = '"  + MemberType.MasterRequest + "'" +
             "\n and pi.master_request_id = sm.member_id" +
@@ -208,7 +208,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
 
     private List<Jsonable> getTaskInstanceMembers0(Long solutionId) throws SQLException {
         String query = "select " + SOLUTION_MAP_COLS + ", " + TASK_INST_COLS +
-                " from solution s, solution_map sm, task_instance ti" +
+                " from SOLUTION s, SOLUTION_MAP sm, task_instance ti" +
             "\n where s.solution_id = ?" +
             "\n and sm.solution_id = s.solution_id" +
             "\n and sm.member_type = '"  + MemberType.TaskInstance + "'" +
@@ -226,7 +226,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
 
     private List<Jsonable> getProcessInstanceMembers0(Long solutionId) throws SQLException {
         String query = "select " + SOLUTION_COLS + ", " + SOLUTION_MAP_COLS + ", " + PROC_INST_COLS +
-                " from solution s, solution_map sm, process_instance pi" +
+                " from SOLUTION s, SOLUTION_MAP sm, PROCESS_INSTANCE pi" +
             "\n where s.solution_id = ?" +
             "\n and s.solution_id = sm.solution_id" +
             "\n and sm.member_type = '"  + MemberType.ProcessInstance + "'" +
@@ -244,7 +244,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
 
     private List<Jsonable> getSolutionMembers0(Long solutionId, boolean deep) throws SQLException {
         String query = "select " + SOLUTION_MAP_COLS +
-                " from solution_map sm" +
+                " from SOLUTION_MAP sm" +
             "\n where sm.solution_id = ?" +
             "\n and sm.member_type = '"  + MemberType.Solution + "'";
 
@@ -260,7 +260,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
             for (String memberId : memberIds) {
                 if (members == null)
                     members = new ArrayList<Jsonable>();
-                String sql = "select " + SOLUTION_COLS + " from solution s where s.id = ?";
+                String sql = "select " + SOLUTION_COLS + " from SOLUTION s where s.id = ?";
                 ResultSet rs2 = db.runSelect(sql, memberId);
                 if (rs2.next())
                     members.add(buildSolution(rs2, deep, deep));
@@ -275,7 +275,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
             db.openConnection();
             if (solutionId == null || solutionId.longValue() <= 0L) {
                 solutionId = db.isMySQL() ? null : getNextId("MDW_COMMON_ID_SEQ");
-                String query = "insert into solution" +
+                String query = "insert into SOLUTION" +
                   "\n(solution_id, id, name, owner_type, owner_id, create_dt, create_usr, comments)" +
                   "\nvalues (?, ?, ?, ?, ?, " + now() + ", ?, ?)";
                 Object[] args = new Object[7];
@@ -293,7 +293,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
                 solution.setSolutionId(solutionId);
             }
             else {
-                String query = "update solution set" +
+                String query = "update SOLUTION set" +
                   "\nname = ?, owner_type = ?, owner_id = ?, mod_dt = " + now() + ", mod_usr = ?, comments = ?" +
                    "\nwhere id = ?";
                 Object[] args = new Object[6];
@@ -320,7 +320,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
     public void addMember(Long solutionId, MemberType memberType, String memberId) throws DataAccessException {
         try {
             db.openConnection();
-            String query = "insert into solution_map" +
+            String query = "insert into SOLUTION_MAP" +
               "\n (solution_id, member_type, member_id, create_dt, create_usr, comments)" +
               "\n values (?, ?, ?, " + now() + ", ?, ?)";
             Object[] args = new Object[5];
@@ -344,7 +344,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
     public void removeMember(Long solutionId, MemberType memberType, String memberId) throws DataAccessException {
         try {
             db.openConnection();
-            String query = "delete from solution_map" +
+            String query = "delete from SOLUTION_MAP" +
               "\n where solution_id = ?" +
               "\n and member_type = ?" +
               "\n and member_id = ?";
@@ -367,17 +367,17 @@ public class SolutionsDataAccess extends CommonDataAccess {
     public void deleteSolution(Long solution_id, String id) throws DataAccessException {
         try {
             db.openConnection();
-            String query = "delete from solution_map " +
+            String query = "delete from SOLUTION_MAP " +
               "\n where solution_id = ?";
             db.runUpdate(query, solution_id);
-            query = "delete from value " +
+            query = "delete from VALUE " +
                     "\n where owner_type = ? " +
                     "\n and owner_id = ? ";
             Object[] args = new Object[2];
             args[0] = OwnerType.SOLUTION;
             args[1] = id;
             db.runUpdate(query, args);
-            query = "delete from solution" +
+            query = "delete from SOLUTION" +
                     "\n where solution_id = ?";
             db.runUpdate(query, solution_id);
             db.commit();
@@ -477,7 +477,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
 
             StringBuilder query =  new StringBuilder();
             query.append("select " + SOLUTION_COLS  +
-                    " from solution s, solution_map sm" +
+                    " from SOLUTION s, SOLUTION_MAP sm" +
                 "\n where s.solution_id = sm.solution_id" +
                 "\n and sm.member_id = '" + memberId + "'" );
 

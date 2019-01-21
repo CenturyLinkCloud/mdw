@@ -30,7 +30,7 @@ public class CollaborationDataAccess extends CommonDataAccess {
         try {
             db.openConnection();
             List<Comment> notes = new ArrayList<Comment>();
-            String query = "select * from instance_note"
+            String query = "select * from INSTANCE_NOTE"
                     + " where instance_note_owner = ? and INSTANCE_NOTE_OWNER_ID = ?"
                     + " order by create_dt";
             Object[] args = new Object[2];
@@ -64,7 +64,7 @@ public class CollaborationDataAccess extends CommonDataAccess {
         try {
             db.openConnection();
             Comment note = null;
-            String query = "select * from instance_note where instance_note_id = ?";
+            String query = "select * from INSTANCE_NOTE where instance_note_id = ?";
             ResultSet rs = db.runSelect(query, id);
             while (rs.next()) {
                 note = new Comment();
@@ -123,7 +123,7 @@ public class CollaborationDataAccess extends CommonDataAccess {
     public void deleteNote(Long id) throws DataAccessException {
         try {
             db.openConnection();
-            String query = "delete from instance_note where instance_note_id = ?";
+            String query = "delete from INSTANCE_NOTE where instance_note_id = ?";
             db.runUpdate(query, id);
             db.commit();
         }
@@ -163,7 +163,7 @@ public class CollaborationDataAccess extends CommonDataAccess {
         try {
             db.openConnection();
             List<Attachment> attachments = new ArrayList<Attachment>();
-            String query = "select * from attachment where attachment_owner=? and attachment_owner_id=?";
+            String query = "select * from ATTACHMENT where attachment_owner=? and attachment_owner_id=?";
             Object[] args = new Object[2];
             args[0] = ownerType;
             args[1] = ownerId;
@@ -196,7 +196,7 @@ public class CollaborationDataAccess extends CommonDataAccess {
         try {
             db.openConnection();
             Attachment attachment = null;
-            String query = "select * from attachment where attachment_id=?";
+            String query = "select * from ATTACHMENT where attachment_id=?";
             ResultSet rs = db.runSelect(query, id);
             if (rs.next()) {
                 attachment = new Attachment();
@@ -227,7 +227,7 @@ public class CollaborationDataAccess extends CommonDataAccess {
         try {
             db.openConnection();
             Long id = db.isMySQL() ? null : this.getNextId("ATTACHMENT_ID_SEQ");
-            String query = "insert into attachment"
+            String query = "insert into ATTACHMENT"
                     + " (attachment_id, attachment_owner, attachment_owner_id,"
                     + " attachment_name, attachment_location, attachment_content_type,"
                     + " create_dt, create_usr) " + "values (?,?,?,?,?,?," + now() + ",?)";
@@ -258,7 +258,7 @@ public class CollaborationDataAccess extends CommonDataAccess {
     public void deleteAttachment(Long id) throws DataAccessException {
         try {
             db.openConnection();
-            String query = "delete from attachment where attachment_id = ?";
+            String query = "delete from ATTACHMENT where attachment_id = ?";
             Object[] args = new Object[1];
             args[1] = id;
             db.runUpdate(query, args);
@@ -277,7 +277,7 @@ public class CollaborationDataAccess extends CommonDataAccess {
             throws DataAccessException {
         try {
             db.openConnection();
-            String query = "update attachment set mod_dt=" + now()
+            String query = "update ATTACHMENT set mod_dt=" + now()
                     + ", mod_usr= ? where attachment_id = ?";
             Object[] args = new Object[2];
             args[0] = user;

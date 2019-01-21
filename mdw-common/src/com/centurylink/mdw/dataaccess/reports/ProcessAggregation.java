@@ -40,7 +40,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
             throws ParseException, DataAccessException, SQLException {
         String sql = "select process_id, " +
                 "count(process_id) as ct\n" +
-                "from process_instance\n" +
+                "from PROCESS_INSTANCE\n" +
                 getProcessWhereClause(query) + "\n" +
                 "group by process_id\n" +
                 "order by ct desc\n";
@@ -61,7 +61,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
 
     private List<ProcessAggregate> getTopsByStatus(Query query)
             throws ParseException, DataAccessException, SQLException {
-        String sql = "select status_cd, count(status_cd) as ct from process_instance\n" +
+        String sql = "select status_cd, count(status_cd) as ct from PROCESS_INSTANCE\n" +
                 getProcessWhereClause(query) + "\n" +
                 "group by status_cd\n" +
                 "order by ct desc\n";
@@ -84,8 +84,8 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
             throws ParseException, DataAccessException, SQLException {
         String sql = "select process_id, " +
                 "avg(elapsed_ms) as elapsed, count(process_id) as ct\n" +
-                "from process_instance" +
-                ", instance_timing\n" +
+                "from PROCESS_INSTANCE" +
+                ", INSTANCE_TIMING\n" +
                 getProcessWhereClause(query) + "\n" +
                 "group by process_id\n" +
                 "order by elapsed desc\n";
@@ -144,9 +144,9 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
                 sql.append(", process_id ");
             if (by.equals("completionTime"))
                 sql.append(", elapsed_ms");
-            sql.append("  from process_instance");
+            sql.append("  from PROCESS_INSTANCE");
             if (by.equals("completionTime"))
-                sql.append(", instance_timing");
+                sql.append(", INSTANCE_TIMING");
             sql.append("\n   ");
             sql.append(getProcessWhereClause(query));
             if (by.equals("status"))

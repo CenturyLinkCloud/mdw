@@ -43,7 +43,7 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
                 sql.append("from (select to_char(create_dt,'DD-Mon-yyyy') as created");
             if (ownerTypes != null)
                 sql.append(", owner_type ");
-            sql.append("  from document\n");
+            sql.append("  from DOCUMENT\n");
             sql.append(getRequestWhereClause(query));
             if (ownerTypes != null)
                 sql.append("\n   and owner_type ").append(getInCondition(ownerTypes));

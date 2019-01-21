@@ -20,7 +20,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("select count(tii.task_id) as ct, tii.task_id\n");
-            sql.append("from (select task_id from task_instance ti ");
+            sql.append("from (select task_id from TASK_INSTANCE ti ");
             sql.append(getTaskWhereClause(query));
             sql.append(") tii\n");
             sql.append("group by task_id\n");
@@ -54,7 +54,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("select count(tii.group_name) as ct, tii.group_name\n");
-            sql.append("from (select ug.group_name from task_inst_grp_mapp tigm, task_instance ti, user_group ug\n   ");
+            sql.append("from (select ug.group_name from TASK_INST_GRP_MAPP tigm, TASK_INSTANCE ti, USER_GROUP ug\n   ");
             sql.append(getTaskWhereClause(query));
             sql.append("and tigm.task_instance_id = ti.task_instance_id\n   ");
             sql.append("and tigm.user_group_id = ug.user_group_id\n   ");
@@ -90,7 +90,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
         try {
             StringBuilder sql = new StringBuilder();
             sql.append("select count(tii.cuid) as ct, tii.cuid, tii.name\n");
-            sql.append("from (select ui.cuid, ui.name from task_instance ti, user_info ui\n   ");
+            sql.append("from (select ui.cuid, ui.name from TASK_INSTANCE ti, USER_INFO ui\n   ");
             sql.append(getTaskWhereClause(query));
             sql.append("and ti.task_claim_user_id = ui.user_info_id\n   ");
             sql.append(") tii\n");
@@ -182,11 +182,11 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
                 sql.append(", ui.cuid, ui.name ");
             else if (statusCodes != null)
                 sql.append(", ti.task_instance_status ");
-            sql.append("\n   from task_instance ti ");
+            sql.append("\n   from TASK_INSTANCE ti ");
             if (workgroups != null)
-                sql.append(", task_inst_grp_mapp tigm, user_group ug ");
+                sql.append(", TASK_INST_GRP_MAPP tigm, USER_GROUP ug ");
             else if (assignees != null)
-                sql.append(", user_info ui ");
+                sql.append(", USER_INFO ui ");
             sql.append("\n   ");
             sql.append(getTaskWhereClause(query));
             if (taskIds != null)

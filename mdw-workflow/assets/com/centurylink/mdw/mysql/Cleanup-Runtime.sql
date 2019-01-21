@@ -53,7 +53,7 @@ SET foreign_key_checks=0;
 
 
    SET @dynsql =
-         Concat('update process_instance'
+         Concat('update PROCESS_INSTANCE'
       , ' set status_cd = '
       , ifnull(purgestatusid, '')
       , ' where end_dt < '
@@ -84,8 +84,8 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	COMMIT;
-   	 DELETE e1 FROM event_log e1 JOIN
-     	(SELECT e2.event_log_id FROM event_log e2
+   	 DELETE e1 FROM EVENT_LOG e1 JOIN
+     	(SELECT e2.event_log_id FROM EVENT_LOG e2
          	WHERE e2.create_dt < DATE_SUB(CURDATE(), INTERVAL eldaydiff DAY)
          LIMIT commitcnt) e2
      USING (event_log_id);
@@ -98,8 +98,8 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-   	 DELETE e1 FROM event_instance e1 JOIN 
-   	 	(SELECT e2.event_name FROM event_instance e2
+   	 DELETE e1 FROM EVENT_INSTANCE e1 JOIN
+   	 	(SELECT e2.event_name FROM EVENT_INSTANCE e2
          	WHERE e2.create_dt < DATE_SUB(CURDATE(), INTERVAL eldaydiff DAY) 
          	AND e2.event_name NOT LIKE 'ScheduledJob%' 
          	LIMIT commitcnt) e3  
@@ -114,15 +114,15 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
      COMMIT;
-     DELETE e1 FROM event_wait_instance e1 JOIN
-     	(SELECT e2.event_wait_instance_id FROM event_wait_instance e2 
+     DELETE e1 FROM EVENT_WAIT_INSTANCE e1 JOIN
+     	(SELECT e2.event_wait_instance_id FROM EVENT_WAIT_INSTANCE e2
          	WHERE e2.event_wait_instance_owner = 'ACTIVITY_INSTANCE'
            	AND e2.event_wait_instance_owner_id IN (
                   SELECT a1.activity_instance_id
-                    FROM activity_instance a1 
+                    FROM ACTIVITY_INSTANCE a1
                    	WHERE a1.process_instance_id IN (
                  		SELECT p1.process_instance_id
-                        	FROM process_instance p1
+                        	FROM PROCESS_INSTANCE p1
                             WHERE p1.status_cd = purgestatusid))
             LIMIT commitcnt) e3
         USING (event_wait_instance_id);
@@ -141,10 +141,10 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-   	 DELETE a1 FROM activity_instance a1 JOIN
-     	(SELECT a2.activity_instance_id FROM activity_instance a2 
+   	 DELETE a1 FROM ACTIVITY_INSTANCE a1 JOIN
+     	(SELECT a2.activity_instance_id FROM ACTIVITY_INSTANCE a2
          	WHERE a2.process_instance_id IN (SELECT p1.process_instance_id
-                                            FROM process_instance p1
+                                            FROM PROCESS_INSTANCE p1
                                            WHERE p1.status_cd = purgestatusid)
             LIMIT commitcnt) a3
         USING (activity_instance_id);
@@ -158,10 +158,10 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-   	 DELETE w1 FROM work_transition_instance w1 JOIN
-     	(SELECT w2.WORK_TRANS_INST_ID FROM work_transition_instance w2 
+   	 DELETE w1 FROM WORK_TRANSITION_INSTANCE w1 JOIN
+     	(SELECT w2.WORK_TRANS_INST_ID FROM WORK_TRANSITION_INSTANCE w2
          	WHERE w2.process_inst_id IN (SELECT p1.process_instance_id
-                                         FROM process_instance p1
+                                         FROM PROCESS_INSTANCE p1
                                         WHERE p1.status_cd = purgestatusid)
             LIMIT commitcnt) w3
         USING (WORK_TRANS_INST_ID);
@@ -175,10 +175,10 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-   	 DELETE v1 FROM variable_instance v1 JOIN
-     	(SELECT v2.variable_inst_id FROM variable_instance v2 
+   	 DELETE v1 FROM VARIABLE_INSTANCE v1 JOIN
+     	(SELECT v2.variable_inst_id FROM VARIABLE_INSTANCE v2
          	WHERE v2.process_inst_id IN (SELECT p1.process_instance_id
-                                        FROM process_instance p1
+                                        FROM PROCESS_INSTANCE p1
                                        WHERE p1.status_cd = purgestatusid)
             LIMIT commitcnt) v3
         USING (variable_inst_id);
@@ -197,15 +197,15 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-   	 DELETE i1 FROM instance_note i1 JOIN
-     	(SELECT i2.instance_note_id FROM instance_note i2
+   	 DELETE i1 FROM INSTANCE_NOTE i1 JOIN
+     	(SELECT i2.instance_note_id FROM INSTANCE_NOTE i2
          	WHERE i2.instance_note_owner_id IN (
                   SELECT ti.task_instance_id
-                    FROM task_instance ti
+                    FROM TASK_INSTANCE ti
                    WHERE ti.task_instance_owner = 'PROCESS_INSTANCE'
                      AND ti.task_instance_owner_id IN (
                                                SELECT p1.process_instance_id
-                                                 FROM process_instance p1
+                                                 FROM PROCESS_INSTANCE p1
                                                 WHERE p1.status_cd = purgestatusid))                                           
             LIMIT commitcnt) i3
        USING (instance_note_id);
@@ -217,7 +217,7 @@ SET foreign_key_checks=0;
    
   SELECT table_name
      INTO table_exist
-     FROM information_schema.tables
+     FROM information_schema.TABLES
     WHERE table_name = 'INSTANCE_INDEX';
     
    IF table_exist IS NOT NULL
@@ -227,15 +227,15 @@ SET foreign_key_checks=0;
      SET row_count = 0;
 	   REPEAT
 	   	 COMMIT;
-	     DELETE i1 FROM instance_index i1 JOIN
-	     	(SELECT INSTANCE_ID,OWNER_TYPE,INDEX_KEY FROM instance_index i2
+	     DELETE i1 FROM INSTANCE_INDEX i1 JOIN
+	     	(SELECT INSTANCE_ID,OWNER_TYPE,INDEX_KEY FROM INSTANCE_INDEX i2
          		WHERE i2.owner_type='TASK_INSTANCE' and i2.instance_id IN (
                   SELECT ti.task_instance_id
-                    FROM task_instance ti
+                    FROM TASK_INSTANCE ti
                    WHERE ti.task_instance_owner = 'PROCESS_INSTANCE'
                      AND ti.task_instance_owner_id IN (
                                                SELECT p1.process_instance_id
-                                                 FROM process_instance p1
+                                                 FROM PROCESS_INSTANCE p1
                                                 WHERE p1.status_cd = purgestatusid))
              	LIMIT commitcnt) i3
         	USING (INSTANCE_ID,OWNER_TYPE,INDEX_KEY);
@@ -248,15 +248,15 @@ SET foreign_key_checks=0;
      SET row_count = 0;
      REPEAT
        COMMIT;
-       DELETE tg1 FROM task_inst_grp_mapp tg1 JOIN
-       	(SELECT tg2.TASK_INSTANCE_ID, tg2.USER_GROUP_ID FROM task_inst_grp_mapp tg2
+       DELETE tg1 FROM TASK_INST_GRP_MAPP tg1 JOIN
+       	(SELECT tg2.TASK_INSTANCE_ID, tg2.USER_GROUP_ID FROM TASK_INST_GRP_MAPP tg2
          	WHERE tg2.task_instance_id IN (
                   SELECT ti.task_instance_id
-                    FROM task_instance ti
+                    FROM TASK_INSTANCE ti
                    WHERE ti.task_instance_owner = 'PROCESS_INSTANCE'
                      AND ti.task_instance_owner_id IN (
                                                SELECT p1.process_instance_id
-                                                 FROM process_instance p1
+                                                 FROM PROCESS_INSTANCE p1
                                                 WHERE p1.status_cd = purgestatusid))
         	LIMIT commitcnt) tg3
         USING (TASK_INSTANCE_ID,USER_GROUP_ID);
@@ -270,11 +270,11 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-   	 DELETE t1 FROM task_instance t1 JOIN
-     	(SELECT t2.task_instance_id FROM task_instance t2 
+   	 DELETE t1 FROM TASK_INSTANCE t1 JOIN
+     	(SELECT t2.task_instance_id FROM TASK_INSTANCE t2
          	WHERE t2.task_instance_owner = 'PROCESS_INSTANCE'
            	AND t2.task_instance_owner_id IN (SELECT p1.process_instance_id
-                                               FROM process_instance p1
+                                               FROM PROCESS_INSTANCE p1
                                               WHERE p1.status_cd = purgestatusid)
       		LIMIT commitcnt) t3
       	USING (task_instance_id);
@@ -295,15 +295,15 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-   	 DELETE dc1 FROM document_content dc1 JOIN 
+   	 DELETE dc1 FROM DOCUMENT_CONTENT dc1 JOIN
       ( SELECT a.document_id FROM 
-		( SELECT doc.document_id FROM document doc JOIN document_content dc USING (document_id)
+		( SELECT doc.document_id FROM DOCUMENT doc JOIN DOCUMENT_CONTENT dc USING (document_id)
        -- 1. all documents with owner_id being a process instance ID marked for deletion
        		WHERE  ( ( doc.owner_id != 0 AND doc.OWNER_TYPE IN ('PROCESS_INSTANCE', 'PROCESS_RUN','LISTENER_REQUEST')  
                AND EXISTS (
                        SELECT
                               process_instance_id
-                         FROM process_instance pi
+                         FROM PROCESS_INSTANCE pi
                         WHERE pi.process_instance_id = doc.owner_id
                           AND pi.status_cd = purgestatusid)
                )
@@ -311,14 +311,14 @@ SET foreign_key_checks=0;
             OR ( doc.owner_id != 0 AND doc.OWNER_TYPE = 'VARIABLE_INSTANCE'
             	AND NOT EXISTS (
             				SELECT variable_inst_id
-            				FROM variable_instance
+            				FROM VARIABLE_INSTANCE
             				WHERE variable_inst_id = doc.owner_id)
                )
            -- 3. all documents with owner type of TASK_INSTANCE where row in TASK_INSTANCE table has been deleted
             OR ( doc.owner_id != 0 AND doc.OWNER_TYPE = 'TASK_INSTANCE'
             	AND NOT EXISTS (
             				SELECT task_instance_id
-            				FROM task_instance
+            				FROM TASK_INSTANCE
             				WHERE task_instance_id = doc.owner_id)
                )   
            -- 4. all documents with owner type of ACTIVITY_INSTANCE/ADAPTER_REQUEST/ADAPTER_RESPONSE/INTERNAL_EVENT where row 
@@ -326,7 +326,7 @@ SET foreign_key_checks=0;
             OR ( doc.owner_id != 0 AND doc.OWNER_TYPE IN('ACTIVITY_INSTANCE','ADAPTER_REQUEST','ADAPTER_RESPONSE','INTERNAL_EVENT')
             	AND NOT EXISTS (
             				SELECT activity_instance_id
-            				FROM activity_instance
+            				FROM ACTIVITY_INSTANCE
             				WHERE activity_instance_id = doc.owner_id)
                )    
        	   -- 5. all documents with LISTENER_REQUEST/USER/TASK_INSTANCE/LISTENER_REQUEST_META/LISTENER_RESPONSE/VARIABLE_INSTANCE/INTERNAL_EVENT
@@ -339,13 +339,13 @@ SET foreign_key_checks=0;
             OR ( doc.owner_id != 0 AND doc.owner_type IN 
             	('LISTENER_RESPONSE','LISTENER_RESPONSE_META','LISTENER_REQUEST_META','DOCUMENT','ADAPTER_REQUEST_META','ADAPTER_RESPONSE_META')
                 AND NOT EXISTS (SELECT document_id
-                                FROM document_content doc2
+                                FROM DOCUMENT_CONTENT doc2
                                 WHERE doc2.document_id = doc.owner_id)
                ) 
              )
              -- 7. the document (event message) is not tied to an event_instance
              AND NOT EXISTS (SELECT e1.document_id 
-             					FROM event_instance e1 
+             					FROM EVENT_INSTANCE e1
              					WHERE e1.document_id = doc.document_id)
 		   ) a 
          LIMIT commitcnt
@@ -367,14 +367,14 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	 COMMIT;
-   	 DELETE dc1 FROM document dc1 JOIN     
-		( SELECT doc.document_id FROM document doc
+   	 DELETE dc1 FROM DOCUMENT dc1 JOIN
+		( SELECT doc.document_id FROM DOCUMENT doc
        -- 1. all documents with owner_id being a process instance ID marked for deletion
        		WHERE  ( ( doc.owner_id != 0 AND doc.OWNER_TYPE IN ('PROCESS_INSTANCE', 'PROCESS_RUN','LISTENER_REQUEST')  
                AND EXISTS (
                        SELECT
                               process_instance_id
-                         FROM process_instance pi
+                         FROM PROCESS_INSTANCE pi
                         WHERE pi.process_instance_id = doc.owner_id
                           AND pi.status_cd = purgestatusid)
                )
@@ -382,14 +382,14 @@ SET foreign_key_checks=0;
             OR ( doc.owner_id != 0 AND doc.OWNER_TYPE = 'VARIABLE_INSTANCE'
             	AND NOT EXISTS (
             				SELECT variable_inst_id
-            				FROM variable_instance
+            				FROM VARIABLE_INSTANCE
             				WHERE variable_inst_id = doc.owner_id)
                )
            -- 3. all documents with owner type of TASK_INSTANCE where row in TASK_INSTANCE table has been deleted
             OR ( doc.owner_id != 0 AND doc.OWNER_TYPE = 'TASK_INSTANCE'
             	AND NOT EXISTS (
             				SELECT task_instance_id
-            				FROM task_instance
+            				FROM TASK_INSTANCE
             				WHERE task_instance_id = doc.owner_id)
                )   
            -- 4. all documents with owner type of ACTIVITY_INSTANCE/ADAPTER_REQUEST/ADAPTER_RESPONSE/INTERNAL_EVENT where row 
@@ -397,7 +397,7 @@ SET foreign_key_checks=0;
             OR ( doc.owner_id != 0 AND doc.OWNER_TYPE IN('ACTIVITY_INSTANCE','ADAPTER_REQUEST','ADAPTER_RESPONSE','INTERNAL_EVENT')
             	AND NOT EXISTS (
             				SELECT activity_instance_id
-            				FROM activity_instance
+            				FROM ACTIVITY_INSTANCE
             				WHERE activity_instance_id = doc.owner_id)
                )    
        	   -- 5. all documents with LISTENER_REQUEST/USER/TASK_INSTANCE/LISTENER_REQUEST_META/LISTENER_RESPONSE/VARIABLE_INSTANCE/INTERNAL_EVENT
@@ -410,17 +410,17 @@ SET foreign_key_checks=0;
             OR ( doc.owner_id != 0 AND doc.owner_type IN 
             	('LISTENER_RESPONSE','LISTENER_RESPONSE_META','LISTENER_REQUEST_META','DOCUMENT','ADAPTER_REQUEST_META','ADAPTER_RESPONSE_META')
                 AND NOT EXISTS (SELECT document_id
-                                  FROM document doc2
+                                  FROM DOCUMENT doc2
                                  WHERE doc2.document_id = doc.owner_id)
                ) 
 			)
 			-- 7. the document doesn't exists in document_content
 			AND NOT EXISTS (SELECT document_id
-                                  FROM document_content dc
+                                  FROM DOCUMENT_CONTENT dc
                                  WHERE dc.document_id = doc.document_id)
             -- 8. the document (event message) is not tied to an event_instance
             AND NOT EXISTS (SELECT e1.document_id 
-             					FROM event_instance e1 
+             					FROM EVENT_INSTANCE e1
              					WHERE e1.document_id = doc.document_id)
          LIMIT commitcnt
       ) dc2 USING (document_id);
@@ -441,8 +441,8 @@ SET foreign_key_checks=0;
    SET row_count = 0;
    REPEAT
    	COMMIT;
-   	DELETE p1 FROM process_instance p1 JOIN
-    	(SELECT p2.process_instance_id FROM process_instance p2 
+   	DELETE p1 FROM PROCESS_INSTANCE p1 JOIN
+    	(SELECT p2.process_instance_id FROM PROCESS_INSTANCE p2
          	WHERE p2.status_cd = purgestatusid
       		LIMIT commitcnt) p3
       	USING (process_instance_id);
