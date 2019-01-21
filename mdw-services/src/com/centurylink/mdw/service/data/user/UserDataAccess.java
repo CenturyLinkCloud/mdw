@@ -794,8 +794,8 @@ public class UserDataAccess extends CommonDataAccess {
         String query = "insert into USER_GROUP_MAPPING" + " (USER_GROUP_MAPPING_ID, USER_INFO_ID,"
                 + "  CREATE_USR, CREATE_DT, USER_GROUP_ID) values ("
                 + (db.isMySQL() ? "null" : "MDW_COMMON_ID_SEQ.NEXTVAL") + ", "
-                + "(select distinct user_info_id from user_info where cuid = ? and END_DATE is NULL), 'MDW', "
-                + now() + ", " + "(select user_group_id from user_group where group_name = ?))";
+                + "(select distinct user_info_id from USER_INFO where cuid = ? and END_DATE is NULL), 'MDW', "
+                + now() + ", " + "(select user_group_id from USER_GROUP where group_name = ?))";
         try {
             db.openConnection();
             db.runUpdate(query, new Object[]{cuid, group});

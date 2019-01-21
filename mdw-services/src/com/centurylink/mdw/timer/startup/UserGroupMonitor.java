@@ -71,7 +71,7 @@ public class UserGroupMonitor implements StartupService {
                     Thread.sleep(interval);
 
                     // Check if it needs to trigger a UserGroup cache refresh
-                    String select = "select mod_dt from value where name= ? and owner_type= ? and owner_id= ?";
+                    String select = "select mod_dt from VALUE where name= ? and owner_type= ? and owner_id= ?";
                     try (DbAccess dbAccess = new DbAccess(); PreparedStatement stmt = dbAccess.getConnection().prepareStatement(select)) {
                         stmt.setString(1, "LastUserGroupChange");
                         stmt.setString(2, "UserGroupAdmin");

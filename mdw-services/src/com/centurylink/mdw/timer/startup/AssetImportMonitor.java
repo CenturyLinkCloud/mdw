@@ -103,7 +103,7 @@ public class AssetImportMonitor implements StartupService {
                     Thread.sleep(interval);
 
                     // Check if it needs to trigger an asset import to sync up this instance's assets
-                    String select = "select value from value where name= ? and owner_type= ? and owner_id= ?";
+                    String select = "select value from VALUE where name= ? and owner_type= ? and owner_id= ?";
                     try (DbAccess dbAccess = new DbAccess(); PreparedStatement stmt = dbAccess.getConnection().prepareStatement(select)) {
                         // Always trigger import if there's a newer remote commit or branch switching and auto pull is enabled
                         if (gitAutoPull && (!branch.equals(vcs.getBranch()) || vcs.getCommitTime(vcs.getCommit()) < vcs.getCommitTime(vcs.getRemoteCommit(branch)))) {
@@ -129,7 +129,7 @@ public class AssetImportMonitor implements StartupService {
 
                             // If no row found in DB, create it
                             if (latestImportCommit == null) {
-                                String insert = "insert into value (value, name, owner_type, owner_id, create_dt, create_usr, mod_dt, mod_usr, comments) "
+                                String insert = "insert into VALUE (value, name, owner_type, owner_id, create_dt, create_usr, mod_dt, mod_usr, comments) "
                                         + "values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
                                 Timestamp currentDate = new Timestamp(System.currentTimeMillis());
                                 try (PreparedStatement insertStmt = dbAccess.getConnection().prepareStatement(insert)) {
@@ -155,7 +155,7 @@ public class AssetImportMonitor implements StartupService {
                                     logger.info("Detected Asset Import in cluster.  Performing Asset Import...");
                                     performImport(gitRoot, assetDir, vcs, branch, gitHardReset, dbAccess.getConnection());
                                 } else {  // Update VALUE DB entry to trigger import on other instances to this newer commit
-                                    String update = "update value set value = ?, mod_dt = ? where name = ? and owner_type = ? and owner_id = ?";
+                                    String update = "update VALUE set value = ?, mod_dt = ? where name = ? and owner_type = ? and owner_id = ?";
                                     try (PreparedStatement updateStmt = dbAccess.getConnection().prepareStatement(update)) {
                                         updateStmt.setString(1, vcs.getCommit());
                                         updateStmt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
