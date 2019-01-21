@@ -1,8 +1,5 @@
 Setting up an MDW database in MySQL:
 
-Note: on Linux it's required to set the MySQL system variable lower_case_table_names to 1:
-http://dev.mysql.com/doc/refman/5.0/en/server-system-variables.html#sysvar_lower_case_table_names
-
 Run the following scripts in this order:
 1. create_tables.sql	
 2. create_indexes.sql
