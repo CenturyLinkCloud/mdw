@@ -203,8 +203,8 @@ public class WorkflowDataAccess extends CommonDataAccess {
      */
     public String getLatestProcessInstanceComments(Long processId) throws DataAccessException {
         StringBuilder query = new StringBuilder();
-        query.append("select process_instance_id, comments from process_instance\n");
-        query.append("where process_instance_id = (select max(process_instance_id) from process_instance ");
+        query.append("select process_instance_id, comments from PROCESS_INSTANCE\n");
+        query.append("where process_instance_id = (select max(process_instance_id) from PROCESS_INSTANCE ");
         query.append("where process_id = ? and comments is not null)");
 
         try {

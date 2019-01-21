@@ -394,7 +394,7 @@ public class UserGroupCache implements PreloadableCache {
     }
 
     private void updateLastUpdateValue() {
-        String select = "select value from value where name = ? and owner_type = ? and owner_id = ?";
+        String select = "select value from VALUE where name = ? and owner_type = ? and owner_id = ?";
         try (DbAccess dbAccess = new DbAccess(); PreparedStatement stmt = dbAccess.getConnection().prepareStatement(select)) {
             stmt.setString(1, "LastUserGroupChange");
             stmt.setString(2, "UserGroupAdmin");
@@ -402,7 +402,7 @@ public class UserGroupCache implements PreloadableCache {
             try (ResultSet rs = stmt.executeQuery()) {
                 Timestamp currentDate = new Timestamp(System.currentTimeMillis());
                 if (rs.next()) {
-                    String update = "update value set value = ?, mod_dt = ? where name = ? and owner_type = ? and owner_id = ?";
+                    String update = "update VALUE set value = ?, mod_dt = ? where name = ? and owner_type = ? and owner_id = ?";
                     try (PreparedStatement updateStmt = dbAccess.getConnection().prepareStatement(update)) {
                         updateStmt.setString(1, ((Long)currentDate.getTime()).toString());
                         updateStmt.setTimestamp(2, currentDate);
@@ -413,7 +413,7 @@ public class UserGroupCache implements PreloadableCache {
                     }
                 }
                 else {
-                    String insert = "insert into value (value, name, owner_type, owner_id, create_dt, create_usr, mod_dt, mod_usr, comments) "
+                    String insert = "insert into VALUE (value, name, owner_type, owner_id, create_dt, create_usr, mod_dt, mod_usr, comments) "
                             + "values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
                     try (PreparedStatement insertStmt = dbAccess.getConnection().prepareStatement(insert)) {
                         insertStmt.setString(1, ((Long)currentDate.getTime()).toString());

@@ -44,7 +44,7 @@ public class RequestDataAccess extends CommonDataAccess {
 
             StringBuilder count = new StringBuilder();
             count.append("select count(*)\n");
-            count.append("from process_instance pi, document d\n");
+            count.append("from PROCESS_INSTANCE pi, DOCUMENT d\n");
             count.append(where);
             int total = 0;
             ResultSet countRs = db.runSelect(count.toString());
@@ -61,7 +61,7 @@ public class RequestDataAccess extends CommonDataAccess {
 
             StringBuilder q = new StringBuilder(db.pagingQueryPrefix());
             q.append("select ").append(PROC_INST_COLS).append(", d.document_id, d.create_dt, d.owner_type, d.status_code, d.status_message, d.path\n");
-            q.append("from process_instance pi, document d\n");
+            q.append("from PROCESS_INSTANCE pi, DOCUMENT d\n");
 
             q.append(where).append(buildOrderBy(query));
             if (query.getMax() != Query.MAX_ALL)
@@ -179,7 +179,7 @@ public class RequestDataAccess extends CommonDataAccess {
     public Request getMasterRequest(String masterRequestId, boolean withContent, boolean withResponseContent)
     throws DataAccessException {
         StringBuilder query = new StringBuilder();
-        query.append("select document_id, process_instance_id from process_instance pi, document d\n");
+        query.append("select document_id, process_instance_id from PROCESS_INSTANCE pi, DOCUMENT d\n");
         query.append("where pi.owner_id = d.document_id\n");
         // query.append("and pi.owner = 'DOCUMENT'\n");  (eg: 'TESTER')
         query.append("and pi.master_request_id = ?");
@@ -211,7 +211,7 @@ public class RequestDataAccess extends CommonDataAccess {
     throws DataAccessException {
         try {
             String query = "select create_dt, owner_type, owner_id, path";
-            query += " from document where document_id = ?";
+            query += " from DOCUMENT where document_id = ?";
             db.openConnection();
             ResultSet rs = db.runSelect(query, id);
             Request request = null;
@@ -227,7 +227,7 @@ public class RequestDataAccess extends CommonDataAccess {
                     // Get META info as well
                     Long metaId = 0L;
                     String owner_type_meta = ownerType + "_META";
-                    query = "select document_id from document where owner_id = ? and owner_type = '" + owner_type_meta + "'";
+                    query = "select document_id from DOCUMENT where owner_id = ? and owner_type = '" + owner_type_meta + "'";
                     db.openConnection();
                     rs = db.runSelect(query, id);
                     if (rs.next()) {
@@ -249,7 +249,7 @@ public class RequestDataAccess extends CommonDataAccess {
                         }
                     }
                     if (!foundInDocDb) {
-                        query = "select content from document_content where document_id = ?";
+                        query = "select content from DOCUMENT_CONTENT where document_id = ?";
                         rs = db.runSelect(query, id);
                         if (rs.next())
                             request.setContent(rs.getString("content"));
@@ -272,12 +272,12 @@ public class RequestDataAccess extends CommonDataAccess {
             if (OwnerType.ADAPTER_REQUEST.equals(ownerType) && ownerId != null) {
                 responseOwnerType = OwnerType.ADAPTER_RESPONSE;
                 request.setOutbound(true);
-                responseQuery += " from document where owner_type='" + responseOwnerType + "' and owner_id = ?";
+                responseQuery += " from DOCUMENT where owner_type='" + responseOwnerType + "' and owner_id = ?";
                 responseRs = db.runSelect(responseQuery, ownerId);
             }
             else if (OwnerType.LISTENER_REQUEST.equals(ownerType)) {
                 responseOwnerType = OwnerType.LISTENER_RESPONSE;
-                responseQuery += " from document where owner_type='" + responseOwnerType + "' and owner_id = ?";
+                responseQuery += " from DOCUMENT where owner_type='" + responseOwnerType + "' and owner_id = ?";
                 responseRs = db.runSelect(responseQuery, id);
             }
             if (responseRs != null && responseRs.next()) {
@@ -291,7 +291,7 @@ public class RequestDataAccess extends CommonDataAccess {
                     // Get META info as well
                     Long metaId = 0L;
                     String owner_type_meta = responseOwnerType + "_META";
-                    query = "select document_id from document where owner_id = ? and owner_type = '" + owner_type_meta + "'";
+                    query = "select document_id from DOCUMENT where owner_id = ? and owner_type = '" + owner_type_meta + "'";
                     db.openConnection();
                     rs = db.runSelect(query, request.getResponseId());
                     if (rs.next()) {
@@ -312,7 +312,7 @@ public class RequestDataAccess extends CommonDataAccess {
                         }
                     }
                     if (!foundInDocDb) {
-                        query = "select content from document_content where document_id = ?";
+                        query = "select content from DOCUMENT_CONTENT where document_id = ?";
                         responseRs = db.runSelect(query, request.getResponseId());
                         if (responseRs.next())
                             response.setContent(responseRs.getString("content"));
@@ -330,7 +330,7 @@ public class RequestDataAccess extends CommonDataAccess {
 
             if (ownerId != null && ownerId > 0 && (withContent || withResponseContent)) {
                 if (OwnerType.ADAPTER_REQUEST.equals(ownerType)) {
-                    query = "select activity_instance_id, process_instance_id from activity_instance where activity_instance_id = ?";
+                    query = "select activity_instance_id, process_instance_id from ACTIVITY_INSTANCE where activity_instance_id = ?";
                     rs = db.runSelect(query, ownerId);
                     if (rs.next()) {
                         request.setActivityInstanceId(rs.getLong("activity_instance_id"));
@@ -361,7 +361,7 @@ public class RequestDataAccess extends CommonDataAccess {
 
             StringBuilder count = new StringBuilder();
             count.append("select count(*)\n");
-            count.append("from document d\n");
+            count.append("from DOCUMENT d\n");
             count.append(where);
             int total = 0;
             ResultSet countRs = db.runSelect(count.toString());
@@ -370,7 +370,7 @@ public class RequestDataAccess extends CommonDataAccess {
 
             StringBuilder q = new StringBuilder(db.pagingQueryPrefix());
             q.append("select d.document_id, d.create_dt, d.status_code, d.status_message, d.path\n");
-            q.append("from document d\n");
+            q.append("from DOCUMENT d\n");
             q.append(where).append(buildOrderBy(query));
             q.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
 
@@ -451,7 +451,7 @@ public class RequestDataAccess extends CommonDataAccess {
 
             StringBuilder count = new StringBuilder();
             count.append("select count(*)\n");
-            count.append("from document d\n");
+            count.append("from DOCUMENT d\n");
             count.append(where);
             int total = 0;
             ResultSet countRs = db.runSelect(count.toString());
@@ -460,7 +460,7 @@ public class RequestDataAccess extends CommonDataAccess {
 
             StringBuilder q = new StringBuilder(db.pagingQueryPrefix());
             q.append("select d.document_id, d.create_dt, d.owner_id, d.status_code, d.status_message, d.path\n");
-            q.append("from document d\n");
+            q.append("from DOCUMENT d\n");
             q.append(where).append(buildOrderBy(query));
             q.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
 
@@ -547,7 +547,7 @@ public class RequestDataAccess extends CommonDataAccess {
     }
 
     private String getResponsesQuery(String type, List<Long> ids) {
-        StringBuilder resp = new StringBuilder("select document_id, owner_id, create_dt from document\n");
+        StringBuilder resp = new StringBuilder("select document_id, owner_id, create_dt from DOCUMENT\n");
         resp.append("where owner_type = '" + type + "'\n");
         resp.append("and owner_id in (");
         int i = 0;

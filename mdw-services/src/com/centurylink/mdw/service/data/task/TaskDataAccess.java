@@ -74,7 +74,7 @@ public class TaskDataAccess extends CommonDataAccess {
             if (db.isMySQL())
                 q = "SHOW COLUMNS FROM `TASK_INSTANCE` LIKE 'task_title'";
             else
-                q = "select column_name from all_tab_columns where table_name='TASK_INSTANCE' AND column_name='TASK_TITLE'";
+                q = "select column_name from ALL_TAB_COLUMNS where table_name='TASK_INSTANCE' AND column_name='TASK_TITLE'";
             if (db.runSelect(q).next()) {
                 hasTaskTitleColumn = true;
                 TASK_INSTANCE_SELECT_SHALLOW += ", TI.TASK_TITLE";
@@ -925,8 +925,8 @@ public class TaskDataAccess extends CommonDataAccess {
      */
     public String getLatestTaskInstanceComments(Long taskId) throws DataAccessException {
         StringBuilder query = new StringBuilder();
-        query.append("select task_instance_id, comments from task_instance\n");
-        query.append("where task_instance_id = (select max(task_instance_id) from task_instance ");
+        query.append("select task_instance_id, comments from TASK_INSTANCE\n");
+        query.append("where task_instance_id = (select max(task_instance_id) from TASK_INSTANCE ");
         query.append("where task_id = ? and comments is not null)");
 
         try {

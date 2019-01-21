@@ -85,7 +85,7 @@ public class UserDataAccess extends CommonDataAccess {
     }
 
     protected Long getNextId(String sequenceName) throws SQLException {
-        String query = "select " + sequenceName + ".NEXTVAL from dual";
+        String query = "select " + sequenceName + ".NEXTVAL from DUAL";
         ResultSet rs = db.runSelect(query);
         rs.next();
         return new Long(rs.getString(1));
@@ -813,9 +813,9 @@ public class UserDataAccess extends CommonDataAccess {
 
     public void removeUserFromGroup(String cuid, String group) throws DataAccessException {
         String query = "delete from USER_GROUP_MAPPING "
-                + " where user_info_id = (select distinct user_info_id from user_info where cuid = '"
+                + " where user_info_id = (select distinct user_info_id from USER_INFO where cuid = '"
                 + cuid + "' and END_DATE is NULL)"
-                + " and user_group_id = (select user_group_id from user_group where group_name = '"
+                + " and user_group_id = (select user_group_id from USER_GROUP where group_name = '"
                 + group + "')";
         try {
             db.openConnection();
@@ -837,9 +837,9 @@ public class UserDataAccess extends CommonDataAccess {
                 + " (USER_ROLE_MAPPING_ID, USER_ROLE_MAPPING_OWNER, USER_ROLE_MAPPING_OWNER_ID,"
                 + "  CREATE_DT,CREATE_USR,USER_ROLE_ID) values ("
                 + (db.isMySQL() ? "null" : "MDW_COMMON_ID_SEQ.NEXTVAL") + ",'USER', "
-                + "(select distinct user_info_id from user_info where cuid = ? and END_DATE is NULL),"
+                + "(select distinct user_info_id from USER_INFO where cuid = ? and END_DATE is NULL),"
                 + now() + ",'MDW',"
-                + "(select user_role_id from user_role where user_role_name = ?))";
+                + "(select user_role_id from USER_ROLE where user_role_name = ?))";
         try {
             db.openConnection();
             db.runUpdate(query, new Object[]{cuid, role});
@@ -858,9 +858,9 @@ public class UserDataAccess extends CommonDataAccess {
     public void removeUserFromRole(String cuid, String role) throws DataAccessException {
         // delete user-role mapping
         String query = "delete from USER_ROLE_MAPPING "
-                + " where USER_ROLE_MAPPING_OWNER_ID= (select distinct user_info_id from user_info where cuid = '"
+                + " where USER_ROLE_MAPPING_OWNER_ID= (select distinct user_info_id from USER_INFO where cuid = '"
                 + cuid + "' and END_DATE is NULL ) "
-                + " and user_role_id = (select user_role_id from user_role where user_role_name = '"
+                + " and user_role_id = (select user_role_id from USER_ROLE where user_role_name = '"
                 + role + "')";
         try {
             db.openConnection();
@@ -975,7 +975,7 @@ public class UserDataAccess extends CommonDataAccess {
         try {
             db.openConnection();
             List<String> attrs = new ArrayList<String>();
-            String query = "select distinct attribute_name from attribute "
+            String query = "select distinct attribute_name from ATTRIBUTE "
                     + "where attribute_owner = 'USER' "
                     + "order by lower(attribute_name)";
             ResultSet rs = db.runSelect(query);
@@ -995,7 +995,7 @@ public class UserDataAccess extends CommonDataAccess {
         try {
             db.openConnection();
             List<String> attrs = new ArrayList<String>();
-            String query = "select distinct attribute_name from attribute "
+            String query = "select distinct attribute_name from ATTRIBUTE "
                     + "where attribute_owner = '" + OwnerType.USER_GROUP + "' "
                     + "order by lower(attribute_name)";
             ResultSet rs = db.runSelect(query);
@@ -1097,12 +1097,12 @@ public class UserDataAccess extends CommonDataAccess {
 
     protected void loadAttributesForUser(User user) throws SQLException, CachingException {
         // load attributes for user
-        String sql = "select DISTINCT att1.attribute_name, att1.attribute_value from attribute att1  " +
+        String sql = "select DISTINCT att1.attribute_name, att1.attribute_value from ATTRIBUTE att1  " +
                 " where att1.attribute_owner = '" + OwnerType.USER + "' and att1.attribute_owner_id  = ?" +
                 " UNION  " +
-                " select DISTINCT att2.attribute_name, '' from attribute att2 " +
+                " select DISTINCT att2.attribute_name, '' from ATTRIBUTE att2 " +
                 " where att2.attribute_owner = '" + OwnerType.USER + "' and att2.attribute_owner_id  != ? " +
-                " and att2.attribute_name not in (select att3.attribute_name from attribute att3" +
+                " and att2.attribute_name not in (select att3.attribute_name from ATTRIBUTE att3" +
                 " where att3.attribute_owner = '" + OwnerType.USER + "' and att3.attribute_Owner_id  = ? )";
 
         ResultSet rs = db.runSelect(sql, new Object[]{user.getId(), user.getId(), user.getId()});
@@ -1113,12 +1113,12 @@ public class UserDataAccess extends CommonDataAccess {
 
     protected void loadAttributesForGroup(Workgroup group) throws SQLException, CachingException {
         // load attributes for workgroup
-        String sql = "select DISTINCT att1.attribute_name, att1.attribute_value from attribute  att1  " +
+        String sql = "select DISTINCT att1.attribute_name, att1.attribute_value from ATTRIBUTE  att1  " +
             " where att1.attribute_owner = '" + OwnerType.USER_GROUP + "' and att1.attribute_owner_id  = ?" +
             " UNION  " +
-            " select DISTINCT att2.attribute_name, '' from attribute  att2 " +
+            " select DISTINCT att2.attribute_name, '' from ATTRIBUTE  att2 " +
             " where att2.attribute_owner = '" + OwnerType.USER_GROUP + "' and att2.attribute_owner_id  != ?" +
-            " and att2.attribute_name not in (select att3.attribute_name from attribute att3" +
+            " and att2.attribute_name not in (select att3.attribute_name from ATTRIBUTE att3" +
             " where att3.attribute_owner = '" + OwnerType.USER_GROUP + "' and att3.attribute_Owner_id  = ? )";
 
         ResultSet rs = db.runSelect(sql, new Object[]{group.getId(), group.getId(), group.getId()});

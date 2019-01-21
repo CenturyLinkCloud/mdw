@@ -64,15 +64,15 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
 
     private String getUniqueIdFrom() {
         if (db.isMySQL())
-            return "from (select CONCAT(pi.PROCESS_ID, ':A', ai.ACTIVITY_ID) as ACT_UNIQUE_ID from activity_instance ai, process_instance pi ";
+            return "from (select CONCAT(pi.PROCESS_ID, ':A', ai.ACTIVITY_ID) as ACT_UNIQUE_ID from ACTIVITY_INSTANCE ai, PROCESS_INSTANCE pi ";
         else
-            return "from (select pi.PROCESS_ID || ':A' || ai.ACTIVITY_ID as ACT_UNIQUE_ID from activity_instance ai, process_instance pi ";
+            return "from (select pi.PROCESS_ID || ':A' || ai.ACTIVITY_ID as ACT_UNIQUE_ID from ACTIVITY_INSTANCE ai, PROCESS_INSTANCE pi ";
     }
 
     private List<ActivityAggregate> getTopsByStatus(Query query)
             throws ParseException, DataAccessException, SQLException {
         String sql = "select status_cd, count(status_cd) as ct " +
-                "from activity_instance ai\n" +
+                "from ACTIVITY_INSTANCE ai\n" +
                 getActivityWhereClause(query) + "\n" +
                 "group by status_cd\n" +
                 "order by ct desc\n";
@@ -131,9 +131,9 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
                 else
                     sql.append(", pi.PROCESS_ID || ':A' || ai.ACTIVITY_ID as act_unique_id");
             }
-            sql.append("  from activity_instance ai ");
+            sql.append("  from ACTIVITY_INSTANCE ai ");
             if (by.equals("throughput"))
-                sql.append(", process_instance pi");
+                sql.append(", PROCESS_INSTANCE pi");
             sql.append("\n");
             sql.append(getActivityWhereClause(query));
             if (by.equals("status"))

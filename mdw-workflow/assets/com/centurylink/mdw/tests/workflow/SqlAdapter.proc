@@ -46,7 +46,7 @@
         "jdbcDataSource": "MDWDataSource",
         "parameterVariable": "userCuid",
         "queryType": "Select",
-        "sqlQuery": "select * from user_info where cuid = ?"
+        "sqlQuery": "select * from USER_INFO where cuid = ?"
       },
       "id": "A3",
       "implementor": "com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter",
@@ -69,7 +69,7 @@
         "jdbcDataSource": "MDWDataSource",
         "parameterVariable": "userCuids",
         "queryType": "Select",
-        "sqlQuery": "select * from user_info ui, user_group_mapping ugm, user_group ug\r\nwhere ui.user_info_id = ugm.user_info_id\r\nand ugm.user_group_id = ug.user_group_id\r\nand ug.group_name = 'Site Admin'\r\nand (ui.cuid = ? or ui.cuid = ?) \r\norder by cuid desc"
+        "sqlQuery": "select * from USER_INFO ui, USER_GROUP_MAPPING ugm, USER_GROUP ug\r\nwhere ui.user_info_id = ugm.user_info_id\r\nand ugm.user_group_id = ug.user_group_id\r\nand ug.group_name = 'Site Admin'\r\nand (ui.cuid = ? or ui.cuid = ?) \r\norder by cuid desc"
       },
       "id": "A4",
       "implementor": "com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter",
@@ -103,7 +103,7 @@
         "WORK_DISPLAY_INFO": "x=472,y=13,w=100,h=66",
         "jdbcDataSource": "MDWDataSource",
         "queryType": "Update",
-        "sqlQuery": "update user_info set name = 'Don Oakes' where cuid = 'dxoakes'"
+        "sqlQuery": "update USER_INFO set name = 'Don Oakes' where cuid = 'dxoakes'"
       },
       "id": "A6",
       "implementor": "com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter",
@@ -124,7 +124,7 @@
         "WORK_DISPLAY_INFO": "x=479,y=153,w=100,h=72",
         "jdbcDataSource": "MDWDataSource",
         "queryType": "Select",
-        "sqlQuery": "select name from user_info where cuid = 'dxoakes'"
+        "sqlQuery": "select name from USER_INFO where cuid = 'dxoakes'"
       },
       "id": "A7",
       "implementor": "com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter",
@@ -145,7 +145,7 @@
         "WORK_DISPLAY_INFO": "x=474,y=291,w=101,h=67",
         "jdbcDataSource": "MDWDataSource",
         "queryType": "Update",
-        "sqlQuery": "update user_info set name = 'Donald Oakes' where cuid = 'dxoakes'"
+        "sqlQuery": "update USER_INFO set name = 'Donald Oakes' where cuid = 'dxoakes'"
       },
       "id": "A8",
       "implementor": "com.centurylink.mdw.workflow.adapter.db.JdbcSqlAdapter",
