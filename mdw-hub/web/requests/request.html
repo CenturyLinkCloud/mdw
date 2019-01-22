@@ -31,6 +31,7 @@
           <div ng-if="request.responseId">Responded: <span class="mdw-resource-value">{{request.responded}}</span></div>
           <div ng-if="request.statusCode">Status Code: <span class="mdw-resource-value">{{request.statusCode}}</span></div>          
           <div ng-if="request.statusMessage">Status Message: <span class="mdw-resource-value">{{request.statusMessage}}</span></div>
+          <div ng-if="request.responseMs">Response Time: <span class="mdw-resource-value">{{request.responseMs}} ms</span></div>
         </div>
         <pre class="mdw-resource-content" ng-if="view.request != 'Formatted'"><code class="mdw-code" ng-bind-html="request.content | highlight:request.format | unsafe"></code></pre>
         <pre class="mdw-resource-content" ng-if="view.request == 'Formatted'"><code class="mdw-code" ng-bind-html="request.formattedContent | highlight:request.format | unsafe"></code></pre>

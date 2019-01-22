@@ -162,7 +162,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
         try {
             Date startDate = query.getDateFilter("startDate");
             if (startDate != null) {
-                String start = getDateFormat().format(startDate);
+                String start = getOracleDateFormat().format(startDate);
                 if (db.isMySQL())
                     sb.append(" and pi.start_dt >= STR_TO_DATE('").append(start).append("','%d-%M-%Y')\n");
                 else

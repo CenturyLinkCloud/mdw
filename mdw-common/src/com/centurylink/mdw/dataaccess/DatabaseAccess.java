@@ -15,29 +15,6 @@
  */
 package com.centurylink.mdw.dataaccess;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.sql.Blob;
-import java.sql.Clob;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
@@ -47,10 +24,26 @@ import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.sql.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class DatabaseAccess {
 
     public static final String MDW_DATA_SOURCE = "MDWDataSource";
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
+    private static boolean IS_TRACE = logger.isTraceEnabled();
 
     private String database_name; // JDBC url or a connection pool name
     private static String INTERNAL_DATA_SOURCE = null;
@@ -334,28 +327,35 @@ public class DatabaseAccess {
         }
     }
 
-    private ResultSet logExecuteQuery(String query) throws SQLException {
+    private ResultSet logExecuteQuery(String query, Object... arguments) throws SQLException {
         if (queryTimeout > 0 && ps != null)
             ps.setQueryTimeout(queryTimeout);
-        if (connection instanceof QueryLogger)
-            return ((QueryLogger)connection).executeQuery(ps, query);
-        else return ps.executeQuery();
+        long before = System.currentTimeMillis();
+        try {
+            return ps.executeQuery();
+        }
+        finally {
+            if (IS_TRACE) {
+                long after = System.currentTimeMillis();
+                logger.trace("SQL (" + (after - before) + " ms): " + DbAccess.substitute(query, arguments));
+            }
+        }
     }
 
-    private int logExecuteUpdate(String query) throws SQLException {
+    private int logExecuteUpdate(String query, Object... arguments) throws SQLException {
         // Only retry if autoCommit is true
         int retriesRemaining = connection.getAutoCommit() ? retryMax : 0;
 
         if (queryTimeout > 0 && ps != null)
             ps.setQueryTimeout(queryTimeout);
 
+        long before = System.currentTimeMillis();
+
         while (retriesRemaining >= 0) {
             try {
-                if (connection instanceof QueryLogger)
-                    return ((QueryLogger)connection).executeUpdate(ps, query);
-                else
-                    return ps.executeUpdate();
-            } catch (Exception e) {
+                return ps.executeUpdate();
+            }
+            catch (Exception e) {
                 if (retriesRemaining-- > 0) {
                     LoggerUtil.getStandardLogger().infoException("SQL Exception occured on query: " + query + "\nRetrying...\n", e);
                     try {
@@ -367,6 +367,12 @@ public class DatabaseAccess {
                 else
                     throw e;  // Can't retry anymore, throw the exception
             }
+            finally {
+                if (IS_TRACE) {
+                    long after = System.currentTimeMillis();
+                    logger.trace("SQL (" + (after - before) + " ms): " + DbAccess.substitute(query, arguments));
+                }
+            }
         }
         return -1;  // Not reachable code
     }
@@ -374,9 +380,16 @@ public class DatabaseAccess {
     private int [] logExecuteBatch(String query) throws SQLException {
         if (queryTimeout > 0 && ps != null)
             ps.setQueryTimeout(queryTimeout);
-        if (connection instanceof QueryLogger)
-            return ((QueryLogger)connection).executeBatch(ps, query);
-        else return ps.executeBatch();
+        long before = System.currentTimeMillis();
+        try {
+            return ps.executeBatch();
+        }
+        finally {
+            if (IS_TRACE) {
+                long after = System.currentTimeMillis();
+                logger.trace("SQL (" + (after - before) + " ms): " + query);
+            }
+        }
     }
 
     public ResultSet runSelect(String query) throws SQLException {
@@ -390,7 +403,7 @@ public class DatabaseAccess {
         closeResultSet();
         ps = connection.prepareStatement(query);
         if (arg!=null) setStatementArgument(1, arg);
-        rs = logExecuteQuery(query);
+        rs = logExecuteQuery(query, arg);
         return rs;
     }
 
@@ -400,13 +413,30 @@ public class DatabaseAccess {
         closeStatement();
         closeResultSet();
         ps = connection.prepareStatement(query);
-        if (arguments!=null) {
-            for (int i=0; i<arguments.length; i++) {
-                setStatementArgument(i+1, arguments[i]);
+        if (arguments != null) {
+            for (int i = 0; i < arguments.length; i++) {
+                setStatementArgument(i + 1, arguments[i]);
             }
         }
-        rs = logExecuteQuery(query);
+        rs = logExecuteQuery(query, arguments);
         return rs;
+    }
+
+    /**
+     * Ordinarily db query logging is at TRACE level.  Use this method
+     * to log queries at DEBUG level.
+     */
+    public ResultSet runSelect(String logMessage, String query, Object[] arguments) throws SQLException {
+        long before = System.currentTimeMillis();
+        try {
+            return runSelect(query, arguments);
+        }
+        finally {
+            if (logger.isDebugEnabled()) {
+                long after = System.currentTimeMillis();
+                logger.debug(logMessage + " (" + (after - before) + " ms): " + DbAccess.substitute(query, arguments));
+            }
+        }
     }
 
     public int runUpdate(String query) throws SQLException {
@@ -417,36 +447,55 @@ public class DatabaseAccess {
             throws SQLException {
         this.closeStatement();
         ps = connection.prepareStatement(query);
-        if (arg!=null) setStatementArgument(1, arg);
-        return logExecuteUpdate(query);
+        if (arg != null)
+            setStatementArgument(1, arg);
+        return logExecuteUpdate(query, arg);
     }
 
     public int runUpdate(String query, Object[] arguments)
             throws SQLException {
         this.closeStatement();
         ps = connection.prepareStatement(query);
-        if (arguments!=null) {
-            for (int i=0; i<arguments.length; i++) {
-                setStatementArgument(i+1, arguments[i]);
+        if (arguments != null) {
+            for (int i = 0; i < arguments.length; i++) {
+                setStatementArgument(i + 1, arguments[i]);
             }
         }
-        return logExecuteUpdate(query);
+        return logExecuteUpdate(query, arguments);
+    }
+
+    /**
+     * Ordinarily db query logging is at TRACE level.  Use this method
+     * to log queries at DEBUG level.
+     */
+    public int runUpdate(String logMessage, String query, Object[] arguments) throws SQLException {
+        long before = System.currentTimeMillis();
+        try {
+            return runUpdate(query, arguments);
+        }
+        finally {
+            if (logger.isDebugEnabled()) {
+                long after = System.currentTimeMillis();
+                logger.debug(logMessage + " (" + (after - before) + " ms): " + DbAccess.substitute(query, arguments));
+            }
+        }
     }
 
     public Long runInsertReturnId(String query, Object[] arguments)
         throws SQLException {
         this.closeStatement();
         ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-        if (arguments!=null) {
-            for (int i=0; i<arguments.length; i++) {
-                setStatementArgument(i+1, arguments[i]);
+        if (arguments != null) {
+            for (int i = 0; i < arguments.length; i++) {
+                setStatementArgument(i + 1, arguments[i]);
             }
         }
-        logExecuteUpdate(query);
+        logExecuteUpdate(query, arguments);
         rs = ps.getGeneratedKeys();
-        if (rs.next()) return rs.getLong(1);
-//        else throw new SQLException("Failed to obtain generated key");
-        else return null;
+        if (rs.next())
+            return rs.getLong(1);
+        else
+            return null;
     }
 
     public void prepareStatement(String query) throws SQLException {
@@ -455,9 +504,9 @@ public class DatabaseAccess {
     }
 
     public void addToBatch(Object [] arguments) throws SQLException {
-        if (arguments!=null) {
-            for (int i=0; i<arguments.length; i++) {
-                setStatementArgument(i+1, arguments[i]);
+        if (arguments != null) {
+            for (int i = 0; i < arguments.length; i++) {
+                setStatementArgument(i + 1, arguments[i]);
             }
         }
         ps.addBatch();
@@ -467,17 +516,20 @@ public class DatabaseAccess {
         return logExecuteBatch("(batch)");
     }
 
+    @Deprecated
     public ResultSet runSelectWithPreparedStatement(Object arg) throws SQLException {
         closeResultSet();
         if (arg!=null) setStatementArgument(1, arg);
         return logExecuteQuery("(prepared query)");
     }
 
+    @Deprecated
     public int runUpdateWithPreparedStatement(Object arg) throws SQLException {
         setStatementArgument(1, arg);
         return logExecuteUpdate("(prepared update)");
     }
 
+    @Deprecated
     public int runUpdateWithPreparedStatement(Object[] arguments) throws SQLException {
         if (arguments!=null) {
             for (int i=0; i<arguments.length; i++) {

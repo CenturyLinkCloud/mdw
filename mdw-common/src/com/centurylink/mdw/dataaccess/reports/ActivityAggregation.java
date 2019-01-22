@@ -46,7 +46,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
                 ") a1\n" +
                 "group by act_unique_id\n" +
                 "order by ct desc\n";
-        ResultSet rs = db.runSelect(sql, preparedWhere.getParams());
+        ResultSet rs = db.runSelect("getTopsByStuck()", sql, preparedWhere.getParams());
         List<ActivityAggregate> list = new ArrayList<>();
         int idx = 0;
         int limit = query.getIntFilter("limit");
@@ -78,7 +78,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
                 preparedWhere.getWhere() +
                 "group by status_cd\n" +
                 "order by ct desc\n";
-        ResultSet rs = db.runSelect(sql, preparedWhere.getParams());
+        ResultSet rs = db.runSelect("getTopsByStatus()", sql, preparedWhere.getParams());
         List<ActivityAggregate> list = new ArrayList<>();
         int idx = 0;
         int limit = query.getIntFilter("limit");
@@ -165,16 +165,12 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
                 sql.append("\norder by to_date(st, 'DD-Mon-yyyy')");
 
             db.openConnection();
-            ResultSet rs = db.runSelect(sql.toString(), params.toArray());
+            ResultSet rs = db.runSelect("Breakdown by " + by, sql.toString(), params.toArray());
             TreeMap<Date,List<ActivityAggregate>> map = new TreeMap<>();
             Date prevStartDate = getStartDate(query);
             while (rs.next()) {
                 String startDateStr = rs.getString("st");
-                Date startDate;
-                if (db.isMySQL())
-                    startDate = getMySqlDateFormat().parse(startDateStr);
-                else
-                    startDate = getDateFormat().parse(startDateStr);
+                Date startDate = getDateFormat().parse(startDateStr);
                 // fill in gaps
                 while (startDate.getTime() - prevStartDate.getTime() > DAY_MS) {
                     prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);

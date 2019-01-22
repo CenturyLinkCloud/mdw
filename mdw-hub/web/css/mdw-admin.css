@@ -1456,6 +1456,7 @@
   font-size: smaller;
   font-weight: bold;
   cursor: default;
+  background: white;
 }
 .mdw-chart-title {
   text-align: center;

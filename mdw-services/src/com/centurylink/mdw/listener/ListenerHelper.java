@@ -410,6 +410,7 @@ public class ListenerHelper {
 
             if (response.getStatusCode() == null)
                 response.setStatusCode(getResponseCode(metaInfo));
+            response.setPath(metaInfo.get(Listener.METAINFO_REQUEST_PATH));
             if (metaInfo.containsKey(Listener.METAINFO_DOCUMENT_ID)) {
                 metaInfo.put(Listener.METAINFO_MDW_REQUEST_ID, metaInfo.get(Listener.METAINFO_DOCUMENT_ID));
                 metaInfo.remove(Listener.METAINFO_DOCUMENT_ID);

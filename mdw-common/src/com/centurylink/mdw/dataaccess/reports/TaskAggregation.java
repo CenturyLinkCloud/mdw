@@ -223,7 +223,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
             TreeMap<Date,List<TaskAggregate>> map = new TreeMap<>();
             while (rs.next()) {
                 String startDateStr = rs.getString("st");
-                Date startDate = getDateFormat().parse(startDateStr);
+                Date startDate = getOracleDateFormat().parse(startDateStr);
                 List<TaskAggregate> taskAggregates = map.get(startDate);
                 if (taskAggregates == null) {
                     taskAggregates = new ArrayList<>();
@@ -262,7 +262,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
         Date start = query.getDateFilter("startDate");
         if (start == null)
             throw new DataAccessException("Parameter startDate is required");
-        String startStr = getDateFormat().format(start);
+        String startStr = getOracleDateFormat().format(start);
         StringBuilder where = new StringBuilder();
         if (db.isMySQL())
             where.append("where ti.create_dt >= STR_TO_DATE('" + startStr + "','%d-%M-%Y')\n   ");
