@@ -413,7 +413,7 @@ class DashboardChart extends Component {
                   getElementAtEvent={this.handleOverallClick} />
               }
               <ChartLegend
-                colors = {this.chartColors}
+                colors={this.chartColors}
                 tops={this.state.tops}
                 selected={this.state.selected} />
             </div>

@@ -4,7 +4,6 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.model.request.RequestAggregate;
 
@@ -78,7 +77,9 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
             long ct = Math.round(rs.getDouble("ct"));
             RequestAggregate requestAggregate = new RequestAggregate(ct);
             requestAggregate.setCount(ct);
-            requestAggregate.setId(rs.getInt("status_cd"));
+            Integer statusCode = rs.getInt("status_code");
+            requestAggregate.setId(statusCode);
+            requestAggregate.setStatus(statusCode);
             list.add(requestAggregate);
             idx++;
         }
@@ -91,7 +92,7 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
         String sql = "select path, " +
                 "avg(elapsed_ms) as elapsed, count(path) as ct\n" +
                 "from DOCUMENT" +
-                ", INSTANCE_TIMING\n" +
+                ", INSTANCE_TIMING it\n" +
                 preparedWhere.getWhere() + " " +
                 "group by path\n" +
                 "order by elapsed desc\n";
@@ -121,7 +122,7 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
             String[] requestPathsArr = query.getArrayFilter("requestPaths");
             List<String> requestPaths = requestPathsArr == null ? null : Arrays.asList(requestPathsArr);
             // by status
-            String[] statuses = query.getArrayFilter("statuses");
+            String[] statuses = query.getArrayFilter("statusCodes");
             List<Integer> statusCodes = null;
             if (statuses != null) {
                 statusCodes = new ArrayList<>();
@@ -153,7 +154,7 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
                 sql.append(", elapsed_ms");
             sql.append("\n  from DOCUMENT");
             if (by.equals("completionTime"))
-                sql.append(", INSTANCE_TIMING");
+                sql.append(", INSTANCE_TIMING it");
             sql.append("\n  ");
             sql.append(preparedWhere.getWhere()).append(" ");
             List<Object> params = new ArrayList<>(Arrays.asList(preparedWhere.getParams()));
@@ -249,26 +250,23 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
         String direction = query.getFilter("direction");
         boolean isMaster = query.getBooleanFilter("Master");
         if ("inbound".equals(direction) || isMaster) {
-            if (by.equals("status") || by.equals("completionTime"))
-                ownerType = OwnerType.LISTENER_RESPONSE;
-            else
-                ownerType = OwnerType.LISTENER_REQUEST;
+            ownerType = OwnerType.LISTENER_RESPONSE;
         }
         else if ("outbound".equals(direction)) {
-            if (by.equals("status"))
-                ownerType = OwnerType.ADAPTER_RESPONSE;
-            else
-                ownerType = OwnerType.ADAPTER_REQUEST;
+            ownerType = OwnerType.ADAPTER_RESPONSE;
         }
         if (ownerType == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing parameter: direction");
-        where.append("  and owner_type = ?\n");
-        params.add(ownerType);
 
         if ("completionTime".equals(by)) {
-            where.append("  and it.owner_type = ? and instance_id = document_id\n");
+            where.append("  and instance_id = document_id and it.owner_type = ?\n");
             params.add(ownerType);
         }
+        else {
+            where.append("  and owner_type = ?\n");
+            params.add(ownerType);
+        }
+
         where.append("  and create_dt >= ? ");
         params.add(getDt(start));
 
@@ -276,6 +274,15 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
         if (end != null) {
             where.append("  and create_dt <= ? ");
             params.add(getDt(end));
+        }
+
+        String status = query.getFilter("Status");
+        if (status != null) {
+            int spaceHyphen = status.indexOf(" -");
+            if (spaceHyphen > 0)
+                status = status.substring(0,spaceHyphen);
+            where.append("  and status_code = ?\n");
+            params.add(Integer.parseInt(status));
         }
 
         return new PreparedWhere(where.toString(), params.toArray());

@@ -24,7 +24,7 @@ class InboundRequests extends Component {
           selectField: 'status',
           selectLabel: 'Statuses',
           tops: '/Requests/tops?direction=inbound&by=status',
-          data: '/requests/breakdown?direction=inbound&by=status',
+          data: '/Requests/breakdown?direction=inbound&by=status',
            instancesParam: 'statusCodes'
         },
         {

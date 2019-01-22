@@ -264,6 +264,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
             where.append("  and status_cd = ?\n");
             params.add(WorkStatuses.getCode(status));
         }
+
         return new PreparedWhere(where.toString(), params.toArray());
     }
 }

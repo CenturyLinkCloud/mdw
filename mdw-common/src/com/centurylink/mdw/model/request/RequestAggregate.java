@@ -17,6 +17,7 @@ package com.centurylink.mdw.model.request;
 
 import com.centurylink.mdw.model.Aggregate;
 import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.StatusResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,13 +31,13 @@ public class RequestAggregate implements Aggregate, Jsonable {
     public String getPath() { return path; }
     public void setPath(String path) { this.path = path; }
 
-    private int status;
-    public int getStatus() { return status; }
-    public void setStatus(int status) { this.status = status; }
-
     public String getName() {
-        return getPath();
+        return getPath() == null ? StatusResponse.getMessage(status) : getPath();
     }
+
+    private Integer status;
+    public Integer getStatus() { return status; }
+    public void setStatus(Integer status) { this.status = status; }
 
     private long value;
     public long getValue() { return value; }
@@ -59,6 +60,8 @@ public class RequestAggregate implements Aggregate, Jsonable {
             path = json.getString("path");
         else if (json.has("name"))
             path = json.getString("name");
+        if (json.has("status"))
+            status = json.getInt("status");
     }
 
     public String getJsonName() {
@@ -70,9 +73,16 @@ public class RequestAggregate implements Aggregate, Jsonable {
         json.put("value", value);
         if (count > -1)
             json.put("count", count);
-        if (getPath() != null) {
-            json.put("id", getPath());
-            json.put("name", getName());
+        if (path != null) {
+            json.put("id", path);
+            json.put("name", path);
+        }
+        else if (id > 0) {
+            json.put("id", id);
+        }
+        if (status != null) {
+            json.put("status", status);
+            json.put("name", StatusResponse.getMessage(status));
         }
         return json;
     }
