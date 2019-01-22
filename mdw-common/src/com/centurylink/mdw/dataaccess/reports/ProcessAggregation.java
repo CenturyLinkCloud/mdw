@@ -47,7 +47,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
                 preparedWhere.getWhere() + " " +
                 "group by process_id\n" +
                 "order by ct desc\n";
-        ResultSet rs = db.runSelect(sql, preparedWhere.getParams());
+        ResultSet rs = db.runSelect("getTopsByThroughput()", sql, preparedWhere.getParams());
         List<ProcessAggregate> list = new ArrayList<>();
         int idx = 0;
         int limit = query.getIntFilter("limit");
@@ -69,7 +69,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
                 preparedWhere.getWhere() + " " +
                 "group by status_cd\n" +
                 "order by ct desc\n";
-        ResultSet rs = db.runSelect(sql, preparedWhere.getParams());
+        ResultSet rs = db.runSelect("getTopsByStatus()", sql, preparedWhere.getParams());
         List<ProcessAggregate> list = new ArrayList<>();
         int idx = 0;
         int limit = query.getIntFilter("limit");
@@ -94,7 +94,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
                 preparedWhere.getWhere() + " " +
                 "group by process_id\n" +
                 "order by elapsed desc\n";
-        ResultSet rs = db.runSelect(sql, preparedWhere.getParams());
+        ResultSet rs = db.runSelect("getTopsByCompletionTime()", sql, preparedWhere.getParams());
         List<ProcessAggregate> list = new ArrayList<>();
         int idx = 0;
         int limit = query.getIntFilter("limit");
@@ -179,16 +179,12 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
                 sql.append("\norder by to_date(st, 'DD-Mon-yyyy')\n");
 
             db.openConnection();
-            ResultSet rs = db.runSelect(sql.toString(), params.toArray());
+            ResultSet rs = db.runSelect("Breakdown by " + by, sql.toString(), params.toArray());
             TreeMap<Date,List<ProcessAggregate>> map = new TreeMap<>();
             Date prevStartDate = getStartDate(query);
             while (rs.next()) {
                 String startDateStr = rs.getString("st");
-                Date startDate;
-                if (db.isMySQL())
-                    startDate = getMySqlDateFormat().parse(startDateStr);
-                else
-                    startDate = getDateFormat().parse(startDateStr);
+                Date startDate = getDateFormat().parse(startDateStr);
                 // fill in gaps
                 while (startDate.getTime() - prevStartDate.getTime() > DAY_MS) {
                     prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
@@ -217,7 +213,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
                 map.put(roundStartDate, new ArrayList<>());
             // gaps at end
             Date endDate = getEndDate(query);
-            while (endDate != null && endDate.getTime() - prevStartDate.getTime() > DAY_MS) {
+            while ((endDate != null) && ((endDate.getTime() - prevStartDate.getTime()) > DAY_MS)) {
                 prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
                 map.put(getRoundDate(prevStartDate), new ArrayList<>());
             }

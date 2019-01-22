@@ -57,6 +57,8 @@ public class RequestAggregate implements Aggregate, Jsonable {
             count = json.getLong("count");
         if (json.has("path"))
             path = json.getString("path");
+        else if (json.has("name"))
+            path = json.getString("name");
     }
 
     public String getJsonName() {
@@ -69,7 +71,6 @@ public class RequestAggregate implements Aggregate, Jsonable {
         if (count > -1)
             json.put("count", count);
         if (getPath() != null) {
-            json.put("path", getPath());
             json.put("id", getPath());
             json.put("name", getName());
         }

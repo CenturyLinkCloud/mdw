@@ -158,7 +158,7 @@ public class RequestDataAccess extends CommonDataAccess {
             try {
                 Date receivedDate = query.getDateFilter("receivedDate");
                 if (receivedDate != null) {
-                    String formatedReceivedDate = getDateFormat().format(receivedDate);
+                    String formatedReceivedDate = getOracleDateFormat().format(receivedDate);
                     if (db.isMySQL()){
                         clause.append(" and d.create_dt >= STR_TO_DATE('").append(formatedReceivedDate).append("','%d-%M-%Y')\n");
                     }else{
@@ -325,6 +325,16 @@ public class RequestDataAccess extends CommonDataAccess {
                     }
 
                     request.setResponse(response);
+                }
+
+                if (request.getResponseId() != null && request.getResponseId() > 0) {
+                    query = "select elapsed_ms from INSTANCE_TIMING where owner_type = ? and instance_id = ?";
+                    String timingOwner = responseOwnerType.equals(OwnerType.LISTENER_RESPONSE) ? OwnerType.LISTENER_RESPONSE : OwnerType.ADAPTER;
+                    Long timingInstanceId = responseOwnerType.equals(OwnerType.LISTENER_RESPONSE) ? request.getResponseId() : ownerId;
+                    rs = db.runSelect(query, new Object[]{timingOwner, timingInstanceId});
+                    if (rs.next()) {
+                        request.setResponseMs(rs.getLong("elapsed_ms"));
+                    }
                 }
             }
 

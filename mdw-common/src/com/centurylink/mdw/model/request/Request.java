@@ -15,19 +15,17 @@
  */
 package com.centurylink.mdw.model.request;
 
-import java.util.Date;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.util.StringHelper;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Date;
 
 public class Request implements Jsonable {
 
     public static final String REQUEST_ID = "request-id";
-    public static final String TRANSACTION_ID = "transaction-id";
 
     // this is the document id
     private Long id = 0L;
@@ -45,6 +43,10 @@ public class Request implements Jsonable {
     private Long responseId;
     public Long getResponseId() { return responseId; }
     public void setResponseId(Long responseId) { this.responseId = responseId; }
+
+    private Long responseMs;
+    public Long getResponseMs() { return responseMs; }
+    public void setResponseMs(Long ms) { this.responseMs = ms; }
 
     private String masterRequestId;
     public String getMasterRequestId() { return masterRequestId; }
@@ -165,6 +167,8 @@ public class Request implements Jsonable {
             statusMessage = json.getString("statusMessage");
         if (json.has("path"))
             path = json.getString("path");
+        if (json.has("responseMs"))
+            responseMs = json.getLong("responseMs");
     }
 
     public JSONObject getJson() throws JSONException {
@@ -213,6 +217,9 @@ public class Request implements Jsonable {
             json.put("statusMessage", statusMessage);
         if (path != null)
             json.put("path", path);
+        if (responseMs != null) {
+            json.put("responseMs", responseMs);
+        }
         return json;
     }
 

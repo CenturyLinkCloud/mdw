@@ -25,7 +25,8 @@
           <span ng-if="request.outbound">Received: <span style="font-weight:bold;">{{request.responded}}</span></span>
           <span ng-if="!request.outbound">Sent: <span style="font-weight:bold;">{{request.responded}}</span></span>
           <span ng-if="request.statusCode"><br>Status Code: <span style="font-weight:bold;">{{request.statusCode}}</span></span>
-          <span ng-if="request.statusMessage"><br>Status Message: <span style="font-weight:bold;">{{request.statusMessage}}</span></span>           
+          <span ng-if="request.statusMessage"><br>Status Message: <span style="font-weight:bold;">{{request.statusMessage}}</span></span>
+          <span ng-if="request.responseMs"><br>Response Time: <span class="mdw-resource-value">{{request.responseMs}} ms</span></span>
         </div>
         <pre class="mdw-resource-content" ng-if="view.response != 'Formatted'"><code class="mdw-code" ng-bind-html="request.responseContent | highlight:request.responseFormat | unsafe"></code></pre>
         <pre class="mdw-resource-content" ng-if="view.response == 'Formatted'"><code class="mdw-code" ng-bind-html="request.formattedResponse | highlight:request.responseFormat | unsafe"></code></pre>

@@ -35,9 +35,9 @@ import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.service.data.process.ProcessCache;
@@ -565,9 +565,12 @@ public class EventServicesImpl implements EventServices {
             transaction = edao.startTransaction();
             Document docvo = new Document();
             if (doc instanceof Response) {
-                String statusMsg = ((Response)doc).getStatusMessage() != null ? ((Response)doc).getStatusMessage() : "";
-                docvo.setStatusCode(((Response)doc).getStatusCode());
+                Response response = (Response)doc;
+                String statusMsg = response.getStatusMessage() != null ? response.getStatusMessage() : "";
+                docvo.setStatusCode(response.getStatusCode());
                 docvo.setStatusMessage(statusMsg.length() > 1000 ? statusMsg.substring(0, 1000) : statusMsg);
+                if (path == null)
+                    path = response.getPath();
                 docvo.setContent(((Response)doc).getContent());
             }
             else if (doc instanceof String)
@@ -578,8 +581,7 @@ public class EventServicesImpl implements EventServices {
             docvo.setOwnerType(ownerType);
             docvo.setOwnerId(ownerId);
             docvo.setPath(path);
-            Long docid = edao.createDocument(docvo, pkg);
-            return docid;
+            return edao.createDocument(docvo, pkg);
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to create document", e);
         } finally {

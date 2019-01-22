@@ -39,6 +39,10 @@ public class Response implements Jsonable {
     public String getStatusMessage() { return statusMessage; }
     public void setStatusMessage(String message) { this.statusMessage = message; }
 
+    private String path;
+    public String getPath() { return path; }
+    public void setPath(String path) { this.path = path; }
+
     private JSONObject meta;
     public JSONObject getMeta() { return meta; }
     public void setMeta(JSONObject info) { meta = info; }

@@ -986,7 +986,7 @@ public class CommonDataAccess {
         return pi;
     }
 
-    protected static DateFormat getDateFormat() {
+    protected static DateFormat getOracleDateFormat() {
         return new SimpleDateFormat("dd-MMM-yyyy");
     }
 
@@ -996,6 +996,10 @@ public class CommonDataAccess {
 
     protected static DateFormat getMySqlDateFormat() {
         return new SimpleDateFormat("yyyy-MM-dd");
+    }
+
+    protected DateFormat getDateFormat() {
+        return db.isMySQL() ? getMySqlDateFormat() : getOracleDateFormat();
     }
 
     protected static String getMySqlDt(Date date) {

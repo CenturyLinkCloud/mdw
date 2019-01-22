@@ -21,7 +21,6 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.task.*;
 import com.centurylink.mdw.model.user.User;
@@ -430,7 +429,7 @@ public class TaskDataAccess extends CommonDataAccess {
             if (db.isMySQL()) db.commit(); // MySQL will lock even when no rows were deleted and using unique index, so commit so that multiple session inserts aren't deadlocked
             // insert groups
             query = "insert into TASK_INST_GRP_MAPP " +
-                    "(TASK_INSTANCE_ID,USER_GROUP_ID,CREATE_DT) values (?,?,"+now()+")";
+                    "(TASK_INSTANCE_ID,USER_GROUP_ID,CREATE_DT) values (?,?," + now() + ")";
             db.prepareStatement(query);
             Object[] args = new Object[2];
             args[0] = taskInstId;
@@ -744,7 +743,7 @@ public class TaskDataAccess extends CommonDataAccess {
         try {
             Date startDate = query.getDateFilter("startDate");
             if (startDate != null) {
-                String start = getDateFormat().format(startDate);
+                String start = getOracleDateFormat().format(startDate);
                 if (db.isMySQL())
                     where.append(" and ti.task_start_dt >= STR_TO_DATE('").append(start).append("','%d-%M-%Y')\n");
                 else
