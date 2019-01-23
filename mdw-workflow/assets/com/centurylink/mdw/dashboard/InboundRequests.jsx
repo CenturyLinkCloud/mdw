@@ -1,5 +1,6 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
+import statuses from './statuses';
 import DashboardChart from './DashboardChart.jsx';
 
 class InboundRequests extends Component {
@@ -15,31 +16,31 @@ class InboundRequests extends Component {
           name: 'Throughput',
           selectField: 'path',
           selectLabel: 'Request Paths',
-          tops: '/Requests/tops?direction=inbound&by=throughput',
-          data: '/Requests/breakdown?direction=inbound&by=throughput',
+          tops: '/Requests/tops?direction=in&by=throughput',
+          data: '/Requests/breakdown?direction=in&by=throughput',
           instancesParam: 'requestPaths'
         },
         {
           name: 'Status',
           selectField: 'status',
           selectLabel: 'Statuses',
-          tops: '/Requests/tops?direction=inbound&by=status',
-          data: '/Requests/breakdown?direction=inbound&by=status',
+          tops: '/Requests/tops?direction=in&by=status',
+          data: '/Requests/breakdown?direction=in&by=status',
            instancesParam: 'statusCodes'
         },
         {
           name: 'Completion Time',
           selectField: 'path',
           selectLabel: 'Request Paths',
-          tops: '/Requests/tops?direction=inbound&by=completionTime',
-          data: '/Requests/breakdown?direction=inbound&by=completionTime',
+          tops: '/Requests/tops?direction=in&by=completionTime',
+          data: '/Requests/breakdown?direction=in&by=completionTime',
           instancesParam: 'requestPaths',
           summaryChart: 'bar',
           units: 'ms'
         },
         {
           name: 'Total Throughput',
-          data: '/Requests/breakdown?direction=inbound&by=total'
+          data: '/Requests/breakdown?direction=in&by=total'
         }
       ],
       filters: {
@@ -49,21 +50,7 @@ class InboundRequests extends Component {
         HealthCheck: false
       },
       filterOptions: {
-        Status: [
-          '200 - OK',
-          '201 - Created',
-          '202 - Accepted',
-          '400 - Bad Request',
-          '401 - Unauthorized',
-          '403 - Forbidden',
-          '404 - Not Found',
-          '405 - Method Not Allowed',
-          '409 - Conflict',
-          '500 - Internal Server Error',
-          '501 - Not Implemented',
-          '502 - Bad Gateway',
-          '503 - Service Unavailable'
-        ]
+        Status: statuses.request
       }
     };
 

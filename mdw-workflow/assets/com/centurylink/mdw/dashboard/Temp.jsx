@@ -9,9 +9,6 @@ class Temp extends Component {
     super(...args);
   }
 
-  componentDidMount() {
-  }
-
   render() {
 
     const data = {
@@ -46,6 +43,7 @@ class Temp extends Component {
         },
         {
           type: 'line',
+          label: 'Other Data',
           fill: false,
           data: [100, 82, 35, 95, 32, 83],
           yAxisID: 'y-axis-line'

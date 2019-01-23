@@ -1,5 +1,6 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
+import statuses from './statuses';
 import DashboardChart from './DashboardChart.jsx';
 
 class Activities extends Component {
@@ -38,7 +39,7 @@ class Activities extends Component {
         Status: ''
       },
       filterOptions: {
-        Status: ['In Progress', 'Failed', 'Waiting']
+        Status: statuses.activity
       }
     };
 

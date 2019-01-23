@@ -19,11 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 
 public class Packages extends TreeMap<String,File> {
 
@@ -41,6 +37,7 @@ public class Packages extends TreeMap<String,File> {
         DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.react");
         DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.task");
         DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.testing");
+        DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.dashboard");
     }
 
     public static boolean isMdwPackage(String packageName) {

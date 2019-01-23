@@ -1,5 +1,6 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
+import statuses from './statuses';
 import DashboardChart from './DashboardChart.jsx';
 
 class Processes extends Component {
@@ -49,14 +50,7 @@ class Processes extends Component {
         Master: false
       },
       filterOptions: {
-        Status: [
-          'Pending',
-          'In Progress',
-          'Failed',
-          'Completed',
-          'Canceled',
-          'Waiting'
-        ]
+        Status: statuses.process
       }
     };
 

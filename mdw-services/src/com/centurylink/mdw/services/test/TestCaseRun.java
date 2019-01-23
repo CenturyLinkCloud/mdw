@@ -916,6 +916,7 @@ public class TestCaseRun implements Runnable {
                     stubResponse.setDelay(delay);
                     stubResponse.setStatusCode(adapterStub.getStatusCode());
                     stubResponse.setStatusMessage(adapterStub.getStatusMessage());
+                    stubResponse.setPath(request.getUrl());
                     return stubResponse;
                 }
                 catch (Throwable th) {

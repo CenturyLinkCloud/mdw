@@ -536,6 +536,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         return logRequest(new Request(message));
     }
 
+    @Deprecated
     protected Long logResponse(String message) {
         return logResponse(new Response(message));
     }
@@ -543,7 +544,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
     protected Long logResponse(Response response) {
         try {
             DocumentReference docref = createDocument(String.class.getName(), response.getContent(),
-                    OwnerType.ADAPTER_RESPONSE, getActivityInstanceId(), response.getStatusCode(), response.getStatusMessage());
+                    OwnerType.ADAPTER_RESPONSE, getActivityInstanceId(), response.getStatusCode(), response.getStatusMessage(), response.getPath());
 
             if (docref.getDocumentId() > 0L) {
                 JSONObject meta = getResponseMeta();
