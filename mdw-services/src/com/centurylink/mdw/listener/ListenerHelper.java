@@ -264,6 +264,7 @@ public class ListenerHelper {
 
                     if (altResponse.getStatusCode() == null)
                         altResponse.setStatusCode(getResponseCode(metaInfo));
+                    altResponse.setPath(metaInfo.get(Listener.METAINFO_REQUEST_PATH));
 
                     if (persistMessage(metaInfo)) {
                         Long ownerId = createResponseDocument(altResponse, eeid);
@@ -289,6 +290,7 @@ public class ListenerHelper {
 
                 if (response.getStatusCode() == null)
                     response.setStatusCode(getResponseCode(metaInfo));
+                response.setPath(metaInfo.get(Listener.METAINFO_REQUEST_PATH));
 
                 if (persistMessage(metaInfo) && !StringHelper.isEmpty(response.getContent())) {
                     Long ownerId = createResponseDocument(response, eeid);
@@ -325,6 +327,7 @@ public class ListenerHelper {
                     response = altResponse;
                     if (response.getStatusCode() == null)
                         response.setStatusCode(getResponseCode(metaInfo));
+                    response.setPath(metaInfo.get(Listener.METAINFO_REQUEST_PATH));
                 }
             }
             if (response == null)
@@ -456,6 +459,7 @@ public class ListenerHelper {
             }
             if (response.getStatusCode() == null)
                 response.setStatusCode(getResponseCode(metaInfo));
+            response.setPath(metaInfo.get(Listener.METAINFO_REQUEST_PATH));
             try {
                 createResponseMeta(metaInfo, reqMetaInfo, createResponseDocument(response, eeid), requestTime);
             }
@@ -596,6 +600,7 @@ public class ListenerHelper {
         statusMsg.setMessage(ex.getMessage());
         response.setStatusCode(statusMsg.getCode());
         response.setStatusMessage(statusMsg.getMessage());
+        response.setPath(metaInfo.get(Listener.METAINFO_REQUEST_PATH));
         if (contentType.equals(Listener.CONTENT_TYPE_JSON)) {
             response.setContent(statusMsg.getJsonString());
         }

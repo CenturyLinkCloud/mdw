@@ -116,8 +116,8 @@ class DashboardChart extends Component {
     this.setState({
       timespan: timespan,
       breakdown: this.state.breakdown,
-      tops: this.state.tops,
-      selected: this.state.selected,
+      tops: [],
+      selected: [],
       filters: this.state.filters,
       data: {}
     }, this.update);
@@ -127,8 +127,8 @@ class DashboardChart extends Component {
     this.setState({
       timespan: this.state.timespan,
       breakdown: breakdown,
-      tops: this.state.tops,
-      selected: this.state.selected,
+      tops: [],
+      selected: [],
       filters: this.state.filters,
       data: {}
     }, this.update);
@@ -169,8 +169,8 @@ class DashboardChart extends Component {
     this.setState({
       timespan: this.state.timespan,
       breakdown: this.state.breakdown,
-      tops: this.state.tops,
-      selected: this.state.selected,
+      tops: [],
+      selected: [],
       filters: filters,
       data: {}
     }, this.update);
@@ -249,6 +249,7 @@ class DashboardChart extends Component {
     return new Promise(resolve => {
       const breakdown = this.getBreakdown();
       if (breakdown && breakdown.tops) {
+        $mdwUi.hubLoading(true);
         var topsUrl = this.buildUrl(this.context.serviceRoot + breakdown.tops);
         topsUrl += '&max=' + this.maxTops;
         fetch(new Request(topsUrl, {
@@ -260,6 +261,7 @@ class DashboardChart extends Component {
           return response.json();
         })
         .then(tops => {
+          $mdwUi.hubLoading(false);
           resolve(tops);
         });
       }
@@ -273,6 +275,7 @@ class DashboardChart extends Component {
     return new Promise(resolve => {
       const breakdown = this.getBreakdown();
       if (breakdown) {
+        $mdwUi.hubLoading(true);
         var dataUrl = this.buildUrl(this.context.serviceRoot + breakdown.data);
         if (breakdown.instancesParam) {
           dataUrl += '&' + breakdown.instancesParam + '=%5B' + this.state.selected.map(sel => {
@@ -288,6 +291,7 @@ class DashboardChart extends Component {
           return response.json();
         })
         .then(data => {
+          $mdwUi.hubLoading(false);
           resolve(data);
         });
       }
@@ -297,7 +301,7 @@ class DashboardChart extends Component {
     });
   }
 
-  getOverallData() {
+  getOverviewData() {
     const breakdown = this.getBreakdown();
     const overallData = {labels: [], datasets: [{label: 'Overall', data: [], backgroundColor: []}]};
     this.state.selected.forEach((sel, i) => {
@@ -309,7 +313,7 @@ class DashboardChart extends Component {
     return overallData;
   }
 
-  getLineData() {
+  getMainData() {
     const lineData = {labels: [], datasets: []};
     var datasets = {}; // id to dataset
     if (this.state.selected.length > 0) {
@@ -341,7 +345,6 @@ class DashboardChart extends Component {
         }
       }, this);
     }
-    // console.log("DATA: " + JSON.stringify(lineData, null, 2));
     return lineData;
   }
 
@@ -376,6 +379,10 @@ class DashboardChart extends Component {
 
   render() {
     const breakdown = this.getBreakdown();
+    const overviewData = this.getOverviewData();
+    const mainData = this.getMainData();
+    const topsLoading = breakdown.tops && !this.state.tops.length;
+
     return (
       <div>
         <ChartHeader title={this.props.title}
@@ -396,18 +403,23 @@ class DashboardChart extends Component {
           onFilterReset={this.handleFilterReset}
           onDownload={this.handleDownload}/>
         <div className="mdw-section" style={{display:'flex'}}>
-          {breakdown.tops &&
+          {topsLoading &&
+            <div className="mdw-chart-title" style={{minWidth:'250px'}}>
+              Loading...
+            </div>
+          }
+          {breakdown.tops && !topsLoading &&
             <div style={{maxWidth:'303px',maxHeight:'303px'}}>
               {(!breakdown.summaryChart || breakdown.summaryChart === 'donut') &&
                 <Doughnut
-                  data={this.getOverallData()}
+                  data={overviewData}
                   options={this.chartOptions}
                   width={250} height={250}
                   getElementAtEvent={this.handleOverallClick} />
               }
               {breakdown.summaryChart === 'bar' &&
                 <Bar
-                  data={this.getOverallData()}
+                  data={overviewData}
                   options={this.chartOptions}
                   width={250} height={250}
                   getElementAtEvent={this.handleOverallClick} />
@@ -418,14 +430,14 @@ class DashboardChart extends Component {
                 selected={this.state.selected} />
             </div>
           }
-          {!breakdown.tops &&
+          {!breakdown.tops && !topsLoading &&
             <div className="mdw-chart-title" style={{width:'320px'}}>
               {breakdown.name}
             </div>
           }
           <div style={{height:'100%',width:'100%'}}>
             <Line
-              data={this.getLineData()}
+              data={mainData}
               options={this.chartOptions}
               getElementAtEvent={this.handleDataClick} />
           </div>

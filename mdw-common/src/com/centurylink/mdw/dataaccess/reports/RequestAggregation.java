@@ -249,17 +249,23 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
         String ownerType = null;
         String direction = query.getFilter("direction");
         boolean isMaster = query.getBooleanFilter("Master");
-        if ("inbound".equals(direction) || isMaster) {
+        if ("in".equals(direction) || isMaster) {
             ownerType = OwnerType.LISTENER_RESPONSE;
         }
-        else if ("outbound".equals(direction)) {
-            ownerType = OwnerType.ADAPTER_RESPONSE;
+        else if ("out".equals(direction)) {
+            if (by.equals("completionTime"))
+                ownerType = OwnerType.ADAPTER;
+            else
+                ownerType = OwnerType.ADAPTER_RESPONSE;
         }
         if (ownerType == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing parameter: direction");
 
         if ("completionTime".equals(by)) {
-            where.append("  and instance_id = document_id and it.owner_type = ?\n");
+            if ("out".equals(direction))
+                where.append("  and instance_id = owner_id and it.owner_type = ?\n");
+            else
+                where.append("  and instance_id = document_id and it.owner_type = ?\n");
             params.add(ownerType);
         }
         else {

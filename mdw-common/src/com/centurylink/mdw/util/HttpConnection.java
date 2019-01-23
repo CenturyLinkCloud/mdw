@@ -24,7 +24,7 @@ public class HttpConnection {
     public static final String HTTP_BASIC_AUTH_HEADER = "Authorization";
 
     private URL url;
-    protected URL getUrl() { return url; }
+    public URL getUrl() { return url; }
 
     private HttpURLConnection connection;
     HttpURLConnection getConnection() { return connection; }

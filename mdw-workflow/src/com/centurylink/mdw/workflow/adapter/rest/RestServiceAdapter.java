@@ -231,6 +231,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                 Response response = new Response(httpHelper.getResponse());
                 response.setStatusCode(httpHelper.getResponseCode());
                 response.setStatusMessage(httpHelper.getResponseMessage());
+                response.setPath(String.valueOf(httpHelper.getConnection().getUrl()));
                 logResponse(response);
             }
             /**
@@ -247,6 +248,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                     Response response = new Response(httpHelper.getResponse());
                     response.setStatusCode(responseCode);
                     response.setStatusMessage(httpHelper.getResponseMessage());
+                    response.setPath(String.valueOf(httpHelper.getConnection().getUrl()));
                     logResponse(response);
                 }
             }
