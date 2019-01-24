@@ -24,8 +24,8 @@ script:
 - ./gradlew --no-daemon publishAll
 after_failure:
 - cat ../testResults/mdw-function-test-results.json
-- cat ../testResults/com.centurylink.mdw.tests.services/SolutionValues.test
-- cat ../testResults/com.centurylink.mdw.tests.services/SolutionService.test
+- cat ../testResults/com.centurylink.mdw.tests.services/SolutionValues.log
+- cat ../testResults/com.centurylink.mdw.tests.services/SolutionService.log
 - cat mdw.log
 - sleep 10s
 notifications:
