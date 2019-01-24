@@ -208,7 +208,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
 
     private List<Jsonable> getTaskInstanceMembers0(Long solutionId) throws SQLException {
         String query = "select " + SOLUTION_MAP_COLS + ", " + TASK_INST_COLS +
-                " from SOLUTION s, SOLUTION_MAP sm, task_instance ti" +
+                " from SOLUTION s, SOLUTION_MAP sm, TASK_INSTANCE ti" +
             "\n where s.solution_id = ?" +
             "\n and sm.solution_id = s.solution_id" +
             "\n and sm.member_type = '"  + MemberType.TaskInstance + "'" +
