@@ -69,7 +69,7 @@ public interface TaskServices {
 
     List<TaskTemplate> getTaskTemplates(Query query) throws ServiceException;
 
-    List<TaskAggregate> getTopTasks(String aggregateBy, Query query) throws ServiceException;
+    List<TaskAggregate> getTopTasks(Query query) throws ServiceException;
 
     TreeMap<Date,List<TaskAggregate>> getTaskBreakdown(Query query) throws ServiceException;
 
@@ -112,4 +112,5 @@ public interface TaskServices {
 
     Map<String, List<TaskTemplate>> getTaskTemplatesByPackage(Query query) throws ServiceException;
 
+    void setElapsedTime(String ownerType, Long instanceId, Long elapsedTime) throws ServiceException;
 }

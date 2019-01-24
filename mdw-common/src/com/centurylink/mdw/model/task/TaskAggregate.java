@@ -49,6 +49,9 @@ public class TaskAggregate implements Aggregate, Jsonable {
     public String getPackageName() { return packageName; }
     public void setPackageName(String pkg) { this.packageName = pkg; }
 
+    private boolean definitionMissing;
+    public void setDefinitionMissing(boolean missing) { this.definitionMissing = missing; }
+
     private String workgroup;
     public String getWorkgroup() { return workgroup; }
     public void setWorkgroup(String workgroup) { this.workgroup = workgroup; }
@@ -57,25 +60,15 @@ public class TaskAggregate implements Aggregate, Jsonable {
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
 
-    private String userName;
-    public String getUserName() { return userName; }
-    public void setUserName(String userName) { this.userName = userName; }
-
-    private String status;
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-
-    private boolean definitionMissing;
-    public boolean isDefinitionMissing() { return definitionMissing; }
-    public void setDefinitionMissing(boolean missing) { this.definitionMissing = missing; }
-
-    public TaskAggregate(long count) {
-        this.count = count;
+    public TaskAggregate(long value) {
+        this.value = value;
     }
 
     @SuppressWarnings("unused")
     public TaskAggregate(JSONObject json) throws JSONException {
-        count = json.getLong("count");
+        value = json.getLong("value");
+        if (json.has("count"))
+            count = json.getLong("count");
         if (json.has("id"))
             id = json.getLong("id");
         if (json.has("name"))
@@ -86,14 +79,10 @@ public class TaskAggregate implements Aggregate, Jsonable {
             packageName = json.getString("packageName");
         if (json.has("definitionMissing"))
             definitionMissing = json.getBoolean("definitionMissing");
-        if (json.has("workgroup"))
-            workgroup = json.getString("workgroup");
         if (json.has("userId"))
             userId = json.getString("userId");
-        if (json.has("userName"))
-            userName = json.getString("userName");
-        if (json.has("status"))
-            status = json.getString("status");
+        if (json.has("workgroup"))
+            workgroup = json.getString("workgroup");
     }
 
     public String getJsonName() {
@@ -102,7 +91,9 @@ public class TaskAggregate implements Aggregate, Jsonable {
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
-        json.put("count", count);
+        json.put("value", value);
+        if (count > -1)
+            json.put("count", count);
         if (id >= 0)
             json.put("id", id);
         if (name != null)
@@ -113,14 +104,10 @@ public class TaskAggregate implements Aggregate, Jsonable {
             json.put("packageName", packageName);
         if (definitionMissing)
             json.put("definitionMissing", true);
-        if (workgroup != null)
-            json.put("workgroup", workgroup);
         if (userId != null)
-            json.put("user", userId);
-        if (userName != null)
-            json.put("userName", userName);
-        if (status != null)
-            json.put("status", status);
+            json.put("id", userId);
+        if (workgroup != null)
+            json.put("id", workgroup);
         return json;
     }
 }

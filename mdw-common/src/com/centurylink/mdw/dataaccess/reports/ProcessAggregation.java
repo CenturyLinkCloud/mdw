@@ -3,6 +3,7 @@ package com.centurylink.mdw.dataaccess.reports;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.PreparedSelect;
 import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.model.workflow.ProcessAggregate;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
@@ -18,7 +19,6 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
         String by = query.getFilter("by");
         if (by == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing required filter: 'by'");
-
         try {
             db.openConnection();
             if (by.equals("throughput"))
@@ -39,97 +39,69 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
     }
 
     private List<ProcessAggregate> getTopsByThroughput(Query query)
-            throws ParseException, DataAccessException, SQLException {
-        PreparedWhere preparedWhere = getProcessWhereClause(query);
-        String sql = "select process_id, " +
-                "count(process_id) as ct\n" +
+            throws ParseException, DataAccessException, SQLException, ServiceException {
+        PreparedWhere preparedWhere = getProcessWhere(query);
+        String sql = "select process_id, count(process_id) as ct\n" +
                 "from PROCESS_INSTANCE\n" +
                 preparedWhere.getWhere() + " " +
                 "group by process_id\n" +
                 "order by ct desc\n";
-        ResultSet rs = db.runSelect("getTopsByThroughput()", sql, preparedWhere.getParams());
-        List<ProcessAggregate> list = new ArrayList<>();
-        int idx = 0;
-        int limit = query.getIntFilter("limit");
-        while (rs.next() && (limit == -1 || idx < limit)) {
-            long ct = Math.round(rs.getDouble("ct"));
+        PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
+                "ProcessAggregation.getTopsByThroughput()");
+        return getTopAggregates(query, preparedSelect, resultSet -> {
+            long ct = Math.round(resultSet.getDouble("ct"));
             ProcessAggregate processAggregate = new ProcessAggregate(ct);
             processAggregate.setCount(ct);
-            processAggregate.setId(rs.getLong("process_id"));
-            list.add(processAggregate);
-            idx++;
-        }
-        return list;
+            processAggregate.setId(resultSet.getLong("process_id"));
+            return processAggregate;
+        });
     }
 
     private List<ProcessAggregate> getTopsByStatus(Query query)
-            throws ParseException, DataAccessException, SQLException {
-        PreparedWhere preparedWhere = getProcessWhereClause(query);
+            throws ParseException, DataAccessException, SQLException, ServiceException {
+        PreparedWhere preparedWhere = getProcessWhere(query);
         String sql = "select status_cd, count(status_cd) as ct from PROCESS_INSTANCE\n" +
                 preparedWhere.getWhere() + " " +
                 "group by status_cd\n" +
                 "order by ct desc\n";
-        ResultSet rs = db.runSelect("getTopsByStatus()", sql, preparedWhere.getParams());
-        List<ProcessAggregate> list = new ArrayList<>();
-        int idx = 0;
-        int limit = query.getIntFilter("limit");
-        while (rs.next() && (limit == -1 || idx < limit)) {
-            long ct = Math.round(rs.getDouble("ct"));
+        PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
+                "ProcessAggregation.getTopsByStatus()");
+        return getTopAggregates(query, preparedSelect, resultSet -> {
+            long ct = Math.round(resultSet.getDouble("ct"));
             ProcessAggregate processAggregate = new ProcessAggregate(ct);
             processAggregate.setCount(ct);
-            processAggregate.setId(rs.getInt("status_cd"));
-            list.add(processAggregate);
-            idx++;
-        }
-        return list;
+            processAggregate.setId(resultSet.getInt("status_cd"));
+            return processAggregate;
+        });
     }
 
     private List<ProcessAggregate> getTopsByCompletionTime(Query query)
-            throws ParseException, DataAccessException, SQLException {
-        PreparedWhere preparedWhere = getProcessWhereClause(query);
-        String sql = "select process_id, " +
-                "avg(elapsed_ms) as elapsed, count(process_id) as ct\n" +
+            throws ParseException, DataAccessException, SQLException, ServiceException {
+        PreparedWhere preparedWhere = getProcessWhere(query);
+        String sql = "select process_id, avg(elapsed_ms) as elapsed, count(process_id) as ct\n" +
                 "from PROCESS_INSTANCE" +
                 ", INSTANCE_TIMING\n" +
                 preparedWhere.getWhere() + " " +
                 "group by process_id\n" +
                 "order by elapsed desc\n";
-        ResultSet rs = db.runSelect("getTopsByCompletionTime()", sql, preparedWhere.getParams());
-        List<ProcessAggregate> list = new ArrayList<>();
-        int idx = 0;
-        int limit = query.getIntFilter("limit");
-        while (rs.next() && (limit == -1 || idx < limit)) {
-            Long elapsed = Math.round(rs.getDouble("elapsed"));
+        PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
+                "ProcessAggregation.getTopsByCompletionTime()");
+        return getTopAggregates(query, preparedSelect, resultSet -> {
+            long ct = Math.round(resultSet.getDouble("ct"));
+            Long elapsed = Math.round(resultSet.getDouble("elapsed"));
             ProcessAggregate processAggregate = new ProcessAggregate(elapsed);
-            processAggregate.setCount(rs.getLong("ct"));
-            processAggregate.setId(rs.getLong("process_id"));
-            list.add(processAggregate);
-            idx++;
-        }
-        return list;
+            processAggregate.setCount(resultSet.getLong("ct"));
+            processAggregate.setId(resultSet.getLong("process_id"));
+            return processAggregate;
+        });
     }
 
     public TreeMap<Date,List<ProcessAggregate>> getBreakdown(Query query) throws DataAccessException, ServiceException {
         String by = query.getFilter("by");
         if (by == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing required filter: 'by'");
-
         try {
-            PreparedWhere preparedWhere = getProcessWhereClause(query);
-            // process ids
-            Long[] processIdsArr = query.getLongArrayFilter("processIds");
-            List<Long> processIds = processIdsArr == null ? null : Arrays.asList(processIdsArr);
-            // by status
-            String[] statuses = query.getArrayFilter("statuses");
-            List<Integer> statusCodes = null;
-            if (statuses != null) {
-                statusCodes = new ArrayList<>();
-                for (String status : statuses)
-                    statusCodes.add(WorkStatuses.getCode(status));
-            }
-            if (processIds != null && statuses != null)
-                throw new DataAccessException("Conflicting parameters: processIds and statuses");
-
+            PreparedWhere preparedWhere = getProcessWhere(query);
             StringBuilder sql = new StringBuilder();
             if (by.equals("status"))
                 sql.append("select count(pi.status_cd) as val, pi.st, pi.status_cd\n");
@@ -146,7 +118,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
                 sql.append("from (select to_char(start_dt,'DD-Mon-yyyy') as st");
             if (by.equals("status"))
                 sql.append(", status_cd ");
-            else if (processIds != null)
+            else if (!by.equals("total"))
                 sql.append(", process_id ");
             if (by.equals("completionTime"))
                 sql.append(", elapsed_ms");
@@ -157,11 +129,20 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
             sql.append(preparedWhere.getWhere()).append(" ");
             List<Object> params = new ArrayList<>(Arrays.asList(preparedWhere.getParams()));
             if (by.equals("status")) {
+                String[] statuses = query.getArrayFilter("statuses");
+                List<Integer> statusCodes = null;
+                if (statuses != null) {
+                    statusCodes = new ArrayList<>();
+                    for (String status : statuses)
+                        statusCodes.add(WorkStatuses.getCode(status));
+                }
                 PreparedWhere inCondition = getInCondition(statusCodes);
                 sql.append("   and status_cd ").append(inCondition.getWhere());
                 params.addAll(Arrays.asList(inCondition.getParams()));
             }
             else if (!by.equals("total")) {
+                Long[] processIdsArr = query.getLongArrayFilter("processIds");
+                List<Long> processIds = processIdsArr == null ? null : Arrays.asList(processIdsArr);
                 PreparedWhere inCondition = getInCondition(processIds);
                 sql.append("   and process_id ").append(inCondition.getWhere());
                 params.addAll(Arrays.asList(inCondition.getParams()));
@@ -230,12 +211,13 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
         }
     }
 
-    protected PreparedWhere getProcessWhereClause(Query query) throws ParseException, DataAccessException {
+    protected PreparedWhere getProcessWhere(Query query) throws ParseException, DataAccessException {
         String by = query.getFilter("by");
         Date start = getStartDate(query);
 
         StringBuilder where = new StringBuilder();
         List<Object> params = new ArrayList<>();
+
         if ("completionTime".equals(by)) {
             where.append("where owner_type = ? and instance_id = process_instance_id\n");
             params.add("PROCESS_INSTANCE");

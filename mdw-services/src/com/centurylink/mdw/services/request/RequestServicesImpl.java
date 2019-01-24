@@ -126,14 +126,7 @@ public class RequestServicesImpl implements RequestServices {
         try {
             CodeTimer timer = new CodeTimer(true);
             List<RequestAggregate> list = getRequestAggregation().getTops(query);
-            timer.logTimingAndContinue("RequestServicesImpl.getTopRequests()");
-//            if ("status".equals(query.getFilter("by"))) {
-//                list = populateRequestStatuses(list);
-//            }
-//            else {
-//                list = populateProcesses(list);
-//            }
-            timer.stopAndLogTiming("RequestServicesImpl.populate()");
+            timer.stopAndLogTiming("RequestServicesImpl.getTopRequests()");
             return list;
         }
         catch (DataAccessException ex) {

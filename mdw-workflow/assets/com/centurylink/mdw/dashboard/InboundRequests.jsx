@@ -14,7 +14,7 @@ class InboundRequests extends Component {
       breakdowns: [
         {
           name: 'Throughput',
-          selectField: 'path',
+          selectField: 'name',
           selectLabel: 'Request Paths',
           tops: '/Requests/tops?direction=in&by=throughput',
           data: '/Requests/breakdown?direction=in&by=throughput',
@@ -22,15 +22,15 @@ class InboundRequests extends Component {
         },
         {
           name: 'Status',
-          selectField: 'status',
+          selectField: 'id',
           selectLabel: 'Statuses',
           tops: '/Requests/tops?direction=in&by=status',
           data: '/Requests/breakdown?direction=in&by=status',
-           instancesParam: 'statusCodes'
+          instancesParam: 'statusCodes'
         },
         {
           name: 'Completion Time',
-          selectField: 'path',
+          selectField: 'name',
           selectLabel: 'Request Paths',
           tops: '/Requests/tops?direction=in&by=completionTime',
           data: '/Requests/breakdown?direction=in&by=completionTime',

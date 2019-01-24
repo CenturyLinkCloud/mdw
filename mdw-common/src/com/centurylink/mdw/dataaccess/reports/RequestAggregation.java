@@ -4,6 +4,7 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.PreparedSelect;
 import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.model.request.RequestAggregate;
 
@@ -40,98 +41,69 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
 
     private List<RequestAggregate> getTopsByThroughput(Query query)
             throws ParseException, DataAccessException, SQLException, ServiceException {
-        PreparedWhere psWhere = getRequestWhereClause(query);
-        String sql = "select path, " +
-                "count(path) as ct\n" +
+        PreparedWhere preparedWhere = getRequestWhere(query);
+        String sql = "select path, count(path) as ct\n" +
                 "from DOCUMENT doc\n" +
-                psWhere.getWhere() + "\n" +
+                preparedWhere.getWhere() + "\n" +
                 "group by path\n" +
                 "order by ct desc\n";
-        ResultSet rs = db.runSelect("getTopsByThroughput()", sql, psWhere.getParams());
-        List<RequestAggregate> list = new ArrayList<>();
-        int idx = 0;
-        int limit = query.getIntFilter("limit");
-        while (rs.next() && (limit == -1 || idx < limit)) {
-            long ct = Math.round(rs.getDouble("ct"));
+        PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
+                "RequestAggregation.getTopsByThroughput()");
+        return getTopAggregates(query, preparedSelect, resultSet -> {
+            long ct = Math.round(resultSet.getDouble("ct"));
             RequestAggregate requestAggregate = new RequestAggregate(ct);
             requestAggregate.setCount(ct);
-            requestAggregate.setPath(rs.getString("doc.path"));
-            list.add(requestAggregate);
-            idx++;
-        }
-        return list;
+            requestAggregate.setPath(resultSet.getString("doc.path"));
+            return requestAggregate;
+        });
     }
 
     private List<RequestAggregate> getTopsByStatus(Query query)
             throws ParseException, DataAccessException, SQLException, ServiceException {
-        PreparedWhere preparedWhere = getRequestWhereClause(query);
+        PreparedWhere preparedWhere = getRequestWhere(query);
         String sql = "select status_code, count(status_code) as ct from DOCUMENT\n" +
                 preparedWhere.getWhere() + " " +
                 "group by status_code\n" +
                 "order by ct desc\n";
-        ResultSet rs = db.runSelect("getTopsByStatus()", sql, preparedWhere.getParams());
-        List<RequestAggregate> list = new ArrayList<>();
-        int idx = 0;
-        int limit = query.getIntFilter("limit");
-        while (rs.next() && (limit == -1 || idx < limit)) {
-            long ct = Math.round(rs.getDouble("ct"));
+        PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
+                "RequestAggregation.getTopsByStatus()");
+        return getTopAggregates(query, preparedSelect, resultSet -> {
+            long ct = Math.round(resultSet.getDouble("ct"));
             RequestAggregate requestAggregate = new RequestAggregate(ct);
             requestAggregate.setCount(ct);
-            Integer statusCode = rs.getInt("status_code");
+            Integer statusCode = resultSet.getInt("status_code");
             requestAggregate.setId(statusCode);
             requestAggregate.setStatus(statusCode);
-            list.add(requestAggregate);
-            idx++;
-        }
-        return list;
+            return requestAggregate;
+        });
     }
 
     private List<RequestAggregate> getTopsByCompletionTime(Query query)
             throws ParseException, DataAccessException, SQLException, ServiceException {
-        PreparedWhere preparedWhere = getRequestWhereClause(query);
-        String sql = "select path, " +
-                "avg(elapsed_ms) as elapsed, count(path) as ct\n" +
+        PreparedWhere preparedWhere = getRequestWhere(query);
+        String sql = "select path, avg(elapsed_ms) as elapsed, count(path) as ct\n" +
                 "from DOCUMENT" +
                 ", INSTANCE_TIMING it\n" +
                 preparedWhere.getWhere() + " " +
                 "group by path\n" +
                 "order by elapsed desc\n";
-        ResultSet rs = db.runSelect("getTopsByCompletionTime()", sql, preparedWhere.getParams());
-        List<RequestAggregate> list = new ArrayList<>();
-        int idx = 0;
-        int limit = query.getIntFilter("limit");
-        while (rs.next() && (limit == -1 || idx < limit)) {
-            Long elapsed = Math.round(rs.getDouble("elapsed"));
+        PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
+                "RequestAggregation.getTopsByCompletionTime()");
+        return getTopAggregates(query, preparedSelect, resultSet -> {
+            Long elapsed = Math.round(resultSet.getDouble("elapsed"));
             RequestAggregate requestAggregate = new RequestAggregate(elapsed);
-            requestAggregate.setCount(rs.getLong("ct"));
-            requestAggregate.setPath(rs.getString("path"));
-            list.add(requestAggregate);
-            idx++;
-        }
-        return list;
+            requestAggregate.setCount(resultSet.getLong("ct"));
+            requestAggregate.setPath(resultSet.getString("path"));
+            return requestAggregate;
+        });
     }
 
     public TreeMap<Date,List<RequestAggregate>> getBreakdown(Query query) throws DataAccessException, ServiceException {
         String by = query.getFilter("by");
         if (by == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing required filter: 'by'");
-
         try {
-            PreparedWhere preparedWhere = getRequestWhereClause(query);
-            // request paths
-            String[] requestPathsArr = query.getArrayFilter("requestPaths");
-            List<String> requestPaths = requestPathsArr == null ? null : Arrays.asList(requestPathsArr);
-            // by status
-            String[] statuses = query.getArrayFilter("statusCodes");
-            List<Integer> statusCodes = null;
-            if (statuses != null) {
-                statusCodes = new ArrayList<>();
-                for (String status : statuses)
-                    statusCodes.add(Integer.parseInt(status));
-            }
-            if (requestPaths != null && statuses != null)
-                throw new DataAccessException("Conflicting parameters: paths and statuses");
-
+            PreparedWhere preparedWhere = getRequestWhere(query);
             StringBuilder sql = new StringBuilder();
             if (by.equals("status"))
                 sql.append("select count(req.status_code) as val, req.st, req.status_code\n");
@@ -148,7 +120,7 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
                 sql.append("from (select to_char(create_dt,'DD-Mon-yyyy') as st");
             if (by.equals("status"))
                 sql.append(", status_code ");
-            else if (requestPaths != null)
+            else if (!by.equals("total"))
                 sql.append(", path ");
             if (by.equals("completionTime"))
                 sql.append(", elapsed_ms");
@@ -159,11 +131,20 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
             sql.append(preparedWhere.getWhere()).append(" ");
             List<Object> params = new ArrayList<>(Arrays.asList(preparedWhere.getParams()));
             if (by.equals("status")) {
+                String[] statuses = query.getArrayFilter("statusCodes");
+                List<Integer> statusCodes = null;
+                if (statuses != null) {
+                    statusCodes = new ArrayList<>();
+                    for (String status : statuses)
+                        statusCodes.add(Integer.parseInt(status));
+                }
                 PreparedWhere inCondition = getInCondition(statusCodes);
                 sql.append("   and status_code ").append(inCondition.getWhere());
                 params.addAll(Arrays.asList(inCondition.getParams()));
             }
             else if (!by.equals("total")) {
+                String[] requestPathsArr = query.getArrayFilter("requestPaths");
+                List<String> requestPaths = requestPathsArr == null ? null : Arrays.asList(requestPathsArr);
                 PreparedWhere inCondition = getInCondition(requestPaths);
                 sql.append("   and path ").append(inCondition.getWhere());
                 params.addAll(Arrays.asList(inCondition.getParams()));
@@ -232,7 +213,7 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
         }
     }
 
-    protected PreparedWhere getRequestWhereClause(Query query)
+    protected PreparedWhere getRequestWhere(Query query)
             throws ParseException, DataAccessException, ServiceException {
         String by = query.getFilter("by");
         Date start = getStartDate(query);

@@ -129,15 +129,14 @@ public class Tasks extends JsonRestService implements JsonExportable {
                     return ServiceLocator.getUserServices()
                             .findWorkgroupUsers(user.getGroupNames(), query.getFind()).getJson();
                 }
-                else if (segOne.equals("topThroughput")) {
+                else if (segOne.equals("tops")) {
                     // dashboard top throughput query
-                    String breakdown = getSegment(path, 2);
-                    List<TaskAggregate> list = taskServices.getTopTasks(breakdown, query);
+                    List<TaskAggregate> taskAggregates = taskServices.getTopTasks(query);
                     JSONArray taskArr = new JSONArray();
                     int ct = 0;
                     TaskAggregate other = null;
                     long otherTot = 0;
-                    for (TaskAggregate taskAggregate : list) {
+                    for (TaskAggregate taskAggregate : taskAggregates) {
                         if (ct >= query.getMax()) {
                             if (other == null) {
                                 other = new TaskAggregate(0);
@@ -156,23 +155,14 @@ public class Tasks extends JsonRestService implements JsonExportable {
                     }
                     return new JsonArray(taskArr).getJson();
                 }
-                else if (segOne.equals("instanceCounts")) {
-                    TreeMap<Date, List<TaskAggregate>> dateMap = taskServices.getTaskBreakdown(query);
-                    boolean isTotals = query.getFilters().get("taskIds") == null
-                            && query.getFilters().get("workgroups") == null
-                            && query.getFilters().get("users") == null
-                            && query.getFilters().get("statuses") == null;
-
-                    Map<String, List<TaskAggregate>> listMap = new HashMap<String, List<TaskAggregate>>();
+                else if (segOne.equals("breakdown")) {
+                    TreeMap<Date,List<TaskAggregate>> dateMap = taskServices.getTaskBreakdown(query);
+                    LinkedHashMap<String,List<TaskAggregate>> listMap = new LinkedHashMap<>();
                     for (Date date : dateMap.keySet()) {
                         List<TaskAggregate> taskAggregates = dateMap.get(date);
-                        if (isTotals) {
-                            for (TaskAggregate taskAggregate : taskAggregates)
-                                taskAggregate.setName("Total");
-                        }
                         listMap.put(Query.getString(date), taskAggregates);
                     }
-                    return new JsonListMap<TaskAggregate>(listMap).getJson();
+                    return new JsonListMap<>(listMap).getJson();
                 }
                 else {
                     // must be instance id

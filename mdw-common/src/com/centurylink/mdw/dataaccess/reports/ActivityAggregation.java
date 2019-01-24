@@ -3,6 +3,7 @@ package com.centurylink.mdw.dataaccess.reports;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.PreparedSelect;
 import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.model.workflow.ActivityAggregate;
 import com.centurylink.mdw.model.workflow.WorkStatus;
@@ -19,7 +20,6 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
         String by = query.getFilter("by");
         if (by == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing required filter: 'by'");
-
         try {
             db.openConnection();
             if (by.equals("throughput"))
@@ -38,29 +38,25 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
     }
 
     private List<ActivityAggregate> getTopsByStuck(Query query)
-            throws ParseException, DataAccessException, SQLException {
-        PreparedWhere preparedWhere = getActivityWhereClause(query);
+            throws ParseException, DataAccessException, SQLException, ServiceException {
+        PreparedWhere preparedWhere = getActivityWhere(query);
         String sql = "select count(act_unique_id) as ct, act_unique_id\n" +
                 getUniqueIdFrom() +
                 preparedWhere.getWhere() +
                 ") a1\n" +
                 "group by act_unique_id\n" +
                 "order by ct desc\n";
-        ResultSet rs = db.runSelect("getTopsByStuck()", sql, preparedWhere.getParams());
-        List<ActivityAggregate> list = new ArrayList<>();
-        int idx = 0;
-        int limit = query.getIntFilter("limit");
-        while (rs.next() && (limit == -1 || idx < limit)) {
-            ActivityAggregate activityAggregate = new ActivityAggregate(rs.getLong("ct"));
-            String actId = rs.getString("act_unique_id");
+
+        PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),"ActivityAggregation.getTopsByStuck()");
+        return getTopAggregates(query, preparedSelect, resultSet -> {
+            ActivityAggregate activityAggregate = new ActivityAggregate(resultSet.getLong("ct"));
+            String actId = resultSet.getString("act_unique_id");
             activityAggregate.setActivityId(actId);
             int colon = actId.lastIndexOf(":");
             activityAggregate.setProcessId(new Long(actId.substring(0, colon)));
             activityAggregate.setDefinitionId(actId.substring(colon + 1));
-            list.add(activityAggregate);
-            idx++;
-        }
-        return list;
+            return activityAggregate;
+        });
     }
 
     private String getUniqueIdFrom() {
@@ -71,26 +67,21 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
     }
 
     private List<ActivityAggregate> getTopsByStatus(Query query)
-            throws ParseException, DataAccessException, SQLException {
-        PreparedWhere preparedWhere = getActivityWhereClause(query);
+            throws ParseException, DataAccessException, SQLException, ServiceException {
+        PreparedWhere preparedWhere = getActivityWhere(query);
         String sql = "select status_cd, count(status_cd) as ct " +
                 "from ACTIVITY_INSTANCE ai\n" +
                 preparedWhere.getWhere() +
                 "group by status_cd\n" +
                 "order by ct desc\n";
-        ResultSet rs = db.runSelect("getTopsByStatus()", sql, preparedWhere.getParams());
-        List<ActivityAggregate> list = new ArrayList<>();
-        int idx = 0;
-        int limit = query.getIntFilter("limit");
-        while (rs.next() && (limit == -1 || idx < limit)) {
-            long ct = Math.round(rs.getDouble("ct"));
+        PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),"ActivityAggregation.getTopsByStatus()");
+        return getTopAggregates(query, preparedSelect, resultSet -> {
+            long ct = Math.round(resultSet.getDouble("ct"));
             ActivityAggregate activityAggregate = new ActivityAggregate(ct);
             activityAggregate.setCount(ct);
-            activityAggregate.setId(rs.getInt("status_cd"));
-            list.add(activityAggregate);
-            idx++;
-        }
-        return list;
+            activityAggregate.setId(resultSet.getInt("status_cd"));
+            return activityAggregate;
+        });
     }
 
     public TreeMap<Date,List<ActivityAggregate>> getBreakdown(Query query) throws DataAccessException, ServiceException {
@@ -99,21 +90,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing required filter: 'by'");
 
         try {
-            PreparedWhere preparedWhere = getActivityWhereClause(query);
-            // activity ids (processid:logicalId)
-            String[] actIdsArr = query.getArrayFilter("activityIds");
-            List<String> actIds = actIdsArr == null ? null : Arrays.asList(actIdsArr);
-            // by status
-            String[] statuses = query.getArrayFilter("statuses");
-            List<Integer> statusCodes = null;
-            if (statuses != null) {
-                statusCodes = new ArrayList<>();
-                for (String status : statuses)
-                    statusCodes.add(WorkStatuses.getCode(status));
-            }
-            if (actIds != null && statuses != null)
-                throw new DataAccessException("Conflicting parameters: activityIds and statuses");
-
+            PreparedWhere preparedWhere = getActivityWhere(query);
             StringBuilder sql = new StringBuilder();
             if (by.equals("status"))
                 sql.append("select count(a.status_cd) as ct, a.st, a.status_cd\n");
@@ -141,11 +118,21 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
             sql.append(preparedWhere.getWhere());
             List<Object> params = new ArrayList<>(Arrays.asList(preparedWhere.getParams()));
             if (by.equals("status")) {
+                String[] statuses = query.getArrayFilter("statuses");
+                List<Integer> statusCodes = null;
+                if (statuses != null) {
+                    statusCodes = new ArrayList<>();
+                    for (String status : statuses)
+                        statusCodes.add(WorkStatuses.getCode(status));
+                }
                 PreparedWhere inCondition = getInCondition(statusCodes);
                 sql.append("   and ai.status_cd ").append(inCondition.getWhere()).append(") a\n");
                 params.addAll(Arrays.asList(inCondition.getParams()));
             }
             else if (by.equals("throughput")) {
+                // activity ids (processid:logicalId)
+                String[] actIdsArr = query.getArrayFilter("activityIds");
+                List<String> actIds = actIdsArr == null ? null : Arrays.asList(actIdsArr);
                 PreparedWhere inCondition = getInCondition(actIds);
                 sql.append("\n ) a  where act_unique_id ").append(inCondition.getWhere());
                 params.addAll(Arrays.asList(inCondition.getParams()));
@@ -223,7 +210,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
         }
     }
 
-    protected PreparedWhere getActivityWhereClause(Query query) throws ParseException, DataAccessException {
+    protected PreparedWhere getActivityWhere(Query query) throws ParseException, DataAccessException {
         String by = query.getFilter("by");
         Date start = getStartDate(query);
 

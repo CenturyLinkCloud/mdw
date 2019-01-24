@@ -32,8 +32,8 @@ import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
-import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.observer.task.TaskValuesProvider;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.service.data.task.TaskDataAccess;
@@ -48,6 +48,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 
+import java.sql.SQLException;
 import java.time.Instant;
 import java.util.*;
 
@@ -62,7 +63,7 @@ public class TaskServicesImpl implements TaskServices {
         return new TaskDataAccess();
     }
 
-    protected TaskAggregation getAggregateDataAccess() throws DataAccessException {
+    protected TaskAggregation getAggregateDataAccess() {
         return new TaskAggregation();
     }
 
@@ -110,7 +111,7 @@ public class TaskServicesImpl implements TaskServices {
             // processInstanceId
             long processInstanceId = query.getLongFilter("processInstanceId");
             if (processInstanceId > 0) {
-                List<String> processInstanceIds = new ArrayList<String>();
+                List<String> processInstanceIds = new ArrayList<>();
                 processInstanceIds.add(String.valueOf(processInstanceId));
                 // implies embedded subprocess instances also
                 ProcessInstance processInstance = ServiceLocator.getWorkflowServices().getProcess(processInstanceId, true);
@@ -152,10 +153,9 @@ public class TaskServicesImpl implements TaskServices {
     /**
      * Ugly logic for determining task instances for activity instances.
      */
-    private TaskList filterForActivityInstance(TaskList taskList, ProcessInstance processInstance, Long[] activityInstanceIds)
-    throws DataAccessException {
+    private TaskList filterForActivityInstance(TaskList taskList, ProcessInstance processInstance, Long[] activityInstanceIds) {
         TaskList filteredList = new TaskList();
-        List<TaskInstance> taskInstances = new ArrayList<TaskInstance>();
+        List<TaskInstance> taskInstances = new ArrayList<>();
         Process process = null;
         if (processInstance.getProcessInstDefId() > 0L)
             process = ProcessCache.getProcessInstanceDefiniton(processInstance.getProcessId(), processInstance.getProcessInstDefId());
@@ -200,10 +200,6 @@ public class TaskServicesImpl implements TaskServices {
         filteredList.setCount(taskInstances.size());
         filteredList.setTotal(taskInstances.size());
         return filteredList;
-    };
-
-    public void saveTaskTemplate(TaskTemplate taskVO) {
-
     }
 
     public Map<String,String> getIndexes(Long taskInstanceId) throws ServiceException {
@@ -259,7 +255,7 @@ public class TaskServicesImpl implements TaskServices {
         }
         else {
             // TODO: implement CustomTaskValuesProvider, and also make provider configurable in Designer (like TaskIndexProvider)
-            return new HashMap<String,Value>();
+            return new HashMap<>();
         }
     }
 
@@ -267,37 +263,32 @@ public class TaskServicesImpl implements TaskServices {
      * Update task values.
      */
     public void applyValues(Long instanceId, Map<String,String> values) throws ServiceException {
-        try {
-            // TODO: implement CustomTaskValuesProvider, and also make provider configurable in Designer (like TaskIndexProvider)
-            TaskRuntimeContext runtimeContext = getContext(instanceId);
-            TaskValuesProvider valuesProvider;
-            if (runtimeContext.getTaskTemplate().isAutoformTask())
-                valuesProvider = new AutoFormTaskValuesProvider();
-            else
-                valuesProvider = new CustomTaskValuesProvider();
-            WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-            valuesProvider.apply(runtimeContext, values);
-            Map<String,Object> newValues = new HashMap<String,Object>();
-            for (String name : values.keySet()) {
-                if (TaskRuntimeContext.isExpression(name)) {
-                    String rootVar;
-                    if (name.indexOf('.') > 0)
-                      rootVar = name.substring(2, name.indexOf('.'));
-                    else
-                      rootVar = name.substring(2, name.indexOf('}'));
-                    newValues.put(rootVar, runtimeContext.evaluate("#{" + rootVar + "}"));
-                }
-                else {
-                    newValues.put(name, runtimeContext.getVariables().get(name));
-                }
+        // TODO: implement CustomTaskValuesProvider, and also make provider configurable in Designer (like TaskIndexProvider)
+        TaskRuntimeContext runtimeContext = getContext(instanceId);
+        TaskValuesProvider valuesProvider;
+        if (runtimeContext.getTaskTemplate().isAutoformTask())
+            valuesProvider = new AutoFormTaskValuesProvider();
+        else
+            valuesProvider = new CustomTaskValuesProvider();
+        WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+        valuesProvider.apply(runtimeContext, values);
+        Map<String,Object> newValues = new HashMap<>();
+        for (String name : values.keySet()) {
+            if (TaskRuntimeContext.isExpression(name)) {
+                String rootVar;
+                if (name.indexOf('.') > 0)
+                  rootVar = name.substring(2, name.indexOf('.'));
+                else
+                  rootVar = name.substring(2, name.indexOf('}'));
+                newValues.put(rootVar, runtimeContext.evaluate("#{" + rootVar + "}"));
             }
-            for (String name : newValues.keySet()) {
-                Object newValue = newValues.get(name);
-                workflowServices.setVariable(runtimeContext, name, newValue);
+            else {
+                newValues.put(name, runtimeContext.getVariables().get(name));
             }
         }
-        catch (ServiceException ex) {
-            throw ex;
+        for (String name : newValues.keySet()) {
+            Object newValue = newValues.get(name);
+            workflowServices.setVariable(runtimeContext, name, newValue);
         }
     }
 
@@ -401,29 +392,16 @@ public class TaskServicesImpl implements TaskServices {
         }
     }
 
-    public List<TaskAggregate> getTopTasks(String aggregateBy, Query query) throws ServiceException {
+    public List<TaskAggregate> getTopTasks(Query query) throws ServiceException {
         try {
             CodeTimer timer = new CodeTimer(true);
-            if ("task".equals(aggregateBy)) {
-                List<TaskAggregate> list = getAggregateDataAccess().getTopTasks(query);
-                timer.logTimingAndContinue("AggregateDataAccessVcs.getTopTasks()");
-                list = populate(list);
-                timer.stopAndLogTiming("TaskServicesImpl.populate()");
-                return list;
+            List<TaskAggregate> list = getAggregateDataAccess().getTops(query);
+            String by = query.getFilter("by");
+            if ("throughput".equals(by) || "completionTime".equals(by)) {
+                list = populateTasks(list);
             }
-            else if ("workgroup".equals(aggregateBy)) {
-                List<TaskAggregate> list = getAggregateDataAccess().getTopTaskWorkgroups(query);
-                timer.stopAndLogTiming("AggregateDataAccessVcs.getTopTaskWorkgroups()");
-                return list;
-            }
-            else if ("assignee".equals(aggregateBy)) {
-                List<TaskAggregate> list = getAggregateDataAccess().getTopTaskAssignees(query);
-                timer.stopAndLogTiming("AggregateDataAccessVcs.getTopTaskAssignees()");
-                return list;
-            }
-            else {
-                throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported aggregation: " + aggregateBy);
-            }
+            timer.stopAndLogTiming("TaskServicesImpl.getTopTasks()");
+            return list;
         }
         catch (DataAccessException ex) {
             throw new ServiceException("Error retrieving top throughput processes: query=" + query, ex);
@@ -435,7 +413,7 @@ public class TaskServicesImpl implements TaskServices {
             TreeMap<Date,List<TaskAggregate>> map = getAggregateDataAccess().getBreakdown(query);
             if (query.getFilters().get("taskIds") != null) {
                 for (Date date : map.keySet())
-                    populate(map.get(date));
+                    populateTasks(map.get(date));
             }
             return map;
         }
@@ -444,14 +422,14 @@ public class TaskServicesImpl implements TaskServices {
         }
     }
 
-    public List<TaskTemplate> getTaskTemplates(Query query) throws ServiceException {
+    public List<TaskTemplate> getTaskTemplates(Query query) {
         List<TaskTemplate> templates;
         String find = query.getFind();
         if (find == null) {
             templates = TaskTemplateCache.getTaskTemplates();
         }
         else {
-            templates = new ArrayList<TaskTemplate>();
+            templates = new ArrayList<>();
             String findLower = find.toLowerCase();
             for (TaskTemplate taskVO : TaskTemplateCache.getTaskTemplates()) {
                 if (taskVO.getTaskName() != null && taskVO.getTaskName().toLowerCase().startsWith(findLower))
@@ -461,16 +439,11 @@ public class TaskServicesImpl implements TaskServices {
             }
             return templates;
         }
-        Collections.sort(templates, new Comparator<TaskTemplate>() {
-            public int compare(TaskTemplate t1, TaskTemplate t2) {
-                return t1.getName().compareToIgnoreCase(t2.getName());
-            }
-        });
+        Collections.sort(templates, (t1, t2) -> t1.getName().compareToIgnoreCase(t2.getName()));
         return templates;
     }
 
-    public Map<String, List<TaskTemplate>> getTaskTemplatesByPackage(Query query)
-            throws ServiceException {
+    public Map<String, List<TaskTemplate>> getTaskTemplatesByPackage(Query query) {
         List<TaskTemplate> taskVOs = getTaskTemplates(query);
         Map<String, List<TaskTemplate>> templates = new HashMap<>();
         for (TaskTemplate taskVO : taskVOs) {
@@ -510,7 +483,7 @@ public class TaskServicesImpl implements TaskServices {
 
             // priority
             if (taskInstance.getPriority() == null) {
-                if (oldTaskInstance.getPriority() != null && oldTaskInstance.getPriority().intValue() != 0)
+                if (oldTaskInstance.getPriority() != null && oldTaskInstance.getPriority() != 0)
                     helper.updatePriority(0);
             }
             else if (!taskInstance.getPriority().equals(oldTaskInstance.getPriority()))
@@ -528,7 +501,7 @@ public class TaskServicesImpl implements TaskServices {
             // workgroups
             if (taskInstance.getWorkgroups() == null || taskInstance.getWorkgroups().isEmpty()) {
                 if (oldTaskInstance.getWorkgroups() != null && !oldTaskInstance.getWorkgroups().isEmpty())
-                    helper.updateWorkgroups(new ArrayList<String>());
+                    helper.updateWorkgroups(new ArrayList<>());
             }
             else if (!taskInstance.getWorkgroupsString().equals(oldTaskInstance.getWorkgroupsString())) {
                 helper.updateWorkgroups(taskInstance.getWorkgroups());
@@ -549,7 +522,7 @@ public class TaskServicesImpl implements TaskServices {
     /**
      * Fills in task header info, consulting latest instance comment if necessary.
      */
-    protected List<TaskAggregate> populate(List<TaskAggregate> taskAggregates) throws DataAccessException {
+    protected List<TaskAggregate> populateTasks(List<TaskAggregate> taskAggregates) throws DataAccessException {
         AggregateDataAccess dataAccess = null;
         for (TaskAggregate tc : taskAggregates) {
             TaskTemplate taskTemplate = TaskTemplateCache.getTaskTemplate(tc.getId());
@@ -629,10 +602,18 @@ public class TaskServicesImpl implements TaskServices {
 
                 instance.setStateCode(TaskState.STATE_CLOSED);
                 instance.setStatusCode(TaskStatus.STATUS_CANCELLED);
-                Map<String,Object> changes = new HashMap<String,Object>();
+                Map<String,Object> changes = new HashMap<>();
                 changes.put("TASK_INSTANCE_STATUS", TaskStatus.STATUS_CANCELLED);
                 changes.put("TASK_INSTANCE_STATE", TaskState.STATE_CLOSED);
                 dataAccess.updateTaskInstance(instance.getTaskInstanceId(), changes, true);
+                try {
+                    Long elapsedMs = dataAccess.getDatabaseTime() - Date.from(instance.getStart()).getTime();
+                    dataAccess.setElapsedTime(OwnerType.TASK_INSTANCE, instance.getTaskInstanceId(), elapsedMs);
+                }
+                catch (SQLException ex) {
+                    logger.severeException("Failed to set timing for task: " + instance.getId(), ex);
+                }
+
                 new TaskWorkflowHelper(instance).notifyTaskAction(TaskAction.CANCEL, prevStatus, prevState);
             }
         }
@@ -640,7 +621,7 @@ public class TaskServicesImpl implements TaskServices {
     }
 
     public List<TaskInstance> getTaskInstancesForProcess(Long processInstanceId)
-    throws ServiceException, DataAccessException {
+    throws DataAccessException {
         CodeTimer timer = new CodeTimer("getTaskInstancesForProcess()", true);
         List<TaskInstance> daoResults = getTaskDAO().getTaskInstancesForProcessInstance(processInstanceId);
         timer.stopAndLogTiming("");
@@ -659,7 +640,7 @@ public class TaskServicesImpl implements TaskServices {
     }
 
     public TaskInstance getTaskInstanceForActivity(Long activityInstanceId)
-            throws ServiceException, DataAccessException {
+            throws DataAccessException {
         return getTaskDAO().getTaskInstanceByActivityInstanceId(activityInstanceId);
     }
 
@@ -696,4 +677,13 @@ public class TaskServicesImpl implements TaskServices {
         helper.updateState(isAlert);
     }
 
+    @Override
+    public void setElapsedTime(String ownerType, Long instanceId, Long elapsedTime) throws ServiceException {
+        try {
+            getTaskDAO().setElapsedTime(ownerType, instanceId, elapsedTime);
+        }
+        catch (SQLException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
 }

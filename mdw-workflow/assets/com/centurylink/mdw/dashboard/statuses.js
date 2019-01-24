@@ -26,6 +26,13 @@ const statuses = {
     '501 - Not Implemented',
     '502 - Bad Gateway',
     '503 - Service Unavailable'
+  ],
+  task: [
+    'Open', 
+    'Assigned', 
+    'In Progress', 
+    'Completed', 
+    'Canceled'
   ]    
 };
 
