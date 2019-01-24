@@ -790,7 +790,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
     }
 
     protected void buildProcessQueryCommon(StringBuilder sqlBuff, Query query, Date start) {
-        sqlBuff.append(" FROM PROCESS_INSTANCE pi, activity_instance ai ");
+        sqlBuff.append(" FROM PROCESS_INSTANCE pi, ACTIVITY_INSTANCE ai ");
         sqlBuff.append(" WHERE pi.process_instance_id = ai.process_instance_id  ");
         if (query.getFind() != null) {
             try {
