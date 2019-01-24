@@ -211,7 +211,7 @@ public class ListenerHelper {
         Response altResponse = null;
         Long eeid = 0L;
         Request requestDoc = new Request(eeid);
-        Set<String> reqMetaInfo = new HashSet<String>(metaInfo.keySet());
+        Set<String> reqMetaInfo = new HashSet<>(metaInfo.keySet());
         long requestTime = System.currentTimeMillis();
 
         try {

@@ -23,11 +23,11 @@ class Processes extends Component {
         },
         {
           name: 'Status',
-          selectField: 'status',
+          selectField: 'name',
           selectLabel: 'Statuses',
           tops: '/Processes/tops?by=status',
           data: '/Processes/breakdown?by=status',
-           instancesParam: 'statuses'
+          instancesParam: 'statuses'
         },
         {
           name: 'Completion Time',

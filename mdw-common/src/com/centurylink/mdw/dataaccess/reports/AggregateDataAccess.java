@@ -19,16 +19,21 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.PreparedSelect;
 import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.Aggregate;
+import com.centurylink.mdw.model.workflow.ProcessAggregate;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.function.Supplier;
 
 public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDataAccess {
 
@@ -98,5 +103,22 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
         }
         in.append(") ");
         return new PreparedWhere(in.toString(), params.toArray());
+    }
+
+    private static final int MAX_LIMIT = 100;
+
+    protected List<T> getTopAggregates(Query query, PreparedSelect select, AggregateSupplier<T> supplier)
+            throws SQLException, ServiceException {
+        ResultSet rs = db.runSelect(select);
+        List<T> list = new ArrayList<>();
+        int idx = 0;
+        int limit = query.getIntFilter("limit");
+        if (limit > MAX_LIMIT)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "limit > max (" + MAX_LIMIT + ")");
+        while (rs.next() && (limit == -1 || idx < limit)) {
+            list.add(supplier.get(rs));
+            idx++;
+        }
+        return list;
     }
 }

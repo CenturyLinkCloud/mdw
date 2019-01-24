@@ -23,7 +23,7 @@ class Activities extends Component {
         },
         {
           name: 'Status',
-          selectField: 'status',
+          selectField: 'name',
           selectLabel: 'Statuses',
           tops: '/Activities/tops?by=status',
           data: '/Activities/breakdown?by=status',

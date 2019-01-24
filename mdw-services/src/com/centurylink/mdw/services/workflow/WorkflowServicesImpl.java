@@ -550,7 +550,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             else {
                 list = populateProcesses(list);
             }
-            timer.stopAndLogTiming("WorkflowServicesImpl.populate()");
+            timer.stopAndLogTiming("WorkflowServicesImpl.getTopProcesses()");
             return list;
         }
         catch (DataAccessException ex) {

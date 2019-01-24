@@ -207,8 +207,8 @@ public class Processes extends JsonRestService implements JsonExportable {
                         TreeMap<Date,List<ProcessAggregate>> dateMap = workflowServices.getProcessBreakdown(query);
                         LinkedHashMap<String,List<ProcessAggregate>> listMap = new LinkedHashMap<>();
                         for (Date date : dateMap.keySet()) {
-                            List<ProcessAggregate> procCounts = dateMap.get(date);
-                            listMap.put(Query.getString(date), procCounts);
+                            List<ProcessAggregate> processAggregates = dateMap.get(date);
+                            listMap.put(Query.getString(date), processAggregates);
                         }
 
                         return new JsonListMap<>(listMap).getJson();

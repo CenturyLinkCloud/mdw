@@ -15,19 +15,6 @@
  */
 package com.centurylink.mdw.services.task;
 
-import java.net.URL;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.cache.CachingException;
@@ -47,34 +34,17 @@ import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
-import com.centurylink.mdw.model.task.TaskAction;
-import com.centurylink.mdw.model.task.TaskInstance;
-import com.centurylink.mdw.model.task.TaskRuntimeContext;
-import com.centurylink.mdw.model.task.TaskState;
-import com.centurylink.mdw.model.task.TaskStatus;
-import com.centurylink.mdw.model.task.TaskStatuses;
-import com.centurylink.mdw.model.task.TaskTemplate;
-import com.centurylink.mdw.model.task.UserTaskAction;
+import com.centurylink.mdw.model.task.*;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
-import com.centurylink.mdw.model.workflow.Transition;
-import com.centurylink.mdw.model.workflow.TransitionInstance;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.observer.ObserverException;
-import com.centurylink.mdw.observer.task.AutoAssignStrategy;
-import com.centurylink.mdw.observer.task.ParameterizedStrategy;
-import com.centurylink.mdw.observer.task.PrioritizationStrategy;
-import com.centurylink.mdw.observer.task.RoutingStrategy;
-import com.centurylink.mdw.observer.task.SubTaskStrategy;
-import com.centurylink.mdw.observer.task.TaskIndexProvider;
-import com.centurylink.mdw.observer.task.TaskNotifier;
+import com.centurylink.mdw.observer.task.*;
 import com.centurylink.mdw.service.Action;
 import com.centurylink.mdw.service.ActionRequestDocument;
 import com.centurylink.mdw.service.ActionRequestDocument.ActionRequest;
@@ -84,11 +54,7 @@ import com.centurylink.mdw.service.data.task.TaskDataAccess;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.service.data.user.UserDataAccess;
-import com.centurylink.mdw.services.EventException;
-import com.centurylink.mdw.services.EventServices;
-import com.centurylink.mdw.services.ProcessException;
-import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.WorkflowServices;
+import com.centurylink.mdw.services.*;
 import com.centurylink.mdw.services.asset.CustomPageLookup;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.task.factory.TaskInstanceNotifierFactory;
@@ -103,6 +69,14 @@ import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.json.JSONObject;
+
+import java.net.URL;
+import java.sql.SQLException;
+import java.time.Instant;
+import java.util.*;
 
 public class TaskWorkflowHelper {
 
@@ -1122,7 +1096,15 @@ public class TaskWorkflowHelper {
         Map<String,Object> changes = new HashMap<>();
         changes.put("TASK_INSTANCE_STATUS", newStatus);
         changes.put("TASK_INSTANCE_STATE", TaskState.STATE_CLOSED);
-        new TaskDataAccess().updateTaskInstance(taskInstance.getTaskInstanceId(), changes, true);
+        TaskDataAccess dataAccess = new TaskDataAccess();
+        dataAccess.updateTaskInstance(taskInstance.getTaskInstanceId(), changes, true);
+        try {
+            Long elapsedMs = dataAccess.getDatabaseTime() - Date.from(taskInstance.getStart()).getTime();
+            dataAccess.setElapsedTime(OwnerType.TASK_INSTANCE, taskInstance.getTaskInstanceId(), elapsedMs);
+        }
+        catch (SQLException ex) {
+            logger.severeException("Failed to set timing for task: " + taskInstance.getId(), ex);
+        }
         taskInstance.setStatusCode(newStatus);
     }
 
@@ -1139,7 +1121,15 @@ public class TaskWorkflowHelper {
         Map<String,Object> changes = new HashMap<String,Object>();
         changes.put("TASK_INSTANCE_STATUS", TaskStatus.STATUS_CANCELLED);
         changes.put("TASK_INSTANCE_STATE", TaskState.STATE_CLOSED);
-        new TaskDataAccess().updateTaskInstance(taskInstance.getTaskInstanceId(), changes, true);
+        TaskDataAccess dataAccess = new TaskDataAccess();
+        dataAccess.updateTaskInstance(taskInstance.getTaskInstanceId(), changes, true);
+        try {
+            Long elapsedMs = dataAccess.getDatabaseTime() - Date.from(taskInstance.getStart()).getTime();
+            dataAccess.setElapsedTime(OwnerType.TASK_INSTANCE, taskInstance.getTaskInstanceId(), elapsedMs);
+        }
+        catch (SQLException ex) {
+            logger.severeException("Failed to set timing for task: " + taskInstance.getId(), ex);
+        }
         notifyTaskAction(TaskAction.CANCEL, prevStatus, prevState);
     }
 

@@ -422,6 +422,13 @@ public class DatabaseAccess {
         return rs;
     }
 
+    public ResultSet runSelect(PreparedSelect select) throws SQLException {
+        if (select.getMessage() == null)
+            return runSelect(select.getSql(), select.getParams());
+        else
+            return runSelect(select.getMessage(), select.getSql(), select.getParams());
+    }
+
     /**
      * Ordinarily db query logging is at TRACE level.  Use this method
      * to log queries at DEBUG level.
