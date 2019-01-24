@@ -15,32 +15,6 @@
  */
 package com.centurylink.mdw.services.test;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.xmlbeans.XmlException;
-import org.codehaus.groovy.control.CompilerConfiguration;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
@@ -61,45 +35,34 @@ import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.UserTaskAction;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.workflow.Activity;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
-import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
-import com.centurylink.mdw.model.workflow.ActivityStubRequest;
-import com.centurylink.mdw.model.workflow.ActivityStubResponse;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.WorkStatus;
-import com.centurylink.mdw.model.workflow.WorkStatuses;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.task.types.TaskList;
-import com.centurylink.mdw.test.PreFilter;
-import com.centurylink.mdw.test.TestCase;
+import com.centurylink.mdw.test.*;
 import com.centurylink.mdw.test.TestCase.Status;
-import com.centurylink.mdw.test.TestCaseActivityStub;
-import com.centurylink.mdw.test.TestCaseAdapterStub;
-import com.centurylink.mdw.test.TestCaseEvent;
-import com.centurylink.mdw.test.TestCaseFile;
-import com.centurylink.mdw.test.TestCaseHttp;
-import com.centurylink.mdw.test.TestCaseItem;
-import com.centurylink.mdw.test.TestCaseMessage;
-import com.centurylink.mdw.test.TestCaseProcess;
-import com.centurylink.mdw.test.TestCaseResponse;
-import com.centurylink.mdw.test.TestCaseTask;
-import com.centurylink.mdw.test.TestCompare;
-import com.centurylink.mdw.test.TestException;
-import com.centurylink.mdw.test.TestExecConfig;
-import com.centurylink.mdw.test.TestFailedException;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.FileHelper;
-
 import groovy.lang.Binding;
 import groovy.lang.Closure;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.xmlbeans.XmlException;
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.*;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.ParseException;
+import java.util.*;
 
 public class TestCaseRun implements Runnable {
 
@@ -243,10 +206,21 @@ public class TestCaseRun implements Runnable {
         try {
             Process proc = process.getProcess();
             Map<String,String> params = process.getParams();
-            if (proc.isService())
-                workflowServices.invokeServiceProcess(proc, masterRequestId, OwnerType.TESTER, 0L, params);
-            else
+            if (proc.isService()) {
+                // avoid process completing before wait registration
+                new Thread(() -> {
+                    try {
+                        Thread.sleep((1000));
+                        workflowServices.invokeServiceProcess(proc, masterRequestId, OwnerType.TESTER, 0L, params);
+                    } catch (Exception ex) {
+                        throw new TestException("Execution failure " + process.getLabel(), ex);
+                    }
+
+                }).start();
+            }
+            else {
                 workflowServices.launchProcess(proc, masterRequestId, OwnerType.TESTER, 0L, params);
+            }
         }
         catch (Exception ex) {
             throw new TestException("Failed to start " + process.getLabel(), ex);
