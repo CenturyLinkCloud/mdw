@@ -155,10 +155,6 @@ public class KotlinAccess implements CacheService, PreloadableCache {
 
     private List<File> getSources() throws IOException {
         Path assetRoot = Paths.get(ApplicationContext.getAssetRoot().getPath().replace('\\', '/'));
-        Path enginePath = Paths.get(new File(assetRoot + "/" + KotlinClasspathKt.KOTLIN_PACKAGE.replace('.', '/')).getPath());
-        Path microservicePath = Paths.get(new File(assetRoot + "/com/centurylink/mdw/microservice").getPath());
-        Path archivePath = Paths.get(new File(assetRoot + "/" + PackageDir.ARCHIVE_SUBDIR).getPath());
-
         PathMatcher ktMatcher = FileSystems.getDefault().getPathMatcher("glob:**/*.kt");
         List<File> files = new ArrayList<>();
         Files.walkFileTree(assetRoot,
@@ -166,11 +162,10 @@ public class KotlinAccess implements CacheService, PreloadableCache {
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
                     File file = path.toFile();
                     MdwIgnore mdwIgnore = new MdwIgnore(file);
-                        if (ktMatcher.matches(path) && !path.startsWith(enginePath) && !path.startsWith(microservicePath)
-                                && !path.startsWith(archivePath) && !mdwIgnore.isIgnore(file)) {
-                            files.add(file);
-                        }
-                        return FileVisitResult.CONTINUE;
+                    if (ktMatcher.matches(path) && !new File(file.getParentFile() + "/buildKt.gradle").exists()) {
+                        files.add(file);
+                    }
+                    return FileVisitResult.CONTINUE;
                 }
             }
         );
