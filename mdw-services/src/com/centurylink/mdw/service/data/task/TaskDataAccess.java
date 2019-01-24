@@ -76,7 +76,7 @@ public class TaskDataAccess extends CommonDataAccess {
                 q = "select column_name from ALL_TAB_COLUMNS where table_name='TASK_INSTANCE' AND column_name='TASK_TITLE'";
             if (db.runSelect(q).next()) {
                 hasTaskTitleColumn = true;
-                TASK_INSTANCE_SELECT_SHALLOW += ", TI.TASK_TITLE";
+                TASK_INSTANCE_SELECT_SHALLOW += ", ti.TASK_TITLE";
             }
             TASK_INSTANCE_SELECT = "distinct " + TASK_INSTANCE_SELECT_SHALLOW + ", " +
                     " ti.TASK_INSTANCE_OWNER_ID as PROCESS_INSTANCE_ID, ui.CUID, ui.NAME as USER_NAME";
