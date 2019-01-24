@@ -1,0 +1,14 @@
+**MDW Features for Demos:
+ - Microservice Orchestration
+ - REST API Create/Expose
+ - Manual Tasks and Fallout
+ - Dashboard and Custom Reports
+ - MDWHub UI Customization
+ - Spring Boot Integration
+ - Automated Tests
+ - Embedded Rules Engine
+ - Kubernetes Deployment
+ - Collaboration Features
+ - In-Flight Workflow Changes
+ - MDW Mobile
+ - Hyperion Integration

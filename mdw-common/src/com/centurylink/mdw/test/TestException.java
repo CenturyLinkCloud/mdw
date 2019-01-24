@@ -15,7 +15,7 @@
  */
 package com.centurylink.mdw.test;
 
-public class TestException extends Exception {
+public class TestException extends RuntimeException {
 
     public TestException(String msg) {
         super(msg);
