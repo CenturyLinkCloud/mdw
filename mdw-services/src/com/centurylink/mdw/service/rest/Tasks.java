@@ -423,8 +423,8 @@ public class Tasks extends JsonRestService implements JsonExportable {
         try {
             if (json.has(TaskList.TASKS))
                 return new TaskList(TaskList.TASKS, json);
-            else if ("Tasks/instanceCounts".equals(query.getPath()))
-                return new JsonListMap<TaskAggregate>(json, TaskAggregate.class);
+            else if ("Tasks/breakdown".equals(query.getPath()))
+                return new JsonListMap<>(json, TaskAggregate.class);
             else
                 throw new JSONException("Unsupported export type for query: " + query);
         }

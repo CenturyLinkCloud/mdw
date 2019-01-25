@@ -1,4 +1,4 @@
-const statuses = {
+module.exports = {
   process: [
     'Pending',
     'In Progress',
@@ -35,5 +35,3 @@ const statuses = {
     'Canceled'
   ]    
 };
-
-export default statuses;

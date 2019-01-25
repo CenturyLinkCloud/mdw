@@ -27,6 +27,7 @@
     "$mdwVersion": false,
     "$mdwMessages": true,
     "require": false,
+    "module": false,
     "location": true,
     "Int8Array": false,
     "Promise": false

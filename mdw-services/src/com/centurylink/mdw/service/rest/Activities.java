@@ -181,8 +181,8 @@ public class Activities extends JsonRestService implements JsonExportable {
         try {
             if (json.has(ActivityList.ACTIVITY_INSTANCES))
                 return new ActivityList(ActivityList.ACTIVITY_INSTANCES, json);
-            else if ("Activities/instanceCounts".equals(query.getPath()))
-                return new JsonListMap<ActivityAggregate>(json, ActivityAggregate.class);
+            else if ("Activities/breakdown".equals(query.getPath()))
+                return new JsonListMap<>(json, ActivityAggregate.class);
             else
                 throw new JSONException("Unsupported export type for query: " + query);
         }
