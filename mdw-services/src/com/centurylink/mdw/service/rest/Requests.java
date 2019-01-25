@@ -180,8 +180,8 @@ public class Requests extends JsonRestService implements JsonExportable {
                 return new RequestList(RequestList.INBOUND_REQUESTS, json);
             else if (json.has("requests") && RequestList.OUTBOUND_REQUESTS.equals(query.getFilters().get("type")))
                 return new RequestList(RequestList.OUTBOUND_REQUESTS, json);
-            else if ("Requests/instanceCounts".equals(query.getPath()))
-                return new JsonListMap<RequestAggregate>(json, RequestAggregate.class);
+            else if ("Requests/breakdown".equals(query.getPath()))
+                return new JsonListMap<>(json, RequestAggregate.class);
             else
                 throw new JSONException("Unsupported export type for query: " + query);
         }

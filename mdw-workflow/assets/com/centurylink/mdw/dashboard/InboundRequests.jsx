@@ -1,6 +1,6 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
-import statuses from './statuses';
+import statuses from '../react/statuses';
 import DashboardChart from './DashboardChart.jsx';
 
 class InboundRequests extends Component {

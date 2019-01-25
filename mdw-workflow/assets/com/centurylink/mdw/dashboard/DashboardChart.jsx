@@ -44,8 +44,8 @@ class DashboardChart extends Component {
     this.updateChart = this.updateChart.bind(this);
     this.retrieveTops = this.retrieveTops.bind(this);
     this.retrieveData = this.retrieveData.bind(this);
-    this.handleOverallClick = this.handleOverallClick.bind(this);
-    this.handleDataClick = this.handleDataClick.bind(this);
+    this.handleOverviewDataClick = this.handleOverviewDataClick.bind(this);
+    this.handleMainDataClick = this.handleMainDataClick.bind(this);
   }
 
   // selected breakdown object from breakdownConfig
@@ -348,30 +348,18 @@ class DashboardChart extends Component {
     return lineData;
   }
 
-  handleOverallClick(chartElements) {
-    if (chartElements && chartElements.length === 1) {
-      const sel = this.state.selected[chartElements[0]._index];
-      var procFilter = sessionStorage.getItem('processFilter');
-      if (procFilter)
-        procFilter = JSON.parse(procFilter);
-      else
-        procFilter = {};
-      procFilter.processId = sel.id;
-      if (procFilter.processId) {
-        var procSpec = sel.name;
-        procFilter.master = this.state.filters.Master ? this.state.filters.Master : false;
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const start = this.getStart();
-        procFilter.startDate = start.getFullYear().toString() + '-' + months[start.getMonth()] + '-' + start.getDate();
-        procFilter.status = this.state.filters.Status ? this.state.filters.Status : '[Any]';
-        sessionStorage.setItem('processFilter', JSON.stringify(procFilter));
-        sessionStorage.setItem('processSpec', procSpec);
+  handleOverviewDataClick(chartElements) {
+    if (chartElements && chartElements.length > 0) {
+      if (this.props.onOverviewDataClick) {
+        const selection = this.state.selected[chartElements[0]._index];
+        const filters = JSON.parse(JSON.stringify(this.state.filters));
+        filters.Starting = this.getStart();
+        this.props.onOverviewDataClick(this.getBreakdown().name, selection, filters);
       }
     }
-    location = this.context.hubRoot + '/' + this.props.list;
   }
 
-  handleDataClick(chartElements) {
+  handleMainDataClick(chartElements) {
     if (chartElements && chartElements.length === 1) {
       // console.log("DATASET INDEX: " + chartElements[0]._datasetIndex);
     }
@@ -415,14 +403,14 @@ class DashboardChart extends Component {
                   data={overviewData}
                   options={this.chartOptions}
                   width={250} height={250}
-                  getElementAtEvent={this.handleOverallClick} />
+                  getElementAtEvent={this.handleOverviewDataClick} />
               }
               {breakdown.summaryChart === 'bar' &&
                 <Bar
                   data={overviewData}
                   options={this.chartOptions}
                   width={250} height={250}
-                  getElementAtEvent={this.handleOverallClick} />
+                  getElementAtEvent={this.handleOverviewDataClick} />
               }
               <ChartLegend
                 colors={this.chartColors}
@@ -439,7 +427,7 @@ class DashboardChart extends Component {
             <Line
               data={mainData}
               options={this.chartOptions}
-              getElementAtEvent={this.handleDataClick} />
+              getElementAtEvent={this.handleMainDataClick} />
           </div>
         </div>
       </div>
