@@ -35,6 +35,20 @@ public class MonitorAttributes {
         return false;
     }
 
+    public void setEnabled(String implAsset, String label, boolean enabled) {
+        String implClass = implAsset.substring(0, implAsset.lastIndexOf('.')).replace('/', '.');
+        JSONArray row = getRow(implClass);
+        if (row == null) {
+            row = new JSONArray();
+            row.put(String.valueOf(enabled));
+            row.put(label);
+            row.put(implAsset);
+            row.put("");
+            rows.put(row);
+        }
+        row.put(0, String.valueOf(enabled));
+    }
+
     public JSONArray getRow(String className) {
         for (int i = 0; i < rows.length(); i++) {
             JSONArray row = rows.getJSONArray(i);
@@ -44,7 +58,6 @@ public class MonitorAttributes {
                 if (implClass.equals(className))
                     return row;
             }
-
         }
         return null;
     }
@@ -65,4 +78,8 @@ public class MonitorAttributes {
         return row;
     }
 
+    @Override
+    public String toString() {
+        return rows == null ? "[]" : rows.toString();
+    }
 }

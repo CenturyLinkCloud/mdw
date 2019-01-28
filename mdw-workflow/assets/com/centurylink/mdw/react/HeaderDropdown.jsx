@@ -16,6 +16,7 @@ class HeaderDropdown extends Component {
   }
 
   render() {
+    const width = this.props.width ? this.props.width + 'px' : '140px';
     return (
       <div className="mdw-heading-input">
         <Dropdown id="{this.props.id}" className="mdw-dropdown"
@@ -32,7 +33,7 @@ class HeaderDropdown extends Component {
               })
             }
           </Dropdown.Menu>
-          <Dropdown.Toggle noCaret={true} style={{padding:'5px',width:'140px',textAlign:'left'}}>
+          <Dropdown.Toggle noCaret={true} style={{padding:'5px',width:width,textAlign:'left'}}>
             <span style={{position:'relative',top:'-3px'}}>{this.props.selected}</span>
             <Glyphicon glyph="chevron-down" style={{color:'#9e9e9e',float:'right'}} />
           </Dropdown.Toggle>
@@ -44,6 +45,7 @@ class HeaderDropdown extends Component {
 
 HeaderDropdown.propTypes = {
   id: PropTypes.string.isRequired,
+  width: PropTypes.number,
   items: PropTypes.arrayOf(PropTypes.string),
   selected: PropTypes.string,
   onSelect: PropTypes.func

@@ -1,7 +1,10 @@
 {
   "activities": [
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=45,y=108,w=60,h=40"},
+      "attributes": {
+        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=45,y=108,w=60,h=40"
+      },
       "id": "A1",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Start",
@@ -15,6 +18,7 @@
     {
       "attributes": {
         "DoNotNotifyCaller": "false",
+        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
         "WORK_DISPLAY_INFO": "x=425,y=105,w=60,h=40"
       },
       "id": "A2",
@@ -23,6 +27,7 @@
     },
     {
       "attributes": {
+        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
         "Rule": "procName = runtimeContext.getProcess().getName();\r\nprocVer = runtimeContext.getProcess().getVersionString();",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=217,y=96,w=100,h=60"
@@ -42,6 +47,7 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "PerformanceLevel": "0",
     "WORK_DISPLAY_INFO": "x=22,y=27,w=182,h=27"
   },
   "variables": {

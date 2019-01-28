@@ -597,11 +597,11 @@ public class DatabaseAccess {
             db_time_diff = new Long(Math.abs(r) < 60000 ? q*1800000 : raw_diff);
             System.out.println("Database time difference: " + db_time_diff/1000.0 + " seconds (raw diff=" + raw_diff + ")");
         }
-        return System.currentTimeMillis()+db_time_diff.longValue();
+        return System.currentTimeMillis() + db_time_diff.longValue();
     }
 
     public static long getCurrentTime() {
-        return System.currentTimeMillis()+db_time_diff.longValue();
+        return System.currentTimeMillis() + db_time_diff.longValue();
     }
     /**
      * The current database Date/Time.  If db_time_diff is not known (eg Designer), server time is returned.

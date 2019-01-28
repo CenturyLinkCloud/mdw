@@ -39,14 +39,11 @@ public class WorkAttributeConstant  {
       * Constant for node geometry information attribute
       */
      public static final String WORK_DISPLAY_INFO = "WORK_DISPLAY_INFO";
-     public static final String SWIMLANE_GEO_INFO = "SWIMLANE_GEO_INFO";
 
-     public static final String SYNCED_ACTIVITIES = "Synced Activities";
      public static final String SYNC_EXPRESSION = "Sync Expression";
 
      public static final String NOTICE_TYPE = "noticeType";
      public static final String EMAIL_NOTICE_SMTP = "SMTP";
-     public static final String NOTICE_HOST = "host";
      public static final String NOTICE_FROM = "from";
      public static final String NOTICE_SUBJECT = "subject";
      public static final String NOTICE_TEMPLATE = "template";
@@ -57,19 +54,12 @@ public class WorkAttributeConstant  {
      public static final String CONTINUE_DESPITE_MESSAGING_EXCEPTION = "ContinueDespiteMessagingException";
      public static final String RECIPIENTS_EXPRESSION = "RecipientsExpression";
 
-     public static final String VARIABLE_NAME = "VARIABLE_NAME";
-     public static final String ATTRIBUTE_NAME = "ATTRIBUTE_NAME";
-     public static final String CONTAINED_STRING = "CONTAINED_STRING";
-
      public static final String PROCESS_NAME = "processname";
      public static final String PROCESS_VERSION = "processversion";
-     public static final String ASSET_VERSION = "assetVersion";
-     public static final String ALIAS_PROCESS_ID = "AliasProcessId";
      public static final String PROCESS_MAP = "processmap";
 
      // the following attributes are used by designer to remember hidden links
      public static final String START_TRANSITION_ID = "START_TRANSITION_ID";
-     public static final String ENTRY_TRANSITION_ID = "ENTRY_TRANSITION_ID";
 
      // the following attribute is only for embedded processes
      public static final String ENTRY_CODE = "ENTRY_CODE";
@@ -104,11 +94,6 @@ public class WorkAttributeConstant  {
       */
      public static final String PERFORMANCE_LEVEL = "PerformanceLevel";
 
-     /**
-      * variable name mapping
-      */
-     public static final String VARIABLE_MAPPING = "Variable Mapping";
-
      // Attributes for setting pre-script and post-script in adapter activities
      public static final String PRE_SCRIPT = "PreScript";
      public static final String PRE_SCRIPT_LANGUAGE = "PreScriptLang";
@@ -121,7 +106,6 @@ public class WorkAttributeConstant  {
      public static final String SIMULATION_ATTR_PREFIX = "SIMUL";
      public static final String SIMULATION_STUB_MODE = SIMULATION_ATTR_PREFIX + "@STUB_MODE";
      public static final String SIMULATION_RESPONSE = SIMULATION_ATTR_PREFIX + "@RESPONSE";
-     public static final String MILESTONE_NAME = "MILESTONE@NAME";
 
      public static boolean isOverrideAttribute(String attrName) {
          return attrName != null && attrName.indexOf('@') >= 0;
@@ -148,30 +132,4 @@ public class WorkAttributeConstant  {
          else
              return rawName;
      }
-
-     /**
-     * Returns top-level (process-level) match if subType is null.
-     */
-    public static boolean isFullAttrNameFor(String fullName, String subType, String subId, String prefix) {
-         if (OwnerType.ACTIVITY.equals(subType))
-             return fullName.startsWith(OVERRIDE_ACTIVITY + subId + ":" + prefix + "@");
-         else if (OwnerType.WORK_TRANSITION.equals(subType))
-             return fullName.startsWith(OVERRIDE_TRANSITION + subId + ":" + prefix + "@");
-         else if (OwnerType.PROCESS.equals(subType))
-             return fullName.startsWith(OVERRIDE_SUBPROC + subId + ":" + prefix + "@");
-         else
-             return fullName.startsWith(prefix + "@"); // top level
-    }
-
-    public static boolean isAttrNameFor(String attrName, String prefix) {
-        return attrName.startsWith(prefix + "@") || attrName.indexOf(":" + prefix + "@") > 0;
-    }
-
-    public static String getOverrideAttributePrefix(String fullName) {
-        int at = fullName.indexOf('@');
-        if (at > 0)
-            return fullName.substring(0, at);
-        else
-            return null;
-    }
 }

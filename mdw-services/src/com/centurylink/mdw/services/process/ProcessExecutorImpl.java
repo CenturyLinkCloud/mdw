@@ -15,33 +15,12 @@
  */
 package com.centurylink.mdw.services.process;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.jms.JMSException;
-import javax.naming.NamingException;
-
-import com.centurylink.mdw.services.*;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.activity.types.AdapterActivity;
-import com.centurylink.mdw.activity.types.FinishActivity;
-import com.centurylink.mdw.activity.types.GeneralActivity;
-import com.centurylink.mdw.activity.types.InvokeProcessActivity;
-import com.centurylink.mdw.activity.types.SuspendibleActivity;
-import com.centurylink.mdw.activity.types.SynchronizationActivity;
+import com.centurylink.mdw.activity.types.*;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.constant.ProcessVisibilityConstant;
-import com.centurylink.mdw.constant.VariableConstants;
-import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.constant.WorkTransitionAttributeConstant;
+import com.centurylink.mdw.constant.*;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.JsonObject;
@@ -54,22 +33,15 @@ import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.workflow.Activity;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
-import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
-import com.centurylink.mdw.model.workflow.Transition;
-import com.centurylink.mdw.model.workflow.TransitionInstance;
-import com.centurylink.mdw.model.workflow.TransitionStatus;
-import com.centurylink.mdw.model.workflow.WorkStatus;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.OfflineMonitor;
 import com.centurylink.mdw.monitor.ProcessMonitor;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.ProcessCache;
+import com.centurylink.mdw.services.*;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.translator.VariableTranslator;
@@ -78,6 +50,15 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.util.timer.TrackingTimer;
+import org.json.JSONObject;
+
+import javax.jms.JMSException;
+import javax.naming.NamingException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 class ProcessExecutorImpl {
 
@@ -90,8 +71,8 @@ class ProcessExecutorImpl {
 
     ProcessExecutorImpl(EngineDataAccess edao, InternalMessenger internalMessenger, boolean forServiceProcess) {
         this.edao = edao;
-        inService = forServiceProcess;
         this.internalMessenger = internalMessenger;
+        inService = forServiceProcess;
     }
 
     private String logtag(Long procId, Long procInstId, Long actId, Long actInstId) {
@@ -977,6 +958,7 @@ class ProcessExecutorImpl {
             // Step 3c. otherwise, activity is successful and complete it
             else {
                 completeActivityInstance(ai, origCompCode, pi, logtag);
+
                 // notify registered monitors
                 activity.notifyMonitors(WorkStatus.LOGMSG_COMPLETE);
 
