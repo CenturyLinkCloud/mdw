@@ -15,38 +15,26 @@
  */
 package com.centurylink.mdw.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.text.DateFormat;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.TimeZone;
-import java.util.Vector;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
+import com.centurylink.mdw.model.JsonObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.JsonObject;
+import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.temporal.ChronoField;
+import java.util.*;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * Helper classes for String utilities.
  */
 public class StringHelper {
 
-    private static final String _df = "yyyy-MM-dd HH:mm:ss";
+    private static final String _dateFormat = "yyyy-MM-dd HH:mm:ss";
+    private static final String _dateFormatMs = "yyyy-MM-dd HH:mm:ss.SSS";
     private static final String _serviceDateFormat = "MM-dd-yyyy HH:mm:ss";
     private static final String _filenameDateFormat = "yyyy-MM-dd'T'HH-mm-ss";
     private static final String _isoDateFormat = "yyyy-MM-dd'T'HH:mm:ss";
@@ -61,19 +49,6 @@ public class StringHelper {
      */
     public static boolean isEmpty(String aStr) {
         return (aStr == null || aStr.trim().length() == 0);
-    }
-
-    /**
-     * Appends a String to the StringBuffer if the String is not null.
-     *
-     * @param aBuff A StringBuffer value.
-     * @param aStr A String value.
-     */
-    public static void appendNotNullString(StringBuffer aBuff, String aStr) {
-        if (aBuff != null && aStr != null && aStr.trim().length() > 0) {
-            aBuff.append(" ");
-            aBuff.append(aStr);
-        }
     }
 
     /**
@@ -1428,7 +1403,12 @@ public class StringHelper {
     }
 
     public static String dateToString(Date d) {
-        return d==null?null:new SimpleDateFormat(_df).format(d);
+        if (d == null)
+            return null;
+        if (d.toInstant().get(ChronoField.MICRO_OF_SECOND) > 0)
+            return new SimpleDateFormat(_dateFormatMs).format(d);
+        else
+            return new SimpleDateFormat(_dateFormat).format(d);
     }
 
     public static String dateToISOString(Date d){
@@ -1436,10 +1416,12 @@ public class StringHelper {
     }
 
     public static Date stringToDate(String s) {
-        if (s==null) return null;
+        if (s == null)
+            return null;
         try {
-            return new SimpleDateFormat(_df).parse(s);
-        } catch (Exception e) {
+            return new SimpleDateFormat(_dateFormat).parse(s);
+        }
+        catch (Exception e) {
             return null;
         }
     }

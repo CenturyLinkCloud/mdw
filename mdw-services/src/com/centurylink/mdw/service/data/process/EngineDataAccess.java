@@ -43,6 +43,9 @@ public interface EngineDataAccess {
     void setProcessCompletionTime(ProcessInstance pi)
     throws SQLException;
 
+    void setActivityCompletionTime(ActivityInstance ai)
+    throws SQLException;
+
     ProcessInstance getProcessInstance(Long procInstId)
     throws DataAccessException,SQLException;
 

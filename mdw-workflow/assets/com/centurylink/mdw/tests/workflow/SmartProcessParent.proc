@@ -1,7 +1,10 @@
 {
   "activities": [
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=56,y=141,w=60,h=40"},
+      "attributes": {
+        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=56,y=141,w=60,h=40"
+      },
       "id": "A1",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Start",
@@ -15,6 +18,7 @@
     {
       "attributes": {
         "DoNotNotifyCaller": "false",
+        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
         "WORK_DISPLAY_INFO": "x=686,y=173,w=60,h=40"
       },
       "id": "A2",
@@ -23,6 +27,7 @@
     },
     {
       "attributes": {
+        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
         "WORK_DISPLAY_INFO": "x=350,y=55,w=100,h=60",
         "processname": "com.centurylink.mdw.tests.workflow/SmartProcessChild",
         "processversion": "[2.1,3)",
@@ -44,6 +49,7 @@
         "DELAY_BETWEEN": "1",
         "Execution Plan": "executionPlan",
         "Force Parallel Execution": "FALSE",
+        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
         "STATUS_AFTER_EVENT": "Hold",
         "WORK_DISPLAY_INFO": "x=354,y=332,w=107,h=64",
         "processmap": "SmartProcessChild,com.centurylink.mdw.tests.workflow/SmartProcessChild,[2.3\\,3),;SmartProcessChild2,com.centurylink.mdw.tests.workflow/SmartProcessChild2,[0.3\\,1),",
@@ -62,6 +68,7 @@
     {
       "attributes": {
         "Expression": "#{testCase}",
+        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
         "SCRIPT": "javax.el",
         "WORK_DISPLAY_INFO": "x=181,y=138,w=89,h=46"
       },
@@ -87,6 +94,7 @@
     },
     {
       "attributes": {
+        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
         "Output Documents": "executionPlan",
         "Rule": "import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument\r\nimport com.centurylink.mdw.bpm.ParameterDocument.Parameter\r\nimport com.centurylink.mdw.bpm.ProcessExecutionPlanDocument.ProcessExecutionPlan\r\nimport com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance\r\nimport com.centurylink.mdw.model.workflow.WorkStatus\r\n\r\nexecutionPlan = ProcessExecutionPlanDocument.Factory.newInstance();\r\nProcessExecutionPlan exeplan = executionPlan.addNewProcessExecutionPlan();\r\nSubprocessInstance subprocinst = exeplan.addNewSubprocessInstance();\r\nsubprocinst.setLogicalProcessName(\"SmartProcessChild\");\r\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());\r\naddParameter(subprocinst, \"inputVar\", \"child11\");\r\naddParameter(subprocinst, \"procName\", \"\\$\");\r\naddParameter(subprocinst, \"procVer\", \"\\$\");\r\nsubprocinst = exeplan.addNewSubprocessInstance();\r\nsubprocinst.setLogicalProcessName(\"SmartProcessChild\");\r\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());\r\naddParameter(subprocinst, \"inputVar\", \"child12\");\r\nsubprocinst = exeplan.addNewSubprocessInstance();\r\nsubprocinst.setLogicalProcessName(\"SmartProcessChild2\");\r\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());\r\naddParameter(subprocinst, \"inputVar\", \"\\$subprocInputVar\");\r\naddParameter(subprocinst, \"procName\", \"\\$\");\r\naddParameter(subprocinst, \"procVer\", \"\\$\");\r\n\r\nvoid addParameter(SubprocessInstance subprocinst, String name, String value) {\r\n Parameter param = subprocinst.addNewParameter();\r\n param.setName(name);\r\n param.setStringValue(value);\r\n}\r\n",
         "SCRIPT": "Groovy",
@@ -104,6 +112,7 @@
     },
     {
       "attributes": {
+        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
         "Rule": "import com.centurylink.mdw.bpm.ParameterDocument.Parameter\r\nimport com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance\r\n\r\nSubprocessInstance subprocinst = executionPlan.getProcessExecutionPlan().getSubprocessInstanceList().get(0);\r\nmultipleSubprocName = getParameter(subprocinst, \"procName\");\r\nmultipleSubprocVer = getParameter(subprocinst, \"procVer\");\r\nsubprocinst = executionPlan.getProcessExecutionPlan().getSubprocessInstanceList().get(2);\r\nmultipleSubprocName2 = getParameter(subprocinst, \"procName\");\r\nmultipleSubprocVer2 = getParameter(subprocinst, \"procVer\");\r\n\r\nprotected String getParameter(SubprocessInstance subprocinst, String name) {\r\n if (subprocinst.getParameterList()==null) return null;\r\n for (Parameter p : subprocinst.getParameterList()) {\r\n  if (p.getName().equals(name)) return p.getStringValue();\r\n }\r\n return null;\r\n}",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=535,y=337,w=100,h=60"
@@ -123,6 +132,7 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "PerformanceLevel": "0",
     "WORK_DISPLAY_INFO": "x=50,y=56,w=184,h=27"
   },
   "variables": {

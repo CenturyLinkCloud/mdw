@@ -184,6 +184,10 @@
   padding-left: 0;
   height: 32px;
 }
+.mdw-asset-dropdown ul {
+  max-height: 450px;
+  overflow-y: auto;
+}
 .mdw-inner-addon {
   position: relative;
 }

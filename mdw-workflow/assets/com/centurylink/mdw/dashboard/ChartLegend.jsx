@@ -7,6 +7,9 @@ function ChartLegend(props) {
     const top = props.tops.find(t => t.id === sel.id);
     if (top) {
       label += top.name;
+      if (label.startsWith('http://') || label.startsWith('https://')) {
+        label = new URL(label).pathname;
+      }
       if (top.value || top.count) {
         label += ' (' + (top.count ? top.count : top.value) + ')';
       }

@@ -31,8 +31,8 @@ import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.util.StringHelper;
 
 import java.sql.ResultSet;
@@ -253,6 +253,11 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         Long elapsedTime = getProcessElapsedTime0(pi.getId());
         setElapsedTime0(OwnerType.PROCESS_INSTANCE, pi.getId(), elapsedTime);
         pi.setCompletionTime(elapsedTime);
+    }
+
+    public void setActivityCompletionTime(ActivityInstance ai) throws SQLException {
+        Long elapsedTime = getActivityElapsedTime0(ai.getId());
+        setElapsedTime0(OwnerType.ACTIVITY_INSTANCE, ai.getId(), elapsedTime);
     }
 
     public void setProcessInstanceStatus(Long procInstId, Integer status)

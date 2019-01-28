@@ -17,6 +17,12 @@
       "default": "0"
     },
     {
+      "type": "checkbox",
+      "name": "_captureTimings",
+      "applier": "ProcessAttributeApplier",
+      "label": "Capture Timings for All Activities"
+    },
+    {
       "type": "asset",
       "name": "PROCESS_START_PAGE",
       "label": "Start Page",
@@ -26,6 +32,6 @@
       "name": "Process Design Help",
       "type": "link",
       "url": "help/process.html"
-    }    
+    }
   ]}
 }

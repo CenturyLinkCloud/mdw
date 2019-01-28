@@ -880,11 +880,11 @@ public class CommonDataAccess {
     protected Long getProcessElapsedTime0(Long processInstanceId) throws SQLException {
         String query;
         if (db.isOracle()) {
-            query = "SELECT EXTRACT(day FROM DIFF)*24*60*60*1000 + "+
-                    "EXTRACT(hour FROM DIFF)*60*60*1000 + "+
-                    "EXTRACT(minute FROM DIFF)*60*1000 + "+
-                    "EXTRACT(second FROM DIFF)*1000 as ELAPSED_MS"+
-                    " FROM (SELECT (" + nowPrecision() + " - START_DT) AS DIFF"+
+            query = "SELECT EXTRACT(day FROM DIFF)*24*60*60*1000 + " +
+                    "EXTRACT(hour FROM DIFF)*60*60*1000 + " +
+                    "EXTRACT(minute FROM DIFF)*60*1000 + " +
+                    "EXTRACT(second FROM DIFF)*1000 as ELAPSED_MS" +
+                    " FROM (SELECT (" + nowPrecision() + " - START_DT) AS DIFF" +
                     " from PROCESS_INSTANCE where PROCESS_INSTANCE_ID=?)";
         }
         else {
@@ -899,6 +899,29 @@ public class CommonDataAccess {
         }
         else {
             throw new SQLException("Cannot find START_DT for process instance: " + processInstanceId);
+        }
+    }
+
+    protected Long getActivityElapsedTime0(Long activityInstanceId) throws SQLException {
+        String query;
+        if (db.isOracle()) {
+            query = "SELECT EXTRACT(day FROM DIFF)*24*60*60*1000 + " +
+                    "EXTRACT(hour FROM DIFF)*60*60*1000 + " +
+                    "EXTRACT(minute FROM DIFF)*60*1000 + " +
+                    "EXTRACT(second FROM DIFF)*1000 as ELAPSED_MS" +
+                    " FROM (SELECT (" + nowPrecision() + " - START_DT) AS DIFF" +
+                    " from ACTIVITY_INSTANCE where ACTIVITY_INSTANCE_ID=?)";
+        }
+        else {
+            query = "select TIMESTAMPDIFF(MICROSECOND,START_DT," + nowPrecision() + ")/1000"
+                    + " from ACTIVITY_INSTANCE where ACTIVITY_INSTANCE_ID=? ";
+        }
+        ResultSet rs = db.runSelect(query, new Object[]{activityInstanceId});
+        if (rs.next()) {
+            return rs.getLong(1);
+        }
+        else {
+            throw new SQLException("Cannot find START_DT for activity: " + activityInstanceId);
         }
     }
 
@@ -920,24 +943,24 @@ public class CommonDataAccess {
         String requestOwner = ownerType + "_REQUEST";
         String query;
         if (db.isOracle()) {
-            query="SELECT EXTRACT(day FROM DIFF)*24*60*60*1000 + "+
-                    "EXTRACT(hour FROM DIFF)*60*60*1000 + "+
-                    "EXTRACT(minute FROM DIFF)*60*1000 + "+
-                    "EXTRACT(second FROM DIFF)*1000 as ELAPSED_MS"+
-                    " FROM (SELECT (t1.CREATE_DT - t2.CREATE_DT) as DIFF"+
-                    " from  DOCUMENT t1"+
-                    " left join DOCUMENT t2"+
-                    " on t2.OWNER_ID=t1.OWNER_ID"+
-                    " and t2.OWNER_TYPE='" + requestOwner + "'"+
-                    " and t1.OWNER_TYPE='" + responseOwner + "'"+
+            query="SELECT EXTRACT(day FROM DIFF)*24*60*60*1000 + " +
+                    "EXTRACT(hour FROM DIFF)*60*60*1000 + " +
+                    "EXTRACT(minute FROM DIFF)*60*1000 + " +
+                    "EXTRACT(second FROM DIFF)*1000 as ELAPSED_MS" +
+                    " FROM (SELECT (t1.CREATE_DT - t2.CREATE_DT) as DIFF" +
+                    " from  DOCUMENT t1" +
+                    " left join DOCUMENT t2" +
+                    " on t2.OWNER_ID=t1.OWNER_ID" +
+                    " and t2.OWNER_TYPE='" + requestOwner + "'" +
+                    " and t1.OWNER_TYPE='" + responseOwner + "'" +
                     " where t1.OWNER_ID=?)";
         }
         else {
           query="select TIMESTAMPDIFF(MICROSECOND,(select t2.CREATE_DT"+
-            " from DOCUMENT t2"+
-            " where OWNER_TYPE='" + requestOwner + "'"+
-            " and t2.OWNER_ID=t1.OWNER_ID),t1.CREATE_DT)/1000"+
-            " from DOCUMENT t1 where t1.OWNER_ID=?"+
+            " from DOCUMENT t2" +
+            " where OWNER_TYPE='" + requestOwner + "'" +
+            " and t2.OWNER_ID=t1.OWNER_ID),t1.CREATE_DT)/1000" +
+            " from DOCUMENT t1 where t1.OWNER_ID=?" +
             " and t1.OWNER_TYPE='" + responseOwner + "' ";
         }
         Object[] args = new Object[1];

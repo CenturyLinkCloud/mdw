@@ -6,7 +6,7 @@ title: MDW Configuration
 ## project.yaml
   - Used at design time by [MDW Studio](../mdw-studio/) and the [CLI](../../getting-started/cli/).
   - Belongs in the root directory of your project (or root module for multi-module builds).
-  - Contains bootstrap information to locate [mdw.yaml](#mdw-yaml) and project assets.
+  - Contains bootstrap information to locate [mdw.yaml](#mdwyaml) and project assets.
   - Also may include custom values (like workgroups) that are needed at design time.
   - Not used at runtime.   
     ```yaml
@@ -74,8 +74,7 @@ title: MDW Configuration
     db.base.location: ../data  # default=assetLoc + "/../data/db"
     db.data.location: ../data/mdw  # default=assetLoc + "/../data/mdw"
     db.startup:  # extra startup params (default = none)
-      - --general_log=1
-      - --general_log_file=/var/log/mysql-queries.log
+      - --lower-case-table-names=1
 
     # optional mongodb (requires asset package com.centurylink.mdw.mongo)
     mongodb:

@@ -8,3 +8,6 @@
   .container {
     width: 1280px;
 }
+.dropdown-menu > .disabled > a:focus, .dropdown-menu > .disabled > a:hover {
+  cursor: default;
+}

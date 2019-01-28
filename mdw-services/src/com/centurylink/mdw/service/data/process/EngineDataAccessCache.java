@@ -15,13 +15,6 @@
  */
 package com.centurylink.mdw.service.data.process;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.DocumentDbAccess;
@@ -29,16 +22,15 @@ import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.Transition;
-import com.centurylink.mdw.model.workflow.TransitionInstance;
-import com.centurylink.mdw.model.workflow.WorkStatus;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+
+import java.sql.SQLException;
+import java.util.*;
 
 public class EngineDataAccessCache implements EngineDataAccess {
 
@@ -344,18 +336,29 @@ public class EngineDataAccessCache implements EngineDataAccess {
             if (pi!=null) pi.setStatusCode(status);
         }
     }
+
     public synchronized void setProcessCompletionTime(ProcessInstance pi) throws SQLException {
-        if(cache_process==CACHE_OFF) {
+        if (cache_process == CACHE_OFF) {
             edadb.setProcessCompletionTime(pi);
-        }else if(cache_process==CACHE_ONLY){
+        }
+        else if (cache_process == CACHE_ONLY) {
             ProcessInstance cachepi = procInstCache.get(pi.getId());
             cachepi.setCompletionTime(pi.getCompletionTime());
-        }else{
+        }
+        else {
             edadb.setProcessCompletionTime(pi);
             ProcessInstance cachepi = procInstCache.get(pi.getId());
-            if(cachepi!=null)cachepi.setCompletionTime(pi.getCompletionTime());
+            if (cachepi != null)
+                cachepi.setCompletionTime(pi.getCompletionTime());
         }
     }
+
+    public synchronized void setActivityCompletionTime(ActivityInstance ai) throws SQLException {
+        if (cache_process != CACHE_ONLY) {
+            edadb.setActivityCompletionTime(ai);
+        }
+    }
+
     public synchronized void cancelTransitionInstances(Long procInstId, String comment,
             Long transId) throws SQLException {
         if (cache_activity_transition==CACHE_ONLY) {
