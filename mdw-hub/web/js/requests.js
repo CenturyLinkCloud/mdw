@@ -2,8 +2,8 @@
 
 var requestMod = angular.module('requests', ['mdw']);
 
-requestMod.controller('RequestsController', ['$scope', '$http', '$location', '$cookieStore', 'mdw', 'util', 'REQUEST_STATUSES',
-                                             function($scope, $http, $location, $cookieStore, mdw, util, REQUEST_STATUSES) {
+requestMod.controller('RequestsController', ['$scope', '$http', '$location', 'mdw', 'util', 'REQUEST_STATUSES',
+                                             function($scope, $http, $location, mdw, util, REQUEST_STATUSES) {
   
   // is this in the context of the Workflow or Services tab?
   $scope.context = $location.path().startsWith('/service') ? 'service' : 'workflow';
@@ -11,7 +11,9 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', '$c
   
   // two-way bound to/from directive
   $scope.requestList = {};
-  $scope.requestFilter = $cookieStore.get($scope.context + '_requestFilter');
+  $scope.requestFilter = sessionStorage.getItem($scope.context + '_requestFilter');
+   if ($scope.requestFilter)
+        $scope.requestFilter = JSON.parse($scope.requestFilter);
   if (!$scope.requestFilter) {
     $scope.requestFilter = { 
         status: '[Active]',
@@ -59,11 +61,11 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', '$c
         requestInstances.endDate = util.formatDateTime(util.correctDbDate(new Date(requestInstances.endDate), dbDate));
     });
     requestList.context = $scope.context;
-    $cookieStore.put($scope.context + '_requestFilter', $scope.requestFilter);    
-  });   
+    sessionStorage.setItem($scope.context + '_requestFilter', JSON.stringify($scope.requestFilter));
+  });
   
   $scope.typeaheadMatchSelection = null;
-  // docId or masterRequestId
+  // docId or masterRequestId or path
   $scope.findTypeaheadMatches = function(typed) {
     var url = mdw.roots.services + '/services/Requests' + '?app=mdw-admin&type=' + $scope.requestFilter.type + '&find=' + typed;
     return $http.get(url).then(function(response) {
@@ -71,10 +73,17 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', '$c
       var reqs = response.data.requests;
       var matches = [];
       reqs.forEach(function(req) {
-        if ($scope.requestFilter.type == 'masterRequests')
-          matches.push({value: req.masterRequestId});
+        if (!isNaN(typed) && $scope.requestFilter.type != 'masterRequests')
+          matches.push({type: 'id', value: req.id});
+        else if (req.path && req.path.startsWith(typed)) {
+          var existPath = matches.find(function(match) {
+            return match.type === 'path' && match.value === req.path;
+          });
+          if (!existPath)
+            matches.push({type: 'path', value: req.path});
+        }
         else
-          matches.push({value: req.id});
+          matches.push({type: 'masterRequestId', value: req.masterRequestId});
       });
       return matches;
     });
@@ -83,6 +92,7 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', '$c
   $scope.clearTypeaheadFilters = function() {
     $scope.requestFilter.masterRequestId = null;
     $scope.requestFilter.id = null;
+    $scope.requestFilter.path = null;
   };
   
   $scope.typeaheadChange = function() {
@@ -92,12 +102,7 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', '$c
   
   $scope.typeaheadSelect = function() {
     $scope.clearTypeaheadFilters();
-    if ($scope.requestFilter.type == 'masterRequests') {
-      $scope.requestFilter.masterRequestId = $scope.typeaheadMatchSelection.value;
-    }
-    else {
-      $scope.requestFilter.id = $scope.typeaheadMatchSelection.value;
-    }
+    $scope.requestFilter[$scope.typeaheadMatchSelection.type] = $scope.typeaheadMatchSelection.value;
   };
   
 }]);

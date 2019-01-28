@@ -129,13 +129,17 @@ public class RequestDataAccess extends CommonDataAccess {
 
         String find = query.getFind();
         String masterRequestId = query.getFilter("masterRequestId");
+        String path = query.getFilter("path");
         if (find != null) {
             // ignore other criteria
-            clause.append(" and pi.master_request_id like '" + find + "%'\n");
+            clause.append(" and pi.master_request_id like '" + find + "%' or d.path like '" + find + "%' \n");
         }
         else if (masterRequestId != null) {
             // ignore other criteria
-            clause.append(" and pi.master_request_id = '" + masterRequestId + "'\n");
+            clause.append(" and pi.master_request_id = '" + masterRequestId + "' \n");
+        }
+        else if (path != null) {
+            clause.append(" or d.path = '" + path + "' \n");
         }
         else {
             // status
@@ -439,11 +443,21 @@ public class RequestDataAccess extends CommonDataAccess {
 
         String find = query.getFind();
         Long id = query.getLongFilter("id");
+        String path = query.getFilter("path");
         if (find != null) {
-            clause.append(" and d.document_id like '" + find + "%'\n");
+            try {
+                Long docId = Long.parseLong(find);
+                clause.append(" and d.document_id like '" + docId + "%'\n");
+            }
+            catch (NumberFormatException e) {
+                clause.append(" and d.path like '" + find + "%'\n");
+            }
         }
         else if (id != null && id > 0) {
             clause.append(" and d.document_id = " + id + "\n");
+        }
+        else if (path != null) {
+            clause.append(" and d.path like '" + path + "%'\n");
         }
         else if (query.getFilter("ownerId") != null) {
             clause.append(" and d.owner_id = " + query.getLongFilter("ownerId") + "\n");
@@ -531,11 +545,21 @@ public class RequestDataAccess extends CommonDataAccess {
 
         String find = query.getFind();
         Long id = query.getLongFilter("id");
+        String path = query.getFilter("path");
         if (find != null) {
-            clause.append(" and d.document_id like '" + find + "%'\n");
+            try {
+                Long docId = Long.parseLong(find);
+                clause.append(" and d.document_id like '" + docId + "%'\n");
+            }
+            catch (NumberFormatException e) {
+                clause.append(" and d.path like '" + find + "%'\n");
+            }
         }
         else if (id != null && id > 0) {
             clause.append(" and d.document_id = " + id + "\n");
+        }
+        else if (path != null) {
+            clause.append(" and d.path like '" + path + "%'\n");
         }
         else if (query.getFilter("ownerId") != null) {
             clause.append(" and d.owner_id = " + query.getLongFilter("ownerId") + "\n");
