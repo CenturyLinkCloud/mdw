@@ -45,7 +45,6 @@ public class ExecutorRegistry extends ServiceRegistry {
         return instance;
     }
 
-    private static Map<String,Class<? extends ScriptExecutor>> executors = new HashMap<>();
     public ScriptExecutor getExecutor(String language) throws ExecutionException {
         // built-in executors first
         if ("Groovy".equalsIgnoreCase(language)) {
@@ -55,11 +54,7 @@ public class ExecutorRegistry extends ServiceRegistry {
             return new JavaScriptExecutor();
         }
 
-        Class<? extends ScriptExecutor> executorClass = executors.get(language);
-        if (executorClass == null) {
-            executorClass = findExecutorClass(language);
-            executors.put(language, executorClass);
-        }
+        Class<? extends ScriptExecutor> executorClass = findExecutorClass(language);
         if (executorClass == null)
             throw new ExecutionException("No ScriptExecutor found for " + language + " (needs an optional asset package?)");
 
@@ -86,7 +81,6 @@ public class ExecutorRegistry extends ServiceRegistry {
         return null;
     }
 
-    private static Map<String,Class<? extends ScriptEvaluator>> evaluators = new HashMap<>();
     public ScriptEvaluator getEvaluator(String language) throws ExecutionException {
         // built-in evaluators first
         if ("Groovy".equalsIgnoreCase(language)) {
@@ -96,11 +90,7 @@ public class ExecutorRegistry extends ServiceRegistry {
             return new JavaScriptExecutor();
         }
 
-        Class<? extends ScriptEvaluator> evaluatorClass = evaluators.get(language);
-        if (evaluatorClass == null) {
-            evaluatorClass = findEvaluatorClass(language);
-            evaluators.put(language, evaluatorClass);
-        }
+        Class<? extends ScriptEvaluator> evaluatorClass = findEvaluatorClass(language);
         if (evaluatorClass == null)
             throw new ExecutionException("No ScriptEvaluator found for " + language + " (needs an optional asset package?)");
 

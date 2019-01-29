@@ -15,7 +15,7 @@
  */
 package com.centurylink.mdw.kotlin
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import com.centurylink.mdw.cache.impl.PackageCache
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.InvokeWrapper
@@ -63,7 +63,7 @@ open class KotlinScriptEngine(
     val scriptEvaluator: ScriptEvaluator by lazy {
         ScriptEvaluator(
                 templateClasspath,
-                this::class.java.getClassLoader(),
+                PackageCache.getPackage(KOTLIN_PACKAGE).getCloudClassLoader(),
                 getScriptArgs(getContext(), scriptArgsTypes))
     }
 
