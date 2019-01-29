@@ -16,12 +16,12 @@ We welcome your contributions to MDW whether they be fixes/enhancements, automat
 1. Prerequisites
    - IntelliJ IDEA Community Edition:                              
      https://www.jetbrains.com/idea/download/
-   - MDW Studio Plugin:
+   - MDW Studio Plugin:   
      http://centurylinkcloud.github.io/mdw/docs/guides/mdw-studio/
 
 2. Get the Source Code
    - Command-line Git:  
-     `git clone https://github.com/CenturyLinkCloud/mdw.git mdw6`
+     `git clone https://github.com/CenturyLinkCloud/mdw.git`
 
 3. Set up npm (One-time step)
    - Install NodeJS:                                                                     
@@ -47,12 +47,12 @@ We welcome your contributions to MDW whether they be fixes/enhancements, automat
    - From the IntelliJ menu select Run > Edit Configurations.
    - Click **+** > Jar Application.
    - For Path to Jar, browse to mdw/deploy/app/mdw-boot-6.1.XX-SNAPSHOT.jar
-   - VM Options: `-Dmdw.runtime.env=dev -Dmdw.config.location=mdw/config`
+   - VM Options: `-Dmdw.runtime.env=dev -Dmdw.config.location=config`
    - Save the configuration and type ctrl-alt-R to run/debug MDW.
 
 8. MDWHub Web Development
    - To avoid having to reassemble the boot jar to test web content changes, add this to your IntelliJ run configuration:
-     `-Dmdw.hub.dev.override.root=../mdw-hub/web`
+     `-Dmdw.hub.dev.override.root=mdw-hub/web`
 
 9. Run the Tests
    - Access the autotest page in MDWHub:
