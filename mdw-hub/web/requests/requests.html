@@ -11,7 +11,8 @@
               <input type="text" class="form-control mdw-inline" autofocus placeholder="search" spellcheck="false"
                 ng-model="typeaheadMatchSelection" uib-typeahead="match as match.value for match in findTypeaheadMatches($viewValue)" 
                 typeahead-editable="false" typeahead-on-select="typeaheadSelect()" typeahead-min-length="2" ng-change="typeaheadChange()">
-            </div>  
+            </div>
+            <span class="glyphicon glyphicon-remove mdw-clear-input" ng-click="clearTypeahead()"></span>
             <div class="mdw-inner-addon mdw-right-addon" uib-dropdown>
               <i class="glyphicon glyphicon-chevron-down"></i> 
               <input type="text" class="form-control mdw-inline mdw-dropfilter mdw-med-indent mdw-med-width2"

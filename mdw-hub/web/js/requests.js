@@ -12,27 +12,27 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', 'md
   // two-way bound to/from directive
   $scope.requestList = {};
   $scope.requestFilter = sessionStorage.getItem($scope.context + '_requestFilter');
-   if ($scope.requestFilter)
+  if ($scope.requestFilter)
         $scope.requestFilter = JSON.parse($scope.requestFilter);
   if (!$scope.requestFilter) {
-    $scope.requestFilter = { 
+    $scope.requestFilter = {
         status: '[Active]',
         sort: 'receivedDate',
         type: $scope.defaultType,
         descending: true
-    }; 
+    };
   }
   else {
-  // fix date format stored in cookieStore
-  if ($scope.requestFilter.receivedDate)
-    $scope.requestFilter.receivedDate = util.serviceDate(new Date($scope.requestFilter.receivedDate));
+    // fix date format stored in cookieStore
+    if ($scope.requestFilter.receivedDate)
+      $scope.requestFilter.receivedDate = util.serviceDate(new Date($scope.requestFilter.receivedDate));
   }
-  
+
   if ($scope.context == 'service') {
     $scope.requestTypes = {
-        inboundRequests: 'Inbound', 
+        inboundRequests: 'Inbound',
         outboundRequests: 'Outbound',
-        masterRequests: 'Master Requests' 
+        masterRequests: 'Master Requests'
       };
   }
   else {
@@ -44,14 +44,18 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', 'md
   }
   
   // pseudo-status [Active] means non-final
-  $scope.allStatuses = ['[Active]'].concat(REQUEST_STATUSES);  
+  $scope.allStatuses = ['[Active]'].concat(REQUEST_STATUSES);
+
+  if ($scope.requestFilter.path) {
+      $scope.typeaheadMatchSelection = $scope.requestFilter.path;
+  }
 
   $scope.setRequestType = function(requestType) {
     $scope.typeaheadMatchSelection = null;
     $scope.clearTypeaheadFilters();
     $scope.requestFilter.type = requestType;
   };
-  
+
   $scope.$on('page-retrieved', function(event, requestList) {
     // received date and end date, adjusted for db offset
     var dbDate = new Date(requestList.retrieveDate);
@@ -64,7 +68,6 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', 'md
     sessionStorage.setItem($scope.context + '_requestFilter', JSON.stringify($scope.requestFilter));
   });
   
-  $scope.typeaheadMatchSelection = null;
   // docId or masterRequestId or path
   $scope.findTypeaheadMatches = function(typed) {
     var url = mdw.roots.services + '/services/Requests' + '?app=mdw-admin&type=' + $scope.requestFilter.type + '&find=' + typed;
@@ -82,7 +85,7 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', 'md
           if (!existPath)
             matches.push({type: 'path', value: req.path});
         }
-        else
+        else if (req.masterRequestId)
           matches.push({type: 'masterRequestId', value: req.masterRequestId});
       });
       return matches;
@@ -103,6 +106,11 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', 'md
   $scope.typeaheadSelect = function() {
     $scope.clearTypeaheadFilters();
     $scope.requestFilter[$scope.typeaheadMatchSelection.type] = $scope.typeaheadMatchSelection.value;
+  };
+
+  $scope.clearTypeahead = function() {
+    $scope.typeaheadMatchSelection = null;
+    $scope.clearTypeaheadFilters();
   };
   
 }]);
