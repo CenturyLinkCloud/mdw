@@ -121,7 +121,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
         if (!packagedJava.isEmpty()) {
             for (Package pkg : packagedJava.keySet()) {
                 try {
-                    List<Class<?>> classes = CompiledJavaCache.compileClasses(pkg.getCloudClassLoader(), pkg, packagedJava.get(pkg), true);
+                    List<Class<?>> classes = CompiledJavaCache.compileClasses(getClass().getClassLoader(), pkg, packagedJava.get(pkg), true);
                     for (Class<?> clazz : classes) {
                         RegisteredService registeredService = clazz.getAnnotation(RegisteredService.class);
                         if (registeredService == null) {
@@ -202,7 +202,8 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
             try {
                 if (Compatibility.hasCodeSubstitutions())
                     javaCode = doCompatibilityCodeSubstitutions(className, javaCode);
-                clazz = compileJavaCode(parentLoader, currentPackage, className, javaCode, cache);
+                compileJavaCode(parentLoader, currentPackage, className, javaCode, cache);
+                clazz = DynamicJavaClassLoader.getInstance(parentLoader, currentPackage, cache).loadClass(className);
                 if (cache) {
                     compiledCache.put(className, clazz);
                 }
@@ -299,8 +300,8 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
         return getResourceClass(resourceClassName, parentLoader, currentPackage).newInstance();
     }
 
-    private static Class<?> compileJavaCode(ClassLoader parentLoader, final Package currentPackage, String className, String javaCode, boolean cache)
-    throws ClassNotFoundException, IOException, MdwJavaException {
+    private static void compileJavaCode(ClassLoader parentLoader, final Package currentPackage, String className, String javaCode, boolean cache)
+    throws IOException, MdwJavaException {
         if (parentLoader == null)
             parentLoader = CompiledJavaCache.class.getClassLoader();
 
@@ -320,7 +321,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
 
         // compiler classpath
         String pathSep = System.getProperty("path.separator");
-        String classpath = getJavaCompilerClasspath(parentLoader, currentPackage);
+        String classpath = getJavaCompilerClasspath(currentPackage);
         classpath += pathSep + getTempDir();  // include java source artifacts
 
         String debug = "Compiling Dynamic Java class: " + className;
@@ -361,72 +362,6 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                 throw new CompilationException("Compilation errors in Dynamic Java. See compiler output in log for details.");
             }
         }
-
-        return currentPackage.getCloudClassLoader().loadClass(className);
-    }
-
-    public static void compileJavaCodeOnly(ClassLoader parentLoader, final Package currentPackage, String className, String javaCode, boolean cache)
-            throws ClassNotFoundException, IOException, MdwJavaException {
-        if (parentLoader == null)
-            parentLoader = CompiledJavaCache.class.getClassLoader();
-
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        if (compiler == null)
-            throw new MdwJavaException("No Java compiler available.  JDK must precede JRE on system PATH.");
-
-        final JavaFileObject jfo = new StringJavaFileObject(className, javaCode);
-
-        DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
-
-        JavaFileManager standardFileManager = compiler.getStandardFileManager(diagnostics, null, null);
-        MdwJavaFileManager<JavaFileManager> mdwFileManager = new MdwJavaFileManager<>(standardFileManager);
-
-        // compiler options
-        List<String> options = new ArrayList<>();
-
-        // compiler classpath
-        String pathSep = System.getProperty("path.separator");
-        String classpath = getJavaCompilerClasspath(parentLoader, currentPackage);
-        classpath += pathSep + getTempDir();  // include java source artifacts
-
-        String debug = "Compiling Dynamic Java class: " + className;
-        if (logger.isMdwDebugEnabled()) {
-            String extra = "parent ClassLoader=" + parentLoader;
-            if (currentPackage != null)
-                extra += ", workflow package: " + currentPackage.getLabel();
-            logger.debug(debug + " (" + extra + ")");
-        }
-        else if (logger.isDebugEnabled()) {
-            logger.debug(debug);
-        }
-
-        if (logger.isMdwDebugEnabled()) {
-            logger.mdwDebug("Dynamic Java Compiler Classpath: " + classpath);
-        }
-
-        options.addAll(Arrays.asList("-g", "-classpath", classpath));
-        String extraOptions = PropertyManager.getProperty(PropertyNames.MDW_JAVA_COMPILER_OPTIONS);
-        if (extraOptions != null)
-            options.addAll(Arrays.asList(extraOptions.split(" ")));
-
-        CompilationTask compileTask = compiler.getTask(null, mdwFileManager, diagnostics, options, null, Arrays.asList(jfo));
-        // TODO jaxb processors
-        // compileTask.setProcessors(processors);
-        boolean hasErrors = false;
-        if (!compileTask.call()) {
-            for (Diagnostic<?> diagnostic : diagnostics.getDiagnostics()) {
-                String msg = "\nJava Compilation " + diagnostic.getKind() + ":" + diagnostic.getSource()
-                        + "(" + diagnostic.getLineNumber() + "," + diagnostic.getColumnNumber() + ")\n"
-                        + "   " + diagnostic.getMessage(null) + "\n";
-                logger.severe(msg);
-                if (!hasErrors && diagnostic.getKind().equals(Diagnostic.Kind.ERROR))
-                    hasErrors = true;
-            }
-            if (hasErrors) {
-                logger.debug("Dynamic Java Compiler Classpath: " + classpath);
-                throw new CompilationException("Compilation errors in Dynamic Java. See compiler output in log for details.");
-            }
-        }
     }
 
     private static List<Class<?>> compileJava(ClassLoader parentLoader, final Package currentPackage, Map<String,String> javaSources, boolean cache)
@@ -456,7 +391,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
 
         // compiler classpath
         String pathSep = System.getProperty("path.separator");
-        String classpath = getJavaCompilerClasspath(parentLoader, currentPackage);
+        String classpath = getJavaCompilerClasspath(currentPackage);
         classpath += pathSep + getTempDir();  // include java source artifacts
 
         String debug = "Compiling Dynamic Java classes: " + classNames;
@@ -520,7 +455,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
         List<Class<?>> classes = new ArrayList<>();
         for (String className : javaSources.keySet()) {
             if (!erroredClasses.contains(className))
-                classes.add(currentPackage.getCloudClassLoader().loadClass(className));
+                classes.add(DynamicJavaClassLoader.getInstance(parentLoader, currentPackage, cache).loadClass(className));
         }
         return classes;
     }
@@ -528,7 +463,9 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
     public void clearCache() {
         compiledCache.clear();
         compilerClasspaths.clear();
+        MdwJavaFileManager.clearJfoCache();
         clearDynamicJavaRegisteredServices();
+        DynamicJavaClassLoader.clearLoaderInstances();
         // garbage collection helps ensure dynamicism of loaded classes
         Runtime.getRuntime().gc();
     }
@@ -559,16 +496,19 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
     }
 
     private static volatile Map<String,String> compilerClasspaths = new ConcurrentHashMap<>();
-    public static String getJavaCompilerClasspath(ClassLoader parentLoader, Package packageVO) throws IOException {
-        if (packageVO == null)
-            packageVO = PackageCache.getPackage("com.centurylink.mdw.base");
-        String key = packageVO.getName();
+    public static String getJavaCompilerClasspath(Package packageVO) throws IOException {
+        String key;
+        if (packageVO == null || packageVO.getName() == null)
+            key= "com.centurylink.mdw.base";
+        else
+            key = packageVO.getName();
+
         String classpath = compilerClasspaths.get(key);
         if (classpath == null) {
             synchronized(compilerClasspaths) {
                 classpath = compilerClasspaths.get(key);
                 if (classpath == null) {
-                    CloudClasspath cloudClsPath = new CloudClasspath(packageVO == null ? null : packageVO.getCloudClassLoader());
+                    CloudClasspath cloudClsPath = new CloudClasspath(packageVO.getCloudClassLoader());
                     cloudClsPath.read();
                     classpath = cloudClsPath.toString();
                     compilerClasspaths.put(key, classpath);
@@ -654,7 +594,124 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
         return ApplicationContext.getTempDirectory();
     }
 
-    public static String doCompatibilityCodeSubstitutions(String label, String in) throws IOException {
+    public static class DynamicJavaClassLoader extends ClassLoader {
+
+        private Package packageVO;
+        private boolean cache;
+
+        private static Map<String, DynamicJavaClassLoader> instances = new ConcurrentHashMap<>();
+
+        static {
+            ClassLoader.registerAsParallelCapable();
+        }
+
+        DynamicJavaClassLoader(ClassLoader parentLoader, Package packageVO, boolean cache) {
+            super(DynamicJavaClassLoader.class.getClassLoader()); //packageVO == null ? DynamicJavaClassLoader.class.getClassLoader() : packageVO.getCloudClassLoader());
+            this.packageVO = packageVO;
+            this.cache = cache;
+        }
+
+        public static DynamicJavaClassLoader getInstance(ClassLoader parentLoader, Package packageVO, boolean cache) {
+            String key = packageVO.getName() + ""; // To handle the default package which has null name
+            if (instances.containsKey(key))
+                return instances.get(key);
+            else {
+                synchronized (instances) {
+                    Map<String, DynamicJavaClassLoader> temp = instances;
+                    if (temp.containsKey(key))
+                        return temp.get(key);
+                    else {
+                        DynamicJavaClassLoader loader = new DynamicJavaClassLoader(parentLoader, packageVO, cache);
+                        instances.put(key, loader);
+                        return loader;
+                    }
+                }
+            }
+        }
+
+        public static void clearLoaderInstances() {
+            instances.clear();
+        }
+
+        protected Class<?> findClass(String name) throws ClassNotFoundException {
+            if (logger.isMdwDebugEnabled())
+                logger.mdwDebug("findClass(): " + name);
+            Class<?> cl = null;
+            // check the cache first
+            cl = compiledCache.get(name);
+            if (cl == null) {
+                JavaFileObject jfo = MdwJavaFileManager.getJavaFileObject(name);
+                if (jfo == null) {
+                    Asset javaAsset = AssetCache.getAsset(name, Asset.JAVA);
+                    if (javaAsset != null) {
+                        try {
+                            String javaCode = javaAsset.getStringContent();
+                            if (Compatibility.hasCodeSubstitutions())
+                                javaCode = doCompatibilityCodeSubstitutions(name, javaCode);
+                            compileJavaCode(getParent(), packageVO, name, javaCode, cache);
+                            jfo = MdwJavaFileManager.getJavaFileObject(name);
+                        } catch (Exception ex) {
+                            logger.severeException(ex.getMessage(), ex);
+                        }
+                    }
+                }
+                if (jfo != null) {
+                    if (packageVO != null && packageVO.getName() != null) {
+                        java.lang.Package pkg = getPackage(packageVO.getName());
+                        if (pkg == null)
+                            definePackage(packageVO.getName(), null, null, null, "MDW", packageVO.getVersionString(), "CenturyLink", null);
+                    }
+                    byte[] bytes = ((ByteArrayJavaFileObject)jfo).getByteArray();
+                    cl = defineClass(name, bytes, 0, bytes.length);
+                }
+            }
+            else  // Found it in cache
+                return cl;
+
+            // try the cloud classloader to find class in assets
+            if (cl == null && packageVO != null && packageVO.getCloudClassLoader().hasClass(name) /* prevent infinite loop */ )
+                cl = packageVO.getCloudClassLoader().directFindClass(name);
+
+            if (cl == null) {
+                // don't log: can happen when trying multiple bundles to resolve a class
+                throw new ClassNotFoundException(cnfeMsg(name));
+            }
+            else if (cache) {
+                compiledCache.put(name, cl);
+            }
+            return cl;
+        }
+
+        private String cnfeMsg(String className) {
+            String msg = className + " with Parent ClassLoader: " + getParent();
+            if (packageVO != null)
+                msg += "\nand Workflow Package: " + packageVO.getLabel() + " (ClassLoader: " + packageVO.getClassLoader() + ")";
+            return msg;
+        }
+
+        public String toString() {
+            String str = getClass().getName() + " with parent " + getParent();
+            if (packageVO != null)
+                str += "\nand Workflow Package: " + packageVO.getLabel() + " (ClassLoader: " + packageVO.getClassLoader() + ")";
+            return str;
+        }
+
+        @Override
+        public Class<?> loadClass(String name) throws ClassNotFoundException {
+            if (!logger.isMdwDebugEnabled()) {
+                return super.loadClass(name);
+            }
+            else {
+                Class<?> loaded = super.loadClass(name);
+                logger.mdwDebug("Loaded class: '" + name + "' from DynamicJavaClassLoader with parent: " + getParent());
+                if (logger.isTraceEnabled())
+                    logger.traceException("Stack trace: ", new Exception("ClassLoader stack trace"));
+                return loaded;
+            }
+        }
+    }
+
+    protected static String doCompatibilityCodeSubstitutions(String label, String in) throws IOException {
         SubstitutionResult substitutionResult = Compatibility.getInstance().performCodeSubstitutions(in);
         if (!substitutionResult.isEmpty()) {
             logger.warn("Compatibility substitutions applied for Java asset " + label + " (details logged at debug level).");

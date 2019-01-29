@@ -16,6 +16,7 @@
 package com.centurylink.mdw.script;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Hashtable;
@@ -118,25 +119,48 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
             File groovyFile = new File(getRootDir() + "/" + name + ".groovy");
             String cached = scriptCache.get(name);
             if (!groovyFile.exists() || !script.equals(cached)) {
-                synchronized (scriptCacheLock) {
-                    groovyFile = new File(getRootDir() + "/" + name + ".groovy");
-                    cached = scriptCache.get(name);
-                    if (!groovyFile.exists() || !script.equals(cached)) {
-                        File rootDir = new File(getRootDir());
-                        if (!rootDir.exists()) {
-                            if (!rootDir.mkdirs())
-                                throw new ExecutionException("Failed to create script root dir: " + rootDir);
-                        }
-                        FileWriter writer = null;
-                        try {
-                            writer = new FileWriter(groovyFile);
-                            writer.write(script);
-                        } finally {
-                            if (writer != null)
-                                writer.close();
-                            timer.stopAndLogTiming("");
-                        }
+                boolean needsUpdate = true;
+                if (groovyFile.exists()) {
+                    FileInputStream fis = null;
+                    String existingScript = null;
+                    String existingScript2 = null;
+                    try {
+                        fis = new FileInputStream(groovyFile);
+                        byte[] bytes = new byte[(int) groovyFile.length()];
+                        fis.read(bytes);
+                        existingScript = new String(bytes);
+                        existingScript2 = existingScript + "\nreturn;";
+                    }
+                    finally {
+                        if (fis != null)
+                            fis.close();
+                    }
+                    if (script.equals(existingScript) || script.equals(existingScript2)) {
                         scriptCache.put(name, script);
+                        needsUpdate = false;
+                    }
+                }
+                if (needsUpdate) {
+                    synchronized (scriptCacheLock) {
+                        groovyFile = new File(getRootDir() + "/" + name + ".groovy");
+                        cached = scriptCache.get(name);
+                        if (!groovyFile.exists() || !script.equals(cached)) {
+                            File rootDir = new File(getRootDir());
+                            if (!rootDir.exists()) {
+                                if (!rootDir.mkdirs())
+                                    throw new ExecutionException("Failed to create script root dir: " + rootDir);
+                            }
+                            FileWriter writer = null;
+                            try {
+                                writer = new FileWriter(groovyFile);
+                                writer.write(script);
+                            } finally {
+                                if (writer != null)
+                                    writer.close();
+                                timer.stopAndLogTiming("");
+                            }
+                            scriptCache.put(name, script);
+                        }
                     }
                 }
             }

@@ -17,14 +17,11 @@ package com.centurylink.mdw.cloud;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.util.ClasspathUtil;
 import com.centurylink.mdw.util.StringHelper;
 
@@ -35,14 +32,13 @@ public class CloudClasspath {
     private CloudClassLoader cloudClassLoader;
     private String systemClasspath;
     private String cloudClasspath;
-    private List<File> webappJars = new ArrayList<File>();
-    private List<File> jarAssetFiles = new ArrayList<File>();
+    private List<File> webappJars = new ArrayList<>();
+    private List<File> jarAssetFiles = new ArrayList<>();
     private File webInfClasses;
     private String configPath;
 
 
     public CloudClasspath(CloudClassLoader cloudClassLoader) {
-        super();
         this.cloudClassLoader = cloudClassLoader;
     }
 
@@ -59,10 +55,24 @@ public class CloudClasspath {
                         cloudClasspath += PATH_SEP;
                 }
             }
-            List<Asset> jarAssets = cloudClassLoader.getJarAssets();
-            if (jarAssets != null) {
-                jarAssetFiles.addAll(Arrays.asList(ClasspathUtil.listJarFiles(ApplicationContext.getAssetRoot(), true, true)));
-            }
+
+            cloudClassLoader.getJarAssets(); // This is to pre-load the JARs for performance
+
+            jarAssetFiles.addAll(Arrays.asList(ClasspathUtil.listJarFiles(ApplicationContext.getAssetRoot(), true, true)));
+            // same-package jars go first
+            String pkgPath = ApplicationContext.getAssetRoot().getCanonicalPath() + FILE_SEP + cloudClassLoader.getPackageName().replace(".", FILE_SEP);
+            jarAssetFiles.sort((o1, o2) -> {
+                try {
+                    if (pkgPath.equals(o1.getParentFile().getCanonicalPath()) && !pkgPath.equals(o2.getParentFile().getCanonicalPath()))
+                        return -1;
+                    else if (pkgPath.equals(o1.getParentFile().getCanonicalPath()) && !pkgPath.equals(o2.getParentFile().getCanonicalPath()))
+                        return 1;
+                    else
+                        return 0;
+                }
+                catch (Exception e) {}
+                return 0;
+            });
         }
 
         if (ApplicationContext.isSpringBoot()) {
