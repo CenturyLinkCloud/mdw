@@ -4,7 +4,6 @@
 // Drawing objects are pre-injected in admin.js.
 var $mdwMessages;
 var $mdwUi = {
-    
    init: function(ngInjector, authUser) {
      $mdwUi.Shape = ngInjector.get('Shape');
      $mdwUi.Label = ngInjector.get('Label');
@@ -76,7 +75,16 @@ var $mdwUi = {
      MIN_DRAG: 3,
      OVAL_LINE_WIDTH: 3,
      HIGHLIGHT_MARGIN: 10,
-     HIGHLIGHT_COLOR: '#03a9f4'
+     HIGHLIGHT_COLOR: '#03a9f4',
+     WORKFLOW_STATUSES: [
+       {status: 'Pending', color: 'blue'},
+       {status: 'In Progress', color: 'green'},
+       {status: 'Failed', color: 'red'},
+       {status: 'Completed', color: 'black'},
+       {status: 'Canceled', color: 'darkgray'},
+       {status: 'Hold', color: 'cyan'},
+       {status: 'Waiting', color: 'yellow'}
+     ]
    },
    showMessage: function(msg) {
      // TODO: https://github.com/CenturyLinkCloud/mdw/issues/409

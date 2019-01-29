@@ -4,7 +4,7 @@ import {Glyphicon} from '../node/node_modules/react-bootstrap';
 import Select from '../node/node_modules/react-select';
 import '../node/node_modules/style-loader!../react/react-select.css';
 import Heading from './Heading.jsx';
-import Workflow from '../react/Workflow.jsx';
+import NgWorkflow from '../react/NgWorkflow.jsx';
 import UserDate from '../react/UserDate.jsx';
 import '../node/node_modules/style-loader!./task-ui.css';
 
@@ -137,7 +137,7 @@ class Task extends Component {
           }
           <div id="mdw-task-workflow" className="mdw-task-workflow">
             {task.ownerType == 'PROCESS_INSTANCE' && task.ownerId &&
-              <Workflow instanceId={task.ownerId} animate={animate} 
+              <NgWorkflow instanceId={task.ownerId} animate={animate} 
                 activity={task.activityInstanceId} containerId='mdw-task-workflow' 
                 hubBase={this.context.hubRoot} serviceBase={this.context.serviceRoot} />
             }

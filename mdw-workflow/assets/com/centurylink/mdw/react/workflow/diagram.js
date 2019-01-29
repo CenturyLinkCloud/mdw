@@ -1,11 +1,6 @@
 'use strict';
 
-var diagramMod = angular.module('mdwDiagram', ['mdw', 'drawingConstants']);
-
-diagramMod.factory('Diagram',
-    ['$document', 'mdw', 'util', 'Label', 'Shape', 'Step', 'Link', 'Subflow', 'Note', 'Marquee', 'Selection', 'Toolbox', 'DC',
-     function($document, mdw, util, Label, Shape, Step, Link, Subflow, Note, Marquee, Selection, Toolbox, DC) {
-
+var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marquee, Selection, Toolbox) {
     var Diagram = function(canvas, dialog, process, implementors, imgBase, editable, instance, activity, instanceEdit) {
     Shape.call(this, this, process);
     this.canvas = canvas;
@@ -240,7 +235,7 @@ diagramMod.factory('Diagram',
     canvasDisplay.w += Diagram.BOUNDARY_DIM;
     canvasDisplay.h += Diagram.BOUNDARY_DIM;
 
-    if (this.editable) {
+    if (this.editable && Toolbox) {
       var toolbox = Toolbox.getToolbox();
       // fill available
       var parentWidth = this.canvas.parentElement.offsetWidth;
@@ -1151,7 +1146,7 @@ diagramMod.factory('Diagram',
   };
 
   Diagram.prototype.onMouseOut = function(e) {
-    $document[0].body.style.cursor = 'default';
+    document.body.style.cursor = 'default';
   };
 
   Diagram.prototype.onMouseMove = function(e) {
@@ -1165,25 +1160,25 @@ diagramMod.factory('Diagram',
         this.anchor = this.hoverObj.getAnchor(x, y);
         if (this.anchor >= 0) {
           if (this.hoverObj.isLink) {
-            $document[0].body.style.cursor = 'crosshair';
+            document.body.style.cursor = 'crosshair';
           }
           else {
             if (this.anchor === 0 || this.anchor == 2)
-              $document[0].body.style.cursor = 'nw-resize';
+              document.body.style.cursor = 'nw-resize';
             else if (this.anchor == 1 || this.anchor == 3)
-              $document[0].body.style.cursor = 'ne-resize';
+              document.body.style.cursor = 'ne-resize';
           }
         }
         else {
-          $document[0].body.style.cursor = 'pointer';
+          document.body.style.cursor = 'pointer';
         }
       }
       else {
-        $document[0].body.style.cursor = 'pointer';
+        document.body.style.cursor = 'pointer';
       }
     }
     else {
-      $document[0].body.style.cursor = '';
+      document.body.style.cursor = '';
     }
   };
 
@@ -1440,4 +1435,16 @@ diagramMod.factory('Diagram',
   };
 
   return Diagram;
-}]);
+};
+
+if (typeof angular !== 'undefined') {
+  var diagramMod = angular.module('mdwDiagram', ['mdw', 'drawingConstants']);
+  diagramMod.factory('Diagram',
+      ['DC', 'Shape', 'Label', 'Step', 'Link', 'Subflow', 'Note', 'Marquee', 'Selection', 'Toolbox',
+      function(DC, Shape, Label, Step, Link, Subflow, Note, Marquee, Selection, Toolbox) {
+    return DiagramFactory(DC, Shape, Label, Step, Link, Subflow, Note, Marquee, Selection, Toolbox);
+  }]);
+}
+else if (module) {
+  module.exports = DiagramFactory;
+}

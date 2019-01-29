@@ -1,10 +1,7 @@
 'use strict';
 
-var labelMod = angular.module('mdwLabel', ['mdw']);
+var LabelFactory = function(DC, Shape) {
 
-labelMod.factory('Label', ['$document', 'mdw', 'util', 'Shape', 'DC',
-                   function($document, mdw, util, Shape, DC) {
-  
   var Label = function(owner, text, display, font) {
     Shape.call(this);
     this.owner = owner;
@@ -15,9 +12,9 @@ labelMod.factory('Label', ['$document', 'mdw', 'util', 'Shape', 'DC',
     this.workflowItem = owner.workflowItem;
     this.isLabel = true;
   };
-  
+
   Label.prototype = new Shape();
-  
+
   Label.SEL_COLOR = '#e91e63';
   Label.SEL_PAD = 4;
   Label.SEL_ROUNDING_RADIUS = 4;
@@ -35,7 +32,7 @@ labelMod.factory('Label', ['$document', 'mdw', 'util', 'Shape', 'DC',
     }
     this.diagram.context.fillStyle = DC.DEFAULT_COLOR;
   };
-  
+
   Label.prototype.prepareDisplay = function() {
     if (this.font)
       this.diagram.context.font = this.font.FONT;
@@ -46,7 +43,7 @@ labelMod.factory('Label', ['$document', 'mdw', 'util', 'Shape', 'DC',
     this.diagram.context.font = DC.DEFAULT_FONT.FONT;
     return maxDisplay;
   };
-  
+
   Label.prototype.select = function() {
     var x = this.display.x - Label.SEL_PAD;
     var y = this.display.y - Label.SEL_PAD;
@@ -54,12 +51,22 @@ labelMod.factory('Label', ['$document', 'mdw', 'util', 'Shape', 'DC',
     var h = this.display.h + Label.SEL_PAD;
     this.diagram.rect(x, y, w, h, Label.SEL_COLOR, null, Label.SEL_ROUNDING_RADIUS);
   };
-  
+
   Label.prototype.move = function(deltaX, deltaY) {
     var x = this.display.x + deltaX;
     var y = this.display.y + deltaY;
-    this.setDisplayAttr(x, y, Math.round(this.display.w), this.display.h); 
+    this.setDisplayAttr(x, y, Math.round(this.display.w), this.display.h);
   };
-  
+
   return Label;
-}]);
+};
+
+if (typeof angular !== 'undefined') {
+  var labelMod = angular.module('mdwLabel', ['mdw']);
+  labelMod.factory('Label', ['DC', 'Shape', function(DC, Shape) {
+    return LabelFactory(DC, Shape);
+  }]);
+}
+else if (module) {
+  module.exports = LabelFactory;
+}

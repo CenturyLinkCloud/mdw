@@ -4,6 +4,7 @@ import PanelHeader from '../react/PanelHeader.jsx';
 import HeaderLabel from '../react/HeaderLabel.jsx';
 import AssetDropdown from '../react/AssetDropdown.jsx';
 import HeaderDropdown from '../react/HeaderDropdown.jsx';
+import Workflow from '../react/Workflow.jsx';
 
 class ProcessHotspots extends Component {
 
@@ -11,7 +12,7 @@ class ProcessHotspots extends Component {
     super(...args);
     this.state = {
       packages: [],
-      sample: 'Day',
+      sample: 'Week',
       process: ''
     };
     this.handleProcessSelect = this.handleProcessSelect.bind(this);    
@@ -57,20 +58,30 @@ class ProcessHotspots extends Component {
   render() {
     return (
       <div>
-      <PanelHeader>
-        <HeaderLabel title="Process:"/>
-        <AssetDropdown id="process-dropdown"
-          packages={this.state.packages}
-          selected={this.state.process}
-          onSelect={this.handleProcessSelect} />
+        <PanelHeader>
+          <HeaderLabel title="Process:"/>
+          <AssetDropdown id="process-dropdown"
+            packages={this.state.packages}
+            selected={this.state.process}
+            onSelect={this.handleProcessSelect} />
 
-        <HeaderLabel title="Sample:" style={{marginLeft:'10px'}}/>
-        <HeaderDropdown id="sample-dropdown" width={100}
-          items={['Day','Week','Month']}
-          selected={this.state.sample}
-          onSelect={this.handleSampleSelect} />
-      </PanelHeader>
-
+          <HeaderLabel title="Sample:" style={{marginLeft:'10px'}}/>
+          <HeaderDropdown id="sample-dropdown" width={100}
+            items={['Day','Week','Month']}
+            selected={this.state.sample}
+            onSelect={this.handleSampleSelect} />
+        </PanelHeader>
+        <div className="mdw-section">
+          <div id="workflow-hotspots">
+            {this.state.process &&
+              <div>
+                <Workflow instanceId={13756} 
+                  containerId='workflow-hotspots' 
+                  hubBase={this.context.hubRoot} serviceBase={this.context.serviceRoot} />
+              </div>
+            }
+          </div>
+        </div>
       </div>
     );
   }
