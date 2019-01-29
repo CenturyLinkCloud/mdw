@@ -161,11 +161,23 @@ public class KotlinAccess implements CacheService, PreloadableCache {
             EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
                     File file = path.toFile();
-                    MdwIgnore mdwIgnore = new MdwIgnore(file);
                     if (ktMatcher.matches(path) && !new File(file.getParentFile() + "/buildKt.gradle").exists()) {
                         files.add(file);
                     }
                     return FileVisitResult.CONTINUE;
+                }
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException
+                {
+                    FileVisitResult result = super.preVisitDirectory(dir, attrs);
+                    if (result.equals(FileVisitResult.CONTINUE)) {
+                        File file = dir.toFile();
+                        if (file.isDirectory() && file.getParentFile() != null) {
+                            MdwIgnore ignore = new MdwIgnore(file.getParentFile());
+                            if (ignore.isIgnore(file))
+                                result = FileVisitResult.SKIP_SUBTREE;
+                        }
+                    }
+                    return result;
                 }
             }
         );
