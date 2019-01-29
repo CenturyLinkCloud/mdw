@@ -208,7 +208,7 @@ archivesBaseName = "mdw"
 
 publishing {
 
-    def warFile = file("${mdwOutputDir}/mdw-${mdwVersion}.war")
+    def warFile = file("../${mdwOutputDir}/mdw-${mdwVersion}.war")
     def warArtifact = artifacts.add('archives', warFile) {
         type 'war'
         builtBy 'war'
