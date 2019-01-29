@@ -16,12 +16,6 @@
       "default": "0"
     },
     {
-      "type": "checkbox",
-      "name": "captureActivityTimings",
-      "applier": "ProcessAttributeApplier",
-      "label": "Capture Activity Timings"
-    },
-    {
       "type": "asset",
       "name": "PROCESS_START_PAGE",
       "label": "Start Page",
