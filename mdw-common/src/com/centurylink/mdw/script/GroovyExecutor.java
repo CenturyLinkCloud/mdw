@@ -16,11 +16,13 @@
 package com.centurylink.mdw.script;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
@@ -46,6 +48,7 @@ import groovy.util.XmlSlurper;
 public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
+    private static final Object scriptCacheLock = new Object();
 
     private static String getRootDir() {
         String rootDirStr = ApplicationContext.getTempDirectory();
@@ -55,7 +58,7 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
         return rootDirStr;
     }
 
-    private static Map<String,String> scriptCache = new Hashtable<String,String>();
+    private static Map<String,String> scriptCache = new ConcurrentHashMap<>();
     public static void clearCache() {
         scriptCache.clear();
     }
@@ -114,25 +117,51 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
         try {
             CodeTimer timer = new CodeTimer("Create and cache groovy script", true);
             File groovyFile = new File(getRootDir() + "/" + name + ".groovy");
-            synchronized(scriptCache) {
-                String cached = scriptCache.get(name);
-                if (!groovyFile.exists() || !script.equals(cached)) {
-                    File rootDir = new File(getRootDir());
-                    if (!rootDir.exists()) {
-                        if (!rootDir.mkdirs())
-                            throw new ExecutionException("Failed to create script root dir: " + rootDir);
-                    }
-                    FileWriter writer = null;
+            String cached = scriptCache.get(name);
+            if (!groovyFile.exists() || !script.equals(cached)) {
+                boolean needsUpdate = true;
+                if (groovyFile.exists()) {
+                    FileInputStream fis = null;
+                    String existingScript = null;
+                    String existingScript2 = null;
                     try {
-                        writer = new FileWriter(groovyFile);
-                        writer.write(script);
+                        fis = new FileInputStream(groovyFile);
+                        byte[] bytes = new byte[(int) groovyFile.length()];
+                        fis.read(bytes);
+                        existingScript = new String(bytes);
+                        existingScript2 = existingScript + "\nreturn;";
                     }
                     finally {
-                        if (writer != null)
-                            writer.close();
-                        timer.stopAndLogTiming("");
+                        if (fis != null)
+                            fis.close();
                     }
-                    scriptCache.put(name, script);
+                    if (script.equals(existingScript) || script.equals(existingScript2)) {
+                        scriptCache.put(name, script);
+                        needsUpdate = false;
+                    }
+                }
+                if (needsUpdate) {
+                    synchronized (scriptCacheLock) {
+                        groovyFile = new File(getRootDir() + "/" + name + ".groovy");
+                        cached = scriptCache.get(name);
+                        if (!groovyFile.exists() || !script.equals(cached)) {
+                            File rootDir = new File(getRootDir());
+                            if (!rootDir.exists()) {
+                                if (!rootDir.mkdirs())
+                                    throw new ExecutionException("Failed to create script root dir: " + rootDir);
+                            }
+                            FileWriter writer = null;
+                            try {
+                                writer = new FileWriter(groovyFile);
+                                writer.write(script);
+                            } finally {
+                                if (writer != null)
+                                    writer.close();
+                                timer.stopAndLogTiming("");
+                            }
+                            scriptCache.put(name, script);
+                        }
+                    }
                 }
             }
             return getScriptEngine().run(name + ".groovy", binding);
@@ -161,21 +190,20 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
     }
 
     private static GroovyScriptEngine scriptEngine;
-    private static GroovyScriptEngine getScriptEngine() throws DataAccessException, IOException, CachingException {
-        synchronized (GroovyScriptEngine.class) {
-            if (scriptEngine == null || !AssetCache.isLoaded()) {
-                CodeTimer timer = new CodeTimer("Initialize script libraries", true);
-                initializeScriptLibraries();
-                initializeDynamicJavaAssets();
-                String[] rootDirs = new String[] { getRootDir() };
-                if (PackageCache.getPackage(Package.MDW + ".base").getCloudClassLoader() != null)
-                    scriptEngine = new GroovyScriptEngine(rootDirs, PackageCache.getPackage(Package.MDW + ".base").getCloudClassLoader());
-                else
-                    scriptEngine = new GroovyScriptEngine(rootDirs);
-                // clear the cached library versions
-                scriptEngine.getGroovyClassLoader().clearCache();
-                timer.stopAndLogTiming("");
-            }
+    private static synchronized GroovyScriptEngine getScriptEngine() throws DataAccessException, IOException, CachingException {
+
+        if (scriptEngine == null || !AssetCache.isLoaded()) {
+            CodeTimer timer = new CodeTimer("Initialize script libraries", true);
+            initializeScriptLibraries();
+            initializeDynamicJavaAssets();
+            String[] rootDirs = new String[]{getRootDir()};
+            if (PackageCache.getPackage(Package.MDW + ".base").getCloudClassLoader() != null)
+                scriptEngine = new GroovyScriptEngine(rootDirs, PackageCache.getPackage(Package.MDW + ".base").getCloudClassLoader());
+            else
+                scriptEngine = new GroovyScriptEngine(rootDirs);
+            // clear the cached library versions
+            scriptEngine.getGroovyClassLoader().clearCache();
+            timer.stopAndLogTiming("");
         }
 
         return scriptEngine;

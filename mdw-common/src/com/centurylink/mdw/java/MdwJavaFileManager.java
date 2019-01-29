@@ -18,6 +18,7 @@ package com.centurylink.mdw.java;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.tools.FileObject;
 import javax.tools.ForwardingJavaFileManager;
@@ -32,10 +33,14 @@ public class MdwJavaFileManager <M extends JavaFileManager> extends ForwardingJa
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private static Map<String,JavaFileObject> jfoCache = new Hashtable<String,JavaFileObject>();
+    private static Map<String,JavaFileObject> jfoCache = new ConcurrentHashMap<>();
 
     public static JavaFileObject getJavaFileObject(String className) {
         return jfoCache.get(className);
+    }
+
+    public static void clearJfoCache() {
+        jfoCache.clear();
     }
 
     public MdwJavaFileManager(M fileManager) {
@@ -53,7 +58,7 @@ public class MdwJavaFileManager <M extends JavaFileManager> extends ForwardingJa
             logger.mdwDebug("Loading Dynamic Java byte code from: " + (sibling == null ? null : sibling.toUri()));
         try {
             JavaFileObject jfo = new ByteArrayJavaFileObject(className, kind);
-            jfoCache.put(className, jfo);
+            jfoCache.putIfAbsent(className, jfo);
             return jfo;
         }
         catch (Exception ex) {

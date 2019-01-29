@@ -155,22 +155,29 @@ public class KotlinAccess implements CacheService, PreloadableCache {
 
     private List<File> getSources() throws IOException {
         Path assetRoot = Paths.get(ApplicationContext.getAssetRoot().getPath().replace('\\', '/'));
-        Path enginePath = Paths.get(new File(assetRoot + "/" + KotlinClasspathKt.KOTLIN_PACKAGE.replace('.', '/')).getPath());
-        Path microservicePath = Paths.get(new File(assetRoot + "/com/centurylink/mdw/microservice").getPath());
-        Path archivePath = Paths.get(new File(assetRoot + "/" + PackageDir.ARCHIVE_SUBDIR).getPath());
-
         PathMatcher ktMatcher = FileSystems.getDefault().getPathMatcher("glob:**/*.kt");
         List<File> files = new ArrayList<>();
         Files.walkFileTree(assetRoot,
             EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
                 public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
                     File file = path.toFile();
-                    MdwIgnore mdwIgnore = new MdwIgnore(file);
-                        if (ktMatcher.matches(path) && !path.startsWith(enginePath) && !path.startsWith(microservicePath)
-                                && !path.startsWith(archivePath) && !mdwIgnore.isIgnore(file)) {
-                            files.add(file);
+                    if (ktMatcher.matches(path) && !new File(file.getParentFile() + "/buildKt.gradle").exists()) {
+                        files.add(file);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException
+                {
+                    FileVisitResult result = super.preVisitDirectory(dir, attrs);
+                    if (result.equals(FileVisitResult.CONTINUE)) {
+                        File file = dir.toFile();
+                        if (file.isDirectory() && file.getParentFile() != null) {
+                            MdwIgnore ignore = new MdwIgnore(file.getParentFile());
+                            if (ignore.isIgnore(file))
+                                result = FileVisitResult.SKIP_SUBTREE;
                         }
-                        return FileVisitResult.CONTINUE;
+                    }
+                    return result;
                 }
             }
         );
