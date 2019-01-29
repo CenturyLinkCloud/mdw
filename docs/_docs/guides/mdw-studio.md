@@ -29,7 +29,7 @@ that enables you to create workflow processes and other assets.
 
 ### 1.1 Installation
   - **Get IntelliJ IDEA**  
-    Install version 2018.2.x of the [Community Edition](https://www.jetbrains.com/idea/download/previous.html), until [this bug](https://youtrack.jetbrains.com/issue/IDEA-203751) is fixed in the 2018.3 stream.  If you happen to have IntelliJ Ultimate, WebStorm,
+    Install [IDEA Community Edition](https://www.jetbrains.com/idea/download/previous.html).  If you happen to have IntelliJ Ultimate, WebStorm,
     or any other IDE built on the IntelliJ platform, you can use that as well.
   - **Requires Git**  
     IntelliJ's Git integration requires a local installation:
