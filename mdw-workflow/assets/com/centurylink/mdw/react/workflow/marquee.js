@@ -1,9 +1,6 @@
 'use strict';
 
-var marqueeMod = angular.module('mdwMarquee', ['mdw']);
-
-marqueeMod.factory('Marquee', ['$document', 'mdw', 'util', 'Shape', 'DC',
-                         function($document, mdw, util, Shape, DC) {
+var MarqueeFactory = function(DC, Shape) {
   var Marquee = function(diagram) {
     Shape.call(this, diagram);
     this.diagram = diagram;
@@ -74,4 +71,14 @@ marqueeMod.factory('Marquee', ['$document', 'mdw', 'util', 'Shape', 'DC',
   };
   
   return Marquee;
-}]);
+};
+
+if (typeof angular !== 'undefined') {
+  var marqueeMod = angular.module('mdwMarquee', ['mdw']);
+  marqueeMod.factory('Marquee', ['DC', 'Shape', function(DC, Shape) {
+    return MarqueeFactory(DC, Shape);
+  }]);
+}
+else if (module) {
+  module.exports = MarqueeFactory;
+}

@@ -1,7 +1,6 @@
 apply plugin: "war"
 
 configurations {
-    wtpExclude
     runtimeExtra // runtime libs excluded due to gradle's funky transitive mechanism
     springBoot
     springBootLoader
@@ -11,10 +10,6 @@ dependencies {
     compile project(":mdw-common")
     compile project(":mdw-services")
     compile project(":mdw-workflow")
-
-    wtpExclude project(":mdw-common")
-    wtpExclude project(":mdw-services")
-    wtpExclude project(":mdw-workflow")
 
     // schemas are included in mdw-common
     providedCompile fileTree(dir: '../mdw/libs', include: 'mdw-schemas.jar')
@@ -119,53 +114,25 @@ task lint {
   dependsOn(jsHint, esLint)
 }
 
-war {
-    dependsOn(lint)
-
-    archiveName = "mdw-${version}.war"
-
-    classpath = war.classpath.plus(configurations.runtimeExtra)
-
-    manifest {
-        attributes("MDW-Version": mdwVersion, "MDW-Build": new Date().format(mdwBuildTimeFormat))
-    }
-
-    from("src") {
-        include "META-INF/mdw/**"
-        include "META-INF/services/**"
-    }
-    from("web") {
-        include "**/*"
-    }
-    from("../mdw-common/src") {
-        include "META-INF/mdw/spring/*"
-    }
-    from("../mdw-workflow/src") {
-        include "META-INF/mdw/**"
-    }
-    from("../mdw") {
-        include "cli/mdw-cli.jar"
-    }
-
-    webXml = file("web/WEB-INF/web.xml")
-    exclude "**/.*ignore";
-    rootSpec.exclude "WEB-INF/web.xml"  // specified above
-    rootSpec.exclude "**/.*ignore"
+task copyWorkflowJs(type: Copy) {
+    from '../mdw-workflow/assets/com/centurylink/mdw/react/workflow'
+    into 'web/js/ui/workflow'
+    include '*.js'
 }
 
 task springBootJar(type: Jar) {
-    dependsOn compileJava
+    dependsOn(compileJava, copyWorkflowJs)
 
     archiveName = "mdw-boot-${version}.jar"
     manifest {
         attributes (
-            "MDW-Version": mdwVersion,
-            "MDW-Build": new Date().format(mdwBuildTimeFormat),
-            "Main-Class": "org.springframework.boot.loader.JarLauncher",
-            "Start-Class": "com.centurylink.mdw.hub.SpringBootApplication",
-            "Spring-Boot-Classes": "BOOT-INF/classes/",
-            "Spring-Boot-Lib": "BOOT-INF/lib/",
-            "Spring-Boot-Version": springBootVersion
+                "MDW-Version": mdwVersion,
+                "MDW-Build": new Date().format(mdwBuildTimeFormat),
+                "Main-Class": "org.springframework.boot.loader.JarLauncher",
+                "Start-Class": "com.centurylink.mdw.hub.SpringBootApplication",
+                "Spring-Boot-Classes": "BOOT-INF/classes/",
+                "Spring-Boot-Lib": "BOOT-INF/lib/",
+                "Spring-Boot-Version": springBootVersion
         )
     }
 
@@ -193,24 +160,48 @@ task springBootJar(type: Jar) {
         exclude "WEB-INF/"
     }
 
-
     from configurations.springBootLoader.asFileTree.files.collect {
         zipTree(it)
     }
 }
 
 war {
-    dependsOn springBootJar
+    dependsOn(lint, springBootJar)
 
-    exclude "**/.*ignore";
-    rootSpec.exclude "**/.*ignore"
+    destinationDir = file("../$mdwOutputDir")
+    archiveName = "mdw-${version}.war"
+
+    classpath = war.classpath.plus(configurations.runtimeExtra)
 
     manifest {
         attributes("MDW-Version": mdwVersion)
         attributes("MDW-Build": new Date().format(mdwBuildTimeFormat))
     }
 
-    destinationDir = file(mdwOutputDir)
+    exclude "**/.*ignore";
+    rootSpec.exclude "**/.*ignore"
+
+    from("src") {
+        include "META-INF/mdw/**"
+        include "META-INF/services/**"
+    }
+    from("web") {
+        include "**/*"
+    }
+    from("../mdw-common/src") {
+        include "META-INF/mdw/spring/*"
+    }
+    from("../mdw-workflow/src") {
+        include "META-INF/mdw/**"
+    }
+    from("../mdw") {
+        include "cli/mdw-cli.jar"
+    }
+
+    webXml = file("web/WEB-INF/web.xml")
+    exclude "**/.*ignore";
+    rootSpec.exclude "WEB-INF/web.xml"  // specified above
+    rootSpec.exclude "**/.*ignore"
 }
 
 archivesBaseName = "mdw"

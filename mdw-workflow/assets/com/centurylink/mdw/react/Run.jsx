@@ -2,7 +2,7 @@ import React, {Component} from '../node/node_modules/react';
 import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
 import values from './values';
 import Value from './Value.jsx';
-import Workflow from './Workflow.jsx';
+import NgWorkflow from './NgWorkflow.jsx';
 
 class Run extends Component {
   constructor(...args) {
@@ -201,7 +201,7 @@ class Run extends Component {
             }
             { this.state.invoked &&
               <div id="mdw-workflow" className="mdw-workflow">
-                <Workflow assetPath={this.state.masterRequestId} 
+                <NgWorkflow assetPath={this.state.masterRequestId} 
                   containerId='mdw-workflow' instanceId={this.state.instanceId} masterRequestId={this.state.masterRequestId}
                   hubBase={$mdwHubRoot} serviceBase={$mdwServicesRoot + '/services'} />
               </div>

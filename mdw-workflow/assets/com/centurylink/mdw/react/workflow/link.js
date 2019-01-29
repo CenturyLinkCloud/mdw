@@ -1,9 +1,6 @@
 'use strict';
 
-var linkMod = angular.module('mdwLink', ['mdw']);
-
-linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
-                        function(mdw, util, DC, Label) {
+var LinkFactory = function(DC, Label) {
 
   var Link = function(diagram, transition, from, to) {
     this.diagram = diagram;
@@ -1067,4 +1064,16 @@ linkMod.factory('Link', ['mdw', 'util', 'DC', 'Label',
   };
   
   return Link;
-}]);
+};
+
+if (typeof angular !== 'undefined') {
+  var linkMod = angular.module('mdwLink', ['mdw']);
+  linkMod.factory('Link', ['DC', 'Label', function(DC, Label) {
+    return LinkFactory(DC, Label);
+  }]);
+}
+else if (module) {
+  module.exports = LinkFactory;
+}
+
+

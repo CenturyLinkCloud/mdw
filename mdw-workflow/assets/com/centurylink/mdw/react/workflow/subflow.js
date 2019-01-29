@@ -1,9 +1,6 @@
 'use strict';
 
-var subflowMod = angular.module('mdwSubflow', ['mdw']);
-
-subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step', 'Link',
-                                function($document, mdw, util, Shape, DC, Step, Link) {
+var SubflowFactory = function(DC, Shape, Step, Link) {
   var Subflow = function(diagram, subprocess) {
     Shape.call(this, diagram, subprocess);
     this.diagram = diagram;
@@ -330,4 +327,15 @@ subflowMod.factory('Subflow', ['$document', 'mdw', 'util', 'Shape', 'DC', 'Step'
   };
   
   return Subflow;
-}]);
+};
+
+if (typeof angular !== 'undefined') {
+  var subflowMod = angular.module('mdwSubflow', ['mdw']);
+  subflowMod.factory('Subflow', ['DC', 'Shape', 'Step', 'Link', function(DC, Shape, Step, Link) {
+    return SubflowFactory(DC, Shape, Step, Link);
+  }]);
+}
+else if (module) {
+  module.exports = SubflowFactory;
+}
+

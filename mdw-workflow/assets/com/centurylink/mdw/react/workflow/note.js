@@ -1,9 +1,6 @@
 'use strict';
 
-var noteMod = angular.module('mdwNote', ['mdw']);
-
-noteMod.factory('Note', ['$document', 'mdw', 'util', 'Shape', 'DC',
-                         function($document, mdw, util, Shape, DC) {
+var NoteFactory = function(DC, Shape) {
   var Note = function(diagram, textNote) {
     Shape.call(this, diagram, textNote);
     this.diagram = diagram;
@@ -43,7 +40,7 @@ noteMod.factory('Note', ['$document', 'mdw', 'util', 'Shape', 'DC',
   Note.prototype.draw = function() {
     this.diagram.rect(this.display.x, this.display.y, this.display.w, this.display.h, Note.BOX_OUTLINE_COLOR, Note.BOX_FILL_COLOR, Note.BOX_ROUNDING_RADIUS);
     if (this.textNote.content) {
-      var lines = this.textNote.content.getLines();
+      var lines = this.textNote.content.replace(/\r/g, '').split(/\n/);
       this.diagram.context.font = Note.FONT;
       for (var i = 0; i < lines.length; i++) {
         this.diagram.context.fillText(lines[i], this.display.x + 4, this.display.y + 2 + Note.FONT_SIZE * (i + 1));
@@ -77,4 +74,15 @@ noteMod.factory('Note', ['$document', 'mdw', 'util', 'Shape', 'DC',
   };
   
   return Note;
-}]);
+};
+
+if (typeof angular !== 'undefined') {
+  var noteMod = angular.module('mdwNote', ['mdw']);
+  noteMod.factory('Note', ['DC', 'Shape', function(DC, Shape) {
+    return NoteFactory(DC, Shape);
+  }]);
+}
+else if (module) {
+  module.exports = NoteFactory;
+}
+

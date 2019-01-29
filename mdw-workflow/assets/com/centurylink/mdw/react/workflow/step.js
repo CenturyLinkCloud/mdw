@@ -1,10 +1,6 @@
 'use strict';
 
-var stepMod = angular.module('mdwStep', ['mdw']);
-
-stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
-                         function(mdw, util, Shape, DC, WORKFLOW_STATUSES) {
-
+var StepFactory = function(DC, Shape) {
   var Step = function(diagram, activity) {
     Shape.call(this, diagram, activity);
     this.diagram = diagram;
@@ -20,7 +16,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
   Step.MAX_INSTS = 10;
   Step.MIN_SIZE = 4;
 
-  Step.STATUSES = [{status: 'Unknown', color: 'transparent'}].concat(WORKFLOW_STATUSES);
+  Step.STATUSES = [{status: 'Unknown', color: 'transparent'}].concat(DC.WORKFLOW_STATUSES);
 
   Step.START_IMPL = 'com.centurylink.mdw.workflow.activity.process.ProcessStartActivity';
   Step.STOP_IMPL = 'com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity';
@@ -158,7 +154,7 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
 
     // step title
     var titleLines = [];
-    this.activity.name.getLines().forEach(function(line) {
+    this.activity.name.replace(/\r/g, '').split(/\n/).forEach(function(line) {
       titleLines.push({ text: line });
     });
     var title = { text: this.activity.name, lines: titleLines, w: 0, h:0 };
@@ -204,5 +200,15 @@ stepMod.factory('Step', ['mdw', 'util', 'Shape', 'DC', 'WORKFLOW_STATUSES',
   };
 
   return Step;
+};
 
-}]);
+if (typeof angular !== 'undefined') {
+  var stepMod = angular.module('mdwStep', ['mdw']);
+  stepMod.factory('Step', ['DC', 'Shape', function(DC, Shape) {
+    return StepFactory(DC, Shape);
+  }]);
+}
+else if (module) {
+  module.exports = StepFactory;
+}
+
