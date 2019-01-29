@@ -12,7 +12,7 @@ dependencies {
     compile project(":mdw-services")
     
     // build-time-only dependencies (excluded from mdw-hub)
-    compile fileTree(dir: "../${mdwAssetRoot}", includes: ["**/*.jar"])
+    compile fileTree(dir: "../${mdwAssetRoot}", includes: ["**/*.jar"], exclude: ["**/node_modules*"])
     
     compile group: "ch.vorburger.mariaDB4j", name: "mariaDB4j-core", version: "2.2.3"
     compile group: "org.apache.velocity", name: "velocity", version: "1.7"
