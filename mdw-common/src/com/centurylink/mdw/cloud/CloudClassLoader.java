@@ -69,7 +69,7 @@ public class CloudClassLoader extends ClassLoader {
         }
 
         if (jarAssets == null) {
-            jarAssets = new ArrayList<Asset>();
+            jarAssets = new ArrayList<>();
             jarAssets.addAll(newJarAssets);
             // same-package jars go first
             if (this.mdwPackage.getName() != null) {
@@ -90,11 +90,15 @@ public class CloudClassLoader extends ClassLoader {
         return jarAssets;
     }
 
+    static {
+        ClassLoader.registerAsParallelCapable();
+    }
+
     public CloudClassLoader(Package pkg) {
-        super(pkg.getClassLoader());
+        super(CompiledJavaCache.DynamicJavaClassLoader.getInstance(pkg.getClassLoader(), pkg, true));
         mdwPackage = pkg;
 
-        classpath = new ArrayList<File>();
+        classpath = new ArrayList<>();
 
         String cp = PropertyManager.getProperty(PropertyNames.MDW_JAVA_RUNTIME_CLASSPATH);
         if (cp != null) {
@@ -123,36 +127,45 @@ public class CloudClassLoader extends ClassLoader {
             assetRoot = new File(assetLoc);
     }
 
-    /**
-     * TODO: allow packages to isolate their classes
-     */
-    private static Map<String,Class<?>> sharedClassCache = new ConcurrentHashMap<String,Class<?>>();
+    private static Map<String,Class<?>> sharedClassCache = new ConcurrentHashMap<>();
+
+    public Class<?> directFindClass(String name) throws ClassNotFoundException {
+        return findClass(name);
+    }
 
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         byte[] b = null;
+        Class<?> found;
         try {
-            Asset javaAsset = AssetCache.getAsset(name, Asset.JAVA);
-            // try dynamic java first
-            if (javaAsset != null)
-                return CompiledJavaCache.getClass(getParent(), mdwPackage, name, javaAsset.getStringContent());
             // try shared cache
-            Class<?> found;
             found = sharedClassCache.get(name);
             if (found != null)
                 return found;
-            // next try dynamic jar assets
-            String path = name.replace('.', '/') + ".class";
-            b = findInJarAssets(path);
-            // lastly try the file system
-            if (b == null)
-                b = findInFileSystem(path);
+
+            // Check that we didn't already look for it
+            b = classesFound.get(name);
+            if (b == null) {
+                // next try dynamic jar assets
+                String path = name.replace('.', '/') + ".class";
+                b = findInJarAssets(path);
+                // lastly try the file system
+                if (b == null)
+                    b = findInFileSystem(path);
+            }
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(),  ex);
         }
 
-        if (b == null) {
+        if (b == null || b.length ==  0) {
+            if (b == null)
+                classesFound.put(name, new byte[0]);  // byte[0] means we didn't find it
             throw new ClassNotFoundException(name);
+        }
+        else {
+            found = sharedClassCache.get(name);
+            if (found != null)
+                return found;
         }
 
         if (logger.isMdwDebugEnabled())
@@ -166,14 +179,11 @@ public class CloudClassLoader extends ClassLoader {
         java.lang.Package pkg = getPackage(pkgName);
         if (pkg == null)
             definePackage(pkgName, null, null, null, "MDW", mdwPackage.getVersionString(), "CenturyLink", null);
-        Class<?> clz = defineClass(name, b, 0, b.length);
-        Class<?> found = sharedClassCache.get(name);
-        if (found != null)
-            clz = found;
-        else
-            sharedClassCache.put(name, clz);
+        found = defineClass(name, b, 0, b.length);
+        Class<?> temp = sharedClassCache.putIfAbsent(name, found);
+        classesFound.put(name, new byte[1]);  // byte[1] means found and loaded
 
-        return clz;
+        return temp == null ? found : temp;
     }
 
     private byte[] findInFileSystem(String path) throws IOException {
@@ -262,18 +272,18 @@ public class CloudClassLoader extends ClassLoader {
         return b;
     }
 
-    private Map<String,Boolean> classesFound = new ConcurrentHashMap<String,Boolean>();
+    private static Map<String,byte[]> classesFound = new ConcurrentHashMap<>();
 
     /**
      * Looks for classes in Jar assets or on the prop-specified classpath.
      * Results are cached, so Jar/CP changes require app redeployment.
      */
     public boolean hasClass(String name) {
-        Boolean found = classesFound.get(name);
+        byte[] b = classesFound.get(name);
+        Boolean found = b == null ? null : b.length > 0;
         if (found != null)
             return found;
 
-        byte[] b = null;
         try {
             // try dynamic jar assets
             String path = name.replace('.', '/') + ".class";
@@ -286,7 +296,7 @@ public class CloudClassLoader extends ClassLoader {
             logger.severeException(ex.getMessage(),  ex);
         }
         found = b != null;
-        classesFound.put(name, found);
+        classesFound.put(name, found ? b : new byte[0]);
         return found;
     }
 
@@ -402,6 +412,15 @@ public class CloudClassLoader extends ClassLoader {
                 logger.traceException("Stack trace: ", new Exception("ClassLoader stack trace"));
             return loaded;
         }
+    }
+
+    public String getPackageName() {
+        return mdwPackage.getName();
+    }
+
+    public static void clearCaches() {
+        sharedClassCache.clear();
+        classesFound.clear();
     }
 
     public String toString() {

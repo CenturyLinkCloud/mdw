@@ -46,6 +46,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Compiles and caches java asset classes, and provides a class-loading mechanism to allow these assets
@@ -55,7 +56,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private static Map<ClassCacheKey,Class<?>> compiledCache = new HashMap<>();
+    private static Map<String,Class<?>> compiledCache = new ConcurrentHashMap<>();
 
     public CompiledJavaCache() {
 
@@ -87,7 +88,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
      * To load all the dynamic java Registered services classes
      */
     private void loadDynamicJavaRegisteredServices() {
-        Map<Package,Map<String,String>> packagedJava = new HashMap<Package,Map<String,String>>();
+        Map<Package,Map<String,String>> packagedJava = new HashMap<>();
         try {
             for (Asset javaAsset : AssetCache.getAssets(Asset.JAVA)) {
                 // process RegisteredService-annotated classes
@@ -105,7 +106,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                         String qName = JavaNaming.getValidPackageName(javaAssetPackage.getName()) + "." + className;
                         Map<String,String> javaSources = packagedJava.get(javaAssetPackage);
                         if (javaSources == null) {
-                            javaSources = new HashMap<String,String>();
+                            javaSources = new HashMap<>();
                             packagedJava.put(javaAssetPackage, javaSources);
                         }
                         javaSources.put(qName, javaAsset.getStringContent());
@@ -196,19 +197,15 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
 
     public static Class<?> getClass(ClassLoader parentLoader, Package currentPackage, String className, String javaCode, boolean cache)
     throws ClassNotFoundException, IOException, MdwJavaException {
-        ClassCacheKey key = new ClassCacheKey(className, parentLoader);
-        Class<?> clazz = cache ? compiledCache.get(key) : null;
+        Class<?> clazz = cache ? compiledCache.get(className) : null;
         if (clazz == null) {
             try {
                 if (Compatibility.hasCodeSubstitutions())
                     javaCode = doCompatibilityCodeSubstitutions(className, javaCode);
-                clazz = compileJavaCode(parentLoader, currentPackage, className, javaCode, cache);
+                compileJavaCode(parentLoader, currentPackage, className, javaCode, cache);
+                clazz = DynamicJavaClassLoader.getInstance(parentLoader, currentPackage, cache).loadClass(className);
                 if (cache) {
-                    key.compiled = new Date();
-                    synchronized (compiledCache) {
-                        compiledCache.remove(key); // needs to be removed since it may have been added by the classloader
-                        compiledCache.put(key, clazz);
-                    }
+                    compiledCache.put(className, clazz);
                 }
             }
             catch (ClassNotFoundException ex) {
@@ -245,12 +242,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
             List<Class<?>> classes = compileJava(parentLoader, currentPackage, javaSources, cache);
             if (cache) {
                 for (Class<?> clazz : classes) {
-                    ClassCacheKey key = new ClassCacheKey(clazz.getName(), parentLoader);
-                    key.compiled = new Date();
-                    synchronized (compiledCache) {
-                        compiledCache.remove(key); // needs to be removed since it may have been added by the classloader
-                        compiledCache.put(key, clazz);
-                    }
+                    compiledCache.put(clazz.getName(), clazz);
                 }
             }
             return classes;
@@ -275,19 +267,9 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
     throws ClassNotFoundException, IOException, MdwJavaException {
         if (className.indexOf('$') > 0) {
             // inner class -- check previously loaded
-            synchronized (compiledCache) {
-                for (ClassCacheKey key : compiledCache.keySet()) {
-                    if (key.equals(new ClassCacheKey(className, parentLoader))) {
-                        Class<?> clazz = compiledCache.get(key);
-                        try {
-                            return clazz.getClassLoader().loadClass(className);
-                        }
-                        catch (ClassNotFoundException cnfe) {
-                            // try next loaded class
-                        }
-                    }
-                }
-            }
+            Class<?> clazz = compiledCache.get(className);
+            if (clazz != null)
+                return clazz;
         }
         Asset javaAsset = AssetCache.getAsset(className, Asset.JAVA);
         if (javaAsset == null)
@@ -318,8 +300,8 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
         return getResourceClass(resourceClassName, parentLoader, currentPackage).newInstance();
     }
 
-    private static Class<?> compileJavaCode(ClassLoader parentLoader, final Package currentPackage, String className, String javaCode, boolean cache)
-    throws ClassNotFoundException, IOException, MdwJavaException {
+    private static void compileJavaCode(ClassLoader parentLoader, final Package currentPackage, String className, String javaCode, boolean cache)
+    throws IOException, MdwJavaException {
         if (parentLoader == null)
             parentLoader = CompiledJavaCache.class.getClassLoader();
 
@@ -335,11 +317,11 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
         MdwJavaFileManager<JavaFileManager> mdwFileManager = new MdwJavaFileManager<JavaFileManager>(standardFileManager);
 
         // compiler options
-        List<String> options = new ArrayList<String>();
+        List<String> options = new ArrayList<>();
 
         // compiler classpath
         String pathSep = System.getProperty("path.separator");
-        String classpath = getJavaCompilerClasspath(parentLoader, currentPackage);
+        String classpath = getJavaCompilerClasspath(currentPackage);
         classpath += pathSep + getTempDir();  // include java source artifacts
 
         String debug = "Compiling Dynamic Java class: " + className;
@@ -380,8 +362,6 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                 throw new CompilationException("Compilation errors in Dynamic Java. See compiler output in log for details.");
             }
         }
-
-        return new DynamicJavaClassLoader(parentLoader, currentPackage, cache).loadClass(className);
     }
 
     private static List<Class<?>> compileJava(ClassLoader parentLoader, final Package currentPackage, Map<String,String> javaSources, boolean cache)
@@ -394,24 +374,24 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
             throw new MdwJavaException("No Java compiler available");
 
         String classNames = "";
-        List<JavaFileObject> jfos = new ArrayList<JavaFileObject>();
+        List<JavaFileObject> jfos = new ArrayList<>();
         for (String className : javaSources.keySet()) {
             jfos.add(new StringJavaFileObject(className, javaSources.get(className)));
             classNames += className + ", ";
         }
         classNames = classNames.substring(0, classNames.length() - 2);
 
-        DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
+        DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
         JavaFileManager standardFileManager = compiler.getStandardFileManager(diagnostics, null, null);
-        MdwJavaFileManager<JavaFileManager> mdwFileManager = new MdwJavaFileManager<JavaFileManager>(standardFileManager);
+        MdwJavaFileManager<JavaFileManager> mdwFileManager = new MdwJavaFileManager<>(standardFileManager);
 
         // compiler options
-        List<String> options = new ArrayList<String>();
+        List<String> options = new ArrayList<>();
 
         // compiler classpath
         String pathSep = System.getProperty("path.separator");
-        String classpath = getJavaCompilerClasspath(parentLoader, currentPackage);
+        String classpath = getJavaCompilerClasspath(currentPackage);
         classpath += pathSep + getTempDir();  // include java source artifacts
 
         String debug = "Compiling Dynamic Java classes: " + classNames;
@@ -472,22 +452,20 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
             }
         }
 
-        List<Class<?>> classes = new ArrayList<Class<?>>();
+        List<Class<?>> classes = new ArrayList<>();
         for (String className : javaSources.keySet()) {
             if (!erroredClasses.contains(className))
-                classes.add(new DynamicJavaClassLoader(parentLoader, currentPackage, cache).loadClass(className));
+                classes.add(DynamicJavaClassLoader.getInstance(parentLoader, currentPackage, cache).loadClass(className));
         }
         return classes;
     }
 
     public void clearCache() {
-        synchronized (compiledCache) {
-            compiledCache.clear();
-        }
-        synchronized(compilerClasspaths) {
-            compilerClasspaths.clear();
-        }
+        compiledCache.clear();
+        compilerClasspaths.clear();
+        MdwJavaFileManager.clearJfoCache();
         clearDynamicJavaRegisteredServices();
+        DynamicJavaClassLoader.clearLoaderInstances();
         // garbage collection helps ensure dynamicism of loaded classes
         Runtime.getRuntime().gc();
     }
@@ -517,15 +495,20 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
         loadCache();
     }
 
-    private static volatile Map<CompilerClasspathKey,String> compilerClasspaths = Collections.synchronizedMap(new HashMap<CompilerClasspathKey,String>());
-    public static String getJavaCompilerClasspath(ClassLoader parentLoader, Package packageVO) throws IOException {
-        CompilerClasspathKey key = new CompilerClasspathKey(parentLoader);
+    private static volatile Map<String,String> compilerClasspaths = new ConcurrentHashMap<>();
+    public static String getJavaCompilerClasspath(Package packageVO) throws IOException {
+        String key;
+        if (packageVO == null || packageVO.getName() == null)
+            key= "com.centurylink.mdw.base";
+        else
+            key = packageVO.getName();
+
         String classpath = compilerClasspaths.get(key);
         if (classpath == null) {
             synchronized(compilerClasspaths) {
                 classpath = compilerClasspaths.get(key);
                 if (classpath == null) {
-                    CloudClasspath cloudClsPath = new CloudClasspath(packageVO == null ? null : packageVO.getCloudClassLoader());
+                    CloudClasspath cloudClsPath = new CloudClasspath(packageVO.getCloudClassLoader());
                     cloudClsPath.read();
                     classpath = cloudClsPath.toString();
                     compilerClasspaths.put(key, classpath);
@@ -611,64 +594,43 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
         return ApplicationContext.getTempDirectory();
     }
 
-    static class ClassCacheKey {
-        private String className;
-        private ClassLoader parentLoader;
-        public ClassLoader getParentLoader() { return parentLoader; }
-        private Date compiled;
-        public Date getCompiled() { return compiled; }
-
-        public ClassCacheKey(String className, ClassLoader parentLoader) {
-            this.className = className;
-            this.parentLoader = parentLoader;
-        }
-
-        public String toString() {
-            return className + " w/parentLoader: " + parentLoader;
-        }
-
-        public boolean equals(Object other) {
-            if (!(other instanceof ClassCacheKey))
-                return false;
-            return toString().equals(other.toString());
-        }
-
-        public int hashCode() {
-            return toString().hashCode();
-        }
-    }
-
-    static class CompilerClasspathKey {
-        private ClassLoader parentLoader;
-
-        CompilerClasspathKey(ClassLoader parentLoader) {
-            this.parentLoader = parentLoader;
-        }
-
-        public String toString() {
-            return "parentLoader: " + parentLoader;
-        }
-
-        public boolean equals(Object other) {
-            if (!(other instanceof CompilerClasspathKey))
-                return false;
-            return toString().equals(other.toString());
-        }
-
-        public int hashCode() {
-            return toString().hashCode();
-        }
-    }
-
-    static class DynamicJavaClassLoader extends ClassLoader {
+    public static class DynamicJavaClassLoader extends ClassLoader {
 
         private Package packageVO;
         private boolean cache;
 
+        private static Map<String, DynamicJavaClassLoader> instances = new ConcurrentHashMap<>();
+
+        static {
+            ClassLoader.registerAsParallelCapable();
+        }
+
         DynamicJavaClassLoader(ClassLoader parentLoader, Package packageVO, boolean cache) {
-            super(parentLoader);
+            super(DynamicJavaClassLoader.class.getClassLoader()); //packageVO == null ? DynamicJavaClassLoader.class.getClassLoader() : packageVO.getCloudClassLoader());
             this.packageVO = packageVO;
             this.cache = cache;
+        }
+
+        public static DynamicJavaClassLoader getInstance(ClassLoader parentLoader, Package packageVO, boolean cache) {
+            String key = packageVO.getName() + ""; // To handle the default package which has null name
+            if (instances.containsKey(key))
+                return instances.get(key);
+            else {
+                synchronized (instances) {
+                    Map<String, DynamicJavaClassLoader> temp = instances;
+                    if (temp.containsKey(key))
+                        return temp.get(key);
+                    else {
+                        DynamicJavaClassLoader loader = new DynamicJavaClassLoader(parentLoader, packageVO, cache);
+                        instances.put(key, loader);
+                        return loader;
+                    }
+                }
+            }
+        }
+
+        public static void clearLoaderInstances() {
+            instances.clear();
         }
 
         protected Class<?> findClass(String name) throws ClassNotFoundException {
@@ -676,10 +638,23 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                 logger.mdwDebug("findClass(): " + name);
             Class<?> cl = null;
             // check the cache first
-            ClassCacheKey key = new ClassCacheKey(name, this.getParent());
-            cl = compiledCache.get(key);
+            cl = compiledCache.get(name);
             if (cl == null) {
                 JavaFileObject jfo = MdwJavaFileManager.getJavaFileObject(name);
+                if (jfo == null) {
+                    Asset javaAsset = AssetCache.getAsset(name, Asset.JAVA);
+                    if (javaAsset != null) {
+                        try {
+                            String javaCode = javaAsset.getStringContent();
+                            if (Compatibility.hasCodeSubstitutions())
+                                javaCode = doCompatibilityCodeSubstitutions(name, javaCode);
+                            compileJavaCode(getParent(), packageVO, name, javaCode, cache);
+                            jfo = MdwJavaFileManager.getJavaFileObject(name);
+                        } catch (Exception ex) {
+                            logger.severeException(ex.getMessage(), ex);
+                        }
+                    }
+                }
                 if (jfo != null) {
                     if (packageVO != null && packageVO.getName() != null) {
                         java.lang.Package pkg = getPackage(packageVO.getName());
@@ -690,30 +665,19 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                     cl = defineClass(name, bytes, 0, bytes.length);
                 }
             }
-            // try the package classloader
-            if (cl == null && packageVO != null) {
-                ClassLoader packageCl = packageVO.getClassLoader();
-                if (packageCl != null) {
-                    try {
-                        cl = packageCl.loadClass(name);
-                    }
-                    catch (ClassNotFoundException ex) {
-                        // more meaningful CNFE is thrown below
-                    }
-                }
-            }
-            // try the cloud classloader
+            else  // Found it in cache
+                return cl;
+
+            // try the cloud classloader to find class in assets
             if (cl == null && packageVO != null && packageVO.getCloudClassLoader().hasClass(name) /* prevent infinite loop */ )
-                cl = packageVO.getCloudClassLoader().loadClass(name);
+                cl = packageVO.getCloudClassLoader().directFindClass(name);
 
             if (cl == null) {
                 // don't log: can happen when trying multiple bundles to resolve a class
                 throw new ClassNotFoundException(cnfeMsg(name));
             }
-            if (cache) {
-                synchronized (compiledCache) {
-                    compiledCache.put(key, cl);  // compiled date is only set at compile time
-                }
+            else if (cache) {
+                compiledCache.put(name, cl);
             }
             return cl;
         }
