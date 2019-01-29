@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.mongodb.MongoClientURI;
 import org.bson.json.JsonWriterSettings;
 
 import com.centurylink.mdw.dataaccess.db.DocumentDb;
@@ -74,7 +75,11 @@ public class MongoDocumentDb implements DocumentDb {
             if (maxConnections > 100)  // MongoClient default is 100 max connections per host
                 options.connectionsPerHost(maxConnections);
 
-            mongoClient = new MongoClient(new ServerAddress(dbHost, dbPort), options.build());
+            if (dbHost.indexOf(",") > 0) {
+                mongoClient = new MongoClient(new MongoClientURI(dbHost, options));
+            }
+            else
+                mongoClient = new MongoClient(new ServerAddress(dbHost, dbPort), options.build());
 
             for (String name : mongoClient.getDatabase("mdw").listCollectionNames()) {
                 createMongoDocIdIndex(name);
