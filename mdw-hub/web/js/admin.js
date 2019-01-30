@@ -1,12 +1,11 @@
 'use strict';
 
-var adminApp = angular.module('adminApp', ['ngRoute', 'ngAnimate', 'ngWebSocket', 'ngCookies', 'ui.bootstrap', 'chart.js', 
- 'mdwChart', 'mdwActions', 'mdwList', 'mdwEditor', 'mdwValues', 'mdwPanel', 'mdwWorkflow', 'mdwDiagram', 'mdwShape', 
+var adminApp = angular.module('adminApp', ['ngRoute', 'ngAnimate', 'ngWebSocket', 'ngCookies', 'ui.bootstrap',
+ 'mdwActions', 'mdwList', 'mdwEditor', 'mdwValues', 'mdwPanel', 'mdwWorkflow', 'mdwDiagram', 'mdwShape',
  'mdwStep', 'mdwLink', 'mdwSubflow', 'mdwLabel', 'mdwNote', 'mdwMarquee', 'mdwSelection', 'mdwInspector', 'mdwInspectorTabs', 
  'mdwToolbox', 'mdwConfigurator', 'mdwCompatibility', 'mdwTask', 'mdwMarkdown', 'authUser', 'mdw', 'util', 'mdwUtil', 'mdwJsx', 
  'constants', 'routes', 'users', 'groups', 'roles', 'assets', 'edit', 'testing', 'tasks', 'processes', 'activities', 
  'requests', 'services', 'system', 'solutions', 'message', 'objectTableConverter', 'mdwSwagger', 'mdwCustom',
- 'dashboardProcesses', 'dashboardRequests', 'dashboardTasks', 'dashboardActivities'
 ]);
 
 adminApp.config(function($httpProvider) {

@@ -81,7 +81,7 @@ class ChartHeader extends Component {
       <PanelHeader>
         <HeaderLabel title={this.props.title + ' for the:'} />
         <HeaderDropdown id="timespan-dropdown"
-          items={['Day','Week','Month']}
+          items={[/*'Day',*/'Week','Month']}
           selected={this.props.timespan}
           onSelect={this.handleDropdownSelect} />
 

@@ -34,10 +34,10 @@
           </button>
           <button type="button" class="btn btn-primary mdw-btn" ng-click="model.activityList.downloadExcel()">
             <span class="glyphicon glyphicon-download-alt"></span> Export
-          </button>        
-          <button type="button" class="btn btn-primary mdw-btn" mdw-route="#/dashboard/activities">
+          </button>
+          <button type="button" class="btn btn-primary mdw-btn" ng-click="goChart()">
             <span class="glyphicon glyphicon-stats"></span> Chart
-          </button>        
+          </button>
         </mdw-actions>
      </div>
      <mdw-list class="mdw-checklist" mdw-list-service="/services/Activities" mdw-list-model="model.activityList" mdw-list-items="activityInstances"

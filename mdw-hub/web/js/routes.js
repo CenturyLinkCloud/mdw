@@ -199,30 +199,6 @@ routesSvc.factory('routes', function() {
         controller: 'ActivityController'
       },     
       {
-        path: '/dashboard/processes',
-        templateUrl: 'dashboard/processes.html',
-        controller: 'DashboardProcessesController'
-      },
-      {
-        path: '/dashboard/requests',
-        templateUrl: 'dashboard/requests.html',
-        controller: 'DashboardRequestsController'
-      },
-      {
-        path: '/dashboard/tasks',
-        templateUrl: 'dashboard/tasks.html',
-        controller: 'DashboardTasksController'
-      },
-      {
-        path: '/dashboard/activities',
-        templateUrl: 'dashboard/activities.html',
-        controller: 'DashboardActivitiesController'
-      },
-      {
-        path: '/exceptions',
-        templateUrl: 'dashboard/exceptions.html'
-      },
-      {
         path: '/solutions',
         templateUrl: 'solutions/solutions.html',
         controller: 'SolutionsController'        

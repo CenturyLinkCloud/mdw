@@ -223,7 +223,7 @@ processMod.controller('ProcessesController',
   };
 
   $scope.goChart = function() {
-    window.location = '#/dashboard/processes?chart=list';
+    window.location = 'dashboard/processes';
   };
 }]);
 
