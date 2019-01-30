@@ -1,6 +1,6 @@
 MongoDocumentDb.java=3
 bson-3.6.4.jar=1
-mongo-config.spring=2
+mongo-config.spring=3
 mongodb-driver-3.6.4.jar=1
 mongodb-driver-core-3.6.4.jar=1
 readme.md=2
