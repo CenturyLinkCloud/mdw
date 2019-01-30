@@ -8,7 +8,7 @@ class Activities extends Component {
   constructor(...args) {
     super(...args);
   }
-
+  
   render() {
 
     const breakdownConfig = {
@@ -27,7 +27,8 @@ class Activities extends Component {
           selectLabel: 'Statuses',
           tops: '/Activities/tops?by=status',
           data: '/Activities/breakdown?by=status',
-          instancesParam: 'statuses'
+          instancesParam: 'statuses',
+          colors: selected => selected.map(sel => statuses.activity[sel.name].color)
         },
         {
           name: 'Total Throughput',

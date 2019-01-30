@@ -762,7 +762,6 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 activityAggregates.add(activityAggregate);
             }
         }
-        activityAggregates.sort((agg1, agg2) -> (int)(agg1.getId() - agg2.getId()));
         return activityAggregates;
     }
 

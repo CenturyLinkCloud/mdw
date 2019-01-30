@@ -27,7 +27,8 @@ class Tasks extends Component {
            selectLabel: 'Statuses',
            tops: '/Tasks/tops?by=status',
            data: '/Tasks/breakdown?by=status',
-           instancesParam: 'statuses'
+           instancesParam: 'statuses',
+           colors: selected => selected.map(sel => statuses.task[sel.name].color)
          },
          {
           name: 'Workgroup',

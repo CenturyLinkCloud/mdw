@@ -8,13 +8,8 @@ class Processes extends Component {
 
   constructor(...args) {
     super(...args);
-    this.getStatusColors = this.getStatusColors.bind(this);
     this.handleOverviewDataClick = this.handleOverviewDataClick.bind(this);
     this.handleMainDataClick = this.handleMainDataClick.bind(this); 
-  }
-
-  getStatusColors(selected) {
-    return selected.map(sel => statuses.process[sel.name].color);
   }
 
   handleOverviewDataClick(breakdown, selection, filters) {
@@ -44,7 +39,7 @@ class Processes extends Component {
   }
 
   render() {
-
+    
     const breakdownConfig = {
       breakdowns: [
         {
@@ -62,7 +57,7 @@ class Processes extends Component {
           tops: '/Processes/tops?by=status',
           data: '/Processes/breakdown?by=status',
           instancesParam: 'statuses',
-          colors: this.getStatusColors
+          colors: selected => selected.map(sel => statuses.process[sel.name].color)
         },
         {
           name: 'Completion Time',
