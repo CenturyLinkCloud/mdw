@@ -7,6 +7,22 @@ class OutboundRequests extends Component {
 
   constructor(...args) {
     super(...args);
+    this.handleOverviewDataClick = this.handleOverviewDataClick.bind(this);
+  }
+
+  handleOverviewDataClick(breakdown, selection, filters) {
+    var reqFilter = sessionStorage.getItem('workflow_requestFilter');
+    reqFilter = reqFilter ? JSON.parse(reqFilter) : {};
+    reqFilter.type = 'outboundRequests';
+    if (breakdown === 'Throughput' || breakdown == 'Completion Time') {
+      reqFilter.path = selection.id;
+      reqFilter.status = filters.Status ? filters.Status : '[Active]';
+      sessionStorage.setItem('workflow_requestFilter', JSON.stringify(reqFilter));
+      location = this.context.hubRoot + '/#/workflow/requests';
+      }
+    else {
+      // TODO request list status
+    }
   }
 
   render() {
@@ -58,6 +74,7 @@ class OutboundRequests extends Component {
     return (
       <DashboardChart title="Outbound Requests"
         breakdownConfig={breakdownConfig}
+        onOverviewDataClick={this.handleOverviewDataClick}
         list="#/workflow/requests" />
     );
   }
