@@ -3,10 +3,12 @@ dependencies {
     compileOnly(project(":mdw-hub")) { 
         exclude(module: "mariaDB4j-core")
         exclude(module: "slf4j-simple")
+        exclude(module: "jmustache")
     }
     compile(project(":mdw-workflow")) { 
         exclude(module: "mariaDB4j-core")
-        exclude(module: "slf4j-simple") 
+        exclude(module: "slf4j-simple")
+        exclude(module: "jmustache")
     }
     // put back this mariaDB4j transitive
     compile group: "commons-io", name: "commons-io", version: "2.5"
