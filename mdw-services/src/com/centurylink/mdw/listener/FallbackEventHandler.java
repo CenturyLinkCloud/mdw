@@ -15,18 +15,6 @@
  */
 package com.centurylink.mdw.listener;
 
-import java.util.List;
-import java.util.Map;
-import java.util.TimerTask;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.cache.impl.PackageCache;
@@ -53,6 +41,15 @@ import com.centurylink.mdw.util.CallURL;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.xml.XmlPath;
+import org.apache.xmlbeans.XmlObject;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import java.util.List;
+import java.util.Map;
+import java.util.TimerTask;
 
 /**
  * Used for old-school (non-service) event handling.
@@ -111,8 +108,7 @@ public class FallbackEventHandler implements ExternalEventHandler {
         }
     }
 
-    public String handleSpecialEventMessage(XmlObject msgdoc)
-        throws EventHandlerException, XmlException {
+    public String handleSpecialEventMessage(XmlObject msgdoc) {
         String rootNodeName = XmlPath.getRootNodeName(msgdoc);
         String response;
         if (rootNodeName.equals("_mdw_property")) {
@@ -127,10 +123,25 @@ public class FallbackEventHandler implements ExternalEventHandler {
             try {
                 ScheduledJob job = MdwServiceRegistry.getInstance().getScheduledJob(className);
                 if (job != null) {
-                    if (job instanceof LoadBalancedScheduledJob)
-                        ((LoadBalancedScheduledJob)job).runOnLoadBalancedInstance(url);
-                    else
-                        job.run(url);
+                    boolean enabled = true;
+                    com.centurylink.mdw.annotations.ScheduledJob scheduledJobAnnotation =
+                            job.getClass().getAnnotation(com.centurylink.mdw.annotations.ScheduledJob.class);
+                    if (scheduledJobAnnotation != null) {
+                        String enabledProp = scheduledJobAnnotation.enabledProp();
+                        if (!enabledProp.isEmpty()) {
+                            enabled = PropertyManager.getBooleanProperty(enabledProp, false);
+                        }
+                    }
+                    if (enabled) {
+                        logger.debug("Running scheduled job: " + job.getClass());
+                        if (job instanceof LoadBalancedScheduledJob)
+                            ((LoadBalancedScheduledJob) job).runOnLoadBalancedInstance(url);
+                        else
+                            job.run(url);
+                    }
+                    else {
+                        logger.debug("Scheduled job is disabled: " + job.getClass());
+                    }
                 }
                 else {
                     className = Compatibility.getEventHandler(className);

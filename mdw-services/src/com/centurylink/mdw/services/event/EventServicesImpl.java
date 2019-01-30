@@ -209,39 +209,6 @@ public class EventServicesImpl implements EventServices {
         }
     }
 
-    public List<VariableInstance> getProcessInstanceVariables(Long procInstId)
-        throws DataAccessException {
-        TransactionWrapper transaction = null;
-        EngineDataAccessDB edao = new EngineDataAccessDB();
-        try {
-            transaction = edao.startTransaction();
-            return edao.getProcessInstanceVariables(procInstId);
-        } catch (SQLException e) {
-            throw new DataAccessException(-1, "Failed to get process instance variables", e);
-        } finally {
-            edao.stopTransaction(transaction);
-        }
-    }
-
-    public void updateProcessInstanceStatus(Long pProcInstId, Integer status)
-    throws ProcessException, com.centurylink.mdw.dataaccess.DataAccessException {
-        TransactionWrapper transaction = null;
-        EngineDataAccessDB edao = new EngineDataAccessDB();
-        try {
-            transaction = edao.startTransaction();
-            edao.setProcessInstanceStatus(pProcInstId, status);
-            if (status.equals(WorkStatus.STATUS_COMPLETED) ||
-                status.equals(WorkStatus.STATUS_CANCELLED) ||
-                status.equals(WorkStatus.STATUS_FAILED)) {
-                edao.removeEventWaitForProcessInstance(pProcInstId);
-            }
-        } catch (SQLException e) {
-            throw new ProcessException(0, "Failed to update process instance status", e);
-        } finally {
-            edao.stopTransaction(transaction);
-        }
-    }
-
     /**
      * This is for regression tester only.
      * @param masterRequestId
@@ -684,7 +651,7 @@ public class EventServicesImpl implements EventServices {
             ScheduledEvent event = edao.lockScheduledEvent(eventName);
             Date currentScheduledTime = event==null?null:event.getScheduledTime();
             ScheduledEventQueue queue = ScheduledEventQueue.getSingleton();
-            boolean processed = queue.processEventInEjb(eventName, event, now, edao);
+            boolean processed = queue.processEvent(eventName, event, now, edao);
             if (processed)  {
                 if (event.isScheduledJob()) {
                     edao.recordScheduledJobHistory(event.getName(), currentScheduledTime,
