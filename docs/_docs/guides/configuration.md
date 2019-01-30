@@ -78,8 +78,9 @@ title: MDW Configuration
 
     # optional mongodb (requires asset package com.centurylink.mdw.mongo)
     mongodb:
-      host: localhost
-      port: 27017
+      host: localhost  # Can also be URI (i.e. host1:27017,host2:27017,host3:27017)
+      port: 27017  # default = 27017 (Note: If host is URI, port property is ignored)
+      name: mdw  # default = mdw
 
     # asset location info (use absolute paths when running thru eclipse wtp)
     asset:
