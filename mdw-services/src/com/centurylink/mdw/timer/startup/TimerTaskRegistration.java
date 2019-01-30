@@ -19,8 +19,11 @@ import com.centurylink.mdw.common.service.MdwServiceRegistry;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.monitor.ScheduledJob;
+import com.centurylink.mdw.services.EventServices;
+import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.startup.StartupService;
@@ -87,11 +90,6 @@ public class TimerTaskRegistration implements StartupService {
         }
     }
 
-    public void restartTimers() throws StartupException {
-        this.onShutdown();
-        this.onStartup();
-    }
-
     public void onShutdown() {
         if (_timers == null || _timers.isEmpty()) {
             return;
@@ -124,16 +122,36 @@ public class TimerTaskRegistration implements StartupService {
             }
         }
 
-        // new-style @ScheduledJob annotations
+        // new-style @ScheduledJob annotations -- allows update of existing event_instance in db to modify cron schedule
         for (ScheduledJob scheduledJob : MdwServiceRegistry.getInstance().getDynamicServices(ScheduledJob.class)) {
-            com.centurylink.mdw.annotations.ScheduledJob annotation =
+            com.centurylink.mdw.annotations.ScheduledJob scheduledJobAnnotation =
                     scheduledJob.getClass().getAnnotation(com.centurylink.mdw.annotations.ScheduledJob.class);
-            if (annotation != null) {
-                String name = annotation.value();
-                if (!timerTasks.containsKey(name)) {
+            if (scheduledJobAnnotation != null) {
+                boolean enabled = true;
+                String enabledProp = scheduledJobAnnotation.enabledProp();
+                if (!enabledProp.isEmpty()) {
+                    enabled = PropertyManager.getBooleanProperty(enabledProp, false);
+                }
+                String name = scheduledJobAnnotation.value();
+                if (enabled && !timerTasks.containsKey(name)) {
                     Properties spec = new Properties();
                     spec.put("TimerClass", scheduledJob.getClass().getName());
-                    spec.put("Schedule", annotation.schedule());
+                    String eventName = SCHEDULED_JOB + "." + scheduledJob.getClass().getName();
+                    spec.put("Schedule", scheduledJobAnnotation.schedule());
+                    try {
+                        EventServices eventServices = ServiceLocator.getEventServices();
+                        EventInstance eventInstance = eventServices.getEventInstance(eventName);
+                        if (eventInstance != null && !scheduledJobAnnotation.schedule().equals(eventInstance.getAuxdata())) {
+                            logger.info("Updating schedule for " + scheduledJob.getClass() + ": " + scheduledJobAnnotation.schedule());
+                            eventServices.updateEventInstance(eventName, eventInstance.getDocumentId(),
+                                    eventInstance.getStatus(), eventInstance.getConsumeDate(), eventInstance.getAuxdata(),
+                                    eventInstance.getReference(), eventInstance.getPreserveSeconds());
+                            ScheduledEventQueue.getSingleton().rescheduleCronJob(eventName, scheduledJobAnnotation.schedule());
+                        }
+                    }
+                    catch (Exception ex) {
+                        logger.error("Unable to retrieve/update scheduled event: " + eventName, ex);
+                    }
                     timerTasks.put(name, spec);
                 }
             }

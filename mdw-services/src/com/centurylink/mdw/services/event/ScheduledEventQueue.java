@@ -15,18 +15,6 @@
  */
 package com.centurylink.mdw.services.event;
 
-import java.sql.SQLException;
-import java.sql.SQLRecoverableException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.PriorityQueue;
-
-import org.json.JSONObject;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.config.PropertyManager;
@@ -49,6 +37,11 @@ import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.json.JSONObject;
+
+import java.sql.SQLException;
+import java.sql.SQLRecoverableException;
+import java.util.*;
 
 public class ScheduledEventQueue implements CacheService {
 
@@ -113,7 +106,7 @@ public class ScheduledEventQueue implements CacheService {
         }
     }
 
-    public boolean processEventInEjb(String eventName, ScheduledEvent event, Date now, EngineDataAccessDB edao) {
+    public boolean processEvent(String eventName, ScheduledEvent event, Date now, EngineDataAccessDB edao) {
         // when this is called, the database has locked the event, or it is null
         // lock and remove in database, and refresh the copy
         if (event==null) {
@@ -216,8 +209,10 @@ public class ScheduledEventQueue implements CacheService {
                 logger.info("Add unscheduled event " + event.getName());
             }
         } catch (DataAccessException e) {
-            if (e.getCode()==23000) logger.info("To schedule the event but it is already scheduled: " + event.getName());
-            else logger.severeException("Failed to schedule event " + name, e);
+            if (e.getCode()==23000)
+                logger.info("To schedule the event but it is already scheduled: " + event.getName());
+            else
+                logger.severeException("Failed to schedule event " + name, e);
         } catch (Exception e) {
             logger.severeException("Failed to schedule event " + name, e);
         }

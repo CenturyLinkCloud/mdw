@@ -148,17 +148,8 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                             // ScheduledJob annotation
                             ScheduledJob scheduledJobAnnotation = clazz.getAnnotation(ScheduledJob.class);
                             if (scheduledJobAnnotation != null) {
-                                boolean enabled = scheduledJobAnnotation.enabled();
-                                if (enabled) {
-                                    String enabledProp = scheduledJobAnnotation.enabledProp();
-                                    if (!enabledProp.isEmpty()) {
-                                        enabled = PropertyManager.getBooleanProperty(enabledProp, false);
-                                    }
-                                    if (enabled) {
-                                        logger.info("Scheduled Job: " + scheduledJobAnnotation.value() + " --> '" + clazz + "'");
-                                        DynamicJavaServiceRegistry.addRegisteredService(com.centurylink.mdw.model.monitor.ScheduledJob.class.getName(), clazz.getName());
-                                    }
-                                }
+                                logger.info("Scheduled Job: " + scheduledJobAnnotation.value() + " --> '" + clazz + "'");
+                                DynamicJavaServiceRegistry.addRegisteredService(com.centurylink.mdw.model.monitor.ScheduledJob.class.getName(), clazz.getName());
                             }
                         }
                         else {

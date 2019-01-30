@@ -12,10 +12,8 @@ public @interface ScheduledJob {
      */
     String value();
 
-    public String schedule();
+    String schedule();
 
-    public boolean enabled() default true;
-
-    public String enabledProp() default "";
+    String enabledProp() default "";
 
 }

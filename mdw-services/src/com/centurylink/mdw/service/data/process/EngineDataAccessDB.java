@@ -464,7 +464,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     public EventInstance getEventInstance(String eventName)
             throws SQLException {
         String query = "select DOCUMENT_ID, STATUS_CD, " +
-            " CREATE_DT, CONSUME_DT, PRESERVE_INTERVAL, COMMENTS from EVENT_INSTANCE " +
+            " CREATE_DT, CONSUME_DT, PRESERVE_INTERVAL, AUXDATA, COMMENTS from EVENT_INSTANCE " +
             " where EVENT_NAME=?";
         ResultSet rs = db.runSelect(query, eventName);
         if (rs.next()) {
@@ -477,6 +477,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             vo.setCreateDate(rs.getTimestamp(3));
             vo.setConsumeDate(rs.getTimestamp(4));
             vo.setPreserveSeconds(rs.getInt(5));
+            vo.setAuxdata(rs.getString("AUXDATA"));
             vo.setComments(rs.getString("COMMENTS"));
             return vo;
         } else {
