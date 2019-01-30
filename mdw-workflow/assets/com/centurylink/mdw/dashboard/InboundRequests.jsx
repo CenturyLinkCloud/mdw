@@ -26,7 +26,8 @@ class InboundRequests extends Component {
           selectLabel: 'Statuses',
           tops: '/Requests/tops?direction=in&by=status',
           data: '/Requests/breakdown?direction=in&by=status',
-          instancesParam: 'statusCodes'
+          instancesParam: 'statusCodes',
+          colors: selected => selected.map(sel => statuses.request[sel.id].color)
         },
         {
           name: 'Completion Time',
@@ -50,7 +51,7 @@ class InboundRequests extends Component {
         HealthCheck: false
       },
       filterOptions: {
-        Status: statuses.request
+        Status: Object.keys(statuses.request).map(status => status + ' - ' + statuses.request[status].message)
       }
     };
 

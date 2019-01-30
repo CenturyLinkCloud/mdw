@@ -2,8 +2,8 @@
 
 var assetMod = angular.module('assets', ['ngResource', 'mdw']);
 
-assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$http', '$cookieStore', '$uibModal', 'mdw', 'uiUtil', 'Assets', 'GitVcs', 'WorkflowCache', 'JSON_DOWNLOAD',
-                                           function($scope, $location, $route, $http, $cookieStore, $uibModal, mdw, uiUtil, Assets, GitVcs, WorkflowCache, JSON_DOWNLOAD) {
+assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$http', '$cookieStore', '$uibModal', 'mdw', 'uiUtil', 'Assets', 'GitVcs', 'WorkflowCache',
+                                           function($scope, $location, $route, $http, $cookieStore, $uibModal, mdw, uiUtil, Assets, GitVcs, WorkflowCache) {
   $scope.pkgList = Assets.get({}, 
     function(data) {
       if (!$scope.pkgList.packages || $scope.pkgList.packages.length === 0) {
@@ -41,7 +41,7 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
   );
   
   $scope.gitImportMessage = 'Do you want to import assets from Git?';
-  $scope.fileImportMessage = 'Select a JSON or ZIP file to import.';
+  $scope.fileImportMessage = 'Select an asset package ZIP file to import.';
   $scope.fileImportUploading = false;
   $scope.packageImportFile = null;
   $scope.distributedImport = false;
@@ -82,7 +82,7 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
       $http({
         url: mdw.roots.hub + '/asset/packages?app=mdw-admin',
         method: 'PUT',
-        headers: {'Content-Type': $scope.packageImportFile.name.endsWith('.zip') ? 'application/zip' : 'application/json'},
+        headers: {'Content-Type': 'application/zip'},
         data: $scope.packageImportFile.content,
         transformRequest: []
       }).then(function success(response) {
@@ -101,22 +101,17 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
   };
   
   $scope.getExportPackagesParam = function() {
-    var pkgParam = '[';
+    var pkgParam = '%5B';
     for (var i = 0; i < $scope.pkgList.getSelected().length; i++) {
       var pkg = $scope.pkgList.getSelected()[i];
       pkgParam += pkg.name;
       if (i < $scope.pkgList.getSelected().length - 1)
         pkgParam += ',';
     }
-    pkgParam += ']';
+    pkgParam += '%5D';
     return pkgParam;
   };
   
-  $scope.exportJson = function() {
-    window.location = mdw.roots.services + '/services/Packages?app=mdw-admin&packages=' + 
-        $scope.getExportPackagesParam() + '&' + JSON_DOWNLOAD;
-  };
-
   $scope.exportZip = function() {
     window.location = mdw.roots.hub + '/asset/packages?app=mdw-admin&packages=' + 
         $scope.getExportPackagesParam();

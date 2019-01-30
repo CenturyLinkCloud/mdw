@@ -19,7 +19,6 @@ constantsMod.constant('QUEUE_NAMES', [
 ]);
 
 constantsMod.constant('EXCEL_DOWNLOAD', 'DownloadFormat=xlsx');
-constantsMod.constant('JSON_DOWNLOAD', 'DownloadFormat=json');
 constantsMod.constant('ZIP_DOWNLOAD', 'DownloadFormat=zip');
 
 // TODO: should be dynamic through a service 
