@@ -82,6 +82,7 @@ public class MongoDocumentDb implements DocumentDb {
 
             if (dbHost.indexOf(",") > 0) {
                 mongoClient = new MongoClient(new MongoClientURI(dbHost, options));
+                dbPort = 0;
             }
             else
                 mongoClient = new MongoClient(new ServerAddress(dbHost, dbPort), options.build());
@@ -176,7 +177,7 @@ public class MongoDocumentDb implements DocumentDb {
 
     public static void createMongoDocIdIndex(String collectionName) {
         IndexOptions indexOptions = new IndexOptions().unique(true).background(true);
-        MongoCollection<org.bson.Document> collection = mongoClient.getDatabase("mdw").getCollection(collectionName);
+        MongoCollection<org.bson.Document> collection = MongoDocumentDb.getMongoDb().getCollection(collectionName);
         String indexName = collection.createIndex(Indexes.ascending("document_id"), indexOptions);
         LoggerUtil.getStandardLogger().mdwDebug("Created Index : " + indexName + " on collection : " + collectionName);
         collectionDocIdIndexed.putIfAbsent(collectionName, Boolean.valueOf(true));
@@ -249,7 +250,7 @@ public class MongoDocumentDb implements DocumentDb {
     }
 
     public String toString() {
-        return dbHost + ":" + dbPort;
+        return (dbPort == 0 ? dbHost : dbHost + ":" + dbPort) + "/" + dbName;
     }
 
 
