@@ -52,7 +52,7 @@ We welcome your contributions to MDW whether they be fixes/enhancements, automat
 
 8. MDWHub Web Development
    - To avoid having to reassemble the boot jar to test web content changes, add this to your IntelliJ run configuration:
-     `-Dmdw.hub.dev.override.root=mdw-hub/web`
+     `-Dmdw.hub.dev.override.root=../mdw-hub/web`
 
 9. Run the Tests
    - Access the autotest page in MDWHub:

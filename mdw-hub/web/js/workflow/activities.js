@@ -216,6 +216,10 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
         return base + selectedActivities.length + ' activities?';
     }
   };
+
+  $scope.goChart = function() {
+    window.location = 'dashboard/activities';
+  };
 }]);
 
 activityMod.controller('ActivityController', ['$scope', '$http', '$route', 'Process', '$uibModal', '$routeParams', 'mdw', 'Activity',

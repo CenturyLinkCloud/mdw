@@ -112,7 +112,10 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', 'md
     $scope.typeaheadMatchSelection = null;
     $scope.clearTypeaheadFilters();
   };
-  
+
+  $scope.goChart = function() {
+    window.location = $scope.requestFilter.type === 'outboundRequests' ? 'dashboard/outboundRequests' : 'dashboard/inboundRequests';
+  };
 }]);
 
 requestMod.controller('RequestController', ['$scope', '$location', '$route', '$routeParams', 'mdw', 'util', 'Request',

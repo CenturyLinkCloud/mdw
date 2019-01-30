@@ -9,7 +9,7 @@
     "jshint": "^2.9.5"
   },
   "scripts": {
-    "jshint": "jshint web/js --config jshint.json",
+    "jshint": "jshint web/js ../mdw-workflow/assets/com/centurylink/mdw/react/workflow/ --config jshint.json",
     "eslint": "eslint ../mdw-workflow/assets/com/centurylink/mdw/react/*.jsx ../mdw-workflow/assets/com/centurylink/mdw/react/*.js ../mdw-workflow/assets/com/centurylink/mdw/dashboard/*.jsx ../mdw-workflow/assets/com/centurylink/mdw/task/*.jsx ../mdw-workflow/assets/com/centurylink/mdw/system/filepanel/*.jsx -c eslint.json"
   }
 }

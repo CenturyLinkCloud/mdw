@@ -358,7 +358,10 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
         $scope.task.message = error.data.status.message;
       });
   };
-  
+
+  $scope.goChart = function() {
+    window.location = 'dashboard/tasks';
+  };
 }]);
 
 tasksMod.controller('TemplatesController', ['$scope', 'mdw', 'util', 'Templates',
