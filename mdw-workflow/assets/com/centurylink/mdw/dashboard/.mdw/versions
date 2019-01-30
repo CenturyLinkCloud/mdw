@@ -1,14 +1,14 @@
 Activities.jsx=2
 ChartHeader.jsx=11
 ChartLegend.jsx=2
-DashboardChart.jsx=20
+DashboardChart.jsx=21
 FilterPop.jsx=5
 InboundRequests.jsx=5
 Index.jsx=4
 Nav.jsx=2
 OutboundRequests.jsx=4
 ProcessHotspots.jsx=2
-Processes.jsx=16
+Processes.jsx=17
 Routes.jsx=7
 SelectPop.jsx=5
 Tasks.jsx=2
