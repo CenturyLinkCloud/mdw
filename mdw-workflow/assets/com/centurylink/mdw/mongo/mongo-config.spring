@@ -9,6 +9,9 @@
     id="mongoDocDb"
     class="com.centurylink.mdw.mongo.MongoDocumentDb">
     <property
+        name="dbName"
+        value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.mongodb.name', 'mdw')" />
+    <property
       name="dbHost"
       value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.mongodb.host')}" />
     <property
