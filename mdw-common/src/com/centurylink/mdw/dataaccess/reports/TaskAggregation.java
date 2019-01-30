@@ -6,6 +6,7 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.PreparedSelect;
 import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.model.task.TaskAggregate;
+import com.centurylink.mdw.model.task.TaskStatus;
 import com.centurylink.mdw.model.task.TaskStatuses;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 
@@ -337,7 +338,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
         String status = query.getFilter("Status");
         if (status != null) {
             where.append("  and task_instance_status = ?\n");
-            params.add(WorkStatuses.getCode(status));
+            params.add(TaskStatuses.getCode(status));
         }
 
         return new PreparedWhere(where.toString(), params.toArray());
