@@ -40,6 +40,10 @@ import com.mongodb.client.model.Indexes;
 
 public class MongoDocumentDb implements DocumentDb {
 
+    private static String dbName;
+    public String getDbName() { return dbName; }
+    public void setDbName(String name) { this.dbName = name; }
+
     private String dbHost;
     public String getDbHost() { return dbHost; }
     public void setDbHost(String host) { this.dbHost = host; }
@@ -56,7 +60,8 @@ public class MongoDocumentDb implements DocumentDb {
     private static Map<String,Boolean> collectionDocIdIndexed = new ConcurrentHashMap<>();
 
     public static MongoDatabase getMongoDb() {
-        return getMongoDb("mdw");   // Default database within Mongo instance
+
+        return getMongoDb(dbName);   // Default database within Mongo instance
     }
 
     public static MongoDatabase getMongoDb(String databaseName) {
@@ -81,7 +86,7 @@ public class MongoDocumentDb implements DocumentDb {
             else
                 mongoClient = new MongoClient(new ServerAddress(dbHost, dbPort), options.build());
 
-            for (String name : mongoClient.getDatabase("mdw").listCollectionNames()) {
+            for (String name : MongoDocumentDb.getMongoDb().listCollectionNames()) {
                 createMongoDocIdIndex(name);
             }
             LoggerUtil.getStandardLogger().info(mongoClient.getMongoClientOptions().toString());
