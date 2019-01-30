@@ -1,12 +1,24 @@
 module.exports = {
-  process: [
-    'Pending',
-    'In Progress',
-    'Failed',
-    'Completed',
-    'Canceled',
-    'Waiting'
-  ],
+  process: {
+    Pending: {
+      color: '#0099C6'
+    },
+    'In Progress': {
+      color: '#109618'
+    },
+    Failed: {
+      color: '#DC3912'
+    },
+    Completed: {
+      color: '#5574A6'
+    },
+    Canceled: {
+      color: '#990099'
+    },
+    Waiting: {
+      color: '#FF9900'
+    }
+  },
   activity: [
     'In Progress', 
     'Failed', 

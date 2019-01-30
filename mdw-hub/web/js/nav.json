@@ -63,12 +63,6 @@
             "priority": 1
           },
           {
-            "label": "Process Hotspots",
-            "path": "dashboard/processHotspots",
-            "href": "/dashboard/processHotspots",
-            "priority": 1
-          },
-          {
             "label": "Tasks",
             "path": "dashboard/tasks",
             "href": "/dashboard/tasks",

@@ -614,16 +614,17 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
         // add any empty statuses
         for (Integer statusCd : WorkStatuses.getWorkStatuses().keySet()) {
-            boolean found = processAggregates.stream().anyMatch(agg -> agg.getId() == statusCd);
-            if (!found) {
-                ProcessAggregate processAggregate = new ProcessAggregate(0);
-                processAggregate.setId(statusCd);
-                processAggregate.setCount(0);
-                processAggregate.setName(WorkStatuses.getWorkStatuses().get(statusCd));
-                processAggregates.add(processAggregate);
+            if (!statusCd.equals(WorkStatus.STATUS_PENDING_PROCESS) && !statusCd.equals(WorkStatus.STATUS_HOLD)) {
+                boolean found = processAggregates.stream().anyMatch(agg -> agg.getId() == statusCd);
+                if (!found) {
+                    ProcessAggregate processAggregate = new ProcessAggregate(0);
+                    processAggregate.setId(statusCd);
+                    processAggregate.setCount(0);
+                    processAggregate.setName(WorkStatuses.getWorkStatuses().get(statusCd));
+                    processAggregates.add(processAggregate);
+                }
             }
         }
-        processAggregates.sort((agg1, agg2) -> (int)(agg1.getId() - agg2.getId()));
         return processAggregates;
     }
 

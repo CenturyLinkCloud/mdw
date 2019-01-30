@@ -35,7 +35,6 @@ public interface WorkStatus {
     String STATUSNAME_CANCELED = "Canceled";
     String STATUSNAME_HOLD = "Hold";
     String STATUSNAME_WAITING = "Waiting";
-    String STATUSNAME_PURGE = "Purge";
     String STATUSNAME_ACTIVE = "[Active]"; // pseudo status meaning not final
 
     Integer[] allStatusCodes = { STATUS_PENDING_PROCESS, STATUS_IN_PROGRESS,
@@ -53,5 +52,4 @@ public interface WorkStatus {
     String LOGMSG_PROC_START = "Process started";
     String LOGMSG_PROC_COMPLETE = "Process completed";
     String LOGMSG_PROC_CANCEL = "Process cancelled";
-
 }
