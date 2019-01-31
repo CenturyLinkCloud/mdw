@@ -33,6 +33,7 @@ import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.util.file.Packages;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
@@ -211,7 +212,7 @@ public class PackageCache implements PreloadableCache {
      * @throws CachingException
      */
     public static List<Package> getAllPackages(String packageName) throws CachingException {
-        List<Package> allPackages = new ArrayList<Package>();
+        List<Package> allPackages = new ArrayList<>();
         for (Package packageVO : getPackageList()) {
             if (packageVO.getName().equals(packageName)) {
                 allPackages.add(packageVO);
@@ -245,6 +246,10 @@ public class PackageCache implements PreloadableCache {
             }
         }
         return null;
+    }
+
+    public static Package getMdwBasePackage() throws CachingException {
+        return getPackage(Packages.MDW_BASE);
     }
 
     public static Package getDefaultPackage() throws CachingException {
