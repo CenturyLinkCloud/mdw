@@ -7,12 +7,27 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
 
   // two-way bound to/from directive
   $scope.model = {};
-  $scope.model.activityList = {};
-  $scope.model.activityFilter = {
+
+  $scope.model.activityFilter = sessionStorage.getItem('activityFilter');
+  if ($scope.model.activityFilter)
+    $scope.model.activityFilter = JSON.parse($scope.model.activityFilter);
+
+  $scope.resetFilter = function() {
+    $scope.model.activityFilter = {
       status: 'Failed',
       sort: 'startDate',
       descending: true
+    };
   };
+  if (!$scope.model.activityFilter) {
+    $scope.resetFilter();
+  }
+  else {
+    if ($scope.model.activityFilter.startDate)
+      $scope.model.activityFilter.startDate = util.serviceDate(new Date($scope.model.activityFilter.startDate));
+  }
+
+  $scope.model.activityList = {};
 
   $scope.allStatuses = ACTIVITY_STATUSES;
   $scope.selectedActivities = [];
@@ -137,7 +152,9 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
     $scope.$parent.digest(); // to show mdw.messages
   };
 
-  $scope.model.typeaheadMatchSelection = null;
+  if ($scope.model.activityFilter.activityName) {
+    $scope.model.typeaheadMatchSelection = $scope.model.activityFilter.activityName;
+  }
 
   // activity instanceId, masterRequestId, activity name
   $scope.findTypeaheadMatches = function(typed) {
@@ -178,9 +195,13 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
       $scope.model.activityFilter.instanceId = null;
     if ($scope.model.activityFilter.masterRequestId)
       $scope.model.activityFilter.masterRequestId = null;
-    if ($scope.model.activityFilter.name)
-      $scope.model.activityFilter.name = null;
+    if ($scope.model.activityFilter.activityName)
+      $scope.model.activityFilter.activityName = null;
   };
+
+  $scope.$on('page-retrieved', function(event) {
+    sessionStorage.setItem('activityFilter', JSON.stringify($scope.model.activityFilter));
+  });
 
   $scope.typeaheadChange = function() {
     if ($scope.model.typeaheadMatchSelection === null)
@@ -193,6 +214,11 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
       $scope.model.activityFilter[$scope.model.typeaheadMatchSelection.type] = $scope.model.typeaheadMatchSelection.id;
     else
       $scope.model.activityFilter[$scope.model.typeaheadMatchSelection.type] = $scope.model.typeaheadMatchSelection.value;
+  };
+
+  $scope.clearTypeahead = function() {
+      $scope.model.typeaheadMatchSelection = null;
+      $scope.clearTypeaheadFilters();
   };
 
   $scope.cancelAction = function(){
