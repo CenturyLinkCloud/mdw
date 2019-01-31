@@ -176,11 +176,16 @@ public class MongoDocumentDb implements DocumentDb {
     }
 
     public static void createMongoDocIdIndex(String collectionName) {
-        IndexOptions indexOptions = new IndexOptions().unique(true).background(true);
-        MongoCollection<org.bson.Document> collection = MongoDocumentDb.getMongoDb().getCollection(collectionName);
-        String indexName = collection.createIndex(Indexes.ascending("document_id"), indexOptions);
-        LoggerUtil.getStandardLogger().mdwDebug("Created Index : " + indexName + " on collection : " + collectionName);
-        collectionDocIdIndexed.putIfAbsent(collectionName, Boolean.valueOf(true));
+        try {
+            IndexOptions indexOptions = new IndexOptions().unique(true).background(true);
+            MongoCollection<org.bson.Document> collection = MongoDocumentDb.getMongoDb().getCollection(collectionName);
+            String indexName = collection.createIndex(Indexes.ascending("document_id"), indexOptions);
+            LoggerUtil.getStandardLogger().mdwDebug("Created Index : " + indexName + " on collection : " + collectionName);
+            collectionDocIdIndexed.putIfAbsent(collectionName, Boolean.valueOf(true));
+        }
+        catch (Exception e) {
+            LoggerUtil.getStandardLogger().info("Failed to create index for 'document_id' on " + collectionName + " collection", e);
+        }
     }
 
     /**
