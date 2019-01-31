@@ -7,7 +7,7 @@
     },
     {
       "name": "instance timing",
-      "check": "SELECT * FROM  information_schema.tables WHERE table_name = 'INSTANCE_TIMING' AND table_schema='MDW'",
+      "check": "SELECT * FROM  information_schema.tables WHERE table_name = 'INSTANCE_TIMING'",
       "upgrade":"CREATE TABLE INSTANCE_TIMING (INSTANCE_ID  BIGINT   NOT NULL,  OWNER_TYPE  VARCHAR(30)  NOT NULL, ELAPSED_MS   BIGINT   NOT NULL);ALTER TABLE INSTANCE_TIMING ADD(CONSTRAINT TIMING_PRIMARY_KEY PRIMARY KEY(INSTANCE_ID,OWNER_TYPE))"
     }
   ]  
