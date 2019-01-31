@@ -21,10 +21,9 @@ import java.util.Iterator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.model.workflow.Package;
-
 /**
  * Provides a default implementation for extracting a Jsonable.
  */
@@ -40,21 +39,10 @@ public interface JsonTranslator {
     default Object createJsonable(JSONObject json) throws Exception {
         String type = json.getString(JSONABLE_TYPE);
         Class<? extends Jsonable> clazz;
-        try {
-            clazz = Class.forName(type).asSubclass(Jsonable.class);
-
-        }
-        catch (ClassNotFoundException cnfe) {
-            try {
-                clazz = CompiledJavaCache
-                    .getResourceClass(type, JsonTranslator.class.getClassLoader(), getPackage())
-                    .asSubclass(Jsonable.class);
-            }
-            catch (ClassNotFoundException cnfe2) {
-                // TODO: above is probably not needed (just use cloud classloader)
-                clazz = getPackage().getCloudClassLoader().loadClass(type).asSubclass(Jsonable.class);
-            }
-        }
+        Package pkg = getPackage();
+        if (pkg == null)
+            pkg = PackageCache.getMdwBasePackage();
+        clazz = pkg.getCloudClassLoader().loadClass(type).asSubclass(Jsonable.class);
         Constructor<? extends Jsonable> ctor = clazz.getConstructor(JSONObject.class);
         Iterator<?> keys = json.keys();
         while (keys.hasNext()) {

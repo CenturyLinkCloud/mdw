@@ -36,6 +36,7 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.monitor.MonitorRegistry;
+import com.centurylink.mdw.util.file.Packages;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -490,7 +491,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
     public static String getJavaCompilerClasspath(Package packageVO) throws IOException {
         String key;
         if (packageVO == null || packageVO.getName() == null)
-            key= "com.centurylink.mdw.base";
+            key= Packages.MDW_BASE;
         else
             key = packageVO.getName();
 

@@ -20,6 +20,7 @@ import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.ProcessLoader;
 import com.centurylink.mdw.model.event.ExternalEvent;
+import com.centurylink.mdw.util.file.Packages;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.xml.XmlPath;
@@ -34,7 +35,7 @@ public class EventHandlerCache implements PreloadableCache {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private static HashMap<String,List<ExternalEvent>> myCache =
-        new HashMap<String,List<ExternalEvent>>();
+        new HashMap<>();
 
     public EventHandlerCache(){
         super();
@@ -44,7 +45,6 @@ public class EventHandlerCache implements PreloadableCache {
 
     /**
      * Method that clears the cache
-     * @return ObjectCache
      */
     public void clearCache(){
         myCache.clear();
@@ -52,7 +52,7 @@ public class EventHandlerCache implements PreloadableCache {
 
     /**
      * returns the cached external event
-     * @param pEventName
+     * @param bucket
      * @return Cached Item
      */
     public static List<ExternalEvent> getExternalEvents(String bucket){
@@ -63,7 +63,7 @@ public class EventHandlerCache implements PreloadableCache {
     static {
         fallbackHandler.setEventName("FallbackHandler");
         fallbackHandler.setEventHandler("com.centurylink.mdw.listener.FallbackEventHandler");
-        fallbackHandler.setPackageName(ProcessLoader.MDW_BASE_PACKAGE);
+        fallbackHandler.setPackageName(Packages.MDW_BASE);
         fallbackHandler.setId(new Long(0));
     }
 
@@ -71,7 +71,7 @@ public class EventHandlerCache implements PreloadableCache {
     static {
         serviceHandler.setEventName("ServiceHandler");
         serviceHandler.setEventHandler("com.centurylink.mdw.service.handler.ServiceRequestHandler");
-        serviceHandler.setPackageName(ProcessLoader.MDW_BASE_PACKAGE);
+        serviceHandler.setPackageName(Packages.MDW_BASE);
         serviceHandler.setId(new Long(0));
     }
 
@@ -79,7 +79,7 @@ public class EventHandlerCache implements PreloadableCache {
     static {
         regressionTestHandler.setEventName("RegressionTestHandler");
         regressionTestHandler.setEventHandler("com.centurylink.mdw.listener.RegressionTestEventHandler");
-        regressionTestHandler.setPackageName(ProcessLoader.MDW_BASE_PACKAGE);
+        regressionTestHandler.setPackageName(Packages.MDW_BASE);
         regressionTestHandler.setId(new Long(0));
         regressionTestHandler.setMessagePattern("ActionRequest/Action[@Name=RegressionTest]");
     }
@@ -93,7 +93,7 @@ public class EventHandlerCache implements PreloadableCache {
     }
 
     private synchronized void load() throws CachingException {
-        HashMap<String,List<ExternalEvent>> myCacheTemp = new HashMap<String,List<ExternalEvent>>();
+        HashMap<String,List<ExternalEvent>> myCacheTemp = new HashMap<>();
         try {
             ProcessLoader loader = DataAccess.getProcessLoader();
             List<ExternalEvent> all = loader.loadExternalEvents();
@@ -106,7 +106,7 @@ public class EventHandlerCache implements PreloadableCache {
                     XmlPath xpath = e.getXpath();
                     List<ExternalEvent> bucket = myCacheTemp.get(xpath.getHashBucket());
                     if (bucket==null) {
-                        bucket = new ArrayList<ExternalEvent>();
+                        bucket = new ArrayList<>();
                         myCacheTemp.put(xpath.getHashBucket(), bucket);
                     }
                     bucket.add(e);

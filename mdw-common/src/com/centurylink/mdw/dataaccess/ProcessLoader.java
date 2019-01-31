@@ -33,8 +33,6 @@ import com.centurylink.mdw.util.timer.ProgressMonitor;
  */
 public interface ProcessLoader {
 
-    public static final String MDW_BASE_PACKAGE = "com.centurylink.mdw.base";
-
     Package loadPackage(Long packageId, boolean deep)
     throws DataAccessException;
 

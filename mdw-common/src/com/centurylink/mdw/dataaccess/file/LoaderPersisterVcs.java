@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import com.centurylink.mdw.util.file.Packages;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.json.JSONException;
@@ -162,9 +163,9 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                     return 1;
                 else if (d2.isArchive() && !d1.isArchive())
                     return -1;
-                else if (d1.getName().equals(MDW_BASE_PACKAGE))
+                else if (d1.getName().equals(Packages.MDW_BASE))
                     return -1;
-                else if (d2.getName().equals(MDW_BASE_PACKAGE))
+                else if (d2.getName().equals(Packages.MDW_BASE))
                     return 1;
                 else
                     return d1.getName().compareTo(d2.getName());
@@ -188,7 +189,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         if (pkgDirs == null) {
             if (!storageDir.exists() || !storageDir.isDirectory())
                 throw new DataAccessException("Directory does not exist: " + storageDir);
-            List<PackageDir> pkgDirsTemp = new ArrayList<PackageDir>();
+            List<PackageDir> pkgDirsTemp = new ArrayList<>();
             for (File pkgNode : getPkgDirFiles(storageDir, includeArchive, new ArrayList<>())) {
                 PackageDir pkgDir = new PackageDir(storageDir, pkgNode, versionControl);
                 if (pkgDir.parse())
@@ -579,7 +580,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     public List<Process> loadProcesses(PackageDir pkgDir, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
-        List<Process> processes = new ArrayList<Process>();
+        List<Process> processes = new ArrayList<>();
         for (File procFile : pkgDir.listFiles(procFileFilter))
             processes.add(loadProcess(pkgDir, pkgDir.getAssetFile(procFile), deep));
         return processes;
@@ -595,7 +596,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     public List<Asset> loadAssets(PackageDir pkgDir, boolean deep) throws IOException, XmlException {
-        List<Asset> assets = new ArrayList<Asset>();
+        List<Asset> assets = new ArrayList<>();
         for (File rsFile : pkgDir.listFiles(assetFileFilter))
             assets.add(loadAsset(pkgDir, pkgDir.getAssetFile(rsFile), deep));
         Collections.sort(assets, new Comparator<Asset>() {
@@ -630,7 +631,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     public void saveActivityImplementors(Package packageVo, PackageDir pkgDir) throws IOException, XmlException, JSONException, DataAccessException {
         if (packageVo.getImplementors() != null && !packageVo.getImplementors().isEmpty()) {
-            List<ActivityImplementor> existingImpls = new ArrayList<ActivityImplementor>();
+            List<ActivityImplementor> existingImpls = new ArrayList<>();
             for (PackageDir existPkgDir : getPackageDirs()) {
                 if (!existPkgDir.isArchive()) {
                     existingImpls.addAll(loadActivityImplementors(existPkgDir));
@@ -654,7 +655,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     public List<ExternalEvent> loadExternalEventHandlers(PackageDir pkgDir) throws IOException, XmlException, JSONException {
-        List<ExternalEvent> evtHandlers = new ArrayList<ExternalEvent>();
+        List<ExternalEvent> evtHandlers = new ArrayList<>();
         for (File evthFile : pkgDir.listFiles(evthFileFilter))
             evtHandlers.add(loadExternalEventHandler(pkgDir, pkgDir.getAssetFile(evthFile)));
         return evtHandlers;
@@ -670,7 +671,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     public List<TaskTemplate> loadTaskTemplates(PackageDir pkgDir) throws IOException, XmlException, JSONException {
-        List<TaskTemplate> tasks = new ArrayList<TaskTemplate>();
+        List<TaskTemplate> tasks = new ArrayList<>();
         for (File taskFile : pkgDir.listFiles(taskFileFilter))
             tasks.add(loadTaskTemplate(pkgDir, pkgDir.getAssetFile(taskFile)));
         return tasks;
@@ -751,7 +752,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     protected void removeObsoleteTaskActivityAttributes(Activity manualTaskActivity) {
         if (manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null) {
-            List<Attribute> attributes = new ArrayList<Attribute>();
+            List<Attribute> attributes = new ArrayList<>();
             List<String> obsoleteAttributes = Arrays.asList(TaskActivity.ATTRIBUTES_MOVED_TO_TASK_TEMPLATE);
             for (Attribute attribute : manualTaskActivity.getAttributes()) {
                 if (!obsoleteAttributes.contains(attribute.getAttributeName()))
@@ -804,7 +805,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         if (progressMonitor != null)
             progressMonitor.progress(10);
 
-        List<Package> packages = new ArrayList<Package>();
+        List<Package> packages = new ArrayList<>();
 
         for (PackageDir pkgDir : getPackageDirs()) {
             try {
@@ -822,7 +823,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     public List<Process> getProcessList(boolean withArchived) throws DataAccessException {
-        List<Process> processes = new ArrayList<Process>();
+        List<Process> processes = new ArrayList<>();
         try {
             for (PackageDir pkgDir : getPackageDirs())
                 processes.addAll(loadProcesses(pkgDir, false));
@@ -867,7 +868,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     public Process getProcessBase(String name, int version) throws DataAccessException {
-        List<Process> versions = version == 0 ? new ArrayList<Process>() : null;
+        List<Process> versions = version == 0 ? new ArrayList<>() : null;
         String plainName = name;
         String pkgName = null;
         int lastSlash = name.lastIndexOf('/');
@@ -913,7 +914,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     public List<Asset> getAssets() throws DataAccessException {
-        List<Asset> assets = new ArrayList<Asset>();
+        List<Asset> assets = new ArrayList<>();
         try {
             for (PackageDir pkgDir : getPackageDirs())
                 assets.addAll(loadAssets(pkgDir, false));
@@ -1014,7 +1015,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     public List<ExternalEvent> loadExternalEvents() throws DataAccessException {
         try {
-            List<ExternalEvent> evtHandlers = new ArrayList<ExternalEvent>();
+            List<ExternalEvent> evtHandlers = new ArrayList<>();
             for (PackageDir pkgDir : getPackageDirs())
                 evtHandlers.addAll(loadExternalEventHandlers(pkgDir));
             return evtHandlers;
@@ -1026,7 +1027,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     public List<TaskTemplate> getTaskTemplates() throws DataAccessException {
         try {
-            List<TaskTemplate> tasks = new ArrayList<TaskTemplate>();
+            List<TaskTemplate> tasks = new ArrayList<>();
             for (PackageDir pkgDir : getPackageDirs()) {
                 for (TaskTemplate pkgTask : loadTaskTemplates(pkgDir)) {
                     // do not load duplicate tasks -- keep only latest
@@ -1047,21 +1048,21 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     public List<TaskCategory> getTaskCategories() throws DataAccessException {
-        List<TaskCategory> taskCats = new ArrayList<TaskCategory>();
+        List<TaskCategory> taskCats = new ArrayList<>();
         taskCats.addAll(baselineData.getTaskCategories().values());
         Collections.sort(taskCats);
         return taskCats;
     }
 
     public Set<String> getTaskCategorySet() throws DataAccessException {
-        return new HashSet<String>(baselineData.getTaskCategoryCodes().values());
+        return new HashSet<>(baselineData.getTaskCategoryCodes().values());
     }
 
     /**
      * uses db loader method to avoid code duplication
      */
     public List<Process> findCallingProcesses(Process subproc) throws DataAccessException {
-        List<Process> callers = new ArrayList<Process>();
+        List<Process> callers = new ArrayList<>();
         try {
             Pattern singleProcPattern = Pattern.compile("^.*\"processname\": \".*" + subproc.getName() + ".*\"", Pattern.MULTILINE);
             Pattern multiProcPattern = Pattern.compile("^.*\"processmap\": \".*" + subproc.getName() + ".*\"", Pattern.MULTILINE);
@@ -1100,7 +1101,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     public List<Process> getProcessListForImplementor(Long implementorId, String implementorClass) throws DataAccessException {
-        List<Process> processes = new ArrayList<Process>();
+        List<Process> processes = new ArrayList<>();
         try {
             String implDecl = "\"implementor\": \"" + implementorClass + "\"";  // crude but fast
             for (PackageDir pkgDir : getPackageDirs()) {
@@ -1624,7 +1625,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     public List<Process> findInvoked(Process caller, List<Process> processes) {
-        List<Process> called = new ArrayList<Process>();
+        List<Process> called = new ArrayList<>();
         if (caller.getActivities() != null) {
             for (Activity activity : caller.getActivities()) {
                 String procName = activity.getAttribute(WorkAttributeConstant.PROCESS_NAME);

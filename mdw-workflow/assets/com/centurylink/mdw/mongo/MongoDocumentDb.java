@@ -40,6 +40,8 @@ import com.mongodb.client.model.Indexes;
 
 public class MongoDocumentDb implements DocumentDb {
 
+    private static final String MDW_PREFIX = "MDW_";
+
     private static String dbName;
     public String getDbName() { return dbName; }
     public void setDbName(String name) { this.dbName = name; }
@@ -88,17 +90,22 @@ public class MongoDocumentDb implements DocumentDb {
                 mongoClient = new MongoClient(new ServerAddress(dbHost, dbPort), options.build());
 
             for (String name : MongoDocumentDb.getMongoDb().listCollectionNames()) {
-                createMongoDocIdIndex(name);
+                if (name.startsWith(MDW_PREFIX))
+                    createMongoDocIdIndex(name);
             }
             LoggerUtil.getStandardLogger().info(mongoClient.getMongoClientOptions().toString());
         }
+    }
+
+    private String getCollectionName(String ownerType) {
+        return MDW_PREFIX + ownerType;
     }
 
     @Override
     public String getDocumentContent(String ownerType, Long documentId) {
         CodeTimer timer = new CodeTimer("Load from documentDb", true);
         try {
-            MongoCollection<org.bson.Document> mongoCollection = getMongoDb().getCollection(ownerType);
+            MongoCollection<org.bson.Document> mongoCollection = getMongoDb().getCollection(getCollectionName(ownerType));
             org.bson.Document mongoQuery = new org.bson.Document("document_id", documentId);
             org.bson.Document c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
             if (c == null) {
@@ -118,7 +125,8 @@ public class MongoDocumentDb implements DocumentDb {
 
     @Override
     public void createDocument(String ownerType, Long documentId, String content) {
-        MongoCollection<org.bson.Document> collection = getMongoDb().getCollection(ownerType);
+        String collectionName = getCollectionName(ownerType);
+        MongoCollection<org.bson.Document> collection = getMongoDb().getCollection(collectionName);
         org.bson.Document myDoc = null;
         if (content.startsWith("{")) {
             try {
@@ -139,14 +147,14 @@ public class MongoDocumentDb implements DocumentDb {
         }
 
         collection.insertOne(myDoc);
-        if (!checkForDocIdIndex(ownerType))
-            createMongoDocIdIndex(ownerType);
+        if (!checkForDocIdIndex(collectionName))
+            createMongoDocIdIndex(collectionName);
     }
 
 
     @Override
     public boolean updateDocument(String ownerType, Long documentId, String content) {
-        MongoCollection<org.bson.Document> collection = getMongoDb().getCollection(ownerType);
+        MongoCollection<org.bson.Document> collection = getMongoDb().getCollection(getCollectionName(ownerType));
         org.bson.Document myDoc = null;
         if (content.startsWith("{")) {
             try {
@@ -171,7 +179,7 @@ public class MongoDocumentDb implements DocumentDb {
 
     @Override
     public boolean deleteDocument(String ownerType, Long documentId) {
-        MongoCollection<org.bson.Document> collection = getMongoDb().getCollection(ownerType);
+        MongoCollection<org.bson.Document> collection = getMongoDb().getCollection(getCollectionName(ownerType));
         return collection.findOneAndDelete(eq("document_id", documentId)) != null;
     }
 
