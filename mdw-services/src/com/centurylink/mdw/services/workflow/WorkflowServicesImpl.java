@@ -636,6 +636,17 @@ public class WorkflowServicesImpl implements WorkflowServices {
         AggregateDataAccess dataAccess = null;
         List<ActivityInstance> aList = activityList.getActivities();
         ArrayList<ActivityInstance> matchActivities = new ArrayList<>();
+        String activityName = query.getFilter("activityName");
+        String decodedActName = "";
+        if (activityName != null) {
+            try {
+                decodedActName = java.net.URLDecoder.decode(activityName, "UTF-8");
+            }
+            catch (UnsupportedEncodingException e) {
+                logger.severe("Unable to decode: " + activityName);
+            }
+        }
+
         for (ActivityInstance activityInstance : aList) {
             Process process = ProcessCache.getProcess(activityInstance.getProcessId());
             if (process == null) {
@@ -663,7 +674,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 String logicalId = activityInstance.getDefinitionId();
                 Activity actdef = process.getActivityById(logicalId);
                 if (actdef != null) {
-                    activityInstance.setName(actdef.getName().replaceAll("\\r", "").replace('\n', ' '));                }
+                    if (!decodedActName.isEmpty() && actdef.getName().startsWith(decodedActName))
+                        matchActivities.add(activityInstance);
+                    activityInstance.setName(actdef.getName().replaceAll("\\r", "").replace('\n', ' '));
+                }
                 else {
                     activityInstance.setName("Unknown (" + activityInstance.getDefinitionId() + ")");
                 }
@@ -672,23 +686,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 activityInstance.setPackageName(process.getPackageName());
             }
         }
-
-        String activityName = query.getFilter("activityName");
-        if (activityName != null) {
-            for (ActivityInstance activityInstance : aList) {
-                try {
-                    String decodedActName = java.net.URLDecoder.decode(activityName, "UTF-8");
-                    if (activityInstance.getName().startsWith(decodedActName)) {
-                        matchActivities.add(activityInstance);
-                    }
-                }
-                catch (UnsupportedEncodingException e) {
-                    logger.severe("Unable to decode: " + activityName);
-                }
-            }
+        if (!decodedActName.isEmpty())
             activityList.setActivities(matchActivities);
-        }
-
         activityList.setCount(activityList.getActivities().size());
         activityList.setTotal(activityList.getActivities().size());
         return activityList;
@@ -999,7 +998,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     public Long launchProcess(String name, String masterRequestId, String ownerType,
-            Long ownerId, Map<String,Object> parameters) throws ServiceException {
+                              Long ownerId, Map<String,Object> parameters) throws ServiceException {
         try {
             Process process = ProcessCache.getProcess(name);
             ProcessEngineDriver driver = new ProcessEngineDriver();
@@ -1012,7 +1011,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     public Long launchProcess(Process process, String masterRequestId, String ownerType,
-            Long ownerId, Map<String,String> params) throws ServiceException {
+                              Long ownerId, Map<String,String> params) throws ServiceException {
         try {
             ProcessEngineDriver driver = new ProcessEngineDriver();
             return driver.startProcess(process.getId(), masterRequestId, ownerType, ownerId, params, null);
@@ -1023,12 +1022,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     public Object invokeServiceProcess(String name, Object masterRequest, String masterRequestId,
-            Map<String,Object> parameters, Map<String,String> headers) throws ServiceException {
+                                       Map<String,Object> parameters, Map<String,String> headers) throws ServiceException {
         return invokeServiceProcess(name, masterRequest, masterRequestId, parameters, headers, null);
     }
 
     public Object invokeServiceProcess(String processName, Object masterRequest, String masterRequestId,
-            Map<String,Object> parameters, Map<String,String> headers, Map<String,String> responseHeaders) throws ServiceException {
+                                       Map<String,Object> parameters, Map<String,String> headers, Map<String,String> responseHeaders) throws ServiceException {
         try {
             Long docId = 0L;
             String request = null;
@@ -1082,12 +1081,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     public String invokeServiceProcess(Process process, String masterRequestId, String ownerType,
-            Long ownerId, Map<String,String> params) throws ServiceException {
+                                       Long ownerId, Map<String,String> params) throws ServiceException {
         return invokeServiceProcess(process, masterRequestId, ownerType, ownerId, params, null);
     }
 
     public String invokeServiceProcess(Process process, String masterRequestId, String ownerType,
-            Long ownerId, Map<String,String> params, Map<String,String> headers) throws ServiceException {
+                                       Long ownerId, Map<String,String> params, Map<String,String> headers) throws ServiceException {
         try {
             ProcessEngineDriver driver = new ProcessEngineDriver();
             String masterRequest = params == null ? null : params.get("request");
@@ -1331,17 +1330,17 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 Object val = parameters.get(key);
                 Variable vo = process.getVariable(key);
                 if (vo == null)
-                  throw new ProcessException("Variable '" + key + "' not found for process: " + process.getName() + " v" + process.getVersionString() + "(id=" + process.getId() + ")");
+                    throw new ProcessException("Variable '" + key + "' not found for process: " + process.getName() + " v" + process.getVersionString() + "(id=" + process.getId() + ")");
                 String translated;
                 if (val instanceof String)
                     translated = (String)val;
                 else {
                     Package pkg = PackageCache.getProcessPackage(process.getId());
                     if (VariableTranslator.isDocumentReferenceVariable(pkg, vo.getType())) {
-                      translated = VariableTranslator.realToString(pkg, vo.getType(), val);
+                        translated = VariableTranslator.realToString(pkg, vo.getType(), val);
                     }
                     else {
-                      translated = VariableTranslator.toString(PackageCache.getProcessPackage(process.getId()), vo.getType(), val);
+                        translated = VariableTranslator.toString(PackageCache.getProcessPackage(process.getId()), vo.getType(), val);
                     }
                 }
                 stringParams.put(key, translated);

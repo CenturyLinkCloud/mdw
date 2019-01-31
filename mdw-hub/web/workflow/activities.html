@@ -14,7 +14,8 @@
             <input type="text" class="form-control mdw-inline" autofocus placeholder="search" spellcheck="false"
               ng-model="model.typeaheadMatchSelection" uib-typeahead="match as match.value for match in findTypeaheadMatches($viewValue)" 
               typeahead-editable="false" typeahead-on-select="typeaheadSelect()" ng-change="typeaheadChange()">
-          </div>  
+          </div>
+          <span class="glyphicon glyphicon-remove mdw-clear-input" ng-click="clearTypeahead()"></span>
         </div>
         
         <!-- NOTE: wrap attribute must be adjusted if action buttons are added or removed -->
