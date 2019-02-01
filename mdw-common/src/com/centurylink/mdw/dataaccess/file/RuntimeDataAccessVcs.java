@@ -810,6 +810,11 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             if (actInstId != null) {
                 sqlBuff.append(" and ai.activity_instance_id  = ").append(actInstId).append("\n");
             }
+
+            String masterRequestId = query.getFilter("masterRequestId");
+            if (masterRequestId != null) {
+                sqlBuff.append(" and pi.master_request_id  = '").append(masterRequestId).append("'\n");
+            }
         }
         if (start != null)
         {
