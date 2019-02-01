@@ -1,7 +1,42 @@
 # Change Log
 
+## [6.1.14](https://github.com/CenturyLinkCloud/mdw/tree/6.1.14) (2019-02-01)
+
+**Compatibility Notes:**
+  - If using an embedded db on a case-sensitive file system where you wish to preserve data, add `--lower_case_table_names=1` 
+    to the db.startup section of mdw.yaml as illustrated in the config guide: https://centurylinkcloud.github.io/mdw/docs/guides/configuration/#mdwyaml.  
+    This change is due to enhancement issue #466.
+  - To take advantage of enhanced dashboard charts introduced by issue #582, it's highly recommended that you add the indexes 
+    commented out at the bottom of the update scripts:   
+     - https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/database/mysql/mdw_upgrade_6.0_To_6.1.sql
+     - https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/database/oracle/mdw_upgrade_6.0_To_6.1.sql
+    Depending on how much existing data is present, these indexes may take a long time to create.
+
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.13...6.1.14)
+
+**Implemented enhancements:**
+
+- Activities list enhanced search and filtering [\#595](https://github.com/CenturyLinkCloud/mdw/issues/595)
+- Update ScheduledJob schedule when annotation changes [\#594](https://github.com/CenturyLinkCloud/mdw/issues/594)
+- More comprehensive MongoDB support  [\#593](https://github.com/CenturyLinkCloud/mdw/issues/593)
+- Show millisecond date/time precision in MDWHub if available [\#591](https://github.com/CenturyLinkCloud/mdw/issues/591)
+- Requests list enhanced search and filtering [\#588](https://github.com/CenturyLinkCloud/mdw/issues/588)
+- Show response times in MDWHub for both inbound and outbound requests [\#587](https://github.com/CenturyLinkCloud/mdw/issues/587)
+- Dashboard charts revamp [\#582](https://github.com/CenturyLinkCloud/mdw/issues/582)
+- Visibility of actual create/due/end date for manual tasks [\#578](https://github.com/CenturyLinkCloud/mdw/issues/578)
+- Remove MySQL/MariaDB lower\_case\_table\_names requirement [\#466](https://github.com/CenturyLinkCloud/mdw/issues/466)
+- DB trace capability for DBCP connections [\#323](https://github.com/CenturyLinkCloud/mdw/issues/323)
+
+**Closed issues:**
+
+- Service flow autotest waits always time out instead of proactively finishing [\#589](https://github.com/CenturyLinkCloud/mdw/issues/589)
+- IllegalStateException due to Spring Boot Mustache autoconfig [\#586](https://github.com/CenturyLinkCloud/mdw/issues/586)
+- War artifact not published using new "maven-publish" gradle plugin [\#577](https://github.com/CenturyLinkCloud/mdw/issues/577)
+- Linkage errors due to eager classloading for @RegisteredService and other annotations [\#561](https://github.com/CenturyLinkCloud/mdw/issues/561)
+- HTTP 500 when querying for Tasks by nonexistent workgroup [\#560](https://github.com/CenturyLinkCloud/mdw/issues/560)
+
 ## [6.1.13](https://github.com/CenturyLinkCloud/mdw/tree/6.1.13) (2019-01-12)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.12...6.1.13)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.11...6.1.13)
 
 **Implemented enhancements:**
 
@@ -37,9 +72,6 @@
 - Publishing to Nexus from Travis CI is broken [\#550](https://github.com/CenturyLinkCloud/mdw/issues/550)
 - Handle empty but non-null request content in TextAdapterActivity [\#545](https://github.com/CenturyLinkCloud/mdw/issues/545)
 - Dashboard charts are broken [\#462](https://github.com/CenturyLinkCloud/mdw/issues/462)
-
-## 6.1.12
-This is a throwaway build due to Maven Central publishing issues.
 
 ## [6.1.11](https://github.com/CenturyLinkCloud/mdw/tree/6.1.11) (2018-11-02)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.09...6.1.11)
