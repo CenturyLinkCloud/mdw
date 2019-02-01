@@ -15,38 +15,36 @@
  */
 package com.centurylink.mdw.model;
 
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Constructor;
+import java.util.*;
+
 /**
- * Used to make instance counts Jsonable.
+ * Used to make aggregate values Jsonable.
  */
 public class JsonListMap<T extends Jsonable> implements Jsonable {
 
-    private Map<String,List<T>> jsonables;
-    public Map<String,List<T>> getJsonables() { return jsonables; }
+    private LinkedHashMap<String,List<T>> jsonables;
+    public LinkedHashMap<String,List<T>> getJsonables() { return jsonables; }
 
-    public JsonListMap(Map<String,List<T>> jsonables) {
+    public JsonListMap(LinkedHashMap<String,List<T>> jsonables) {
         this.jsonables = jsonables;
     }
 
-    public JsonListMap(String name, Map<String,List<T>> jsonables) {
+    @SuppressWarnings("unused")
+    public JsonListMap(String name, LinkedHashMap<String,List<T>> jsonables) {
         this.name = name;
         this.jsonables = jsonables;
     }
 
     public JsonListMap(JSONObject json, Class<T> type) throws JSONException {
-        this.jsonables = new HashMap<String,List<T>>();
+        this.jsonables = new LinkedHashMap<>();
         for (String name : JSONObject.getNames(json)) {
             JSONArray jsonArr = json.getJSONArray(name);
-            List<T> list = new ArrayList<T>();
+            List<T> list = new ArrayList<>();
             for (int i = 0; i < jsonArr.length(); i++) {
                 JSONObject jsonObj = jsonArr.getJSONObject(i);
                 try {
@@ -63,8 +61,18 @@ public class JsonListMap<T extends Jsonable> implements Jsonable {
     }
 
     public JSONObject getJson() throws JSONException {
-
-        JSONObject json = create();
+        JSONObject json = new JsonObject() {
+            public Set<String> keySet() {
+                return jsonables.keySet();
+            }
+            protected Set<Map.Entry<String, Object>> entrySet() {
+                Set<Map.Entry<String,Object>> entries = new LinkedHashSet<>();
+                for (String key : keySet()) {
+                    entries.add(new AbstractMap.SimpleEntry(key, get(key)));
+                }
+                return entries;
+            }
+        };
         for (String key : jsonables.keySet()) {
             JSONArray jsonArr = new JSONArray();
             for (Jsonable jsonable : jsonables.get(key)) {

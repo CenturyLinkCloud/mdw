@@ -202,7 +202,9 @@ public class Processes extends JsonRestService implements JsonExportable {
                     }
                     else if (segOne.equals("insights")) {
                         List<Insight> processInsights = workflowServices.getProcessInsights(query);
-                        return new JsonList<>(processInsights, "insights").getJson();
+                        JsonList<Insight> jsonList = new JsonList<>(processInsights, "insights");
+                        jsonList.setTotal(processInsights.size());
+                        return jsonList.getJson();
                     }
                     else {
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path segment: " + segOne);
