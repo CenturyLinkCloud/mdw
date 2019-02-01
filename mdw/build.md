@@ -33,16 +33,15 @@
   - Compilation or testing errors will prevent the build from being published.
 
 7. After success:
-  Manually close/release from [Nexus Repository Manager](https://oss.sonatype.org/#welcome) (may revisit automating this)
+  Manually close/release from [Nexus Repository Manager](https://oss.sonatype.org/#welcome) (don't want to automating this)
   Verify repository contains artifacts:
   7a. (Formal Build)
-    - Formal build repo : http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (10 min)
-    - Assets: http://repo.maven.apache.org/maven2/com/centurylink/mdw/assets/tests-workflow/  (15 min)
+    - Repository: http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (20-30 min)
   7b. (Snapshot Build)
     - Snapshot repo: https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/
 
 8. (Formal builds only) On GitHub:
-  - Make sure all the closed issues have milestone assigned otherwise they will not be reported in release notes.
+  - Make sure all the closed issues have the current milestone assigned; otherwise they will not be included in release notes.
   - Create a milestone marker for the next build. (https://github.com/CenturyLinkCloud/mdw/milestones/new)
   - Assign any un-delivered issues and pull request for current build's milestone to the next build's milestone.
   - Close this build's milestone in GitHub.
@@ -56,9 +55,9 @@
     github_changelog_generator --no-pull-request  --filter-by-milestone --future-release '6.1.xx' --exclude-labels designer,internal,wontfix,duplicate,documentation
     ```
   - git pull
-  - Review/Update CHANGELOG.md and then: `git commit CHANGELOG.md -m "Release notes [skip ci]"`
-  - git push (pushes generated CHANGELOG.md to GitHub)
-  - Update the new release on GitHub (), copy the notes from updated CHANGELOG.md
+  - Review/Update/Merge CHANGELOG.md (retaining old Compatibility Notes sections).
+  - Commit (with `[skip ci]`) and push merged CHANGELOG.md
+  - Update the new release on GitHub (), copying the notes from updated CHANGELOG.md
 
 10. Run task 1, 2 & 5 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
     - Mark build as "This is a pre-release" on GitHub
