@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.mongodb.MongoClientURI;
+import com.mongodb.client.model.FindOneAndReplaceOptions;
 import org.bson.json.JsonWriterSettings;
 
 import com.centurylink.mdw.dataaccess.db.DocumentDb;
@@ -128,7 +129,7 @@ public class MongoDocumentDb implements DocumentDb {
         String collectionName = getCollectionName(ownerType);
         MongoCollection<org.bson.Document> collection = getMongoDb().getCollection(collectionName);
         org.bson.Document myDoc = null;
-        if (content.startsWith("{")) {
+        if (content != null && content.startsWith("{")) {
             try {
                 // Parse JSON to create BSON CONTENT Document
                 org.bson.Document myJsonDoc = org.bson.Document.parse(content);
@@ -156,7 +157,7 @@ public class MongoDocumentDb implements DocumentDb {
     public boolean updateDocument(String ownerType, Long documentId, String content) {
         MongoCollection<org.bson.Document> collection = getMongoDb().getCollection(getCollectionName(ownerType));
         org.bson.Document myDoc = null;
-        if (content.startsWith("{")) {
+        if (content != null && content.startsWith("{")) {
             try {
                 // Parse JSON to create BSON CONTENT Document
                 org.bson.Document myJsonDoc = org.bson.Document.parse(content);
@@ -173,8 +174,10 @@ public class MongoDocumentDb implements DocumentDb {
             myDoc = new org.bson.Document("CONTENT", content).append("document_id", documentId).append("isJSON", false);
         if (collection.findOneAndReplace(eq("document_id", documentId), myDoc) != null)
             return true;
-        else
-            return false;
+        else {  // Must have been null content initially and being updated now to non-null
+            collection.insertOne(myDoc);
+            return true;
+        }
     }
 
     @Override
