@@ -64,7 +64,17 @@
 
 11. See mdw-ctl-internal build.md.
 
-12. - Upgrade mdw-demo 
+12. Create and publish Docker image
+    - Log into 143 server and sudo su - mdwapp, then go to directory with cloned Git repo (/app/prod/jack/mdw/mdw).
+    - git pull
+    - Create docker image with following command:
+        docker build --build-arg version=6.1.04 -t mdwcore/mdw:6.1.04 .   (update with actual MDW version)
+    - Log into docker using the following command (use your Docker Hub credentials when it prompts you)
+        docker login
+    - Publish image to Docker repository with command
+        docker push mdwcore/mdw:6.1.0X   (update with actual MDW version)
+
+13. - Upgrade mdw-demo 
    - Wait until new build is searchable on Maven Central:    
      https://search.maven.org/search?q=mdw-common (> 2hrs)
    - Update mdw version in the following files:
