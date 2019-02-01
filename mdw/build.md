@@ -57,9 +57,9 @@
   - git pull
   - Review/Update/Merge CHANGELOG.md (retaining old Compatibility Notes sections).
   - Commit (with `[skip ci]`) and push merged CHANGELOG.md
-  - Update the new release on GitHub (), copying the notes from updated CHANGELOG.md
+  - Update the new release on GitHub (https://github.com/CenturyLinkCloud/mdw/releases), copying the notes from updated CHANGELOG.md
 
-10. Run task 1, 2 & 5 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
+10. Run task 1, 2, 3 & 6 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
     - Mark build as "This is a pre-release" on GitHub
 
 11. See mdw-ctl-internal build.md.
