@@ -32,13 +32,19 @@ public class DocumentDbAccess {
     }
 
     public void createDocument(Document doc, Package pkg) {
-        if (documentDb != null)
-            documentDb.createDocument(doc.getOwnerType(), doc.getDocumentId(), doc.getContent(pkg));
+        if (documentDb != null) {
+            String content = doc.getContent(pkg);
+            if (content != null)
+                documentDb.createDocument(doc.getOwnerType(), doc.getDocumentId(), content);
+        }
     }
 
     public boolean updateDocumentContent(String ownerType, Long documentId, String content) {
         if (documentDb != null) {
-            return DatabaseAccess.getDocumentDb().updateDocument(ownerType, documentId, content);
+            if (content == null)  // Remove document if new value/content is null
+                return documentDb.deleteDocument(ownerType, documentId);
+            else
+                return documentDb.updateDocument(ownerType, documentId, content);
         }
         else {
             return false;

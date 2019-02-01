@@ -307,14 +307,15 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         else
             db.runUpdate(query, String.valueOf(args));
         doc.setDocumentId(docId);
+
+        String content = doc.getContent(pkg);
+        if (content == null || "".equals(content))
+            return docId;
+
         if (getDocumentDbAccess().hasDocumentDb()) {
             getDocumentDbAccess().createDocument(doc, pkg);
         }
         else {
-            String content = doc.getContent(pkg);
-            if (content == null || "".equals(content))
-                return docId;
-
             // store in DOCUMENT_CONTENT column
             query = "insert into DOCUMENT_CONTENT (DOCUMENT_ID, CONTENT) values (?, ?)";
             args = new Object[2];
