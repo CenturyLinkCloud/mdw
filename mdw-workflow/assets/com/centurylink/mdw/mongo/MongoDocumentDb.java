@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.mongodb.MongoClientURI;
-import com.mongodb.client.model.FindOneAndReplaceOptions;
+import org.bson.Document;
 import org.bson.json.JsonWriterSettings;
 
 import com.centurylink.mdw.dataaccess.db.DocumentDb;
@@ -91,8 +91,17 @@ public class MongoDocumentDb implements DocumentDb {
                 mongoClient = new MongoClient(new ServerAddress(dbHost, dbPort), options.build());
 
             for (String name : MongoDocumentDb.getMongoDb().listCollectionNames()) {
-                if (name.startsWith(MDW_PREFIX))
-                    createMongoDocIdIndex(name);
+                if (name.startsWith(MDW_PREFIX)) {
+                    boolean needsIndex = true;
+                    for (Document doc : MongoDocumentDb.getMongoDb().getCollection(name).listIndexes()) {
+                        if ("document_id_1".equals(doc.getString("name"))) {
+                            needsIndex = false;
+                            collectionDocIdIndexed.putIfAbsent(name, true);
+                        }
+                    }
+                    if (needsIndex)
+                        createMongoDocIdIndex(name);
+                }
             }
             LoggerUtil.getStandardLogger().info(mongoClient.getMongoClientOptions().toString());
         }
@@ -188,7 +197,7 @@ public class MongoDocumentDb implements DocumentDb {
 
     public static void createMongoDocIdIndex(String collectionName) {
         try {
-            IndexOptions indexOptions = new IndexOptions().unique(true).background(true);
+            IndexOptions indexOptions = new IndexOptions().unique(true).background(true).name("document_id_1");
             MongoCollection<org.bson.Document> collection = MongoDocumentDb.getMongoDb().getCollection(collectionName);
             String indexName = collection.createIndex(Indexes.ascending("document_id"), indexOptions);
             LoggerUtil.getStandardLogger().mdwDebug("Created Index : " + indexName + " on collection : " + collectionName);
