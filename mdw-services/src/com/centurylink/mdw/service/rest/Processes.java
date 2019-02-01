@@ -15,41 +15,21 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import javax.ws.rs.Path;
-
-import com.centurylink.mdw.constant.OwnerType;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.JsonArray;
-import com.centurylink.mdw.model.JsonExportable;
-import com.centurylink.mdw.model.JsonListMap;
-import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.Status;
-import com.centurylink.mdw.model.Value;
+import com.centurylink.mdw.model.*;
 import com.centurylink.mdw.model.Value.Display;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.model.workflow.LinkedProcessInstance;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.ProcessAggregate;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.ProcessList;
-import com.centurylink.mdw.model.workflow.ProcessRun;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ProcessServices;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -59,11 +39,18 @@ import com.centurylink.mdw.util.JsonUtil;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Path("/Processes")
 @Api("MDW process instances and values")
@@ -212,6 +199,10 @@ public class Processes extends JsonRestService implements JsonExportable {
                         }
 
                         return new JsonListMap<>(listMap).getJson();
+                    }
+                    else if (segOne.equals("insights")) {
+                        List<Insight> processInsights = workflowServices.getProcessInsights(query);
+                        return new JsonList<>(processInsights, "insights").getJson();
                     }
                     else {
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path segment: " + segOne);

@@ -35,10 +35,8 @@ import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.dataaccess.reports.ActivityAggregation;
 import com.centurylink.mdw.dataaccess.reports.AggregateDataAccess;
 import com.centurylink.mdw.dataaccess.reports.ProcessAggregation;
-import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.StringDocument;
-import com.centurylink.mdw.model.Value;
+import com.centurylink.mdw.dataaccess.reports.ProcessInsights;
+import com.centurylink.mdw.model.*;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetHeader;
 import com.centurylink.mdw.model.asset.AssetInfo;
@@ -55,9 +53,9 @@ import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
@@ -87,6 +85,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.*;
 
 public class WorkflowServicesImpl implements WorkflowServices {
@@ -568,7 +567,16 @@ public class WorkflowServicesImpl implements WorkflowServices {
             return map;
         }
         catch (DataAccessException ex) {
-            throw new ServiceException(500, "Error retrieving process instance breakdown: query=" + query, ex);
+            throw new ServiceException(500, "Error retrieving process breakdown: query=" + query, ex);
+        }
+    }
+
+    public List<Insight> getProcessInsights(Query query) throws ServiceException {
+        try {
+            return new ProcessInsights().getInsights(query);
+        }
+        catch (SQLException | ParseException ex) {
+            throw new ServiceException(500, "Error retrieving process insights: query=" + query, ex);
         }
     }
 
