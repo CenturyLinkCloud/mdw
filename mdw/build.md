@@ -2,50 +2,52 @@
 
 ### TODO: avoid signing snapshots?
 
-1 - Edit these files to set the new build number:
-    mdw/gradle.properties:
-      - mdwVersion
-      - mdwPrevTag
-    mdw/project.yaml:
-      - mdw.version
-    mdw/cli/tests/quickstart.bats (line 53 -- skip for formal builds, add back for snapshots)
-    mdw/cli/tests/convert.bats (line 18 -- skip formal builds, add back for snapshots)
-      - comment/uncomment skip (formal)
-        (TODO: better way of handling)
+1. Edit these files to set the new build number:
+  - mdw/gradle.properties:
+    - mdwVersion
+    - mdwPrevTag
+  - mdw/project.yaml:
+    - mdw.version
 
-2 - Run Gradle task updateMdwVerInFiles to update these files:
+2. Run Gradle task updateMdwVerInFiles to update these files:
   - mdw-hub/package.json
   - RestApiDefinition.java
   - all package.yaml files
 
-3 - (Brand new point-release -- eg: moving from 6.1 to 6.2):
+3. Comment/uncomment these CLI tests:
+  - mdw/cli/tests/quickstart.bats (line 52 -- skip for formal/1st shapshot build, add back for second/subsequent snapshots)
+  - mdw/cli/tests/convert.bats (line 18 -- skip for formal/1st snapshot builds, add back for second/subsequent snapshots)
+      - comment/uncomment skip (formal)
+        TODO: better way of handling -- this is because mdw.version is something that hasn't been published yet (formal and first snapshot)
+
+4. (Brand new point-release -- eg: moving from 6.1 to 6.2):
   - Clean out schemaUpgradeQueries in mdw-common/src/META-INF/mdw/db/mysql.json and oracle.json.
 
-4 - (Formal builds only) Clean Tag
-  - Go to https://github.com/CenturyLinkCloud/mdw/tags
+5 - (Formal builds only) Clean Tag
+  - Open browser to https://github.com/CenturyLinkCloud/mdw/tags
   - Delete SNAPSHOT release and tag
   - git pull
 
-5 - Commit and push all the above changes to Git (normally gradle.properties and project.yaml).
+6 - Commit and push all the above changes to Git (normally gradle.properties, project.yaml and maybe CLI tests).
   - Travis CI will run the build, tests and publish to maven-central or sonatype.
   - Compilation or testing errors will prevent the build from being published.
 
-6 - After success:
+7 - After success:
   Manually close/release from [Nexus Repository Manager](https://oss.sonatype.org/#welcome) (may revisit automating this)
   Verify repository contains artifacts:
-  6a. (Formal Build)
+  7a. (Formal Build)
     - Formal build repo : http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (10 min)
     - Assets: http://repo.maven.apache.org/maven2/com/centurylink/mdw/assets/tests-workflow/  (15 min)
-  6b. (Snapshot Build)
+  7b. (Snapshot Build)
     - Snapshot repo: https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/
 
-7 - (Formal builds only) On GitHub:
+8 - (Formal builds only) On GitHub:
   - Make sure all the closed issues have milestone assigned otherwise they will not be reported in release notes.
   - Create a milestone marker for the next build. (https://github.com/CenturyLinkCloud/mdw/milestones/new)
   - Assign any un-delivered issues and pull request for current build's milestone to the next build's milestone.
   - Close this build's milestone in GitHub.
 
-8 - Release Notes
+9 - Release Notes
   - If you are doing it first time then install ruby (https://github.com/CenturyLinkCloud/mdw#documentation) and do following in root of your workspace dir
     `gem install github_changelog_generator`
   - Set the CHANGELOG_GITHUB_TOKEN environment variable to your 40 digit token from GitHub
@@ -58,10 +60,10 @@
   - git push (pushes generated CHANGELOG.md to GitHub)
   - Update the new release on GitHub (), copy the notes from updated CHANGELOG.md
 
-9 - Run task 1, 2 & 5 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
+10 - Run task 1, 2 & 5 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
     - Mark build as "This is a pre-release" on GitHub
 
-10 - Create and publish Docker image
+11 - Create and publish Docker image
     - Log into 143 server and sudo su - mdwapp, then go to directory with cloned Git repo (/app/prod/jack/mdw/mdw).
     - git pull
     - Create docker image with following command:
@@ -71,7 +73,7 @@
     - Publish image to Docker repository with command
         docker push mdwcore/mdw:6.1.0X   (update with actual MDW version)
 
-11 - Upgrade mdw-demo (Need to wait until asset zips are queryable on Maven Central):
+12 - Upgrade mdw-demo (Need to wait until asset zips are queryable on Maven Central):
    - Update mdw version in the following files:
        - mdw-demo/gradle.properties
        - mdw-demo/pom.xml
