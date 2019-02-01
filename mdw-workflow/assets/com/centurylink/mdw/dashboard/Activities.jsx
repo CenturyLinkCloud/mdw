@@ -1,14 +1,32 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import statuses from '../react/statuses';
+import constants from '../react/constants';
 import DashboardChart from './DashboardChart.jsx';
 
 class Activities extends Component {
 
   constructor(...args) {
     super(...args);
+    this.handleOverviewDataClick = this.handleOverviewDataClick.bind(this); 
   }
   
+  // TODO populate activity name filter
+  handleOverviewDataClick(breakdown, selection, filters) {
+    var activityFilter = sessionStorage.getItem('activityFilter');
+    activityFilter = activityFilter ? JSON.parse(activityFilter) : {};
+    if (breakdown === 'Status') {
+      activityFilter.status = selection.name;
+    }
+    else if (filters.Status) {
+      activityFilter.status = filters.Status;
+    }
+    const start = filters.Starting;
+    activityFilter.startDate = start.getFullYear().toString() + '-' + constants.months[start.getMonth()] + '-' + start.getDate();
+    sessionStorage.setItem('activityFilter', JSON.stringify(activityFilter));
+    location = this.context.hubRoot + '/#/workflow/activities';
+  }
+
   render() {
 
     const breakdownConfig = {
@@ -40,13 +58,14 @@ class Activities extends Component {
         Status: ''
       },
       filterOptions: {
-        Status: statuses.activity
+        Status: Object.keys(statuses.activity)
       }
     };
 
     return (
       <DashboardChart title="Stuck Activities"
         breakdownConfig={breakdownConfig}
+        onOverviewDataClick={this.handleOverviewDataClick}
         list="#/workflow/activities" />
     );
   }

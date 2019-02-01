@@ -20,15 +20,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Standard parameters:
@@ -48,7 +40,6 @@ public class Query {
     public static final int MAX_ALL = -1;
 
     public Query() {
-
     }
 
     public Query(String path) {
@@ -243,6 +234,33 @@ public class Query {
         return value == null ? null : Instant.parse(value);
     }
 
+    public enum Timespan {
+        Day (24*3600*1000),
+        Week (Day.millis * 7),
+        Month (Day.millis * 30);
+
+        private final int millis;
+        public int millis() { return millis; }
+
+        Timespan(int millis) {
+            this.millis = millis;
+        }
+    }
+
+    public Timespan getTimespanFilter(String key) {
+        String span = getFilter(key);
+        if (span == null) {
+            return Timespan.Week;
+        }
+        else {
+            try {
+                return Timespan.valueOf(span);
+            } catch (IllegalArgumentException ex) {
+                return null;
+            }
+        }
+    }
+
     public Query setFilter(String key, Date date) {
         String value = getString(date);
         if (value == null)
@@ -280,41 +298,6 @@ public class Query {
             else
                 return getDateTimeFormat().format(date);
         }
-    }
-    /**
-     * Support ISO8601 format for a Date YYYY-MM-dd
-     * @param str
-     * @return a Date object
-     * @throws ParseException
-     */
-    public static Date getISO8601Date(String str) throws ParseException {
-        // Use thread safe Java 8 version
-        return Date.from(LocalDate.parse(str, DateTimeFormatter.ISO_DATE).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-    }
-    /**
-     *
-     * @param date
-     * @return
-     * @throws ParseException
-     */
-    public static String getISO8601DateString(Date date) {
-        if (date == null)
-            return null;
-        else {
-            Calendar c = Calendar.getInstance();
-            c.setTime(date);
-            return new SimpleDateFormat("yyyy-MM-dd").format(date);
-        }
-    }
-    /**
-     * Support ISO8601 format for a DateTime yyyy-MM-dd'T'HH:mm:ss'Z'
-     * @param str
-     * @return a Date object
-     * @throws ParseException
-     */
-    public static Date getISO8601DateTime(String str) throws ParseException {
-        // Use thread safe Java 8 version
-        return Date.from(LocalDateTime.parse(str, DateTimeFormatter.ISO_DATE_TIME).atZone(ZoneId.systemDefault()).toInstant());
     }
 
     /**
