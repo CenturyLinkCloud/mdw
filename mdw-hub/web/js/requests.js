@@ -49,6 +49,12 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', 'md
   if ($scope.requestFilter.path) {
       $scope.typeaheadMatchSelection = $scope.requestFilter.path;
   }
+  else if ($scope.requestFilter.id) {
+      $scope.typeaheadMatchSelection = $scope.requestFilter.id;
+  }
+  else if ($scope.requestFilter.masterRequestId) {
+      $scope.typeaheadMatchSelection = $scope.requestFilter.masterRequestId;
+  }
 
   $scope.setRequestType = function(requestType) {
     $scope.typeaheadMatchSelection = null;

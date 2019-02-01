@@ -152,8 +152,14 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
     $scope.$parent.digest(); // to show mdw.messages
   };
 
-  if ($scope.model.activityFilter.activityName) {
+  if ($scope.model.activityFilter.masterRequestId) {
+    $scope.model.typeaheadMatchSelection = $scope.model.activityFilter.masterRequestId;
+  }
+  else if ($scope.model.activityFilter.activityName) {
     $scope.model.typeaheadMatchSelection = $scope.model.activityFilter.activityName;
+  }
+  else if ($scope.model.activityFilter.instanceId) {
+    $scope.model.typeaheadMatchSelection = $scope.model.activityFilter.instanceId;
   }
 
   // activity instanceId, masterRequestId, activity name
