@@ -6,6 +6,7 @@ import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.Insight;
+import com.centurylink.mdw.model.workflow.WorkStatuses;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,32 +24,50 @@ public class ProcessInsights extends CommonDataAccess {
         PreparedWhere where = getWhere(query);
         String sql = "select count(pi.status_cd) as ct, pi.st, pi.status_cd\n" +
                 "from (select date(start_dt) as st, status_cd \n" +
-                "  from PROCESS_INSTANCE\n" + where.getWhere() +
+                "  from PROCESS_INSTANCE\n" + where.getWhere() + ") pi\n" +
                 "group by st, status_cd\n" +
                 "order by st";
 
         List<Insight> insights = new ArrayList<>();
         Date prevStart = getStartDate(query);
-        db.openConnection();
-        ResultSet rs = db.runSelect("Process insights ", sql, where.getParams());
-        while (rs.next()) {
-            String startStr = rs.getString("st");
-            Date start = getDateFormat().parse(startStr);
+        try {
+            db.openConnection();
+            ResultSet rs = db.runSelect("Process insights ", sql, where.getParams());
+            // TODO: check missing start date
+            while (rs.next()) {
+                String startStr = rs.getString("st");
+                Date start = getDateFormat().parse(startStr);
 
-            // fill in gaps
-            while (start.getTime() - prevStart.getTime() > Query.Timespan.Day.millis()) {
+                // fill in gaps
+                while (start.getTime() - prevStart.getTime() > Query.Timespan.Day.millis()) {
+                    prevStart = new Date(prevStart.getTime() + Query.Timespan.Day.millis());
+                    insights.add(new Insight(getRoundDate(prevStart).toInstant(), new LinkedHashMap<>()));
+                }
+
+                Insight insight = insights.stream().filter(in -> in.getTime().equals(start.toInstant())).findAny().orElse(null);
+                if (insight == null) {
+                    LinkedHashMap<String,Integer> map = new LinkedHashMap<>();
+                    insight = new Insight(getRoundDate(start).toInstant(), map);
+                    insights.add(insight);
+                }
+
+                String status = WorkStatuses.getName(rs.getInt("status_cd"));
+                insight.getElements().put(status, rs.getInt("ct"));
+
+                prevStart = start;
+            }
+            // gaps at end
+            Date endDate = new Date(System.currentTimeMillis() + DatabaseAccess.getDbTimeDiff());
+            while ((endDate.getTime() - prevStart.getTime()) > Query.Timespan.Day.millis()) {
                 prevStart = new Date(prevStart.getTime() + Query.Timespan.Day.millis());
-                Insight insight = new Insight(getRoundDate(prevStart).toInstant(), new LinkedHashMap<>());
-                insights.add(insight);
+                insights.add(new Insight(getRoundDate(prevStart).toInstant(), new LinkedHashMap<>()));
             }
 
-            LinkedHashMap<String,Integer> elements = new LinkedHashMap<>();
-
-
-
+            return insights;
         }
-
-        return insights;
+        finally {
+            db.closeConnection();
+        }
     }
 
     private PreparedWhere getWhere(Query query) throws ServiceException {
@@ -72,8 +91,8 @@ public class ProcessInsights extends CommonDataAccess {
     }
 
     private Long getProcessId(Query query) throws ServiceException {
-        Long processId = query.getLongFilter("processId");
-        if (processId == null)
+        long processId = query.getLongFilter("processId");
+        if (processId == -1)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing query param: processId");
         return processId;
     }
