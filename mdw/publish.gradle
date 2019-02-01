@@ -101,7 +101,7 @@ task updateHubPackageJson {
 }
 
 task updateMdwVerInAssetPackages {
-    description = "Update Asset Package Version" + mdwVersion
+    description = "Update Asset Package Version: " + mdwVersion
     def assetRootPath = file("../${mdwAssetRoot}").toString()
     def mdwPkgVer = mdwVersion;
     if (mdwVersion.endsWith("-SNAPSHOT"))
