@@ -44,6 +44,8 @@ import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.model.report.Insight;
+import com.centurylink.mdw.model.report.Timepoint;
 import com.centurylink.mdw.model.system.SysInfo;
 import com.centurylink.mdw.model.system.SysInfoCategory;
 import com.centurylink.mdw.model.task.TaskInstance;
@@ -577,6 +579,15 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
         catch (SQLException | ParseException ex) {
             throw new ServiceException(500, "Error retrieving process insights: query=" + query, ex);
+        }
+    }
+
+    public List<Timepoint> getProcessTrend(Query query) throws ServiceException {
+        try {
+            return new ProcessInsights().getTrend(query);
+        }
+        catch (SQLException | ParseException ex) {
+            throw new ServiceException(500, "Error retrieving process trend: query=" + query, ex);
         }
     }
 

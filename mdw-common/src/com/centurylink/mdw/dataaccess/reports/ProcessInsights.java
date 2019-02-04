@@ -5,7 +5,8 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.model.Insight;
+import com.centurylink.mdw.model.report.Insight;
+import com.centurylink.mdw.model.report.Timepoint;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 
 import java.sql.ResultSet;
@@ -21,19 +22,18 @@ import static com.centurylink.mdw.dataaccess.reports.AggregateDataAccess.getRoun
 public class ProcessInsights extends CommonDataAccess {
 
     public List<Insight> getInsights(Query query) throws SQLException, ParseException, ServiceException {
-        PreparedWhere where = getWhere(query);
+        PreparedWhere where = getWhere(query, false);
         String sql = "select count(pi.status_cd) as ct, pi.st, pi.status_cd\n" +
-                "from (select date(start_dt) as st, status_cd \n" +
+                "from (select date(start_dt) as st, status_cd\n" +
                 "  from PROCESS_INSTANCE\n" + where.getWhere() + ") pi\n" +
                 "group by st, status_cd\n" +
                 "order by st";
 
-        List<Insight> insights = new ArrayList<>();
-        Date prevStart = getStartDate(query);
         try {
             db.openConnection();
+            List<Insight> insights = new ArrayList<>();
+            Date prevStart = getStartDate(query);
             ResultSet rs = db.runSelect("Process insights ", sql, where.getParams());
-            // TODO: check missing start date
             while (rs.next()) {
                 String startStr = rs.getString("st");
                 Date start = getDateFormat().parse(startStr);
@@ -70,7 +70,32 @@ public class ProcessInsights extends CommonDataAccess {
         }
     }
 
-    private PreparedWhere getWhere(Query query) throws ServiceException {
+    public List<Timepoint> getTrend(Query query) throws SQLException, ParseException, ServiceException {
+        PreparedWhere where = getWhere(query, true);
+        String sql = "select avg(pi.elapsed_ms) as ms, pi.st\n" +
+                "from (select date(start_dt) as st, elapsed_ms\n" +
+                "  from PROCESS_INSTANCE, INSTANCE_TIMING\n" + where.getWhere() + ") pi\n" +
+                "group by st\n" +
+                "order by st";
+
+        try {
+            db.openConnection();
+            List<Timepoint> timepoints = new ArrayList<>();
+            ResultSet rs = db.runSelect("Process trend ", sql, where.getParams());
+            while (rs.next()) {
+                String startStr = rs.getString("st");
+                Date start = getDateFormat().parse(startStr);
+
+                timepoints.add(new Timepoint(getRoundDate(start).toInstant(), Math.round(rs.getDouble("ms"))));
+            }
+            return timepoints;
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    private PreparedWhere getWhere(Query query, boolean isTrend) throws ServiceException {
         StringBuilder where = new StringBuilder();
         List<Object> params = new ArrayList<>();
 
@@ -80,11 +105,13 @@ public class ProcessInsights extends CommonDataAccess {
         where.append("  and process_id = ?\n");
         params.add(getProcessId(query));
 
-        String cross = query.getFilter("cross");
-        if ("completionTime".equals(cross)) {
-            where.append("  and owner_type = ?\n");
-            params.add("PROCESS_INSTANCE");
-            where.append("  and instance_id == process_instance_id");
+        if (isTrend) {
+            String trend = query.getFilter("trend");
+            if ("completionTime".equals(trend)) {
+                where.append("  and owner_type = ?\n");
+                params.add("PROCESS_INSTANCE");
+                where.append("  and instance_id = process_instance_id");
+            }
         }
 
         return new PreparedWhere(where.toString(), params.toArray());

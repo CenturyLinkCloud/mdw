@@ -1,6 +1,6 @@
 package com.centurylink.mdw.dataaccess.reports;
 
-import com.centurylink.mdw.model.Aggregate;
+import com.centurylink.mdw.model.report.Aggregate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

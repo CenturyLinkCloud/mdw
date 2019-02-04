@@ -87,7 +87,6 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "ProcessAggregation.getTopsByCompletionTime()");
         return getTopAggregates(query, preparedSelect, resultSet -> {
-            long ct = Math.round(resultSet.getDouble("ct"));
             Long elapsed = Math.round(resultSet.getDouble("elapsed"));
             ProcessAggregate processAggregate = new ProcessAggregate(elapsed);
             processAggregate.setCount(resultSet.getLong("ct"));

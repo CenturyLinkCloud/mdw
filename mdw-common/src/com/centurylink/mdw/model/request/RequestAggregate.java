@@ -15,7 +15,7 @@
  */
 package com.centurylink.mdw.model.request;
 
-import com.centurylink.mdw.model.Aggregate;
+import com.centurylink.mdw.model.report.Aggregate;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.StatusResponse;
 import org.json.JSONException;

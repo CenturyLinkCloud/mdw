@@ -22,8 +22,7 @@ import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.PreparedSelect;
 import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.model.Aggregate;
-import com.centurylink.mdw.model.workflow.ProcessAggregate;
+import com.centurylink.mdw.model.report.Aggregate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.function.Supplier;
 
 public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDataAccess {
 
@@ -83,6 +81,7 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
         roundDate.setHours(0);
         roundDate.setMinutes(0);
         roundDate.setSeconds(0);
+        roundDate.setTime((roundDate.getTime() / 1000) * 1000);
         return roundDate;
     }
 
