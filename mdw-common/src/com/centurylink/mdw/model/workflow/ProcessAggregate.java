@@ -15,7 +15,7 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import com.centurylink.mdw.model.Aggregate;
+import com.centurylink.mdw.model.report.Aggregate;
 import com.centurylink.mdw.model.Jsonable;
 import org.json.JSONException;
 import org.json.JSONObject;

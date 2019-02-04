@@ -332,6 +332,7 @@ class DashboardChart extends Component {
     const lineData = {labels: [], datasets: []};
     var datasets = {}; // id to dataset
     const chartColors = this.getChartColors();
+    let year = new Date().getFullYear();
     if (this.state.selected.length > 0) {
       this.state.selected.forEach((sel, i) => {
         let dataset = {label: sel.name, borderColor: chartColors[i], data: [], fill: false};
@@ -339,7 +340,7 @@ class DashboardChart extends Component {
         lineData.datasets.push(dataset);
         Object.keys(this.state.data).forEach(key => {
           if (i === 0) {
-            lineData.labels.push(key);
+            lineData.labels.push(key.startsWith(year + '-') ? key.substr(5) : key);
           }
           const aggs = this.state.data[key];
           const selAgg = aggs.find(agg => agg.id === sel.id);
@@ -351,7 +352,7 @@ class DashboardChart extends Component {
       let dataset = {borderColor: chartColors[0], data: [], fill: false};
       lineData.datasets.push(dataset);
       Object.keys(this.state.data).forEach(key => {
-        lineData.labels.push(key);
+        lineData.labels.push(key.startsWith(year + '-') ? key.substr(5) : key);
         let point = this.state.data[key][0];
         if (point) {
           dataset.data.push(point.value);
@@ -409,11 +410,10 @@ class DashboardChart extends Component {
         <div className="mdw-section" style={{display:'flex'}}>
           {topsLoading &&
             <div className="mdw-chart-title" style={{minWidth:'250px'}}>
-              Loading...
             </div>
           }
           {breakdown.tops && !topsLoading &&
-            <div style={{maxWidth:'303px',maxHeight:'303px'}}>
+            <div style={{maxWidth:'282px',maxHeight:'282px'}}>
               {(!breakdown.summaryChart || breakdown.summaryChart === 'donut') &&
                 <Doughnut
                   data={overviewData}
@@ -430,12 +430,11 @@ class DashboardChart extends Component {
               }
               <ChartLegend
                 colors={this.getChartColors()}
-                tops={this.state.tops}
-                selected={this.state.selected} />
+                items={this.state.selected} />
             </div>
           }
           {!breakdown.tops && !topsLoading &&
-            <div className="mdw-chart-title" style={{width:'320px'}}>
+            <div className="mdw-chart-title" style={{width:'250px'}}>
               {breakdown.name}
             </div>
           }

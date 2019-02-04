@@ -17,9 +17,10 @@ package com.centurylink.mdw.services;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.Insight;
+import com.centurylink.mdw.model.report.Insight;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.event.Event;
+import com.centurylink.mdw.model.report.Timepoint;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
@@ -139,6 +140,7 @@ public interface WorkflowServices {
     List<ProcessAggregate> getTopProcesses(Query query) throws ServiceException;
     TreeMap<Date,List<ProcessAggregate>> getProcessBreakdown(Query query) throws ServiceException;
     List<Insight> getProcessInsights(Query query) throws ServiceException;
+    List<Timepoint> getProcessTrend(Query query) throws ServiceException;
 
     List<ActivityAggregate> getTopActivities(Query query) throws ServiceException;
     TreeMap<Date,List<ActivityAggregate>> getActivityBreakdown(Query query) throws ServiceException;

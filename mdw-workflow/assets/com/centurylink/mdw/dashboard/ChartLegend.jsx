@@ -1,31 +1,32 @@
 import React from '../node/node_modules/react';
 
+// items prop should have id, name (and optionally packageName/version and count/value)
 function ChartLegend(props) {
 
-  function getLabel(sel) {
+  function getLabel(item) {
     var label = '';
-    const top = props.tops.find(t => t.id === sel.id);
-    if (top) {
-      label += top.name;
+    const found = props.items.find(it => it.id === item.id);
+    if (found) {
+      label += found.name;
       if (label.startsWith('http://') || label.startsWith('https://')) {
         label = new URL(label).pathname;
       }
-      if (top.value || top.count) {
-        label += ' (' + (top.count ? top.count : top.value) + ')';
+      if (found.value || found.count) {
+        label += ' (' + (found.count ? found.count : found.value) + ')';
       }
     }
     return label;
   }
 
-  function getTitle(sel) {
+  function getTitle(item) {
     var title = '';
-    const top = props.tops.find(t => t.id === sel.id);
-    if (top) {
-      title += top.name;
-      if (top.packageName) {
-        title = top.packageName + '/' + title;
-        if (top.version) {
-          title += ' v' + top.version;
+    const found = props.items.find(it => it.id === item.id);
+    if (found) {
+      title += found.name;
+      if (found.packageName) {
+        title = found.packageName + '/' + title;
+        if (found.version) {
+          title += ' v' + found.version;
         }
       }
     }
@@ -34,15 +35,17 @@ function ChartLegend(props) {
 
   return (
     <ul className="mdw-chart-legend">
-      {props.selected &&
-        props.selected.map((sel, i) => {
+      {props.items &&
+        props.items.map((item, i) => {
+          let backgroundColor = item.color ? item.color : props.colors[i];
+          let borderColor = item.borderColor ? item.borderColor : backgroundColor;
           return (
             <li key={i}>
               <span className="mdw-chart-legend-icon"
-                style={{backgroundColor: props.colors[i], borderColor: props.colors[i]}}>
+                style={{backgroundColor: backgroundColor, borderColor: borderColor}}>
               </span>
-              <span className="mdw-chart-legend-text" title={getTitle(sel)}>
-                  {getLabel(sel)}
+              <span className="mdw-chart-legend-text" title={getTitle(item)}>
+                  {getLabel(item)}
               </span>
             </li>
           );

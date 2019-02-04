@@ -239,10 +239,10 @@ public class Query {
         Week (Day.millis * 7),
         Month (Day.millis * 30);
 
-        private final int millis;
-        public int millis() { return millis; }
+        private final long millis;
+        public long millis() { return millis; }
 
-        Timespan(int millis) {
+        Timespan(long millis) {
             this.millis = millis;
         }
     }

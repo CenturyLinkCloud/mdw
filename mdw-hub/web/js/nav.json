@@ -63,6 +63,12 @@
             "priority": 1
           },
           {
+            "label": "Process Insights",
+            "path": "dashboard/processInsights",
+            "href": "/dashboard/processInsights",
+            "priority": 1
+          },
+          {
             "label": "Tasks",
             "path": "dashboard/tasks",
             "href": "/dashboard/tasks",

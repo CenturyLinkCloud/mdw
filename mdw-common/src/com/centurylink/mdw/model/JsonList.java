@@ -25,8 +25,7 @@ public class JsonList<E extends Jsonable> extends io.limberest.json.JsonList<E> 
         super(list, jsonName);
     }
 
-    public JSONObject toJson() {
-        return getJson();
+    public JSONObject getJson() {
+        return toJson();
     }
-
 }

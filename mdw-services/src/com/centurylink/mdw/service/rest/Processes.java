@@ -25,6 +25,8 @@ import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.*;
 import com.centurylink.mdw.model.Value.Display;
 import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.model.report.Insight;
+import com.centurylink.mdw.model.report.Timepoint;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.variable.Variable;
@@ -114,7 +116,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                         return getSummaryJson(process);
                     }
                     else {
-                        JSONObject json = null;
+                        JSONObject json;
                         if (query.getBooleanFilter("shallow"))
                             json = ServiceLocator.getProcessServices().getInstanceShallow(id).getJson();
                         else if (query.getBooleanFilter("nosubs"))
@@ -204,7 +206,13 @@ public class Processes extends JsonRestService implements JsonExportable {
                         List<Insight> processInsights = workflowServices.getProcessInsights(query);
                         JsonList<Insight> jsonList = new JsonList<>(processInsights, "insights");
                         jsonList.setTotal(processInsights.size());
-                        return jsonList.getJson();
+                        JSONObject json = jsonList.getJson();
+                        String trend = query.getFilter("trend");
+                        if ("completionTime".equals(trend)) {
+                            List<Timepoint> timepoints = workflowServices.getProcessTrend(query);
+                            json.put("trend", new JsonList<>(timepoints, "trend").getJson().getJSONArray("trend"));
+                        }
+                        return json;
                     }
                     else {
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path segment: " + segOne);
@@ -232,9 +240,9 @@ public class Processes extends JsonRestService implements JsonExportable {
                             Map<String,String> variables = getParameters(headers);
                             variables = getVariables(variables);
 
-                            int pageIndex = headers.get("pageIndex") == null ? 0 : Integer.parseInt((String)headers.get("pageIndex"));
-                            int pageSize = headers.get("pageSize") == null ? 0 : Integer.parseInt((String)headers.get("pageSize"));
-                            String orderBy = (String)headers.get("orderBy");
+                            int pageIndex = headers.get("pageIndex") == null ? 0 : Integer.parseInt(headers.get("pageIndex"));
+                            int pageSize = headers.get("pageSize") == null ? 0 : Integer.parseInt(headers.get("pageSize"));
+                            String orderBy = headers.get("orderBy");
 
                             ProcessList procList = processServices.getInstances(criteria, variables, pageIndex, pageSize, orderBy);
                             return procList.getJson();
@@ -454,15 +462,10 @@ public class Processes extends JsonRestService implements JsonExportable {
 
             return null;
         }
-        catch (NumberFormatException ex) {
+        catch (NumberFormatException | ParseException ex) {
             logger.severeException(ex.getMessage(), ex);
             throw new ServiceException(ServiceException.BAD_REQUEST, ex.getMessage());
-        }
-        catch (ParseException ex) {
-            logger.severeException(ex.getMessage(), ex);
-            throw new ServiceException(ServiceException.BAD_REQUEST, ex.getMessage());
-        }
-        catch (DataAccessException ex) {
+        } catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
@@ -482,25 +485,25 @@ public class Processes extends JsonRestService implements JsonExportable {
     }
 
     private Map<String,String> getVariables(Map<String,String> params) {
-        Map<String,String> variables = new HashMap<String,String>();
+        Map<String,String> variables = new HashMap<>();
         for (String key : params.keySet()) {
             if (!processParams.contains(key) && !standardParams.contains(key)) {
-                variables.put(key, (String)params.get(key));
+                variables.put(key, params.get(key));
             }
         }
         return variables.isEmpty() ? null : variables;
     }
 
     private Map<String,String> getCriteria(Map<String,String> params) {
-        Map<String,String> criteria = new HashMap<String,String>();
+        Map<String,String> criteria = new HashMap<>();
         for (String key : params.keySet()) {
             if (processParams.contains(key))
-                criteria.put(key, (String)params.get(key));
+                criteria.put(key, params.get(key));
         }
         return criteria.isEmpty() ? null : criteria;
     }
 
-    private static List<String> processParams = Arrays.asList(new String[] {
+    private static final List<String> processParams = Arrays.asList(new String[] {
             "processId",
             "processIdList",
             "processName",
@@ -519,7 +522,7 @@ public class Processes extends JsonRestService implements JsonExportable {
             "endDateTo",
             "endDateto" });
 
-    private static List<String> standardParams = Arrays.asList(new String[] {
+    private static final List<String> standardParams = Arrays.asList(new String[] {
             "pageIndex",
             "pageSize",
             "orderBy",
