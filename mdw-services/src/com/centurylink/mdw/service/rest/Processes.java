@@ -25,6 +25,7 @@ import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.*;
 import com.centurylink.mdw.model.Value.Display;
 import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.model.report.Hotspot;
 import com.centurylink.mdw.model.report.Insight;
 import com.centurylink.mdw.model.report.Timepoint;
 import com.centurylink.mdw.model.user.Role;
@@ -213,6 +214,12 @@ public class Processes extends JsonRestService implements JsonExportable {
                             json.put("trend", new JsonList<>(timepoints, "trend").getJson().getJSONArray("trend"));
                         }
                         return json;
+                    }
+                    else if (segOne.equals("hotspots")) {
+                        List<Hotspot> processHotspots = workflowServices.getProcessHotspots(query);
+                        JsonList<Hotspot> jsonList = new JsonList<>(processHotspots, "hotspots");
+                        jsonList.setTotal(processHotspots.size());
+                        return jsonList.getJson();
                     }
                     else {
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path segment: " + segOne);

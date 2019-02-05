@@ -17,6 +17,7 @@ package com.centurylink.mdw.services;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.report.Hotspot;
 import com.centurylink.mdw.model.report.Insight;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.event.Event;
@@ -141,6 +142,7 @@ public interface WorkflowServices {
     TreeMap<Date,List<ProcessAggregate>> getProcessBreakdown(Query query) throws ServiceException;
     List<Insight> getProcessInsights(Query query) throws ServiceException;
     List<Timepoint> getProcessTrend(Query query) throws ServiceException;
+    List<Hotspot> getProcessHotspots(Query query) throws ServiceException;
 
     List<ActivityAggregate> getTopActivities(Query query) throws ServiceException;
     TreeMap<Date,List<ActivityAggregate>> getActivityBreakdown(Query query) throws ServiceException;

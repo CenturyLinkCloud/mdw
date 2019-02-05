@@ -13,7 +13,7 @@ class ProcessHotspots extends Component {
     this.state = {
       packages: [],
       sample: 'Week',
-      process: ''
+      processDef: {}
     };
     this.handleProcessSelect = this.handleProcessSelect.bind(this);    
     this.handleSampleSelect = this.handleSampleSelect.bind(this);    
@@ -33,17 +33,41 @@ class ProcessHotspots extends Component {
       this.setState({
         packages: data.packages,
         sample: this.state.sample,
-        process: this.state.process
+        processDef: this.state.processDef,
+        data: {}
       });
       $mdwUi.hubLoading(false);
     });
   }
 
   handleProcessSelect(assetPath) {
-    this.setState({
-      packages: this.state.packages,
-      sample: this.state.sample,
-      process: assetPath
+    $mdwUi.hubLoading(true);
+    fetch(new Request(this.context.serviceRoot + '/Workflow/' + assetPath, {
+      method: 'GET',
+      headers: { Accept: 'application/json'},
+      credentials: 'same-origin'
+    }))
+    .then(response => {
+      return response.json();
+    })
+    .then(data => {
+      this.setState({
+        packages: this.state.packages,
+        sample: this.state.sample,
+        processDef: data,
+        data: {}
+      }, () => {
+        $mdwUi.hubLoading(false);
+        this.retrieveData()
+        .then(data => {
+          this.setState({
+            packages: this.state.packages,
+            sample: this.state.sample,
+            processDef: this.state.processDef,
+            data: data
+          });  
+        });
+      });
     });
   }
 
@@ -51,18 +75,53 @@ class ProcessHotspots extends Component {
     this.setState({
       packages: this.state.packages,
       sample: sampleSize,
-      process: this.state.process
+      processDef: this.state.processDef,
+      data: {}
+    }, () => {
+      this.retrieveData()
+      .then(data => {
+        this.setState({
+          packages: this.state.packages,
+          sample: sampleSize,
+          processDef: this.state.processDef,
+          data: data
+        });
+      });
+    });
+  }
+
+  retrieveData() {
+    return new Promise(resolve => {
+      $mdwUi.hubLoading(true);
+      var dataUrl = this.context.serviceRoot + '/Processes/hotspots?processId=' + this.state.processDef.id;
+      dataUrl += '&span=' + this.state.sample;
+      fetch(new Request(dataUrl, {
+        method: 'GET',
+        headers: { Accept: 'application/json'},
+        credentials: 'same-origin'
+      }))
+      .then(response => {
+        return response.json();
+      })
+      .then(data => {
+        $mdwUi.hubLoading(false);
+        resolve(data);
+      });
     });
   }
 
   render() {
+    var sel;
+    if (this.state.processDef.name) {
+      sel = this.state.processDef.packageName + '/' + this.state.processDef.name + '.proc';
+    }
     return (
       <div>
         <PanelHeader>
           <HeaderLabel title="Process:"/>
           <AssetDropdown id="process-dropdown" placeholder="[Select a process]"
             packages={this.state.packages}
-            selected={this.state.process}
+            selected={sel}
             onSelect={this.handleProcessSelect} />
 
           <HeaderLabel title="Sample:" style={{marginLeft:'10px'}}/>
@@ -73,9 +132,11 @@ class ProcessHotspots extends Component {
         </PanelHeader>
         <div className="mdw-section" style={{minHeight:'600px'}}>
           <div id="workflow-hotspots">
-            {this.state.process &&
+            {this.state.processDef.id &&
               <div>
-                <Workflow instanceId={13756} 
+                <Workflow 
+                  process={this.state.processDef} 
+                  data={this.state.data}
                   containerId='workflow-hotspots' 
                   hubBase={this.context.hubRoot} serviceBase={this.context.serviceRoot} />
               </div>

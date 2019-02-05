@@ -117,14 +117,14 @@ public class ProcessInsights extends CommonDataAccess {
         return new PreparedWhere(where.toString(), params.toArray());
     }
 
-    private Long getProcessId(Query query) throws ServiceException {
+    protected Long getProcessId(Query query) throws ServiceException {
         long processId = query.getLongFilter("processId");
         if (processId == -1)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing query param: processId");
         return processId;
     }
 
-    private Date getStartDate(Query query) throws ServiceException {
+    protected Date getStartDate(Query query) throws ServiceException {
         Query.Timespan span = query.getTimespanFilter("span");
         if (span == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid span: " + query.getFilter("span"));

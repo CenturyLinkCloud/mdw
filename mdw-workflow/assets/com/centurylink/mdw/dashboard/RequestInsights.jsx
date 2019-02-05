@@ -69,7 +69,8 @@ class RequestInsights extends Component {
     this.setState({
       paths: this.state.paths,
       sample: sampleSize,
-      path: this.state.path
+      path: this.state.path,
+      data: {}
     }, () => {
       this.retrieveData()
       .then(data => {

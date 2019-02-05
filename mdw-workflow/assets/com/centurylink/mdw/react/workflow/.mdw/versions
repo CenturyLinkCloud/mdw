@@ -1,9 +1,9 @@
-Diagram.js=2
+Diagram.js=3
 Label.js=1
 Link.js=1
 Marquee.js=1
 Note.js=1
 Selection.js=1
 Shape.js=1
-Step.js=1
+Step.js=2
 Subflow.js=1

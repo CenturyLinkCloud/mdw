@@ -32,11 +32,11 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.dataaccess.reports.ActivityAggregation;
-import com.centurylink.mdw.dataaccess.reports.AggregateDataAccess;
-import com.centurylink.mdw.dataaccess.reports.ProcessAggregation;
-import com.centurylink.mdw.dataaccess.reports.ProcessInsights;
-import com.centurylink.mdw.model.*;
+import com.centurylink.mdw.dataaccess.reports.*;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.StringDocument;
+import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetHeader;
 import com.centurylink.mdw.model.asset.AssetInfo;
@@ -44,6 +44,7 @@ import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.model.report.Hotspot;
 import com.centurylink.mdw.model.report.Insight;
 import com.centurylink.mdw.model.report.Timepoint;
 import com.centurylink.mdw.model.system.SysInfo;
@@ -588,6 +589,15 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
         catch (SQLException | ParseException ex) {
             throw new ServiceException(500, "Error retrieving process trend: query=" + query, ex);
+        }
+    }
+
+    public List<Hotspot> getProcessHotspots(Query query) throws ServiceException {
+        try {
+            return new ProcessHotspots().getHotspots(query);
+        }
+        catch (SQLException | ParseException ex) {
+            throw new ServiceException(500, "Error retrieving process hotspots: query=" + query, ex);
         }
     }
 

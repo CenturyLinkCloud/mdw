@@ -1,6 +1,5 @@
 import React, {Component} from '../node/node_modules/react/react';
 import implementors from './implementors';
-import process from './process';
 import ShapeFactory from './workflow/Shape';
 import LabelFactory from './workflow/Label';
 import StepFactory from './workflow/Step';
@@ -15,40 +14,42 @@ class Workflow extends Component {
     
   constructor(...args) {
     super(...args);
-    this.state = { process: {} };
+    this.state = { implementors: {} };
+    this.drawDiagram = this.drawDiagram.bind(this);
   }
   
-  componentDidMount() {
-    process.get(this.props.serviceBase, this.props.assetPath, this.props.instanceId, this.props.masterRequestId, proc => {
-      implementors.get(this.props.serviceBase, impls => {
-        var canvas = document.getElementById('mdw-canvas');
-        if (canvas) {
-          // TODO cache these factories
-          var Shape = ShapeFactory($mdwUi.DC);
-          var Label = LabelFactory($mdwUi.DC, Shape);
-          const Step = StepFactory($mdwUi.DC, Shape);
-          const Link = LinkFactory($mdwUi.DC, Label);
-          const Subflow = SubflowFactory($mdwUi.DC, Shape, Step, Link);
-          const Note = NoteFactory($mdwUi.DC, Shape);
-          const Marquee = MarqueeFactory($mdwUi.DC, Shape);
-          const Selection = SelectionFactory();
-          const Diagram = DiagramFactory($mdwUi.DC, Shape, Label, Step, Link, Subflow, Note, Marquee, Selection);
+  componentDidMount() {    
+    implementors.get(this.props.serviceBase, impls => {
+      this.Shape = ShapeFactory($mdwUi.DC);
+      this.Label = LabelFactory($mdwUi.DC, this.Shape);
+      this.Step = StepFactory($mdwUi.DC, this.Shape);
+      this.Link = LinkFactory($mdwUi.DC, this.Label);
+      this.Subflow = SubflowFactory($mdwUi.DC, this.Shape, this.Step, this.Link);
+      this.Note = NoteFactory($mdwUi.DC, this.Shape);
+      this.Marquee = MarqueeFactory($mdwUi.DC, this.Shape);
+      this.Selection = SelectionFactory();
+      this.Diagram = DiagramFactory($mdwUi.DC, this.Shape, this.Label, this.Step, this.Link, this.Subflow, 
+            this.Note, this.Marquee, this.Selection);
 
-          var diagram = new Diagram(canvas, null, proc, impls, this.props.hubBase, this.props.editable, proc.instance, this.props.activity);
-          if (this.props.containerId)
-            diagram.containerId = this.props.containerId;
-          this.setState({
-            process: process,
-            implementors: this.implementors,
-            diagram: diagram
-          }, () => diagram.draw(this.props.animate));
-        }
-      });
+      this.setState({implementors: impls});
     });
+  }
+
+  drawDiagram() {
+    var canvas = document.getElementById('mdw-canvas');
+    if (canvas && this.state.implementors && this.Diagram) {
+      var diagram = new (this.Diagram)(canvas, null, this.props.process, this.state.implementors, this.props.hubBase, 
+            this.props.editable, this.props.instance, this.props.activity, false, this.props.data);
+      if (this.props.containerId) {
+        diagram.containerId = this.props.containerId;
+      }
+      diagram.draw(this.props.animate);
+    }
   }
 
   // TODO: Inspector
   render() {
+    this.drawDiagram();
     return (
       <div className="mdw-workflow">
         <div>

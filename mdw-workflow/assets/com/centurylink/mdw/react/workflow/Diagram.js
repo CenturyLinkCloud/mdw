@@ -1,7 +1,7 @@
 'use strict';
 
 var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marquee, Selection, Toolbox) {
-    var Diagram = function(canvas, dialog, process, implementors, imgBase, editable, instance, activity, instanceEdit) {
+    var Diagram = function(canvas, dialog, process, implementors, imgBase, editable, instance, activity, instanceEdit, data) {
     Shape.call(this, this, process);
     this.canvas = canvas;
     this.dialog = dialog;
@@ -23,6 +23,7 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
         this.activityId = activity;
     }
     this.instanceEdit = instanceEdit && instanceEdit.toString() === 'true';
+    this.data = data;
   };
 
   Diagram.prototype = new Shape();
@@ -157,6 +158,9 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
         }
       });
     }
+    else if (this.data) {
+      this.applyData();
+    }
     else {
       diagram.notes.forEach(function(note) {
         note.draw();
@@ -166,7 +170,6 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
     if (this.marquee) {
       this.marquee.draw();
     }
-
   };
 
   // sets display fields and returns a display with w and h for canvas size
@@ -365,6 +368,34 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
         }
         callback();
       }
+    }
+  };
+
+  Diagram.prototype.applyData = function() {
+    var diagram = this; // forEach inner access
+
+    if (this.data.hotspots && this.data.hotspots.length) {
+      let hottest = this.data.hotspots.reduce((max, cur) => cur.ms > max.ms ? cur : max);
+      diagram.steps.forEach(function(step) {
+        let hotspot = diagram.data.hotspots.find(hs => ('A' + hs.id) === step.activity.id);
+        if (hotspot && hotspot.ms) {
+          step.data = { message: hotspot.ms + ' ms', heat: hotspot.ms/hottest.ms };
+          step.data.color = "hsl(" + ((1.0 - step.data.heat) * 240) + ", 100%, 50%)";
+          step.draw();
+        }
+      });
+      if (diagram.subflows) {
+        diagram.subflows.forEach(function(subflow) {
+          subflow.steps.forEach(function(step) {
+            let hotspot = diagram.data.hotspots.find(hs => ('A' + hs.id) === step.activity.id);
+            if (hotspot && hotspot.ms) {
+              step.data = { message: hotspot.ms + ' ms', heat: hotspot.ms/hottest.ms };
+              step.data.color = "hsl(" + ((1.0 - step.data.heat) * 240) + ", 100%, 50%)";
+              step.draw();
+            }
+          });
+        });
+      }  
     }
   };
 
@@ -838,7 +869,7 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
                   display.x - adj,
                   display.y - adj,
                   display.w + 2 * adj,
-                  display.h + 2* adj,
+                  display.h + 2 * adj,
                   statusColor, statusColor, rounding);
               x1 = display.x + del;
               y1 = display.y + del;
@@ -863,6 +894,31 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
         }
       }
     }
+  };
+
+  Diagram.prototype.drawData = function(display, size, color, opacity) {
+    if (opacity)
+      this.context.globalAlpha = opacity;
+    var rounding = DC.BOX_ROUNDING_RADIUS;
+    var x1, y1, w1, h1;
+    this.rect(
+        display.x,
+        display.y,
+        display.w,
+        display.h,
+        color, color, rounding);
+    x1 = display.x + size;
+    y1 = display.y + size;
+    w1 = display.w - 2 * size;
+    h1 = display.h - 2 * size;
+    x1 += Step.OLD_INST_W;
+    y1 += Step.OLD_INST_W;
+    w1 -= 2 * Step.OLD_INST_W;
+    h1 -= 2 * Step.OLD_INST_W;
+    if (w1 > 0 && h1 > 0)
+      this.context.clearRect(x1, y1, w1, h1);
+    if (opacity)
+      this.context.globalAlpha = 1.0;
   };
 
   Diagram.prototype.roundedRect = function(x, y, w, h, border, fill) {
