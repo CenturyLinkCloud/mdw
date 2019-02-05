@@ -1,4 +1,4 @@
-AssetDropdown.jsx=1
+AssetDropdown.jsx=2
 ButtonLink.jsx=3
 Comment.jsx=9
 DatePicker.jsx=1
@@ -8,7 +8,7 @@ Footer.jsx=2
 Header.jsx=2
 HeaderButton.jsx=1
 HeaderButtons.jsx=1
-HeaderDropdown.jsx=6
+HeaderDropdown.jsx=7
 HeaderLabel.jsx=1
 HeaderPopButton.jsx=5
 NavLink.jsx=3

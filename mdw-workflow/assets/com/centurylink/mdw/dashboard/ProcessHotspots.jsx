@@ -60,7 +60,7 @@ class ProcessHotspots extends Component {
       <div>
         <PanelHeader>
           <HeaderLabel title="Process:"/>
-          <AssetDropdown id="process-dropdown"
+          <AssetDropdown id="process-dropdown" placeholder="[Select a process]"
             packages={this.state.packages}
             selected={this.state.process}
             onSelect={this.handleProcessSelect} />
@@ -71,7 +71,7 @@ class ProcessHotspots extends Component {
             selected={this.state.sample}
             onSelect={this.handleSampleSelect} />
         </PanelHeader>
-        <div className="mdw-section">
+        <div className="mdw-section" style={{minHeight:'600px'}}>
           <div id="workflow-hotspots">
             {this.state.process &&
               <div>

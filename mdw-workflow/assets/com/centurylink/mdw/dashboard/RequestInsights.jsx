@@ -174,7 +174,7 @@ class RequestInsights extends Component {
       <div>
         <PanelHeader>
           <HeaderLabel title="Path:"/>
-          <HeaderDropdown id="path-dropdown"
+          <HeaderDropdown id="path-dropdown" placeholder="[Select a path]"
             items={this.state.paths}
             selected={this.state.path}
             onSelect={this.handlePathSelect} />

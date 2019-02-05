@@ -17,9 +17,11 @@ class AssetDropdown extends Component {
 
   render() {
     var width = 140;
-    var selName;
+    var selName = this.props.placeholder;
     if (this.props.selected) {
       selName = this.props.selected.substring(this.props.selected.lastIndexOf('/') + 1);
+    }
+    if (selName) {
       const canvas = document.createElement('canvas');
       const context = canvas.getContext('2d');
       context.font = '14px "Helvetica Neue", Helvetica, Arial, sans-serif';
@@ -68,7 +70,9 @@ class AssetDropdown extends Component {
           </Dropdown.Menu>
           <Dropdown.Toggle noCaret={true} style={{padding:'5px',width:width+'px',textAlign:'left'}}
             title={this.props.selected}>
-            <span style={{position:'relative',top:'-3px'}}>{selName}</span>
+              <span style={{position:'relative',top:'-3px',color:this.props.selected?'':'#9e9e9e'}}>
+                {selName}
+              </span>
             <Glyphicon glyph="chevron-down" style={{color:'#9e9e9e',float:'right'}} />
           </Dropdown.Toggle>
         </Dropdown>
