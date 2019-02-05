@@ -17,6 +17,8 @@ package com.centurylink.mdw.services;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.report.Insight;
+import com.centurylink.mdw.model.report.Timepoint;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.request.RequestAggregate;
 import com.centurylink.mdw.model.request.RequestList;
@@ -41,6 +43,10 @@ public interface RequestServices {
 
     List<RequestAggregate> getTopRequests(Query query) throws ServiceException;
     TreeMap<Date,List<RequestAggregate>> getRequestBreakdown(Query query) throws ServiceException;
+    List<Insight> getRequestInsights(Query query) throws ServiceException;
+    List<Timepoint> getRequestTrend(Query query) throws ServiceException;
+
+    List<String> getRequestPaths(Query query) throws ServiceException;
 
     void setElapsedTime(String ownerType, Long instanceId, Long elapsedTime) throws ServiceException;
 }

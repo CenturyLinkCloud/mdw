@@ -3,33 +3,31 @@ import PropTypes from '../node/node_modules/prop-types';
 import {Bar} from '../node/node_modules/react-chartjs-2';
 import PanelHeader from '../react/PanelHeader.jsx';
 import HeaderLabel from '../react/HeaderLabel.jsx';
-import AssetDropdown from '../react/AssetDropdown.jsx';
 import HeaderDropdown from '../react/HeaderDropdown.jsx';
 import ChartLegend from './ChartLegend.jsx';
 import statuses from '../react/statuses';
 import {months} from '../react/constants';
 import chartOptions from './insightOptions';
 
-class ProcessInsights extends Component {
+class RequestInsights extends Component {
 
   constructor(...args) {
     super(...args);
     this.state = {
-      packages: [],
+      paths: [],
       sample: 'Week',
-      process: '',
+      path: '',
       data: {}
     };
-    this.handleProcessSelect = this.handleProcessSelect.bind(this);    
+    this.handlePathSelect = this.handlePathSelect.bind(this);
     this.handleSampleSelect = this.handleSampleSelect.bind(this);
-    this.getProcessId = this.getProcessId.bind(this);
     this.retrieveData = this.retrieveData.bind(this);
     this.getChartData = this.getChartData.bind(this);
   }
 
   componentDidMount() {
     $mdwUi.hubLoading(true);
-    fetch(new Request(this.context.serviceRoot + '/Workflow', {
+    fetch(new Request(this.context.serviceRoot + '/Requests/paths', {
       method: 'GET',
       headers: { Accept: 'application/json'},
       credentials: 'same-origin'
@@ -37,30 +35,30 @@ class ProcessInsights extends Component {
     .then(response => {
       return response.json();
     })
-    .then(data => {
+    .then(paths => {
       this.setState({
-        packages: data.packages,
+        paths: paths,
         sample: this.state.sample,
-        process: this.state.process,
+        path: this.state.path,
         data: {}
       });
       $mdwUi.hubLoading(false);
     });
   }
 
-  handleProcessSelect(assetPath) {
+  handlePathSelect(path) {
     this.setState({
-      packages: this.state.packages,
+      paths: this.state.paths,
       sample: this.state.sample,
-      process: assetPath,
+      path: path,
       data: {}
     }, () => {
       this.retrieveData()
       .then(data => {
         this.setState({
-          packages: this.state.packages,
+          paths: this.state.paths,
           sample: this.state.sample,
-          process: assetPath,
+          path: path,
           data: data
         });
       });
@@ -69,32 +67,20 @@ class ProcessInsights extends Component {
 
   handleSampleSelect(sampleSize) {
     this.setState({
-      packages: this.state.packages,
+      paths: this.state.paths,
       sample: sampleSize,
-      process: this.state.process
+      path: this.state.path
     }, () => {
       this.retrieveData()
       .then(data => {
         this.setState({
-          packages: this.state.packages,
+          paths: this.state.paths,
           sample: sampleSize,
-          process: this.state.process,
+          path: this.state.path,
           data: data
         });
       });
     });
-  }
-
-  getProcessId() {
-    for (let i = 0; i < this.state.packages.length; i++) {
-      let pkg = this.state.packages[i];
-      for (let j = 0; j < pkg.assets.length; j++) {
-        let asset = pkg.assets[j];
-        if (pkg.name + '/' + asset.name === this.state.process) {
-          return asset.id;
-        }
-      }
-    }
   }
 
   getTimeLabel(time) {
@@ -111,7 +97,7 @@ class ProcessInsights extends Component {
   retrieveData() {
     return new Promise(resolve => {
       $mdwUi.hubLoading(true);
-      var dataUrl = this.context.serviceRoot + '/Processes/insights?processId=' + this.getProcessId();
+      var dataUrl = this.context.serviceRoot + '/Requests/insights?path=' + this.state.path;
       dataUrl += '&trend=completionTime';
       dataUrl += '&span=' + this.state.sample;
       fetch(new Request(dataUrl, {
@@ -129,11 +115,11 @@ class ProcessInsights extends Component {
     });
   }
 
-  getLegendItem(statusName) {
-    let status = statuses.process[statusName];
+  getLegendItem(statusCode) {
+    let status = statuses.request[statusCode];
     return {
-      id: statusName, 
-      name: statusName, 
+      id: statusCode, 
+      name: statusCode + ' - ' + status.message, 
       color: statuses.shade(status.color, 0.5),
       borderColor: status.color
     };
@@ -157,11 +143,15 @@ class ProcessInsights extends Component {
           spanGaps: true
         };
         chartData.datasets.push(lineDataset);
+        this.state.data.insights.forEach(insight => {
+          const lineData = this.state.data.trend.find(t => t.time === insight.time);
+          lineDataset.data.push(lineData ? lineData.value : null);
+        });
       }
-      Object.keys(statuses.process).forEach(statusName => {
-        let status = statuses.process[statusName];
+      Object.keys(statuses.request).forEach(statusCode => {
+        let status = statuses.request[statusCode];
         let dataset = {
-          label: statusName,
+          label: statusCode + ' - ' + status.message,
           data: [],
           borderColor: status.color,
           backgroundColor: statuses.shade(status.color, 0.5),
@@ -170,14 +160,9 @@ class ProcessInsights extends Component {
         };
         chartData.datasets.push(dataset);
         this.state.data.insights.forEach(insight => {
-          dataset.data.push(insight.elements[statusName] || 0);
-          if (lineDataset) {
-            const lineData = this.state.data.trend.find(t => t.time === insight.time);
-            lineDataset.data.push(lineData ? lineData.value : null);
-          }
+          dataset.data.push(insight.elements[statusCode] || 0);
         });
       });
-      
       return chartData;
     }
   }
@@ -188,11 +173,11 @@ class ProcessInsights extends Component {
     return (
       <div>
         <PanelHeader>
-          <HeaderLabel title="Process:"/>
-          <AssetDropdown id="process-dropdown"
-            packages={this.state.packages}
-            selected={this.state.process}
-            onSelect={this.handleProcessSelect} />
+          <HeaderLabel title="Path:"/>
+          <HeaderDropdown id="path-dropdown"
+            items={this.state.paths}
+            selected={this.state.path}
+            onSelect={this.handlePathSelect} />
           <HeaderLabel title="Sample:" style={{marginLeft:'10px'}}/>
           <HeaderDropdown id="sample-dropdown" width={100}
             items={['Day','Week','Month']}
@@ -206,7 +191,7 @@ class ProcessInsights extends Component {
                   Statuses
                 </div>
                 <ChartLegend
-                  items={Object.keys(statuses.process).map(key => this.getLegendItem(key))} />
+                  items={Object.keys(statuses.request).map(key => this.getLegendItem(key))} />
               </div>
             }
             {chartData &&
@@ -221,9 +206,9 @@ class ProcessInsights extends Component {
   }
 }
 
-ProcessInsights.contextTypes = {
+RequestInsights.contextTypes = {
   hubRoot: PropTypes.string,
   serviceRoot: PropTypes.string
 };
 
-export default ProcessInsights;
+export default RequestInsights;

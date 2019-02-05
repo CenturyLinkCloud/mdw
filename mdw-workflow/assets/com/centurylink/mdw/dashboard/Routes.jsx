@@ -9,7 +9,7 @@ import Tasks from './Tasks.jsx';
 import Activities from './Activities.jsx';
 import InboundRequests from './InboundRequests.jsx';
 import OutboundRequests from './OutboundRequests.jsx';
-import RequestPath from './RequestPath.jsx';
+import RequestInsights from './RequestInsights.jsx';
 
 function Routes(props, context) {
   // Routes should match nav.json dashboard entries
@@ -29,8 +29,8 @@ function Routes(props, context) {
         render={(props) => <InboundRequests {...props} />} />
       <Route exact path={context.hubRoot + '/dashboard/outboundRequests'}
         render={(props) => <OutboundRequests {...props} />} />
-      <Route exact path={context.hubRoot + '/dashboard/requestPath'}
-        render={(props) => <RequestPath {...props} />} />
+      <Route exact path={context.hubRoot + '/dashboard/requestInsights'}
+        render={(props) => <RequestInsights {...props} />} />
     </div>
   );
 }

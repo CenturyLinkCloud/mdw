@@ -15,21 +15,11 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.text.ParseException;
-import java.util.*;
-
-import javax.ws.rs.Path;
-
-import com.centurylink.mdw.model.JsonArray;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.JsonExportable;
-import com.centurylink.mdw.model.JsonListMap;
+import com.centurylink.mdw.model.*;
+import com.centurylink.mdw.model.report.Insight;
+import com.centurylink.mdw.model.report.Timepoint;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.request.RequestAggregate;
 import com.centurylink.mdw.model.request.RequestList;
@@ -38,9 +28,15 @@ import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.RequestServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.rest.JsonRestService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.Path;
+import java.text.ParseException;
+import java.util.*;
 
 @Path("/Requests")
 @Api("MDW master and service requests")
@@ -105,8 +101,22 @@ public class Requests extends JsonRestService implements JsonExportable {
                         List<RequestAggregate> reqCounts = dateMap.get(date);
                         listMap.put(Query.getString(date), reqCounts);
                     }
-
                     return new JsonListMap<>(listMap).getJson();
+                }
+                else if (segOne.equals("paths")) {
+                    return new JsonArray(requestServices.getRequestPaths(query)).getJson();
+                }
+                else if (segOne.equals("insights")) {
+                    List<Insight> requestInsights = requestServices.getRequestInsights(query);
+                    JsonList<Insight> jsonList = new JsonList<>(requestInsights, "insights");
+                    jsonList.setTotal(requestInsights.size());
+                    JSONObject json = jsonList.getJson();
+                    String trend = query.getFilter("trend");
+                    if ("completionTime".equals(trend)) {
+                        List<Timepoint> timepoints = requestServices.getRequestTrend(query);
+                        json.put("trend", new JsonList<>(timepoints, "trend").getJson().getJSONArray("trend"));
+                    }
+                    return json;
                 }
                 else {
                     try {
