@@ -94,6 +94,12 @@
             "path": "dashboard/outboundRequests",
             "href": "/dashboard/outboundRequests",
             "priority": 1
+          },
+          {
+            "label": "Request Insights",
+            "path": "dashboard/requestInsights",
+            "href": "/dashboard/requestInsights",
+            "priority": 1
           }
         ]
       }

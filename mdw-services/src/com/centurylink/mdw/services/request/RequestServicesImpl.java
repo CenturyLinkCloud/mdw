@@ -15,22 +15,29 @@
  */
 package com.centurylink.mdw.services.request;
 
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
-import java.util.TreeMap;
-
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.reports.RequestAggregation;
+import com.centurylink.mdw.dataaccess.reports.RequestInsights;
+import com.centurylink.mdw.model.report.Insight;
+import com.centurylink.mdw.model.report.Timepoint;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.request.RequestAggregate;
 import com.centurylink.mdw.model.request.RequestList;
-import com.centurylink.mdw.model.workflow.ProcessAggregate;
 import com.centurylink.mdw.service.data.RequestDataAccess;
 import com.centurylink.mdw.services.RequestServices;
 import com.centurylink.mdw.util.timer.CodeTimer;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.TreeMap;
 
 public class RequestServicesImpl implements RequestServices {
 
@@ -38,7 +45,7 @@ public class RequestServicesImpl implements RequestServices {
         return new RequestDataAccess();
     }
 
-    protected RequestAggregation getRequestAggregation() throws DataAccessException {
+    protected RequestAggregation getRequestAggregation() {
         return new RequestAggregation();
     }
 
@@ -136,8 +143,7 @@ public class RequestServicesImpl implements RequestServices {
 
     public TreeMap<Date,List<RequestAggregate>> getRequestBreakdown(Query query) throws ServiceException {
         try {
-            TreeMap<Date,List<RequestAggregate>> map = getRequestAggregation().getBreakdown(query);
-            return map;
+            return getRequestAggregation().getBreakdown(query);
         }
         catch (DataAccessException ex) {
             throw new ServiceException(500, "Error retrieving request breakdown: query=" + query, ex);
@@ -151,6 +157,47 @@ public class RequestServicesImpl implements RequestServices {
         }
         catch (SQLException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
+    public List<String> getRequestPaths(Query query) throws ServiceException {
+        String sql = "select distinct path\n" +
+                "from DOCUMENT doc\n" +
+                "where path is not null\n" +
+                "  and owner_type = ?\n" +
+                "order by path";
+        String ownerType = "out".equals(query.getFilter("direction")) ?
+                OwnerType.ADAPTER_RESPONSE : OwnerType.LISTENER_RESPONSE;
+        try (DbAccess dbAccess = new DbAccess()) {
+            ResultSet rs = dbAccess.runSelect(sql,ownerType);
+            List<String> paths = new ArrayList<>();
+            while (rs.next()) {
+                paths.add(rs.getString("path"));
+            }
+            return paths;
+        }
+        catch (SQLException ex) {
+            throw new ServiceException(500, "Error retrieving request paths: query=" + query, ex);
+        }
+    }
+
+    @Override
+    public List<Insight> getRequestInsights(Query query) throws ServiceException {
+        try {
+            return new RequestInsights().getInsights(query);
+        }
+        catch (SQLException | ParseException ex) {
+            throw new ServiceException(500, "Error retrieving request insights: query=" + query, ex);
+        }
+    }
+
+    @Override
+    public List<Timepoint> getRequestTrend(Query query) throws ServiceException {
+        try {
+            return new RequestInsights().getTrend(query);
+        }
+        catch (SQLException | ParseException ex) {
+            throw new ServiceException(500, "Error retrieving request trend: query=" + query, ex);
         }
     }
 }

@@ -16,7 +16,25 @@ class HeaderDropdown extends Component {
   }
 
   render() {
-    const width = this.props.width ? this.props.width + 'px' : '140px';
+
+    var width;
+    if (this.props.width) {
+      width = this.props.width;
+    }
+    else {
+      width = 140;
+      if (this.props.selected) {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        context.font = '14px "Helvetica Neue", Helvetica, Arial, sans-serif';
+        const metrics = context.measureText(this.props.selected);
+        const selWidth = metrics.width + 35;
+        if (selWidth > width) {
+          width = selWidth;
+        }
+      }
+    }
+
     return (
       <div className="mdw-heading-input">
         <Dropdown id="{this.props.id}" className="mdw-dropdown"
