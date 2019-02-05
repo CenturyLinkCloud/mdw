@@ -45,6 +45,10 @@ public class Page {
         return asset;
     }
 
+    /**
+     * Accessed in react default index.html substitution.
+     */
+    @SuppressWarnings("unused")
     public String getAssetPath() {
         String relPath = getRelPath();
         return relPath.substring(0, relPath.length() - getAsset().getName().length() - 1).replace('/', '.')
@@ -98,7 +102,7 @@ public class Page {
         Path pkgPath = Paths.get(getAsset().getFile().getPath()).normalize();
         while (pkgPath != null && pkgPath.startsWith(rootPath)) {
             if (new File(pkgPath + "/" + PackageDir.PACKAGE_JSON_PATH).exists() || new File(pkgPath + "/" + PackageDir.PACKAGE_YAML_PATH).exists() ) {
-                Page p = new Page(mdw, "/" + rootPath.relativize(pkgPath) + "/" + name);
+                Page p = new Page(mdw, "/" + rootPath.relativize(pkgPath).toString().replace('\\', '/') + "/" + name);
                 if (p.exists())
                     return p;
             }

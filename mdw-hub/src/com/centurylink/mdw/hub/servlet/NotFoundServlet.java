@@ -74,7 +74,7 @@ public class NotFoundServlet extends HttpServlet {
             if (!page.exists()) {
                 String rootPkg = PropertyManager.getProperty(PropertyNames.MDW_HUB_ROOT_PACKAGE);
                 if (rootPkg != null)
-                    page = findPage(mdw, "/" + rootPkg + path);
+                    page = findPage(mdw, "/" + rootPkg.replace('\\', '/') + path);
             }
 
             if (page.exists()) {
