@@ -157,6 +157,10 @@ class ProcessInsights extends Component {
           spanGaps: true
         };
         chartData.datasets.push(lineDataset);
+        this.state.data.insights.forEach(insight => {
+          const lineData = this.state.data.trend.find(t => t.time === insight.time);
+          lineDataset.data.push(lineData ? lineData.value : null);
+        });
       }
       Object.keys(statuses.process).forEach(statusName => {
         let status = statuses.process[statusName];
@@ -171,10 +175,6 @@ class ProcessInsights extends Component {
         chartData.datasets.push(dataset);
         this.state.data.insights.forEach(insight => {
           dataset.data.push(insight.elements[statusName] || 0);
-          if (lineDataset) {
-            const lineData = this.state.data.trend.find(t => t.time === insight.time);
-            lineDataset.data.push(lineData ? lineData.value : null);
-          }
         });
       });
       
@@ -189,7 +189,7 @@ class ProcessInsights extends Component {
       <div>
         <PanelHeader>
           <HeaderLabel title="Process:"/>
-          <AssetDropdown id="process-dropdown"
+          <AssetDropdown id="process-dropdown" placeholder="[Select a process]"
             packages={this.state.packages}
             selected={this.state.process}
             onSelect={this.handleProcessSelect} />
