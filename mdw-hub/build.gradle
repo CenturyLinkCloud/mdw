@@ -116,7 +116,7 @@ task lint {
 
 task copyWorkflowJs(type: Copy) {
     from '../mdw-workflow/assets/com/centurylink/mdw/react/workflow'
-    into 'web/js/ui/workflow'
+    into 'web/lib/mdw/workflow'
     include '*.js'
 }
 

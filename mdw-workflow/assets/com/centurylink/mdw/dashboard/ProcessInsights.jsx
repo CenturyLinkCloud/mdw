@@ -71,7 +71,8 @@ class ProcessInsights extends Component {
     this.setState({
       packages: this.state.packages,
       sample: sampleSize,
-      process: this.state.process
+      process: this.state.process,
+      data: {}
     }, () => {
       this.retrieveData()
       .then(data => {

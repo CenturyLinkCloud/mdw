@@ -81,6 +81,9 @@ var StepFactory = function(DC, Shape) {
         color = '#ffea00';
       this.diagram.drawState(this.display, this.instances, !this.diagram.drawBoxes, adj, animationTimeSlice, color);
     }
+    else if (this.data) {
+      this.diagram.drawData(this.display, 10 * this.data.heat, this.data.color, 0.8);
+    }
 
     var yAdjust = -2;
     if (this.implementor.icon) {
@@ -126,7 +129,10 @@ var StepFactory = function(DC, Shape) {
 
     // logical id
     this.diagram.context.fillStyle = DC.META_COLOR;
-    this.diagram.context.fillText(activity.id, this.display.x + 2, this.display.y - 2);
+    var showText = activity.id;
+    if (this.data && this.data.message)
+      showText += ' (' + this.data.message + ')';
+    this.diagram.context.fillText(showText, this.display.x + 2, this.display.y - 2);
     this.diagram.context.fillStyle = DC.DEFAULT_COLOR;
   };
 
