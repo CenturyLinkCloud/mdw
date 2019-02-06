@@ -7,13 +7,12 @@ import com.centurylink.mdw.model.report.Hotspot;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProcessHotspots extends ProcessInsights {
 
-    public List<Hotspot> getHotspots(Query query) throws SQLException, ParseException, ServiceException {
+    public List<Hotspot> getHotspots(Query query) throws SQLException, ServiceException {
 
         PreparedWhere where = getWhere(query);
         String sql = "select avg(it.elapsed_ms) as avg_time, ai.activity_id\n" +
@@ -35,13 +34,16 @@ public class ProcessHotspots extends ProcessInsights {
     }
 
     private PreparedWhere getWhere(Query query) throws ServiceException {
-        StringBuilder where = new StringBuilder();
+        StringBuilder where = new StringBuilder("where ");
         List<Object> params = new ArrayList<>();
 
-        where.append("where ai.process_instance_id = pi.process_instance_id\n");
-
-        where.append("and process_id = ?\n");
-        params.add(getProcessId(query));
+        where.append("((ai.process_instance_id = pi.process_instance_id and process_id = ?)\n");
+        where.append("  or (ai.process_instance_id in (select process_instance_id from process_instance where " +
+                "owner = 'MAIN_PROCESS_INSTANCE' and owner_id in " +
+                "(select process_instance_id from process_instance where process_id = ?))))\n");
+        Long processId = getProcessId(query);
+        params.add(processId);
+        params.add(processId);
 
         where.append("and owner_type = ?\n");
         params.add("ACTIVITY_INSTANCE");

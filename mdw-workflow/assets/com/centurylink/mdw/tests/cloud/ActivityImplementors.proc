@@ -1,7 +1,10 @@
 {
   "activities": [
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=284,y=28,w=60,h=40"},
+      "attributes": {
+        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=284,y=28,w=60,h=40"
+      },
       "id": "A1",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Start",
@@ -13,7 +16,10 @@
       }]
     },
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=284,y=133,w=60,h=40"},
+      "attributes": {
+        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=284,y=133,w=60,h=40"
+      },
       "id": "A3",
       "implementor": "com.centurylink.mdw.tests.cloud.WhichActivity",
       "name": "Which?",
@@ -49,7 +55,10 @@
       ]
     },
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=36,y=204,w=60,h=40"},
+      "attributes": {
+        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=36,y=204,w=60,h=40"
+      },
       "id": "A4",
       "implementor": "com.centurylink.mdw.tests.cloud.JavaActivity",
       "name": "Java\nActivity",
@@ -61,7 +70,10 @@
       }]
     },
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=572,y=192,w=60,h=40"},
+      "attributes": {
+        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=572,y=192,w=60,h=40"
+      },
       "id": "A5",
       "implementor": "com.centurylink.mdw.tests.cloud.KotlinActivity",
       "name": "Kotlin\nActivity",
@@ -75,6 +87,7 @@
     {
       "attributes": {
         "Invader": "Dr. Soran",
+        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
         "Planet": "Neptune",
         "WORK_DISPLAY_INFO": "x=181,y=318,w=100,h=60"
       },
@@ -92,6 +105,7 @@
     {
       "attributes": {
         "Invader": "Gul Dukat",
+        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
         "Planet": "Jupiter",
         "WORK_DISPLAY_INFO": "x=375,y=384,w=100,h=60"
       },
@@ -107,13 +121,19 @@
       }]
     },
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=38,y=323,w=60,h=40"},
+      "attributes": {
+        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=38,y=323,w=60,h=40"
+      },
       "id": "A8",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
       "name": "Stop"
     },
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=569,y=310,w=60,h=40"},
+      "attributes": {
+        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=569,y=310,w=60,h=40"
+      },
       "id": "A9",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
       "name": "Stop"
@@ -121,8 +141,10 @@
   ],
   "attributes": {
     "ArrowStyle": "ArrowEnd",
+    "Monitors": "[[\"false\",\"Due Date Monitor\",\"com.centurylink.mdw.base/ProcessDueDateMonitor.java\",\"\"]]",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "PerformanceLevel": "0",
     "WORK_DISPLAY_INFO": "x=39,y=79,w=202,h=26"
   },
   "variables": {
