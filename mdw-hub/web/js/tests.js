@@ -427,7 +427,8 @@ testingMod.filter('instanceLinks', function($sce) {
       input.getLines().forEach(function(line) {
         if (line.startsWith('process: ' + start)) {
           var procInstId = line.substring(start.length + 9, line.length - end.length);
-          output += 'process: ' + start + '<a href="#/workflow/processes/' +  procInstId + '">' + procInstId + '</a>' + end + '\n';
+          var flowUrl = $mdwHubRoot + '/#/workflow/processes/' +  procInstId;
+          output += 'process: ' + start + '<a href="' + flowUrl + '" target="workflow">' + procInstId + '</a>' + end + '\n';
         }
         else {
           output += line + '\n';

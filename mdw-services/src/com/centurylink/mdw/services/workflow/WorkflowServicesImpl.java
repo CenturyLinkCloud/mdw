@@ -596,7 +596,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         try {
             return new ProcessHotspots().getHotspots(query);
         }
-        catch (SQLException | ParseException ex) {
+        catch (SQLException ex) {
             throw new ServiceException(500, "Error retrieving process hotspots: query=" + query, ex);
         }
     }
