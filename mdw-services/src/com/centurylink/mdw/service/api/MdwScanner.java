@@ -15,20 +15,17 @@
  */
 package com.centurylink.mdw.service.api;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.ws.rs.Path;
-
-import org.reflections.Reflections;
-
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.MdwServiceRegistry;
 import com.centurylink.mdw.common.service.XmlService;
 import com.centurylink.mdw.service.rest.Assets;
-
 import io.swagger.annotations.Api;
 import io.swagger.config.Scanner;
+import org.reflections.Reflections;
+
+import javax.ws.rs.Path;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MdwScanner implements Scanner {
 
@@ -53,7 +50,7 @@ public class MdwScanner implements Scanner {
 
     @Override
     public Set<Class<?>> classes() {
-        Set<Class<?>> classes = new HashSet<Class<?>>();
+        Set<Class<?>> classes = new HashSet<>();
 
         // swagger definition
         classes.add(RestApiDefinition.class);
@@ -65,9 +62,9 @@ public class MdwScanner implements Scanner {
             else {
                 String path = c.getSimpleName();
                 Path pathAnnotation = c.getAnnotation(Path.class);
-                if (pathAnnotation != null && pathAnnotation.value() != null)
+                if (pathAnnotation != null)
                     path = pathAnnotation.value();
-                if (path.startsWith(servicePath) || ("/" + path).startsWith(servicePath))
+                if (servicePath.startsWith(path) || servicePath.startsWith("/" + path))
                     classes.add(c);
             }
         }
@@ -84,7 +81,7 @@ public class MdwScanner implements Scanner {
                 else {
                     String path = jsonServiceClass.getName().replace('.', '/');
                     Path pathAnnotation = jsonServiceClass.getAnnotation(Path.class);
-                    if (pathAnnotation != null && pathAnnotation.value() != null) {
+                    if (pathAnnotation != null) {
                         path = jsonServiceClass.getPackage().getName().replace('.', '/');
                         if (!pathAnnotation.value().startsWith("/"))
                             path += "/";
@@ -103,7 +100,7 @@ public class MdwScanner implements Scanner {
                 else {
                     String path = xmlServiceClass.getName().replace('.', '/');
                     Path pathAnnotation = xmlServiceClass.getAnnotation(Path.class);
-                    if (pathAnnotation != null && pathAnnotation.value() != null) {
+                    if (pathAnnotation != null) {
                         path = xmlServiceClass.getPackage().getName();
                         if (!pathAnnotation.value().startsWith("/"))
                             path += "/";

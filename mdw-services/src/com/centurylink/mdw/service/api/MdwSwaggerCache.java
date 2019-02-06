@@ -97,7 +97,7 @@ public class MdwSwaggerCache implements CacheService {
     }
 
     @Override
-    public void refreshCache() throws Exception {
+    public void refreshCache() {
         clearCache();  // Lazy loading
 
     }

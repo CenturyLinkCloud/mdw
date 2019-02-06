@@ -15,34 +15,12 @@
  */
 package com.centurylink.mdw.service.api;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.databind.type.SimpleType;
-
 import io.limberest.api.SwaggerModelConverter;
 import io.swagger.annotations.Info;
 import io.swagger.annotations.SwaggerDefinition;
 import io.swagger.converter.ModelConverters;
-import io.swagger.models.Contact;
-import io.swagger.models.ExternalDocs;
-import io.swagger.models.License;
-import io.swagger.models.Operation;
-import io.swagger.models.Path;
-import io.swagger.models.Response;
-import io.swagger.models.Scheme;
-import io.swagger.models.Swagger;
-import io.swagger.models.Tag;
+import io.swagger.models.*;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.PathParameter;
 import io.swagger.servlet.ReaderContext;
@@ -50,6 +28,13 @@ import io.swagger.servlet.extensions.ReaderExtension;
 import io.swagger.util.BaseReaderUtils;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.util.*;
 
 /**
  * Duplicated from io.swagger.servlet.Reader except where noted below to avoid auto-inclusion of
@@ -80,8 +65,8 @@ public class SwaggerAnnotationsReader {
     public static void read(Swagger swagger, Set<Class<?>> classes) {
         final SwaggerAnnotationsReader reader = new SwaggerAnnotationsReader(swagger);
         for (Class<?> cls : classes) {
-            final ReaderContext context = new ReaderContext(swagger, cls, "", null, false, new ArrayList<String>(),
-                    new ArrayList<String>(), new ArrayList<String>(), new ArrayList<Parameter>());
+            final ReaderContext context = new ReaderContext(swagger, cls, "", null, false, new ArrayList<>(),
+                    new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
             reader.read(context);
         }
     }
@@ -147,7 +132,7 @@ public class SwaggerAnnotationsReader {
                     }
                 }
 
-                final Map<String, String> regexMap = new HashMap<String, String>();
+                final Map<String,String> regexMap = new HashMap<>();
                 final String parsedPath = PathUtils.parsePath(operationPath, regexMap);
 
                 if (parsedPath != null) {
