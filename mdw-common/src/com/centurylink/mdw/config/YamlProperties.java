@@ -82,7 +82,15 @@ public class YamlProperties {
      * @return
      */
     public String getString(String name) {
+        return (String)get(name, PropType.string);
+    }
+
+    public boolean isEncrypted(String name) {
         String value = (String)get(name, PropType.string);
+        return value != null && value.startsWith("~[") && value.endsWith("]");
+    }
+
+    public String decryptValue(String value) {
         if (value != null && value.startsWith("~[") && value.endsWith("]")) {
             try {
                 Decrypt decrypter = new Decrypt();
@@ -94,11 +102,6 @@ public class YamlProperties {
             }
         }
         return value;
-    }
-
-    public boolean isEncrypted(String name) {
-        String value = (String)get(name, PropType.string);
-        return value != null && value.startsWith("~[") && value.endsWith("]");
     }
 
     @SuppressWarnings("unchecked")
@@ -173,15 +176,27 @@ public class YamlProperties {
                 }
             }
             else {
+                // Decrypt values here for all types
                 if (type == PropType.group) {
                     Map<String,Object> map = new HashMap<>();
                     Map<?,?> groupMap = (Map<?,?>)value;
                     for (Object groupKey : groupMap.keySet()) {
-                        map.put(name + "." + groupKey, groupMap.get(groupKey));
+                        Object obj = groupMap.get(groupKey);
+                        if (obj instanceof String)
+                            obj = decryptValue((String)obj);
+                        map.put(name + "." + groupKey, obj);
                     }
                     return map;
                 }
-                return value;
+                else if (type == PropType.list) {
+                    for (int i=0; i < ((List) value).size(); i++) {
+                        if (((List) value).get(i) instanceof String)  // Should all be Strings, but just in case
+                            ((List) value).set(i, decryptValue((String)((List) value).get(i)));
+                    }
+                    return value;
+                }
+                else
+                    return decryptValue((String)value);
             }
         }
         return null;
