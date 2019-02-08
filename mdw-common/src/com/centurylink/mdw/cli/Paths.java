@@ -13,10 +13,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Parameters(commandNames="paths", commandDescription="Display and optionally normalize unique service paths", separators="=")
 public class Paths extends Setup {
@@ -49,6 +46,15 @@ public class Paths extends Setup {
         this.swagger = swagger;
     }
 
+    @Parameter(names="--path", description="Specific path to normalize")
+    private String path;
+    public String getPath() {
+        return path;
+    }
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     private DbInfo db;
     private List<ServicePath> paths;
     private List<ServicePath> swaggerPaths;
@@ -65,11 +71,21 @@ public class Paths extends Setup {
 
         if (normalize) {
             swaggerPaths = getSwaggerPaths();
+            if (isDebug()) {
+                System.out.println("Swagger paths:");
+                for (ServicePath swaggerPath : swaggerPaths) {
+                    System.out.println("  - " + swaggerPath);
+                }
+            }
         }
 
-        paths = retrieve();
+        if (path != null)
+            paths = Arrays.asList(new ServicePath(path));
+        else
+            paths = retrieve();
 
         System.out.println(outbound ? "Outbound paths: " : "Inbound paths:");
+        HashSet<String> unique = normalize && isDebug() ? new HashSet<>() : null;
         for (ServicePath path : paths) {
             if (normalize) {
                 String norm = path.normalize(swaggerPaths);
@@ -82,10 +98,21 @@ public class Paths extends Setup {
                         // TODO batch update
                     }
                 }
+                if (unique != null)
+                    unique.add(norm);
             }
             else {
                 System.out.println("  - " + path);
             }
+        }
+
+        if (unique != null) {
+            List<String> uniqueList = new ArrayList<>();
+            uniqueList.addAll(Arrays.asList(unique.toArray(new String[0])));
+            uniqueList.sort(String::compareToIgnoreCase);
+            System.out.println("Unique normalized paths:");
+            for (String uniquePath : uniqueList)
+                System.out.println("  - " + uniquePath);
         }
 
 //        String normal = normalizeInbound(path);
