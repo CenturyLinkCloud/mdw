@@ -85,7 +85,7 @@ public class Solutions extends JsonRestService {
      * For create (creating a new solution, or creating a new solution/member).
      */
     @Override
-    @Path("/{solutionId}/memberType/{memberId}")
+    @Path("/{solutionId}/{memberType}")
     @ApiOperation(value="Create a solution or add a member to an existing solution",
         notes="Supported memberTypes: requests, tasks, processes, solutions.", response=StatusMessage.class)
     @ApiImplicitParams({
@@ -157,7 +157,7 @@ public class Solutions extends JsonRestService {
     /**
      * Delete a user or a user/group, user/role relationship.
      */
-    @Path("/{solutionId}/memberType/{memberId}")
+    @Path("/{solutionId}/{memberType}/{memberId}")
     @ApiOperation(value="Delete a solution or remove a member from a solution",
         notes="Supported memberTypes: requests, tasks, processes, solutions.", response=StatusMessage.class)
     public JSONObject delete(String path, JSONObject content, Map<String,String> headers)

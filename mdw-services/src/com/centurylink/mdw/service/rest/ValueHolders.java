@@ -15,21 +15,20 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.Path;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import io.swagger.annotations.Api;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.Path;
+import java.util.Map;
 
 @Path("/ValueHolders")
+@Api("Values by owner type and id")
 public class ValueHolders extends JsonRestService {
 
     @Override
@@ -52,11 +51,22 @@ public class ValueHolders extends JsonRestService {
         String ownerType = parameters.get("holderType");
 
         try {
-            List<String> ids = ServiceLocator.getWorkflowServices().getValueHolderIds(valueName, valuePattern, ownerType);
-            return new JsonArray(ids).getJson();
+            if (valuePattern == null)
+                return getValues(valueName, ownerType).getJson();
+            else
+                return getValues(valueName, valuePattern, ownerType).getJson();
         }
         catch (Exception ex) {
             throw new ServiceException("Error loading value holders for " + valueName, ex);
         }
+    }
+
+    @Path("/{valueName}")
+    public JsonArray getValues(String valueName, String ownerType) throws ServiceException {
+        return new JsonArray(ServiceLocator.getWorkflowServices().getValueHolderIds(valueName, null, ownerType));
+    }
+
+    public JsonArray getValues(String valueName, String valuePattern, String ownerType) throws ServiceException {
+        return new JsonArray(ServiceLocator.getWorkflowServices().getValueHolderIds(valueName, valuePattern, ownerType));
     }
 }
