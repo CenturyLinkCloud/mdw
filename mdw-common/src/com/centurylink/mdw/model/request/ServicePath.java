@@ -17,15 +17,27 @@ public class ServicePath implements Comparable<ServicePath> {
         this.segments = this.path.split("/");
     }
 
+    /**
+     * Sorting such that best match is found first.
+     */
     @Override
     public int compareTo(ServicePath servicePath) {
         // longer paths come first
-        if (path.startsWith(servicePath.path))
-            return servicePath.path.length() - path.length();
-        else if (servicePath.path.startsWith(path))
-            return path.length() - servicePath.path.length();
-        else
+        if (segments.length != servicePath.segments.length) {
+            return servicePath.segments.length - segments.length;
+        }
+        else {
+            for (int i = 0; i < segments.length; i++) {
+                boolean segmentIsParam = isParam(segments[i]);
+                boolean serviceSegmentIsParam = isParam(servicePath.segments[i]);
+                // non-params first
+                if (segmentIsParam && !serviceSegmentIsParam)
+                    return 1;
+                else if (serviceSegmentIsParam && !segmentIsParam)
+                    return -1;
+            }
             return path.compareTo(servicePath.path);
+        }
     }
 
     public boolean matches(ServicePath runtimePath) {
@@ -35,14 +47,17 @@ public class ServicePath implements Comparable<ServicePath> {
         if (runtimeSegments.length == segments.length) {
             for (int i = 0; i < runtimeSegments.length; i++) {
                 String segment = segments[i];
-                if (!runtimeSegments[i].equals(segment) &&
-                        !(segment.charAt(0) == '{' && segment.charAt(segment.length() -1) == '}')) {
+                if (!runtimeSegments[i].equals(segment) && !isParam(segment)) {
                     return false;
                 }
             }
             return true;
         }
         return false;
+    }
+
+    public static boolean isParam(String segment) {
+        return segment.charAt(0) == '{' && segment.charAt(segment.length() -1) == '}';
     }
 
     public String normalize(List<ServicePath> pathSpecs) {

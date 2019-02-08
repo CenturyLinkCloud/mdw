@@ -29,6 +29,7 @@ import com.centurylink.mdw.model.task.*;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.user.UserList;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
@@ -45,11 +46,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.xmlbeans.XmlException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.ws.rs.Path;
+import java.io.IOException;
 import java.text.ParseException;
 import java.time.Instant;
 import java.util.*;
@@ -59,13 +62,18 @@ import static com.centurylink.mdw.constant.TaskAttributeConstant.LOGICAL_ID;
 @Path("/Tasks")
 @Api("Task instances")
 public class Tasks extends JsonRestService implements JsonExportable {
+
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
+    private TaskServices getTaskServices() {
+        return ServiceLocator.getTaskServices();
+    }
 
     /**
      * Retrieve a task or list of tasks, or subData for a task instance.
      */
     @Override
-    @Path("/{taskInstanceId}/{subData}")
+    @Path("/{instanceId}/{subData}")
     @ApiOperation(value = "Retrieve a task instance or a page of task instances", notes = "If taskInstanceId is not present, returns a page of task instances. "
             + "If subData is not present, returns task summary info. "
             + "Options for subData: 'values', 'indexes', 'history', 'actions', 'subtasks'", response = Value.class, responseContainer = "List")
@@ -85,84 +93,24 @@ public class Tasks extends JsonRestService implements JsonExportable {
                 if (segOne.equals("templates")) {
                     boolean grouped = query.getBooleanFilter("grouped");
                     if (grouped) {
-                        return getPackageTemplatesJson(taskServices.getTaskTemplatesByPackage(query));
+                        return getPackageTemplatesJson(getTaskServices().getTaskTemplatesByPackage(query));
                     }
-                    else {
-                        List<TaskTemplate> taskVOs = taskServices.getTaskTemplates(query);
-                        JSONArray jsonTasks = new JSONArray();
-                        for (TaskTemplate taskVO : taskVOs) {
-                            JSONObject jsonTask = new JsonObject();
-                            jsonTask.put("packageName", taskVO.getPackageName());
-                            jsonTask.put("taskId", taskVO.getId());
-                            jsonTask.put("name", taskVO.getTaskName());
-                            jsonTask.put("version", taskVO.getVersionString());
-                            jsonTask.put("logicalId", taskVO.getLogicalId());
-                            jsonTasks.put(jsonTask);
-                        }
-                        return new JsonArray(jsonTasks).getJson();
-                    }
+                    return getTemplates(query).getJson();
                 }
                 else if (segOne.equals("categories")) {
-                    Map<Integer, TaskCategory> categories = DataAccess.getBaselineData()
-                            .getTaskCategories();
-                    List<TaskCategory> list = new ArrayList<>();
-                    list.addAll(categories.values());
-                    Collections.sort(list);
-                    return JsonUtil.getJsonArray(list).getJson();
+                    return getCategories(query).getJson();
                 }
                 else if (segOne.equals("bulkActions")) {
-                    boolean myTasks = query.getBooleanFilter("myTasks");
-                    List<TaskAction> taskActions;
-                    if (myTasks)
-                        taskActions = AllowableTaskActions.getMyTasksBulkActions();
-                    else
-                        taskActions = AllowableTaskActions.getWorkgroupTasksBulkActions();
-                    JSONArray jsonTaskActions = new JSONArray();
-                    for (TaskAction taskAction : taskActions) {
-                        jsonTaskActions.put(taskAction.getJson());
-                    }
-                    return new JsonArray(jsonTaskActions).getJson();
+                    return getBulkActions(query).getJson();
                 }
                 else if (segOne.equals("assignees")) {
-                    // return potential assignees for all this user's workgroups
-                    User user = UserGroupCache.getUser(userCuid);
-                    return ServiceLocator.getUserServices()
-                            .findWorkgroupUsers(user.getGroupNames(), query.getFind()).getJson();
+                    return getPotentialAssignees(query, userCuid).getJson();
                 }
                 else if (segOne.equals("tops")) {
-                    // dashboard top throughput query
-                    List<TaskAggregate> taskAggregates = taskServices.getTopTasks(query);
-                    JSONArray taskArr = new JSONArray();
-                    int ct = 0;
-                    TaskAggregate other = null;
-                    long otherTot = 0;
-                    for (TaskAggregate taskAggregate : taskAggregates) {
-                        if (ct >= query.getMax()) {
-                            if (other == null) {
-                                other = new TaskAggregate(0);
-                                other.setName("Other");
-                            }
-                            otherTot += taskAggregate.getCount();
-                        }
-                        else {
-                            taskArr.put(taskAggregate.getJson());
-                        }
-                        ct++;
-                    }
-                    if (other != null) {
-                        other.setCount(otherTot);
-                        taskArr.put(other.getJson());
-                    }
-                    return new JsonArray(taskArr).getJson();
+                    return getTops(query).getJson();
                 }
                 else if (segOne.equals("breakdown")) {
-                    TreeMap<Date,List<TaskAggregate>> dateMap = taskServices.getTaskBreakdown(query);
-                    LinkedHashMap<String,List<TaskAggregate>> listMap = new LinkedHashMap<>();
-                    for (Date date : dateMap.keySet()) {
-                        List<TaskAggregate> taskAggregates = dateMap.get(date);
-                        listMap.put(Query.getString(date), taskAggregates);
-                    }
-                    return new JsonListMap<>(listMap).getJson();
+                    return getBreakdown(query).getJson();
                 }
                 else {
                     // must be instance id
@@ -239,6 +187,81 @@ public class Tasks extends JsonRestService implements JsonExportable {
         }
     }
 
+    @Override
+    @Path("/{instanceId}")
+    @ApiOperation(value = "Update a task instance, update an instance's index values, or register to wait for an event", response = StatusMessage.class, notes = "If indexes is present, body is TaskIndexes; if regEvent is present, body is Event; otherwise body is a Task."
+            + "If subData is not present, updates task summary info. Options for subData: values, indexes, regEvent")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Task", paramType = "body", dataType = "com.centurylink.mdw.model.task.TaskInstance", value = "When no subData is specified"),
+            @ApiImplicitParam(name = "indexes", paramType = "body", dataType = "com.centurylink.mdw.model.task.TaskIndexes", value = "When {subData}=indexes"),
+            @ApiImplicitParam(name = "regEvent", paramType = "body", dataType = "com.centurylink.mdw.model.event.Event", value = "When {subData}=regEvent.  Only the id (event name) field is mandatory in Event object.  Optionally, a completionCode can specified - Default is FINISHED"),
+            @ApiImplicitParam(name = "values", paramType = "body", dataType = "java.lang.Object", value = "When {subData}=values. JSON object parseable into a key/value Map.") })
+    public JSONObject put(String path, JSONObject content, Map<String,String> headers)
+            throws ServiceException, JSONException {
+        String id = getSegment(path, 1);
+        if (id == null)
+            throw new ServiceException(HTTP_400_BAD_REQUEST,
+                    "Missing path segment: {taskInstanceId}");
+        try {
+            Long instanceId = Long.parseLong(id);
+            String extra = getSegment(path, 2);
+            if (extra == null) {
+                // update task summary info
+                TaskInstance taskInstJson = new TaskInstance(content);
+                if (!content.has("id"))
+                    throw new ServiceException(HTTP_400_BAD_REQUEST,
+                            "Content is missing required field: id");
+                long contentInstanceId = content.getLong("id");
+                if (instanceId != contentInstanceId)
+                    throw new ServiceException(HTTP_400_BAD_REQUEST,
+                            "Content/path mismatch (instanceId): " + contentInstanceId + " is not: "
+                                    + instanceId);
+
+                ServiceLocator.getTaskServices().updateTask(getAuthUser(headers), taskInstJson);
+                return null;
+            }
+            else if (extra.equals("values")) {
+                Map<String, String> values = JsonUtil.getMap(content);
+                TaskServices taskServices = ServiceLocator.getTaskServices();
+                taskServices.applyValues(instanceId, values);
+            }
+            else if (extra.equals("indexes")) {
+                // update task indexes
+                TaskIndexes taskIndexes = new TaskIndexes(content);
+                if (instanceId != taskIndexes.getTaskInstanceId())
+                    throw new ServiceException(HTTP_400_BAD_REQUEST,
+                            "Content/path mismatch (instanceId): " + taskIndexes.getTaskInstanceId()
+                                    + " is not: " + instanceId);
+                ServiceLocator.getTaskServices().updateIndexes(taskIndexes.getTaskInstanceId(),
+                        taskIndexes.getIndexes());
+
+                if (logger.isDebugEnabled())
+                    logger.debug("Updated task indexes for instance ID: "
+                            + taskIndexes.getTaskInstanceId());
+
+                return null;
+            }
+            else if (extra.equals("regEvent")) {
+                Event event = new Event(content);
+                WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+                workflowServices.registerTaskWaitEvent(instanceId, event);
+                if (logger.isDebugEnabled())
+                    logger.debug("Registered Event : [" + event.getId() + "]Task Instance Id = "
+                            + instanceId);
+            }
+        }
+        catch (NumberFormatException ex) {
+            throw new ServiceException(HTTP_400_BAD_REQUEST, "Invalid task instance id: " + id);
+        }
+        catch (ServiceException ex) {
+            throw ex;
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
+        return null;
+    }
+
     /**
      * For creating a new task or performing task action(s). When performing
      * actions: old way = path='Tasks/{instanceId}/{action}', new way =
@@ -246,10 +269,10 @@ public class Tasks extends JsonRestService implements JsonExportable {
      * 'Claim'.
      */
     @Override
-    @Path("/{action}")
+    @Path("/action")
     @ApiOperation(value = "Create a task instance or perform an action on existing instance(s)",
-        notes = "If {action} is 'Create', then the body contains a task template logical Id; otherwise it contains a TaskAction to be performed.",
-        response = StatusMessage.class)
+            notes = "If {action} is 'Create', then the body contains a task template logical Id; otherwise it contains a TaskAction to be performed.",
+            response = StatusMessage.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "TaskAction", paramType = "body", dataType = "com.centurylink.mdw.model.task.UserTaskAction") })
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
@@ -344,81 +367,6 @@ public class Tasks extends JsonRestService implements JsonExportable {
         }
     }
 
-    @Override
-    @Path("/{taskInstanceId}/{subData}")
-    @ApiOperation(value = "Update a task instance, update an instance's index values, or register to wait for an event", response = StatusMessage.class, notes = "If indexes is present, body is TaskIndexes; if regEvent is present, body is Event; otherwise body is a Task."
-            + "If subData is not present, returns task summary info. Options for subData: values, indexes, regEvent")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "Task", paramType = "body", dataType = "com.centurylink.mdw.model.task.TaskInstance", value = "When no subData is specified"),
-            @ApiImplicitParam(name = "indexes", paramType = "body", dataType = "com.centurylink.mdw.model.task.TaskIndexes", value = "When {subData}=indexes"),
-            @ApiImplicitParam(name = "regEvent", paramType = "body", dataType = "com.centurylink.mdw.model.event.Event", value = "When {subData}=regEvent.  Only the id (event name) field is mandatory in Event object.  Optionally, a completionCode can specified - Default is FINISHED"),
-            @ApiImplicitParam(name = "values", paramType = "body", dataType = "java.lang.Object", value = "When {subData}=values. JSON object parseable into a key/value Map.") })
-    public JSONObject put(String path, JSONObject content, Map<String,String> headers)
-            throws ServiceException, JSONException {
-        String id = getSegment(path, 1);
-        if (id == null)
-            throw new ServiceException(HTTP_400_BAD_REQUEST,
-                    "Missing path segment: {taskInstanceId}");
-        try {
-            Long instanceId = Long.parseLong(id);
-            String extra = getSegment(path, 2);
-            if (extra == null) {
-                // update task summary info
-                TaskInstance taskInstJson = new TaskInstance(content);
-                if (!content.has("id"))
-                    throw new ServiceException(HTTP_400_BAD_REQUEST,
-                            "Content is missing required field: id");
-                long contentInstanceId = content.getLong("id");
-                if (instanceId != contentInstanceId)
-                    throw new ServiceException(HTTP_400_BAD_REQUEST,
-                            "Content/path mismatch (instanceId): " + contentInstanceId + " is not: "
-                                    + instanceId);
-
-                ServiceLocator.getTaskServices().updateTask(getAuthUser(headers), taskInstJson);
-                return null;
-            }
-            else if (extra.equals("values")) {
-                Map<String, String> values = JsonUtil.getMap(content);
-                TaskServices taskServices = ServiceLocator.getTaskServices();
-                taskServices.applyValues(instanceId, values);
-            }
-            else if (extra.equals("indexes")) {
-                // update task indexes
-                TaskIndexes taskIndexes = new TaskIndexes(content);
-                if (instanceId != taskIndexes.getTaskInstanceId())
-                    throw new ServiceException(HTTP_400_BAD_REQUEST,
-                            "Content/path mismatch (instanceId): " + taskIndexes.getTaskInstanceId()
-                                    + " is not: " + instanceId);
-                ServiceLocator.getTaskServices().updateIndexes(taskIndexes.getTaskInstanceId(),
-                        taskIndexes.getIndexes());
-
-                if (logger.isDebugEnabled())
-                    logger.debug("Updated task indexes for instance ID: "
-                            + taskIndexes.getTaskInstanceId());
-
-                return null;
-            }
-            else if (extra.equals("regEvent")) {
-                Event event = new Event(content);
-                WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-                workflowServices.registerTaskWaitEvent(instanceId, event);
-                if (logger.isDebugEnabled())
-                    logger.debug("Registered Event : [" + event.getId() + "]Task Instance Id = "
-                            + instanceId);
-            }
-        }
-        catch (NumberFormatException ex) {
-            throw new ServiceException(HTTP_400_BAD_REQUEST, "Invalid task instance id: " + id);
-        }
-        catch (ServiceException ex) {
-            throw ex;
-        }
-        catch (Exception ex) {
-            throw new ServiceException(ex.getMessage(), ex);
-        }
-        return null;
-    }
-
     public Jsonable toJsonable(Query query, JSONObject json) throws JSONException {
         try {
             if (json.has(TaskList.TASKS))
@@ -468,5 +416,92 @@ public class Tasks extends JsonRestService implements JsonExportable {
         }
         templatesJson.put("packages", pkgsArray);
         return templatesJson;
+    }
+
+    @Path("/templates")
+    public JsonArray getTemplates(Query query) throws ServiceException {
+        List<TaskTemplate> taskVOs = getTaskServices().getTaskTemplates(query);
+        JSONArray jsonTasks = new JSONArray();
+        for (TaskTemplate taskVO : taskVOs) {
+            JSONObject jsonTask = new JsonObject();
+            jsonTask.put("packageName", taskVO.getPackageName());
+            jsonTask.put("taskId", taskVO.getId());
+            jsonTask.put("name", taskVO.getTaskName());
+            jsonTask.put("version", taskVO.getVersionString());
+            jsonTask.put("logicalId", taskVO.getLogicalId());
+            jsonTasks.put(jsonTask);
+        }
+        return new JsonArray(jsonTasks);
+    }
+
+    @Path("/categories")
+    public JsonArray getCategories(Query query) throws DataAccessException {
+        Map<Integer, TaskCategory> categories = DataAccess.getBaselineData().getTaskCategories();
+        List<TaskCategory> list = new ArrayList<>();
+        list.addAll(categories.values());
+        Collections.sort(list);
+        return JsonUtil.getJsonArray(list);
+    }
+
+    @Path("/bulkActions")
+    public JsonArray getBulkActions(Query query) throws IOException, XmlException {
+        boolean myTasks = query.getBooleanFilter("myTasks");
+        List<TaskAction> taskActions;
+        if (myTasks)
+            taskActions = AllowableTaskActions.getMyTasksBulkActions();
+        else
+            taskActions = AllowableTaskActions.getWorkgroupTasksBulkActions();
+        JSONArray jsonTaskActions = new JSONArray();
+        for (TaskAction taskAction : taskActions) {
+            jsonTaskActions.put(taskAction.getJson());
+        }
+        return new JsonArray(jsonTaskActions);
+    }
+
+    @Path("/assignees")
+    public UserList getPotentialAssignees(Query query, String userCuid) throws DataAccessException {
+        // return potential assignees for all this user's workgroups
+        User user = UserGroupCache.getUser(userCuid);
+        return ServiceLocator.getUserServices()
+                .findWorkgroupUsers(user.getGroupNames(), query.getFind());
+    }
+
+    @Path("/tops")
+    public JsonArray getTops(Query query) throws ServiceException {
+        // dashboard top throughput query
+        List<TaskAggregate> taskAggregates = getTaskServices().getTopTasks(query);
+        JSONArray taskArr = new JSONArray();
+        int ct = 0;
+        TaskAggregate other = null;
+        long otherTot = 0;
+        for (TaskAggregate taskAggregate : taskAggregates) {
+            if (ct >= query.getMax()) {
+                if (other == null) {
+                    other = new TaskAggregate(0);
+                    other.setName("Other");
+                }
+                otherTot += taskAggregate.getCount();
+            }
+            else {
+                taskArr.put(taskAggregate.getJson());
+            }
+            ct++;
+        }
+        if (other != null) {
+            other.setCount(otherTot);
+            taskArr.put(other.getJson());
+        }
+        return new JsonArray(taskArr);
+    }
+
+    @Path("/breakdown")
+    public JsonListMap<TaskAggregate> getBreakdown(Query query) throws ServiceException {
+        TreeMap<Date,List<TaskAggregate>> dateMap = getTaskServices().getTaskBreakdown(query);
+        LinkedHashMap<String,List<TaskAggregate>> listMap = new LinkedHashMap<>();
+        for (Date date : dateMap.keySet()) {
+            List<TaskAggregate> taskAggregates = dateMap.get(date);
+            listMap.put(Query.getString(date), taskAggregates);
+        }
+        return new JsonListMap<>(listMap);
     }
 }

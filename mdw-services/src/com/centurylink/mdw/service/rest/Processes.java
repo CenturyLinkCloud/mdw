@@ -73,6 +73,10 @@ public class Processes extends JsonRestService implements JsonExportable {
         return roles;
     }
 
+    private WorkflowServices getWorkflowServices() {
+        return ServiceLocator.getWorkflowServices();
+    }
+
     /**
      * Retrieve process instance(s).
      */
@@ -113,8 +117,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                         }
                     }
                     else if ("summary".equals(segTwo)) {
-                        ProcessInstance process = workflowServices.getProcess(id, false);
-                        return getSummaryJson(process);
+                        return getSummary(id);
                     }
                     else {
                         JSONObject json;
@@ -123,7 +126,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                         else if (query.getBooleanFilter("nosubs"))
                             json = workflowServices.getProcess(id).getJson();
                         else
-                            json = workflowServices.getProcess(id, true).getJson();
+                            json = getProcess(id).getJson();
                         json.put("retrieveDate", StringHelper.serviceDateToString(DatabaseAccess.getDbDate()));
                         return json;
                     }
@@ -131,82 +134,32 @@ public class Processes extends JsonRestService implements JsonExportable {
                 catch (NumberFormatException ex) {
                     // path must be special
                     if (segOne.equals("definitions")) {
-                        List<Process> processVOs = workflowServices.getProcessDefinitions(query);
-                        JSONArray jsonProcesses = new JSONArray();
-                        for (Process processVO : processVOs) {
-                            JSONObject jsonProcess = new JsonObject();
-                            jsonProcess.put("packageName", processVO.getPackageName());
-                            jsonProcess.put("processId", processVO.getId());
-                            jsonProcess.put("name", processVO.getName());
-                            jsonProcess.put("version", processVO.getVersionString());
-                            jsonProcesses.put(jsonProcess);
-                        }
-                        return new JsonArray(jsonProcesses).getJson();
+                        return getDefinitions(query).getJson();
                     }
                     else if (segOne.equals("run")) {
                         String[] segments = getSegments(path);
                         if (segments.length != 3 && segments.length != 4)
                             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing path segment {subData} (procDefId|assetPath)");
-                        Process procDef;
                         if (segments.length == 3) {
-                            String defId = segments[2];
                             try {
-                                procDef = workflowServices.getProcessDefinition(Long.parseLong(defId));
+                                return getProcessRun(Long.parseLong(segments[2]), getAuthUser(headers)).getJson();
                             }
                             catch (NumberFormatException nfe) {
-                                throw new ServiceException(ServiceException.BAD_REQUEST, "Bad procDefId: " + defId);
+                                throw new ServiceException(ServiceException.BAD_REQUEST, "Bad definitionId: " + segments[2]);
                             }
                         }
                         else {
-                            procDef = workflowServices.getProcessDefinition(segments[2] + '/' + segments[3], null);
+                            return getProcessRun(segments[2] + '/' + segments[3], getAuthUser(headers)).getJson();
                         }
-                        if (procDef == null)
-                            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + path);
-                        ProcessRun processRun = new ProcessRun();
-                        processRun.setDefinitionId(procDef.getId());
-                        processRun.setMasterRequestId(getAuthUser(headers) + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()));
-                        processRun.setValues(getInputValues(procDef));
-                        return processRun.getJson();
                     }
                     else if (segOne.equals("tops")) {
-                        List<ProcessAggregate> list = workflowServices.getTopProcesses(query);
-                        JSONArray processArray = new JSONArray();
-                        int count = 0;
-                        ProcessAggregate other = null;
-                        long otherTotal = 0;
-                        for (ProcessAggregate processAggregate : list) {
-                            if (count >= query.getMax()) {
-                                if (other == null) {
-                                    other = new ProcessAggregate(0);
-                                    other.setName("Other");
-                                }
-                                otherTotal += processAggregate.getValue();
-                            }
-                            else {
-                                processArray.put(processAggregate.getJson());
-                            }
-                            count++;
-                        }
-                        if (other != null) {
-                            other.setValue(otherTotal);
-                            processArray.put(other.getJson());
-                        }
-                        return new JsonArray(processArray).getJson();
+                        return getTops(query).getJson();
                     }
                     else if (segOne.equals("breakdown")) {
-                        TreeMap<Date,List<ProcessAggregate>> dateMap = workflowServices.getProcessBreakdown(query);
-                        LinkedHashMap<String,List<ProcessAggregate>> listMap = new LinkedHashMap<>();
-                        for (Date date : dateMap.keySet()) {
-                            List<ProcessAggregate> processAggregates = dateMap.get(date);
-                            listMap.put(Query.getString(date), processAggregates);
-                        }
-
-                        return new JsonListMap<>(listMap).getJson();
+                        return getBreakdown(query).getJson();
                     }
                     else if (segOne.equals("insights")) {
-                        List<Insight> processInsights = workflowServices.getProcessInsights(query);
-                        JsonList<Insight> jsonList = new JsonList<>(processInsights, "insights");
-                        jsonList.setTotal(processInsights.size());
+                        JsonList<Insight> jsonList = getInsights(query);
                         JSONObject json = jsonList.getJson();
                         String trend = query.getFilter("trend");
                         if ("completionTime".equals(trend)) {
@@ -216,10 +169,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                         return json;
                     }
                     else if (segOne.equals("hotspots")) {
-                        List<Hotspot> processHotspots = workflowServices.getProcessHotspots(query);
-                        JsonList<Hotspot> jsonList = new JsonList<>(processHotspots, "hotspots");
-                        jsonList.setTotal(processHotspots.size());
-                        return jsonList.getJson();
+                        return getHotspots(query).getJson();
                     }
                     else {
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path segment: " + segOne);
@@ -230,8 +180,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                 long triggerId = query.getLongFilter("triggerId");
                 if (triggerId > 0) {
                     // retrieve instance by trigger -- just send summary
-                    ProcessInstance process = workflowServices.getProcessForTrigger(triggerId);
-                    return getSummaryJson(process);
+                    return getSummary(triggerId);
                 }
                 else if ("designer".equals(query.getFilter("mdw-app"))) {
                     try {
@@ -266,9 +215,9 @@ public class Processes extends JsonRestService implements JsonExportable {
                         if (processList.getCount() == 0)
                             throw new ServiceException(ServiceException.NOT_FOUND, "Process instance not found: " + query);
                         else if (OwnerType.MAIN_PROCESS_INSTANCE.equals(processList.getProcesses().get(0).getOwner())) {
-                            return getSummaryJson(workflowServices.getProcess(processList.getProcesses().get(0).getOwnerId(), true));
+                            return getSummary(processList.getProcesses().get(0).getOwnerId());
                         }
-                        return getSummaryJson(processList.getProcesses().get(0));
+                        return getSummary(processList.getProcesses().get(0).getId());
                     }
                     else {
                         return processList.getJson();
@@ -284,7 +233,9 @@ public class Processes extends JsonRestService implements JsonExportable {
         }
     }
 
-    protected JSONObject getSummaryJson(ProcessInstance process) {
+    @Path("/{instanceId}/summary")
+    public JSONObject getSummary(Long instanceId) throws ServiceException {
+        ProcessInstance process = getWorkflowServices().getProcess(instanceId, false);
         JSONObject summary = new JsonObject();
         summary.put("id", process.getId());
         summary.put("name", process.getProcessName());
@@ -544,5 +495,104 @@ public class Processes extends JsonRestService implements JsonExportable {
             }
         }
         return inputVals;
+    }
+
+    @Path("/definitions")
+    public JsonArray getDefinitions(Query query) throws ServiceException {
+        List<Process> processVOs = getWorkflowServices().getProcessDefinitions(query);
+        JSONArray jsonProcesses = new JSONArray();
+        for (Process processVO : processVOs) {
+            JSONObject jsonProcess = new JsonObject();
+            jsonProcess.put("packageName", processVO.getPackageName());
+            jsonProcess.put("processId", processVO.getId());
+            jsonProcess.put("name", processVO.getName());
+            jsonProcess.put("version", processVO.getVersionString());
+            jsonProcesses.put(jsonProcess);
+        }
+        return new JsonArray(jsonProcesses);
+    }
+
+    @Path("/run/{definitionId}")
+    public ProcessRun getProcessRun(Long definitionId, String authUser) throws ServiceException {
+        Process definition = getWorkflowServices().getProcessDefinition(definitionId);
+        if (definition == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + definitionId);
+        return getProcessRun(definition, authUser);
+    }
+
+    @Path("/run/{package}/{process}")
+    public ProcessRun getProcessRun(String assetPath, String authUser) throws ServiceException {
+        Process definition = getWorkflowServices().getProcessDefinition(assetPath, null);
+        if (definition == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + assetPath);
+        return getProcessRun(definition, authUser);
+    }
+
+    private ProcessRun getProcessRun(Process processDefinition, String user) {
+        ProcessRun processRun = new ProcessRun();
+        processRun.setDefinitionId(processDefinition.getId());
+        processRun.setMasterRequestId(user + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()));
+        processRun.setValues(getInputValues(processDefinition));
+        return processRun;
+    }
+
+    @Path("/{instanceId}")
+    public ProcessInstance getProcess(Long instanceId) throws ServiceException {
+        return getWorkflowServices().getProcess(instanceId, true);
+    }
+
+    @Path("/tops")
+    public JsonArray getTops(Query query) throws ServiceException {
+        List<ProcessAggregate> list = getWorkflowServices().getTopProcesses(query);
+        JSONArray processArray = new JSONArray();
+        int count = 0;
+        ProcessAggregate other = null;
+        long otherTotal = 0;
+        for (ProcessAggregate processAggregate : list) {
+            if (count >= query.getMax()) {
+                if (other == null) {
+                    other = new ProcessAggregate(0);
+                    other.setName("Other");
+                }
+                otherTotal += processAggregate.getValue();
+            }
+            else {
+                processArray.put(processAggregate.getJson());
+            }
+            count++;
+        }
+        if (other != null) {
+            other.setValue(otherTotal);
+            processArray.put(other.getJson());
+        }
+        return new JsonArray(processArray);
+    }
+
+    @Path("/breakdown")
+    public JsonListMap<ProcessAggregate> getBreakdown(Query query) throws ServiceException {
+        TreeMap<Date,List<ProcessAggregate>> dateMap = getWorkflowServices().getProcessBreakdown(query);
+        LinkedHashMap<String,List<ProcessAggregate>> listMap = new LinkedHashMap<>();
+        for (Date date : dateMap.keySet()) {
+            List<ProcessAggregate> processAggregates = dateMap.get(date);
+            listMap.put(Query.getString(date), processAggregates);
+        }
+
+        return new JsonListMap<>(listMap);
+    }
+
+    @Path("/insights")
+    public JsonList<Insight> getInsights(Query query) throws ServiceException {
+        List<Insight> processInsights = getWorkflowServices().getProcessInsights(query);
+        JsonList<Insight> jsonList = new JsonList<>(processInsights, "insights");
+        jsonList.setTotal(processInsights.size());
+        return jsonList;
+    }
+
+    @Path("/hotspots")
+    public JsonList<Hotspot> getHotspots(Query query) throws ServiceException {
+        List<Hotspot> processHotspots = getWorkflowServices().getProcessHotspots(query);
+        JsonList<Hotspot> jsonList = new JsonList<>(processHotspots, "hotspots");
+        jsonList.setTotal(processHotspots.size());
+        return jsonList;
     }
 }

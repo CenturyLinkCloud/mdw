@@ -24,6 +24,7 @@ import java.util.Map;
 
 import javax.ws.rs.Path;
 
+import io.swagger.annotations.Api;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +52,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
 @Path("/GitVcs")
+@Api("Commit info")
 public class GitVcs extends JsonRestService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
@@ -87,6 +89,7 @@ public class GitVcs extends JsonRestService {
      * Retrieves commit info for an asset.
      */
     @Override
+    @Path("{package}/{asset}")
     public JSONObject get(String assetPath, Map<String,String> headers)
             throws ServiceException, JSONException {
         AssetServices assetServices = ServiceLocator.getAssetServices();

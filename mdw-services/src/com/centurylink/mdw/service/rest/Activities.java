@@ -86,10 +86,10 @@ public class Activities extends JsonRestService implements JsonExportable {
                         return getDefinitions(query);
                     }
                     else if (segOne.equals("tops")) {
-                        return getTops(query);
+                        return getTops(query).getJson();
                     }
                     else if (segOne.equals("breakdown")) {
-                        return getBreakdown(query);
+                        return getBreakdown(query).getJson();
                     }
                     else {
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path segment: " + segOne);
@@ -117,10 +117,11 @@ public class Activities extends JsonRestService implements JsonExportable {
      */
     @Override
     @Path("/{instanceId}/{action}/{completionCode}")
-    @ApiOperation(value = "Take action on activity whose activity Instance ID is activityInstanceId, if completionCode is defined then take completionCode path", response = StatusMessage.class)
+    @ApiOperation(value = "Take action on activity whose activity Instance ID is activityInstanceId, " +
+            "if completionCode is defined then take completionCode path", response = StatusMessage.class)
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
-        Map<String, String> parameters = getParameters(headers);
+        Map<String,String> parameters = getParameters(headers);
         String instId = getSegment(path, 1);
         if (instId == null)
             instId = parameters.get("activityInstanceId");
@@ -136,8 +137,8 @@ public class Activities extends JsonRestService implements JsonExportable {
             String completionCode = getSegment(path, 3);
             if (completionCode == null)
                 completionCode = parameters.get("completionCode");
-            WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-            workflowServices.actionActivity(activityInstanceId, action, completionCode, getAuthUser(headers));
+
+            actionActivity(activityInstanceId, action,completionCode, getAuthUser(headers));
             return null;
         }
         catch (NumberFormatException ex) {
@@ -190,7 +191,7 @@ public class Activities extends JsonRestService implements JsonExportable {
     }
 
     @Path("/tops")
-    public JSONObject getTops(Query query) throws ServiceException {
+    public JsonArray getTops(Query query) throws ServiceException {
         List<ActivityAggregate> list = getWorkflowServices().getTopActivities(query);
         JSONArray actArr = new JSONArray();
         int ct = 0;
@@ -212,17 +213,23 @@ public class Activities extends JsonRestService implements JsonExportable {
             other.setValue(otherTot);
             actArr.put(other.getJson());
         }
-        return new JsonArray(actArr).getJson();
+        return new JsonArray(actArr);
     }
 
     @Path("/breakdown")
-    public JSONObject getBreakdown(Query query) throws ServiceException {
+    public JsonListMap<ActivityAggregate> getBreakdown(Query query) throws ServiceException {
         TreeMap<Date, List<ActivityAggregate>> dateMap = getWorkflowServices().getActivityBreakdown(query);
         LinkedHashMap<String, List<ActivityAggregate>> listMap = new LinkedHashMap<>();
         for (Date date : dateMap.keySet()) {
             List<ActivityAggregate> actCounts = dateMap.get(date);
             listMap.put(Query.getString(date), actCounts);
         }
-        return new JsonListMap<>(listMap).getJson();
+        return new JsonListMap<>(listMap);
+    }
+
+    @Path("/{instanceId}/{action}")
+    public void actionActivity(Long instanceId, String action, String result, String authUser) throws ServiceException {
+        WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+        workflowServices.actionActivity(instanceId, action, result, authUser);
     }
 }
