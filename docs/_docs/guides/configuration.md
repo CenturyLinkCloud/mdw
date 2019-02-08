@@ -30,7 +30,7 @@ title: MDW Configuration
   - Used at runtime by the MDW server.
   - Specify your config directory via the `-Dmdw.config.location` system property.
   - To convert from old-style mdw.properties to mdw.yaml, run the [CLI](../../getting-started/cli/) command `mdw convert`.
-  - Encrypted values (via `mdw encrypt`) start with `~[` and end with `]`.  Only string values support encryption (not lists).
+  - Encrypted values (via `mdw encrypt`) start with `~[` and end with `]`.
     Requires MDW_APP_TOKEN environment variable.  Note: when running the CLI command `mdw encrypt --input=my_value_to_encrypt`,
     the MDW_APP_TOKEN value must be defined in the shell where the command is executed.
   - Here's an annotated example describing MDW's configuration options:   
