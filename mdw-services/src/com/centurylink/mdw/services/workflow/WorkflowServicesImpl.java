@@ -880,7 +880,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public Process getProcessDefinition(Long id) throws ServiceException {
+    public Process getProcessDefinition(Long id) {
         return ProcessCache.getProcess(id);
     }
 

@@ -19,6 +19,7 @@ import java.util.Map;
 
 import javax.ws.rs.Path;
 
+import io.swagger.annotations.Api;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,6 +30,7 @@ import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonXmlRestService;
 
 @Path("/Events")
+@Api("Event notifications")
 public class Events extends JsonXmlRestService {
 
     @Override

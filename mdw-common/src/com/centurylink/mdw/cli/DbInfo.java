@@ -16,6 +16,9 @@
 package com.centurylink.mdw.cli;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,9 +31,7 @@ public class DbInfo {
     }
 
     public DbInfo(Props props) throws IOException {
-        this.url = props.get(Props.Db.URL);
-        this.user = props.get(Props.Db.USER);
-        this.password = props.get(Props.Db.PASSWORD);
+        this(props.get(Props.Db.URL), props.get(Props.Db.USER), props.get(Props.Db.PASSWORD));
     }
 
     private String url;
@@ -68,4 +69,17 @@ public class DbInfo {
             return null;
     }
 
+    public void loadDbDriver() throws IOException {
+        try {
+            Class.forName(DbInfo.getDatabaseDriver(this.getUrl()));
+        }
+        catch (ClassNotFoundException ex) {
+            throw new IOException(ex.getMessage(), ex);
+        }
+    }
+
+    public Connection getConnection() throws SQLException, IOException {
+        loadDbDriver();
+        return DriverManager.getConnection(getUrl(), getUser(), getPassword());
+    }
 }
