@@ -98,7 +98,7 @@ public class Assets extends JsonRestService {
      * For this case We retrieve the discovery package list on the server to avoid browser CORS complications.
      */
     @Override
-    @Path("/{assetPath}")
+    @Path("/{packageName}/{assetName}")
     @ApiOperation(value="Retrieve an asset or all the asset packages",
         notes="If assetPath is not present, returns all assetPackages.",
         response=PackageList.class)
@@ -249,13 +249,6 @@ public class Assets extends JsonRestService {
 
                 // import packages
                 ProgressMonitor progressMonitor = new LoggerProgressMonitor(logger);
-                //             AssetServices assetServices = ServiceLocator.getAssetServices();
-                //             VersionControlGit vcs = (VersionControlGit)assetServices.getVersionControl();
-                //             progressMonitor.start("Archive existing assets");
-                //             if (VcsArchiver.setInProgress()) {
-                //                 bulletin = SystemMessages.bulletinOn("Asset import in progress...");
-                //                 VcsArchiver archiver = new VcsArchiver(assetRoot, tempDir, vcs, progressMonitor);
-                //                 archiver.backup();
                 progressMonitor.start("Unzipping " + tempFile + " into: " + assetRoot);
                 logger.info("Unzipping " + tempFile + " into: " + assetRoot);
                 ZipHelper.unzip(tempFile, assetRoot, null, null, true);
@@ -270,10 +263,6 @@ public class Assets extends JsonRestService {
                     }
                 };
                 thread.start();
-    //            }
-     //           else {
-     //               throw new ServiceException(ServiceException.CONFLICT, "Asset import was NOT performed since an import was already in progress...");
-    //            }
                 progressMonitor.done();
                 tempFile.delete();
             }

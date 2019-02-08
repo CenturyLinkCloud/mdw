@@ -59,6 +59,7 @@ public class Main {
         Encrypt encrypt = new Encrypt();
         Decrypt decrypt = new Decrypt();
         Token token = new Token();
+        Paths paths = new Paths();
 
         JCommander cmd = JCommander.newBuilder()
             .addObject(main)
@@ -81,6 +82,7 @@ public class Main {
             .addCommand("encrypt", encrypt)
             .addCommand("decrypt", decrypt)
             .addCommand("token", token)
+            .addCommand("paths", paths)
             .build();
 
         cmd.setProgramName("mdw");
@@ -144,6 +146,9 @@ public class Main {
                 }
                 else if (command.equals("token")) {
                     op = token;
+                }
+                else if (command.equals("paths")) {
+                    op = paths;
                 }
 
                 if (op == null) {

@@ -56,7 +56,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Path("/Processes")
-@Api("MDW process instances and values")
+@Api("Workflow process instances and values")
 public class Processes extends JsonRestService implements JsonExportable {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();

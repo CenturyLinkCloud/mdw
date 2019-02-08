@@ -160,6 +160,7 @@ public class RequestServicesImpl implements RequestServices {
         }
     }
 
+    // TODO: Use cache
     public List<String> getRequestPaths(Query query) throws ServiceException {
         String sql = "select distinct path\n" +
                 "from DOCUMENT doc\n" +
@@ -179,6 +180,11 @@ public class RequestServicesImpl implements RequestServices {
         catch (SQLException ex) {
             throw new ServiceException(500, "Error retrieving request paths: query=" + query, ex);
         }
+
+//        if ("out".equals(query.getFilter("direction")))
+//            return ServicePathCache.getOutboundPaths();
+//        else
+//            return ServicePathCache.getInboundPaths();
     }
 
     @Override

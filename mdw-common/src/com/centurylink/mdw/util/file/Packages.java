@@ -85,6 +85,7 @@ public class Packages extends TreeMap<String,File> {
         return new File(metaDir + "/package.json").isFile() || new File(metaDir + "/package.yaml").isFile();
     }
 
+    @SuppressWarnings("unused")
     public List<File> getPackageDirs() {
         List<File> dirs = new ArrayList<>(values());
         dirs.sort(new Comparator<File>() {
@@ -116,6 +117,7 @@ public class Packages extends TreeMap<String,File> {
      * Whether a (relative) file path is the result of asset compilation
      * (as determined based on asset package names).
      */
+    @SuppressWarnings("unused")
     public boolean isAssetOutput(String path) {
         for (String pkg : getPackageNames()) {
             if (path.startsWith(pkg) || path.startsWith(pkg.replace('.', '/')))
