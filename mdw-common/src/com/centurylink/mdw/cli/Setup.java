@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,7 +39,8 @@ public abstract class Setup implements Operation {
 
     protected static final String META_DIR = ".mdw";
     protected static final String MDW_COMMON_PATH = "/com/centurylink/mdw/mdw-templates/";
-    protected static final String SONATYPE_URL = "https://oss.sonatype.org/service/local/artifact/maven";
+    public static final String MAVEN_CENTRAL_URL = "http://repo.maven.apache.org/maven2";
+    public static final String SONATYPE_URL = "https://oss.sonatype.org/service/local/artifact/maven";
 
     Setup() {
     }
@@ -59,7 +61,7 @@ public abstract class Setup implements Operation {
     public void setDebug(boolean debug) { this.debug = debug; }
 
     @Parameter(names="--discovery-url", description="Asset Discovery URL")
-    private String discoveryUrl = "http://repo.maven.apache.org/maven2";
+    private String discoveryUrl = MAVEN_CENTRAL_URL;
     public String getDiscoveryUrl() { return discoveryUrl; }
 
     public void setDiscoveryUrl(String url) {
@@ -69,7 +71,7 @@ public abstract class Setup implements Operation {
     }
 
     @Parameter(names="--releases-url", description="MDW releases Maven repo URL")
-    private String releasesUrl = "http://repo.maven.apache.org/maven2";
+    private String releasesUrl = MAVEN_CENTRAL_URL;
     public String getReleasesUrl() {
         return releasesUrl.endsWith("/") ? releasesUrl.substring(0, releasesUrl.length() - 1) : releasesUrl;
     }
@@ -584,6 +586,11 @@ public abstract class Setup implements Operation {
 
     protected List<File> getAssetFiles(String packageName) throws IOException {
         return getAssetPackageDirs().getAssetFiles(packageName);
+    }
+
+    protected String getBaseUrl() throws MalformedURLException {
+        URL serviceUrl = new URL(getServicesUrl() + "/..");
+        return serviceUrl.getProtocol() + "://" + serviceUrl.getHost() + ":" + serviceUrl.getPort() + "/" + serviceUrl.getPath();
     }
 
     protected void updateBuildFile() throws IOException {
