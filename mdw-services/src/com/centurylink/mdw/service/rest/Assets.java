@@ -15,19 +15,6 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.Path;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cli.Discover;
 import com.centurylink.mdw.cli.Import;
@@ -44,8 +31,8 @@ import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.model.system.SystemMessage.Level;
 import com.centurylink.mdw.model.user.Role;
-import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -58,11 +45,21 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.LoggerProgressMonitor;
 import com.centurylink.mdw.util.timer.ProgressMonitor;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.Path;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Path("/Assets")
 @Api("Workflow assets")
@@ -98,9 +95,8 @@ public class Assets extends JsonRestService {
      * For this case We retrieve the discovery package list on the server to avoid browser CORS complications.
      */
     @Override
-    @Path("/{packageName}/{assetName}")
-    @ApiOperation(value="Retrieve an asset or all the asset packages",
-        notes="If assetPath is not present, returns all assetPackages.",
+    @Path("/{package}/{asset}")
+    @ApiOperation(value="Retrieve an asset, an asset package, or all the asset packages",
         response=PackageList.class)
     @ApiImplicitParams({
         @ApiImplicitParam(name="discoveryUrl", paramType="query", dataType="string"),
@@ -157,7 +153,7 @@ public class Assets extends JsonRestService {
                     return assetServices.getAssetPackageList(query).getJson();
                 }
                 else {
-                    JSONObject json = assetServices.getPackages(true).getJson(); // TODO query param for vcs info
+                    JSONObject json = getPackages(query).getJson();
                     if (assetServices.getArchiveDir().isDirectory())
                         json.put("hasArchive", true);
                     return json;
@@ -165,19 +161,10 @@ public class Assets extends JsonRestService {
             }
             else {
                 if (asset == null) {
-                    PackageAssets pkgAssets = assetServices.getAssets(pkg, true);
-                    if (pkgAssets == null)
-                        throw new ServiceException(ServiceException.NOT_FOUND, "No such package: " + pkg);
-                    else
-                        return pkgAssets.getJson();
+                    return getPackage(pkg).getJson();
                 }
                 else {
-                    String assetPath = pkg + "/" + asset;
-                    AssetInfo theAsset = assetServices.getAsset(assetPath, true);
-                    if (theAsset == null)
-                        throw new ServiceException(ServiceException.NOT_FOUND, "No such asset: " + assetPath);
-                    else
-                        return theAsset.getJson();
+                    return getAssetInfo(pkg + "/" + asset).getJson();
                 }
             }
         }
@@ -310,6 +297,9 @@ public class Assets extends JsonRestService {
     }
 
     @Override
+    @Path("/{package}/{asset}")
+    @ApiOperation(value="Delete an asset or an asset package",
+            response=PackageList.class)
     public JSONObject delete(String path, JSONObject content, Map<String, String> headers)
             throws ServiceException, JSONException {
         String[] segments = getSegments(path);
@@ -326,5 +316,26 @@ public class Assets extends JsonRestService {
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
         }
         return null;
+    }
+
+    public PackageList getPackages(Query query) throws ServiceException {
+        return ServiceLocator.getAssetServices().getPackages(true);
+    }
+
+    @Path("/{package}")
+    public PackageAssets getPackage(String pkg) throws ServiceException {
+        PackageAssets pkgAssets = ServiceLocator.getAssetServices().getAssets(pkg, true);
+        if (pkgAssets == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "No such package: " + pkg);
+        else
+            return pkgAssets;
+    }
+
+    public AssetInfo getAssetInfo(String assetPath) throws ServiceException {
+        AssetInfo theAsset = ServiceLocator.getAssetServices().getAsset(assetPath, true);
+        if (theAsset == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "No such asset: " + assetPath);
+        else
+            return theAsset;
     }
 }

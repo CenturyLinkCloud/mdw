@@ -62,7 +62,7 @@ public class Workflow extends JsonRestService {
     }
 
     @Override
-    @Path("/{packageName}/{processName}/{processVersion}/{processInstanceId}")
+    @Path("/{packageName}/{processName}/{processInstanceId}")
     @ApiOperation(value="Retrieve a process definition JSON.",
         notes="Path segments {packageName} and {processName} are required, while {processVersion} and {processInstanceId} are optional.",
         response=Process.class)
@@ -132,7 +132,7 @@ public class Workflow extends JsonRestService {
                     }
                 }
                 if (process == null) {
-                    process = workflowServices.getProcessDefinition(assetPath, query);
+                    process = getProcessDefinition(assetPath, query);
                     if (process == null)
                         throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + path);
                 }
@@ -173,5 +173,10 @@ public class Workflow extends JsonRestService {
     throws ServiceException, JSONException {
         // TODO implement update
         return super.put(path, content, headers);
+    }
+
+    @Path("/{packageName}/{processName}/{processVersion}/{processInstanceId}")
+    public Process getProcessDefinition(String assetPath, Query query) throws ServiceException {
+        return ServiceLocator.getWorkflowServices().getProcessDefinition(assetPath, query);
     }
 }

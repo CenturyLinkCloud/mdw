@@ -54,6 +54,10 @@ public class Requests extends JsonRestService implements JsonExportable {
         return Entity.Request;
     }
 
+    private RequestServices getRequestServices() {
+        return ServiceLocator.getRequestServices();
+    }
+
     /**
      * Retrieve a request by doc id, masterRequestId, all matching requests, or an aggregated request breakdown.
      */
@@ -70,46 +74,16 @@ public class Requests extends JsonRestService implements JsonExportable {
             String segOne = getSegment(path, 1);
             if (segOne != null) {
                 if (segOne.equals("tops")) {
-                    List<RequestAggregate> list = requestServices.getTopRequests(query);
-                    JSONArray requestArray = new JSONArray();
-                    int ct = 0;
-                    RequestAggregate other = null;
-                    long otherTotal = 0;
-                    for (RequestAggregate requestAggregate : list) {
-                        if (ct >= query.getMax()) {
-                            if (other == null) {
-                                other = new RequestAggregate(0);
-                                other.setPath("Other");
-                            }
-                            otherTotal += requestAggregate.getValue();
-                        }
-                        else {
-                            requestArray.put(requestAggregate.getJson());
-                        }
-                        ct++;
-                    }
-                    if (other != null) {
-                        other.setValue(otherTotal);
-                        requestArray.put(other.getJson());
-                    }
-                    return new JsonArray(requestArray).getJson();
+                    return getTops(query).getJson();
                 }
                 else if (segOne.equals("breakdown")) {
-                    TreeMap<Date,List<RequestAggregate>> dateMap = requestServices.getRequestBreakdown(query);
-                    LinkedHashMap<String,List<RequestAggregate>> listMap = new LinkedHashMap<>();
-                    for (Date date : dateMap.keySet()) {
-                        List<RequestAggregate> reqCounts = dateMap.get(date);
-                        listMap.put(Query.getString(date), reqCounts);
-                    }
-                    return new JsonListMap<>(listMap).getJson();
+                    return getBreakdown(query).getJson();
                 }
                 else if (segOne.equals("paths")) {
-                    return new JsonArray(requestServices.getRequestPaths(query)).getJson();
+                    return getPaths(query).getJson();
                 }
                 else if (segOne.equals("insights")) {
-                    List<Insight> requestInsights = requestServices.getRequestInsights(query);
-                    JsonList<Insight> jsonList = new JsonList<>(requestInsights, "insights");
-                    jsonList.setTotal(requestInsights.size());
+                    JsonList<Insight> jsonList = getInsights(query);
                     JSONObject json = jsonList.getJson();
                     String trend = query.getFilter("trend");
                     if ("completionTime".equals(trend)) {
@@ -198,7 +172,56 @@ public class Requests extends JsonRestService implements JsonExportable {
         catch (ParseException ex) {
             throw new JSONException(ex);
         }
-
     }
 
+    @Path("/tops")
+    public JsonArray getTops(Query query) throws ServiceException {
+        List<RequestAggregate> list = getRequestServices().getTopRequests(query);
+        JSONArray requestArray = new JSONArray();
+        int ct = 0;
+        RequestAggregate other = null;
+        long otherTotal = 0;
+        for (RequestAggregate requestAggregate : list) {
+            if (ct >= query.getMax()) {
+                if (other == null) {
+                    other = new RequestAggregate(0);
+                    other.setPath("Other");
+                }
+                otherTotal += requestAggregate.getValue();
+            }
+            else {
+                requestArray.put(requestAggregate.getJson());
+            }
+            ct++;
+        }
+        if (other != null) {
+            other.setValue(otherTotal);
+            requestArray.put(other.getJson());
+        }
+        return new JsonArray(requestArray);
+    }
+
+    @Path("/breakdown")
+    public JsonListMap<RequestAggregate> getBreakdown(Query query) throws ServiceException {
+        TreeMap<Date,List<RequestAggregate>> dateMap = getRequestServices().getRequestBreakdown(query);
+        LinkedHashMap<String,List<RequestAggregate>> listMap = new LinkedHashMap<>();
+        for (Date date : dateMap.keySet()) {
+            List<RequestAggregate> reqCounts = dateMap.get(date);
+            listMap.put(Query.getString(date), reqCounts);
+        }
+        return new JsonListMap<>(listMap);
+    }
+
+    @Path("/insights")
+    public JsonList<Insight> getInsights(Query query) throws ServiceException {
+        List<Insight> requestInsights = getRequestServices().getRequestInsights(query);
+        JsonList<Insight> jsonList = new JsonList<>(requestInsights, "insights");
+        jsonList.setTotal(requestInsights.size());
+        return jsonList;
+    }
+
+    @Path("/paths")
+    public JsonArray getPaths(Query query) throws ServiceException {
+        return new JsonArray(getRequestServices().getRequestPaths(query));
+    }
 }
