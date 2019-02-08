@@ -120,7 +120,7 @@ public class YamlPropertyManager extends PropertyManager {
         for (YamlProperties yamlProp : yamlProps) {
             Map<String,String> groupMap = yamlProp.getGroup(group);
             if (groupMap != null) {
-                String val = null;
+                String val;
                 for (String key : groupMap.keySet()) {
                     val = groupMap.get(key);
                     props.put(key, val);
