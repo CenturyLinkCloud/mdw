@@ -86,8 +86,20 @@ public class YamlProperties {
     }
 
     public boolean isEncrypted(String name) {
-        String value = (String)get(name, PropType.string);
-        return value != null && value.startsWith("~[") && value.endsWith("]");
+        boolean encrypted = false;
+        String value = (String)get(name, PropType.string, false);
+        if (value != null) {
+            if (value.startsWith("~[") && value.endsWith("]"))  // Encrypted
+                encrypted = true;
+            else if (value.startsWith("[") && value.endsWith("]") && value.length() > 6 && value.contains("~[")){  // It's a List
+                String[] values = value.substring(1, value.length()-1).split(",");
+                for (int i = 0; i < values.length; i++) {
+                    if (values[i] != null && values[i].trim().startsWith("~[") && values[i].trim().endsWith("]"))
+                        encrypted = true;
+                }
+            }
+        }
+        return encrypted;
     }
 
     public String decryptValue(String value) {
@@ -95,7 +107,7 @@ public class YamlProperties {
             try {
                 Decrypt decrypter = new Decrypt();
                 decrypter.setInput(value.substring(2, value.length() - 1));
-                value = decrypter.decrypt();
+                return decrypter.decrypt();
             }
             catch (IOException ex) {
                 ex.printStackTrace();
@@ -151,6 +163,10 @@ public class YamlProperties {
     }
 
     public Object get(String name, PropType type) {
+        return get(name, type, true);
+    }
+
+    public Object get(String name, PropType type, Boolean decrypt) {
         String key = name;
         if (prefix != null && key.startsWith(prefix + ".")) {
             key = key.substring(prefix.length() + 1);
@@ -182,21 +198,28 @@ public class YamlProperties {
                     Map<?,?> groupMap = (Map<?,?>)value;
                     for (Object groupKey : groupMap.keySet()) {
                         Object obj = groupMap.get(groupKey);
-                        if (obj instanceof String)
+                        if (decrypt && obj instanceof String)
                             obj = decryptValue((String)obj);
                         map.put(name + "." + groupKey, obj);
                     }
                     return map;
                 }
                 else if (type == PropType.list) {
-                    for (int i=0; i < ((List) value).size(); i++) {
-                        if (((List) value).get(i) instanceof String)  // Should all be Strings, but just in case
-                            ((List) value).set(i, decryptValue((String)((List) value).get(i)));
+                    if (decrypt) {
+                        List newValue = new ArrayList();
+                        for (int i = 0; i < ((List) value).size(); i++) {
+                            if (((List) value).get(i) instanceof String)  // Should all be Strings, but just in case
+                                newValue.add(i, decryptValue((String) ((List) value).get(i)));
+                            else
+                                newValue.add(i, ((List) value).get(i));  // This should not happen
+                        }
+                        return newValue;
                     }
                     return value;
                 }
-                else
-                    return decryptValue((String)value);
+                else {
+                    return decrypt ? decryptValue((String) value) : value;
+                }
             }
         }
         return null;

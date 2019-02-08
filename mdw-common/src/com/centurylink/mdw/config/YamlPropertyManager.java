@@ -120,8 +120,11 @@ public class YamlPropertyManager extends PropertyManager {
         for (YamlProperties yamlProp : yamlProps) {
             Map<String,String> groupMap = yamlProp.getGroup(group);
             if (groupMap != null) {
+                String val = null;
                 for (String key : groupMap.keySet()) {
-                    props.put(key, groupMap.get(key));
+                    val = groupMap.get(key);
+                    props.put(key, val);
+                    cachedValues.put(key, val);
                 }
             }
         }
@@ -163,7 +166,13 @@ public class YamlPropertyManager extends PropertyManager {
     @SuppressWarnings("unchecked")
     public List<String> getList(String name) {
         if (cachedValues.containsKey(name)) {
-            return (List<String>)cachedValues.get(name);
+            try {
+                return (List<String>) cachedValues.get(name);
+            }
+            catch (ClassCastException e) { // List was cached in String representation (i.e. as part of a property group)
+                cachedValues.remove(name);
+                return getList(name);
+            }
         }
         else {
             List<String> value = getListValue(name);
