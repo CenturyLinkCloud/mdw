@@ -82,12 +82,12 @@ public class YamlProperties {
      * @return
      */
     public String getString(String name) {
-        return (String)get(name, PropType.string);
+        return decryptValue((String)get(name, PropType.string));
     }
 
     public boolean isEncrypted(String name) {
         boolean encrypted = false;
-        String value = (String)get(name, PropType.string, false);
+        String value = (String)get(name, PropType.string);
         if (value != null) {
             if (value.startsWith("~[") && value.endsWith("]"))  // Encrypted
                 encrypted = true;
@@ -118,7 +118,14 @@ public class YamlProperties {
 
     @SuppressWarnings("unchecked")
     public List<String> getList(String name) {
-        return (List<String>)get(name, PropType.list);
+        List<String> origList = (List<String>)get(name, PropType.list);
+        List<String> list = null;
+        if (origList != null) {
+            list = new ArrayList<>();  // Make a safe copy with decrypted values
+            for (int i = 0; i < origList.size(); i++)
+                list.add(i, decryptValue(origList.get(i)));   // Decrypt values
+        }
+        return list;
     }
 
     /**
@@ -130,19 +137,24 @@ public class YamlProperties {
         Map<String,Object> groupMap = (Map<String,Object>)get(name, PropType.group);
         if (groupMap != null) {
             map = new HashMap<>();
-            for (String groupKey : groupMap.keySet()) {
-                if (groupMap.get(groupKey) instanceof String || groupMap.get(groupKey) instanceof Boolean) {
-                    map.put(groupKey, groupMap.get(groupKey).toString());
-                }
-                else {
-                    Map<String, Object> innerMap = loader.getMap(groupKey, groupMap);
-                    for (String innerKey : innerMap.keySet()) {
-                        map.put(groupKey + "." + innerKey, innerMap.get(innerKey).toString());
-                    }
-                }
-            }
+            parseGroupMap(groupMap, map, null);  // Parses groupMap recursively
         }
         return map;
+    }
+
+    /**
+     *  Flattens the group map
+     */
+    protected void parseGroupMap(Map<String,Object> groupMap, Map<String,String> resultMap, String prefix) {
+        Object obj;
+        for (String groupKey : groupMap.keySet()) {
+            obj = groupMap.get(groupKey);
+            String key = prefix == null ? groupKey : prefix + "." + groupKey;
+            if (obj instanceof Map)
+                parseGroupMap(loader.getMap(groupKey, groupMap), resultMap, key); // Parse inner map
+            else
+                resultMap.put(key, decryptValue(obj.toString())); // String, Boolean and List values
+        }
     }
 
     /**
@@ -155,7 +167,7 @@ public class YamlProperties {
         if (groupMap != null) {
             map = new HashMap<>();
             for (String groupKey : groupMap.keySet()) {
-                String value = groupMap.get(groupKey).toString();
+                String value = decryptValue(groupMap.get(groupKey).toString());
                 map.put(groupKey.substring(name.length() + 1), value);
             }
         }
@@ -163,10 +175,6 @@ public class YamlProperties {
     }
 
     public Object get(String name, PropType type) {
-        return get(name, type, true);
-    }
-
-    public Object get(String name, PropType type, Boolean decrypt) {
         String key = name;
         if (prefix != null && key.startsWith(prefix + ".")) {
             key = key.substring(prefix.length() + 1);
@@ -192,34 +200,15 @@ public class YamlProperties {
                 }
             }
             else {
-                // Decrypt values here for all types
                 if (type == PropType.group) {
                     Map<String,Object> map = new HashMap<>();
                     Map<?,?> groupMap = (Map<?,?>)value;
                     for (Object groupKey : groupMap.keySet()) {
-                        Object obj = groupMap.get(groupKey);
-                        if (decrypt && obj instanceof String)
-                            obj = decryptValue((String)obj);
-                        map.put(name + "." + groupKey, obj);
+                        map.put(name + "." + groupKey, groupMap.get(groupKey));
                     }
                     return map;
                 }
-                else if (type == PropType.list) {
-                    if (decrypt) {
-                        List newValue = new ArrayList();
-                        for (int i = 0; i < ((List) value).size(); i++) {
-                            if (((List) value).get(i) instanceof String)  // Should all be Strings, but just in case
-                                newValue.add(i, decryptValue((String) ((List) value).get(i)));
-                            else
-                                newValue.add(i, ((List) value).get(i));  // This should not happen
-                        }
-                        return newValue;
-                    }
-                    return value;
-                }
-                else {
-                    return decrypt ? decryptValue((String) value) : value;
-                }
+                return value;
             }
         }
         return null;
