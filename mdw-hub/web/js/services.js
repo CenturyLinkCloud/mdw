@@ -2,37 +2,56 @@
 
 var servicesMod = angular.module('services', ['ngResource', 'mdw', 'assets']);
 
-servicesMod.controller('ServicesController', ['$scope', 'mdw', 'ServiceApis', 
-                                             function($scope, mdw, ServiceApis) {
+servicesMod.controller('ServicesController', ['$scope', 'mdw', 'ServiceApis', 'Assets',
+                                             function($scope, mdw, ServiceApis, Assets) {
 
+  var pkgList = Assets.get({}, function success() {
+    var pkgPaths = pkgList.packages.map(function(pkg) {
+      return '/' + pkg.name.replace(/\./g, '/');
+    });
 
-  var swaggerDef = ServiceApis.get({}, function success() {
-    $scope.serviceApis = {}; // path-to-api object
+    var swaggerDef = ServiceApis.get({}, function success() {
+      $scope.serviceApis = {}; // path-to-api object
+      var paths = swaggerDef.paths;
+      Object.keys(paths).forEach(function(path) {
+        var rootPath = path;
+        var slash = path.indexOf('/', 1);
+        if (slash > 0) {
+          rootPath = path.substring(0, slash);
+        }
+        // if path corresponds to pkg(s), root path is longest matching pkg path
+        for (let i = 0; i < pkgPaths.length; i++) {
+          let pkgPath = pkgPaths[i];
+          if (path.startsWith(pkgPath)) {
+            slash = path.indexOf('/', pkgPath.length + 1);
+            if (slash > 0)
+              rootPath = pkgPath + path.substring(pkgPath.length, slash);
+            else
+              rootPath = pkgPath + path.substring(pkgPath.length);
+          }
+        }
 
-    var paths = swaggerDef.paths;
-    Object.getOwnPropertyNames(paths).forEach(function(pathName) {
-      var barePath = pathName;
-      var slashCurly = pathName.indexOf('/{');
-      if (slashCurly > 0)
-        barePath = pathName.substring(0, slashCurly);
-      barePath = '/' + barePath.substring(1).replace(/\//g, '.');
-      
-      var serviceApi = $scope.serviceApis[barePath];
-      if (!serviceApi)
-        serviceApi = {};
-      serviceApi.label = barePath.replace(/\./g, '/');
-      $scope.serviceApis[barePath] = serviceApi;
-      
-      var pathVal = paths[pathName];
-      Object.getOwnPropertyNames(pathVal).forEach(function(methodName) {
-        serviceApi[methodName] = pathVal[methodName];
-        var tags = serviceApi[methodName].tags;
-        if (tags && tags[0])
-          serviceApi.description = tags[0];
+        // serviceApis = one per root path
+        var servicePath = '/' + rootPath.substring(1).replace(/\//g, '.');
+        var serviceApi = $scope.serviceApis[servicePath];
+        if (!serviceApi) {
+          serviceApi = {};
+          serviceApi.label = rootPath;
+          $scope.serviceApis[servicePath] = serviceApi;
+        }
+
+        if (!serviceApi.description) {
+          var pathVal = paths[path];
+          Object.keys(pathVal).forEach(function(methodName) {
+            serviceApi[methodName] = pathVal[methodName];
+            var tags = serviceApi[methodName].tags;
+            if (tags && tags[0])
+              serviceApi.description = tags[0];
+          });
+        }
       });
     });
   });
-  
 }]);
 
 servicesMod.controller('ServiceController', ['$scope', '$routeParams', '$sce', '$window', 'mdw', 'ServiceApis', 'Assets', 'Asset', 
