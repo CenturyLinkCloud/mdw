@@ -38,6 +38,7 @@ import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
+import com.centurylink.mdw.service.data.ServicePaths;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.WorkflowServices;
@@ -890,7 +891,7 @@ public class TestCaseRun implements Runnable {
                     stubResponse.setDelay(delay);
                     stubResponse.setStatusCode(adapterStub.getStatusCode());
                     stubResponse.setStatusMessage(adapterStub.getStatusMessage());
-                    stubResponse.setPath(request.getUrl());
+                    stubResponse.setPath(ServicePaths.getOutboundResponsePath(request.getUrl(), request.getMethod()));
                     return stubResponse;
                 }
                 catch (Throwable th) {

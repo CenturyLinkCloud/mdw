@@ -3,33 +3,22 @@
  */
 package com.centurylink.mdw.util;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.HashMap;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.Header;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.*;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.ByteArrayBuffer;
+
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.HashMap;
 
 /**
  * Uses the Apache HTTP Client (supports PATCH).
@@ -39,6 +28,10 @@ public class HttpAltConnection extends HttpConnection {
     private CloseableHttpClient httpClient;
     private HttpHost proxy;
     private HttpRequestBase methodRequest;
+    public String getMethod() {
+        return methodRequest == null ? null : methodRequest.getMethod();
+    }
+
     private CloseableHttpResponse httpResponse;
 
     private String proxyProtocol = "http";

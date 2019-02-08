@@ -178,25 +178,8 @@ public class Requests extends JsonRestService implements JsonExportable {
     public JsonArray getTops(Query query) throws ServiceException {
         List<RequestAggregate> list = getRequestServices().getTopRequests(query);
         JSONArray requestArray = new JSONArray();
-        int ct = 0;
-        RequestAggregate other = null;
-        long otherTotal = 0;
         for (RequestAggregate requestAggregate : list) {
-            if (ct >= query.getMax()) {
-                if (other == null) {
-                    other = new RequestAggregate(0);
-                    other.setPath("Other");
-                }
-                otherTotal += requestAggregate.getValue();
-            }
-            else {
-                requestArray.put(requestAggregate.getJson());
-            }
-            ct++;
-        }
-        if (other != null) {
-            other.setValue(otherTotal);
-            requestArray.put(other.getJson());
+            requestArray.put(requestAggregate.getJson());
         }
         return new JsonArray(requestArray);
     }

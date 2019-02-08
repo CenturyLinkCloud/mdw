@@ -545,25 +545,8 @@ public class Processes extends JsonRestService implements JsonExportable {
     public JsonArray getTops(Query query) throws ServiceException {
         List<ProcessAggregate> list = getWorkflowServices().getTopProcesses(query);
         JSONArray processArray = new JSONArray();
-        int count = 0;
-        ProcessAggregate other = null;
-        long otherTotal = 0;
         for (ProcessAggregate processAggregate : list) {
-            if (count >= query.getMax()) {
-                if (other == null) {
-                    other = new ProcessAggregate(0);
-                    other.setName("Other");
-                }
-                otherTotal += processAggregate.getValue();
-            }
-            else {
-                processArray.put(processAggregate.getJson());
-            }
-            count++;
-        }
-        if (other != null) {
-            other.setValue(otherTotal);
-            processArray.put(other.getJson());
+            processArray.put(processAggregate.getJson());
         }
         return new JsonArray(processArray);
     }

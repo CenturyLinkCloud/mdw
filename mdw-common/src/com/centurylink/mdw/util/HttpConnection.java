@@ -26,6 +26,10 @@ public class HttpConnection {
     private URL url;
     public URL getUrl() { return url; }
 
+    public String getMethod() {
+        return connection == null ? null : connection.getRequestMethod();
+    }
+
     private HttpURLConnection connection;
     HttpURLConnection getConnection() { return connection; }
 

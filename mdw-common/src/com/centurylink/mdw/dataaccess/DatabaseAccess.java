@@ -634,14 +634,6 @@ public class DatabaseAccess {
             return "\n) allrows where rownum <= " + (startRow+rowCount) + ") where rnum  > " + startRow;
     }
 
-    public void setQueryTimeout(int seconds) throws SQLException {
-        queryTimeout = seconds;
-    }
-
-    public int getQueryTimeout() throws SQLException {
-        return queryTimeout;
-    }
-
     public String toString() {
         return database_name;
     }

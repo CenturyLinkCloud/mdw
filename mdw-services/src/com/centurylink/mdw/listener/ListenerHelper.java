@@ -40,6 +40,7 @@ import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.ServiceMonitor;
+import com.centurylink.mdw.service.data.ServicePaths;
 import com.centurylink.mdw.service.data.event.EventHandlerCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
@@ -264,7 +265,7 @@ public class ListenerHelper {
 
                     if (altResponse.getStatusCode() == null)
                         altResponse.setStatusCode(getResponseCode(metaInfo));
-                    altResponse.setPath(metaInfo.get(Listener.METAINFO_REQUEST_PATH));
+                    altResponse.setPath(ServicePaths.getInboundResponsePath(metaInfo));
 
                     if (persistMessage(metaInfo)) {
                         Long ownerId = createResponseDocument(altResponse, eeid);
@@ -290,7 +291,7 @@ public class ListenerHelper {
 
                 if (response.getStatusCode() == null)
                     response.setStatusCode(getResponseCode(metaInfo));
-                response.setPath(metaInfo.get(Listener.METAINFO_REQUEST_PATH));
+                response.setPath(ServicePaths.getInboundResponsePath(metaInfo));
 
                 if (persistMessage(metaInfo) && !StringHelper.isEmpty(response.getContent())) {
                     Long ownerId = createResponseDocument(response, eeid);
@@ -327,7 +328,7 @@ public class ListenerHelper {
                     response = altResponse;
                     if (response.getStatusCode() == null)
                         response.setStatusCode(getResponseCode(metaInfo));
-                    response.setPath(metaInfo.get(Listener.METAINFO_REQUEST_PATH));
+                    response.setPath(ServicePaths.getInboundResponsePath(metaInfo));
                 }
             }
             if (response == null)
@@ -413,7 +414,7 @@ public class ListenerHelper {
 
             if (response.getStatusCode() == null)
                 response.setStatusCode(getResponseCode(metaInfo));
-            response.setPath(metaInfo.get(Listener.METAINFO_REQUEST_PATH));
+            response.setPath(ServicePaths.getInboundResponsePath(metaInfo));
             if (metaInfo.containsKey(Listener.METAINFO_DOCUMENT_ID)) {
                 metaInfo.put(Listener.METAINFO_MDW_REQUEST_ID, metaInfo.get(Listener.METAINFO_DOCUMENT_ID));
                 metaInfo.remove(Listener.METAINFO_DOCUMENT_ID);
@@ -459,7 +460,7 @@ public class ListenerHelper {
             }
             if (response.getStatusCode() == null)
                 response.setStatusCode(getResponseCode(metaInfo));
-            response.setPath(metaInfo.get(Listener.METAINFO_REQUEST_PATH));
+            response.setPath(ServicePaths.getInboundResponsePath(metaInfo));
             try {
                 createResponseMeta(metaInfo, reqMetaInfo, createResponseDocument(response, eeid), requestTime);
             }
@@ -600,7 +601,7 @@ public class ListenerHelper {
         statusMsg.setMessage(ex.getMessage());
         response.setStatusCode(statusMsg.getCode());
         response.setStatusMessage(statusMsg.getMessage());
-        response.setPath(metaInfo.get(Listener.METAINFO_REQUEST_PATH));
+        response.setPath(ServicePaths.getInboundResponsePath(metaInfo));
         if (contentType.equals(Listener.CONTENT_TYPE_JSON)) {
             response.setContent(statusMsg.getJsonString());
         }

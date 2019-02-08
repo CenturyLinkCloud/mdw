@@ -42,11 +42,13 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
     private List<RequestAggregate> getTopsByThroughput(Query query)
             throws ParseException, DataAccessException, SQLException, ServiceException {
         PreparedWhere preparedWhere = getRequestWhere(query);
-        String sql = "select path, count(path) as ct\n" +
+        String sql = db.pagingQueryPrefix() +
+                "select path, count(path) as ct\n" +
                 "from DOCUMENT doc\n" +
                 preparedWhere.getWhere() + "\n" +
                 "group by path\n" +
-                "order by ct desc\n";
+                "order by ct desc\n" +
+                db.pagingQuerySuffix(query.getStart(), query.getMax());
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "RequestAggregation.getTopsByThroughput()");
         return getTopAggregates(query, preparedSelect, resultSet -> {
@@ -61,10 +63,12 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
     private List<RequestAggregate> getTopsByStatus(Query query)
             throws ParseException, DataAccessException, SQLException, ServiceException {
         PreparedWhere preparedWhere = getRequestWhere(query);
-        String sql = "select status_code, count(status_code) as ct from DOCUMENT\n" +
+        String sql = db.pagingQueryPrefix() +
+                "select status_code, count(status_code) as ct from DOCUMENT\n" +
                 preparedWhere.getWhere() + " " +
                 "group by status_code\n" +
-                "order by ct desc\n";
+                "order by ct desc\n" +
+                db.pagingQuerySuffix(query.getStart(), query.getMax());
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "RequestAggregation.getTopsByStatus()");
         return getTopAggregates(query, preparedSelect, resultSet -> {
@@ -81,12 +85,14 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
     private List<RequestAggregate> getTopsByCompletionTime(Query query)
             throws ParseException, DataAccessException, SQLException, ServiceException {
         PreparedWhere preparedWhere = getRequestWhere(query);
-        String sql = "select path, avg(elapsed_ms) as elapsed, count(path) as ct\n" +
+        String sql = db.pagingQueryPrefix() +
+                "select path, avg(elapsed_ms) as elapsed, count(path) as ct\n" +
                 "from DOCUMENT" +
                 ", INSTANCE_TIMING it\n" +
                 preparedWhere.getWhere() + " " +
                 "group by path\n" +
-                "order by elapsed desc\n";
+                "order by elapsed desc\n" +
+                db.pagingQuerySuffix(query.getStart(), query.getMax());
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "RequestAggregation.getTopsByCompletionTime()");
         return getTopAggregates(query, preparedSelect, resultSet -> {
@@ -223,8 +229,10 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
 
         boolean includeHealthCheck = query.getBooleanFilter("HealthCheck");
         if (!includeHealthCheck) {
-            where.append("  and path != ?\n");
+            where.append("  and path != ?");
             params.add("AppSummary");
+            where.append(" and path != ?\n");
+            params.add("Get->AppSummary");
         }
 
         String ownerType = null;
@@ -259,9 +267,10 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
 
         Date end = getEndDate(query);
         if (end != null) {
-            where.append("  and create_dt <= ? ");
+            where.append(" and create_dt <= ? ");
             params.add(getDt(end));
         }
+        where.append("\n");
 
         String status = query.getFilter("Status");
         if (status != null) {
