@@ -18,7 +18,7 @@ import java.util.*;
 @Parameters(commandNames="paths", commandDescription="Display and optionally normalize unique service paths", separators="=")
 public class Paths extends Setup {
 
-    static final String SELECT = "select path from DOCUMENT where owner_type = ? and path is not null group by path order by path";
+    static final String SELECT = "select path from DOCUMENT where owner_type = ? and path is not null group by path";
     static final String UPDATE = "";
     static final int BATCH_SIZE = 5000;
 
@@ -46,7 +46,7 @@ public class Paths extends Setup {
         this.swagger = swagger;
     }
 
-    @Parameter(names="--path", description="Specific path to normalize")
+    @Parameter(names="--path", description="Specific path to normalize (always dry run)")
     private String path;
     public String getPath() {
         return path;
@@ -56,7 +56,6 @@ public class Paths extends Setup {
     }
 
     private DbInfo db;
-    private List<ServicePath> paths;
     private List<ServicePath> swaggerPaths;
 
     @Override
@@ -79,68 +78,59 @@ public class Paths extends Setup {
             }
         }
 
-        if (path != null)
-            paths = Arrays.asList(new ServicePath(path));
-        else
-            paths = retrieve();
+        HashSet<String> uniquePaths = normalize && isDebug() ? new HashSet<>() : null;
 
-        System.out.println(outbound ? "Outbound paths: " : "Inbound paths:");
-        HashSet<String> unique = normalize && isDebug() ? new HashSet<>() : null;
-        for (ServicePath path : paths) {
-            if (normalize) {
-                String norm = path.normalize(swaggerPaths);
-                if (norm.equals(path.getPath())) {
-                    System.out.println("  - " + path);
-                }
-                else {
-                    System.out.println("  - " + path + " -> " + norm);
-                    if (!dryrun) {
-                        // TODO batch update
+        if (path != null) {
+            ServicePath normalized = new ServicePath(path).normalize(swaggerPaths);
+            if (path.equals(normalized.getPath()))
+                System.out.println("  - " + path);
+            else
+                System.out.println("  - " + path + " -> " + normalized);
+        }
+        else {
+            System.out.println(outbound ? "Outbound paths: " : "Inbound paths:");
+            // group by is much faster than select distinct on mysql
+            try (Connection conn = db.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(SELECT)) {
+                stmt.setString(1, outbound ? "ADAPTER_RESPONSE" : "LISTENER_RESPONSE");
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        ServicePath servicePath = ServicePath.parse(rs.getString(1));
+                        if (normalize) {
+                            ServicePath normalized = servicePath.normalize(swaggerPaths);
+                            if (normalized.getPath().equals(servicePath.getPath())) {
+                                System.out.println("  - " + servicePath);
+                            }
+                            else {
+                                System.out.println("  - " + servicePath + " -> " + normalized);
+                                if (!dryrun) {
+                                    // TODO batch update
+                                }
+                            }
+                            if (uniquePaths != null)
+                                uniquePaths.add(normalized.getPath());
+                        }
+                        else {
+                            System.out.println("  - " + path);
+                        }
                     }
                 }
-                if (unique != null)
-                    unique.add(norm);
             }
-            else {
-                System.out.println("  - " + path);
+            catch (SQLException ex) {
+                throw new IOException(ex);
             }
         }
 
-        if (unique != null) {
+        if (uniquePaths != null) {
             List<String> uniqueList = new ArrayList<>();
-            uniqueList.addAll(Arrays.asList(unique.toArray(new String[0])));
+            uniqueList.addAll(Arrays.asList(uniquePaths.toArray(new String[0])));
             uniqueList.sort(String::compareToIgnoreCase);
             System.out.println("Unique normalized paths:");
             for (String uniquePath : uniqueList)
                 System.out.println("  - " + uniquePath);
         }
 
-//        String normal = normalizeInbound(path);
-//        if (!path.equals(normal)) {
-//            logger.debug(path + " -> " + normal);
-//        }
-//        if (!inboundPaths.contains(normal))
-//            inboundPaths.add(normal);
-
         return this;
-    }
-
-    private List<ServicePath> retrieve() throws IOException {
-        // group by is much faster than select distinct on mysql
-        try (Connection conn = db.getConnection();
-               PreparedStatement stmt = conn.prepareStatement(SELECT)) {
-            stmt.setString(1, outbound ? "ADAPTER_RESPONSE" : "LISTENER_RESPONSE");
-            List<ServicePath> servicePaths = new ArrayList<>();
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    servicePaths.add(new ServicePath(rs.getString(1)));
-                }
-                return servicePaths;
-            }
-        }
-        catch (SQLException ex) {
-            throw new IOException(ex);
-        }
     }
 
     private List<ServicePath> getSwaggerPaths(ProgressMonitor... monitors) throws IOException {

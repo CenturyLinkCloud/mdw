@@ -57,7 +57,7 @@ public class MdwSwaggerCache implements CacheService {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Swagger scanning classes:");
                     for (Class<?> c : classes)
-                        logger.debug("  - " + c);
+                        logger.trace("  - " + c);
                 }
                 SwaggerAnnotationsReader.read(swagger, classes);
             }

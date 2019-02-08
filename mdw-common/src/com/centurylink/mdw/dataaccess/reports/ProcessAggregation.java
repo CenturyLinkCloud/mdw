@@ -41,11 +41,13 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
     private List<ProcessAggregate> getTopsByThroughput(Query query)
             throws ParseException, DataAccessException, SQLException, ServiceException {
         PreparedWhere preparedWhere = getProcessWhere(query);
-        String sql = "select process_id, count(process_id) as ct\n" +
+        String sql = db.pagingQueryPrefix() +
+                "select process_id, count(process_id) as ct\n" +
                 "from PROCESS_INSTANCE\n" +
                 preparedWhere.getWhere() + " " +
                 "group by process_id\n" +
-                "order by ct desc\n";
+                "order by ct desc\n" +
+                db.pagingQuerySuffix(query.getStart(), query.getMax());
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "ProcessAggregation.getTopsByThroughput()");
         return getTopAggregates(query, preparedSelect, resultSet -> {
@@ -60,10 +62,12 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
     private List<ProcessAggregate> getTopsByStatus(Query query)
             throws ParseException, DataAccessException, SQLException, ServiceException {
         PreparedWhere preparedWhere = getProcessWhere(query);
-        String sql = "select status_cd, count(status_cd) as ct from PROCESS_INSTANCE\n" +
+        String sql = db.pagingQueryPrefix() +
+                "select status_cd, count(status_cd) as ct from PROCESS_INSTANCE\n" +
                 preparedWhere.getWhere() + " " +
                 "group by status_cd\n" +
-                "order by ct desc\n";
+                "order by ct desc\n" +
+                db.pagingQuerySuffix(query.getStart(), query.getMax());
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "ProcessAggregation.getTopsByStatus()");
         return getTopAggregates(query, preparedSelect, resultSet -> {
@@ -78,12 +82,14 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
     private List<ProcessAggregate> getTopsByCompletionTime(Query query)
             throws ParseException, DataAccessException, SQLException, ServiceException {
         PreparedWhere preparedWhere = getProcessWhere(query);
-        String sql = "select process_id, avg(elapsed_ms) as elapsed, count(process_id) as ct\n" +
+        String sql = db.pagingQueryPrefix() +
+                "select process_id, avg(elapsed_ms) as elapsed, count(process_id) as ct\n" +
                 "from PROCESS_INSTANCE" +
                 ", INSTANCE_TIMING\n" +
                 preparedWhere.getWhere() + " " +
                 "group by process_id\n" +
-                "order by elapsed desc\n";
+                "order by elapsed desc\n" +
+                db.pagingQuerySuffix(query.getStart(), query.getMax());
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "ProcessAggregation.getTopsByCompletionTime()");
         return getTopAggregates(query, preparedSelect, resultSet -> {

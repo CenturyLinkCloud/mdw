@@ -28,6 +28,7 @@ import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.service.data.ServicePaths;
 import com.centurylink.mdw.util.HttpAltConnection;
 import com.centurylink.mdw.util.HttpConnection;
 import com.centurylink.mdw.util.HttpHelper;
@@ -231,7 +232,8 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                 Response response = new Response(httpHelper.getResponse());
                 response.setStatusCode(httpHelper.getResponseCode());
                 response.setStatusMessage(httpHelper.getResponseMessage());
-                response.setPath(String.valueOf(httpHelper.getConnection().getUrl()));
+                response.setPath(ServicePaths.getOutboundResponsePath(String.valueOf(httpHelper.getConnection().getUrl()),
+                        httpHelper.getConnection().getMethod()));
                 logResponse(response);
             }
             /**
@@ -248,7 +250,8 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                     Response response = new Response(httpHelper.getResponse());
                     response.setStatusCode(responseCode);
                     response.setStatusMessage(httpHelper.getResponseMessage());
-                    response.setPath(String.valueOf(httpHelper.getConnection().getUrl()));
+                    response.setPath(ServicePaths.getOutboundResponsePath(String.valueOf(httpHelper.getConnection().getUrl()),
+                            httpHelper.getConnection().getMethod()));
                     logResponse(response);
                 }
             }

@@ -41,4 +41,7 @@
   <Cache Name="ProcessRequests" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.service.data.process.ProcessRequests</Property>
   </Cache>
+  <Cache Name="ServicePaths" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.service.data.ServicePaths</Property>
+  </Cache>
 </ApplicationCache>

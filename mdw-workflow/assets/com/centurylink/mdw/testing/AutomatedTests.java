@@ -70,8 +70,8 @@ public class AutomatedTests extends JsonRestService {
         }
     }
 
-    @Path("/{testCase}/{item}")
-    @ApiOperation(value="If {testCase} asset path not specified, returns all cases",
+    @Path("/{package}/{testCase}/{item}")
+    @ApiOperation(value="If {package}/{testCase} asset path not specified, returns all cases",
     notes="{item} can be a test case item like from a postman collection",
     response=TestCase.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers)
@@ -171,7 +171,8 @@ public class AutomatedTests extends JsonRestService {
         return null;
     }
 
-    private TestCase getTestCase(String[] segments) throws ServiceException {
+    @Path("/{package}/{testCase}")
+    public TestCase getTestCase(String[] segments) throws ServiceException {
         if (segments.length < 7)
             return null;
         String testCasePath = segments[5] + '/' + segments[6];
