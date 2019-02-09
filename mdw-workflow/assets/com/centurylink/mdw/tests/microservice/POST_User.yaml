@@ -1,0 +1,29 @@
+test: 'POST:User'
+request:
+  url: '${base-url}/com/centurylink/mdw/tests/microservice/user'
+  method: POST
+  headers:
+    Content-Type: application/json
+    mdw-request-id: '${mdw-request-id}'
+  body: |-
+    {
+      "id": "${dev-user}",
+      "firstName": "Linus",
+      "lastName": "Torvalds",
+      "emailAddress": "torvalds@transmeta.com",
+      "group": "${dev-group}"
+    }
+response:
+  status:
+    code: 202
+    message: Accepted
+  headers:
+    content-type: application/json
+    mdw-request-id: ${~.*}
+  body: |-
+    {
+      "status": {
+        "code": 202,
+        "message": "Accepted"
+      }
+    }

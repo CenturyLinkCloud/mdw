@@ -1,11 +1,17 @@
+DEL_Group.yaml=1
+DEL_User.yaml=1
+GET_ServiceSummary.yaml=1
 GroupRequestMapper.groovy=1
 MicroserviceOrchestration.proc=4
 MicroserviceOrchestrator.test=2
 MicroserviceOrchestrator.yaml=1
+POST_User.yaml=1
 ServicePlanDsl.test=3
 ServicePlanDsl.yaml=3
 ServicePlanTest.kt=1
 ServicePlanTest.proc=2
 User.java=4
 UserRequestMapper.groovy=1
+localhost.env=1
 mainRequest.json=2
+microservice-orchestrator.postman=1

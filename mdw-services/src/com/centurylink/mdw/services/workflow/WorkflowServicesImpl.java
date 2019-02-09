@@ -343,6 +343,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
         Query query = new Query();
         query.setFilter("master", true);
         query.setFilter("masterRequestId", masterRequestId);
+        query.setSort("process_instance_id");
+        query.setDescending(true);
         List<ProcessInstance> instances = getProcesses(query).getProcesses();
         if (instances.isEmpty())
             return null;
