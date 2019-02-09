@@ -18,21 +18,15 @@ import java.util.*;
 @Parameters(commandNames="paths", commandDescription="Display and optionally normalize unique service paths", separators="=")
 public class Paths extends Setup {
 
-    static final String SELECT = "select path from DOCUMENT where owner_type = ? and path is not null group by path";
-    static final String UPDATE = "";
-    static final int BATCH_SIZE = 5000;
+    // group by is much faster than select distinct on mysql
+    static final int DEFAULT_MAX = 1000;
 
-    @Parameter(names="--outbound", description="Show/update outbound request paths (otherwise inbound paths are shown/updated")
+    @Parameter(names="--outbound", description="Show outbound request paths (otherwise inbound paths are shown")
     private boolean outbound;
     public boolean isOutbound() { return outbound; }
     public void setOutbound(boolean outbound) { this.outbound = outbound; }
 
-    @Parameter(names="--dryrun", description="(With --normalize) show what would be updated")
-    private boolean dryrun;
-    public boolean isDryrun() { return dryrun; }
-    public void setDryrun(boolean dryrun) { this.dryrun = dryrun; }
-
-    @Parameter(names="--normalize", description="Update reponse paths in DOCUMENT table")
+    @Parameter(names="--normalize", description="Show normalized reponse paths")
     private boolean normalize;
     public boolean isNormalize() { return normalize; }
     public void setNormalize(boolean normalize) { this.normalize = normalize; }
@@ -46,7 +40,7 @@ public class Paths extends Setup {
         this.swagger = swagger;
     }
 
-    @Parameter(names="--path", description="Specific path to normalize (always dry run)")
+    @Parameter(names="--path", description="Specific path to normalize")
     private String path;
     public String getPath() {
         return path;
@@ -55,13 +49,17 @@ public class Paths extends Setup {
         this.path = path;
     }
 
-    private DbInfo db;
+    @Parameter(names="--max", description="Maximum paths to retrieve/display")
+    private int max;
+    public int getMax() { return max == 0 ? DEFAULT_MAX : max; }
+    public void setMax(int max) { this.max = max; }
+
     private List<ServicePath> swaggerPaths;
 
     @Override
     public Paths run(ProgressMonitor... monitors) throws IOException {
 
-        db = new DbInfo(new Props(this));
+        DbInfo db = new DbInfo(new Props(this));
 
         Map<String,Long> dbDependencies = DbInfo.getDependencies(db.getUrl());
         for (String dep : dbDependencies.keySet()) {
@@ -88,10 +86,14 @@ public class Paths extends Setup {
                 System.out.println("  - " + path + " -> " + normalized);
         }
         else {
+            String sql;
+            if (db.getUrl().startsWith("jdbc:oracle"))
+                sql = "select distinct path from DOCUMENT where owner_type = ? and path is not null and rownum <= " + getMax();
+            else
+                sql = "select path from DOCUMENT where owner_type = ? and path is not null group by path limit " + getMax();
             System.out.println(outbound ? "Outbound paths: " : "Inbound paths:");
-            // group by is much faster than select distinct on mysql
             try (Connection conn = db.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(SELECT)) {
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, outbound ? "ADAPTER_RESPONSE" : "LISTENER_RESPONSE");
                 try (ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {
@@ -103,9 +105,6 @@ public class Paths extends Setup {
                             }
                             else {
                                 System.out.println("  - " + servicePath + " -> " + normalized);
-                                if (!dryrun) {
-                                    // TODO batch update
-                                }
                             }
                             if (uniquePaths != null)
                                 uniquePaths.add(normalized.getPath());
@@ -157,22 +156,4 @@ public class Paths extends Setup {
         Collections.sort(servicePaths);
         return servicePaths;
     }
-
-    private void update(boolean isOutbound) throws IOException {
-//        String query = "";
-//        db.prepareStatement(query);
-//        Object[] args = new Object[4];
-//        for (Attribute vo : pAttributes) {
-//            String v = vo.getAttributeValue();
-//            if (v==null||v.length()==0) continue;
-//            args[0] = pOwner;
-//            args[1] = pOwnerId;
-//            args[2] = vo.getAttributeName();
-//            args[3] = v;
-//            db.addToBatch(args);
-//        }
-//        db.runBatchUpdate();
-
-    }
-
 }

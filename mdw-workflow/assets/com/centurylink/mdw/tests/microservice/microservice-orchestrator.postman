@@ -1,0 +1,135 @@
+{
+	"info": {
+		"_postman_id": "34632827-dbee-431f-8c57-84a75de6c62a",
+		"name": "microservice-orchestrator",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "User",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "mdw-request-id",
+						"value": "{{mdw-request-id}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": \"{{dev-user}}\",\n  \"firstName\": \"Linus\",\n  \"lastName\": \"Torvalds\",\n  \"emailAddress\": \"torvalds@transmeta.com\",\n  \"group\": \"{{dev-group}}\"\n}"
+				},
+				"url": {
+					"raw": "{{base-url}}/com/centurylink/mdw/tests/microservice/user",
+					"host": [
+						"{{base-url}}"
+					],
+					"path": [
+						"com",
+						"centurylink",
+						"mdw",
+						"tests",
+						"microservice",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ServiceSummary",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{base-url}}/com/centurylink/mdw/microservice/summary?masterRequestId={{mdw-request-id}}",
+					"host": [
+						"{{base-url}}"
+					],
+					"path": [
+						"com",
+						"centurylink",
+						"mdw",
+						"microservice",
+						"summary"
+					],
+					"query": [
+						{
+							"key": "masterRequestId",
+							"value": "{{mdw-request-id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{base-url}}/Users/{{dev-user}}",
+					"host": [
+						"{{base-url}}"
+					],
+					"path": [
+						"Users",
+						"{{dev-user}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Group",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{base-url}}/Workgroups/{{dev-group}}",
+					"host": [
+						"{{base-url}}"
+					],
+					"path": [
+						"Workgroups",
+						"{{dev-group}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

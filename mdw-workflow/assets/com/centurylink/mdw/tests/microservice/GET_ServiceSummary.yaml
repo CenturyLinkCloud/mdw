@@ -1,0 +1,63 @@
+test: 'GET:ServiceSummary'
+request:
+  url: >-
+    ${base-url}/com/centurylink/mdw/microservice/summary?masterRequestId=${mdw-request-id}
+  method: GET
+  headers:
+    Content-Type: application/json
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    content-type: application/json
+    mdw-request-id: '${~.*}'
+  body: |-
+    {
+      "instanceId": ${~\d+},
+      "masterRequestId": "${mdw-request-id}",
+      "microservices": [
+        {
+          "instances": [
+            {
+              "id": ${~\d+},
+              "invocations": [
+                {
+                  "requestId": ${~\d+},
+                  "responseId": ${~\d+},
+                  "sent": "${~.*}",
+                  "status": {
+                    "code": 200,
+                    "message": "OK"
+                  }
+                }
+              ],
+              "status": "Completed",
+              "triggered": "${~.*}"
+            }
+          ],
+          "name": "admin/createUser"
+        },
+        {
+          "instances": [
+            {
+              "id": ${~\d+},
+              "invocations": [
+                {
+                  "requestId": ${~\d+},
+                  "responseId": ${~\d+},
+                  "sent": "${~.*}",
+                  "status": {
+                    "code": 201,
+                    "message": "Created"
+                  }
+                }
+              ],
+              "status": "Completed",
+              "triggered": "${~.*}"
+            }
+          ],
+          "name": "admin/createGroup"
+        }
+      ]
+    }

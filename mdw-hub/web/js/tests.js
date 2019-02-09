@@ -31,8 +31,7 @@ testingMod.controller('TestsController',
   });
 
   $scope.config = TestConfig.get();
-  console.log("CONFIG: " + JSON.stringify($scope.config, null, 2));
-  
+
   $scope.running = function() {
     return $scope.forStatus('InProgress');
   };
