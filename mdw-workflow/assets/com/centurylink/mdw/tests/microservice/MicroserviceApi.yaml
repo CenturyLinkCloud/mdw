@@ -1,0 +1,183 @@
+test: MicroserviceApi
+request:
+  url: '${base-url}/com/centurylink/mdw/tests/microservice/user'
+  method: POST
+  headers:
+    Content-Type: application/json
+    mdw-request-id: ${mdw-request-id}
+    mdw-synchronous: 'true'
+  body: |-
+    {
+      "id": "${dev-user}",
+      "firstName": "Linus",
+      "lastName": "Torvalds",
+      "emailAddress": "torvalds@transmeta.com",
+      "group": "${dev-group}"
+    }
+response:
+  status:
+    code: 201
+    message: Created
+  headers:
+    content-type: application/json
+    mdw-request-id: '${~\d+}'
+  body: |-
+    {
+      "responses": {
+        "admin/createUser": {
+          "code": 200,
+          "message": "OK"
+        },
+        "admin/createGroup": {
+          "code": 201,
+          "message": "Created"
+        }
+      },
+      "status": {
+        "code": 201,
+        "message": "Created"
+      }
+    }
+test: MicroserviceApi
+request:
+  url: '${base-url}/com/centurylink/mdw/tests/microservice/user'
+  method: POST
+  headers:
+    Content-Type: application/json
+    mdw-request-id: ${mdw-request-id}
+    mdw-synchronous: 'true'
+  body: |-
+    {
+      "id": "${dev-user}",
+      "firstName": "Linus",
+      "lastName": "Torvalds",
+      "emailAddress": "torvalds@transmeta.com",
+      "group": "${dev-group}"
+    }
+response:
+  status:
+    code: 409
+    message: Conflict
+  headers:
+    content-type: application/json
+    mdw-request-id: '${~.*}'
+  body: |-
+    {
+      "responses": {
+        "admin/createUser": {
+          "code": 409,
+          "message": "Conflict"
+        },
+        "admin/createGroup": {
+          "code": 409,
+          "message": "Conflict"
+        }
+      },
+      "status": {
+        "code": 409,
+        "message": "Conflict"
+      }
+    }
+test: MicroserviceApi
+request:
+  url: >-
+    ${base-url}/com/centurylink/mdw/microservice/summary?masterRequestId=${mdw-request-id}
+  method: GET
+  headers:
+    Content-Type: application/json
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    content-type: application/json
+    mdw-request-id: '${~.*}'
+  body: |-
+    {
+      "instanceId": ${~\d+},
+      "masterRequestId": "${mdw-request-id}",
+      "microservices": [
+        {
+          "instances": [
+            {
+              "id": ${~\d+},
+              "invocations": [
+                {
+                  "requestId": ${~\d+},
+                  "responseId": ${~\d+},
+                  "sent": "${~.*}",
+                  "status": {
+                    "code": 409,
+                    "message": "Conflict"
+                  }
+                }
+              ],
+              "status": "Completed",
+              "triggered": "${~.*}"
+            }
+          ],
+          "name": "admin/createUser"
+        },
+        {
+          "instances": [
+            {
+              "id": ${~\d+},
+              "invocations": [
+                {
+                  "requestId": ${~\d+},
+                  "responseId": ${~\d+},
+                  "sent": "${~.*}",
+                  "status": {
+                    "code": 409,
+                    "message": "Conflict"
+                  }
+                }
+              ],
+              "status": "Completed",
+              "triggered": "${~.*}"
+            }
+          ],
+          "name": "admin/createGroup"
+        }
+      ]
+    }
+test: MicroserviceApi
+request:
+  url: '${base-url}/Users/torvalds'
+  method: DELETE
+  headers:
+    Content-Type: application/json
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    content-type: application/json
+    mdw-request-id: '${~\d+}'
+  body: |-
+    {
+      "status": {
+        "code": 200,
+        "message": "OK"
+      }
+    }
+test: MicroserviceApi
+request:
+  url: '${base-url}/Workgroups/Devs'
+  method: DELETE
+  headers:
+    Content-Type: application/json
+response:
+  status:
+    code: 200
+    message: OK
+  headers:
+    content-type: application/json
+    mdw-request-id: '${~\d+}'
+  body: |-
+    {
+      "status": {
+        "code": 200,
+        "message": "OK"
+      }
+    }

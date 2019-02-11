@@ -30,6 +30,6 @@ sourceSets {
 }
 
 jar {
-    destinationDir = file('.')
-    baseName 'service-plan'
+    destinationDirectory = file('.')
+    archiveBaseName = 'service-plan'
 }

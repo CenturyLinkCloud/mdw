@@ -18,6 +18,11 @@
 						"key": "mdw-request-id",
 						"value": "{{mdw-request-id}}",
 						"type": "text"
+					},
+					{
+						"key": "mdw-synchronous",
+						"value": "{{mdw-synchronous}}",
+						"type": "text"
 					}
 				],
 				"body": {
