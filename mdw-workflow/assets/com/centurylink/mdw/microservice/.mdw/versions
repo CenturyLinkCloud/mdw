@@ -1,9 +1,8 @@
 ${StandardInvoke}.proc=6
-.mdwignore=3
+.mdwignore=4
 CombiningConsolidator.java=2
 Consolidator.java=1
 DependenciesWaitActivity.java=8
-ErrorHandler.kt=1
 ErrorHandlerActivity.kt=1
 IdentityRequestMapper.groovy=1
 IdentityResponseMapper.groovy=1
@@ -28,4 +27,4 @@ error.png=1
 orchestrator.png=1
 plan.png=1
 readme.md=1
-service-plan.jar=1
+service-plan.jar=4
