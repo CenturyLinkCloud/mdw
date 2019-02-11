@@ -234,6 +234,8 @@ public class Users extends JsonRestService {
         UserServices userServices = ServiceLocator.getUserServices();
         try {
             if (rel == null) {
+                if (userServices.getUser(cuid) == null)
+                    throw new ServiceException(ServiceException.NOT_FOUND, "User not found: " + cuid);
                 userServices.deleteUser(cuid);
             }
             else if (rel.equals("workgroups")) {

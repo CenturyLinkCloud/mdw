@@ -5,6 +5,7 @@ request:
   headers:
     Content-Type: application/json
     mdw-request-id: '${mdw-request-id}'
+    mdw-synchronous: '${mdw-synchronous}'
   body: |-
     {
       "id": "${dev-user}",

@@ -1,0 +1,45 @@
+package com.centurylink.mdw.tests.microservice
+
+def vals = [
+    'mdw-request-id': 'microservice-test-' + System.currentTimeMillis(),
+    'mdw-synchronous': 'true'
+]
+
+// initially no capture (possible cleanup)
+submit request('microservice-orchestrator.postman/DEL:User') {
+    options = [ captureResult: false ]
+}
+
+submit request('microservice-orchestrator.postman/DEL:Group') {
+    options = [ captureResult: false ]
+}
+
+def response = submit request('microservice-orchestrator.postman/POST:User') {
+    values = vals
+}
+assert response.status.code == 201
+// case-insensitive header check
+assert response.checkHeader('content-type', 'application/json')
+
+// ensure no dups
+response = submit request('microservice-orchestrator.postman/POST:User') {
+    values = vals
+}
+assert response.status.code == 409
+
+// retrieve service summary
+response = submit request('microservice-orchestrator.postman/GET:ServiceSummary') {
+    values = vals
+}
+assert response.status.code == 200
+
+response = submit request('microservice-orchestrator.postman/DEL:User')
+assert response.status.code == 200
+
+response = submit request('microservice-orchestrator.postman/DEL:Group')
+assert response.status.code == 200
+
+// validate all results
+verify(response) {
+    values = vals
+}

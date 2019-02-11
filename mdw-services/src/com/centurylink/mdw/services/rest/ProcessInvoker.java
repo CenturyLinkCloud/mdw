@@ -111,7 +111,16 @@ public class ProcessInvoker extends JsonRestService {
         String masterRequestId = getMasterRequestId(headers);
 
         if (process.isService()) {
-            return invokeServiceProcess(assetRequest.getAsset(), requestObj, masterRequestId, null, headers);
+            Map<String,Object> inputParams = null;
+            if (headers.containsKey("mdw-synchronous")) {
+                Boolean isSynchronous = "true".equalsIgnoreCase(headers.get("mdw-synchronous"));
+                Variable syncVar = process.getVariable("synchronous");
+                if (syncVar != null && syncVar.isInput()) {
+                    inputParams = new HashMap<>();
+                    inputParams.put("synchronous", isSynchronous);
+                }
+            }
+            return invokeServiceProcess(assetRequest.getAsset(), requestObj, masterRequestId, inputParams, headers);
         }
         else {
             // request and requestHeaders need explicit binding for non-service procs

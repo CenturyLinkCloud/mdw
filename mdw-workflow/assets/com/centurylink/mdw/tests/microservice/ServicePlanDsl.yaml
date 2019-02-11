@@ -56,6 +56,7 @@ process: # 10019
               microservice: admin/createUser,
               serviceUrl: 'http://localhost:8080/mdw/services/Users',
               serviceMethod: POST,
+              synchronous: true,
               request: 'DOCUMENT:12345',
               requestHeaders: null,
               serviceSummary: null,
@@ -69,6 +70,7 @@ process: # 10019
             method: POST,
             name: admin/createUser,
             subflow: 'com.centurylink.mdw.microservice/\${StandardInvoke}.proc',
+            synchronous: true,
             url: 'http://localhost:8080/mdw/services/Users'
           }]
         
@@ -116,6 +118,7 @@ process: # 10018
               microservice: admin/createUser,
               serviceUrl: 'http://localhost:8080/mdw/services/Users',
               serviceMethod: POST,
+              synchronous: true,
               request: 'DOCUMENT:12345',
               requestHeaders: null,
               serviceSummary: null,
@@ -127,6 +130,7 @@ process: # 10018
             method: POST,
             name: admin/createUser,
             subflow: 'com.centurylink.mdw.microservice/\${StandardInvoke}.proc',
+            synchronous: true,
             url: 'http://localhost:8080/mdw/services/Users'
           },
           {
@@ -134,6 +138,7 @@ process: # 10018
               microservice: admin/createGroup,
               serviceUrl: 'http://localhost:8080/mdw/services/Workgroups',
               serviceMethod: POST,
+              synchronous: true,
               request: 'DOCUMENT:12345',
               requestHeaders: null,
               serviceSummary: null,
@@ -145,6 +150,7 @@ process: # 10018
             method: POST,
             name: admin/createGroup,
             subflow: 'com.centurylink.mdw.microservice/\${StandardInvoke}.proc',
+            synchronous: true,
             url: 'http://localhost:8080/mdw/services/Workgroups'
           }]
         

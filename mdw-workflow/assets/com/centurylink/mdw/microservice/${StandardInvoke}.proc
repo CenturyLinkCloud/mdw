@@ -30,7 +30,7 @@
       "implementor": "com.centurylink.mdw.workflow.activity.transform.CrossmapActivity",
       "name": "Map\r\nRequest",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=437,ly=188,type=ElbowV,xs=550&349,ys=164&235"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=ElbowV,lx=357,ly=204,xs=550&164,ys=164&244"},
         "event": "FINISH",
         "id": "T7",
         "to": "A5"
@@ -45,17 +45,25 @@
         "REQUEST_VARIABLE": "serviceRequest",
         "RESPONSE_VARIABLE": "serviceResponse",
         "RetryHttpCodes": "500",
-        "WORK_DISPLAY_INFO": "x=270,y=239,w=159,h=81"
+        "WORK_DISPLAY_INFO": "x=85,y=249,w=159,h=81"
       },
       "id": "A5",
       "implementor": "com.centurylink.mdw.microservice.MicroserviceRestAdapter",
       "name": "REST\r\nInvoke",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=248,ly=370,type=ElbowV,xs=349&170,ys=324&396"},
-        "event": "FINISH",
-        "id": "T3",
-        "to": "A6"
-      }]
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=ElbowV,lx=320,ly=289,xs=248&393,ys=289&289"},
+          "event": "FINISH",
+          "id": "T3",
+          "to": "A6"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=154,ly=366,xs=154&154,ys=334&398"},
+          "event": "ERROR",
+          "id": "T8",
+          "to": "A9"
+        }
+      ]
     },
     {
       "attributes": {
@@ -63,13 +71,13 @@
         "Mapper": "${responseMapper}",
         "Mapper_assetVersion": "0",
         "Output": "response",
-        "WORK_DISPLAY_INFO": "x=110,y=400,w=120,h=80"
+        "WORK_DISPLAY_INFO": "x=398,y=249,w=120,h=80"
       },
       "id": "A6",
       "implementor": "com.centurylink.mdw.workflow.activity.transform.CrossmapActivity",
       "name": "Map\r\nResponse",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=321,ly=439,type=Elbow,xs=234&396,ys=439&439"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=458,ly=364,xs=458&458,ys=333&395"},
         "event": "FINISH",
         "id": "T6",
         "to": "A8"
@@ -104,12 +112,25 @@
         "id": "T4",
         "to": "A2"
       }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=98,y=402,w=113,h=76"},
+      "id": "A9",
+      "implementor": "com.centurylink.mdw.microservice.ErrorHandlerActivity",
+      "name": "Handle\nError",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=305,ly=440,xs=215&396,ys=440&440"},
+        "event": "FINISH",
+        "id": "T9",
+        "to": "A8"
+      }]
     }
   ],
   "attributes": {
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "PerformanceLevel": "0",
     "WORK_DISPLAY_INFO": "x=30,y=25,w=175,h=26"
   },
   "variables": {
@@ -180,6 +201,10 @@
     "serviceUrl": {
       "category": "INPUT",
       "type": "java.lang.String"
+    },
+    "synchronous": {
+      "category": "INPUT",
+      "type": "java.lang.Boolean"
     }
   }
 }

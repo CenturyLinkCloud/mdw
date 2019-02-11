@@ -10,6 +10,7 @@ import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.Status;
+import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
@@ -54,7 +55,9 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
     protected Long logResponse(Response response) {
         Long responseId = super.logResponse(response);
         int code = response.getStatusCode() == null ? 0 : response.getStatusCode();
-        Status status = new Status(code, response.getStatusMessage());
+        String message = response.getStatusMessage() == null ? StatusResponse.forCode(code).getStatus().getMessage() :
+                response.getStatusMessage();
+        Status status = new Status(code, message);
         try {
             updateServiceSummary(status, responseId);
             // For mySQL, now we need to restore  isolation level back to default

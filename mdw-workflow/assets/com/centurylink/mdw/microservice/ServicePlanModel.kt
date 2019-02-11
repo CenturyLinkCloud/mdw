@@ -20,10 +20,12 @@ data class Microservice(
         var subflow: String = "com.centurylink.mdw.microservice/\${StandardInvoke}.proc",
         var enabled: Boolean? = true,
         var count: Int = 1,
+        var synchronous: Boolean? = true,
         var bindings: MutableMap<String,Any?> = mutableMapOf(
           "microservice" to name,
           "serviceUrl" to url,
           "serviceMethod" to method,
+          "synchronous" to synchronous,
           "request" to runtimeContext.docRefs["request"],
           "requestHeaders" to runtimeContext.docRefs["requestHeaders"],
           "serviceSummary" to runtimeContext.docRefs["serviceSummary"],
