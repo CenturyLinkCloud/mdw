@@ -1,1 +1,445 @@
- 
+process: # 15706
+  name: \${StandardInvoke}
+  instance: 1
+  activity: # 1 "2019-02-11 13:55:36.430"
+    name: Start
+    status: Completed
+  activity: # 7 "2019-02-11 13:55:36.444"
+    name: |
+      Await
+      Dependencies
+    status: Completed
+    result: Completed::FINISH
+  activity: # 4 "2019-02-11 13:55:36.503"
+    name: |
+      Map
+      Request
+    status: Completed
+  activity: # 5 "2019-02-11 13:55:36.582"
+    name: |
+      REST
+      Invoke
+    status: Completed
+  activity: # 6 "2019-02-11 13:55:36.689"
+    name: |
+      Map
+      Response
+    status: Completed
+  activity: # 8 "2019-02-11 13:55:36.760"
+    name: |
+      Notify Summary
+      Update
+    status: Completed
+  activity: # 2 "2019-02-11 13:55:36.777"
+    name: Stop
+    status: Completed
+  variable: # 25980
+    name: i
+    value: 0
+  variable: # 25977
+    name: microservice
+    value: admin/createGroup
+  variable: # 25974
+    name: request
+    value: |
+      {
+        "emailAddress": "timbl@w3.org",
+        "firstName": "Tim",
+        "group": "Arch",
+        "id": "timbl",
+        "lastName": "Berners-Lee"
+      }
+  variable: # 25975
+    name: requestHeaders
+    value: |
+      {
+              "content-type": "application/json",
+              "HttpMethod": "POST",
+              "RequestPath": "com/centurylink/mdw/microservice/user"
+            }
+  variable: # 25988
+    name: requestId
+    value: ${~\\d+}
+  variable: # 25981
+    name: requestMapper
+    value: com.centurylink.mdw.tests.microservice/GroupRequestMapper.groovy
+  variable: # 25991
+    name: response
+    value: |
+      {"status": {
+        "code": 201,
+        "message": "Created"
+      }}
+  variable: # 25982
+    name: responseMapper
+    value: com.centurylink.mdw.microservice/StatusResponseMapper.groovy
+  variable: # 25983
+    name: serviceMethod
+    value: POST
+  variable: # 25985
+    name: serviceRequest
+    value: {"name": "Arch"}
+  variable: # 25989
+    name: serviceResponse
+    value: |
+      {"status": {
+        "code": 201,
+        "message": "Created"
+      }}
+  variable: # 25976
+    name: serviceSummary
+    value: |
+      {
+        "instanceId": ${~\\d+},
+        "masterRequestId": "${~.*}",
+        "microservices": [
+          {
+            "instances": [{
+              "id": ${~\\d+},
+              "invocations": [{
+                "requestId": ${~\\d+},
+                "responseId": ${~\\d+},
+                "sent": "${~.*}",
+                "status": {
+                  "code": 200,
+                  "message": "OK"
+                }
+              }],
+              "status": "Completed",
+              "triggered": "${~.*}"
+            }],
+            "name": "admin/createUser"
+          },
+          {
+            "instances": [{
+              "id": ${~\\d+},
+              "invocations": [{
+                "requestId": ${~\\d+},
+                "responseId": ${~\\d+},
+                "sent": "${~.*}",
+                "status": {
+                  "code": 201,
+                  "message": "Created"
+                }
+              }],
+              "status": "Completed",
+              "triggered": "${~.*}"
+            }],
+            "name": "admin/createGroup"
+          }
+        ]
+      }
+  variable: # 25979
+    name: serviceUrl
+    value: http://localhost:8080/mdw/services/Workgroups
+  variable: # 25978
+    name: synchronous
+    value: true
+process: # 15705
+  name: \${StandardInvoke}
+  instance: 2
+  activity: # 1 "2019-02-11 13:55:36.424"
+    name: Start
+    status: Completed
+  activity: # 7 "2019-02-11 13:55:36.437"
+    name: |
+      Await
+      Dependencies
+    status: Completed
+    result: Completed::FINISH
+  activity: # 4 "2019-02-11 13:55:36.452"
+    name: |
+      Map
+      Request
+    status: Completed
+  activity: # 5 "2019-02-11 13:55:36.555"
+    name: |
+      REST
+      Invoke
+    status: Completed
+  activity: # 6 "2019-02-11 13:55:36.624"
+    name: |
+      Map
+      Response
+    status: Completed
+  activity: # 8 "2019-02-11 13:55:36.752"
+    name: |
+      Notify Summary
+      Update
+    status: Completed
+  activity: # 2 "2019-02-11 13:55:36.770"
+    name: Stop
+    status: Completed
+  variable: # 25970
+    name: i
+    value: 0
+  variable: # 25967
+    name: microservice
+    value: admin/createUser
+  variable: # 25964
+    name: request
+    value: |
+      {
+        "emailAddress": "timbl@w3.org",
+        "firstName": "Tim",
+        "group": "Arch",
+        "id": "timbl",
+        "lastName": "Berners-Lee"
+      }
+  variable: # 25965
+    name: requestHeaders
+    value: |
+      {
+              "content-type": "application/json",
+              "HttpMethod": "POST",
+              "RequestPath": "com/centurylink/mdw/microservice/user"
+            }
+  variable: # 25986
+    name: requestId
+    value: ${~\\d+}
+  variable: # 25971
+    name: requestMapper
+    value: com.centurylink.mdw.tests.microservice/UserRequestMapper.groovy
+  variable: # 25990
+    name: response
+    value: |
+      {"status": {
+        "code": 200,
+        "message": "OK"
+      }}
+  variable: # 25972
+    name: responseMapper
+    value: com.centurylink.mdw.microservice/StatusResponseMapper.groovy
+  variable: # 25973
+    name: serviceMethod
+    value: POST
+  variable: # 25984
+    name: serviceRequest
+    value: |
+      {
+        "attributes": {"email": "timbl@w3.org"},
+        "cuid": "timbl",
+        "name": "TimBerners-Lee"
+      }
+  variable: # 25987
+    name: serviceResponse
+    value: |
+      {"status": {
+        "code": 200,
+        "message": "OK"
+      }}
+  variable: # 25966
+    name: serviceSummary
+    value: |
+      {
+        "instanceId": ${~\\d+},
+        "masterRequestId": "${~.*}",
+        "microservices": [
+          {
+            "instances": [{
+              "id": ${~\\d+},
+              "invocations": [{
+                "requestId": ${~\\d+},
+                "responseId": ${~\\d+},
+                "sent": "${~.*}",
+                "status": {
+                  "code": 200,
+                  "message": "OK"
+                }
+              }],
+              "status": "Completed",
+              "triggered": "${~.*}"
+            }],
+            "name": "admin/createUser"
+          },
+          {
+            "instances": [{
+              "id": ${~\\d+},
+              "invocations": [{
+                "requestId": ${~\\d+},
+                "responseId": ${~\\d+},
+                "sent": "${~.*}",
+                "status": {
+                  "code": 201,
+                  "message": "Created"
+                }
+              }],
+              "status": "Completed",
+              "triggered": "${~.*}"
+            }],
+            "name": "admin/createGroup"
+          }
+        ]
+      }
+  variable: # 25969
+    name: serviceUrl
+    value: http://localhost:8080/mdw/services/Users
+  variable: # 25968
+    name: synchronous
+    value: true
+process: # 15686
+  name: MicroserviceOrchestration
+  instance: 1
+  activity: # 1 "2019-02-11 13:39:36.808"
+    name: Receive
+    status: Completed
+  activity: # 6 "2019-02-11 13:39:36.814"
+    name: |
+      Validate
+      Request
+    status: Completed
+    result: true
+  activity: # 4 "2019-02-11 13:39:36.820"
+    name: |
+      Create
+      Plan
+    status: Completed
+  activity: # 3 "2019-02-11 13:39:36.856"
+    name: |
+      Invoke
+      Services
+    status: Completed
+  activity: # 10 "2019-02-11 13:39:37.248"
+    name: |
+      Synchronous
+      Response?
+    status: Completed
+    result: true
+  activity: # 5 "2019-02-11 13:39:37.267"
+    name: |
+      Consolidate
+      Responses
+    status: Completed
+  activity: # 2 "2019-02-11 13:39:37.276"
+    name: Response
+    status: Completed
+  variable: # 25755
+    name: request
+    value: |
+      {
+        "emailAddress": "timbl@w3.org",
+        "firstName": "Tim",
+        "group": "Arch",
+        "id": "timbl",
+        "lastName": "Berners-Lee"
+      }
+  variable: # 25756
+    name: requestHeaders
+    value: |
+      {
+              "content-type": "application/json",
+              "HttpMethod": "POST",
+              "RequestPath": "com/centurylink/mdw/microservice/user"
+            }
+  variable: # 25788
+    name: response
+    value: |
+      {
+        "responses": {
+          "admin/createUser": {
+            "code": 200,
+            "message": "OK"
+          },
+          "admin/createGroup": {
+            "code": 201,
+            "message": "Created"
+          }
+        },
+        "status": {
+          "code": 201,
+          "message": "Created"
+        }
+      }
+  variable: # 25758
+    name: servicePlan
+    value: |
+      !!com.centurylink.mdw.microservice.ServicePlan {
+        services: [
+          {
+            bindings: {
+              microservice: admin/createUser,
+              serviceUrl: 'http://localhost:8080/mdw/services/Users',
+              serviceMethod: POST,
+              synchronous: true,
+              request: 'DOCUMENT:${~\\d+}',
+              requestHeaders: 'DOCUMENT:${~\\d+}',
+              serviceSummary: 'DOCUMENT:${~\\d+}',
+              requestMapper: com.centurylink.mdw.tests.microservice/UserRequestMapper.groovy,
+              responseMapper: com.centurylink.mdw.microservice/StatusResponseMapper.groovy
+            },
+            count: 1,
+            enabled: true,
+            method: POST,
+            name: admin/createUser,
+            subflow: 'com.centurylink.mdw.microservice/\${StandardInvoke}.proc',
+            synchronous: true,
+            url: 'http://localhost:8080/mdw/services/Users'
+          },
+          {
+            bindings: {
+              microservice: admin/createGroup,
+              serviceUrl: 'http://localhost:8080/mdw/services/Workgroups',
+              serviceMethod: POST,
+              synchronous: true,
+              request: 'DOCUMENT:${~\\d+}',
+              requestHeaders: 'DOCUMENT:${~\\d+}',
+              serviceSummary: 'DOCUMENT:${~\\d+}',
+              requestMapper: com.centurylink.mdw.tests.microservice/GroupRequestMapper.groovy,
+              responseMapper: com.centurylink.mdw.microservice/StatusResponseMapper.groovy
+            },
+            count: 1,
+            enabled: true,
+            method: POST,
+            name: admin/createGroup,
+            subflow: 'com.centurylink.mdw.microservice/\${StandardInvoke}.proc',
+            synchronous: true,
+            url: 'http://localhost:8080/mdw/services/Workgroups'
+          }]
+
+      }
+  variable: # 25759
+    name: serviceSummary
+    value: |
+      {
+        "instanceId": ${~\\d+},
+        "masterRequestId": "${masterRequestId}",
+        "microservices": [
+          {
+            "instances": [{
+              "id": ${~\\d+},
+              "invocations": [{
+                "requestId": ${~\\d+},
+                "responseId": ${~\\d+},
+                "sent": "${~.*}",
+                "status": {
+                  "code": 200,
+                  "message": "OK"
+                }
+              }],
+              "status": "Completed",
+              "triggered": "${~.*}"
+            }],
+            "name": "admin/createUser"
+          },
+          {
+            "instances": [{
+              "id": ${~\\d+},
+              "invocations": [{
+                "requestId": ${~\\d+},
+                "responseId": ${~\\d+},
+                "sent": "${~.*}",
+                "status": {
+                  "code": 201,
+                  "message": "Created"
+                }
+              }],
+              "status": "Completed",
+              "triggered": "${~.*}"
+            }],
+            "name": "admin/createGroup"
+          }
+        ]
+      }
+  variable: # 25757
+    name: synchronous
+    value: true

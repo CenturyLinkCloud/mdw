@@ -1,4 +1,29 @@
-package com.centurylink.mdw.tests.microservice
+package com.centurylink.mdw.tests.services
 
-// TODO launch for different conditions via postman test
-println 'TODO'
+// cleanup first
+delete http('api/Users/timbl')
+delete http('api/Workgroups/Arch')
+
+start process('MicroserviceOrchestration.proc') {
+    variables = [
+      synchronous: true,
+      requestHeaders: '''{
+        "content-type": "application/json", 
+        "HttpMethod": "POST", 
+        "RequestPath": "com/centurylink/mdw/microservice/user"
+      }''',
+      request: '''{
+        "_type": "com.centurylink.mdw.tests.microservice.User",
+        "user:": {
+          "id": "timbl",
+          "firstName": "Tim",
+          "lastName": "Berners-Lee",
+          "emailAddress": "timbl@w3.org",
+          "group": "Arch"
+        }
+      }'''
+    ]
+}
+
+wait process
+verify processes('MicroserviceOrchestration', 'com.centurylink.mdw.microservice/${StandardInvoke}')

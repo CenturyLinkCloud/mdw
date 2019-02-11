@@ -136,6 +136,7 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "SERVICE",
+    "PerformanceLevel": "0",
     "WORK_DISPLAY_INFO": "x=379,y=59,w=250,h=26",
     "requestMethod": "POST",
     "requestParameters": "[[\"User\",\"Body\",\"true\",\"User with optional groups\",\"com.centurylink.mdw.tests.microservice/User.java\",\"[0.2,1)\"]]",

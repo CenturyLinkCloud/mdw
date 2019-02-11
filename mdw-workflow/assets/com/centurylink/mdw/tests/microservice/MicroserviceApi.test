@@ -1,7 +1,9 @@
 package com.centurylink.mdw.tests.microservice
 
+masterRequestId = 'microservice-test-' + System.currentTimeMillis()
+
 def vals = [
-    'mdw-request-id': 'microservice-test-' + System.currentTimeMillis(),
+    'mdw-request-id': masterRequestId,
     'mdw-synchronous': 'true'
 ]
 

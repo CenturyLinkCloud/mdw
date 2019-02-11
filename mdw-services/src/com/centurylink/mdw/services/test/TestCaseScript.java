@@ -76,7 +76,7 @@ public abstract class TestCaseScript extends Script {
     /**
      * In case it's assigned through binding.
      */
-    private void syncMasterRequestId() {
+    protected void syncMasterRequestId() {
         if (getBinding().hasVariable("masterRequestId")) {
             Object defined = getBinding().getVariable("masterRequestId");
             TestCaseRun run = getTestCaseRun();
