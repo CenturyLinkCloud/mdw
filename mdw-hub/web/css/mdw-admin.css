@@ -170,7 +170,8 @@
 .mdw-heading-input {
   float: left;
   display: flex;
-  margin-left: 20px;
+  margin-left: 8px;
+  margin-right: 12px;
 }
 .mdw-heading-input input {
   padding: 5px;

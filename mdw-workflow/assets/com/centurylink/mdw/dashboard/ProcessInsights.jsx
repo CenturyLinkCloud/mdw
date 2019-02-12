@@ -189,16 +189,16 @@ class ProcessInsights extends Component {
     return (
       <div>
         <PanelHeader>
-          <HeaderLabel title="Process:"/>
-          <AssetDropdown id="process-dropdown" placeholder="[Select a process]"
-            packages={this.state.packages}
-            selected={this.state.process}
-            onSelect={this.handleProcessSelect} />
-          <HeaderLabel title="Sample:" style={{marginLeft:'10px'}}/>
+          <HeaderLabel title="Sample:" />
           <HeaderDropdown id="sample-dropdown" width={100}
             items={['Day','Week','Month']}
             selected={this.state.sample}
             onSelect={this.handleSampleSelect} />
+          <HeaderLabel title="Process:"/>
+          <AssetDropdown id="process-dropdown" placeholder="[Select a process...]"
+            packages={this.state.packages}
+            selected={this.state.process}
+            onSelect={this.handleProcessSelect} />
         </PanelHeader>
         <div className="mdw-section" style={{display:'flex',minHeight:'600px'}}>
             {chartData &&
