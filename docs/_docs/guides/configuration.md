@@ -131,9 +131,9 @@ title: MDW Configuration
       port: 1636
       base.dn: dc=mydc,dc=example
 
-    # process cleanup scheduled job registration    
+    # scheduled jobs registration    
     timer.task:
-      ProcessCleanup: 
+      ProcessCleanup:   # process cleanup
         TimerClass: com.centurylink.mdw.timer.cleanup.ProcessCleanup
         Schedule: 30 2 * * ? * # run daily at 2:30 am
         RuntimeCleanupScript: Cleanup-Runtime.sql
@@ -141,6 +141,11 @@ title: MDW Configuration
         ExternalEventExpirationAgeInDays: 180
         MaximumProcessExpiration: 10000
         CommitInterval: 10000
+      StuckActivities:  # auto-retry of stuck activities
+        TimerClass: com.centurylink.mdw.timer.cleanup.StuckActivities
+        Schedule: 15 * * ? * # run hourly at 15 mins past the hour
+        ActivityAgeInMinutes: 3600 # (seconds) default=1800
+        MaximumActivities: 100 # default=10
 
     timer.InitialDelay: 120  # (seconds) default=120
     timer.CheckInterval: 60  # (seconds) default=60
