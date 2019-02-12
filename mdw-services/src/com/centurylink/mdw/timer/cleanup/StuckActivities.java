@@ -25,6 +25,7 @@ import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.WorkStatus;
+import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
@@ -49,6 +50,9 @@ timer.task:
  * if you need to make change in above properties then first delete the db entry by identifying the row using
  * this sql:  select * from event_instance where event_name like '%ScheduledJob%'
  * Then re-start the server/instance for new clean-up properties to be effective.
+ *
+ * The query used to identify stuck activities will perform a full table scan, so
+ * consider creating an index on ACTIVITY_INSTANCE table if it is causing performance issues.
  */
 
 public class StuckActivities implements ScheduledJob {
@@ -84,7 +88,8 @@ public class StuckActivities implements ScheduledJob {
 
     private List<Long> failStuckActivities(int activityAge, int maxActivities) {
         List<Long> list = new ArrayList<>();
-        DatabaseAccess db = new DatabaseAccess(null);
+        EngineDataAccessDB edao = new EngineDataAccessDB();
+        DatabaseAccess db = edao.getDatabaseAccess();
 
         try {
             db.openConnection();
@@ -113,11 +118,6 @@ public class StuckActivities implements ScheduledJob {
                 actList.add(act);
             }
 
-            sqlBuf = new StringBuilder("update ACTIVITY_INSTANCE set status_cd=" + WorkStatus.STATUS_FAILED + ", end_dt=");
-            sqlBuf.append((db.isPrecisionSupport() ? db.isMySQL() ? "now(6)" : "systimestamp" : db.isMySQL() ? "now()" : "sysdate"));
-            sqlBuf.append(", status_message=? where activity_instance_id=?");
-
-            Object[] args = new Object[2];
             Process procDef;
             boolean retry = false;
             // Update activity instances' status
@@ -125,7 +125,7 @@ public class StuckActivities implements ScheduledJob {
                 procDef = ProcessCache.getProcess(act.getProcessId());
                 if (procDef == null)
                     act.setMessage("Auto-failed by StuckActivities job - No Retry due to missing Process definition");
-                else if (procDef.getActivityByLogicalId(act.getActivityId().toString()) == null)
+                else if (procDef.getActivityByLogicalId("A" + act.getActivityId()) == null)
                     act.setMessage("Auto-failed by StuckActivities job - No Retry due to missing Activity for Process definition");
                 else if (procDef.isService())
                     act.setMessage("Auto-failed by StuckActivities job - No Retry due to being Service Process");
@@ -133,14 +133,11 @@ public class StuckActivities implements ScheduledJob {
                     act.setMessage("Auto-failed / Retried by StuckActivities job");
                     retry = true;
                 }
-                args[0] = act.getMessage();
-                args[1] = act.getId();
                 logger.info("Failing stuck activity instance " + act.getId());
-                db.runUpdate(sqlBuf.toString(), args);  // Update status, end_dt, and status_message  (i.e. fail activity instance)
+                edao.setActivityInstanceStatus(act, WorkStatus.STATUS_FAILED, null);
                 if (retry)
                     list.add(act.getId());  // Add to list after activity instance is updated
             }
-
         } catch (Exception e) {
             logger.error("Error while trying to fail stuck activities", e);
         } finally {
