@@ -79,12 +79,14 @@ public class ServicePath implements Comparable<ServicePath> {
     }
 
     public ServicePath normalize(List<ServicePath> pathSpecs) {
-        for (ServicePath pathSpec : pathSpecs) {
-            if (pathSpec.matchesPath(path)) {
-                return new ServicePath(pathSpec.path, method);
+        if (pathSpecs != null) {
+            for (ServicePath pathSpec : pathSpecs) {
+                if (pathSpec.matchesPath(path)) {
+                    return new ServicePath(pathSpec.path, method);
+                }
             }
         }
-        return new ServicePath(path, method);
+        return this;
     }
 
     @Override
