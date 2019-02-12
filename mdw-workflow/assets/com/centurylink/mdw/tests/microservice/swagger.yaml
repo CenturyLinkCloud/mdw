@@ -1,0 +1,257 @@
+---
+swagger: "2.0"
+info:
+  description: "MDW Application Services"
+  version: "6.1.15"
+  title: "MDW REST API"
+basePath: "/mdw/api"
+schemes:
+- "http"
+paths:
+  /Users/{cuid}:
+    get:
+      tags:
+      - "MDW users"
+      summary: "Retrieve a specific user or a page of users"
+      description: "If cuid is not present, returns a page of users; if Find is present,\
+        \ searches by pattern."
+      operationId: "get"
+      parameters:
+      - name: "find"
+        in: "query"
+        required: false
+        type: "string"
+      - name: "cuid"
+        in: "path"
+        required: false
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/User"
+    put:
+      tags:
+      - "MDW users"
+      summary: "Update a user"
+      operationId: "put"
+      parameters:
+      - in: "body"
+        name: "User"
+        required: true
+        schema:
+          $ref: "#/definitions/User"
+        format: ""
+      - name: "cuid"
+        in: "path"
+        required: false
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/StatusMessage"
+  /Users/{cuid}/rel/{relId}:
+    post:
+      tags:
+      - "MDW users"
+      summary: "Create a user or add existing user to a workgroup or role"
+      description: "If rel/{relId} is present, user is added to workgroup or role."
+      operationId: "post"
+      parameters:
+      - in: "body"
+        name: "Workgroup"
+        required: false
+        schema:
+          $ref: "#/definitions/User"
+        format: ""
+      - name: "cuid"
+        in: "path"
+        required: false
+      - name: "relId"
+        in: "path"
+        required: false
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/StatusMessage"
+    delete:
+      tags:
+      - "MDW users"
+      summary: "Delete a user or remove a user from a workgroup or role"
+      description: "If rel/{relId} is present, user is removed from workgroup or role."
+      operationId: "delete"
+      parameters:
+      - name: "cuid"
+        in: "path"
+        required: false
+      - name: "relId"
+        in: "path"
+        required: false
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/StatusMessage"
+  /Users: {}
+  /Workgroups/{groupName}:
+    get:
+      tags:
+        - "MDW user workgroups service"
+      summary: "Retrieve a workgroup or all workgroups"
+      description: "If groupName is not present, returns all workgroups."
+      operationId: "get"
+      parameters:
+        - name: "groupName"
+          in: "path"
+          required: false
+      responses:
+        200:
+          description: "OK"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Workgroup"
+    put:
+      tags:
+        - "MDW user workgroups service"
+      summary: "Update a workgroup"
+      operationId: "put"
+      parameters:
+        - in: "body"
+          name: "Workgroup"
+          required: true
+          schema:
+            $ref: "#/definitions/Workgroup"
+          format: ""
+        - name: "groupName"
+          in: "path"
+          required: false
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/StatusMessage"
+  /Workgroups/{groupName}/{'users'}/{cuid}:
+    post:
+      tags:
+        - "MDW user workgroups service"
+      summary: "Create a workgroup or add a user to an existing workgroup"
+      description: "If users/{cuid} is present, user is added to workgroup."
+      operationId: "post"
+      parameters:
+        - in: "body"
+          name: "Workgroup"
+          required: true
+          schema:
+            $ref: "#/definitions/Workgroup"
+          format: ""
+        - name: "groupName"
+          in: "path"
+          required: true
+        - name: "'users'"
+          in: "path"
+          required: false
+        - name: "cuid"
+          in: "path"
+          required: false
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/StatusMessage"
+    delete:
+      tags:
+        - "MDW user workgroups service"
+      summary: "Delete a workgroup or remove a user from a workgroup"
+      description: "If users/{cuid} is present, user is removed from workgroup."
+      operationId: "delete"
+      parameters:
+        - name: "groupName"
+          in: "path"
+          required: false
+        - name: "'users'"
+          in: "path"
+          required: false
+        - name: "cuid"
+          in: "path"
+          required: false
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/StatusMessage"
+definitions:
+  User:
+    type: "object"
+    required:
+    - "cuid"
+    - "name"
+    properties:
+      name:
+        type: "string"
+        description: "User's full name"
+      cuid:
+        type: "string"
+        description: "User's workstation id"
+        minLength: 3
+        maxLength: 128
+      endDate:
+        type: "string"
+      workgroups:
+        type: "array"
+        description: "User's workgroups"
+        items:
+          $ref: "#/definitions/Workgroup"
+      attributes:
+        type: "object"
+        description: "User personalization attributes, such as email and phone number"
+        additionalProperties:
+          type: "string"
+    description: "MDW user"
+  Workgroup:
+    type: "object"
+    required:
+    - "name"
+    properties:
+      name:
+        type: "string"
+        description: "Workgroup unique name"
+      description:
+        type: "string"
+      users:
+        type: "array"
+        items:
+          $ref: "#/definitions/User"
+      parentGroup:
+        type: "string"
+      endDate:
+        type: "string"
+      attributes:
+        type: "object"
+        description: "Workgroup attributes, such as group email and slack channel"
+        additionalProperties:
+          type: "string"
+      active:
+        type: "boolean"
+    description: "MDW user workgroup"
+  StatusMessage:
+    type: "object"
+    properties:
+      code:
+        type: "integer"
+        format: "int32"
+      message:
+        type: "string"
+      requestId:
+        type: "string"
+      xml:
+        type: "string"
+      success:
+        type: "boolean"
+    description: "MDW service response (embedded as 'status' object)"
+externalDocs:
+  description: "MDW"
+  url: "https://github.com/CenturyLinkCloud/mdw"
+

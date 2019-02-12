@@ -17,3 +17,4 @@ UserRequestMapper.groovy=1
 localhost.env=1
 mainRequest.json=3
 microservice-orchestrator.postman=2
+swagger.yaml=1

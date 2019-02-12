@@ -63,8 +63,7 @@ class InboundRequests extends Component {
       filters: {
         Ending: new Date(),
         Status: '',
-        Master: false,
-        HealthCheck: false
+        'Health Check': false
       },
       filterOptions: {
         Status: Object.keys(statuses.request).map(status => status + ' - ' + statuses.request[status].message)

@@ -124,7 +124,7 @@ class ProcessHotspots extends Component {
             selected={sel}
             onSelect={this.handleProcessSelect} />
 
-          <HeaderLabel title="Sample:" style={{marginLeft:'10px'}}/>
+          <HeaderLabel title="Sample:" />
           <HeaderDropdown id="sample-dropdown" width={100}
             items={['Day','Week','Month']}
             selected={this.state.sample}

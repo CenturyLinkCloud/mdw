@@ -45,7 +45,7 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
         String sql = db.pagingQueryPrefix() +
                 "select path, count(path) as ct\n" +
                 "from DOCUMENT doc\n" +
-                preparedWhere.getWhere() + "\n" +
+                preparedWhere.getWhere() +
                 "group by path\n" +
                 "order by ct desc\n" +
                 db.pagingQuerySuffix(query.getStart(), query.getMax());
@@ -65,7 +65,7 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
         PreparedWhere preparedWhere = getRequestWhere(query);
         String sql = db.pagingQueryPrefix() +
                 "select status_code, count(status_code) as ct from DOCUMENT\n" +
-                preparedWhere.getWhere() + " " +
+                preparedWhere.getWhere() +
                 "group by status_code\n" +
                 "order by ct desc\n" +
                 db.pagingQuerySuffix(query.getStart(), query.getMax());
@@ -89,7 +89,7 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
                 "select path, avg(elapsed_ms) as elapsed, count(path) as ct\n" +
                 "from DOCUMENT" +
                 ", INSTANCE_TIMING it\n" +
-                preparedWhere.getWhere() + " " +
+                preparedWhere.getWhere() +
                 "group by path\n" +
                 "order by elapsed desc\n" +
                 db.pagingQuerySuffix(query.getStart(), query.getMax());
@@ -227,7 +227,7 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
         StringBuilder where = new StringBuilder("where path is not null\n");
         List<Object> params = new ArrayList<>();
 
-        boolean includeHealthCheck = query.getBooleanFilter("HealthCheck");
+        boolean includeHealthCheck = query.getBooleanFilter("Health Check");
         if (!includeHealthCheck) {
             where.append("  and path != ?");
             params.add("AppSummary");
@@ -235,20 +235,17 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
             params.add("Get->AppSummary");
         }
 
-        String ownerType = null;
+        String ownerType;
         String direction = query.getFilter("direction");
-        boolean isMaster = query.getBooleanFilter("Master");
-        if ("in".equals(direction) || isMaster) {
-            ownerType = OwnerType.LISTENER_RESPONSE;
-        }
-        else if ("out".equals(direction)) {
+        if ("out".equals(direction)) {
             if (by.equals("completionTime"))
                 ownerType = OwnerType.ADAPTER;
             else
                 ownerType = OwnerType.ADAPTER_RESPONSE;
         }
-        if (ownerType == null)
-            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing parameter: direction");
+        else {
+            ownerType = OwnerType.LISTENER_RESPONSE;
+        }
 
         if ("completionTime".equals(by)) {
             if ("out".equals(direction))

@@ -14,13 +14,15 @@ class RequestInsights extends Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      paths: [],
+      paths: [],      
       sample: 'Week',
+      requestType: 'Inbound',
       path: '',
       data: {}
     };
-    this.handlePathSelect = this.handlePathSelect.bind(this);
     this.handleSampleSelect = this.handleSampleSelect.bind(this);
+    this.handleRequestTypeSelect = this.handleRequestTypeSelect.bind(this);
+    this.handlePathSelect = this.handlePathSelect.bind(this);
     this.retrieveData = this.retrieveData.bind(this);
     this.getChartData = this.getChartData.bind(this);
   }
@@ -39,6 +41,7 @@ class RequestInsights extends Component {
       this.setState({
         paths: paths,
         sample: this.state.sample,
+        requestType: this.state.requestType,
         path: this.state.path,
         data: {}
       });
@@ -46,29 +49,11 @@ class RequestInsights extends Component {
     });
   }
 
-  handlePathSelect(path) {
-    this.setState({
-      paths: this.state.paths,
-      sample: this.state.sample,
-      path: path,
-      data: {}
-    }, () => {
-      this.retrieveData()
-      .then(data => {
-        this.setState({
-          paths: this.state.paths,
-          sample: this.state.sample,
-          path: path,
-          data: data
-        });
-      });
-    });
-  }
-
   handleSampleSelect(sampleSize) {
     this.setState({
       paths: this.state.paths,
       sample: sampleSize,
+      requestType: this.state.requestType,
       path: this.state.path,
       data: {}
     }, () => {
@@ -77,7 +62,50 @@ class RequestInsights extends Component {
         this.setState({
           paths: this.state.paths,
           sample: sampleSize,
+          requestType: this.state.requestType,
           path: this.state.path,
+          data: data
+        });
+      });
+    });
+  }
+
+  handleRequestTypeSelect(requestType) {
+    this.setState({
+      paths: this.state.paths,
+      sample: this.state.sampleSize,
+      requestType: requestType,
+      path: this.state.path,
+      data: {}
+    }, () => {
+      this.retrieveData()
+      .then(data => {
+        this.setState({
+          paths: this.state.paths,
+          sample: this.state.sample,
+          requestType: requestType,
+          path: this.state.path,
+          data: data
+        });
+      });
+    });
+  }
+
+  handlePathSelect(path) {
+    this.setState({
+      paths: this.state.paths,
+      sample: this.state.sample,
+      requestType: this.state.requestType,
+      path: path,
+      data: {}
+    }, () => {
+      this.retrieveData()
+      .then(data => {
+        this.setState({
+          paths: this.state.paths,
+          sample: this.state.sample,
+          requestType: this.state.requestType,
+          path: path,
           data: data
         });
       });
@@ -101,6 +129,7 @@ class RequestInsights extends Component {
       var dataUrl = this.context.serviceRoot + '/Requests/insights?path=' + this.state.path;
       dataUrl += '&trend=completionTime';
       dataUrl += '&span=' + this.state.sample;
+      dataUrl += '&direction=' + this.state.requestType;
       fetch(new Request(dataUrl, {
         method: 'GET',
         headers: { Accept: 'application/json'},
@@ -174,16 +203,21 @@ class RequestInsights extends Component {
     return (
       <div>
         <PanelHeader>
-          <HeaderLabel title="Path:"/>
-          <HeaderDropdown id="path-dropdown" placeholder="[Select a path]"
-            items={this.state.paths}
-            selected={this.state.path}
-            onSelect={this.handlePathSelect} />
-          <HeaderLabel title="Sample:" style={{marginLeft:'10px'}}/>
+          <HeaderLabel title="Sample Size:"/>
           <HeaderDropdown id="sample-dropdown" width={100}
             items={['Day','Week','Month']}
             selected={this.state.sample}
             onSelect={this.handleSampleSelect} />
+          <HeaderLabel title="Requests:" />
+          <HeaderDropdown id="request-dropdown" width={100}
+            items={['Inbound','Outbound','Master']}
+            selected={this.state.requestType}
+            onSelect={this.handleRequestTypeSelect} />
+          <HeaderLabel title="Path:" />
+          <HeaderDropdown id="path-dropdown" placeholder="[Select a path...]"
+            items={this.state.paths}
+            selected={this.state.path}
+            onSelect={this.handlePathSelect} />
         </PanelHeader>
         <div className="mdw-section" style={{display:'flex',minHeight:'600px'}}>
             {chartData &&

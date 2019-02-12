@@ -85,14 +85,14 @@ class ChartHeader extends Component {
           selected={this.props.timespan}
           onSelect={this.handleDropdownSelect} />
 
-        <HeaderLabel title="by:"  style={{marginLeft:'10px'}}/>
+        <HeaderLabel title="by:" />
         <HeaderDropdown id="breakdown-dropdown"
           items={this.props.breakdownConfig.breakdowns.map(bd => bd.name)}
           selected={this.props.breakdown}
           onSelect={this.handleDropdownSelect} />
 
         {breakdown.units &&
-          <HeaderLabel title={'(' + breakdown.units + ')'} style={{marginLeft:'10px'}}/>
+          <HeaderLabel title={'(' + breakdown.units + ')'} />
         }
 
         <HeaderButtons>
