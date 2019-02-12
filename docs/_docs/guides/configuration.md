@@ -144,7 +144,7 @@ title: MDW Configuration
       StuckActivities:  # auto-retry of stuck activities
         TimerClass: com.centurylink.mdw.timer.cleanup.StuckActivities
         Schedule: 15 * * ? * # run hourly at 15 mins past the hour
-        ActivityAgeInMinutes: 3600 # (seconds) default=1800
+        ActivityAgeInSeconds: 3600 # (seconds) default=1800
         MaximumActivities: 100 # default=10
 
     timer.InitialDelay: 120  # (seconds) default=120
