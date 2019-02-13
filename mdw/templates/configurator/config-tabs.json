@@ -39,7 +39,7 @@
     },
     "Events": {
       "_template": "<implementor>",
-      "_categories": ["com.centurylink.mdw.activity.types.TaskActivity", "com.centurylink.mdw.activity.types.InvokeProcessActivity", "com.centurylink.mdw.activity.types.SynchronizationActivity", "com.centurylink.mdw.activity.types.PauseActivity"]
+      "_categories": ["com.centurylink.mdw.activity.types.TaskActivity", "com.centurylink.mdw.activity.types.InvokeProcessActivity", "com.centurylink.mdw.activity.types.SynchronizationActivity", "com.centurylink.mdw.activity.types.PauseActivity", "com.centurylink.mdw.activity.types.DependenciesWaitActivity"]
     },
     "Recipients": {
       "_template": "<implementor>",
