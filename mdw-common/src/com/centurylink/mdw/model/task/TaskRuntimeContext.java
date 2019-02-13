@@ -48,7 +48,7 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
 
     public TaskRuntimeContext(Package pkg, Process process,
             ProcessInstance processInstance, Map<String,Object> variables, TaskTemplate template, TaskInstance taskInstance, User assignee) {
-        super(pkg, process, processInstance, variables);
+        super(pkg, process, processInstance, 0, variables);
         this.taskTemplate = template;
         this.taskInstance = taskInstance;
         this.assignee = assignee;

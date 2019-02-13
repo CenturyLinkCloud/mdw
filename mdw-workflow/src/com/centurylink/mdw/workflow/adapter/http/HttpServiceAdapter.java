@@ -81,7 +81,7 @@ public class HttpServiceAdapter extends TextAdapterActivity {
                 if (response.getStatusCode() > 0 && StringHelper.isEmpty(response.getStatusMessage())) {
                     response.setStatusMessage(StatusResponse.getMessage(response.getStatusCode()));
                 }
-                response.setPath(ServicePaths.getOutboundResponsePath(String.valueOf(httpConn.getUrl()), httpConn.getMethod()));
+                response.setPath(ServicePaths.getOutboundResponsePath(httpConn.getUrl(), httpConn.getMethod()));
             }
         }
         return response;

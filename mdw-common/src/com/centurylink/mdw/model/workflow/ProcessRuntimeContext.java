@@ -65,6 +65,9 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
     protected ProcessInstance processInstance;
     public ProcessInstance getProcessInstance() { return processInstance; }
 
+    private int performanceLevel;
+    public int getPerformanceLevel() { return performanceLevel; }
+
     /**
      * Purposely separate from processInstance.getVariables().
      */
@@ -122,17 +125,19 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         return v == null ? defaultValue : v;
     }
 
-    public ProcessRuntimeContext(Package pkg, Process process, ProcessInstance processInstance) {
+    public ProcessRuntimeContext(Package pkg, Process process, ProcessInstance processInstance, int performanceLevel) {
         this.pkg = pkg;
         this.process = process;
         this.processInstance = processInstance;
+        this.performanceLevel = performanceLevel;
         this.variables = new HashMap<String,Object>();
     }
 
-    public ProcessRuntimeContext(Package pkg, Process process, ProcessInstance processInstance, Map<String,Object> variables) {
+    public ProcessRuntimeContext(Package pkg, Process process, ProcessInstance processInstance, int performanceLevel, Map<String,Object> variables) {
         this.pkg = pkg;
         this.process = process;
         this.processInstance = processInstance;
+        this.performanceLevel = performanceLevel;
         this.variables = variables;
     }
 

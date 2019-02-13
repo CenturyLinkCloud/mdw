@@ -19,15 +19,16 @@ public class ActivityTimingMonitor implements ActivityMonitor {
 
     @Override
     public Map<String,Object> onFinish(ActivityRuntimeContext context) {
-        try {
-            ActivityInstance activityInstance = context.getActivityInstance();
-            Date start = activityInstance.getStartDate();
-            CommonDataAccess dataAccess = new CommonDataAccess();
-            Long elapsedTime = dataAccess.getDatabaseTime() - start.getTime();
-            dataAccess.setElapsedTime(OwnerType.ACTIVITY_INSTANCE, activityInstance.getId(), elapsedTime);
-        }
-        catch (SQLException ex) {
-            context.logException(ex.getMessage(), ex);
+        if (context.getPerformanceLevel() <= 5) {
+            try {
+                ActivityInstance activityInstance = context.getActivityInstance();
+                Date start = activityInstance.getStartDate();
+                CommonDataAccess dataAccess = new CommonDataAccess();
+                Long elapsedTime = dataAccess.getDatabaseTime() - start.getTime();
+                dataAccess.setElapsedTime(OwnerType.ACTIVITY_INSTANCE, activityInstance.getId(), elapsedTime);
+            } catch (SQLException ex) {
+                context.logException(ex.getMessage(), ex);
+            }
         }
         return null;
     }

@@ -1854,7 +1854,8 @@ class ProcessExecutorImpl {
         Package pkg = PackageCache.getProcessPackage(processVO.getId());
         // runtime context for enablement does not contain hydrated variables map (too expensive)
         List<ProcessMonitor> monitors = MonitorRegistry.getInstance()
-                .getProcessMonitors(new ProcessRuntimeContext(pkg, processVO, processInstance, new HashMap<String,Object>()));
+                .getProcessMonitors(new ProcessRuntimeContext(pkg, processVO, processInstance,
+                        getDataAccess().getPerformanceLevel(), new HashMap<>()));
         if (!monitors.isEmpty()) {
             Map<String, Object> vars = new HashMap<>();
             if (processInstance.getVariables() != null) {
@@ -1872,7 +1873,8 @@ class ProcessExecutorImpl {
                     vars.put(var.getName(), value);
                 }
             }
-            ProcessRuntimeContext runtimeContext = new ProcessRuntimeContext(pkg, processVO, processInstance, vars);
+            ProcessRuntimeContext runtimeContext = new ProcessRuntimeContext(pkg, processVO, processInstance,
+                    getDataAccess().getPerformanceLevel(), vars);
 
             for (ProcessMonitor monitor : monitors) {
                 try {
@@ -1941,7 +1943,8 @@ class ProcessExecutorImpl {
             if (pkg != null)
                 processInst.setPackageName(pkg.getName());
             Activity activity = process.getActivityVO(actInstVO.getActivityId());
-            ActivityRuntimeContext runtimeContext = new ActivityRuntimeContext(pkg, process, processInst, activity, actInstVO);
+            ActivityRuntimeContext runtimeContext = new ActivityRuntimeContext(pkg, process, processInst,
+                    getDataAccess().getPerformanceLevel(), activity, actInstVO);
             // TODO option to suppress variables
             if (activityImpl == null) {
                 try {
@@ -1991,7 +1994,8 @@ class ProcessExecutorImpl {
             if (pkg != null)
                 processInst.setPackageName(pkg.getName());
 
-            ProcessRuntimeContext runtimeContext = new ProcessRuntimeContext(pkg, process, processInst);
+            ProcessRuntimeContext runtimeContext = new ProcessRuntimeContext(pkg, process, processInst,
+                    getDataAccess().getPerformanceLevel());
 
             try {
                 processInst.setVariables(getDataAccess().getProcessInstanceVariables(processInst.getId()));

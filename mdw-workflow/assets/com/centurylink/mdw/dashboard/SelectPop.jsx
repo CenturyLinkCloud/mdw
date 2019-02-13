@@ -15,9 +15,6 @@ class SelectPop extends Component {
   getLabel(top) {
     var label = top.name;
     if (top.value) {
-      if (label.startsWith('http://') || label.startsWith('https://')) {
-        label = new URL(label).pathname;
-      }
       label += ' (' + top.value + (this.props.units ? ' ' + this.props.units : '') + ')';
     }
     return label;
