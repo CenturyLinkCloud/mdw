@@ -15,45 +15,20 @@
  */
 package com.centurylink.mdw.services.asset;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import org.json.JSONObject;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.YamlBuilder;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.AssetRevision;
-import com.centurylink.mdw.dataaccess.DataAccess;
-import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.dataaccess.*;
 import com.centurylink.mdw.dataaccess.file.AssetFile;
 import com.centurylink.mdw.dataaccess.file.GitDiffs;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.asset.ArchiveDir;
-import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.asset.AssetInfo;
-import com.centurylink.mdw.model.asset.AssetPackageList;
-import com.centurylink.mdw.model.asset.PackageAssets;
-import com.centurylink.mdw.model.asset.PackageList;
+import com.centurylink.mdw.model.asset.*;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.util.file.FileHelper;
@@ -61,6 +36,15 @@ import com.centurylink.mdw.util.file.MdwIgnore;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
+import org.json.JSONObject;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AssetServicesImpl implements AssetServices {
 
@@ -111,7 +95,7 @@ public class AssetServicesImpl implements AssetServices {
             assetPath = getVersionControlGit().getRelativePath(assetRoot);
         }
         return assetPath;
-    };
+    }
 
     public AssetServicesImpl() {
         assetRoot = ApplicationContext.getAssetRoot();
@@ -151,9 +135,9 @@ public class AssetServicesImpl implements AssetServices {
             if (pkgDir == null) {
                 pkgDir = getGhostPackage(packageName);
                 if (pkgDir == null)
-                    throw new DataAccessException("Missing package metadata directory: " + pkgDir);
+                    throw new DataAccessException("Missing package metadata directory: " + packageName);
             }
-            List<AssetInfo> assets = new ArrayList<AssetInfo>();
+            List<AssetInfo> assets = new ArrayList<>();
             if (!DiffType.MISSING.equals(pkgDir.getVcsDiffType())) {
                 for (File file : pkgDir.listFiles()) {
                     if (file.isFile()) {
@@ -192,7 +176,7 @@ public class AssetServicesImpl implements AssetServices {
             for (String pkg : formatAssets.keySet()) {
                 List<AssetInfo> assets = pkgAssets.get(pkg);
                 if (assets == null) {
-                    assets = new ArrayList<AssetInfo>();
+                    assets = new ArrayList<>();
                     pkgAssets.put(pkg, assets);
                 }
                 assets.addAll(formatAssets.get(pkg));
@@ -203,15 +187,14 @@ public class AssetServicesImpl implements AssetServices {
 
     public Map<String,List<AssetInfo>> findAssets(Predicate<File> predicate) throws ServiceException {
         Map<String,List<AssetInfo>> packageAssets = new HashMap<>();
-        List<File> assetRoots = new ArrayList<>();
-        assetRoots.add(assetRoot);
         try {
             CodeTimer timer = new CodeTimer("AssetServices", true);
-            List<PackageDir> pkgDirs = findPackageDirs(assetRoots, new ArrayList<>());
+            List<PackageDir> pkgDirs = getPackageDirs();
             for (PackageDir pkgDir : pkgDirs) {
+                MdwIgnore mdwIgnore = new MdwIgnore(pkgDir);
                 List<AssetInfo> assets = null;
                 for (File file : pkgDir.listFiles())
-                    if (file.isFile() && predicate.test(file)) {
+                    if (file.isFile() && !mdwIgnore.isIgnore(file) && predicate.test(file)) {
                         if (assets == null)
                             assets = new ArrayList<>();
                         assets.add(new AssetInfo(pkgDir.getAssetFile(file)));
@@ -222,9 +205,6 @@ public class AssetServicesImpl implements AssetServices {
             timer.logTimingAndContinue("findAssets()");
             return packageAssets;
         }
-        catch (DataAccessException ex) {
-            throw new ServiceException(ex.getMessage(), ex);
-        }
         catch (IOException ex) {
             throw new ServiceException(ex.getMessage(), ex);
         }
@@ -232,13 +212,13 @@ public class AssetServicesImpl implements AssetServices {
 
 
     public PackageList getPackages(boolean withVcsInfo) throws ServiceException {
-        List<File> assetRoots = new ArrayList<File>();
+        List<File> assetRoots = new ArrayList<>();
         assetRoots.add(assetRoot);
         try {
             File vcsRoot = getVersionControl() == null ? null : getGitRoot();
             PackageList pkgList = new PackageList(ApplicationContext.getServer(), assetRoot, vcsRoot);
             CodeTimer timer = new CodeTimer("AssetServices", true);
-            List<PackageDir> pkgDirs = findPackageDirs(assetRoots, new ArrayList<File>());
+            List<PackageDir> pkgDirs = findPackageDirs(assetRoots, new ArrayList<>());
             timer.logTimingAndContinue("findPackageDirs()");
             pkgList.setPackageDirs(pkgDirs);
             if (withVcsInfo)
@@ -247,10 +227,7 @@ public class AssetServicesImpl implements AssetServices {
             timer.stopAndLogTiming("addVersionControlInfo(PackageList)");
             return pkgList;
         }
-        catch (DataAccessException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
-        }
-        catch (IOException ex) {
+        catch (DataAccessException | IOException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
@@ -258,9 +235,9 @@ public class AssetServicesImpl implements AssetServices {
     public AssetPackageList getAssetPackageList(Query query) throws ServiceException {
         try {
             List<PackageAssets> packageAssetList = new ArrayList<>();
-            for (PackageDir pkgDir : findPackageDirs(Arrays.asList(new File[]{assetRoot}), new ArrayList<File>())) {
+            for (PackageDir pkgDir : findPackageDirs(Arrays.asList(assetRoot), new ArrayList<>())) {
 
-                Stream<File> stream = Arrays.asList(pkgDir.listFiles()).stream();
+                Stream<File> stream = Arrays.stream(pkgDir.listFiles());
 
                 // currently "extension" is the only supported filter
                 String ext = query.getFilter("extension");
@@ -282,10 +259,10 @@ public class AssetServicesImpl implements AssetServices {
                     }
                 }
 
-                List<AssetInfo> assets = new ArrayList<AssetInfo>();
+                List<AssetInfo> assets = new ArrayList<>();
                 for (File file : stream.collect(Collectors.toList())) {
                     assets.add(new AssetInfo(pkgDir.getAssetFile(file)));
-                };
+                }
                 if (!assets.isEmpty()) {
                     PackageAssets pkgAssets = new PackageAssets(pkgDir);
                     pkgAssets.setAssets(assets);
@@ -297,10 +274,7 @@ public class AssetServicesImpl implements AssetServices {
             assetPackageList.sort();
             return assetPackageList;
         }
-        catch (DataAccessException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
-        }
-        catch (IOException ex) {
+        catch (DataAccessException| IOException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
@@ -309,10 +283,7 @@ public class AssetServicesImpl implements AssetServices {
         try {
             return getPackageDir(name);
         }
-        catch (IOException ex) {
-            throw new ServiceException(ex.getMessage(), ex);
-        }
-        catch (DataAccessException ex) {
+        catch (DataAccessException | IOException ex) {
             throw new ServiceException(ex.getMessage(), ex);
         }
     }
@@ -352,12 +323,27 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
+    @Override
+    public List<PackageDir> getPackageDirs() throws IOException {
+        try {
+            return findPackageDirs(Arrays.asList(new File[]{assetRoot}), new ArrayList<>());
+        }
+        catch (DataAccessException ex) {
+            throw new IOException(ex);
+        }
+    }
+
+    @Override
+    public List<PackageDir> findPackageDirs(Predicate<File> predicate) throws IOException {
+        return getPackageDirs().stream().filter(predicate).collect(Collectors.toList());
+    }
+
     /**
      * Finds the next level of sibling PackageDirs under a set of non-package dirs.
      */
     private List<PackageDir> findPackageDirs(List<File> dirs, List<File> excludes) throws IOException, DataAccessException {
-        List<PackageDir> pkgSubDirs = new ArrayList<PackageDir>();
-        List<File> allSubDirs = new ArrayList<File>();
+        List<PackageDir> pkgSubDirs = new ArrayList<>();
+        List<File> allSubDirs = new ArrayList<>();
 
         for (File dir : dirs) {
             MdwIgnore mdwIgnore = new MdwIgnore(dir);
@@ -379,7 +365,7 @@ public class AssetServicesImpl implements AssetServices {
         return pkgSubDirs;
     }
 
-    private void addVersionControlInfo(PackageList pkgList) throws ServiceException {
+    private void addVersionControlInfo(PackageList pkgList) {
         try {
             VersionControlGit versionControl = (VersionControlGit) getVersionControl();
             if (versionControl != null) {
@@ -438,7 +424,7 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
-    private void addVersionControlInfo(PackageAssets pkgAssets) throws ServiceException {
+    private void addVersionControlInfo(PackageAssets pkgAssets) {
         try {
             VersionControlGit versionControl = (VersionControlGit) getVersionControl();
             if (versionControl != null && getGitUser() != null && getGitBranch() != null) {
@@ -495,8 +481,28 @@ public class AssetServicesImpl implements AssetServices {
         return vc;
     }
 
+    @Override
     public AssetInfo getAsset(String path) throws ServiceException {
-        return getAsset(path, false);
+        int lastSlash = path.lastIndexOf('/');
+        String pkgName = path.substring(0, lastSlash);
+        String assetName = path.substring(lastSlash + 1);
+        try {
+            PackageDir pkgDir = getPackageDir(pkgName);
+            if (pkgDir != null && findPackageDirs(dir -> dir.equals(pkgDir)).size() == 1) {
+                MdwIgnore mdwIgnore = new MdwIgnore(pkgDir);
+                File file = new File(pkgDir + "/" + assetName);
+                if (!mdwIgnore.isIgnore(file)) {
+                    AssetFile assetFile = pkgDir.getAssetFile(file);
+                    if (assetFile.isFile()) {
+                        return new AssetInfo(assetFile);
+                    }
+                }
+            }
+            return null;
+        }
+        catch (DataAccessException | IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
     }
 
     public AssetInfo getAsset(String path, boolean withVcsInfo) throws ServiceException {
@@ -538,23 +544,13 @@ public class AssetServicesImpl implements AssetServices {
     /**
      * Returns either Java or Kotlin asset implementor for a class.  Null if not found.
      */
-    public AssetInfo getImplAsset(String className) {
+    public AssetInfo getImplAsset(String className) throws ServiceException {
         int lastDot = className.lastIndexOf('.');
         if (lastDot > 0 && lastDot < className.length() - 1) {
             String assetRoot = className.substring(0, lastDot) + "/" + className.substring(lastDot + 1);
-            try {
-                // TODO asset service should return null if not found instead of throwing
-                return getAsset(assetRoot + ".java");
-            }
-            catch (ServiceException ex) {
-                try {
+                AssetInfo implAsset = getAsset(assetRoot + ".java");
+                if (implAsset == null)
                     return getAsset(assetRoot + ".kt");
-                }
-                catch (ServiceException ex2) {
-                    logger.debugException(ex.getMessage(), ex);
-                    logger.debugException(ex2.getMessage(), ex2);
-                }
-            }
         }
         return null;
     }
@@ -600,7 +596,7 @@ public class AssetServicesImpl implements AssetServices {
     }
 
     @Override
-    public List<ArchiveDir> getArchiveDirs() throws ServiceException {
+    public List<ArchiveDir> getArchiveDirs() {
         List<ArchiveDir> archiveDirs = new ArrayList<>();
         if (getArchiveDir().isDirectory()) {
             for (File archiveDir : getArchiveDir().listFiles()) {
@@ -622,7 +618,7 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
-    private void addVersionControlInfo(AssetInfo asset) throws ServiceException {
+    private void addVersionControlInfo(AssetInfo asset) {
         CodeTimer timer = new CodeTimer("addVersionControlInfo(AssetInfo)", true);
         try {
             VersionControlGit versionControl = (VersionControlGit) getVersionControl();
@@ -712,7 +708,7 @@ public class AssetServicesImpl implements AssetServices {
 
         return packageList.getPackageDirs().stream()
                 .filter(packageDir -> packageDir.getVcsDiffType() == DiffType.EXTRA)
-                .map(packageDir -> packageDir.getPackageName()).collect(Collectors.toList());
+                .map(PackageDir::getPackageName).collect(Collectors.toList());
     }
 
     private class GhostVersionControl implements VersionControl {
@@ -723,7 +719,7 @@ public class AssetServicesImpl implements AssetServices {
             this.assetRevisions = assetRevisions;
         }
 
-        public AssetRevision getRevision(File file) throws IOException {
+        public AssetRevision getRevision(File file) {
             if (assetRevisions == null)
                 return null;
             String val = assetRevisions.getProperty(file.getName());
@@ -732,10 +728,10 @@ public class AssetServicesImpl implements AssetServices {
             return VersionControlGit.parseAssetRevision(val.trim());
         }
 
-        public void connect(String repositoryUrl, String user, String password, File localDir) throws IOException {
+        public void connect(String repositoryUrl, String user, String password, File localDir) {
         }
 
-        public long getId(File file) throws IOException {
+        public long getId(File file) {
             return 0;
         }
 
@@ -743,13 +739,13 @@ public class AssetServicesImpl implements AssetServices {
             return null;
         }
 
-        public void setRevision(File file, AssetRevision rev) throws IOException {
+        public void setRevision(File file, AssetRevision rev) {
         }
 
         public void clearId(File file) {
         }
 
-        public void deleteRev(File file) throws IOException {
+        public void deleteRev(File file) {
         }
 
         public void clear() {
@@ -759,19 +755,14 @@ public class AssetServicesImpl implements AssetServices {
             return false;
         }
 
-        public void hardCheckout(String branch, Boolean hard) throws Exception {
-            // TODO Auto-generated method stub
-
+        public void hardCheckout(String branch, Boolean hard) {
         }
 
-        public Map<String, List<String>> checkVersionConsistency(String branch, String path)
-                throws Exception {
-            // TODO Auto-generated method stub
+        public Map<String, List<String>> checkVersionConsistency(String branch, String path) {
             return null;
         }
 
-        public String getCommit() throws IOException {
-            // TODO Auto-generated method stub
+        public String getCommit() {
             return null;
         }
     }
@@ -779,6 +770,8 @@ public class AssetServicesImpl implements AssetServices {
     @Override
     public Renderer getRenderer(String assetPath, String renderTo) throws ServiceException {
         AssetInfo asset = getAsset(assetPath);
+        if (asset == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Asset not found: " + assetPath);
         if (renderTo.equals(Asset.HTML)) {
             return new HtmlRenderer(asset);
         }
