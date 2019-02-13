@@ -17,12 +17,16 @@ package com.centurylink.mdw.services;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.model.asset.ArchiveDir;
@@ -84,6 +88,7 @@ public interface AssetServices {
     /**
      * @param assetPath - myPackage/myAsset.ext
      * @param withVcsInfo - include Git info if available
+     * @throws ServiceException if asset not found
      */
     AssetInfo getAsset(String assetPath, boolean withVcsInfo) throws ServiceException;
 
@@ -92,8 +97,7 @@ public interface AssetServices {
      * @param assetPath - myPackage/myAsset.ext
      */
     AssetInfo getAsset(String assetPath) throws ServiceException;
-
-    AssetInfo getImplAsset(String className);
+    AssetInfo getImplAsset(String className) throws ServiceException;
 
     void createPackage(String packageName) throws ServiceException;
     void deletePackage(String packageName) throws ServiceException;
@@ -107,4 +111,8 @@ public interface AssetServices {
     List<String> getExtraPackageNames() throws ServiceException;
 
     Renderer getRenderer(String assetPath, String renderTo) throws ServiceException;
+
+    List<PackageDir> getPackageDirs() throws IOException;
+
+    List<PackageDir> findPackageDirs(Predicate<File> predicate) throws IOException;
 }

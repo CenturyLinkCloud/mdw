@@ -157,6 +157,8 @@ public class TestingServicesImpl implements TestingServices {
                     method = "OPTIONS";
             }
             AssetInfo testCaseAsset = assetServices.getAsset(assetPath);
+            if (testCaseAsset == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Test case not found: " + assetPath);
             TestCaseItem item = null;
             String json = new String(FileHelper.read(testCaseAsset.getFile()));
             JSONObject coll = new JSONObject(json);

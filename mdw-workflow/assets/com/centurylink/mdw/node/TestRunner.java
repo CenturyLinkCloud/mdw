@@ -15,29 +15,24 @@
  */
 package com.centurylink.mdw.node;
 
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONObject;
-
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCase.Status;
 import com.centurylink.mdw.test.TestCaseItem;
 import com.centurylink.mdw.test.TestExecConfig;
-import com.eclipsesource.v8.JavaCallback;
-import com.eclipsesource.v8.NodeJS;
-import com.eclipsesource.v8.V8;
-import com.eclipsesource.v8.V8Array;
-import com.eclipsesource.v8.V8Object;
+import com.eclipsesource.v8.*;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Runs NodeJS test assets (through runner.js).
@@ -54,7 +49,10 @@ public class TestRunner {
 
         System.out.println("NODE JS: " + nodeJS.getNodeVersion());
 
-        V8Object fileObj = new V8Object(nodeJS.getRuntime()).add("file", assets.getAsset(RUNNER).getFile().getAbsolutePath());
+        AssetInfo runnerAsset = assets.getAsset(RUNNER);
+        if (runnerAsset == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Asset not found: " + RUNNER);
+        V8Object fileObj = new V8Object(nodeJS.getRuntime()).add("file", runnerAsset.getFile().getAbsolutePath());
         JavaCallback callback = new JavaCallback() {
             public Object invoke(V8Object receiver, V8Array parameters) {
               return fileObj;
@@ -74,7 +72,10 @@ public class TestRunner {
         };
         nodeJS.getRuntime().registerJavaMethod(callback, "setParseResult");
 
-        nodeJS.exec(assets.getAsset(PARSER).getFile());
+        AssetInfo parserAsset = assets.getAsset(PARSER);
+        if (parserAsset == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Asset not found: " + PARSER);
+        nodeJS.exec(parserAsset.getFile());
         while (nodeJS.isRunning()) {
             nodeJS.handleMessage();
         }
@@ -205,7 +206,10 @@ public class TestRunner {
         };
         nodeJS.getRuntime().registerJavaMethod(callback, "setTestResponse");
 
-        nodeJS.exec(assets.getAsset(RUNNER).getFile());
+        AssetInfo runner = assets.getAsset(RUNNER);
+        if (runner == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Asset not found: " + RUNNER);
+        nodeJS.exec(runner.getFile());
         while (nodeJS.isRunning()) {
             nodeJS.handleMessage();
         }

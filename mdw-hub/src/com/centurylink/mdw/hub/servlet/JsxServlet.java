@@ -29,6 +29,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.ws.Service;
 
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -73,6 +74,8 @@ public class JsxServlet extends HttpServlet {
                 String pkgName = pkgPath.replace('/', '.');
                 String assetPath = pkgName + p.substring(lastSlash);
                 AssetInfo jsxAsset = assetServices.getAsset(assetPath);
+                if (jsxAsset == null)
+                    throw new ServiceException(ServiceException.NOT_FOUND, "JSX asset not found: " + assetPath);
 
                 try {
                     CacheService webpackCacheInstance = CacheRegistration.getInstance().getCache(webpackCacheClassName);
