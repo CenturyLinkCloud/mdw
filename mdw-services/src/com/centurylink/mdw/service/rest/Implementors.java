@@ -147,7 +147,7 @@ public class Implementors extends JsonRestService {
                             if (rows.length() > 0)
                                 monitoringWidget.setAttribute("default", rows.toString());
                         }
-                        catch (IOException ex) {
+                        catch (IOException | ServiceException ex) {
                             logger.severeException("Error loading monitor widgets for: " + implClassName, ex);
                         }
                         return widgets;
