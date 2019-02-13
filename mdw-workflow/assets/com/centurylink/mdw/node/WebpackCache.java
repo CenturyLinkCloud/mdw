@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.node;
 
-import com.centurylink.mdw.annotations.Parameter;
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CacheService;
@@ -26,13 +25,13 @@ import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.util.file.MdwIgnore;
 import com.centurylink.mdw.util.file.ZipHelper;
 import com.centurylink.mdw.util.file.ZipHelper.Exist;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.eclipsesource.v8.JavaCallback;
 import com.eclipsesource.v8.NodeJS;
-import com.eclipsesource.v8.V8Array;
 import com.eclipsesource.v8.V8Object;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -41,16 +40,15 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Customize these annotations for preload options by extending WebpackCache in a custom
- * package and set property mdw.webpack.cache.class.name (see JsxServlet.java).
+ * In non-dev environments, precompiles all Index.jsx assets.
  */
-@RegisteredService(value=CacheService.class,
-    parameters={@Parameter(name="PreloadedJsx", value="com.centurylink.mdw.task/Main.jsx,com.centurylink.mdw.react/Run.jsx")})
+@RegisteredService(value=CacheService.class)
 public class WebpackCache implements PreloadableCache {
 
     private static final String NODE_PACKAGE = "com.centurylink.mdw.node";
@@ -85,17 +83,30 @@ public class WebpackCache implements PreloadableCache {
                 logger.severeException(ex.getMessage(), ex);
             }
 
-            // nothing is precompiled in dev mode (keep server startup quick)
-            if (!isDevMode()) {
-                // initialize specified JSX assets
-                String preloadedJsx = params.get("PreloadedJsx");
-                if (preloadedJsx != null && preloadedJsx.length() > 0) {
-                    for (String jsxAssetPath : preloadedJsx.split(",")) {
-                        AssetInfo asset = ServiceLocator.getAssetServices().getAsset(jsxAssetPath);
-                        if (asset != null)
-                            getCompiled(asset);
-                    }
+            AssetServices assetServices = ServiceLocator.getAssetServices();
+            List<AssetInfo> precompiledJsx = new ArrayList<>();
+            AssetInfo runJsx = assetServices.getAsset("com.centurylink.mdw.react/Run.jsx");
+            if (runJsx != null) {
+                // conditionally compile in dev for faster startup
+                if (!isDevMode() || !getOutput(runJsx).exists()) {
+                    precompiledJsx.add(runJsx);
                 }
+            }
+            if (!isDevMode()) {
+                // in non-dev everything is precompiled
+                AssetInfo taskMain = assetServices.getAsset("com.centurylink.mdw.task/Main.jsx");
+                if (taskMain != null)
+                    precompiledJsx.add(taskMain);
+
+                // add all Index.jsx assets
+                for (List<AssetInfo> assets : assetServices.findAssets(file -> file.getName().equals("Index.jsx")).values()) {
+                    precompiledJsx.addAll(assets);
+                }
+            }
+            if (precompiledJsx.size() > 0)
+                logger.info("Precompiling JSX assets:");
+            for (AssetInfo jsxAsset : precompiledJsx) {
+                getCompiled(jsxAsset);
             }
         }
         catch (Exception ex) {
@@ -114,11 +125,10 @@ public class WebpackCache implements PreloadableCache {
 
     @Override
     public void loadCache() throws CachingException {
-        // only specified assets are preloaded
     }
 
     @Override
-    public void refreshCache() throws Exception {
+    public void refreshCache() {
         clearCache();  // lazy loading
     }
 
@@ -137,7 +147,7 @@ public class WebpackCache implements PreloadableCache {
      * Starter file will be compiled, but asset used to compute output path.
      */
     public File getCompiled(AssetInfo asset, File starter) throws IOException, ServiceException {
-        File file = null;
+        File file;
         synchronized(WebpackCache.class) {
             file = webpackAssets.get(asset);
             if (file == null || !file.exists() || file.lastModified() < asset.getFile().lastModified()
@@ -174,16 +184,16 @@ public class WebpackCache implements PreloadableCache {
         String assetRoot = ApplicationContext.getAssetRoot().getAbsolutePath().replace('\\', '/');
         StringBuilder sb = new StringBuilder();
         String nodeModules = assetRoot + "/com/centurylink/mdw/node/node_modules";
-        sb.append("import React from '" + nodeModules + "/react';\n");
-        sb.append("import ReactDOM from '" + nodeModules + "/react-dom';\n");
-        sb.append("import " + jsxAsset.getRootName() + " from '" + jsxAsset.getFile().getAbsolutePath().replace('\\', '/') + "';\n\n");
+        sb.append("import React from '").append(nodeModules).append("/react';\n");
+        sb.append("import ReactDOM from '").append(nodeModules).append("/react-dom';\n");
+        sb.append("import ").append(jsxAsset.getRootName()).append(" from '").append(jsxAsset.getFile().getAbsolutePath().replace('\\', '/')).append("';\n\n");
 
         if (logger.isDebugEnabled())
-            sb.append("console.log('Starting: " + pkgPath + "/" + jsxAsset.getName() + "');\n\n");
+            sb.append("console.log('Starting: ").append(pkgPath).append("/").append(jsxAsset.getName()).append("');\n\n");
 
         sb.append("ReactDOM.render(\n");
-        sb.append("  React.createElement(" + jsxAsset.getRootName() + ", {}, null),\n");
-        sb.append("  document.querySelector('[mdw-jsx=\"" + pkgPath + "/" + jsxAsset.getName() + "\"]')\n");
+        sb.append("  React.createElement(").append(jsxAsset.getRootName()).append(", {}, null),\n");
+        sb.append("  document.querySelector('[mdw-jsx=\"").append(pkgPath).append("/").append(jsxAsset.getName()).append("\"]')\n");
         sb.append(");");
         return sb.toString();
     }
@@ -197,21 +207,19 @@ public class WebpackCache implements PreloadableCache {
     /**
      * Returns null except in dev mode.
      */
-    private void compile(AssetInfo asset, File source, File target) throws IOException, ServiceException {
+    private void compile(AssetInfo asset, File source, File target) throws ServiceException {
         File watched = watchedAssets.get(asset);
         if (watched == null) {
             if (isDevMode()) {
-                new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            // avoid recursive compiles
-                            if (isDevMode())
-                                watchedAssets.put(asset, target);
-                            doCompile(asset, source, target);
-                        }
-                        catch (Exception ex) {
-                            logger.severeException(ex.getMessage(), ex);
-                        }
+                new Thread(() -> {
+                    try {
+                        // avoid recursive compiles
+                        if (isDevMode())
+                            watchedAssets.put(asset, target);
+                        doCompile(asset, source, target);
+                    }
+                    catch (Exception ex) {
+                        logger.severeException(ex.getMessage(), ex);
                     }
                 }).start();
             }
@@ -221,7 +229,7 @@ public class WebpackCache implements PreloadableCache {
         }
     }
 
-    private void doCompile(AssetInfo asset, File source, File target) throws IOException, ServiceException {
+    private void doCompile(AssetInfo asset, File source, File target) throws ServiceException {
         long before = System.currentTimeMillis();
         Result webpackResult = compile(source, target);
         JSONObject resultsJson = new JSONObject(webpackResult.message);
@@ -243,31 +251,29 @@ public class WebpackCache implements PreloadableCache {
     /**
      * This can take a while.
      */
-    private Result compile(File source, File target) throws IOException, ServiceException {
+    private Result compile(File source, File target) throws ServiceException {
         AssetServices assetServices = ServiceLocator.getAssetServices();
         AssetInfo parser = assetServices.getAsset(NODE_PACKAGE + "/parser.js");
+        if (parser == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Asset not found: " + parser);
         AssetInfo runner = assetServices.getAsset(NODE_PACKAGE + "/webpackRunner.js");
+        if (runner == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Asset not found: " + runner);
 
         NodeJS nodeJS = NodeJS.createNodeJS();
 
         logger.info("Compiling " + source + " using NODE JS: " + nodeJS.getNodeVersion());
         V8Object fileObj = new V8Object(nodeJS.getRuntime()).add("file", runner.getFile().getAbsolutePath());
-        JavaCallback callback = new JavaCallback() {
-            public Object invoke(V8Object receiver, V8Array parameters) {
-              return fileObj;
-            }
-        };
+        JavaCallback callback = (receiver, parameters) -> fileObj;
         nodeJS.getRuntime().registerJavaMethod(callback, "getRunner");
 
         final Result parseResult = new Result();
-        callback = new JavaCallback() {
-            public Object invoke(V8Object receiver, V8Array parameters) {
-                V8Object resultObj = parameters.getObject(0);
-                parseResult.status = resultObj.getString("status");
-                parseResult.message = resultObj.getString("message");
-                resultObj.release();
-                return null;
-            }
+        callback = (receiver, parameters) -> {
+            V8Object resultObj = parameters.getObject(0);
+            parseResult.status = resultObj.getString("status");
+            parseResult.message = resultObj.getString("message");
+            resultObj.release();
+            return null;
         };
         nodeJS.getRuntime().registerJavaMethod(callback, "setParseResult");
 
@@ -290,22 +296,16 @@ public class WebpackCache implements PreloadableCache {
         inputObj.add("output", target.getAbsolutePath());
         inputObj.add("debug", logger.isDebugEnabled());
         inputObj.add("devMode", isDevMode());
-        callback = new JavaCallback() {
-            public Object invoke(V8Object receiver, V8Array parameters) {
-              return inputObj;
-            }
-        };
+        callback = (receiver, parameters) -> inputObj;
         nodeJS.getRuntime().registerJavaMethod(callback, "getInput");
 
         final Result webpackResult = new Result();
-        callback = new JavaCallback() {
-            public Object invoke(V8Object receiver, V8Array parameters) {
-                V8Object resultObj = parameters.getObject(0);
-                webpackResult.status = resultObj.getString("status");
-                webpackResult.message = resultObj.getString("message");
-                resultObj.release();
-                return null;
-            }
+        callback = (receiver, parameters) -> {
+            V8Object resultObj = parameters.getObject(0);
+            webpackResult.status = resultObj.getString("status");
+            webpackResult.message = resultObj.getString("message");
+            resultObj.release();
+            return null;
         };
         nodeJS.getRuntime().registerJavaMethod(callback, "setWebpackResult");
 

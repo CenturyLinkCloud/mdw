@@ -46,11 +46,13 @@ public class MdwIgnore {
     }
 
     public boolean isIgnore(File file) {
-        return excludes.contains(file) || ".DS_Store".equals(file.getName());
+        return excludes.contains(file) ||
+                ".DS_Store".equals(file.getName()) ||
+                ("node_modules".equals(file.getName()) && file.isDirectory());
     }
 
     /**
-     * TODO: Currently hardcoded for Mac's annoying .DS_Store files.
+     * Hardcoded for Mac's annoying .DS_Store files.
      */
     public static boolean isIgnore(AssetFile assetFile) {
         return ".DS_Store".equals(assetFile.getName());
