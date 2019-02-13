@@ -140,6 +140,7 @@ public class Workflow extends JsonRestService {
                 json.put("name", process.getName());
                 json.put("id", process.getId());
                 json.put("packageName", process.getPackageName());
+                json.put("version", process.getVersionString());
                 if (instanceId != null) {
                     json.put("instanceId", instanceId);
                 }

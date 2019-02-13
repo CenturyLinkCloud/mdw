@@ -5,8 +5,21 @@
       "type": "text",
       "name": "name",
       "label": "Name",
-      "multiline": true,
-      "rows": 2
+      "readonly": true
+    },
+    {
+      "type": "text",
+      "name": "version",
+      "label": "Version",
+      "readonly": true,
+      "vw": 75
+    },
+    {
+      "type": "text",
+      "name": "definitionId",
+      "label": "ID",
+      "readonly": true,
+      "vw": 150
     },
     {
       "type": "text",
