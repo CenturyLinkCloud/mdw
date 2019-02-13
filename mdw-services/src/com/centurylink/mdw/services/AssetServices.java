@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -36,70 +37,74 @@ import com.centurylink.mdw.services.asset.Renderer;
  */
 public interface AssetServices {
 
-    public File getAssetRoot();
+    File getAssetRoot();
 
-    public File getArchiveDir();
-    public void deleteArchive() throws ServiceException;
+    File getArchiveDir();
+    void deleteArchive() throws ServiceException;
 
-    public VersionControl getVersionControl() throws IOException;
+    VersionControl getVersionControl() throws IOException;
 
     /**
      * Returns the list of workflow packages.  Does not include archived packages.
      * Includes Git information if available.
      */
-    public PackageList getPackages(boolean withVcsInfo) throws ServiceException;
+    PackageList getPackages(boolean withVcsInfo) throws ServiceException;
 
     /**
      * Returns packages, with their assets filtered by query criteria.
      */
-    public AssetPackageList getAssetPackageList(Query query) throws ServiceException;
+    AssetPackageList getAssetPackageList(Query query) throws ServiceException;
 
     /**
      * Return the PackageDir for a name.  Does not contain assets or VCS info.
      */
-    public PackageDir getPackage(String name) throws ServiceException;
+    PackageDir getPackage(String name) throws ServiceException;
 
     /**
      * Returns the assets of a workflow package latest version.
      */
-    public PackageAssets getAssets(String packageName) throws ServiceException;
-    public PackageAssets getAssets(String packageName, boolean withVcsInfo) throws ServiceException;
+    PackageAssets getAssets(String packageName) throws ServiceException;
+    PackageAssets getAssets(String packageName, boolean withVcsInfo) throws ServiceException;
 
     /**
      * Returns all assets for a given file extension (mapped to their package name).
      * Assets do not contain VCS info.
      */
-    public Map<String,List<AssetInfo>> getAssetsOfType(String format) throws ServiceException;
+    Map<String,List<AssetInfo>> getAssetsOfType(String format) throws ServiceException;
     /**
      * Returns all assets for a list of file extensions (mapped to their package name).
      * Assets do not contain VCS info.
      */
-    public Map<String,List<AssetInfo>> getAssetsOfTypes(String[] formats) throws ServiceException;
+    Map<String,List<AssetInfo>> getAssetsOfTypes(String[] formats) throws ServiceException;
+    /**
+     * Returns all assets with the specified name (without VCS info).
+     */
+    Map<String,List<AssetInfo>> findAssets(Predicate<File> predicate) throws ServiceException;
 
     /**
      * @param assetPath - myPackage/myAsset.ext
      * @param withVcsInfo - include Git info if available
      */
-    public AssetInfo getAsset(String assetPath, boolean withVcsInfo) throws ServiceException;
+    AssetInfo getAsset(String assetPath, boolean withVcsInfo) throws ServiceException;
 
     /**
      * Without VCS info.
      * @param assetPath - myPackage/myAsset.ext
      */
-    public AssetInfo getAsset(String assetPath) throws ServiceException;
+    AssetInfo getAsset(String assetPath) throws ServiceException;
 
-    public AssetInfo getImplAsset(String className);
+    AssetInfo getImplAsset(String className);
 
-    public void createPackage(String packageName) throws ServiceException;
-    public void deletePackage(String packageName) throws ServiceException;
+    void createPackage(String packageName) throws ServiceException;
+    void deletePackage(String packageName) throws ServiceException;
 
-    public void createAsset(String assetPath) throws ServiceException;
-    public void createAsset(String assetPath, byte[] content) throws ServiceException;
-    public void deleteAsset(String assetPath) throws ServiceException;
+    void createAsset(String assetPath) throws ServiceException;
+    void createAsset(String assetPath, byte[] content) throws ServiceException;
+    void deleteAsset(String assetPath) throws ServiceException;
 
-    public List<ArchiveDir> getArchiveDirs() throws ServiceException;
+    List<ArchiveDir> getArchiveDirs() throws ServiceException;
 
-    public List<String> getExtraPackageNames() throws ServiceException;
+    List<String> getExtraPackageNames() throws ServiceException;
 
-    public Renderer getRenderer(String assetPath, String renderTo) throws ServiceException;
+    Renderer getRenderer(String assetPath, String renderTo) throws ServiceException;
 }

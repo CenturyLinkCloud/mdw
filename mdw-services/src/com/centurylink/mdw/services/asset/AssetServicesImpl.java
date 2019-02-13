@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -181,32 +182,7 @@ public class AssetServicesImpl implements AssetServices {
     }
 
     public Map<String,List<AssetInfo>> getAssetsOfType(String format) throws ServiceException {
-        Map<String,List<AssetInfo>> packageAssets = new HashMap<String,List<AssetInfo>>();
-        List<File> assetRoots = new ArrayList<File>();
-        assetRoots.add(assetRoot);
-        try {
-            CodeTimer timer = new CodeTimer("AssetServices", true);
-            List<PackageDir> pkgDirs = findPackageDirs(assetRoots, new ArrayList<File>());
-            for (PackageDir pkgDir : pkgDirs) {
-                List<AssetInfo> assets = null;
-                for (File file : pkgDir.listFiles())
-                    if (file.isFile() && file.getName().endsWith("." + format)) {
-                        if (assets == null)
-                            assets = new ArrayList<AssetInfo>();
-                        assets.add(new AssetInfo(pkgDir.getAssetFile(file)));
-                }
-                if (assets != null)
-                    packageAssets.put(pkgDir.getPackageName(), assets);
-            }
-            timer.logTimingAndContinue("getAssetsOfType(" + format + ")");
-            return packageAssets;
-        }
-        catch (DataAccessException ex) {
-            throw new ServiceException(ex.getMessage(), ex);
-        }
-        catch (IOException ex) {
-            throw new ServiceException(ex.getMessage(), ex);
-        }
+        return findAssets(file -> file.getName().endsWith("." + format));
     }
 
     public Map<String,List<AssetInfo>> getAssetsOfTypes(String[] formats) throws ServiceException {
@@ -224,6 +200,36 @@ public class AssetServicesImpl implements AssetServices {
         }
         return pkgAssets;
     }
+
+    public Map<String,List<AssetInfo>> findAssets(Predicate<File> predicate) throws ServiceException {
+        Map<String,List<AssetInfo>> packageAssets = new HashMap<>();
+        List<File> assetRoots = new ArrayList<>();
+        assetRoots.add(assetRoot);
+        try {
+            CodeTimer timer = new CodeTimer("AssetServices", true);
+            List<PackageDir> pkgDirs = findPackageDirs(assetRoots, new ArrayList<>());
+            for (PackageDir pkgDir : pkgDirs) {
+                List<AssetInfo> assets = null;
+                for (File file : pkgDir.listFiles())
+                    if (file.isFile() && predicate.test(file)) {
+                        if (assets == null)
+                            assets = new ArrayList<>();
+                        assets.add(new AssetInfo(pkgDir.getAssetFile(file)));
+                    }
+                if (assets != null)
+                    packageAssets.put(pkgDir.getPackageName(), assets);
+            }
+            timer.logTimingAndContinue("findAssets()");
+            return packageAssets;
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
+        catch (IOException ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
+    }
+
 
     public PackageList getPackages(boolean withVcsInfo) throws ServiceException {
         List<File> assetRoots = new ArrayList<File>();

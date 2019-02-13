@@ -189,6 +189,22 @@
   max-height: 450px;
   overflow-y: auto;
 }
+.mdw-typeahead {
+  display: flex;
+  flex-grow: 1;
+  max-width: 600px;
+}
+.mdw-typeahead .rbt-input {
+  margin-left: 8px;
+  height: 27px;
+  min-width: 200px;
+  max-width: 600px;
+  font-weight: normal;
+  padding: 2px 5px;
+}
+.mdw-typeahead .rbt-close {
+  margin-top: -22px;
+}
 .mdw-inner-addon {
   position: relative;
 }

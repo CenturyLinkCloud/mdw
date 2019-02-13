@@ -22,6 +22,7 @@ import com.centurylink.mdw.model.report.Timepoint;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.request.RequestAggregate;
 import com.centurylink.mdw.model.request.RequestList;
+import com.centurylink.mdw.model.request.ServicePath;
 
 import java.util.Date;
 import java.util.List;
@@ -46,7 +47,8 @@ public interface RequestServices {
     List<Insight> getRequestInsights(Query query) throws ServiceException;
     List<Timepoint> getRequestTrend(Query query) throws ServiceException;
 
-    List<String> getRequestPaths(Query query) throws ServiceException;
+    List<String> getServicePaths(Query query) throws ServiceException;
+    List<ServicePath> getRequestPaths(Query query) throws ServiceException;
 
     void setElapsedTime(String ownerType, Long instanceId, Long elapsedTime) throws ServiceException;
 }

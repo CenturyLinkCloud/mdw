@@ -8,7 +8,6 @@ import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.report.Insight;
 import com.centurylink.mdw.model.report.Timepoint;
-import com.centurylink.mdw.model.workflow.WorkStatuses;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

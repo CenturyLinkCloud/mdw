@@ -180,7 +180,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                 long triggerId = query.getLongFilter("triggerId");
                 if (triggerId > 0) {
                     // retrieve instance by trigger -- just send summary
-                    return getSummary(triggerId);
+                    return getSummaryJson(workflowServices.getProcessForTrigger(triggerId));
                 }
                 else if ("designer".equals(query.getFilter("mdw-app"))) {
                     try {
@@ -215,9 +215,9 @@ public class Processes extends JsonRestService implements JsonExportable {
                         if (processList.getCount() == 0)
                             throw new ServiceException(ServiceException.NOT_FOUND, "Process instance not found: " + query);
                         else if (OwnerType.MAIN_PROCESS_INSTANCE.equals(processList.getProcesses().get(0).getOwner())) {
-                            return getSummary(processList.getProcesses().get(0).getOwnerId());
+                            return getSummaryJson(workflowServices.getProcess(processList.getProcesses().get(0).getOwnerId(), true));
                         }
-                        return getSummary(processList.getProcesses().get(0).getId());
+                        return getSummaryJson(processList.getProcesses().get(0));
                     }
                     else {
                         return processList.getJson();
@@ -236,6 +236,10 @@ public class Processes extends JsonRestService implements JsonExportable {
     @Path("/{instanceId}/summary")
     public JSONObject getSummary(Long instanceId) throws ServiceException {
         ProcessInstance process = getWorkflowServices().getProcess(instanceId, false);
+        return getSummaryJson(process);
+    }
+
+    protected JSONObject getSummaryJson(ProcessInstance process) {
         JSONObject summary = new JsonObject();
         summary.put("id", process.getId());
         summary.put("name", process.getProcessName());

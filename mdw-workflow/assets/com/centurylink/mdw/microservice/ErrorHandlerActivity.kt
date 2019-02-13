@@ -11,6 +11,7 @@ import com.centurylink.mdw.model.StatusResponse
 @Activity(value="Microservice Error Handler", icon="com.centurylink.mdw.microservice/error.png")
 class ErrorHandlerActivity : DefaultActivityImpl() {
 
+    // TODO no condition
     override fun execute(runtimeContext: ActivityRuntimeContext): Any? {
         val isSynchronous = runtimeContext.variables["synchronous"]
         val serviceResponse = runtimeContext.variables["serviceResponse"]

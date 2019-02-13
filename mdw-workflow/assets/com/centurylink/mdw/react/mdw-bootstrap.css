@@ -11,3 +11,6 @@
 .dropdown-menu > .disabled > a:focus, .dropdown-menu > .disabled > a:hover {
   cursor: default;
 }
+.mark, mark {
+  padding: 0;
+}

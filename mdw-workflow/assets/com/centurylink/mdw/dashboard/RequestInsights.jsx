@@ -1,5 +1,6 @@
 import React, {Component} from '../node/node_modules/react/react';
 import PropTypes from '../node/node_modules/prop-types';
+import {AsyncTypeahead} from '../node/node_modules/react-bootstrap-typeahead';
 import {Bar} from '../node/node_modules/react-chartjs-2';
 import PanelHeader from '../react/PanelHeader.jsx';
 import HeaderLabel from '../react/HeaderLabel.jsx';
@@ -22,31 +23,11 @@ class RequestInsights extends Component {
     };
     this.handleSampleSelect = this.handleSampleSelect.bind(this);
     this.handleRequestTypeSelect = this.handleRequestTypeSelect.bind(this);
+    this.getStart = this.getStart.bind(this);
+    this.findPaths = this.findPaths.bind(this);
     this.handlePathSelect = this.handlePathSelect.bind(this);
     this.retrieveData = this.retrieveData.bind(this);
     this.getChartData = this.getChartData.bind(this);
-  }
-
-  componentDidMount() {
-    $mdwUi.hubLoading(true);
-    fetch(new Request(this.context.serviceRoot + '/Requests/paths', {
-      method: 'GET',
-      headers: { Accept: 'application/json'},
-      credentials: 'same-origin'
-    }))
-    .then(response => {
-      return response.json();
-    })
-    .then(paths => {
-      this.setState({
-        paths: paths,
-        sample: this.state.sample,
-        requestType: this.state.requestType,
-        path: this.state.path,
-        data: {}
-      });
-      $mdwUi.hubLoading(false);
-    });
   }
 
   handleSampleSelect(sampleSize) {
@@ -73,7 +54,7 @@ class RequestInsights extends Component {
   handleRequestTypeSelect(requestType) {
     this.setState({
       paths: this.state.paths,
-      sample: this.state.sampleSize,
+      sample: this.state.sample,
       requestType: requestType,
       path: this.state.path,
       data: {}
@@ -91,12 +72,51 @@ class RequestInsights extends Component {
     });
   }
 
-  handlePathSelect(path) {
+  getStart() {
+    var spanMs = 24 * 3600 * 1000; // one day
+    if (this.state.sample === 'Week') {
+      spanMs = spanMs * 6;
+    }
+    else if (this.state.sample === 'Month') {
+      spanMs = spanMs * 29;
+    }
+    return new Date(new Date().getTime() - spanMs);
+  }
+
+  findPaths(input) {
+    this.pathsLoading = true;
+    var url = this.context.serviceRoot + '/Requests/paths' +
+            '?Starting=' + this.getStart().toISOString() +
+            '&direction=' + (this.state.requestType === 'Outbound' ? 'out' : 'in') + 
+            '&find=' + input;
+
+    fetch(new Request(url, {
+      method: 'GET',
+      headers: { Accept: 'application/json'},
+      credentials: 'same-origin'
+    }))
+    .then(response => {
+      return response.json();
+    })
+    .then(data => {
+      data.paths.forEach(p => p.path = p.path.replace(/->/, '→ '));
+      this.setState({
+        paths: data.paths,
+        sample: this.state.sample,
+        requestType: this.state.requestType,
+        path: this.state.path,
+        data: {}
+      }, () => this.pathsLoading = false);
+    });
+  }
+
+  handlePathSelect(paths) {
+    var path = paths.constructor === Array ? paths[0] : paths;
     this.setState({
       paths: this.state.paths,
       sample: this.state.sample,
       requestType: this.state.requestType,
-      path: path,
+      path: path ? path.path : '',
       data: {}
     }, () => {
       this.retrieveData()
@@ -105,7 +125,7 @@ class RequestInsights extends Component {
           paths: this.state.paths,
           sample: this.state.sample,
           requestType: this.state.requestType,
-          path: path,
+          path: this.state.path,
           data: data
         });
       });
@@ -126,10 +146,11 @@ class RequestInsights extends Component {
   retrieveData() {
     return new Promise(resolve => {
       $mdwUi.hubLoading(true);
-      var dataUrl = this.context.serviceRoot + '/Requests/insights?path=' + this.state.path;
+      var dataUrl = this.context.serviceRoot + '/Requests/insights?path=' + 
+              encodeURI(this.state.path.replace(/→ /, '->'));
       dataUrl += '&trend=completionTime';
       dataUrl += '&span=' + this.state.sample;
-      dataUrl += '&direction=' + this.state.requestType;
+      dataUrl += '&direction=' + (this.state.requestType === 'Outbound' ? 'out' : 'in');
       fetch(new Request(dataUrl, {
         method: 'GET',
         headers: { Accept: 'application/json'},
@@ -203,7 +224,7 @@ class RequestInsights extends Component {
     return (
       <div>
         <PanelHeader>
-          <HeaderLabel title="Sample Size:"/>
+          <HeaderLabel title="Sample:"/>
           <HeaderDropdown id="sample-dropdown" width={100}
             items={['Day','Week','Month']}
             selected={this.state.sample}
@@ -214,10 +235,15 @@ class RequestInsights extends Component {
             selected={this.state.requestType}
             onSelect={this.handleRequestTypeSelect} />
           <HeaderLabel title="Path:" />
-          <HeaderDropdown id="path-dropdown" placeholder="[Select a path...]"
-            items={this.state.paths}
-            selected={this.state.path}
-            onSelect={this.handlePathSelect} />
+          <AsyncTypeahead className="mdw-typeahead"
+            autoFocus 
+            placeholder="Enter a path or method..."
+            clearButton
+            onSearch={this.findPaths} 
+            options={this.state.paths}
+            labelKey="path"
+            isLoading={this.pathsLoading || false}
+            onChange={this.handlePathSelect}  />
         </PanelHeader>
         <div className="mdw-section" style={{display:'flex',minHeight:'600px'}}>
             {chartData &&

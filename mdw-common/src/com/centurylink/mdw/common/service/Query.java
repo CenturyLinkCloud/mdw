@@ -313,6 +313,8 @@ public class Query {
                     sb.append("&");
                 sb.append(name).append("=").append(URLEncoder.encode(filters.get(name)));
             }
+            if (sb.length() > 0)
+                sb.append("&");
         }
         if (count) {
             sb.append("count=true");
