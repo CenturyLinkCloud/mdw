@@ -3,16 +3,23 @@
   "pagelet": {"widgets": [
     {
       "type": "text",
+      "name": "name",
+      "label": "Name",
+      "readonly": true
+    },
+    {
+      "type": "text",
+      "name": "version",
+      "label": "Version",
+      "readonly": true,
+      "vw": 75
+    },
+    {
+      "type": "text",
       "name": "id",
       "label": "ID",
       "readonly": true,
       "vw": 150
-    },
-    {
-      "type": "text",
-      "name": "name",
-      "label": "Name",
-      "readonly": true
     },
     {
       "type": "text",
