@@ -49,59 +49,64 @@ public class ServicePaths implements CacheService {
     }
 
     private static synchronized void load() {
-        inboundPaths = new ArrayList<>();
-        outboundPaths = new ArrayList<>();
+        List<ServicePath> inboundPathsTmp = inboundPaths;
+        List<ServicePath> outboundPathsTmp;
 
-        // default is enabled if dashboard package present
-        boolean hasDashboard = PackageCache.getPackage("com.centurylink.mdw.dashboard") != null;
-        if (hasDashboard) {
-            // inbound paths
-            Swagger swagger = MdwSwaggerCache.getSwagger("/");
-            if (swagger != null) {
-                for (String swaggerPath : swagger.getPaths().keySet()) {
-                    inboundPaths.add(new ServicePath(swaggerPath));
+        if (inboundPathsTmp == null) {
+
+            inboundPathsTmp = new ArrayList<>();
+            outboundPathsTmp = new ArrayList<>();
+
+            // default is enabled if dashboard package present
+            boolean hasDashboard = PackageCache.getPackage("com.centurylink.mdw.dashboard") != null;
+            if (hasDashboard) {
+                // inbound paths
+                Swagger swagger = MdwSwaggerCache.getSwagger("/");
+                if (swagger != null) {
+                    for (String swaggerPath : swagger.getPaths().keySet()) {
+                        inboundPathsTmp.add(new ServicePath(swaggerPath));
+                    }
+                    Collections.sort(inboundPathsTmp);
                 }
-                Collections.sort(inboundPaths);
-            }
 
-            // outbound paths
-            try {
-                Map<String,List<AssetInfo>> swaggers = ServiceLocator.getAssetServices().findAssets(file ->
-                    file.getName().equals("swagger.yaml") || file.getName().equals("swagger.json")
-                );
-                for (String pkg : swaggers.keySet()) {
-                    for (AssetInfo swaggerAsset : swaggers.get(pkg)) {
-                        if (swaggerAsset.getExtension().equals("yaml")) {
-                            YamlLoader yamlLoader = new YamlLoader(swaggerAsset.getFile());
-                            Map yamlPaths = yamlLoader.getMap("paths", yamlLoader.getTop());
-                            if (yamlPaths != null) {
-                                String basePath = yamlLoader.get("basePath", (Map)yamlLoader.getTop());
-                                final String base = basePath == null ? "" : basePath;
-                                yamlPaths.keySet().stream().forEach(p ->
-                                    outboundPaths.add(new ServicePath(base + p.toString()))
-                                );
-                            }
-                        }
-                        else if (swaggerAsset.getExtension().equals("json")) {
-                            String content = new String(Files.readAllBytes(swaggerAsset.getFile().toPath()));
-                            JSONObject json = new JSONObject(content);
-                            if (json.has("paths")) {
-                                String base = json.optString("basePath");
-                                JSONObject pathsJson = json.getJSONObject("paths");
-                                for (String path : JSONObject.getNames(pathsJson)) {
-                                    outboundPaths.add(new ServicePath(base + path));
+                // outbound paths
+                try {
+                    Map<String, List<AssetInfo>> swaggers = ServiceLocator.getAssetServices().findAssets(file ->
+                            file.getName().equals("swagger.yaml") || file.getName().equals("swagger.json")
+                    );
+                    for (String pkg : swaggers.keySet()) {
+                        for (AssetInfo swaggerAsset : swaggers.get(pkg)) {
+                            if (swaggerAsset.getExtension().equals("yaml")) {
+                                YamlLoader yamlLoader = new YamlLoader(swaggerAsset.getFile());
+                                Map yamlPaths = yamlLoader.getMap("paths", yamlLoader.getTop());
+                                if (yamlPaths != null) {
+                                    String basePath = yamlLoader.get("basePath", (Map) yamlLoader.getTop());
+                                    final String base = basePath == null ? "" : basePath;
+                                    yamlPaths.keySet().stream().forEach(p ->
+                                            outboundPathsTmp.add(new ServicePath(base + p.toString()))
+                                    );
+                                }
+                            } else if (swaggerAsset.getExtension().equals("json")) {
+                                String content = new String(Files.readAllBytes(swaggerAsset.getFile().toPath()));
+                                JSONObject json = new JSONObject(content);
+                                if (json.has("paths")) {
+                                    String base = json.optString("basePath");
+                                    JSONObject pathsJson = json.getJSONObject("paths");
+                                    for (String path : JSONObject.getNames(pathsJson)) {
+                                        outboundPathsTmp.add(new ServicePath(base + path));
+                                    }
                                 }
                             }
                         }
                     }
+                } catch (ServiceException | IOException ex) {
+                    logger.severeException(ex.getMessage(), ex);
                 }
+            } else {
+                logger.info("ServicePaths cache disabled");
             }
-            catch (ServiceException | IOException ex) {
-                logger.severeException(ex.getMessage(), ex);
-            }
-        }
-        else {
-            logger.info("ServicePaths cache disabled");
+            inboundPaths = inboundPathsTmp;
+            outboundPaths = outboundPathsTmp;
         }
     }
 
