@@ -23,6 +23,7 @@ import com.centurylink.mdw.model.report.Timepoint;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.request.RequestAggregate;
 import com.centurylink.mdw.model.request.RequestList;
+import com.centurylink.mdw.model.request.ServicePath;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.RequestServices;
@@ -204,7 +205,7 @@ public class Requests extends JsonRestService implements JsonExportable {
     }
 
     @Path("/paths")
-    public JsonArray getPaths(Query query) throws ServiceException {
-        return new JsonArray(getRequestServices().getRequestPaths(query));
+    public JsonList<ServicePath> getPaths(Query query) throws ServiceException {
+        return new JsonList<>(getRequestServices().getRequestPaths(query), "paths");
     }
 }

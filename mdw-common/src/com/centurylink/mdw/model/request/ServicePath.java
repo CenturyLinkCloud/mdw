@@ -1,8 +1,11 @@
 package com.centurylink.mdw.model.request;
 
+import com.centurylink.mdw.model.Jsonable;
+import org.json.JSONObject;
+
 import java.util.List;
 
-public class ServicePath implements Comparable<ServicePath> {
+public class ServicePath implements Jsonable, Comparable<ServicePath> {
 
     public static final String DELIMETER = "->";
 
@@ -14,6 +17,11 @@ public class ServicePath implements Comparable<ServicePath> {
 
     private final String[] segments;
     public String[] getSegments() { return segments; }
+
+    @SuppressWarnings("unused")
+    public ServicePath(JSONObject json) {
+        this(json.getString("path"), json.has("method") ? json.getString("method") : null);
+    }
 
     public ServicePath(String path) {
         this(path, null);
@@ -108,5 +116,14 @@ public class ServicePath implements Comparable<ServicePath> {
             return path;
         else
             return method + DELIMETER + path;
+    }
+
+    @Override
+    public JSONObject getJson() {
+        JSONObject json = new JSONObject();
+        json.put("path", path);
+        if (method != null)
+            json.put("method", method);
+        return json;
     }
 }

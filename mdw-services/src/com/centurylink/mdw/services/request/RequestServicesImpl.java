@@ -17,9 +17,7 @@ package com.centurylink.mdw.services.request;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.reports.RequestAggregation;
 import com.centurylink.mdw.dataaccess.reports.RequestInsights;
 import com.centurylink.mdw.model.report.Insight;
@@ -27,17 +25,19 @@ import com.centurylink.mdw.model.report.Timepoint;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.request.RequestAggregate;
 import com.centurylink.mdw.model.request.RequestList;
+import com.centurylink.mdw.model.request.ServicePath;
 import com.centurylink.mdw.service.data.RequestDataAccess;
+import com.centurylink.mdw.service.data.ServicePaths;
 import com.centurylink.mdw.services.RequestServices;
 import com.centurylink.mdw.util.timer.CodeTimer;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class RequestServicesImpl implements RequestServices {
 
@@ -160,31 +160,25 @@ public class RequestServicesImpl implements RequestServices {
         }
     }
 
-    // TODO: Use cache
-    public List<String> getRequestPaths(Query query) throws ServiceException {
-        String sql = "select distinct path\n" +
-                "from DOCUMENT doc\n" +
-                "where path is not null\n" +
-                "  and owner_type = ?\n" +
-                "order by path";
-        String ownerType = "out".equals(query.getFilter("direction")) ?
-                OwnerType.ADAPTER_RESPONSE : OwnerType.LISTENER_RESPONSE;
-        try (DbAccess dbAccess = new DbAccess()) {
-            ResultSet rs = dbAccess.runSelect(sql,ownerType);
-            List<String> paths = new ArrayList<>();
-            while (rs.next()) {
-                paths.add(rs.getString("path"));
-            }
-            return paths;
+    @Override
+    public List<String> getServicePaths(Query query) {
+        Stream<String> stream;
+        if ("out".equals(query.getFilter("direction")))
+            stream = ServicePaths.getOutboundPaths().stream().map(Object::toString);
+        else
+            stream = ServicePaths.getInboundPaths().stream().map(Object::toString);
+
+        return stream.sorted(String::compareToIgnoreCase).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ServicePath> getRequestPaths(Query query) throws ServiceException {
+        try {
+            return new RequestAggregation().getPaths(query);
         }
-        catch (SQLException ex) {
+        catch (DataAccessException ex) {
             throw new ServiceException(500, "Error retrieving request paths: query=" + query, ex);
         }
-
-//        if ("out".equals(query.getFilter("direction")))
-//            return ServicePathCache.getOutboundPaths();
-//        else
-//            return ServicePathCache.getInboundPaths();
     }
 
     @Override

@@ -33,39 +33,10 @@ public class ServiceSummaryApi extends JsonRestService {
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
         String[] segments = getSegments(path);
-        WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
         Query query = getQuery(path, headers);
-        MicroserviceAccess serviceAccess = new MicroserviceAccess();
         if (segments.length == 5) {
             // no {id} -- must have a supported query filter
-            ServiceSummary serviceSummary = null;
-            String masterRequestId = query.getFilter("masterRequestId");
-            if (masterRequestId != null) {
-                // Do not assume serviceSummary defined in master process instance
-                ProcessInstance masterProcess = workflowServices.getMasterProcess(masterRequestId);
-                if (masterProcess == null)
-                    throw new ServiceException(ServiceException.NOT_FOUND, "Master process not found for: " + masterRequestId);
-                try {
-                    serviceSummary = serviceAccess.findServiceSummary(ServiceLocator
-                            .getProcessServices().getCallHierearchy(masterProcess.getId()));
-                }
-                catch (DataAccessException ex) {
-                    throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
-                }
-            }
-            else if (query.getFilter("processInstanceId") != null) {
-                try {
-                    Long processInstanceId = query.getLongFilter("processInstanceId");
-                    ProcessRuntimeContext runtimeContext = workflowServices.getContext(processInstanceId);
-                    serviceSummary = serviceAccess.findServiceSummary(runtimeContext);
-                }
-                catch (NumberFormatException ex) {
-                    throw new ServiceException(ServiceException.BAD_REQUEST, "Bad processInstanceId: " + query.getFilter("processInstanceId"));
-                }
-            }
-            else {
-                throw new ServiceException(ServiceException.BAD_REQUEST, "Missing query filter");
-            }
+            ServiceSummary serviceSummary = findServiceSummary(query);
             if (serviceSummary == null)
                 throw new ServiceException(ServiceException.NOT_FOUND, "Service summary not found");
             return serviceSummary.getJson();
@@ -80,10 +51,10 @@ public class ServiceSummaryApi extends JsonRestService {
                     id = id.substring(0, index);
                 }
                 Long docId = Long.parseLong(id);
-                ServiceSummary serviceSummary = serviceAccess.getServiceSummary(docId);
+                ServiceSummary serviceSummary = getServiceSummary(docId);
 
                 if (segments.length == 7 && segments[6].equals("subflows")) {  // ActivityInstanceId
-                    return serviceAccess.getProcessList(serviceSummary, relatedId).getJson();
+                    return new MicroserviceAccess().getProcessList(serviceSummary, relatedId).getJson();
                 }
                 else {  // ProcessInstanceId
                     if (relatedId != null && serviceSummary.findParent(relatedId) != null)
@@ -98,5 +69,44 @@ public class ServiceSummaryApi extends JsonRestService {
         }
 
         throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + path);
+    }
+
+    @Path("/{id}")
+    public ServiceSummary getServiceSummary(Long docId) throws ServiceException {
+        return new MicroserviceAccess().getServiceSummary(docId);
+    }
+
+    private ServiceSummary findServiceSummary(Query query) throws ServiceException {
+        WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+        MicroserviceAccess serviceAccess = new MicroserviceAccess();
+        ServiceSummary serviceSummary = null;
+        String masterRequestId = query.getFilter("masterRequestId");
+        if (masterRequestId != null) {
+            // Do not assume serviceSummary defined in master process instance
+            ProcessInstance masterProcess = workflowServices.getMasterProcess(masterRequestId);
+            if (masterProcess == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Master process not found for: " + masterRequestId);
+            try {
+                serviceSummary = serviceAccess.findServiceSummary(ServiceLocator
+                        .getProcessServices().getCallHierearchy(masterProcess.getId()));
+            }
+            catch (DataAccessException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+            }
+        }
+        else if (query.getFilter("processInstanceId") != null) {
+            try {
+                Long processInstanceId = query.getLongFilter("processInstanceId");
+                ProcessRuntimeContext runtimeContext = workflowServices.getContext(processInstanceId);
+                serviceSummary = serviceAccess.findServiceSummary(runtimeContext);
+            }
+            catch (NumberFormatException ex) {
+                throw new ServiceException(ServiceException.BAD_REQUEST, "Bad processInstanceId: " + query.getFilter("processInstanceId"));
+            }
+        }
+        else {
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing query filter");
+        }
+        return serviceSummary;
     }
 }

@@ -7,6 +7,7 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.PreparedSelect;
 import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.model.request.RequestAggregate;
+import com.centurylink.mdw.model.request.ServicePath;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -51,6 +52,7 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
                 db.pagingQuerySuffix(query.getStart(), query.getMax());
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "RequestAggregation.getTopsByThroughput()");
+
         return getTopAggregates(query, preparedSelect, resultSet -> {
             long ct = Math.round(resultSet.getDouble("ct"));
             RequestAggregate requestAggregate = new RequestAggregate(ct);
@@ -219,6 +221,33 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
         }
     }
 
+    public List<ServicePath> getPaths(Query query) throws DataAccessException, ServiceException {
+
+        try {
+            db.openConnection();
+            PreparedWhere preparedWhere = getRequestWhere(query);
+            // on mysql group by is much faster than select distinct
+            String sql = db.pagingQueryPrefix() +
+                    (db.isMySQL() ? "select path " : "select distinct path ") +
+                    "from DOCUMENT doc\n" +
+                    preparedWhere.getWhere() + (db.isMySQL() ? "group by path " : "") +
+                    "order by path\n" +
+                    db.pagingQuerySuffix(query.getStart(), query.getMax());
+            ResultSet rs = db.runSelect(new PreparedSelect(sql, preparedWhere.getParams()));
+            List<ServicePath> servicePaths = new ArrayList<>();
+            while (rs.next()) {
+                servicePaths.add(new ServicePath(rs.getString(1)));
+            }
+            return servicePaths;
+        }
+        catch (SQLException | ParseException ex) {
+            throw new DataAccessException(ex.getMessage(), ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
     protected PreparedWhere getRequestWhere(Query query)
             throws ParseException, DataAccessException, ServiceException {
         String by = query.getFilter("by");
@@ -238,7 +267,7 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
         String ownerType;
         String direction = query.getFilter("direction");
         if ("out".equals(direction)) {
-            if (by.equals("completionTime"))
+            if ("completionTime".equals(by))
                 ownerType = OwnerType.ADAPTER;
             else
                 ownerType = OwnerType.ADAPTER_RESPONSE;
@@ -276,6 +305,18 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
                 status = status.substring(0,spaceHyphen);
             where.append("  and status_code = ?\n");
             params.add(Integer.parseInt(status));
+        }
+
+        String find = query.getFind();
+        if (find != null) {
+            if (find.startsWith("/"))
+                find = find.substring(1);
+            where.append("  and (path like '" + find + "%' " +
+                "or path like 'GET->" + find + "%' " +
+                "or path like 'POST->" + find + "%' " +
+                "or path like 'PUT->" + find + "%' " +
+                "or path like 'DELETE->" + find + "%' " +
+                "or path like 'PATCH->" + find + "%')\n");
         }
 
         return new PreparedWhere(where.toString(), params.toArray());
