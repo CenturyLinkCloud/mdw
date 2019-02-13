@@ -220,16 +220,12 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
                 currentSummary = summary;
             for (Microservice service : servicePlan.getServices()) {
                 for (MicroserviceInstance instance : currentSummary.getMicroservices(service.getName()).getInstances()) {
-                    if (instance.getId().equals(procInstId)) {
-                        instance.setStatus(WorkStatus.STATUSNAME_COMPLETED);
-                    }
                     if (!instance.getStatus().equals(WorkStatus.STATUSNAME_COMPLETED)
                             && !instance.getStatus().equals(WorkStatus.STATUSNAME_CANCELED)) {
                         done = false;
                     }
                 }
             }
-            setVariableValue(getServiceSummaryVariableName(), summary);
         }
         catch (Exception ex) {
             logexception(ex.getMessage(), ex);
