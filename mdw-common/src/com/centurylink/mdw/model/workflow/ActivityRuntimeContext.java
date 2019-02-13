@@ -39,7 +39,7 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
     private Map<String,String> attributes;
     public Map<String,String> getAttributes() {
         if (attributes == null) {
-            attributes = new HashMap<String,String>();
+            attributes = new HashMap<>();
             for (Attribute attribute : activity.getAttributes()) {
                 attributes.put(attribute.getAttributeName(), attribute.getAttributeValue());
             }
@@ -52,8 +52,8 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
     }
 
     public ActivityRuntimeContext(Package pkg, Process process, ProcessInstance processInstance,
-            Activity activity, ActivityInstance activityInstance) {
-        super(pkg, process, processInstance);
+            int performanceLevel, Activity activity, ActivityInstance activityInstance) {
+        super(pkg, process, processInstance, performanceLevel);
         this.activity = activity;
         this.activityInstance = activityInstance;
     }
@@ -95,7 +95,7 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
     }
 
     public ActivityRuntimeContext(JSONObject json) throws JSONException {
-        super(null, null, null, json.has("variables") ? new HashMap<>() : null);
+        super(null, null, null, 0, json.has("variables") ? new HashMap<>() : null);
         String procPath = json.getString("process");
         int slash = procPath.indexOf("/");
         if (slash > 0) {

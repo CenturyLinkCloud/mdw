@@ -454,7 +454,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     }
                 }
             }
-            return new ProcessRuntimeContext(pkg, process, instance, vars);
+            return new ProcessRuntimeContext(pkg, process, instance, 0, vars);
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);

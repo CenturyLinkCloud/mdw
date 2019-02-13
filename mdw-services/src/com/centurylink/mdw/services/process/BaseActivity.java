@@ -126,7 +126,8 @@ public abstract class BaseActivity implements GeneralActivity {
             this.entryCode = entryCode;
             try {
                 pkg = PackageCache.getProcessPackage(getMainProcessDefinition().getId());
-                _runtimeContext = new ActivityRuntimeContext(pkg, getProcessDefinition(), processInst, activityDef, activityInst);
+                _runtimeContext = new ActivityRuntimeContext(pkg, getProcessDefinition(), processInst,
+                        getPerformanceLevel(), activityDef, activityInst);
                 for (VariableInstance var : getParameters())
                     _runtimeContext.getVariables().put(var.getName(), getVariableValue(var.getName()));
             }

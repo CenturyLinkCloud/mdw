@@ -124,13 +124,19 @@ public class ServicePaths implements CacheService {
             load();
         if (url == null)
             return null;
-        ServicePath servicePath;
         try {
-            servicePath = new ServicePath(new URL(url).getPath(), method);
+            return getOutboundResponsePath(new URL(url), method);
         }
         catch (MalformedURLException ex) {
-            servicePath = new ServicePath(url, method);
+            return new ServicePath(url, method).normalize(outboundPaths).toString();
         }
-        return servicePath.normalize(outboundPaths).toString();
+    }
+
+    public static String getOutboundResponsePath(URL url, String method) {
+        if (outboundPaths == null)
+            load();
+        if (url == null)
+            return null;
+        return new ServicePath(url.getPath(), method).normalize(outboundPaths).toString();
     }
 }
