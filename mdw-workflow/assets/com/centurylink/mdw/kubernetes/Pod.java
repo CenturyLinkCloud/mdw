@@ -7,7 +7,7 @@ import org.json.JSONObject;
 /**
  * Not serializable.
  */
-public class Pod implements Jsonable {
+public class Pod implements Jsonable, Comparable<Pod> {
 
     private String name;
     public String getName() { return name; }
@@ -29,5 +29,15 @@ public class Pod implements Jsonable {
     @Override
     public JSONObject getJson() {
         throw new JSONException("Not serializable");
+    }
+
+    @Override
+    public int compareTo(Pod other) {
+        if (this.namespace.equals(other.namespace)) {
+            return this.name.compareToIgnoreCase(other.name);
+        }
+        else {
+            return this.namespace.compareToIgnoreCase(other.namespace);
+        }
     }
 }
