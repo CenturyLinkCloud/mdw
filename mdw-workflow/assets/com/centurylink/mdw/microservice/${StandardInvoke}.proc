@@ -1,15 +1,15 @@
 {
   "activities": [
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=69,y=98,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=72,y=93,w=60,h=40"},
       "id": "A1",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Start",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=21,ly=-232,type=Elbow,xs=133&246,ys=118&118"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=164,ly=112,xs=136&193,ys=112&112"},
         "event": "FINISH",
         "id": "T1",
-        "to": "A7"
+        "to": "A10"
       }]
     },
     {
@@ -24,13 +24,13 @@
         "Mapper": "${requestMapper}",
         "Mapper_assetVersion": "0",
         "Output": "serviceRequest",
-        "WORK_DISPLAY_INFO": "x=491,y=81,w=119,h=79"
+        "WORK_DISPLAY_INFO": "x=394,y=132,w=119,h=79"
       },
       "id": "A4",
       "implementor": "com.centurylink.mdw.workflow.activity.transform.CrossmapActivity",
       "name": "Map\r\nRequest",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=ElbowV,lx=357,ly=204,xs=550&164,ys=164&244"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=ElbowV,lx=308,ly=229,xs=453&164,ys=214&245"},
         "event": "FINISH",
         "id": "T7",
         "to": "A5"
@@ -89,13 +89,13 @@
         "MICROSERVICE_NAMES": "[[\"true\",\"\",\"\"]]",
         "STATUS_AFTER_TIMEOUT": "Cancelled",
         "WAIT_EVENT_NAMES": "[[\"service-summary-update-${masterRequestId}\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=250,y=80,w=119,h=81"
+        "WORK_DISPLAY_INFO": "x=399,y=11,w=119,h=81"
       },
       "id": "A7",
       "implementor": "com.centurylink.mdw.microservice.DependenciesWaitActivity",
       "name": "Await\nDependencies",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=466,ly=120,type=Elbow,xs=373&487,ys=120&120"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=456,ly=111,xs=456&456,ys=96&127"},
         "event": "FINISH",
         "id": "T5",
         "to": "A4"
@@ -112,6 +112,32 @@
         "id": "T10",
         "to": "A2"
       }]
+    },
+    {
+      "attributes": {
+        "Expression": "synchronous ? 'Yes' : 'No'",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=197,y=68,w=124,h=88"
+      },
+      "id": "A10",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Is Synchronous?",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=ElbowV,lx=321,ly=175,xs=254&254&394,ys=160&171&171"},
+          "event": "FINISH",
+          "id": "T11",
+          "resultCode": "Yes",
+          "to": "A4"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=ElbowV,lx=324,ly=32,xs=260&260&399,ys=64&51&51"},
+          "event": "FINISH",
+          "id": "T12",
+          "resultCode": "No",
+          "to": "A7"
+        }
+      ]
     }
   ],
   "attributes": {
