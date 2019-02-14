@@ -25,11 +25,6 @@ process: # 15706
       Map
       Response
     status: Completed
-  activity: # 8 "2019-02-11 13:55:36.760"
-    name: |
-      Notify Summary
-      Update
-    status: Completed
   activity: # 2 "2019-02-11 13:55:36.777"
     name: Stop
     status: Completed
@@ -131,7 +126,7 @@ process: # 15706
       }
   variable: # 25979
     name: serviceUrl
-    value: http://localhost:8080/mdw/services/Workgroups
+    value: http://${~.*}/mdw/services/Workgroups
   variable: # 25978
     name: synchronous
     value: true
@@ -146,7 +141,6 @@ process: # 15705
       Await
       Dependencies
     status: Completed
-    result: Completed::FINISH
   activity: # 4 "2019-02-11 13:55:36.452"
     name: |
       Map
@@ -162,14 +156,12 @@ process: # 15705
       Map
       Response
     status: Completed
-  activity: # 8 "2019-02-11 13:55:36.752"
-    name: |
-      Notify Summary
-      Update
-    status: Completed
   activity: # 2 "2019-02-11 13:55:36.770"
     name: Stop
     status: Completed
+  variable:
+    name: dependencies
+    value: [["true", "admin/createGroup", ""]]
   variable: # 25970
     name: i
     value: 0
@@ -273,7 +265,7 @@ process: # 15705
       }
   variable: # 25969
     name: serviceUrl
-    value: http://localhost:8080/mdw/services/Users
+    value: http://${~.*}/mdw/services/Users
   variable: # 25968
     name: synchronous
     value: true
@@ -358,9 +350,10 @@ process: # 15686
           {
             bindings: {
               microservice: admin/createUser,
-              serviceUrl: 'http://localhost:8080/mdw/services/Users',
+              serviceUrl: 'http://${~.*}/mdw/services/Users',
               serviceMethod: POST,
               synchronous: true,
+              dependencies: '[["true", "admin/createGroup", ""]]',
               request: 'DOCUMENT:${~\\d+}',
               requestHeaders: 'DOCUMENT:${~\\d+}',
               serviceSummary: 'DOCUMENT:${~\\d+}',
@@ -368,19 +361,21 @@ process: # 15686
               responseMapper: com.centurylink.mdw.microservice/StatusResponseMapper.groovy
             },
             count: 1,
+            dependencies: '[["true", "admin/createGroup", ""]]',
             enabled: true,
             method: POST,
             name: admin/createUser,
             subflow: 'com.centurylink.mdw.microservice/\${StandardInvoke}.proc',
             synchronous: true,
-            url: 'http://localhost:8080/mdw/services/Users'
+            url: 'http://${~.*}/mdw/services/Users'
           },
           {
             bindings: {
               microservice: admin/createGroup,
-              serviceUrl: 'http://localhost:8080/mdw/services/Workgroups',
+              serviceUrl: 'http://${~.*}/mdw/services/Workgroups',
               serviceMethod: POST,
               synchronous: true,
+              dependencies: '',
               request: 'DOCUMENT:${~\\d+}',
               requestHeaders: 'DOCUMENT:${~\\d+}',
               serviceSummary: 'DOCUMENT:${~\\d+}',
@@ -388,12 +383,13 @@ process: # 15686
               responseMapper: com.centurylink.mdw.microservice/StatusResponseMapper.groovy
             },
             count: 1,
+            dependencies: '',
             enabled: true,
             method: POST,
             name: admin/createGroup,
             subflow: 'com.centurylink.mdw.microservice/\${StandardInvoke}.proc',
             synchronous: true,
-            url: 'http://localhost:8080/mdw/services/Workgroups'
+            url: 'http://${~.*}/mdw/services/Workgroups'
           }]
 
       }
