@@ -15,13 +15,11 @@
  */
 package com.centurylink.mdw.hub.servlet;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -47,76 +45,90 @@ import com.centurylink.mdw.util.ExpressionUtil;
 public class NotFoundServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String path = (String)request.getAttribute("javax.servlet.forward.servlet_path");
-        if (path != null) {
-            if (path.endsWith("/images/tab_sel.png")) {  // hack for nav back from Task UI
-                response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/images/tab_sel.png");
-                return;
-            }
-            if (path.endsWith("/mdw.ico")) {  // hack for nav back from Task UI
-                response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/images/mdw.ico");
-                return;
-            }
-            if (path.indexOf('.') == -1 && path.indexOf('#') == -1 && (path.startsWith("/tasks"))) {
-                String redirectPath = path;
-                String[] pathSegs = path.substring(1).split("/");
-                if (pathSegs.length > 2)
-                    redirectPath = "/" + pathSegs[0] + "/" + pathSegs[1];
-                response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/#" + redirectPath);
-                return;
-            }
-
-            if (path.startsWith("/dashboard/"))
-                path = "/com/centurylink/mdw/dashboard/Index";
-
-            Mdw mdw = WebAppContext.getMdw();
-            Page page = findPage(mdw, path);
-            if (!page.exists()) {
-                String rootPkg = PropertyManager.getProperty(PropertyNames.MDW_HUB_ROOT_PACKAGE);
-                if (rootPkg != null)
-                    page = findPage(mdw, "/" + rootPkg.replace('\\', '/') + path);
-            }
-
-            if (page.exists()) {
+        String assetPath = request.getParameter("missingAsset");
+        if (assetPath != null) {
+            String htmlPath = request.getServletContext().getRealPath("error/noAsset.html");
+            String html = new String(Files.readAllBytes(new File(htmlPath).toPath()));
+            Map<String,String> data = new HashMap<>();
+            data.put("assetPath", assetPath);
+            String packageName = assetPath.substring(0, assetPath.indexOf('/'));
+            data.put("packageName", packageName);
+            data.put("packagePath", packageName.replace('.', '/'));
+            try {
+                html = ExpressionUtil.substitute(html, data, true).replace('\n', ' ');
                 response.setContentType("text/html");
-
-                if (page.getAsset().shouldCache(request.getHeader("If-None-Match"))) {
-                    response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-                }
-                else {
-                    response.setHeader("ETag", page.getAsset().getETag());
-                    InputStream in = null;
-                    OutputStream out = response.getOutputStream();
-                    try {
-                        if (page.getExt().equals("md")) {
-                            // TODO: render markdown to html
-                        }
-                        else if (page.getTemplate() != null) {
-                            String html = new String(Files.readAllBytes(Paths.get(page.getTemplateAsset().getFile().getPath())));
-                            in = new ByteArrayInputStream(ExpressionUtil.substitute(html, page, true).getBytes());
-                        }
-                        else {
-                            in = new FileInputStream(page.getFile());
-                        }
-                        int read = 0;
-                        byte[] bytes = new byte[1024];
-                        while((read = in.read(bytes)) != -1)
-                            out.write(bytes, 0, read);
-                    }
-                    catch (MdwException ex) {
-                        throw new IOException(ex.getMessage(), ex);
-                    }
-                    finally {
-                        if (in != null)
-                            in.close();
-                        response.setStatus(HttpServletResponse.SC_OK);
-                    }
-                }
-                return;
+                response.getWriter().println(html);
+            }
+            catch (MdwException ex) {
+                throw new IOException(ex);
             }
         }
+        else {
+            String path = (String) request.getAttribute("javax.servlet.forward.servlet_path");
+            if (path != null) {
+                if (path.endsWith("/images/tab_sel.png")) {  // hack for nav back from Task UI
+                    response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/images/tab_sel.png");
+                    return;
+                }
+                if (path.endsWith("/mdw.ico")) {  // hack for nav back from Task UI
+                    response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/images/mdw.ico");
+                    return;
+                }
+                if (path.indexOf('.') == -1 && path.indexOf('#') == -1 && (path.startsWith("/tasks"))) {
+                    String redirectPath = path;
+                    String[] pathSegs = path.substring(1).split("/");
+                    if (pathSegs.length > 2)
+                        redirectPath = "/" + pathSegs[0] + "/" + pathSegs[1];
+                    response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/#" + redirectPath);
+                    return;
+                }
 
-        request.getRequestDispatcher("/error/404.html").forward(request, response);
+                if (path.startsWith("/dashboard/"))
+                    path = "/com/centurylink/mdw/dashboard/Index";
+
+                Mdw mdw = WebAppContext.getMdw();
+                Page page = findPage(mdw, path);
+                if (!page.exists()) {
+                    String rootPkg = PropertyManager.getProperty(PropertyNames.MDW_HUB_ROOT_PACKAGE);
+                    if (rootPkg != null)
+                        page = findPage(mdw, "/" + rootPkg.replace('\\', '/') + path);
+                }
+
+                if (page.exists()) {
+                    response.setContentType("text/html");
+
+                    if (page.getAsset().shouldCache(request.getHeader("If-None-Match"))) {
+                        response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+                    } else {
+                        response.setHeader("ETag", page.getAsset().getETag());
+                        InputStream in = null;
+                        OutputStream out = response.getOutputStream();
+                        try {
+                            if (page.getExt().equals("md")) {
+                                // TODO: render markdown to html
+                            } else if (page.getTemplate() != null) {
+                                String html = new String(Files.readAllBytes(Paths.get(page.getTemplateAsset().getFile().getPath())));
+                                in = new ByteArrayInputStream(ExpressionUtil.substitute(html, page, true).getBytes());
+                            } else {
+                                in = new FileInputStream(page.getFile());
+                            }
+                            int read = 0;
+                            byte[] bytes = new byte[1024];
+                            while ((read = in.read(bytes)) != -1)
+                                out.write(bytes, 0, read);
+                        } catch (MdwException ex) {
+                            throw new IOException(ex.getMessage(), ex);
+                        } finally {
+                            if (in != null)
+                                in.close();
+                            response.setStatus(HttpServletResponse.SC_OK);
+                        }
+                    }
+                    return;
+                }
+            }
+            request.getRequestDispatcher("/error/404.html").forward(request, response);
+        }
     }
 
     private Page findPage(Mdw mdw, String path) {
