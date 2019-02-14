@@ -13,7 +13,7 @@
       }]
     },
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=641,y=418,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=429,y=414,w=60,h=40"},
       "id": "A2",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
       "name": "Stop"
@@ -77,10 +77,10 @@
       "implementor": "com.centurylink.mdw.workflow.activity.transform.CrossmapActivity",
       "name": "Map\r\nResponse",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=458,ly=364,xs=458&458,ys=333&395"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=459,ly=371,xs=459&459,ys=333&410"},
         "event": "FINISH",
-        "id": "T6",
-        "to": "A8"
+        "id": "T9",
+        "to": "A2"
       }]
     },
     {
@@ -102,30 +102,15 @@
       }]
     },
     {
-      "attributes": {
-        "Event Name": "service-summary-update-${masterRequestId}",
-        "WORK_DISPLAY_INFO": "x=400,y=399,w=119,h=80"
-      },
-      "id": "A8",
-      "implementor": "com.centurylink.mdw.microservice.ServiceEventPublish",
-      "name": "Notify Summary\nUpdate",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=586,ly=273,type=Elbow,xs=523&637,ys=438&438"},
-        "event": "FINISH",
-        "id": "T4",
-        "to": "A2"
-      }]
-    },
-    {
       "attributes": {"WORK_DISPLAY_INFO": "x=98,y=402,w=113,h=76"},
       "id": "A9",
       "implementor": "com.centurylink.mdw.microservice.ErrorHandlerActivity",
       "name": "Handle\nError",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=305,ly=440,xs=215&396,ys=440&440"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=320,ly=434,xs=215&425,ys=434&434"},
         "event": "FINISH",
-        "id": "T9",
-        "to": "A8"
+        "id": "T10",
+        "to": "A2"
       }]
     }
   ],
