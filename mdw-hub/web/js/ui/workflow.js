@@ -66,13 +66,14 @@ workflowMod.controller('MdwWorkflowController',
     var template = $scope.process.template;
     var packageName = template && $scope.process.templatePackage ? $scope.process.templatePackage : $scope.process.packageName;
     var processName = template ? template : $scope.process.name;
-    var processVersion = $scope.process.archived ? (template ? $scope.process.template.version : $scope.process.version) : null;
+    var processVersion = template ? $scope.process.template.version : $scope.process.version;
+    var archivedVersion = $scope.process.archived ? processVersion : null;
     var instanceId = $scope.process.id;
     var masterRequestId = $scope.process.masterRequestId;
     var processStatus = $scope.process.status;
     var workflowUrl = $scope.serviceBase + '/Workflow/' + packageName + '/' + processName;
-    if (processVersion)
-      workflowUrl += '/v' + processVersion;
+    if (archivedVersion)
+      workflowUrl += '/v' + archivedVersion;
     if (instanceId)
       workflowUrl += '/' + instanceId;
     if ($scope.editable)
@@ -80,7 +81,10 @@ workflowMod.controller('MdwWorkflowController',
     $http({ method: 'GET', url: workflowUrl })
       .then(function success(response) {
         $scope.process = response.data;
-        $scope.process.packageName = packageName; // not returned in JSON
+        // not returned in JSON
+        $scope.process.packageName = packageName;
+        $scope.process.version = processVersion ? processVersion : $scope.process.version;
+        $scope.process.definitionId = $scope.process.id;
         // restore summary instance data
         $scope.process.id = instanceId;
         $scope.process.masterRequestId = masterRequestId;
