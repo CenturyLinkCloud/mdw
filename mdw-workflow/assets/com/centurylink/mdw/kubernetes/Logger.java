@@ -75,10 +75,11 @@ class Logger {
                         }
                     }
                 }
-                shutdown();
             }
             catch (IOException ex) {
                 logger.severeException(ex.getMessage(), ex);
+            }
+            finally {
                 shutdown();
             }
         }).start();
@@ -89,20 +90,20 @@ class Logger {
     }
 
     void shutdown() {
-
-        logger.info("Logger shutdown: " + this);
-
         try {
             if (out != null) {
                 out.close();
+                out = null;
             }
             if (in != null) {
                 in.close();
+                in = null;
             }
         }
         catch (IOException ex) {
             logger.severeException(ex.getMessage(), ex);
         }
+        logger.info("Logger shutdown: " + this);
     }
 
     File getFile() {

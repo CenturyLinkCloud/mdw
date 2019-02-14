@@ -30,7 +30,9 @@ public class Startup implements StartupService {
             PodList podList = new PodList(new JSONObject(invoker.invoke("pods")));
             loggers = new ArrayList<>();
             for (Pod pod : podList.getPods()) {
-                loggers.add(new Logger(pod));
+                if (Context.getNamespace().equals(pod.getNamespace())) {
+                    loggers.add(new Logger(pod));
+                }
             }
             for (Logger logger : loggers) {
                 logger.startup();
