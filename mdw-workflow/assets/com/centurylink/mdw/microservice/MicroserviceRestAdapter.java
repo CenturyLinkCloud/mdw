@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.Status;
@@ -14,6 +15,8 @@ import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
 
@@ -60,9 +63,6 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
         Status status = new Status(code, message);
         try {
             updateServiceSummary(status, responseId);
-            // For mySQL, now we need to restore  isolation level back to default
-            if (changedIsolation && getEngine().getDatabaseAccess().connectionIsOpen())
-                getEngine().getDatabaseAccess().runUpdate("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
         }
         catch (ActivityException | SQLException ex) {
             logexception(ex.getMessage(), ex);
@@ -126,15 +126,28 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
                 getEngine().getDatabaseAccess().runUpdate("SET TRANSACTION ISOLATION LEVEL READ COMMITTED");
                 changedIsolation = true;
             }
-            if (status != null) // Only notify after performing invocation
+            if (status != null) {
+                // For mySQL, now (after getting response) we need to restore  isolation level back to default
+                if (changedIsolation && getEngine().getDatabaseAccess().connectionIsOpen())
+                    getEngine().getDatabaseAccess().runUpdate("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
+
+                // Only notify after performing invocation
                 notifyServiceSummaryUpdate(serviceSummary);
+            }
         }
     }
 
     /**
-     * TODO: default behavior
+     * Standard behavior is to publish event fitting standard pattern of default event
+     * used in DependenciesWaitActivity (Microservice Dependencies Wait)
      */
-    public void notifyServiceSummaryUpdate(ServiceSummary serviceSummary) {
+    protected void notifyServiceSummaryUpdate(ServiceSummary serviceSummary) throws ActivityException {
+        WorkflowServices wfs = ServiceLocator.getWorkflowServices();
+        try {
+            wfs.notify("service-summary-update-" + getMasterRequestId(), null, 2);
+        } catch (ServiceException e) {
+            throw new ActivityException("Cannot publish Service Summary update event", e);
+        }
     }
 
     /**

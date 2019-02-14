@@ -9,6 +9,8 @@ import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.monitor.ProcessMonitor;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
+import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.util.TransactionWrapper;
 
 import java.util.Map;
@@ -61,6 +63,8 @@ public class MicroserviceStatusProcessMonitor implements ProcessMonitor {
                             docVo.setObject(summary, varInst.getType());
                             db.updateDocumentContent(docVo.getDocumentId(), docVo.getContent(context.getPackage()));
                             context.logInfo("Updated status for microservice " + microserviceName);
+                            WorkflowServices wfs = ServiceLocator.getWorkflowServices();
+                            wfs.notify("service-summary-update-" + context.getMasterRequestId(), null, 2);
                         }
                     }
                 } catch (Exception ex) {

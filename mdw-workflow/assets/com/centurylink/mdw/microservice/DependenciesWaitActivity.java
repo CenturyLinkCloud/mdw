@@ -19,6 +19,7 @@ import com.centurylink.mdw.workflow.activity.event.EventWaitActivity;
 public class DependenciesWaitActivity extends EventWaitActivity {
 
     private static String MICROSERVICE_NAMES = "MICROSERVICE_NAMES";
+    private static String DEPENDENCIES = "DEPENDENCIES";
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
@@ -88,7 +89,10 @@ public class DependenciesWaitActivity extends EventWaitActivity {
      * @return a table of microservices and expressions
      */
     public List<String[]> getMicroserviceAttributes() {
-        String attVal = this.getAttributeValue(MICROSERVICE_NAMES);
+        String attVal = getAttributeValueSmart(DEPENDENCIES);
+        if (StringHelper.isEmpty(attVal))
+            attVal = this.getAttributeValue(MICROSERVICE_NAMES);
+
         return StringHelper.parseTable(attVal, ',', ';', 3);
     }
 
@@ -161,8 +165,8 @@ public class DependenciesWaitActivity extends EventWaitActivity {
      * <p>
      * Looks through the service summary for a successful completion for a
      * certain microservice:
-     * <li>1. First checks the invocations for a 200 response</li>
-     * <li>2. If none found then checks the updates for a 200 Completion
+     * <li>1. First checks the invocations for a 200 or 201 response</li>
+     * <li>2. If none found then checks the updates for a 200 or 201 Completion
      * response</li>
      * </p>
      *
@@ -182,7 +186,8 @@ public class DependenciesWaitActivity extends EventWaitActivity {
                 List<Invocation> invocations = instance.getInvocations();
                 if (invocations != null) {
                     for (Invocation invocation : invocations) {
-                        if (invocation.getStatus().getCode() == Status.OK.getCode()) {
+                        if (invocation.getStatus().getCode() == Status.OK.getCode() ||
+                                invocation.getStatus().getCode() == Status.CREATED.getCode()) {
                             return invocation;
                         }
                     }
@@ -190,7 +195,8 @@ public class DependenciesWaitActivity extends EventWaitActivity {
                 List<Update> updates = instance.getUpdates();
                 if (updates != null) {
                     for (Update update : updates) {
-                        if (update.getStatus().getCode() == Status.OK.getCode()) {
+                        if (update.getStatus().getCode() == Status.OK.getCode() ||
+                                update.getStatus().getCode() == Status.CREATED.getCode()) {
                             return update;
                         }
                     }

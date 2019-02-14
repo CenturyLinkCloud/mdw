@@ -38,15 +38,15 @@
     {
       "attributes": {
         "Output Documents": "[\"servicePlan\"]",
-        "Rule": "import com.centurylink.mdw.microservice.servicePlan\r\nimport com.centurylink.mdw.model.Jsonable\r\n\r\nvariables[\"servicePlan\"] = servicePlan(runtimeContext) {\r\n    services {\r\n        microservice {\r\n            name = \"admin/createUser\"\r\n            method = \"POST\"\r\n            url = \"${runtimeContext.props[\"mdw.services.url\"]}/services/Users\"\r\n            bindings {\r\n              \"requestMapper\" to \"com.centurylink.mdw.tests.microservice/UserRequestMapper.groovy\"\r\n              \"responseMapper\" to \"com.centurylink.mdw.microservice/StatusResponseMapper.groovy\"\r\n            }\r\n        }\r\n        microservice {\r\n            name = \"admin/createGroup\"\r\n            method = \"POST\"\r\n            url = \"${runtimeContext.props[\"mdw.services.url\"]}/services/Workgroups\"\r\n            enabled = (variables[\"request\"] as Jsonable).getJson().has(\"group\")\r\n            bindings {\r\n              \"requestMapper\" to \"com.centurylink.mdw.tests.microservice/GroupRequestMapper.groovy\"\r\n              \"responseMapper\" to \"com.centurylink.mdw.microservice/StatusResponseMapper.groovy\"\r\n            }\r\n        }\r\n    }\r\n}",
+        "Rule": "import com.centurylink.mdw.microservice.servicePlan\nimport com.centurylink.mdw.model.Jsonable\n\nvariables[\"servicePlan\"] = servicePlan(runtimeContext) {\n    services {\n        microservice {\n            name = \"admin/createUser\"\n            method = \"POST\"\n            url = \"${runtimeContext.props[\"mdw.services.url\"]}/services/Users\"\n            dependencies = \"[[\\\"true\\\", \\\"admin/createGroup\\\", \\\"\\\"]]\"\n            bindings {\n              \"requestMapper\" to \"com.centurylink.mdw.tests.microservice/UserRequestMapper.groovy\"\n              \"responseMapper\" to \"com.centurylink.mdw.microservice/StatusResponseMapper.groovy\"\n            }\n        }\n        microservice {\n            name = \"admin/createGroup\"\n            method = \"POST\"\n            url = \"${runtimeContext.props[\"mdw.services.url\"]}/services/Workgroups\"\n            enabled = (variables[\"request\"] as Jsonable).getJson().has(\"group\")\n            bindings {\n              \"requestMapper\" to \"com.centurylink.mdw.tests.microservice/GroupRequestMapper.groovy\"\n              \"responseMapper\" to \"com.centurylink.mdw.microservice/StatusResponseMapper.groovy\"\n            }\n        }\n    }\n}",
         "SCRIPT": "Kotlin Script",
-        "WORK_DISPLAY_INFO": "x=238,y=282,w=118,h=75"
+        "WORK_DISPLAY_INFO": "x=237,y=282,w=118,h=75"
       },
       "id": "A4",
       "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
       "name": "Create\r\nPlan",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=399,ly=320,type=Elbow,xs=360&424,ys=320&320"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=391,ly=320,xs=359&424,ys=320&320"},
         "event": "FINISH",
         "id": "T3",
         "to": "A3"
@@ -84,7 +84,7 @@
           "to": "A7"
         },
         {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=305,ly=238,type=Elbow,xs=297&297,ys=221&278"},
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=302,ly=242,xs=296&296,ys=221&277"},
           "event": "FINISH",
           "id": "T6",
           "resultCode": "true",

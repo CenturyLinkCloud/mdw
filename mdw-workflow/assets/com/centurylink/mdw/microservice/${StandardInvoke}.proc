@@ -85,7 +85,10 @@
     },
     {
       "attributes": {
+        "DEPENDENCIES": "${dependencies}",
+        "MICROSERVICE_NAMES": "[[\"true\",\"\",\"\"]]",
         "STATUS_AFTER_TIMEOUT": "Cancelled",
+        "WAIT_EVENT_NAMES": "[[\"service-summary-update-${masterRequestId}\",\"\"]]",
         "WORK_DISPLAY_INFO": "x=250,y=80,w=119,h=81"
       },
       "id": "A7",
@@ -135,6 +138,10 @@
     "WORK_DISPLAY_INFO": "x=30,y=25,w=175,h=26"
   },
   "variables": {
+    "dependencies": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
     "i": {
       "category": "INPUT",
       "type": "java.lang.Integer"

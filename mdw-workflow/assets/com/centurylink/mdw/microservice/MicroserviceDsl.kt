@@ -42,6 +42,7 @@ class MicroserviceBuilder(private val runtimeContext: ActivityRuntimeContext) {
     var subflow = default.subflow
     var enabled = default.enabled
     var count = default.count
+    var dependencies = default.dependencies
     var bindings = default.bindings.toMutableMap()
 
     var customBindings = mutableMapOf<String,Any?>()
@@ -58,7 +59,8 @@ class MicroserviceBuilder(private val runtimeContext: ActivityRuntimeContext) {
                 method = method,
                 subflow = subflow,
                 enabled = enabled,
-                count = count
+                count = count,
+                dependencies = dependencies
         )
         microservice.bindings.putAll(customBindings)
         return microservice

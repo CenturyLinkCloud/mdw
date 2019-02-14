@@ -21,11 +21,13 @@ data class Microservice(
         var enabled: Boolean? = true,
         var count: Int = 1,
         var synchronous: Boolean? = true,
+        var dependencies: String = "",
         var bindings: MutableMap<String,Any?> = mutableMapOf(
           "microservice" to name,
           "serviceUrl" to url,
           "serviceMethod" to method,
           "synchronous" to synchronous,
+          "dependencies" to dependencies,
           "request" to runtimeContext.docRefs["request"],
           "requestHeaders" to runtimeContext.docRefs["requestHeaders"],
           "serviceSummary" to runtimeContext.docRefs["serviceSummary"],
