@@ -15,22 +15,6 @@
  */
 package com.centurylink.mdw.hub.servlet;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.Service;
-
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
@@ -40,6 +24,17 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URLEncoder;
 
 @WebServlet(urlPatterns={"*.jsx"})
 public class JsxServlet extends HttpServlet {
@@ -60,8 +55,7 @@ public class JsxServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             if (request.getServletPath().endsWith(".jsx")) {
                 String path = request.getServletPath();
@@ -74,8 +68,13 @@ public class JsxServlet extends HttpServlet {
                 String pkgName = pkgPath.replace('/', '.');
                 String assetPath = pkgName + p.substring(lastSlash);
                 AssetInfo jsxAsset = assetServices.getAsset(assetPath);
-                if (jsxAsset == null)
-                    throw new ServiceException(ServiceException.NOT_FOUND, "JSX asset not found: " + assetPath);
+                if (jsxAsset == null) {
+                    Exception ex = new ServiceException(ServiceException.NOT_FOUND, "JSX asset not found: " + assetPath);
+                    logger.error(ex.getMessage(), ex);
+                    String repath = request.getContextPath() + "/404?missingAsset=" + URLEncoder.encode(assetPath, "utf-8");
+                    response.getWriter().println("location = '" + repath + "'");
+                    return;
+                }
 
                 try {
                     CacheService webpackCacheInstance = CacheRegistration.getInstance().getCache(webpackCacheClassName);
@@ -88,7 +87,7 @@ public class JsxServlet extends HttpServlet {
                         response.setHeader("ETag", String.valueOf(file.lastModified()));
                         OutputStream out = response.getOutputStream();
                         try (InputStream in = new FileInputStream(file)) {
-                            int read = 0;
+                            int read;
                             byte[] bytes = new byte[1024 * 16];
                             while((read = in.read(bytes)) != -1)
                                 out.write(bytes, 0, read);
@@ -124,5 +123,4 @@ public class JsxServlet extends HttpServlet {
             return false;
         }
     }
-
 }
