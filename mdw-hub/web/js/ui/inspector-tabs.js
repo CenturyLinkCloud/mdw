@@ -19,10 +19,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
          * List where prop names are labels and prop values are evaluated.
          */
         Definition: {
-          Name: 'name',
-          Description: 'description',
-          Created: 'created',
-            '_template': mdw.roots.hub + '/js/ui/templates/processDefinition.json'
+          '_template': mdw.roots.hub + '/js/ui/templates/processDefinition.json'
         },
         Design: {
           '_template': mdw.roots.services + '/js/ui/templates/process.json'
