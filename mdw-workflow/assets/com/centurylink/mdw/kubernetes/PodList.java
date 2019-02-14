@@ -6,6 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,6 +24,7 @@ public class PodList implements Jsonable {
             for (int i = 0; i < items.length(); i++) {
                 pods.add(new Pod(items.getJSONObject(i)));
             }
+            Collections.sort(pods);
         }
     }
 
