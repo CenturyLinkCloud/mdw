@@ -10,7 +10,7 @@ data class ServicePlan(
 /**
  * Required values come first in constructor.
  * Binding values do not need to be escaped when overridden since runtimeContext is available.
- * TODO: dependencies, etc
+ * TODO: dependencies(complete), etc
  */
 data class Microservice(
         private val runtimeContext: ActivityRuntimeContext = MockRuntimeContext("dummy"),

@@ -4,12 +4,10 @@ process: # 15706
   activity: # 1 "2019-02-11 13:55:36.430"
     name: Start
     status: Completed
-  activity: # 7 "2019-02-11 13:55:36.444"
-    name: |
-      Await
-      Dependencies
+  activity: # 10 "2019-02-14 16:23:49"
+    name: Is Synchronous?
     status: Completed
-    result: Completed::FINISH
+    result: Yes
   activity: # 4 "2019-02-11 13:55:36.503"
     name: |
       Map
@@ -136,11 +134,10 @@ process: # 15705
   activity: # 1 "2019-02-11 13:55:36.424"
     name: Start
     status: Completed
-  activity: # 7 "2019-02-11 13:55:36.437"
-    name: |
-      Await
-      Dependencies
+  activity: # 10 "2019-02-14 16:23:49"
+    name: Is Synchronous?
     status: Completed
+    result: Yes
   activity: # 4 "2019-02-11 13:55:36.452"
     name: |
       Map
