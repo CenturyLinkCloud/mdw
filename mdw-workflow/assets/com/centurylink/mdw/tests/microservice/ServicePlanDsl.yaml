@@ -57,6 +57,7 @@ process: # 10019
               serviceUrl: 'http://localhost:8080/mdw/services/Users',
               serviceMethod: POST,
               synchronous: true,
+              dependencies: '',
               request: 'DOCUMENT:12345',
               requestHeaders: null,
               serviceSummary: null,
@@ -66,6 +67,7 @@ process: # 10019
               intVar: 123
             },
             count: 1,
+            dependencies: '',
             enabled: true,
             method: POST,
             name: admin/createUser,
@@ -119,6 +121,7 @@ process: # 10018
               serviceUrl: 'http://localhost:8080/mdw/services/Users',
               serviceMethod: POST,
               synchronous: true,
+              dependencies: '',
               request: 'DOCUMENT:12345',
               requestHeaders: null,
               serviceSummary: null,
@@ -126,6 +129,7 @@ process: # 10018
               responseMapper: com.centurylink.mdw.microservice/IdentityResponseMapper.groovy
             },
             count: 1,
+            dependencies: '',
             enabled: true,
             method: POST,
             name: admin/createUser,
@@ -139,6 +143,7 @@ process: # 10018
               serviceUrl: 'http://localhost:8080/mdw/services/Workgroups',
               serviceMethod: POST,
               synchronous: true,
+              dependencies: '',
               request: 'DOCUMENT:12345',
               requestHeaders: null,
               serviceSummary: null,
@@ -146,6 +151,7 @@ process: # 10018
               responseMapper: com.centurylink.mdw.microservice/IdentityResponseMapper.groovy
             },
             count: 1,
+            dependencies: '',
             enabled: true,
             method: POST,
             name: admin/createGroup,
