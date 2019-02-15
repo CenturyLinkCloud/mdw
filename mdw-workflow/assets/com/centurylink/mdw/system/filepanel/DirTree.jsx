@@ -45,7 +45,7 @@ function DirTree(props) {
                 className={'fp-item' + (selPath === file.path ? ' fp-selected' : '')}
                 tabIndex={file.tabIndex}
                 onClick={() => props.onSelect(file)}>
-                <Glyphicon glyph="file" className="fp-item-icon" style={{paddingRight:'4px'}} />
+                <Glyphicon glyph="file" className="fp-item-icon" style={{marginLeft:'16px',paddingRight:'4px'}} />
                 {file.name}
               </span>
             </div>

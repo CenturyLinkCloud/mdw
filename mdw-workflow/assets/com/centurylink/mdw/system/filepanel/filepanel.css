@@ -210,3 +210,9 @@
 .fp-current {
 	background-color: #00ff00;
 }
+.tree-view {
+  overflow-x: hidden;
+}
+.tree-view_children {
+  margin-left: 16px;
+}

@@ -3,7 +3,7 @@ permalink: /docs/guides/mdw-cookbook/
 title: MDW Cookbook
 ---
 
-Let's walk through the essential features of MDW.  All the source code referenced in this guide
+Let's walk through a few of the essential features of MDW.  All the source code referenced in this guide
 is available to clone in its completed state from the [mdw-demo repository](https://github.com/CenturyLinkCloud/mdw-demo).  
 
 ## Sections in this Guide
