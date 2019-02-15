@@ -20,11 +20,17 @@ document.body.style.overflowY = 'hidden';
 class Index extends Component {
   constructor(...args) {
     super(...args);
-    this.state = { hosts: [], rootDirs: [], selected: {}, grep: {}};
+    this.state = { hosts: [], rootDirs: [], selected: {}, grep: {} };
     this.handleSelect = this.handleSelect.bind(this);
     this.handleInfo = this.handleInfo.bind(this);
     this.handleGrep = this.handleGrep.bind(this);
     this.handleResultClick = this.handleResultClick.bind(this);
+    this.setDirPane = this.setDirPane.bind(this);
+    this.isSplitterHover = this.isSplitterHover.bind(this);
+    this.onMouseMove = this.onMouseMove.bind(this);
+    this.onMouseOut = this.onMouseOut.bind(this);
+    this.onMouseDown = this.onMouseDown.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
   }
   
   componentDidMount() {
@@ -177,11 +183,64 @@ class Index extends Component {
       lineMatch: lineMatch
     });
   }
+
+  setDirPane(dirPane) {
+    this.dirPane = dirPane;
+  }
+
+  isSplitterHover(e) {
+    if (this.dirPane) {
+      let x = e.clientX - e.currentTarget.getBoundingClientRect().left;
+      let dirPaneWidth = this.dirPane.offsetWidth - 2;
+      return Math.abs(x - dirPaneWidth) <= 3;
+    }
+  }
+
+  onMouseMove(e) {
+    if (!this.isBusy) {
+      this.isBusy = true;
+      if (this.isSplitterDrag) {
+        e.preventDefault();
+        let x = e.clientX - e.currentTarget.getBoundingClientRect().left;
+        this.dirPane.style.width = x + 'px';
+        this.dirPane.style.minWidth = x + 'px';
+        this.dirPane.style.maxWidth = x + 'px';
+      }
+      else {
+        if (this.isSplitterHover(e)) {
+          document.body.style.cursor = 'ew-resize';
+        }
+        else {
+          document.body.style.cursor = 'default';
+        }
+      }
+      this.isBusy = false;
+    }
+  }
+
+  onMouseDown(e) {
+    this.isSplitterDrag = this.isSplitterHover(e);
+  }
+
+  onMouseUp() {
+    this.isSplitterDrag = false;
+    document.body.style.cursor = 'default';
+  }
   
+  onMouseOut() {
+    if (!this.isSplitterDrag) {
+      document.body.style.cursor = 'default';
+    }
+  }
+
   render() {
     return (
-      <div className="fp-container">
-        <div className="fp-left">
+      <div className="fp-container"
+        onMouseMove={this.onMouseMove}
+        onMouseOut={this.onMouseOut}
+        onMouseDown={this.onMouseDown}
+        onMouseUp={this.onMouseUp}>
+        <div className="fp-left" ref={this.setDirPane}>
           <div className="fp-dirs">
             {this.state.rootDirs &&
               this.state.rootDirs.map(dir => {
