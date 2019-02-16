@@ -57,10 +57,12 @@ that enables you to create workflow processes and other assets.
     - Once the project is created and opened, Intellij will display notifications like these:   
       <img src="../images/studio/new-project-notifications.png" alt="New Project Notifications" style="width:400px;margin-left:50px;" /><br/>
       You'll need to invoke the recommended actions to import required baseline assets and enable IDE build integration.
-      If you miss the opportunity to click these action links, display the Event Log tool window to view them again, or to update
-      baseline assets right-click on the project and select Update MDW Assets.
+      If you miss the opportunity to click these action links, display the Event Log tool window to view them again.
+    - The Gradle import wizard will prompt you to select options.  The defaults are usually fine, except you'll want to select the Gradle 'wrapper' task configuration:
+      ![Gradle Import](../images/studio/gradle-import.png) 
       **Note**: If you selected Maven build type, you should see a message about unimported Maven projects instead of the Gradle message above.
-      Also, if you're using Maven, after project creation and import you'll need right-click on the assets folder and select Mark Directory As > Sources Root.
+      Also, if you're using Maven, after project creation and import you'll need to right-click on the assets folder and select Mark Directory As > Sources Root.
+    - At any time you can update MDW baseline assets by right-clicking on the project and selecting Update MDW Assets  
   - **Project artifacts**
     - The essential configuration artifact that describes a project to MDW Studio is project.yaml.  This file lives in your project root and tells the IDE where to locate your
       MDW configuration and assets.  Without it, your project will not be recognized as an MDW project.  The mdw.version element in project.yaml must
