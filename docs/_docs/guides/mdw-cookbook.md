@@ -55,8 +55,8 @@ is available to clone in its completed state from the [mdw-demo repository](http
   - Right-click on the assets folder and select New > Package.  Name the package "com.centurylink.mdw.demo.bugs".
   
 #### Create a process  
-  - Right-click on the bugs package you just created and select New > MDW Process.  Name the process "Create Bug", and for Kind select "Service Process".<br>
-    ![create process](../images/create-proc.png)
+  - Right-click on the bugs package you just created and select New > MDW Process.  Name the process "Create Bug", and for Kind select "Service Process".   
+    ![Create Process](../images/create-proc.png)
   
     Click OK and we can start designing.
   
@@ -67,9 +67,10 @@ is available to clone in its completed state from the [mdw-demo repository](http
   
 #### Add some process variables
   - Now click on the Variables property tab.  Because you created a service process, some conventional variables have already been added.
-    Besides these, add a new string variable named 'bugTitle' and make sure its Mode is Input.  Also change the type of 'request' to org.json.JSONObject.
+  - Besides these, add a new string variable named 'bugTitle' and make sure its Mode is Input.
+  - Also change the type of 'request' to org.json.JSONObject.
     Here's what the Variables property tab should look like when you're finished:
-    ![add variables](../images/add-vars.png)
+    ![Add Variables](../images/add-vars.png)
 
 #### Write a script activity 
   In MDW, an *activity* is an individual step in a workflow,and an *activity implementor* is a Java class that defines an activity's behavior.  
@@ -88,7 +89,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
         response = new StatusResponse(Status.OK)
     }
     else {
-        response = new StatusResponse(Status.BAD_REQUEST, "bugTitle too long")
+        response = new StatusResponse(Status.BAD_REQUEST, "Bug title is too long")
     }
     ```
     Notice how this script has implicit access to the `bugTitle` and `response` variables, for both reading and assigning.
@@ -113,7 +114,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
   - Right-click on the Create Bug process in the project view and select Run Process (this menu item is disabled until the server is fully started up).
     Selecting Run Process should open you browser to MDWHub on the standard process start page.  Enter something for the bug title.
     
-    ![set variables](../images/set-vars.png)
+    ![Set Variables](../images/set-vars.png)
     
   - Click the Run button to execute your process.
   
@@ -123,20 +124,20 @@ is available to clone in its completed state from the [mdw-demo repository](http
     
   - Click the process title or a blank place in the MDWHub runtime view.  The Inspector pane appears.  Click the Values tab in Inspector to view
     variable values:
-    ![hub process instance](../images/proc-inst-hub.png)
+    ![Process Instance](../images/proc-inst-hub.png)
     
   - To see how a process definition looks in MDWHub, click on the Definition Nav link for the instance.  Click a blank spot in the canvas to view
     design-time attributes for the process.
 
 #### Modify the process with conditional branching
   - Switch back to the "Create Bug" process editor again in MDW Studio.  Select the link (or *transition* in MDW-speak) connecting Validate Request 
-    to the Stop activity.  On the Configurator Definition tab enter "accepted" for the result.  You can reposition the result label if desired.
+    to the Stop activity.  On the Configurator Definition tab enter "valid" for the result.  You can reposition the result label if desired.
     Now change the name of the Stop activity to "Created".  
   - From the Toolbox, drag a second Process Stop activity onto the canvas and place it below the Validate Request activity.  Name this activity "Rejected".
   - Next comes the trickiest part of mastering MDW Studio.  We use the so-called "shift-click-drag" mechanism for linking activities on the canvas.
     Hold down the Shift key on your keyboard, click on the Validate Request activity, and continue holding down the mouse left click button while 
     dragging the cursor to the Rejected activity (shift-click-drag).  Set the result for this new transition to "invalid".  Your process should look like this:   
-    ![script activity](../images/multiple-outcomes.png)
+    ![Multiple Outcomes](../images/multiple-outcomes.png)
   
   - With these changes in place our script can drive the direction of flow by way of its return value.  On the Validate Request Design tab, click
     the Edit link and change the script content to this:
@@ -145,11 +146,11 @@ is available to clone in its completed state from the [mdw-demo repository](http
     import com.centurylink.mdw.model.StatusResponse
     
     if (bugTitle.length() <= 512) {
-        response = new StatusResponse(Status.OK)
-        return "accepted"
+        response = new StatusResponse(Status.CREATED)
+        return "valid"
     }
     else {
-        response = new StatusResponse(Status.BAD_REQUEST, "bugTitle too long")
+        response = new StatusResponse(Status.BAD_REQUEST, "Bug title too long")
         return "invalid"
     }
     ```
@@ -163,22 +164,21 @@ is available to clone in its completed state from the [mdw-demo repository](http
   - Switch back to MDWHub in your browser.  On the Workflow tab, click the Definitions nav link.  Open Create Bug and click the Run button.
     Enter a bug title and execute the process.
     
-  - Unless you entered a super long bug title, your flow should have proceeded down the "accepted" path.
+  - Unless you entered a super long bug title, your flow should have proceeded down the "valid" path, and the response should be 201 Created.
     
 
 ### 1.4. Expose the process as a REST service
   Okay, things are about to get real.  An actual REST API for reporting a bug would take as input a lot more information than our simple 
-  bugTitle string.  Now that you've had a taste of editing assets in MDWHub, we'll switch back to Eclipse and whip up a model object to 
-  represent a bug and bind it to JSON.
+  bugTitle string.  Now that you've had a taste of designing workflows, we'll switch whip up a model object to represent a bug and bind it to JSON.
 
 #### Code a model object
   If you're an experienced Java developer, you're used to compiling your code and creating a deployable archive through a build script.
-  In MDW things work differently.  All your code is dynamic, meaning it's compiled on-the-fly in real time by MDW as needed.  In this section
-  we'll create an individual Java asset.  However, as your application evolves and becomes more complex you can build Jar file(s) and deploy
-  those as dynamic assets as well.  The MDW ClassLoader takes care of finding what it needs. 
+  In MDW things work differently.  You can still have statically compiled code in your src/main/java folder, but all your asset code is dynamic, 
+  meaning it's compiled on-the-fly in real time by MDW as needed.  In this section we'll create our model class as a Java asset.  **TODO:** Link to
+  best practices for MDW Spring Boot project structure. 
   
-  - In Designer Process Explorer view, right-click on the com.centurylink.mdw.demo.bugs package and select New > Java Source.  Name the source
-    Bug.java and click Finish.  Edit the code to look like this:
+  - In MDW Studio, right-click on the com.centurylink.mdw.demo.bugs package and select New > Java Class.  Name the class Bug,
+    and edit the code to look like this:
     ```java
     package com.centurylink.mdw.demo.bugs;
     
@@ -186,22 +186,27 @@ is available to clone in its completed state from the [mdw-demo repository](http
     import com.centurylink.mdw.model.Jsonable;
     
     public class Bug implements Jsonable {
-        
+    
         public Bug(JSONObject json) {
             bind(json);
         }
-        
+    
         private Long id;
         public Long getId() { return id; }
-        
+    
         private String title;
         public String getTitle() { return title; }
         public void setTitle(String title) { this.title = title; }
-        
+    
         private String description;
         public String getDescription() { return description; }
         public void setDescription(String description) { this.description = description; }
+    
+        private Integer severity;
+        public Integer getSeverity() { return severity; }
+        public void setSeverity(Integer severity) { this.severity = severity; }
         
+        @Override
         public String toString() {
             return getJson().toString(2);
         }
@@ -216,49 +221,45 @@ is available to clone in its completed state from the [mdw-demo repository](http
         These provide autobinding and serialization, respectively.  Yet, being an interface, Jsonable can be mixed in with any existing object model.
     
 #### Change to Jsonable process variables    
-  - After saving Bug.java, reopen the Create Bug process.  Change variable name "bugTitle" to "request".  It's a convention in MDW that service processes
-    declare a "request" input variable and a "response" output variable.  Since we're adopting this convention, the content of incoming HTTP requests and outgoing
-    responses will automatically be bound to our variables.  Also change the types of both "request" and "response" to com.centurylink.mdw.model.Jsonable.
+  - After creating Bug.java, reopen the Create Bug process.  Delete variable "bugTitle" and change "request" to type com.centurylink.mdw.model.Jsonable.
+    It's a convention in MDW that service processes declare a "request" input variable and a "response" output variable.  Since we're adopting this convention, 
+    the content of incoming HTTP requests and outgoing responses are automatically bound to our variables.
 
-  - Back on the Script property tab for Validate Request, under the Documents section select the "response" variable and move it from Read-Only to
-    Writable.  The reason we have to do this is that so-called [document variables](../../workflow/built-in-variable-types) in MDW are passed by reference
+  - Take another look at the Script property tab for Validate Request, under the Documents section notice that the "response" variable is Writable.
+    The reason for this is that so-called [document variables](../../workflow/built-in-variable-types) in MDW are passed by reference
     (whereas strings and native types are passed by value).  Passing by reference is nice because we can update the same document from many different subflows.
     But a byproduct of this is that the engine needs to lock this variable for update when our activity is invoked.  Hence the need to mark "response" as writable.
-    ![writable doc](../images/writable-doc.png) 
+    ![Writable Doc](../images/writable-doc.png) 
     
   - Edit the Validate Request script content to look something like this:
     ```groovy
+    import com.centurylink.mdw.model.Status
     import com.centurylink.mdw.model.StatusResponse
-    import static com.centurylink.mdw.model.Status.ACCEPTED
-    import static com.centurylink.mdw.model.Status.BAD_REQUEST
     
-    if (request.title.length() > 512) {
-        response = new StatusResponse(BAD_REQUEST)
-        return 'invalid'
+    if (request.title.length() <= 512) {
+        response = new StatusResponse(Status.CREATED)
+        return "valid"
     }
     else {
-        response = new StatusResponse(ACCEPTED)
-        return 'accepted'
-    }
-  
+        response = new StatusResponse(Status.BAD_REQUEST, "Bug title too long")
+        return "invalid"
+    }  
     ```   
-    Here we're counting on Jsonable autobinding since we access request.title through its getter method, and we expect it to contain JSON title property value.
-    We assign response to a StatusResponse, which is a built-in Jsonable representing an [HTTP Status Code](https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html).
-    
-  - Save the Create Bug process after making these changes.
-  
+    Here we changed `bugTitle` to `request.title`, counting on Jsonable autobinding so that we can acccess request title through its getter method, and we 
+    expect it to contain the JSON "title" property value. We assign response to a StatusResponse, which is a built-in Jsonable representing 
+    an [HTTP Status Code](https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html).
+      
 #### Implement a JAX-RS REST endpoint
 
   - To facilitate path-based request handling, MDW supports [@Path](http://docs.oracle.com/javaee/6/api/javax/ws/rs/Path.html) annotations.
     Paths are qualified by the containing asset package name, so for this let's create a separate, friendly-named package to house our REST service.
-    Right-click on your project in Process Explorer and select New > MDW Package.  Name this new package simply "demo.api".
+    Right-click on "assets" folder in your project and select New > Package.  Name this new package simply "demo".
     
-  - In the "demo.api" package create a Java source asset named Bugs.java like this:
+  - In the "demo" package create a Java class named Bugs like this:
     ```java
-    package demo.api;
-        
-    import java.util.Map;
+    package demo;
     
+    import java.util.Map;
     import javax.ws.rs.Path;
     
     import org.json.JSONException;
@@ -267,17 +268,18 @@ is available to clone in its completed state from the [mdw-demo repository](http
     import com.centurylink.mdw.common.service.ServiceException;
     import com.centurylink.mdw.demo.bugs.Bug;
     import com.centurylink.mdw.services.rest.JsonRestService;
-        
+    
     @Path("/bugs")
     public class Bugs extends JsonRestService {
-        
+    
         @Override
         public JSONObject post(String path, JSONObject content, Map<String,String> headers)
                 throws ServiceException, JSONException {
             String requestId = Long.toHexString(System.nanoTime());
-            return invokeServiceProcess("com.centurylink.mdw.demo.bugs/Create Bug", new Bug(content), requestId, null, headers);
+            return invokeServiceProcess("com.centurylink.mdw.demo.bugs/Create Bug",
+                    new Bug(content), requestId, null, headers);
         }
-    }    
+    }
     ```
     The root path of our bugs service is governed by the @Path annotation of the class.  We override `post()`
     from [JsonRestService](../../javadoc/com/centurylink/mdw/services/rest/JsonRestService.html)
@@ -285,25 +287,25 @@ is available to clone in its completed state from the [mdw-demo repository](http
     [invokeServiceProcess()](../../javadoc/com/centurylink/mdw/services/rest/JsonRestService.html#invokeServiceProcess-java.lang.String-java.lang.Object-java.lang.String-java.util.Map-java.util.Map-).
     to programmatically launch our Create Bug process, and we return the result as JSON.
     
-  - After saving Bugs.java, we're ready to POST a JSON request to http://localhost:8080/mdw/services/demo/api/bugs.
+  - After syncing the server again, we're ready to POST a JSON request to http://localhost:8080/mdw/api/demo/bugs.
     For this you can use a tool like [Postman](https://www.getpostman.com/).
     Or if you don't feel like biting that off just now, MDWHub's System tab has a Messaging feature where you can submit simple HTTP requests.
     
-  - Whatever submit mechanism you use, post a request something like this:
+  - Whatever submit mechanism you use, post a request with a body something like this:
     ```json
     {
       "title": "This is a good bug",
       "description": "Whatever that means"
     }
     ```
-    Here's what a request and response look like when submitted through MDWHub:
-    ![post bug](../images/post-bug.png)  
+  - Here's what a request and response look like when submitted through MDWHub:
+    ![Post Bug](../images/post-bug.png)  
   
     Something to point out about our development cycle: Notice that we didn't perform any compilation step on our java source assets.
-    We simply saved them, and Designer told MDW server to refresh its asset cache to reflect our changes next time we ran.
+    We simply preformed a sync, and MDW Studio told the server to refresh its asset cache to reflect our changes next time we ran.
   
-  - After submitting a request, view the corresponding process instance in Designer or MDWHub.  Confirm that the "request" and "response"
-    variables are populated as expected.    
+  - After submitting a request, click the Workflow tab in MDWHub.  Click the Filter button, and select status = \[Any] so that completed
+    processes are shown.  Your latest submittal should be at the top.  Confirm that the "request" and "response" values are populated as expected.    
     
 ### 1.5. Document the Service API using Swagger
 
@@ -321,35 +323,29 @@ is available to clone in its completed state from the [mdw-demo repository](http
   public class Bugs extends JsonRestService {
   ```
   - At this point, instead of copy/pasting code from this guide, why not download the completed Bugs.java artifact from the mdw-demo
-    GitHub repository?  Here's the asset on GitHub:<br>
-    <https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/demo/api/Bugs.java>.   
-    From the GitHub source view, right-click on Raw and select Save Link As, overwriting Bugs.java in the assets/demo/api folder in your project.
+    GitHub repository?  Here's the asset on GitHub:
+    <a href="https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/demo/Bugs.java" target="_blank">https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/demo/Bugs.java</a>.   
+    From the GitHub source view, right-click on Raw and select Save Link As, overwriting Bugs.java in the assets/demo folder in your project.
     Or just click the link to view the raw source in your browser, and copy/paste it into the asset. 
 
-  - Now in Eclipse select File > Close All, and then click the Refresh Icon in Process Explorer. (**Tip**: Before refreshing Process Explorer,
-    it's a good idea to save your work and close all files.  If you have assets open when refreshing, Designer does its best to reconcile your
-    change versus what it reads from the hard-drive, but if it gets confused it can end up giving you heartburn).
-    
-  - Expand your workflow project again in Process Explorer, and open Bugs.java.  Check the
+  - Open Bugs.java in MDW Studio.  Check the
     [@ApiOperation](https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X#apioperation) and 
     [@ApiImplicitParams](https://github.com/swagger-api/swagger-core/wiki/Annotations-1.5.X#apiimplicitparam-apiimplicitparams)
     annotations to see how these document the POST operation and indicate its expected body content.
     
-  - Touch and save Bugs.java to trigger Designer to invoke the Cache Refresh service on the server.  Or you can always manually refresh 
-    the MDW asset cache by right-clicking on the project and selecting Server > Refresh Caches.  Yet another way to manually refresh is 
-    through the System tab Tools link in MDWHub.
+  - Perform the Sync Server action via the toolbar or Tools menu.
     
 #### View generated API documentation in MDWHub 
   - Once the server cache has been refreshed, access MDWHub in your browser and click the Services tab.  Most of what you'll see listed here
-    are paths for the built-in MDW services.  Scroll to the bottom to find your /demo/api/bugs resource path.  Click this link to investigate your service API docs.
-    Swagger uses [JSON Schema](http://www.yaml.org/spec/1.2/spec.html#id2803231) syntax, so the definitive word on your API contract is depicted on the JSON tab.
-    A more readable [YAML](http://www.yaml.org/) representation can be viewed on the YAML tab.  The raw content of both of these tabs is itself available via MDW's
+    are paths for the built-in MDW services.  Scroll to the bottom to find your /demo/bugs resource path.  Click this link to investigate your service API docs.
+    Swagger uses [JSON Schema](http://www.yaml.org/spec/1.2/spec.html#id2803231) syntax, so the definitive word on your API contract is depicted on the JSON subtab.
+    A more readable [YAML](http://www.yaml.org/) representation can be viewed on the YAML subtab.  The raw content of both of these tabs is itself available via MDW's
     built-in service API (in fact, that's how MDWHub gets them).
     
   - MDW incorporates [Swagger UI](https://swagger.io/swagger-ui/) to make available a handy user interface for surveying REST APIs.
     Click on the Swagger subtab to check out the POST operation's docs.  Swagger-UI renders expandable elements for each model object.
     If you expand POST, you can even click the "Try it out" button to submit a request from here.
-    ![swagger-ui](../images/swagger-ui.png)
+    ![Swagger UI](../images/swagger-ui.png)
 
 
 ### 1.6. Auto-validate requests against the API
@@ -362,7 +358,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     [Bug.java on GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/com/centurylink/mdw/demo/bugs/Bug.java).  Overwrite your
     current workspace version with this latest code.
     
-  - In Eclipse close all files, refresh Process Explorer, and open the Bug.java asset you just downloaded.  Note this annotation on the `id` field:
+  - In MDW Studio open the Bug.java asset you just downloaded.  Note this annotation on the `id` field:
     ```java
     @ApiModelProperty(readOnly=true)
     private Long id;  
@@ -379,17 +375,15 @@ is available to clone in its completed state from the [mdw-demo repository](http
     And we've introduced a new annotation *@Size* which is not from Swagger, but actually from the Java [JSR-303 Validations](http://beanvalidation.org/1.0/spec/)
     standard.  This tells consumers of our API about our maximum length constraint.
     
-  - Refresh the server cache and revisit the Swagger docs on MDWHub's Services tab to confirm that these changes are reflected in the docs.
+  - Sync the server and revisit the Services tab on MDWHub.  On the Swagger subtab, check the Bug item under Models to confirm that these changes are reflected in the docs.
   
 #### Incorporate auto-validation
-  - To validate the incoming request of Bugs workflow for conformance with Swagger schema, MDW Swagger Validator activity is very useful. It replaces programmatic Swagger validation. 
-Open the Create Bug process. Add the Swagger Validator activity to the workflow as shown below.  
-- In the Path text box provided, specify the service which needs to be validated.
-   Say  '/mdw/api/bugs'
-
-From drop down, You can choose any or a combination of Query, Headers, Body, Path for
-validation.
-![Swagger Validation Activity](../images/swaggerValidator.png)<br>
+  To validate the incoming request of Bugs workflow for conformance with Swagger schema, we can replace our validation script with the
+  [Swagger Validator](http://centurylinkcloud.github.io/mdw/docs/help/SwaggerValidator.html) activity. 
+  - Edit the Create Bug process to insert a Swagger Validator step from the Toolbox into your workflow.  Name the activity "Valid Request?".
+  - On the Validator's Design configurator tab, select Body and Path to be validated, and check the Strict checkbox.
+  - Set the Result values of the outbound transitions to "true" and "false". 
+    ![Swagger Validator](../images/swaggerValidator.png)
  
   - Post a request with this body to test failed validation:
     ```json
@@ -409,13 +403,22 @@ validation.
   To integrate our Bug object into the Create Bug workflow, we'll use the TaskInstance model, and map the data to our Bug object.
   
 #### Create an activity implementor asset
-  - Fire up Designer, right-click the com.centurylink.mdw.demo.bugs package, and select New > Activity > General Activity.
-    ![create activity](../images/create-activity.png)<br>
-    Label the activity Persist Bug, and in the Icon text box type *bug.png*.  Click Next, and for Dynamic Java Class Name, type *PersistBugActivity*.
+  - Fire up MDW Studio, right-click the com.centurylink.mdw.demo.bugs package, and select New > MDW Activity > Java Activity.
+    ![Create Activity](../images/create-activity.png)
+  - Replace the generated Java code with
+    [PersistBugActivity.java on GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/com/centurylink/mdw/demo/bugs/PersistBugActivity.java).
+  - The appearance of our new activity in the Toolbox is governed by the `@Activity` annotation:
+    ```java
+    @Activity(value="Persist Bug", icon="com.centurylink.mdw.demo.bugs/bug.png")
+    public class PersistBugActivity extends DefaultActivityImpl {    
+    ```   
+    Here we've labeled the activity Persist Bug, and specified an icon according to MDW's asset path notation: \<package_name>/\<asset_file>.
+    (Unlike a qualified Java class name, an asset path contains a slash separating the package from the asset).
+
+  - Download [bug.png from GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/com/centurylink/mdw/demo/bugs/bug.png)
+    into assets/com/centurylink/mdw/demo/bugs in your project.  Then click the Reload toolbar button on the Toolbox view to reflect this new addition. 
   
-  - After clicking Finish, replace the generated Java code with 
-    [PersistBugActivity.java on GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/com/centurylink/mdw/demo/bugs/PersistBugActivity.java),
-    which implements `execute()` to tell MDW's workflow engine what to do.  These lines from `execute()` take care of creating the task:
+  - In PersistBugActivity we've implemented `execute()` to tell MDW's workflow engine what to do.  These lines from `execute()` take care of creating the task:
     ```java
     public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
       Bug requestBug = (Bug)getValue("request");
@@ -434,38 +437,24 @@ validation.
       ....
     ```
     Here we're calling [TaskServices.createTask()](../../javadoc/com/centurylink/mdw/services/TaskServices.html#createTask-java.lang.Long-java.lang.String-java.lang.Long-java.lang.String-java.lang.Long-java.lang.String-java.lang.String-), 
-    which requires a [Task Template](../../help/taskTemplates.html) asset to specify a pattern.
-    The getTaskTemplate() method returns a string which illustrates MDW's convention for referring to a specific asset:
-    `com.centurylink.mdw.demo.bugs/ResolveBugAutoform.task`.
-    This equates to assets/com/centurylink/mdw/demo/bugs/ResolveBugAutoform.task in your project directory.  Unlike a qualified Java class name,
-    a slash separates the package from the asset name.  We'll create the task template asset in the next step.
+    which requires a [Task Template](../../help/taskTemplates.html) asset to specify a pattern.  We'll create the task template asset in the next step.
     
-  - When you clicked Finish in the activity creation wizard, aside from the generated PersistBugActivity.java asset, another one named 
-    "Persist Bug.impl" was created to capture the  metadata you just entered.  Since they can lead to clutter and they're usually edited via 
-    the Toolbox, impl assets are filtered from Process Explorer by default.  You can click the Filter icon to configure this, 
-    or view the .impl file from the assets directory on your hard drive.
-    
-  - Also remember that we told the Designer wizard to use bug.png for our activity's toolbox icon.  You probably guessed that the icon image is an asset as well.
-    Download [bug.png from GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/com/centurylink/mdw/demo/bugs/bug.png)
-    into assets/com/centurylink/mdw/demo/bugs in your project.  Then close all open files and refresh Process Explorer to see it appear.
-    
-  - Now finally you can drag the Persist Bug activity from the toolbox onto the Create Bug process design.  Name it "Save Bug", and link it 
+  - Drag the Persist Bug activity from the Toolbox onto the Create Bug process design.  Name it "Save Bug", and link it 
     into your process like so:   
-    ![create bug 2](../images/create-bug-2.png)<br>
-    Now save your process changes.
+    ![Create Bug 2](../images/create-bug-2.png)<br>
 
 #### Create a task template asset
-  - Right-click on the com.centurylink.mdw.demo.bugs package and select New > Task Template.  Name the template ResolveBugAutoform.task, and 
-    make sure you select AutoForm for Language/Format:<br>
-    ![create task template](../images/create-task-template.png)<br>
+  - Right-click on the com.centurylink.mdw.demo.bugs package and select New > MDW Task.  Name the task ResolveBugAutoform, and 
+    make sure its type is AutoForm:<br>
+    ![Create Task Template](../images/create-task-template.png)<br>
     
-  - When the wizard finishes, ResolveBugAutoform.task will open in Designer's template editor.  Notice the tabs at the bottom of the editor pane.
+  - In the MDW Studio task editor, find the tabs at the bottom of the pane.
     On the General tab, for Task Name enter the [Java Expression](http://docs.oracle.com/javaee/6/tutorial/doc/gjddd.html) `${bug.title}`, 
     which tells MDW to use the *bug* process variable's *title* value.<br>
-    ![task template editor](../images/task-template-editor.png)<br>
+    ![Task Template Editor](../images/task-template-editor.png)<br>
     
-  - Then on the Workgroups tab, add Developers to the Selected Groups.  That's all we need to do to the template at the moment.  Later on we'll
-    learn how to customize the web UI and other aspects of our task.  But for now save the template with just these changes.  
+  - Then on the Workgroups tab, add Developers to the Selected Groups.  That's all we need to do for the moment.  Later on we'll
+    learn how to customize the web UI and other aspects of our task.  
      
 #### Run the revised process and view the task
   - We want to submit a (valid) bug request via HTTP POST as before.  But you may have noticed that getTaskTemplate() in the GitHub version
@@ -476,78 +465,68 @@ validation.
         return "com.centurylink.mdw.demo.bugs/ResolveBugAutoform.task";
     }
     ```
-    After submitting, the process flow should run to completion.  On the Values tab, double-click the responseHeaders variable.  
-    When submitting you may have noticed that the HTTP status code on the response
-    changed to 201 (Created), and the response headers now include *Location*.  Review the code in PersistBugActivity.execute() to see
+    After submitting, the process flow should run to completion.  Find the process in MDWHub, and on the Inspector Values tab, click the 
+    responseHeaders variable 'Document:' link.  
+    When submitting you may have noticed that the response headers now include *Location*.  Review the code in PersistBugActivity.execute() to see
     how responseHeaders is populated.  It's another example of a convention in MDW whereby you can readily control the behavior of 
     your REST service.
 
-  - Point your browser to MDWHub, and click on the Tasks tab.  You should see the top task named whatever you submitted for the bug's title.
-    Click to drill into the task.  What the...?  You got a blank page!  It's common practice in MDW to deliver optional features in the
-    form of asset packages.  MDWHub's Task UI relies on a couple of these packages.  You can import them using MDWHub or Designer.
-    We'll use Hub since we're already there.
-    
-  - Click on the Admin tab in MDWHub, and select the Assets nav link to see your packages (ignoring any errors regarding Git Branch mismatches).
-    Click Import > Discover.  Then click the Discover button on the discovery page to see a list of available packages.
-    Select these two packages, and then click  Import button at the bottom of the page:
-    ![task packages](../images/task-packages.png)<br>
-    
-  - The com.centurylink.mdw.node package requires a server restart after being imported.  So restart your server,
-    and then when you revisit the Tasks tab and click on the link it should be able to display the task page.
-    
-  - In Designer, close all open files and refresh Process Explorer to reflect the newly-imported packages. 
+  - Still in MDWHub, and click on the Tasks tab.  You should see the top task named whatever you submitted for the bug's title.
+    Click to drill into the task.  What the...?  You got a blank page!  Task pages are implemented as React JSX assets (more about that later).
+    When running in development mode, `-Dmdw.runtime.env=dev`, JSX assets are compiled just in time, so the first time you click on one you'll get a blank
+    page.  Just refresh your browser to display the task.
+    ![Task Instance](../images/task-instance.png)<br>
   
 ### 2.2 Invoke a subprocess
-  What to do when a bug gets created?  With human action required, it'll be a long-running workflow, which obviously cannot respond in real time.
-  Whereas Create Bug is a service process and must respond within a second or two, once the bug is created we want to spawn a separate flow
+  What to do when a bug gets created?  With human action required, it'll be a long-running workflow, which obviously cannot respond in real time to an HTTP request.
+  Whereas Create Bug is a service process and should respond within a few hundred milliseconds, once the bug is created we want to spawn a separate flow
   that can proceed at length.  The pattern to accomplish this in MDW is to invoke a subprocess.
   
 #### Use the Invoke Subprocess activity
-  - First create a new process under package com.centurylink.mdw.demo.bugs.  Call this process "A Bug's Life".  We'll not check Service Process
-    on the Design tab this time.  By definition service processes are not long-running, and they're restricted from containing certain activities.
-    Now add an Input variable named 'bug' with type com.centurylink.mdw.model.Jsonable.  Save "A Bug's Life".
+  - First create a new process under package com.centurylink.mdw.demo.bugs.  Call this process "A Bug's Life", and this time leave Kind as Workflow Process.
+    Add an Input variable named 'bug' with type com.centurylink.mdw.model.Jsonable.
     
   - Return to the Create Bug process, and from the Toolbox drag an Invoke Subprocess activity.  Name it "Invoke Bug Subflow", and Link it 
-    after Save Bug and before Created.  Double click the subprocess activity and on the Design tab select "A Bug's Life" for Subprocess. 
-    Also uncheck Synchronous since we don't want to wait for the subflow to complete before responding.  Lastly, click the Bindings tab which
+    after Save Bug and before Created.  On the Configurator Design tab for Invoke Bug Subflow select "A Bug's Life" for it's Subprocess. 
+    Also uncheck Synchronous since we want to fire and forget this subflow so we can respond right away.  The Bindings table 
     displays all the input variables from our selected subprocess.  Enter ${response} as the Binding Expression for the 'bug' input variable:
-    ![create bug 3](../images/create-bug-3.png)<br>
+    ![Create Bug 3](../images/create-bug-3.png)<br>
     
     The [Java expression](http://docs.oracle.com/javaee/6/tutorial/doc/gjddd.html) ${response} in this context means that the 'response' 
-    variable from Create Bug will be bound to 'bug' in the subflow.
+    variable from Create Bug will be bound to input 'bug' in the subflow.
     
-  - Save everything and invoke the service as before.  Open the latest "Create Bug" process instance in Designer or MDWHub, and select the
-    Invoke Bug Workflow activity.  On the Subprocesses property tab, double-click (in Designer) or click (in Hub) the "A Bug's Life" instance.
+  - Sync the server and invoke the service as before.  View the latest "Create Bug" process instance in MDWHub, and select the
+    Invoke Bug Workflow activity.  On the Subprocesses Inspector tab, click the "A Bug's Life" instance ID.
     View the subflow Values to confirm that 'bug' is populated correctly.
 
 ### 2.3 Add a manual task activity
 
 #### Insert a manual task 
-  - Returning to "A Bug's Life", drag an Autoform Manual Task activity and link it between Start and Stop.  Change the label to
-    "Await Resolution".  On the Design tab, select the ResolveBugAutoform task template we create.  For Instance ID Variable instead of selecting
+  - Returning to "A Bug's Life" in MDW Studio, drag in an Autoform Manual Task activity.  You'll be prompted as to whether you'd like to create
+    and associate a task template.  Since we've already created our template, answer No to this.  Name the activity "Await Resolution", and link
+    it between Start and Stop.  On the Design tab, select the ResolveBugAutoform task template we create.  For Instance ID Variable instead of selecting
     from the dropdown, type the expression `${bug.id}`.  This tells MDW that we've already created the task (in Save Bug), and we just need 
     our activity to await task completion.<br>
-    ![a bugs life](../images/a-bugs-life.png)<br>
+    ![A Bug's Life](../images/a-bugs-life.png)<br>
     
-  - Save and submit a request to to run.  Confirm that the status of Await Resolution in "A Bug's Life" is *Waiting*.  This indicates that flow will resume 
-    once the associated manual task is completed.
+  - Sync the server and submit a request.  Find the process instance in MDWHub and confirm that the status of Await Resolution in "A Bug's Life" 
+    is *Waiting*.  This indicates that flow will resume once the associated manual task is completed.
 
 #### Perform actions on the task
   - In MDWHub click the Tasks tab, find the just-created bug task, and drill into it.  Click the Action button and select Claim.
-    By default you must be assigned a task to complete it (although this behavior [can be overridden](../../help/taskAction.html)).
-    Click the Action button again and select Complete.
+    You'll observe the status change to *Assigned*, with yourself as the assignee.  By default you must be assigned a task to complete it 
+    (although this behavior [can be overridden](../../help/taskAction.html)).  Click the Action button again and select Complete.
     
-  - Return to the Bug's Life instance in MDWHub or Designer, and refresh to confirm that now the subflow has run to completion.
-    Manual tasks provide a great mechanism for humans to interact with workflows.  Aside from triggering actions, another key aspect
-    of manual tasks in MDWHub is enabling data entry.  In [subsection 2.5](#25-consume-a-rest-service) we'll explore how, with 
+  - Return to the Bug's Life instance in MDWHub, and confirm that now the subflow has run to completion.
+    Manual tasks provide a great mechanism for humans to interact with workflow.  Aside from triggering actions, another key aspect
+    of manual tasks in MDWHub is enabling data entry.  In [section 2.5](#25-consume-a-rest-service) we'll explore how, with 
     [AutoForm tasks](../../javadoc/com/centurylink/mdw/workflow/activity/task/AutoFormManualTaskActivity.html), 
-    data entry can be tied to variables through configuration.  In this case a data-entry form is generated on-the-fly by MDWHub.
-    Later, in [section 3](#3-integrate-a-custom-web-ui), we'll create an entirely custom web UI based around a 
-    [Custom task](../../javadoc/com/centurylink/mdw/workflow/activity/task/CustomManualTaskActivity.html).
+    data entry can be tied to variables through configuration.  Later, in [section 3](#3-integrate-a-custom-web-ui), we'll create an entirely custom 
+    web UI based around a [Custom task](../../javadoc/com/centurylink/mdw/workflow/activity/task/CustomManualTaskActivity.html).
     
   - Before we move on, make one last change to "A Bug's Life".  On the Definition property tab of the outbound link from the manual
     task activity, change the Result from blank to "Resolve" like so:<br> 
-    ![custom action](../images/custom-action.png)<br>
+    ![Custom Action](../images/custom-action.png)<br>
     Setting the outbound link's result is a convenient way to customize the actions available for a given task.  Now if you resubmit
     and claim the corresponding task, you'll see that "Resolve" replaces "Complete" in MDWHub's task action popover.  By branching into
     two or more outgoing links from a manual task, you can give users the power to drive workflow outcomes through their task actions. 
@@ -558,11 +537,11 @@ validation.
   a redeployment.
   
 #### Customize baseline data  
-  - In Designer, open the ResolveBug.task template.  Check out the options available in the Category dropdown.  None of these options
+  - In MDW Studio, open ResolveBugAutoform.task.  On the General tab check out the options available in the Category dropdown.  None of these
     seem like a good fit for a bug.  It would be nice to add our own values as options.  This is the problem we'll solve by creating a
     Spring asset.
     
-  - Right-click on the com.centurylink.mdw.demo.bugs package and select New > Spring Config.  Name the asset bugsContext.spring, and click Finish.
+  - Right-click on the com.centurylink.mdw.demo.bugs package and select New > File.  Name the asset bugsContext.spring, and click Finish.
     Paste this into bugsContext.spring:
     ```xml
     <?xml version="1.0" encoding="UTF-8"?>
@@ -578,7 +557,7 @@ validation.
     Aside from namespace boilerplate, this context contains a single Spring bean declaration with an *id* of bugCategories.
     The *id* is not significant, but the *class* attribute is.  This is where we plug in our custom behavior.
     
-  - Create a new Java Source asset in the same package named Categories.java.  Paste its content from
+  - Create a new Java class in the same package named Categories.  Paste its content from
     [Categories.java on GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/com/centurylink/mdw/demo/bugs/Categories.java).
     The important thing to note about this code is this:
     ```java
@@ -594,17 +573,21 @@ validation.
     We extend [MdwBaselineData](../../javadoc/com/centurylink/mdw/dataaccess/file/MdwBaselineData.html), which provides the entry-point 
     for us to designate our own values for certain reference data in MDW.  In the Categories constructor, we're building our own list
     of TaskCategories to include along with the MDW built-in ones.
+
+  - This configures server-side baseline data.  MDW Studio uses a different mechanism involving project.yaml.  We'll explore that later, but in the meantime
+    we'll set the category using MDWHub.  Sync your server and then click the Admin tab in MDWHub.  There click on the Assets nav link, drill into the
+    com.centurylink.mdw.demo.bugs package and open ResolveBugAutoform.task.
+  - Click on Edit button and in the Category dropdown select Bug.  Click Save and choose to overwrite version 0.1 and not to commit and push changes:
+    ![Hub Task](../images/hub-task.png)<br>
+    Click 'Save and Close'.
+  - This illustrates how any type of asset, including processes, can be edited in MDWHub.
     
 #### Configure the ResolveBugAutoform task template    
-  - Designer caches this type of data obtained from the MDW server, so close everything and refresh Process Explorer.  When you
-    re-expand the project tree, that's when Designer pulls these values from the server.  After that, open up ResolveBugAutoform.task and
-    change the Category to ISSUE - Bug.
-    
-  - While we're here let's explore some other aspects of manual tasks.  We could specify a [due interval](../../help/taskSLA.html)
+  - Returning to MDW Studio let's explore some other aspects of manual tasks.  We could specify a [due interval](../../help/taskSLA.html)
     in minutes or hours.  But a hard-wired interval turns out to be not that useful.  Instead let's implement a
     [PrioritizationStrategy](../../javadoc/com/centurylink/mdw/observer/task/PrioritizationStrategy.html)
     to dynamically determine a task's priority level as well as when it's due.  In the com.centurylink.mdw.demo.bugs package
-    create a new Java Source asset named Prioritization.java with 
+    create a new Java class named Prioritization with 
     [code from GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/com/centurylink/mdw/demo/bugs/Prioritization.java).
     The logic here is very straightforward, but it's worth mentioning this annotation we haven't seen before:
     ```java
@@ -688,7 +671,7 @@ validation.
 
 #### Access task values through REST
   - One of the many built-in REST APIs in MDW is for viewing and updating task values.  To illustrate, paste this URL into your browser:
-    `http://localhost:8080/mdw/services/Tasks/{id}/values` (where *{id}* is the task id for an instance of the bug task).
+    `http://localhost:8080/mdw/api/Tasks/{id}/values` (where *{id}* is the task id for an instance of the bug task).
     Notice that the Autoform UI descriptor elements such as *label* and *display* are returned along with the data.  This exposes a nice clean
     interface for external systems to interact with MDW tasks via REST.  Even if the tasks UI is a completely separate system, it can use REST
     to perform the same actions as MDWHub, while reserving control about what can be updated in the hands of the workflow developer.    
@@ -738,7 +721,7 @@ validation.
     
       componentDidMount() {
         var bugId = location.hash.substring(9);
-        fetch(new Request('/mdw/services/demo/api/bugs/' + bugId, {
+        fetch(new Request('/mdw/api/demo/bugs/' + bugId, {
           method: 'GET',
           headers: {Accept: 'application/json'}
         }))
@@ -765,7 +748,7 @@ validation.
     Here using [JSX syntax](https://facebook.github.io/react/docs/jsx-in-depth.html) we're fetching bug details
     in the [componentDidMount](https://facebook.github.io/react/docs/react-component.html#componentdidmount) React
     component lifecycle method.  This submits an HTTP GET request, which is handled by the get() method in our
-    [Bugs.java](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/demo/api/Bugs.java) REST service asset.  Then, 
+    [Bugs.java](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/demo/Bugs.java) REST service asset.  Then, 
     in the render() method of our component, we're simply stringifying the bug to JSON and calling that a UI!
     <img src="../images/shucks.png" style="margin-top:-20px;margin-bottom:0;position:relative;top:5px;" alt="embarrassed">
     
@@ -817,7 +800,7 @@ validation.
   - When a user clicks on the Save button, the following code from handleClick() is executed: 
     ```typescript
     if (event.currentTarget.name === 'save') {
-      fetch(new Request('/mdw/services/demo/api/bugs/' + this.state.bug.id, {
+      fetch(new Request('/mdw/api/demo/bugs/' + this.state.bug.id, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify(this.state.bug)
@@ -827,7 +810,7 @@ validation.
     This performs an HTTP PUT request that's handled by the put() method in Bugs.java.  Here's what happens when the Resolve button is clicked:
     ```typescript
     else if (event.currentTarget.name === 'resolve') {
-      fetch(new Request('/mdw/services/Tasks/' +  this.state.bug.id + '/Resolve', {
+      fetch(new Request('/mdw/api/Tasks/' +  this.state.bug.id + '/Resolve', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -837,7 +820,7 @@ validation.
       }))
       ...
     ```    
-    This performs a POST to http://localhost:8080/mdw/services/Tasks/{id}/Resolve, to perform the Resolve action.  The distinction here is that
+    This performs a POST to http://localhost:8080/mdw/api/Tasks/{id}/Resolve, to perform the Resolve action.  The distinction here is that
     this uses the MDW built-in Tasks API instead of our demo API.  As you build out your UI, you'll want to lean heavily on the MDW APIs, and the easy
     way to get familiar with them is by perusing their Swagger docs.  Another trick that's very useful is to use your browser's developer tools to
     watch the REST network traffic between MDWHub and the server to see how MDW itself leverages these APIs.
