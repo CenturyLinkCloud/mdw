@@ -1,6 +1,6 @@
 ---
 title: Built-In Variable Types
-permalink: /docs/development/built-in-variable-types/
+permalink: /docs/workflow/built-in-variable-types/
 ---
 
 Standard variable types in MDW.

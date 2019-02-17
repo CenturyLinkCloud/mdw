@@ -43,7 +43,7 @@ We've touched on processes, activities, and variables.  Some of the other freque
  - [MDW Terminology](../workflow/terminology)
  
  And here's an exhaustive list of built-in variable types:
- - [Variable Types](../workflow/built-in-variables)
+ - [Variable Types](../workflow/built-in-variable-types)
 
 ### Assets
 A process in MDW is one type of [asset](../help/assets.html).  There are many others.  In fact, most everything

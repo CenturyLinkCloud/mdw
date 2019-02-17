@@ -40,7 +40,7 @@ article h4 {
 
 li .highlighter-rouge {
 	margin-top: 0;
-	margin-bottom: 0;
+	margin-bottom: 5px;
 }
 .copy-txt {
   font-family: monospace;
