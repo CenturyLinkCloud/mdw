@@ -74,6 +74,8 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
             if (template == null)
                 throw new ActivityException("No template asset found: " + spec);
 
+            String priority = getAttributeValue(WorkAttributeConstant.NOTICE_PRIORITY);
+
             ActivityRuntimeContext context = getRuntimeContext();
             List<Address> recipAddresses = getRecipientAddresses(context);
             List<Address> ccAddresses = getCcRecipientAddresses(context);
@@ -92,6 +94,7 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
                 templatedEmail.setRecipients(recipAddresses.toArray(new Address[0]));
                 templatedEmail.setCcRecipients(ccAddresses.toArray(new Address[0]));
                 templatedEmail.setRuntimeContext(getRuntimeContext());
+                templatedEmail.setPriority(priority);
                 templatedEmail.sendEmail();
             }
             else {
@@ -149,13 +152,13 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
     }
 
     protected Map<String,File> getAttachments() throws PropertyException {
-        Map<String,File> attachments = new HashMap<String,File>();
+        Map<String,File> attachments = new HashMap<>();
 
         String attachmentPatterns = getAttributeValue(WorkAttributeConstant.NOTICE_ATTACHMENTS);
         if (!StringHelper.isEmpty(attachmentPatterns)) {
 
             // master req id directory and subdirs
-            List<File> dirs = new ArrayList<File>();
+            List<File> dirs = new ArrayList<>();
 
             File mriDir = new File(ApplicationContext.getAttachmentsDirectory() + getMasterRequestId());
             if (mriDir.exists() && mriDir.isDirectory()) {

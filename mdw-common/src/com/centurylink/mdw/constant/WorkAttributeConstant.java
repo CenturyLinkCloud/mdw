@@ -44,6 +44,7 @@ public class WorkAttributeConstant  {
 
      public static final String NOTICE_TYPE = "noticeType";
      public static final String EMAIL_NOTICE_SMTP = "SMTP";
+     public static final String NOTICE_PRIORITY = "priority";
      public static final String NOTICE_FROM = "from";
      public static final String NOTICE_SUBJECT = "subject";
      public static final String NOTICE_TEMPLATE = "template";

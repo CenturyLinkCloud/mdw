@@ -144,11 +144,24 @@ public class TemplatedEmail {
     public Address[] getCcRecipients() { return ccRecipients; }
     public void setCcRecipients(Address[] ccRecipients) { this.ccRecipients = ccRecipients; }
 
+    private String priority;
+    public String getPriority() { return priority; }
+    public void setPriority(String priority) { this.priority = priority; }
+
+    private String getPriorityValue() {
+        if (priority == null || "Normal".equalsIgnoreCase(priority))
+            return "3";  // Normal
+        else if ("High".equalsIgnoreCase(priority))
+            return "1";
+        else
+            return "5";
+    }
+
     private boolean html;
     public boolean isHtml() { return html; }
     public void setHtml(boolean html) { this.html = html; }
 
-    private Map<String,String> images = new HashMap<String,String>();
+    private Map<String,String> images = new HashMap<>();
     public void addImage(String id, String file) { images.put(id, file); }
     public void removeImage(String id) { images.remove(id); }
 
@@ -156,7 +169,7 @@ public class TemplatedEmail {
     public AssetVersionSpec getTemplateAssetVerSpec() { return templateAssetVerSpec; }
     public void setTemplateAssetVerSpec(AssetVersionSpec templateAssetVerSpec) { this.templateAssetVerSpec = templateAssetVerSpec; }
 
-    private Map<String,File> attachments = new HashMap<String,File>();
+    private Map<String,File> attachments = new HashMap<>();
     public Map<String,File> getAttachments() { return attachments; }
     public void setAttachments(Map<String,File> attachments) { this.attachments = attachments; }
     public void addAttachment(String name, File file) { attachments.put(name, file); }
@@ -218,14 +231,15 @@ public class TemplatedEmail {
             if (ccRecipients != null) {
                 message.setRecipients(Message.RecipientType.CC, ccRecipients);
             }
+            message.setHeader("X-Priority", getPriorityValue());
             Transport.send(message);
         }
         catch (SendFailedException ex) {
             addMessagingException(ex);
             // try to resend without bad recipients
             if (ex.getValidUnsentAddresses() != null) {
-                List<Address> newRecips = new ArrayList<Address>();
-                List<Address> newCCs = new ArrayList<Address>();
+                List<Address> newRecips = new ArrayList<>();
+                List<Address> newCCs = new ArrayList<>();
                 for (Address validUnsent : ex.getValidUnsentAddresses()) {
                     for (Address recip : recipients) {
                         if (validUnsent.equals(recip)) {
@@ -310,7 +324,7 @@ public class TemplatedEmail {
 
     /**
      * Creates the mime message for the e-mail.
-     * @param session the JavaMail session
+     * @param messageBody
      * @return the message
      */
     private Message buildMessage(String messageBody)
