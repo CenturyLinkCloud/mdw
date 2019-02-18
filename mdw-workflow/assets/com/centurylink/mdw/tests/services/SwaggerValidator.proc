@@ -1,0 +1,81 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=69,y=132,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=178,ly=152,xs=133&224,ys=152&152"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=449,y=132,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "OK"
+    },
+    {
+      "attributes": {
+        "Strict": "true",
+        "Validate": "[\"Body\"]",
+        "WORK_DISPLAY_INFO": "x=228,y=117,w=111,h=74"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.validate.SwaggerValidatorActivity",
+      "name": "Request\nValid?",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=383,ly=156,xs=343&444,ys=152&152"},
+          "event": "FINISH",
+          "id": "T2",
+          "resultCode": "true",
+          "to": "A2"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=287,ly=210,xs=282&282,ys=195&245"},
+          "event": "FINISH",
+          "id": "T3",
+          "resultCode": "false",
+          "to": "A4"
+        }
+      ]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=251,y=249,w=60,h=40"},
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Invalid"
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "SERVICE",
+    "WORK_DISPLAY_INFO": "x=50,y=38,w=69,h=27",
+    "requestMethod": "POST",
+    "requestParameters": "[[\"person\",\"Body\",\"true\",\"Person\",\"com.centurylink.mdw.tests.workflow/Person.java\"]]",
+    "requestPath": "Person"
+  },
+  "variables": {
+    "request": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "requestHeaders": {
+      "category": "INPUT",
+      "type": "java.util.Map<String,String>"
+    },
+    "response": {
+      "category": "OUTPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "responseHeaders": {
+      "category": "OUTPUT",
+      "type": "java.util.Map<String,String>"
+    }
+  }
+}

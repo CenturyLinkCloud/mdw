@@ -339,6 +339,9 @@ process: # 15686
           "message": "Created"
         }
       }
+  variable:
+    name: responseHeaders
+    value: {"HttpStatusCode": "201"}
   variable: # 25758
     name: servicePlan
     value: |

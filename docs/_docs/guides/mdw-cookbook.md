@@ -8,7 +8,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
 
 ## Sections in this Guide
   MDW is a [workflow framework](../../intro) specializing in [microservice orchestration](../../presentations/microservices).
-  We'll focus these topics, and dive into other key features like manual task handling and web UI development.
+  We'll focus on these topics, and dive into other key features like manual task handling and web UI development.
   Our use case is a bug management workflow.
   1. [Implement a REST Service](#1-implement-a-rest-service)
      - 1.1 [Setup](#11-setup) 
@@ -174,8 +174,8 @@ is available to clone in its completed state from the [mdw-demo repository](http
 #### Code a model object
   If you're an experienced Java developer, you're used to compiling your code and creating a deployable archive through a build script.
   In MDW things work differently.  You can still have statically compiled code in your src/main/java folder, but all your asset code is dynamic, 
-  meaning it's compiled on-the-fly in real time by MDW as needed.  In this section we'll create our model class as a Java asset.  **TODO:** Link to
-  best practices for MDW Spring Boot project structure. 
+  meaning it's compiled on-the-fly in real time by MDW as needed.  Check out the [Spring Boot Guide](../spring-boot) to learn more about best practices
+  for project structure.  In this section we'll create our model class as a Java asset.
   
   - In MDW Studio, right-click on the com.centurylink.mdw.demo.bugs package and select New > Java Class.  Name the class Bug,
     and edit the code to look like this:
@@ -508,7 +508,6 @@ is available to clone in its completed state from the [mdw-demo repository](http
     from the dropdown, type the expression `${bug.id}`.  This tells MDW that we've already created the task (in Save Bug), and we just need 
     our activity to await task completion.<br>
     ![A Bug's Life](../images/a-bugs-life.png)<br>
-    
   - Sync the server and submit a request.  Find the process instance in MDWHub and confirm that the status of Await Resolution in "A Bug's Life" 
     is *Waiting*.  This indicates that flow will resume once the associated manual task is completed.
 
@@ -524,8 +523,9 @@ is available to clone in its completed state from the [mdw-demo repository](http
     data entry can be tied to variables through configuration.  Later, in [section 3](#3-integrate-a-custom-web-ui), we'll create an entirely custom 
     web UI based around a [Custom task](../../javadoc/com/centurylink/mdw/workflow/activity/task/CustomManualTaskActivity.html).
     
-  - Before we move on, make one last change to "A Bug's Life".  On the Definition property tab of the outbound link from the manual
-    task activity, change the Result from blank to "Resolve" like so:<br> 
+  - Before we move on, make a couple more changes to "A Bug's Life".  First, change the Stop activity's name to "Close",
+    signifying that the end of it's lifecycle.
+  - Also, on the Definition property tab of the outbound link from the manual task activity, change the Result from blank to "Resolve" like so:<br> 
     ![Custom Action](../images/custom-action.png)<br>
     Setting the outbound link's result is a convenient way to customize the actions available for a given task.  Now if you resubmit
     and claim the corresponding task, you'll see that "Resolve" replaces "Complete" in MDWHub's task action popover.  By branching into
@@ -618,29 +618,20 @@ is available to clone in its completed state from the [mdw-demo repository](http
     by checking the Tasks tab in MDWHub.
     
 ### 2.5 Consume a REST service
-  Way back in [section 1](#1-implement-a-rest-service) we covered how to produce a REST service.  Now we want to consume a REST API, specifically
-  a [microservice](https://en.wikipedia.org/wiki/Microservices), from within our workflow.  You'll find that the microservice architectural approach, with
-  its emphasis on tightly-focused services, lends itself to the visual orchestration capabilities in MDW.
-
-#### Import the microservice package
+  Back in [section 1](#1-implement-a-rest-service) we covered how to produce a REST service.  Now we want to consume a REST API from within our workflow.  
+  Let's say during the bug lifecycle we want to retrieve any associated commit on GitHub.  For this we can use the [GitHub REST API](https://developer.github.com/v3/).
   The MDW term for an activity that invokes an external service (whatever the protocol), is *adapter activity* (or simply *adapter*).
-  In the base package there's a built-in general REST adapter, but the optional `com.centurylink.mdw.microservice` package includes assets
-  that are especially well-suited to the microservice paradigm.  So first we'll import this package.
-   
-  - Back on the Admin tab in MDWHub, select the Assets nav link and click Click Import > Discover.  Click the Discover button and select
-    **com.centurylink.mdw.microservice**, and then click Import at the bottom of the page.
-  
-#### Add an adapter activity
-  During the bug lifecycle we'll want to confirm any associated commit, and for this we'll use the [GitHub REST API](https://developer.github.com/v3/).
-  
-  - In Designer open "A Bug's Life" and drag from the toolbox a Microservice REST Adapter.  Link it between "Await Resolution" and "Close", and 
+  In this section we'll use MDW's RESTful Service Adapter activity to access the GitHub API.
+
+#### Add an adapter activity  
+  - In MDW Studio open "A Bug's Life" and drag from the toolbox a RESTful Service Adapter.  Link it between "Await Resolution" and "Close", and 
     label it "Retrieve Commit".  We need a variable to hold the adapter response, so on the process Variables tab add a local variable named 'commit'.
     We're not going to build a Jsonable model for this object, so just make the 'commit' variable type org.json.JSONObject.
     
   - On the REST adapter Design tab, make sure the GET method is selected, and paste this for Resource URL:<br>
     `https://api.github.com/repos/CenturyLinkCloud/mdw-demo/commits/${bug.commitId}`  
         
-  - Also on the activity Design tab, select GET for the HTTP Method, and in the Response Variable dropdown select 'response'.  We don't need a request
+  - Also on the activity Design tab, in the Response Variable dropdown select 'response'.  We don't need a request
     variable for an HTTP GET.  Here's what the process should look like:
     ![a bugs life 2](../images/a-bugs-life-2.png)<br> 
     
@@ -649,23 +640,23 @@ is available to clone in its completed state from the [mdw-demo repository](http
     enter expressions to show and capture data from the *bug* runtime value:<br>
     ![autoform variables](../images/autoform-variables.png)<br>
   
-  - Save ResolveBugAutoform.task and the process "A Bug's Life".  Post a new request with something like the following, (remembering to include the
+  - Sync the server.  Then post a new request with something like the following, (remembering to include the
     `autoform` header):
     ```json
     {
-      "title": "Missing documentation on package-level handlers",
-      "description": "Someone needs to step up.  I'm not saying who...",
+      "title": "Missing documentation on latest whiz-bang feature",
+      "description": "Someone needs to step up.",
       "severity": 3
     }
     ```
 
   - Now check the Tasks tab in MDWHub and drill into the task for the bug you just submitted.  Claim the task so that you can edit its data.
-    Now click on the Values nav link and you'll see the results of our autoform variables configuration.  Enter `52c7b84` for Commit:<br>
+    Now click on the Values nav link and you'll see the results of our autoform variables configuration.  Enter `9758b56` for Commit:<br>
     ![autoform](../images/autoform.png)<br>
-    The commitId above is the short form of a valid commit hash in mdw-demo on GitHub.  Click Save and then perform the Resolve action.
+    The commitId above is the short form of a valid commit hash in mdw-demo on GitHub.  Click Save, and then perform the Resolve action.
     
-  - Click over to the Workflow tab in MDWHub.  Select "All Processes" in the dropdown, and set the Filter to Completed to see your the latest 
-    "A Bug's Life" at the top.  View the value of *bug* to confirm that the commit id we entered is reflected back into our workflow.
+  - Click over to the Workflow tab in MDWHub.  Select "All Processes" in the dropdown, and set the Filter to \[Any] to see your the latest 
+    "A Bug's Life" at the top.  In tht process the value of *bug* to confirm that the commit id we entered is reflected back into our workflow.
     Check the value of *commit* to see what came back from GitHub.  Another item of note: if you click on the Retrieve Commit adapter you'll
     see that it has Requests and Responses property tabs where you can drill in to see other information like the URL and HTTP headers.
 

@@ -123,11 +123,16 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
         }
     }
 
+    /**
+     * Populates "response" variable with a default JSON status object.  Can be overwritten by
+     * custom logic in a downstream activity, or in a JsonRestService implementation.
+     */
     protected Object handleResult(Result result) throws ActivityException {
+        ServiceValuesAccess serviceValues = getRuntimeContext().getServiceValues();
+        StatusResponse statusResponse;
         if (result.isError()) {
-            ServiceValuesAccess serviceValues = getRuntimeContext().getServiceValues();
             logsevere("Validation error: " + result.getStatus().toString());
-            StatusResponse statusResponse = new StatusResponse(result.getWorstCode(), result.getStatus().getMessage());
+            statusResponse = new StatusResponse(result.getWorstCode(), result.getStatus().getMessage());
             String responseHeadersVarName = serviceValues.getResponseHeadersVariableName();
             Map<String,String> responseHeaders = serviceValues.getResponseHeaders();
             if (responseHeaders == null) {
@@ -138,21 +143,21 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
             }
             responseHeaders.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(statusResponse.getStatus().getCode()));
             setVariableValue(responseHeadersVarName, responseHeaders);
-            String responseVariableName = serviceValues.getResponseVariableName();
-            Variable responseVariable = getMainProcessDefinition().getVariable(responseVariableName);
-            if (responseVariable == null)
-                throw new ActivityException("Missing response variable: " + responseVariableName);
-            Object responseObject;
-            if (responseVariable.getType().equals(Jsonable.class.getName()))
-                responseObject = statusResponse; // _type has not been set, so serialization would fail
-            else
-                responseObject = serviceValues.fromJson(responseVariableName, statusResponse.getJson());
-            setVariableValue(responseVariableName, responseObject);
-            return false;
         }
         else {
-            return true;
+            statusResponse = new StatusResponse(com.centurylink.mdw.model.Status.OK, "Valid request");
         }
+        String responseVariableName = serviceValues.getResponseVariableName();
+        Variable responseVariable = getMainProcessDefinition().getVariable(responseVariableName);
+        if (responseVariable == null)
+            throw new ActivityException("Missing response variable: " + responseVariableName);
+        Object responseObject;
+        if (responseVariable.getType().equals(Jsonable.class.getName()))
+            responseObject = statusResponse; // _type has not been set, so serialization would fail
+        else
+            responseObject = serviceValues.fromJson(responseVariableName, statusResponse.getJson());
+        setVariableValue(responseVariableName, responseObject);
+        return !result.isError();
     }
 
     /**

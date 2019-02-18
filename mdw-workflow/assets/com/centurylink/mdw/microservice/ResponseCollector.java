@@ -3,6 +3,7 @@ package com.centurylink.mdw.microservice;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.centurylink.mdw.model.variable.ServiceValuesAccess;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
@@ -61,16 +62,14 @@ public class ResponseCollector extends DefaultActivityImpl {
      * Override if your main response does not have a JsonTranslator for its type.
      */
     protected void updateResponse(Pair<Integer,JSONObject> combined) throws ActivityException {
-        Variable responseHeadersVar = getProcessDefinition().getVariable("responseHeaders");
-        if (responseHeadersVar != null) {
-            @SuppressWarnings("unchecked")
-            Map<String,String> responseHeaders = (Map<String,String>)getVariableValue("responseHeaders");
-            if (responseHeaders == null)
-                responseHeaders = new HashMap<>();
-            responseHeaders.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(combined.getFirst()));
-        }
-
-        setVariableValue("response", combined.getSecond().toString(2));
+        ServiceValuesAccess serviceValues = getRuntimeContext().getServiceValues();
+        Map<String,String> responseHeaders = serviceValues.getResponseHeaders();
+        if (responseHeaders == null)
+            responseHeaders = new HashMap<>();
+        responseHeaders.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(combined.getFirst()));
+        setVariableValue(serviceValues.getResponseHeadersVariableName(),responseHeaders);
+        
+        setVariableValue(serviceValues.getResponseVariableName(), combined.getSecond().toString(2));
     }
 
 }

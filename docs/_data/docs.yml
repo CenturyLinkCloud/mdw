@@ -16,8 +16,8 @@
 
 - title: Guides
   docs:
-  - guides/tomcat
   - guides/spring-boot
+  - guides/tomcat
   - guides/docker
   - guides/kubernetes
   - guides/cloud-foundry

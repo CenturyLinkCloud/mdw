@@ -21,9 +21,8 @@ that enables you to create workflow processes and other assets.
      - 3.2 [Create a Run Configuration](#32-create-a-run-configuration)
      - 3.3 [Start the MDW server](#33-start-the-mdw-server)
      - 3.4 [Run a process through MDWHub](#34-run-a-process-through-mdwhub)
-  4. [Add a Process Variable](#4-add-a-process-variable)
-  5. [Create a Custom Activity](#4-create-a-custom-activity)
-  6. [Create a REST Service](#5-create-a-rest-service)
+  4. [Explore the MDW Cookbook](#4-explore-the-mdw-cookbook)
+     - 4.1 [Walk through MDW's essential features](#41-walk-through-mdws-essential-features)
 
 ## 1. Install and Run MDW Studio
 
@@ -136,3 +135,15 @@ that enables you to create workflow processes and other assets.
 ### 3.4 Run a process through MDWHub
   - Right-click on My First Process in the project tree and select Run Process.
   - This should open the MDWHub run process page.  Click the run button to execute your flow.
+
+## 4. Explore the MDW Cookbook
+
+### 4.1 Walk through MDW's essential features
+  - Check out the [MDW Cookbook](../mdw-cookbook) to learn more about MDW:
+    - Implement a REST API that uses workflow
+    - Incorporate human-performed tasks
+    - Consume a REST service from workflow
+    - Design a custom web UI to interact with your flow
+    - Send Slack notifications in a process
+    - Add custom dashboard chards to MDWHub
+    

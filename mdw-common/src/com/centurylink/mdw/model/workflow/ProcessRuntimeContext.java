@@ -130,7 +130,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         this.process = process;
         this.processInstance = processInstance;
         this.performanceLevel = performanceLevel;
-        this.variables = new HashMap<String,Object>();
+        this.variables = new HashMap<>();
     }
 
     public ProcessRuntimeContext(Package pkg, Process process, ProcessInstance processInstance, int performanceLevel, Map<String,Object> variables) {
@@ -182,12 +182,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
     }
 
     protected String logtag() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("p");
-        sb.append(this.getProcessId());
-        sb.append(".");
-        sb.append(this.getProcessInstanceId());
-        return sb.toString();
+        return "p" + getProcessId() + "." + getProcessInstanceId();
     }
 
     public String getCompletionCode() {
@@ -284,7 +279,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
 
     protected Map<String,ValueExpression> getValueExpressionMap() {
         if (valueExpressionMap == null) {
-            valueExpressionMap = new HashMap<String,ValueExpression>();
+            valueExpressionMap = new HashMap<>();
             valueExpressionMap.put("context", new ValueExpressionLiteral(this, Object.class));
             valueExpressionMap.put("masterRequestId", new ValueExpressionLiteral(getMasterRequestId(), String.class));
             valueExpressionMap.put("mdwHubUrl", new ValueExpressionLiteral(ApplicationContext.getMdwHubUrl(), String.class));
@@ -418,7 +413,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         }
         this.processInstance = new ProcessInstance(json.getJSONObject("processInstance"));
         if (json.has("variables")) {
-            variables = new HashMap<String,Object>();
+            variables = new HashMap<>();
             Map<String,String> varMap = JsonUtil.getMap(json.getJSONObject("variables"));
             for (String name : varMap.keySet()) {
                 String val = varMap.get(name);
