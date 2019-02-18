@@ -72,7 +72,6 @@ public interface TaskActivity extends GeneralActivity {
     // these attributes indicate new-style task template
     static final String ATTRIBUTE_TASK_TEMPLATE = "TASK_TEMPLATE";
     static final String ATTRIBUTE_TASK_TEMPLATE_VERSION = "TASK_TEMPLATE_assetVersion";
-    static final String ATTRIBUTE_TASK_PAGELET = "TASK_PAGELET";
 
     static final String[] ATTRIBUTES_MOVED_TO_TASK_TEMPLATE = {
             ATTRIBUTE_TASK_LOGICAL_ID,
