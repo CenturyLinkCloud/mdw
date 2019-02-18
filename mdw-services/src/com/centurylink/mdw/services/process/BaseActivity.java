@@ -1348,7 +1348,7 @@ public abstract class BaseActivity implements GeneralActivity {
 
         Document docVO = getEngine().loadDocument(docRef, false);
 
-        if (docVO == null)
+        if (docVO == null || docVO.getContent(getPackage()) == null)
             return newValue != null;
 
         if (newValue == null)
@@ -1358,12 +1358,12 @@ public abstract class BaseActivity implements GeneralActivity {
         Object oldObject = VariableTranslator.realToObject(getPackage(), docVO.getDocumentType(), oldString);
 
         if (docVO.getDocumentType().equals(Object.class.getName()))
-            return !oldObject.equals(newValue);
+            return !newValue.equals(oldObject);
 
         // general comparison involves reserializing since round-trip results are not guaranteed
         oldString = VariableTranslator.realToString(getPackage(), docVO.getDocumentType(), oldObject);
         String newString = VariableTranslator.realToString(getPackage(), docVO.getDocumentType(), newValue);
-        return !oldString.equals(newString);
+        return !newString.equals(oldString);
     }
 
     /**
