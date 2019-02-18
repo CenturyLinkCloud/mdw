@@ -24,16 +24,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.mongodb.MongoClientURI;
+import com.mongodb.*;
 import org.bson.Document;
 import org.bson.json.JsonWriterSettings;
 
 import com.centurylink.mdw.dataaccess.db.DocumentDb;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.timer.CodeTimer;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientOptions;
-import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
@@ -42,6 +39,13 @@ import com.mongodb.client.model.Indexes;
 public class MongoDocumentDb implements DocumentDb {
 
     private static final String MDW_PREFIX = "MDW_";
+
+    // Optional URI specified options (for replica or shard sets)
+    protected static final String MAX_POOL_SIZE = "maxPoolSize";
+    protected static final String READ_CONCERN = "readConcernLevel";
+    protected static final String WRITE_CONCERN = "w";
+    protected static final String READ_PREFERENCE = "readPreference";
+
 
     private static String dbName;
     public String getDbName() { return dbName; }
@@ -80,15 +84,53 @@ public class MongoDocumentDb implements DocumentDb {
     public void initializeDbClient() {
         if (mongoClient == null) {
             MongoClientOptions.Builder options = MongoClientOptions.builder();
-            if (maxConnections > 100)  // MongoClient default is 100 max connections per host
-                options.connectionsPerHost(maxConnections);
 
-            if (dbHost.indexOf(",") > 0) {
+            if (dbHost.startsWith("mongodb") && dbHost.contains("://")) {
+                boolean needMaxConnections = true;
+                boolean needReadConcern = true;
+                boolean needWriteConcern = true;
+                boolean needReadPreference = true;
+
+                int index = dbHost.indexOf("?");
+                if (index > 0 && dbHost.length() > index+2) { // Means URI has options specified
+                    for (String entry : dbHost.substring(index+1).split("[&;]")) {
+                        String[] option = entry.split("=");
+                        if (option.length == 2 && option[1] != null) {
+                            switch (option[0]) {
+                                case MAX_POOL_SIZE:
+                                    needMaxConnections = false;
+                                    break;
+                                case READ_CONCERN:
+                                    needReadConcern = false;
+                                    break;
+                                case WRITE_CONCERN:
+                                    needWriteConcern = false;
+                                    break;
+                                case READ_PREFERENCE:
+                                    needReadPreference = false;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+                // Apply default option needed for replica sets whenever not specified in URI
+                if (needMaxConnections)
+                    options = options.connectionsPerHost(maxConnections);
+                if (needReadConcern)
+                    options = options.readConcern(ReadConcern.MAJORITY);
+                if (needWriteConcern)
+                    options = options.writeConcern(WriteConcern.MAJORITY);
+                if (needReadPreference)
+                    options = options.readPreference(ReadPreference.primary());
+
                 mongoClient = new MongoClient(new MongoClientURI(dbHost, options));
                 dbPort = 0;
             }
-            else
-                mongoClient = new MongoClient(new ServerAddress(dbHost, dbPort), options.build());
+            else {
+                mongoClient = new MongoClient(new ServerAddress(dbHost, dbPort), options.connectionsPerHost(maxConnections).writeConcern(WriteConcern.ACKNOWLEDGED).build());
+            }
 
             for (String name : MongoDocumentDb.getMongoDb().listCollectionNames()) {
                 if (name.startsWith(MDW_PREFIX)) {
