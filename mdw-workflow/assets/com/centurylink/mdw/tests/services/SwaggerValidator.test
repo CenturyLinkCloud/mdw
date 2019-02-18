@@ -1,0 +1,31 @@
+package com.centurylink.mdw.tests.services
+
+import com.centurylink.mdw.model.StatusResponse
+import com.centurylink.mdw.model.Status
+import org.json.JSONObject
+
+def response = post http("api/com/centurylink/mdw/tests/services/Person") {
+    payload = '''{
+  "firstName": "Douglas",
+  "lastName": "Crockford"
+}'''
+}
+assert response.code == 200
+def statusResponse = new StatusResponse(new JSONObject(response.actual))
+assert statusResponse.status.code == Status.OK.code
+assert statusResponse.status.message == 'Valid request'
+
+response = post http("api/com/centurylink/mdw/tests/services/Person") {
+    payload = '''{
+  "firstName": "Douglas",
+  "lastName": "Crockford",
+  "occupation": "Icon"
+}'''
+}
+assert response.code == 400
+statusResponse = new StatusResponse(new JSONObject(response.actual))
+assert statusResponse.status.code == Status.BAD_REQUEST.code
+assert statusResponse.status.message == '["occupation: value \'Icon\' is not allowed"]'
+
+
+

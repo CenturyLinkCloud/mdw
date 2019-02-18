@@ -11,7 +11,7 @@ messageMod.controller('MessageController', ['$scope', '$location', '$http', 'mdw
   $scope.httpHelper.httpMethods = [];
   $scope.httpHelper.httpMethod = 'POST';
   $scope.httpHelper.timeOut = 15000;
-  $scope.httpHelper.url = "http://localhost:8080/mdw/services";
+  $scope.httpHelper.url = 'http://localhost:8080/mdw/api';
   $scope.httpHelper.responseCode = "";
   $scope.httpHelper.httpMethods = HTTP_METHODS.slice();
   
@@ -25,12 +25,12 @@ messageMod.controller('MessageController', ['$scope', '$location', '$http', 'mdw
 
   var mdwProps = util.getMdwProperties();
   if (mdwProps) {
-    $scope.httpHelper.url = mdwProps["mdw.services.url"] + "/services";
+    $scope.httpHelper.url = mdwProps['mdw.services.url'] ? mdwProps['mdw.services.url'] + '/api' : mdwProps['mdw.hub.url'] + '/api';
   }
   else {
     util.loadMdwProperties().then(function(response) {
       mdwProps = util.getMdwProperties();
-      $scope.httpHelper.url = mdwProps["mdw.services.url"] + "/services";
+      $scope.httpHelper.url = mdwProps['mdw.services.url'] ? mdwProps['mdw.services.url'] + '/api' : mdwProps['mdw.hub.url'] + '/api';
     });
   }
 
