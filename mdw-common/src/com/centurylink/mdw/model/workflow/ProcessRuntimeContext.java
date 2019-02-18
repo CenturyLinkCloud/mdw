@@ -365,6 +365,8 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
             Variable var = getProcess().getVariable(key);
             if (var == null)
                 throw new IllegalArgumentException("Variable not defined: " + key);
+            if (obj == null)
+                return "";
             if (obj instanceof Date)
                 return ((Date)obj).toInstant().toString();  // dates always resolve to ISO time
             VariableTranslator translator = com.centurylink.mdw.translator.VariableTranslator

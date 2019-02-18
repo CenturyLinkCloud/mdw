@@ -137,6 +137,8 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
      * @return serialized string value
      */
     public static String realToString(Package pkg, String type, Object value) {
+        if (value == null)
+            return "";
         com.centurylink.mdw.variable.VariableTranslator trans = getTranslator(pkg, type);
         if (trans instanceof DocumentReferenceTranslator)
             return ((DocumentReferenceTranslator)trans).realToString(value);
@@ -153,6 +155,8 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
      * @return deserialized object
      */
     public static Object realToObject(Package pkg, String type, String value) {
+        if (StringHelper.isEmpty(value))
+            return null;
         com.centurylink.mdw.variable.VariableTranslator trans = getTranslator(pkg, type);
         if (trans instanceof DocumentReferenceTranslator)
             return ((DocumentReferenceTranslator)trans).realToObject(value);
