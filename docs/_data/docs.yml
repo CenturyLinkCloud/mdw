@@ -39,11 +39,6 @@
   - guides/tuning
   - releases
 
-- title: Designer
-  docs:
-  - getting-started/install-designer
-  - designer/user-guide
-
 - title: Presentations
   docs:
   - presentations/microservices

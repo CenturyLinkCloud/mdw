@@ -82,7 +82,7 @@ title: MDW Configuration
       port: 27017  # default = 27017 (Note: If host is URI, port property is ignored)
       name: mdw  # default = mdw
 
-    # asset location info (use absolute paths when running thru eclipse wtp)
+    # asset location info
     asset:
       location: assets  # required
 

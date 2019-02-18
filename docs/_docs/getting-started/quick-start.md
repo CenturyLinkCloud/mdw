@@ -68,16 +68,9 @@ Get up and running with MDW in a hurry.
   If everything is set up correctly, after MDW fully starts you should be able to access MDWHub in your browser:<br>
   <http://localhost:8080/mdw>
 
-### Import into IntelliJ IDEA
-  - Launch IntelliJ (Community Edition is okay), and select "Import Project" from the splash screen
+### Import into MDW Studio
+  - [Install MDW Studio](../../guides/mdw-studio) for IntelliJ IDEA
+  - Launch IntelliJ and select "Import Project" from the splash screen
   - Browse to and select your newly created project directory
   - Elect to "Import project from external model", and select Gradle or Maven as appropriate
-  - [Get started using MDW Studio](../../guides/mdw-studio) for IntelliJ
   
-### Import into Eclipse
-  In you included the `--eclipse` option when you ran `mdw init`, your project is ready to be imported into
-  Eclipse.  From the Eclipse File menu select > Import > General > Existing Projects into Workspace.  Then browse for your project
-  directory.
-  
-  To start creating workflows and assets using MDW Designer in Eclipse,
-  [install the MDW Designer plugin](../install-designer).
