@@ -22,7 +22,8 @@ process: # 10211
     value: |
       !!com.centurylink.mdw.tests.workflow.Person {
         firstName: isaac,
-        lastName: Richards
+        lastName: Richards,
+        occupation: Developer
       }
   variable: # 10523
     name: localJsonable
@@ -36,5 +37,6 @@ process: # 10211
     value: |
       !!com.centurylink.mdw.tests.workflow.Person {
         firstName: manoj,
-        lastName: agrawal
+        lastName: agrawal,
+        occupation: null
       }

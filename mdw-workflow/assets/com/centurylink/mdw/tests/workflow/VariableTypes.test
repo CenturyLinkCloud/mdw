@@ -11,7 +11,8 @@ start process("VariableTypes") {
 }''',
     inputYaml: '''!!com.centurylink.mdw.tests.workflow.Person
 firstName: isaac
-lastName: richards'''
+lastName: richards,
+occupation: Developer'''
   ]
 }
 wait process
