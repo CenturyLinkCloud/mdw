@@ -727,7 +727,13 @@ public class VersionControlGit implements VersionControl {
     }
 
     public byte[] readFromHead(String filePath) throws Exception {
-        return readFromCommit(ObjectId.toString(localRepo.resolve(Constants.HEAD)), filePath);
+        try {
+            return readFromCommit(ObjectId.toString(localRepo.resolve(Constants.HEAD)), filePath);
+        }
+        catch (Exception e) {  // MDW Studio throws MissingObjectExceptions after a pull, on Windows at least
+            reconnect();
+            return readFromCommit(ObjectId.toString(localRepo.resolve(Constants.HEAD)), filePath);
+        }
     }
 
     public Map<String, List<String>> checkVersionConsistency(String branch, String path) throws Exception {
