@@ -330,7 +330,7 @@ public class AssetContentServlet extends HttpServlet {
                     authorizeForUpdate(request.getSession(), Action.Change, Entity.Asset, path, isInstance);
 
                     // If not Development, asset change will have to be committed, so check if on latest commit
-                    if (!isInstance && !ApplicationContext.isDevelopment() && vcs.getCommit() != vcs.getRemoteCommit(vcs.getBranch())) {
+                    if (!isInstance && !ApplicationContext.isDevelopment() && vcs.getCommit() != null && !vcs.getCommit().equals(vcs.getRemoteCommit(vcs.getBranch()))) {
                         throw new ServiceException(ServiceException.NOT_ALLOWED, "Asset save was NOT performed - local commit out of sync with remote");
                     }
 
