@@ -48,6 +48,14 @@ public class PrePostWidgetProvider implements WidgetProvider {
             language.setAttribute("section", "Script");
             language.setOptions(Arrays.asList(new String[] {"Groovy", "Kotlin Script"}));
             widgets.add(language);
+            Widget outputDocs = new Widget("Output Documents", "picklist");
+            outputDocs.setAttribute("label", "Documents");
+            outputDocs.setAttribute("unselectedLabel", "Read-Only");
+            outputDocs.setAttribute("selectedLabel", "Writable");
+            outputDocs.setAttribute("source", "DocumentVariables");
+            outputDocs.setAttribute("section", "Script");
+            widgets.add(outputDocs);
+
             return widgets;
         }
         return null;
