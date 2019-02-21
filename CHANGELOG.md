@@ -1,16 +1,48 @@
 # Change Log
 
-## [6.1.14](https://github.com/CenturyLinkCloud/mdw/tree/6.1.14) (2019-02-01)
+## [6.1.15](https://github.com/CenturyLinkCloud/mdw/tree/6.1.15) (2019-02-21)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.14...6.1.15)
+
+**Implemented enhancements:**
 
 **Compatibility Notes:**
-  - If using an embedded db on a case-sensitive file system where you wish to preserve data, add `--lower_case_table_names=1` 
-    to the db.startup section of mdw.yaml as illustrated in the config guide: https://centurylinkcloud.github.io/mdw/docs/guides/configuration/#mdwyaml.  
-    This change is due to enhancement issue #466.
-  - To take advantage of enhanced dashboard charts introduced by issue #582, it's highly recommended that you add the indexes 
+  - To take advantage of enhanced dashboard charts introduced by issue #582, it's highly recommended that you add the indexes
     commented out at the bottom of the update scripts:   
      - https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/database/mysql/mdw_upgrade_6.0_To_6.1.sql
      - https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/database/oracle/mdw_upgrade_6.0_To_6.1.sql
-    Depending on how much existing data is present, these indexes may take a long time to create.
+    Depending on how much existing data is present, these indexes may take a while to create.
+
+- Apply needed MongoDB options whenever not present in specified URI [\#616](https://github.com/CenturyLinkCloud/mdw/issues/616)
+- Ability to specify high priority in SMTP emails [\#614](https://github.com/CenturyLinkCloud/mdw/issues/614)
+- FilePanel enhancements for Kubernetes [\#611](https://github.com/CenturyLinkCloud/mdw/issues/611)
+- Display id and version on process Inspector tab [\#610](https://github.com/CenturyLinkCloud/mdw/issues/610)
+- Webpack precompile JSX assets in non-dev environments [\#608](https://github.com/CenturyLinkCloud/mdw/issues/608)
+- Implement process monitor for updating Service Summary [\#607](https://github.com/CenturyLinkCloud/mdw/issues/607)
+- Support encrypted property values for groups and lists [\#604](https://github.com/CenturyLinkCloud/mdw/issues/604)
+- Implement new ScheduledJob to automatically handle stuck activities [\#603](https://github.com/CenturyLinkCloud/mdw/issues/603)
+- Process/Request Insights charts in MDWHub dashboard [\#598](https://github.com/CenturyLinkCloud/mdw/issues/598)
+- Process Hotspots view in Dashboard tab [\#597](https://github.com/CenturyLinkCloud/mdw/issues/597)
+- Microservice dependencies wait activity [\#419](https://github.com/CenturyLinkCloud/mdw/issues/419)
+
+**Closed issues:**
+
+- Asset save action via Hub does not work [\#618](https://github.com/CenturyLinkCloud/mdw/issues/618)
+- Hub doesn't display the Output Document lists for Adapter type activities [\#617](https://github.com/CenturyLinkCloud/mdw/issues/617)
+- Swagger Validator activity generates no response when OK [\#615](https://github.com/CenturyLinkCloud/mdw/issues/615)
+- NullPointerExceptions resulting from issue \#457 [\#613](https://github.com/CenturyLinkCloud/mdw/issues/613)
+- FilePanel fixes and enhancements [\#612](https://github.com/CenturyLinkCloud/mdw/issues/612)
+- User-friendly message for tabs and nav links to missing React assets [\#609](https://github.com/CenturyLinkCloud/mdw/issues/609)
+- Repetitive loading/logging in ServicePaths cache [\#606](https://github.com/CenturyLinkCloud/mdw/issues/606)
+- In Hub Services tab, method-defined subpaths cause a server error when clicked [\#602](https://github.com/CenturyLinkCloud/mdw/issues/602)
+- Custom React Index.jsx assets fail to attach to DOM element on Windows [\#601](https://github.com/CenturyLinkCloud/mdw/issues/601)
+- Out-of-order dates for new month in dashboard breakdown data [\#599](https://github.com/CenturyLinkCloud/mdw/issues/599)
+
+## [6.1.14](https://github.com/CenturyLinkCloud/mdw/tree/6.1.14) (2019-02-01)
+
+**Compatibility Notes:**
+  - If using an embedded db on a case-sensitive file system where you wish to preserve data, add `--lower_case_table_names=1`
+    to the db.startup section of mdw.yaml as illustrated in the config guide: https://centurylinkcloud.github.io/mdw/docs/guides/configuration/#mdwyaml.  
+    This change is due to enhancement issue #466.
 
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.13...6.1.14)
 
