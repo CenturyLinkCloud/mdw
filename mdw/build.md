@@ -59,12 +59,12 @@
   - Update the new release on GitHub (https://github.com/CenturyLinkCloud/mdw/releases), copying the notes from updated CHANGELOG.md
 
 10. Run task 1, 2, 3 & 6 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
-    - Mark build as "This is a pre-release" on GitHub
+    - Mark snapshot release as "This is a pre-release" on GitHub
 
 11. See mdw-ctl-internal build.md.
 
 12. Create and publish Docker image
-    - Log into 143 server and sudo su - mdwapp, then go to directory with cloned Git repo (/app/prod/jack/mdw/mdw).
+    - Log into 143 and `su - mdwapp`, then go to directory with cloned Git repo (/app/prod/jack/mdw/mdw).
     - git pull
     - Create docker image with following command:
         docker build --build-arg version=6.1.04 -t mdwcore/mdw:6.1.04 .   (update with actual MDW version)
