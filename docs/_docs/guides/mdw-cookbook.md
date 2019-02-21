@@ -255,7 +255,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     Paths are qualified by the containing asset package name, so for this let's create a separate, friendly-named package to house our REST service.
     Right-click on "assets" folder in your project and select New > Package.  Name this new package simply "demo".
     
-  - In the "demo" package create a Java class named Bugs like this:
+  - Right-click on the 'demo' package and select New > MDW REST > Java Service.  Name the service "Bugs" and overwrite its content with this:
     ```java
     package demo;
     
@@ -1003,7 +1003,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     a [TaskIndexProvider](../../javadoc/com/centurylink/mdw/observer/task/TaskIndexProvider.html). 
 
 ### 3.4 Introduce collaboration through Slack 
-  When workflow is intertwined with manual activities, workgroup users and managers need to stay on top of the tasks they're responsible for.
+  When workflow is intertwined with human activities, workgroup users and managers need to stay on top of the tasks they're responsible for.
   Users can't be expected to continually monitor MDWHub to look for updates on assigned tasks and pending actions.
   [MDW Mobile](../mdw-mobile) provides a hub-like experience with complete workflow visibility, along with configurable device notifications.
   Another great option is [Slack](https://slack.com/), which will have particular appeal to teams already using it for workforce communication.
@@ -1015,8 +1015,9 @@ is available to clone in its completed state from the [mdw-demo repository](http
   description and a link back to MDWHub's task view.  Later we'll describe how to install the [MDW Slack App](install-the-mdw-slack-app) for more advanced
   two-way integration.
   
-  - Using Designer or MDWHub, import the necessary Slack asset package dependency.  In MDWHub, for example, on the Admin tab click the Assets nav link and
-    then Import > Discover and select the `com.centurylink.mdw.slack` package in the discovered list.
+  Slack support is included in an optional assets package.  The first order of business is to discover and import this package into your workflow project.
+  
+  - TODO: Discover/Import using Studio.
    
   - Configure an [incoming webhook](https://api.slack.com/incoming-webhooks) as described in the Slack documentation, and add it to [mdw.yaml](../configuration/):
     ```

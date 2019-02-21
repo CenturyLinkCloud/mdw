@@ -125,7 +125,6 @@ public class Init extends Setup {
         }
         else {
             System.out.println("Using templates from: " + templateDir);
-            System.out.println("TEMP ZIP: " + tempZip);
             new Zip(new File(templateDir), tempZip).run(progressMonitors);
         }
         new Unzip(tempZip, getProjectDir(), false, opt -> {
