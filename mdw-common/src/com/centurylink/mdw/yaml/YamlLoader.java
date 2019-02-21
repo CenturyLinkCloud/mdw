@@ -37,7 +37,7 @@ public class YamlLoader {
         this(new String(Files.readAllBytes(Paths.get(file.getPath()))));
     }
 
-    public YamlLoader(String yamlStr) throws IOException {
+    public YamlLoader(String yamlStr) {
         Yaml yaml = new Yaml();
         top = yaml.load(yamlStr);
     }

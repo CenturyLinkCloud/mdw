@@ -27,7 +27,14 @@ public abstract class GitDiscoverer implements Discoverer {
 
     private String ref;
     public String getRef() { return ref; }
-    public void setRef(String ref) { this.ref = ref; }
+    public void setRef(String ref) {
+        if (!this.ref.equals(ref)) {
+            assetPath = null;
+            packages = null;
+            packageInfo = null;
+        }
+        this.ref = ref;
+    }
 
     public abstract URL getApiBase();
     public abstract String getRepoPath();
