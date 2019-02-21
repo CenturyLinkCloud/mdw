@@ -65,8 +65,7 @@ public class VersionProperties extends Properties {
                 for (Enumeration<?> e = keys(); e.hasMoreElements();) {
                     String key = (String)e.nextElement();
                     String val = (String)get(key);
-                    bw.write(key.replaceAll(" ", "\\\\ ").replaceAll("!", "\\\\!") + "=" + val);
-                    bw.newLine();
+                    bw.write(key.replaceAll(" ", "\\\\ ").replaceAll("!", "\\\\!") + "=" + val + "\n");
                 }
             }
             bw.flush();
