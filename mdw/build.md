@@ -32,7 +32,7 @@
   - Compilation or testing errors will prevent the build from being published.
 
 7. After success:
-  Manually close/release from [Nexus Repository Manager](https://oss.sonatype.org/#welcome) (don't want to automating this)
+  Manually close/release from [Nexus Repository Manager](https://oss.sonatype.org/#welcome) (don't want to automating this).
   Verify repository contains artifacts:
   7a. (Formal Build)
     - Repository: http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (20-30 min)

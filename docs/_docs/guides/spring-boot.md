@@ -3,63 +3,83 @@ permalink: /docs/guides/spring-boot/
 title: Spring Boot
 ---
 
-## 1. Self-contained Boot Jar
-  The quickest way to get started is to use MDW's [CLI](../cli) and follow the 
-  [Quick Start](../quick-start) setup guide.  When you run `mdw install` in your
-  project directory, the standalone mdw-boot.jar is downloaded from the latest
-  release on GitHub: <https://github.com/CenturyLinkCloud/mdw/releases>.
-  
-  The downloaded mdw-boot.jar already contains embedded Tomcat, and the base
-  assets by default include [Embedded DB](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/db/readme.md).
-  All your artifacts take the form of [Assets](../../help/assets.html), so you'll never need to touch mdw-boot.jar. 
-  
-## 2. MDW as a Spring Boot Dependency
-  If you're creating your own full-blown Spring Boot app, you can reference MDW as a straight dependency.
-  By including [mdw-spring-boot](https://search.maven.org/#search%7Cga%7C1%7Ca%3A%22mdw-spring-boot%22) among your dependencies, 
-  you'll automagically get the MDWHub webapp and expose your MDW 
-  [REST APIs](../../guides/mdw-cookbook/#14-expose-the-process-as-a-rest-service).  Sometimes we call this *Pure Spring Boot* mode.
-  
-  The easy way to see how this works is to use run the MDW CLI command:
-  ```
-  mdw init --spring-boot
-  ```
-  This creates a starter project with these extra artifacts:
-  
-  - **build.gradle** (or pom.xml with the --maven option): 
+## Sections in this Guide
+  1. [MDW as a Spring Boot Dependency](#1-mdw-as-a-spring-boot-dependency)
+     - 1.1 [Gradle](#11-gradle)
+     - 1.2 [Maven](#12-maven)
+     - 1.3 [MDW Studio](#13-mdw-studio)
+     - 1.4 [MDW CLI](#14-mdw-cli)
+  2. [Project Build Considerations](#2-project-build-considerations)
+     - 2.1 [Asset jar dependencies](#21-asset-jar-dependencies)
+     - 2.2 [Boot jar generation](#22-boot-jar-generation)
+     - 2.3 [Runtime class loading](#23-runtime-class-loading)
 
-  Here's a snippet from a simple Gradle build script created in this way: 
+
+## 1. MDW as a Spring Boot Dependency
+
+  Building MDW into your Spring Boot project is as simple as adding the
+  [mdw-spring-boot](https://search.maven.org/#search%7Cga%7C1%7Ca%3A%22mdw-spring-boot%22) dependency.
+  You'll automagically get the MDWHub webapp and expose your MDW 
+  [REST APIs](../../guides/mdw-cookbook/#14-expose-the-process-as-a-rest-service).
+
+### 1.1 Gradle
   ```gradle
-  buildscript {
-      repositories {
-          mavenCentral()
-      }
-      dependencies {
-          classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-      }
-  }
-  
-  apply plugin: 'java'
-  apply plugin: 'org.springframework.boot'
-  
-  group = "my-mdw-boot"
-  version = '1.0.1-SNAPSHOT'
-  
-  sourceCompatibility = 1.8
-  
-  repositories {
-      mavenCentral()
-  }
-  
   dependencies {
       compile group: 'com.centurylink.mdw', name: 'mdw-spring-boot', version: mdwVersion
       compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: springBootVersion
       
       // asset package dependencies
       compileOnly fileTree(dir: "${assetLoc}", includes: ["**/*.jar"])
-  }
-  ```  
+  }  
+  ```
+  Gradle is the preferred build automation tool for MDW.
 
-### 2.1 Asset Jar Dependencies
+### 1.2 Maven
+  ```xml
+  <dependencies>
+    <dependency>
+      <groupId>com.centurylink.mdw</groupId>
+      <artifactId>mdw-spring-boot</artifactId>
+      <version>${mdw.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <!-- kotlin asset package dependencies -->
+    <dependency>
+      <groupId>com.centurylink.mdw.kotlin</groupId>
+      <artifactId>script-engine.jar</artifactId>
+      <version>0.4</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/assets/com/centurylink/mdw/kotlin/script-engine.jar</systemPath>
+    </dependency>        
+    <dependency>
+      <groupId>com.centurylink.mdw.microservice</groupId>
+      <artifactId>service-plan.jar</artifactId>
+      <version>0.2</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/assets/com/centurylink/mdw/microservice/service-plan.jar</systemPath>
+    </dependency>        
+  </dependencies>  
+  ```
+
+### 1.3 MDW Studio
+  With [MDW Studio](../mdw-studio) you can use the New Project wizard to create an MDW Spring Boot project with the appropriate build file dependencies:
+  ![New Project MDW](../images/studio/new-project-mdw.png)
+  [Section 1.2](../mdw-studio/#12-create-and-open-a-project) of the User Guide walks you through how to do this. 
+  
+### 1.4 MDW CLI
+  The [MDW CLI](../../getting-started/cli) comes with the ability to create a new project, which can be built and run from the command line,
+  and/or imported into MDW Studio.  Here's the command to create a new Spring Boot project with default options:
+  ```
+  mdw init --spring-boot
+  ``` 
+  Check out the [Quick Start](../../getting-started/quick-start) guide for a walk through describing this approach.
+    
+## 2. Project Build Considerations
+    
+### 2.1 Asset jar dependencies
   Notice the compileOnly `fileTree` dependency on jar files among your assets:
   ```gradle
       compileOnly fileTree(dir: "${assetLoc}", includes: ["**/*.jar"])
@@ -68,7 +88,7 @@ title: Spring Boot
   its dependency resolution on Gradle or Maven.  The reason for **compileOnly** is so that these jars do not get bundled
   into your generated boot jar, which would defeat the purpose of treating them as dynamic assets.
 
-### 2.2 Boot Jar Generation
+### 2.2 Boot jar generation
   To avoid runtime [NoClassDefFoundErrors](https://docs.oracle.com/javase/8/docs/api/java/lang/NoClassDefFoundError.html),
   it's **imperative** that you customize the `bootJar` task as in the example:
   ```gradle
@@ -84,7 +104,7 @@ title: Spring Boot
   The purpose of this is to exclude all asset packages from your generated boot jar.  Read on if you're curious about
   why this is needed.
 
-### 2.3 Runtime Class Loading
+### 2.3 Runtime class loading
   Aside from asset jars, you can of course also have regular old static dependencies that are built into your boot jar:
   ```gradle
      compile 'com.google.code.gson:gson:2.8.5'
