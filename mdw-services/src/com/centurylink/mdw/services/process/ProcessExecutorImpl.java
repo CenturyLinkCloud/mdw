@@ -280,7 +280,7 @@ class ProcessExecutorImpl {
             String masterRequestId, Map<String,String> parameters, String label, String template)
     throws ProcessException, DataAccessException
     {
-        ProcessInstance pi;
+        ProcessInstance pi = null;
         try {
             Process processVO;
             if (OwnerType.MAIN_PROCESS_INSTANCE.equals(ownerType)) {
@@ -318,6 +318,10 @@ class ProcessExecutorImpl {
             edao.createProcessInstance(pi);
             createVariableInstancesFromEventMessage(pi, parameters);
         } catch (SQLException e) {
+            if (pi != null && pi.getId() != null && pi.getId() > 0L)
+                try {
+                    edao.setProcessInstanceStatus(pi.getId(), WorkStatus.STATUS_FAILED);
+                } catch (SQLException ex) { logger.severeException("Exception while updating process status to 'Failed'", ex);}
             throw new DataAccessException(-1, e.getMessage(), e);
         }
         return pi;
