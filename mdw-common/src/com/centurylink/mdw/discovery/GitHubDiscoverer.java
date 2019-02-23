@@ -103,7 +103,7 @@ public class GitHubDiscoverer extends GitDiscoverer {
         String parentPath;
         if (lastSlash == -1)
             parentPath = "";
-        else if (lastSlash >= path.length() - 1)
+        else if (lastSlash < path.length() - 1)
             parentPath = path.substring(0, lastSlash);
         else
             throw new IOException("Invalid path: " + path);
