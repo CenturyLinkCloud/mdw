@@ -3,6 +3,7 @@ package com.centurylink.mdw.discovery;
 import com.centurylink.mdw.model.PackageMeta;
 import com.centurylink.mdw.model.ProjectMeta;
 import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.file.Packages;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -28,7 +29,7 @@ public abstract class GitDiscoverer implements Discoverer {
     private String ref;
     public String getRef() { return ref; }
     public void setRef(String ref) {
-        if (!this.ref.equals(ref)) {
+        if (ref == null || !ref.equals(this.ref)) {
             assetPath = null;
             packages = null;
             packageInfo = null;
@@ -38,6 +39,7 @@ public abstract class GitDiscoverer implements Discoverer {
 
     public abstract URL getApiBase();
     public abstract String getRepoPath();
+    public abstract String getRepoName();
     public abstract List<String> getBranches(int max) throws IOException;
     public abstract List<String> getTags(int max) throws IOException;
 
@@ -102,7 +104,9 @@ public abstract class GitDiscoverer implements Discoverer {
                 JSONObject item = treeInfo.getJSONObject(i);
                 String path = item.getString("path");
                 if (path.endsWith("/.mdw")) {
-                    packages.add(getPackageName(path));
+                    String pkg = getPackageName(path);
+                    if (!Packages.isMdwPackage(pkg))
+                        packages.add(pkg);
                 }
             }
         }

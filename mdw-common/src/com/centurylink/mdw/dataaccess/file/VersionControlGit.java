@@ -469,6 +469,22 @@ public class VersionControlGit implements VersionControl {
         cloneCommand.call();
     }
 
+    /**
+     * Different from cloneRepo in that will clone only a single branch.
+     * For quicker clone of specific branch/tag.
+     */
+    public void cloneBranch(String branch) throws Exception {
+        CloneCommand cloneCommand = Git.cloneRepository()
+                .setURI(repositoryUrl)
+                .setDirectory(localRepo.getDirectory().getParentFile())
+                .setBranchesToClone(Arrays.asList(branch))
+                .setCloneAllBranches(false)
+                .setBranch(branch);
+        if (credentialsProvider != null)
+            cloneCommand.setCredentialsProvider(credentialsProvider);
+        cloneCommand.call();
+    }
+
     public Status getStatus() throws Exception {
         return getStatus(null);
     }

@@ -15,6 +15,7 @@ public class GitHubDiscoverer extends GitDiscoverer {
 
     private URL apiBase;
     private String repoPath;
+    private String repoName;
 
     /**
      * Must be a public repository.
@@ -28,17 +29,17 @@ public class GitHubDiscoverer extends GitDiscoverer {
         apiBase = new URL(apiBaseUrl + "api.github.com/repos");
         String path = repoUrl.getPath();
         repoPath = path.substring(1, path.lastIndexOf('.'));
+        repoName = repoPath.substring(repoPath.lastIndexOf('/') + 1);
     }
 
     @Override
-    public URL getApiBase() {
-        return apiBase;
-    }
+    public URL getApiBase() { return apiBase; }
 
     @Override
-    public String getRepoPath() {
-        return repoPath;
-    }
+    public String getRepoPath() {  return repoPath; }
+
+    @Override
+    public String getRepoName() { return repoName; }
 
     @Override
     public List<String> getBranches(int max) throws IOException {
@@ -99,9 +100,13 @@ public class GitHubDiscoverer extends GitDiscoverer {
     private String getSha(String path, String ref) throws IOException {
         // CenturylinkCloud/mdw/contents/mdw-workflow?ref=6.1.15-SNAPSHOT
         int lastSlash = path.lastIndexOf('/');
-        if (lastSlash == -1 || lastSlash >= path.length() - 1)
+        String parentPath;
+        if (lastSlash == -1)
+            parentPath = "";
+        else if (lastSlash >= path.length() - 1)
+            parentPath = path.substring(0, lastSlash);
+        else
             throw new IOException("Invalid path: " + path);
-        String parentPath = path.substring(0, lastSlash);
         String itemName = URLEncoder.encode(path.substring(lastSlash + 1), "utf-8");
         String url = apiBase + "/" + repoPath + "/contents/" + parentPath + "?ref=" + ref;
         HttpHelper http = getHttpHelper(url);
