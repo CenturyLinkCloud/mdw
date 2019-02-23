@@ -16,7 +16,7 @@ import java.util.*;
 
 public abstract class GitDiscoverer implements Discoverer {
 
-    private static boolean FRUGAL_MDW_REQUESTS = false;
+    private static boolean FRUGAL_MDW_REQUESTS = true;
     private static final String MDW_GIT = "https://github.com/CenturyLinkCloud/mdw.git";
 
     private URL repoUrl;
@@ -105,12 +105,13 @@ public abstract class GitDiscoverer implements Discoverer {
                 String path = item.getString("path");
                 if (path.endsWith("/.mdw")) {
                     String pkg = getPackageName(path);
-                    if (!Packages.isMdwPackage(pkg))
+                    if (MDW_GIT.equals(repoUrl.toString()) || !Packages.isMdwPackage(pkg))
                         packages.add(pkg);
                 }
             }
         }
 
+        Collections.sort(packages);
         return packages;
     }
 
@@ -128,7 +129,7 @@ public abstract class GitDiscoverer implements Discoverer {
                         throw new IOException("not found: " + yamlPath);
                     String base64 = packageYaml.getString("content");
                     pkgInfo = new PackageMeta(Base64.getMimeDecoder().decode(base64));
-                    if (FRUGAL_MDW_REQUESTS && MDW_GIT.equals(repoUrl.toString()))
+                    if (MDW_GIT.equals(repoUrl.toString()) && FRUGAL_MDW_REQUESTS)
                         mdwVersion = pkgInfo.getVersion();
                 }
                 else {
