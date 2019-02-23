@@ -33,6 +33,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
      - 4.2 [Unit test an activity using MockRuntimeContext](#42-unit-test-an-activity-using-mockruntimecontext)
      - 4.3 [Automate service tests with workflow verification](#43-automate-service-tests-with-workflow-verification)
      - 4.4 [Designate a package-level error handler](#44-designate-a-package-level-error-handler)
+     - 4.5 [Create custom dashboard charts](#45-create-custom-dashboard-charts)
 
 ## 1. Implement a REST Service
 
@@ -1015,19 +1016,26 @@ is available to clone in its completed state from the [mdw-demo repository](http
   description and a link back to MDWHub's task view.  Later we'll describe how to install the [MDW Slack App](install-the-mdw-slack-app) for more advanced
   two-way integration.
   
-  Slack support is included in an optional assets package.  The first order of business is to discover and import this package into your workflow project.
+  MDW delivers much of its functionality by way of asset packages like those we've been developing in this guide.  The project creation wizard
+  imports a few fundamental packages to get started with, but for additional features like Slack integration, we'll need to import 
+  `com.centurylink.mdw.slack` into our project.
   
-  - TODO: Discover/Import using Studio.
+  - From the IntelliJ menu select Tools > MDW > Discover New Assets.  Expand the MDW GitHub repository tags and select the version that corresponds
+    to your project's MDW version.  In Packages to Import, select 'com.centurylink.mdw.slack':
+    
+    ![Discover Assets](../images/discover-assets.png)<br>
+    **Note:** Besides MDW's packages, you can discover your own and other third-party packages by adding their Git repository URL to the Discovery 
+    URLs in MDW Studio. 
    
   - Configure an [incoming webhook](https://api.slack.com/incoming-webhooks) as described in the Slack documentation, and add it to [mdw.yaml](../configuration/):
     ```
     mdw.slack.webhook.url=https://hooks.slack.com/services/XXXXXXX/XXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXX
     ```
-    Then restart your server or refresh its cache.
+    Then restart your server to pick up this configuration change.
   
 #### Create a Slack notice template
-  - In Designer's Process Explorer view, right-click on package `com.centurylink.mdw.demo.bugs` and select New > JSON.  Edit your asset
-    to look something like this:
+  - In MDW Studio, right-click on package `com.centurylink.mdw.demo.bugs` and select New > File.  Name the file slackNotice.json.
+    Edit the asset to look something like this:
     ```
     {
       "text": "*<${taskInstanceUrl}|${request.title} \#${taskInstanceId}>*\\n${request.description}"
@@ -1038,12 +1046,11 @@ is available to clone in its completed state from the [mdw-demo repository](http
     [TaskRuntimeContext](../../javadoc/com/centurylink/mdw/model/task/TaskRuntimeContext.html), which gives you access to all your process
     variables (e.g.: ${request.title}) as well as some special values like ${taskInstanceUrl}.
     
-  - Save the notice template as slackNotice.json. 
-    See the Slack documentation on [message formatting](https://api.slack.com/docs/message-formatting) for more on how you can beautify your messages.
+  - See the Slack documentation on [message formatting](https://api.slack.com/docs/message-formatting) for more on how you can beautify your messages.
         
-  - Now let's tell MDW to make use of your notice template.  In Designer, open task asset ResolveBugCustom.task.  Click the Notices tab, 
+  - Now let's tell MDW to make use of your notice template.  Open task asset ResolveBugCustom.task.  Click the Notices tab, 
     which displays a table of configured notifications per outcome.  In the Template column dropdown for the **Open** outcome, select slackNotice.json.
-    The NotifierClass(es) column should automatically get populated with the appropriate notifier for the asset type you selected.
+    Paste `com.centurylink.mdw.slack.TaskNotifier` into the NotifierClass(es) column.
     ![task slack notice](../images/task-slack-notice.png)
     
     As an aside for future consideration, this is a comma-delimited list where you and also enter your own custom notifier classes which implement the 
@@ -1070,7 +1077,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
   - Follow these instructions from the repository readme for cloning and running mdw-demo:
     <https://github.com/CenturyLinkCloud/mdw-demo/blob/master/README.md>
     
-  - Run mdw-demo through Eclipse and try out the Bugs functionality we've just developed.
+  - Import mdw-demo into MDW Studio and try out the Bugs functionality we've just developed.
 
   
 ## 4. Explore other Features
@@ -1083,6 +1090,8 @@ is available to clone in its completed state from the [mdw-demo repository](http
 ### 4.3 Automate service tests with workflow verification
 
 ### 4.4 Designate a package-level error handler
+
+### 4.5 Create custom dashboard charts
 
     
     
