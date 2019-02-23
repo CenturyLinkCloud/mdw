@@ -40,6 +40,7 @@ public class Packages extends TreeMap<String,File> {
         DEFAULT_BASE_PACKAGES.add("com.centurylink.mdw.dashboard");
     }
 
+    // TODO: use "provider" from PackageMeta
     public static boolean isMdwPackage(String packageName) {
         return packageName.startsWith("com.centurylink.mdw.") &&
                 !packageName.startsWith("com.centurylink.mdw.demo") &&

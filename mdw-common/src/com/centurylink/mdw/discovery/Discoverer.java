@@ -9,6 +9,10 @@ import java.util.Map;
 public interface Discoverer {
 
     String getAssetPath() throws IOException;
+
+    /**
+     * Excludes MDW packages unless GitHub public repo.
+     */
     List<String> getPackages() throws IOException;
     Map<String, PackageMeta> getPackageInfo() throws IOException;
 }

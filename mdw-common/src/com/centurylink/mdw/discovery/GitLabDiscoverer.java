@@ -16,6 +16,7 @@ public class GitLabDiscoverer extends GitDiscoverer {
 
     private URL apiBase;
     private String repoPath;
+    private String repoName;
 
     public GitLabDiscoverer(URL repoUrl) throws IOException {
         this(repoUrl, false);
@@ -33,7 +34,8 @@ public class GitLabDiscoverer extends GitDiscoverer {
         apiBaseUrl += repoUrl.getHost();
         apiBase = new URL(apiBaseUrl + "/api/v4");
         String path = repoUrl.getPath();
-        repoPath = URLEncoder.encode(path.substring(1, path.lastIndexOf('.')), "utf-8");
+        repoPath = path.substring(1, path.lastIndexOf('.'));
+        repoName = repoPath.substring(repoPath.lastIndexOf('/') + 1);
         String query = repoUrl.getQuery();
         if (query != null) {
             for (String pair : query.split("&")) {
@@ -54,21 +56,20 @@ public class GitLabDiscoverer extends GitDiscoverer {
     }
 
     @Override
-    public URL getApiBase() {
-        return apiBase;
-    }
+    public URL getApiBase() { return apiBase; }
 
     @Override
-    public String getRepoPath() {
-        return repoPath;
-    }
+    public String getRepoPath() {  return repoPath; }
+
+    @Override
+    public String getRepoName() { return repoName; }
 
     @Override
     public List<String> getBranches(int max) throws IOException {
         if (max <= 0 || max > 100)
             max = 100;
         // projects/MDW_DEV%2Fmdw-demo-ctl/repository/branches
-        String url = apiBase + "/projects/" + repoPath + "/repository/branches?per_page=" + max;
+        String url = apiBase + "/projects/" + URLEncoder.encode(repoPath, "utf-8") + "/repository/branches?per_page=" + max;
         return getArrayValues(url,"name");
     }
 
@@ -77,13 +78,14 @@ public class GitLabDiscoverer extends GitDiscoverer {
         if (max <= 0 || max > 100)
             max = 100;
         // projects/MDW_DEV%2Fmdw-demo-ctl/repository/tags
-        String url = apiBase + "/projects/" + repoPath + "/repository/tags?per_page=" + max;
+        String url = apiBase + "/projects/" + URLEncoder.encode(repoPath, "utf-8") + "/repository/tags?per_page=" + max;
         return getArrayValues(url,"name");
     }
 
     public JSONObject getFileInfo(String path, String ref) throws IOException {
         // projects/MDW_DEV%2Fmdw-demo-ctl/repository/files/project.yaml?ref=master
-        String url = apiBase + "/projects/" + repoPath + "/repository/files/" + URLEncoder.encode(path, "utf-8") + "?ref=" + ref;
+        String url = apiBase + "/projects/" + URLEncoder.encode(repoPath, "utf-8") + "/repository/files/" +
+                URLEncoder.encode(path, "utf-8") + "?ref=" + ref;
         HttpHelper http = getHttpHelper(url);
         String info = http.get();
         if (http.getResponseCode() == 404) {
@@ -97,7 +99,8 @@ public class GitLabDiscoverer extends GitDiscoverer {
 
     public JSONArray getTreeInfo(String path, String ref, boolean recursive) throws IOException {
         // projects/MDW_DEV%2Fmdw-demo-ctl/repository/tree?path=/&ref=master
-        String url = apiBase + "/projects/" + repoPath + "/repository/tree?path=" + URLEncoder.encode(path, "utf-8") + "&ref=" + ref;
+        String url = apiBase + "/projects/" + URLEncoder.encode(repoPath, "utf-8") + "/repository/tree?path=" +
+                URLEncoder.encode(path, "utf-8") + "&ref=" + ref;
         if (recursive)
             url += "&recursive=true";
         HttpHelper http = getHttpHelper(url);

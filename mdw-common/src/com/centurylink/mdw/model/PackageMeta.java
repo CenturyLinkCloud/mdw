@@ -25,6 +25,7 @@ public class PackageMeta {
         version = loader.get("version", top);
         schemaVersion = loader.get("schemaVersion", top);
         icon = loader.get("icon", top);
+        provider = loader.get("provider", top);
 
     }
 
@@ -39,6 +40,9 @@ public class PackageMeta {
     private String icon;
     public String getIcon() { return icon; }
     public void setIcon(String icon) { this.icon = icon; }
+
+    private String provider;
+    public String getProvider() { return provider; }
 
     @Override
     public String toString() {
