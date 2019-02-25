@@ -87,6 +87,8 @@ public interface Listener {
     public static final String METAINFO_HTTP_METHOD = "HttpMethod";
     public static final String METAINFO_HTTP_STATUS_CODE = "HttpStatusCode";
 
+    public static final String METAINFO_TOPIC = "Topic"; // Topic based routing like Kafka, TibcoBus, etc
+
     public static final String METAINFO_REMOTE_ADDR = "RemoteAddr";
     public static final String METAINFO_REMOTE_HOST = "RemoteHost";
     public static final String METAINFO_REMOTE_PORT = "RemotePort";

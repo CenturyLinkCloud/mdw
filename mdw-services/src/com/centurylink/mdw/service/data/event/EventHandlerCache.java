@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 CenturyLink, Inc.
+ * Copyright (C) 2019 CenturyLink, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,8 @@ public class EventHandlerCache implements PreloadableCache {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private static HashMap<String,List<ExternalEvent>> myCache =
-        new HashMap<>();
+    private static HashMap<String,List<ExternalEvent>> myContentCache = new HashMap<>();
+    private static HashMap<String,List<ExternalEvent>> myPathCache = new HashMap<>();
 
     public EventHandlerCache(){
         super();
@@ -47,16 +47,41 @@ public class EventHandlerCache implements PreloadableCache {
      * Method that clears the cache
      */
     public void clearCache(){
-        myCache.clear();
+        myPathCache.clear();
+        myContentCache.clear();
     }
 
     /**
-     * returns the cached external event
+     * returns the cached content-based external event
      * @param bucket
      * @return Cached Item
      */
+    @Deprecated
     public static List<ExternalEvent> getExternalEvents(String bucket){
-      return myCache.get(bucket);
+      return getContentExternalEvents(bucket);
+    }
+
+    /**
+     * returns the cached content-based external event
+     * @param bucket
+     * @return Cached Item
+     */
+    public static List<ExternalEvent> getContentExternalEvents(String bucket){
+        return myContentCache.get(bucket);
+    }
+
+    /**
+     * returns the cached path-based external event
+     * @param bucket
+     * @return Cached Item
+     */
+    public static List<ExternalEvent> getPathExternalEvents(String bucket){
+        if (myPathCache.get(bucket) != null)
+            return myPathCache.get(bucket);
+        else if (bucket.indexOf('/') > 0) {  // We could have a sub-path
+            return getPathExternalEvents(bucket.substring(0, bucket.lastIndexOf('/')));
+        }
+        return null;
     }
 
     public static ExternalEvent fallbackHandler = new ExternalEvent();
@@ -93,7 +118,8 @@ public class EventHandlerCache implements PreloadableCache {
     }
 
     private synchronized void load() throws CachingException {
-        HashMap<String,List<ExternalEvent>> myCacheTemp = new HashMap<>();
+        HashMap<String,List<ExternalEvent>> myContentCacheTemp = new HashMap<>();
+        HashMap<String,List<ExternalEvent>> myPathCacheTemp = new HashMap<>();
         try {
             ProcessLoader loader = DataAccess.getProcessLoader();
             List<ExternalEvent> all = loader.loadExternalEvents();
@@ -103,18 +129,33 @@ public class EventHandlerCache implements PreloadableCache {
                     continue;
                 }
                 try{
-                    XmlPath xpath = e.getXpath();
-                    List<ExternalEvent> bucket = myCacheTemp.get(xpath.getHashBucket());
-                    if (bucket==null) {
-                        bucket = new ArrayList<>();
-                        myCacheTemp.put(xpath.getHashBucket(), bucket);
+                    if (e.isContentRouting()) {
+                        XmlPath xpath = e.getXpath();
+                        List<ExternalEvent> bucket = myContentCacheTemp.get(xpath.getHashBucket());
+                        if (bucket == null) {
+                            bucket = new ArrayList<>();
+                            myContentCacheTemp.put(xpath.getHashBucket(), bucket);
+                        }
+                        bucket.add(e);
                     }
-                    bucket.add(e);
+                    else {
+                        if (e.getMessagePattern().startsWith("/"))
+                            e.setMessagePattern(e.getMessagePattern().substring(1));
+                     //   if (e.getMessagePattern().endsWith("/"))
+                     //       e.setMessagePattern(e.getMessagePattern().substring(0, e.getMessagePattern().length()-1));
+                        List<ExternalEvent> bucket = myPathCacheTemp.get(e.getMessagePattern());
+                        if (bucket == null) {
+                            bucket = new ArrayList<>();
+                            myPathCacheTemp.put(e.getMessagePattern(), bucket);
+                        }
+                        bucket.add(e);
+                    }
                 } catch (Exception ex) {
                     logger.severeException("Cannot parse event pattern '" + e.getEventName() + "'", ex);
                 }
             }
-            myCache = myCacheTemp;
+            myContentCache = myContentCacheTemp;
+            myPathCache = myPathCacheTemp;
         } catch(Exception ex){
             throw new CachingException(ex.getMessage(), ex);
         }
