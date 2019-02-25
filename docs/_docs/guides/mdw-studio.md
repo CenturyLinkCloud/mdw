@@ -21,8 +21,11 @@ that enables you to create workflow processes and other assets.
      - 3.2 [Create a Run Configuration](#32-create-a-run-configuration)
      - 3.3 [Start the MDW server](#33-start-the-mdw-server)
      - 3.4 [Run a process through MDWHub](#34-run-a-process-through-mdwhub)
-  4. [Explore the MDW Cookbook](#4-explore-the-mdw-cookbook)
-     - 4.1 [Walk through MDW's essential features](#41-walk-through-mdws-essential-features)
+  4. [Discover and Import Asset Packages](#4-discover-and-import-asset-packages)
+     - 4.1 [Import the MDW Slack package](#41-import-the-mdw-slack-package)
+     - 4.2 [Expose your own packages for Discovery](#42-expose-your-own-packages-for-discovery)
+  5. [Explore the MDW Cookbook](#5-explore-the-mdw-cookbook)
+     - 5.1 [Walk through MDW's essential features](#51-walk-through-mdws-essential-features)
 
 ## 1. Install and Run MDW Studio
 
@@ -136,9 +139,23 @@ that enables you to create workflow processes and other assets.
   - Right-click on My First Process in the project tree and select Run Process.
   - This should open the MDWHub run process page.  Click the run button to execute your flow.
 
-## 4. Explore the MDW Cookbook
+## 4. Discover and Import Asset Packages
 
-### 4.1 Walk through MDW's essential features
+### 4.1 Import the MDW Slack package
+  - From the IntelliJ menu select Tools > MDW > Discover New Assets.  Expand the MDW GitHub repository tags and select the version that corresponds
+    to your project's MDW version.  In Packages to Import, select 'com.centurylink.mdw.slack':
+    ![Discover Assets](../images/discover-assets.png)
+
+### 4.2 Expose your own packages for Discovery
+  - Open IntelliJ Preferences/Settings.  Under the MDW category, click the `+` button next to From the IntelliJ menu select Tools > MDW > Discover New Assets.  Expand the MDW GitHub repository tags and select the version that corresponds
+    to your project's MDW version.  Enter/paste the Git repository URL containing the assets you'd like to discover.
+    ![Discovery Prefs](../images/discovery-prefs.png)
+  - Any MDW project's assets can be discovered through Git this way.  Assets are located by their relative path as specified in
+    [project.yaml](../configuration/#project.yaml).
+
+## 5. Explore the MDW Cookbook
+
+### 5.1 Walk through MDW's essential features
   - Check out the [MDW Cookbook](../mdw-cookbook) to learn more about MDW:
     - Implement a REST API that uses workflow
     - Incorporate human-performed tasks
