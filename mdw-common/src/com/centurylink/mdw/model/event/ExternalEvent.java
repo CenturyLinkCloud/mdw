@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 CenturyLink, Inc.
+ * Copyright (C) 2019 CenturyLink, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
     private String eventHandler;
     private XmlPath xpath;
     private String eventMessagePattern;
+    private Boolean isContentRouting = true;
 
     public ExternalEvent(){
         xpath = null;
@@ -52,7 +53,7 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
         return eventHandler;
     }
     /**
-     * @param eventData the eventData to set
+     * @param eventHandler the eventData to set
      */
     public void setEventHandler(String eventHandler) {
         this.eventHandler = eventHandler;
@@ -79,6 +80,7 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
         this.eventMessagePattern = eventMessagePattern;
     }
 
+    public Boolean isContentRouting() { return isContentRouting == null || isContentRouting == true; }
 
     public Long getId() {
         return id;
@@ -121,6 +123,7 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
     public ExternalEvent(JSONObject json) throws JSONException {
         this.eventMessagePattern = json.getString("path");
         this.eventHandler = json.getString("handlerClass");
+        this.isContentRouting = "path".equalsIgnoreCase(json.optString("routing")) ? false : true;
     }
 
     /**
@@ -131,6 +134,7 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
         JSONObject json = create();
         json.put("path", eventMessagePattern);
         json.put("handlerClass", eventHandler);
+        json.put("routing", isContentRouting ? "content" : "path");
         return json;
     }
 

@@ -92,9 +92,12 @@ public class ListenerHelper {
 
     private ExternalEvent findEventHandler(String request, Object requestDoc, Map<String,String> metaInfo)
     throws XmlException, JSONException {
+        XmlObject xmlBean = null;
+        String rootname = null;
+        // Handle MDW internal legacy messages first
         if (requestDoc instanceof XmlObject) {
-            XmlObject xmlBean = (XmlObject) requestDoc;
-            String rootname = XmlPath.getRootNodeName(xmlBean);
+            xmlBean = (XmlObject) requestDoc;
+            rootname = XmlPath.getRootNodeName(xmlBean);
             if (rootname.startsWith("_mdw_"))
                 return null; // internal request
             else if ("ActionRequest".equals(rootname)) {
@@ -102,15 +105,46 @@ public class ListenerHelper {
                 if (v != null)
                     return EventHandlerCache.regressionTestHandler;
             }
-            List<ExternalEvent> bucket = EventHandlerCache.getExternalEvents(rootname);
-            if (bucket != null) {
-                for (ExternalEvent e : bucket) {
-                    String v = e.getXpath().evaluate(xmlBean);
-                    if (v != null)
+        }
+        // Check for path/topic based routing - Takes precendence over content based routing
+        List<ExternalEvent> bucket = null;
+        boolean isTopic = metaInfo.get(Listener.METAINFO_TOPIC) != null;   // Preliminary test (cannot be Topic if REST or SOAP)
+        if (metaInfo.get(Listener.METAINFO_REQUEST_PATH) != null &&   // Means no path after context and servlet (e.g. /mdw/services, etc)
+            (Listener.METAINFO_PROTOCOL_REST.equals(metaInfo.get(Listener.METAINFO_PROTOCOL)) || Listener.METAINFO_PROTOCOL_SOAP.equals(metaInfo.get(Listener.METAINFO_PROTOCOL)))) {
+            bucket = EventHandlerCache.getPathExternalEvents(metaInfo.get(Listener.METAINFO_REQUEST_PATH));
+            isTopic = false;  // In case it was set to true above
+        }
+        else if (isTopic)
+            bucket = EventHandlerCache.getPathExternalEvents(metaInfo.get(metaInfo.get(Listener.METAINFO_TOPIC)));
+
+        if (bucket != null) {
+            for (ExternalEvent e : bucket) {
+                if (isTopic) {
+                    if (metaInfo.get(Listener.METAINFO_TOPIC).equals(e.getMessagePattern())) {
+                        if (bucket.size() > 1)
+                            logger.warn("Multiple external event handlers matched incoming request for topic " + metaInfo.get(Listener.METAINFO_TOPIC));
                         return e;
+                    }
+                }
+                else if (metaInfo.get(Listener.METAINFO_REQUEST_PATH).startsWith(e.getMessagePattern())) {
+                    if (bucket.size() > 1)
+                        logger.warn("Multiple external event handlers matched incoming request for path " + metaInfo.get(Listener.METAINFO_REQUEST_PATH));
+                    return e;
                 }
             }
-            bucket = EventHandlerCache.getExternalEvents("*");
+        }
+
+        // Check legacy content based routing (XML only)
+        if (xmlBean != null) {
+            bucket = EventHandlerCache.getContentExternalEvents(rootname);
+            if (bucket != null) {
+                for (ExternalEvent e : bucket) {
+                        String v = e.getXpath().evaluate(xmlBean);
+                        if (v != null)
+                            return e;
+                }
+            }
+            bucket = EventHandlerCache.getContentExternalEvents("*");
             if (bucket != null) {
                 for (ExternalEvent e : bucket) {
                     String v = XmlPath.evaluate(xmlBean, e.getMessagePattern());
