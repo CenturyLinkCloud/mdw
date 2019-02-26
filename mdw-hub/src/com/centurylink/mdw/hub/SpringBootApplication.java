@@ -24,12 +24,7 @@ import com.centurylink.mdw.util.ClasspathUtil;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.file.ZipHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
-import org.apache.catalina.Context;
-import org.apache.tomcat.util.descriptor.web.ErrorPage;
-import org.apache.tomcat.util.descriptor.web.FilterDef;
-import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
@@ -61,9 +56,6 @@ public class SpringBootApplication {
         }
     }
 
-    /**
-     * TODO: support Jetty as well
-     */
     @Bean
     public TomcatServletWebServerFactory containerFactory() {
         String portProp = System.getProperty("mdw.server.port");
@@ -76,53 +68,7 @@ public class SpringBootApplication {
             contextProp = System.getProperty("server.contextPath");
         if (contextProp == null)
             contextProp = "/mdw";
-        TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory(contextProp, Integer.parseInt(portProp));
-        factory.addContextCustomizers(tomcatContextCustomizer());
-        factory.setDocumentRoot(new File(getBootDir() + "/web"));
-        return factory;
-    }
-
-    @Bean
-    public TomcatContextCustomizer tomcatContextCustomizer() {
-        return new TomcatContextCustomizer() {
-            @Override
-            public void customize(Context context) {
-                context.addApplicationListener("org.apache.tomcat.websocket.server.WsContextListener");
-                context.addErrorPage(new ErrorPage() {
-                    @Override
-                    public int getErrorCode() {
-                        return 404;
-                    }
-                    @Override
-                    public String getLocation() {
-                        return "/404";
-                    }
-                });
-                context.addErrorPage(new ErrorPage() {
-                    @Override
-                    public int getErrorCode() {
-                        return 500;
-                    }
-                    @Override
-                    public String getLocation() {
-                        return "/error";
-                    }
-                });
-                // CORS access is wide open
-                FilterDef corsFilter = new FilterDef();
-                corsFilter.setFilterName("CorsFilter");
-                corsFilter.setFilterClass("org.apache.catalina.filters.CorsFilter");
-                corsFilter.addInitParameter("cors.allowed.methods", "GET,POST,PUT,DELETE,HEAD,OPTIONS");
-                corsFilter.addInitParameter("cors.allowed.headers", "Authorization,Content-Type,X-Requested-With,Accept,Origin,Access-Control-Request-Method,Access-Control-Request-Headers,Accept-Encoding,Accept-Language,Cache-Control,Connection,Host,Pragma,Referer,User-Agent");
-                corsFilter.addInitParameter("cors.allowed.origins", "*");
-                context.addFilterDef(corsFilter);
-                FilterMap filterMap = new FilterMap();
-                filterMap.setFilterName(corsFilter.getFilterName());
-                filterMap.addURLPattern("/api/*");
-                filterMap.addURLPattern("/services/AppSummary");
-                context.addFilterMap(filterMap);
-            }
-        };
+        return new MdwServletContainerFactory(contextProp, Integer.parseInt(portProp), getBootDir());
     }
 
     private static File bootDir;
@@ -142,7 +88,7 @@ public class SpringBootApplication {
                     FileHelper.deleteRecursive(bootDir);
                 if (!bootDir.mkdirs())
                     throw new StartupException("Cannot create boot dir: " + bootDir.getAbsolutePath());
-                File bootJar = null;
+                File bootJar;
                 if (mainLoc.indexOf('!') > 0) {
                     bootJar = new File(new URI(mainLoc.substring(0, mainLoc.indexOf('!'))));
                     if (!bootJar.exists())
