@@ -191,7 +191,7 @@ class DashboardChart extends Component {
       var downloadUrl = this.buildUrl(this.context.serviceRoot + breakdown.data);
       if (breakdown.instancesParam) {
         downloadUrl += '&' + breakdown.instancesParam + '=%5B' + this.state.selected.map(sel => {
-          return breakdown.instancesParam === 'statuses' ? sel.name : sel.id;
+          return breakdown.selectField ? encodeURI(sel[breakdown.selectField]) : encodeURI(sel.id);
         }).join() + '%5D';
       }
       location = downloadUrl + '&DownloadFormat=xlsx';
@@ -280,7 +280,7 @@ class DashboardChart extends Component {
         var dataUrl = this.buildUrl(this.context.serviceRoot + breakdown.data);
         if (breakdown.instancesParam) {
           dataUrl += '&' + breakdown.instancesParam + '=%5B' + this.state.selected.map(sel => {
-            return breakdown.selectField ? sel[breakdown.selectField] : sel.id;
+            return breakdown.selectField ? encodeURI(sel[breakdown.selectField]) : encodeURI(sel.id);
           }).join() + '%5D';
         }
         fetch(new Request(dataUrl, {
