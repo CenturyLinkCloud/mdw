@@ -35,7 +35,7 @@ repositories {
 
 dependencies {
     compile group: 'com.centurylink.mdw', name: 'mdw-spring-boot', version: mdwVersion
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter', version: springBootVersion
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: springBootVersion
     // asset package dependencies
     compileOnly fileTree(dir: "${assetLoc}", includes: ["**/*.jar"])
 }
