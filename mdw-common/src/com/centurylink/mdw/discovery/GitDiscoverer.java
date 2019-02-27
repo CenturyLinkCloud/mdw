@@ -89,7 +89,7 @@ public abstract class GitDiscoverer implements Discoverer {
             ProjectMeta projectMeta = new ProjectMeta(Base64.getMimeDecoder().decode(base64));
             assetPath = projectMeta.getAssetLocation();
             if (projectPath != null) {
-                assetPath = new File(projectPath + "/" + assetPath).toPath().normalize().toString();
+                assetPath = new File(projectPath + "/" + assetPath).toPath().normalize().toString().replace('\\', '/');
             }
         }
         return assetPath;
