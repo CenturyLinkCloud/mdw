@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 CenturyLink, Inc.
+ * Copyright (C) 2019 CenturyLink, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,12 +31,12 @@ public class StringStringMapTranslator extends DocumentReferenceTranslator {
     @Override
     public Object realToObject(String json) throws TranslationException {
         try {
-            Map<String,String> stringMap = new HashMap<String,String>();
+            Map<String,String> stringMap = new HashMap<>();
             JSONObject jsonObject = new JsonObject(json);
             String[] stringNames = JSONObject.getNames(jsonObject);
             if (stringNames != null) {
                 for (int i = 0; i < stringNames.length; i++) {
-                    stringMap.put(stringNames[i], jsonObject.getString(stringNames[i]));
+                    stringMap.put(stringNames[i], jsonObject.optString(stringNames[i], null));
                 }
             }
             return stringMap;
@@ -55,10 +55,7 @@ public class StringStringMapTranslator extends DocumentReferenceTranslator {
             while (it.hasNext()) {
                 String name = it.next();
                 String val = stringMap.get(name);
-                if (val == null) {
-                    continue;
-                }
-                jsonObject.put(name, val);
+                jsonObject.put(name, val == null ? JSONObject.NULL : val);
             }
         return jsonObject.toString(2);
         }
