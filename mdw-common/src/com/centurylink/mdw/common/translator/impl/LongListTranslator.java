@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 CenturyLink, Inc.
+ * Copyright (C) 2019 CenturyLink, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public class LongListTranslator extends DocumentReferenceTranslator {
             List<Long> longList = new ArrayList<Long>();
             JSONArray jsonArray = new JSONArray(json);
             for (int i = 0; i < jsonArray.length(); i++)
-                longList.add(jsonArray.getLong(i));
+                longList.add((Long)jsonArray.opt(i));
             return longList;
         }
         catch (JSONException ex) {
