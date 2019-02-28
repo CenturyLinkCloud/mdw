@@ -15,12 +15,12 @@
     {
       "attributes": {
         "STATUS_AFTER_EVENT": "Cancelled",
-        "TASK_PAGELET": "com.centurylink.mdw.base/CustomManualTask.pagelet",
+        "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
         "WORK_DISPLAY_INFO": "x=170,y=30,w=100,h=60"
       },
       "id": "A2",
-      "implementor": "com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity",
-      "name": "Handlers Fallout",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+      "name": "Handle Fallout",
       "transitions": [{
         "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=305,ly=60,xs=274&336,ys=60&60"},
         "event": "FINISH",

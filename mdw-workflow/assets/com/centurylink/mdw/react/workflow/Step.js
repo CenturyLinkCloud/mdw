@@ -21,8 +21,8 @@ var StepFactory = function(DC, Shape) {
   Step.START_IMPL = 'com.centurylink.mdw.workflow.activity.process.ProcessStartActivity';
   Step.STOP_IMPL = 'com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity';
   Step.PAUSE_IMPL = 'com.centurylink.mdw.base.PauseActivity';
-  Step.TASK_IMPL = 'com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity';
-  Step.TASK_PAGELET = 'com.centurylink.mdw.base/CustomManualTask.pagelet';
+  Step.TASK_IMPL = 'com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity';
+  Step.TASK_PAGELET = 'com.centurylink.mdw.base/AutoFormManualTask.pagelet';
 
   Step.create = function(diagram, idNum, implementor, x, y) {
     var activity = Step.newActivity(diagram, idNum, implementor, x, y);
