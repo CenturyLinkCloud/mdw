@@ -894,7 +894,7 @@ public class TaskWorkflowHelper {
 
         ProcessRuntimeContext processContext = null;
         if (OwnerType.PROCESS_INSTANCE.equals(taskInstance.getOwnerType()))
-            processContext = workflowServices.getContext(taskInstance.getOwnerId());
+            processContext = workflowServices.getContext(taskInstance.getOwnerId(), true);
 
         if (processContext != null) {
             return new TaskRuntimeContext(processContext, getTemplate(), taskInstance, assignee);

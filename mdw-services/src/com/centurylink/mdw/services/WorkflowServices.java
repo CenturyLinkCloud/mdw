@@ -126,6 +126,7 @@ public interface WorkflowServices {
     ProcessInstance getMasterProcess(String masterRequestId) throws ServiceException;
 
     ProcessRuntimeContext getContext(Long instanceId) throws ServiceException;
+    ProcessRuntimeContext getContext(Long instanceId, Boolean embeddedVars) throws ServiceException;
 
     Map<String,Value> getProcessValues(Long instanceId, boolean includeEmpty) throws ServiceException;
     Map<String,Value> getProcessValues(Long instanceId) throws ServiceException;
