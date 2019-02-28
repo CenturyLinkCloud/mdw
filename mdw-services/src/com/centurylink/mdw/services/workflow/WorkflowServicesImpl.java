@@ -423,7 +423,15 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     public ProcessRuntimeContext getContext(Long instanceId) throws ServiceException {
+        return getContext(instanceId, false);
+    }
+
+    public ProcessRuntimeContext getContext(Long instanceId, Boolean embeddedVars) throws ServiceException {
         ProcessInstance instance = getProcess(instanceId);
+        // Edge case where we want to get main process variables when we loaded embedded process instance
+        // Applies to when looking/setting process variables in manual task located in embedded subproc
+        if (instance.isEmbedded() && embeddedVars)
+            instance.setVariables(getProcess(instance.getOwnerId()).getVariables());
         Process process = null;
         if (instance.getProcessInstDefId() > 0L)
             process = ProcessCache.getProcessInstanceDefiniton(instance.getProcessId(), instance.getProcessInstDefId());

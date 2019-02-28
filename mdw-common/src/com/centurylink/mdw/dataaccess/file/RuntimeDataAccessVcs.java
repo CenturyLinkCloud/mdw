@@ -122,7 +122,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             List<VariableInstance> variableDataList = new ArrayList<VariableInstance>();
             query = "select VARIABLE_INST_ID, VARIABLE_ID, VARIABLE_VALUE, VARIABLE_NAME, VARIABLE_TYPE_ID " +
                     "from VARIABLE_INSTANCE where PROCESS_INST_ID=? order by lower(VARIABLE_NAME)";
-            rs = db.runSelect(query, procInstInfo.isEmbedded() ? procInstInfo.getOwnerId() : procInstId);
+            rs = db.runSelect(query, procInstId);
             while (rs.next()) {
                 VariableInstance data = new VariableInstance();
                 data.setInstanceId(new Long(rs.getLong(1)));
