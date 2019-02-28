@@ -54,12 +54,12 @@
           "label": "Description",
           "type": "text"
         },
-	    {
-	      "type": "asset",
-	      "name": "dataType",
-	      "label": "Data Type",
-	      "source": "java,kt"
-	    }
+        {
+          "type": "asset",
+          "name": "dataType",
+          "label": "Data Type",
+          "source": "java,kt"
+        }
       ]
     },
     {
