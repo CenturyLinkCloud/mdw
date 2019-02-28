@@ -1204,7 +1204,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
                             varInst.setStringValue((String)value);
                         else
                             varInst.setData(value);
-                        workflowDataAccess.createVariable(context.getProcessInstanceId(), varInst);
+                        Long procInstId = context.getProcessInstance().isEmbedded() ? context.getProcessInstance().getOwnerId() : context.getProcessInstanceId();
+                        workflowDataAccess.createVariable(procInstId, varInst);
                     }
                 }
                 else {
@@ -1269,7 +1270,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     public void createDocument(ProcessRuntimeContext context, String varName, Object value) throws ServiceException {
         String type = context.getProcess().getVariable(varName).getType();
         EventServices eventMgr = ServiceLocator.getEventServices();
-        Long procInstId = context.getProcessInstanceId();
+        Long procInstId = context.getProcessInstance().isEmbedded() ? context.getProcessInstance().getOwnerId() : context.getProcessInstanceId();
         try {
             Long docId = eventMgr.createDocument(type, OwnerType.PROCESS_INSTANCE, procInstId, value, context.getPackage());
             VariableInstance varInst = eventMgr.setVariableInstance(procInstId, varName, new DocumentReference(docId));
