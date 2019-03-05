@@ -339,7 +339,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             if (typeof runtimeInfo == 'undefined') {
               // no runtimeInfo means just checking for tab applicability
               return diagramObject.workflowType == 'activity' && 
-                diagramObject.implementor && diagramObject.implementor.category == 'com.centurylink.mdw.activity.types.InvokeProcessActivity';        
+                diagramObject.implementor && (diagramObject.implementor.category == 'com.centurylink.mdw.activity.types.InvokeProcessActivity' || diagramObject.implementor.category == 'com.centurylink.mdw.activity.types.OrchestratorActivity');
             }
             else {
               if (runtimeInfo === null || runtimeInfo.length === 0)

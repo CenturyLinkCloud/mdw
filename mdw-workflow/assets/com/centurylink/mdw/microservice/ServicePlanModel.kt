@@ -2,6 +2,8 @@ package com.centurylink.mdw.microservice
 
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext
 import com.centurylink.mdw.test.MockRuntimeContext
+import org.json.JSONArray
+import org.json.JSONObject
 
 data class ServicePlan(
         var services: MutableList<Microservice> = mutableListOf()
@@ -57,4 +59,44 @@ data class Microservice(
             "",
             bindings
     )
+}
+
+class Microservices(runtimeContext: ActivityRuntimeContext) : ArrayList<Microservice>() {
+
+    init {
+        val rows = JSONArray(runtimeContext.attributes["microservices"])
+        for (i in 0 until rows.length()) {
+            val row = rows.getJSONArray(i)
+            val def = JSONObject(row.getString(ROWS.indexOf("definition")))
+            val envs = def.getJSONArray("environments")
+            var baseUrl = envs.getJSONObject(0).getString("baseEndpoint")
+            if (!baseUrl.endsWith("/")) baseUrl += "/"
+
+            val microservice = Microservice(runtimeContext,
+                    name = def.getString("teamName") + "/" + def.getString("name"),
+                    url = baseUrl + row.getString(ROWS.indexOf("path")),
+                    method = row.getString(ROWS.indexOf("method")),
+                    enabled = "true" == row.getString(ROWS.indexOf("enabled")),
+                    count = row.getString(ROWS.indexOf("count")).toInt()
+            )
+
+            microservice.bindings["requestMapper"] = row.getString(ROWS.indexOf("requestMapper"))
+            microservice.bindings["responseMapper"] = row.getString(ROWS.indexOf("responseMapper"))
+
+            add(microservice)
+        }
+    }
+
+    companion object {
+        val ROWS = arrayOf(
+                "enabled",
+                "definition",
+                "path",
+                "method",
+                "count",
+                "requestMapper",
+                "responseMapper",
+                "dependencies"
+        )
+    }
 }
