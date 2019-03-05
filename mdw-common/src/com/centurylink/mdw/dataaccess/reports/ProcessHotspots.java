@@ -38,9 +38,9 @@ public class ProcessHotspots extends ProcessInsights {
         List<Object> params = new ArrayList<>();
 
         where.append("((ai.process_instance_id = pi.process_instance_id and process_id = ?)\n");
-        where.append("  or (ai.process_instance_id in (select process_instance_id from process_instance where " +
+        where.append("  or (ai.process_instance_id in (select process_instance_id from PROCESS_INSTANCE where " +
                 "owner = 'MAIN_PROCESS_INSTANCE' and owner_id in " +
-                "(select process_instance_id from process_instance where process_id = ?))))\n");
+                "(select process_instance_id from PROCESS_INSTANCE where process_id = ?))))\n");
         Long processId = getProcessId(query);
         params.add(processId);
         params.add(processId);
