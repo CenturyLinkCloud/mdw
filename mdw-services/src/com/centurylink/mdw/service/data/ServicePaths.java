@@ -1,8 +1,8 @@
 package com.centurylink.mdw.service.data;
 
 import com.centurylink.mdw.cache.CacheService;
-import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.request.ServicePath;
@@ -57,9 +57,9 @@ public class ServicePaths implements CacheService {
             inboundPathsTmp = new ArrayList<>();
             outboundPathsTmp = new ArrayList<>();
 
-            // default is enabled if dashboard package present
-            boolean hasDashboard = PackageCache.getPackage("com.centurylink.mdw.dashboard") != null;
-            if (hasDashboard) {
+            // default is enabled
+            boolean enabled = PropertyManager.getBooleanProperty("mdw.service.paths.cache", true);
+            if (enabled) {
                 // inbound paths
                 Swagger swagger = MdwSwaggerCache.getSwagger("/");
                 if (swagger != null) {
