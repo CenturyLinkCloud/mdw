@@ -70,7 +70,7 @@ class Microservices(runtimeContext: ActivityRuntimeContext) : ArrayList<Microser
             val def = JSONObject(row.getString(ROWS.indexOf("definition")))
             val envs = def.getJSONArray("environments")
             var baseUrl = envs.getJSONObject(0).getString("baseEndpoint")
-            if (!baseUrl.endsWith("/")) baseUrl += "/"
+            if (baseUrl.endsWith("/")) baseUrl = baseUrl.substring(0, baseUrl.length - 1)
 
             val microservice = Microservice(runtimeContext,
                     name = def.getString("teamName") + "/" + def.getString("name"),

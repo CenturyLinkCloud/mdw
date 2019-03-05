@@ -15,18 +15,6 @@
  */
 package com.centurylink.mdw.hub.servlet;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyManager;
@@ -35,6 +23,18 @@ import com.centurylink.mdw.hub.context.Mdw;
 import com.centurylink.mdw.hub.context.Page;
 import com.centurylink.mdw.hub.context.WebAppContext;
 import com.centurylink.mdw.util.ExpressionUtil;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Overrides 404 handling to check for matching asset content.
@@ -47,21 +47,7 @@ public class NotFoundServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String assetPath = request.getParameter("missingAsset");
         if (assetPath != null) {
-            String htmlPath = request.getServletContext().getRealPath("error/noAsset.html");
-            String html = new String(Files.readAllBytes(new File(htmlPath).toPath()));
-            Map<String,String> data = new HashMap<>();
-            data.put("assetPath", assetPath);
-            String packageName = assetPath.substring(0, assetPath.indexOf('/'));
-            data.put("packageName", packageName);
-            data.put("packagePath", packageName.replace('.', '/'));
-            try {
-                html = ExpressionUtil.substitute(html, data, true).replace('\n', ' ');
-                response.setContentType("text/html");
-                response.getWriter().println(html);
-            }
-            catch (MdwException ex) {
-                throw new IOException(ex);
-            }
+            serveMissingAssetPage(request, response, assetPath);
         }
         else {
             String path = (String) request.getAttribute("javax.servlet.forward.servlet_path");
@@ -126,6 +112,12 @@ public class NotFoundServlet extends HttpServlet {
                     }
                     return;
                 }
+                else if (path.equals("/com/centurylink/mdw/dashboard/Index")) {
+                    String unfoundAsset = path.substring(1, path.lastIndexOf('/')).replace('/', '.');
+                    String redirect = "/404?missingAsset=" + URLEncoder.encode(unfoundAsset, "utf-8");
+                    request.getRequestDispatcher(redirect).forward(request, response);
+                    return;
+                }
             }
             request.getRequestDispatcher("/error/404.html").forward(request, response);
         }
@@ -165,5 +157,26 @@ public class NotFoundServlet extends HttpServlet {
             }
         }
         return page;
+    }
+
+    private void serveMissingAssetPage(HttpServletRequest request, HttpServletResponse response, String assetPath)
+    throws IOException {
+        String htmlPath = request.getServletContext().getRealPath("error/noAsset.html");
+        String html = new String(Files.readAllBytes(new File(htmlPath).toPath()));
+        Map<String,String> data = new HashMap<>();
+        data.put("assetPath", assetPath);
+        int slash = assetPath.indexOf('/');
+        String packageName = slash > 0 ? assetPath.substring(0, assetPath.indexOf('/')) : assetPath;
+        data.put("packageName", packageName);
+        data.put("packagePath", packageName.replace('.', '/'));
+        data.put("contextRoot", ApplicationContext.getMdwHubContextRoot());
+        try {
+            html = ExpressionUtil.substitute(html, data, true).replace('\n', ' ');
+            response.setContentType("text/html");
+            response.getWriter().println(html);
+        }
+        catch (MdwException ex) {
+            throw new IOException(ex);
+        }
     }
 }

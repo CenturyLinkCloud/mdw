@@ -3,19 +3,31 @@
 <div style="margin-left:50px;padding:20px;font-size:16px;font-family:Helvetica Neue,Helvetica,Arial,sans-serif;">
   <div style="width:100%;height:78px;">
     <div style="float:left;margin-top:5px;">
-      <img src="images/mdw.png" alt="MDW">
-      <img src="images/hub_logo.png" alt="Hub Logo">
+      <img src="/${contextRoot}/images/mdw.png" alt="MDW">
+      <img src="/${contextRoot}/images/hub_logo.png" alt="Hub Logo">
       <span style="font-weight:bold;position:relative;top:-20px;left:5px;">
-        Asset not found: ${assetPath}
+        Asset(s) not found: ${assetPath}
       </span>
     </div>
   </div>
 
   <div style="margin-left:25px;margin-right:25px;margin-bottom:25px;">
-    <p>Make sure this asset package is present:</p>
+    <p>Make sure these asset packages are present:</p>
     <ul>
       <li>
-        <a href="https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-workflow/assets/${packagePath}">${packageName}</a>
+        <a href="https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-workflow/assets/${packagePath}">
+          ${packageName}
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-workflow/assets/com/centurylink/mdw/react">
+          com.centurylink.mdw.react
+        </a>
+      </li>
+      <li>
+        <a href="https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-workflow/assets/com/centurylink/mdw/node">
+          com.centurylink.mdw.node
+        </a>
       </li>
     </ul>
     </p>
