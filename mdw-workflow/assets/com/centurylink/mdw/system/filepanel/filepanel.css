@@ -68,6 +68,7 @@
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
+  padding-right: 5px;
 }
 .fp-item {
   width: auto;

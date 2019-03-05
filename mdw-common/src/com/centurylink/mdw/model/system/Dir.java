@@ -15,29 +15,25 @@
  */
 package com.centurylink.mdw.model.system;
 
+import com.centurylink.mdw.model.Jsonable;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.nio.file.attribute.UserPrincipal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.centurylink.mdw.model.Jsonable;
-
-public class Dir implements Jsonable {
+public class Dir implements Jsonable, Comparable<Dir> {
 
     private String name;
     public String getName() { return name; }
@@ -123,6 +119,8 @@ public class Dir implements Jsonable {
                 }
             }
         }
+        Collections.sort(dirs);
+        Collections.sort(files);
     }
 
     private void addDetails() throws IOException {
@@ -185,4 +183,8 @@ public class Dir implements Jsonable {
         return false;
     }
 
+    @Override
+    public int compareTo(Dir other) {
+        return this.getName().compareToIgnoreCase(other.getName());
+    }
 }

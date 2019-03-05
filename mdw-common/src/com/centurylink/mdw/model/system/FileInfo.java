@@ -15,6 +15,10 @@
  */
 package com.centurylink.mdw.model.system;
 
+import com.centurylink.mdw.model.Jsonable;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,12 +33,7 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.nio.file.attribute.UserPrincipal;
 import java.time.Instant;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.centurylink.mdw.model.Jsonable;
-
-public class FileInfo implements Jsonable {
+public class FileInfo implements Jsonable, Comparable<FileInfo> {
 
     private String name;
     public String getName() { return name; }
@@ -154,5 +153,8 @@ public class FileInfo implements Jsonable {
         return 100 * other / (ascii + other) > 95;
     }
 
-
+    @Override
+    public int compareTo(FileInfo other) {
+        return this.getName().compareToIgnoreCase(other.getName());
+    }
 }
