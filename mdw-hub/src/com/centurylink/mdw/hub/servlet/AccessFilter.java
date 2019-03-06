@@ -361,7 +361,7 @@ public class AccessFilter implements Filter {
         catch (Throwable t) {
             logger.severeException("Error accessing " + request.getRequestURL() + ": " + t.getMessage() , t);
             request.setAttribute("error", t);
-            request.getRequestDispatcher("/error").forward(request, response);
+            request.getRequestDispatcher("/500").forward(request, response);
         }
     }
 

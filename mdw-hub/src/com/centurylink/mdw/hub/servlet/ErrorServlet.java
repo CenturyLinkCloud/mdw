@@ -30,7 +30,7 @@ import com.centurylink.mdw.model.StatusResponse;
 /**
  * Error must already have been logged elsewhere.
  */
-@WebServlet(urlPatterns={"/error"}, loadOnStartup=1)
+@WebServlet(urlPatterns={"/500"}, loadOnStartup=1)
 public class ErrorServlet extends HttpServlet {
 
     protected void service(HttpServletRequest request, HttpServletResponse response)

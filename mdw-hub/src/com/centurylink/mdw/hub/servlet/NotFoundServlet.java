@@ -161,8 +161,17 @@ public class NotFoundServlet extends HttpServlet {
 
     private void serveMissingAssetPage(HttpServletRequest request, HttpServletResponse response, String assetPath)
     throws IOException {
-        String htmlPath = request.getServletContext().getRealPath("error/noAsset.html");
-        String html = new String(Files.readAllBytes(new File(htmlPath).toPath()));
+        File htmlFile;
+        if (ApplicationContext.isSpringBoot()) {
+            // pure spring boot
+            htmlFile = new File(ApplicationContext.getDeployPath() + "/hub/error/noAsset.html");
+            if (!htmlFile.exists())
+                htmlFile = new File(ApplicationContext.getDeployPath() + "/web/error/noAsset.html");
+        }
+        else {
+            htmlFile = new File(request.getServletContext().getRealPath("error/noAsset.html"));
+        }
+        String html = new String(Files.readAllBytes(htmlFile.toPath()));
         Map<String,String> data = new HashMap<>();
         data.put("assetPath", assetPath);
         int slash = assetPath.indexOf('/');

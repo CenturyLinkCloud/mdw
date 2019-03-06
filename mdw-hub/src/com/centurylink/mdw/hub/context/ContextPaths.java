@@ -46,8 +46,8 @@ public class ContextPaths {
         DEFAULT_NON_HUB_ROOTS.add("/testResult");
         DEFAULT_NON_HUB_ROOTS.add("/login");
         DEFAULT_NON_HUB_ROOTS.add("/logout");
-        DEFAULT_NON_HUB_ROOTS.add("/error");
         DEFAULT_NON_HUB_ROOTS.add("/404");
+        DEFAULT_NON_HUB_ROOTS.add("/500");
         DEFAULT_NON_HUB_ROOTS.add("*.jsx");
     }
 
