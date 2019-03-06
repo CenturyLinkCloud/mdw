@@ -20,12 +20,12 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.util.file.MdwIgnore;
 import com.centurylink.mdw.util.file.ZipHelper;
 import com.centurylink.mdw.util.file.ZipHelper.Exist;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -83,31 +83,25 @@ public class WebpackCache implements PreloadableCache {
                 logger.severeException(ex.getMessage(), ex);
             }
 
-            AssetServices assetServices = ServiceLocator.getAssetServices();
-            List<AssetInfo> precompiledJsx = new ArrayList<>();
-            AssetInfo runJsx = assetServices.getAsset("com.centurylink.mdw.react/Run.jsx");
-            if (runJsx != null) {
-                // conditionally compile in dev for faster startup
-                if (!isDevMode() || !getOutput(runJsx).exists()) {
-                    precompiledJsx.add(runJsx);
-                }
-            }
-            if (!isDevMode()) {
-                // in non-dev everything is precompiled
-                AssetInfo taskMain = assetServices.getAsset("com.centurylink.mdw.task/Main.jsx");
-                if (taskMain != null)
-                    precompiledJsx.add(taskMain);
-
+            if (PackageCache.getPackage("com.centurylink.mdw.react") != null) {
+                // find JSX assets
+                AssetServices assetServices = ServiceLocator.getAssetServices();
+                List<AssetInfo> jsxAssets = new ArrayList<>();
+                jsxAssets.add(assetServices.getAsset("com.centurylink.mdw.react/Run.jsx"));
+                if (PackageCache.getPackage("com.centurylink.mdw.task") != null)
+                    jsxAssets.add(assetServices.getAsset("com.centurylink.mdw.task/Main.jsx"));
                 // add all Index.jsx assets
                 for (List<AssetInfo> assets : assetServices.findAssets(file -> file.getName().equals("Index.jsx")).values()) {
-                    precompiledJsx.addAll(assets);
+                    jsxAssets.addAll(assets);
+                }
+                // precompile if not dev or not previously compiled
+                for (AssetInfo jsxAsset : jsxAssets) {
+                    if (!isDevMode() || !getOutput(jsxAsset).exists()) {
+                        getCompiled(jsxAsset);
+                    }
                 }
             }
-            if (precompiledJsx.size() > 0)
-                logger.info("Precompiling JSX assets:");
-            for (AssetInfo jsxAsset : precompiledJsx) {
-                getCompiled(jsxAsset);
-            }
+
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
