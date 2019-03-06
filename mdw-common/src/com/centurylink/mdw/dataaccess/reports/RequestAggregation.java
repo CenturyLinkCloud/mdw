@@ -57,7 +57,7 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
             long ct = Math.round(resultSet.getDouble("ct"));
             RequestAggregate requestAggregate = new RequestAggregate(ct);
             requestAggregate.setCount(ct);
-            requestAggregate.setPath(resultSet.getString("doc.path"));
+            requestAggregate.setPath(resultSet.getString("path"));
             return requestAggregate;
         });
     }

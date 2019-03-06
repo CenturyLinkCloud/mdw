@@ -24,7 +24,7 @@ public class ProcessInsights extends CommonDataAccess {
     public List<Insight> getInsights(Query query) throws SQLException, ParseException, ServiceException {
         PreparedWhere where = getWhere(query, false);
         String sql = "select count(pi.status_cd) as ct, pi.st, pi.status_cd\n" +
-                "from (select date(start_dt) as st, status_cd\n" +
+                "from (" + getSelectDate("start_dt") + " as st, status_cd\n" +
                 "  from PROCESS_INSTANCE\n" + where.getWhere() + ") pi\n" +
                 "group by st, status_cd\n" +
                 "order by st";
@@ -73,7 +73,8 @@ public class ProcessInsights extends CommonDataAccess {
     public List<Timepoint> getTrend(Query query) throws SQLException, ParseException, ServiceException {
         PreparedWhere where = getWhere(query, true);
         String sql = "select avg(pi.elapsed_ms) as ms, pi.st\n" +
-                "from (select date(start_dt) as st, elapsed_ms\n" +
+                "from (" + getSelectDate("start_dt") +
+                " as st, elapsed_ms\n" +
                 "  from PROCESS_INSTANCE, INSTANCE_TIMING\n" + where.getWhere() + ") pi\n" +
                 "group by st\n" +
                 "order by st";

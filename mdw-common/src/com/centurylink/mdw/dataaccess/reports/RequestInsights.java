@@ -24,7 +24,7 @@ public class RequestInsights extends CommonDataAccess {
     public List<Insight> getInsights(Query query) throws SQLException, ParseException, ServiceException {
         PreparedWhere where = getWhere(query, false);
         String sql = "select count(req.status_code) as ct, req.st, req.status_code\n" +
-                "from (select date(create_dt) as st, status_code \n" +
+                "from (" + getSelectDate("create_dt") + " as st, status_code \n" +
                 "  from DOCUMENT\n" + where.getWhere() + ") req\n" +
                 "group by st, status_code\n" +
                 "order by st";
@@ -73,7 +73,7 @@ public class RequestInsights extends CommonDataAccess {
     public List<Timepoint> getTrend(Query query) throws SQLException, ParseException, ServiceException {
         PreparedWhere where = getWhere(query, true);
         String sql = "select avg(req.elapsed_ms) as ms, req.st\n" +
-                "from (select date(create_dt) as st, elapsed_ms\n" +
+                "from (" + getSelectDate("create_dt") + " as st, elapsed_ms\n" +
                 "  from DOCUMENT, INSTANCE_TIMING\n" + where.getWhere() + ") req\n" +
                 "group by st\n" +
                 "order by st";
