@@ -15,6 +15,9 @@ module.exports = {
     Canceled: {
       color: '#990099'
     },
+    Cancelled: {
+      color: '#990099'
+    },
     Waiting: {
       color: '#FF9900'
     }
@@ -33,17 +36,20 @@ module.exports = {
   task: {
     Open: {
       color: '#22AA99'
-    }, 
+    },
     Assigned: {
       color: '#FF9900'
-    }, 
+    },
     'In Progress': {
       color: '#109618'
-    }, 
+    },
     Completed: {
       color: '#5574A6'
-    }, 
+    },
     Canceled: {
+      color: '#990099'
+    },
+    Cancelled: {
       color: '#990099'
     }
   },

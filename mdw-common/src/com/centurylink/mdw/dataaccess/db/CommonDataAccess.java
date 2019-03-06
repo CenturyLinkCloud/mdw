@@ -1036,4 +1036,11 @@ public class CommonDataAccess {
     protected String getDt(Date date) {
         return db.isMySQL() ? getMySqlDt(date) : getOracleDt(date);
     }
+
+    protected String getSelectDate(String column) {
+        if (db.isOracle())
+            return "select to_char(" + column + ",'DD-Mon-yyyy')";
+        else
+            return "select date(" + column + ")";
+    }
 }
