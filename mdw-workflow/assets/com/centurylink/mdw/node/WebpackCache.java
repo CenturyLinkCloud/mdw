@@ -96,7 +96,8 @@ public class WebpackCache implements PreloadableCache {
                 }
                 // precompile if not dev or not previously compiled
                 for (AssetInfo jsxAsset : jsxAssets) {
-                    if (!isDevMode() || !getOutput(jsxAsset).exists()) {
+                    if ((!isDevMode() || !getOutput(jsxAsset).exists()) &&
+                            !"false".equalsIgnoreCase(System.getProperty("mdw.webpack.precompile"))) {
                         getCompiled(jsxAsset);
                     }
                 }

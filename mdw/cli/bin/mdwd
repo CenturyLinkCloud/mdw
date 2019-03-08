@@ -1,1 +1,1 @@
-nohup java -jar $@ ${MDW_HOME}/mdw-cli.jar run >> mdw.log 2>&1 &
+nohup java -Dmdw.webpack.precompile=false -jar $@ ${MDW_HOME}/mdw-cli.jar run >> mdw.log 2>&1 &
