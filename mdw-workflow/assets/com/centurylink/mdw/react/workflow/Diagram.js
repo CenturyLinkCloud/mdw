@@ -1378,7 +1378,7 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
   Diagram.prototype.getLatestInstance = function() {
     var instances = this.selection.getSelectObj().instances;
     if (instances && instances.length) {
-      return instances[instances.length - 1];
+      return instances[0];  // They are sorted descending
     }
   };
 
@@ -1393,11 +1393,16 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
             actions.push('retry');
             actions.push('proceed');
           }
-          else if (inst.status === 'Waiting') {
-            actions.push('proceed');
+          else if (inst.status === 'Waiting' || inst.status === 'In Progress') {
             var impl = selObj.implementor;
-            if (impl && impl.category && impl.category === 'com.centurylink.mdw.activity.types.PauseActivity') {
-              actions.push('resume');
+            if (inst.status === 'Waiting') {
+              actions.push('proceed');
+              if (impl && impl.category && impl.category === 'com.centurylink.mdw.activity.types.PauseActivity') {
+                  actions.push('resume');
+              }
+            }
+            if (impl && impl.category && impl.category !== 'com.centurylink.mdw.activity.types.TaskActivity') {
+              actions.push('fail');
             }
           }
         }
