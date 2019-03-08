@@ -5,28 +5,24 @@
       <div class="panel-heading mdw-heading">Discover Asset Packages</div>
       <form name="discoveryForm" class="form-horizontal" role="form">
       <div class="form-group mdw-static-group" style="padding:15px 0 0 35px">
-          <label class="radio-inline col-xs-3"><input type="radio" ng-model="discoveryType" value="distributed" ng-change='clear()'>Distributed Discovery</label>
-          <label class="radio-inline col-xs-3"><input type="radio" ng-model="discoveryType" value="central" ng-change='clear()'>Central Discovery</label> 
-       </div>
+        <label class="radio-inline col-xs-3"><input type="radio" ng-model="discoveryType" value="central" ng-change='clear();void(0)'>Central Discovery</label>
+        <label class="radio-inline col-xs-3"><input type="radio" ng-model="discoveryType" value="git" ng-change='clear()' uib-popover-template="'assets/gitrepositories.html'" popover-placement="bottom" pop-click>Git Discovery</label>
+      </div>
         <div class="form-group mdw-static-group" style="padding:15px 15px 0 0">
-          <label class="control-label col-xs-2"  ng-if="discoveryType === 'distributed'">Discovery URL:</label>
           <label class="control-label col-xs-2"  ng-if="discoveryType === 'central'">Group Id:</label>
-          <div class="col-md-8" ng-if="discoveryType === 'distributed'">
-            <input class="form-control col-md-6" type="text" ng-model="discoveryUrl" required>
-          </div>
           <div class="col-md-8" ng-if="discoveryType === 'central'">
             <input class="form-control col-md-6" type="text" ng-model="groupId" required>
           </div>
-            <button class="btn btn-primary mdw-btn" type="submit" ng-click="discover()" 
-              ng-disabled="!authUser.hasRole('Process Design') || !discoveryUrl">
-              <span class="glyphicon glyphicon-search"></span> Discover
-            </button>
+          <button class="btn btn-primary mdw-btn" type="submit" ng-if="discoveryType === 'central'" ng-click="discover()"
+                  ng-disabled="!authUser.hasRole('Process Design') || !groupId">
+            <span class="glyphicon glyphicon-search"></span> Discover
+          </button>
         </div>
       </form>
       <div class="panel panel-default mdw-panel mdw-panel-embedded">
         <div class="panel-heading mdw-heading">
           <div class="mdw-heading-checklist">
-            <input type="checkbox" ng-model="discoveredPkgList.selectedState.all" ng-change="discoveredPkgList.toggleAll()" 
+            <input type="checkbox" ng-model="discoveredPkgList.selectedState.all" ng-change="discoveredPkgList.toggleAll()"
               ng-if="discoveredPkgList && discoveredPkgList.packages && discoveredPkgList.packages.length > 0"></input>
             Discovered Packages
           </div>

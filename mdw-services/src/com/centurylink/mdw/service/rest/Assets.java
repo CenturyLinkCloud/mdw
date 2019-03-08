@@ -22,6 +22,11 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.discovery.GitDiscoverer;
+import com.centurylink.mdw.discovery.GitHubDiscoverer;
+import com.centurylink.mdw.discovery.GitLabDiscoverer;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.ArchiveDir;
@@ -49,6 +54,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -99,7 +105,8 @@ public class Assets extends JsonRestService {
     @ApiOperation(value="Retrieve an asset, an asset package, or all the asset packages",
         response=PackageList.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="discoveryUrl", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="discoveryUrls", paramType="query", dataType="array"),
+        @ApiImplicitParam(name="branch", paramType="query", dataType="string"),
         @ApiImplicitParam(name="discoveryType", paramType="query", dataType="string"),
         @ApiImplicitParam(name="groupId", paramType="query", dataType="string"),
         @ApiImplicitParam(name="archiveDirs", paramType="query", dataType="string")})
@@ -107,9 +114,8 @@ public class Assets extends JsonRestService {
 
         try {
             Query query = getQuery(path, headers);
-            String discoveryUrl = query.getFilter("discoveryUrl");
-            if (discoveryUrl != null) {
-                String discoveryType = query.getFilter("discoveryType");
+            String discoveryType = query.getFilter("discoveryType");
+            if (discoveryType != null) {
                 if (!discoveryType.isEmpty() && discoveryType.equals("central")) {
                     String groupId = query.getFilter("groupId");
                     try {
@@ -121,15 +127,45 @@ public class Assets extends JsonRestService {
                                 "Invalid response from maven central search query", e);
                     }
                 }
-                else {
-                    String url = discoveryUrl + "/services/" + path;
-                    HttpHelper helper = HttpHelper.getHttpHelper("GET", new URL(url));
-                    try {
-                        return new JsonObject(helper.get());
+                else if ("git".equals(discoveryType)){
+                    GitDiscoverer discoverer = null;
+                    URL repoUrl = null;
+                    String[] repoUrls = query.getArrayFilter("discoveryUrls");
+                    JSONObject repositories = new JSONObject();
+                    if (repoUrls != null) {
+                        repositories.put("repositories", new JSONArray());
+                        for (int i = 0; i < repoUrls.length; i++) {
+                            repoUrl = new URL(repoUrls[i]);
+                            if ("github.com".equals(repoUrl.getHost()))
+                                discoverer = new GitHubDiscoverer(repoUrl);
+                            else
+                                discoverer = new GitLabDiscoverer(repoUrl, true);
+                            JSONArray array = repositories.getJSONArray("repositories");
+                            JSONObject jsonObj = new JSONObject();
+                            jsonObj.put("url", repoUrl);
+                            jsonObj.put("branches", new JSONArray(discoverer.getBranches(PropertyManager.getIntegerProperty(PropertyNames.MDW_DISCOVERY_BRANCHTAGS_MAX, 10))));
+                            jsonObj.put("tags", new JSONArray(discoverer.getTags(PropertyManager.getIntegerProperty(PropertyNames.MDW_DISCOVERY_BRANCHTAGS_MAX, 10))));
+                            array.put(jsonObj);
+                        }
+                        return repositories;
                     }
-                    catch (JSONException ex) {
-                        throw new ServiceException(ServiceException.INTERNAL_ERROR,
-                                "Invalid response from: " + discoveryUrl, ex);
+                    else {
+                        String  url = query.getFilter("discoveryUrl");
+                        String  branch = query.getFilter("branch");
+                        repoUrl = new URL(url);
+                        JSONObject packages = new JSONObject();
+                        packages.put("gitBranch", branch);
+                        packages.put("assetRoot", ApplicationContext.getAssetRoot());
+                        packages.put("packages", new JSONArray());
+                        if ("github.com".equals(repoUrl.getHost())) {
+                            discoverer = new GitHubDiscoverer(repoUrl);
+                            discoverer.setToken("8c378d2a87565d02f28421e0536759a12bece268");
+                        }
+                        else {
+                            discoverer = new GitLabDiscoverer(repoUrl, true);
+                        }
+                        // TODO : retreiving packages from git and populating the packages JSONObject
+                        return packages;
                     }
                 }
             }
@@ -192,7 +228,7 @@ public class Assets extends JsonRestService {
         Query query = getQuery(path, headers);
         String discoveryUrl = query.getFilter("discoveryUrl");
         if (discoveryUrl == null)
-            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: discoveryUrl");
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: repositoryUrl");
         String discoveryType = query.getFilter("discoveryType");
         if (discoveryType == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: discoveryType");
@@ -224,34 +260,7 @@ public class Assets extends JsonRestService {
                 thread.start();
             }
             else {
-                // download from discovery server
-                String url = discoveryUrl + "/asset/packages?packages="
-                        + discQuery.getFilter("packages");
-                HttpHelper helper = HttpHelper.getHttpHelper("GET", new URL(url));
-                File tempDir = new File(ApplicationContext.getTempDirectory());
-                File tempFile = new File(tempDir + "/pkgDownload_"
-                        + StringHelper.filenameDateToString(new Date()) + ".zip");
-                logger.info("Saving package import temporary file: " + tempFile);
-                helper.download(tempFile);
-
-                // import packages
-                ProgressMonitor progressMonitor = new LoggerProgressMonitor(logger);
-                progressMonitor.start("Unzipping " + tempFile + " into: " + assetRoot);
-                logger.info("Unzipping " + tempFile + " into: " + assetRoot);
-                ZipHelper.unzip(tempFile, assetRoot, null, null, true);
-                //                 archiver.archive(true);
-                //                 SystemMessages.bulletinOff(bulletin, "Asset import completed");
-                bulletin = null;
-                Thread thread = new Thread() {
-                    @Override
-                    public void run() {
-                        this.setName("AssetsCacheRefresh-thread");
-                        CacheRegistration.getInstance().refreshCaches(null);
-                    }
-                };
-                thread.start();
-                progressMonitor.done();
-                tempFile.delete();
+                // handle git import
             }
         }
         catch (Exception ex) {

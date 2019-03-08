@@ -77,9 +77,9 @@ public class Mdw {
     public boolean isAllowAnyAuthenticatedUser() { return allowAnyAuthenticatedUser; }
     public void setAllowAnyAuthenticatedUser(boolean allow) { this.allowAnyAuthenticatedUser = allow; }
 
-    private String discoveryUrl;
-    public String getDiscoveryUrl() { return discoveryUrl; }
-    public void setDiscoveryUrl(String url) { this.discoveryUrl = url; }
+    private List<String> discoveryUrls;
+    public List<String> getDiscoveryUrls() { return discoveryUrls; }
+    public void setDiscoveryUrls(List<String> url) { this.discoveryUrls = url; }
 
     private String customRoutes;
     public String getCustomRoutes() { return customRoutes; }
