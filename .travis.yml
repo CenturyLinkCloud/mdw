@@ -20,8 +20,8 @@ before_script:
 - export mdwVersion=`cat gradle.properties  | grep mdwVersion | cut -d'=' -f2`
 script:
 - ./gradlew -version
-- ./gradlew --no-daemon zipAssetPackages
-- ./gradlew --no-daemon publishAll
+- ./gradlew zipAssetPackages
+- ./gradlew publishAll
 after_failure:
 - cat ../testResults/mdw-function-test-results.json
 #- cat ../testResults/com.centurylink.mdw.tests.services/SolutionValues.log

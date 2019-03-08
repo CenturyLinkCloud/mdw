@@ -15,37 +15,24 @@
  */
 package com.centurylink.mdw.cli;
 
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.FileSystems;
-import java.nio.file.FileVisitOption;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.*;
+
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+
+;
 
 @Parameters(commandNames="test", commandDescription="Run Automated Test(s)", separators="=")
 public class Test extends Setup {
@@ -306,6 +293,14 @@ public class Test extends Setup {
         List<PathMatcher> exMatchers = getExcludeMatchers();
         Files.walkFileTree(Paths.get(getAssetRoot().getPath()),
                 EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                        if (dir.getFileName().equals("node_modules"))
+                            return FileVisitResult.SKIP_SUBTREE;
+                        else
+                            return FileVisitResult.CONTINUE;
+                    }
+                    @Override
                     public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
                         Path p = Paths.get(getAssetPath(path.toFile()));
                         if (matches(inMatchers, p) && !matches(exMatchers, p)) {
