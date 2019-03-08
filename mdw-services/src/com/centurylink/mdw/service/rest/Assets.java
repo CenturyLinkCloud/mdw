@@ -29,6 +29,7 @@ import com.centurylink.mdw.discovery.GitHubDiscoverer;
 import com.centurylink.mdw.discovery.GitLabDiscoverer;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.PackageMeta;
 import com.centurylink.mdw.model.asset.ArchiveDir;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.PackageAssets;
@@ -113,6 +114,7 @@ public class Assets extends JsonRestService {
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
 
         try {
+            AssetServices assetServices = ServiceLocator.getAssetServices();
             Query query = getQuery(path, headers);
             String discoveryType = query.getFilter("discoveryType");
             if (discoveryType != null) {
@@ -128,49 +130,14 @@ public class Assets extends JsonRestService {
                     }
                 }
                 else if ("git".equals(discoveryType)){
-                    GitDiscoverer discoverer = null;
-                    URL repoUrl = null;
                     String[] repoUrls = query.getArrayFilter("discoveryUrls");
-                    JSONObject repositories = new JSONObject();
-                    if (repoUrls != null) {
-                        repositories.put("repositories", new JSONArray());
-                        for (int i = 0; i < repoUrls.length; i++) {
-                            repoUrl = new URL(repoUrls[i]);
-                            if ("github.com".equals(repoUrl.getHost()))
-                                discoverer = new GitHubDiscoverer(repoUrl);
-                            else
-                                discoverer = new GitLabDiscoverer(repoUrl, true);
-                            JSONArray array = repositories.getJSONArray("repositories");
-                            JSONObject jsonObj = new JSONObject();
-                            jsonObj.put("url", repoUrl);
-                            jsonObj.put("branches", new JSONArray(discoverer.getBranches(PropertyManager.getIntegerProperty(PropertyNames.MDW_DISCOVERY_BRANCHTAGS_MAX, 10))));
-                            jsonObj.put("tags", new JSONArray(discoverer.getTags(PropertyManager.getIntegerProperty(PropertyNames.MDW_DISCOVERY_BRANCHTAGS_MAX, 10))));
-                            array.put(jsonObj);
-                        }
-                        return repositories;
-                    }
-                    else {
-                        String  url = query.getFilter("discoveryUrl");
-                        String  branch = query.getFilter("branch");
-                        repoUrl = new URL(url);
-                        JSONObject packages = new JSONObject();
-                        packages.put("gitBranch", branch);
-                        packages.put("assetRoot", ApplicationContext.getAssetRoot());
-                        packages.put("packages", new JSONArray());
-                        if ("github.com".equals(repoUrl.getHost())) {
-                            discoverer = new GitHubDiscoverer(repoUrl);
-                            discoverer.setToken("8c378d2a87565d02f28421e0536759a12bece268");
-                        }
-                        else {
-                            discoverer = new GitLabDiscoverer(repoUrl, true);
-                        }
-                        // TODO : retreiving packages from git and populating the packages JSONObject
-                        return packages;
-                    }
+                    String branch = query.getFilter("branch");
+                    if (branch != null)
+                        return assetServices.discoverGitAssets(repoUrls[0], branch);
+                    else
+                        return assetServices.getGitBranches(repoUrls);
                 }
             }
-
-            AssetServices assetServices = ServiceLocator.getAssetServices();
 
             if (query.getBooleanFilter("archiveDirs")) {
                 List<ArchiveDir> archiveDirs = assetServices.getArchiveDirs();

@@ -35,6 +35,7 @@ import com.centurylink.mdw.model.asset.AssetPackageList;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.services.asset.Renderer;
+import org.json.JSONObject;
 
 /**
  * Services for interacting with design-time workflow assets.
@@ -115,4 +116,8 @@ public interface AssetServices {
     List<PackageDir> getPackageDirs() throws IOException;
 
     List<PackageDir> findPackageDirs(Predicate<File> predicate) throws IOException;
+
+    JSONObject getGitBranches(String[] repoUrls) throws ServiceException;
+
+    JSONObject discoverGitAssets(String repoUrl, String branch) throws ServiceException;
 }
