@@ -117,14 +117,13 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
         $scope.getExportPackagesParam();
   };
 
-  $scope.discoveryUrls = $cookieStore.get('discoveryUrls');
-  $scope.discoveryUrl = $cookieStore.get('discoveryUrl');
+  $scope.repositoryUrls = $cookieStore.get('discoveryUrls');
   $scope.discoveryType = 'central';
   $scope.groupId = $cookieStore.get('groupId');
   if (!$scope.discoveryUrls)
     $scope.discoveryUrls = mdw.discoveryUrls;
   if (!$scope.groupId)
-  $scope.groupId = 'com.centurylink.mdw.assets';
+    $scope.groupId = 'com.centurylink.mdw.assets';
 
   $scope.repositoriesList = Assets.get({discoveryUrls: $scope.discoveryUrls, discoveryType: 'git'},
     function(data) {
@@ -256,7 +255,7 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
   $scope.discover = function() {
     $cookieStore.put('groupId', $scope.groupId);
     $scope.discoveredPkgList = null;
-    $scope.pkgList = Assets.get({discoveryUrl: $scope.discoveryUrl, branch:$scope.branch , discoveryType: $scope.discoveryType, groupId: $scope.groupId},
+    $scope.pkgList = Assets.get({discoveryUrls: $scope.discoveryUrl, branch:$scope.branch , discoveryType: $scope.discoveryType, groupId: $scope.groupId},
       function(data) {
         $scope.discoveryMessage = null;
         $scope.discoveredPkgList = data;
@@ -295,8 +294,6 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
     $cookieStore.put('discoveryUrls', $scope.discoveryUrls);
     $scope.discoveryUrl =  repoUrl;
     $scope.branch = branch;
-    $cookieStore.put('branch',  branch);
-    $cookieStore.put('discoveryUrl',  $scope.discoveryUrl);
     $scope.closePopover();
     $scope.discover();
   };
