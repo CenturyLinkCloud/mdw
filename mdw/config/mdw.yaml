@@ -23,7 +23,9 @@ temp.dir: ./temp
 
 hub.url: http://localhost:8080/mdw
 services.url: http://localhost:8080/mdw
-discovery.url: http://repo.maven.apache.org/maven2
+discovery:
+  urls:
+    - https://github.com/CenturyLinkCloud/mdw.git
 
 logging:
   level: DEBUG

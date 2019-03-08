@@ -75,10 +75,10 @@ public class WebAppContext {
             String appId = PropertyManager.getProperty(PropertyNames.MDW_APP_ID);
             mdw.setAppId(appId);
 
-            String discoveryUrl = PropertyManager.getProperty(PropertyNames.DISCOVERY_URL);
-            if (discoveryUrl == null)
-                discoveryUrl = "https://mdw-dev.useast.appfog.ctl.io/mdw";
-            mdw.setDiscoveryUrl(discoveryUrl);
+            List<String> discoveryUrls = PropertyManager.getListProperty(PropertyNames.DISCOVERY_URL);
+            if (discoveryUrls == null)
+                discoveryUrls.add("https://github.com/CenturyLinkCloud/mdw.git");
+            mdw.setDiscoveryUrls(discoveryUrls);
 
             mdw.setGitBranch(PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH));
             mdw.setGitTag(PropertyManager.getProperty(PropertyNames.MDW_GIT_TAG));

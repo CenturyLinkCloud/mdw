@@ -8,7 +8,7 @@ mdwMod.factory('mdw', function() {
     version: $mdwVersion,
     build: $mdwBuild,
     webSocketUrl: $mdwWebSocketUrl,
-    discoveryUrl: $mdwDiscoveryUrl,
+    discoveryUrls: $mdwDiscoveryUrls,
     authMethod: $mdwAuthMethod,
     appId: $mdwAppId,
     hubUser: $mdwHubUser,   // Used to determine if isDevelopment() - value is only set when in Dev mode
