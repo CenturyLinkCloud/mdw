@@ -268,14 +268,21 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     @Override
     public void actionActivity(Long activityInstanceId, String action, String completionCode, String user) throws ServiceException {
+        EngineDataAccessDB dataAccess = null;
         try {
             UserAction userAction = auditLog(action, UserAction.Entity.ActivityInstance, activityInstanceId, user, completionCode);
             if (Action.Proceed.toString().equalsIgnoreCase(action)) {
                 ServiceLocator.getEventServices().skipActivity(null, activityInstanceId, completionCode);
             }
-            else if (Action.Retry.toString().equalsIgnoreCase(action)) {
+            else if (Action.Retry.toString().equalsIgnoreCase(action) || Action.Fail.toString().equalsIgnoreCase(action)) {
                 ActivityInstance activityVo = ServiceLocator.getEventServices().getActivityInstance(activityInstanceId);
-                ServiceLocator.getEventServices().retryActivity(activityVo.getActivityId(), activityInstanceId);
+                if (Action.Retry.toString().equalsIgnoreCase(action))
+                    ServiceLocator.getEventServices().retryActivity(activityVo.getActivityId(), activityInstanceId);
+                else if (activityVo.getEndDate() == null) {// Only fail it if not yet completed
+                    dataAccess = new EngineDataAccessDB();
+                    dataAccess.getDatabaseAccess().openConnection();
+                    dataAccess.setActivityInstanceStatus(activityVo, WorkStatus.STATUS_FAILED, "Manually Failed by user " + user);
+                }
             }
             else if (Action.Resume.toString().equalsIgnoreCase(action)) {
                 String eventName = "mdw.Resume-" + activityInstanceId;
@@ -287,6 +294,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
+        }
+        finally {
+            if (dataAccess != null)
+                dataAccess.getDatabaseAccess().closeConnection();
         }
     }
 
