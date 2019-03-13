@@ -18,18 +18,17 @@ package com.centurylink.mdw.service.rest;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cli.Discover;
 import com.centurylink.mdw.cli.Import;
+import com.centurylink.mdw.cli.Update;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.discovery.GitDiscoverer;
-import com.centurylink.mdw.discovery.GitHubDiscoverer;
-import com.centurylink.mdw.discovery.GitLabDiscoverer;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.PackageMeta;
 import com.centurylink.mdw.model.asset.ArchiveDir;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.PackageAssets;
@@ -44,25 +43,19 @@ import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.rest.JsonRestService;
-import com.centurylink.mdw.util.HttpHelper;
-import com.centurylink.mdw.util.StringHelper;
-import com.centurylink.mdw.util.file.ZipHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.util.timer.LoggerProgressMonitor;
-import com.centurylink.mdw.util.timer.ProgressMonitor;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.ws.rs.Path;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -186,16 +179,14 @@ public class Assets extends JsonRestService {
     @Path("/packages")
     @ApiOperation(value="Import discovered asset packages", response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="discoveryUrl", paramType="query", required=true),
-        @ApiImplicitParam(name="discoveryType", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="discoveryUrl", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="branch", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="discoveryType", paramType="query", required=true),
         @ApiImplicitParam(name="groupId", paramType="query", dataType="string"),
         @ApiImplicitParam(name="packages", paramType="body", required=true, dataType="List")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         Query query = getQuery(path, headers);
-        String discoveryUrl = query.getFilter("discoveryUrl");
-        if (discoveryUrl == null)
-            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: repositoryUrl");
         String discoveryType = query.getFilter("discoveryType");
         if (discoveryType == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: discoveryType");
@@ -227,7 +218,24 @@ public class Assets extends JsonRestService {
                 thread.start();
             }
             else {
-                // handle git import
+                String discoveryUrl = query.getFilter("discoveryUrl");
+                if ("https://github.com/CenturyLinkCloud/mdw.git".equals(discoveryUrl)) {
+                    Update update = new Update(null);
+                    update.setAssetLoc(assetRoot.getPath());
+                    update.setBaseAssetPackages(pkgs);
+                    update.setMdwVersion(ApplicationContext.getMdwVersion());
+                    update.run();
+                }
+                else {
+                    String branch = query.getFilter("branch");
+                    if (branch == null)
+                        throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: groupId");
+                    String localPath = ApplicationContext.getTempDirectory();
+                    VersionControlGit vcGit = new VersionControlGit();
+                    vcGit.connect(discoveryUrl, null, null, new File(localPath + "_" + java.lang.System.currentTimeMillis()));
+                    vcGit.cloneBranch(branch);
+                    // TODO: moving pacakges
+                }
             }
         }
         catch (Exception ex) {

@@ -313,7 +313,7 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
         pkgsObj.packages.push(pkg.name);
     });
     
-    $scope.pkgList = Assets.put({discoveryUrls: $scope.discoveryUrls, discoveryType: $scope.discoveryType, groupId: $scope.groupId}, pkgsObj,
+    $scope.pkgList = Assets.put({discoveryUrl: $scope.discoveryUrl, branch:$scope.branch, discoveryType: $scope.discoveryType, groupId: $scope.groupId}, pkgsObj,
       function(data) {
         $scope.discoveryMessage = null;
         // leave cache error logging to the server side
