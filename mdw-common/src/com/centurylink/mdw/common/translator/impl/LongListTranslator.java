@@ -32,7 +32,7 @@ public class LongListTranslator extends DocumentReferenceTranslator {
             List<Long> longList = new ArrayList<Long>();
             JSONArray jsonArray = new JSONArray(json);
             for (int i = 0; i < jsonArray.length(); i++)
-                longList.add((Long)jsonArray.opt(i));
+                longList.add(jsonArray.opt(i) == null ? null : jsonArray.getLong(i));
             return longList;
         }
         catch (JSONException ex) {
