@@ -23,7 +23,7 @@
     "$mdwBuild": false,
     "$mdwAuthMethod": false,
     "$mdwWebSocketUrl": false,
-    "$mdwDiscoveryUrl": false,
+    "$mdwDiscoveryUrls": false,
     "$mdwCustomRoutes": false,
     "$mdwGitBranch": false,
     "$mdwGitTag": false,

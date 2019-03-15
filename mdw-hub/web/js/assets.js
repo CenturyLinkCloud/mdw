@@ -2,8 +2,8 @@
 
 var assetMod = angular.module('assets', ['ngResource', 'mdw']);
 
-assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$http', '$cookieStore', '$uibModal', 'mdw', 'uiUtil', 'Assets', 'GitVcs', 'WorkflowCache',
-                                           function($scope, $location, $route, $http, $cookieStore, $uibModal, mdw, uiUtil, Assets, GitVcs, WorkflowCache) {
+assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$http', '$cookieStore', '$uibModal', 'mdw', 'util', 'uiUtil', 'Assets', 'GitVcs', 'WorkflowCache',
+                                           function($scope, $location, $route, $http, $cookieStore, $uibModal, mdw, util, uiUtil, Assets, GitVcs, WorkflowCache) {
   $scope.pkgList = Assets.get({}, 
     function(data) {
       if (!$scope.pkgList.packages || $scope.pkgList.packages.length === 0) {
@@ -117,18 +117,154 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
         $scope.getExportPackagesParam();
   };
 
-  $scope.discoveryUrl = $cookieStore.get('discoveryUrl');
-  $scope.discoveryType = 'distributed';
+  $scope.repositoryUrls = $cookieStore.get('discoveryUrls');
+  $scope.discoveryType = 'central';
   $scope.groupId = $cookieStore.get('groupId');
-  if (!$scope.discoveryUrl)
-    $scope.discoveryUrl = mdw.discoveryUrl;
+  if (!$scope.discoveryUrls)
+    $scope.discoveryUrls = mdw.discoveryUrls;
   if (!$scope.groupId)
-  $scope.groupId = 'com.centurylink.mdw.assets';
+    $scope.groupId = 'com.centurylink.mdw.assets';
+
+  $scope.repositoriesList = Assets.get({discoveryUrls: $scope.discoveryUrls, discoveryType: 'git'},
+    function(data) {
+      $scope.discoveryMessage = null;
+      $scope.repositoriesList.repositories.forEach(function(repository) {
+        var url = repository.url;
+        if (url.indexOf('?') != -1)
+          url = url.substr(0, url.indexOf('?'));
+        var lines = url.split('@');
+        if (lines[1] != null)
+           url = lines[0].substr(0, lines[0].indexOf("//")+2) + lines[1];
+        repository.repoUrl = url;
+      });
+      $scope.applyRepoCollapsedState();
+      $scope.applyBranchCollapsedState();
+      $scope.applyTagCollapsedState();
+    },
+    function(error) {
+      if (error.data.status)
+        $scope.discoveryMessage = 'Discovery failed: ' + error.data.status.message;
+    }
+  );
+
+  $scope.saveRepoCollapsedState = function() {
+    var st = {};
+    $scope.repositoriesList.repositories.forEach(function(repository) {
+    if (repository.collapsed)
+      st[repository.url] = true;
+    });
+    $cookieStore.put('repoCollapsedState', st);
+  };
+
+  $scope.saveBranchCollapsedState = function() {
+    var st = {};
+    $scope.repositoriesList.repositories.forEach(function(repository) {
+      if (repository.branches.collapsed)
+        st[repository.url+'_branch'] = true;
+    });
+    $cookieStore.put('branchCollapsedState', st);
+  };
+
+  $scope.saveTagCollapsedState = function() {
+    var st = {};
+    $scope.repositoriesList.repositories.forEach(function(repository) {
+      if (repository.tags.collapsed)
+        st[repository.url+'_tag'] = true;
+    });
+    $cookieStore.put('tagCollapsedState', st);
+  };
+
+  $scope.applyRepoCollapsedState = function() {
+    var st = $cookieStore.get('repoCollapsedState');
+    if (st) {
+      util.getProperties(st).forEach(function(repoUrl) {
+        var col = st[repoUrl];
+        if (col === true) {
+          if($scope.repositoriesList.repositories) {
+            for (var i = 0; i < $scope.repositoriesList.repositories.length; i++) {
+              if (repoUrl == $scope.repositoriesList.repositories[i].url) {
+                $scope.repositoriesList.repositories[i].collapsed = true;
+                break;
+              }
+            }
+          }
+        }
+      });
+    }
+  };
+
+  $scope.applyBranchCollapsedState = function() {
+    var st = $cookieStore.get('branchCollapsedState');
+    if (st) {
+      util.getProperties(st).forEach(function(branch) {
+        var col = st[branch];
+        if (col === true) {
+          if ($scope.repositoriesList.repositories) {
+            for (var i = 0; i < $scope.repositoriesList.repositories.length; i++) {
+              if (branch === $scope.repositoriesList.repositories[i].url+"_branch") {
+                $scope.repositoriesList.repositories[i].branches.collapsed = true;
+                break;
+              }
+            }
+          }
+        }
+      });
+    }
+  };
+
+  $scope.applyTagCollapsedState = function() {
+      var st = $cookieStore.get('tagCollapsedState');
+      if (st) {
+        util.getProperties(st).forEach(function(tag) {
+          var col = st[tag];
+          if (col === true) {
+            if($scope.repositoriesList.repositories) {
+              for (var i = 0; i < $scope.repositoriesList.repositories.length; i++) {
+                if (tag === $scope.repositoriesList.repositories[i].url+"_tag") {
+                  $scope.repositoriesList.repositories[i].tags.collapsed = true;
+                  break;
+                }
+              }
+            }
+          }
+        });
+      }
+    };
+
+  $scope.collapse = function(repository) {
+    repository.collapsed = true;
+    $scope.saveRepoCollapsedState();
+  };
+
+  $scope.expand = function(repository) {
+    repository.collapsed = false;
+    $scope.saveRepoCollapsedState();
+  };
+
+  $scope.collapseBranch = function(branch) {
+    branch.collapsed = true;
+    $scope.saveBranchCollapsedState();
+  };
+
+  $scope.expandBranch = function(branch) {
+    branch.collapsed = false;
+    $scope.saveBranchCollapsedState();
+  };
+
+  $scope.collapseTag = function(tag) {
+    tag.collapsed = true;
+    $scope.saveTagCollapsedState();
+  };
+
+  $scope.expandTag = function(tag) {
+    tag.collapsed = false;
+    $scope.saveTagCollapsedState();
+  };
+
   $scope.discover = function() {
-    $cookieStore.put('discoveryUrl', $scope.discoveryUrl);
     $cookieStore.put('groupId', $scope.groupId);
     $scope.discoveredPkgList = null;
-    $scope.pkgList = Assets.get({discoveryUrl: $scope.discoveryUrl, discoveryType: $scope.discoveryType, groupId: $scope.groupId}, 
+    $scope.pkgList = Assets.get({discoveryUrls: $scope.discoveryUrl, branch:$scope.branch , discoveryType: $scope.discoveryType, groupId: $scope.groupId},
       function(data) {
         $scope.discoveryMessage = null;
         $scope.discoveredPkgList = data;
@@ -162,6 +298,19 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
   $scope.clear = function() {
     $scope.discoveredPkgList = null; 
   };
+
+  $scope.discoverFromGit = function(repoUrl, branch) {
+    $cookieStore.put('discoveryUrls', $scope.discoveryUrls);
+    $scope.discoveryUrl =  repoUrl;
+    $scope.branch = branch;
+    $scope.closePopover();
+    $scope.discover();
+  };
+
+  $scope.stopPropagation = function($event) {
+    $event.stopPropagation();
+    $event.preventDefault();
+  };
   
   $scope.importDiscovered = function() {
     var pkgsObj = { packages: [] };
@@ -173,7 +322,7 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
         pkgsObj.packages.push(pkg.name);
     });
     
-    $scope.pkgList = Assets.put({discoveryUrl: $scope.discoveryUrl, discoveryType: $scope.discoveryType, groupId: $scope.groupId}, pkgsObj, 
+    $scope.pkgList = Assets.put({discoveryUrl: $scope.discoveryUrl, branch:$scope.branch, discoveryType: $scope.discoveryType, groupId: $scope.groupId}, pkgsObj,
       function(data) {
         $scope.discoveryMessage = null;
         // leave cache error logging to the server side
@@ -246,7 +395,7 @@ assetMod.controller('PackageController', ['$scope', '$routeParams', '$route', '$
   $scope.isEditAllowed = function() {
     return $scope.authUser.hasRole('Process Design') && !mdw.git.tag;
   };
-  
+
   $scope.newAsset = function(type) {
     var ext = ASSET_TYPES[type];
     $scope.closePopover();

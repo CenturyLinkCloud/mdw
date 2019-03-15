@@ -1,0 +1,59 @@
+<div ng-repeat="repository in repositoriesList.repositories" ng-click=stopPropagation($event) style="cursor:auto">
+  <div class="col-md-12">
+    <div class= "col-md-1">
+      <a href="" ng-if="!repository.collapsed" ng-click="collapse(repository)">
+        <span class="glyphicon glyphicon-chevron-up"></span>
+      </a>
+      <a href="" ng-if="repository.collapsed" ng-click="expand(repository)">
+        <span class="glyphicon glyphicon-chevron-down"></span>
+      </a>
+    </div>
+    <div>
+      <label class="mdw-label">{{repository.repoUrl}}</label>
+    </div>
+    <div class="col-md-12" uib-collapse="repository.collapsed">
+      <div>
+        <div class= "col-md-1">
+          <a href="" ng-if="!repository.branches.collapsed" ng-click="collapseBranch(repository.branches)">
+            <span class="glyphicon glyphicon-chevron-up"></span>
+          </a>
+          <a href="" ng-if="repository.branches.collapsed" ng-click="expandBranch(repository.branches)">
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </a>
+        </div>
+        <label class="mdw-label">Branches</label>
+        <div uib-collapse="repository.branches.collapsed">
+          <ul class="dropdown-menu mdw-popover-menu">
+            <li ng-repeat="branch in repository.branches">
+              <div class="col-md-12">
+                <span ng-click="discoverFromGit(repository.url, branch)"> {{branch}}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12" uib-collapse="repository.collapsed">
+      <div>
+        <div class= "col-md-1">
+          <a href="" ng-if="!repository.tags.collapsed" ng-click="collapseTag(repository.tags)">
+            <span class="glyphicon glyphicon-chevron-up"></span>
+          </a>
+          <a href="" ng-if="repository.tags.collapsed" ng-click="expandTag(repository.tags)">
+            <span class="glyphicon glyphicon-chevron-down"></span>
+          </a>
+        </div>
+        <label class="mdw-label">Tags</label>
+        <div uib-collapse="repository.tags.collapsed">
+          <ul class="dropdown-menu mdw-popover-menu">
+            <li ng-repeat="tag in repository.tags">
+              <div class="col-md-12">
+                <span ng-click="discoverFromGit(repository.url, tag)"> {{tag}}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

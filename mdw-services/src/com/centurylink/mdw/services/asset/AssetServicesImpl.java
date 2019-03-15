@@ -27,7 +27,11 @@ import com.centurylink.mdw.dataaccess.file.GitDiffs;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.discovery.GitDiscoverer;
+import com.centurylink.mdw.discovery.GitHubDiscoverer;
+import com.centurylink.mdw.discovery.GitLabDiscoverer;
 import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.PackageMeta;
 import com.centurylink.mdw.model.asset.*;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.services.AssetServices;
@@ -36,11 +40,13 @@ import com.centurylink.mdw.util.file.MdwIgnore;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -781,4 +787,57 @@ public class AssetServicesImpl implements AssetServices {
         return null;
     }
 
+    public JSONObject getGitBranches(String[] repoUrls) throws ServiceException {
+        JSONObject repositories = new JSONObject();
+        repositories.put("repositories", new JSONArray());
+        try {
+            for (int i = 0; i < repoUrls.length; i++) {
+                GitDiscoverer discoverer = getDiscoverer(repoUrls[i]);
+                JSONArray array = repositories.getJSONArray("repositories");
+                JSONObject jsonObj = new JSONObject();
+                jsonObj.put("url", repoUrls[i]);
+                jsonObj.put("branches", new JSONArray(discoverer.getBranches(PropertyManager.getIntegerProperty(PropertyNames.MDW_DISCOVERY_BRANCHTAGS_MAX, 10))));
+                jsonObj.put("tags", new JSONArray(discoverer.getTags(PropertyManager.getIntegerProperty(PropertyNames.MDW_DISCOVERY_BRANCHTAGS_MAX, 10))));
+                array.put(jsonObj);
+            }
+        }
+        catch (IOException ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
+        return repositories;
+    }
+
+    public JSONObject discoverGitAssets(String repoUrl, String branch) throws ServiceException {
+        JSONObject packages = new JSONObject();
+        packages.put("gitBranch", branch);
+        packages.put("assetRoot", ApplicationContext.getAssetRoot());
+        packages.put("packages", new JSONArray());
+        try {
+            GitDiscoverer discoverer = getDiscoverer(repoUrl);
+            discoverer.setRef(branch);
+            Map<String, PackageMeta> pacakgeInfo = discoverer.getPackageInfo();
+            for (PackageMeta pkgMeta : pacakgeInfo.values()) {
+                JSONArray array = packages.getJSONArray("packages");
+                JSONObject jsonObj = new JSONObject();
+                jsonObj.put("format", "json");
+                jsonObj.put("name", pkgMeta.getName());
+                jsonObj.put("version", pkgMeta.getVersion());
+                array.put(jsonObj);
+            }
+        }
+        catch (IOException ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
+        return packages;
+    }
+
+    public GitDiscoverer getDiscoverer(String repoUrl) throws IOException{
+        URL url = new URL(repoUrl);
+        GitDiscoverer discoverer;
+        if ("github.com".equals(url.getHost()))
+            discoverer = new GitHubDiscoverer(url);
+        else
+            discoverer = new GitLabDiscoverer(url, true);
+        return discoverer;
+    }
 }
