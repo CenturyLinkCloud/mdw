@@ -16,6 +16,7 @@
 package com.centurylink.mdw.service.rest;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cli.Delete;
 import com.centurylink.mdw.cli.Discover;
 import com.centurylink.mdw.cli.Import;
 import com.centurylink.mdw.cli.Update;
@@ -23,7 +24,10 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.discovery.GitDiscoverer;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.ArchiveDir;
@@ -46,12 +50,17 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.ws.rs.Path;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -225,11 +234,31 @@ public class Assets extends JsonRestService {
                     String branch = query.getFilter("branch");
                     if (branch == null)
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: groupId");
-                    String localPath = ApplicationContext.getTempDirectory();
+                    File gitLocalPath = new File(PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH));
                     VersionControlGit vcGit = new VersionControlGit();
-                    vcGit.connect(discoveryUrl, null, null, new File(localPath + "_" + java.lang.System.currentTimeMillis()));
+                    AssetServices assetServices = ServiceLocator.getAssetServices();
+                    GitDiscoverer discoverer = assetServices.getDiscoverer(discoveryUrl);
+                    discoverer.setRef(branch);
+                    String assetPath = discoverer.getAssetPath();
+                    if (discoveryUrl.indexOf('?') != -1)
+                        discoveryUrl = discoveryUrl.substring(0, discoveryUrl.indexOf('?'));
+                    URL url = new URL(discoveryUrl);
+                    String[] userInfo = url.getUserInfo().split(":");
+                    File test = new File(gitLocalPath.getAbsolutePath()).getParentFile();
+                    if (test != null && gitLocalPath.getPath().length() <= 3)
+                        test = new File( gitLocalPath.getAbsolutePath()).getParentFile().getParentFile().getParentFile();
+                    File tempfile = new File ( test.getAbsolutePath() + "/" + "mdw_git_discovery_" + java.lang.System.currentTimeMillis());
+                    vcGit.connect(discoveryUrl, null, null, tempfile);
+                    vcGit.setCredentialsProvider(new UsernamePasswordCredentialsProvider(userInfo[0], userInfo[1]));
                     vcGit.cloneBranch(branch);
-                    // TODO: moving pacakges
+                    for (String pkg : pkgs) {
+                        String pkgPath = pkg.replace(".", "/");
+                        String src = tempfile.getAbsolutePath() + "/" + assetPath + "/" + pkgPath;
+                        String dest = ApplicationContext.getAssetRoot().getAbsolutePath() + "/" + pkgPath;
+                        Files.createDirectories(Paths.get(dest));
+                        Files.move(Paths.get(src), Paths.get(dest), StandardCopyOption.REPLACE_EXISTING);
+                    }
+                    new Delete(tempfile).run();
                 }
             }
         }

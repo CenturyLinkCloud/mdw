@@ -8,11 +8,8 @@
         <span class="glyphicon glyphicon-chevron-down"></span>
       </a>
     </div>
-    <div ng-if="repository.url.indexOf('?') != -1">
-      <label class="mdw-label" >{{repository.url.substr(0, repository.url.indexOf('?'))}}</label>
-    </div>
-    <div ng-if="repository.url.indexOf('?') == -1">
-      <label class="mdw-label">{{repository.url}}</label>
+    <div>
+      <label class="mdw-label">{{repository.repoUrl}}</label>
     </div>
     <div class="col-md-12" uib-collapse="repository.collapsed">
       <div>
