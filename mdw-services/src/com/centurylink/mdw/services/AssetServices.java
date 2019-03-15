@@ -29,12 +29,14 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
+import com.centurylink.mdw.discovery.GitDiscoverer;
 import com.centurylink.mdw.model.asset.ArchiveDir;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetPackageList;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.services.asset.Renderer;
+import org.json.JSONObject;
 
 /**
  * Services for interacting with design-time workflow assets.
@@ -115,4 +117,10 @@ public interface AssetServices {
     List<PackageDir> getPackageDirs() throws IOException;
 
     List<PackageDir> findPackageDirs(Predicate<File> predicate) throws IOException;
+
+    JSONObject getGitBranches(String[] repoUrls) throws ServiceException;
+
+    JSONObject discoverGitAssets(String repoUrl, String branch) throws ServiceException;
+
+    GitDiscoverer getDiscoverer(String repoUrl) throws IOException;
 }

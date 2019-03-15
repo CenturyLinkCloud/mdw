@@ -16,12 +16,18 @@
 package com.centurylink.mdw.service.rest;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cli.Delete;
 import com.centurylink.mdw.cli.Discover;
 import com.centurylink.mdw.cli.Import;
+import com.centurylink.mdw.cli.Update;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.discovery.GitDiscoverer;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.ArchiveDir;
@@ -38,17 +44,13 @@ import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.rest.JsonRestService;
-import com.centurylink.mdw.util.HttpHelper;
-import com.centurylink.mdw.util.StringHelper;
-import com.centurylink.mdw.util.file.ZipHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.util.timer.LoggerProgressMonitor;
-import com.centurylink.mdw.util.timer.ProgressMonitor;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -56,8 +58,10 @@ import javax.ws.rs.Path;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -99,17 +103,18 @@ public class Assets extends JsonRestService {
     @ApiOperation(value="Retrieve an asset, an asset package, or all the asset packages",
         response=PackageList.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="discoveryUrl", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="discoveryUrls", paramType="query", dataType="array"),
+        @ApiImplicitParam(name="branch", paramType="query", dataType="string"),
         @ApiImplicitParam(name="discoveryType", paramType="query", dataType="string"),
         @ApiImplicitParam(name="groupId", paramType="query", dataType="string"),
         @ApiImplicitParam(name="archiveDirs", paramType="query", dataType="string")})
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
 
         try {
+            AssetServices assetServices = ServiceLocator.getAssetServices();
             Query query = getQuery(path, headers);
-            String discoveryUrl = query.getFilter("discoveryUrl");
-            if (discoveryUrl != null) {
-                String discoveryType = query.getFilter("discoveryType");
+            String discoveryType = query.getFilter("discoveryType");
+            if (discoveryType != null) {
                 if (!discoveryType.isEmpty() && discoveryType.equals("central")) {
                     String groupId = query.getFilter("groupId");
                     try {
@@ -121,20 +126,15 @@ public class Assets extends JsonRestService {
                                 "Invalid response from maven central search query", e);
                     }
                 }
-                else {
-                    String url = discoveryUrl + "/services/" + path;
-                    HttpHelper helper = HttpHelper.getHttpHelper("GET", new URL(url));
-                    try {
-                        return new JsonObject(helper.get());
-                    }
-                    catch (JSONException ex) {
-                        throw new ServiceException(ServiceException.INTERNAL_ERROR,
-                                "Invalid response from: " + discoveryUrl, ex);
-                    }
+                else if ("git".equals(discoveryType)){
+                    String[] repoUrls = query.getArrayFilter("discoveryUrls");
+                    String branch = query.getFilter("branch");
+                    if (branch != null)
+                        return assetServices.discoverGitAssets(repoUrls[0], branch);
+                    else
+                        return assetServices.getGitBranches(repoUrls);
                 }
             }
-
-            AssetServices assetServices = ServiceLocator.getAssetServices();
 
             if (query.getBooleanFilter("archiveDirs")) {
                 List<ArchiveDir> archiveDirs = assetServices.getArchiveDirs();
@@ -183,16 +183,14 @@ public class Assets extends JsonRestService {
     @Path("/packages")
     @ApiOperation(value="Import discovered asset packages", response=StatusMessage.class)
     @ApiImplicitParams({
-        @ApiImplicitParam(name="discoveryUrl", paramType="query", required=true),
-        @ApiImplicitParam(name="discoveryType", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="discoveryUrl", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="branch", paramType="query", dataType="string"),
+        @ApiImplicitParam(name="discoveryType", paramType="query", required=true),
         @ApiImplicitParam(name="groupId", paramType="query", dataType="string"),
         @ApiImplicitParam(name="packages", paramType="body", required=true, dataType="List")})
     public JSONObject put(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         Query query = getQuery(path, headers);
-        String discoveryUrl = query.getFilter("discoveryUrl");
-        if (discoveryUrl == null)
-            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: discoveryUrl");
         String discoveryType = query.getFilter("discoveryType");
         if (discoveryType == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: discoveryType");
@@ -224,34 +222,44 @@ public class Assets extends JsonRestService {
                 thread.start();
             }
             else {
-                // download from discovery server
-                String url = discoveryUrl + "/asset/packages?packages="
-                        + discQuery.getFilter("packages");
-                HttpHelper helper = HttpHelper.getHttpHelper("GET", new URL(url));
-                File tempDir = new File(ApplicationContext.getTempDirectory());
-                File tempFile = new File(tempDir + "/pkgDownload_"
-                        + StringHelper.filenameDateToString(new Date()) + ".zip");
-                logger.info("Saving package import temporary file: " + tempFile);
-                helper.download(tempFile);
-
-                // import packages
-                ProgressMonitor progressMonitor = new LoggerProgressMonitor(logger);
-                progressMonitor.start("Unzipping " + tempFile + " into: " + assetRoot);
-                logger.info("Unzipping " + tempFile + " into: " + assetRoot);
-                ZipHelper.unzip(tempFile, assetRoot, null, null, true);
-                //                 archiver.archive(true);
-                //                 SystemMessages.bulletinOff(bulletin, "Asset import completed");
-                bulletin = null;
-                Thread thread = new Thread() {
-                    @Override
-                    public void run() {
-                        this.setName("AssetsCacheRefresh-thread");
-                        CacheRegistration.getInstance().refreshCaches(null);
+                String discoveryUrl = query.getFilter("discoveryUrl");
+                if ("https://github.com/CenturyLinkCloud/mdw.git".equals(discoveryUrl)) {
+                    Update update = new Update(null);
+                    update.setAssetLoc(assetRoot.getPath());
+                    update.setBaseAssetPackages(pkgs);
+                    update.setMdwVersion(ApplicationContext.getMdwVersion());
+                    update.run();
+                }
+                else {
+                    String branch = query.getFilter("branch");
+                    if (branch == null)
+                        throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: groupId");
+                    File gitLocalPath = new File(PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH));
+                    VersionControlGit vcGit = new VersionControlGit();
+                    AssetServices assetServices = ServiceLocator.getAssetServices();
+                    GitDiscoverer discoverer = assetServices.getDiscoverer(discoveryUrl);
+                    discoverer.setRef(branch);
+                    String assetPath = discoverer.getAssetPath();
+                    if (discoveryUrl.indexOf('?') != -1)
+                        discoveryUrl = discoveryUrl.substring(0, discoveryUrl.indexOf('?'));
+                    URL url = new URL(discoveryUrl);
+                    String[] userInfo = url.getUserInfo().split(":");
+                    File test = new File(gitLocalPath.getAbsolutePath()).getParentFile();
+                    if (test != null && gitLocalPath.getPath().length() <= 3)
+                        test = new File( gitLocalPath.getAbsolutePath()).getParentFile().getParentFile().getParentFile();
+                    File tempfile = new File ( test.getAbsolutePath() + "/" + "mdw_git_discovery_" + java.lang.System.currentTimeMillis());
+                    vcGit.connect(discoveryUrl, null, null, tempfile);
+                    vcGit.setCredentialsProvider(new UsernamePasswordCredentialsProvider(userInfo[0], userInfo[1]));
+                    vcGit.cloneBranch(branch);
+                    for (String pkg : pkgs) {
+                        String pkgPath = pkg.replace(".", "/");
+                        String src = tempfile.getAbsolutePath() + "/" + assetPath + "/" + pkgPath;
+                        String dest = ApplicationContext.getAssetRoot().getAbsolutePath() + "/" + pkgPath;
+                        Files.createDirectories(Paths.get(dest));
+                        Files.move(Paths.get(src), Paths.get(dest), StandardCopyOption.REPLACE_EXISTING);
                     }
-                };
-                thread.start();
-                progressMonitor.done();
-                tempFile.delete();
+                    new Delete(tempfile).run();
+                }
             }
         }
         catch (Exception ex) {

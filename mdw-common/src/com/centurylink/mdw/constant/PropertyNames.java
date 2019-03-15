@@ -62,7 +62,7 @@ public class PropertyNames {
     public static final String MDW_ENGINE_USE_TRANSACTION = "mdw.engine.use.transaction";
     public static final String MDW_STUB_SERVER = "mdw.stub.server"; // used internally, set by regression tester "<host>:<port>:<timeout>";
     public static final String DOCS_URL = "mdw.docs.url";
-    public static final String DISCOVERY_URL = "mdw.discovery.url";
+    public static final String DISCOVERY_URL = "mdw.discovery.urls";
     public static final String FILEPANEL_ROOT_DIRS = "filepanel.root.dirs";
     public static final String FILEPANEL_EXCLUDE_PATTERNS = "filepanel.exclude.patterns";
     public static final String FILEPANEL_MASKED_LINES = "filepanel.masked.lines";
@@ -193,5 +193,5 @@ public class PropertyNames {
     public static final String MDW_JSON_FALSE_VALUES_OUTPUT = "mdw.json.false.values.output";
     public static final String MDW_JSON_PRETTY_INDENT = "mdw.json.pretty.indent";
     public static final String MDW_JSON_ORDERED_KEYS = "mdw.json.ordered.keys";
-
+    public static final String MDW_DISCOVERY_BRANCHTAGS_MAX = "mdw.discovery.maxBranchesTags";
 }
