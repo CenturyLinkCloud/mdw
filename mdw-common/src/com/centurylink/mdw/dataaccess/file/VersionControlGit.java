@@ -482,7 +482,9 @@ public class VersionControlGit implements VersionControl {
                 .setBranch(branch);
         if (credentialsProvider != null)
             cloneCommand.setCredentialsProvider(credentialsProvider);
-        cloneCommand.call();
+        Git git = cloneCommand.call();
+        git.getRepository().close();
+        git.close();
     }
 
     public Status getStatus() throws Exception {
