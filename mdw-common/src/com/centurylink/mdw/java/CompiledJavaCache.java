@@ -55,9 +55,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
 
+    public final static boolean classicLoading = PropertyManager.getBooleanProperty(PropertyNames.MDW_CONTAINER_CLASSIC_CLASSLOADING, false);
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private static Map<String,Class<?>> compiledCache = new ConcurrentHashMap<>();
+    private static Map<String,Boolean> classesNotFound = new ConcurrentHashMap<>();
 
     public CompiledJavaCache() {
 
@@ -196,9 +198,6 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                     javaCode = doCompatibilityCodeSubstitutions(className, javaCode);
                 compileJavaCode(parentLoader, currentPackage, className, javaCode, cache);
                 clazz = DynamicJavaClassLoader.getInstance(parentLoader, currentPackage, cache).loadClass(className);
-                if (cache) {
-                    compiledCache.put(className, clazz);
-                }
             }
             catch (ClassNotFoundException ex) {
                 throw ex;
@@ -232,11 +231,6 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                     javaSources.put(className, doCompatibilityCodeSubstitutions(className, javaSources.get(className)));
             }
             List<Class<?>> classes = compileJava(parentLoader, currentPackage, javaSources, cache);
-            if (cache) {
-                for (Class<?> clazz : classes) {
-                    compiledCache.put(clazz.getName(), clazz);
-                }
-            }
             return classes;
         }
         catch (ClassNotFoundException ex) {
@@ -455,6 +449,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
     public void clearCache() {
         compiledCache.clear();
         compilerClasspaths.clear();
+        classesNotFound.clear();
         MdwJavaFileManager.clearJfoCache();
         clearDynamicJavaRegisteredServices();
         DynamicJavaClassLoader.clearLoaderInstances();
@@ -591,6 +586,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
         private Package packageVO;
         private boolean cache;
 
+        private static Map<String, Object> parallelLockMap = new ConcurrentHashMap<>();
         private static Map<String, DynamicJavaClassLoader> instances = new ConcurrentHashMap<>();
 
         static {
@@ -629,47 +625,49 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
             if (logger.isMdwDebugEnabled())
                 logger.mdwDebug("findClass(): " + name);
             Class<?> cl = null;
-            // check the cache first
-            cl = compiledCache.get(name);
-            if (cl == null) {
-                JavaFileObject jfo = MdwJavaFileManager.getJavaFileObject(name);
-                if (jfo == null) {
-                    Asset javaAsset = AssetCache.getAsset(name, Asset.JAVA);
-                    if (javaAsset != null) {
-                        try {
-                            String javaCode = javaAsset.getStringContent();
-                            if (Compatibility.hasCodeSubstitutions())
-                                javaCode = doCompatibilityCodeSubstitutions(name, javaCode);
-                            compileJavaCode(getParent(), packageVO, name, javaCode, cache);
-                            jfo = MdwJavaFileManager.getJavaFileObject(name);
-                        } catch (Exception ex) {
-                            logger.severeException(ex.getMessage(), ex);
+            if (classicLoading || classesNotFound.get(name) == null) {
+                // check the cache first
+                cl = compiledCache.get(name);
+                if (cl == null) {
+                    JavaFileObject jfo = MdwJavaFileManager.getJavaFileObject(name);
+                    if (jfo == null) {
+                        Asset javaAsset = AssetCache.getAsset(name, Asset.JAVA);
+                        if (javaAsset != null) {
+                            try {
+                                String javaCode = javaAsset.getStringContent();
+                                if (Compatibility.hasCodeSubstitutions())
+                                    javaCode = doCompatibilityCodeSubstitutions(name, javaCode);
+                                compileJavaCode(getParent(), packageVO, name, javaCode, cache);
+                                jfo = MdwJavaFileManager.getJavaFileObject(name);
+                            } catch (Exception ex) {
+                                logger.severeException(ex.getMessage(), ex);
+                            }
                         }
                     }
-                }
-                if (jfo != null) {
-                    if (packageVO != null && packageVO.getName() != null) {
-                        java.lang.Package pkg = getPackage(packageVO.getName());
-                        if (pkg == null)
-                            definePackage(packageVO.getName(), null, null, null, "MDW", packageVO.getVersionString(), "CenturyLink", null);
+                    if (jfo != null) {
+                        if (packageVO != null && packageVO.getName() != null) {
+                            java.lang.Package pkg = getPackage(packageVO.getName());
+                            if (pkg == null)
+                                definePackage(packageVO.getName(), null, null, null, "MDW", packageVO.getVersionString(), "CenturyLink", null);
+                        }
+                        byte[] bytes = ((ByteArrayJavaFileObject) jfo).getByteArray();
+                        cl = defineClass(name, bytes, 0, bytes.length);
                     }
-                    byte[] bytes = ((ByteArrayJavaFileObject)jfo).getByteArray();
-                    cl = defineClass(name, bytes, 0, bytes.length);
-                }
+                } else  // Found it in cache
+                    return cl;
+
+                // try the cloud classloader to find class in assets
+                if (cl == null && packageVO != null && packageVO.getCloudClassLoader().hasClass(name) /* prevent infinite loop */)
+                    cl = packageVO.getCloudClassLoader().directFindClass(name);
             }
-            else  // Found it in cache
-                return cl;
-
-            // try the cloud classloader to find class in assets
-            if (cl == null && packageVO != null && packageVO.getCloudClassLoader().hasClass(name) /* prevent infinite loop */ )
-                cl = packageVO.getCloudClassLoader().directFindClass(name);
-
             if (cl == null) {
+                if (!classicLoading) classesNotFound.putIfAbsent(name, true);
                 // don't log: can happen when trying multiple bundles to resolve a class
                 throw new ClassNotFoundException(cnfeMsg(name));
-            }
-            else if (cache) {
-                compiledCache.put(name, cl);
+            } else if (cache) {
+                Class<?> tempCl = compiledCache.putIfAbsent(name, cl);
+                if (tempCl != null)
+                    cl = tempCl;
             }
             return cl;
         }
@@ -690,16 +688,38 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
 
         @Override
         public Class<?> loadClass(String name) throws ClassNotFoundException {
-            if (!logger.isMdwDebugEnabled()) {
-                return super.loadClass(name);
+            Class<?> loaded = null;
+            try {
+                synchronized (getStaticClassLoadingLock(name)) {  // Only allow 1 class loader instance to load same class
+                    // Look in assets first (overrides classes provided by built-in JARs), unless classicLoading is true
+                    loaded = classicLoading ? super.loadClass(name) : findClass(name);
+                }
+            } catch (ClassNotFoundException | LinkageError e) {
+                if (classicLoading)
+                    throw e;
+                else
+                    loaded = super.loadClass(name);  // Not in assets, so look in parent loaders.
             }
-            else {
-                Class<?> loaded = super.loadClass(name);
+            if (logger.isMdwDebugEnabled()) {
                 logger.mdwDebug("Loaded class: '" + name + "' from DynamicJavaClassLoader with parent: " + getParent());
                 if (logger.isTraceEnabled())
                     logger.traceException("Stack trace: ", new Exception("ClassLoader stack trace"));
-                return loaded;
             }
+            return loaded;
+        }
+
+        /**
+         * Prevents multiple instances of dynamicJavaClassLoader from trying to load
+         * the same class at the same time
+         */
+        private Object getStaticClassLoadingLock(String className) {
+            Object lock = null;
+            Object newLock = new Object();
+            lock = parallelLockMap.putIfAbsent(className, newLock);
+            if (lock == null) {
+                lock = newLock;
+            }
+            return lock;
         }
     }
 

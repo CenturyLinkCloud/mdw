@@ -49,6 +49,7 @@ title: MDW Configuration
       messenger: jms  # required
       jms.provider: ActiveMQ  # required
       threadpool.provider: MDW  # required
+      classic.classloading: false  # Load classes from runnable JAR/WAR first - default=false 
 
     # optional settings for activemq (For overriding values in application-context.xml)
     activemq:

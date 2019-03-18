@@ -402,16 +402,18 @@ public class CloudClassLoader extends ClassLoader {
 
     @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
-        if (!logger.isMdwDebugEnabled()) {
-            return super.loadClass(name);
-        }
-        else {
-            Class<?> loaded = super.loadClass(name);
+        Class<?> loaded = null;
+        if (CompiledJavaCache.classicLoading)  //Classic loading, delegate to parent loaders, assets are searched last
+            loaded = super.loadClass(name);
+        else
+            loaded = getParent().loadClass(name); //Search assets first
+
+        if (logger.isMdwDebugEnabled()) {
             logger.mdwDebug("Loaded class: '" + name + "' from CloudClassLoader with parent: " + getParent());
             if (logger.isTraceEnabled())
                 logger.traceException("Stack trace: ", new Exception("ClassLoader stack trace"));
-            return loaded;
         }
+        return loaded;
     }
 
     public String getPackageName() {
@@ -420,7 +422,10 @@ public class CloudClassLoader extends ClassLoader {
 
     public static void clearCaches() {
         sharedClassCache.clear();
+        sharedClassCache = new ConcurrentHashMap<>();
         classesFound.clear();
+        classesFound = new ConcurrentHashMap<>();
+        cachedJarAssets = null;
     }
 
     public String toString() {
