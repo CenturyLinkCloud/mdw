@@ -25,6 +25,7 @@ public class PropertyNames {
     public static final String MDW_CONTAINER_JMS_PROVIDER = "mdw.container.jms.provider";
     public static final String MDW_CONTAINER_MESSENGER = "mdw.container.messenger";  // jms or http
     public static final String MDW_CONTAINER_THREADPOOL_PROVIDER = "mdw.container.threadpool.provider";
+    public static final String MDW_CONTAINER_CLASSIC_CLASSLOADING = "mdw.container.classic.classloading";
     // database
     public static final String MDW_DB_URL = "mdw.database.url";
     public static final String MDW_DB_USERNAME = "mdw.database.username";
