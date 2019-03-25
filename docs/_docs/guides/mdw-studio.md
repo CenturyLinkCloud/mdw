@@ -38,14 +38,14 @@ that enables you to create workflow processes and other assets.
     [https://git-scm.com/downloads](https://git-scm.com/downloads)
   - **Install the MDW Studio plugin**  
     - Stable release (recommended)
-      - Preferences/Settings > Plugins > Search for "MDW" > Click link "Search in Repositories"
+      - Preferences/Settings > Plugins > Marketplace > Search for "MDW"
       - Select "MDW Studio":
         ![Install](../images/studio/install.png)
       - Lastly, click Install and then Restart
     - Snapshot release
       - Add the Beta plugin repository in IntelliJ
-        - Preferences/Settings > Plugins > Browse Repositories > Manage Repositories > + > {% include copyToClipboard.html text="https://plugins.jetbrains.com/plugins/Beta/list" %}
-        - Search for "MDW" and click Install
+        - Preferences/Settings > Plugins > Browse Repositories > Manage Plugin Repositories > + > {% include copyToClipboard.html text="https://plugins.jetbrains.com/plugins/beta/list" %}
+        - Under Marketplace, search for "MDW" and install MDW Studio
 
 ### 1.2 Create and open a project
   - **Run the New Project wizard**
