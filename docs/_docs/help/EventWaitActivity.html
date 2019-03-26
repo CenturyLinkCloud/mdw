@@ -17,9 +17,9 @@ The attribute <em>Events</em> specifies one or more events the activity instance
 Each event specification contains three entries:
 <ul>
   <li>Event Name. This is an event name that is used to match with event names generated
-      by external event handlers. The event name can contain place holders or <a href="http://docs.oracle.com/javaee/7/tutorial/jsf-el.htm#GJDDD">Java EL Expressions</a> 
-      (e.g. "#{my_variable_1}" or "${my_variable_1}") 
-      for including dynamic contents such as process instance IDs.</li>
+      by external event handlers. The event name can contain <a href="bindingExpressions.html">Expressions</a>
+      (e.g. "${variables['myVar']}")
+      for including dynamic values such as variables or process instance IDs.</li>
   <li>Completion code. This is used to set the completion code after the activity
       instance is waken by an external message. To set a transition event type
       other than FINISH, prepend the event type name and colon, such as "<code>ERROR</code>"
@@ -27,16 +27,6 @@ Each event specification contains three entries:
   <li>Recurring. This is a check box. If checked, it indicates the event can occur
       multiple times for the given process instance. A typical example is pending order change.</li> 
 </ul>
-The syntax for a place holder is a "$" and a variable name enclosed in braces ("{" and "}"),
-such as <code>{$my_variable_1}</code>. Make sure to note the difference between having the "$" inside versus outside the "{}".  
-Inside the curly brackets ( "{$my_variable_1}" ) means it's a Place Holder, while outside ( "${my_variable_1}" ) means it's a Java expression. 
-Besides process variables, the following variable names
-have predefined meanings:
-<table>
-  <tr><td>{$ProcessInstanceID}</td><td>Has the value of the process instance ID</td></tr>
-  <tr><td>{$MasterRequestID}</td><td>Has the value of the master request ID</td></tr>
-  <tr><td>{$ActivityInstanceID}</td><td>Has the value of the activity instance ID</td></tr>
-</table>
 
 <h3>Timeout and Status after Timeout</h3>
 The time out attribute specifies how long we should time out the waiting.
