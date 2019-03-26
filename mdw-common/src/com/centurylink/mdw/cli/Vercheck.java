@@ -15,6 +15,11 @@
  */
 package com.centurylink.mdw.cli;
 
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.util.file.VersionProperties;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,11 +31,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-import com.centurylink.mdw.dataaccess.VersionControl;
-import com.centurylink.mdw.util.file.VersionProperties;
 
 @Parameters(commandNames = "vercheck", commandDescription = "Compare asset versions to avoid errors during import", separators="=")
 public class Vercheck extends Setup {
@@ -70,16 +70,14 @@ public class Vercheck extends Setup {
 
         findAssetFiles();
 
-        if (tag != null) {
-            try {
-                compareTaggedVersions();
-            }
-            catch (ReflectiveOperationException | IOException ex) {
-                if (isDebug())
-                    ex.printStackTrace();
-                System.err.println("ERROR: " + ex + " (--debug for details)");
-                errorCount++;
-            }
+        try {
+            compareVersions();
+        }
+        catch (ReflectiveOperationException | IOException ex) {
+            if (isDebug())
+                ex.printStackTrace();
+            System.err.println("ERROR: " + ex + " (--debug for details)");
+            errorCount++;
         }
 
         for (String path : assetFiles.keySet()) {
@@ -111,45 +109,60 @@ public class Vercheck extends Setup {
         return this;
     }
 
-    private void compareTaggedVersions() throws IOException, ReflectiveOperationException {
+    private void compareVersions() throws IOException, ReflectiveOperationException {
         Props props = new Props(this);
         VcInfo vcInfo = new VcInfo(getGitRoot(), props);
         String mavenUrl = props.get(Props.Gradle.MAVEN_REPO_URL);
-        Git git = new Git(mavenUrl, vcInfo, "getCommitForTag", tag);
-        String tagCommit = (String) git.run().getResult();
-        if (tagCommit == null)
-            throw new IOException("No commit found for tag '" + tag + "'");
-        System.out.println("Comparing content vs tag " + tag + " (" + tagCommit + ")");
-        Map<String,Properties> tagVersions = new HashMap<>();
+        Git git;
+        String commit;
+        if (tag != null) {
+            git = new Git(mavenUrl, vcInfo, "getCommitForTag", tag);
+            commit = (String) git.run().getResult();
+            if (commit == null)
+                throw new IOException("No commit found for tag '" + tag + "'");
+            System.out.println("Comparing content vs tag " + tag + " (" + commit + ")");
+        }
+        else {
+            // compare with remote HEAD
+            String branch = props.get(Props.Git.BRANCH);
+            if (branch == null)
+                branch = "master";
+            git = new Git(mavenUrl, vcInfo, "getRemoteCommit", branch);
+            commit = (String) git.run().getResult();
+            if (commit == null)
+                throw new IOException("No commit found for branch '" + branch + "'");
+            System.out.println("Comparing content vs branch " + branch + " (" + commit + ")");
+        }
+        Map<String,Properties> gitVersions = new HashMap<>();
         VersionControl versionControl = git.getVersionControl();
         Method readFromCommit = versionControl.getClass().getMethod("readFromCommit", String.class, String.class);
         for (String path : assetFiles.keySet()) {
             AssetFile assetFile = assetFiles.get(path);
             if (assetFile.error == null && assetFile.file != null) {
                 // check if version has been incremented
-                Properties tagProps = tagVersions.get(assetFile.path);
-                if (tagProps == null) {
+                Properties gitVerProps = gitVersions.get(assetFile.path);
+                if (gitVerProps == null) {
                     String versionFilePath = getGitPath(new File(assetFile.file.getParentFile() + "/" + META_DIR + "/versions"));
-                    tagProps = new Properties();
-                    byte[] versionBytes = (byte[]) readFromCommit.invoke(versionControl, tagCommit, versionFilePath);
+                    gitVerProps = new Properties();
+                    byte[] versionBytes = (byte[]) readFromCommit.invoke(versionControl, commit, versionFilePath);
                     if (versionBytes != null) {
-                        tagProps.load(new ByteArrayInputStream(versionBytes));
+                        gitVerProps.load(new ByteArrayInputStream(versionBytes));
                     }
-                    tagVersions.put(assetFile.path, tagProps);
+                    gitVersions.put(assetFile.path, gitVerProps);
                 }
-                String tagVerProp = tagProps.getProperty(assetFile.file.getName());
-                if (tagVerProp != null) {
+                String getVerProp = gitVerProps.getProperty(assetFile.file.getName());
+                if (getVerProp != null) {
                     try {
-                        int tagVer = Integer.parseInt(tagVerProp.split(" ")[0]);
-                        if (tagVer > assetFile.version) {
-                            assetFile.error = ERR_TAG_VER_GT + " (" + formatVersion(tagVer) + " > " + formatVersion(assetFile.version) + ")";
+                        int gitVer = Integer.parseInt(getVerProp.split(" ")[0]);
+                        if (gitVer > assetFile.version) {
+                            assetFile.error = ERR_TAG_VER_GT + " (" + formatVersion(gitVer) + " > " + formatVersion(assetFile.version) + ")";
                             if (fix)
-                                assetFile.fixed = updateVersion(assetFile, ++tagVer);
+                                assetFile.fixed = updateVersion(assetFile, ++gitVer);
                         }
-                        else if (tagVer == assetFile.version) {
+                        else if (gitVer == assetFile.version) {
                             // compare file contents
                             String gitPath = getGitPath(assetFile.file);
-                            byte[] tagContents = (byte[]) readFromCommit.invoke(versionControl, tagCommit, gitPath);
+                            byte[] tagContents = (byte[]) readFromCommit.invoke(versionControl, commit, gitPath);
                             byte[] fileContents = Files.readAllBytes(Paths.get(assetFile.file.getPath()));
                             if (!Arrays.equals(tagContents, fileContents)) {
                                 assetFile.error = ERR_SAME_VER_DIFF_CONTENT + " (v " + formatVersion(assetFile.version) + ")";
@@ -176,7 +189,7 @@ public class Vercheck extends Setup {
     private Map<String,AssetFile> findAssetFiles(ProgressMonitor... monitors) throws IOException {
         Map<String,File> packageDirs = getAssetPackageDirs();
         Map<String,Properties> versionProps = getVersionProps(packageDirs);
-        assetFiles = new HashMap<String,AssetFile>();
+        assetFiles = new HashMap<>();
 
         for (String pkg : versionProps.keySet()) {
             Properties pkgProps = versionProps.get(pkg);
