@@ -46,15 +46,8 @@ The following attributes are used by this implementor:
       will be completely up to the application specific code.</li>
   <li>Correlation ID. If an asynchronous response is expected, or the message is an asynchronous response
       to an asynchronous external message, the correlation ID may need to be specified.
-      The value of the attribute allows to contain place holders for dynamic contents.
-      The syntax for place holder is a "$" and a variable name enclosed in braces ("{" and "}"),
-	  such as <code>{$my_variable_1}</code>. Besides process variables, the following variable names
-	have predefined meanings:
-	<table>
- 	 <tr><td>{$ProcessInstanceID}</td><td>Has the value of the process instance ID</td></tr>
- 	 <tr><td>{$MasterRequestID}</td><td>Has the value of the master request ID</td></tr>
- 	 <tr><td>{$ActivityInstanceID}</td><td>Has the value of the activity instance ID</td></tr>
-	</table>
+      The value of the attribute can contain <a href="bindingExpressions.html">Expressions</a>
+      (e.g. "${variables['myVar']}").
 	</li>
 </ul>
 

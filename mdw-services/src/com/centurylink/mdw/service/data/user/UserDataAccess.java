@@ -147,6 +147,7 @@ public class UserDataAccess extends CommonDataAccess {
             if (rs.next()) {
                 User user = createUserInfoFromResultSet(rs);
                 loadGroupsRolesForUser(user);
+                loadAttributesForUser(user);
                 return user;
             }
             else
