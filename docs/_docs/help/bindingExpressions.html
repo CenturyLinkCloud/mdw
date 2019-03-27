@@ -27,10 +27,10 @@ In most cases the evaluation context for an MDW Java EL expression is a
 In this context your process variables are available as top-level entities, or they can be the base for further evaluation:
 </p>
 <pre>
-    #{productType}
-    #{customer.name}
-    #{mySuit == 'hearts'}
-    #{myVar}_hardCodedSuffix
+    ${productType}
+    ${customer.name}
+    ${mySuit == 'hearts'}
+    ${myVar}_hardCodedSuffix
 </pre>
 
 <p>
@@ -47,14 +47,14 @@ as <i>context</i>, so through this you can access any values described by the ja
 to the Employee.wsdl endpoint hosted in the same MDW environment, on the Design tab for this activity in MDW Studio you could specify:
 </p>
 <pre>
-  #{context.servicesUrl}/SOAP/Employee.wsdl
+  ${context.servicesUrl}/SOAP/Employee.wsdl
 </pre>
 <p>
 In a more likely scenario, suppose you're invoking the Employee service at an endpoint specified in your configuration
 file as <i>employee.service.url</i>.  In that case you can take advantage of the <code>props</code> shortcut access:
 </p>
 <pre>
-  #{props['employee.service.url']}
+  ${props['employee.service.url']}
 </pre>
 
 <h3>Document Variables</h3>
@@ -64,7 +64,7 @@ if you have a JAXBElement variable named <i>order</i> in your workflow based on 
 you can access the orderNumber element as follows:
 </p>
 <pre>
-  #{order.orderNumber}
+  ${order.orderNumber}
 </pre>
 <p>
 Note: Do not try this type of access through getProcessInstance().getVariables().  For documents this returns only a DocumentReference,
@@ -75,7 +75,7 @@ When a TaskRuntimeContext is extant, or for notification XHTML templates, docume
 In this case the above example could be replicated as follows (see the <a href="customWeb.html">Custom Web</a> and <a href="notification.html">Notifications</a> docs for details):
 </p>
 <pre>
-  #{variables['order']['/orderNumber']}
+  ${variables['order']['/orderNumber']}
 </pre>
 </body>
 </html>
