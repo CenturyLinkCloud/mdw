@@ -246,10 +246,11 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
         },
         Hierarchy: {
           'hierarchyInstances': [{
-            'Process': '${it.treeLabel}',
-            'ID': '${it.id}',
+            Process: '${it.treeLabel}',
+            ID: '${it.id}',
             '_url': '${"#/workflow/processes/" + it.id}',
-            '': '${it.thisFlag}'
+            '': '${it.thisFlag}',
+            Status: '${it.status}'
           }],
           'getHierarchyList': function(diagramObject, workflowObject, runtimeInfo) {
             if (typeof runtimeInfo == 'undefined') {
@@ -294,6 +295,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
                     caller.children.forEach(function(child) {
                       addChildren(child);
                     });
+                    pad = pad.substring(4);
                   }
                 };
 
