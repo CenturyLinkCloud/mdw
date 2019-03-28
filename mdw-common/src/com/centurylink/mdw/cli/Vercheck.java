@@ -40,6 +40,14 @@ public class Vercheck extends Setup {
     public String getTag() {
         return tag;
     }
+    public void setTag(String tag) { this.tag = tag; }
+
+    @Parameter(names="--branch", description="Git branch to compare (default = from mdw.yaml)")
+    private String branch;
+    public String getBranch() {
+        return branch;
+    }
+    public void setBranch(String branch) { this.branch = branch; }
 
     @Parameter(names="--warn", description="Print warning output also")
     private boolean warn;
@@ -66,7 +74,7 @@ public class Vercheck extends Setup {
     @Override
     public Vercheck run(ProgressMonitor... monitors) throws IOException {
 
-        System.out.println("Finding asset files...");
+        getOut().println("Finding asset files...");
 
         findAssetFiles();
 
@@ -76,7 +84,7 @@ public class Vercheck extends Setup {
         catch (ReflectiveOperationException | IOException ex) {
             if (isDebug())
                 ex.printStackTrace();
-            System.err.println("ERROR: " + ex + " (--debug for details)");
+            getErr().println("ERROR: " + ex + " (--debug for details)");
             errorCount++;
         }
 
@@ -84,27 +92,27 @@ public class Vercheck extends Setup {
             AssetFile assetFile = assetFiles.get(path);
             if (assetFile.error != null) {
                 if (assetFile.fixed) {
-                    System.out.println("FIXED: " + path + " --> " + assetFile.error);
+                    getOut().println("FIXED: " + path + " --> " + assetFile.error);
                 }
                 else {
-                    System.err.println("ERROR: " + path + " --> " + assetFile.error);
+                    getErr().println("ERROR: " + path + " --> " + assetFile.error);
                     errorCount++;
                 }
             }
             else {
                 if (assetFile.file == null && warn) {
                     if (fix && removeVersion(assetFile)) {
-                        System.err.println("FIXED: " + path + " --> " + WARN_EXTRA_VERSION);
+                        getErr().println("FIXED: " + path + " --> " + WARN_EXTRA_VERSION);
                     }
                     else {
-                        System.err.println("WARNING: " + path + " --> " + WARN_EXTRA_VERSION);
+                        getErr().println("WARNING: " + path + " --> " + WARN_EXTRA_VERSION);
                     }
                 }
             }
         }
 
         if (errorCount > 0)
-            System.err.println("\nversion check failed with " + errorCount + " errors");
+            getErr().println("\nversion check failed with " + errorCount + " errors");
 
         return this;
     }
@@ -120,18 +128,19 @@ public class Vercheck extends Setup {
             commit = (String) git.run().getResult();
             if (commit == null)
                 throw new IOException("No commit found for tag '" + tag + "'");
-            System.out.println("Comparing content vs tag " + tag + " (" + commit + ")");
+            getOut().println("Comparing content vs tag " + tag + " (" + commit + ")");
         }
         else {
             // compare with remote HEAD
-            String branch = props.get(Props.Git.BRANCH);
+            if (branch == null)
+                branch = props.get(Props.Git.BRANCH);
             if (branch == null)
                 branch = "master";
             git = new Git(mavenUrl, vcInfo, "getRemoteCommit", branch);
             commit = (String) git.run().getResult();
             if (commit == null)
                 throw new IOException("No commit found for branch '" + branch + "'");
-            System.out.println("Comparing content vs branch " + branch + " (" + commit + ")");
+            getOut().println("Comparing content vs branch " + branch + " (" + commit + ")");
         }
         Map<String,Properties> gitVersions = new HashMap<>();
         VersionControl versionControl = git.getVersionControl();
