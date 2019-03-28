@@ -84,43 +84,6 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
         this.implementor = implementor;
     }
 
-    /**
-     * Method that returns the sla
-     */
-    public int getSlaSeconds() {
-        String sla = this.getAttribute(WorkAttributeConstant.SLA);
-        if (sla == null || sla.length() == 0)
-            return 0;
-        String unit = this.getAttribute(WorkAttributeConstant.SLA_UNITS);
-        if (unit == null || unit.isEmpty())
-            unit = this.getAttribute(WorkAttributeConstant.SLA_UNIT);
-        if (unit == null || unit.isEmpty())
-            unit = ServiceLevelAgreement.INTERVAL_SECONDS;
-        return ServiceLevelAgreement.unitsToSeconds(sla, unit);
-    }
-
-    public int getSla() {
-        return getSlaSeconds();
-    }
-
-    /**
-     * method that sets the sla
-     */
-    public void setSlaSeconds(int slaSeconds) {
-        String unit = this.getAttribute(WorkAttributeConstant.SLA_UNITS);
-        if (unit == null || unit.isEmpty())
-            getAttribute(WorkAttributeConstant.SLA_UNIT);
-        if (unit == null || unit.isEmpty()) {
-            unit = ServiceLevelAgreement.INTERVAL_SECONDS;
-            setAttribute(WorkAttributeConstant.SLA_UNIT, unit);
-        }
-        setAttribute(WorkAttributeConstant.SLA, ServiceLevelAgreement.secondsToUnits(slaSeconds, unit));
-    }
-
-    public void setSla(int sla) {
-        setSlaSeconds(sla);
-    }
-
     public String getAttribute(String name) {
         return Attribute.findAttribute(attributes, name);
     }

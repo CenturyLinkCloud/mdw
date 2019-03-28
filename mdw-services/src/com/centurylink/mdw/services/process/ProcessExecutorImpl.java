@@ -849,8 +849,8 @@ class ProcessExecutorImpl {
     private void removeActivitySLA(ActivityInstance ai, ProcessInstance procInst) {
         Process procdef = getProcessDefinition(procInst);
         Activity actVO = procdef.getActivityVO(ai.getActivityId());
-        int sla_seconds = actVO==null?0:actVO.getSlaSeconds();
-        if (sla_seconds > 0) {
+        String sla = actVO==null?null:actVO.getAttribute(WorkAttributeConstant.SLA);
+        if (sla != null && !"0".equals(sla)) {
             ScheduledEventQueue eventQueue = ScheduledEventQueue.getSingleton();
             try {
                 eventQueue.unscheduleEvent(ScheduledEvent.INTERNAL_EVENT_PREFIX+ai.getId());
