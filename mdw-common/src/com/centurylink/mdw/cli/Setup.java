@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,6 +49,14 @@ public abstract class Setup implements Operation {
     protected Setup(File projectDir) {
         this.projectDir = projectDir;
     }
+
+    private PrintStream out = System.out;
+    public PrintStream getOut() { return out; }
+    public void setOut(PrintStream out) { this.out = out; }
+
+    private PrintStream err = System.err;
+    public PrintStream getErr() { return err; }
+    public void setErr(PrintStream err) { this.err = err; }
 
     @Parameter(names="--project-dir", description="Project directory (default = ./)")
     protected File projectDir;
@@ -416,7 +425,10 @@ public abstract class Setup implements Operation {
         return new File(getAssetLoc());
     }
 
+    private File gitRoot;
     public File getGitRoot() throws IOException {
+        if (gitRoot != null)
+            return gitRoot; // was set programmatically
         Props props = new Props(this);
         String gitLocalPath = props.get("mdw.git.local.path");
         if (gitLocalPath != null) {
@@ -428,6 +440,10 @@ public abstract class Setup implements Operation {
         }
         return getProjectDir();
     }
+    public void setGitRoot(File gitRoot) {
+        this.gitRoot = gitRoot;
+    }
+
 
     public String getGitPath(File file) throws IOException {
         return getRelativePath(getGitRoot(), file);
