@@ -101,7 +101,7 @@ public class Discover extends Setup {
     }
 
     public void discoverMdw(String url, ProgressMonitor... monitors) throws IOException {
-        System.out.println("Discovering assets from: " + url);
+        getOut().println("Discovering assets from: " + url);
         String assetsJson = new Fetch(new URL(url + "/services/Assets")).run().getData();
         this.packages = new JSONObject(assetsJson);
     }
@@ -120,7 +120,7 @@ public class Discover extends Setup {
 
         String url = query.toString();
 
-        System.out.println("Discovering assets from: " + url);
+        getOut().println("Discovering assets from: " + url);
 
         URLConnection connection = new URL(url).openConnection();
         BufferedReader bufferedReader = new BufferedReader(

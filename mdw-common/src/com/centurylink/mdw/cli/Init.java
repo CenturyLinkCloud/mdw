@@ -91,14 +91,14 @@ public class Init extends Setup {
     }
 
     public Init run(ProgressMonitor... progressMonitors) throws IOException {
-        System.out.println("Initializing " + project + "...");
+        getOut().println("Initializing " + project + "...");
         int slashIndex = project.lastIndexOf('/');
         if (slashIndex > 0)
             project = project.substring(slashIndex + 1);
 
         if (getProjectDir().exists() && !allowExisting) {
             if (!getProjectDir().isDirectory() || getProjectDir().list().length > 0) {
-                System.err.println(getProjectDir() + " already exists and is not an empty directory");
+                getErr().println(getProjectDir() + " already exists and is not an empty directory");
                 return this;
             }
         }
@@ -120,11 +120,11 @@ public class Init extends Setup {
         tempZip.deleteOnExit();
         if (templateDir == null) {
             String templatesUrl = getTemplatesUrl();
-            System.out.println("Retrieving templates: " + templatesUrl);
+            getOut().println("Retrieving templates: " + templatesUrl);
             new Download(new URL(templatesUrl), tempZip).run(progressMonitors);
         }
         else {
-            System.out.println("Using templates from: " + templateDir);
+            getOut().println("Using templates from: " + templateDir);
             new Zip(new File(templateDir), tempZip).run(progressMonitors);
         }
         new Unzip(tempZip, getProjectDir(), false, opt -> {
@@ -132,7 +132,7 @@ public class Init extends Setup {
             return value == null ? false : Boolean.valueOf(value.toString());
         }).run();
         deleteDynamicTemplates();
-        System.out.println("Writing: ");
+        getOut().println("Writing: ");
         subst(getProjectDir());
         if (isSnapshots())
             updateBuildFile();
@@ -165,17 +165,17 @@ public class Init extends Setup {
     private void deleteDynamicTemplates() throws IOException {
         File codegenDir = new File(getProjectDir() + "/codegen");
         if (codegenDir.exists()) {
-            System.out.println("Deleting " + codegenDir);
+            getOut().println("Deleting " + codegenDir);
             new Delete(codegenDir, true).run();
         }
         File assetsDir = new File(getProjectDir() + "/assets");
         if (assetsDir.exists()) {
-            System.out.println("Deleting " + assetsDir);
+            getOut().println("Deleting " + assetsDir);
             new Delete(assetsDir, true).run();
         }
         File configuratorDir = new File(getProjectDir() + "/configurator");
         if (configuratorDir.exists()) {
-            System.out.println("Deleting " + configuratorDir);
+            getOut().println("Deleting " + configuratorDir);
             new Delete(configuratorDir, true).run();
         }
     }

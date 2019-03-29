@@ -92,17 +92,17 @@ public class Test extends Setup {
     @Override
     public Operation run(ProgressMonitor... progressMonitors) throws IOException {
         if (!json)
-            System.out.println("Finding tests...");
+            getOut().println("Finding tests...");
         List<File> caseFiles = findCaseFiles();
         if (caseFiles.isEmpty()) {
-            System.out.println("No tests found");
+            getOut().println("No tests found");
             return this;
         }
 
         if (isDebug()) {
-            System.out.println("Test Cases:");
+            getOut().println("Test Cases:");
             for (File caseFile : caseFiles)
-                System.out.println("  " + caseFile);
+                getOut().println("  " + caseFile);
         }
 
         JSONObject configRequest = getConfigRequest();
@@ -128,7 +128,7 @@ public class Test extends Setup {
         new Fetch(new URL(getServicesUrl() + PATH + "/exec")).post(caseRequest.toString(2));
 
         if (!json)
-            System.out.println("Running tests...");
+            getOut().println("Running tests...");
 
         long before = System.currentTimeMillis();
         File resultsFile = getResultsSummaryFile();
@@ -171,10 +171,10 @@ public class Test extends Setup {
                                             if (!json) {
                                                 int finished = finished(statuses);
                                                 if (isSuccess(status))
-                                                    System.out.print("   ");
+                                                    getOut().print("   ");
                                                 else
-                                                    System.out.print("  *");
-                                                System.out.println(status + " (" + finished + "/" + statuses.size() + ") - " + asset);
+                                                    getOut().print("  *");
+                                                getOut().println(status + " (" + finished + "/" + statuses.size() + ") - " + asset);
                                             }
                                             if (!isSuccess(status)) {
                                                 boolean ignoreFailure = false;
@@ -187,7 +187,7 @@ public class Test extends Setup {
                                                 if (!ignoreFailure)
                                                     this.success = false;
                                                 if (test.has("message") && !json)
-                                                    System.out.println("    (" + test.getString("message"));
+                                                    getOut().println("    (" + test.getString("message"));
                                             }
                                         }
                                     }
@@ -204,7 +204,7 @@ public class Test extends Setup {
                 key.reset();
             }
             catch (InterruptedException ex) {
-                System.err.println("Test execution canceled");
+                getErr().println("Test execution canceled");
                 watcher.close();
                 done = true;
             }
@@ -273,17 +273,17 @@ public class Test extends Setup {
             for (String status : counts.keySet()) {
                 json.put(status, counts.get(status));
             }
-            System.out.println(json.toString(2));
+            getOut().println(json.toString(2));
         }
         else {
-            System.out.println("\nSummary (" + getServicesUrl() + PATH + "):");
+            getOut().println("\nSummary (" + getServicesUrl() + PATH + "):");
             for (String status : counts.keySet()) {
-                System.out.print("  " + status + ": ");
+                getOut().print("  " + status + ": ");
                 for (int i = status.length(); i < 16; i++)
-                    System.out.print(" ");
-                System.out.println(counts.get(status));
+                    getOut().print(" ");
+                getOut().println(counts.get(status));
             }
-            System.out.println("  Total:            " + statuses.size() + " (in " + elapsed + " ms)");
+            getOut().println("  Total:            " + statuses.size() + " (in " + elapsed + " ms)");
         }
     }
 

@@ -31,7 +31,7 @@ public class Decrypt implements Operation {
     public void setInput(String input) { this.input = input; }
 
     public Decrypt run(ProgressMonitor... progressMonitors) throws IOException {
-        System.out.println(decrypt());
+        getOut().println(decrypt());
         return this;
     }
 

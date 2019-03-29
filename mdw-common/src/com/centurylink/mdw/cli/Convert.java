@@ -95,25 +95,25 @@ public class Convert extends Setup {
 
     protected void convertPackages() throws IOException {
 
-        System.out.println("Processing packages:");
+        getOut().println("Processing packages:");
         Map<String,File> packageDirs = getAssetPackageDirs();
         for (String packageName : packageDirs.keySet()) {
-            System.out.println("  " + packageName);
+            getOut().println("  " + packageName);
             File packageDir = packageDirs.get(packageName);
             File metaDir = new File(packageDir + "/" + META_DIR);
             File yamlFile = new File(metaDir + "/package.yaml");
             File jsonFile = new File(metaDir + "/package.json");
             if (yamlFile.exists()) {
                 if (jsonFile.exists()) {
-                    System.out.println("    Removing redundant file: " + jsonFile);
+                    getOut().println("    Removing redundant file: " + jsonFile);
                     new Delete(jsonFile).run();
                 }
                 else {
-                    System.out.println("    Ignoring existing: " + yamlFile);
+                    getOut().println("    Ignoring existing: " + yamlFile);
                 }
             }
             else {
-                System.out.println("    Converting: " + jsonFile);
+                getOut().println("    Converting: " + jsonFile);
                 JSONObject json = new JSONObject(new String(Files.readAllBytes(Paths.get(jsonFile.getPath()))));
                 Map<String,String> vals = new HashMap<>();
                 vals.put("name", json.getString("name"));
@@ -126,9 +126,9 @@ public class Convert extends Setup {
                 vals.put("schemaVersion", schemaVer);
                 YamlBuilder yamlBuilder = new YamlBuilder();
                 yamlBuilder.append(vals);
-                System.out.println("    Writing: " + yamlFile);
+                getOut().println("    Writing: " + yamlFile);
                 Files.write(Paths.get(yamlFile.getPath()), yamlBuilder.toString().getBytes());
-                System.out.println("    Deleting: " + jsonFile);
+                getOut().println("    Deleting: " + jsonFile);
                 new Delete(jsonFile).run();
             }
         }
@@ -140,7 +140,7 @@ public class Convert extends Setup {
             mapIn = getClass().getClassLoader().getResourceAsStream("META-INF/mdw/configurations.map");
         }
         else {
-            System.out.println("Mapping from " + map.getAbsolutePath());
+            getOut().println("Mapping from " + map.getAbsolutePath());
             mapIn = new FileInputStream(map);
         }
         Properties mapProps = new Properties();
@@ -149,7 +149,7 @@ public class Convert extends Setup {
         if (input == null) {
             input = new File(getConfigRoot() + "/mdw.properties");
         }
-        System.out.println("Loading properties from " + input.getAbsolutePath());
+        getOut().println("Loading properties from " + input.getAbsolutePath());
         Properties inputProps = new OrderedProperties();
         inputProps.load(new FileInputStream(input));
 
@@ -160,7 +160,7 @@ public class Convert extends Setup {
         try {
             YamlBuilder yamlBuilder = YamlProperties.translate(prefix, inputProps, mapProps);
             File out = new File(getConfigRoot() + "/" + baseName + ".yaml");
-            System.out.println("Writing output config: " + out.getAbsolutePath());
+            getOut().println("Writing output config: " + out.getAbsolutePath());
             Files.write(Paths.get(out.getPath()), yamlBuilder.toString().getBytes());
         }
         catch (ReflectiveOperationException ex) {
@@ -181,7 +181,7 @@ public class Convert extends Setup {
             throw new IOException("Asset path cannot be created: " + outFile);
         }
 
-        System.out.println("Creating: " + outFile);
+        getOut().println("Creating: " + outFile);
 
         String label = implJson.getString("label");
         String imports = "import com.centurylink.mdw.annotations.Activity" + (suffix.equals("kt") ? "" : ";") + "\n";
@@ -204,7 +204,7 @@ public class Convert extends Setup {
         if (pageletXml != null) {
             try {
                 JSONObject pagelet = new Pagelet(pageletXml).getJson();
-                System.out.println("pagelet for formatted pasting: " + pagelet.toString(2));
+                getOut().println("pagelet for formatted pasting: " + pagelet.toString(2));
                 annotations += ",\n                pagelet=" + JSONObject.quote(pagelet.toString());
             }
             catch (Exception ex) {

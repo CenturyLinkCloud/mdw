@@ -187,7 +187,7 @@ public class Checkpoint extends Setup {
     public void updateRefs(boolean assetImport) throws SQLException, IOException {
         List<AssetRef> refs = getCurrentRefs();
         if (refs == null || refs.isEmpty())
-            System.out.println("Skipping ASSET_REF table insert/update due to empty current assets");
+            getOut().println("Skipping ASSET_REF table insert/update due to empty current assets");
         else {
             String select = "select name, ref from ASSET_REF where definition_id = ?";
             try (Connection conn = getDbConnection();

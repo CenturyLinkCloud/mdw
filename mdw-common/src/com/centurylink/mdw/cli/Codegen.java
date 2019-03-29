@@ -161,13 +161,13 @@ public class Codegen extends Setup {
                 byte[] serviceProcBytes = Files.readAllBytes(templatePath);
                 Map<String,io.swagger.models.Path> swaggerPaths = swagger.getPaths();
                 for (String path : swaggerPaths.keySet()) {
-                    System.out.println("\nGenerating processes for path: " + path);
+                    getOut().println("\nGenerating processes for path: " + path);
                     ProcessNamer namer = new ProcessNamer(basePackage, path);
                     io.swagger.models.Path swaggerPath = swaggerPaths.get(path);
                     for (HttpMethod httpMethod : swaggerPath.getOperationMap().keySet()) {
                         String processName = namer.getName(httpMethod.toString());
                         String assetPath = namer.getPackage() + "/" + processName + ".proc";
-                        System.out.println("  " + httpMethod + " -> " + assetPath);
+                        getOut().println("  " + httpMethod + " -> " + assetPath);
                         createAsset(assetPath, serviceProcBytes);
                     }
                 }
@@ -224,11 +224,11 @@ public class Codegen extends Setup {
         }
 
         if (isDebug()) {
-            System.out.print("\nCodegen: ");
+            getOut().print("\nCodegen: ");
             for (String arg : args) {
-                System.out.print(arg + " ");
+                getOut().print(arg + " ");
             }
-            System.out.println("\n");
+            getOut().println("\n");
         }
 
         String version = Version.readVersionFromResources();

@@ -61,7 +61,7 @@ public class Token extends Setup {
         }
         else {
             String token = retrieve();
-            System.out.println("MDW Access Token:\n" + token);
+            getOut().println("MDW Access Token:\n" + token);
         }
 
         return this;
@@ -91,7 +91,7 @@ public class Token extends Setup {
         if (mdwAppToken == null)
             throw new IOException("--app-token param or MDW_APP_TOKEN environment variable required");
 
-        System.out.println("Retrieving token for app " + mdwAppId + " user " + user + " from " + mdwCentralUrl + " ...");
+        getOut().println("Retrieving token for app " + mdwAppId + " user " + user + " from " + mdwCentralUrl + " ...");
 
         JSONObject json = new JSONObject();
         json.put("mdwAppToken", mdwAppToken);
@@ -149,7 +149,7 @@ public class Token extends Setup {
 
         DecodedJWT jwt = verifier.verify(userToken);
         String subject = jwt.getSubject();
-        System.out.println("Token verified for app " + mdwAppId + " and user " + subject);
+        getOut().println("Token verified for app " + mdwAppId + " and user " + subject);
     }
 
     public static Map<String,Long> getVerificationDependencies() {

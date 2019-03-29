@@ -333,11 +333,11 @@ public abstract class Setup implements Operation {
                 }
                 newContents.append(contents.substring(index));
                 if (newContents.toString().equals(contents)) {
-                    System.out.println("   " + child);
+                    getOut().println("   " + child);
                 }
                 else {
                     Files.write(Paths.get(child.getPath()), newContents.toString().getBytes());
-                    System.out.println("   " + child + " *");
+                    getOut().println("   " + child + " *");
                 }
             }
         }
@@ -522,19 +522,19 @@ public abstract class Setup implements Operation {
      */
     public void debug() throws IOException {
         status();
-        System.out.println("CLI Props:");
+        getOut().println("CLI Props:");
         Props props = new Props(this);
         for (Prop prop : Props.ALL_PROPS) {
-            System.out.println("  " + prop);
-            System.out.println("    = " + props.get(prop, false));
+            getOut().println("  " + prop);
+            getOut().println("    = " + props.get(prop, false));
         }
     }
 
     public void status() throws IOException {
-        System.out.println("Project Dir:\n " + getProjectDir().getAbsolutePath());
-        System.out.println("Config Root:\n " + getConfigRoot());
-        System.out.println("Asset Root:\n  " + getAssetRoot());
-        System.out.println("Git Root:\n  " + getGitRoot());
+        getOut().println("Project Dir:\n " + getProjectDir().getAbsolutePath());
+        getOut().println("Config Root:\n " + getConfigRoot());
+        getOut().println("Asset Root:\n  " + getAssetRoot());
+        getOut().println("Git Root:\n  " + getGitRoot());
     }
 
     /**
@@ -580,7 +580,7 @@ public abstract class Setup implements Operation {
             if (!templateDir.mkdirs())
                 throw new IOException("Unable to create directory: " + templateDir.getAbsolutePath());
             String templatesUrl = getTemplatesUrl();
-            System.out.println("Retrieving templates: " + templatesUrl);
+            getOut().println("Retrieving templates: " + templatesUrl);
             File tempZip = Files.createTempFile("mdw-templates-", ".zip").toFile();
             new Download(new URL(templatesUrl), tempZip).run(monitors);
             File tempDir = Files.createTempDirectory("mdw-templates-").toFile();

@@ -165,7 +165,7 @@ public class Import extends Setup {
             if (!isForce()) {
                 String serviceUrl = new Props(this).get(Props.SERVICES_URL, false);
                 if (serviceUrl != null && new URL(serviceUrl).getHost().equals("localhost")) {
-                    System.err.println(Props.SERVICES_URL.getProperty() + " indicates 'localhost'; "
+                    getErr().println(Props.SERVICES_URL.getProperty() + " indicates 'localhost'; "
                             + "use --force to confirm (overwrites ALL local changes)");
                     return this;
                 }
@@ -211,7 +211,7 @@ public class Import extends Setup {
         try {
             inProgress = true;
 
-            System.out.println("Importing from Git into: " + getProjectDir() + "...(branch: " + branch + ")(Hard Reset: " + (hardReset ? "YES)" : "NO)"));
+            getOut().println("Importing from Git into: " + getProjectDir() + "...(branch: " + branch + ")(Hard Reset: " + (hardReset ? "YES)" : "NO)"));
 
             // Check Asset inconsistencies
             Map<String, List<String>> issues = versionControl.checkVersionConsistency(branch, getAssetLoc());
@@ -273,14 +273,14 @@ public class Import extends Setup {
                 git.run(monitors);
                 String gitBranch = (String)git.getResult();
                 if (!gitBranch.equals(configuredBranch)) {
-                    System.err.println(Props.Git.BRANCH.getProperty() + " (" + configuredBranch
+                    getErr().println(Props.Git.BRANCH.getProperty() + " (" + configuredBranch
                             + ") disagrees with local Git (" + gitBranch
                             + ");  use --force to confirm (overwrites ALL local changes from Git remote)");
                     return;
                 }
             }
 
-            System.out.println("Importing from Git into: " + getProjectDir() + "...");
+            getOut().println("Importing from Git into: " + getProjectDir() + "...");
 
             // Check Asset inconsistencies
             Git git = new Git(getReleasesUrl(), vcInfo, "checkVersionConsistency", vcInfo.getBranch(), getAssetLoc());
@@ -345,7 +345,7 @@ public class Import extends Setup {
 
         // import packages
         File assetDir = getAssetRoot();
-        System.out.println("Unzipping into: " + assetDir);
+        getOut().println("Unzipping into: " + assetDir);
         new Unzip(tempZip, assetDir, true).run();
         if (!tempZip.delete())
             throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
@@ -363,13 +363,13 @@ public class Import extends Setup {
         try {
             String msg = "Importing " + pkg + " v" + version;
             new Download(new URL(url), tempZip, msg).run(monitors);
-            System.out.println("Unzipping " + artifactId + "/" + version + " into: " + assetDir);
+            getOut().println("Unzipping " + artifactId + "/" + version + " into: " + assetDir);
             new Unzip(tempZip, assetDir, true).run();
             if (!tempZip.delete())
                 throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
         }
         catch (FileNotFoundException e) {
-            System.err.println("  - " + url + " not found for import");
+            getErr().println("  - " + url + " not found for import");
         }
     }
 
@@ -385,13 +385,13 @@ public class Import extends Setup {
         try {
             String msg = "Importing " + pkg;
             new Download(new URL(url), tempZip, msg).run(monitors);
-            System.out.println("Unzipping into: " + assetDir);
+            getOut().println("Unzipping into: " + assetDir);
             new Unzip(tempZip, assetDir, true).run();
             if (!tempZip.delete())
                 throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
         }
         catch (FileNotFoundException e) {
-            System.err.println("  - " + pkg + " not found for import");
+            getErr().println("  - " + pkg + " not found for import");
         }
     }
 

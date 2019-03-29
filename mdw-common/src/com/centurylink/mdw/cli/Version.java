@@ -36,7 +36,7 @@ public class Version implements Operation {
             String mf = path.substring(0, path.lastIndexOf("!") + 1) + "/META-INF/MANIFEST.MF";
             Manifest manifest = new Manifest(new URL(mf).openStream());
             Attributes attr = manifest.getMainAttributes();
-            System.out.println("MDW CLI " + attr.getValue("MDW-Version") + " (" + attr.getValue("MDW-Build") + ")");
+            getOut().println("MDW CLI " + attr.getValue("MDW-Version") + " (" + attr.getValue("MDW-Build") + ")");
         }
         return this;
     }
