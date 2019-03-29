@@ -23,9 +23,6 @@
 - List type process variables experience issues whenever they contain null entries [\#623](https://github.com/CenturyLinkCloud/mdw/issues/623)
 - User-friendly message for tabs and nav links to missing React assets [\#609](https://github.com/CenturyLinkCloud/mdw/issues/609)
 
-## [6.1.16-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/6.1.16-SNAPSHOT) (2019-03-29)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.15...6.1.16-SNAPSHOT)
-
 ## [6.1.15](https://github.com/CenturyLinkCloud/mdw/tree/6.1.15) (2019-02-21)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.14...6.1.15)
 
