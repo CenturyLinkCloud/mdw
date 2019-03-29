@@ -1,5 +1,31 @@
 # Change Log
 
+## [6.1.16](https://github.com/CenturyLinkCloud/mdw/tree/6.1.16) (2019-03-29)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.16-SNAPSHOT...6.1.16)
+
+**Implemented enhancements:**
+
+- Vercheck should default to comparing vs remote branch [\#632](https://github.com/CenturyLinkCloud/mdw/issues/632)
+- Preferential loading of asset classes over WAR/Spring Boot JAR classes [\#630](https://github.com/CenturyLinkCloud/mdw/issues/630)
+- Ability to manually Fail an activity just like Retry/Proceed [\#629](https://github.com/CenturyLinkCloud/mdw/issues/629)
+- Asset package discovery via Git [\#621](https://github.com/CenturyLinkCloud/mdw/issues/621)
+- Failure during Process Instance creation should leave instance in Failed status [\#620](https://github.com/CenturyLinkCloud/mdw/issues/620)
+- Topic/Path-based routing for Event Handlers [\#250](https://github.com/CenturyLinkCloud/mdw/issues/250)
+
+**Closed issues:**
+
+- Event wait activity does not proceed when timeout is configured via expression [\#636](https://github.com/CenturyLinkCloud/mdw/issues/636)
+- Inspector instance hierarchy view incorrect tree structure [\#635](https://github.com/CenturyLinkCloud/mdw/issues/635)
+- UserGroupCache can contain users with missing attributes [\#634](https://github.com/CenturyLinkCloud/mdw/issues/634)
+- Dashboard query errors with Oracle db [\#627](https://github.com/CenturyLinkCloud/mdw/issues/627)
+- Viewing and updating process variables using a manual task in embedded subprocess [\#626](https://github.com/CenturyLinkCloud/mdw/issues/626)
+- Dashboard Requests path parameters lack URL encoding [\#624](https://github.com/CenturyLinkCloud/mdw/issues/624)
+- List type process variables experience issues whenever they contain null entries [\#623](https://github.com/CenturyLinkCloud/mdw/issues/623)
+- User-friendly message for tabs and nav links to missing React assets [\#609](https://github.com/CenturyLinkCloud/mdw/issues/609)
+
+## [6.1.16-SNAPSHOT](https://github.com/CenturyLinkCloud/mdw/tree/6.1.16-SNAPSHOT) (2019-03-29)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.15...6.1.16-SNAPSHOT)
+
 ## [6.1.15](https://github.com/CenturyLinkCloud/mdw/tree/6.1.15) (2019-02-21)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.14...6.1.15)
 
@@ -7,7 +33,7 @@
 
 **Compatibility Notes:**
   - To take advantage of enhanced dashboard charts introduced by issue #582, it's highly recommended that you add the indexes
-    commented out at the bottom of the update scripts:   
+    commented out at the bottom of the update scripts:
      - https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/database/mysql/mdw_upgrade_6.0_To_6.1.sql
      - https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/database/oracle/mdw_upgrade_6.0_To_6.1.sql
     Depending on how much existing data is present, these indexes may take a while to create.
@@ -31,7 +57,6 @@
 - Swagger Validator activity generates no response when OK [\#615](https://github.com/CenturyLinkCloud/mdw/issues/615)
 - NullPointerExceptions resulting from issue \#457 [\#613](https://github.com/CenturyLinkCloud/mdw/issues/613)
 - FilePanel fixes and enhancements [\#612](https://github.com/CenturyLinkCloud/mdw/issues/612)
-- User-friendly message for tabs and nav links to missing React assets [\#609](https://github.com/CenturyLinkCloud/mdw/issues/609)
 - Repetitive loading/logging in ServicePaths cache [\#606](https://github.com/CenturyLinkCloud/mdw/issues/606)
 - In Hub Services tab, method-defined subpaths cause a server error when clicked [\#602](https://github.com/CenturyLinkCloud/mdw/issues/602)
 - Custom React Index.jsx assets fail to attach to DOM element on Windows [\#601](https://github.com/CenturyLinkCloud/mdw/issues/601)
@@ -41,7 +66,7 @@
 
 **Compatibility Notes:**
   - If using an embedded db on a case-sensitive file system where you wish to preserve data, add `--lower_case_table_names=1`
-    to the db.startup section of mdw.yaml as illustrated in the config guide: https://centurylinkcloud.github.io/mdw/docs/guides/configuration/#mdwyaml.  
+    to the db.startup section of mdw.yaml as illustrated in the config guide: https://centurylinkcloud.github.io/mdw/docs/guides/configuration/#mdwyaml.
     This change is due to enhancement issue #466.
 
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.13...6.1.14)
