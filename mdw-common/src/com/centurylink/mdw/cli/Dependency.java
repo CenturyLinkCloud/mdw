@@ -24,6 +24,9 @@ public class Dependency implements Operation {
 
     @Override
     public Dependency run(ProgressMonitor... progressMonitors) throws IOException {
+        if (System.getProperty("mdw.studio.version") != null)
+            return this; // dependencies are provided with plugin
+
         String mdwHome = System.getenv("MDW_HOME");
         if (mdwHome == null)
             mdwHome = System.getProperty("mdw.home");
