@@ -69,9 +69,9 @@ public class Paths extends Setup {
         if (normalize) {
             swaggerPaths = getSwaggerPaths();
             if (isDebug()) {
-                System.out.println("Swagger paths:");
+                getOut().println("Swagger paths:");
                 for (ServicePath swaggerPath : swaggerPaths) {
-                    System.out.println("  - " + swaggerPath);
+                    getOut().println("  - " + swaggerPath);
                 }
             }
         }
@@ -81,9 +81,9 @@ public class Paths extends Setup {
         if (path != null) {
             ServicePath normalized = new ServicePath(path).normalize(swaggerPaths);
             if (path.equals(normalized.getPath()))
-                System.out.println("  - " + path);
+                getOut().println("  - " + path);
             else
-                System.out.println("  - " + path + " -> " + normalized);
+                getOut().println("  - " + path + " -> " + normalized);
         }
         else {
             String sql;
@@ -91,7 +91,7 @@ public class Paths extends Setup {
                 sql = "select distinct path from DOCUMENT where owner_type = ? and path is not null and rownum <= " + getMax();
             else
                 sql = "select path from DOCUMENT where owner_type = ? and path is not null group by path limit " + getMax();
-            System.out.println(outbound ? "Outbound paths: " : "Inbound paths:");
+            getOut().println(outbound ? "Outbound paths: " : "Inbound paths:");
             try (Connection conn = db.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setString(1, outbound ? "ADAPTER_RESPONSE" : "LISTENER_RESPONSE");
@@ -101,16 +101,16 @@ public class Paths extends Setup {
                         if (normalize) {
                             ServicePath normalized = servicePath.normalize(swaggerPaths);
                             if (normalized.getPath().equals(servicePath.getPath())) {
-                                System.out.println("  - " + servicePath);
+                                getOut().println("  - " + servicePath);
                             }
                             else {
-                                System.out.println("  - " + servicePath + " -> " + normalized);
+                                getOut().println("  - " + servicePath + " -> " + normalized);
                             }
                             if (uniquePaths != null)
                                 uniquePaths.add(normalized.getPath());
                         }
                         else {
-                            System.out.println("  - " + path);
+                            getOut().println("  - " + path);
                         }
                     }
                 }
@@ -124,9 +124,9 @@ public class Paths extends Setup {
             List<String> uniqueList = new ArrayList<>();
             uniqueList.addAll(Arrays.asList(uniquePaths.toArray(new String[0])));
             uniqueList.sort(String::compareToIgnoreCase);
-            System.out.println("Unique normalized paths:");
+            getOut().println("Unique normalized paths:");
             for (String uniquePath : uniqueList)
-                System.out.println("  - " + uniquePath);
+                getOut().println("  - " + uniquePath);
         }
 
         return this;

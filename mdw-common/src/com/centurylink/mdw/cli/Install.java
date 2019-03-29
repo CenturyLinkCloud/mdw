@@ -113,7 +113,7 @@ public class Install extends Setup {
             File jarFile = new File(getBootJarLoc() + "/mdw-boot-" + mdwVer + ".jar");
             if (bootJarDir.isDirectory()) {
                 if (jarFile.exists() && !mdwVer.endsWith("-SNAPSHOT")) {
-                    System.out.println("Already up-to-date: " + jarFile.getAbsolutePath());
+                    getOut().println("Already up-to-date: " + jarFile.getAbsolutePath());
                     return this;
                 }
 
@@ -168,7 +168,7 @@ public class Install extends Setup {
 
         if (downloads != null) {
             for (Download download : downloads) {
-                System.out.println("Downloading " + download.getTo() + "...");
+                getOut().println("Downloading " + download.getTo() + "...");
                 download.run(progressMonitors);
             }
         }
@@ -180,7 +180,7 @@ public class Install extends Setup {
         if (!super.validate())
             return false;
         if (getMdwVersion() == null) {
-            System.err.println("Option --mdw-version required or should be readable from project.yaml");
+            getErr().println("Option --mdw-version required or should be readable from project.yaml");
             return false;
         }
         return true;

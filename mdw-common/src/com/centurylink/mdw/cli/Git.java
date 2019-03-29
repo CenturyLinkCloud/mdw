@@ -105,7 +105,7 @@ public class Git implements Operation {
             if (!command.equals("git")) {
                 versionControl.connect(vcInfo.getUrl(), vcInfo.getUser(), vcInfo.getPassword(), vcInfo.getLocalDir());
                 if (!versionControl.exists()) {
-                    System.out.println("Git local not found: " + vcInfo.getLocalDir() + " -- cloning from " + vcInfo.getUrl() + "...");
+                    getOut().println("Git local not found: " + vcInfo.getLocalDir() + " -- cloning from " + vcInfo.getUrl() + "...");
                     vcClass.getMethod("cloneNoCheckout", boolean.class).invoke(versionControl, true);
                 }
             }

@@ -33,7 +33,7 @@ public class Encrypt implements Operation {
     public void setInput(String input) { this.input = input; }
 
     public Encrypt run(ProgressMonitor... progressMonitors) throws IOException {
-        System.out.println(encrypt());
+        getOut().println(encrypt());
         return this;
     }
 

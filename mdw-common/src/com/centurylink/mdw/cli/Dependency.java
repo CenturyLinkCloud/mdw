@@ -41,7 +41,7 @@ public class Dependency implements Operation {
 
         File depJar = new File(libDir + "/" + path.substring(path.lastIndexOf('/')));
         if (!depJar.exists()) {
-            System.out.println("Downloading " + depJar + "...");
+            getOut().println("Downloading " + depJar + "...");
             new Download(new URL(mavenRepoUrl + "/" + path), depJar, size).run(progressMonitors);
         }
         return this;

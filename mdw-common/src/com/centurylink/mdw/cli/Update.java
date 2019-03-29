@@ -59,7 +59,7 @@ public class Update extends Setup {
 
         if (isSnapshots()) {
             for (String pkg : getBaseAssetPackages()) {
-                System.out.println("Import asset packages:");
+                getOut().println("Import asset packages:");
                 mport.importSnapshotPackage(pkg, monitors);
             }
         }
@@ -94,19 +94,19 @@ public class Update extends Setup {
             }
 
             List<String> toDownload = new ArrayList<>();
-            System.out.println("Import asset packages:");
+            getOut().println("Import asset packages:");
             for (String pkg : getBaseAssetPackages()) {
                 if (discovered.containsKey(pkg)) {
-                    System.out.println("  - " + pkg);
+                    getOut().println("  - " + pkg);
                     toDownload.add(isMdw ? pkg : discovered.get(pkg));
                 }
                 else {
-                    System.err.println("  - " + pkg + " not found for import");
+                    getErr().println("  - " + pkg + " not found for import");
                 }
             }
 
             if (toDownload.isEmpty()) {
-                System.out.println(" - no packages selected");
+                getOut().println(" - no packages selected");
             }
             else {
                 if (isMdw) {

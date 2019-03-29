@@ -101,7 +101,7 @@ public class Run implements Operation {
                 logDir = new File(".");
                 cmdLine.add("-Dmdw.log.location=.");
             }
-            System.out.println("Running MDW daemon with log dir: " + logDir.getAbsolutePath());
+            getOut().println("Running MDW daemon with log dir: " + logDir.getAbsolutePath());
             cmdLine.add(getBootJar());
         }
         else {
@@ -112,10 +112,10 @@ public class Run implements Operation {
         }
         ProcessBuilder builder = new ProcessBuilder(cmdLine);
         builder.redirectErrorStream(true);
-        System.out.println("Starting process:");
+        getOut().println("Starting process:");
         for (String cmd : cmdLine)
-            System.out.print(cmd + " ");
-        System.out.println("\n");
+            getOut().print(cmd + " ");
+        getOut().println("\n");
         Process process = builder.start();
         if (!daemon) {
             Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -137,7 +137,7 @@ public class Run implements Operation {
                 public void run() {
                     try (BufferedReader out = new BufferedReader(new InputStreamReader(process.getInputStream()));) {
                         out.lines().forEach(line -> {
-                            System.out.println(line);
+                            getOut().println(line);
                         });
                     }
                     catch (IOException ex) {
@@ -149,20 +149,20 @@ public class Run implements Operation {
 
         try {
             int res = process.waitFor();
-            System.out.println("Process exited with code: " + res);
+            getOut().println("Process exited with code: " + res);
             if (daemon && wait > 0) {
                 long before = System.currentTimeMillis();
                 boolean available = false;
                 URL url = new URL("http://localhost:" + getServerPort() + "/" + getContextRoot() + "/services/AppSummary");
-                System.out.println("Awaiting mdw services availability at " + url);
+                getOut().println("Awaiting mdw services availability at " + url);
                 while (!available) {
                     long elapsed = System.currentTimeMillis() - before;
                     if (elapsed / 1000 > wait) {
-                        System.out.println("\nStartup timeout (" + wait + " s) exceeded");
+                        getOut().println("\nStartup timeout (" + wait + " s) exceeded");
                         if (retried < retries) {
                             retried++;
                             process.destroy();
-                            System.out.println("   Retrying (" + retried + ")");
+                            getOut().println("   Retrying (" + retried + ")");
                             run(progressMonitors);
                             return this;
                         }
@@ -173,19 +173,19 @@ public class Run implements Operation {
                     try {
                         String response = new Fetch(url).run().getData();
                         String mdwVersion = new JSONObject(response).getString("mdwVersion");
-                        System.out.println("\nMDW " + mdwVersion + " became available after " + (elapsed/1000) + " s");
+                        getOut().println("\nMDW " + mdwVersion + " became available after " + (elapsed/1000) + " s");
                         available = true;
                     }
                     catch (IOException | JSONException ex) {
                         // unparseable means not available
-                        System.out.print("...");
+                        getOut().print("...");
                         Thread.sleep(3000);
                     }
                 }
             }
         }
         catch (InterruptedException ex) {
-            System.out.println("Destroying process");
+            getOut().println("Destroying process");
             process.destroy();
         }
 
