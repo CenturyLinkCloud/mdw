@@ -15,21 +15,20 @@
  */
 package com.centurylink.mdw.model.asset;
 
+import com.centurylink.mdw.dataaccess.AssetRevision;
+import com.centurylink.mdw.dataaccess.file.AssetFile;
+import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
+import com.centurylink.mdw.model.Jsonable;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.dataaccess.AssetRevision;
-import com.centurylink.mdw.dataaccess.file.AssetFile;
-import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
-
 public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
 
-    private static Map<String,String> extToContentType = new HashMap<String,String>();
+    private static Map<String,String> extToContentType = new HashMap<>();
     static {
         extToContentType.put("camel", "text/xml");
         extToContentType.put("css", "text/css");
@@ -59,29 +58,15 @@ public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
      * TODO: make this extensible
      */
     public String getContentType() {
-        String ct = extToContentType.get(getExtension());
-        if (ct == null)
-            ct = isBinary() ? "application/octet-stream" : "text/plain";
-        return ct;
+        return getContentType(getExtension());
     }
 
-    /**
-     * TODO: extensibility
-     */
     public boolean isBinary() {
-        if (isImage())
-            return true;
-        String ext = getExtension();
-        return "xlsx".equals(ext) || "docx".equals(ext) || "jar".equals(ext) || "class".equals(ext)
-            || "zip".equals(ext) || "eot".equals(ext) || "ttf".equals(ext) || "woff".equals(ext) || "woof2".equals(ext);
+        return isBinary(getExtension());
     }
 
-    /**
-     * TODO: extensibility
-     */
     public boolean isImage() {
-        String ext = getExtension();
-        return "png".equals(ext) || "jpg".equals(ext) || "gif".equals(ext) || "svg".equals(ext);
+        return isImage(getExtension());
     }
 
     public boolean isMarkdown() {
@@ -213,4 +198,33 @@ public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
     private DiffType vcsDiffType;
     public DiffType getVcsDiffType() { return vcsDiffType; }
     public void setVcsDiffType(DiffType diffType) { this.vcsDiffType = diffType; }
+
+    /**
+     * TODO: extensibility
+     */
+    public static boolean isBinary(String ext) {
+        if (isImage(ext))
+            return true;
+        return "xlsx".equals(ext) || "docx".equals(ext) || "jar".equals(ext) || "class".equals(ext)
+                || "zip".equals(ext) || "eot".equals(ext) || "ttf".equals(ext) || "woff".equals(ext) || "woof2".equals(ext);
+    }
+
+    /**
+     * TODO: extensibility
+     */
+    public static boolean isImage(String ext) {
+        return "png".equals(ext) || "jpg".equals(ext) || "gif".equals(ext) || "svg".equals(ext);
+    }
+
+    /**
+     * If not mapped, content-type is application/octet-stream for binary and test/plain otherwise.
+     * TODO: extensibility
+     */
+    public static String getContentType(String ext) {
+        String ct = extToContentType.get(ext);
+        if (ct == null)
+            ct = isBinary(ext) ? "application/octet-stream" : "text/plain";
+        return ct;
+    }
+
 }
