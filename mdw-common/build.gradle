@@ -153,6 +153,7 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/model/event/EventType.class"
         include "com/centurylink/mdw/model/variable/Variable.class"
         include "com/centurylink/mdw/model/asset/Asset.class"
+        include "com/centurylink/mdw/model/asset/AssetInfo.class"
         include "com/centurylink/mdw/model/Jsonable.class"
         include "com/centurylink/mdw/model/JsonObject.class"
         include "com/centurylink/mdw/model/JsonObject\$*.class"

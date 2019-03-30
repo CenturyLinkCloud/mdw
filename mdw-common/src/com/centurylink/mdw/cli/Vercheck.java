@@ -18,6 +18,7 @@ package com.centurylink.mdw.cli;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.util.file.VersionProperties;
 
 import java.io.ByteArrayInputStream;
@@ -173,7 +174,16 @@ public class Vercheck extends Setup {
                             String gitPath = getGitPath(assetFile.file);
                             byte[] tagContents = (byte[]) readFromCommit.invoke(versionControl, commit, gitPath);
                             byte[] fileContents = Files.readAllBytes(Paths.get(assetFile.file.getPath()));
-                            if (!Arrays.equals(tagContents, fileContents)) {
+                            boolean isDifferent;
+                            if (assetFile.isBinary()) {
+                                isDifferent = !Arrays.equals(tagContents, fileContents);
+                            }
+                            else {
+                                String tagString =  new String(tagContents).replaceAll("\\r\\n", "\n");
+                                String fileString =  new String(fileContents).replaceAll("\\r\\n", "\n");
+                                isDifferent = !tagString.equals(fileString);
+                            }
+                            if (isDifferent) {
                                 assetFile.error = ERR_SAME_VER_DIFF_CONTENT + " (v " + formatVersion(assetFile.version) + ")";
                                 if (fix)
                                     assetFile.fixed = updateVersion(assetFile, ++assetFile.version);
@@ -186,13 +196,6 @@ public class Vercheck extends Setup {
                 }
             }
         }
-    }
-
-    private static String formatVersion(int version) {
-        if (version == 0)
-            return "0";
-        else
-            return version/1000 + "." + version%1000;
     }
 
     private Map<String,AssetFile> findAssetFiles(ProgressMonitor... monitors) throws IOException {
@@ -276,6 +279,13 @@ public class Vercheck extends Setup {
         return true;
     }
 
+    private static String formatVersion(int version) {
+        if (version == 0)
+            return "0";
+        else
+            return version/1000 + "." + version%1000;
+    }
+
     class AssetFile {
         String path;
         File file;
@@ -293,6 +303,20 @@ public class Vercheck extends Setup {
 
         String getAssetName() {
             return path.substring(path.lastIndexOf('/') + 1);
+        }
+
+        boolean isBinary() {
+            return AssetInfo.isBinary(getExtension());
+        }
+
+        String getExtension() {
+            int lastDot = file.getName().lastIndexOf('.');
+            if (lastDot >= 0 && file.getName().length() > lastDot + 1) {
+                return file.getName().substring(0, lastDot + 1);
+            }
+            else {
+                return null;
+            }
         }
     }
 }
