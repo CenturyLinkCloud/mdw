@@ -73,14 +73,17 @@ public class Vercheck extends Setup {
     public int getErrorCount() { return errorCount; }
 
     @Override
-    public Vercheck run(ProgressMonitor... monitors) throws IOException {
+    public Vercheck run(ProgressMonitor... progressMonitors) throws IOException {
 
         getOut().println("Finding asset files...");
+
+        for (ProgressMonitor progressMonitor : progressMonitors)
+            progressMonitor.progress(0);
 
         findAssetFiles();
 
         try {
-            compareVersions();
+            compareVersions(progressMonitors);
         }
         catch (ReflectiveOperationException | IOException ex) {
             if (isDebug())
@@ -118,12 +121,13 @@ public class Vercheck extends Setup {
         return this;
     }
 
-    private void compareVersions() throws IOException, ReflectiveOperationException {
+    private void compareVersions(ProgressMonitor... progressMonitors) throws IOException, ReflectiveOperationException {
         Props props = new Props(this);
         VcInfo vcInfo = new VcInfo(getGitRoot(), props);
         String mavenUrl = props.get(Props.Gradle.MAVEN_REPO_URL);
         Git git;
         String commit;
+        long before = System.currentTimeMillis();
         if (tag != null) {
             git = new Git(mavenUrl, vcInfo, "getCommitForTag", tag);
             commit = (String) git.run().getResult();
@@ -146,8 +150,13 @@ public class Vercheck extends Setup {
         Map<String,Properties> gitVersions = new HashMap<>();
         VersionControl versionControl = git.getVersionControl();
         Method readFromCommit = versionControl.getClass().getMethod("readFromCommit", String.class, String.class);
+        int i = 0;
         for (String path : assetFiles.keySet()) {
             AssetFile assetFile = assetFiles.get(path);
+            for (ProgressMonitor progressMonitor : progressMonitors) {
+                if (progressMonitor.isSupportsMessage())
+                    progressMonitor.message(path);
+            }
             if (assetFile.error == null && assetFile.file != null) {
                 // check if version has been incremented
                 Properties gitVerProps = gitVersions.get(assetFile.path);
@@ -175,7 +184,10 @@ public class Vercheck extends Setup {
                             byte[] tagContents = (byte[]) readFromCommit.invoke(versionControl, commit, gitPath);
                             byte[] fileContents = Files.readAllBytes(Paths.get(assetFile.file.getPath()));
                             boolean isDifferent;
-                            if (assetFile.isBinary()) {
+                            if (tagContents == null) {
+                                isDifferent = false; // not in git, despite being git versions file
+                            }
+                            else if (assetFile.isBinary()) {
                                 isDifferent = !Arrays.equals(tagContents, fileContents);
                             }
                             else {
@@ -195,6 +207,16 @@ public class Vercheck extends Setup {
                     }
                 }
             }
+            int prog = (int) Math.floor((i * 100)/assetFiles.size());
+            for (ProgressMonitor progressMonitor : progressMonitors)
+                progressMonitor.progress(prog);
+            i++;
+        }
+        for (ProgressMonitor progressMonitor : progressMonitors)
+            progressMonitor.progress(100);
+        if (isDebug()) {
+            long secs = Math.round(((double) (System.currentTimeMillis() - before)) / 1000);
+            getOut().println("Compare finished in " + secs + " s");
         }
     }
 

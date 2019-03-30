@@ -25,4 +25,5 @@ public interface ProgressMonitor {
     void progress(int percent);
 
     default boolean isCanceled() { return false; }
+    default boolean isSupportsMessage() { return false; }
 }
