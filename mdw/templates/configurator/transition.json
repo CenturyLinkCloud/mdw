@@ -2,16 +2,17 @@
   "category": "attributes",
   "pagelet": {"widgets": [
     {
-      "type": "text",
+      "type": "number",
       "name": "TRANSITION_RETRY_COUNT",
       "label": "Retry Count",
-      "vw": 100
+      "vw": 50
     },
     {
-      "type": "text",
+      "type": "number",
       "name": "TRANSITION_DELAY",
+      "applier": "TransitionDelayApplier",
       "label": "Delay (seconds)",
-      "vw": 100
+      "vw": 50
     },
     {
       "type": "dropdown",
