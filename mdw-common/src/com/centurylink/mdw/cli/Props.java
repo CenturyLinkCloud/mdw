@@ -34,6 +34,7 @@ public class Props {
     public static Prop HUB_URL;
     public static Prop CENTRAL_URL;
     public static Prop APP_ID;
+    public static Prop TEMP_DIR;
 
     public static class ProjectYaml {
         public static final String MDW_VERSION = "project.mdw.version";
@@ -76,6 +77,7 @@ public class Props {
         HUB_URL = new Prop("hub-url", MDW, "mdw.hub.url");
         CENTRAL_URL = new Prop("central-url", MDW, "mdw.central.url");
         APP_ID = new Prop("app-id", MDW, "mdw.app.id");
+        TEMP_DIR = new Prop("temp-dir", MDW, "mdw.temp.dir");
 
         ALL_PROPS.add(ASSET_LOC);
         ALL_PROPS.add(DISCOVERY_URL);
@@ -83,6 +85,7 @@ public class Props {
         ALL_PROPS.add(HUB_URL);
         ALL_PROPS.add(CENTRAL_URL);
         ALL_PROPS.add(APP_ID);
+        ALL_PROPS.add(TEMP_DIR);
 
         // mdw git
         Git.REMOTE_URL = new Prop("git-remote-url", MDW, "mdw.git.remote.url");

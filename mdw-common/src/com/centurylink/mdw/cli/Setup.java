@@ -592,6 +592,13 @@ public abstract class Setup implements Operation {
         }
     }
 
+    public File getTempDir() throws IOException {
+        String propVal = new Props(this).get(Props.TEMP_DIR, false);
+        if (propVal == null)
+            return null;
+        return new File(propVal);
+    }
+
     private Packages assetPackageDirs;
     protected Packages getAssetPackageDirs() throws IOException {
         if (assetPackageDirs == null) {
