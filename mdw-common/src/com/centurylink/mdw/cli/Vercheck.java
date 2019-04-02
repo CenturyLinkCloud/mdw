@@ -72,6 +72,9 @@ public class Vercheck extends Setup {
     private int errorCount;
     public int getErrorCount() { return errorCount; }
 
+    private Exception exception;
+    public Exception getException() { return exception; }
+
     @Override
     public Vercheck run(ProgressMonitor... progressMonitors) throws IOException {
 
@@ -86,30 +89,30 @@ public class Vercheck extends Setup {
             compareVersions(progressMonitors);
         }
         catch (ReflectiveOperationException | IOException ex) {
+            this.exception = ex;
             if (isDebug())
-                ex.printStackTrace();
+                ex.printStackTrace(getErr());
             getErr().println("ERROR: " + ex + " (--debug for details)");
             errorCount++;
         }
 
-        for (String path : assetFiles.keySet()) {
-            AssetFile assetFile = assetFiles.get(path);
-            if (assetFile.error != null) {
-                if (assetFile.fixed) {
-                    getOut().println("FIXED: " + path + " --> " + assetFile.error);
-                }
-                else {
-                    getErr().println("ERROR: " + path + " --> " + assetFile.error);
-                    errorCount++;
-                }
-            }
-            else {
-                if (assetFile.file == null && warn) {
-                    if (fix && removeVersion(assetFile)) {
-                        getErr().println("FIXED: " + path + " --> " + WARN_EXTRA_VERSION);
+        if (exception == null) {
+            for (String path : assetFiles.keySet()) {
+                AssetFile assetFile = assetFiles.get(path);
+                if (assetFile.error != null) {
+                    if (assetFile.fixed) {
+                        getOut().println("FIXED: " + path + " --> " + assetFile.error);
+                    } else {
+                        getErr().println("ERROR: " + path + " --> " + assetFile.error);
+                        errorCount++;
                     }
-                    else {
-                        getErr().println("WARNING: " + path + " --> " + WARN_EXTRA_VERSION);
+                } else {
+                    if (assetFile.file == null && warn) {
+                        if (fix && removeVersion(assetFile)) {
+                            getErr().println("FIXED: " + path + " --> " + WARN_EXTRA_VERSION);
+                        } else {
+                            getErr().println("WARNING: " + path + " --> " + WARN_EXTRA_VERSION);
+                        }
                     }
                 }
             }
