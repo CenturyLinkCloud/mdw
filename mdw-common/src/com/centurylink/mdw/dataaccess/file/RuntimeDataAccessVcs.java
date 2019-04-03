@@ -843,7 +843,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
 
     protected String buildActivityCountQuery(Query query, Date start) {
         StringBuilder sqlBuff = new StringBuilder();
-        sqlBuff.append("SELECT count(pi.process_instance_id) ");
+        sqlBuff.append("SELECT count(ai.activity_instance_id) ");
         buildProcessQueryCommon(sqlBuff, query, start);
         return sqlBuff.toString();
     }
