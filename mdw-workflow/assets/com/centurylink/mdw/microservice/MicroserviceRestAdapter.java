@@ -1,11 +1,5 @@
 package com.centurylink.mdw.microservice;
 
-import java.sql.SQLException;
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Jsonable;
@@ -19,6 +13,12 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
+
+import java.sql.SQLException;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * REST adapter overridden to support microservices and
@@ -35,7 +35,7 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
     public Map<String, String> getRequestHeaders() {
         Map<String, String> requestHeaders = super.getRequestHeaders();
         if (requestHeaders == null)
-            requestHeaders = new HashMap<String, String>();
+            requestHeaders = new HashMap<>();
         try {
             requestHeaders.put(Request.REQUEST_ID, getMasterRequestId());
             String httpMethod = getHttpMethod();

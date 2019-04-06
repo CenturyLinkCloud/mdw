@@ -287,4 +287,15 @@ public abstract class RestService {
     protected String generateRequestId() {
         return Long.toHexString(System.nanoTime());
     }
+
+    /**
+     * Finds masterRequestId from 'mdw-request-id' header, or generates if not found.
+     */
+    protected String masterRequestId(Map<String,String> headers) {
+        String masterRequestId = headers.get(Listener.METAINFO_MDW_REQUEST_ID);
+        if (masterRequestId == null)
+            masterRequestId = generateRequestId();
+        return masterRequestId;
+    }
+
 }

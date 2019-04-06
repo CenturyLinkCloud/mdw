@@ -33,7 +33,6 @@ public class HttpConnection {
     private HttpURLConnection connection;
     HttpURLConnection getConnection() { return connection; }
 
-
     private boolean followRedirects = true;
     public boolean isFollowRedirects(){ return followRedirects; }
     public void setFollowRedirects(boolean follow) {

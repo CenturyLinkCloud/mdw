@@ -37,7 +37,7 @@ public interface AdapterMonitor extends RegisteredService, Monitor {
      * @param headers Protocol header values.  May be modified by the monitor.
      * @return null, or an alternative request that should be sent to the called service
      */
-    default public Object onRequest(ActivityRuntimeContext context, Object request, Map<String,String> headers) {
+    default Object onRequest(ActivityRuntimeContext context, Object request, Map<String,String> headers, Object connection) {
         return null;
     }
 
@@ -51,7 +51,7 @@ public interface AdapterMonitor extends RegisteredService, Monitor {
      * @param headers protocol headers
      * @return null, or an alternative response to send back to the MDW runtime
      */
-    default public Object onInvoke(ActivityRuntimeContext context, Object request, Map<String,String> headers) {
+    default Object onInvoke(ActivityRuntimeContext context, Object request, Map<String,String> headers, Object connection) {
         return null;
     }
 
@@ -64,22 +64,9 @@ public interface AdapterMonitor extends RegisteredService, Monitor {
      * @param connection Connection used in adapter
      * @return Null unless the monitor wants to change the response contents.  In that case, return the alternative response.
      */
-    default public Object onResponse(ActivityRuntimeContext context, Object response, Map<String,String> headers, Object connection) {
-        return onResponse(context, response, headers);
-    }
-
-    /**
-     * Called when the response is received.
-     * @deprecated
-     * @param context The workflow runtime context of the adapter activity
-     * @param response The response that was received from the external system. (String, XMLBean, JAXB Element, JSONObject, etc).
-     * @param headers Protocol headers for the incoming response.  New headers can be injected by the monitor.
-     * @return Null unless the monitor wants to change the response contents.  In that case, return the alternative response.
-     */
-    default public Object onResponse(ActivityRuntimeContext context, Object response, Map<String,String> headers) {
+    default Object onResponse(ActivityRuntimeContext context, Object response, Map<String,String> headers, Object connection) {
         return null;
     }
-
 
     /**
      * Called when an error is encountered.
@@ -87,7 +74,7 @@ public interface AdapterMonitor extends RegisteredService, Monitor {
      * @param t error that was encountered
      * @return null, or activity result code
      */
-    default public String onError(ActivityRuntimeContext context, Throwable t) {
+    default String onError(ActivityRuntimeContext context, Throwable t) {
         return null;
     }
 }
