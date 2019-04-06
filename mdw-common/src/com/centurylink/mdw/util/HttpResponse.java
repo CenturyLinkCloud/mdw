@@ -4,6 +4,7 @@
 package com.centurylink.mdw.util;
 
 public class HttpResponse {
+
     private int code;
     public int getCode() { return code; }
     void setCode(int code) { this.code = code; }
@@ -19,4 +20,7 @@ public class HttpResponse {
         this.content = content;
     }
 
+    public HttpResponse(int code) {
+        this.code = code;
+    }
 }

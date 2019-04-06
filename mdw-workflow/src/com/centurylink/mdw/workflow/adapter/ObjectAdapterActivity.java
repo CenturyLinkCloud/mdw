@@ -15,13 +15,6 @@
  */
 package com.centurylink.mdw.workflow.adapter;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.adapter.AdapterInvocationError;
@@ -34,7 +27,6 @@ import com.centurylink.mdw.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
@@ -51,6 +43,9 @@ import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Adapter activity for services with object-based request/response content.
@@ -529,14 +524,14 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
 
             Object altRequest = null;
             for (AdapterMonitor monitor : monitors) {
-                altRequest = monitor.onRequest(runtimeContext, request, headers);
+                altRequest = monitor.onRequest(runtimeContext, request, headers, connection);
                 if (altRequest != null)
                     request = altRequest;
             }
 
             Object altResponse = null;
             for (AdapterMonitor monitor : monitors) {
-                altResponse = monitor.onInvoke(runtimeContext, request, headers);
+                altResponse = monitor.onInvoke(runtimeContext, request, headers, connection);
                 if (altResponse != null) {
                     // TODO monitor full Response
                     Response alt = new Response();

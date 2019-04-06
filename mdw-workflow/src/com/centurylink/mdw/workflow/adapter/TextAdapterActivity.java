@@ -726,14 +726,14 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
 
             String altRequest = null;
             for (AdapterMonitor monitor : monitors) {
-                altRequest = (String)monitor.onRequest(runtimeContext, request, headers);
+                altRequest = (String)monitor.onRequest(runtimeContext, request, headers, connection);
                 if (altRequest != null)
                     request = altRequest;
             }
 
             String altResponse = null;
             for (AdapterMonitor monitor : monitors) {
-                altResponse = (String)monitor.onInvoke(runtimeContext, request, headers);
+                altResponse = (String)monitor.onInvoke(runtimeContext, request, headers, connection);
                 if (altResponse != null)
                     return new Response(altResponse); // TODO monitor full Response
             }
