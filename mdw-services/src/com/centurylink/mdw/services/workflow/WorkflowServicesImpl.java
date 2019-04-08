@@ -739,7 +739,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
         if (!decodedActName.isEmpty())
             activityList.setActivities(matchActivities);
         activityList.setCount(activityList.getActivities().size());
-        activityList.setTotal(activityList.getActivities().size());
+        if (activityList.getTotal() <= 0L)
+            activityList.setTotal(activityList.getActivities().size());
         return activityList;
     }
 
