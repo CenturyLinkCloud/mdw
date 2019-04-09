@@ -113,7 +113,7 @@ public class MonitorRegistry extends ServiceRegistry {
      * Returns all service monitors.
      */
     public List<ServiceMonitor> getServiceMonitors() {
-        List<ServiceMonitor> serviceMonitors = new ArrayList<ServiceMonitor>();
+        List<ServiceMonitor> serviceMonitors = new ArrayList<>();
         serviceMonitors.addAll(getDynamicServices(ServiceMonitor.class));
         return serviceMonitors;
     }

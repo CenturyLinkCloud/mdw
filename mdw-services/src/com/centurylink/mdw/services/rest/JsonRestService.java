@@ -23,6 +23,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.service.data.process.ProcessCache;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -230,6 +232,12 @@ public abstract class JsonRestService extends RestService implements JsonService
             Map<String,Object> parameters, Map<String,String> headers) throws ServiceException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
         long documentId = Long.parseLong(headers.get(Listener.METAINFO_DOCUMENT_ID));
+        // for convenience, populate requestHeaders var if present since not service
+        if (!parameters.containsKey("requestHeaders")) {
+            Process process = ProcessCache.getProcess(name);
+            if (process.getVariable("requestHeaders") != null)
+                parameters.put("requestHeaders", headers);
+        }
         workflowServices.launchProcess(name, masterRequestId, OwnerType.DOCUMENT, documentId, parameters);
     }
 

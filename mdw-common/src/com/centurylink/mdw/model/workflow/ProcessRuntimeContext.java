@@ -68,6 +68,9 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
     private int performanceLevel;
     public int getPerformanceLevel() { return performanceLevel; }
 
+    private boolean synchronous;
+    public boolean isSynchronous() { return synchronous; }
+
     /**
      * Purposely separate from processInstance.getVariables().
      */
@@ -125,19 +128,21 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         return v == null ? defaultValue : v;
     }
 
-    public ProcessRuntimeContext(Package pkg, Process process, ProcessInstance processInstance, int performanceLevel) {
+    public ProcessRuntimeContext(Package pkg, Process process, ProcessInstance processInstance, int performanceLevel, boolean synchronous) {
         this.pkg = pkg;
         this.process = process;
         this.processInstance = processInstance;
         this.performanceLevel = performanceLevel;
+        this.synchronous = synchronous;
         this.variables = new HashMap<>();
     }
 
-    public ProcessRuntimeContext(Package pkg, Process process, ProcessInstance processInstance, int performanceLevel, Map<String,Object> variables) {
+    public ProcessRuntimeContext(Package pkg, Process process, ProcessInstance processInstance, int performanceLevel, boolean synchronous, Map<String,Object> variables) {
         this.pkg = pkg;
         this.process = process;
         this.processInstance = processInstance;
         this.performanceLevel = performanceLevel;
+        this.synchronous = synchronous;
         this.variables = variables;
     }
 

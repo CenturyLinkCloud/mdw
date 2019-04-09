@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.util.log;
 
+import com.centurylink.mdw.common.service.MdwServiceRegistry;
 import com.centurylink.mdw.common.service.WebSocketMessenger;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -26,10 +27,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,6 +61,11 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
 
     protected String generateLogLine(char type, String tag, String message) {
         StringBuffer sb = new StringBuffer();
+        for (LogLineInjector injector : getInjectors()) {
+            String prefix = injector.prefix();
+            if (prefix != null)
+                sb.append(prefix).append(" ");
+        }
         sb.append("[(");
         sb.append(type);
         sb.append(")");
@@ -71,6 +78,11 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
             sb.append(Thread.currentThread().getId());
         }
         sb.append("] ");
+        for (LogLineInjector injector : getInjectors()) {
+            String suffix = injector.suffix();
+            if (suffix != null)
+                sb.append(suffix).append(" ");
+        }
         sb.append(message);
         return sb.toString();
     }
@@ -270,5 +282,13 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
             String line = generateLogLine('t', tag, message);
             logIt(LogLevel.TRACE, line, null);
         }
+    }
+
+    private static List<LogLineInjector> injectors;
+    protected List<LogLineInjector> getInjectors() {
+        if (injectors == null) {
+            injectors = new ArrayList<>(MdwServiceRegistry.getInstance().getDynamicServices(LogLineInjector.class));
+        }
+        return injectors;
     }
 }

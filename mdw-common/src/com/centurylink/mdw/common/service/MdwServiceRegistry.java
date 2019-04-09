@@ -21,15 +21,17 @@ import java.util.List;
 
 import com.centurylink.mdw.container.EmbeddedDbExtension;
 import com.centurylink.mdw.model.monitor.ScheduledJob;
+import com.centurylink.mdw.util.log.LogLineInjector;
 
 public class MdwServiceRegistry extends ServiceRegistry {
 
-    public static final List<String> mdwServices = new ArrayList<String>(Arrays.asList(new String[] {
+    public static final List<String> mdwServices = new ArrayList<>(Arrays.asList(new String[] {
             JsonService.class.getName(),
             XmlService.class.getName(),
             ScheduledJob.class.getName(),
             RequestRoutingStrategy.class.getName(),
-            EmbeddedDbExtension.class.getName()}));
+            EmbeddedDbExtension.class.getName(),
+            LogLineInjector.class.getName()}));
 
     protected MdwServiceRegistry(List<Class<? extends RegisteredService>> serviceInterfaces) {
         super(serviceInterfaces);
@@ -44,33 +46,10 @@ public class MdwServiceRegistry extends ServiceRegistry {
             services.add(ScheduledJob.class);
             services.add(RequestRoutingStrategy.class);
             services.add(EmbeddedDbExtension.class);
+            services.add(LogLineInjector.class);
             instance = new MdwServiceRegistry(services);
         }
         return instance;
-    }
-
-    public JsonService getJsonService(String className) {
-        // retrieve from Cloud mode
-        JsonService dynamicJsonService = getDynamicService(null, JsonService.class, className);
-        if (dynamicJsonService != null)
-            return dynamicJsonService;
-        for (JsonService service : getServices(JsonService.class)) {
-            if (className.equals(service.getClass().getName()))
-                return service;
-        }
-        return null;
-    }
-
-    public XmlService getXmlService(String className) {
-        //retrieve from Cloud mode
-        XmlService dynamicXmlService = getDynamicService(null, XmlService.class, className);
-        if (dynamicXmlService != null)
-            return dynamicXmlService;
-        for (XmlService service : getServices(XmlService.class)) {
-            if (className.equals(service.getClass().getName()))
-                return service;
-        }
-        return null;
     }
 
     public ScheduledJob getScheduledJob(String className) {
@@ -81,18 +60,6 @@ public class MdwServiceRegistry extends ServiceRegistry {
         for (ScheduledJob scheduledJob : getServices(ScheduledJob.class)) {
             if (className.equals(scheduledJob.getClass().getName()))
                 return scheduledJob;
-        }
-        return null;
-    }
-
-    public RequestRoutingStrategy getRequestRoutingStrategy(String className) {
-        // Cloud mode
-        RequestRoutingStrategy dynamicStrategy = getDynamicService(null, RequestRoutingStrategy.class, className);
-        if (dynamicStrategy != null)
-            return dynamicStrategy;
-        for (RequestRoutingStrategy routingStrategy : getServices(RequestRoutingStrategy.class)) {
-            if (className.equals(routingStrategy.getClass().getName()))
-                return routingStrategy;
         }
         return null;
     }

@@ -89,9 +89,9 @@ public class ServiceRegistry {
      * @return
      */
     public <T extends RegisteredService> List<T> getDynamicServices(Class<T> serviceInterface) {
-        List<T> dynServices = new ArrayList<T>();
+        List<T> dynServices = new ArrayList<>();
         if (dynamicServices.containsKey(serviceInterface.getName())) {
-            Set<String> deregister = new HashSet<String>();
+            Set<String> deregister = new HashSet<>();
             for (String serviceClassName : dynamicServices.get(serviceInterface.getName())) {
                 try {
                     Class<?> clazz = CompiledJavaCache.getClassFromAssetName(null, serviceClassName);

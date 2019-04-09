@@ -15,17 +15,6 @@
  */
 package com.centurylink.mdw.services.rest;
 
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONObject;
-
 import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -43,6 +32,16 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class RestService {
 
@@ -298,4 +297,7 @@ public abstract class RestService {
         return masterRequestId;
     }
 
+    protected String logtag(Map<String,String> headers) {
+        return headers.get(Listener.METAINFO_HTTP_METHOD) + " " + headers.get(Listener.METAINFO_REQUEST_PATH);
+    }
 }

@@ -15,15 +15,7 @@
  */
 package com.centurylink.mdw.services.process;
 
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.activity.ActivityException;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-
 import com.centurylink.mdw.activity.types.SuspendibleActivity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.WorkflowException;
@@ -43,13 +35,9 @@ import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.workflow.Activity;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.Transition;
-import com.centurylink.mdw.model.workflow.WorkStatus;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessCache;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
@@ -62,6 +50,13 @@ import com.centurylink.mdw.util.TransactionUtil;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ProcessEngineDriver {
 
@@ -956,37 +951,6 @@ public class ProcessEngineDriver {
         int delay = PropertyManager.getIntegerProperty(PropertyNames.MDW_PROCESS_LAUNCH_DELAY, 2);
         engine.startProcessInstance(processInst, delay);
         return processInst.getId();
-    }
-
-    /**
-     * Start a process from somewhere in the middle - for development use only
-     */
-    public Long startProcessFromActivity(Long processId, Long activityId, String masterRequestId,
-            String ownerType, Long ownerId, Map<String,String> vars) throws Exception {
-        Process procdef = getProcessDefinition(processId);
-        int performance_level = procdef.getPerformanceLevel();
-        if (performance_level<=0) performance_level = default_performance_level_regular;
-        EngineDataAccess edao = EngineDataAccessCache.getInstance(false, performance_level);
-        InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
-        Long procInstId;
-        if (masterRequestId == null)
-            masterRequestId = genMasterRequestId();
-        ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
-        ProcessInstance processInst = engine.createProcessInstance(
-                procdef.getId(), ownerType, ownerId, null, null,
-                masterRequestId, vars);
-        logger.info(logtag(processId, processInst.getId(), masterRequestId),
-                WorkStatus.LOGMSG_PROC_START + " - " + procdef.getQualifiedName() + "/" + procdef.getVersionString());
-        engine.notifyMonitors(processInst, WorkStatus.LOGMSG_PROC_START);
-        if (ownerType.equals(OwnerType.DOCUMENT))
-            setOwnerDocumentProcessInstanceId(engine, ownerId, processInst.getId(), masterRequestId);
-        engine.updateProcessInstanceStatus(processInst.getId(), WorkStatus.STATUS_PENDING_PROCESS);
-        // setProcessInstanceStatus will really set to STATUS_IN_PROGRESS - hint to set START_DT as well
-        InternalEvent evMsg = InternalEvent.createActivityStartMessage(activityId,
-                    processInst.getId(), null, masterRequestId, null);
-        engine.sendInternalEvent(evMsg);
-        procInstId = processInst.getId();
-        return procInstId;
     }
 
     private String logtag(Long procId, Long procInstId, String masterRequestId) {
