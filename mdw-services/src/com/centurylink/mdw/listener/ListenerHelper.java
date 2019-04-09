@@ -282,7 +282,7 @@ public class ListenerHelper {
                 if (path != null)
                     reqMsg.append("on path '").append(path).append("'");
                 if (eeid > 0 && !"AppSummary".equals(path)) // don't log health/ping
-                    logger.debug(reqMsg.toString());
+                    logger.debug("", reqMsg.toString());
                 else
                     logger.mdwDebug(reqMsg.toString());
             }

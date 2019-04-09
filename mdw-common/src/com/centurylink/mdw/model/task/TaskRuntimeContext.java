@@ -46,9 +46,14 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
     private User assignee;
     public User getAssignee() { return assignee; }
 
+    @Override
+    public boolean isSynchronous() {
+        throw new UnsupportedOperationException();
+    }
+
     public TaskRuntimeContext(Package pkg, Process process,
             ProcessInstance processInstance, Map<String,Object> variables, TaskTemplate template, TaskInstance taskInstance, User assignee) {
-        super(pkg, process, processInstance, 0, variables);
+        super(pkg, process, processInstance, 0, false, variables);
         this.taskTemplate = template;
         this.taskInstance = taskInstance;
         this.assignee = assignee;

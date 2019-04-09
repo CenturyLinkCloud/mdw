@@ -1859,7 +1859,7 @@ class ProcessExecutorImpl {
         // runtime context for enablement does not contain hydrated variables map (too expensive)
         List<ProcessMonitor> monitors = MonitorRegistry.getInstance()
                 .getProcessMonitors(new ProcessRuntimeContext(pkg, processVO, processInstance,
-                        getDataAccess().getPerformanceLevel(), new HashMap<>()));
+                        getDataAccess().getPerformanceLevel(), isInService(), new HashMap<>()));
         if (!monitors.isEmpty()) {
             Map<String, Object> vars = new HashMap<>();
             if (processInstance.getVariables() != null) {
@@ -1878,14 +1878,14 @@ class ProcessExecutorImpl {
                 }
             }
             ProcessRuntimeContext runtimeContext = new ProcessRuntimeContext(pkg, processVO, processInstance,
-                    getDataAccess().getPerformanceLevel(), vars);
+                    getDataAccess().getPerformanceLevel(), isInService(), vars);
 
             for (ProcessMonitor monitor : monitors) {
                 try {
                     if (monitor instanceof OfflineMonitor) {
                         @SuppressWarnings("unchecked")
                         OfflineMonitor<ProcessRuntimeContext> processOfflineMonitor = (OfflineMonitor<ProcessRuntimeContext>) monitor;
-                        new OfflineMonitorTrigger<ProcessRuntimeContext>(processOfflineMonitor, runtimeContext).fire(event);
+                        new OfflineMonitorTrigger<>(processOfflineMonitor, runtimeContext).fire(event);
                     }
                     else {
                         if (WorkStatus.LOGMSG_PROC_START.equals(event)) {
@@ -1893,7 +1893,7 @@ class ProcessExecutorImpl {
                             if (updated != null) {
                                 for (String varName : updated.keySet()) {
                                     if (processInstance.getVariables() == null)
-                                        processInstance.setVariables(new ArrayList<VariableInstance>());
+                                        processInstance.setVariables(new ArrayList<>());
                                     Variable varVO = processVO.getVariable(varName);
                                     if (varVO == null || !varVO.isInput())
                                         throw new ProcessException("Process '" + processVO.getFullLabel() + "' has no such input variable defined: " + varName);
@@ -1999,7 +1999,7 @@ class ProcessExecutorImpl {
                 processInst.setPackageName(pkg.getName());
 
             ProcessRuntimeContext runtimeContext = new ProcessRuntimeContext(pkg, process, processInst,
-                    getDataAccess().getPerformanceLevel());
+                    getDataAccess().getPerformanceLevel(), isInService());
 
             try {
                 processInst.setVariables(getDataAccess().getProcessInstanceVariables(processInst.getId()));

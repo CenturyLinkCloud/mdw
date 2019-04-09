@@ -53,7 +53,7 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
 
     public ActivityRuntimeContext(Package pkg, Process process, ProcessInstance processInstance,
             int performanceLevel, Activity activity, ActivityInstance activityInstance) {
-        super(pkg, process, processInstance, performanceLevel);
+        super(pkg, process, processInstance, performanceLevel, false);
         this.activity = activity;
         this.activityInstance = activityInstance;
     }
@@ -68,6 +68,11 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
 
     public Long getActivityInstanceId() {
         return getActivityInstance().getId();
+    }
+
+    @Override
+    public boolean isSynchronous() {
+        throw new UnsupportedOperationException();
     }
 
     protected String logtag() {
@@ -95,7 +100,7 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
     }
 
     public ActivityRuntimeContext(JSONObject json) throws JSONException {
-        super(null, null, null, 0, json.has("variables") ? new HashMap<>() : null);
+        super(null, null, null, 0, false, json.has("variables") ? new HashMap<>() : null);
         String procPath = json.getString("process");
         int slash = procPath.indexOf("/");
         if (slash > 0) {
