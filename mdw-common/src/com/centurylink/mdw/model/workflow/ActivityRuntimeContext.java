@@ -71,7 +71,7 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
     }
 
     @Override
-    public boolean isSynchronous() {
+    public boolean isInService() {
         throw new UnsupportedOperationException();
     }
 

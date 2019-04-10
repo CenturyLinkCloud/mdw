@@ -1079,7 +1079,7 @@ public abstract class BaseActivity implements GeneralActivity {
                 if (monitor.isOffline()) {
                     @SuppressWarnings("unchecked")
                     OfflineMonitor<ActivityRuntimeContext> activityOfflineMonitor = (OfflineMonitor<ActivityRuntimeContext>) monitor;
-                    new OfflineMonitorTrigger<ActivityRuntimeContext>(activityOfflineMonitor, runtimeContext).fire(event);
+                    new OfflineMonitorTrigger<>(activityOfflineMonitor, runtimeContext).fire(event);
                 }
                 else {
                     if (event.equals(WorkStatus.LOGMSG_START))

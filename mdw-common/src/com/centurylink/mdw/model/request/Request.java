@@ -114,6 +114,10 @@ public class Request implements Jsonable {
     public JSONObject getMeta() { return meta; }
     public void setMeta(JSONObject info) { meta = info; }
 
+    private Long metaId;
+    public Long getMetaId() { return metaId; }
+    public void setMetaId(Long id) { this.metaId = id; }
+
     private Response response;
     public Response getResponse() { return response; }
     public void setResponse(Response resp) { response = resp; }

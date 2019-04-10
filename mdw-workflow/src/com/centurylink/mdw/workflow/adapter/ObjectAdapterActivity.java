@@ -31,6 +31,7 @@ import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.event.AdapterStubResponse;
+import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.Process;
@@ -51,13 +52,11 @@ import java.util.*;
  * Adapter activity for services with object-based request/response content.
  */
 @Tracked(LogLevel.TRACE)
-public abstract class ObjectAdapterActivity extends DefaultActivityImpl implements AdapterActivity, AdapterInvocationError
-{
+public abstract class ObjectAdapterActivity extends DefaultActivityImpl
+        implements AdapterActivity, AdapterInvocationError {
     protected static final String DO_LOGGING = "DO_LOGGING";
     protected static final String REQUEST_VARIABLE = "REQUEST_VARIABLE";
     protected static final String RESPONSE_VARIABLE = "RESPONSE_VARIABLE";
-    protected static final String REQUEST_XSD = "REQUEST_XSD";
-    protected static final String RESPONSE_XSD = "RESPONSE_XSD";
 
     /**
      * Subclasses do not have to but may override this method.
@@ -92,8 +91,9 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
         boolean logging = doLogging();
         try {
             String requestString = externalRequestToString(requestData);
+            Request request = new Request(requestString);
             if (logging && requestData != null)
-                logRequest(requestString);
+                logRequest(request);
             if (stubMode) {
                 loginfo("Adapter is running in StubMode");
                 if (stubber.isStubbing()) {
@@ -280,14 +280,6 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
             super.setReturnCode(ActivityResultCodeConstant.RESULT_RETRY);
         }
 
-        for (AdapterMonitor monitor : MonitorRegistry.getInstance().getAdapterMonitors(getRuntimeContext())) {
-            String errResult = (String)monitor.onError(getRuntimeContext(), errorCause);
-            if (errResult != null) {
-                this.setReturnCode(errResult);
-                return;
-            }
-        }
-
         this.handleAdapterFailure(errorCode, errorCause);
     }
 
@@ -303,31 +295,20 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
          return "Adapter invocation exception";
     }
 
-    protected Long logRequest(String message) {
+    protected Long logRequest(Request request) {
         try {
-            DocumentReference docref = createDocument(String.class.getName(), message,
+            DocumentReference docRef = createDocument(String.class.getName(), request.getContent(),
                     OwnerType.ADAPTER_REQUEST, getActivityInstanceId());
-            return docref.getDocumentId();
+            request.setId(docRef.getDocumentId());
+            return docRef.getDocumentId();
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             return null;
         }
     }
-
-    protected Long logResponse(String message) {
-        try {
-            DocumentReference docref = createDocument(String.class.getName(), message,
-                    OwnerType.ADAPTER_RESPONSE, getActivityInstanceId());
-
-            Long elapsedTime = getEngine().getRequestCompletionTime(OwnerType.ADAPTER, getActivityInstanceId());
-            if (elapsedTime != null)
-                getEngine().setElapsedTime(OwnerType.ADAPTER, getActivityInstanceId(), elapsedTime);
-
-            return docref.getDocumentId();
-        } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
-            return null;
-        }
+    @Deprecated
+    protected Long logRequest(String message) {
+        return logRequest(new Request(message));
     }
 
     protected Long logResponse(Response response) {
@@ -344,6 +325,11 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
             logger.severeException(ex.getMessage(), ex);
             return null;
         }
+    }
+
+    @Deprecated
+    protected Long logResponse(String message) {
+        return logResponse(new Response(message));
     }
 
     /**
@@ -407,7 +393,7 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
             return oldStubbed;
         }
 
-        List<SimulationResponse> responses = new ArrayList<SimulationResponse>();
+        List<SimulationResponse> responses = new ArrayList<>();
         for (Attribute attr : this.getAttributes()) {
             if (attr.getAttributeName().startsWith(WorkAttributeConstant.SIMULATION_RESPONSE)) {
                 SimulationResponse r = new SimulationResponse(attr.getAttributeValue());
@@ -511,16 +497,16 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
     protected abstract Object invoke(Object pConnection, Object request)
     throws AdapterException,ConnectionException;
 
-    private Response doInvoke(Object connection, Object request)
-            throws AdapterException, ConnectionException {
-        // TODO change method signature in MDW 6 to avoid try/catch
+    private Response doInvoke(Object connection, Object request) throws AdapterException {
+        ActivityRuntimeContext runtimeContext = null;
+        List<AdapterMonitor> monitors = null;
         try {
             Map<String, String> headers = null;
             if (this instanceof HeaderAwareAdapter)
                 headers = ((HeaderAwareAdapter) this).getRequestHeaders();
 
-            ActivityRuntimeContext runtimeContext = getRuntimeContext();
-            List<AdapterMonitor> monitors = MonitorRegistry.getInstance().getAdapterMonitors(runtimeContext);
+            runtimeContext = getRuntimeContext();
+            monitors = MonitorRegistry.getInstance().getAdapterMonitors(runtimeContext);
 
             Object altRequest = null;
             for (AdapterMonitor monitor : monitors) {
@@ -561,10 +547,19 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl implemen
 
             return getResponse(connection, response);
         }
-        catch (IOException ex) {
-            throw new AdapterException(ex.getMessage(), ex);
-        }
-        catch (ActivityException ex) {
+        catch (Exception ex) {
+            if (monitors != null) {
+                for (AdapterMonitor monitor : monitors) {
+                    String errResult = monitor.onError(runtimeContext, ex);
+                    if (errResult != null) {
+                        setReturnCode(errResult);
+                    }
+                }
+            }
+            if (ex instanceof RuntimeException)
+                throw (RuntimeException)ex;
+            if (ex instanceof AdapterException)
+                throw (AdapterException)ex;
             throw new AdapterException(ex.getMessage(), ex);
         }
     }

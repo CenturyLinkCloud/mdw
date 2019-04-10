@@ -21,6 +21,7 @@ import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.Response;
+import com.centurylink.mdw.model.request.Request;
 
 /**
  * Interface for text-based adapter activities.
@@ -49,7 +50,7 @@ public interface TextAdapter {
 
     /**
      * Close a connection opened.
-     * @param conneciton the object returned by openConnection()
+     * @param connection the object returned by openConnection()
      *         and is typically the adapter activity instance itself.
      */
     void closeConnection(Object connection);
@@ -68,30 +69,23 @@ public interface TextAdapter {
      * When it is used to support certified message, the method
      * should throw exceptions unless a correct acknowledgment is received.
      *
-     * @param conneciton the object returned by openConnection()
+     * @param connection the object returned by openConnection()
      *         and is typically the adapter activity instance itself.
      * @param request
      * @param timeout time out in seconds. Ignored if no response is expected.
      * @param headers protocol request data, e.g. correlation ID
      * @return response if the underlying protocol is synchronous
      *    or null otherwise
-     * @throws ConnectionException retriable exception
-     * @throws AdapterException non-retriable exception
      */
-    String invoke(Object connection,
-            String request, int timeout, Map<String,String> headers)
+    String invoke(Object connection, String request, int timeout, Map<String,String> headers)
     throws AdapterException,ConnectionException;
 
-    Response doInvoke(Object connection,
-            String request, int timeout, Map<String,String> headers)
+    Response doInvoke(Object connection, Request request, int timeout, Map<String,String> headers)
     throws AdapterException,ConnectionException;
 
     /**
      * Handle success response.
      * @param response
-     * @throws ActivityException
-     * @throws ConnectionException
-     * @throws AdapterException
      */
     void onSuccess(String response)
     throws ActivityException, ConnectionException, AdapterException;

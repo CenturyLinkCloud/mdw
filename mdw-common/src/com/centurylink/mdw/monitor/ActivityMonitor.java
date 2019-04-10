@@ -31,7 +31,7 @@ public interface ActivityMonitor extends RegisteredService, Monitor {
      * @param context the activity workflow context
      * @return optional map containing new or updated process variable values
      */
-    default public Map<String,Object> onStart(ActivityRuntimeContext context) {
+    default Map<String,Object> onStart(ActivityRuntimeContext context) {
         return null;
     }
 
@@ -39,7 +39,7 @@ public interface ActivityMonitor extends RegisteredService, Monitor {
      * Non-null means bypass execution with the returned result code.
      * @return optional map with variable values to set in this activity's process.
      */
-    default public String onExecute(ActivityRuntimeContext context) {
+    default String onExecute(ActivityRuntimeContext context) {
         return null;
     }
 
@@ -47,14 +47,13 @@ public interface ActivityMonitor extends RegisteredService, Monitor {
      * Called when an activity instance is successfully completed.
      * @return optional map with variable values to override in this activity's process.
      */
-    default public Map<String,Object> onFinish(ActivityRuntimeContext context) {
+    default Map<String,Object> onFinish(ActivityRuntimeContext context) {
         return null;
     }
 
     /**
      * Called when an activity instance fails due to error.
-     * TODO: make exception available
      */
-    default public void onError(ActivityRuntimeContext context) {
+    default void onError(ActivityRuntimeContext context) {
     }
 }

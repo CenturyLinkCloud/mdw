@@ -1,0 +1,128 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=67,y=136,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=161,ly=156,xs=131&191,ys=156&156"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=718,y=138,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Output Documents": "[\"response\"]",
+        "Rule": "import com.centurylink.mdw.zipkin.tests.SpanId\n\nruntimeContext.logInfo(\"FortuneMain >> Originator: ${variables[\"originator\"]}\")\n\n// populate variables for verifying traceId and spanId\nval tracer = brave.Tracing.currentTracer()\nval span = tracer.currentSpan()\nif (span != null) {\n    variables[\"traceId\"] = span.context().traceIdString()\n    variables[\"spanId\"] = SpanId(span.context().spanId()).hexId()\n}\n\n",
+        "SCRIPT": "Kotlin Script",
+        "WORK_DISPLAY_INFO": "x=195,y=128,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
+      "name": "Populate",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=332,ly=157,xs=299&366,ys=157&157"},
+          "event": "FINISH",
+          "id": "T2",
+          "to": "A4"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=ElbowV,lx=248,ly=240,xs=246&246&368,ys=191&289&289"},
+          "event": "FINISH",
+          "id": "T4",
+          "to": "A5"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=370,y=128,w=100,h=60",
+        "processname": "com.centurylink.mdw.zipkin.tests/FortuneSub.proc",
+        "processversion": "[0.1,1)",
+        "synchronous": "true",
+        "variables": "{\"request\":\"$request\",\"response\":\"$response\"}"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke\nFortuneSub",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=515,ly=157,xs=474&556,ys=157&157"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=371,y=258,w=100,h=60",
+        "processname": "com.centurylink.mdw.zipkin.tests/AsyncSub.proc",
+        "processversion": "[0.1,1)",
+        "synchronous": "false",
+        "variables": "{\"originator\":\"$originator\"}"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke\nAsyncSub",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=ElbowH,lx=515,ly=222,xs=475&556,ys=288&157"},
+        "event": "FINISH",
+        "id": "T5",
+        "to": "A6"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=560,y=134,w=75,h=45"},
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity",
+      "name": "Sync",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=676,ly=158,xs=639&714,ys=158&158"},
+        "event": "FINISH",
+        "id": "T6",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "SERVICE",
+    "PerformanceLevel": "0",
+    "WORK_DISPLAY_INFO": "x=48,y=47,w=135,h=26"
+  },
+  "variables": {
+    "originator": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "request": {
+      "category": "INPUT",
+      "type": "org.json.JSONObject"
+    },
+    "requestHeaders": {
+      "category": "INPUT",
+      "type": "java.util.Map<String,String>"
+    },
+    "response": {
+      "category": "OUTPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "spanId": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "traceId": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    }
+  }
+}

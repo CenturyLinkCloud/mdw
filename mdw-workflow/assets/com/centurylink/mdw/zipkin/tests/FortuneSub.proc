@@ -1,0 +1,90 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=72,y=139,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=165,ly=159,xs=136&194,ys=159&159"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=620,y=142,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Output Documents": "[\"response\"]",
+        "Rule": "import org.json.JSONObject\nimport brave.internal.HexCodec.writeHexLong\nimport com.centurylink.mdw.zipkin.tests.Fortune\nimport com.centurylink.mdw.zipkin.tests.SpanId\n\nval username = (variables[\"request\"] as JSONObject).getString(\"name\")\nruntimeContext.logInfo(\"FortuneSub >> Name: ${username}\")\nvariables[\"username\"] = username\n\nval tracer = brave.Tracing.currentTracer()\nval span = tracer.currentSpan()\nif (span != null) {\n    variables[\"traceId\"] = span.context().traceIdString()\n    variables[\"spanId\"] = SpanId(span.context().spanId()).hexId()\n}\nvariables[\"response\"] = Fortune(username, \"You will acquire great wealth.\")\n",
+        "SCRIPT": "Kotlin Script",
+        "WORK_DISPLAY_INFO": "x=198,y=128,w=110,h=69"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
+      "name": "Determine\nFortune",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=361,ly=161,xs=312&410,ys=161&161"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {
+        "EndpointUri": "${props['mdw.services.url']}/api/Users?find=${username}",
+        "HttpMethod": "GET",
+        "Microservice": "FindUsers",
+        "RESPONSE_VARIABLE": "foundUsers",
+        "WORK_DISPLAY_INFO": "x=414,y=132,w=100,h=60"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.microservice.MicroserviceRestAdapter",
+      "name": "Retrieve\nUser",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=567,ly=162,xs=518&616,ys=162&162"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "SERVICE",
+    "PerformanceLevel": "0",
+    "WORK_DISPLAY_INFO": "x=44,y=39,w=109,h=26"
+  },
+  "variables": {
+    "foundUsers": {
+      "category": "LOCAL",
+      "type": "org.json.JSONObject"
+    },
+    "request": {
+      "category": "INPUT",
+      "type": "org.json.JSONObject"
+    },
+    "response": {
+      "category": "OUTPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
+    },
+    "spanId": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "traceId": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "username": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    }
+  }
+}

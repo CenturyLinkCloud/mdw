@@ -47,7 +47,7 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
     public User getAssignee() { return assignee; }
 
     @Override
-    public boolean isSynchronous() {
+    public boolean isInService() {
         throw new UnsupportedOperationException();
     }
 
