@@ -1,0 +1,12 @@
+ClientAdapter.java=1
+ServerAdapter.java=2
+TraceAdapterMonitor.java=1
+TraceProcessMonitor.java=1
+TraceServiceMonitor.java=1
+TracingLogLine.java=1
+brave-5.6.3.jar=1
+brave-context-slf4j-5.6.3.jar=1
+brave-instrumentation-http-5.6.3.jar=1
+readme.md=3
+zipkin-2.12.7.jar=1
+zipkin-reporter-2.8.2.jar=1

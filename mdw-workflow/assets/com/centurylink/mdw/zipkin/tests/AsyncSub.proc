@@ -1,0 +1,59 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=72,y=131,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=195,ly=151,xs=136&255,ys=151&151"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=492,y=131,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Rule": "import brave.internal.HexCodec.writeHexLong\nimport com.centurylink.mdw.zipkin.tests.SpanId\n\nruntimeContext.logInfo(\"FortuneMain >> Originator: ${variables[\"originator\"]}\")\n\nval tracer = brave.Tracing.currentTracer()\nval span = tracer.currentSpan()\nif (span != null) {\n    variables[\"traceId\"] = span.context().traceIdString()\n    variables[\"spanId\"] = SpanId(span.context().spanId()).hexId()\n}\n\n",
+        "SCRIPT": "Kotlin Script",
+        "WORK_DISPLAY_INFO": "x=259,y=127,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
+      "name": "Populate",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=425,ly=151,xs=363&488,ys=151&151"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "PerformanceLevel": "0",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=0,h=0"
+  },
+  "variables": {
+    "originator": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "spanId": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "traceId": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    }
+  }
+}

@@ -23,6 +23,10 @@ import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 /**
  * Process monitors can be registered through @Monitor annotations to get
  * notified during the lifecycle of an MDW workflow process.
+ *
+ * Processes may run asynchronously.  Therefore interface methods will
+ * be invoked on different instances, and instance-level members should not
+ * be stored for access from lifecycle methods.
  */
 public interface ProcessMonitor extends RegisteredService, Monitor {
 
@@ -31,7 +35,7 @@ public interface ProcessMonitor extends RegisteredService, Monitor {
      * Variables should be defined in the process as INPUT mode.
      * Return null if no variable updates are required.
      */
-    default public Map<String,Object> onStart(ProcessRuntimeContext context) {
+    default Map<String,Object> onStart(ProcessRuntimeContext context) {
         return null;
     }
 
@@ -39,7 +43,7 @@ public interface ProcessMonitor extends RegisteredService, Monitor {
      * Invoked on process completion.
      * Return map is currently not used.
      */
-    default public Map<String,Object> onFinish(ProcessRuntimeContext context) {
+    default Map<String,Object> onFinish(ProcessRuntimeContext context) {
         return null;
     }
 

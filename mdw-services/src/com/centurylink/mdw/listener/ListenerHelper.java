@@ -249,8 +249,9 @@ public class ListenerHelper {
         Set<String> reqMetaInfo = new HashSet<>(metaInfo.keySet());
         long requestTime = System.currentTimeMillis();
 
+        List<ServiceMonitor> monitors = MonitorRegistry.getInstance().getServiceMonitors();
         try {
-            for (ServiceMonitor monitor : MonitorRegistry.getInstance().getServiceMonitors()) {
+            for (ServiceMonitor monitor : monitors) {
                 String altRequest = (String) monitor.onRequest(request, metaInfo);
                 if (altRequest != null)
                     request = altRequest;
@@ -287,7 +288,7 @@ public class ListenerHelper {
                     logger.mdwDebug(reqMsg.toString());
             }
 
-            for (ServiceMonitor monitor : MonitorRegistry.getInstance().getServiceMonitors()) {
+            for (ServiceMonitor monitor : monitors) {
                 CodeTimer timer = new CodeTimer(monitor.getClass().getSimpleName() + ".onHandle()", true);
                 Object obj = monitor.onHandle(request, metaInfo);
                 timer.stopAndLogTiming("");
@@ -315,7 +316,7 @@ public class ListenerHelper {
             ServiceHandler serviceHandler = getServiceHandler(request, metaInfo);
             if (serviceHandler != null) {
                 Object responseObj = serviceHandler.invoke(request, metaInfo);
-                for (ServiceMonitor monitor : MonitorRegistry.getInstance().getServiceMonitors()) {
+                for (ServiceMonitor monitor : monitors) {
                     Object obj = monitor.onResponse(responseObj, metaInfo);
                     if (obj != null)
                         responseObj = obj;
@@ -351,7 +352,7 @@ public class ListenerHelper {
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             Response response = null;
-            for (ServiceMonitor monitor : MonitorRegistry.getInstance().getServiceMonitors()) {
+            for (ServiceMonitor monitor : monitors) {
                 Object obj = monitor.onError(ex, metaInfo);
                 if (obj != null) {
                     if (obj instanceof Response)
@@ -434,7 +435,7 @@ public class ListenerHelper {
             requestDoc.setContent(request);
             Response response = handler.handleEventMessage(requestDoc, msgdoc, metaInfo);
 
-            for (ServiceMonitor monitor : MonitorRegistry.getInstance().getServiceMonitors()) {
+            for (ServiceMonitor monitor : monitors) {
                 Object obj = monitor.onResponse(response, metaInfo);
                 if (obj != null) {
                     if (obj instanceof Response)
@@ -476,7 +477,7 @@ public class ListenerHelper {
         catch (Exception e) {
             logger.severeException("Exception in ListenerHelper.processEvent()", e);
             Response response = null;
-            for (ServiceMonitor monitor : MonitorRegistry.getInstance().getServiceMonitors()) {
+            for (ServiceMonitor monitor : monitors) {
                 Object obj = monitor.onError(e, metaInfo);
                 if (obj != null) {
                     if (obj instanceof Response)

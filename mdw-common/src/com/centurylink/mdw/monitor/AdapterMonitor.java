@@ -25,6 +25,8 @@ import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
  * external service calls originating from MDW workflow adapter activities.  Must be threadsafe.
  * Normally all registered monitors are called in sequence.  However the first monitor whose onInvoke()
  * returns non-null breaks the chain, and this non-null response is passed back to the MDW runtime.
+ *
+ * Same instance is guaranteed for all lifecycle methods.
  */
 public interface AdapterMonitor extends RegisteredService, Monitor {
 
@@ -43,7 +45,7 @@ public interface AdapterMonitor extends RegisteredService, Monitor {
 
     /**
      * Called after onRequest(), but before the service is actually invoked.
-     * Can be used to short-circuit the service.  Currently must return null or a String.
+     * Can be used to short-circuit (stub) the service.  Currently must return null or a String.
      * Returning non-null from here bypasses onResponse() and other chained monitors' onInvoke().
      *
      * @param context The workflow runtime context of the adapter activity

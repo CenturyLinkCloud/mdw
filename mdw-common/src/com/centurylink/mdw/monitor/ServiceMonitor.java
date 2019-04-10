@@ -25,6 +25,8 @@ import com.centurylink.mdw.common.service.ServiceException;
  * service calls handled by the MDW framework.  Must be threadsafe.
  * Normally all registered monitors are called in sequence.  However the first monitor whose onHandle()
  * returns non-null breaks the chain, and this non-null response is passed back to the consumer.
+ *
+ * Same instance is guaranteed for all lifecycle methods.
  */
 public interface ServiceMonitor extends RegisteredService, Monitor {
 
@@ -36,7 +38,7 @@ public interface ServiceMonitor extends RegisteredService, Monitor {
      * @param headers Incoming protocol header values.  May be modified by the monitor.
      * @return null, or an alternative request that should be passed on instead of the incoming request
      */
-    default public Object onRequest(Object request, Map<String,String> headers) throws ServiceException {
+    default Object onRequest(Object request, Map<String,String> headers) throws ServiceException {
         return null;
     }
 
@@ -49,7 +51,7 @@ public interface ServiceMonitor extends RegisteredService, Monitor {
      * @param headers protocol headers
      * @return null, or an alternative response to send back to the service consumer
      */
-    default public Object onHandle(Object request, Map<String,String> headers) throws ServiceException {
+    default Object onHandle(Object request, Map<String,String> headers) throws ServiceException {
         return null;
     }
 
@@ -61,7 +63,7 @@ public interface ServiceMonitor extends RegisteredService, Monitor {
      * @param headers Outbound protocol header values.  May be modified by the monitor.
      * @return null, or an alternative response to send back to the service consumer.
      */
-    default public Object onResponse(Object response, Map<String,String> headers) throws ServiceException {
+    default Object onResponse(Object response, Map<String,String> headers) throws ServiceException {
         return null;
     }
 
@@ -70,7 +72,7 @@ public interface ServiceMonitor extends RegisteredService, Monitor {
      * @param headers service meta information
      * @return alternate response or null
      */
-    default public Object onError(Throwable t, Map<String,String> headers) {
+    default Object onError(Throwable t, Map<String,String> headers) {
         return null;
     }
 

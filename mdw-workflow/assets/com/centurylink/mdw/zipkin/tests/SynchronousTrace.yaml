@@ -1,0 +1,105 @@
+process: # 73
+  name: AsyncSub
+  instance: 1
+  activity: # 1 "2019-04-04 18:06:14.624"
+    name: Start
+    status: Completed
+  activity: # 3 "2019-04-04 18:06:14.633"
+    name: Populate
+    status: Completed
+  activity: # 2 "2019-04-04 18:06:14.985"
+    name: Stop
+    status: Completed
+  variable: # 218
+    name: originator
+    value: FortuneService
+process: # 71
+  name: FortuneMain
+  instance: 1
+  activity: # 1 "2019-04-04 18:06:14.054"
+    name: Start
+    status: Completed
+  activity: # 3 "2019-04-04 18:06:14.213"
+    name: Populate
+    status: Completed
+  activity: # 4 "2019-04-04 18:06:14.593"
+    name: |
+      Invoke
+      FortuneSub
+    status: Completed
+  activity: # 5 "2019-04-04 18:06:14.612"
+    name: |
+      Invoke
+      AsyncSub
+    status: Completed
+  activity: # 2 "2019-04-04 18:06:14.856"
+    name: Stop
+    status: Completed
+  variable: # 212
+    name: originator
+    value: FortuneService
+  variable: # 213
+    name: request
+    value: {"name": "Charlie"}
+  variable: # 214
+    name: requestHeaders
+    value: |
+      {
+        "AuthenticatedUser": "mdwapp",
+        "Content-Type": "application/json",
+        "HttpMethod": "POST",
+        "Protocol": "REST",
+        "RemoteAddr": "${~.*}",
+        "RemoteHost": "${~.*}",
+        "RemotePort": "${~\\d*}",
+        "RequestPath": "com/centurylink/mdw/zipkin/tests/fortune",
+        "RequestURL": "http://localhost:8080/mdw/api/com/centurylink/mdw/zipkin/tests/fortune",
+        "ServiceClass": "com.centurylink.mdw.hub.servlet.RestServlet",
+        "accept": "text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2",
+        "connection": "keep-alive",
+        "content-length": "19",
+        "content-type": "application/json",
+        "document-id": "${~\\d*}",
+        "host": "${~.*}",
+        "mdw-request-id": "${masterRequestId}",
+        "user-agent": "${~.*}",
+        "x-b3-parentspanid": "${traceId}",
+        "x-b3-sampled": "1",
+        "x-b3-spanid": "${spanId}",
+        "x-b3-traceid": "${traceId}"
+      }
+  variable: # 222
+    name: response
+    value: {"fortune": "You will acquire great wealth!"}
+  variable: # 215
+    name: spanId
+    value: ${spanId}
+  variable: # 216
+    name: traceId
+    value: ${traceId}
+process: # 72
+  name: FortuneSub
+  instance: 1
+  activity: # 1 "2019-04-04 18:06:14.619"
+    name: Start
+    status: Completed
+  activity: # 3 "2019-04-04 18:06:14.625"
+    name: |
+      Determine
+      Fortune
+    status: Completed
+  activity: # 2 "2019-04-04 18:06:14.842"
+    name: Stop
+    status: Completed
+  variable: # 217
+    name: request
+    value: {"name": "Charlie"}
+  variable: # 221
+    name: response
+    value: {"fortune": "You will acquire great wealth!"}
+  variable: # 219
+    name: spanId
+    value: ${spanId}
+  variable: # 220
+    name: traceId
+    value: ${traceId}

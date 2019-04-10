@@ -69,7 +69,6 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
     static final String RESPONSE_TYPE = "ResponseType";
 
     private static Random random = null;
-    private boolean isStubbing;
 
     /**
      * Timeout value for waiting for responses. Used for synchronous mode only.
@@ -98,10 +97,6 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
     abstract protected boolean canBeSynchronous();
 
     abstract protected boolean canBeAsynchronous();
-
-    protected boolean canBeCertified() {
-        return false;
-    }
 
     /**
      * The method overrides the one from the super class and perform the followings:
@@ -342,13 +337,17 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         Response responseData = null;
         Object connection = null;
         StubHelper stubber = new StubHelper();
-        isStubbing = stubber.isStubbing() || isStubMode();
-        boolean logging = doLogging();
+        boolean isStubbing = stubber.isStubbing() || isStubMode();
         try {
             init();
+            Request request = new Request(requestData);
             if (requestData != null && doLogging()) {
-                logRequest(new Request(requestData));
+                Long requestId = logRequest(request);
+                request.setId(requestId);
             }
+            Map<String,String> requestHeaders = getRequestHeaders();
+            if (requestHeaders == null)
+                requestHeaders = new HashMap<>();
             if (isStubbing) {
                 loginfo("Adapter is running in StubMode");
                 if (stubber.isStubbing()) {
@@ -358,7 +357,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
                         loginfo("Stub server instructs to get real response");
                         isStubbing = false;
                         connection = openConnection();
-                        responseData = doInvoke(connection, requestData, getTimeoutForResponse(), getRequestHeaders());
+                        responseData = doInvoke(connection, request, getTimeoutForResponse(), requestHeaders);
                     } else {
                         loginfo("Response received from stub server");
                     }
@@ -369,9 +368,9 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
             }
             else {
                 connection = this.openConnection();
-                responseData = doInvoke(connection, requestData, getTimeoutForResponse(), getRequestHeaders());
+                responseData = doInvoke(connection, request, getTimeoutForResponse(), requestHeaders);
             }
-            if (responseData.getContent() != null && (logging || !isSynchronous())) {
+            if (responseData.getContent() != null && (doLogging() || !isSynchronous())) {
                 logResponse(responseData);
             }
             onSuccess(responseData.getContent());
@@ -453,13 +452,6 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
                     handleRetry(-1, errorCause);
                 }
             }
-            for (AdapterMonitor monitor : MonitorRegistry.getInstance().getAdapterMonitors(getRuntimeContext())) {
-                String errResult = (String)monitor.onError(getRuntimeContext(), errorCause);
-                if (errResult != null) {
-                    this.setReturnCode(errResult);
-                    return;
-                }
-            }
 
             completionCode = onFailure(errorCause);
             this.setReturnCode(completionCode);
@@ -516,29 +508,29 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
 
     protected Long logRequest(Request request) {
         try {
-            DocumentReference docref = createDocument(String.class.getName(), request.getContent(),
+            DocumentReference docRef = createDocument(String.class.getName(), request.getContent(),
                     OwnerType.ADAPTER_REQUEST, getActivityInstanceId(), request.getPath());
 
-            if (docref.getDocumentId() > 0L) {
+            if (docRef.getDocumentId() > 0L) {
+                request.setId(docRef.getDocumentId());
                 JSONObject meta = getRequestMeta();
-                if (meta != null && meta.length() > 0)
-                    createDocument(JSONObject.class.getName(), meta, OwnerType.ADAPTER_REQUEST_META, docref.getDocumentId());
+                if (meta != null && meta.length() > 0) {
+                    DocumentReference metaRef = createDocument(JSONObject.class.getName(), meta,
+                            OwnerType.ADAPTER_REQUEST_META, docRef.getDocumentId());
+                    request.setMetaId(metaRef.getDocumentId());
+                }
             }
 
-            return docref.getDocumentId();
+            return docRef.getDocumentId();
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             return null;
         }
     }
 
+    @Deprecated
     protected Long logRequest(String message) {
         return logRequest(new Request(message));
-    }
-
-    @Deprecated
-    protected Long logResponse(String message) {
-        return logResponse(new Response(message));
     }
 
     protected Long logResponse(Response response) {
@@ -561,6 +553,11 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
             logexception(ex.getMessage(), ex);
             return null;
         }
+    }
+
+    @Deprecated
+    protected Long logResponse(String message) {
+        return logResponse(new Response(message));
     }
 
     protected JSONObject getRequestMeta() throws Exception {
@@ -664,7 +661,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         Object connection = null;
         try {
             connection = openConnection();
-            return doInvoke(connection, request, timeout, meta_data);
+            return doInvoke(connection, new Request(request), timeout, meta_data);
         } finally {
             if (connection != null)
                 closeConnection(connection);
@@ -717,18 +714,36 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
     }
 
     @Override
-    public Response doInvoke(Object connection, String request, int timeout,
-            Map<String,String> headers) throws AdapterException, ConnectionException {
-        // TODO change method signature in MDW 6 to avoid try/catch
+    public Response doInvoke(Object connection, Request request, int timeout,
+            Map<String,String> headers) throws AdapterException {
+        ActivityRuntimeContext runtimeContext = null;
+        List<AdapterMonitor> monitors = null;
         try {
-            ActivityRuntimeContext runtimeContext = getRuntimeContext();
-            List<AdapterMonitor> monitors = MonitorRegistry.getInstance().getAdapterMonitors(runtimeContext);
-
-            String altRequest = null;
+            runtimeContext = getRuntimeContext();
+            monitors = MonitorRegistry.getInstance().getAdapterMonitors(runtimeContext);
             for (AdapterMonitor monitor : monitors) {
-                altRequest = (String)monitor.onRequest(runtimeContext, request, headers, connection);
-                if (altRequest != null)
-                    request = altRequest;
+                String altRequest = (String)monitor.onRequest(runtimeContext, request, headers, connection);
+                if (altRequest != null) {
+                    request.setContent(altRequest);
+                    if (request.getId() != null && request.getId() > 0) {
+                        DocumentReference requestRef = new DocumentReference(request.getId());
+                        updateDocumentContent(requestRef, request.getContent(), String.class.getName());
+                    }
+                }
+            }
+            Map<String,String> requestHeaders = getRequestHeaders();
+            if (requestHeaders == null)
+                requestHeaders = new HashMap<>();
+            if (!requestHeaders.equals(headers) && request.getMetaId() != null && request.getMetaId() > 0) {
+                // headers were changed by monitor
+                DocumentReference metaRef = new DocumentReference(request.getMetaId());
+                JSONObject requestMeta = getRequestMeta();
+                if (requestMeta != null) {
+                    JSONObject jsonHeaders = new JSONObject();
+                    headers.keySet().forEach(key -> jsonHeaders.put(key, headers.get(key)));
+                    requestMeta.put("headers", jsonHeaders);
+                    updateDocumentContent(metaRef, requestMeta, JSONObject.class.getName());
+                }
             }
 
             String altResponse = null;
@@ -738,7 +753,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
                     return new Response(altResponse); // TODO monitor full Response
             }
 
-            String responseStr = invoke(connection, request, timeout, headers);
+            String responseStr = invoke(connection, request.getContent(), timeout, headers);
 
             for (AdapterMonitor monitor : monitors) {
                 altResponse = (String)monitor.onResponse(runtimeContext, responseStr, getResponseHeaders(), connection);
@@ -748,10 +763,19 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
 
             return getResponse(connection, responseStr);
         }
-        catch (IOException ex) {
-            throw new AdapterException(ex.getMessage(), ex);
-        }
-        catch (ActivityException ex) {
+        catch (Exception ex) {
+            if (monitors != null) {
+                for (AdapterMonitor monitor : monitors) {
+                    String errResult = monitor.onError(runtimeContext, ex);
+                    if (errResult != null) {
+                        setReturnCode(errResult);
+                    }
+                }
+            }
+            if (ex instanceof RuntimeException)
+                throw (RuntimeException)ex;
+            if (ex instanceof AdapterException)
+                throw (AdapterException)ex;
             throw new AdapterException(ex.getMessage(), ex);
         }
     }

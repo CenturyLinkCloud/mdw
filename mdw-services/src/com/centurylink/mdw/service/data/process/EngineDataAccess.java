@@ -134,16 +134,16 @@ public interface EngineDataAccess {
     throws DataAccessException, SQLException;
 
     Document getDocument(Long documentId, boolean forUpdate)
-    throws DataAccessException,SQLException;
+    throws DataAccessException, SQLException;
 
     Long createDocument(Document docvo)
-    throws DataAccessException,SQLException;
+    throws DataAccessException, SQLException;
 
     Long createDocument(Document docvo, Package pkg)
-    throws DataAccessException,SQLException;
+    throws DataAccessException, SQLException;
 
     void updateDocumentContent(Long documentId, String content)
-    throws DataAccessException,SQLException;
+    throws DataAccessException, SQLException;
 
     void updateDocumentInfo(Document docvo)
     throws SQLException;

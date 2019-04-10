@@ -1,7 +1,7 @@
 package com.centurylink.mdw.util;
 
 /**
- * Models an HttpResponse.
+ * Models an HttpRequest.
  */
 public class HttpRequest {
     private HttpConnection connection;
@@ -9,9 +9,5 @@ public class HttpRequest {
 
     public HttpRequest(HttpConnection httpConnection) {
         this.connection = httpConnection;
-    }
-
-    public void setHeader(String name, String value) {
-        connection.setHeader(name, value);
     }
 }

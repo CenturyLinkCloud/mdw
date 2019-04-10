@@ -15,15 +15,13 @@
  */
 package com.centurylink.mdw.model;
 
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.JsonObject;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a Throwable as a Jsonable for JSON serialization.
@@ -168,17 +166,15 @@ public class JsonableThrowable implements Jsonable {
             }
         }
         catch (NoSuchMethodException ex) {
-            if (message != null) {
-                try {
-                    ctor = clazz.getConstructor(String.class);
-                    th = ctor.newInstance(message);
-                }
-                catch (NoSuchMethodException ex2) {
-                    th = clazz.newInstance();
-                }
+            if (message == null)
+                message = "null";
+            try {
+                ctor = clazz.getConstructor(String.class);
+                th = ctor.newInstance(message);
             }
-            // no appropriate constructor
-            th = clazz.newInstance();
+            catch (NoSuchMethodException ex2) {
+                th = clazz.newInstance();
+            }
         }
         if (stackElements != null)
             th.setStackTrace(stackElements);
