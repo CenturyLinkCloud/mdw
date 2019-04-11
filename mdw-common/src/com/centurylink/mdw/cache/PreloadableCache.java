@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public interface PreloadableCache extends CacheService {
 
-    public void initialize(Map<String,String> params) throws CachingException;
+    default void initialize(Map<String,String> params) throws CachingException {}
 
     void loadCache() throws CachingException;
 

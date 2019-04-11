@@ -15,17 +15,6 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
@@ -39,6 +28,11 @@ import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.ExternalEvent;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableType;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.*;
 
 /**
  * Value object representing a process definition.
@@ -47,11 +41,6 @@ public class Process extends Asset implements Jsonable {
 
     public static final String TRANSITION_ON_NULL = "Matches Null Return Code";
     public static final String TRANSITION_ON_DEFAULT = "Acts as Default";
-
-    public static final Integer PROCESS_TYPE_CONCRETE = new Integer(1);
-    public static final Integer PROCESS_TYPE_ALIAS = new Integer(2);        // for MDW 5, this means process def is stored in RULE_SET
-
-    public static final String OLD_START_ACTIVITY_BASE_CLASS = "com.qwest.mdw.workflow.activity.types.StartActivity";
 
     private List<ExternalEvent> externalEvents;
     private List<Variable> variables;
@@ -930,4 +919,5 @@ public class Process extends Asset implements Jsonable {
     public String getContentType() {
         return "application/json";
     }
+
 }

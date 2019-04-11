@@ -40,8 +40,9 @@ import com.centurylink.mdw.workflow.activity.AbstractWait;
  *
  */
 
-public abstract class InvokeProcessActivityBase extends AbstractWait
-        implements InvokeProcessActivity {
+public abstract class InvokeProcessActivityBase extends AbstractWait implements InvokeProcessActivity {
+
+    protected static final String SYNCHRONOUS = "synchronous";
 
     public final boolean resumeWaiting(InternalEvent msg)
             throws ActivityException {

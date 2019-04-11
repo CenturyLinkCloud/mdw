@@ -15,40 +15,24 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.attribute.Attribute;
-import com.centurylink.mdw.model.monitor.ServiceLevelAgreement;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Activity implements Serializable, Comparable<Activity>, Jsonable {
 
     public static final String DEFAULT_IMPL = "com.centurylink.mdw.workflow.activity.DefaultActivityImpl";
 
-    private Long id;
-    private String name;
-    private String description;
-
-    private String implementor;
-    private List<Attribute> attributes;
-
     public Activity() {
     }
 
-    public Activity(Long id, String name, String description, String implementor, List<Attribute> attributes){
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.implementor = implementor;
-        this.attributes = attributes;
-    }
-
+    private Long id;
     public Long getId() {
         return id;
     }
@@ -56,6 +40,7 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
         this.id = id;
     }
 
+    private String name;
     public String getName() {
         return name;
     }
@@ -63,6 +48,7 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
         this.name = name;
     }
 
+    private String description;
     public String getDescription() {
         return description;
     }
@@ -70,18 +56,20 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
         this.description = description;
     }
 
-    public List<Attribute> getAttributes() {
-        return attributes;
-    }
-    public void setAttributes(List<Attribute> attributes) {
-        this.attributes = attributes;
-    }
-
+    private String implementor;
     public String getImplementor() {
         return implementor;
     }
     public void setImplementor(String implementor) {
         this.implementor = implementor;
+    }
+
+    private List<Attribute> attributes;
+    public List<Attribute> getAttributes() {
+        return attributes;
+    }
+    public void setAttributes(List<Attribute> attributes) {
+        this.attributes = attributes;
     }
 
     public String getAttribute(String name) {
@@ -90,7 +78,7 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
 
     public void setAttribute(String name, String value) {
         if (attributes == null)
-            attributes = new ArrayList<Attribute>();
+            attributes = new ArrayList<>();
         Attribute.setAttribute(attributes, name, value);
     }
 
@@ -102,10 +90,6 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
 
     public String getLogicalId() {
         return getAttribute(WorkAttributeConstant.LOGICAL_ID);
-    }
-
-    public String getReferenceId() {
-        return getAttribute(WorkAttributeConstant.REFERENCE_ID);
     }
 
     public Activity(JSONObject json) throws JSONException {
@@ -134,6 +118,10 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
         if (attributes != null && !attributes.isEmpty())
             json.put("attributes", Attribute.getAttributesJson(attributes));
         return json;
+    }
+
+    public String oneLineName() {
+        return getName().replaceAll("\r", "").replace('\n', ' ');
     }
 
     // for labeling only

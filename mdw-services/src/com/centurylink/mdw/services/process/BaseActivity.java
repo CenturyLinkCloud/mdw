@@ -43,6 +43,7 @@ import com.centurylink.mdw.monitor.ActivityMonitor;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.OfflineMonitor;
 import com.centurylink.mdw.script.*;
+import com.centurylink.mdw.service.data.activity.ActivityImplementorCache;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
@@ -107,9 +108,8 @@ public abstract class BaseActivity implements GeneralActivity {
      * @param parameters variable instances of the process instance,
      *    or of the parent process instance when this is in an embedded process
      */
-    void prepare(Activity actVO, ProcessInstance pi, ActivityInstance ai,
-            List<VariableInstance> parameters,
-            Long transInstId, String entryCode, TrackingTimer timer, ProcessExecutor engine) {
+    void prepare(Activity actVO, ProcessInstance pi, ActivityInstance ai, List<VariableInstance> parameters,
+                 Long transInstId, String entryCode, TrackingTimer timer, ProcessExecutor engine) {
         try {
             if (timer != null)
                 timer.start("Prepare Activity");
@@ -126,15 +126,14 @@ public abstract class BaseActivity implements GeneralActivity {
             this.entryCode = entryCode;
             try {
                 pkg = PackageCache.getProcessPackage(getMainProcessDefinition().getId());
+                ActivityImplementor implementor = ActivityImplementorCache.get(activityDef.getImplementor());
+                String category = implementor == null ? GeneralActivity.class.getName() : implementor.getCategory();
                 _runtimeContext = new ActivityRuntimeContext(pkg, getProcessDefinition(), processInst,
-                        getPerformanceLevel(), activityDef, activityInst);
+                        getPerformanceLevel(), getEngine().isInService(), activityDef, category, activityInst);
                 for (VariableInstance var : getParameters())
                     _runtimeContext.getVariables().put(var.getName(), getVariableValue(var.getName()));
             }
-            catch (NullPointerException ex) {
-                logger.severeException(ex.getMessage(), ex);
-            }
-            catch (ActivityException ex) {
+            catch (NullPointerException | ActivityException ex) {
                 logger.severeException(ex.getMessage(), ex);
             }
         }
@@ -164,13 +163,13 @@ public abstract class BaseActivity implements GeneralActivity {
         this.activityInst = runtimeContext.getActivityInstance();
 
         if (runtimeContext.getAttributes() != null) {
-            attributes = new ArrayList<Attribute>();
+            attributes = new ArrayList<>();
             for (String attrName : runtimeContext.getAttributes().keySet())
                 attributes.add(new Attribute(attrName, runtimeContext.getAttribute(attrName)));
         }
 
         if (runtimeContext.getVariables() != null) {
-            parameters = new ArrayList<VariableInstance>();
+            parameters = new ArrayList<>();
             for (String varName : runtimeContext.getVariables().keySet())
                 parameters.add(new VariableInstance(varName, runtimeContext.getVariables().get(varName)));
         }
@@ -212,9 +211,6 @@ public abstract class BaseActivity implements GeneralActivity {
                 if (ret != null)
                     setReturnCode(String.valueOf(ret));
             }
-            catch (ActivityException ex) {
-                throw ex;
-            }
             finally
             {
                 if (Thread.currentThread().getContextClassLoader() instanceof CloudClassLoader)
@@ -239,8 +235,6 @@ public abstract class BaseActivity implements GeneralActivity {
      * Executes the workflow activity.
      * This method is the main method that subclasses need to override.
      * The implementation in the default implementation does nothing.
-     *
-     * @throws ActivityException
      */
     public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
         // compatibility dictates that the default implementation delegate to execute()
@@ -396,7 +390,7 @@ public abstract class BaseActivity implements GeneralActivity {
     }
 
     private Process mainProcDef;
-    protected Process getMainProcessDefinition() throws ActivityException {
+    protected Process getMainProcessDefinition() {
         if (mainProcDef == null) {
             if (processInst.getProcessInstDefId() > 0L)
                 mainProcDef = ProcessCache.getProcessInstanceDefiniton(processInst.getProcessId(), processInst.getProcessInstDefId());
@@ -428,7 +422,6 @@ public abstract class BaseActivity implements GeneralActivity {
      * @param processInstId process instance ID where the variable belongs.
      * @param name variable name
      * @return variable data as an object
-     * @throws ActivityException
      */
     protected Object getParameterValue(Long processInstId, String name)
         throws DataAccessException {
@@ -465,7 +458,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @param name variable name
      * @return the variable instance ID
      */
-    protected String getParameterType(String name) throws ActivityException {
+    protected String getParameterType(String name) {
         for (VariableInstance varinst : parameters) {
             if (varinst.getName().equals(name)) return varinst.getType();
         }
@@ -505,7 +498,6 @@ public abstract class BaseActivity implements GeneralActivity {
      *    empty string, which will cause database not-null constraint
      *    violation
      * @return variable instance ID
-     * @throws ActivityException
      */
     protected Long setParameterValue(String name, Object value)
     throws ActivityException {
@@ -542,7 +534,6 @@ public abstract class BaseActivity implements GeneralActivity {
      *    empty string, which will cause database not-null constraint
      *    violation
      * @return variable instance ID
-     * @throws ActivityException
      */
     protected Long setParameterValue(Long processInstId, String name, Object value)
         throws ActivityException {
@@ -572,16 +563,15 @@ public abstract class BaseActivity implements GeneralActivity {
      * the method updates the content of the referred document.
      * The method will throw an exception if the document reference points to
      * a remote document.
-     * @param name
-     * @param varType
+     * @param name name
+     * @param varType variable type
      * @param value this is the document
-     * @throws ActivityException
      */
     protected DocumentReference setParameterValueAsDocument(String name, String varType, Object value)
     throws ActivityException {
         DocumentReference docref = (DocumentReference)this.getParameterValue(name);
         if (docref == null) {
-            docref = createDocument(varType, value, OwnerType.VARIABLE_INSTANCE, new Long(0));
+            docref = createDocument(varType, value, OwnerType.VARIABLE_INSTANCE, 0L);
             Long varInstId = setParameterValue(name, docref);
             updateDocumentInfo(docref, null, OwnerType.VARIABLE_INSTANCE, varInstId);
         } else {
@@ -593,7 +583,7 @@ public abstract class BaseActivity implements GeneralActivity {
     /**
      * Method that returns the external event instance data
      *
-     * @param externalEventInstId
+     * @param externalEventInstId instance id
      * @return EventDetails as String
      */
     protected String getExternalEventInstanceDetails(Long externalEventInstId)
@@ -661,7 +651,7 @@ public abstract class BaseActivity implements GeneralActivity {
      *  <li>If none of above applies, return the value as it is.</li>
      * </ul>
      *
-     * @param name
+     * @param name name
      * @return attribute value (literal or translated).
      * @throws PropertyException if a translation rule is applied
      *      and translation fails.
@@ -698,8 +688,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * This method is the same as getAttributeValue except
      * it expects a variable name, and when the specification
      * is a '$' followed by variable name, it removes the '$'
-     * @param attrname
-     * @return
+     * @param attrname attribute name
      */
     protected String getAttributeValueAsVariableName(String attrname) {
         String value = Attribute.findAttribute(attributes, attrname);
@@ -752,7 +741,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * The method checks if a string is of the form of a variable reference,
      * i.e. a dollar sign followed by an identifier.
      * This is typically used to check if an attribute specifies a variable.
-     * @param v
+     * @param v value
      * @return true if the argument is a dollar sign followed by an identifier
      */
     protected boolean valueIsVariable(String v) {
@@ -808,8 +797,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * The method translates place holders for attributes such as
      * event names.
      * TODO: combine this with getAttributeValueSmart?
-     * @param eventName
-     * @return
+     * @param eventName event name
      */
     protected String translatePlaceHolder(String eventName) {
         // honor java EL expressions
@@ -882,7 +870,7 @@ public abstract class BaseActivity implements GeneralActivity {
             logexception("Error retrieving " + docref, ex);
             throw new ActivityException("Error retrieving " + docref, ex);
         }
-        return docvo == null ? null : docvo.getObject(type, getPackage());
+        return docvo.getObject(type, getPackage());
     }
 
     protected String getDocumentContent(DocumentReference docref) throws ActivityException {
@@ -900,9 +888,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * Same as getDocument() but also puts a write lock on it.
      * The lock will be released at the end of the transaction.
      *
-     * @param docref
-     * @return
-     * @throws ActivityException
+     * @param docref document reference
      */
     protected Object getDocumentForUpdate(DocumentReference docref, String type)
             throws ActivityException {
@@ -915,7 +901,7 @@ public abstract class BaseActivity implements GeneralActivity {
             logexception("Error retrieving " + docref, ex);
             throw new ActivityException("Error retrieving " + docref, ex);
         }
-        return docvo == null ? null : docvo.getObject(type, getPackage());
+        return docvo.getObject(type, getPackage());
     }
 
     protected DocumentReference createDocument(String docType, Object document, String ownerType,
@@ -938,8 +924,8 @@ public abstract class BaseActivity implements GeneralActivity {
      *      other possible types are LISTENER_REQUEST, LISTENER_RESPONSE,
      *      ADAPTOR_REQUEST, ADAPTOR_RESPONSE
      * @param ownerId ID of the owner, dependent on owner type.
-     * @param statusCode
-     * @param statusMessage
+     * @param statusCode status code
+     * @param statusMessage message
      * @return document reference
      */
     protected DocumentReference createDocument(String docType, Object document, String ownerType,
@@ -967,9 +953,8 @@ public abstract class BaseActivity implements GeneralActivity {
     /**
      * Update the content (actual document object) bound to the given
      * document reference object.
-     * @param docref
-     * @param document
-     * @throws ActivityException
+     * @param docref document reference
+     * @param document document
      */
     protected void updateDocumentContent(DocumentReference docref, Object document, String type)
         throws ActivityException {
@@ -1011,8 +996,6 @@ public abstract class BaseActivity implements GeneralActivity {
      *          MDW database (the default database where MDW schemas reside).
      *          For other databases, you need to pass in either a data source name
      *         or JDBC URL.
-     * @return
-     * @throws SQLException
      */
     protected DatabaseAccess openDatabaseAccess(String database_name) throws SQLException {
         DatabaseAccess db;
@@ -1044,7 +1027,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * property manager, using java system property "property_manager", which
      * takes the class name of the custom property manager as its value.
      *
-     * @param propertyName
+     * @param propertyName property name
      * @return value of the property, or null if the property does not exist.
      */
     protected String getProperty(String propertyName) {
@@ -1102,7 +1085,6 @@ public abstract class BaseActivity implements GeneralActivity {
                     for (String varName : updates.keySet()) {
                         loginfo("Variable: " + varName + " updated by ActivityMonitor: " + monitor.getClass().getName());
                         setVariableValue(varName, updates.get(varName));
-                        // TODO Once ordering of monitors is implemented, update runtimeContext's variables map here
                     }
                 }
             }
@@ -1190,7 +1172,7 @@ public abstract class BaseActivity implements GeneralActivity {
 
         String temp = getAttributeValue(OUTPUTDOCS);
         outputDocuments = temp == null ? new String[0] : StringHelper.parseList(temp).toArray(new String[0]);
-        Object retObj = null;
+        Object retObj;
         try {
             if (Compatibility.hasCodeSubstitutions())
                 script = doCompatibilityCodeSubstitutions(script);
@@ -1244,7 +1226,7 @@ public abstract class BaseActivity implements GeneralActivity {
     /**
      * Convenience method that returns a variable value, dereferencing doc types.
      * Note: to update a document value it must be included in getOutputDocuments().
-     * @param varName
+     * @param varName variable name
      * @return the variable value
      */
     protected Object getVariableValue(String varName) throws ActivityException {
@@ -1281,8 +1263,8 @@ public abstract class BaseActivity implements GeneralActivity {
      * Meant to be used by Script, Dynamic Java and other activities where it is
      * not known whether the value of a document has changed after execution.
      * Note: to update a document value through this method it must be included in getOutputDocuments().
-     * @param varName
-     * @param varType
+     * @param varName variable name
+     * @param varType variable type
      * @param value new value to set
      */
     protected void setVariableValue(String varName, String varType, Object value) throws ActivityException {
@@ -1364,27 +1346,6 @@ public abstract class BaseActivity implements GeneralActivity {
         oldString = VariableTranslator.realToString(getPackage(), docVO.getDocumentType(), oldObject);
         String newString = VariableTranslator.realToString(getPackage(), docVO.getDocumentType(), newValue);
         return !newString.equals(oldString);
-    }
-
-    /**
-     * The method records an event flag. If the event flag is already recorded,
-     * The method simply returns true; o/w it returns false.
-     * The method is intended to be used to coordinate an action that should be executed
-     * only once by multiple potentially independent threads/processes/clustered servers.
-     *
-     * @param eventName a unique event name that should also be different from non-flag events.
-     * @param preserveInterval for clean-up routines - how long this entry should be preserved after creation
-     * @return true when the event is already recorded, false otherwise
-     * @throws ActivityException
-     */
-    protected boolean recordEventFlag(String eventName, int preserveInterval)
-        throws ActivityException {
-        try {
-            return true; // engine.getDataAccess().recordEventFlag(eventName, preserveInterval);
-        } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
-            throw new ActivityException(0, ex.getMessage(),ex);
-        }
     }
 
     public TransactionWrapper startTransaction()

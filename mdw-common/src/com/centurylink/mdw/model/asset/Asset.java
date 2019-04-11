@@ -658,4 +658,8 @@ public class Asset implements Comparable<Asset> {
     public String getTextNormalized() throws IOException {
         return text().replace("\r", "");
     }
+
+    public String oneLineName() {
+        return getName().replaceAll("\r", "").replace('\n', ' ');
+    }
 }

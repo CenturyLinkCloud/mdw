@@ -1,6 +1,5 @@
 package com.centurylink.mdw.tests.server
 
-import com.centurylink.mdw.config.PropertyManager
 import com.centurylink.mdw.model.JsonObject
 import com.centurylink.mdw.tests.workflow.Person
 

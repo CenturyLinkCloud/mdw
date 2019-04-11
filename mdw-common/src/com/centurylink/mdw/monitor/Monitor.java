@@ -24,7 +24,7 @@ public interface Monitor {
         return this instanceof OfflineMonitor<?>;
     }
 
-    default public boolean isEnabled(RuntimeContext context) {
+    default boolean isEnabled(RuntimeContext context) {
         com.centurylink.mdw.annotations.Monitor annotation =
                 getClass().getAnnotation(com.centurylink.mdw.annotations.Monitor.class);
         if (annotation == null) {
@@ -33,11 +33,23 @@ public interface Monitor {
         else {
             String attr = context.getAttribute(WorkAttributeConstant.MONITORS);
             if (attr == null) {
+                // not explicity specified in attribute
+                if (!annotation.enablementCategory().isEmpty()) {
+                    // enabled per-category
+                    return annotation.enablementCategory().equals(getCategory(context));
+                }
                 return annotation.defaultEnabled();
             }
             else {
                 return new MonitorAttributes(attr).isEnabled(this.getClass().getName());
             }
         }
+    }
+
+    /**
+     * Default value matches annotation default (to enable for all categories).
+     */
+    default String getCategory(RuntimeContext context) {
+        return "";
     }
 }

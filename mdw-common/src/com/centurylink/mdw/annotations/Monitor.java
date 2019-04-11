@@ -30,7 +30,7 @@ public @interface Monitor {
     /**
      * This represents the type of monitor to (optionally register).
      */
-    public Class<? extends com.centurylink.mdw.monitor.Monitor> category();
+    Class<? extends com.centurylink.mdw.monitor.Monitor> category();
 
     /**
      * Recommended practice is to leave this set to false, and then enable
@@ -38,12 +38,14 @@ public @interface Monitor {
      * will trigger this monitor.  If defaultEnabled is set to true, this monitor
      * is enabled unless explicitly deselected in MDW Studio/Hub.
      */
-    public boolean defaultEnabled() default false;
+    boolean defaultEnabled() default false;
+
+    String enablementCategory() default "";
 
     /**
      * Default value for user-entered options for this monitor.
      * The value entered in MDW Studio/Hub is available as the forth column in the
      * JSONArray value from attribute "monitors" in the runtimeContext.
      */
-    public String defaultOptions() default "";
+    String defaultOptions() default "";
 }

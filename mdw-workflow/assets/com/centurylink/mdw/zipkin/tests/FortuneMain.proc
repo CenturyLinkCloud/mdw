@@ -67,7 +67,7 @@
         "processname": "com.centurylink.mdw.zipkin.tests/AsyncSub.proc",
         "processversion": "[0.1,1)",
         "synchronous": "false",
-        "variables": "{\"originator\":\"$originator\"}"
+        "variables": "{\"requestHeaders\":\"$requestHeaders\",\"originator\":\"$originator\"}"
       },
       "id": "A5",
       "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",

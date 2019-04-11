@@ -44,4 +44,7 @@
   <Cache Name="ServicePaths" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.service.data.ServicePaths</Property>
   </Cache>
+  <Cache Name="ActivityImplementorCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.service.data.activity.ActivityImplementorCache</Property>
+  </Cache>
 </ApplicationCache>
