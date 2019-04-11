@@ -23,7 +23,7 @@ import com.centurylink.mdw.model.system.SysInfoCategory;
 
 public interface SystemServices {
 
-    public enum SysInfoType {
+    enum SysInfoType {
         System,
         Thread,
         Class,
@@ -35,12 +35,11 @@ public interface SystemServices {
         Exit // only works from localhost
     }
 
-    public List<SysInfoCategory> getSysInfoCategories(SysInfoType type, Query query) throws ServiceException;
-    public SysInfoCategory getSystemInfo();
-    public SysInfoCategory getDbInfo();
-    public SysInfoCategory getSystemProperties();
-    public SysInfoCategory getEnvironmentVariables();
-    public SysInfoCategory getMdwProperties();
-    public SysInfoCategory findClass(String className, ClassLoader classLoader);
-    public SysInfoCategory findClass(String className);
+    List<SysInfoCategory> getSysInfoCategories(SysInfoType type, Query query) throws ServiceException;
+    SysInfoCategory getSystemInfo();
+    SysInfoCategory getDbInfo();
+    SysInfoCategory getSystemProperties();
+    SysInfoCategory getMdwProperties();
+    SysInfoCategory findClass(String className, ClassLoader classLoader);
+    SysInfoCategory findClass(String className);
 }
