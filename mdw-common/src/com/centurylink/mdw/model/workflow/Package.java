@@ -307,6 +307,10 @@ public class Package implements Serializable, Jsonable {
         return defaultPackage;
     }
 
+    public static void setDefaultPackage(Package pkg) {
+        defaultPackage = pkg;
+    }
+
     /**
      * TODO : dynamic java classloader
      * @return the bundle classloader specified by the package config
