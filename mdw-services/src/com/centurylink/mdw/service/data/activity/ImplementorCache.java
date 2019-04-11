@@ -13,6 +13,7 @@ import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -24,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Cached activity implementors do not include pagelet.
  */
-public class ActivityImplementorCache implements PreloadableCache {
+public class ImplementorCache implements PreloadableCache {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
@@ -64,6 +65,7 @@ public class ActivityImplementorCache implements PreloadableCache {
             });
 
             // annotation-driven
+            CacheRegistration.getInstance().getCache("");
             AssetServices assetServices = ServiceLocator.getAssetServices();
             Map<String,List<AssetInfo>> annotatedAssets = assetServices.getAssetsOfTypes(new String[]{"java", "kt"});
             for (String packageName : annotatedAssets.keySet()) {

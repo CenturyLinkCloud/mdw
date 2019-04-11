@@ -39,7 +39,7 @@ import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.OfflineMonitor;
 import com.centurylink.mdw.monitor.ProcessMonitor;
-import com.centurylink.mdw.service.data.activity.ActivityImplementorCache;
+import com.centurylink.mdw.service.data.activity.ImplementorCache;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.*;
@@ -1946,7 +1946,7 @@ class ProcessExecutorImpl {
                 processInst.setPackageName(pkg.getName());
             Activity activity = process.getActivityVO(actInstVO.getActivityId());
 
-            ActivityImplementor activityImplementor = ActivityImplementorCache.get(activity.getImplementor());
+            ActivityImplementor activityImplementor = ImplementorCache.get(activity.getImplementor());
             String category = activityImplementor == null ? GeneralActivity.class.getName() : activityImplementor.getCategory();
             ActivityRuntimeContext runtimeContext = new ActivityRuntimeContext(pkg, process, processInst,
                     getDataAccess().getPerformanceLevel(), isInService(), activity, category, actInstVO);

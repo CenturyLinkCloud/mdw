@@ -24,8 +24,6 @@ script:
 - ./gradlew --no-daemon publishAll
 after_failure:
 - cat ../testResults/mdw-function-test-results.json
-- cat ../testResults/com.centurylink.mdw.tests.cloud/ActivityImplementors.log
-- cat ../testResults/com.centurylink.mdw.tests.cloud/ActivityImplementors.yaml
 #- cat ../testResults/com.centurylink.mdw.tests.services/SolutionService.log
 - cat mdw.log
 - sleep 10s

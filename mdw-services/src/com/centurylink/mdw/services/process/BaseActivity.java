@@ -43,7 +43,7 @@ import com.centurylink.mdw.monitor.ActivityMonitor;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.OfflineMonitor;
 import com.centurylink.mdw.script.*;
-import com.centurylink.mdw.service.data.activity.ActivityImplementorCache;
+import com.centurylink.mdw.service.data.activity.ImplementorCache;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
@@ -126,7 +126,7 @@ public abstract class BaseActivity implements GeneralActivity {
             this.entryCode = entryCode;
             try {
                 pkg = PackageCache.getProcessPackage(getMainProcessDefinition().getId());
-                ActivityImplementor implementor = ActivityImplementorCache.get(activityDef.getImplementor());
+                ActivityImplementor implementor = ImplementorCache.get(activityDef.getImplementor());
                 String category = implementor == null ? GeneralActivity.class.getName() : implementor.getCategory();
                 _runtimeContext = new ActivityRuntimeContext(pkg, getProcessDefinition(), processInst,
                         getPerformanceLevel(), getEngine().isInService(), activityDef, category, activityInst);

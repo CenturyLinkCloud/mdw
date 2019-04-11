@@ -31,6 +31,8 @@ import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.model.system.SystemMessage.Level;
+import com.centurylink.mdw.model.workflow.ActivityImplementor;
+import com.centurylink.mdw.service.data.activity.ImplementorCache;
 import com.centurylink.mdw.services.bundle.CacheRegistry;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.util.InitialRequest;
@@ -78,6 +80,10 @@ public class CacheRegistration implements StartupService {
             preloadCaches();
             SpringAppContext.getInstance().loadPackageContexts();  // trigger dynamic context loading
             preloadDynamicCaches();
+            // implementor cache relies on kotlin from preloadDynamicCaches()
+            ImplementorCache implementorCache = new ImplementorCache();
+            implementorCache.loadCache();
+            allCaches.put(ImplementorCache.class.getSimpleName(), implementorCache);
         }
         catch (Exception ex){
             String message = "Failed to load caches";
@@ -95,7 +101,7 @@ public class CacheRegistration implements StartupService {
     private void preloadCaches() throws IOException, XmlException {
         Map<String,Properties> caches = getPreloadCacheSpecs();
         for (String cacheName : caches.keySet()) {
-            Properties cacheProps = (Properties)caches.get(cacheName);
+            Properties cacheProps = caches.get(cacheName);
             String cacheClassName = cacheProps.getProperty("ClassName");
             logger.info(" - loading cache " + cacheName);
             CacheService cachingObj = getCacheInstance(cacheClassName, cacheProps);
