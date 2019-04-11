@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -178,38 +178,46 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceInstance.html#getStatus--">getStatus</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceInstance.html#getTransactionId--">getTransactionId</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.time.Instant</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceInstance.html#getTriggered--">getTriggered</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/microservice/Update.html" title="class in com.centurylink.mdw.microservice">Update</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceInstance.html#getUpdates--">getUpdates</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/Status.html" title="class in com.centurylink.mdw.model">Status</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceInstance.html#latestStatus--">latestStatus</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceInstance.html#setId-java.lang.Long-">setId</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceInstance.html#setInvocations-java.util.List-">setInvocations</a></span>(java.util.List&lt;<a href="../../../../com/centurylink/mdw/microservice/Invocation.html" title="class in com.centurylink.mdw.microservice">Invocation</a>&gt;&nbsp;invocations)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceInstance.html#setMicroservice-java.lang.String-">setMicroservice</a></span>(java.lang.String&nbsp;microservice)</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceInstance.html#setStatus-java.lang.String-">setStatus</a></span>(java.lang.String&nbsp;status)</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceInstance.html#setTransactionId-java.lang.String-">setTransactionId</a></span>(java.lang.String&nbsp;transactionId)</code>&nbsp;</td>
+</tr>
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceInstance.html#setTriggered-java.time.Instant-">setTriggered</a></span>(java.time.Instant&nbsp;triggered)</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceInstance.html#setUpdates-java.util.List-">setUpdates</a></span>(java.util.List&lt;<a href="../../../../com/centurylink/mdw/microservice/Update.html" title="class in com.centurylink.mdw.microservice">Update</a>&gt;&nbsp;updates)</code>&nbsp;</td>
 </tr>
@@ -348,6 +356,24 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
 <pre>public&nbsp;void&nbsp;setStatus(java.lang.String&nbsp;status)</pre>
 </li>
 </ul>
+<a name="getTransactionId--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTransactionId</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getTransactionId()</pre>
+</li>
+</ul>
+<a name="setTransactionId-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setTransactionId</h4>
+<pre>public&nbsp;void&nbsp;setTransactionId(java.lang.String&nbsp;transactionId)</pre>
+</li>
+</ul>
 <a name="getInvocations--">
 <!--   -->
 </a>
@@ -472,6 +498,6 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

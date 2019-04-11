@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -190,22 +190,30 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/PackageList.html#getVcsRoot--">getVcsRoot</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i9" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/PackageList.html#setGitBranch-java.lang.String-">setGitBranch</a></span>(java.lang.String&nbsp;branch)</code>&nbsp;</td>
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/PackageList.html#getVcsTag--">getVcsTag</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/PackageList.html#setPackageDirs-java.util.List-">setPackageDirs</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/dataaccess/file/PackageDir.html" title="class in com.centurylink.mdw.dataaccess.file">PackageDir</a>&gt;&nbsp;pkgDirs)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/PackageList.html#setGitBranch-java.lang.String-">setGitBranch</a></span>(java.lang.String&nbsp;branch)</code>&nbsp;</td>
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/PackageList.html#setVcsBranch-java.lang.String-">setVcsBranch</a></span>(java.lang.String&nbsp;branch)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/PackageList.html#setPackageDirs-java.util.List-">setPackageDirs</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/dataaccess/file/PackageDir.html" title="class in com.centurylink.mdw.dataaccess.file">PackageDir</a>&gt;&nbsp;pkgDirs)</code>&nbsp;</td>
 </tr>
 <tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/PackageList.html#setVcsRemoteUrl-java.lang.String-">setVcsRemoteUrl</a></span>(java.lang.String&nbsp;url)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/PackageList.html#setVcsBranch-java.lang.String-">setVcsBranch</a></span>(java.lang.String&nbsp;branch)</code>&nbsp;</td>
 </tr>
 <tr id="i13" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/PackageList.html#setVcsRemoteUrl-java.lang.String-">setVcsRemoteUrl</a></span>(java.lang.String&nbsp;url)</code>&nbsp;</td>
+</tr>
+<tr id="i14" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/PackageList.html#setVcsTag-java.lang.String-">setVcsTag</a></span>(java.lang.String&nbsp;tag)</code>&nbsp;</td>
+</tr>
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/PackageList.html#sort--">sort</a></span>()</code>&nbsp;</td>
 </tr>
@@ -307,6 +315,24 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <li class="blockList">
 <h4>setVcsBranch</h4>
 <pre>public&nbsp;void&nbsp;setVcsBranch(java.lang.String&nbsp;branch)</pre>
+</li>
+</ul>
+<a name="getVcsTag--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getVcsTag</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getVcsTag()</pre>
+</li>
+</ul>
+<a name="setVcsTag-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setVcsTag</h4>
+<pre>public&nbsp;void&nbsp;setVcsTag(java.lang.String&nbsp;tag)</pre>
 </li>
 </ul>
 <a name="getGitBranch--">
@@ -465,6 +491,6 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

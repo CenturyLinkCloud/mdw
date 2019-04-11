@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":9,"i2":10};
+var methods = {"i0":10,"i1":9,"i2":10,"i3":10,"i4":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -157,13 +157,23 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/MonitorAttributes.html#isEnabled-java.lang.String-">isEnabled</a></span>(java.lang.String&nbsp;className)</code>&nbsp;</td>
 </tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/MonitorAttributes.html#setEnabled-java.lang.String-java.lang.String-boolean-">setEnabled</a></span>(java.lang.String&nbsp;implAsset,
+          java.lang.String&nbsp;label,
+          boolean&nbsp;enabled)</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/MonitorAttributes.html#toString--">toString</a></span>()</code>&nbsp;</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -205,6 +215,17 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;boolean&nbsp;isEnabled(java.lang.String&nbsp;className)</pre>
 </li>
 </ul>
+<a name="setEnabled-java.lang.String-java.lang.String-boolean-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setEnabled</h4>
+<pre>public&nbsp;void&nbsp;setEnabled(java.lang.String&nbsp;implAsset,
+                       java.lang.String&nbsp;label,
+                       boolean&nbsp;enabled)</pre>
+</li>
+</ul>
 <a name="getRow-java.lang.String-">
 <!--   -->
 </a>
@@ -217,11 +238,24 @@ extends java.lang.Object</pre>
 <a name="getRowDefault-com.centurylink.mdw.model.asset.AssetInfo-java.lang.Class-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getRowDefault</h4>
 <pre>public static&nbsp;org.json.JSONArray&nbsp;getRowDefault(<a href="../../../../com/centurylink/mdw/model/asset/AssetInfo.html" title="class in com.centurylink.mdw.model.asset">AssetInfo</a>&nbsp;implAsset,
                                                java.lang.Class&lt;? extends <a href="../../../../com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor">Monitor</a>&gt;&nbsp;monitorClass)</pre>
+</li>
+</ul>
+<a name="toString--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -292,6 +326,6 @@ extends java.lang.Object</pre>
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

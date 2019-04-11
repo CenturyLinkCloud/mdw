@@ -101,12 +101,20 @@ var activeTableTab = "activeTableTab";
 <dt>All Superinterfaces:</dt>
 <dd><a href="../../../../com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor">Monitor</a>, <a href="../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a></dd>
 </dl>
+<dl>
+<dt>All Known Implementing Classes:</dt>
+<dd><a href="../../../../com/centurylink/mdw/microservice/MicroserviceStatusProcessMonitor.html" title="class in com.centurylink.mdw.microservice">MicroserviceStatusProcessMonitor</a>, <a href="../../../../com/centurylink/mdw/base/ProcessDueDateMonitor.html" title="class in com.centurylink.mdw.base">ProcessDueDateMonitor</a>, <a href="../../../../com/centurylink/mdw/zipkin/TraceProcessMonitor.html" title="class in com.centurylink.mdw.zipkin">TraceProcessMonitor</a></dd>
+</dl>
 <hr>
 <br>
 <pre>public interface <span class="typeNameLabel">ProcessMonitor</span>
 extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a>, <a href="../../../../com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor">Monitor</a></pre>
 <div class="block">Process monitors can be registered through @Monitor annotations to get
- notified during the lifecycle of an MDW workflow process.</div>
+ notified during the lifecycle of an MDW workflow process.
+
+ Processes may run asynchronously.  Therefore interface methods will
+ be invoked on different instances, and instance-level members should not
+ be stored for access from lifecycle methods.</div>
 </li>
 </ul>
 </div>
@@ -143,7 +151,7 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor">Monitor</a></h3>
-<code><a href="../../../../com/centurylink/mdw/monitor/Monitor.html#isEnabled-com.centurylink.mdw.model.workflow.RuntimeContext-">isEnabled</a>, <a href="../../../../com/centurylink/mdw/monitor/Monitor.html#isOffline--">isOffline</a></code></li>
+<code><a href="../../../../com/centurylink/mdw/monitor/Monitor.html#getCategory-com.centurylink.mdw.model.workflow.RuntimeContext-">getCategory</a>, <a href="../../../../com/centurylink/mdw/monitor/Monitor.html#isEnabled-com.centurylink.mdw.model.workflow.RuntimeContext-">isEnabled</a>, <a href="../../../../com/centurylink/mdw/monitor/Monitor.html#isOffline--">isOffline</a></code></li>
 </ul>
 </li>
 </ul>
@@ -250,6 +258,6 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

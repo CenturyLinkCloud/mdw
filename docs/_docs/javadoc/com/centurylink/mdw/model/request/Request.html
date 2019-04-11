@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li><a href="../../../../../com/centurylink/mdw/model/request/RequestCount.html" title="class in com.centurylink.mdw.model.request"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/model/request/RequestAggregate.html" title="class in com.centurylink.mdw.model.request"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/centurylink/mdw/model/request/Request.html" target="_top">Frames</a></li>
@@ -136,10 +136,6 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#REQUEST_ID">REQUEST_ID</a></span></code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#TRANSACTION_ID">TRANSACTION_ID</a></span></code>&nbsp;</td>
-</tr>
 </table>
 </li>
 </ul>
@@ -160,6 +156,9 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#Request-java.lang.Long-">Request</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
 </tr>
+<tr class="altColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#Request-java.lang.String-">Request</a></span>(java.lang.String&nbsp;content)</code>&nbsp;</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -176,168 +175,200 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>java.lang.Long</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getActivityInstanceId--">getActivityInstanceId</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getContent--">getContent</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>java.util.Date</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getCreated--">getCreated</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getId--">getId</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getJson--">getJson</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getJsonName--">getJsonName</a></span>()</code>
 <div class="block">May be overridden to name the JSON object returned from <a href="../../../../../com/centurylink/mdw/model/Jsonable.html#getJson--"><code>Jsonable.getJson()</code></a>.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getMasterRequestId--">getMasterRequestId</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getMeta--">getMeta</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>java.lang.Long</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getMetaId--">getMetaId</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getPackageName--">getPackageName</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getPath--">getPath</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.util.Date</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getProcessEnd--">getProcessEnd</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getProcessId--">getProcessId</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getProcessInstanceId--">getProcessInstanceId</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getProcessName--">getProcessName</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>java.util.Date</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getProcessStart--">getProcessStart</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getProcessStatus--">getProcessStatus</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getProcessVersion--">getProcessVersion</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>java.util.Date</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getResponded--">getResponded</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/Response.html" title="class in com.centurylink.mdw.model">Response</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getResponse--">getResponse</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getResponseContent--">getResponseContent</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getResponseId--">getResponseId</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i22" class="altColor">
+<td class="colFirst"><code>java.lang.Long</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getResponseMs--">getResponseMs</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>java.lang.Integer</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getStatusCode--">getStatusCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#getStatusMessage--">getStatusMessage</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#isOutbound--">isOutbound</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setContent-java.lang.String-">setContent</a></span>(java.lang.String&nbsp;c)</code>&nbsp;</td>
-</tr>
-<tr id="i23" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setCreated-java.util.Date-">setCreated</a></span>(java.util.Date&nbsp;received)</code>&nbsp;</td>
-</tr>
-<tr id="i24" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setId-java.lang.Long-">setId</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
-</tr>
-<tr id="i25" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setMasterRequestId-java.lang.String-">setMasterRequestId</a></span>(java.lang.String&nbsp;masterRequestId)</code>&nbsp;</td>
-</tr>
 <tr id="i26" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setMeta-org.json.JSONObject-">setMeta</a></span>(org.json.JSONObject&nbsp;info)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setActivityInstanceId-java.lang.Long-">setActivityInstanceId</a></span>(java.lang.Long&nbsp;instanceId)</code>&nbsp;</td>
 </tr>
 <tr id="i27" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setOutbound-boolean-">setOutbound</a></span>(boolean&nbsp;ob)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setContent-java.lang.String-">setContent</a></span>(java.lang.String&nbsp;c)</code>&nbsp;</td>
 </tr>
 <tr id="i28" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setPackageName-java.lang.String-">setPackageName</a></span>(java.lang.String&nbsp;pkg)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setCreated-java.util.Date-">setCreated</a></span>(java.util.Date&nbsp;received)</code>&nbsp;</td>
 </tr>
 <tr id="i29" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setProcessEnd-java.util.Date-">setProcessEnd</a></span>(java.util.Date&nbsp;end)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setId-java.lang.Long-">setId</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
 </tr>
 <tr id="i30" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setProcessId-java.lang.Long-">setProcessId</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setMasterRequestId-java.lang.String-">setMasterRequestId</a></span>(java.lang.String&nbsp;masterRequestId)</code>&nbsp;</td>
 </tr>
 <tr id="i31" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setProcessInstanceId-java.lang.Long-">setProcessInstanceId</a></span>(java.lang.Long&nbsp;instanceId)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setMeta-org.json.JSONObject-">setMeta</a></span>(org.json.JSONObject&nbsp;info)</code>&nbsp;</td>
 </tr>
 <tr id="i32" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setProcessName-java.lang.String-">setProcessName</a></span>(java.lang.String&nbsp;processName)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setMetaId-java.lang.Long-">setMetaId</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
 </tr>
 <tr id="i33" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setProcessStart-java.util.Date-">setProcessStart</a></span>(java.util.Date&nbsp;start)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setOutbound-boolean-">setOutbound</a></span>(boolean&nbsp;ob)</code>&nbsp;</td>
 </tr>
 <tr id="i34" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setProcessStatus-java.lang.String-">setProcessStatus</a></span>(java.lang.String&nbsp;status)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setPackageName-java.lang.String-">setPackageName</a></span>(java.lang.String&nbsp;pkg)</code>&nbsp;</td>
 </tr>
 <tr id="i35" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setProcessVersion-java.lang.String-">setProcessVersion</a></span>(java.lang.String&nbsp;version)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setPath-java.lang.String-">setPath</a></span>(java.lang.String&nbsp;path)</code>&nbsp;</td>
 </tr>
 <tr id="i36" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setResponded-java.util.Date-">setResponded</a></span>(java.util.Date&nbsp;responded)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setProcessEnd-java.util.Date-">setProcessEnd</a></span>(java.util.Date&nbsp;end)</code>&nbsp;</td>
 </tr>
 <tr id="i37" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setResponse-com.centurylink.mdw.model.Response-">setResponse</a></span>(<a href="../../../../../com/centurylink/mdw/model/Response.html" title="class in com.centurylink.mdw.model">Response</a>&nbsp;resp)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setProcessId-java.lang.Long-">setProcessId</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
 </tr>
 <tr id="i38" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setResponseId-java.lang.Long-">setResponseId</a></span>(java.lang.Long&nbsp;responseId)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setProcessInstanceId-java.lang.Long-">setProcessInstanceId</a></span>(java.lang.Long&nbsp;instanceId)</code>&nbsp;</td>
 </tr>
 <tr id="i39" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setStatusCode-java.lang.Integer-">setStatusCode</a></span>(java.lang.Integer&nbsp;code)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setProcessName-java.lang.String-">setProcessName</a></span>(java.lang.String&nbsp;processName)</code>&nbsp;</td>
 </tr>
 <tr id="i40" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setProcessStart-java.util.Date-">setProcessStart</a></span>(java.util.Date&nbsp;start)</code>&nbsp;</td>
+</tr>
+<tr id="i41" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setProcessStatus-java.lang.String-">setProcessStatus</a></span>(java.lang.String&nbsp;status)</code>&nbsp;</td>
+</tr>
+<tr id="i42" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setProcessVersion-java.lang.String-">setProcessVersion</a></span>(java.lang.String&nbsp;version)</code>&nbsp;</td>
+</tr>
+<tr id="i43" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setResponded-java.util.Date-">setResponded</a></span>(java.util.Date&nbsp;responded)</code>&nbsp;</td>
+</tr>
+<tr id="i44" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setResponse-com.centurylink.mdw.model.Response-">setResponse</a></span>(<a href="../../../../../com/centurylink/mdw/model/Response.html" title="class in com.centurylink.mdw.model">Response</a>&nbsp;resp)</code>&nbsp;</td>
+</tr>
+<tr id="i45" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setResponseId-java.lang.Long-">setResponseId</a></span>(java.lang.Long&nbsp;responseId)</code>&nbsp;</td>
+</tr>
+<tr id="i46" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setResponseMs-java.lang.Long-">setResponseMs</a></span>(java.lang.Long&nbsp;ms)</code>&nbsp;</td>
+</tr>
+<tr id="i47" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setStatusCode-java.lang.Integer-">setStatusCode</a></span>(java.lang.Integer&nbsp;code)</code>&nbsp;</td>
+</tr>
+<tr id="i48" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/request/Request.html#setStatusMessage-java.lang.String-">setStatusMessage</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
@@ -380,26 +411,13 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <a name="REQUEST_ID">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>REQUEST_ID</h4>
 <pre>public static final&nbsp;java.lang.String REQUEST_ID</pre>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../../../constant-values.html#com.centurylink.mdw.model.request.Request.REQUEST_ID">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a name="TRANSACTION_ID">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>TRANSACTION_ID</h4>
-<pre>public static final&nbsp;java.lang.String TRANSACTION_ID</pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../constant-values.html#com.centurylink.mdw.model.request.Request.TRANSACTION_ID">Constant Field Values</a></dd>
 </dl>
 </li>
 </ul>
@@ -418,6 +436,15 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <li class="blockList">
 <h4>Request</h4>
 <pre>public&nbsp;Request(java.lang.Long&nbsp;id)</pre>
+</li>
+</ul>
+<a name="Request-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>Request</h4>
+<pre>public&nbsp;Request(java.lang.String&nbsp;content)</pre>
 </li>
 </ul>
 <a name="Request-org.json.JSONObject-">
@@ -514,6 +541,24 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <pre>public&nbsp;void&nbsp;setResponseId(java.lang.Long&nbsp;responseId)</pre>
 </li>
 </ul>
+<a name="getResponseMs--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getResponseMs</h4>
+<pre>public&nbsp;java.lang.Long&nbsp;getResponseMs()</pre>
+</li>
+</ul>
+<a name="setResponseMs-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setResponseMs</h4>
+<pre>public&nbsp;void&nbsp;setResponseMs(java.lang.Long&nbsp;ms)</pre>
+</li>
+</ul>
 <a name="getMasterRequestId--">
 <!--   -->
 </a>
@@ -548,6 +593,24 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <li class="blockList">
 <h4>setProcessInstanceId</h4>
 <pre>public&nbsp;void&nbsp;setProcessInstanceId(java.lang.Long&nbsp;instanceId)</pre>
+</li>
+</ul>
+<a name="getActivityInstanceId--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getActivityInstanceId</h4>
+<pre>public&nbsp;java.lang.Long&nbsp;getActivityInstanceId()</pre>
+</li>
+</ul>
+<a name="setActivityInstanceId-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setActivityInstanceId</h4>
+<pre>public&nbsp;void&nbsp;setActivityInstanceId(java.lang.Long&nbsp;instanceId)</pre>
 </li>
 </ul>
 <a name="getProcessId--">
@@ -757,6 +820,24 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <pre>public&nbsp;void&nbsp;setStatusMessage(java.lang.String&nbsp;message)</pre>
 </li>
 </ul>
+<a name="getPath--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPath</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getPath()</pre>
+</li>
+</ul>
+<a name="setPath-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setPath</h4>
+<pre>public&nbsp;void&nbsp;setPath(java.lang.String&nbsp;path)</pre>
+</li>
+</ul>
 <a name="getMeta--">
 <!--   -->
 </a>
@@ -773,6 +854,24 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <li class="blockList">
 <h4>setMeta</h4>
 <pre>public&nbsp;void&nbsp;setMeta(org.json.JSONObject&nbsp;info)</pre>
+</li>
+</ul>
+<a name="getMetaId--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMetaId</h4>
+<pre>public&nbsp;java.lang.Long&nbsp;getMetaId()</pre>
+</li>
+</ul>
+<a name="setMetaId-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setMetaId</h4>
+<pre>public&nbsp;void&nbsp;setMetaId(java.lang.Long&nbsp;id)</pre>
 </li>
 </ul>
 <a name="getResponse--">
@@ -846,7 +945,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li><a href="../../../../../com/centurylink/mdw/model/request/RequestCount.html" title="class in com.centurylink.mdw.model.request"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/model/request/RequestAggregate.html" title="class in com.centurylink.mdw.model.request"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/centurylink/mdw/model/request/Request.html" target="_top">Frames</a></li>
@@ -886,6 +985,6 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

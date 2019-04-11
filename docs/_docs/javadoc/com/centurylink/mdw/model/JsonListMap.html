@@ -114,7 +114,7 @@ var activeTableTab = "activeTableTab";
 <pre>public class <span class="typeNameLabel">JsonListMap&lt;T extends <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a>&gt;</span>
 extends java.lang.Object
 implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a></pre>
-<div class="block">Used to make instance counts Jsonable.</div>
+<div class="block">Used to make aggregate values Jsonable.</div>
 </li>
 </ul>
 </div>
@@ -137,11 +137,11 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
            java.lang.Class&lt;<a href="../../../../com/centurylink/mdw/model/JsonListMap.html" title="type parameter in JsonListMap">T</a>&gt;&nbsp;type)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/model/JsonListMap.html#JsonListMap-java.util.Map-">JsonListMap</a></span>(java.util.Map&lt;java.lang.String,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/JsonListMap.html" title="type parameter in JsonListMap">T</a>&gt;&gt;&nbsp;jsonables)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/model/JsonListMap.html#JsonListMap-java.util.LinkedHashMap-">JsonListMap</a></span>(java.util.LinkedHashMap&lt;java.lang.String,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/JsonListMap.html" title="type parameter in JsonListMap">T</a>&gt;&gt;&nbsp;jsonables)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/model/JsonListMap.html#JsonListMap-java.lang.String-java.util.Map-">JsonListMap</a></span>(java.lang.String&nbsp;name,
-           java.util.Map&lt;java.lang.String,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/JsonListMap.html" title="type parameter in JsonListMap">T</a>&gt;&gt;&nbsp;jsonables)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/model/JsonListMap.html#JsonListMap-java.lang.String-java.util.LinkedHashMap-">JsonListMap</a></span>(java.lang.String&nbsp;name,
+           java.util.LinkedHashMap&lt;java.lang.String,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/JsonListMap.html" title="type parameter in JsonListMap">T</a>&gt;&gt;&nbsp;jsonables)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -163,7 +163,7 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/model/JsonListMap.html#getJson--">getJson</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>java.util.Map&lt;java.lang.String,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/JsonListMap.html" title="type parameter in JsonListMap">T</a>&gt;&gt;</code></td>
+<td class="colFirst"><code>java.util.LinkedHashMap&lt;java.lang.String,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/JsonListMap.html" title="type parameter in JsonListMap">T</a>&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/model/JsonListMap.html#getJsonables--">getJsonables</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
@@ -208,23 +208,23 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="JsonListMap-java.util.Map-">
+<a name="JsonListMap-java.util.LinkedHashMap-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>JsonListMap</h4>
-<pre>public&nbsp;JsonListMap(java.util.Map&lt;java.lang.String,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/JsonListMap.html" title="type parameter in JsonListMap">T</a>&gt;&gt;&nbsp;jsonables)</pre>
+<pre>public&nbsp;JsonListMap(java.util.LinkedHashMap&lt;java.lang.String,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/JsonListMap.html" title="type parameter in JsonListMap">T</a>&gt;&gt;&nbsp;jsonables)</pre>
 </li>
 </ul>
-<a name="JsonListMap-java.lang.String-java.util.Map-">
+<a name="JsonListMap-java.lang.String-java.util.LinkedHashMap-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>JsonListMap</h4>
 <pre>public&nbsp;JsonListMap(java.lang.String&nbsp;name,
-                   java.util.Map&lt;java.lang.String,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/JsonListMap.html" title="type parameter in JsonListMap">T</a>&gt;&gt;&nbsp;jsonables)</pre>
+                   java.util.LinkedHashMap&lt;java.lang.String,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/JsonListMap.html" title="type parameter in JsonListMap">T</a>&gt;&gt;&nbsp;jsonables)</pre>
 </li>
 </ul>
 <a name="JsonListMap-org.json.JSONObject-java.lang.Class-">
@@ -256,7 +256,7 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
 <ul class="blockList">
 <li class="blockList">
 <h4>getJsonables</h4>
-<pre>public&nbsp;java.util.Map&lt;java.lang.String,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/JsonListMap.html" title="type parameter in JsonListMap">T</a>&gt;&gt;&nbsp;getJsonables()</pre>
+<pre>public&nbsp;java.util.LinkedHashMap&lt;java.lang.String,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/JsonListMap.html" title="type parameter in JsonListMap">T</a>&gt;&gt;&nbsp;getJsonables()</pre>
 </li>
 </ul>
 <a name="getJson--">
@@ -352,6 +352,6 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

@@ -199,7 +199,7 @@ implements <a href="../../../../../com/centurylink/mdw/services/TaskServices.htm
 </td>
 </tr>
 <tr id="i7" class="rowColor">
-<td class="colFirst"><code>protected <a href="../../../../../com/centurylink/mdw/dataaccess/file/AggregateDataAccessVcs.html" title="class in com.centurylink.mdw.dataaccess.file">AggregateDataAccessVcs</a></code></td>
+<td class="colFirst"><code>protected <a href="../../../../../com/centurylink/mdw/dataaccess/reports/TaskAggregation.html" title="class in com.centurylink.mdw.dataaccess.reports">TaskAggregation</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/task/TaskServicesImpl.html#getAggregateDataAccess--">getAggregateDataAccess</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i8" class="altColor">
@@ -231,8 +231,8 @@ implements <a href="../../../../../com/centurylink/mdw/services/TaskServices.htm
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/task/TaskServicesImpl.html#getSubtasks-java.lang.Long-">getSubtasks</a></span>(java.lang.Long&nbsp;masterTaskInstanceId)</code>&nbsp;</td>
 </tr>
 <tr id="i15" class="rowColor">
-<td class="colFirst"><code>java.util.Map&lt;java.util.Date,java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskCount.html" title="class in com.centurylink.mdw.model.task">TaskCount</a>&gt;&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/task/TaskServicesImpl.html#getTaskInstanceBreakdown-com.centurylink.mdw.common.service.Query-">getTaskInstanceBreakdown</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+<td class="colFirst"><code>java.util.TreeMap&lt;java.util.Date,java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskAggregate.html" title="class in com.centurylink.mdw.model.task">TaskAggregate</a>&gt;&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/task/TaskServicesImpl.html#getTaskBreakdown-com.centurylink.mdw.common.service.Query-">getTaskBreakdown</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
 <tr id="i16" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a></code></td>
@@ -262,9 +262,8 @@ implements <a href="../../../../../com/centurylink/mdw/services/TaskServices.htm
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/task/TaskServicesImpl.html#getTaskTemplatesByPackage-com.centurylink.mdw.common.service.Query-">getTaskTemplatesByPackage</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
 <tr id="i22" class="altColor">
-<td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskCount.html" title="class in com.centurylink.mdw.model.task">TaskCount</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/task/TaskServicesImpl.html#getTopThroughputTasks-java.lang.String-com.centurylink.mdw.common.service.Query-">getTopThroughputTasks</a></span>(java.lang.String&nbsp;aggregateBy,
-                     <a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskAggregate.html" title="class in com.centurylink.mdw.model.task">TaskAggregate</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/task/TaskServicesImpl.html#getTopTasks-com.centurylink.mdw.common.service.Query-">getTopTasks</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
 <tr id="i23" class="rowColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,<a href="../../../../../com/centurylink/mdw/model/Value.html" title="class in com.centurylink.mdw.model">Value</a>&gt;</code></td>
@@ -287,14 +286,16 @@ implements <a href="../../../../../com/centurylink/mdw/services/TaskServices.htm
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/task/TaskServicesImpl.html#performTaskAction-com.centurylink.mdw.model.task.UserTaskAction-">performTaskAction</a></span>(<a href="../../../../../com/centurylink/mdw/model/task/UserTaskAction.html" title="class in com.centurylink.mdw.model.task">UserTaskAction</a>&nbsp;taskAction)</code>&nbsp;</td>
 </tr>
 <tr id="i26" class="altColor">
-<td class="colFirst"><code>protected java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskCount.html" title="class in com.centurylink.mdw.model.task">TaskCount</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/task/TaskServicesImpl.html#populate-java.util.List-">populate</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskCount.html" title="class in com.centurylink.mdw.model.task">TaskCount</a>&gt;&nbsp;taskCounts)</code>
+<td class="colFirst"><code>protected java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskAggregate.html" title="class in com.centurylink.mdw.model.task">TaskAggregate</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/task/TaskServicesImpl.html#populateTasks-java.util.List-">populateTasks</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskAggregate.html" title="class in com.centurylink.mdw.model.task">TaskAggregate</a>&gt;&nbsp;taskAggregates)</code>
 <div class="block">Fills in task header info, consulting latest instance comment if necessary.</div>
 </td>
 </tr>
 <tr id="i27" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/task/TaskServicesImpl.html#saveTaskTemplate-com.centurylink.mdw.model.task.TaskTemplate-">saveTaskTemplate</a></span>(<a href="../../../../../com/centurylink/mdw/model/task/TaskTemplate.html" title="class in com.centurylink.mdw.model.task">TaskTemplate</a>&nbsp;taskVO)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/task/TaskServicesImpl.html#setElapsedTime-java.lang.String-java.lang.Long-java.lang.Long-">setElapsedTime</a></span>(java.lang.String&nbsp;ownerType,
+              java.lang.Long&nbsp;instanceId,
+              java.lang.Long&nbsp;elapsedTime)</code>&nbsp;</td>
 </tr>
 <tr id="i28" class="altColor">
 <td class="colFirst"><code>void</code></td>
@@ -358,12 +359,7 @@ implements <a href="../../../../../com/centurylink/mdw/services/TaskServices.htm
 <ul class="blockList">
 <li class="blockList">
 <h4>getAggregateDataAccess</h4>
-<pre>protected&nbsp;<a href="../../../../../com/centurylink/mdw/dataaccess/file/AggregateDataAccessVcs.html" title="class in com.centurylink.mdw.dataaccess.file">AggregateDataAccessVcs</a>&nbsp;getAggregateDataAccess()
-                                                 throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
-</dl>
+<pre>protected&nbsp;<a href="../../../../../com/centurylink/mdw/dataaccess/reports/TaskAggregation.html" title="class in com.centurylink.mdw.dataaccess.reports">TaskAggregation</a>&nbsp;getAggregateDataAccess()</pre>
 </li>
 </ul>
 <a name="createTask-java.lang.Long-java.lang.String-java.lang.Long-java.lang.String-java.lang.Long-java.lang.String-java.lang.String-">
@@ -446,15 +442,6 @@ implements <a href="../../../../../com/centurylink/mdw/services/TaskServices.htm
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
-</li>
-</ul>
-<a name="saveTaskTemplate-com.centurylink.mdw.model.task.TaskTemplate-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>saveTaskTemplate</h4>
-<pre>public&nbsp;void&nbsp;saveTaskTemplate(<a href="../../../../../com/centurylink/mdw/model/task/TaskTemplate.html" title="class in com.centurylink.mdw.model.task">TaskTemplate</a>&nbsp;taskVO)</pre>
 </li>
 </ul>
 <a name="getIndexes-java.lang.Long-">
@@ -630,34 +617,33 @@ implements <a href="../../../../../com/centurylink/mdw/services/TaskServices.htm
 </dl>
 </li>
 </ul>
-<a name="getTopThroughputTasks-java.lang.String-com.centurylink.mdw.common.service.Query-">
+<a name="getTopTasks-com.centurylink.mdw.common.service.Query-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getTopThroughputTasks</h4>
-<pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskCount.html" title="class in com.centurylink.mdw.model.task">TaskCount</a>&gt;&nbsp;getTopThroughputTasks(java.lang.String&nbsp;aggregateBy,
-                                                       <a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
-                                                throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<h4>getTopTasks</h4>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskAggregate.html" title="class in com.centurylink.mdw.model.task">TaskAggregate</a>&gt;&nbsp;getTopTasks(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                                          throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html#getTopThroughputTasks-java.lang.String-com.centurylink.mdw.common.service.Query-">getTopThroughputTasks</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html" title="interface in com.centurylink.mdw.services">TaskServices</a></code></dd>
+<dd><code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html#getTopTasks-com.centurylink.mdw.common.service.Query-">getTopTasks</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html" title="interface in com.centurylink.mdw.services">TaskServices</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
 </li>
 </ul>
-<a name="getTaskInstanceBreakdown-com.centurylink.mdw.common.service.Query-">
+<a name="getTaskBreakdown-com.centurylink.mdw.common.service.Query-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getTaskInstanceBreakdown</h4>
-<pre>public&nbsp;java.util.Map&lt;java.util.Date,java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskCount.html" title="class in com.centurylink.mdw.model.task">TaskCount</a>&gt;&gt;&nbsp;getTaskInstanceBreakdown(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+<h4>getTaskBreakdown</h4>
+<pre>public&nbsp;java.util.TreeMap&lt;java.util.Date,java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskAggregate.html" title="class in com.centurylink.mdw.model.task">TaskAggregate</a>&gt;&gt;&nbsp;getTaskBreakdown(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
                                                                                  throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html#getTaskInstanceBreakdown-com.centurylink.mdw.common.service.Query-">getTaskInstanceBreakdown</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html" title="interface in com.centurylink.mdw.services">TaskServices</a></code></dd>
+<dd><code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html#getTaskBreakdown-com.centurylink.mdw.common.service.Query-">getTaskBreakdown</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html" title="interface in com.centurylink.mdw.services">TaskServices</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
@@ -669,13 +655,10 @@ implements <a href="../../../../../com/centurylink/mdw/services/TaskServices.htm
 <ul class="blockList">
 <li class="blockList">
 <h4>getTaskTemplates</h4>
-<pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskTemplate.html" title="class in com.centurylink.mdw.model.task">TaskTemplate</a>&gt;&nbsp;getTaskTemplates(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
-                                              throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskTemplate.html" title="class in com.centurylink.mdw.model.task">TaskTemplate</a>&gt;&nbsp;getTaskTemplates(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html#getTaskTemplates-com.centurylink.mdw.common.service.Query-">getTaskTemplates</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html" title="interface in com.centurylink.mdw.services">TaskServices</a></code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -685,13 +668,10 @@ implements <a href="../../../../../com/centurylink/mdw/services/TaskServices.htm
 <ul class="blockList">
 <li class="blockList">
 <h4>getTaskTemplatesByPackage</h4>
-<pre>public&nbsp;java.util.Map&lt;java.lang.String,java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskTemplate.html" title="class in com.centurylink.mdw.model.task">TaskTemplate</a>&gt;&gt;&nbsp;getTaskTemplatesByPackage(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
-                                                                                       throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<pre>public&nbsp;java.util.Map&lt;java.lang.String,java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskTemplate.html" title="class in com.centurylink.mdw.model.task">TaskTemplate</a>&gt;&gt;&nbsp;getTaskTemplatesByPackage(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html#getTaskTemplatesByPackage-com.centurylink.mdw.common.service.Query-">getTaskTemplatesByPackage</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html" title="interface in com.centurylink.mdw.services">TaskServices</a></code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -714,14 +694,14 @@ implements <a href="../../../../../com/centurylink/mdw/services/TaskServices.htm
 </dl>
 </li>
 </ul>
-<a name="populate-java.util.List-">
+<a name="populateTasks-java.util.List-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>populate</h4>
-<pre>protected&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskCount.html" title="class in com.centurylink.mdw.model.task">TaskCount</a>&gt;&nbsp;populate(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskCount.html" title="class in com.centurylink.mdw.model.task">TaskCount</a>&gt;&nbsp;taskCounts)
-                                      throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<h4>populateTasks</h4>
+<pre>protected&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskAggregate.html" title="class in com.centurylink.mdw.model.task">TaskAggregate</a>&gt;&nbsp;populateTasks(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskAggregate.html" title="class in com.centurylink.mdw.model.task">TaskAggregate</a>&gt;&nbsp;taskAggregates)
+                                               throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <div class="block">Fills in task header info, consulting latest instance comment if necessary.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -787,13 +767,11 @@ implements <a href="../../../../../com/centurylink/mdw/services/TaskServices.htm
 <li class="blockList">
 <h4>getTaskInstancesForProcess</h4>
 <pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a>&gt;&nbsp;getTaskInstancesForProcess(java.lang.Long&nbsp;processInstanceId)
-                                                        throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a>,
-                                                               <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+                                                        throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html#getTaskInstancesForProcess-java.lang.Long-">getTaskInstancesForProcess</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html" title="interface in com.centurylink.mdw.services">TaskServices</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 <dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
 </dl>
 </li>
@@ -823,13 +801,11 @@ implements <a href="../../../../../com/centurylink/mdw/services/TaskServices.htm
 <li class="blockList">
 <h4>getTaskInstanceForActivity</h4>
 <pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a>&nbsp;getTaskInstanceForActivity(java.lang.Long&nbsp;activityInstanceId)
-                                        throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a>,
-                                               <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+                                        throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html#getTaskInstanceForActivity-java.lang.Long-">getTaskInstanceForActivity</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html" title="interface in com.centurylink.mdw.services">TaskServices</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 <dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
 </dl>
 </li>
@@ -877,7 +853,7 @@ implements <a href="../../../../../com/centurylink/mdw/services/TaskServices.htm
 <a name="updateTaskInstanceState-java.lang.Long-boolean-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>updateTaskInstanceState</h4>
 <pre>public&nbsp;void&nbsp;updateTaskInstanceState(java.lang.Long&nbsp;taskInstId,
@@ -889,6 +865,24 @@ implements <a href="../../../../../com/centurylink/mdw/services/TaskServices.htm
 <dd><code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html#updateTaskInstanceState-java.lang.Long-boolean-">updateTaskInstanceState</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html" title="interface in com.centurylink.mdw.services">TaskServices</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
+<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="setElapsedTime-java.lang.String-java.lang.Long-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>setElapsedTime</h4>
+<pre>public&nbsp;void&nbsp;setElapsedTime(java.lang.String&nbsp;ownerType,
+                           java.lang.Long&nbsp;instanceId,
+                           java.lang.Long&nbsp;elapsedTime)
+                    throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html#setElapsedTime-java.lang.String-java.lang.Long-java.lang.Long-">setElapsedTime</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/TaskServices.html" title="interface in com.centurylink.mdw.services">TaskServices</a></code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
 </li>
@@ -961,6 +955,6 @@ implements <a href="../../../../../com/centurylink/mdw/services/TaskServices.htm
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

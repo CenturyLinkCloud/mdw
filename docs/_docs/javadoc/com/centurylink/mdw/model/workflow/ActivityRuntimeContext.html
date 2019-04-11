@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -47,7 +47,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityList.html" title="class in com.centurylink.mdw.model.workflow"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityNodeSequencer.html" title="class in com.centurylink.mdw.model.workflow"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityStubRequest.html" title="class in com.centurylink.mdw.model.workflow"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -164,10 +164,13 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html#ActivityRuntimeContext-org.json.JSONObject-">ActivityRuntimeContext</a></span>(org.json.JSONObject&nbsp;json)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html#ActivityRuntimeContext-com.centurylink.mdw.model.workflow.Package-com.centurylink.mdw.model.workflow.Process-com.centurylink.mdw.model.workflow.ProcessInstance-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.workflow.ActivityInstance-">ActivityRuntimeContext</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html#ActivityRuntimeContext-com.centurylink.mdw.model.workflow.Package-com.centurylink.mdw.model.workflow.Process-com.centurylink.mdw.model.workflow.ProcessInstance-int-boolean-com.centurylink.mdw.model.workflow.Activity-java.lang.String-com.centurylink.mdw.model.workflow.ActivityInstance-">ActivityRuntimeContext</a></span>(<a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg,
                       <a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process,
                       <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&nbsp;processInstance,
+                      int&nbsp;performanceLevel,
+                      boolean&nbsp;inService,
                       <a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
+                      java.lang.String&nbsp;category,
                       <a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&nbsp;activityInstance)</code>&nbsp;</td>
 </tr>
 </table>
@@ -215,25 +218,33 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html#getCompletionCode--">getCompletionCode</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html#getCategory--">getCategory</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i8" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html#getCompletionCode--">getCompletionCode</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html#getJson--">getJson</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html#getJsonName--">getJsonName</a></span>()</code>
 <div class="block">May be overridden to name the JSON object returned from <a href="../../../../../com/centurylink/mdw/model/Jsonable.html#getJson--"><code>Jsonable.getJson()</code></a>.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>protected java.util.Map&lt;java.lang.String,javax.el.ValueExpression&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html#getValueExpressionMap--">getValueExpressionMap</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html#logtag--">logtag</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html#setCategory-java.lang.String-">setCategory</a></span>(java.lang.String&nbsp;category)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -241,7 +252,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.centurylink.mdw.model.workflow.<a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a></h3>
-<code><a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#evaluate-java.lang.String-">evaluate</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#evaluateToString-java.lang.String-">evaluateToString</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getAttribute-java.lang.String-java.lang.Boolean-">getAttribute</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getAttribute-java.lang.String-java.lang.Integer-">getAttribute</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getAttribute-java.lang.String-java.lang.String-">getAttribute</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getDocRefs--">getDocRefs</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getELResolver--">getELResolver</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getEnv--">getEnv</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getExpressionFactory--">getExpressionFactory</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getFunctionMapper--">getFunctionMapper</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getMasterRequestId--">getMasterRequestId</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getMdwHubUrl--">getMdwHubUrl</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getMdwVersion--">getMdwVersion</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getPackage--">getPackage</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getProcess--">getProcess</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getProcessId--">getProcessId</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getProcessInstance--">getProcessInstance</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getProcessInstanceId--">getProcessInstanceId</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getProperty-java.lang.String-">getProperty</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getProps--">getProps</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getServicesUrl--">getServicesUrl</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getServiceValues--">getServiceValues</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getValue-java.lang.String-">getValue</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getValueAsString-java.lang.String-">getValueAsString</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getValueForString-java.lang.String-java.lang.String-">getValueForString</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getVariableMapper--">getVariableMapper</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getVariables--">getVariables</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#isExpression-java.lang.String-">isExpression</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#isLogDebugEnabled--">isLogDebugEnabled</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#isLogInfoEnabled--">isLogInfoEnabled</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#logDebug-java.lang.String-">logDebug</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#logException-java.lang.String-java.lang.Exception-">logException</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#logInfo-java.lang.String-">logInfo</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#logSevere-java.lang.String-">logSevere</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#logWarn-java.lang.String-">logWarn</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#set-java.lang.String-java.lang.Object-">set</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#setProcessCompletionCode-java.lang.String-">setProcessCompletionCode</a></code></li>
+<code><a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#evaluate-java.lang.String-">evaluate</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#evaluateToString-java.lang.String-">evaluateToString</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getAppId--">getAppId</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getAttribute-java.lang.String-java.lang.Boolean-">getAttribute</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getAttribute-java.lang.String-java.lang.Integer-">getAttribute</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getAttribute-java.lang.String-java.lang.String-">getAttribute</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getDocRefs--">getDocRefs</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getELResolver--">getELResolver</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getEnv--">getEnv</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getExpressionFactory--">getExpressionFactory</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getFunctionMapper--">getFunctionMapper</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getMasterRequestId--">getMasterRequestId</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getMdwHubUrl--">getMdwHubUrl</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getMdwVersion--">getMdwVersion</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getPackage--">getPackage</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getPerformanceLevel--">getPerformanceLevel</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getProcess--">getProcess</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getProcessId--">getProcessId</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getProcessInstance--">getProcessInstance</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getProcessInstanceId--">getProcessInstanceId</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getProperty-java.lang.String-">getProperty</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getProps--">getProps</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getServicesUrl--">getServicesUrl</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getServiceValues--">getServiceValues</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getValue-java.lang.String-">getValue</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getValueAsString-java.lang.String-">getValueAsString</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getValueForString-java.lang.String-java.lang.String-">getValueForString</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getVariableMapper--">getVariableMapper</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getVariables--">getVariables</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#isExpression-java.lang.String-">isExpression</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#isInService--">isInService</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#isLogDebugEnabled--">isLogDebugEnabled</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#isLogInfoEnabled--">isLogInfoEnabled</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#logDebug-java.lang.String-">logDebug</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#logException-java.lang.String-java.lang.Exception-">logException</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#logInfo-java.lang.String-">logInfo</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#logSevere-java.lang.String-">logSevere</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#logWarn-java.lang.String-">logWarn</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#set-java.lang.String-java.lang.Object-">set</a>, <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#setProcessCompletionCode-java.lang.String-">setProcessCompletionCode</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.javax.el.ELContext">
@@ -285,7 +296,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ActivityRuntimeContext-com.centurylink.mdw.model.workflow.Package-com.centurylink.mdw.model.workflow.Process-com.centurylink.mdw.model.workflow.ProcessInstance-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.workflow.ActivityInstance-">
+<a name="ActivityRuntimeContext-com.centurylink.mdw.model.workflow.Package-com.centurylink.mdw.model.workflow.Process-com.centurylink.mdw.model.workflow.ProcessInstance-int-boolean-com.centurylink.mdw.model.workflow.Activity-java.lang.String-com.centurylink.mdw.model.workflow.ActivityInstance-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -294,7 +305,10 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <pre>public&nbsp;ActivityRuntimeContext(<a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg,
                               <a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process,
                               <a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&nbsp;processInstance,
+                              int&nbsp;performanceLevel,
+                              boolean&nbsp;inService,
                               <a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
+                              java.lang.String&nbsp;category,
                               <a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&nbsp;activityInstance)</pre>
 </li>
 </ul>
@@ -327,6 +341,24 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <li class="blockList">
 <h4>getActivity</h4>
 <pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;getActivity()</pre>
+</li>
+</ul>
+<a name="getCategory--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCategory</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getCategory()</pre>
+</li>
+</ul>
+<a name="setCategory-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setCategory</h4>
+<pre>public&nbsp;void&nbsp;setCategory(java.lang.String&nbsp;category)</pre>
 </li>
 </ul>
 <a name="getActivityInstance--">
@@ -443,6 +475,8 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <pre>public&nbsp;org.json.JSONObject&nbsp;getJson()
                             throws org.json.JSONException</pre>
 <dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getJson--">getJson</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.json.JSONException</code></dd>
 </dl>
@@ -457,6 +491,10 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <pre>public&nbsp;java.lang.String&nbsp;getJsonName()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/centurylink/mdw/model/Jsonable.html#getJsonName--">Jsonable</a></code></span></div>
 <div class="block">May be overridden to name the JSON object returned from <a href="../../../../../com/centurylink/mdw/model/Jsonable.html#getJson--"><code>Jsonable.getJson()</code></a>.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html#getJsonName--">getJsonName</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a></code></dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -486,7 +524,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityList.html" title="class in com.centurylink.mdw.model.workflow"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityNodeSequencer.html" title="class in com.centurylink.mdw.model.workflow"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityStubRequest.html" title="class in com.centurylink.mdw.model.workflow"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -527,6 +565,6 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

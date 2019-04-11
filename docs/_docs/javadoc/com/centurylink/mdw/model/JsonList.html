@@ -157,7 +157,7 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/model/JsonList.html#toJson--">toJson</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/model/JsonList.html#getJson--">getJson</a></span>()</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -165,7 +165,7 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;io.limberest.json.JsonList</h3>
-<code>getList, getTotal, jsonName, setTotal</code></li>
+<code>getList, getTotal, jsonName, setTotal, toJson</code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -179,14 +179,14 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;com.centurylink.mdw.model.<a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a></h3>
-<code><a href="../../../../com/centurylink/mdw/model/Jsonable.html#create--">create</a>, <a href="../../../../com/centurylink/mdw/model/Jsonable.html#getJson--">getJson</a>, <a href="../../../../com/centurylink/mdw/model/Jsonable.html#getJsonName--">getJsonName</a></code></li>
+<code><a href="../../../../com/centurylink/mdw/model/Jsonable.html#create--">create</a>, <a href="../../../../com/centurylink/mdw/model/Jsonable.html#getJsonName--">getJsonName</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.io.limberest.json.Jsonable">
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;io.limberest.json.Jsonable</h3>
-<code>bind, jsonName</code></li>
+<code>bind, jsonName, toJson</code></li>
 </ul>
 </li>
 </ul>
@@ -220,19 +220,13 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="toJson--">
+<a name="getJson--">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>toJson</h4>
-<pre>public&nbsp;org.json.JSONObject&nbsp;toJson()</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>toJson</code>&nbsp;in interface&nbsp;<code>io.limberest.json.Jsonable</code></dd>
-<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
-<dd><code>toJson</code>&nbsp;in class&nbsp;<code>io.limberest.json.JsonList&lt;<a href="../../../../com/centurylink/mdw/model/JsonList.html" title="type parameter in JsonList">E</a> extends <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a>&gt;</code></dd>
-</dl>
+<h4>getJson</h4>
+<pre>public&nbsp;org.json.JSONObject&nbsp;getJson()</pre>
 </li>
 </ul>
 </li>
@@ -303,6 +297,6 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

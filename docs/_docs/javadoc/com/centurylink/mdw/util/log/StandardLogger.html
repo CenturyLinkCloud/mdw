@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6,"i26":6,"i27":6};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
+var methods = {"i0":6,"i1":6,"i2":18,"i3":6,"i4":18,"i5":18,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":18,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6,"i26":18,"i27":6,"i28":6,"i29":6,"i30":18,"i31":6};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -98,17 +98,12 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <dl>
-<dt>All Superinterfaces:</dt>
-<dd>java.io.Serializable</dd>
-</dl>
-<dl>
 <dt>All Known Implementing Classes:</dt>
-<dd><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html" title="class in com.centurylink.mdw.util.log">AbstractStandardLoggerBase</a>, <a href="../../../../../com/centurylink/mdw/util/log/log4j/Log4JStandardLoggerImpl.html" title="class in com.centurylink.mdw.util.log.log4j">Log4JStandardLoggerImpl</a>, <a href="../../../../../com/centurylink/mdw/util/log/SimpleLogger.html" title="class in com.centurylink.mdw.util.log">SimpleLogger</a></dd>
+<dd><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html" title="class in com.centurylink.mdw.util.log">AbstractStandardLoggerBase</a>, <a href="../../../../../com/centurylink/mdw/util/log/log4j/Log4JStandardLoggerImpl.html" title="class in com.centurylink.mdw.util.log.log4j">Log4JStandardLoggerImpl</a>, <a href="../../../../../com/centurylink/mdw/util/log/SimpleLogger.html" title="class in com.centurylink.mdw.util.log">SimpleLogger</a>, <a href="../../../../../com/centurylink/mdw/util/log/slf4j/Slf4JStandardLoggerImpl.html" title="class in com.centurylink.mdw.util.log.slf4j">Slf4JStandardLoggerImpl</a></dd>
 </dl>
 <hr>
 <br>
-<pre>public interface <span class="typeNameLabel">StandardLogger</span>
-extends java.io.Serializable</pre>
+<pre>public interface <span class="typeNameLabel">StandardLogger</span></pre>
 </li>
 </ul>
 </div>
@@ -141,16 +136,14 @@ extends java.io.Serializable</pre>
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t5" class="tableTab"><span><a href="javascript:show(16);">Default Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#debug-java.lang.String-">debug</a></span>(java.lang.String&nbsp;logtodisplay)</code>
-<div class="block">Logs messages which are of level DEBUG.</div>
-</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#debug-java.lang.String-">debug</a></span>(java.lang.String&nbsp;msg)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -158,138 +151,141 @@ extends java.io.Serializable</pre>
      java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#debugException-java.lang.String-java.lang.Throwable-">debugException</a></span>(java.lang.String&nbsp;msg,
-              java.lang.Throwable&nbsp;throwable)</code>
-<div class="block">Logs messages which are of level Debug.</div>
-</td>
+<td class="colFirst"><code>default void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#debug-java.lang.String-java.lang.Throwable-">debug</a></span>(java.lang.String&nbsp;msg,
+     java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#debugException-java.lang.String-java.lang.Throwable-">debugException</a></span>(java.lang.String&nbsp;msg,
+              java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>default void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#error-java.lang.String-">error</a></span>(java.lang.String&nbsp;msg)</code>&nbsp;</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>default void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#error-java.lang.String-java.lang.Throwable-">error</a></span>(java.lang.String&nbsp;msg,
+     java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#exception-java.lang.String-java.lang.String-java.lang.Throwable-">exception</a></span>(java.lang.String&nbsp;tag,
          java.lang.String&nbsp;message,
          java.lang.Throwable&nbsp;e)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#getDefaultHost--">getDefaultHost</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#getDefaultPort--">getDefaultPort</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>java.io.PrintStream</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#getPrintStream--">getPrintStream</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#getSentryMark--">getSentryMark</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i8" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#info-java.lang.String-">info</a></span>(java.lang.String&nbsp;logtodisplay)</code>
-<div class="block">Logs messages which are of level INFO.</div>
-</td>
-</tr>
 <tr id="i9" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#info-java.lang.String-">info</a></span>(java.lang.String&nbsp;msg)</code>&nbsp;</td>
+</tr>
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#info-java.lang.String-java.lang.String-">info</a></span>(java.lang.String&nbsp;tag,
     java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#infoException-java.lang.String-java.lang.Throwable-">infoException</a></span>(java.lang.String&nbsp;logtodisplay,
-             java.lang.Throwable&nbsp;throwable)</code>
-<div class="block">INFO is a message level for informational messages.</div>
-</td>
-</tr>
 <tr id="i11" class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isDebugEnabled--">isDebugEnabled</a></span>()</code>
-<div class="block">Checks if the debug log vele is set or not</div>
-</td>
+<td class="colFirst"><code>default void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#info-java.lang.String-java.lang.Throwable-">info</a></span>(java.lang.String&nbsp;msg,
+    java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
 </tr>
 <tr id="i12" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isEnabledFor-com.centurylink.mdw.util.log.StandardLogger.LogLevel-">isEnabledFor</a></span>(<a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.LogLevel.html" title="enum in com.centurylink.mdw.util.log">StandardLogger.LogLevel</a>&nbsp;level)</code>&nbsp;</td>
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#infoException-java.lang.String-java.lang.Throwable-">infoException</a></span>(java.lang.String&nbsp;msg,
+             java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
 </tr>
 <tr id="i13" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isInfoEnabled--">isInfoEnabled</a></span>()</code>
-<div class="block">Checks if the info log vele is set or not</div>
-</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isDebugEnabled--">isDebugEnabled</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i14" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isMdwDebugEnabled--">isMdwDebugEnabled</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isEnabledFor-com.centurylink.mdw.util.log.StandardLogger.LogLevel-">isEnabledFor</a></span>(<a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.LogLevel.html" title="enum in com.centurylink.mdw.util.log">StandardLogger.LogLevel</a>&nbsp;level)</code>&nbsp;</td>
 </tr>
 <tr id="i15" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isTraceEnabled--">isTraceEnabled</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isInfoEnabled--">isInfoEnabled</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i16" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isMdwDebugEnabled--">isMdwDebugEnabled</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i17" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isTraceEnabled--">isTraceEnabled</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#log-com.centurylink.mdw.util.log.StandardLogger.LogLevel-java.lang.String-">log</a></span>(<a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.LogLevel.html" title="enum in com.centurylink.mdw.util.log">StandardLogger.LogLevel</a>&nbsp;level,
    java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#mdwDebug-java.lang.String-">mdwDebug</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
-</tr>
-<tr id="i18" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#refreshCache--">refreshCache</a></span>()</code>&nbsp;</td>
-</tr>
 <tr id="i19" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#severe-java.lang.String-">severe</a></span>(java.lang.String&nbsp;logtodisplay)</code>
-<div class="block">Logs messages which are of level SEVERE.</div>
-</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#mdwDebug-java.lang.String-">mdwDebug</a></span>(java.lang.String&nbsp;msg)</code>&nbsp;</td>
 </tr>
 <tr id="i20" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#refreshWatcher--">refreshWatcher</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i21" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#severe-java.lang.String-">severe</a></span>(java.lang.String&nbsp;msg)</code>&nbsp;</td>
+</tr>
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#severe-java.lang.String-java.lang.String-">severe</a></span>(java.lang.String&nbsp;tag,
       java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#severeException-java.lang.String-java.lang.Throwable-">severeException</a></span>(java.lang.String&nbsp;message,
-               java.lang.Throwable&nbsp;throwable)</code>
-<div class="block">Logs messages which are of level SEVERE.</div>
-</td>
-</tr>
-<tr id="i22" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#trace-java.lang.String-">trace</a></span>(java.lang.String&nbsp;logtoDisplay)</code>&nbsp;</td>
-</tr>
 <tr id="i23" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#severeException-java.lang.String-java.lang.Throwable-">severeException</a></span>(java.lang.String&nbsp;msg,
+               java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
+</tr>
+<tr id="i24" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#trace-java.lang.String-">trace</a></span>(java.lang.String&nbsp;msg)</code>&nbsp;</td>
+</tr>
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#trace-java.lang.String-java.lang.String-">trace</a></span>(java.lang.String&nbsp;tag,
      java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i26" class="altColor">
+<td class="colFirst"><code>default void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#trace-java.lang.String-java.lang.Throwable-">trace</a></span>(java.lang.String&nbsp;msg,
+     java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
+</tr>
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#traceException-java.lang.String-java.lang.Throwable-">traceException</a></span>(java.lang.String&nbsp;msg,
               java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#warn-java.lang.String-">warn</a></span>(java.lang.String&nbsp;logtodisplay)</code>
-<div class="block">Logs messages which are of level WARN.</div>
-</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#warn-java.lang.String-">warn</a></span>(java.lang.String&nbsp;msg)</code>&nbsp;</td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#warn-java.lang.String-java.lang.String-">warn</a></span>(java.lang.String&nbsp;tag,
     java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i30" class="altColor">
+<td class="colFirst"><code>default void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#warn-java.lang.String-java.lang.Throwable-">warn</a></span>(java.lang.String&nbsp;msg,
+    java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
+</tr>
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#warnException-java.lang.String-java.lang.Throwable-">warnException</a></span>(java.lang.String&nbsp;logtodisplay,
-             java.lang.Throwable&nbsp;throwable)</code>
-<div class="block">Logs messages which are of level WARN.</div>
-</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#warnException-java.lang.String-java.lang.Throwable-">warnException</a></span>(java.lang.String&nbsp;msg,
+             java.lang.Throwable&nbsp;t)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -312,17 +308,7 @@ extends java.io.Serializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>info</h4>
-<pre>void&nbsp;info(java.lang.String&nbsp;logtodisplay)</pre>
-<div class="block">Logs messages which are of level INFO.
- INFO is a message level for informational messages.
- Typically INFO messages will be written to the console
- or its equivalent.  So the INFO level should only be
- used for reasonably significant messages that will
- make sense to end users and system admins.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>message</code> - the message to be logged</dd>
-</dl>
+<pre>void&nbsp;info(java.lang.String&nbsp;msg)</pre>
 </li>
 </ul>
 <a name="warn-java.lang.String-">
@@ -331,16 +317,16 @@ extends java.io.Serializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>warn</h4>
-<pre>void&nbsp;warn(java.lang.String&nbsp;logtodisplay)</pre>
-<div class="block">Logs messages which are of level WARN.
- WARN is a message level indicating a potential problem.
- In general WARNING messages should describe events that will
- be of interest to end users or system managers, or which
- indicate potential problems.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>message</code> - the message to be logged</dd>
-</dl>
+<pre>void&nbsp;warn(java.lang.String&nbsp;msg)</pre>
+</li>
+</ul>
+<a name="error-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>error</h4>
+<pre>default&nbsp;void&nbsp;error(java.lang.String&nbsp;msg)</pre>
 </li>
 </ul>
 <a name="severe-java.lang.String-">
@@ -349,17 +335,16 @@ extends java.io.Serializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>severe</h4>
-<pre>void&nbsp;severe(java.lang.String&nbsp;logtodisplay)</pre>
-<div class="block">Logs messages which are of level SEVERE.
- SEVERE is a message level indicating a serious failure.
- In general SEVERE messages should describe events that are
- of considerable importance and which will prevent normal
- program execution.   They should be reasonably intelligible
- to end users and to system administrators.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>message</code> - the message to be logged</dd>
-</dl>
+<pre>void&nbsp;severe(java.lang.String&nbsp;msg)</pre>
+</li>
+</ul>
+<a name="debug-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>debug</h4>
+<pre>void&nbsp;debug(java.lang.String&nbsp;msg)</pre>
 </li>
 </ul>
 <a name="trace-java.lang.String-">
@@ -368,7 +353,106 @@ extends java.io.Serializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>trace</h4>
-<pre>void&nbsp;trace(java.lang.String&nbsp;logtoDisplay)</pre>
+<pre>void&nbsp;trace(java.lang.String&nbsp;msg)</pre>
+</li>
+</ul>
+<a name="mdwDebug-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>mdwDebug</h4>
+<pre>void&nbsp;mdwDebug(java.lang.String&nbsp;msg)</pre>
+</li>
+</ul>
+<a name="info-java.lang.String-java.lang.Throwable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>info</h4>
+<pre>default&nbsp;void&nbsp;info(java.lang.String&nbsp;msg,
+                  java.lang.Throwable&nbsp;t)</pre>
+</li>
+</ul>
+<a name="infoException-java.lang.String-java.lang.Throwable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>infoException</h4>
+<pre>void&nbsp;infoException(java.lang.String&nbsp;msg,
+                   java.lang.Throwable&nbsp;t)</pre>
+</li>
+</ul>
+<a name="warn-java.lang.String-java.lang.Throwable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>warn</h4>
+<pre>default&nbsp;void&nbsp;warn(java.lang.String&nbsp;msg,
+                  java.lang.Throwable&nbsp;t)</pre>
+</li>
+</ul>
+<a name="warnException-java.lang.String-java.lang.Throwable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>warnException</h4>
+<pre>void&nbsp;warnException(java.lang.String&nbsp;msg,
+                   java.lang.Throwable&nbsp;t)</pre>
+</li>
+</ul>
+<a name="error-java.lang.String-java.lang.Throwable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>error</h4>
+<pre>default&nbsp;void&nbsp;error(java.lang.String&nbsp;msg,
+                   java.lang.Throwable&nbsp;t)</pre>
+</li>
+</ul>
+<a name="severeException-java.lang.String-java.lang.Throwable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>severeException</h4>
+<pre>void&nbsp;severeException(java.lang.String&nbsp;msg,
+                     java.lang.Throwable&nbsp;t)</pre>
+</li>
+</ul>
+<a name="debug-java.lang.String-java.lang.Throwable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>debug</h4>
+<pre>default&nbsp;void&nbsp;debug(java.lang.String&nbsp;msg,
+                   java.lang.Throwable&nbsp;t)</pre>
+</li>
+</ul>
+<a name="debugException-java.lang.String-java.lang.Throwable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>debugException</h4>
+<pre>void&nbsp;debugException(java.lang.String&nbsp;msg,
+                    java.lang.Throwable&nbsp;t)</pre>
+</li>
+</ul>
+<a name="trace-java.lang.String-java.lang.Throwable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>trace</h4>
+<pre>default&nbsp;void&nbsp;trace(java.lang.String&nbsp;msg,
+                   java.lang.Throwable&nbsp;t)</pre>
 </li>
 </ul>
 <a name="traceException-java.lang.String-java.lang.Throwable-">
@@ -381,102 +465,13 @@ extends java.io.Serializable</pre>
                     java.lang.Throwable&nbsp;t)</pre>
 </li>
 </ul>
-<a name="infoException-java.lang.String-java.lang.Throwable-">
+<a name="isInfoEnabled--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>infoException</h4>
-<pre>void&nbsp;infoException(java.lang.String&nbsp;logtodisplay,
-                   java.lang.Throwable&nbsp;throwable)</pre>
-<div class="block">INFO is a message level for informational messages.
- Typically INFO messages will be written to the console
- or its equivalent.  So the INFO level should only be
- used for reasonably significant messages that will
- make sense to end users and system admins.
- The message of the Throwable [getMessage()] is attached to the log message.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>message</code> - the message to be logged</dd>
-<dd><code>throwable</code> - the throwable to be looged</dd>
-</dl>
-</li>
-</ul>
-<a name="severeException-java.lang.String-java.lang.Throwable-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>severeException</h4>
-<pre>void&nbsp;severeException(java.lang.String&nbsp;message,
-                     java.lang.Throwable&nbsp;throwable)</pre>
-<div class="block">Logs messages which are of level SEVERE.
- SEVERE is a message level indicating a serious failure.
- In general SEVERE messages should describe events that are
- of considerable importance and which will prevent normal
- program execution.   They should be reasonably intelligible
- to end users and to system administrators.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>message</code> - the message to be logged.</dd>
-<dd><code>throwable</code> - the throwable to be logged.</dd>
-</dl>
-</li>
-</ul>
-<a name="warnException-java.lang.String-java.lang.Throwable-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>warnException</h4>
-<pre>void&nbsp;warnException(java.lang.String&nbsp;logtodisplay,
-                   java.lang.Throwable&nbsp;throwable)</pre>
-<div class="block">Logs messages which are of level WARN.
- WARN is a message level indicating a potential problem.
- In general WARNING messages should describe events that will
- be of interest to end users or system managers, or which
- indicate potential problems.
- The message of the Throwable [getMessage()] is attached to the log message.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>message</code> - the message to be logged</dd>
-<dd><code>throwable</code> - the throwable to be logged</dd>
-</dl>
-</li>
-</ul>
-<a name="debug-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>debug</h4>
-<pre>void&nbsp;debug(java.lang.String&nbsp;logtodisplay)</pre>
-<div class="block">Logs messages which are of level DEBUG.
- DEBUG is a message level providing tracing information..
- Typically used for debugging purposes.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>message</code> - the message to be logged</dd>
-</dl>
-</li>
-</ul>
-<a name="debugException-java.lang.String-java.lang.Throwable-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>debugException</h4>
-<pre>void&nbsp;debugException(java.lang.String&nbsp;msg,
-                    java.lang.Throwable&nbsp;throwable)</pre>
-<div class="block">Logs messages which are of level Debug.
- DEBUG is a message level providing tracing information..
- Typically used for debugging purposes.
- The message of the Throwable [getMessage()] is attached to the log message.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>message</code> - the message to be logged</dd>
-<dd><code>throwable</code> - the throwable to be logged</dd>
-</dl>
+<h4>isInfoEnabled</h4>
+<pre>boolean&nbsp;isInfoEnabled()</pre>
 </li>
 </ul>
 <a name="isDebugEnabled--">
@@ -486,34 +481,6 @@ extends java.io.Serializable</pre>
 <li class="blockList">
 <h4>isDebugEnabled</h4>
 <pre>boolean&nbsp;isDebugEnabled()</pre>
-<div class="block">Checks if the debug log vele is set or not</div>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>boolean status</dd>
-</dl>
-</li>
-</ul>
-<a name="isInfoEnabled--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isInfoEnabled</h4>
-<pre>boolean&nbsp;isInfoEnabled()</pre>
-<div class="block">Checks if the info log vele is set or not</div>
-<dl>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>boolean status</dd>
-</dl>
-</li>
-</ul>
-<a name="isMdwDebugEnabled--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isMdwDebugEnabled</h4>
-<pre>boolean&nbsp;isMdwDebugEnabled()</pre>
 </li>
 </ul>
 <a name="isTraceEnabled--">
@@ -525,13 +492,13 @@ extends java.io.Serializable</pre>
 <pre>boolean&nbsp;isTraceEnabled()</pre>
 </li>
 </ul>
-<a name="mdwDebug-java.lang.String-">
+<a name="isMdwDebugEnabled--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>mdwDebug</h4>
-<pre>void&nbsp;mdwDebug(java.lang.String&nbsp;message)</pre>
+<h4>isMdwDebugEnabled</h4>
+<pre>boolean&nbsp;isMdwDebugEnabled()</pre>
 </li>
 </ul>
 <a name="isEnabledFor-com.centurylink.mdw.util.log.StandardLogger.LogLevel-">
@@ -553,13 +520,24 @@ extends java.io.Serializable</pre>
          java.lang.String&nbsp;message)</pre>
 </li>
 </ul>
-<a name="refreshCache--">
+<a name="info-java.lang.String-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>refreshCache</h4>
-<pre>void&nbsp;refreshCache()</pre>
+<h4>info</h4>
+<pre>void&nbsp;info(java.lang.String&nbsp;tag,
+          java.lang.String&nbsp;message)</pre>
+</li>
+</ul>
+<a name="warn-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>warn</h4>
+<pre>void&nbsp;warn(java.lang.String&nbsp;tag,
+          java.lang.String&nbsp;message)</pre>
 </li>
 </ul>
 <a name="exception-java.lang.String-java.lang.String-java.lang.Throwable-">
@@ -573,14 +551,14 @@ extends java.io.Serializable</pre>
                java.lang.Throwable&nbsp;e)</pre>
 </li>
 </ul>
-<a name="info-java.lang.String-java.lang.String-">
+<a name="severe-java.lang.String-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>info</h4>
-<pre>void&nbsp;info(java.lang.String&nbsp;tag,
-          java.lang.String&nbsp;message)</pre>
+<h4>severe</h4>
+<pre>void&nbsp;severe(java.lang.String&nbsp;tag,
+            java.lang.String&nbsp;message)</pre>
 </li>
 </ul>
 <a name="debug-java.lang.String-java.lang.String-">
@@ -591,26 +569,6 @@ extends java.io.Serializable</pre>
 <h4>debug</h4>
 <pre>void&nbsp;debug(java.lang.String&nbsp;tag,
            java.lang.String&nbsp;message)</pre>
-</li>
-</ul>
-<a name="warn-java.lang.String-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>warn</h4>
-<pre>void&nbsp;warn(java.lang.String&nbsp;tag,
-          java.lang.String&nbsp;message)</pre>
-</li>
-</ul>
-<a name="severe-java.lang.String-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>severe</h4>
-<pre>void&nbsp;severe(java.lang.String&nbsp;tag,
-            java.lang.String&nbsp;message)</pre>
 </li>
 </ul>
 <a name="trace-java.lang.String-java.lang.String-">
@@ -638,25 +596,16 @@ extends java.io.Serializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getDefaultPort</h4>
-<pre>java.lang.String&nbsp;getDefaultPort()</pre>
+<pre>int&nbsp;getDefaultPort()</pre>
 </li>
 </ul>
-<a name="getSentryMark--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getSentryMark</h4>
-<pre>java.lang.String&nbsp;getSentryMark()</pre>
-</li>
-</ul>
-<a name="getPrintStream--">
+<a name="refreshWatcher--">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>getPrintStream</h4>
-<pre>java.io.PrintStream&nbsp;getPrintStream()</pre>
+<h4>refreshWatcher</h4>
+<pre>void&nbsp;refreshWatcher()</pre>
 </li>
 </ul>
 </li>
@@ -727,6 +676,6 @@ extends java.io.Serializable</pre>
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

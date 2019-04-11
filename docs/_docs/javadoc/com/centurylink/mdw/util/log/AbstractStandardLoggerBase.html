@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -107,21 +107,17 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a>, java.io.Serializable</dd>
+<dd><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></dd>
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../../com/centurylink/mdw/util/log/log4j/Log4JStandardLoggerImpl.html" title="class in com.centurylink.mdw.util.log.log4j">Log4JStandardLoggerImpl</a>, <a href="../../../../../com/centurylink/mdw/util/log/SimpleLogger.html" title="class in com.centurylink.mdw.util.log">SimpleLogger</a></dd>
+<dd><a href="../../../../../com/centurylink/mdw/util/log/log4j/Log4JStandardLoggerImpl.html" title="class in com.centurylink.mdw.util.log.log4j">Log4JStandardLoggerImpl</a>, <a href="../../../../../com/centurylink/mdw/util/log/SimpleLogger.html" title="class in com.centurylink.mdw.util.log">SimpleLogger</a>, <a href="../../../../../com/centurylink/mdw/util/log/slf4j/Slf4JStandardLoggerImpl.html" title="class in com.centurylink.mdw.util.log.slf4j">Slf4JStandardLoggerImpl</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public abstract class <span class="typeNameLabel">AbstractStandardLoggerBase</span>
 extends java.lang.Object
 implements <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../serialized-form.html#com.centurylink.mdw.util.log.AbstractStandardLoggerBase">Serialized Form</a></dd>
-</dl>
 </li>
 </ul>
 </div>
@@ -156,14 +152,18 @@ implements <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.h
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#DEFAULT_HOST">DEFAULT_HOST</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>protected static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#dateFormat">dateFormat</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#DEFAULT_PORT">DEFAULT_PORT</a></span></code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#DEFAULT_HOST">DEFAULT_HOST</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#DEFAULT_PORT">DEFAULT_PORT</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#watcher">watcher</a></span></code>&nbsp;</td>
 </tr>
@@ -204,41 +204,88 @@ implements <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.h
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#buildJSONLogMessage-java.lang.String-">buildJSONLogMessage</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>protected java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#generate_log_line-char-java.lang.String-java.lang.String-">generate_log_line</a></span>(char&nbsp;type,
-                 java.lang.String&nbsp;tag,
-                 java.lang.String&nbsp;message)</code>&nbsp;</td>
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#debug-java.lang.String-java.lang.String-">debug</a></span>(java.lang.String&nbsp;tag,
+     java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#getDefaultHost--">getDefaultHost</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#exception-java.lang.String-java.lang.String-java.lang.Throwable-">exception</a></span>(java.lang.String&nbsp;tag,
+         java.lang.String&nbsp;message,
+         java.lang.Throwable&nbsp;e)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#getDefaultPort--">getDefaultPort</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#generateLogLine-char-java.lang.String-java.lang.String-">generateLogLine</a></span>(char&nbsp;type,
+               java.lang.String&nbsp;tag,
+               java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#getSentryMark--">getSentryMark</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#getDefaultHost--">getDefaultHost</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#refreshCache--">refreshCache</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#getDefaultPort--">getDefaultPort</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
+<td class="colFirst"><code>protected java.util.List&lt;<a href="../../../../../com/centurylink/mdw/util/log/LogLineInjector.html" title="interface in com.centurylink.mdw.util.log">LogLineInjector</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#getInjectors--">getInjectors</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#info-java.lang.String-java.lang.String-">info</a></span>(java.lang.String&nbsp;tag,
+    java.lang.String&nbsp;message)</code>&nbsp;</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#isDebugEnabled--">isDebugEnabled</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#isInfoEnabled--">isInfoEnabled</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#isMdwDebugEnabled--">isMdwDebugEnabled</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i11" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#isTraceEnabled--">isTraceEnabled</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i12" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#refreshWatcher--">refreshWatcher</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#sendToWatcher-java.lang.String-">sendToWatcher</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#sendToWatchers-java.lang.String-">sendToWatchers</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#sendToWebWatcher-java.lang.String-org.json.JSONObject-">sendToWebWatcher</a></span>(java.lang.String&nbsp;topic,
                 org.json.JSONObject&nbsp;message)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i16" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#severe-java.lang.String-java.lang.String-">severe</a></span>(java.lang.String&nbsp;tag,
+      java.lang.String&nbsp;message)</code>&nbsp;</td>
+</tr>
+<tr id="i17" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#trace-java.lang.String-java.lang.String-">trace</a></span>(java.lang.String&nbsp;tag,
+     java.lang.String&nbsp;message)</code>&nbsp;</td>
+</tr>
+<tr id="i18" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#warn-java.lang.String-java.lang.String-">warn</a></span>(java.lang.String&nbsp;tag,
+    java.lang.String&nbsp;message)</code>&nbsp;</td>
+</tr>
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html#watching--">watching</a></span>()</code>&nbsp;</td>
 </tr>
@@ -255,7 +302,7 @@ implements <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.h
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;com.centurylink.mdw.util.log.<a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></h3>
-<code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#debug-java.lang.String-">debug</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#debug-java.lang.String-java.lang.String-">debug</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#debugException-java.lang.String-java.lang.Throwable-">debugException</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#exception-java.lang.String-java.lang.String-java.lang.Throwable-">exception</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#getPrintStream--">getPrintStream</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#info-java.lang.String-">info</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#info-java.lang.String-java.lang.String-">info</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#infoException-java.lang.String-java.lang.Throwable-">infoException</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isDebugEnabled--">isDebugEnabled</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isEnabledFor-com.centurylink.mdw.util.log.StandardLogger.LogLevel-">isEnabledFor</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isInfoEnabled--">isInfoEnabled</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isMdwDebugEnabled--">isMdwDebugEnabled</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isTraceEnabled--">isTraceEnabled</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#log-com.centurylink.mdw.util.log.StandardLogger.LogLevel-java.lang.String-">log</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#mdwDebug-java.lang.String-">mdwDebug</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#severe-java.lang.String-">severe</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#severe-java.lang.String-java.lang.String-">severe</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#severeException-java.lang.String-java.lang.Throwable-">severeException</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#trace-java.lang.String-">trace</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#trace-java.lang.String-java.lang.String-">trace</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#traceException-java.lang.String-java.lang.Throwable-">traceException</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#warn-java.lang.String-">warn</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#warn-java.lang.String-java.lang.String-">warn</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#warnException-java.lang.String-java.lang.Throwable-">warnException</a></code></li>
+<code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#debug-java.lang.String-">debug</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#debug-java.lang.String-java.lang.Throwable-">debug</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#debugException-java.lang.String-java.lang.Throwable-">debugException</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#error-java.lang.String-">error</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#error-java.lang.String-java.lang.Throwable-">error</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#info-java.lang.String-">info</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#info-java.lang.String-java.lang.Throwable-">info</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#infoException-java.lang.String-java.lang.Throwable-">infoException</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isEnabledFor-com.centurylink.mdw.util.log.StandardLogger.LogLevel-">isEnabledFor</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#log-com.centurylink.mdw.util.log.StandardLogger.LogLevel-java.lang.String-">log</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#mdwDebug-java.lang.String-">mdwDebug</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#severe-java.lang.String-">severe</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#severeException-java.lang.String-java.lang.Throwable-">severeException</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#trace-java.lang.String-">trace</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#trace-java.lang.String-java.lang.Throwable-">trace</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#traceException-java.lang.String-java.lang.Throwable-">traceException</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#warn-java.lang.String-">warn</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#warn-java.lang.String-java.lang.Throwable-">warn</a>, <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#warnException-java.lang.String-java.lang.Throwable-">warnException</a></code></li>
 </ul>
 </li>
 </ul>
@@ -290,11 +337,20 @@ implements <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.h
 <ul class="blockList">
 <li class="blockList">
 <h4>DEFAULT_PORT</h4>
-<pre>public static final&nbsp;java.lang.String DEFAULT_PORT</pre>
+<pre>public static final&nbsp;int DEFAULT_PORT</pre>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../../../constant-values.html#com.centurylink.mdw.util.log.AbstractStandardLoggerBase.DEFAULT_PORT">Constant Field Values</a></dd>
 </dl>
+</li>
+</ul>
+<a name="dateFormat">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>dateFormat</h4>
+<pre>protected static&nbsp;java.lang.String dateFormat</pre>
 </li>
 </ul>
 <a name="watcher">
@@ -350,48 +406,35 @@ implements <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.h
 <ul class="blockList">
 <li class="blockList">
 <h4>getDefaultPort</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getDefaultPort()</pre>
+<pre>public&nbsp;int&nbsp;getDefaultPort()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#getDefaultPort--">getDefaultPort</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></code></dd>
 </dl>
 </li>
 </ul>
-<a name="getSentryMark--">
+<a name="refreshWatcher--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getSentryMark</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getSentryMark()</pre>
+<h4>refreshWatcher</h4>
+<pre>public&nbsp;void&nbsp;refreshWatcher()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#getSentryMark--">getSentryMark</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></code></dd>
+<dd><code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#refreshWatcher--">refreshWatcher</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></code></dd>
 </dl>
 </li>
 </ul>
-<a name="refreshCache--">
+<a name="generateLogLine-char-java.lang.String-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>refreshCache</h4>
-<pre>public&nbsp;void&nbsp;refreshCache()</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#refreshCache--">refreshCache</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="generate_log_line-char-java.lang.String-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>generate_log_line</h4>
-<pre>protected&nbsp;java.lang.String&nbsp;generate_log_line(char&nbsp;type,
-                                             java.lang.String&nbsp;tag,
-                                             java.lang.String&nbsp;message)</pre>
+<h4>generateLogLine</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;generateLogLine(char&nbsp;type,
+                                           java.lang.String&nbsp;tag,
+                                           java.lang.String&nbsp;message)</pre>
 </li>
 </ul>
 <a name="watching--">
@@ -440,7 +483,7 @@ implements <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.h
 <a name="sendToWebWatcher-java.lang.String-org.json.JSONObject-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>sendToWebWatcher</h4>
 <pre>protected&nbsp;void&nbsp;sendToWebWatcher(java.lang.String&nbsp;topic,
@@ -452,6 +495,152 @@ implements <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.h
 <dd><code>org.json.JSONException</code></dd>
 <dd><code>java.io.IOException</code></dd>
 </dl>
+</li>
+</ul>
+<a name="isInfoEnabled--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isInfoEnabled</h4>
+<pre>public&nbsp;boolean&nbsp;isInfoEnabled()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isInfoEnabled--">isInfoEnabled</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="isDebugEnabled--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isDebugEnabled</h4>
+<pre>public&nbsp;boolean&nbsp;isDebugEnabled()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isDebugEnabled--">isDebugEnabled</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="isTraceEnabled--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isTraceEnabled</h4>
+<pre>public&nbsp;boolean&nbsp;isTraceEnabled()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isTraceEnabled--">isTraceEnabled</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="isMdwDebugEnabled--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isMdwDebugEnabled</h4>
+<pre>public&nbsp;boolean&nbsp;isMdwDebugEnabled()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#isMdwDebugEnabled--">isMdwDebugEnabled</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="exception-java.lang.String-java.lang.String-java.lang.Throwable-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>exception</h4>
+<pre>public&nbsp;void&nbsp;exception(java.lang.String&nbsp;tag,
+                      java.lang.String&nbsp;message,
+                      java.lang.Throwable&nbsp;e)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#exception-java.lang.String-java.lang.String-java.lang.Throwable-">exception</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="info-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>info</h4>
+<pre>public&nbsp;void&nbsp;info(java.lang.String&nbsp;tag,
+                 java.lang.String&nbsp;message)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#info-java.lang.String-java.lang.String-">info</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="debug-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>debug</h4>
+<pre>public&nbsp;void&nbsp;debug(java.lang.String&nbsp;tag,
+                  java.lang.String&nbsp;message)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#debug-java.lang.String-java.lang.String-">debug</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="warn-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>warn</h4>
+<pre>public&nbsp;void&nbsp;warn(java.lang.String&nbsp;tag,
+                 java.lang.String&nbsp;message)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#warn-java.lang.String-java.lang.String-">warn</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="severe-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>severe</h4>
+<pre>public&nbsp;void&nbsp;severe(java.lang.String&nbsp;tag,
+                   java.lang.String&nbsp;message)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#severe-java.lang.String-java.lang.String-">severe</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="trace-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>trace</h4>
+<pre>public&nbsp;void&nbsp;trace(java.lang.String&nbsp;tag,
+                  java.lang.String&nbsp;message)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html#trace-java.lang.String-java.lang.String-">trace</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getInjectors--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getInjectors</h4>
+<pre>protected&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/util/log/LogLineInjector.html" title="interface in com.centurylink.mdw.util.log">LogLineInjector</a>&gt;&nbsp;getInjectors()</pre>
 </li>
 </ul>
 </li>
@@ -522,6 +711,6 @@ implements <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.h
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

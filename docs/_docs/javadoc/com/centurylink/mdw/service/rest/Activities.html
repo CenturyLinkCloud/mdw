@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -175,19 +175,34 @@ implements <a href="../../../../../com/centurylink/mdw/model/JsonExportable.html
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/Activities.html#actionActivity-java.lang.Long-java.lang.String-java.lang.String-java.lang.String-">actionActivity</a></span>(java.lang.Long&nbsp;instanceId,
+              java.lang.String&nbsp;action,
+              java.lang.String&nbsp;result,
+              java.lang.String&nbsp;authUser)</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/Activities.html#get-java.lang.String-java.util.Map-">get</a></span>(java.lang.String&nbsp;path,
    java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>
 <div class="block">Retrieve activity instance(s).</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../com/centurylink/mdw/model/user/UserAction.Action.html" title="enum in com.centurylink.mdw.model.user">UserAction.Action</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/Activities.html#getAction-java.lang.String-java.lang.Object-java.util.Map-">getAction</a></span>(java.lang.String&nbsp;path,
          java.lang.Object&nbsp;content,
          java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/JsonListMap.html" title="class in com.centurylink.mdw.model">JsonListMap</a>&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityAggregate.html" title="class in com.centurylink.mdw.model.workflow">ActivityAggregate</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/Activities.html#getBreakdown-com.centurylink.mdw.common.service.Query-">getBreakdown</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>org.json.JSONObject</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/Activities.html#getDefinitions-com.centurylink.mdw.common.service.Query-">getDefinitions</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../../com/centurylink/mdw/model/user/UserAction.Entity.html" title="enum in com.centurylink.mdw.model.user">UserAction.Entity</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/Activities.html#getEntity-java.lang.String-java.lang.Object-java.util.Map-">getEntity</a></span>(java.lang.String&nbsp;path,
          java.lang.Object&nbsp;content,
@@ -195,7 +210,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/JsonExportable.html
 <div class="block">Should be overridden.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>protected java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/Activities.html#getEntityId-java.lang.String-java.lang.Object-java.util.Map-">getEntityId</a></span>(java.lang.String&nbsp;path,
            java.lang.Object&nbsp;content,
@@ -203,14 +218,18 @@ implements <a href="../../../../../com/centurylink/mdw/model/JsonExportable.html
 <div class="block">Override if entity has a meaningful ID.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/Activities.html#getRoles-java.lang.String-">getRoles</a></span>(java.lang.String&nbsp;path)</code>
 <div class="block">A user who belongs to any role in the returned list is allowed
  to perform this action/method.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i8" class="altColor">
+<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/JsonArray.html" title="class in com.centurylink.mdw.model">JsonArray</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/Activities.html#getTops-com.centurylink.mdw.common.service.Query-">getTops</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/Activities.html#post-java.lang.String-org.json.JSONObject-java.util.Map-">post</a></span>(java.lang.String&nbsp;path,
     org.json.JSONObject&nbsp;content,
@@ -218,7 +237,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/JsonExportable.html
 <div class="block">Take {action} on activity which has {activityInstanceId}.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/Activities.html#toJsonable-com.centurylink.mdw.common.service.Query-org.json.JSONObject-">toJsonable</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query,
           org.json.JSONObject&nbsp;json)</code>&nbsp;</td>
@@ -236,7 +255,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/JsonExportable.html
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.centurylink.mdw.services.rest.<a href="../../../../../com/centurylink/mdw/services/rest/RestService.html" title="class in com.centurylink.mdw.services.rest">RestService</a></h3>
-<code><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#auditLog-com.centurylink.mdw.model.user.UserAction-">auditLog</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#authorize-java.lang.String-org.json.JSONObject-java.util.Map-">authorize</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#authorizeExport-java.util.Map-">authorizeExport</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#generateRequestId--">generateRequestId</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getAuthUser-java.util.Map-">getAuthUser</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getEntityDescription-java.lang.String-java.lang.Object-java.util.Map-">getEntityDescription</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getParameters-java.util.Map-">getParameters</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getQuery-java.lang.String-java.util.Map-">getQuery</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRequestUrl-java.util.Map-">getRequestUrl</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRequiredProperty-java.lang.String-">getRequiredProperty</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRoles-java.lang.String-java.lang.String-">getRoles</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSegment-java.lang.String-int-">getSegment</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSegments-java.lang.String-">getSegments</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSource--">getSource</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSub-java.lang.String-">getSub</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getUserAction-com.centurylink.mdw.model.user.User-java.lang.String-java.lang.Object-java.util.Map-">getUserAction</a></code></li>
+<code><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#auditLog-com.centurylink.mdw.model.user.UserAction-">auditLog</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#authorize-java.lang.String-org.json.JSONObject-java.util.Map-">authorize</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#authorizeExport-java.util.Map-">authorizeExport</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#generateRequestId--">generateRequestId</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getAuthUser-java.util.Map-">getAuthUser</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getEntityDescription-java.lang.String-java.lang.Object-java.util.Map-">getEntityDescription</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getParameters-java.util.Map-">getParameters</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getQuery-java.lang.String-java.util.Map-">getQuery</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRequestUrl-java.util.Map-">getRequestUrl</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRequiredProperty-java.lang.String-">getRequiredProperty</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRoles-java.lang.String-java.lang.String-">getRoles</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSegment-java.lang.String-int-">getSegment</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSegments-java.lang.String-">getSegments</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSource--">getSource</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSub-java.lang.String-">getSub</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getUserAction-com.centurylink.mdw.model.user.User-java.lang.String-java.lang.Object-java.util.Map-">getUserAction</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#logtag-java.util.Map-">logtag</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#masterRequestId-java.util.Map-">masterRequestId</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -392,7 +411,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/JsonExportable.html
 <a name="getAction-java.lang.String-java.lang.Object-java.util.Map-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getAction</h4>
 <pre>protected&nbsp;<a href="../../../../../com/centurylink/mdw/model/user/UserAction.Action.html" title="enum in com.centurylink.mdw.model.user">UserAction.Action</a>&nbsp;getAction(java.lang.String&nbsp;path,
@@ -401,6 +420,65 @@ implements <a href="../../../../../com/centurylink/mdw/model/JsonExportable.html
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getAction-java.lang.String-java.lang.Object-java.util.Map-">getAction</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html" title="class in com.centurylink.mdw.services.rest">RestService</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getDefinitions-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDefinitions</h4>
+<pre>public&nbsp;org.json.JSONObject&nbsp;getDefinitions(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                                   throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getTops-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTops</h4>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/JsonArray.html" title="class in com.centurylink.mdw.model">JsonArray</a>&nbsp;getTops(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                  throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getBreakdown-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getBreakdown</h4>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/JsonListMap.html" title="class in com.centurylink.mdw.model">JsonListMap</a>&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityAggregate.html" title="class in com.centurylink.mdw.model.workflow">ActivityAggregate</a>&gt;&nbsp;getBreakdown(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                                            throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="actionActivity-java.lang.Long-java.lang.String-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>actionActivity</h4>
+<pre>public&nbsp;void&nbsp;actionActivity(java.lang.Long&nbsp;instanceId,
+                           java.lang.String&nbsp;action,
+                           java.lang.String&nbsp;result,
+                           java.lang.String&nbsp;authUser)
+                    throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -472,6 +550,6 @@ implements <a href="../../../../../com/centurylink/mdw/model/JsonExportable.html
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

@@ -101,6 +101,10 @@ var activeTableTab = "activeTableTab";
 <dt>All Superinterfaces:</dt>
 <dd><a href="../../../../com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor">Monitor</a>, <a href="../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a></dd>
 </dl>
+<dl>
+<dt>All Known Implementing Classes:</dt>
+<dd><a href="../../../../com/centurylink/mdw/slack/MessageMonitor.html" title="class in com.centurylink.mdw.slack">MessageMonitor</a>, <a href="../../../../com/centurylink/mdw/routing/RoutingServiceMonitor.html" title="class in com.centurylink.mdw.routing">RoutingServiceMonitor</a>, <a href="../../../../com/centurylink/mdw/zipkin/TraceServiceMonitor.html" title="class in com.centurylink.mdw.zipkin">TraceServiceMonitor</a></dd>
+</dl>
 <hr>
 <br>
 <pre>public interface <span class="typeNameLabel">ServiceMonitor</span>
@@ -108,7 +112,9 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 <div class="block">ServiceMonitors can be registered through @Monitor annotations to intercept
  service calls handled by the MDW framework.  Must be threadsafe.
  Normally all registered monitors are called in sequence.  However the first monitor whose onHandle()
- returns non-null breaks the chain, and this non-null response is passed back to the consumer.</div>
+ returns non-null breaks the chain, and this non-null response is passed back to the consumer.
+
+ Same instance is guaranteed for all lifecycle methods.</div>
 </li>
 </ul>
 </div>
@@ -159,7 +165,7 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor">Monitor</a></h3>
-<code><a href="../../../../com/centurylink/mdw/monitor/Monitor.html#isEnabled-com.centurylink.mdw.model.workflow.RuntimeContext-">isEnabled</a>, <a href="../../../../com/centurylink/mdw/monitor/Monitor.html#isOffline--">isOffline</a></code></li>
+<code><a href="../../../../com/centurylink/mdw/monitor/Monitor.html#getCategory-com.centurylink.mdw.model.workflow.RuntimeContext-">getCategory</a>, <a href="../../../../com/centurylink/mdw/monitor/Monitor.html#isEnabled-com.centurylink.mdw.model.workflow.RuntimeContext-">isEnabled</a>, <a href="../../../../com/centurylink/mdw/monitor/Monitor.html#isOffline--">isOffline</a></code></li>
 </ul>
 </li>
 </ul>
@@ -327,6 +333,6 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":18,"i1":18};
+var methods = {"i0":18,"i1":18,"i2":18};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -101,6 +101,10 @@ var activeTableTab = "activeTableTab";
 <dt>All Known Subinterfaces:</dt>
 <dd><a href="../../../../com/centurylink/mdw/monitor/ActivityMonitor.html" title="interface in com.centurylink.mdw.monitor">ActivityMonitor</a>, <a href="../../../../com/centurylink/mdw/monitor/AdapterMonitor.html" title="interface in com.centurylink.mdw.monitor">AdapterMonitor</a>, <a href="../../../../com/centurylink/mdw/monitor/ProcessMonitor.html" title="interface in com.centurylink.mdw.monitor">ProcessMonitor</a>, <a href="../../../../com/centurylink/mdw/monitor/ServiceMonitor.html" title="interface in com.centurylink.mdw.monitor">ServiceMonitor</a>, <a href="../../../../com/centurylink/mdw/monitor/TaskMonitor.html" title="interface in com.centurylink.mdw.monitor">TaskMonitor</a></dd>
 </dl>
+<dl>
+<dt>All Known Implementing Classes:</dt>
+<dd><a href="../../../../com/centurylink/mdw/base/ActivityTimingMonitor.html" title="class in com.centurylink.mdw.base">ActivityTimingMonitor</a>, <a href="../../../../com/centurylink/mdw/testing/AdapterStubbingMonitor.html" title="class in com.centurylink.mdw.testing">AdapterStubbingMonitor</a>, <a href="../../../../com/centurylink/mdw/slack/MessageMonitor.html" title="class in com.centurylink.mdw.slack">MessageMonitor</a>, <a href="../../../../com/centurylink/mdw/microservice/MicroserviceStatusProcessMonitor.html" title="class in com.centurylink.mdw.microservice">MicroserviceStatusProcessMonitor</a>, <a href="../../../../com/centurylink/mdw/base/ProcessDueDateMonitor.html" title="class in com.centurylink.mdw.base">ProcessDueDateMonitor</a>, <a href="../../../../com/centurylink/mdw/routing/RoutingServiceMonitor.html" title="class in com.centurylink.mdw.routing">RoutingServiceMonitor</a>, <a href="../../../../com/centurylink/mdw/testing/TestCaseActivityMonitor.html" title="class in com.centurylink.mdw.testing">TestCaseActivityMonitor</a>, <a href="../../../../com/centurylink/mdw/zipkin/TraceActivityMonitor.html" title="class in com.centurylink.mdw.zipkin">TraceActivityMonitor</a>, <a href="../../../../com/centurylink/mdw/zipkin/TraceAdapterMonitor.html" title="class in com.centurylink.mdw.zipkin">TraceAdapterMonitor</a>, <a href="../../../../com/centurylink/mdw/zipkin/TraceProcessMonitor.html" title="class in com.centurylink.mdw.zipkin">TraceProcessMonitor</a>, <a href="../../../../com/centurylink/mdw/zipkin/TraceServiceMonitor.html" title="class in com.centurylink.mdw.zipkin">TraceServiceMonitor</a></dd>
+</dl>
 <hr>
 <br>
 <pre>public interface <span class="typeNameLabel">Monitor</span></pre>
@@ -123,10 +127,16 @@ var activeTableTab = "activeTableTab";
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>default java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/Monitor.html#getCategory-com.centurylink.mdw.model.workflow.RuntimeContext-">getCategory</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a>&nbsp;context)</code>
+<div class="block">Default value matches annotation default (to enable for all categories).</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>default boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/Monitor.html#isEnabled-com.centurylink.mdw.model.workflow.RuntimeContext-">isEnabled</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a>&nbsp;context)</code>&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>default boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/Monitor.html#isOffline--">isOffline</a></span>()</code>&nbsp;</td>
 </tr>
@@ -157,10 +167,20 @@ var activeTableTab = "activeTableTab";
 <a name="isEnabled-com.centurylink.mdw.model.workflow.RuntimeContext-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>isEnabled</h4>
 <pre>default&nbsp;boolean&nbsp;isEnabled(<a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a>&nbsp;context)</pre>
+</li>
+</ul>
+<a name="getCategory-com.centurylink.mdw.model.workflow.RuntimeContext-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getCategory</h4>
+<pre>default&nbsp;java.lang.String&nbsp;getCategory(<a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a>&nbsp;context)</pre>
+<div class="block">Default value matches annotation default (to enable for all categories).</div>
 </li>
 </ul>
 </li>
@@ -231,6 +251,6 @@ var activeTableTab = "activeTableTab";
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

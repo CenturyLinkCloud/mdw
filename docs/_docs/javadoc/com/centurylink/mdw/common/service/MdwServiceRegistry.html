@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":9,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
+var methods = {"i0":10,"i1":9,"i2":10,"i3":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -179,24 +179,12 @@ extends <a href="../../../../../com/centurylink/mdw/common/service/ServiceRegist
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/common/service/MdwServiceRegistry.html#getInstance--">getInstance</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/common/service/JsonService.html" title="interface in com.centurylink.mdw.common.service">JsonService</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/common/service/MdwServiceRegistry.html#getJsonService-java.lang.String-">getJsonService</a></span>(java.lang.String&nbsp;className)</code>&nbsp;</td>
-</tr>
-<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/common/service/RequestRoutingStrategy.html" title="interface in com.centurylink.mdw.common.service">RequestRoutingStrategy</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/common/service/MdwServiceRegistry.html#getRequestRoutingStrategies--">getRequestRoutingStrategies</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/common/service/RequestRoutingStrategy.html" title="interface in com.centurylink.mdw.common.service">RequestRoutingStrategy</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/common/service/MdwServiceRegistry.html#getRequestRoutingStrategy-java.lang.String-">getRequestRoutingStrategy</a></span>(java.lang.String&nbsp;className)</code>&nbsp;</td>
-</tr>
-<tr id="i5" class="rowColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/monitor/ScheduledJob.html" title="interface in com.centurylink.mdw.model.monitor">ScheduledJob</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/common/service/MdwServiceRegistry.html#getScheduledJob-java.lang.String-">getScheduledJob</a></span>(java.lang.String&nbsp;className)</code>&nbsp;</td>
-</tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/common/service/XmlService.html" title="interface in com.centurylink.mdw.common.service">XmlService</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/common/service/MdwServiceRegistry.html#getXmlService-java.lang.String-">getXmlService</a></span>(java.lang.String&nbsp;className)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -270,24 +258,6 @@ extends <a href="../../../../../com/centurylink/mdw/common/service/ServiceRegist
 <pre>public static&nbsp;<a href="../../../../../com/centurylink/mdw/common/service/MdwServiceRegistry.html" title="class in com.centurylink.mdw.common.service">MdwServiceRegistry</a>&nbsp;getInstance()</pre>
 </li>
 </ul>
-<a name="getJsonService-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getJsonService</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/common/service/JsonService.html" title="interface in com.centurylink.mdw.common.service">JsonService</a>&nbsp;getJsonService(java.lang.String&nbsp;className)</pre>
-</li>
-</ul>
-<a name="getXmlService-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getXmlService</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/common/service/XmlService.html" title="interface in com.centurylink.mdw.common.service">XmlService</a>&nbsp;getXmlService(java.lang.String&nbsp;className)</pre>
-</li>
-</ul>
 <a name="getScheduledJob-java.lang.String-">
 <!--   -->
 </a>
@@ -295,15 +265,6 @@ extends <a href="../../../../../com/centurylink/mdw/common/service/ServiceRegist
 <li class="blockList">
 <h4>getScheduledJob</h4>
 <pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/monitor/ScheduledJob.html" title="interface in com.centurylink.mdw.model.monitor">ScheduledJob</a>&nbsp;getScheduledJob(java.lang.String&nbsp;className)</pre>
-</li>
-</ul>
-<a name="getRequestRoutingStrategy-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getRequestRoutingStrategy</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/common/service/RequestRoutingStrategy.html" title="interface in com.centurylink.mdw.common.service">RequestRoutingStrategy</a>&nbsp;getRequestRoutingStrategy(java.lang.String&nbsp;className)</pre>
 </li>
 </ul>
 <a name="getRequestRoutingStrategies--">
@@ -392,6 +353,6 @@ extends <a href="../../../../../com/centurylink/mdw/common/service/ServiceRegist
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

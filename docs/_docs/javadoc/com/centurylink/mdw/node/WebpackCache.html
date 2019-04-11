@@ -111,13 +111,11 @@ var activeTableTab = "activeTableTab";
 </dl>
 <hr>
 <br>
-<pre><a href="../../../../com/centurylink/mdw/annotations/RegisteredService.html" title="annotation in com.centurylink.mdw.annotations">@RegisteredService</a>(<a href="../../../../com/centurylink/mdw/annotations/RegisteredService.html#value--">value</a>=<a href="../../../../com/centurylink/mdw/cache/CacheService.html" title="interface in com.centurylink.mdw.cache">CacheService.class</a>,
-                   <a href="../../../../com/centurylink/mdw/annotations/RegisteredService.html#parameters--">parameters</a>=<a href="../../../../com/centurylink/mdw/annotations/Parameter.html" title="annotation in com.centurylink.mdw.annotations">@Parameter</a>(<a href="../../../../com/centurylink/mdw/annotations/Parameter.html#name--">name</a>="PreloadedJsx",<a href="../../../../com/centurylink/mdw/annotations/Parameter.html#value--">value</a>="com.centurylink.mdw.task/Main.jsx,com.centurylink.mdw.react/Run.jsx"))
+<pre><a href="../../../../com/centurylink/mdw/annotations/RegisteredService.html" title="annotation in com.centurylink.mdw.annotations">@RegisteredService</a>(<a href="../../../../com/centurylink/mdw/annotations/RegisteredService.html#value--">value</a>=<a href="../../../../com/centurylink/mdw/cache/CacheService.html" title="interface in com.centurylink.mdw.cache">CacheService.class</a>)
 public class <span class="typeNameLabel">WebpackCache</span>
 extends java.lang.Object
 implements <a href="../../../../com/centurylink/mdw/cache/PreloadableCache.html" title="interface in com.centurylink.mdw.cache">PreloadableCache</a></pre>
-<div class="block">Customize these annotations for preload options by extending WebpackCache in a custom
- package and set property mdw.webpack.cache.class.name (see JsxServlet.java).</div>
+<div class="block">In non-dev environments, precompiles all Index.jsx assets.</div>
 </li>
 </ul>
 </div>
@@ -254,13 +252,10 @@ implements <a href="../../../../com/centurylink/mdw/cache/PreloadableCache.html"
 <ul class="blockList">
 <li class="blockList">
 <h4>refreshCache</h4>
-<pre>public&nbsp;void&nbsp;refreshCache()
-                  throws java.lang.Exception</pre>
+<pre>public&nbsp;void&nbsp;refreshCache()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/cache/CacheService.html#refreshCache--">refreshCache</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/centurylink/mdw/cache/CacheService.html" title="interface in com.centurylink.mdw.cache">CacheService</a></code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.Exception</code></dd>
 </dl>
 </li>
 </ul>
@@ -379,6 +374,6 @@ implements <a href="../../../../com/centurylink/mdw/cache/PreloadableCache.html"
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>
