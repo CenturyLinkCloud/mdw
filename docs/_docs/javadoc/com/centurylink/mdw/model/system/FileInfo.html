@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":9,"i11":10,"i12":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":9,"i12":10,"i13":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -107,13 +107,13 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd>io.limberest.json.Jsonable</dd>
+<dd>io.limberest.json.Jsonable, java.lang.Comparable&lt;<a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html" title="class in com.centurylink.mdw.model.system">FileInfo</a>&gt;</dd>
 </dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">FileInfo</span>
 extends java.lang.Object
-implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a></pre>
+implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a>, java.lang.Comparable&lt;<a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html" title="class in com.centurylink.mdw.model.system">FileInfo</a>&gt;</pre>
 </li>
 </ul>
 </div>
@@ -154,56 +154,60 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html#compareTo-com.centurylink.mdw.model.system.FileInfo-">compareTo</a></span>(<a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html" title="class in com.centurylink.mdw.model.system">FileInfo</a>&nbsp;other)</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html#getGroup--">getGroup</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html#getJson--">getJson</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html#getLineCount--">getLineCount</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.time.Instant</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html#getModified--">getModified</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html#getName--">getName</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html#getOwner--">getOwner</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html#getPath--">getPath</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html#getPermissions--">getPermissions</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html#getSize--">getSize</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html#isBinary--">isBinary</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html#isBinary-java.io.File-">isBinary</a></span>(java.io.File&nbsp;f)</code>
 <div class="block">TODO: validate</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html#isDetails--">isDetails</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html#setLineCount-int-">setLineCount</a></span>(int&nbsp;count)</code>&nbsp;</td>
 </tr>
@@ -396,7 +400,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <a name="isBinary-java.io.File-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>isBinary</h4>
 <pre>public static&nbsp;boolean&nbsp;isBinary(java.io.File&nbsp;f)
@@ -405,6 +409,19 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="compareTo-com.centurylink.mdw.model.system.FileInfo-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>compareTo</h4>
+<pre>public&nbsp;int&nbsp;compareTo(<a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html" title="class in com.centurylink.mdw.model.system">FileInfo</a>&nbsp;other)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code>compareTo</code>&nbsp;in interface&nbsp;<code>java.lang.Comparable&lt;<a href="../../../../../com/centurylink/mdw/model/system/FileInfo.html" title="class in com.centurylink.mdw.model.system">FileInfo</a>&gt;</code></dd>
 </dl>
 </li>
 </ul>
@@ -476,6 +493,6 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

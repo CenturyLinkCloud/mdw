@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -47,7 +47,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../com/centurylink/mdw/microservice/ServiceEventPublish.html" title="class in com.centurylink.mdw.microservice"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../com/centurylink/mdw/microservice/ResponseCollector.html" title="class in com.centurylink.mdw.microservice"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../com/centurylink/mdw/microservice/ServiceSummaryApi.html" title="class in com.centurylink.mdw.microservice"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -139,6 +139,10 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
 <tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html#ServiceSummary-java.lang.String-">ServiceSummary</a></span>(java.lang.String&nbsp;masterRequestId)</code>&nbsp;</td>
 </tr>
+<tr class="altColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html#ServiceSummary-java.lang.String-java.lang.Long-">ServiceSummary</a></span>(java.lang.String&nbsp;masterRequestId,
+              java.lang.Long&nbsp;instanceId)</code>&nbsp;</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -168,45 +172,78 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
 </td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html" title="class in com.centurylink.mdw.microservice">ServiceSummary</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html#addServiceSummary-java.lang.String-java.lang.Long-">addServiceSummary</a></span>(java.lang.String&nbsp;masterRequestId,
+                 java.lang.Long&nbsp;instanceId)</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html#addUpdate-java.lang.String-java.lang.Long-com.centurylink.mdw.microservice.Update-">addUpdate</a></span>(java.lang.String&nbsp;microserviceName,
          java.lang.Long&nbsp;instanceId,
          <a href="../../../../com/centurylink/mdw/microservice/Update.html" title="class in com.centurylink.mdw.microservice">Update</a>&nbsp;update)</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
+<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html" title="class in com.centurylink.mdw.microservice">ServiceSummary</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html#findCurrent-java.lang.Long-">findCurrent</a></span>(java.lang.Long&nbsp;instanceId)</code>
+<div class="block">Find the ServiceSummary that was created by activity with activityInstanceId matching instanceId</div>
+</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html" title="class in com.centurylink.mdw.microservice">ServiceSummary</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html#findParent-java.lang.Long-">findParent</a></span>(java.lang.Long&nbsp;procInstId)</code>
+<div class="block">Find the ServiceSummary that contains a microservice with ID matching procInstId</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>org.json.JSONObject</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html#getAttributes--">getAttributes</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html" title="class in com.centurylink.mdw.microservice">ServiceSummary</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html#getChildServiceSummaryList--">getChildServiceSummaryList</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>java.lang.Long</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html#getInstanceId--">getInstanceId</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/microservice/Invocation.html" title="class in com.centurylink.mdw.microservice">Invocation</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html#getInvocations-java.lang.String-java.lang.Long-">getInvocations</a></span>(java.lang.String&nbsp;microserviceName,
               java.lang.Long&nbsp;instanceId)</code>
 <div class="block">Adds instance and/or empty invocation list for this instance if not found.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html#getJson--">getJson</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html#getMasterRequestId--">getMasterRequestId</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/microservice/MicroserviceInstance.html" title="class in com.centurylink.mdw.microservice">MicroserviceInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html#getMicroservice-java.lang.String-java.lang.Long-">getMicroservice</a></span>(java.lang.String&nbsp;name,
                java.lang.Long&nbsp;instanceId)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,<a href="../../../../com/centurylink/mdw/microservice/MicroserviceList.html" title="class in com.centurylink.mdw.microservice">MicroserviceList</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html#getMicroservices--">getMicroservices</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/microservice/MicroserviceList.html" title="class in com.centurylink.mdw.microservice">MicroserviceList</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html#getMicroservices-java.lang.String-">getMicroservices</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/microservice/Update.html" title="class in com.centurylink.mdw.microservice">Update</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html#getUpdates-java.lang.String-java.lang.Long-">getUpdates</a></span>(java.lang.String&nbsp;microserviceName,
           java.lang.Long&nbsp;instanceId)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i16" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html#setAttributes-org.json.JSONObject-">setAttributes</a></span>(org.json.JSONObject&nbsp;attr)</code>&nbsp;</td>
+</tr>
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html#setMicroservices-java.util.Map-">setMicroservices</a></span>(java.util.Map&lt;java.lang.String,<a href="../../../../com/centurylink/mdw/microservice/MicroserviceList.html" title="class in com.centurylink.mdw.microservice">MicroserviceList</a>&gt;&nbsp;microservices)</code>&nbsp;</td>
 </tr>
@@ -255,6 +292,16 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
 <pre>public&nbsp;ServiceSummary(java.lang.String&nbsp;masterRequestId)</pre>
 </li>
 </ul>
+<a name="ServiceSummary-java.lang.String-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ServiceSummary</h4>
+<pre>public&nbsp;ServiceSummary(java.lang.String&nbsp;masterRequestId,
+                      java.lang.Long&nbsp;instanceId)</pre>
+</li>
+</ul>
 <a name="ServiceSummary-org.json.JSONObject-">
 <!--   -->
 </a>
@@ -279,6 +326,33 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
 <li class="blockList">
 <h4>getMasterRequestId</h4>
 <pre>public&nbsp;java.lang.String&nbsp;getMasterRequestId()</pre>
+</li>
+</ul>
+<a name="getInstanceId--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getInstanceId</h4>
+<pre>public&nbsp;java.lang.Long&nbsp;getInstanceId()</pre>
+</li>
+</ul>
+<a name="getAttributes--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAttributes</h4>
+<pre>public&nbsp;org.json.JSONObject&nbsp;getAttributes()</pre>
+</li>
+</ul>
+<a name="setAttributes-org.json.JSONObject-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setAttributes</h4>
+<pre>public&nbsp;void&nbsp;setAttributes(org.json.JSONObject&nbsp;attr)</pre>
 </li>
 </ul>
 <a name="getMicroservices--">
@@ -372,6 +446,45 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
                       <a href="../../../../com/centurylink/mdw/microservice/Update.html" title="class in com.centurylink.mdw.microservice">Update</a>&nbsp;update)</pre>
 </li>
 </ul>
+<a name="getChildServiceSummaryList--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getChildServiceSummaryList</h4>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html" title="class in com.centurylink.mdw.microservice">ServiceSummary</a>&gt;&nbsp;getChildServiceSummaryList()</pre>
+</li>
+</ul>
+<a name="addServiceSummary-java.lang.String-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>addServiceSummary</h4>
+<pre>public&nbsp;<a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html" title="class in com.centurylink.mdw.microservice">ServiceSummary</a>&nbsp;addServiceSummary(java.lang.String&nbsp;masterRequestId,
+                                        java.lang.Long&nbsp;instanceId)</pre>
+</li>
+</ul>
+<a name="findParent-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findParent</h4>
+<pre>public&nbsp;<a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html" title="class in com.centurylink.mdw.microservice">ServiceSummary</a>&nbsp;findParent(java.lang.Long&nbsp;procInstId)</pre>
+<div class="block">Find the ServiceSummary that contains a microservice with ID matching procInstId</div>
+</li>
+</ul>
+<a name="findCurrent-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findCurrent</h4>
+<pre>public&nbsp;<a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html" title="class in com.centurylink.mdw.microservice">ServiceSummary</a>&nbsp;findCurrent(java.lang.Long&nbsp;instanceId)</pre>
+<div class="block">Find the ServiceSummary that was created by activity with activityInstanceId matching instanceId</div>
+</li>
+</ul>
 <a name="getJson--">
 <!--   -->
 </a>
@@ -408,7 +521,7 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../com/centurylink/mdw/microservice/ServiceEventPublish.html" title="class in com.centurylink.mdw.microservice"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../com/centurylink/mdw/microservice/ResponseCollector.html" title="class in com.centurylink.mdw.microservice"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../com/centurylink/mdw/microservice/ServiceSummaryApi.html" title="class in com.centurylink.mdw.microservice"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -449,6 +562,6 @@ implements <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

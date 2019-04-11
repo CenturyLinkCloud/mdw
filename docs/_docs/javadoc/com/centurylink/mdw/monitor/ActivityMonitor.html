@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":18,"i1":18,"i2":18,"i3":18};
+var methods = {"i0":18,"i1":18,"i2":18,"i3":18,"i4":18};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -101,6 +101,10 @@ var activeTableTab = "activeTableTab";
 <dt>All Superinterfaces:</dt>
 <dd><a href="../../../../com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor">Monitor</a>, <a href="../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a></dd>
 </dl>
+<dl>
+<dt>All Known Implementing Classes:</dt>
+<dd><a href="../../../../com/centurylink/mdw/base/ActivityTimingMonitor.html" title="class in com.centurylink.mdw.base">ActivityTimingMonitor</a>, <a href="../../../../com/centurylink/mdw/testing/TestCaseActivityMonitor.html" title="class in com.centurylink.mdw.testing">TestCaseActivityMonitor</a>, <a href="../../../../com/centurylink/mdw/zipkin/TraceActivityMonitor.html" title="class in com.centurylink.mdw.zipkin">TraceActivityMonitor</a></dd>
+</dl>
 <hr>
 <br>
 <pre>public interface <span class="typeNameLabel">ActivityMonitor</span>
@@ -126,24 +130,30 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>default java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/ActivityMonitor.html#getCategory-com.centurylink.mdw.model.workflow.RuntimeContext-">getCategory</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a>&nbsp;runtimeContext)</code>
+<div class="block">Default value matches annotation default (to enable for all categories).</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>default void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/ActivityMonitor.html#onError-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">onError</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;context)</code>
 <div class="block">Called when an activity instance fails due to error.</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>default java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/ActivityMonitor.html#onExecute-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">onExecute</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;context)</code>
 <div class="block">Non-null means bypass execution with the returned result code.</div>
 </td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>default java.util.Map&lt;java.lang.String,java.lang.Object&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/ActivityMonitor.html#onFinish-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">onFinish</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;context)</code>
 <div class="block">Called when an activity instance is successfully completed.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>default java.util.Map&lt;java.lang.String,java.lang.Object&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/ActivityMonitor.html#onStart-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">onStart</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;context)</code>
 <div class="block">Called when an activity instance is to be started.</div>
@@ -218,12 +228,26 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 <a name="onError-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>onError</h4>
 <pre>default&nbsp;void&nbsp;onError(<a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;context)</pre>
-<div class="block">Called when an activity instance fails due to error.
- TODO: make exception available</div>
+<div class="block">Called when an activity instance fails due to error.</div>
+</li>
+</ul>
+<a name="getCategory-com.centurylink.mdw.model.workflow.RuntimeContext-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getCategory</h4>
+<pre>default&nbsp;java.lang.String&nbsp;getCategory(<a href="../../../../com/centurylink/mdw/model/workflow/RuntimeContext.html" title="interface in com.centurylink.mdw.model.workflow">RuntimeContext</a>&nbsp;runtimeContext)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../com/centurylink/mdw/monitor/Monitor.html#getCategory-com.centurylink.mdw.model.workflow.RuntimeContext-">Monitor</a></code></span></div>
+<div class="block">Default value matches annotation default (to enable for all categories).</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/monitor/Monitor.html#getCategory-com.centurylink.mdw.model.workflow.RuntimeContext-">getCategory</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor">Monitor</a></code></dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -294,6 +318,6 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

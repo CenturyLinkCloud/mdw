@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":9,"i12":10,"i13":10,"i14":10,"i15":10};
+var methods = {"i0":9,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -168,14 +168,14 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/soccom/SoccomClient.html#SoccomClient-java.lang.String-java.lang.String-">SoccomClient</a></span>(java.lang.String&nbsp;host,
-            java.lang.String&nbsp;port)</code>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/soccom/SoccomClient.html#SoccomClient-java.lang.String-int-">SoccomClient</a></span>(java.lang.String&nbsp;host,
+            int&nbsp;port)</code>
 <div class="block">Alternative constructor.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/soccom/SoccomClient.html#SoccomClient-java.lang.String-java.lang.String-java.io.PrintStream-">SoccomClient</a></span>(java.lang.String&nbsp;host,
-            java.lang.String&nbsp;port,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/soccom/SoccomClient.html#SoccomClient-java.lang.String-int-java.io.PrintStream-">SoccomClient</a></span>(java.lang.String&nbsp;host,
+            int&nbsp;port,
             java.io.PrintStream&nbsp;log)</code>
 <div class="block">Basic constructor.</div>
 </td>
@@ -273,30 +273,24 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i11" class="rowColor">
-<td class="colFirst"><code>static void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/soccom/SoccomClient.html#main-java.lang.String:A-">main</a></span>(java.lang.String[]&nbsp;argv)</code>
-<div class="block">This method allows to send a message from the command line.</div>
-</td>
-</tr>
-<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/soccom/SoccomClient.html#putreq_vfooter-java.lang.String-">putreq_vfooter</a></span>(java.lang.String&nbsp;endmark)</code>
 <div class="block">Mark the end of a variable-size message.</div>
 </td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/soccom/SoccomClient.html#putreq_vheader-java.lang.String-">putreq_vheader</a></span>(java.lang.String&nbsp;endmark)</code>
 <div class="block">Send the header part of a variable-size request message.</div>
 </td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/soccom/SoccomClient.html#putreq_vline-java.lang.String-">putreq_vline</a></span>(java.lang.String&nbsp;msg)</code>
 <div class="block">Send a line as a part of a variable-size request message.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/soccom/SoccomClient.html#putreq-java.lang.String-">putreq</a></span>(java.lang.String&nbsp;msg)</code>
 <div class="block">Send a request message.</div>
@@ -324,14 +318,14 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="SoccomClient-java.lang.String-java.lang.String-java.io.PrintStream-">
+<a name="SoccomClient-java.lang.String-int-java.io.PrintStream-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>SoccomClient</h4>
 <pre>public&nbsp;SoccomClient(java.lang.String&nbsp;host,
-                    java.lang.String&nbsp;port,
+                    int&nbsp;port,
                     java.io.PrintStream&nbsp;log)
              throws <a href="../../../../com/centurylink/mdw/soccom/SoccomException.html" title="class in com.centurylink.mdw.soccom">SoccomException</a></pre>
 <div class="block">Basic constructor.</div>
@@ -351,14 +345,14 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
-<a name="SoccomClient-java.lang.String-java.lang.String-">
+<a name="SoccomClient-java.lang.String-int-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>SoccomClient</h4>
 <pre>public&nbsp;SoccomClient(java.lang.String&nbsp;host,
-                    java.lang.String&nbsp;port)
+                    int&nbsp;port)
              throws <a href="../../../../com/centurylink/mdw/soccom/SoccomException.html" title="class in com.centurylink.mdw.soccom">SoccomException</a></pre>
 <div class="block">Alternative constructor. It has no parameter for log PrintStream
  and it logs all messages to the terminal screen.</div>
@@ -658,7 +652,7 @@ extends java.lang.Object</pre>
 <a name="finalize--">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>finalize</h4>
 <pre>protected&nbsp;void&nbsp;finalize()</pre>
@@ -667,25 +661,6 @@ extends java.lang.Object</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code>finalize</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
-</dl>
-</li>
-</ul>
-<a name="main-java.lang.String:A-">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>main</h4>
-<pre>public static&nbsp;void&nbsp;main(java.lang.String[]&nbsp;argv)
-                 throws java.lang.Exception</pre>
-<div class="block">This method allows to send a message from the command line.
- As an example:
- <pre>
-    java com.qwest.magic.soccom.SoccomClient magicdevl 4001 "test msg"
- </pre></div>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.Exception</code></dd>
 </dl>
 </li>
 </ul>
@@ -757,6 +732,6 @@ extends java.lang.Object</pre>
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

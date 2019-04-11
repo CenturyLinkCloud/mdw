@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
+var methods = {"i0":18,"i1":18,"i2":6,"i3":18,"i4":18};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/centurylink/mdw/cli/Main.html" title="class in com.centurylink.mdw.cli"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../com/centurylink/mdw/cli/ProcessNamer.html" title="class in com.centurylink.mdw.cli"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../com/centurylink/mdw/cli/Paths.html" title="class in com.centurylink.mdw.cli"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/centurylink/mdw/cli/Operation.html" target="_top">Frames</a></li>
@@ -99,7 +99,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Known Implementing Classes:</dt>
-<dd><a href="../../../../com/centurylink/mdw/cli/BpmnImport.html" title="class in com.centurylink.mdw.cli">BpmnImport</a>, <a href="../../../../com/centurylink/mdw/cli/Checkpoint.html" title="class in com.centurylink.mdw.cli">Checkpoint</a>, <a href="../../../../com/centurylink/mdw/cli/Codegen.html" title="class in com.centurylink.mdw.cli">Codegen</a>, <a href="../../../../com/centurylink/mdw/cli/Convert.html" title="class in com.centurylink.mdw.cli">Convert</a>, <a href="../../../../com/centurylink/mdw/cli/Copy.html" title="class in com.centurylink.mdw.cli">Copy</a>, <a href="../../../../com/centurylink/mdw/cli/Crawl.html" title="class in com.centurylink.mdw.cli">Crawl</a>, <a href="../../../../com/centurylink/mdw/cli/Decrypt.html" title="class in com.centurylink.mdw.cli">Decrypt</a>, <a href="../../../../com/centurylink/mdw/cli/Delete.html" title="class in com.centurylink.mdw.cli">Delete</a>, <a href="../../../../com/centurylink/mdw/cli/Dependency.html" title="class in com.centurylink.mdw.cli">Dependency</a>, <a href="../../../../com/centurylink/mdw/cli/Discover.html" title="class in com.centurylink.mdw.cli">Discover</a>, <a href="../../../../com/centurylink/mdw/cli/Download.html" title="class in com.centurylink.mdw.cli">Download</a>, <a href="../../../../com/centurylink/mdw/cli/Encrypt.html" title="class in com.centurylink.mdw.cli">Encrypt</a>, <a href="../../../../com/centurylink/mdw/cli/Export.html" title="class in com.centurylink.mdw.cli">Export</a>, <a href="../../../../com/centurylink/mdw/cli/Fetch.html" title="class in com.centurylink.mdw.cli">Fetch</a>, <a href="../../../../com/centurylink/mdw/cli/Git.html" title="class in com.centurylink.mdw.cli">Git</a>, <a href="../../../../com/centurylink/mdw/cli/Import.html" title="class in com.centurylink.mdw.cli">Import</a>, <a href="../../../../com/centurylink/mdw/cli/Init.html" title="class in com.centurylink.mdw.cli">Init</a>, <a href="../../../../com/centurylink/mdw/cli/Install.html" title="class in com.centurylink.mdw.cli">Install</a>, <a href="../../../../com/centurylink/mdw/cli/Run.html" title="class in com.centurylink.mdw.cli">Run</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in com.centurylink.mdw.cli">Setup</a>, <a href="../../../../com/centurylink/mdw/cli/Status.html" title="class in com.centurylink.mdw.cli">Status</a>, <a href="../../../../com/centurylink/mdw/cli/Stop.html" title="class in com.centurylink.mdw.cli">Stop</a>, <a href="../../../../com/centurylink/mdw/cli/Test.html" title="class in com.centurylink.mdw.cli">Test</a>, <a href="../../../../com/centurylink/mdw/cli/Unzip.html" title="class in com.centurylink.mdw.cli">Unzip</a>, <a href="../../../../com/centurylink/mdw/cli/Update.html" title="class in com.centurylink.mdw.cli">Update</a>, <a href="../../../../com/centurylink/mdw/cli/Vercheck.html" title="class in com.centurylink.mdw.cli">Vercheck</a>, <a href="../../../../com/centurylink/mdw/cli/Version.html" title="class in com.centurylink.mdw.cli">Version</a>, <a href="../../../../com/centurylink/mdw/cli/Zip.html" title="class in com.centurylink.mdw.cli">Zip</a></dd>
+<dd><a href="../../../../com/centurylink/mdw/cli/BpmnImport.html" title="class in com.centurylink.mdw.cli">BpmnImport</a>, <a href="../../../../com/centurylink/mdw/cli/Checkpoint.html" title="class in com.centurylink.mdw.cli">Checkpoint</a>, <a href="../../../../com/centurylink/mdw/cli/Codegen.html" title="class in com.centurylink.mdw.cli">Codegen</a>, <a href="../../../../com/centurylink/mdw/cli/Convert.html" title="class in com.centurylink.mdw.cli">Convert</a>, <a href="../../../../com/centurylink/mdw/cli/Copy.html" title="class in com.centurylink.mdw.cli">Copy</a>, <a href="../../../../com/centurylink/mdw/cli/Crawl.html" title="class in com.centurylink.mdw.cli">Crawl</a>, <a href="../../../../com/centurylink/mdw/cli/Decrypt.html" title="class in com.centurylink.mdw.cli">Decrypt</a>, <a href="../../../../com/centurylink/mdw/cli/Delete.html" title="class in com.centurylink.mdw.cli">Delete</a>, <a href="../../../../com/centurylink/mdw/cli/Dependency.html" title="class in com.centurylink.mdw.cli">Dependency</a>, <a href="../../../../com/centurylink/mdw/cli/Discover.html" title="class in com.centurylink.mdw.cli">Discover</a>, <a href="../../../../com/centurylink/mdw/cli/Download.html" title="class in com.centurylink.mdw.cli">Download</a>, <a href="../../../../com/centurylink/mdw/cli/Encrypt.html" title="class in com.centurylink.mdw.cli">Encrypt</a>, <a href="../../../../com/centurylink/mdw/cli/Export.html" title="class in com.centurylink.mdw.cli">Export</a>, <a href="../../../../com/centurylink/mdw/cli/Fetch.html" title="class in com.centurylink.mdw.cli">Fetch</a>, <a href="../../../../com/centurylink/mdw/cli/Git.html" title="class in com.centurylink.mdw.cli">Git</a>, <a href="../../../../com/centurylink/mdw/cli/Import.html" title="class in com.centurylink.mdw.cli">Import</a>, <a href="../../../../com/centurylink/mdw/cli/Init.html" title="class in com.centurylink.mdw.cli">Init</a>, <a href="../../../../com/centurylink/mdw/cli/Install.html" title="class in com.centurylink.mdw.cli">Install</a>, <a href="../../../../com/centurylink/mdw/cli/Paths.html" title="class in com.centurylink.mdw.cli">Paths</a>, <a href="../../../../com/centurylink/mdw/cli/Run.html" title="class in com.centurylink.mdw.cli">Run</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in com.centurylink.mdw.cli">Setup</a>, <a href="../../../../com/centurylink/mdw/cli/Status.html" title="class in com.centurylink.mdw.cli">Status</a>, <a href="../../../../com/centurylink/mdw/cli/Stop.html" title="class in com.centurylink.mdw.cli">Stop</a>, <a href="../../../../com/centurylink/mdw/cli/Test.html" title="class in com.centurylink.mdw.cli">Test</a>, <a href="../../../../com/centurylink/mdw/cli/Token.html" title="class in com.centurylink.mdw.cli">Token</a>, <a href="../../../../com/centurylink/mdw/cli/Unzip.html" title="class in com.centurylink.mdw.cli">Unzip</a>, <a href="../../../../com/centurylink/mdw/cli/Update.html" title="class in com.centurylink.mdw.cli">Update</a>, <a href="../../../../com/centurylink/mdw/cli/Vercheck.html" title="class in com.centurylink.mdw.cli">Vercheck</a>, <a href="../../../../com/centurylink/mdw/cli/Version.html" title="class in com.centurylink.mdw.cli">Version</a>, <a href="../../../../com/centurylink/mdw/cli/Zip.html" title="class in com.centurylink.mdw.cli">Zip</a></dd>
 </dl>
 <hr>
 <br>
@@ -117,14 +117,34 @@ var activeTableTab = "activeTableTab";
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t5" class="tableTab"><span><a href="javascript:show(16);">Default Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>default java.io.PrintStream</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Operation.html#getErr--">getErr</a></span>()</code>
+<div class="block">TODO very few operations actually honor errStream</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>default java.io.PrintStream</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Operation.html#getOut--">getOut</a></span>()</code>
+<div class="block">TODO very few operations actually honor outStream</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/cli/Operation.html" title="interface in com.centurylink.mdw.cli">Operation</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Operation.html#run-com.centurylink.mdw.cli.ProgressMonitor...-">run</a></span>(<a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;progressMonitors)</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>default void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Operation.html#setErr-java.io.PrintStream-">setErr</a></span>(java.io.PrintStream&nbsp;err)</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>default void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Operation.html#setOut-java.io.PrintStream-">setOut</a></span>(java.io.PrintStream&nbsp;out)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -144,7 +164,7 @@ var activeTableTab = "activeTableTab";
 <a name="run-com.centurylink.mdw.cli.ProgressMonitor...-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>run</h4>
 <pre><a href="../../../../com/centurylink/mdw/cli/Operation.html" title="interface in com.centurylink.mdw.cli">Operation</a>&nbsp;run(<a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;progressMonitors)
@@ -156,6 +176,44 @@ var activeTableTab = "activeTableTab";
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>
 </dl>
+</li>
+</ul>
+<a name="getOut--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getOut</h4>
+<pre>default&nbsp;java.io.PrintStream&nbsp;getOut()</pre>
+<div class="block">TODO very few operations actually honor outStream</div>
+</li>
+</ul>
+<a name="setOut-java.io.PrintStream-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setOut</h4>
+<pre>default&nbsp;void&nbsp;setOut(java.io.PrintStream&nbsp;out)</pre>
+</li>
+</ul>
+<a name="getErr--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getErr</h4>
+<pre>default&nbsp;java.io.PrintStream&nbsp;getErr()</pre>
+<div class="block">TODO very few operations actually honor errStream</div>
+</li>
+</ul>
+<a name="setErr-java.io.PrintStream-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>setErr</h4>
+<pre>default&nbsp;void&nbsp;setErr(java.io.PrintStream&nbsp;err)</pre>
 </li>
 </ul>
 </li>
@@ -186,7 +244,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/centurylink/mdw/cli/Main.html" title="class in com.centurylink.mdw.cli"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../com/centurylink/mdw/cli/ProcessNamer.html" title="class in com.centurylink.mdw.cli"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../com/centurylink/mdw/cli/Paths.html" title="class in com.centurylink.mdw.cli"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/centurylink/mdw/cli/Operation.html" target="_top">Frames</a></li>
@@ -226,6 +284,6 @@ var activeTableTab = "activeTableTab";
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

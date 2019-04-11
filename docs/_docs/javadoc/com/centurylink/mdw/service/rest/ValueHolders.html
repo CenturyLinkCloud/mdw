@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -188,6 +188,17 @@ extends <a href="../../../../../com/centurylink/mdw/services/rest/JsonRestServic
 <div class="block">Should be overridden.</div>
 </td>
 </tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/JsonArray.html" title="class in com.centurylink.mdw.model">JsonArray</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/ValueHolders.html#getValues-java.lang.String-java.lang.String-">getValues</a></span>(java.lang.String&nbsp;valueName,
+         java.lang.String&nbsp;ownerType)</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/JsonArray.html" title="class in com.centurylink.mdw.model">JsonArray</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/ValueHolders.html#getValues-java.lang.String-java.lang.String-java.lang.String-">getValues</a></span>(java.lang.String&nbsp;valueName,
+         java.lang.String&nbsp;valuePattern,
+         java.lang.String&nbsp;ownerType)</code>&nbsp;</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.services.rest.JsonRestService">
@@ -201,7 +212,7 @@ extends <a href="../../../../../com/centurylink/mdw/services/rest/JsonRestServic
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.centurylink.mdw.services.rest.<a href="../../../../../com/centurylink/mdw/services/rest/RestService.html" title="class in com.centurylink.mdw.services.rest">RestService</a></h3>
-<code><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#auditLog-com.centurylink.mdw.model.user.UserAction-">auditLog</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#authorize-java.lang.String-org.json.JSONObject-java.util.Map-">authorize</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#authorizeExport-java.util.Map-">authorizeExport</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#generateRequestId--">generateRequestId</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getAction-java.lang.String-java.lang.Object-java.util.Map-">getAction</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getAuthUser-java.util.Map-">getAuthUser</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getEntityDescription-java.lang.String-java.lang.Object-java.util.Map-">getEntityDescription</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getEntityId-java.lang.String-java.lang.Object-java.util.Map-">getEntityId</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getParameters-java.util.Map-">getParameters</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getQuery-java.lang.String-java.util.Map-">getQuery</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRequestUrl-java.util.Map-">getRequestUrl</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRequiredProperty-java.lang.String-">getRequiredProperty</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRoles-java.lang.String-">getRoles</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRoles-java.lang.String-java.lang.String-">getRoles</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSegment-java.lang.String-int-">getSegment</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSegments-java.lang.String-">getSegments</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSource--">getSource</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSub-java.lang.String-">getSub</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getUserAction-com.centurylink.mdw.model.user.User-java.lang.String-java.lang.Object-java.util.Map-">getUserAction</a></code></li>
+<code><a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#auditLog-com.centurylink.mdw.model.user.UserAction-">auditLog</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#authorize-java.lang.String-org.json.JSONObject-java.util.Map-">authorize</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#authorizeExport-java.util.Map-">authorizeExport</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#generateRequestId--">generateRequestId</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getAction-java.lang.String-java.lang.Object-java.util.Map-">getAction</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getAuthUser-java.util.Map-">getAuthUser</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getEntityDescription-java.lang.String-java.lang.Object-java.util.Map-">getEntityDescription</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getEntityId-java.lang.String-java.lang.Object-java.util.Map-">getEntityId</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getParameters-java.util.Map-">getParameters</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getQuery-java.lang.String-java.util.Map-">getQuery</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRequestUrl-java.util.Map-">getRequestUrl</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRequiredProperty-java.lang.String-">getRequiredProperty</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRoles-java.lang.String-">getRoles</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getRoles-java.lang.String-java.lang.String-">getRoles</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSegment-java.lang.String-int-">getSegment</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSegments-java.lang.String-">getSegments</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSource--">getSource</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getSub-java.lang.String-">getSub</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#getUserAction-com.centurylink.mdw.model.user.User-java.lang.String-java.lang.Object-java.util.Map-">getUserAction</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#logtag-java.util.Map-">logtag</a>, <a href="../../../../../com/centurylink/mdw/services/rest/RestService.html#masterRequestId-java.util.Map-">masterRequestId</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -261,7 +272,7 @@ extends <a href="../../../../../com/centurylink/mdw/services/rest/JsonRestServic
 <a name="get-java.lang.String-java.util.Map-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>get</h4>
 <pre>public&nbsp;org.json.JSONObject&nbsp;get(java.lang.String&nbsp;path,
@@ -275,6 +286,37 @@ extends <a href="../../../../../com/centurylink/mdw/services/rest/JsonRestServic
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 <dd><code>org.json.JSONException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getValues-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getValues</h4>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/JsonArray.html" title="class in com.centurylink.mdw.model">JsonArray</a>&nbsp;getValues(java.lang.String&nbsp;valueName,
+                           java.lang.String&nbsp;ownerType)
+                    throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getValues-java.lang.String-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getValues</h4>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/JsonArray.html" title="class in com.centurylink.mdw.model">JsonArray</a>&nbsp;getValues(java.lang.String&nbsp;valueName,
+                           java.lang.String&nbsp;valuePattern,
+                           java.lang.String&nbsp;ownerType)
+                    throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -346,6 +388,6 @@ extends <a href="../../../../../com/centurylink/mdw/services/rest/JsonRestServic
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

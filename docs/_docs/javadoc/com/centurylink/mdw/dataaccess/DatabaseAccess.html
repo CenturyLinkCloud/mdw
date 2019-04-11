@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":9,"i9":10,"i10":9,"i11":9,"i12":9,"i13":10,"i14":9,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10};
-var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":9,"i9":10,"i10":9,"i11":9,"i12":9,"i13":9,"i14":9,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":42,"i33":10,"i34":10,"i35":10,"i36":10,"i37":42,"i38":42,"i39":10,"i40":10};
+var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -182,7 +182,7 @@ extends java.lang.Object</pre>
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
@@ -234,18 +234,18 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i11" class="rowColor">
+<td class="colFirst"><code>static long</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#getDbTimeDiff--">getDbTimeDiff</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../com/centurylink/mdw/dataaccess/db/DocumentDb.html" title="interface in com.centurylink.mdw.dataaccess.db">DocumentDb</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#getDocumentDb--">getDocumentDb</a></span>()</code>
 <div class="block">Returns null if not enabled</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../com/centurylink/mdw/dataaccess/EmbeddedDataAccess.html" title="class in com.centurylink.mdw.dataaccess">EmbeddedDataAccess</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#getEmbedded--">getEmbedded</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i13" class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#getQueryTimeout--">getQueryTimeout</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i14" class="altColor">
 <td class="colFirst"><code>static void</code></td>
@@ -303,55 +303,77 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i27" class="rowColor">
 <td class="colFirst"><code>java.sql.ResultSet</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#runSelect-java.lang.String-">runSelect</a></span>(java.lang.String&nbsp;query)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#runSelect-com.centurylink.mdw.dataaccess.PreparedSelect-">runSelect</a></span>(<a href="../../../../com/centurylink/mdw/dataaccess/PreparedSelect.html" title="class in com.centurylink.mdw.dataaccess">PreparedSelect</a>&nbsp;select)</code>&nbsp;</td>
 </tr>
 <tr id="i28" class="altColor">
+<td class="colFirst"><code>java.sql.ResultSet</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#runSelect-java.lang.String-">runSelect</a></span>(java.lang.String&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>java.sql.ResultSet</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#runSelect-java.lang.String-java.lang.Object-">runSelect</a></span>(java.lang.String&nbsp;query,
          java.lang.Object&nbsp;arg)</code>&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>java.sql.ResultSet</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#runSelect-java.lang.String-java.lang.Object:A-">runSelect</a></span>(java.lang.String&nbsp;query,
          java.lang.Object[]&nbsp;arguments)</code>&nbsp;</td>
 </tr>
-<tr id="i30" class="altColor">
-<td class="colFirst"><code>java.sql.ResultSet</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#runSelectWithPreparedStatement-java.lang.Object-">runSelectWithPreparedStatement</a></span>(java.lang.Object&nbsp;arg)</code>&nbsp;</td>
-</tr>
 <tr id="i31" class="rowColor">
+<td class="colFirst"><code>java.sql.ResultSet</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#runSelect-java.lang.String-java.lang.String-java.lang.Object:A-">runSelect</a></span>(java.lang.String&nbsp;logMessage,
+         java.lang.String&nbsp;query,
+         java.lang.Object[]&nbsp;arguments)</code>
+<div class="block">Ordinarily db query logging is at TRACE level.</div>
+</td>
+</tr>
+<tr id="i32" class="altColor">
+<td class="colFirst"><code>java.sql.ResultSet</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#runSelectWithPreparedStatement-java.lang.Object-">runSelectWithPreparedStatement</a></span>(java.lang.Object&nbsp;arg)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</td>
+</tr>
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#runUpdate-java.lang.String-">runUpdate</a></span>(java.lang.String&nbsp;query)</code>&nbsp;</td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#runUpdate-java.lang.String-java.lang.Object-">runUpdate</a></span>(java.lang.String&nbsp;query,
          java.lang.Object&nbsp;arg)</code>&nbsp;</td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#runUpdate-java.lang.String-java.lang.Object:A-">runUpdate</a></span>(java.lang.String&nbsp;query,
          java.lang.Object[]&nbsp;arguments)</code>&nbsp;</td>
 </tr>
-<tr id="i34" class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#runUpdateWithPreparedStatement-java.lang.Object-">runUpdateWithPreparedStatement</a></span>(java.lang.Object&nbsp;arg)</code>&nbsp;</td>
-</tr>
-<tr id="i35" class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#runUpdateWithPreparedStatement-java.lang.Object:A-">runUpdateWithPreparedStatement</a></span>(java.lang.Object[]&nbsp;arguments)</code>&nbsp;</td>
-</tr>
 <tr id="i36" class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#runUpdate-java.lang.String-java.lang.String-java.lang.Object:A-">runUpdate</a></span>(java.lang.String&nbsp;logMessage,
+         java.lang.String&nbsp;query,
+         java.lang.Object[]&nbsp;arguments)</code>
+<div class="block">Ordinarily db query logging is at TRACE level.</div>
+</td>
+</tr>
+<tr id="i37" class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#runUpdateWithPreparedStatement-java.lang.Object-">runUpdateWithPreparedStatement</a></span>(java.lang.Object&nbsp;arg)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</td>
+</tr>
+<tr id="i38" class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#runUpdateWithPreparedStatement-java.lang.Object:A-">runUpdateWithPreparedStatement</a></span>(java.lang.Object[]&nbsp;arguments)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</td>
+</tr>
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#setConnection-java.sql.Connection-">setConnection</a></span>(java.sql.Connection&nbsp;conn)</code>
 <div class="block">This should be only used by CommonDataAccess.startTransaction()</div>
 </td>
 </tr>
-<tr id="i37" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#setQueryTimeout-int-">setQueryTimeout</a></span>(int&nbsp;seconds)</code>&nbsp;</td>
-</tr>
-<tr id="i38" class="altColor">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -675,6 +697,38 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
+<a name="runSelect-com.centurylink.mdw.dataaccess.PreparedSelect-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>runSelect</h4>
+<pre>public&nbsp;java.sql.ResultSet&nbsp;runSelect(<a href="../../../../com/centurylink/mdw/dataaccess/PreparedSelect.html" title="class in com.centurylink.mdw.dataaccess">PreparedSelect</a>&nbsp;select)
+                             throws java.sql.SQLException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.sql.SQLException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="runSelect-java.lang.String-java.lang.String-java.lang.Object:A-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>runSelect</h4>
+<pre>public&nbsp;java.sql.ResultSet&nbsp;runSelect(java.lang.String&nbsp;logMessage,
+                                    java.lang.String&nbsp;query,
+                                    java.lang.Object[]&nbsp;arguments)
+                             throws java.sql.SQLException</pre>
+<div class="block">Ordinarily db query logging is at TRACE level.  Use this method
+ to log queries at DEBUG level.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.sql.SQLException</code></dd>
+</dl>
+</li>
+</ul>
 <a name="runUpdate-java.lang.String-">
 <!--   -->
 </a>
@@ -713,6 +767,24 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;int&nbsp;runUpdate(java.lang.String&nbsp;query,
                      java.lang.Object[]&nbsp;arguments)
               throws java.sql.SQLException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.sql.SQLException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="runUpdate-java.lang.String-java.lang.String-java.lang.Object:A-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>runUpdate</h4>
+<pre>public&nbsp;int&nbsp;runUpdate(java.lang.String&nbsp;logMessage,
+                     java.lang.String&nbsp;query,
+                     java.lang.Object[]&nbsp;arguments)
+              throws java.sql.SQLException</pre>
+<div class="block">Ordinarily db query logging is at TRACE level.  Use this method
+ to log queries at DEBUG level.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.sql.SQLException</code></dd>
@@ -782,8 +854,10 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>runSelectWithPreparedStatement</h4>
-<pre>public&nbsp;java.sql.ResultSet&nbsp;runSelectWithPreparedStatement(java.lang.Object&nbsp;arg)
-                                                  throws java.sql.SQLException</pre>
+<pre>@Deprecated
+public&nbsp;java.sql.ResultSet&nbsp;runSelectWithPreparedStatement(java.lang.Object&nbsp;arg)
+                                                              throws java.sql.SQLException</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.sql.SQLException</code></dd>
@@ -796,8 +870,10 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>runUpdateWithPreparedStatement</h4>
-<pre>public&nbsp;int&nbsp;runUpdateWithPreparedStatement(java.lang.Object&nbsp;arg)
-                                   throws java.sql.SQLException</pre>
+<pre>@Deprecated
+public&nbsp;int&nbsp;runUpdateWithPreparedStatement(java.lang.Object&nbsp;arg)
+                                               throws java.sql.SQLException</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.sql.SQLException</code></dd>
@@ -810,8 +886,10 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>runUpdateWithPreparedStatement</h4>
-<pre>public&nbsp;int&nbsp;runUpdateWithPreparedStatement(java.lang.Object[]&nbsp;arguments)
-                                   throws java.sql.SQLException</pre>
+<pre>@Deprecated
+public&nbsp;int&nbsp;runUpdateWithPreparedStatement(java.lang.Object[]&nbsp;arguments)
+                                               throws java.sql.SQLException</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.sql.SQLException</code></dd>
@@ -874,6 +952,15 @@ extends java.lang.Object</pre>
 <div class="block">The current database Date/Time.  If db_time_diff is not known (eg Designer), server time is returned.</div>
 </li>
 </ul>
+<a name="getDbTimeDiff--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDbTimeDiff</h4>
+<pre>public static&nbsp;long&nbsp;getDbTimeDiff()</pre>
+</li>
+</ul>
 <a name="pagingQueryPrefix--">
 <!--   -->
 </a>
@@ -896,34 +983,6 @@ extends java.lang.Object</pre>
 <dd><code>startRow</code> - the first row to display, index starting from 0</dd>
 <dd><code>rowCount</code> - </dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-</dl>
-</li>
-</ul>
-<a name="setQueryTimeout-int-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setQueryTimeout</h4>
-<pre>public&nbsp;void&nbsp;setQueryTimeout(int&nbsp;seconds)
-                     throws java.sql.SQLException</pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.sql.SQLException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="getQueryTimeout--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getQueryTimeout</h4>
-<pre>public&nbsp;int&nbsp;getQueryTimeout()
-                    throws java.sql.SQLException</pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.sql.SQLException</code></dd>
 </dl>
 </li>
 </ul>
@@ -1008,6 +1067,6 @@ extends java.lang.Object</pre>
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

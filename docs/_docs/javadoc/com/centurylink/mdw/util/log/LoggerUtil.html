@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html" title="class in com.centurylink.mdw.util.log"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../com/centurylink/mdw/util/log/SimpleLogger.html" title="class in com.centurylink.mdw.util.log"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/util/log/LogLineInjector.html" title="interface in com.centurylink.mdw.util.log"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/centurylink/mdw/util/log/LoggerUtil.html" target="_top">Frames</a></li>
@@ -156,21 +156,27 @@ implements java.io.Serializable</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>static <a href="../../../../../com/centurylink/mdw/util/log/LoggerUtil.html" title="class in com.centurylink.mdw.util.log">LoggerUtil</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/LoggerUtil.html#getInstance--">getInstance</a></span>()</code>
-<div class="block">Static method to get instance</div>
-</td>
+<td class="colFirst"><code>static java.io.File</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/LoggerUtil.html#getConfigurationFile-java.lang.String-">getConfigurationFile</a></span>(java.lang.String&nbsp;filepath)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/LoggerUtil.html#getStandardLogger--">getStandardLogger</a></span>()</code>
-<div class="block">Get a standard logger.</div>
-</td>
+<td class="colFirst"><code>static <a href="../../../../../com/centurylink/mdw/util/log/LoggerUtil.html" title="class in com.centurylink.mdw.util.log">LoggerUtil</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/LoggerUtil.html#getInstance--">getInstance</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/LoggerUtil.html#getStandardLogger--">getStandardLogger</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/LoggerUtil.html#getStandardLogger-java.lang.String-">getStandardLogger</a></span>(java.lang.String&nbsp;className)</code>
 <div class="block">Get a standard logger based on a class name.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/LoggerUtil.html#initializeLogging--">initializeLogging</a></span>()</code>
+<div class="block">For Spring Boot with slf4j SimpleLogger, an opportunity to initialize logging before Spring starts logging.</div>
 </td>
 </tr>
 </table>
@@ -223,7 +229,24 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>getInstance</h4>
 <pre>public static&nbsp;<a href="../../../../../com/centurylink/mdw/util/log/LoggerUtil.html" title="class in com.centurylink.mdw.util.log">LoggerUtil</a>&nbsp;getInstance()</pre>
-<div class="block">Static method to get instance</div>
+</li>
+</ul>
+<a name="initializeLogging--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>initializeLogging</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;initializeLogging()
+                                          throws java.io.IOException</pre>
+<div class="block">For Spring Boot with slf4j SimpleLogger, an opportunity to initialize logging before Spring starts logging.
+ Otherwise for slf4j, properties have already been defaulted before we have a chance to set them.
+
+ See mdw-spring-boot AutoConfig for initialization of logback for pure Spring Boot apps.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
 </li>
 </ul>
 <a name="getStandardLogger--">
@@ -233,17 +256,25 @@ implements java.io.Serializable</pre>
 <li class="blockList">
 <h4>getStandardLogger</h4>
 <pre>public static&nbsp;<a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a>&nbsp;getStandardLogger()</pre>
-<div class="block">Get a standard logger.</div>
 </li>
 </ul>
 <a name="getStandardLogger-java.lang.String-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getStandardLogger</h4>
 <pre>public static&nbsp;<a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log">StandardLogger</a>&nbsp;getStandardLogger(java.lang.String&nbsp;className)</pre>
 <div class="block">Get a standard logger based on a class name.</div>
+</li>
+</ul>
+<a name="getConfigurationFile-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getConfigurationFile</h4>
+<pre>public static&nbsp;java.io.File&nbsp;getConfigurationFile(java.lang.String&nbsp;filepath)</pre>
 </li>
 </ul>
 </li>
@@ -274,7 +305,7 @@ implements java.io.Serializable</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../com/centurylink/mdw/util/log/AbstractStandardLoggerBase.html" title="class in com.centurylink.mdw.util.log"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../com/centurylink/mdw/util/log/SimpleLogger.html" title="class in com.centurylink.mdw.util.log"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/util/log/LogLineInjector.html" title="interface in com.centurylink.mdw.util.log"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/centurylink/mdw/util/log/LoggerUtil.html" target="_top">Frames</a></li>
@@ -314,6 +345,6 @@ implements java.io.Serializable</pre>
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

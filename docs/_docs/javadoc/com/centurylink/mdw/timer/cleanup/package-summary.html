@@ -41,7 +41,7 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../com/centurylink/mdw/test/impl/package-summary.html">Prev&nbsp;Package</a></li>
+<li><a href="../../../../../com/centurylink/mdw/tests/workflow/package-summary.html">Prev&nbsp;Package</a></li>
 <li><a href="../../../../../com/centurylink/mdw/timer/process/package-summary.html">Next&nbsp;Package</a></li>
 </ul>
 <ul class="navList">
@@ -101,6 +101,24 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="../../../../../com/centurylink/mdw/timer/cleanup/StuckActivities.html" title="class in com.centurylink.mdw.timer.cleanup">StuckActivities</a></td>
+<td class="colLast">
+<div class="block">This script fixes stuck activities by failing them and then retrying them
+ A stuck activity means it's "In Progress" status and older than {ActivityAgeInMinutes}
+ Add following to mdw.yaml
+timer.task:
+ StuckActivities:
+    TimerClass: com.centurylink.mdw.timer.cleanup.StuckActivities
+    Schedule: 30 2 * * *    # to run hourly at 30 minutes past the hour use : Schedule: 30 * * * ? *
+    ActivityAgeInMinutes: 1800 # How old activity instance should be to be a candidate for fixing
+    MaximumActivities: 10  # How many stuck activity instances to be retried in each run
+
+ if you need to make change in above properties then first delete the db entry by identifying the row using
+ this sql:  select * from event_instance where event_name like '%ScheduledJob%'
+ Then re-start the server/instance for new clean-up properties to be effective.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="../../../../../com/centurylink/mdw/timer/cleanup/TaskCleanup.html" title="class in com.centurylink.mdw.timer.cleanup">TaskCleanup</a></td>
 <td class="colLast">
 <div class="block">Updates task_instance_state to 5 (Invalid) for VCS Asset manual tasks with missing templates.</div>
@@ -131,7 +149,7 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../com/centurylink/mdw/test/impl/package-summary.html">Prev&nbsp;Package</a></li>
+<li><a href="../../../../../com/centurylink/mdw/tests/workflow/package-summary.html">Prev&nbsp;Package</a></li>
 <li><a href="../../../../../com/centurylink/mdw/timer/process/package-summary.html">Next&nbsp;Package</a></li>
 </ul>
 <ul class="navList">
@@ -157,6 +175,6 @@
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":10,"i2":9,"i3":9,"i4":10,"i5":9,"i6":10,"i7":10,"i8":10,"i9":10,"i10":9,"i11":9,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10};
+var methods = {"i0":9,"i1":10,"i2":9,"i3":9,"i4":10,"i5":9,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":9,"i12":9,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -73,13 +73,13 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -120,6 +120,37 @@ implements <a href="../../../../com/centurylink/mdw/dataaccess/db/DocumentDb.htm
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#MAX_POOL_SIZE">MAX_POOL_SIZE</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#READ_CONCERN">READ_CONCERN</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#READ_PREFERENCE">READ_PREFERENCE</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#WRITE_CONCERN">WRITE_CONCERN</a></span></code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.summary">
@@ -185,51 +216,59 @@ implements <a href="../../../../com/centurylink/mdw/dataaccess/db/DocumentDb.htm
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#getDbHost--">getDbHost</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i7" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#getDbName--">getDbName</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#getDbPort--">getDbPort</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#getDocumentContent-java.lang.String-java.lang.Long-">getDocumentContent</a></span>(java.lang.String&nbsp;ownerType,
                   java.lang.Long&nbsp;documentId)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#getMaxConnections--">getMaxConnections</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>static com.mongodb.client.MongoDatabase</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#getMongoDb--">getMongoDb</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>static com.mongodb.client.MongoDatabase</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#getMongoDb-java.lang.String-">getMongoDb</a></span>(java.lang.String&nbsp;databaseName)</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#initializeDbClient--">initializeDbClient</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#isEnabled--">isEnabled</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#setDbHost-java.lang.String-">setDbHost</a></span>(java.lang.String&nbsp;host)</code>&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#setDbName-java.lang.String-">setDbName</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
+</tr>
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#setDbPort-int-">setDbPort</a></span>(int&nbsp;port)</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#setMaxConnections-int-">setMaxConnections</a></span>(int&nbsp;maxConns)</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/mongo/MongoDocumentDb.html#updateDocument-java.lang.String-java.lang.Long-java.lang.String-">updateDocument</a></span>(java.lang.String&nbsp;ownerType,
               java.lang.Long&nbsp;documentId,
@@ -253,6 +292,66 @@ implements <a href="../../../../com/centurylink/mdw/dataaccess/db/DocumentDb.htm
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="MAX_POOL_SIZE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MAX_POOL_SIZE</h4>
+<pre>protected static final&nbsp;java.lang.String MAX_POOL_SIZE</pre>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#com.centurylink.mdw.mongo.MongoDocumentDb.MAX_POOL_SIZE">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a name="READ_CONCERN">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>READ_CONCERN</h4>
+<pre>protected static final&nbsp;java.lang.String READ_CONCERN</pre>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#com.centurylink.mdw.mongo.MongoDocumentDb.READ_CONCERN">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a name="WRITE_CONCERN">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>WRITE_CONCERN</h4>
+<pre>protected static final&nbsp;java.lang.String WRITE_CONCERN</pre>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#com.centurylink.mdw.mongo.MongoDocumentDb.WRITE_CONCERN">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a name="READ_PREFERENCE">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>READ_PREFERENCE</h4>
+<pre>protected static final&nbsp;java.lang.String READ_PREFERENCE</pre>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#com.centurylink.mdw.mongo.MongoDocumentDb.READ_PREFERENCE">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor.detail">
@@ -276,6 +375,24 @@ implements <a href="../../../../com/centurylink/mdw/dataaccess/db/DocumentDb.htm
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="getDbName--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDbName</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getDbName()</pre>
+</li>
+</ul>
+<a name="setDbName-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setDbName</h4>
+<pre>public&nbsp;void&nbsp;setDbName(java.lang.String&nbsp;name)</pre>
+</li>
+</ul>
 <a name="getDbHost--">
 <!--   -->
 </a>
@@ -540,13 +657,13 @@ implements <a href="../../../../com/centurylink/mdw/dataaccess/db/DocumentDb.htm
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -555,6 +672,6 @@ implements <a href="../../../../com/centurylink/mdw/dataaccess/db/DocumentDb.htm
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

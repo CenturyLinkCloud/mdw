@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -238,17 +238,6 @@ extends java.lang.Object</pre>
 <div class="block">Starting a regular process.</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code>java.lang.Long</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/process/ProcessEngineDriver.html#startProcessFromActivity-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-java.lang.Long-java.util.Map-">startProcessFromActivity</a></span>(java.lang.Long&nbsp;processId,
-                        java.lang.Long&nbsp;activityId,
-                        java.lang.String&nbsp;masterRequestId,
-                        java.lang.String&nbsp;ownerType,
-                        java.lang.Long&nbsp;ownerId,
-                        java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;vars)</code>
-<div class="block">Start a process from somewhere in the middle - for development use only</div>
-</td>
-</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -455,7 +444,7 @@ extends java.lang.Object</pre>
 <a name="startProcess-java.lang.Long-java.lang.String-java.lang.String-java.lang.Long-java.util.Map-java.lang.String-java.lang.Long-java.util.Map-">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>startProcess</h4>
 <pre>public&nbsp;java.lang.Long&nbsp;startProcess(java.lang.Long&nbsp;processId,
@@ -477,26 +466,6 @@ extends java.lang.Object</pre>
 <dd><code>vars</code> - Input parameter bindings for the process instance to be created</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Process instance ID</dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.Exception</code></dd>
-</dl>
-</li>
-</ul>
-<a name="startProcessFromActivity-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-java.lang.Long-java.util.Map-">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>startProcessFromActivity</h4>
-<pre>public&nbsp;java.lang.Long&nbsp;startProcessFromActivity(java.lang.Long&nbsp;processId,
-                                               java.lang.Long&nbsp;activityId,
-                                               java.lang.String&nbsp;masterRequestId,
-                                               java.lang.String&nbsp;ownerType,
-                                               java.lang.Long&nbsp;ownerId,
-                                               java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;vars)
-                                        throws java.lang.Exception</pre>
-<div class="block">Start a process from somewhere in the middle - for development use only</div>
-<dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd>
 </dl>
@@ -570,6 +539,6 @@ extends java.lang.Object</pre>
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

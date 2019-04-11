@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -139,18 +139,44 @@ var activeTableTab = "activeTableTab";
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/RequestServices.html#getRequestAndResponse-java.lang.Long-">getRequestAndResponse</a></span>(java.lang.Long&nbsp;requestId)</code>&nbsp;</td>
 </tr>
 <tr id="i4" class="altColor">
-<td class="colFirst"><code>java.util.Map&lt;java.util.Date,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/request/RequestCount.html" title="class in com.centurylink.mdw.model.request">RequestCount</a>&gt;&gt;</code></td>
+<td class="colFirst"><code>java.util.TreeMap&lt;java.util.Date,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/request/RequestAggregate.html" title="class in com.centurylink.mdw.model.request">RequestAggregate</a>&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/RequestServices.html#getRequestBreakdown-com.centurylink.mdw.common.service.Query-">getRequestBreakdown</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/report/Insight.html" title="class in com.centurylink.mdw.model.report">Insight</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/RequestServices.html#getRequestInsights-com.centurylink.mdw.common.service.Query-">getRequestInsights</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/request/ServicePath.html" title="class in com.centurylink.mdw.model.request">ServicePath</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/RequestServices.html#getRequestPaths-com.centurylink.mdw.common.service.Query-">getRequestPaths</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/request/Request.html" title="class in com.centurylink.mdw.model.request">Request</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/RequestServices.html#getRequestResponse-java.lang.Long-">getRequestResponse</a></span>(java.lang.Long&nbsp;requestId)</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/request/RequestList.html" title="class in com.centurylink.mdw.model.request">RequestList</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/RequestServices.html#getRequests-com.centurylink.mdw.common.service.Query-">getRequests</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>
 <div class="block">Retrieves one page of requests.</div>
 </td>
+</tr>
+<tr id="i9" class="rowColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/report/Timepoint.html" title="class in com.centurylink.mdw.model.report">Timepoint</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/RequestServices.html#getRequestTrend-com.centurylink.mdw.common.service.Query-">getRequestTrend</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/RequestServices.html#getServicePaths-com.centurylink.mdw.common.service.Query-">getServicePaths</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i11" class="rowColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/request/RequestAggregate.html" title="class in com.centurylink.mdw.model.request">RequestAggregate</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/RequestServices.html#getTopRequests-com.centurylink.mdw.common.service.Query-">getTopRequests</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i12" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/RequestServices.html#setElapsedTime-java.lang.String-java.lang.Long-java.lang.Long-">setElapsedTime</a></span>(java.lang.String&nbsp;ownerType,
+              java.lang.Long&nbsp;instanceId,
+              java.lang.Long&nbsp;elapsedTime)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -252,14 +278,100 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
+<a name="getTopRequests-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTopRequests</h4>
+<pre>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/request/RequestAggregate.html" title="class in com.centurylink.mdw.model.request">RequestAggregate</a>&gt;&nbsp;getTopRequests(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                                         throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="getRequestBreakdown-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRequestBreakdown</h4>
+<pre>java.util.TreeMap&lt;java.util.Date,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/request/RequestAggregate.html" title="class in com.centurylink.mdw.model.request">RequestAggregate</a>&gt;&gt;&nbsp;getRequestBreakdown(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                                                                                throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getRequestInsights-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRequestInsights</h4>
+<pre>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/report/Insight.html" title="class in com.centurylink.mdw.model.report">Insight</a>&gt;&nbsp;getRequestInsights(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                                    throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getRequestTrend-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRequestTrend</h4>
+<pre>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/report/Timepoint.html" title="class in com.centurylink.mdw.model.report">Timepoint</a>&gt;&nbsp;getRequestTrend(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                                   throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getServicePaths-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getServicePaths</h4>
+<pre>java.util.List&lt;java.lang.String&gt;&nbsp;getServicePaths(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                                          throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getRequestPaths-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getRequestPaths</h4>
+<pre>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/request/ServicePath.html" title="class in com.centurylink.mdw.model.request">ServicePath</a>&gt;&nbsp;getRequestPaths(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                                     throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="setElapsedTime-java.lang.String-java.lang.Long-java.lang.Long-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>getRequestBreakdown</h4>
-<pre>java.util.Map&lt;java.util.Date,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/request/RequestCount.html" title="class in com.centurylink.mdw.model.request">RequestCount</a>&gt;&gt;&nbsp;getRequestBreakdown(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
-                                                                        throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<h4>setElapsedTime</h4>
+<pre>void&nbsp;setElapsedTime(java.lang.String&nbsp;ownerType,
+                    java.lang.Long&nbsp;instanceId,
+                    java.lang.Long&nbsp;elapsedTime)
+             throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
@@ -334,6 +446,6 @@ var activeTableTab = "activeTableTab";
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

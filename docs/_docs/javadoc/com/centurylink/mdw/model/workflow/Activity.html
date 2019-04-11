@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityCount.html" title="class in com.centurylink.mdw.model.workflow"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityAggregate.html" title="class in com.centurylink.mdw.model.workflow"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/centurylink/mdw/model/workflow/Activity.html" target="_top">Frames</a></li>
@@ -160,13 +160,6 @@ implements java.io.Serializable, java.lang.Comparable&lt;<a href="../../../../..
 <tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html#Activity-org.json.JSONObject-">Activity</a></span>(org.json.JSONObject&nbsp;json)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html#Activity-java.lang.Long-java.lang.String-java.lang.String-java.lang.String-java.util.List-">Activity</a></span>(java.lang.Long&nbsp;id,
-        java.lang.String&nbsp;name,
-        java.lang.String&nbsp;description,
-        java.lang.String&nbsp;implementor,
-        java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&nbsp;attributes)</code>&nbsp;</td>
-</tr>
 </table>
 </li>
 </ul>
@@ -223,57 +216,45 @@ implements java.io.Serializable, java.lang.Comparable&lt;<a href="../../../../..
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html#getProcessName--">getProcessName</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i10" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html#getReferenceId--">getReferenceId</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html#getSequenceId--">getSequenceId</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i11" class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html#getSla--">getSla</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html#oneLineName--">oneLineName</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i12" class="altColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html#getSlaSeconds--">getSlaSeconds</a></span>()</code>
-<div class="block">Method that returns the sla</div>
-</td>
-</tr>
-<tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html#setAttribute-java.lang.String-java.lang.String-">setAttribute</a></span>(java.lang.String&nbsp;name,
             java.lang.String&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html#setAttributes-java.util.List-">setAttributes</a></span>(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&nbsp;attributes)</code>&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html#setDescription-java.lang.String-">setDescription</a></span>(java.lang.String&nbsp;description)</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html#setId-java.lang.Long-">setId</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html#setImplementor-java.lang.String-">setImplementor</a></span>(java.lang.String&nbsp;implementor)</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html#setName-java.lang.String-">setName</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html#setProcessName-java.lang.String-">setProcessName</a></span>(java.lang.String&nbsp;processName)</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html#setSla-int-">setSla</a></span>(int&nbsp;sla)</code>&nbsp;</td>
-</tr>
-<tr id="i21" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html#setSlaSeconds-int-">setSlaSeconds</a></span>(int&nbsp;slaSeconds)</code>
-<div class="block">method that sets the sla</div>
-</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/workflow/Activity.html#setSequenceId-int-">setSequenceId</a></span>(int&nbsp;sequenceId)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -339,19 +320,6 @@ implements java.io.Serializable, java.lang.Comparable&lt;<a href="../../../../..
 <li class="blockList">
 <h4>Activity</h4>
 <pre>public&nbsp;Activity()</pre>
-</li>
-</ul>
-<a name="Activity-java.lang.Long-java.lang.String-java.lang.String-java.lang.String-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>Activity</h4>
-<pre>public&nbsp;Activity(java.lang.Long&nbsp;id,
-                java.lang.String&nbsp;name,
-                java.lang.String&nbsp;description,
-                java.lang.String&nbsp;implementor,
-                java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&nbsp;attributes)</pre>
 </li>
 </ul>
 <a name="Activity-org.json.JSONObject-">
@@ -430,24 +398,6 @@ implements java.io.Serializable, java.lang.Comparable&lt;<a href="../../../../..
 <pre>public&nbsp;void&nbsp;setDescription(java.lang.String&nbsp;description)</pre>
 </li>
 </ul>
-<a name="getAttributes--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getAttributes</h4>
-<pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&nbsp;getAttributes()</pre>
-</li>
-</ul>
-<a name="setAttributes-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setAttributes</h4>
-<pre>public&nbsp;void&nbsp;setAttributes(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&nbsp;attributes)</pre>
-</li>
-</ul>
 <a name="getImplementor--">
 <!--   -->
 </a>
@@ -466,42 +416,22 @@ implements java.io.Serializable, java.lang.Comparable&lt;<a href="../../../../..
 <pre>public&nbsp;void&nbsp;setImplementor(java.lang.String&nbsp;implementor)</pre>
 </li>
 </ul>
-<a name="getSlaSeconds--">
+<a name="getAttributes--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getSlaSeconds</h4>
-<pre>public&nbsp;int&nbsp;getSlaSeconds()</pre>
-<div class="block">Method that returns the sla</div>
+<h4>getAttributes</h4>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&nbsp;getAttributes()</pre>
 </li>
 </ul>
-<a name="getSla--">
+<a name="setAttributes-java.util.List-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getSla</h4>
-<pre>public&nbsp;int&nbsp;getSla()</pre>
-</li>
-</ul>
-<a name="setSlaSeconds-int-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setSlaSeconds</h4>
-<pre>public&nbsp;void&nbsp;setSlaSeconds(int&nbsp;slaSeconds)</pre>
-<div class="block">method that sets the sla</div>
-</li>
-</ul>
-<a name="setSla-int-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setSla</h4>
-<pre>public&nbsp;void&nbsp;setSla(int&nbsp;sla)</pre>
+<h4>setAttributes</h4>
+<pre>public&nbsp;void&nbsp;setAttributes(java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&gt;&nbsp;attributes)</pre>
 </li>
 </ul>
 <a name="getAttribute-java.lang.String-">
@@ -545,15 +475,6 @@ implements java.io.Serializable, java.lang.Comparable&lt;<a href="../../../../..
 <pre>public&nbsp;java.lang.String&nbsp;getLogicalId()</pre>
 </li>
 </ul>
-<a name="getReferenceId--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getReferenceId</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getReferenceId()</pre>
-</li>
-</ul>
 <a name="getJson--">
 <!--   -->
 </a>
@@ -568,6 +489,15 @@ implements java.io.Serializable, java.lang.Comparable&lt;<a href="../../../../..
 </dl>
 </li>
 </ul>
+<a name="oneLineName--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>oneLineName</h4>
+<pre>public&nbsp;java.lang.String&nbsp;oneLineName()</pre>
+</li>
+</ul>
 <a name="getProcessName--">
 <!--   -->
 </a>
@@ -580,10 +510,28 @@ implements java.io.Serializable, java.lang.Comparable&lt;<a href="../../../../..
 <a name="setProcessName-java.lang.String-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>setProcessName</h4>
 <pre>public&nbsp;void&nbsp;setProcessName(java.lang.String&nbsp;processName)</pre>
+</li>
+</ul>
+<a name="getSequenceId--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSequenceId</h4>
+<pre>public&nbsp;int&nbsp;getSequenceId()</pre>
+</li>
+</ul>
+<a name="setSequenceId-int-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>setSequenceId</h4>
+<pre>public&nbsp;void&nbsp;setSequenceId(int&nbsp;sequenceId)</pre>
 </li>
 </ul>
 </li>
@@ -614,7 +562,7 @@ implements java.io.Serializable, java.lang.Comparable&lt;<a href="../../../../..
 <div class="subNav">
 <ul class="navList">
 <li>Prev&nbsp;Class</li>
-<li><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityCount.html" title="class in com.centurylink.mdw.model.workflow"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityAggregate.html" title="class in com.centurylink.mdw.model.workflow"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../index.html?com/centurylink/mdw/model/workflow/Activity.html" target="_top">Frames</a></li>
@@ -654,6 +602,6 @@ implements java.io.Serializable, java.lang.Comparable&lt;<a href="../../../../..
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

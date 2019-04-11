@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -171,26 +171,38 @@ extends <a href="../../../../com/centurylink/mdw/util/HttpConnection.html" title
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/HttpAltConnection.html#getMethod--">getMethod</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.io.OutputStream</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/HttpAltConnection.html#getOutputStream--">getOutputStream</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/HttpAltConnection.html#getProxyProtocol--">getProxyProtocol</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/HttpAltConnection.html#isOpen--">isOpen</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/HttpAltConnection.html#open--">open</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/HttpAltConnection.html#prepare-java.lang.String-">prepare</a></span>(java.lang.String&nbsp;method)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../com/centurylink/mdw/util/HttpResponse.html" title="class in com.centurylink.mdw.util">HttpResponse</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/HttpAltConnection.html#readInput--">readInput</a></span>()</code>
 <div class="block">Populates the response member.</div>
 </td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/HttpAltConnection.html#setProxyProtocol-java.lang.String-">setProxyProtocol</a></span>(java.lang.String&nbsp;protocol)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -198,7 +210,7 @@ extends <a href="../../../../com/centurylink/mdw/util/HttpConnection.html" title
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.centurylink.mdw.util.<a href="../../../../com/centurylink/mdw/util/HttpConnection.html" title="class in com.centurylink.mdw.util">HttpConnection</a></h3>
-<code><a href="../../../../com/centurylink/mdw/util/HttpConnection.html#extractBasicAuthCredentials-java.lang.String-">extractBasicAuthCredentials</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getBasicAuthHeader-java.lang.String-java.lang.String-">getBasicAuthHeader</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getConnectTimeout--">getConnectTimeout</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getDefaultContentType--">getDefaultContentType</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getHeader-java.lang.String-">getHeader</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getHeaders--">getHeaders</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getMaxBytes--">getMaxBytes</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getProxyHost--">getProxyHost</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getProxyPort--">getProxyPort</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getProxyProtocol--">getProxyProtocol</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getReadTimeout--">getReadTimeout</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getResponse--">getResponse</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getUrl--">getUrl</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#isFollowRedirects--">isFollowRedirects</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setConnectTimeout-int-">setConnectTimeout</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setFollowRedirects-boolean-">setFollowRedirects</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setHeader-java.lang.String-java.lang.String-">setHeader</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setHeaders-java.util.Map-">setHeaders</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setMaxBytes-long-">setMaxBytes</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setPassword-java.lang.String-">setPassword</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setProxy-java.lang.String-int-">setProxy</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setProxyHost-java.lang.String-">setProxyHost</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setProxyPort-int-">setProxyPort</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setProxyProtocol-java.lang.String-">setProxyProtocol</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setReadTimeout-int-">setReadTimeout</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setResponse-com.centurylink.mdw.util.HttpResponse-">setResponse</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setUser-java.lang.String-">setUser</a></code></li>
+<code><a href="../../../../com/centurylink/mdw/util/HttpConnection.html#extractBasicAuthCredentials-java.lang.String-">extractBasicAuthCredentials</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getBasicAuthHeader-java.lang.String-java.lang.String-">getBasicAuthHeader</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getConnectTimeout--">getConnectTimeout</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getDefaultContentType--">getDefaultContentType</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getHeader-java.lang.String-">getHeader</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getHeaders--">getHeaders</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getMaxBytes--">getMaxBytes</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getProxyHost--">getProxyHost</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getProxyPort--">getProxyPort</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getProxyType--">getProxyType</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getReadTimeout--">getReadTimeout</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getResponse--">getResponse</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getUrl--">getUrl</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#isFollowRedirects--">isFollowRedirects</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setConnectTimeout-int-">setConnectTimeout</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setFollowRedirects-boolean-">setFollowRedirects</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setHeader-java.lang.String-java.lang.String-">setHeader</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setHeaders-java.util.Map-">setHeaders</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setMaxBytes-long-">setMaxBytes</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setPassword-java.lang.String-">setPassword</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setProxy-java.lang.String-int-">setProxy</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setProxyHost-java.lang.String-">setProxyHost</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setProxyPort-int-">setProxyPort</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setProxyType-java.net.Proxy.Type-">setProxyType</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setReadTimeout-int-">setReadTimeout</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setResponse-com.centurylink.mdw.util.HttpResponse-">setResponse</a>, <a href="../../../../com/centurylink/mdw/util/HttpConnection.html#setUser-java.lang.String-">setUser</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -249,6 +261,37 @@ extends <a href="../../../../com/centurylink/mdw/util/HttpConnection.html" title
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="getMethod--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMethod</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getMethod()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/util/HttpConnection.html#getMethod--">getMethod</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/centurylink/mdw/util/HttpConnection.html" title="class in com.centurylink.mdw.util">HttpConnection</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getProxyProtocol--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getProxyProtocol</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getProxyProtocol()</pre>
+</li>
+</ul>
+<a name="setProxyProtocol-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setProxyProtocol</h4>
+<pre>public&nbsp;void&nbsp;setProxyProtocol(java.lang.String&nbsp;protocol)</pre>
+</li>
+</ul>
 <a name="isOpen--">
 <!--   -->
 </a>
@@ -396,6 +439,6 @@ extends <a href="../../../../com/centurylink/mdw/util/HttpConnection.html" title
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -163,6 +163,15 @@ implements <a href="../../../../../com/centurylink/mdw/services/EventServices.ht
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/EventServicesImpl.html#createDocument-java.lang.String-java.lang.String-java.lang.Long-java.lang.Object-com.centurylink.mdw.model.workflow.Package-java.lang.String-">createDocument</a></span>(java.lang.String&nbsp;type,
+              java.lang.String&nbsp;ownerType,
+              java.lang.Long&nbsp;ownerId,
+              java.lang.Object&nbsp;doc,
+              <a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg,
+              java.lang.String&nbsp;path)</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/EventServicesImpl.html#createEventLog-java.lang.String-java.lang.String-java.lang.String-java.lang.String-java.lang.String-java.lang.Long-java.lang.String-java.lang.String-java.lang.String-">createEventLog</a></span>(java.lang.String&nbsp;pEventName,
               java.lang.String&nbsp;pEventCategory,
               java.lang.String&nbsp;pEventSubCat,
@@ -175,17 +184,17 @@ implements <a href="../../../../../com/centurylink/mdw/services/EventServices.ht
 <div class="block">Method that creates the event log based on the passed in params</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/EventServicesImpl.html#findProcessByProcessInstanceId-java.lang.Long-">findProcessByProcessInstanceId</a></span>(java.lang.Long&nbsp;processInstanceId)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/EventServicesImpl.html#getActivityInstance-java.lang.Long-">getActivityInstance</a></span>(java.lang.Long&nbsp;pActivityInstId)</code>
 <div class="block">Returns the ActivityInstance identified by the passed in Id</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/EventServicesImpl.html#getActivityInstances-java.lang.String-java.lang.String-java.lang.String-">getActivityInstances</a></span>(java.lang.String&nbsp;masterRequestId,
                     java.lang.String&nbsp;processName,
@@ -193,43 +202,39 @@ implements <a href="../../../../../com/centurylink/mdw/services/EventServices.ht
 <div class="block">Returns the activity instances by process name, activity logical ID, and  master request ID.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/EventServicesImpl.html#getDistinctEventLogEventSources--">getDistinctEventLogEventSources</a></span>()</code>
 <div class="block">Method that returns distinct event log sources</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">Document</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/EventServicesImpl.html#getDocumentVO-java.lang.Long-">getDocumentVO</a></span>(java.lang.Long&nbsp;docid)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/event/EventInstance.html" title="class in com.centurylink.mdw.model.event">EventInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/EventServicesImpl.html#getEventInstance-java.lang.String-">getEventInstance</a></span>(java.lang.String&nbsp;eventName)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/event/EventLog.html" title="class in com.centurylink.mdw.model.event">EventLog</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/EventServicesImpl.html#getEventLogs-java.lang.String-java.lang.String-java.lang.String-java.lang.Long-">getEventLogs</a></span>(java.lang.String&nbsp;pEventName,
             java.lang.String&nbsp;pEventSource,
             java.lang.String&nbsp;pEventOwner,
             java.lang.Long&nbsp;pEventOwnerId)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/EventServicesImpl.html#getProcessInstance-java.lang.Long-">getProcessInstance</a></span>(java.lang.Long&nbsp;procInstId)</code>
 <div class="block">Returns the ProcessInstance identified by the passed in Id</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/EventServicesImpl.html#getProcessInstances-java.lang.String-java.lang.String-">getProcessInstances</a></span>(java.lang.String&nbsp;masterRequestId,
                    java.lang.String&nbsp;processName)</code>
 <div class="block">Returns the process instances by process name and master request ID.</div>
 </td>
-</tr>
-<tr id="i12" class="altColor">
-<td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/EventServicesImpl.html#getProcessInstanceVariables-java.lang.Long-">getProcessInstanceVariables</a></span>(java.lang.Long&nbsp;procInstId)</code>&nbsp;</td>
 </tr>
 <tr id="i13" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/monitor/ScheduledEvent.html" title="class in com.centurylink.mdw.model.monitor">ScheduledEvent</a>&gt;</code></td>
@@ -392,11 +397,6 @@ implements <a href="../../../../../com/centurylink/mdw/services/EventServices.ht
                    int&nbsp;preserveSeconds,
                    java.lang.String&nbsp;comments)</code>&nbsp;</td>
 </tr>
-<tr id="i39" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/EventServicesImpl.html#updateProcessInstanceStatus-java.lang.Long-java.lang.Integer-">updateProcessInstanceStatus</a></span>(java.lang.Long&nbsp;pProcInstId,
-                           java.lang.Integer&nbsp;status)</code>&nbsp;</td>
-</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -477,7 +477,7 @@ implements <a href="../../../../../com/centurylink/mdw/services/EventServices.ht
 <dd><code><a href="../../../../../com/centurylink/mdw/services/EventServices.html#createEventLog-java.lang.String-java.lang.String-java.lang.String-java.lang.String-java.lang.String-java.lang.Long-java.lang.String-java.lang.String-java.lang.String-">createEventLog</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/EventServices.html" title="interface in com.centurylink.mdw.services">EventServices</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>pEventName</code> - </dd>
-<dd><code>pEventCat</code> - </dd>
+<dd><code>pEventCategory</code> - </dd>
 <dd><code>pEventSource</code> - </dd>
 <dd><code>pEventOwner</code> - </dd>
 <dd><code>pEventOwnerId</code> - </dd>
@@ -590,37 +590,6 @@ implements <a href="../../../../../com/centurylink/mdw/services/EventServices.ht
 </dl>
 </li>
 </ul>
-<a name="getProcessInstanceVariables-java.lang.Long-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getProcessInstanceVariables</h4>
-<pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&gt;&nbsp;getProcessInstanceVariables(java.lang.Long&nbsp;procInstId)
-                                                             throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="updateProcessInstanceStatus-java.lang.Long-java.lang.Integer-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>updateProcessInstanceStatus</h4>
-<pre>public&nbsp;void&nbsp;updateProcessInstanceStatus(java.lang.Long&nbsp;pProcInstId,
-                                        java.lang.Integer&nbsp;status)
-                                 throws <a href="../../../../../com/centurylink/mdw/services/ProcessException.html" title="class in com.centurylink.mdw.services">ProcessException</a>,
-                                        <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/services/ProcessException.html" title="class in com.centurylink.mdw.services">ProcessException</a></code></dd>
-<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
-</dl>
-</li>
-</ul>
 <a name="sendDelayEventsToWaitActivities-java.lang.String-">
 <!--   -->
 </a>
@@ -698,7 +667,7 @@ implements <a href="../../../../../com/centurylink/mdw/services/EventServices.ht
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/services/EventServices.html#getProcessInstance-java.lang.Long-">getProcessInstance</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/EventServices.html" title="interface in com.centurylink.mdw.services">EventServices</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>pProcInstId</code> - </dd>
+<dd><code>procInstId</code> - </dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>ProcessInstance</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -863,6 +832,27 @@ implements <a href="../../../../../com/centurylink/mdw/services/EventServices.ht
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/services/EventServices.html#createDocument-java.lang.String-java.lang.String-java.lang.Long-java.lang.Object-com.centurylink.mdw.model.workflow.Package-">createDocument</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/EventServices.html" title="interface in com.centurylink.mdw.services">EventServices</a></code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="createDocument-java.lang.String-java.lang.String-java.lang.Long-java.lang.Object-com.centurylink.mdw.model.workflow.Package-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createDocument</h4>
+<pre>public&nbsp;java.lang.Long&nbsp;createDocument(java.lang.String&nbsp;type,
+                                     java.lang.String&nbsp;ownerType,
+                                     java.lang.Long&nbsp;ownerId,
+                                     java.lang.Object&nbsp;doc,
+                                     <a href="../../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg,
+                                     java.lang.String&nbsp;path)
+                              throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/services/EventServices.html#createDocument-java.lang.String-java.lang.String-java.lang.Long-java.lang.Object-com.centurylink.mdw.model.workflow.Package-java.lang.String-">createDocument</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/EventServices.html" title="interface in com.centurylink.mdw.services">EventServices</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
 </dl>
@@ -1287,6 +1277,6 @@ implements <a href="../../../../../com/centurylink/mdw/services/EventServices.ht
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

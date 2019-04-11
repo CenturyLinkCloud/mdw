@@ -101,6 +101,10 @@ var activeTableTab = "activeTableTab";
 <dt>All Superinterfaces:</dt>
 <dd><a href="../../../../com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor">Monitor</a>, <a href="../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a></dd>
 </dl>
+<dl>
+<dt>All Known Implementing Classes:</dt>
+<dd><a href="../../../../com/centurylink/mdw/testing/AdapterStubbingMonitor.html" title="class in com.centurylink.mdw.testing">AdapterStubbingMonitor</a>, <a href="../../../../com/centurylink/mdw/zipkin/TraceAdapterMonitor.html" title="class in com.centurylink.mdw.zipkin">TraceAdapterMonitor</a></dd>
+</dl>
 <hr>
 <br>
 <pre>public interface <span class="typeNameLabel">AdapterMonitor</span>
@@ -108,7 +112,9 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 <div class="block">AdapterMonitors can be registered through @Monitor annotations to intercept
  external service calls originating from MDW workflow adapter activities.  Must be threadsafe.
  Normally all registered monitors are called in sequence.  However the first monitor whose onInvoke()
- returns non-null breaks the chain, and this non-null response is passed back to the MDW runtime.</div>
+ returns non-null breaks the chain, and this non-null response is passed back to the MDW runtime.
+
+ Same instance is guaranteed for all lifecycle methods.</div>
 </li>
 </ul>
 </div>
@@ -136,25 +142,28 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>default java.lang.Object</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/AdapterMonitor.html#onInvoke-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Object-java.util.Map-">onInvoke</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;context,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/AdapterMonitor.html#onInvoke-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Object-java.util.Map-java.lang.Object-">onInvoke</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;context,
         java.lang.Object&nbsp;request,
-        java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>
+        java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers,
+        java.lang.Object&nbsp;connection)</code>
 <div class="block">Called after onRequest(), but before the service is actually invoked.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>default java.lang.Object</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/AdapterMonitor.html#onRequest-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Object-java.util.Map-">onRequest</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;context,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/AdapterMonitor.html#onRequest-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Object-java.util.Map-java.lang.Object-">onRequest</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;context,
          java.lang.Object&nbsp;request,
-         java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>
+         java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers,
+         java.lang.Object&nbsp;connection)</code>
 <div class="block">Called when the request is created.</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>default java.lang.Object</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/AdapterMonitor.html#onResponse-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Object-java.util.Map-">onResponse</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;context,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/monitor/AdapterMonitor.html#onResponse-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Object-java.util.Map-java.lang.Object-">onResponse</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;context,
           java.lang.Object&nbsp;response,
-          java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>
+          java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers,
+          java.lang.Object&nbsp;connection)</code>
 <div class="block">Called when the response is received.</div>
 </td>
 </tr>
@@ -164,7 +173,7 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;com.centurylink.mdw.monitor.<a href="../../../../com/centurylink/mdw/monitor/Monitor.html" title="interface in com.centurylink.mdw.monitor">Monitor</a></h3>
-<code><a href="../../../../com/centurylink/mdw/monitor/Monitor.html#isEnabled-com.centurylink.mdw.model.workflow.RuntimeContext-">isEnabled</a>, <a href="../../../../com/centurylink/mdw/monitor/Monitor.html#isOffline--">isOffline</a></code></li>
+<code><a href="../../../../com/centurylink/mdw/monitor/Monitor.html#getCategory-com.centurylink.mdw.model.workflow.RuntimeContext-">getCategory</a>, <a href="../../../../com/centurylink/mdw/monitor/Monitor.html#isEnabled-com.centurylink.mdw.model.workflow.RuntimeContext-">isEnabled</a>, <a href="../../../../com/centurylink/mdw/monitor/Monitor.html#isOffline--">isOffline</a></code></li>
 </ul>
 </li>
 </ul>
@@ -180,7 +189,7 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="onRequest-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Object-java.util.Map-">
+<a name="onRequest-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Object-java.util.Map-java.lang.Object-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -188,7 +197,8 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 <h4>onRequest</h4>
 <pre>default&nbsp;java.lang.Object&nbsp;onRequest(<a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;context,
                                    java.lang.Object&nbsp;request,
-                                   java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</pre>
+                                   java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers,
+                                   java.lang.Object&nbsp;connection)</pre>
 <div class="block">Called when the request is created.  Can change the request contents.
  Currently must return null or a String.</div>
 <dl>
@@ -201,7 +211,7 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 </dl>
 </li>
 </ul>
-<a name="onInvoke-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Object-java.util.Map-">
+<a name="onInvoke-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Object-java.util.Map-java.lang.Object-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -209,9 +219,10 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 <h4>onInvoke</h4>
 <pre>default&nbsp;java.lang.Object&nbsp;onInvoke(<a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;context,
                                   java.lang.Object&nbsp;request,
-                                  java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</pre>
+                                  java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers,
+                                  java.lang.Object&nbsp;connection)</pre>
 <div class="block">Called after onRequest(), but before the service is actually invoked.
- Can be used to short-circuit the service.  Currently must return null or a String.
+ Can be used to short-circuit (stub) the service.  Currently must return null or a String.
  Returning non-null from here bypasses onResponse() and other chained monitors' onInvoke().</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -223,7 +234,7 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 </dl>
 </li>
 </ul>
-<a name="onResponse-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Object-java.util.Map-">
+<a name="onResponse-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-java.lang.Object-java.util.Map-java.lang.Object-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -231,13 +242,15 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 <h4>onResponse</h4>
 <pre>default&nbsp;java.lang.Object&nbsp;onResponse(<a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;context,
                                     java.lang.Object&nbsp;response,
-                                    java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</pre>
+                                    java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers,
+                                    java.lang.Object&nbsp;connection)</pre>
 <div class="block">Called when the response is received.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>context</code> - The workflow runtime context of the adapter activity</dd>
 <dd><code>response</code> - The response that was received from the external system. (String, XMLBean, JAXB Element, JSONObject, etc).</dd>
 <dd><code>headers</code> - Protocol headers for the incoming response.  New headers can be injected by the monitor.</dd>
+<dd><code>connection</code> - Connection used in adapter</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Null unless the monitor wants to change the response contents.  In that case, return the alternative response.</dd>
 </dl>
@@ -255,7 +268,7 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>context</code> - adapter workflow context</dd>
-<dd><code>ex</code> - error that was encountered</dd>
+<dd><code>t</code> - error that was encountered</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>null, or activity result code</dd>
 </dl>
@@ -329,6 +342,6 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

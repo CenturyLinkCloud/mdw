@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6,"i26":6,"i27":6,"i28":6,"i29":6,"i30":6,"i31":6,"i32":6,"i33":6,"i34":6,"i35":6,"i36":6,"i37":6,"i38":6,"i39":6,"i40":6,"i41":6,"i42":6,"i43":6,"i44":6,"i45":6,"i46":6,"i47":6,"i48":6,"i49":6,"i50":6,"i51":6,"i52":6,"i53":6,"i54":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6,"i19":6,"i20":6,"i21":6,"i22":6,"i23":6,"i24":6,"i25":6,"i26":6,"i27":6,"i28":6,"i29":6,"i30":6,"i31":6,"i32":6,"i33":6,"i34":6,"i35":6,"i36":6,"i37":6,"i38":6,"i39":6,"i40":6,"i41":6,"i42":6,"i43":6,"i44":6,"i45":6,"i46":6,"i47":6,"i48":6,"i49":6,"i50":6,"i51":6,"i52":6,"i53":6,"i54":6,"i55":6,"i56":6,"i57":6,"i58":6,"i59":6,"i60":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -143,9 +143,10 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#actionActivity-java.lang.String-java.lang.String-java.lang.String-">actionActivity</a></span>(java.lang.String&nbsp;activityInstanceId,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#actionActivity-java.lang.Long-java.lang.String-java.lang.String-java.lang.String-">actionActivity</a></span>(java.lang.Long&nbsp;activityInstanceId,
               java.lang.String&nbsp;action,
-              java.lang.String&nbsp;completionCode)</code>&nbsp;</td>
+              java.lang.String&nbsp;completionCode,
+              java.lang.String&nbsp;uer)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -167,12 +168,12 @@ var activeTableTab = "activeTableTab";
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getActivity-java.lang.Long-">getActivity</a></span>(java.lang.Long&nbsp;instanceId)</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
-<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ActivityList.html" title="class in com.centurylink.mdw.model.workflow">ActivityList</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getActivityDefinitions-com.centurylink.mdw.common.service.Query-">getActivityDefinitions</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+<td class="colFirst"><code>java.util.TreeMap&lt;java.util.Date,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/workflow/ActivityAggregate.html" title="class in com.centurylink.mdw.model.workflow">ActivityAggregate</a>&gt;&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getActivityBreakdown-com.centurylink.mdw.common.service.Query-">getActivityBreakdown</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
-<td class="colFirst"><code>java.util.Map&lt;java.util.Date,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/workflow/ActivityCount.html" title="class in com.centurylink.mdw.model.workflow">ActivityCount</a>&gt;&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getActivityInstanceBreakdown-com.centurylink.mdw.common.service.Query-">getActivityInstanceBreakdown</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ActivityList.html" title="class in com.centurylink.mdw.model.workflow">ActivityList</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getActivityDefinitions-com.centurylink.mdw.common.service.Query-">getActivityDefinitions</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,java.lang.String&gt;</code></td>
@@ -184,105 +185,129 @@ var activeTableTab = "activeTableTab";
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getContext-java.lang.Long-">getContext</a></span>(java.lang.Long&nbsp;instanceId)</code>&nbsp;</td>
 </tr>
 <tr id="i9" class="rowColor">
+<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getContext-java.lang.Long-java.lang.Boolean-">getContext</a></span>(java.lang.Long&nbsp;instanceId,
+          java.lang.Boolean&nbsp;embeddedVars)</code>&nbsp;</td>
+</tr>
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getDocType-java.lang.Object-">getDocType</a></span>(java.lang.Object&nbsp;docObj)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">Document</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getDocument-java.lang.Long-">getDocument</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getDocumentStringValue-java.lang.Long-">getDocumentStringValue</a></span>(java.lang.Long&nbsp;id)</code>
 <div class="block">Converts a document to a string, applying a consistent format for XML and JSON.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html" title="class in com.centurylink.mdw.model.workflow">ActivityImplementor</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getImplementor-java.lang.String-">getImplementor</a></span>(java.lang.String&nbsp;className)</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html" title="class in com.centurylink.mdw.model.workflow">ActivityImplementor</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getImplementors--">getImplementors</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
+<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getInstanceDefinition-java.lang.String-java.lang.Long-">getInstanceDefinition</a></span>(java.lang.String&nbsp;assetPath,
+                     java.lang.Long&nbsp;instanceId)</code>
+<div class="block">Retrieve process definition for a specific instance from the document table.</div>
+</td>
+</tr>
+<tr id="i16" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getMasterProcess-java.lang.String-">getMasterProcess</a></span>(java.lang.String&nbsp;masterRequestId)</code>
 <div class="block">If multiple matches, returns latest.</div>
 </td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getProcess-java.lang.Long-">getProcess</a></span>(java.lang.Long&nbsp;instanceId)</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getProcess-java.lang.Long-boolean-">getProcess</a></span>(java.lang.Long&nbsp;instanceId,
           boolean&nbsp;withSubprocs)</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i19" class="rowColor">
+<td class="colFirst"><code>java.util.TreeMap&lt;java.util.Date,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/workflow/ProcessAggregate.html" title="class in com.centurylink.mdw.model.workflow">ProcessAggregate</a>&gt;&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getProcessBreakdown-com.centurylink.mdw.common.service.Query-">getProcessBreakdown</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i20" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getProcessDefinition-java.lang.Long-">getProcessDefinition</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getProcessDefinition-java.lang.String-com.centurylink.mdw.common.service.Query-">getProcessDefinition</a></span>(java.lang.String&nbsp;assetPath,
                     <a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getProcessDefinitions-com.centurylink.mdw.common.service.Query-">getProcessDefinitions</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessList.html" title="class in com.centurylink.mdw.model.workflow">ProcessList</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getProcesses-com.centurylink.mdw.common.service.Query-">getProcesses</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getProcessForTrigger-java.lang.Long-">getProcessForTrigger</a></span>(java.lang.Long&nbsp;triggerId)</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
-<td class="colFirst"><code>java.util.Map&lt;java.util.Date,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/workflow/ProcessCount.html" title="class in com.centurylink.mdw.model.workflow">ProcessCount</a>&gt;&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getProcessInstanceBreakdown-com.centurylink.mdw.common.service.Query-">getProcessInstanceBreakdown</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+<tr id="i25" class="rowColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/report/Hotspot.html" title="class in com.centurylink.mdw.model.report">Hotspot</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getProcessHotspots-com.centurylink.mdw.common.service.Query-">getProcessHotspots</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i26" class="altColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/report/Insight.html" title="class in com.centurylink.mdw.model.report">Insight</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getProcessInsights-com.centurylink.mdw.common.service.Query-">getProcessInsights</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i27" class="rowColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/report/Timepoint.html" title="class in com.centurylink.mdw.model.report">Timepoint</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getProcessTrend-com.centurylink.mdw.common.service.Query-">getProcessTrend</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i28" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/Value.html" title="class in com.centurylink.mdw.model">Value</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getProcessValue-java.lang.Long-java.lang.String-">getProcessValue</a></span>(java.lang.Long&nbsp;instanceId,
                java.lang.String&nbsp;name)</code>
 <div class="block">name can be an expression</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,<a href="../../../../com/centurylink/mdw/model/Value.html" title="class in com.centurylink.mdw.model">Value</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getProcessValues-java.lang.Long-">getProcessValues</a></span>(java.lang.Long&nbsp;instanceId)</code>&nbsp;</td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,<a href="../../../../com/centurylink/mdw/model/Value.html" title="class in com.centurylink.mdw.model">Value</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getProcessValues-java.lang.Long-boolean-">getProcessValues</a></span>(java.lang.Long&nbsp;instanceId,
                 boolean&nbsp;includeEmpty)</code>&nbsp;</td>
 </tr>
-<tr id="i26" class="altColor">
-<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/workflow/ActivityCount.html" title="class in com.centurylink.mdw.model.workflow">ActivityCount</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getTopThroughputActivities-com.centurylink.mdw.common.service.Query-">getTopThroughputActivities</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+<tr id="i31" class="rowColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/workflow/ActivityAggregate.html" title="class in com.centurylink.mdw.model.workflow">ActivityAggregate</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getTopActivities-com.centurylink.mdw.common.service.Query-">getTopActivities</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
-<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/workflow/ProcessCount.html" title="class in com.centurylink.mdw.model.workflow">ProcessCount</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getTopThroughputProcesses-com.centurylink.mdw.common.service.Query-">getTopThroughputProcesses</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+<tr id="i32" class="altColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/workflow/ProcessAggregate.html" title="class in com.centurylink.mdw.model.workflow">ProcessAggregate</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getTopProcesses-com.centurylink.mdw.common.service.Query-">getTopProcesses</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getValue-java.lang.String-java.lang.String-java.lang.String-">getValue</a></span>(java.lang.String&nbsp;ownerType,
         java.lang.String&nbsp;ownerId,
         java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getValueHolderIds-java.lang.String-java.lang.String-">getValueHolderIds</a></span>(java.lang.String&nbsp;valueName,
                  java.lang.String&nbsp;valuePattern)</code>
 <div class="block">Get ValueHolder IDs for the specified name and pattern</div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getValueHolderIds-java.lang.String-java.lang.String-java.lang.String-">getValueHolderIds</a></span>(java.lang.String&nbsp;valueName,
                  java.lang.String&nbsp;valuePattern,
@@ -290,12 +315,12 @@ var activeTableTab = "activeTableTab";
 <div class="block">Get ValueHolder IDs for the specified name, pattern and ownerType</div>
 </td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#getValues-java.lang.String-java.lang.String-">getValues</a></span>(java.lang.String&nbsp;ownerType,
          java.lang.String&nbsp;ownerId)</code>&nbsp;</td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#invokeServiceProcess-com.centurylink.mdw.model.workflow.Process-java.lang.String-java.lang.String-java.lang.Long-java.util.Map-">invokeServiceProcess</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process,
                     java.lang.String&nbsp;masterRequestId,
@@ -303,7 +328,7 @@ var activeTableTab = "activeTableTab";
                     java.lang.Long&nbsp;ownerId,
                     java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;params)</code>&nbsp;</td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#invokeServiceProcess-com.centurylink.mdw.model.workflow.Process-java.lang.String-java.lang.String-java.lang.Long-java.util.Map-java.util.Map-">invokeServiceProcess</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process,
                     java.lang.String&nbsp;masterRequestId,
@@ -312,7 +337,7 @@ var activeTableTab = "activeTableTab";
                     java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;params,
                     java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#invokeServiceProcess-java.lang.String-java.lang.Object-java.lang.String-java.util.Map-java.util.Map-">invokeServiceProcess</a></span>(java.lang.String&nbsp;processName,
                     java.lang.Object&nbsp;masterRequest,
@@ -320,7 +345,7 @@ var activeTableTab = "activeTableTab";
                     java.util.Map&lt;java.lang.String,java.lang.Object&gt;&nbsp;parameters,
                     java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code>java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#invokeServiceProcess-java.lang.String-java.lang.Object-java.lang.String-java.util.Map-java.util.Map-java.util.Map-">invokeServiceProcess</a></span>(java.lang.String&nbsp;processName,
                     java.lang.Object&nbsp;masterRequest,
@@ -331,7 +356,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">responseHeaders will be populated from process variable, if any</div>
 </td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#launchProcess-com.centurylink.mdw.model.workflow.Process-java.lang.String-java.lang.String-java.lang.Long-java.util.Map-">launchProcess</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process,
              java.lang.String&nbsp;masterRequestId,
@@ -339,7 +364,7 @@ var activeTableTab = "activeTableTab";
              java.lang.Long&nbsp;ownerId,
              java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;params)</code>&nbsp;</td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#launchProcess-java.lang.String-java.lang.String-java.lang.String-java.lang.Long-java.util.Map-">launchProcess</a></span>(java.lang.String&nbsp;name,
              java.lang.String&nbsp;masterRequestId,
@@ -347,46 +372,52 @@ var activeTableTab = "activeTableTab";
              java.lang.Long&nbsp;ownerId,
              java.util.Map&lt;java.lang.String,java.lang.Object&gt;&nbsp;params)</code>&nbsp;</td>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code>java.lang.Integer</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#notify-com.centurylink.mdw.model.workflow.Package-java.lang.String-java.lang.Object-">notify</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;runtimePackage,
       java.lang.String&nbsp;eventName,
       java.lang.Object&nbsp;eventMessage)</code>&nbsp;</td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>java.lang.Integer</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#notify-com.centurylink.mdw.model.workflow.Package-java.lang.String-java.lang.Object-int-">notify</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;runtimePackage,
       java.lang.String&nbsp;eventName,
       java.lang.Object&nbsp;eventMessage,
       int&nbsp;delay)</code>&nbsp;</td>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code>java.lang.Integer</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#notify-java.lang.String-java.lang.String-int-">notify</a></span>(java.lang.String&nbsp;event,
       java.lang.String&nbsp;message,
       int&nbsp;delay)</code>&nbsp;</td>
 </tr>
-<tr id="i41" class="rowColor">
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#registerTaskWaitEvent-java.lang.Long-com.centurylink.mdw.model.event.Event-">registerTaskWaitEvent</a></span>(java.lang.Long&nbsp;taskInstanceId,
                      <a href="../../../../com/centurylink/mdw/model/event/Event.html" title="class in com.centurylink.mdw.model.event">Event</a>&nbsp;event)</code>&nbsp;</td>
 </tr>
-<tr id="i42" class="altColor">
+<tr id="i47" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#registerTaskWaitEvent-java.lang.Long-java.lang.String-">registerTaskWaitEvent</a></span>(java.lang.Long&nbsp;taskInstanceId,
                      java.lang.String&nbsp;eventName)</code>&nbsp;</td>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i48" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#registerTaskWaitEvent-java.lang.Long-java.lang.String-java.lang.String-">registerTaskWaitEvent</a></span>(java.lang.Long&nbsp;taskInstanceId,
                      java.lang.String&nbsp;eventName,
                      java.lang.String&nbsp;completionCode)</code>&nbsp;</td>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i49" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessRun.html" title="class in com.centurylink.mdw.model.workflow">ProcessRun</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#runProcess-com.centurylink.mdw.model.workflow.ProcessRun-">runProcess</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/ProcessRun.html" title="class in com.centurylink.mdw.model.workflow">ProcessRun</a>&nbsp;runRequest)</code>&nbsp;</td>
 </tr>
-<tr id="i45" class="rowColor">
+<tr id="i50" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#saveInstanceDefinition-java.lang.String-java.lang.Long-com.centurylink.mdw.model.workflow.Process-">saveInstanceDefinition</a></span>(java.lang.String&nbsp;assetPath,
+                      java.lang.Long&nbsp;instanceId,
+                      <a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process)</code>&nbsp;</td>
+</tr>
+<tr id="i51" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#setAttributes-java.lang.String-java.lang.Long-java.util.Map-">setAttributes</a></span>(java.lang.String&nbsp;ownerType,
              java.lang.Long&nbsp;ownerId,
@@ -394,13 +425,13 @@ var activeTableTab = "activeTableTab";
 <div class="block">Replace <b>all</b> attributes for this ownerId</div>
 </td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i52" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#setDocumentValue-com.centurylink.mdw.model.workflow.ProcessRuntimeContext-java.lang.String-java.lang.Object-">setDocumentValue</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a>&nbsp;context,
                 java.lang.String&nbsp;varName,
                 java.lang.Object&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i53" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#setValues-java.lang.String-java.lang.String-java.util.Map-">setValues</a></span>(java.lang.String&nbsp;ownerType,
          java.lang.String&nbsp;ownerId,
@@ -408,29 +439,29 @@ var activeTableTab = "activeTableTab";
 <div class="block">Replace <b>all</b> values for this ownerId</div>
 </td>
 </tr>
-<tr id="i48" class="altColor">
+<tr id="i54" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#setVariable-java.lang.Long-java.lang.String-java.lang.Object-">setVariable</a></span>(java.lang.Long&nbsp;processInstanceId,
            java.lang.String&nbsp;varName,
            java.lang.Object&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i55" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#setVariable-com.centurylink.mdw.model.workflow.ProcessRuntimeContext-java.lang.String-java.lang.Object-">setVariable</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a>&nbsp;context,
            java.lang.String&nbsp;varName,
            java.lang.Object&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr id="i50" class="altColor">
+<tr id="i56" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#setVariables-java.lang.Long-java.util.Map-">setVariables</a></span>(java.lang.Long&nbsp;processInstanceId,
             java.util.Map&lt;java.lang.String,java.lang.Object&gt;&nbsp;values)</code>&nbsp;</td>
 </tr>
-<tr id="i51" class="rowColor">
+<tr id="i57" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#setVariables-com.centurylink.mdw.model.workflow.ProcessRuntimeContext-java.util.Map-">setVariables</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a>&nbsp;context,
             java.util.Map&lt;java.lang.String,java.lang.Object&gt;&nbsp;values)</code>&nbsp;</td>
 </tr>
-<tr id="i52" class="altColor">
+<tr id="i58" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#updateAttributes-java.lang.String-java.lang.Long-java.util.Map-">updateAttributes</a></span>(java.lang.String&nbsp;ownerType,
                 java.lang.Long&nbsp;ownerId,
@@ -442,13 +473,13 @@ var activeTableTab = "activeTableTab";
  removing <b>all</b> attributes for this ownerId first</div>
 </td>
 </tr>
-<tr id="i53" class="rowColor">
+<tr id="i59" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#updateDocument-com.centurylink.mdw.model.workflow.ProcessRuntimeContext-java.lang.String-java.lang.Object-">updateDocument</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a>&nbsp;context,
               java.lang.String&nbsp;varName,
               java.lang.Object&nbsp;value)</code>&nbsp;</td>
 </tr>
-<tr id="i54" class="altColor">
+<tr id="i60" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/WorkflowServices.html#updateValues-java.lang.String-java.lang.String-java.util.Map-">updateValues</a></span>(java.lang.String&nbsp;ownerType,
             java.lang.String&nbsp;ownerId,
@@ -711,22 +742,22 @@ var activeTableTab = "activeTableTab";
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>taskInstanceId</code> - (Task Instance Id for Task)</dd>
 <dd><code>eventName</code> - </dd>
-<dd><code>recurring</code> - </dd>
 <dd><code>completionCode</code> - null for default outcome</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
 </li>
 </ul>
-<a name="actionActivity-java.lang.String-java.lang.String-java.lang.String-">
+<a name="actionActivity-java.lang.Long-java.lang.String-java.lang.String-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>actionActivity</h4>
-<pre>void&nbsp;actionActivity(java.lang.String&nbsp;activityInstanceId,
+<pre>void&nbsp;actionActivity(java.lang.Long&nbsp;activityInstanceId,
                     java.lang.String&nbsp;action,
-                    java.lang.String&nbsp;completionCode)
+                    java.lang.String&nbsp;completionCode,
+                    java.lang.String&nbsp;uer)
              throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
@@ -810,6 +841,21 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
+<a name="getContext-java.lang.Long-java.lang.Boolean-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getContext</h4>
+<pre><a href="../../../../com/centurylink/mdw/model/workflow/ProcessRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ProcessRuntimeContext</a>&nbsp;getContext(java.lang.Long&nbsp;instanceId,
+                                 java.lang.Boolean&nbsp;embeddedVars)
+                          throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="getProcessValues-java.lang.Long-boolean-">
 <!--   -->
 </a>
@@ -883,27 +929,27 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
-<a name="getTopThroughputProcesses-com.centurylink.mdw.common.service.Query-">
+<a name="getTopProcesses-com.centurylink.mdw.common.service.Query-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getTopThroughputProcesses</h4>
-<pre>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/workflow/ProcessCount.html" title="class in com.centurylink.mdw.model.workflow">ProcessCount</a>&gt;&nbsp;getTopThroughputProcesses(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
-                                                throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<h4>getTopProcesses</h4>
+<pre>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/workflow/ProcessAggregate.html" title="class in com.centurylink.mdw.model.workflow">ProcessAggregate</a>&gt;&nbsp;getTopProcesses(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                                          throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
 </li>
 </ul>
-<a name="getProcessInstanceBreakdown-com.centurylink.mdw.common.service.Query-">
+<a name="getProcessBreakdown-com.centurylink.mdw.common.service.Query-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getProcessInstanceBreakdown</h4>
-<pre>java.util.Map&lt;java.util.Date,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/workflow/ProcessCount.html" title="class in com.centurylink.mdw.model.workflow">ProcessCount</a>&gt;&gt;&nbsp;getProcessInstanceBreakdown(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+<h4>getProcessBreakdown</h4>
+<pre>java.util.TreeMap&lt;java.util.Date,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/workflow/ProcessAggregate.html" title="class in com.centurylink.mdw.model.workflow">ProcessAggregate</a>&gt;&gt;&nbsp;getProcessBreakdown(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
                                                                                 throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -911,27 +957,69 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
-<a name="getTopThroughputActivities-com.centurylink.mdw.common.service.Query-">
+<a name="getProcessInsights-com.centurylink.mdw.common.service.Query-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getTopThroughputActivities</h4>
-<pre>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/workflow/ActivityCount.html" title="class in com.centurylink.mdw.model.workflow">ActivityCount</a>&gt;&nbsp;getTopThroughputActivities(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
-                                                  throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<h4>getProcessInsights</h4>
+<pre>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/report/Insight.html" title="class in com.centurylink.mdw.model.report">Insight</a>&gt;&nbsp;getProcessInsights(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                                    throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
 </li>
 </ul>
-<a name="getActivityInstanceBreakdown-com.centurylink.mdw.common.service.Query-">
+<a name="getProcessTrend-com.centurylink.mdw.common.service.Query-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getActivityInstanceBreakdown</h4>
-<pre>java.util.Map&lt;java.util.Date,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/workflow/ActivityCount.html" title="class in com.centurylink.mdw.model.workflow">ActivityCount</a>&gt;&gt;&nbsp;getActivityInstanceBreakdown(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+<h4>getProcessTrend</h4>
+<pre>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/report/Timepoint.html" title="class in com.centurylink.mdw.model.report">Timepoint</a>&gt;&nbsp;getProcessTrend(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                                   throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getProcessHotspots-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getProcessHotspots</h4>
+<pre>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/report/Hotspot.html" title="class in com.centurylink.mdw.model.report">Hotspot</a>&gt;&nbsp;getProcessHotspots(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                                    throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getTopActivities-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTopActivities</h4>
+<pre>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/workflow/ActivityAggregate.html" title="class in com.centurylink.mdw.model.workflow">ActivityAggregate</a>&gt;&nbsp;getTopActivities(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                                            throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getActivityBreakdown-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getActivityBreakdown</h4>
+<pre>java.util.TreeMap&lt;java.util.Date,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/workflow/ActivityAggregate.html" title="class in com.centurylink.mdw.model.workflow">ActivityAggregate</a>&gt;&gt;&nbsp;getActivityBreakdown(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
                                                                                   throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
@@ -1366,7 +1454,7 @@ var activeTableTab = "activeTableTab";
 <a name="createProcess-java.lang.String-com.centurylink.mdw.common.service.Query-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>createProcess</h4>
 <pre>void&nbsp;createProcess(java.lang.String&nbsp;assetPath,
@@ -1377,6 +1465,39 @@ var activeTableTab = "activeTableTab";
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 <dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getInstanceDefinition-java.lang.String-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getInstanceDefinition</h4>
+<pre><a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;getInstanceDefinition(java.lang.String&nbsp;assetPath,
+                              java.lang.Long&nbsp;instanceId)
+                       throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<div class="block">Retrieve process definition for a specific instance from the document table.
+ Quickly returns null if no such definition exists.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="saveInstanceDefinition-java.lang.String-java.lang.Long-com.centurylink.mdw.model.workflow.Process-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>saveInstanceDefinition</h4>
+<pre>void&nbsp;saveInstanceDefinition(java.lang.String&nbsp;assetPath,
+                            java.lang.Long&nbsp;instanceId,
+                            <a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process)
+                     throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
 </li>
 </ul>
@@ -1448,6 +1569,6 @@ var activeTableTab = "activeTableTab";
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

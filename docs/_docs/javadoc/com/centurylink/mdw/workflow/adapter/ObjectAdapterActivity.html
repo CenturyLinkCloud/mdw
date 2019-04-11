@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":42,"i19":10,"i20":10,"i21":10,"i22":6,"i23":10,"i24":6,"i25":10,"i26":10,"i27":10,"i28":6};
+var methods = {"i0":6,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":42,"i19":10,"i20":10,"i21":10,"i22":6,"i23":10,"i24":6,"i25":10,"i26":42,"i27":10,"i28":42,"i29":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -121,7 +121,7 @@ var activeTableTab = "activeTableTab";
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../../com/centurylink/mdw/workflow/adapter/file/FileWriterAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.file">FileWriterAdapter</a>, <a href="../../../../../com/centurylink/mdw/workflow/adapter/db/JdbcSqlAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.db">JdbcSqlAdapter</a>, <a href="../../../../../com/centurylink/mdw/workflow/adapter/jms/JmsAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.jms">JmsAdapter</a>, <a href="../../../../../com/centurylink/mdw/workflow/adapter/ldap/LdapAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.ldap">LdapAdapter</a></dd>
+<dd><a href="../../../../../com/centurylink/mdw/camel/CamelRouteAdapter.html" title="class in com.centurylink.mdw.camel">CamelRouteAdapter</a>, <a href="../../../../../com/centurylink/mdw/workflow/adapter/file/FileWriterAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.file">FileWriterAdapter</a>, <a href="../../../../../com/centurylink/mdw/workflow/adapter/db/JdbcSqlAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.db">JdbcSqlAdapter</a>, <a href="../../../../../com/centurylink/mdw/workflow/adapter/jms/JmsAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.jms">JmsAdapter</a>, <a href="../../../../../com/centurylink/mdw/workflow/adapter/ldap/LdapAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.ldap">LdapAdapter</a></dd>
 </dl>
 <hr>
 <br>
@@ -158,15 +158,7 @@ implements <a href="../../../../../com/centurylink/mdw/activity/types/AdapterAct
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#REQUEST_XSD">REQUEST_XSD</a></span></code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#RESPONSE_VARIABLE">RESPONSE_VARIABLE</a></span></code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#RESPONSE_XSD">RESPONSE_XSD</a></span></code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -181,7 +173,7 @@ implements <a href="../../../../../com/centurylink/mdw/activity/types/AdapterAct
 <!--   -->
 </a>
 <h3>Fields inherited from interface&nbsp;com.centurylink.mdw.activity.types.<a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html" title="interface in com.centurylink.mdw.activity.types">AdapterActivity</a></h3>
-<code><a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#COMPCODE_AUTO_RETRY">COMPCODE_AUTO_RETRY</a>, <a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#DEFAULT_STUBBER_PORT">DEFAULT_STUBBER_PORT</a>, <a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#DEFAULT_STUBBER_TIMEOUT">DEFAULT_STUBBER_TIMEOUT</a>, <a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#MAKE_ACTUAL_CALL">MAKE_ACTUAL_CALL</a>, <a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#PROP_MAX_TRIES">PROP_MAX_TRIES</a>, <a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#PROP_RETRY_INTERVAL">PROP_RETRY_INTERVAL</a>, <a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#PROP_SYNCHRONOUS_RESPONSE">PROP_SYNCHRONOUS_RESPONSE</a>, <a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#PROP_TIMEOUT">PROP_TIMEOUT</a></code></li>
+<code><a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#COMPCODE_AUTO_RETRY">COMPCODE_AUTO_RETRY</a>, <a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#DEFAULT_STUBBER_PORT">DEFAULT_STUBBER_PORT</a>, <a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#DEFAULT_STUBBER_TIMEOUT">DEFAULT_STUBBER_TIMEOUT</a>, <a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#MAKE_ACTUAL_CALL">MAKE_ACTUAL_CALL</a>, <a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#PROP_MAX_TRIES">PROP_MAX_TRIES</a>, <a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#PROP_RETRY_INTERVAL">PROP_RETRY_INTERVAL</a>, <a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#PROP_SYNCHRONOUS_RESPONSE">PROP_SYNCHRONOUS_RESPONSE</a>, <a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#PROP_TIMEOUT">PROP_TIMEOUT</a>, <a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#REQUEST_XSD">REQUEST_XSD</a>, <a href="../../../../../com/centurylink/mdw/activity/types/AdapterActivity.html#RESPONSE_XSD">RESPONSE_XSD</a></code></li>
 </ul>
 </li>
 </ul>
@@ -327,7 +319,7 @@ implements <a href="../../../../../com/centurylink/mdw/activity/types/AdapterAct
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#getStubResponse-java.lang.String-">getStubResponse</a></span>(java.lang.String&nbsp;requestData)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
-<div class="block"><span class="deprecationComment">Use <code>getStubbedResponse</code></span></div>
+<div class="block"><span class="deprecationComment">Use <a href="../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#getStubResponse-java.lang.String-"><code>getStubbedResponse</code></a></span></div>
 </div>
 </td>
 </tr>
@@ -372,17 +364,25 @@ implements <a href="../../../../../com/centurylink/mdw/activity/types/AdapterAct
 </tr>
 <tr id="i25" class="rowColor">
 <td class="colFirst"><code>protected java.lang.Long</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#logRequest-java.lang.String-">logRequest</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#logRequest-com.centurylink.mdw.model.request.Request-">logRequest</a></span>(<a href="../../../../../com/centurylink/mdw/model/request/Request.html" title="class in com.centurylink.mdw.model.request">Request</a>&nbsp;request)</code>&nbsp;</td>
 </tr>
 <tr id="i26" class="altColor">
 <td class="colFirst"><code>protected java.lang.Long</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#logResponse-com.centurylink.mdw.model.Response-">logResponse</a></span>(<a href="../../../../../com/centurylink/mdw/model/Response.html" title="class in com.centurylink.mdw.model">Response</a>&nbsp;response)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#logRequest-java.lang.String-">logRequest</a></span>(java.lang.String&nbsp;message)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</td>
 </tr>
 <tr id="i27" class="rowColor">
 <td class="colFirst"><code>protected java.lang.Long</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#logResponse-java.lang.String-">logResponse</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#logResponse-com.centurylink.mdw.model.Response-">logResponse</a></span>(<a href="../../../../../com/centurylink/mdw/model/Response.html" title="class in com.centurylink.mdw.model">Response</a>&nbsp;response)</code>&nbsp;</td>
 </tr>
 <tr id="i28" class="altColor">
+<td class="colFirst"><code>protected java.lang.Long</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#logResponse-java.lang.String-">logResponse</a></span>(java.lang.String&nbsp;message)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+</td>
+</tr>
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>protected abstract java.lang.Object</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#openConnection--">openConnection</a></span>()</code>
 <div class="block">Open a connection to the external system.</div>
@@ -401,7 +401,7 @@ implements <a href="../../../../../com/centurylink/mdw/activity/types/AdapterAct
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.centurylink.mdw.services.process.<a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html" title="class in com.centurylink.mdw.services.process">BaseActivity</a></h3>
-<code><a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#closeDatabaseAccess-com.centurylink.mdw.dataaccess.DatabaseAccess-">closeDatabaseAccess</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#createDocument-java.lang.String-java.lang.Object-java.lang.String-java.lang.Long-">createDocument</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#createDocument-java.lang.String-java.lang.Object-java.lang.String-java.lang.Long-java.lang.Integer-java.lang.String-">createDocument</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#doCompatibilityCodeSubstitutions-java.lang.String-">doCompatibilityCodeSubstitutions</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#evaluateExpression-java.lang.String-java.lang.String-java.lang.String-">evaluateExpression</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#executeScript-java.lang.String-java.lang.String-java.util.Map-java.lang.String-">executeScript</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getActivityId--">getActivityId</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getActivityInstance--">getActivityInstance</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getActivityInstanceId--">getActivityInstanceId</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getActivityName--">getActivityName</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getAsset-java.lang.String-java.lang.String-int-">getAsset</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getAttribute-java.lang.String-">getAttribute</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getAttribute-java.lang.String-java.lang.Boolean-">getAttribute</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getAttribute-java.lang.String-java.lang.Integer-">getAttribute</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getAttribute-java.lang.String-java.lang.String-">getAttribute</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getAttributes--">getAttributes</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getAttributeValue-java.lang.String-">getAttributeValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getAttributeValueAsVariableName-java.lang.String-">getAttributeValueAsVariableName</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getAttributeValueSmart-java.lang.String-">getAttributeValueSmart</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getDocument-com.centurylink.mdw.model.variable.DocumentReference-java.lang.String-">getDocument</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getDocumentContent-com.centurylink.mdw.model.variable.DocumentReference-">getDocumentContent</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getDocumentForUpdate-com.centurylink.mdw.model.variable.DocumentReference-java.lang.String-">getDocumentForUpdate</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getEngine--">getEngine</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getEntryCode--">getEntryCode</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getExternalEventInstanceDetails-java.lang.Long-">getExternalEventInstanceDetails</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getMainProcessDefinition--">getMainProcessDefinition</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getMasterRequestId--">getMasterRequestId</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getOutputDocuments--">getOutputDocuments</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getPackage--">getPackage</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getParameterId-java.lang.String-">getParameterId</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getParameters--">getParameters</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getParameterStringValue-java.lang.String-">getParameterStringValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getParameterType-java.lang.String-">getParameterType</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getParameterValue-java.lang.Long-java.lang.String-">getParameterValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getParameterValue-java.lang.String-">getParameterValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getParentProcessId--">getParentProcessId</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getPerformanceLevel--">getPerformanceLevel</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getProcessDefinition--">getProcessDefinition</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getProcessId--">getProcessId</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getProcessInstance--">getProcessInstance</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getProcessInstanceId--">getProcessInstanceId</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getProcessInstanceOwner--">getProcessInstanceOwner</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getProcessInstanceOwnerId--">getProcessInstanceOwnerId</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getProperty-java.lang.String-">getProperty</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getRequiredVariableValue-java.lang.String-">getRequiredVariableValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getReturnCode--">getReturnCode</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getReturnMessage--">getReturnMessage</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getRuntimeContext--">getRuntimeContext</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getScriptEvaluator-java.lang.String-java.lang.String-">getScriptEvaluator</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getScriptExecClassName-java.lang.String-">getScriptExecClassName</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getScriptExecutor-java.lang.String-java.lang.String-">getScriptExecutor</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getValue-java.lang.String-">getValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getValueSmart-java.lang.String-java.lang.String-">getValueSmart</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getVariableInstance-java.lang.String-">getVariableInstance</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getVariableValue-java.lang.String-">getVariableValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getVariableValueSmart-java.lang.String-">getVariableValueSmart</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getWorkTransitionInstanceId--">getWorkTransitionInstanceId</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#initialize-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">initialize</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#isDisabled--">isDisabled</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#isLogDebugEnabled--">isLogDebugEnabled</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#isLogInfoEnabled--">isLogInfoEnabled</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#isOutputDocument-java.lang.String-">isOutputDocument</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#lockActivityInstance--">lockActivityInstance</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#lockProcessInstance--">lockProcessInstance</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#logdebug-java.lang.String-">logdebug</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#logexception-java.lang.String-java.lang.Exception-">logexception</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#loginfo-java.lang.String-">loginfo</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#logsevere-java.lang.String-">logsevere</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#logtag--">logtag</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#logwarn-java.lang.String-">logwarn</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#openDatabaseAccess-java.lang.String-">openDatabaseAccess</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#prepare-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">prepare</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#recordEventFlag-java.lang.String-int-">recordEventFlag</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setOutputDocuments-java.lang.String:A-">setOutputDocuments</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setParameterValue-java.lang.Long-java.lang.String-java.lang.Object-">setParameterValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setParameterValue-java.lang.String-java.lang.Object-">setParameterValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setParameterValueAsDocument-java.lang.String-java.lang.String-java.lang.Object-">setParameterValueAsDocument</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setParameterValues-java.util.Map-">setParameterValues</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setProcessInstanceCompletionCode-java.lang.String-">setProcessInstanceCompletionCode</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setReturnCode-java.lang.String-">setReturnCode</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setReturnMessage-java.lang.String-">setReturnMessage</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setValue-java.lang.String-java.lang.Object-">setValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setVariableValue-java.lang.String-java.lang.Object-">setVariableValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setVariableValue-java.lang.String-java.lang.String-java.lang.Object-">setVariableValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#startTransaction--">startTransaction</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#stopTransaction-com.centurylink.mdw.util.TransactionWrapper-">stopTransaction</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#translatePlaceHolder-java.lang.String-">translatePlaceHolder</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#updateDocumentContent-com.centurylink.mdw.model.variable.DocumentReference-java.lang.Object-java.lang.String-">updateDocumentContent</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#updateDocumentInfo-com.centurylink.mdw.model.variable.DocumentReference-java.lang.String-java.lang.String-java.lang.Long-">updateDocumentInfo</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#updateDocumentInfo-com.centurylink.mdw.model.variable.DocumentReference-java.lang.String-java.lang.String-java.lang.Long-java.lang.Integer-java.lang.String-">updateDocumentInfo</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#valueIsJavaExpression-java.lang.String-">valueIsJavaExpression</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#valueIsVariable-java.lang.String-">valueIsVariable</a></code></li>
+<code><a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#closeDatabaseAccess-com.centurylink.mdw.dataaccess.DatabaseAccess-">closeDatabaseAccess</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#createDocument-java.lang.String-java.lang.Object-java.lang.String-java.lang.Long-">createDocument</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#createDocument-java.lang.String-java.lang.Object-java.lang.String-java.lang.Long-java.lang.Integer-java.lang.String-">createDocument</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#createDocument-java.lang.String-java.lang.Object-java.lang.String-java.lang.Long-java.lang.Integer-java.lang.String-java.lang.String-">createDocument</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#createDocument-java.lang.String-java.lang.Object-java.lang.String-java.lang.Long-java.lang.String-">createDocument</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#doCompatibilityCodeSubstitutions-java.lang.String-">doCompatibilityCodeSubstitutions</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#evaluateExpression-java.lang.String-java.lang.String-java.lang.String-">evaluateExpression</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#executeScript-java.lang.String-java.lang.String-java.util.Map-java.lang.String-">executeScript</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getActivityId--">getActivityId</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getActivityInstance--">getActivityInstance</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getActivityInstanceId--">getActivityInstanceId</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getActivityName--">getActivityName</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getAsset-java.lang.String-java.lang.String-int-">getAsset</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getAttribute-java.lang.String-">getAttribute</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getAttribute-java.lang.String-java.lang.Boolean-">getAttribute</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getAttribute-java.lang.String-java.lang.Integer-">getAttribute</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getAttribute-java.lang.String-java.lang.String-">getAttribute</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getAttributes--">getAttributes</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getAttributeValue-java.lang.String-">getAttributeValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getAttributeValueAsVariableName-java.lang.String-">getAttributeValueAsVariableName</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getAttributeValueSmart-java.lang.String-">getAttributeValueSmart</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getDocument-com.centurylink.mdw.model.variable.DocumentReference-java.lang.String-">getDocument</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getDocumentContent-com.centurylink.mdw.model.variable.DocumentReference-">getDocumentContent</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getDocumentForUpdate-com.centurylink.mdw.model.variable.DocumentReference-java.lang.String-">getDocumentForUpdate</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getEngine--">getEngine</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getEntryCode--">getEntryCode</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getExternalEventInstanceDetails-java.lang.Long-">getExternalEventInstanceDetails</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getMainProcessDefinition--">getMainProcessDefinition</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getMasterRequestId--">getMasterRequestId</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getOutputDocuments--">getOutputDocuments</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getPackage--">getPackage</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getParameterId-java.lang.String-">getParameterId</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getParameters--">getParameters</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getParameterStringValue-java.lang.String-">getParameterStringValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getParameterType-java.lang.String-">getParameterType</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getParameterValue-java.lang.Long-java.lang.String-">getParameterValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getParameterValue-java.lang.String-">getParameterValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getParentProcessId--">getParentProcessId</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getPerformanceLevel--">getPerformanceLevel</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getProcessDefinition--">getProcessDefinition</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getProcessId--">getProcessId</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getProcessInstance--">getProcessInstance</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getProcessInstanceId--">getProcessInstanceId</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getProcessInstanceOwner--">getProcessInstanceOwner</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getProcessInstanceOwnerId--">getProcessInstanceOwnerId</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getProperty-java.lang.String-">getProperty</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getRequiredVariableValue-java.lang.String-">getRequiredVariableValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getReturnCode--">getReturnCode</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getReturnMessage--">getReturnMessage</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getRuntimeContext--">getRuntimeContext</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getScriptEvaluator-java.lang.String-java.lang.String-">getScriptEvaluator</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getScriptExecClassName-java.lang.String-">getScriptExecClassName</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getScriptExecutor-java.lang.String-java.lang.String-">getScriptExecutor</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getValue-java.lang.String-">getValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getValueSmart-java.lang.String-java.lang.String-">getValueSmart</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getVariableInstance-java.lang.String-">getVariableInstance</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getVariableValue-java.lang.String-">getVariableValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getVariableValueSmart-java.lang.String-">getVariableValueSmart</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#getWorkTransitionInstanceId--">getWorkTransitionInstanceId</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#initialize-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">initialize</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#isDisabled--">isDisabled</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#isLogDebugEnabled--">isLogDebugEnabled</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#isLogInfoEnabled--">isLogInfoEnabled</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#isOutputDocument-java.lang.String-">isOutputDocument</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#lockActivityInstance--">lockActivityInstance</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#lockProcessInstance--">lockProcessInstance</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#logdebug-java.lang.String-">logdebug</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#logexception-java.lang.String-java.lang.Exception-">logexception</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#loginfo-java.lang.String-">loginfo</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#logsevere-java.lang.String-">logsevere</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#logtag--">logtag</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#logwarn-java.lang.String-">logwarn</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#openDatabaseAccess-java.lang.String-">openDatabaseAccess</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#prepare-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">prepare</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setOutputDocuments-java.lang.String:A-">setOutputDocuments</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setParameterValue-java.lang.Long-java.lang.String-java.lang.Object-">setParameterValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setParameterValue-java.lang.String-java.lang.Object-">setParameterValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setParameterValueAsDocument-java.lang.String-java.lang.String-java.lang.Object-">setParameterValueAsDocument</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setParameterValues-java.util.Map-">setParameterValues</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setProcessInstanceCompletionCode-java.lang.String-">setProcessInstanceCompletionCode</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setReturnCode-java.lang.String-">setReturnCode</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setReturnMessage-java.lang.String-">setReturnMessage</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setValue-java.lang.String-java.lang.Object-">setValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setVariableValue-java.lang.String-java.lang.Object-">setVariableValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#setVariableValue-java.lang.String-java.lang.String-java.lang.Object-">setVariableValue</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#startTransaction--">startTransaction</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#stopTransaction-com.centurylink.mdw.util.TransactionWrapper-">stopTransaction</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#translatePlaceHolder-java.lang.String-">translatePlaceHolder</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#updateDocumentContent-com.centurylink.mdw.model.variable.DocumentReference-java.lang.Object-java.lang.String-">updateDocumentContent</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#updateDocumentInfo-com.centurylink.mdw.model.variable.DocumentReference-java.lang.String-java.lang.String-java.lang.Long-">updateDocumentInfo</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#updateDocumentInfo-com.centurylink.mdw.model.variable.DocumentReference-java.lang.String-java.lang.String-java.lang.Long-java.lang.Integer-java.lang.String-">updateDocumentInfo</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#valueIsJavaExpression-java.lang.String-">valueIsJavaExpression</a>, <a href="../../../../../com/centurylink/mdw/services/process/BaseActivity.html#valueIsVariable-java.lang.String-">valueIsVariable</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -460,39 +460,13 @@ implements <a href="../../../../../com/centurylink/mdw/activity/types/AdapterAct
 <a name="RESPONSE_VARIABLE">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>RESPONSE_VARIABLE</h4>
 <pre>protected static final&nbsp;java.lang.String RESPONSE_VARIABLE</pre>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../../../constant-values.html#com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity.RESPONSE_VARIABLE">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a name="REQUEST_XSD">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>REQUEST_XSD</h4>
-<pre>protected static final&nbsp;java.lang.String REQUEST_XSD</pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../constant-values.html#com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity.REQUEST_XSD">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a name="RESPONSE_XSD">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>RESPONSE_XSD</h4>
-<pre>protected static final&nbsp;java.lang.String RESPONSE_XSD</pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../constant-values.html#com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity.RESPONSE_XSD">Constant Field Values</a></dd>
 </dl>
 </li>
 </ul>
@@ -720,22 +694,24 @@ implements <a href="../../../../../com/centurylink/mdw/activity/types/AdapterAct
 </dl>
 </li>
 </ul>
+<a name="logRequest-com.centurylink.mdw.model.request.Request-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>logRequest</h4>
+<pre>protected&nbsp;java.lang.Long&nbsp;logRequest(<a href="../../../../../com/centurylink/mdw/model/request/Request.html" title="class in com.centurylink.mdw.model.request">Request</a>&nbsp;request)</pre>
+</li>
+</ul>
 <a name="logRequest-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>logRequest</h4>
-<pre>protected&nbsp;java.lang.Long&nbsp;logRequest(java.lang.String&nbsp;message)</pre>
-</li>
-</ul>
-<a name="logResponse-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>logResponse</h4>
-<pre>protected&nbsp;java.lang.Long&nbsp;logResponse(java.lang.String&nbsp;message)</pre>
+<pre>@Deprecated
+protected&nbsp;java.lang.Long&nbsp;logRequest(java.lang.String&nbsp;message)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="logResponse-com.centurylink.mdw.model.Response-">
@@ -745,6 +721,17 @@ implements <a href="../../../../../com/centurylink/mdw/activity/types/AdapterAct
 <li class="blockList">
 <h4>logResponse</h4>
 <pre>protected&nbsp;java.lang.Long&nbsp;logResponse(<a href="../../../../../com/centurylink/mdw/model/Response.html" title="class in com.centurylink.mdw.model">Response</a>&nbsp;response)</pre>
+</li>
+</ul>
+<a name="logResponse-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>logResponse</h4>
+<pre>@Deprecated
+protected&nbsp;java.lang.Long&nbsp;logResponse(java.lang.String&nbsp;message)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 <a name="externalRequestToString-java.lang.Object-">
@@ -811,7 +798,7 @@ implements <a href="../../../../../com/centurylink/mdw/activity/types/AdapterAct
 <h4>getStubResponse</h4>
 <pre>@Deprecated
 protected&nbsp;java.lang.String&nbsp;getStubResponse(java.lang.String&nbsp;requestData)</pre>
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use <code>getStubbedResponse</code></span></div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">Use <a href="../../../../../com/centurylink/mdw/workflow/adapter/ObjectAdapterActivity.html#getStubResponse-java.lang.String-"><code>getStubbedResponse</code></a></span></div>
 </li>
 </ul>
 <a name="getStubbedResponse-java.lang.Object-">
@@ -939,7 +926,7 @@ protected&nbsp;java.lang.String&nbsp;getStubResponse(java.lang.String&nbsp;reque
  to the pool.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>conneciton</code> - </dd>
+<dd><code>connection</code> - </dd>
 </dl>
 </li>
 </ul>
@@ -958,7 +945,6 @@ protected&nbsp;java.lang.String&nbsp;getStubResponse(java.lang.String&nbsp;reque
  If logging is desired, extenders should override logMessage().</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>attrs</code> - attributes to be passed to configure the activity.</dd>
 <dd><code>request</code> - request message</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>response message</dd>
@@ -1121,6 +1107,6 @@ protected&nbsp;java.lang.String&nbsp;getStubResponse(java.lang.String&nbsp;reque
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

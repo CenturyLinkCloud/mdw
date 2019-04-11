@@ -99,7 +99,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Known Implementing Classes:</dt>
-<dd><a href="../../../../com/centurylink/mdw/workflow/adapter/soap/DocumentWebServiceAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.soap">DocumentWebServiceAdapter</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/http/HttpServiceAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.http">HttpServiceAdapter</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/soap/MdwRpcWebServiceAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.soap">MdwRpcWebServiceAdapter</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/rest/MultiRestServiceAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.rest">MultiRestServiceAdapter</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html" title="class in com.centurylink.mdw.workflow.adapter">PoolableAdapterBase</a>, <a href="../../../../com/centurylink/mdw/workflow/activity/event/PublishEventMessageRest.html" title="class in com.centurylink.mdw.workflow.activity.event">PublishEventMessageRest</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/rest/RestServiceAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.rest">RestServiceAdapter</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/soap/SoapWebServiceAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.soap">SoapWebServiceAdapter</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/socket/SocketAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.socket">SocketAdapter</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">TextAdapterActivity</a></dd>
+<dd><a href="../../../../com/centurylink/mdw/workflow/adapter/soap/DocumentWebServiceAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.soap">DocumentWebServiceAdapter</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/http/HttpServiceAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.http">HttpServiceAdapter</a>, <a href="../../../../com/centurylink/mdw/kafka/KafkaAdapter.html" title="class in com.centurylink.mdw.kafka">KafkaAdapter</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/soap/MdwRpcWebServiceAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.soap">MdwRpcWebServiceAdapter</a>, <a href="../../../../com/centurylink/mdw/microservice/MicroserviceRestAdapter.html" title="class in com.centurylink.mdw.microservice">MicroserviceRestAdapter</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/rest/MultiRestServiceAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.rest">MultiRestServiceAdapter</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/PoolableAdapterBase.html" title="class in com.centurylink.mdw.workflow.adapter">PoolableAdapterBase</a>, <a href="../../../../com/centurylink/mdw/workflow/activity/event/PublishEventMessageRest.html" title="class in com.centurylink.mdw.workflow.activity.event">PublishEventMessageRest</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/rest/RestServiceAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.rest">RestServiceAdapter</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/soap/SoapWebServiceAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.soap">SoapWebServiceAdapter</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/socket/SocketAdapter.html" title="class in com.centurylink.mdw.workflow.adapter.socket">SocketAdapter</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">TextAdapterActivity</a></dd>
 </dl>
 <hr>
 <br>
@@ -131,8 +131,8 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/Response.html" title="class in com.centurylink.mdw.model">Response</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/adapter/TextAdapter.html#doInvoke-java.lang.Object-java.lang.String-int-java.util.Map-">doInvoke</a></span>(java.lang.Object&nbsp;connection,
-        java.lang.String&nbsp;request,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/adapter/TextAdapter.html#doInvoke-java.lang.Object-com.centurylink.mdw.model.request.Request-int-java.util.Map-">doInvoke</a></span>(java.lang.Object&nbsp;connection,
+        <a href="../../../../com/centurylink/mdw/model/request/Request.html" title="class in com.centurylink.mdw.model.request">Request</a>&nbsp;request,
         int&nbsp;timeout,
         java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)</code>&nbsp;</td>
 </tr>
@@ -235,7 +235,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">Close a connection opened.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>conneciton</code> - the object returned by openConnection()
+<dd><code>connection</code> - the object returned by openConnection()
          and is typically the adapter activity instance itself.</dd>
 </dl>
 </li>
@@ -265,7 +265,7 @@ var activeTableTab = "activeTableTab";
  should throw exceptions unless a correct acknowledgment is received.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>conneciton</code> - the object returned by openConnection()
+<dd><code>connection</code> - the object returned by openConnection()
          and is typically the adapter activity instance itself.</dd>
 <dd><code>request</code> - </dd>
 <dd><code>timeout</code> - time out in seconds. Ignored if no response is expected.</dd>
@@ -274,19 +274,19 @@ var activeTableTab = "activeTableTab";
 <dd>response if the underlying protocol is synchronous
     or null otherwise</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/centurylink/mdw/connector/adapter/ConnectionException.html" title="class in com.centurylink.mdw.connector.adapter">ConnectionException</a></code> - retriable exception</dd>
-<dd><code><a href="../../../../com/centurylink/mdw/connector/adapter/AdapterException.html" title="class in com.centurylink.mdw.connector.adapter">AdapterException</a></code> - non-retriable exception</dd>
+<dd><code><a href="../../../../com/centurylink/mdw/connector/adapter/AdapterException.html" title="class in com.centurylink.mdw.connector.adapter">AdapterException</a></code></dd>
+<dd><code><a href="../../../../com/centurylink/mdw/connector/adapter/ConnectionException.html" title="class in com.centurylink.mdw.connector.adapter">ConnectionException</a></code></dd>
 </dl>
 </li>
 </ul>
-<a name="doInvoke-java.lang.Object-java.lang.String-int-java.util.Map-">
+<a name="doInvoke-java.lang.Object-com.centurylink.mdw.model.request.Request-int-java.util.Map-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>doInvoke</h4>
 <pre><a href="../../../../com/centurylink/mdw/model/Response.html" title="class in com.centurylink.mdw.model">Response</a>&nbsp;doInvoke(java.lang.Object&nbsp;connection,
-                  java.lang.String&nbsp;request,
+                  <a href="../../../../com/centurylink/mdw/model/request/Request.html" title="class in com.centurylink.mdw.model.request">Request</a>&nbsp;request,
                   int&nbsp;timeout,
                   java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;headers)
            throws <a href="../../../../com/centurylink/mdw/connector/adapter/AdapterException.html" title="class in com.centurylink.mdw.connector.adapter">AdapterException</a>,
@@ -408,6 +408,6 @@ var activeTableTab = "activeTableTab";
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>

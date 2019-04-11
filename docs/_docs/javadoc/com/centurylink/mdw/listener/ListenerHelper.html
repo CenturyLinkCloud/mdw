@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":9,"i8":10,"i9":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":9,"i9":10,"i10":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -129,26 +129,19 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ListenerHelper.html#RETURN_STATUS_FAILURE">RETURN_STATUS_FAILURE</a></span></code>
-<div class="block">Status code -1, often used to designate general failure without specific
- code.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ListenerHelper.html#RETURN_STATUS_NO_HANDLER">RETURN_STATUS_NO_HANDLER</a></span></code>
 <div class="block">Status code -3, used to indicate the error that there is no external
  event handler configured for the message.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ListenerHelper.html#RETURN_STATUS_NON_XML">RETURN_STATUS_NON_XML</a></span></code>
 <div class="block">Status code -2, used to indicate the error that the input data cannot be
  parsed by the generic XML Bean.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ListenerHelper.html#RETURN_STATUS_SUCCESS">RETURN_STATUS_SUCCESS</a></span></code>
 <div class="block">Status code 0, often used to designate success.</div>
@@ -212,12 +205,21 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ListenerHelper.html#createDocument-java.lang.String-java.lang.Object-com.centurylink.mdw.model.workflow.Package-java.lang.String-java.lang.Long-java.lang.String-">createDocument</a></span>(java.lang.String&nbsp;docType,
+              java.lang.Object&nbsp;document,
+              <a href="../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg,
+              java.lang.String&nbsp;ownerType,
+              java.lang.Long&nbsp;ownerId,
+              java.lang.String&nbsp;path)</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ListenerHelper.html#createDocument-java.lang.String-java.lang.Object-java.lang.String-java.lang.Long-">createDocument</a></span>(java.lang.String&nbsp;docType,
               java.lang.Object&nbsp;document,
               java.lang.String&nbsp;ownerType,
               java.lang.Long&nbsp;ownerId)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/Response.html" title="class in com.centurylink.mdw.model">Response</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ListenerHelper.html#createErrorResponse-java.lang.String-java.util.Map-com.centurylink.mdw.common.service.ServiceException-">createErrorResponse</a></span>(java.lang.String&nbsp;req,
                    java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;metaInfo,
@@ -225,22 +227,22 @@ extends java.lang.Object</pre>
 <div class="block">Create a default error message.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ListenerHelper.html#getProcessId-java.lang.String-">getProcessId</a></span>(java.lang.String&nbsp;procname)</code>
 <div class="block">Helper method to obtain process ID from process name.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/services/event/ServiceHandler.html" title="interface in com.centurylink.mdw.services.event">ServiceHandler</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ListenerHelper.html#getServiceHandler-java.lang.String-java.util.Map-">getServiceHandler</a></span>(java.lang.String&nbsp;request,
                  java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;metaInfo)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>static boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ListenerHelper.html#isJson-java.lang.String-">isJson</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ListenerHelper.html#processEvent-java.lang.String-java.util.Map-">processEvent</a></span>(java.lang.String&nbsp;request,
             java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;metaInfo)</code>
@@ -248,7 +250,7 @@ extends java.lang.Object</pre>
  protocol-independent way.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/listener/ListenerHelper.html#updateDocumentContent-com.centurylink.mdw.model.variable.DocumentReference-java.lang.Object-java.lang.String-com.centurylink.mdw.model.workflow.Package-">updateDocumentContent</a></span>(<a href="../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;docref,
                      java.lang.Object&nbsp;doc,
@@ -288,21 +290,6 @@ extends java.lang.Object</pre>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../../constant-values.html#com.centurylink.mdw.listener.ListenerHelper.RETURN_STATUS_SUCCESS">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a name="RETURN_STATUS_FAILURE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>RETURN_STATUS_FAILURE</h4>
-<pre>public static final&nbsp;int RETURN_STATUS_FAILURE</pre>
-<div class="block">Status code -1, often used to designate general failure without specific
- code.</div>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../constant-values.html#com.centurylink.mdw.listener.ListenerHelper.RETURN_STATUS_FAILURE">Constant Field Values</a></dd>
 </dl>
 </li>
 </ul>
@@ -478,6 +465,25 @@ extends java.lang.Object</pre>
 </dl>
 </li>
 </ul>
+<a name="createDocument-java.lang.String-java.lang.Object-com.centurylink.mdw.model.workflow.Package-java.lang.String-java.lang.Long-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createDocument</h4>
+<pre>public&nbsp;<a href="../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;createDocument(java.lang.String&nbsp;docType,
+                                        java.lang.Object&nbsp;document,
+                                        <a href="../../../../com/centurylink/mdw/model/workflow/Package.html" title="class in com.centurylink.mdw.model.workflow">Package</a>&nbsp;pkg,
+                                        java.lang.String&nbsp;ownerType,
+                                        java.lang.Long&nbsp;ownerId,
+                                        java.lang.String&nbsp;path)
+                                 throws <a href="../../../../com/centurylink/mdw/event/EventHandlerException.html" title="class in com.centurylink.mdw.event">EventHandlerException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/event/EventHandlerException.html" title="class in com.centurylink.mdw.event">EventHandlerException</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="updateDocumentContent-com.centurylink.mdw.model.variable.DocumentReference-java.lang.Object-java.lang.String-com.centurylink.mdw.model.workflow.Package-">
 <!--   -->
 </a>
@@ -628,6 +634,6 @@ extends java.lang.Object</pre>
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->
-<p class="legalCopy"><small><i>Copyright &#169; 2018 CenturyLink, Inc.</i></small></p>
+<p class="legalCopy"><small><i>Copyright &#169; 2019 CenturyLink, Inc.</i></small></p>
 </body>
 </html>
