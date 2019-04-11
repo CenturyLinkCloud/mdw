@@ -15,11 +15,6 @@
  */
 package com.centurylink.mdw.workflow.activity.process;
 
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
@@ -29,11 +24,11 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.variable.DocumentReference;
-import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
-import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
 import com.centurylink.mdw.services.process.ProcessExecutor;
@@ -43,6 +38,11 @@ import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * This activity implementor implements invocation of subprocesses.
  */
@@ -50,7 +50,6 @@ import com.centurylink.mdw.util.timer.Tracked;
 public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
 
     private static final String VARIABLES = "variables";
-    private static final String SYNCHRONOUS = "synchronous";
     private boolean subprocIsService = false;
     private boolean passingByReference = true;
 
@@ -74,8 +73,6 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
      * Subclass may override this method to obtain variable binding in other ways.
      *
      * @param childVars variables defined for the child process
-     * @param prMgr process manager remote EJB handle
-     * @param varMgr variable manager remote EJB handle
      * @return a map (name-value pairs) of variable bindings
      * @throws Exception various types of exceptions
      */

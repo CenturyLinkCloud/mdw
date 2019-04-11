@@ -4,16 +4,13 @@ import brave.Span;
 import brave.SpanCustomizer;
 import brave.Tracer;
 import brave.Tracing;
-import brave.context.slf4j.MDCScopeDecorator;
 import brave.http.HttpAdapter;
 import brave.http.HttpClientHandler;
 import brave.http.HttpClientParser;
 import brave.http.HttpTracing;
-import brave.propagation.ThreadLocalCurrentTraceContext;
 import brave.propagation.TraceContext;
 import com.centurylink.mdw.annotations.Monitor;
 import com.centurylink.mdw.common.MdwException;
-import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.monitor.AdapterMonitor;
 import com.centurylink.mdw.util.HttpConnection;
@@ -37,30 +34,18 @@ public class TraceAdapterMonitor implements AdapterMonitor {
     public Object onRequest(ActivityRuntimeContext context, Object content, Map<String,String> headers, Object connection) {
         if (connection instanceof HttpConnection) {
             HttpConnection httpConnection = (HttpConnection)connection;
-            Tracing tracing = Tracing.current();
-            if (tracing == null) {
-                // TODO reporter based on prop/config
-                tracing = Tracing.newBuilder()
-                        .localServiceName(headers.get(Listener.METAINFO_REQUEST_PATH))
-                        .currentTraceContext(ThreadLocalCurrentTraceContext.newBuilder()
-                                .addScopeDecorator(MDCScopeDecorator.create())
-                                .build()
-                        )
-                        .build();
-            }
+            Tracing tracing = TraceHelper.getTracing("mdw-adapter");
             HttpTracing httpTracing = HttpTracing.create(tracing).toBuilder()
                     .clientParser(new HttpClientParser() {
                         public <Req> void request(HttpAdapter<Req, ?> adapter, Req req, SpanCustomizer customizer) {
                             // customize span name
-                            customizer.name(context.getActivity().getName().replaceAll("\r", "").replace('\n', ' '));
+                            customizer.name(context.getActivity().oneLineName());
                         }
                     })
                     .build();
             Tracer tracer = httpTracing.tracing().tracer();
             handler = HttpClientHandler.create(httpTracing, new ClientAdapter());
-            injector = httpTracing.tracing().propagation().injector((httpRequest, key, value) -> {
-                headers.put(key, value);
-            });
+            injector = httpTracing.tracing().propagation().injector((httpRequest, key, value) -> headers.put(key, value));
             span = handler.handleSend(injector, new HttpRequest(httpConnection));
             scope = tracer.withSpanInScope(span);
         }

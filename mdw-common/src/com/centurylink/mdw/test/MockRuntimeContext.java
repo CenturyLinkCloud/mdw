@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.BaselineData;
@@ -159,7 +160,7 @@ public class MockRuntimeContext extends ActivityRuntimeContext {
     }
 
     public MockRuntimeContext(String activityName, BaselineData baselineData) {
-        super(null, null, null, 0, null, null);
+        super(null, null, null, 0, false, null, GeneralActivity.class.getName(), null);
         this.activityName = activityName;
         this.baselineData = baselineData;
         PropertyManager.initializeMockPropertyManager();

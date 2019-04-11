@@ -15,10 +15,11 @@
  */
 package com.centurylink.mdw.monitor;
 
-import java.util.Map;
-
 import com.centurylink.mdw.common.service.RegisteredService;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
+import com.centurylink.mdw.model.workflow.RuntimeContext;
+
+import java.util.Map;
 
 /**
  * Activity monitors can be registered through @Monitor annotations to get
@@ -55,5 +56,9 @@ public interface ActivityMonitor extends RegisteredService, Monitor {
      * Called when an activity instance fails due to error.
      */
     default void onError(ActivityRuntimeContext context) {
+    }
+
+    default String getCategory(RuntimeContext runtimeContext) {
+        return ((ActivityRuntimeContext)runtimeContext).getCategory();
     }
 }

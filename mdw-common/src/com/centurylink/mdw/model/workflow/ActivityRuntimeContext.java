@@ -15,23 +15,27 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.el.ValueExpression;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.util.JsonUtil;
 import com.sun.el.ValueExpressionLiteral;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.el.ValueExpression;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jsonable {
 
     private Activity activity;
     public Activity getActivity() { return activity; }
+
+    // interface extending ActivityCategory
+    private String category;
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 
     private ActivityInstance activityInstance;
     public ActivityInstance getActivityInstance() { return activityInstance; }
@@ -51,10 +55,11 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
         return getAttributes().get(name);
     }
 
-    public ActivityRuntimeContext(Package pkg, Process process, ProcessInstance processInstance,
-            int performanceLevel, Activity activity, ActivityInstance activityInstance) {
-        super(pkg, process, processInstance, performanceLevel, false);
+    public ActivityRuntimeContext(Package pkg, Process process, ProcessInstance processInstance, int performanceLevel,
+            boolean inService, Activity activity, String category, ActivityInstance activityInstance) {
+        super(pkg, process, processInstance, performanceLevel, inService);
         this.activity = activity;
+        this.category = category;
         this.activityInstance = activityInstance;
     }
 
@@ -68,11 +73,6 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
 
     public Long getActivityInstanceId() {
         return getActivityInstance().getId();
-    }
-
-    @Override
-    public boolean isInService() {
-        throw new UnsupportedOperationException();
     }
 
     protected String logtag() {
@@ -115,6 +115,8 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
             process.setName(procPath);
         }
         this.activity = new Activity(json.getJSONObject("activity"));
+        if (json.has("category"))
+            category = json.getString("category");
         this.activityInstance = new ActivityInstance(json.getJSONObject("activityInstance"));
         this.processInstance = new ProcessInstance(json.getJSONObject("processInstance"));
         if (json.has("variables")) {
@@ -129,6 +131,8 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
         json.put("activity", getActivity().getJson());
+        if (category != null)
+            json.put("category", category);
         json.put("activityInstance", getActivityInstance().getJson());
         json.put("process", getPackage().getName() + "/" + getProcess().getName());
         json.put("processInstance", getProcessInstance().getJson());

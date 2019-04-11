@@ -67,7 +67,6 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
 
     public static final String EXECUTION_PLAN_VARIABLE = "Execution Plan";
     private static final String DELAY_BETWEEN = "DELAY_BETWEEN";
-    private static final String SYNCHRONOUS = "synchronous";
     private static final String FORCE_PARALLEL = "Force Parallel Execution";
 
     private boolean emptyPlan;

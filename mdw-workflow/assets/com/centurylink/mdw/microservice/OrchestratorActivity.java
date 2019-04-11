@@ -41,7 +41,6 @@ import com.centurylink.mdw.workflow.activity.process.InvokeProcessActivityBase;
 @Tracked(LogLevel.TRACE)
 public class OrchestratorActivity extends InvokeProcessActivityBase {
 
-    private static final String SYNCHRONOUS = "synchronous";
     private static final String PARALLEL = "parallel";
     private static final String DELAY = "delay";
 

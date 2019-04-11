@@ -15,9 +15,7 @@
  */
 package com.centurylink.mdw.services.workflow;
 
-import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.app.Templates;
-import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -39,7 +37,6 @@ import com.centurylink.mdw.model.StringDocument;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetHeader;
-import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.event.EventInstance;
@@ -60,10 +57,14 @@ import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
+import com.centurylink.mdw.service.data.activity.ActivityImplementorCache;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.service.data.process.ProcessCache;
-import com.centurylink.mdw.services.*;
+import com.centurylink.mdw.services.EventServices;
+import com.centurylink.mdw.services.ProcessException;
+import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
@@ -961,91 +962,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    private static List<ActivityImplementor> activityImplementors;
-    /**
-     * Does not include pagelet.
-     * TODO: cache should be refreshable
-     */
-    public List<ActivityImplementor> getImplementors() throws ServiceException {
-        if (activityImplementors == null) {
-            try {
-                activityImplementors = DataAccess.getProcessLoader().getActivityImplementors();
-                for (ActivityImplementor impl : activityImplementors) {
-                    // qualify the icon location
-                    String icon = impl.getIcon();
-                    if (icon != null && !icon.startsWith("shape:") && icon.indexOf('/') <= 0) {
-                        for (Package pkg : PackageCache.getPackages()) {
-                            for (Asset asset : pkg.getAssets()) {
-                                if (asset.getName().equals(icon)) {
-                                    impl.setIcon(pkg.getName() + "/" + icon);
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    impl.setPagelet(null);
-                }
-                AssetServices assetServices = ServiceLocator.getAssetServices();
-                Map<String,List<AssetInfo>> annotatedAssets = assetServices.getAssetsOfTypes(new String[]{"java", "kt"});
-                for (String packageName : annotatedAssets.keySet()) {
-                    Package pkg = PackageCache.getPackage(packageName);
-                    for (AssetInfo assetInfo : annotatedAssets.get(packageName)) {
-                        ActivityImplementor impl = getAnnotatedImpl(pkg, assetInfo);
-                        if (impl != null)
-                            activityImplementors.add(impl);
-                    }
-                }
-            }
-            catch (CachingException ex) {
-                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
-            }
-            catch (DataAccessException ex) {
-                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
-            }
-        }
-        return activityImplementors;
+    public List<ActivityImplementor> getImplementors() {
+        return new ArrayList<>(ActivityImplementorCache.getImplementors().values());
     }
 
-    public ActivityImplementor getImplementor(String className) throws ServiceException {
-        try {
-            for (ActivityImplementor implementor : DataAccess.getProcessLoader().getActivityImplementors()) {
-                String implClassName = implementor.getImplementorClass();
-                if (className == null) {
-                    if (implClassName == null)
-                        return implementor;
-                }
-                else if (implClassName.equals(className)) {
-                    return implementor;
-                }
-            }
-            Package pkg = PackageCache.getPackage(className.substring(0, className.lastIndexOf('.')));
-            if (pkg != null) {
-                AssetInfo assetInfo = ServiceLocator.getAssetServices().getImplAsset(className);
-                if (assetInfo != null)
-                    return getAnnotatedImpl(pkg, assetInfo);
-            }
-            return null;
-        }
-        catch (DataAccessException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
-        }
-    }
-
-    private ActivityImplementor getAnnotatedImpl(Package pkg, AssetInfo assetInfo) {
-        String implClass = pkg.getName() + "." + assetInfo.getRootName();
-        try {
-            String contents = new String(Files.readAllBytes(assetInfo.getFile().toPath()));
-            if (contents.contains("@Activity")) {
-                GeneralActivity activity = pkg.getActivityImplementor(implClass);
-                com.centurylink.mdw.annotations.Activity annotation =
-                        activity.getClass().getAnnotation(com.centurylink.mdw.annotations.Activity.class);
-                return new ActivityImplementor(implClass, annotation);
-            }
-        }
-        catch (Exception ex) {
-            logger.severeException("Cannot load " + implClass, ex);
-        }
-        return null;
+    public ActivityImplementor getImplementor(String className) {
+        return ActivityImplementorCache.get(className);
     }
 
     public Long launchProcess(String name, String masterRequestId, String ownerType,

@@ -1,6 +1,6 @@
-AsyncSub.proc=2
+AsyncSub.proc=3
 Fortune.kt=1
-FortuneMain.proc=2
+FortuneMain.proc=3
 FortuneService.java=2
 FortuneSub.proc=2
 SpanId.kt=1

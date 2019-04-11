@@ -39,6 +39,7 @@ import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.OfflineMonitor;
 import com.centurylink.mdw.monitor.ProcessMonitor;
+import com.centurylink.mdw.service.data.activity.ActivityImplementorCache;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.*;
@@ -795,8 +796,6 @@ class ProcessExecutorImpl {
             return ar;
         } catch (SQLException e) {
             throw new ProcessException(-1, e.getMessage(), e);
-        } catch (NamingException e) {
-            throw new ProcessException(-1, e.getMessage(), e);
         } catch (InterruptedException e) {
             throw new ProcessException(-1, e.getMessage(), e);
         } catch (MdwException e) {
@@ -807,8 +806,7 @@ class ProcessExecutorImpl {
     private void prepareActivitySub(Process processVO, Activity actVO,
             ProcessInstance pi, ActivityInstance ai, Long pWorkTransInstId,
             InternalEvent event, BaseActivity activity)
-    throws DataAccessException, SQLException, NamingException, MdwException, ServiceLocatorException {
-
+    throws SQLException, MdwException {
 
         if (logger.isInfoEnabled())
             logger.info(logtag(pi.getProcessId(), pi.getId(), ai.getActivityId(), ai.getId()),
@@ -1947,8 +1945,11 @@ class ProcessExecutorImpl {
             if (pkg != null)
                 processInst.setPackageName(pkg.getName());
             Activity activity = process.getActivityVO(actInstVO.getActivityId());
+
+            ActivityImplementor activityImplementor = ActivityImplementorCache.get(activity.getImplementor());
+            String category = activityImplementor == null ? GeneralActivity.class.getName() : activityImplementor.getCategory();
             ActivityRuntimeContext runtimeContext = new ActivityRuntimeContext(pkg, process, processInst,
-                    getDataAccess().getPerformanceLevel(), activity, actInstVO);
+                    getDataAccess().getPerformanceLevel(), isInService(), activity, category, actInstVO);
             // TODO option to suppress variables
             if (activityImpl == null) {
                 try {

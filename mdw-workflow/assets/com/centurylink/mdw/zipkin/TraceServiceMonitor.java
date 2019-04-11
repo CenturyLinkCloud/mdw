@@ -3,10 +3,8 @@ package com.centurylink.mdw.zipkin;
 import brave.Span;
 import brave.Tracer;
 import brave.Tracing;
-import brave.context.slf4j.MDCScopeDecorator;
 import brave.http.HttpServerHandler;
 import brave.http.HttpTracing;
-import brave.propagation.ThreadLocalCurrentTraceContext;
 import brave.propagation.TraceContext;
 import com.centurylink.mdw.annotations.Monitor;
 import com.centurylink.mdw.common.MdwException;
@@ -30,17 +28,7 @@ public class TraceServiceMonitor implements ServiceMonitor {
     @Override
     public Object onRequest(Object request, Map<String,String> headers) {
         if (headers.containsKey(Listener.METAINFO_HTTP_METHOD)) {
-            Tracing tracing = Tracing.current();
-            if (tracing == null) {
-                // TODO reporter based on prop/config
-                tracing = Tracing.newBuilder()
-                        .localServiceName(headers.get(Listener.METAINFO_REQUEST_PATH))
-                        .currentTraceContext(ThreadLocalCurrentTraceContext.newBuilder()
-                                .addScopeDecorator(MDCScopeDecorator.create())
-                                .build()
-                        )
-                        .build();
-            }
+            Tracing tracing = TraceHelper.getTracing("mdw-service");
             HttpTracing httpTracing = HttpTracing.create(tracing);
             handler = HttpServerHandler.create(httpTracing, new ServerAdapter());
             extractor = httpTracing.tracing().propagation().extractor(ServerAdapter.ServerRequest::getHeader);
