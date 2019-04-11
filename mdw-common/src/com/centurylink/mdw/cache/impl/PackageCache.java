@@ -137,6 +137,7 @@ public class PackageCache implements PreloadableCache {
     @Override
     public synchronized void refreshCache() throws CachingException {
         synchronized(lock) {
+            Package.setDefaultPackage(null);
             packageList = load();
         }
     }
