@@ -20,7 +20,7 @@
     },
     {
       "attributes": {
-        "Rule": "import com.centurylink.mdw.config.PropertyManager\r\n\r\nprintln 'one: ' + PropertyManager.getProperty(\"one.prop\")\r\nprintln 'two: ' + runtimeContext.getProperty(\"two.prop\")\r\n\r\nprintln 'three.flat: ' + PropertyManager.getProperty(\"three.flat.config\")\r\nprintln 'three.structured: ' + runtimeContext.getProperty(\"three.structured.config\")\r\n",
+        "Rule": "import com.centurylink.mdw.config.PropertyManager\n\nprintln 'one: ' + PropertyManager.getProperty(\"one.prop\")\nprintln 'two: ' + runtimeContext.getProperty(\"two.prop\")\n\nprintln 'three.flat: ' + PropertyManager.getProperty(\"three.flat.config\")\nprintln 'three.structured: ' + runtimeContext.getProperty(\"three.structured.config\")\n",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=248,y=249,w=100,h=60"
       },
