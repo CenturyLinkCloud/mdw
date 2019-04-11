@@ -123,18 +123,22 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
     public JavaExecutor getExecutorInstance() throws MdwJavaException {
         if (executorInstance == null) {
             try {
-                tempPkg = getPackage();
+                String className = getClassName();
 
+                tempPkg = getPackage();
                 if (tempPkg.isDefaultPackage()) {  // In case in-flight pulled out of Git history
                     tempPkg = new Package();
                     tempPkg.setName(getProcessDefinition().getPackageName());
-                    // Use fake version (negative number) based on process version to uniquely identify the dynamic java version in CompiledJavaCache key
+                    // Use fake version (negative number) based on process version to uniquely identify the dynamic java version in CompiledJavaCache key (NOT USED it seems)
                     tempPkg.setVersion((-1 * getProcessDefinition().getVersion()));
+                    // Since in-flight, compile with different name than current code from current process version
+                    String oldClassName = className;
+                    className = className + "_" + getProcessId();
+                    javaCode = javaCode.replace(oldClassName, className);
                 }
 
                 setExecutorClassLoader(tempPkg.getCloudClassLoader());
 
-                String className = getClassName();
                 Class<?> clazz = CompiledJavaCache.getClass(getExecutorClassLoader(), tempPkg, className, javaCode);
                 if (clazz == null)
                     throw new ClassNotFoundException(className);
