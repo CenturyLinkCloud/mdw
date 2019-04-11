@@ -57,7 +57,7 @@ import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
-import com.centurylink.mdw.service.data.activity.ActivityImplementorCache;
+import com.centurylink.mdw.service.data.activity.ImplementorCache;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.service.data.process.ProcessCache;
@@ -963,11 +963,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     public List<ActivityImplementor> getImplementors() {
-        return new ArrayList<>(ActivityImplementorCache.getImplementors().values());
+        return new ArrayList<>(ImplementorCache.getImplementors().values());
     }
 
     public ActivityImplementor getImplementor(String className) {
-        return ActivityImplementorCache.get(className);
+        return ImplementorCache.get(className);
     }
 
     public Long launchProcess(String name, String masterRequestId, String ownerType,
