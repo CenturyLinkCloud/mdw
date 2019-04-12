@@ -1,53 +1,79 @@
-process: # 73
+process: # 819
   name: AsyncSub
   instance: 1
-  activity: # 1 "2019-04-04 18:06:14.624"
+  activity: # 1 "2019-04-12 12:46:11.546"
     name: Start
     status: Completed
-  activity: # 3 "2019-04-04 18:06:14.633"
+  activity: # 3 "2019-04-12 12:46:11.557"
     name: Populate
     status: Completed
-  activity: # 2 "2019-04-04 18:06:14.985"
+  activity: # 4 "2019-04-12 12:46:12.111"
+    name: |
+      Retrieve
+      Workgroup
+    status: Completed
+  activity: # 2 "2019-04-12 12:46:12.139"
     name: Stop
     status: Completed
-  variable: # 218
+  variable: # 2603
     name: originator
     value: FortuneService
-process: # 71
+  variable: # 2608
+    name: spanId
+    value: ${~.*}
+  variable: # 2609
+    name: traceId
+    value: ${traceId}
+  variable: # 2612
+    name: workgroup
+    value: |
+      {
+        "attributes": {"Slack Channel(s)": ""},
+        "description": "MDW Support Group",
+        "name": "MDW Support",
+        "users": []
+      }
+process: # 817
   name: FortuneMain
   instance: 1
-  activity: # 1 "2019-04-04 18:06:14.054"
+  activity: # 1 "2019-04-12 12:46:10.918"
     name: Start
     status: Completed
-  activity: # 3 "2019-04-04 18:06:14.213"
+  activity: # 3 "2019-04-12 12:46:11.003"
     name: Populate
     status: Completed
-  activity: # 4 "2019-04-04 18:06:14.593"
+  activity: # 4 "2019-04-12 12:46:11.510"
     name: |
       Invoke
       FortuneSub
     status: Completed
-  activity: # 5 "2019-04-04 18:06:14.612"
+  activity: # 5 "2019-04-12 12:46:11.529"
     name: |
       Invoke
       AsyncSub
     status: Completed
-  activity: # 2 "2019-04-04 18:06:14.856"
+  activity: # 6 "2019-04-12 12:46:11.549"
+    name: Sync
+    status: Waiting
+  activity: # 6 "2019-04-12 12:46:12.050"
+    name: Sync
+    status: Completed
+  activity: # 2 "2019-04-12 12:46:12.058"
     name: Stop
     status: Completed
-  variable: # 212
+  variable: # 2597
     name: originator
     value: FortuneService
-  variable: # 213
+  variable: # 2598
     name: request
-    value: {"name": "Charlie"}
-  variable: # 214
+    value: {"name": "World"}
+  variable: # 2599
     name: requestHeaders
     value: |
       {
-        "AuthenticatedUser": "mdwapp",
+        "AuthenticatedUser": "${~.*}",
         "Content-Type": "application/json",
-        "HttpMethod": "POST",
+        "HttpMethod": "GET",
         "Protocol": "REST",
         "RemoteAddr": "${~.*}",
         "RemoteHost": "${~.*}",
@@ -55,10 +81,9 @@ process: # 71
         "RequestPath": "com/centurylink/mdw/zipkin/tests/fortune",
         "RequestURL": "http://localhost:8080/mdw/api/com/centurylink/mdw/zipkin/tests/fortune",
         "ServiceClass": "com.centurylink.mdw.hub.servlet.RestServlet",
-        "accept": "text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2",
+        "accept": "application/json",
         "connection": "keep-alive",
-        "content-length": "19",
-        "content-type": "application/json",
+        "content-type": "${~.*}",
         "document-id": "${~\\d*}",
         "host": "${~.*}",
         "mdw-request-id": "${masterRequestId}",
@@ -68,38 +93,61 @@ process: # 71
         "x-b3-spanid": "${spanId}",
         "x-b3-traceid": "${traceId}"
       }
-  variable: # 222
+  variable: # 2611
     name: response
-    value: {"fortune": "You will acquire great wealth!"}
-  variable: # 215
+    value: |
+      {
+        "fortune": "You will acquire great wealth.",
+        "name": "World"
+      }
+  variable: # 2600
     name: spanId
     value: ${spanId}
-  variable: # 216
+  variable: # 2601
     name: traceId
     value: ${traceId}
-process: # 72
+process: # 818
   name: FortuneSub
   instance: 1
-  activity: # 1 "2019-04-04 18:06:14.619"
+  activity: # 1 "2019-04-12 12:46:11.540"
     name: Start
     status: Completed
-  activity: # 3 "2019-04-04 18:06:14.625"
+  activity: # 3 "2019-04-12 12:46:11.556"
     name: |
       Determine
       Fortune
     status: Completed
-  activity: # 2 "2019-04-04 18:06:14.842"
+  activity: # 4 "2019-04-12 12:46:11.999"
+    name: |
+      Retrieve
+      User
+    status: Completed
+  activity: # 2 "2019-04-12 12:46:12.036"
     name: Stop
     status: Completed
-  variable: # 217
+  variable: # 2610
+    name: foundUsers
+    value: |
+      {
+        "count": 0,
+        "users": []
+      }
+  variable: # 2602
     name: request
-    value: {"name": "Charlie"}
-  variable: # 221
+    value: {"name": "World"}
+  variable: # 2606
     name: response
-    value: {"fortune": "You will acquire great wealth!"}
-  variable: # 219
+    value: |
+      {
+        "fortune": "You will acquire great wealth.",
+        "name": "World"
+      }
+  variable: # 2604
     name: spanId
     value: ${spanId}
-  variable: # 220
+  variable: # 2605
     name: traceId
     value: ${traceId}
+  variable: # 2607
+    name: username
+    value: World

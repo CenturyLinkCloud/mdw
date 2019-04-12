@@ -353,7 +353,8 @@ public abstract class TestCaseScript extends Script {
             Asset expectedResults = new Asset();
             expectedResults.setName(resultsAssetName);
             String testAssetFile = getTestCaseRun().getTestCase().getAsset().getFile().toString();
-            expectedResults.setRawFile(new File(testAssetFile.substring(0, testAssetFile.lastIndexOf('.')) + Asset.getFileExtension(Asset.YAML)));
+            File file = new File(testAssetFile.substring(0, testAssetFile.lastIndexOf('.')) + Asset.getFileExtension(Asset.YAML));
+            expectedResults.setRawFile(file);
             return expectedResults;
         }
         else {

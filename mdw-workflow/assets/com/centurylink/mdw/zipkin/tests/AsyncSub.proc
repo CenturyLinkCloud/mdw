@@ -36,17 +36,17 @@
     },
     {
       "attributes": {
-        "EndpointUri": "${props['mdw.services.url']}/api/Workgroups",
+        "EndpointUri": "${props['mdw.services.url']}/api/Workgroups/MDW%20Support",
         "HttpMethod": "GET",
         "Microservice": "mdw/Workgroups",
         "PostScriptLang": "Groovy",
         "PreScriptLang": "Groovy",
-        "RESPONSE_VARIABLE": "workgroups",
+        "RESPONSE_VARIABLE": "workgroup",
         "WORK_DISPLAY_INFO": "x=390,y=122,w=100,h=60"
       },
       "id": "A4",
       "implementor": "com.centurylink.mdw.microservice.MicroserviceRestAdapter",
-      "name": "Retrieve\nWorkgroups",
+      "name": "Retrieve\nWorkgroup",
       "transitions": [{
         "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=538,ly=151,xs=494&583,ys=151&151"},
         "event": "FINISH",
@@ -67,10 +67,6 @@
       "category": "INPUT",
       "type": "java.lang.String"
     },
-    "requestHeaders": {
-      "category": "INPUT",
-      "type": "java.util.Map<String,String>"
-    },
     "spanId": {
       "category": "LOCAL",
       "type": "java.lang.String"
@@ -79,7 +75,7 @@
       "category": "LOCAL",
       "type": "java.lang.String"
     },
-    "workgroups": {
+    "workgroup": {
       "category": "LOCAL",
       "type": "org.json.JSONObject"
     }
