@@ -284,9 +284,14 @@ routesSvc.factory('routes', function() {
         controller: 'SystemController'
       },
       {
-          path: '/system/memory/:sysInfoType',
-          templateUrl: 'system/memory.html',
-          controller: 'SystemController'
+        path: '/system/memory/:sysInfoType',
+        templateUrl: 'system/memory.html',
+        controller: 'SystemController'
+      },
+      {
+        path: '/system/mbeans/:sysInfoType',
+        templateUrl: 'system/mbeans.html',
+        controller: 'SystemController'
       },
       {
         path: '/system/console',

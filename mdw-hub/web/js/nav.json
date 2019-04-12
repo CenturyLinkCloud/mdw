@@ -241,20 +241,25 @@
       {
         "links": [
           {
-            "label": "System Info",
+            "label": "System",
             "path": "system/sysInfo",
             "href": "#/system/sysInfo/System",
             "priority": 1
           },
           {
-            "label": "Thread Info",
+            "label": "Threads",
             "path": "system/threadInfo",
             "href": "#/system/threadInfo/Thread"
           },
           {
-            "label": "Memory Info",
+            "label": "Memory",
             "path": "system/memory",
             "href": "#/system/memory/Memory"
+          },
+          {
+            "label": "MBeans",
+            "path": "system/mbeans",
+            "href": "#/system/mbeans/MBeans"
           },
           {
             "label": "Messaging",

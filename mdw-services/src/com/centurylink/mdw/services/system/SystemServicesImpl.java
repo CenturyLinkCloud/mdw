@@ -101,8 +101,20 @@ public class SystemServicesImpl implements SystemServices {
                 throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
             }
         }
-        else if (type == SysInfoType.MBean) {
-            sysInfoCats.add(getMbeanInfo());
+        else if (type == SysInfoType.MBeans) {
+            Map<String,Mbean> domainMbeans = getDomainMbeans();
+            for (String domain : domainMbeans.keySet()) {
+                List<SysInfo> sysInfos = new ArrayList<>();
+                Mbean mbean = domainMbeans.get(domain);
+                for (String name : mbean.getValues().keySet()) {
+                    String value = mbean.getValues().get(name);
+                    int lf = value.indexOf('\n');
+                    if (lf > 0)
+                        value = value.substring(0, lf) + "...";
+                    sysInfos.add(new SysInfo(name, value));
+                }
+                sysInfoCats.add(new SysInfoCategory(domain, sysInfos));
+            }
         }
 
         return sysInfoCats;
@@ -266,37 +278,44 @@ public class SystemServicesImpl implements SystemServices {
         return output.toString();
     }
 
-    public SysInfoCategory getMbeanInfo() {
-        List<SysInfo> mbeanInfo = new ArrayList<>();
-        mbeanInfo.add(new SysInfo(mbeanInfo()));
-        return new SysInfoCategory("MBean Info", mbeanInfo);
-    }
-
-    private String mbeanInfo() {
+    private Map<String,Mbean> getDomainMbeans() {
+        long before = System.currentTimeMillis();
         MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         Set<ObjectInstance> instances = server.queryMBeans(null, null);
         Iterator<ObjectInstance> iterator = instances.iterator();
-        StringBuilder sb = new StringBuilder();
         Map<String,Mbean> domainMbeans = new TreeMap<>();
         while (iterator.hasNext()) {
             ObjectInstance instance = iterator.next();
             ObjectName objectName = instance.getObjectName();
             try {
                 MBeanInfo mbeanInfo = server.getMBeanInfo(objectName);
-                String type = objectName.getKeyProperty("type");
                 String domain = objectName.getDomain();
+                String name = objectName.getKeyProperty("name");
+                String type = objectName.getKeyProperty("type");
                 Mbean mbean = domainMbeans.get(domain);
                 if (mbean == null) {
-                    mbean = new Mbean(domain, type);
+                    mbean = new Mbean(domain, name, type);
                     domainMbeans.put(domain, mbean);
                 }
                 for (MBeanAttributeInfo attrInfo : mbeanInfo.getAttributes()) {
-                    String name = attrInfo.getName();
+                    String attrName = attrInfo.getName();
                     try {
-                        Object value = server.getAttribute(objectName, name);
+                        Object value = server.getAttribute(objectName, attrName);
+                        if (name != null)
+                            attrName = name + "/" + attrName;
                         if (type != null)
-                            name = type + "/" + name;
-                        mbean.getValues().put(name, String.valueOf(value));
+                            attrName = type + "/" + attrName;
+                        if (!attrName.toLowerCase().contains("/password")) {
+                            String stringValue;
+                            if (value != null && value.getClass().getName().equals("[Ljava.lang.String;"))
+                                stringValue = Arrays.toString((String[])value);
+                            else if (value != null && value.getClass().getName().equals("[Ljava.lang.Object;"))
+                                stringValue = Arrays.toString((Object[])value);
+                            else
+                                stringValue = String.valueOf(value);
+                            mbean.getValues().put(attrName, stringValue);
+                        }
+
                     }
                     catch (Exception ex) {
                         logger.trace(ex.getMessage());
@@ -309,26 +328,10 @@ public class SystemServicesImpl implements SystemServices {
             }
         }
 
-        for (String domain : domainMbeans.keySet()) {
-            sb.append(domain).append(":\n");
-            for (int i = 0; i <= domain.length(); i++)
-                sb.append("-");
-            sb.append("\n");
-            Mbean mbean = domainMbeans.get(domain);
-            for (String name : mbean.getValues().keySet()) {
-                String value = mbean.getValues().get(name);
-                int lf = value.indexOf('\n');
-                if (lf > 0)
-                    value = value.substring(0, lf) + "...";
-                sb.append("   ").append(name).append(": ").append(value).append("\n");
-            }
-            sb.append("\n");
-        }
-
-        System.out.println("\n\n" + sb);
-        return sb.toString();
+        if (logger.isDebugEnabled())
+            logger.debug("MBeans queried in " + (System.currentTimeMillis() - before) + "ms");
+        return domainMbeans;
     }
-
 
     public String getTopInfo() {
         try {
@@ -432,6 +435,21 @@ public class SystemServicesImpl implements SystemServices {
             if (dbAccess != null) {
                 dbAccess.closeConnection();
             }
+        }
+
+        try {
+            Mbean mbean = getDomainMbeans().get("com.centurylink.mdw");
+            if (mbean != null) {
+                for (String key : DatasourceAttributes.getAttributes().keySet()) {
+                    String value = mbean.getValues().get(key);
+                    String label = "Datasource " + DatasourceAttributes.getAttributes().get(key);
+                    dbInfos.add(new SysInfo(label, value));
+                }
+                dbInfos.add(new SysInfo("Full Datasource Info", "Available under **MBeans**"));
+            }
+        }
+        catch (Exception ex) {
+            logger.severeException(ex.getMessage(), ex);
         }
 
         return new SysInfoCategory("Database Details", dbInfos);
