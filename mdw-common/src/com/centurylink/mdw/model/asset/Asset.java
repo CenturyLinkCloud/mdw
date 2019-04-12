@@ -19,6 +19,7 @@ import com.centurylink.mdw.model.attribute.Attribute;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.*;
 
 public class Asset implements Comparable<Asset> {
@@ -126,7 +127,14 @@ public class Asset implements Comparable<Asset> {
     private File rawFile;
 
     public Asset() {
+    }
 
+    public Asset(AssetInfo assetInfo, String packageName) throws IOException {
+        this.name = assetInfo.getName();
+        this.rawFile = assetInfo.getFile();
+        this.content = Files.readAllBytes(rawFile.toPath());
+        this.language = extensionToLanguage.get("." + assetInfo.getExtension());
+        this.packageName = packageName;
     }
 
     public Asset(Asset cloneFrom) {

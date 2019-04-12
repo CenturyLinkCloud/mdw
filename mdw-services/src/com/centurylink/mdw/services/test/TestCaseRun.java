@@ -18,7 +18,6 @@ package com.centurylink.mdw.services.test;
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
-import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -28,6 +27,7 @@ import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.event.AdapterStubResponse;
 import com.centurylink.mdw.model.listener.Listener;
@@ -534,7 +534,9 @@ public class TestCaseRun implements Runnable {
         if (path.endsWith(".proc"))
             return getProcess(path);
         try {
-            return AssetCache.getAsset(path.indexOf('/') > 0 ? path : getTestCase().getPackage() + '/' + path);
+            String assetPath = path.indexOf('/') > 0 ? path : getTestCase().getPackage() + '/' + path;
+            AssetInfo assetInfo = ServiceLocator.getAssetServices().getAsset(assetPath);
+            return new Asset(assetInfo, assetPath.substring(0, assetPath.indexOf('/')));
         }
         catch (Exception ex) {
             throw new TestException("Cannot load " + path, ex);

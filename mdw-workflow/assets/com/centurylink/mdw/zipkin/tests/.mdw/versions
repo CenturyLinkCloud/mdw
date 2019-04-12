@@ -1,8 +1,8 @@
-AsyncSub.proc=3
+AsyncSub.proc=4
 Fortune.kt=1
-FortuneMain.proc=3
+FortuneMain.proc=4
 FortuneService.java=2
 FortuneSub.proc=2
 SpanId.kt=1
-SynchronousTrace.test=4
-SynchronousTrace.yaml=3
+SynchronousTrace.test=5
+SynchronousTrace.yaml=4
