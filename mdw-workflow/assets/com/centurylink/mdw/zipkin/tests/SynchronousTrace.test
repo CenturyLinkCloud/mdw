@@ -1,14 +1,9 @@
 package com.centurylink.mdw.zipkin.tests
 
-import com.centurylink.mdw.util.log.LoggerUtil
-
 import static brave.internal.HexCodec.writeHexLong
 import static java.time.Instant.now
 
-def logger = LoggerUtil.getStandardLogger()
-
 masterRequestId = Long.toHexString(now().toEpochMilli())
-println "masterRequestId: " + masterRequestId
 
 def tracer = brave.Tracing.currentTracer()
 def span = tracer.nextSpan().name("inService").start()
@@ -23,11 +18,11 @@ try {
     spanId = new String(spanRes)
     println "spanId: " + spanId
 
-    logger.info("", "FortuneService >> GET")
-
     def response = get http("api/com/centurylink/mdw/zipkin/tests/fortune") {
         headers = [
                 "Accept": "application/json",
+                "cache-control": "no-cache",
+                "pragma": "no-cache",
                 "mdw-request-id": masterRequestId,
                 "x-b3-traceid": traceId,
                 "x-b3-spanid": spanId,
