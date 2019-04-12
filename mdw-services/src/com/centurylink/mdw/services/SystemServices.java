@@ -30,7 +30,7 @@ public interface SystemServices {
         CLI,
         Caches,
         JMS,
-        MBean,
+        MBeans,
         Memory,
         Exit // only works from localhost
     }
