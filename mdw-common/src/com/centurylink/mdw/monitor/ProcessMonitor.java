@@ -47,4 +47,7 @@ public interface ProcessMonitor extends RegisteredService, Monitor {
         return null;
     }
 
+    default void onError(ProcessRuntimeContext context) {
+
+    }
 }

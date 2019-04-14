@@ -434,8 +434,7 @@ class ProcessExecutorImpl {
         return procdef;
     }
 
-    protected Process getMainProcessDefinition(ProcessInstance procinst)
-        throws DataAccessException, SQLException {
+    protected Process getMainProcessDefinition(ProcessInstance procinst) {
         Process procdef = null;
         if (procinst.getProcessInstDefId() > 0L)
             procdef = ProcessCache.getProcessInstanceDefiniton(procinst.getProcessId(), procinst.getProcessInstDefId());
@@ -591,7 +590,7 @@ class ProcessExecutorImpl {
                     startActivityId, processInstanceVO.getId(),
                     null, processInstanceVO.getMasterRequestId(),
                     EventType.EVENTNAME_START + ":");
-            if (delay>0) {
+            if (delay > 0) {
                 String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + processInstanceVO.getId()
                     + "start" + startActivityId;
                 this.sendDelayedInternalEvent(event, delay, msgid, false);
@@ -709,8 +708,7 @@ class ProcessExecutorImpl {
         return actInst;
     }
 
-    ActivityRuntime prepareActivityInstance(InternalEvent event, ProcessInstance procInst)
-            throws DataAccessException, ProcessException, ServiceLocatorException {
+    ActivityRuntime prepareActivityInstance(InternalEvent event, ProcessInstance procInst) throws ProcessException {
         try {
             // for asynch engine, procInst is always null
             ActivityRuntime ar = new ActivityRuntime();
@@ -736,18 +734,20 @@ class ProcessExecutorImpl {
                 logger.exception(logtag, "Failed to create activity implementor instance", e);
                 ar.activity = null;
             }
-            boolean isSynchActivity = ar.activity!=null && ar.activity instanceof SynchronizationActivity;
-            if (isSynchActivity) getDataAccess().lockProcessInstance(procInst.getId());
+            boolean isSyncActivity = ar.activity instanceof SynchronizationActivity;
+            if (isSyncActivity)
+                getDataAccess().lockProcessInstance(procInst.getId());
 
             List<ActivityInstance> actInsts;
-            if (this.inService) actInsts = null;
-            else actInsts = getDataAccess().getActivityInstances(activityId, procInst.getId(), true, isSynchActivity);
-            if (actInsts==null || actInsts.isEmpty()) {
+            if (this.inService)
+                actInsts = null;
+            else
+                actInsts = getDataAccess().getActivityInstances(activityId, procInst.getId(), true, isSyncActivity);
+            if (actInsts == null || actInsts.isEmpty()) {
                 // create activity instance and prepare it
                 ar.actinst = createActivityInstance(activityId, procInst.getId());
-                prepareActivitySub(processVO, actVO, ar.procinst, ar.actinst,
-                        workTransInstanceId, event, ar.activity);
-                if (ar.activity==null) {
+                prepareActivitySub(processVO, actVO, ar.procinst, ar.actinst, workTransInstanceId, event, ar.activity);
+                if (ar.activity == null) {
                     logger.severe("Failed to load the implementor class or create instance: " + actVO.getImplementor());
                     ar.startCase = ActivityRuntime.STARTCASE_ERROR_IN_PREPARE;
                 } else {
@@ -755,22 +755,22 @@ class ProcessExecutorImpl {
                     // notify registered monitors
                     ar.activity.notifyMonitors(WorkStatus.LOGMSG_START);
                 }
-            } else if (isSynchActivity) {
+            } else if (isSyncActivity) {
                 ar.actinst = actInsts.get(0);
-                   if (ar.actinst.getStatusCode()==WorkStatus.STATUS_IN_PROGRESS.intValue())
+                   if (ar.actinst.getStatusCode() == WorkStatus.STATUS_IN_PROGRESS)
                     ar.actinst = waitForActivityDone(ar.actinst);
-                if (ar.actinst.getStatusCode()==WorkStatus.STATUS_WAITING.intValue()) {
-                    if (workTransInstanceId!=null && workTransInstanceId.longValue()>0L) {
+                if (ar.actinst.getStatusCode() == WorkStatus.STATUS_WAITING) {
+                    if (workTransInstanceId != null && workTransInstanceId > 0L) {
                         getDataAccess().completeTransitionInstance(workTransInstanceId, ar.actinst.getId());
                     }
                     ar.startCase = ActivityRuntime.STARTCASE_SYNCH_WAITING;
-                } else if (ar.actinst.getStatusCode()==WorkStatus.STATUS_HOLD.intValue()) {
-                    if (workTransInstanceId!=null && workTransInstanceId.longValue()>0L) {
+                } else if (ar.actinst.getStatusCode() == WorkStatus.STATUS_HOLD) {
+                    if (workTransInstanceId != null && workTransInstanceId > 0L) {
                         getDataAccess().completeTransitionInstance(workTransInstanceId, ar.actinst.getId());
                     }
                     ar.startCase = ActivityRuntime.STARTCASE_SYNCH_WAITING;
                 } else {    // completed - possible when there are OR conditions
-                    if (workTransInstanceId!=null && workTransInstanceId.longValue()>0L) {
+                    if (workTransInstanceId != null && workTransInstanceId > 0L) {
                         getDataAccess().completeTransitionInstance(workTransInstanceId, ar.actinst.getId());
                     }
                     ar.startCase = ActivityRuntime.STARTCASE_SYNCH_COMPLETE;
@@ -778,13 +778,13 @@ class ProcessExecutorImpl {
             } else {
                 ActivityInstance onHoldActInst = null;
                 for (ActivityInstance actInst : actInsts) {
-                    if (actInst.getStatusCode()==WorkStatus.STATUS_HOLD.intValue()) {
+                    if (actInst.getStatusCode() == WorkStatus.STATUS_HOLD) {
                         onHoldActInst = actInst;
                         break;
                     }
                 }
-                if (onHoldActInst!=null) {
-                    if (workTransInstanceId!=null && workTransInstanceId.longValue()>0L) {
+                if (onHoldActInst != null) {
+                    if (workTransInstanceId != null && workTransInstanceId > 0L) {
                         getDataAccess().completeTransitionInstance(workTransInstanceId, onHoldActInst.getId());
                     }
                     ar.startCase = ActivityRuntime.STARTCASE_RESUME_WAITING;
@@ -1243,7 +1243,6 @@ class ProcessExecutorImpl {
                     (isCancelled?WorkStatus.LOGMSG_PROC_CANCEL:WorkStatus.LOGMSG_PROC_COMPLETE) + " - " + processVO.getQualifiedName()
                     + (isCancelled?"":completionCode==null?" completion code is null":(" completion code = "+completionCode)));
         }
-
         notifyMonitors(processInst, WorkStatus.LOGMSG_PROC_COMPLETE);
     }
 
@@ -1850,7 +1849,7 @@ class ProcessExecutorImpl {
     /**
      * Notify registered ProcessMonitors.
      */
-    public void notifyMonitors(ProcessInstance processInstance, String event) throws SQLException, DataAccessException {
+    public void notifyMonitors(ProcessInstance processInstance, String event) {
         // notify registered monitors
         Process processVO = getMainProcessDefinition(processInstance);
         Package pkg = PackageCache.getProcessPackage(processVO.getId());
@@ -1859,7 +1858,7 @@ class ProcessExecutorImpl {
                 .getProcessMonitors(new ProcessRuntimeContext(pkg, processVO, processInstance,
                         getDataAccess().getPerformanceLevel(), isInService(), new HashMap<>()));
         if (!monitors.isEmpty()) {
-            Map<String, Object> vars = new HashMap<>();
+            Map<String,Object> vars = new HashMap<>();
             if (processInstance.getVariables() != null) {
                 for (VariableInstance var : processInstance.getVariables()) {
                     Object value = var.getData();
@@ -1911,6 +1910,9 @@ class ProcessExecutorImpl {
                                     }
                                 }
                             }
+                        }
+                        else if (WorkStatus.LOGMSG_PROC_ERROR.equals(event)) {
+                            monitor.onError(runtimeContext);
                         }
                         else if (WorkStatus.LOGMSG_PROC_COMPLETE.equals(event)) {
                             monitor.onFinish(runtimeContext);

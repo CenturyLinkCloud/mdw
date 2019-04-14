@@ -267,7 +267,7 @@ public class ListenerHelper {
                 requestDoc.setMeta(createRequestMetaDocument(metaInfo, reqMetaInfo, eeid));
 
             // log request-id so that it can easily be located
-            if (logger.isDebugEnabled()) {
+            if (logger.isInfoEnabled()) {
                 StringBuilder reqMsg = new StringBuilder(">> ");
                 String method = metaInfo.get(Listener.METAINFO_HTTP_METHOD);
                 if (method != null)
@@ -283,7 +283,7 @@ public class ListenerHelper {
                 if (path != null)
                     reqMsg.append("on path '").append(path).append("'");
                 if (eeid > 0 && !"AppSummary".equals(path)) // don't log health/ping
-                    logger.debug("", reqMsg.toString());
+                    logger.info("", reqMsg.toString());
                 else
                     logger.mdwDebug(reqMsg.toString());
             }
@@ -333,6 +333,10 @@ public class ListenerHelper {
                     if (persistMeta(metaInfo)) {
                         response.setMeta(createResponseMeta(metaInfo, reqMetaInfo, ownerId, requestTime));
                     }
+                }
+
+                if (logger.isDebugEnabled() && eeid > 0) {
+                    logger.debug("", "<< Request " + eeid + " processed: " + (System.currentTimeMillis() - requestTime) + " ms");
                 }
 
                 return response.getContent();
@@ -455,12 +459,16 @@ public class ListenerHelper {
                 metaInfo.remove(Listener.METAINFO_DOCUMENT_ID);
             }
 
-
             if (persistMessage(metaInfo) && !StringHelper.isEmpty(response.getContent())) {
                 Long ownerId = createResponseDocument(response, eeid);
                 if (persistMeta(metaInfo))
                     response.setMeta(createResponseMeta(metaInfo, reqMetaInfo, ownerId, requestTime));
             }
+
+            if (logger.isDebugEnabled() && eeid > 0) {
+                logger.debug("", "<< Request " + eeid + " processed: " + (System.currentTimeMillis() - requestTime) + " ms");
+            }
+
             return response.getContent();
         }
         catch (ServiceException ex) {

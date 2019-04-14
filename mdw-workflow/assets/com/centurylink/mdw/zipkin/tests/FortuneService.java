@@ -39,6 +39,7 @@ public class FortuneService extends JsonRestService {
         logger.info(logtag(headers), "FortuneService >> post()");
         Map<String,Object> inputParams = new HashMap<>();
         inputParams.put("originator", this.getClass().getSimpleName());
+        inputParams.put("request", content);
         launchProcess(process, masterRequestId(headers), inputParams, headers);
         return new StatusResponse(Status.ACCEPTED).getJson();
     }

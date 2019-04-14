@@ -127,6 +127,7 @@ public class ProcessEngineDriver {
                             messageDoc.getWorkId(), messageDoc.getWorkInstanceId()), "Inherited Event - type="
                             + eventType + ", compcode=" + messageDoc.getCompletionCode());
             }
+            engine.notifyMonitors(processInstVO, WorkStatus.LOGMSG_PROC_ERROR);
             String compCode = messageDoc.getCompletionCode();
             ProcessInstance originatingInstance = processInstVO;
             Process embeddedHandlerProc = processVO.findSubprocess(eventType, compCode);
@@ -474,7 +475,8 @@ public class ProcessEngineDriver {
      */
     public void processEvents(String msgid, String textMessage) {
         try {
-            if (logger.isDebugEnabled()) logger.debug("executeFlow: " + textMessage);
+            if (logger.isDebugEnabled())
+                logger.debug("executeFlow: " + textMessage);
             InternalEvent event = new InternalEvent(textMessage);
             // a. find the process instance (looking for memory only first, then regular)
             Long procInstId;
@@ -485,8 +487,10 @@ public class ProcessEngineDriver {
                 } else {
                     procInstId = event.getWorkInstanceId();
                 }
-            } else procInstId = event.getOwnerId();
-            if (procInstId!=null) {
+            } else {
+                procInstId = event.getOwnerId();
+            }
+            if (procInstId != null) {
                 EngineDataAccess temp_edao = EngineDataAccessCache.getInstance(false, 9);
                 procInst = temp_edao.getProcessInstance(procInstId);
                 if (procInst==null) {
@@ -501,8 +505,7 @@ public class ProcessEngineDriver {
                             if (ApplicationContext.isDevelopment()) {
                                 logger.severe("Unable to load process instance id=" + procInstId + ".  Was this instance deleted?");
                                 return;
-                            }
-                            else {
+                            } else {
                                 throw ex;
                             }
                         }
@@ -511,14 +514,18 @@ public class ProcessEngineDriver {
                         edbao.stopTransaction(transaction);
                     }
                 }
-            } else procInst = null;
+            } else {
+                procInst = null;
+            }
             // b. now determine performance level here
             int performance_level;
-            if (procInst==null) {        // must be process start message
+            if (procInst == null) {        // must be process start message
                 if (event.isProcess() && event.getEventType().equals(EventType.START)) {
                     Process procdef = getProcessDefinition(event.getWorkId());
                     performance_level = procdef.getPerformanceLevel();
-                } else performance_level = 0;
+                } else {
+                    performance_level = 0;
+                }
             } else {
                 Process procdef = getProcessDefinition(procInst.getProcessId());
                 if (procdef == null) {
@@ -543,18 +550,19 @@ public class ProcessEngineDriver {
                 }
                 performance_level = procdef.getPerformanceLevel();
             }
-            if (performance_level<=0) performance_level = default_performance_level_regular;
+            if (performance_level <= 0)
+                performance_level = default_performance_level_regular;
             // c. create engine
             EngineDataAccess edao = EngineDataAccessCache.getInstance(false, performance_level);
             InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
             ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
-            if (msgid!=null) {
+            if (msgid != null) {
                 boolean success = engine.deleteInternalEvent(msgid);
                 if (!success) {
                     // retry two times to get around race condition (internal event inserted
                     // into EVENT_INSTANCE table but not committed yet)
                     int retries = 0;
-                    while (!success && retries<2) {
+                    while (!success && retries < 2) {
                         logger.debug("Failed to consume internal event " + msgid + " - retry in 2 seconds");
                         Thread.sleep(eventConsumeRetrySleep * 1000);
                         retries++;
@@ -566,13 +574,15 @@ public class ProcessEngineDriver {
                     return;    // already processed;
                 }
             }
-            if (performance_level>=9) msgBroker.setCacheOption(InternalMessenger.CACHE_ONLY);
-            else if (performance_level>=3) msgBroker.setCacheOption(InternalMessenger.CACHE_ON);
+            if (performance_level >= 9)
+                msgBroker.setCacheOption(InternalMessenger.CACHE_ONLY);
+            else if (performance_level >= 3)
+                msgBroker.setCacheOption(InternalMessenger.CACHE_ON);
             // d. process event(s)
-            if (performance_level>=3) {
+            if (performance_level >= 3) {
                 // TODO cache proc inst
                 processEvent(engine, event, procInst);
-                while ((event=msgBroker.getNextMessageFromQueue(engine))!=null) {
+                while ((event = msgBroker.getNextMessageFromQueue(engine)) != null) {
                     procInst = this.findProcessInstance(engine, event);
                     processEvent(engine, event, procInst);
                 }
@@ -586,12 +596,11 @@ public class ProcessEngineDriver {
         }
     }
 
-    private void processEvent(ProcessExecutor engine,
-            InternalEvent event, ProcessInstance procInst) {
+    private void processEvent(ProcessExecutor engine, InternalEvent event, ProcessInstance procInst) {
         try {
             if (event.isProcess()) {
                 if (event.getEventType().equals(EventType.START)) {
-                    if (procInst==null) {
+                    if (procInst == null) {
                         procInst = engine.createProcessInstance(
                                 event.getWorkId(), event.getOwnerType(), event.getOwnerId(),
                                 event.getSecondaryOwnerType(), event.getSecondaryOwnerId(),
@@ -611,7 +620,8 @@ public class ProcessEngineDriver {
                     handleInheritedEvent(engine, procInst, getProcessDefinition(procInst), event, EventType.DELAY);
                 }
             } else {
-                if (!processInstanceIsActive(procInst)) return;
+                if (!processInstanceIsActive(procInst))
+                    return;
                 if (event.getEventType().equals(EventType.START)) {
                     this.executeActivity(engine, event, procInst);
                 } else if (event.getEventType().equals(EventType.RESUME)) {
@@ -821,7 +831,7 @@ public class ProcessEngineDriver {
         InternalMessenger msgBroker = engine.getInternalMessenger();
         lastException = null;
         processEvent(engine, event, mainProcessInst);
-        while ((event=msgBroker.getNextMessageFromQueue(engine)) != null) {
+        while ((event = msgBroker.getNextMessageFromQueue(engine)) != null) {
             ProcessInstance procInst = this.findProcessInstance(engine, event);
             processEvent(engine, event, procInst);
         }
