@@ -364,10 +364,9 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
-    public ActivityRuntime prepareActivityInstance(
-            InternalEvent event, ProcessInstance procInst)
-            throws ProcessException, DataAccessException, ServiceLocatorException {
-        TransactionWrapper transaction=null;
+    public ActivityRuntime prepareActivityInstance(InternalEvent event, ProcessInstance procInst)
+            throws ProcessException, DataAccessException {
+        TransactionWrapper transaction = null;
         try {
             transaction = startTransaction();
             return engineImpl.prepareActivityInstance(event, procInst);
@@ -376,10 +375,9 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
-    public void cancelActivityInstance(
-            ActivityInstance actInst, ProcessInstance procinst, String pStatusMsg)
-    throws ProcessException, DataAccessException {
-        TransactionWrapper transaction=null;
+    public void cancelActivityInstance(ActivityInstance actInst, ProcessInstance procinst, String pStatusMsg)
+            throws DataAccessException {
+        TransactionWrapper transaction = null;
         try {
             transaction = startTransaction();
             engineImpl.cancelActivityInstance(actInst, procinst, pStatusMsg);
@@ -1242,7 +1240,7 @@ public class ProcessExecutor implements RetryableTransaction {
      * Notify registered ProcessMonitors.
      */
     public void notifyMonitors(ProcessInstance processInstance, String event) {
-        TransactionWrapper transaction=null;
+        TransactionWrapper transaction = null;
         try {
             transaction = startTransaction();
             engineImpl.notifyMonitors(processInstance, event);

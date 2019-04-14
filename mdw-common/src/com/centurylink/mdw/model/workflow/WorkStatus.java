@@ -52,4 +52,5 @@ public interface WorkStatus {
     String LOGMSG_PROC_START = "Process started";
     String LOGMSG_PROC_COMPLETE = "Process completed";
     String LOGMSG_PROC_CANCEL = "Process cancelled";
+    String LOGMSG_PROC_ERROR = "Process errored";
 }

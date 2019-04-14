@@ -1,0 +1,45 @@
+package com.centurylink.mdw.zipkin.tests
+
+import static brave.internal.HexCodec.writeHexLong
+import static java.time.Instant.now
+
+masterRequestId = Long.toHexString(now().toEpochMilli())
+
+def tracer = brave.Tracing.currentTracer()
+def span = tracer.nextSpan().name("inAsync").start()
+traceId = span.context().traceIdString()
+println "traceId: " + traceId
+
+def scopedSpan = tracer.startScopedSpan("childSpan")
+try {
+    def spanRes = new char[16]
+    span = tracer.currentSpan()
+    writeHexLong(spanRes, 0, span.context().spanId())
+    spanId = new String(spanRes)
+    println "spanId: " + spanId
+
+    def response = post http("api/com/centurylink/mdw/zipkin/tests/fortune") {
+        headers = [
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "cache-control": "no-cache",
+                "pragma": "no-cache",
+                "mdw-request-id": masterRequestId,
+                "x-b3-traceid": traceId,
+                "x-b3-spanid": spanId,
+                "x-b3-parentspanid": traceId,
+                "x-b3-sampled": "1"
+        ]
+        payload = '{ "name": "Bill" }'
+    }
+    assert response.code == 202
+
+    wait process("FortuneMain")  {
+        // wait process times out -- TODO: why?
+        timeout = 10
+    }
+    verify processes("FortuneMain", "FortuneSub", "AsyncSub")
+} finally {
+    scopedSpan.finish()
+    span.finish()
+}

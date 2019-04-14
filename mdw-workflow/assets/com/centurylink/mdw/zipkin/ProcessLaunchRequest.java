@@ -22,6 +22,8 @@ public class ProcessLaunchRequest {
         return request;
     }
 
+    private ProcessLaunchRequest() {}
+
     private Map<String,String> headers;
 
     public String getHeader(String name) {
