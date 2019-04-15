@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.centurylink.mdw.container.EmbeddedDbExtension;
 import com.centurylink.mdw.model.monitor.ScheduledJob;
+import com.centurylink.mdw.model.system.SystemMetric;
 import com.centurylink.mdw.util.log.LogLineInjector;
 
 public class MdwServiceRegistry extends ServiceRegistry {
@@ -31,7 +32,8 @@ public class MdwServiceRegistry extends ServiceRegistry {
             ScheduledJob.class.getName(),
             RequestRoutingStrategy.class.getName(),
             EmbeddedDbExtension.class.getName(),
-            LogLineInjector.class.getName()}));
+            LogLineInjector.class.getName(),
+            SystemMetric.class.getName()}));
 
     protected MdwServiceRegistry(List<Class<? extends RegisteredService>> serviceInterfaces) {
         super(serviceInterfaces);
@@ -47,6 +49,7 @@ public class MdwServiceRegistry extends ServiceRegistry {
             services.add(RequestRoutingStrategy.class);
             services.add(EmbeddedDbExtension.class);
             services.add(LogLineInjector.class);
+            services.add(SystemMetric.class);
             instance = new MdwServiceRegistry(services);
         }
         return instance;
