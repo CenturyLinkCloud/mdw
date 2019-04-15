@@ -13,4 +13,6 @@ public interface SystemMetric extends RegisteredService {
      * Executed at intervals to collect metrics.
      */
     List<Metric> collect();
+
+    default boolean isEnabled() { return false; }
 }

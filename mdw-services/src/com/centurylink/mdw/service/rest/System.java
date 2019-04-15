@@ -18,6 +18,7 @@ package com.centurylink.mdw.service.rest;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.JsonArray;
+import com.centurylink.mdw.model.report.MetricDataList;
 import com.centurylink.mdw.model.system.SysInfoCategory;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -30,12 +31,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.ws.rs.Path;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
 @Path("/System")
 public class System extends JsonRestService {
 
+    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss");
     /**
      * ASSET_DESIGN role can PUT in-memory config for running tests.
      */
@@ -68,13 +71,14 @@ public class System extends JsonRestService {
             Query query = getQuery(path, headers);
             int span = query.getIntFilter("span");
             if (span == -1)
-                span = 1800; // 30 minutes
+                span = 600; // 10 minutes
             SystemMetrics systemMetrics = SystemMetrics.getInstance();
+            MetricDataList data = systemMetrics.getData(metric);
             if (segments.length == 4 && segments[3].equals("summary")) {
-                return new JsonArray(systemMetrics.getSummary(metric, span)).getJson();
+                return new JsonArray(data.getAverages(span)).getJson();
             }
             else if (segments.length == 3) {
-                return systemMetrics.getData(metric, span).getJson(span);
+                return data.getJson(span, timeFormatter);
             }
         }
         throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path: " + path);

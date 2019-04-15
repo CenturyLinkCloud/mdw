@@ -13,15 +13,20 @@ public class Metric implements Jsonable {
     private String name;
     public String getName() { return name; }
 
+    private String id;
+    public String getId() { return id; }
+
     public long value;
     public long getValue() { return value; }
+    public void setValue(long value) { this.value = value; }
 
-    public Metric(JSONObject json) {
-        this.name = json.getString("name");
-        this.value = json.getLong("value");
+    public Metric(String id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
-    public Metric(String name, long value) {
+    public Metric(String id, String name, long value) {
+        this.id = id;
         this.name = name;
         this.value = value;
     }
@@ -30,6 +35,7 @@ public class Metric implements Jsonable {
     public JSONObject getJson() throws JSONException {
         JSONObject json = new JsonObject();
         json.put("name", name);
+        json.put("id", id);
         json.put("value", value);
         return json;
     }

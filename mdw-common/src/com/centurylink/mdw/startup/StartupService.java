@@ -22,9 +22,9 @@ import com.centurylink.mdw.common.service.RegisteredService;
  */
 public interface StartupService extends RegisteredService {
 
-    public void onStartup() throws StartupException;
+    void onStartup() throws StartupException;
 
-    public void onShutdown();
+    void onShutdown();
 
-    default public boolean isEnabled() { return true; }
+    default boolean isEnabled() { return true; }
 }
