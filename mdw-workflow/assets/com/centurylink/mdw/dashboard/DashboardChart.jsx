@@ -70,14 +70,16 @@ class DashboardChart extends Component {
   }
 
   getStart() {
-    var spanMs = 24 * 3600 * 1000; // one day
-    if (this.state.timespan === 'Week') {
-      spanMs = spanMs * 6;
+    if (this.state.filters.Ending) {
+      var spanMs = 24 * 3600 * 1000; // one day
+      if (this.state.timespan === 'Week') {
+        spanMs = spanMs * 6;
+      }
+      else if (this.state.timespan === 'Month') {
+        spanMs = spanMs * 29;
+      }
+      return new Date(this.state.filters.Ending.getTime() - spanMs);
     }
-    else if (this.state.timespan === 'Month') {
-      spanMs = spanMs * 29;
-    }
-    return new Date(this.state.filters.Ending.getTime() - spanMs);
   }
 
   setTops(tops, selected) {
@@ -205,7 +207,10 @@ class DashboardChart extends Component {
   buildUrl(base) {
     const breakdown = this.getBreakdown();
     var url = base + (breakdown.data.indexOf('?') >= 0 ? '&' : '?');
-    url += 'Starting=' + this.getStart().toISOString();
+    let start = this.getStart();
+    if (start) {
+      url += 'Starting=' + start.toISOString();
+    }
     Object.keys(this.state.filters).forEach(key => {
       let val = this.state.filters[key];
       if (val) {
@@ -252,7 +257,6 @@ class DashboardChart extends Component {
       if (breakdown && breakdown.tops) {
         $mdwUi.hubLoading(true);
         var topsUrl = this.buildUrl(this.context.serviceRoot + breakdown.tops);
-        topsUrl += '&max=' + this.maxTops;
         fetch(new Request(topsUrl, {
           method: 'GET',
           headers: { Accept: 'application/json'},

@@ -6,8 +6,7 @@ import org.json.JSONObject;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Rolling, fixed size list for holding metric data.
@@ -52,6 +51,33 @@ public class MetricDataList {
     }
 
     /**
+     * Accumulated averages.
+     */
+    public List<Metric> getAverages(int span) {
+        Map<String,Metric> accum = new LinkedHashMap<>();
+        int count = span / PERIOD;
+        if (count > dataList.size())
+            count = dataList.size();
+        for (int i = dataList.size() - count; i < dataList.size(); i++) {
+            MetricData metricData = dataList.get(i);
+            for (Metric metric : metricData.getMetrics()) {
+                Metric total = accum.get(metric.getName());
+                if (total == null) {
+                    total = new Metric(metric.getId(), metric.getName(), metric.getValue());
+                    accum.put(metric.getName(), total);
+                }
+                else {
+                    total.setValue(total.getValue() + metric.getValue());
+                }
+            }
+        }
+        for (Metric metric : accum.values()) {
+            metric.setValue(Math.round(metric.getValue() / count));
+        }
+        return new ArrayList<>(accum.values());
+    }
+
+    /**
      * Returns a left-padded list.
      */
     public List<MetricData> getData(int span) {
@@ -66,11 +92,11 @@ public class MetricDataList {
                 MetricData first = dataList.get(0);
                 List<Metric> pads = new ArrayList<>();
                 for (Metric metric : first.getMetrics()) {
-                    pads.add(new Metric(metric.getName(), 0));
+                    pads.add(new Metric(metric.getId(), metric.getName(), 0));
                 }
                 LocalDateTime time = first.getTime();
                 while (padded.size() < count) {
-                    time = time.plusSeconds(PERIOD);
+                    time = time.minusSeconds(PERIOD);
                     padded.add(0, new MetricData(time, pads));
                 }
                 return padded;

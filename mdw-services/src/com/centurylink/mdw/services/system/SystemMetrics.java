@@ -2,7 +2,6 @@ package com.centurylink.mdw.services.system;
 
 import com.centurylink.mdw.common.service.MdwServiceRegistry;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.report.Metric;
 import com.centurylink.mdw.model.report.MetricData;
 import com.centurylink.mdw.model.report.MetricDataList;
 import com.centurylink.mdw.model.system.SystemMetric;
@@ -10,7 +9,9 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -23,7 +24,7 @@ public class SystemMetrics {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private static volatile SystemMetrics instance = new SystemMetrics();
+    private static volatile SystemMetrics instance;
     public static SystemMetrics getInstance() {
         if (instance == null) {
             synchronized (SystemMetrics.class) {
@@ -76,33 +77,14 @@ public class SystemMetrics {
         }
     }
 
-    public SystemMetric getSystemMetric(String name) throws ServiceException {
+    public MetricDataList getData(String name) throws ServiceException {
         SystemMetric systemMetric = systemMetrics.get(name);
         if (systemMetric == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "SystemMetric not found: " + name);
-        return systemMetric;
-    }
-
-    /**
-     *
-     * @param name metric name
-     * @param span in seconds
-     * @return list of metrics aggregating data
-     */
-    public List<Metric> getSummary(String name, int span) throws ServiceException {
         if (!isActive()) {
             activate();
         }
-        SystemMetric systemMetric = getSystemMetric(name);
-        return new ArrayList<>(); // TODO
-
-    }
-
-    public MetricDataList getData(String name, int span) throws ServiceException {
-        if (!isActive()) {
-            activate();
-        }
-        return metricDataLists.get(getSystemMetric(name));
+        return metricDataLists.get(name);
     }
 
     private void doCollect(LocalDateTime time, SystemMetric systemMetric) {

@@ -8,7 +8,7 @@ function ChartLegend(props) {
     const found = props.items.find(it => it.id === item.id);
     if (found) {
       label += found.name;
-      if (found.value || found.count) {
+      if (found.value || found.value === 0 || found.count) {
         label += ' (' + (found.count ? found.count : found.value) + ')';
       }
     }
