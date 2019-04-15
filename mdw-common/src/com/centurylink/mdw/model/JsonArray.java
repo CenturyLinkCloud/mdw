@@ -16,6 +16,7 @@
 package com.centurylink.mdw.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -36,7 +37,14 @@ public class JsonArray implements Jsonable {
         this.array = array;
     }
 
-    public JsonArray(List<String> values) {
+    public JsonArray(List<? extends Jsonable> jsonables) {
+        array = new JSONArray();
+        for (Jsonable jsonable : jsonables) {
+            array.put(jsonable.getJson());
+        }
+    }
+
+    public JsonArray(Collection<String> values) {
         array = new JSONArray(values);
     }
 

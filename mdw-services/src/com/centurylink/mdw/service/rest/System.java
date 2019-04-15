@@ -15,24 +15,23 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.Path;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.JsonArray;
-import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.system.SysInfoCategory;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.SystemServices;
 import com.centurylink.mdw.services.SystemServices.SysInfoType;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.services.system.SystemMetrics;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.Path;
+import java.util.List;
+import java.util.Map;
 
 @Path("/System")
 public class System extends JsonRestService {
@@ -64,8 +63,20 @@ public class System extends JsonRestService {
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported SysInfoType: " + segments[1]);
             }
         }
-        else {
-            return new JsonObject(); // TODO
+        else if (segments.length >= 3 && segments[1].equals("metrics")) {
+            String metric = segments[2];
+            Query query = getQuery(path, headers);
+            int span = query.getIntFilter("span");
+            if (span == -1)
+                span = 1800; // 30 minutes
+            SystemMetrics systemMetrics = SystemMetrics.getInstance();
+            if (segments.length == 4 && segments[3].equals("summary")) {
+                return new JsonArray(systemMetrics.getSummary(metric, span)).getJson();
+            }
+            else if (segments.length == 3) {
+                return systemMetrics.getData(metric, span).getJson(span);
+            }
         }
+        throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path: " + path);
     }
 }
