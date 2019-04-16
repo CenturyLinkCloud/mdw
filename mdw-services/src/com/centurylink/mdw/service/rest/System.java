@@ -38,7 +38,6 @@ import java.util.Map;
 @Path("/System")
 public class System extends JsonRestService {
 
-    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss");
     /**
      * ASSET_DESIGN role can PUT in-memory config for running tests.
      */
@@ -71,14 +70,14 @@ public class System extends JsonRestService {
             Query query = getQuery(path, headers);
             int span = query.getIntFilter("span");
             if (span == -1)
-                span = 600; // 10 minutes
+                span = 300; // 5 minutes
             SystemMetrics systemMetrics = SystemMetrics.getInstance();
             MetricDataList data = systemMetrics.getData(metric);
             if (segments.length == 4 && segments[3].equals("summary")) {
                 return new JsonArray(data.getAverages(span)).getJson();
             }
             else if (segments.length == 3) {
-                return data.getJson(span, timeFormatter);
+                return data.getJson(span);
             }
         }
         throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path: " + path);

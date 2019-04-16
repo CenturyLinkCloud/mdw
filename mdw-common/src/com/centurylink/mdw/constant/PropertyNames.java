@@ -108,13 +108,6 @@ public class PropertyNames {
     public static final String MDW_TIMER_CHECK_INTERVAL = "mdw.timer.CheckInterval";    // interval between checks in seconds
     public static final String MDW_TIMER_THRESHOLD_FOR_DELAY = "mdw.timer.ThresholdForDelay";   // (minutes) threshold for using timer for delayed JMS messages
 
-    public static final String MDW_CERTIFIED_MESSAGE_ACK_TIMEOUT = "mdw.certified_message.AcknowlegmentTimeout";    // default ack timeout in seconds
-    public static final String MDW_CERTIFIED_MESSAGE_RETRY_INTERVAL = "mdw.certified_message.RetryInterval";    // default interval for next retry in seconds
-    public static final String MDW_CERTIFIED_MESSAGE_MAX_TRIES = "mdw.certified_message.MaxTries";  // default max tries
-
-    // this is a group, contains <name>.Adapter and pool specific properties
-    public static final String MDW_CONNECTION_POOL = "mdw.connection.pool"; // prefix for connection pool properties
-
     public static final String MDW_HUB_URL = "mdw.hub.url";
     public static final String MDW_TASK_ACTION_DEF = "mdw.hub.action.definition";
     public static final String MDW_HUB_OVERRIDE_PACKAGE = "mdw.hub.override.package";
@@ -195,4 +188,9 @@ public class PropertyNames {
     public static final String MDW_JSON_PRETTY_INDENT = "mdw.json.pretty.indent";
     public static final String MDW_JSON_ORDERED_KEYS = "mdw.json.ordered.keys";
     public static final String MDW_DISCOVERY_BRANCHTAGS_MAX = "mdw.discovery.maxBranchesTags";
+
+    // System metrics
+    public static final String MDW_SYSTEM_METRICS_PERIOD = "mdw.system.metrics.period";
+    public static final String MDW_SYSTEM_METRICS_RETENTION = "mdw.system.metrics.retention";
+    public static final String MDW_SYSTEM_METRICS_ENABLED = "mdw.system.metrics.enabled";
 }
