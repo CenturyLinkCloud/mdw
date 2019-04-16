@@ -121,13 +121,6 @@
             "href": "/dashboard/system",
             "priority": 1,
             "condition": "user.hasRole('Site Admin')"
-          },
-          {
-            "label": "Monitoring",
-            "path": "dashboard/monitoring",
-            "href": "/dashboard/monitoring",
-            "priority": 1,
-            "condition": "user.hasRole('Site Admin')"
           }
         ]
       }

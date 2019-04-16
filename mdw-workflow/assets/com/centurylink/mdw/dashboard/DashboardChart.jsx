@@ -3,6 +3,7 @@ import PropTypes from '../node/node_modules/prop-types';
 import {Doughnut, Bar, Line} from '../node/node_modules/react-chartjs-2';
 import ChartHeader from './ChartHeader.jsx';
 import ChartLegend from './ChartLegend.jsx';
+import {shade} from '../react/statuses';
 
 class DashboardChart extends Component {
 
@@ -191,12 +192,14 @@ class DashboardChart extends Component {
     const breakdown = this.getBreakdown();
     if (breakdown) {
       var downloadUrl = this.buildUrl(this.context.serviceRoot + breakdown.data);
+      var sep = downloadUrl.indexOf('?') >= 0 ? '&' : '?';
       if (breakdown.instancesParam) {
-        downloadUrl += '&' + breakdown.instancesParam + '=%5B' + this.state.selected.map(sel => {
+        downloadUrl += sep + breakdown.instancesParam + '=%5B' + this.state.selected.map(sel => {
           return breakdown.selectField ? encodeURI(sel[breakdown.selectField]) : encodeURI(sel.id);
         }).join() + '%5D';
       }
-      location = downloadUrl + '&DownloadFormat=xlsx';
+      sep = downloadUrl.indexOf('?') >= 0 ? '&' : '?';
+      location = downloadUrl + sep + 'DownloadFormat=xlsx';
     }
   }
 
@@ -222,6 +225,9 @@ class DashboardChart extends Component {
         }
       }
     });
+    if (url.endsWith('?')) {
+      url = url.substring(0, url.length - 1);
+    }
     return url;
   }
 
@@ -385,38 +391,60 @@ class DashboardChart extends Component {
   getOverviewData() {
     const breakdown = this.getBreakdown();
     const chartColors = this.getChartColors();
+    const chartOptions = this.getChartOptions();
     const overallData = {labels: [], datasets: [{label: 'Overall', data: [], backgroundColor: []}]};
+    var max, total = 0;
+    if (breakdown.stacked && chartOptions.scales && chartOptions.scales.yAxes && chartOptions.scales.yAxes.length > 0) {
+      const ticks = chartOptions.scales.yAxes[0].ticks;
+      if (ticks) {
+        max = ticks.max;
+      }
+    }
     this.state.selected.forEach((sel, i) => {
       let label = breakdown.summaryChart === 'bar' ? '' : sel.name;
       overallData.labels.push(label);
       overallData.datasets[0].data.push(sel.value);
+      total += sel.value;
       overallData.datasets[0].backgroundColor.push(chartColors[i]);
     }, this);
+    if (max) {
+      // fill up donut
+      overallData.labels.push('');
+      overallData.datasets[0].data.push(max - total);
+    }
     return overallData;
   }
 
   getMainData() {
+    const breakdown = this.getBreakdown();
     const lineData = {labels: [], datasets: []};
     var datasets = {}; // id to dataset
     const chartColors = this.getChartColors();
     let year = new Date().getFullYear();
     if (this.state.selected.length > 0) {
       this.state.selected.forEach((sel, i) => {
-        let dataset = {label: sel.name, borderColor: chartColors[i], data: [], fill: false};
+        let dataset = {label: sel.name, borderColor: chartColors[i], data: [], fill: breakdown.fill ? breakdown.fill : false};
+        if (breakdown.fill) {
+          dataset.backgroundColor = shade(chartColors[i], 0.5);
+        }
         datasets[sel.id] = dataset;
         lineData.datasets.push(dataset);
-        Object.keys(this.state.data).forEach(key => {
+        Object.keys(this.state.data).forEach((key, j) => {
           if (i === 0) {
             lineData.labels.push(key.startsWith(year + '-') ? key.substr(5) : key);
           }
           const aggs = this.state.data[key];
           const selAgg = aggs.find(agg => agg.id === sel.id);
-          dataset.data.push(selAgg ? selAgg.value : 0);
+          var value = selAgg ? selAgg.value : 0;
+          if (breakdown.stacked && i > 0) {
+            value += lineData.datasets[i-1].data[j]; // additive
+          }
+          dataset.data.push(value);
         }, this);
       }, this);
     }
     else { // eg: total
-      let dataset = {borderColor: chartColors[0], data: [], fill: false};
+      let dataset = {borderColor: chartColors[0], data: [], fill: breakdown.fill ? breakdown.fill : false};
       lineData.datasets.push(dataset);
       Object.keys(this.state.data).forEach(key => {
         lineData.labels.push(key.startsWith(year + '-') ? key.substr(5) : key);
@@ -484,16 +512,21 @@ class DashboardChart extends Component {
               {(!breakdown.summaryChart || breakdown.summaryChart === 'donut') &&
                 <Doughnut
                   data={overviewData}
-                  options={this.getChartOptions()}
+                  options={this.chartOptions}
                   width={250} height={250}
                   getElementAtEvent={this.handleOverviewDataClick} />
               }
               {breakdown.summaryChart === 'bar' &&
                 <Bar
                   data={overviewData}
-                  options={this.getChartOptions()}
+                  options={this.chartOptions}
                   width={250} height={250}
                   getElementAtEvent={this.handleOverviewDataClick} />
+              }
+              {breakdown.summaryTitle && 
+                <div className="mdw-chart-subtitle" style={{width:'250px'}}>
+                  {breakdown.summaryTitle}
+                </div>
               }
               <ChartLegend
                 colors={this.getChartColors()}

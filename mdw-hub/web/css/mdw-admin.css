@@ -1485,6 +1485,12 @@
   font-weight: bold;
   font-size: 18px;
 }
+.mdw-chart-subtitle {
+  text-align: center;
+  font-weight: bold;
+  position: relative;
+  top: 5px;
+}
 .mdw-modal-input {
   width: 268px;
   height: 25px;

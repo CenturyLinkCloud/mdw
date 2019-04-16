@@ -19,19 +19,31 @@ class System extends Component {
       breakdowns: [
         {
           name: 'CPU',
-          selectField: 'name',
-          selectLabel: 'CPU Usage',
+          units: 'Usage %',
+          summaryTitle: 'Rolling Average',
           tops: '/System/metrics/CPU/summary',
           data: '/System/metrics/CPU',
           websocketUrl: webSocketUrl,
-          colors: ['#3366CC','#FF9900','#109618'],
-          chartOptions: { animation: false }
+          colors: ['#3366CC','#FF9900'],
+          fill: 'origin',
+          stacked: true,
+          chartOptions: { 
+            animation: false,
+            scales: {
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true,
+                  max: 100
+                }
+              }]
+            }
+          }
         }
       ]
     };
 
     return (
-      <DashboardChart title="System"
+      <DashboardChart
         breakdownConfig={breakdownConfig} />
     );
   }

@@ -28,7 +28,6 @@ public class CpuMetric implements SystemMetric {
         List<Metric> metrics = new ArrayList<>();
         metrics.add(new Metric("jvm", "JVM", process));
         metrics.add(new Metric("other", "Other", other));
-        metrics.add(new Metric("idle", "Idle", 100 - process - other));
         return metrics;
     }
 }

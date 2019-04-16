@@ -10,16 +10,22 @@ import org.json.JSONObject;
  */
 public class Metric implements Jsonable {
 
-    private String name;
-    public String getName() { return name; }
-
     private String id;
     public String getId() { return id; }
+
+    private String name;
+    public String getName() { return name; }
 
     public long value;
     public long getValue() { return value; }
     public void setValue(long value) { this.value = value; }
 
+    public Metric(JSONObject json) {
+        this.id = json.getString("id");
+        this.name = json.getString("name");
+        if (json.has("value"))
+            this.value = json.getLong("value");
+    }
     public Metric(String id, String name) {
         this.id = id;
         this.name = name;
