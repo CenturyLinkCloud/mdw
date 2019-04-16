@@ -2,12 +2,15 @@ package com.centurylink.mdw.services.system;
 
 import com.centurylink.mdw.common.service.MdwServiceRegistry;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.WebSocketMessenger;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.report.MetricData;
 import com.centurylink.mdw.model.report.MetricDataList;
 import com.centurylink.mdw.model.system.SystemMetric;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,11 +19,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static com.centurylink.mdw.model.report.MetricDataList.PERIOD;
+import static com.centurylink.mdw.config.PropertyManager.getBooleanProperty;
+import static com.centurylink.mdw.config.PropertyManager.getIntegerProperty;
 
 public class SystemMetrics {
 
-    private static final int RETAIN = 3600 / PERIOD;  // one hour of data
+    private int period;
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
@@ -44,14 +48,21 @@ public class SystemMetrics {
     private ScheduledExecutorService scheduler;
 
     private void initialize() {
-        systemMetrics = new TreeMap<>();
-        metricDataLists = new HashMap<>();
-        for (SystemMetric systemMetric :
-                MdwServiceRegistry.getInstance().getDynamicServices(SystemMetric.class)) {
-            systemMetrics.put(systemMetric.getName(), systemMetric);
-            metricDataLists.put(systemMetric.getName(), new MetricDataList(RETAIN));
+        period = getIntegerProperty(PropertyNames.MDW_SYSTEM_METRICS_PERIOD, 5);
+        if (period > 0) {
+            int retain = getIntegerProperty(PropertyNames.MDW_SYSTEM_METRICS_RETENTION, 3600) / period;
+            systemMetrics = new TreeMap<>();
+            metricDataLists = new HashMap<>();
+            for (SystemMetric systemMetric :
+                    MdwServiceRegistry.getInstance().getDynamicServices(SystemMetric.class)) {
+                if (getBooleanProperty(PropertyNames.MDW_SYSTEM_METRICS_ENABLED + "." + systemMetric.getName(),
+                        true)) {
+                    systemMetrics.put(systemMetric.getName(), systemMetric);
+                    metricDataLists.put(systemMetric.getName(), new MetricDataList(period, retain));
+                }
+            }
+            scheduler = Executors.newScheduledThreadPool(systemMetrics.size());
         }
-        scheduler = Executors.newScheduledThreadPool(systemMetrics.size());
     }
 
     private boolean active;
@@ -64,9 +75,9 @@ public class SystemMetrics {
                 scheduler.scheduleAtFixedRate(() -> {
                     if (active) {
                         LocalDateTime time = LocalDateTime.now();
-                        doCollect(time.minusSeconds(time.getSecond() % PERIOD), systemMetric);
+                        doCollect(time.minusSeconds(time.getSecond() % period), systemMetric);
                     }
-                }, PERIOD - (LocalDateTime.now().getSecond() % PERIOD), PERIOD, TimeUnit.SECONDS);
+                }, period - (LocalDateTime.now().getSecond() % period), period, TimeUnit.SECONDS);
             }
         }
     }
@@ -92,6 +103,13 @@ public class SystemMetrics {
             logger.trace("Collecting system metrics: " + systemMetric.getName());
 
         MetricData data = new MetricData(time, systemMetric.collect());
-        metricDataLists.get(systemMetric.getName()).add(data);
+        MetricDataList dataList = metricDataLists.get(systemMetric.getName());
+        dataList.add(data);
+        try {
+            WebSocketMessenger.getInstance().send("/System/metrics/" + systemMetric.getName(),
+                    dataList.getJson(300).toString()); // TODO param
+        } catch (IOException ex) {
+            logger.severeException(ex.getMessage(), ex);
+        }
     }
 }

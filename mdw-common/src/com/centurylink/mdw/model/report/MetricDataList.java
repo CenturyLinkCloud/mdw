@@ -6,20 +6,25 @@ import org.json.JSONObject;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Rolling, fixed size list for holding metric data.
  */
 public class MetricDataList {
 
-    public static final int PERIOD = 10; // seconds
+    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss");
 
     private int max;
+    private int period;
     private List<MetricData> dataList;
 
-    public MetricDataList(int size) {
-        this.max = size;
+    public MetricDataList(int period, int max) {
+        this.period = period;
+        this.max = max;
         dataList = new ArrayList<>();
     }
 
@@ -35,17 +40,13 @@ public class MetricDataList {
     }
 
     public JSONObject getJson(int span) {
-        return getJson(span, DateTimeFormatter.ISO_DATE_TIME);
-    }
-
-    public JSONObject getJson(int span, DateTimeFormatter formatter) {
         JSONObject json = new JsonObject();
         for (MetricData metricData : getData(span)) {
             JSONArray jsonArray = new JSONArray();
             for (Metric metric : metricData.getMetrics()) {
                 jsonArray.put(metric.getJson());
             }
-            json.put(formatter.format(metricData.getTime()), jsonArray);
+            json.put(timeFormatter.format(metricData.getTime()), jsonArray);
         }
         return json;
     }
@@ -55,7 +56,7 @@ public class MetricDataList {
      */
     public List<Metric> getAverages(int span) {
         Map<String,Metric> accum = new LinkedHashMap<>();
-        int count = span / PERIOD;
+        int count = span / period;
         if (count > dataList.size())
             count = dataList.size();
         for (int i = dataList.size() - count; i < dataList.size(); i++) {
@@ -81,7 +82,7 @@ public class MetricDataList {
      * Returns a left-padded list.
      */
     public List<MetricData> getData(int span) {
-        int count = span / PERIOD;
+        int count = span / period;
         if (dataList.size() < count) {
             if (dataList.isEmpty()) {
                 return dataList;
@@ -96,7 +97,7 @@ public class MetricDataList {
                 }
                 LocalDateTime time = first.getTime();
                 while (padded.size() < count) {
-                    time = time.minusSeconds(PERIOD);
+                    time = time.minusSeconds(period);
                     padded.add(0, new MetricData(time, pads));
                 }
                 return padded;

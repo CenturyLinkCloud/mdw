@@ -239,14 +239,56 @@ class DashboardChart extends Component {
   updateChart() {
     this.retrieveData()
     .then(data => {
-      this.setState({
-        timespan: this.state.timespan,
-        breakdown: this.state.breakdown,
-        tops: this.state.tops,
-        selected: this.state.selected,
-        filters: this.state.filters,
-        data: data
+      this.acceptData(data);
+    })
+    .then(() => {
+      const breakdown = this.getBreakdown();
+      if (breakdown.websocketUrl) {
+        const socket = new WebSocket(breakdown.websocketUrl);
+        socket.addEventListener('open', () => {
+          socket.send(breakdown.data);
+        });
+        socket.addEventListener('message', event => {
+          const data = JSON.parse(event.data);
+          this.acceptData(data)
+          .then(() => {
+            this.recalcSummary(data);
+          });
+        });
+      }
+    });
+  }
+
+  // works for Metrics-style data (every id/name represented in every item)
+  recalcSummary(data) {
+    var accum = {};
+    for (let t in data) {
+      let items = data[t];
+      for (let item of items) {
+        let metric = accum[item.name];
+        if (metric) {
+          metric.value += item.value;
+        }
+        else {
+          accum[item.name] = { id: item.id, name: item.name, value: item.value };
+        }
+      }
+    }
+    var avgs = [];
+    for (let a in accum) {
+      avgs.push({
+        id: accum[a].id,
+        name: accum[a].name,
+        value: Math.round(accum[a].value / Object.keys(data).length)
       });
+    }
+    this.setState({
+      timespan: this.state.timespan,
+      breakdown: this.state.breakdown,
+      tops: avgs,
+      selected: avgs,
+      filters: this.state.filters,
+      data: data
     });
   }
 
@@ -304,6 +346,27 @@ class DashboardChart extends Component {
         resolve({});
       }
     });
+  }
+
+  acceptData(data) {
+    return new Promise(resolve => {
+      this.setState({
+        timespan: this.state.timespan,
+        breakdown: this.state.breakdown,
+        tops: this.state.tops,
+        selected: this.state.selected,
+        filters: this.state.filters,
+        data: data
+      }, () => resolve());
+    });
+  }
+
+  getChartOptions() {
+    const breakdown = this.getBreakdown();
+    if (breakdown.chartOptions) {
+      return Object.assign({}, this.chartOptions, breakdown.chartOptions);
+    }
+    return this.chartOptions;
   }
 
   getChartColors() {
@@ -421,14 +484,14 @@ class DashboardChart extends Component {
               {(!breakdown.summaryChart || breakdown.summaryChart === 'donut') &&
                 <Doughnut
                   data={overviewData}
-                  options={this.chartOptions}
+                  options={this.getChartOptions()}
                   width={250} height={250}
                   getElementAtEvent={this.handleOverviewDataClick} />
               }
               {breakdown.summaryChart === 'bar' &&
                 <Bar
                   data={overviewData}
-                  options={this.chartOptions}
+                  options={this.getChartOptions()}
                   width={250} height={250}
                   getElementAtEvent={this.handleOverviewDataClick} />
               }
@@ -445,7 +508,7 @@ class DashboardChart extends Component {
           <div style={{height:'100%',width:'100%'}}>
             <Line
               data={mainData}
-              options={this.chartOptions}
+              options={this.getChartOptions()}
               getElementAtEvent={this.handleMainDataClick} />
           </div>
         </div>

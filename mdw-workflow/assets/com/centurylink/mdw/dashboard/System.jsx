@@ -10,6 +10,11 @@ class System extends Component {
 
   render() {
     
+    let webSocketUrl = $mdwWebSocketUrl;
+    if (webSocketUrl === '${mdwWebSocketUrl}') {
+      webSocketUrl = null;
+    }
+
     const breakdownConfig = {
       breakdowns: [
         {
@@ -18,7 +23,9 @@ class System extends Component {
           selectLabel: 'CPU Usage',
           tops: '/System/metrics/CPU/summary',
           data: '/System/metrics/CPU',
-          colors: ['#3366CC','#FF9900','#109618']
+          websocketUrl: webSocketUrl,
+          colors: ['#3366CC','#FF9900','#109618'],
+          chartOptions: { animation: false }
         }
       ]
     };
