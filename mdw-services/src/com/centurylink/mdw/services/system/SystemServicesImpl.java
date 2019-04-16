@@ -382,9 +382,9 @@ public class SystemServicesImpl implements SystemServices {
         systemInfos.add(new SysInfo("OS version", System.getProperty("os.version")));
         systemInfos.add(new SysInfo("OS arch", System.getProperty("os.arch")));
         Runtime runtime = Runtime.getRuntime();
-        systemInfos.add(new SysInfo("Max memory", runtime.maxMemory()/1024/1024 + " MB"));
-        systemInfos.add(new SysInfo("Free memory", runtime.freeMemory()/1024/1024 + " MB"));
-        systemInfos.add(new SysInfo("Total memory", runtime.totalMemory()/1024/1024 + " MB"));
+        systemInfos.add(new SysInfo("Max memory", runtime.maxMemory()/1000000 + " MB"));
+        systemInfos.add(new SysInfo("Free memory", runtime.freeMemory()/1000000 + " MB"));
+        systemInfos.add(new SysInfo("Heap memory", runtime.totalMemory()/1000000 + " MB"));
         systemInfos.add(new SysInfo("Available processors", String.valueOf(runtime.availableProcessors())));
         systemInfos.add(new SysInfo("Default ClassLoader", ClasspathUtil.class.getClassLoader().getClass().getName()));
 

@@ -250,11 +250,14 @@ class DashboardChart extends Component {
     .then(() => {
       const breakdown = this.getBreakdown();
       if (breakdown.websocketUrl) {
-        const socket = new WebSocket(breakdown.websocketUrl);
-        socket.addEventListener('open', () => {
-          socket.send(breakdown.data);
+        if (this.websocket) {
+          this.websocket.close();
+        }
+        this.websocket = new WebSocket(breakdown.websocketUrl);
+        this.websocket.addEventListener('open', () => {
+          this.websocket.send(breakdown.data);
         });
-        socket.addEventListener('message', event => {
+        this.websocket.addEventListener('message', event => {
           const data = JSON.parse(event.data);
           this.acceptData(data)
           .then(() => {

@@ -18,8 +18,8 @@ class System extends Component {
     const breakdownConfig = {
       breakdowns: [
         {
-          name: 'CPU',
-          units: 'Usage %',
+          name: 'CPU Usage',
+          units: 'Percent',
           summaryTitle: 'Rolling Average',
           tops: '/System/metrics/CPU/summary',
           data: '/System/metrics/CPU',
@@ -34,6 +34,27 @@ class System extends Component {
                 ticks: {
                   beginAtZero: true,
                   max: 100
+                }
+              }]
+            }
+          }
+        },
+        {
+          name: 'Heap Memory',
+          units: 'MB',
+          summaryTitle: 'Rolling Average',
+          tops: '/System/metrics/Memory/summary',
+          data: '/System/metrics/Memory',
+          websocketUrl: webSocketUrl,
+          colors: ['#3366CC','#22AA99'],
+          fill: 'origin',
+          chartOptions: { 
+            animation: false,
+            scales: {
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true,
+                  max: undefined // must unset options from above
                 }
               }]
             }
