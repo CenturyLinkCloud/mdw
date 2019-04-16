@@ -20,7 +20,6 @@ class ChartHeader extends Component {
     this.handleSelectApply = this.handleSelectApply.bind(this);
     this.handleFilterChange = this.handleFilterChange.bind(this);
     this.handleFilterReset = this.handleFilterReset.bind(this);
-    this.handleDownload = this.handleDownload.bind(this);
   }
 
   // selected breakdown object from breakdownConfig
@@ -69,30 +68,30 @@ class ChartHeader extends Component {
     }
   }
 
-  handleDownload() {
-    if (this.props.onDownload) {
-      this.props.onDownload();
-    }
-  }
-
   render() {
     const breakdown = this.getBreakdown();
     return (
       <PanelHeader>
-        <HeaderLabel title={this.props.title + ' for the:'} />
-        <HeaderDropdown id="timespan-dropdown"
-          items={[/*'Day',*/'Week','Month']}
-          selected={this.props.timespan}
-          onSelect={this.handleDropdownSelect} />
+        {this.props.title &&
+          <HeaderLabel title={this.props.title + ' for the:'} />
+        }
+        {this.props.title &&
+          <HeaderDropdown id="timespan-dropdown"
+            items={[/*'Day',*/'Week','Month']}
+            selected={this.props.timespan}
+            onSelect={this.handleDropdownSelect} />
+        }
 
-        <HeaderLabel title="by:" />
+        {this.props.title &&
+          <HeaderLabel title="by:" />
+        }
         <HeaderDropdown id="breakdown-dropdown"
           items={this.props.breakdownConfig.breakdowns.map(bd => bd.name)}
           selected={this.props.breakdown}
           onSelect={this.handleDropdownSelect} />
 
         {breakdown.units &&
-          <HeaderLabel title={'(' + breakdown.units + ')'} />
+          <HeaderLabel title={breakdown.units} />
         }
 
         <HeaderButtons>
@@ -107,17 +106,23 @@ class ChartHeader extends Component {
                   onApply={this.handleSelectApply} />
               } />
           }
-          <HeaderPopButton label="Filters" glyph="filter"
-            popover={
-              <FilterPop filters={this.props.filters}
-                filterOptions={this.props.filterOptions}
-                onFilterChange={this.handleFilterChange}
-                onFilterReset={this.handleFilterReset} />
-            } />
-          <HeaderButton label="Export" glyph="download-alt"
-            onClick={this.handleDownload} />
-          <HeaderButton label="List" glyph="menu-hamburger"
-            onClick={() => location = this.context.hubRoot + '/' + this.props.list} />
+          {this.props.breakdownConfig.filters &&
+            <HeaderPopButton label="Filters" glyph="filter"
+              popover={
+                <FilterPop filters={this.props.filters}
+                  filterOptions={this.props.filterOptions}
+                  onFilterChange={this.handleFilterChange}
+                  onFilterReset={this.handleFilterReset} />
+              } />
+          }
+          {this.props.onDownload &&
+            <HeaderButton label="Export" glyph="download-alt"
+              onClick={this.props.onDownload} />
+          }
+          {this.props.list &&
+            <HeaderButton label="List" glyph="menu-hamburger"
+              onClick={() => location = this.context.hubRoot + '/' + this.props.list} />
+          }
         </HeaderButtons>
       </PanelHeader>
     );

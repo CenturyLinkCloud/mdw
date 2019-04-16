@@ -73,7 +73,7 @@ public class MetricDataList {
             }
         }
         for (Metric metric : accum.values()) {
-            metric.setValue(Math.round(metric.getValue() / count));
+            metric.setValue(Math.round((double)metric.getValue() / count));
         }
         return new ArrayList<>(accum.values());
     }

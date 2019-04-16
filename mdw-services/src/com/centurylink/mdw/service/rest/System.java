@@ -18,9 +18,15 @@ package com.centurylink.mdw.service.rest;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.JsonArray;
+import com.centurylink.mdw.model.JsonExportable;
+import com.centurylink.mdw.model.JsonListMap;
+import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.report.Metric;
 import com.centurylink.mdw.model.report.MetricDataList;
 import com.centurylink.mdw.model.system.SysInfoCategory;
 import com.centurylink.mdw.model.user.Role;
+import com.centurylink.mdw.model.workflow.ProcessAggregate;
+import com.centurylink.mdw.model.workflow.ProcessList;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.SystemServices;
 import com.centurylink.mdw.services.SystemServices.SysInfoType;
@@ -31,12 +37,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.ws.rs.Path;
+import java.text.ParseException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
 @Path("/System")
-public class System extends JsonRestService {
+public class System extends JsonRestService implements JsonExportable {
 
     /**
      * ASSET_DESIGN role can PUT in-memory config for running tests.
@@ -81,5 +88,10 @@ public class System extends JsonRestService {
             }
         }
         throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path: " + path);
+    }
+
+    @Override
+    public Jsonable toJsonable(Query query, JSONObject json) throws JSONException {
+        return new JsonListMap<>(json, Metric.class);
     }
 }
