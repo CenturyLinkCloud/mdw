@@ -1,6 +1,6 @@
 ActivityTimingMonitor.java=4
-AutoFormManualTask.pagelet=10
-CustomManualTask.pagelet=9
+AutoFormManualTask.pagelet=11
+CustomManualTask.pagelet=10
 MdwRpcWebService.wsdl=2
 PauseActivity.java=3
 ProcessDueDateMonitor.java=4
