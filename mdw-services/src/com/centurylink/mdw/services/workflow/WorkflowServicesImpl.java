@@ -966,8 +966,19 @@ public class WorkflowServicesImpl implements WorkflowServices {
         return new ArrayList<>(ImplementorCache.getImplementors().values());
     }
 
-    public ActivityImplementor getImplementor(String className) {
-        return ImplementorCache.get(className);
+    public ActivityImplementor getImplementor(String className) throws ServiceException {
+        ActivityImplementor implementor =  ImplementorCache.get(className);
+        if (implementor.getPagelet() == null) {
+            try {
+                for (ActivityImplementor impl : DataAccess.getProcessLoader().getActivityImplementors()) {
+                    if (impl.getImplementorClass().equals(implementor.getImplementorClass()))
+                        return impl; // loaded from .impl file
+                }
+            } catch (DataAccessException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
+            }
+        }
+        return implementor; // loaded from annotation or not found
     }
 
     public Long launchProcess(String name, String masterRequestId, String ownerType,

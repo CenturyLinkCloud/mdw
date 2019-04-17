@@ -3,7 +3,7 @@
     "CCGroups": "[\"MDW Support\"]",
     "FormName": "Autoform",
     "Groups": "[\"Developers\"]",
-    "Notices": "Open,com.centurylink.mdw.base/taskOpenEmail.html,[0.9\\,1),com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier,,,,;Assigned,,,,,,,;Completed,,,,,,,;Cancelled,,,,,,,;In Progress,,,,,,,;Alert,,,,,,,;Jeopardy,,,,,,,;Forward,,,,,,,",
+    "Notices": "[[\"Open\",\"com.centurylink.mdw.base/emailTemplate.html\",\"[0.2,1)\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Assigned\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Completed\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Cancelled\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"In Progress\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Alert\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Jeopardy\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Forward\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"]]",
     "RecipientVar": "${recipientList ? recipientList : recipient}"
   },
   "category": "GEN",
