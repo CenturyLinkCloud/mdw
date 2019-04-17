@@ -440,7 +440,8 @@ class DashboardChart extends Component {
           const aggs = this.state.data[key];
           const selAgg = aggs.find(agg => agg.id === sel.id);
           var value = selAgg ? selAgg.value : 0;
-          if (breakdown.stacked && i > 0) {
+          let stacked = breakdown.stacked && (!Array.isArray(breakdown.stacked) || breakdown.stacked[i]);
+          if (stacked && i > 0) {
             value += lineData.datasets[i-1].data[j]; // additive
           }
           dataset.data.push(value);

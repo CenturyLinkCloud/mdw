@@ -7,6 +7,10 @@ import java.util.List;
 
 public interface SystemMetric extends RegisteredService {
 
+    /**
+     * Should match path segment[2] on REST request.
+     * And this path is the same used for websocket subscribe.
+     */
     String getName();
 
     /**

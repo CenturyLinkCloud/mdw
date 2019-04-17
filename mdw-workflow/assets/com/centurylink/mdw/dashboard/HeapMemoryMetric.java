@@ -11,11 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RegisteredService(SystemMetric.class)
-public class MemoryMetric implements SystemMetric {
+public class HeapMemoryMetric implements SystemMetric {
 
     @Override
     public String getName() {
-        return "Memory";
+        return "HeapMemory";
     }
 
     private MemoryMXBean memoryMxBean;
