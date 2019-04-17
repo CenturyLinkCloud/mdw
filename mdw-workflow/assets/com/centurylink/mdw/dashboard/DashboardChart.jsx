@@ -426,8 +426,9 @@ class DashboardChart extends Component {
     let year = new Date().getFullYear();
     if (this.state.selected.length > 0) {
       this.state.selected.forEach((sel, i) => {
-        let dataset = {label: sel.name, borderColor: chartColors[i], data: [], fill: breakdown.fill ? breakdown.fill : false};
-        if (breakdown.fill) {
+        let fill = breakdown.fill && (!Array.isArray(breakdown.fill) || breakdown.fill[i]);
+        let dataset = {label: sel.name, borderColor: chartColors[i], data: [], fill: fill ? fill : false};
+        if (fill && chartColors[i]) {
           dataset.backgroundColor = shade(chartColors[i], 0.5);
         }
         datasets[sel.id] = dataset;

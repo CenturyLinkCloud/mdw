@@ -25,7 +25,7 @@ class System extends Component {
           data: '/System/metrics/CPU',
           websocketUrl: webSocketUrl,
           colors: ['#3366CC','#FF9900'],
-          fill: 'origin',
+          fill: true,
           stacked: true,
           chartOptions: { 
             animation: false,
@@ -47,7 +47,27 @@ class System extends Component {
           data: '/System/metrics/Memory',
           websocketUrl: webSocketUrl,
           colors: ['#3366CC','#22AA99'],
-          fill: 'origin',
+          fill: true,
+          chartOptions: { 
+            animation: false,
+            scales: {
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true,
+                  max: undefined // must unset options from above
+                }
+              }]
+            }
+          }
+        },
+        {
+          name: 'Thread Pool',
+          summaryTitle: 'Rolling Average',
+          tops: '/System/metrics/ThreadPool/summary',
+          data: '/System/metrics/ThreadPool',
+          websocketUrl: webSocketUrl,
+          colors: ['#3366CC','#DC3912'],
+          fill: [true,true,true],
           chartOptions: { 
             animation: false,
             scales: {

@@ -65,7 +65,7 @@ public class SystemServicesImpl implements SystemServices {
         }
         else if (type == SysInfoType.Thread) {
             sysInfoCats.add(getThreadDump());
-            sysInfoCats.add(getPoolStatus());
+            sysInfoCats.add(getThreadPoolStatus());
         }
         else if (type == SysInfoType.Memory) {
             sysInfoCats.add(getMemoryInfo());
@@ -502,7 +502,7 @@ public class SystemServicesImpl implements SystemServices {
         return category;
     }
 
-    private SysInfoCategory getPoolStatus() {
+    private SysInfoCategory getThreadPoolStatus() {
         ThreadPoolProvider threadPool = ApplicationContext.getThreadPoolProvider();
         List<SysInfo> poolStatus = new ArrayList<>();
         if (!(threadPool instanceof CommonThreadPool)) {
