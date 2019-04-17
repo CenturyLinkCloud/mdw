@@ -254,16 +254,16 @@ class DashboardChart extends Component {
           this.websocket.close();
         }
         this.websocket = new WebSocket(breakdown.websocketUrl);
-        this.websocket.addEventListener('open', () => {
+        this.websocket.onopen = () => {
           this.websocket.send(breakdown.data);
-        });
-        this.websocket.addEventListener('message', event => {
+        };
+        this.websocket.onmessage = event => {
           const data = JSON.parse(event.data);
           this.acceptData(data)
           .then(() => {
             this.recalcSummary(data);
           });
-        });
+        };
       }
     });
   }

@@ -713,4 +713,17 @@ public class ApplicationContext {
     public static boolean isMdwAuth() {
         return "mdw".equals(getAuthMethod());
     }
- }
+
+    private static String hostname;
+    public static String getHostname() {
+        if (hostname == null) {
+            try {
+                hostname = InetAddress.getLocalHost().getHostName();
+            }
+            catch (Exception ex) {
+                logger.severeException(ex.getMessage(), ex);
+            }
+        }
+        return hostname;
+    }
+}

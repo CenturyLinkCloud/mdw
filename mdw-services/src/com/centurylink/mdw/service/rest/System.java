@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.service.rest;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.JsonArray;
@@ -25,25 +26,26 @@ import com.centurylink.mdw.model.report.Metric;
 import com.centurylink.mdw.model.report.MetricDataList;
 import com.centurylink.mdw.model.system.SysInfoCategory;
 import com.centurylink.mdw.model.user.Role;
-import com.centurylink.mdw.model.workflow.ProcessAggregate;
-import com.centurylink.mdw.model.workflow.ProcessList;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.SystemServices;
 import com.centurylink.mdw.services.SystemServices.SysInfoType;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.services.system.SystemMetrics;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.ws.rs.Path;
-import java.text.ParseException;
-import java.time.format.DateTimeFormatter;
+import java.net.InetAddress;
 import java.util.List;
 import java.util.Map;
 
 @Path("/System")
 public class System extends JsonRestService implements JsonExportable {
+
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     /**
      * ASSET_DESIGN role can PUT in-memory config for running tests.
@@ -58,6 +60,7 @@ public class System extends JsonRestService implements JsonExportable {
     @Path("/{sysInfoType}/{category}")
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
         SystemServices systemServices = ServiceLocator.getSystemServices();
+        headers.put("mdw-hostname", ApplicationContext.getHostname());
         String[] segments = getSegments(path);
         if (segments.length == 2) {
             JSONArray jsonArr = new JSONArray();
