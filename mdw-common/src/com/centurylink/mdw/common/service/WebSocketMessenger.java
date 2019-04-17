@@ -15,26 +15,19 @@
  */
 package com.centurylink.mdw.common.service;
 
+import com.centurylink.mdw.model.system.Bulletin;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+
+import javax.websocket.*;
+import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.websocket.CloseReason;
-import javax.websocket.EndpointConfig;
-import javax.websocket.OnClose;
-import javax.websocket.OnError;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
-import javax.websocket.server.ServerEndpoint;
-
-import com.centurylink.mdw.model.system.Bulletin;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
-
-@ServerEndpoint("/websocket")
+@ServerEndpoint(value="/websocket", configurator=WebSocketConfig.class)
 public class WebSocketMessenger {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
