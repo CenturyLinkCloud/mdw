@@ -87,7 +87,7 @@ public class JavaPropertyManager extends PropertyManager {
      * Null means not found.
      */
     private String getMainPropertyFileName() throws StartupException {
-        String configLoc = getPropertyFileLocation();
+        String configLoc = getConfigLocation();
         File file = new File(configLoc == null ? MDW_PROPERTIES_FILE_NAME : (configLoc+MDW_PROPERTIES_FILE_NAME));
         if (file.exists())
             return MDW_PROPERTIES_FILE_NAME;
@@ -176,7 +176,7 @@ public class JavaPropertyManager extends PropertyManager {
 
     final protected void loadFromFile(Properties properties, String filename)
     throws PropertyException {
-        String configLoc = getPropertyFileLocation();
+        String configLoc = getConfigLocation();
         InputStream stream = null;
         try {
             File file = new File(configLoc==null?filename:(configLoc+filename));

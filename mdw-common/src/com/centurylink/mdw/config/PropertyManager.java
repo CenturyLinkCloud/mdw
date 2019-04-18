@@ -92,19 +92,22 @@ public abstract class PropertyManager {
         return v.equalsIgnoreCase("true");
     }
 
-    private String propertyFileLocation;
+    private static String configLocation;
 
-    protected String getPropertyFileLocation() {
-        if (propertyFileLocation == null) {
+    /**
+     * Directory where MDW config files can be found.
+     */
+    public static String getConfigLocation() {
+        if (configLocation == null) {
             String configLoc = System.getProperty(MDW_CONFIG_LOCATION);
             if (configLoc != null) {
                 if (!configLoc.endsWith("/"))
                     configLoc = configLoc + "/";
-                propertyFileLocation = configLoc;
+                configLocation = configLoc;
                 System.out.println("Loading configuration files from '" + new File(configLoc).getAbsolutePath() + "'");
             }
         }
-        return propertyFileLocation;
+        return configLocation;
     }
 
     /**

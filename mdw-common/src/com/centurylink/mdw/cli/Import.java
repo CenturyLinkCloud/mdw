@@ -15,6 +15,14 @@
  */
 package com.centurylink.mdw.cli;
 
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+import com.centurylink.mdw.bpmn.BpmnProcessImporter;
+import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.drawio.DrawIoProcessImporter;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.procimport.ProcessImporter;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,15 +33,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-import com.centurylink.mdw.bpmn.BpmnProcessImporter;
-import com.centurylink.mdw.dataaccess.VersionControl;
-import com.centurylink.mdw.drawio.DrawIoProcessImporter;
-import com.centurylink.mdw.procimport.ProcessImporter;
-import com.centurylink.mdw.model.workflow.Process;
 
 /**
  * Imports asset packages from Git or Maven.
@@ -204,9 +203,12 @@ public class Import extends Setup {
         importPackagesFromMdw(new Props(this).get(Props.DISCOVERY_URL), pkgs);
     }
 
-    public void importMDWGit(ProgressMonitor... monitors) throws IOException {
+    /**
+     * This is for importing project assets from Git into an environment.
+     */
+    public void importAssetsFromGit(ProgressMonitor... monitors) throws IOException {
         if (inProgress)
-            throw new IOException("Asset import was NOT performed since an import was already in progress...");
+            throw new IOException("Asset import already in progress...");
 
         try {
             inProgress = true;
@@ -214,22 +216,15 @@ public class Import extends Setup {
             getOut().println("Importing from Git into: " + getProjectDir() + "...(branch: " + branch + ")(Hard Reset: " + (hardReset ? "YES)" : "NO)"));
 
             // Check Asset inconsistencies
-            Map<String, List<String>> issues = versionControl.checkVersionConsistency(branch, getAssetLoc());
-
-            // Report inconsistencies if found
-            if (issues != null && !issues.isEmpty()) {
-                String message = "";
-                if (issues.get("Old") != null) {
-                    message += "Failed -- Import would replace the following assets with older versions: \n";
-                    for (String file : issues.get("Old"))
-                        message += file + " \n";
-                }
-                if (issues.get("Conflict") != null) {
-                    message += "Failed -- Import would replace the following modified assets with same versions (version needs incrementing): \n";
-                    for (String file : issues.get("Conflict"))
-                        message += file + " \n";
-                }
-                throw new IOException(message);
+            Vercheck vercheck = new Vercheck();
+            vercheck.setConfigLoc(getConfigLoc());
+            vercheck.setAssetLoc(getAssetLoc());
+            vercheck.setGitRoot(getGitRoot());
+            vercheck.setForImport(true);
+            vercheck.setDebug(true);
+            vercheck.run();
+            if (vercheck.getErrorCount() > 0) {
+                throw new IOException("Asset version conflict(s).  See log for details");
             }
 
             // Perform import (Git pull)
@@ -258,57 +253,40 @@ public class Import extends Setup {
         }
     }
 
+    /**
+     * This is for importing newly-discovered assets.
+     */
     public void importGit(ProgressMonitor... monitors) throws IOException {
         if (inProgress)
-            throw new IOException("Asset import was NOT performed since an import was already in progress...");
+            throw new IOException("Asset already in progress...");
 
         try {
             inProgress = true;
             Props props = new Props(this);
             VcInfo vcInfo = new VcInfo(getGitRoot(), props);
 
-            if (!isForce()) {
-                String configuredBranch = props.get(Props.Git.BRANCH);
-                Git git = new Git(props.get(Props.Gradle.MAVEN_REPO_URL), vcInfo, "getBranch");
-                git.run(monitors);
-                String gitBranch = (String)git.getResult();
-                if (!gitBranch.equals(configuredBranch)) {
-                    getErr().println(Props.Git.BRANCH.getProperty() + " (" + configuredBranch
-                            + ") disagrees with local Git (" + gitBranch
-                            + ");  use --force to confirm (overwrites ALL local changes from Git remote)");
-                    return;
-                }
-            }
-
             getOut().println("Importing from Git into: " + getProjectDir() + "...");
 
-            // Check Asset inconsistencies
+            // CLI dependencies
             Git git = new Git(getReleasesUrl(), vcInfo, "checkVersionConsistency", vcInfo.getBranch(), getAssetLoc());
             git.run(monitors);
-            @SuppressWarnings("unchecked")
-            Map<String, List<String>> issues = (Map<String, List<String>>)git.getResult();
 
-            // Report inconsistencies if found
-            if (issues != null && !issues.isEmpty()) {
-                String message = "";
-                if (issues.get("Old") != null) {
-                    message += "Failed -- Import would replace the following assets with older versions: \n";
-                    for (String file : issues.get("Old"))
-                        message += file + " \n";
-                }
-                if (issues.get("Conflict") != null) {
-                    message += "Failed -- Import would replace the following modified assets with same versions (version needs incrementing): \n";
-                    for (String file : issues.get("Conflict"))
-                        message += file + " \n";
-                }
-                throw new IOException(message);
+            // Check Asset inconsistencies
+            Vercheck vercheck = new Vercheck();
+            vercheck.setConfigLoc(getConfigLoc());
+            vercheck.setAssetLoc(getAssetLoc());
+            vercheck.setGitRoot(getGitRoot());
+            vercheck.setDebug(true);
+            vercheck.run();
+            if (vercheck.getErrorCount() > 0) {
+                throw new IOException("Asset version conflict(s).  See log for details");
             }
 
-            // Perform import (Git pull)
+            // perform import (Git pull)
             git = new Git(getReleasesUrl(), vcInfo, "hardCheckout", vcInfo.getBranch(), isHardReset());
             git.run(monitors);
 
-            // Capture new Refs in ASSET_REF after import (Git pull)
+            // capture new Refs in ASSET_REF after import (Git pull)
             DbInfo dbInfo = new DbInfo(props);
             Checkpoint checkpoint = new Checkpoint(getReleasesUrl(), vcInfo, getAssetRoot(), dbInfo);
             try {
