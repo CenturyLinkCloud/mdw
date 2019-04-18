@@ -253,8 +253,13 @@ public class Vercheck extends Setup {
     private GitDiffs gitDiffs;
     private GitDiffs getGitDiffs() throws IOException {
         if (gitDiffs == null) {
-            Git git = new Git(mavenUrl, vcInfo, "getDiffs", tag != null ? tag : branch,
-                    getGitPath(getAssetRoot()));
+            Git git;
+            if (tag == null) {
+                git = new Git(mavenUrl, vcInfo, "getDiffs", branch, getGitPath(getAssetRoot()));
+            }
+            else {
+                git = new Git(mavenUrl, vcInfo, "getDiffsForTag", tag, getGitPath(getAssetRoot()));
+            }
             gitDiffs = (GitDiffs) git.run().getResult();
         }
         return gitDiffs;
