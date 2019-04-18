@@ -18,6 +18,7 @@ package com.centurylink.mdw.cli;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.dataaccess.file.GitDiffs;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.util.file.VersionProperties;
 
@@ -60,9 +61,21 @@ public class Vercheck extends Setup {
     public boolean isFix() { return warn; }
     public void setFix(boolean fix) { this.fix = fix; }
 
+    @Parameter(names="--for-import", description="For import (opposite direction: Git version < Local = ERROR).")
+    private boolean forImport;
+    public boolean isForImport() { return forImport; }
+    public void setForImport(boolean forImport) { this.forImport = forImport; }
+
+    @Parameter(names="--full-scan", description="Full scan including unchanged local assets")
+    private boolean fullScan;
+    public boolean isFullScan() { return fullScan; }
+    public void setFullScan(boolean fullScan) { this.fullScan = fullScan; }
+
+
     private static final String ERR_UNVERSIONED = "Unversioned asset";
     private static final String ERR_BAD_VERSION_LINE = "Bad version line";
-    private static final String ERR_TAG_VER_GT = "Tag version greater than asset version";
+    private static final String ERR_GIT_VER_GT = "Git version greater than asset version";
+    private static final String ERR_GIT_VER_LT = "Git version less than asset version";
     private static final String ERR_SAME_VER_DIFF_CONTENT = "Content changed but version not incremented";
     private static final String WARN_EXTRA_VERSION = "Extraneous version entry";
     private static final String[] UNVERSIONED_EXTS = new String[] { ".impl", ".evth"  };
@@ -75,6 +88,10 @@ public class Vercheck extends Setup {
     private Exception exception;
     public Exception getException() { return exception; }
 
+    private VcInfo vcInfo;
+    private String mavenUrl;
+    private Props props;
+
     @Override
     public Vercheck run(ProgressMonitor... progressMonitors) throws IOException {
 
@@ -86,6 +103,9 @@ public class Vercheck extends Setup {
         findAssetFiles();
 
         try {
+            props = new Props(this);
+            vcInfo = new VcInfo(getGitRoot(), props);
+            mavenUrl = props.get(Props.Gradle.MAVEN_REPO_URL);
             compareVersions(progressMonitors);
         }
         catch (ReflectiveOperationException | IOException ex) {
@@ -125,9 +145,6 @@ public class Vercheck extends Setup {
     }
 
     private void compareVersions(ProgressMonitor... progressMonitors) throws IOException, ReflectiveOperationException {
-        Props props = new Props(this);
-        VcInfo vcInfo = new VcInfo(getGitRoot(), props);
-        String mavenUrl = props.get(Props.Gradle.MAVEN_REPO_URL);
         Git git;
         String commit;
         long before = System.currentTimeMillis();
@@ -156,57 +173,67 @@ public class Vercheck extends Setup {
         int i = 0;
         for (String path : assetFiles.keySet()) {
             AssetFile assetFile = assetFiles.get(path);
-            for (ProgressMonitor progressMonitor : progressMonitors) {
-                if (progressMonitor.isSupportsMessage())
-                    progressMonitor.message(path);
-            }
-            if (assetFile.error == null && assetFile.file != null) {
-                // check if version has been incremented
-                Properties gitVerProps = gitVersions.get(assetFile.path);
-                if (gitVerProps == null) {
-                    String versionFilePath = getGitPath(new File(assetFile.file.getParentFile() + "/" + META_DIR + "/versions"));
-                    gitVerProps = new Properties();
-                    byte[] versionBytes = (byte[]) readFromCommit.invoke(versionControl, commit, versionFilePath);
-                    if (versionBytes != null) {
-                        gitVerProps.load(new ByteArrayInputStream(versionBytes));
-                    }
-                    gitVersions.put(assetFile.path, gitVerProps);
+            GitDiffs.DiffType gitDiff = getGitDiff(assetFile);
+            boolean doCheck;
+            if (isForImport())
+                doCheck = gitDiff == GitDiffs.DiffType.DIFFERENT;
+            else
+                doCheck = isFullScan() || gitDiff != null;
+            if (doCheck) {
+                for (ProgressMonitor progressMonitor : progressMonitors) {
+                    if (progressMonitor.isSupportsMessage())
+                        progressMonitor.message(path);
                 }
-                String getVerProp = gitVerProps.getProperty(assetFile.file.getName());
-                if (getVerProp != null) {
-                    try {
-                        int gitVer = Integer.parseInt(getVerProp.split(" ")[0]);
-                        if (gitVer > assetFile.version) {
-                            assetFile.error = ERR_TAG_VER_GT + " (" + formatVersion(gitVer) + " > " + formatVersion(assetFile.version) + ")";
-                            if (fix)
-                                assetFile.fixed = updateVersion(assetFile, ++gitVer);
+                if (assetFile.error == null && assetFile.file != null) {
+                    Properties gitVerProps = gitVersions.get(assetFile.path);
+                    if (gitVerProps == null) {
+                        String versionFilePath = getGitPath(new File(assetFile.file.getParentFile() + "/" + META_DIR + "/versions"));
+                        gitVerProps = new Properties();
+                        byte[] versionBytes = (byte[]) readFromCommit.invoke(versionControl, commit, versionFilePath);
+                        if (versionBytes != null) {
+                            gitVerProps.load(new ByteArrayInputStream(versionBytes));
                         }
-                        else if (gitVer == assetFile.version) {
-                            // compare file contents
-                            String gitPath = getGitPath(assetFile.file);
-                            byte[] tagContents = (byte[]) readFromCommit.invoke(versionControl, commit, gitPath);
-                            byte[] fileContents = Files.readAllBytes(Paths.get(assetFile.file.getPath()));
-                            boolean isDifferent;
-                            if (tagContents == null) {
-                                isDifferent = false; // not in git, despite being git versions file
-                            }
-                            else if (assetFile.isBinary()) {
-                                isDifferent = !Arrays.equals(tagContents, fileContents);
-                            }
-                            else {
-                                String tagString =  new String(tagContents).replaceAll("\\r\\n", "\n");
-                                String fileString =  new String(fileContents).replaceAll("\\r\\n", "\n");
-                                isDifferent = !tagString.equals(fileString);
-                            }
-                            if (isDifferent) {
-                                assetFile.error = ERR_SAME_VER_DIFF_CONTENT + " (v " + formatVersion(assetFile.version) + ")";
-                                if (fix)
-                                    assetFile.fixed = updateVersion(assetFile, ++assetFile.version);
-                            }
-                        }
+                        gitVersions.put(assetFile.path, gitVerProps);
                     }
-                    catch (NumberFormatException ex) {
-                        // won't compare
+                    String gitVerProp = gitVerProps.getProperty(assetFile.file.getName());
+                    if (gitVerProp != null) {
+                        try {
+                            int gitVer = Integer.parseInt(gitVerProp.split(" ")[0]);
+                            if (gitVer == assetFile.version) {
+                                // compare file contents
+                                byte[] tagContents = (byte[]) readFromCommit.invoke(versionControl, commit, getGitPath(assetFile.file));
+                                byte[] fileContents = Files.readAllBytes(Paths.get(assetFile.file.getPath()));
+                                boolean isDifferent;
+                                if (tagContents == null) {
+                                    isDifferent = false; // not in git, despite being git versions file
+                                } else if (assetFile.isBinary()) {
+                                    isDifferent = !Arrays.equals(tagContents, fileContents);
+                                } else {
+                                    String tagString = new String(tagContents).replaceAll("\\r\\n", "\n");
+                                    String fileString = new String(fileContents).replaceAll("\\r\\n", "\n");
+                                    isDifferent = !tagString.equals(fileString);
+                                }
+                                if (isDifferent) {
+                                    assetFile.error = ERR_SAME_VER_DIFF_CONTENT + " (v " + formatVersion(assetFile.version) + ")";
+                                    if (!isForImport() && fix)
+                                        assetFile.fixed = updateVersion(assetFile, ++assetFile.version);
+                                }
+                            } else {
+                                if (isForImport()) {
+                                    if (gitVer < assetFile.version) {
+                                        assetFile.error = ERR_GIT_VER_LT + " (" + formatVersion(gitVer) + " < " + formatVersion(assetFile.version) + ")";
+                                    }
+                                } else {
+                                    if (gitVer > assetFile.version) {
+                                        assetFile.error = ERR_GIT_VER_GT + " (" + formatVersion(gitVer) + " > " + formatVersion(assetFile.version) + ")";
+                                        if (fix)
+                                            assetFile.fixed = updateVersion(assetFile, ++gitVer);
+                                    }
+                                }
+                            }
+                        } catch (NumberFormatException ex) {
+                            // won't compare
+                        }
                     }
                 }
             }
@@ -223,6 +250,21 @@ public class Vercheck extends Setup {
         }
     }
 
+    private GitDiffs gitDiffs;
+    private GitDiffs getGitDiffs() throws IOException {
+        if (gitDiffs == null) {
+            Git git = new Git(mavenUrl, vcInfo, "getDiffs", tag != null ? tag : branch,
+                    getGitPath(getAssetRoot()));
+            gitDiffs = (GitDiffs) git.run().getResult();
+        }
+        return gitDiffs;
+    }
+    private GitDiffs.DiffType getGitDiff(AssetFile assetFile) throws IOException {
+        if (assetFile.file == null)
+            return null;
+        return getGitDiffs().getDiffType(getGitPath(assetFile.file));
+    }
+
     private Map<String,AssetFile> findAssetFiles(ProgressMonitor... monitors) throws IOException {
         Map<String,File> packageDirs = getAssetPackageDirs();
         Map<String,Properties> versionProps = getVersionProps(packageDirs);
@@ -237,13 +279,14 @@ public class Vercheck extends Setup {
                 String verProp = pkgProps.getProperty(asset);
                 try {
                     assetFile.version = verProp == null ? 0 : Integer.parseInt(verProp.split(" ")[0]);
-                    if (assetFile.version == 0) {
-                        assetFile.error = ERR_UNVERSIONED;
-                        if (fix)
-                            assetFile.fixed = updateVersion(assetFile, 1);
+                    if (!isForImport()) {
+                        if (assetFile.version == 0) {
+                            assetFile.error = ERR_UNVERSIONED;
+                            if (fix)
+                                assetFile.fixed = updateVersion(assetFile, 1);
+                        }
                     }
-                }
-                catch (NumberFormatException ex) {
+                } catch (NumberFormatException ex) {
                     assetFile.error = ERR_BAD_VERSION_LINE + ": " + asset + "=" + verProp;
                 }
             }
@@ -256,10 +299,12 @@ public class Vercheck extends Setup {
                     AssetFile assetFile = assetFiles.get(path);
                     if (assetFile == null) {
                         assetFile = new AssetFile(path);
-                        assetFile.error = ERR_UNVERSIONED;
-                        if (fix)
-                            assetFile.fixed = updateVersion(assetFile, 1);
-                        assetFiles.put(path, assetFile);
+                        if (!isForImport()) {
+                            assetFile.error = ERR_UNVERSIONED;
+                            if (fix)
+                                assetFile.fixed = updateVersion(assetFile, 1);
+                            assetFiles.put(path, assetFile);
+                        }
                     }
                     assetFile.file = file;
                 }

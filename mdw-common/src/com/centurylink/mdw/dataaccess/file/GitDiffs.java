@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public class GitDiffs {
 
-    public static enum DiffType {
+    public enum DiffType {
         /**
          * Files deleted from the repo, or local files not in repository (eg: unstaged).
          */

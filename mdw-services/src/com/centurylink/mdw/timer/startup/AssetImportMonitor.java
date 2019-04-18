@@ -192,7 +192,7 @@ public class AssetImportMonitor implements StartupService {
         Bulletin bulletin = SystemMessages.bulletinOn("Asset import in progress...");
         Import importer = new Import(gitRoot, vcs, branch, gitHardResetOverride ? gitHardResetOverride : gitHardReset, conn);
         importer.setAssetLoc(vcs.getRelativePath(assetDir));
-        importer.importMDWGit();
+        importer.importAssetsFromGit();
         SystemMessages.bulletinOff(bulletin, "Asset import completed");
         gitHardResetOverride = false;   // Import successful, so reset back to use gitHardReset property
         bulletin = null;

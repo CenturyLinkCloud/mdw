@@ -53,8 +53,6 @@ import java.util.*;
 
 public class VersionControlGit implements VersionControl {
 
-    public static final String HEAD_REF = "refs/heads/master";
-    public static final String NOTES_REF = "refs/notes/mdw";
     public static final String VERSIONS_FILE = ".mdw/versions";
     public static final char NEWLINE_CHAR = 0x0a;
 
@@ -593,13 +591,6 @@ public class VersionControlGit implements VersionControl {
         return localDir.toPath().normalize().relativize(path.normalize()).toString().replace('\\', '/');
     }
 
-    /**
-     * Check path vs repository
-     */
-    public boolean isDiff(String path) throws Exception {
-        return !git.diff().setPathFilter(PathFilter.create(path)).call().isEmpty();
-    }
-
     public GitDiffs getDiffs(String branch, String path) throws Exception {
         fetch();
         GitDiffs diffs = new GitDiffs();
@@ -752,66 +743,5 @@ public class VersionControlGit implements VersionControl {
             reconnect();
             return readFromCommit(ObjectId.toString(localRepo.resolve(Constants.HEAD)), filePath);
         }
-    }
-
-    public Map<String, List<String>> checkVersionConsistency(String branch, String path) throws Exception {
-        Map<String, List<String>> issues = new HashMap<>();
-        List<String> oldAssets = new ArrayList<>();
-        List<String> conflictingAssets = new ArrayList<>();
-
-        GitDiffs diffs = getDiffs(branch, path);  // This does a Git fetch first
-
-        for (String assetPath : diffs.getDiffs(DiffType.DIFFERENT)) {
-
-            File assetFile = new File(assetPath);
-            String versionAssetPath = assetPath;
-
-            // Check to see if the changed asset is a versions file - If not, get versions file for asset pkg
-            if (!assetPath.endsWith(VERSIONS_FILE)) {
-                versionAssetPath = assetFile.getParentFile().getPath().replace('\\', '/') + "/" + VERSIONS_FILE;
-            }
-
-            byte[] bytes = readFromCommit(localRepo.resolve("origin/" + branch).getName(), versionAssetPath);
-            if (bytes != null && bytes.length > 0) {
-                VersionProperties newVersions = new VersionProperties(new ByteArrayInputStream(bytes));
-
-                // If changed file is versions file, compare all props with existing to make sure versions of files have not been decreased (this includes unchanged files)
-                if (versionAssetPath.equals(assetPath)) {
-                    // Create Properties map for current versions - NOT USED (Use versions file from local copy, not from current git commit since it could have been changed locally)
-                    //VersionProperties currentVersions = new VersionProperties(new ByteArrayInputStream(readFromCommit(getCommit(), versionAssetPath)));
-
-                    // Check each property to make sure if value changed, that it was increased, not decreased
-                    for (String key : newVersions.stringPropertyNames()) {
-                        File assetTmp = new File(assetPath.substring(0, assetPath.indexOf(VERSIONS_FILE)) + key);
-                        if (getRevision(assetTmp) != null && VersionControlGit.parseAssetRevision(newVersions.getProperty(key)).getVersion() < getRevision(assetTmp).getVersion()) {
-                            oldAssets.add(assetTmp.getPath());
-                        }
-                    }
-                }
-                else {  // Check that modified assets had their versions incremented
-                    AssetRevision assetRevNew = null;
-                    // Check that asset is a versioned (i.e. exists in versions file)
-                    if(newVersions.getProperty(assetFile.getName()) != null)
-                        assetRevNew = VersionControlGit.parseAssetRevision(newVersions.getProperty(assetFile.getName()).trim());
-
-                    AssetRevision assetRevCurrent = getRevision(assetFile);
-
-                    if (assetRevNew != null && assetRevCurrent != null) {
-                        if (assetRevNew.getVersion() < assetRevCurrent.getVersion())
-                            oldAssets.add(assetPath);
-                        else if (assetRevNew.getVersion() == assetRevCurrent.getVersion())
-                            conflictingAssets.add(assetPath);
-                    }
-                }
-            }
-        }
-
-        if (oldAssets.size() > 0)
-            issues.put("Old", oldAssets);
-
-        if (conflictingAssets.size() > 0)
-            issues.put("Conflict", conflictingAssets);
-
-        return issues;
     }
 }

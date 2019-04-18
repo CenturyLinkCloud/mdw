@@ -231,7 +231,7 @@ public class DatabaseAccess {
             }
             finally {
                 checkUpgradePerformed = true;
-            }
+        }
         }
     }
 

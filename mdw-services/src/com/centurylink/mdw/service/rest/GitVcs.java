@@ -15,26 +15,14 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.Path;
-
-import io.swagger.annotations.Api;
-import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cli.Checkpoint;
 import com.centurylink.mdw.cli.Import;
+import com.centurylink.mdw.cli.Props;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.SystemMessages;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
@@ -50,6 +38,18 @@ import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import io.swagger.annotations.Api;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.Path;
+import java.io.File;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Path("/GitVcs")
 @Api("Commit info")
@@ -228,8 +228,11 @@ public class GitVcs extends JsonRestService {
         try (DbAccess dbAccess = new DbAccess()) {
             bulletin = SystemMessages.bulletinOn("Asset import in progress...");
             Import gitImporter = new Import(gitRoot, vcGit, branch, hard, dbAccess.getConnection());
-            gitImporter.setAssetLoc(assetPath);
-            gitImporter.importMDWGit();
+            Props.init("mdw.yaml");
+            gitImporter.setAssetLoc(ApplicationContext.getAssetRoot().getAbsolutePath());
+            gitImporter.setConfigLoc(PropertyManager.getConfigLocation());
+            gitImporter.setGitRoot(gitRoot);
+            gitImporter.importAssetsFromGit();
             SystemMessages.bulletinOff(bulletin, "Asset import completed");
             CacheRegistration.getInstance().refreshCaches(null);
         }

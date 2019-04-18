@@ -21,16 +21,15 @@ import java.util.List;
 import java.util.Map;
 
 public interface VersionControl {
-    public void connect(String repositoryUrl, String user, String password, File localDir) throws IOException;
-    public long getId(File file) throws IOException;
-    public File getFile(long id);
-    public AssetRevision getRevision(File file) throws IOException;
-    public void setRevision(File file, AssetRevision rev) throws IOException;
-    public void clearId(File file);
-    public void deleteRev(File file) throws IOException;
-    public void clear();
-    public boolean exists();
-    public void hardCheckout(String branch, Boolean hard) throws Exception;
-    public Map<String, List<String>> checkVersionConsistency(String branch, String path) throws Exception;
-    public String getCommit() throws IOException;
+    void connect(String repositoryUrl, String user, String password, File localDir) throws IOException;
+    long getId(File file) throws IOException;
+    File getFile(long id);
+    AssetRevision getRevision(File file) throws IOException;
+    void setRevision(File file, AssetRevision rev) throws IOException;
+    void clearId(File file);
+    void deleteRev(File file) throws IOException;
+    void clear();
+    boolean exists();
+    void hardCheckout(String branch, Boolean hard) throws Exception;
+    String getCommit() throws IOException;
 }
