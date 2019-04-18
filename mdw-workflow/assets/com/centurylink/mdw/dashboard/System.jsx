@@ -15,7 +15,7 @@ class System extends Component {
         xAxes: [{
           scaleLabel: {
             display: true,
-            labelString: 'Server Time'
+            labelString: 'Server time: ${hostname}'
           }
         }],
         yAxes: [{

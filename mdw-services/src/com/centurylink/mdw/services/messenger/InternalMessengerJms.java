@@ -32,11 +32,11 @@ public class InternalMessengerJms extends InternalMessenger {
     private static int threshold = -1;
 
     public void sendMessage(InternalEvent msg, EngineDataAccess edao)
-        throws ProcessException
-    {
+        throws ProcessException {
         try {
             String msgid = addMessage(msg, edao);
-            if (msgid==null) return;    // cached
+            if (msgid == null)
+                return; // cached
             JMSServices.getInstance().sendTextMessage(null,
                     JMSDestinationNames.PROCESS_HANDLER_QUEUE, msg.toXml(), 0, msgid);
         } catch (Exception e) {
@@ -48,7 +48,7 @@ public class InternalMessengerJms extends InternalMessenger {
     public void sendDelayedMessage(InternalEvent msg, int delaySeconds, String msgid, boolean isUpdate,
             EngineDataAccess edao) throws ProcessException {
         try {
-            if (threshold<0) {
+            if (threshold < 0) {
                 threshold = 60*PropertyManager.getIntegerProperty(PropertyNames.MDW_TIMER_THRESHOLD_FOR_DELAY, 60);
             }
             if (delaySeconds>=threshold) {

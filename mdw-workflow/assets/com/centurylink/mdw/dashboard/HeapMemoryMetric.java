@@ -29,6 +29,7 @@ public class HeapMemoryMetric implements SystemMetric {
         List<Metric> metrics = new ArrayList<>();
         metrics.add(new Metric("used", "Used", heapUsage.getUsed() / 1000000));
         metrics.add(new Metric("heap", "Heap", heapUsage.getCommitted() / 1000000));
+        metrics.add(new Metric("max", "Max", heapUsage.getMax() / 1000000));
         return metrics;
     }
 }

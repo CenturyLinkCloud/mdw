@@ -1736,9 +1736,8 @@ class ProcessExecutorImpl {
         }
     }
 
-    Integer notifyProcess(String pEventName, Long pEventInstId,
-                    String message, int delay)
-    throws DataAccessException, EventException, SQLException {
+    Integer notifyProcess(String pEventName, Long pEventInstId, String message, int delay)
+            throws EventException, SQLException {
         List<EventWaitInstance> waiters = null;
 
         waiters = edao.recordEventArrive(pEventName, pEventInstId);
@@ -1754,7 +1753,7 @@ class ProcessExecutorImpl {
                                 + pEventName + "' actInst=" + inst.getActivityInstanceId());
                     }
                     ActivityInstance actInst = edao.getActivityInstance(inst.getActivityInstanceId());
-                    if (actInst.getStatusCode()==WorkStatus.STATUS_IN_PROGRESS.intValue()) {
+                    if (actInst.getStatusCode() == WorkStatus.STATUS_IN_PROGRESS) {
                         // assuming it is a service process waiting for message
                         JSONObject json = new JsonObject();
                         json.put("ACTION", "NOTIFY");
@@ -1766,7 +1765,7 @@ class ProcessExecutorImpl {
                     }
                     // deregister wait instances
                     edao.removeEventWaitForActivityInstance(inst.getActivityInstanceId(), "activity notified");
-                    if (pEventInstId!=null && pEventInstId.longValue()>0) {
+                    if (pEventInstId!=null && pEventInstId > 0) {
                         Document docvo = edao.getDocument(pEventInstId, true);
                         edao.updateDocumentInfo(docvo);
                     }
@@ -1775,9 +1774,13 @@ class ProcessExecutorImpl {
                 logger.severeException(ex.getMessage(), ex);
                 throw new EventException(ex.getMessage());
             }
-            if (hasFailures) return EventInstance.RESUME_STATUS_PARTIAL_SUCCESS;
-            else return EventInstance.RESUME_STATUS_SUCCESS;
-        } else return EventInstance.RESUME_STATUS_NO_WAITERS;
+            if (hasFailures)
+                return EventInstance.RESUME_STATUS_PARTIAL_SUCCESS;
+            else
+                return EventInstance.RESUME_STATUS_SUCCESS;
+        } else {
+            return EventInstance.RESUME_STATUS_NO_WAITERS;
+        }
     }
 
     private boolean isProcessInstanceProgressable(ProcessInstance pInstance) {
@@ -1802,29 +1805,30 @@ class ProcessExecutorImpl {
      *   2) when register even wait instance, and the even has already arrived. In this case
      *       the argument message null.
      */
-    private void resumeActivityInstance(ActivityInstance actInst,
-            String pCompletionCode, Long documentId, String message, int delay)
-    throws DataAccessException, MdwException, SQLException {
+    private void resumeActivityInstance(ActivityInstance actInst, String pCompletionCode, Long documentId,
+            String message, int delay) throws MdwException, SQLException {
         ProcessInstance pi = edao.getProcessInstance(actInst.getProcessInstanceId());
         if (!this.isProcessInstanceResumable(pi)) {
             logger.info("ProcessInstance in NOT resumable. ProcessInstanceId:" + pi.getId());
         }
         InternalEvent outgoingMsg = InternalEvent.
-            createActivityNotifyMessage(actInst, EventType.RESUME,
-                    pi.getMasterRequestId(), pCompletionCode);
-        if (documentId!=null) {        // should be always true
+            createActivityNotifyMessage(actInst, EventType.RESUME, pi.getMasterRequestId(), pCompletionCode);
+        if (documentId != null) {        // should be always true
             outgoingMsg.setSecondaryOwnerType(OwnerType.DOCUMENT);
             outgoingMsg.setSecondaryOwnerId(documentId);
         }
-        if (message!=null && message.length()<2500) {
+        if (message != null && message.length() < 2500) {
             outgoingMsg.addParameter("ExternalEventMessage", message);
         }
         if (this.isProcessInstanceProgressable(pi)) {
             edao.setProcessInstanceStatus(pi.getId(), WorkStatus.STATUS_IN_PROGRESS);
         }
-        if (delay>0) this.sendDelayedInternalEvent(outgoingMsg, delay,
-                ScheduledEvent.INTERNAL_EVENT_PREFIX+actInst.getId(), false);
-        else this.sendInternalEvent(outgoingMsg);
+        if (delay > 0) {
+            this.sendDelayedInternalEvent(outgoingMsg, delay,
+                    ScheduledEvent.INTERNAL_EVENT_PREFIX+actInst.getId(), false);
+        } else {
+            this.sendInternalEvent(outgoingMsg);
+        }
     }
 
     void sendInternalEvent(InternalEvent event) throws MdwException {
@@ -1832,7 +1836,7 @@ class ProcessExecutorImpl {
     }
 
     void sendDelayedInternalEvent(InternalEvent event, int delaySeconds, String msgid, boolean isUpdate)
-        throws MdwException {
+            throws MdwException {
         internalMessenger.sendDelayedMessage(event, delaySeconds, msgid, isUpdate, edao);
     }
 

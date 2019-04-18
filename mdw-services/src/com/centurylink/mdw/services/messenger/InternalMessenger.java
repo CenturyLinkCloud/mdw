@@ -53,7 +53,7 @@ public abstract class InternalMessenger {
                 messageQueue.add(msg);
             }
             return null;
-        } else if (cacheOption==CACHE_ON) {
+        } else if (cacheOption == CACHE_ON) {
             String msgid = generateMessageId(msg);
             edao.persistInternalEvent(msgid, msg.toXml());
             msg.setMessageId(msgid);
