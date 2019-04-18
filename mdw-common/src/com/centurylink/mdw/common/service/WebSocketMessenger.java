@@ -21,6 +21,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,9 +33,9 @@ public class WebSocketMessenger {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private static Map<String,List<Session>> topicSubscribers = new ConcurrentHashMap<>();
+    private static final Map<String,List<Session>> topicSubscribers = new ConcurrentHashMap<>();
 
-    private static WebSocketMessenger instance = null;;
+    private static WebSocketMessenger instance = null;
     /**
      * @return null until first subscriber
      */
@@ -55,8 +56,7 @@ public class WebSocketMessenger {
         synchronized(topicSubscribers) {
             // remove session
             for (List<Session> sessions : topicSubscribers.values()) {
-                if (sessions.contains(session))
-                    sessions.remove(session);
+                sessions.remove(session);
             }
             // remove topics without any sessions
             for (String topic : topicSubscribers.keySet()) {
@@ -68,7 +68,12 @@ public class WebSocketMessenger {
 
     @OnError
     public void onError(Session session, Throwable t) {
-        if (t instanceof IOException && t.getMessage() != null && t.getMessage().startsWith(
+        if (t instanceof EOFException && "null".equals(t.getMessage())) {
+            // avoid nuisance logging when browser closes connection
+            if (logger.isMdwDebugEnabled())
+                logger.warn(t.getMessage());
+        }
+        else if (t instanceof IOException && t.getMessage() != null && t.getMessage().startsWith(
                 "An established connection was aborted")) {
             // avoid nuisance logging when browser closes connection
             if (logger.isMdwDebugEnabled())

@@ -250,7 +250,7 @@ task checkAssetVersions(type: Exec) {
     else {
         mdwCmd = 'cli/bin/mdw'
     }
-    def cmds = [mdwCmd, 'vercheck', '--tag=' + mdwPrevTag, '--warn']
+    def cmds = [mdwCmd, 'vercheck', '--tag=' + mdwPrevTag, '--warn', '--debug']
     commandLine cmds
 }
 

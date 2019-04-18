@@ -591,14 +591,26 @@ public class VersionControlGit implements VersionControl {
         return localDir.toPath().normalize().relativize(path.normalize()).toString().replace('\\', '/');
     }
 
+    public GitDiffs getDiffsForTag(String tag, String path) throws Exception {
+        fetch();
+        ObjectId obj = localRepo.resolve("refs/tags/" + tag + "^{tree}");
+        if (obj == null)
+            throw new IOException("Unable to determine Git Diffs: path " + path + " not found on tag " + tag);
+        return getDiffs(obj, path);
+    }
+
     public GitDiffs getDiffs(String branch, String path) throws Exception {
         fetch();
+        ObjectId obj = localRepo.resolve("origin/" + branch + "^{tree}");
+        if (obj == null)
+            throw new IOException("Unable to determine Git Diffs: path " + path + " not found on branch " + branch);
+        return getDiffs(obj, path);
+    }
+
+    private GitDiffs getDiffs(ObjectId objectId, String path) throws Exception {
         GitDiffs diffs = new GitDiffs();
-        ObjectId remoteHead = localRepo.resolve("origin/" + branch + "^{tree}");
-        if (remoteHead == null)
-            throw new IOException("Unable to determine Git Diffs due to missing remote HEAD");
         CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
-        newTreeIter.reset(localRepo.newObjectReader(), remoteHead);
+        newTreeIter.reset(localRepo.newObjectReader(), objectId);
         DiffCommand dc = git.diff().setNewTree(newTreeIter);
         if (path != null)
             dc.setPathFilter(PathFilter.create(path));
