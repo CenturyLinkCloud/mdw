@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO: Ability to override default 1G size limit
+ * TODO: Ability to override default 10 MB size limit
  */
 class Logger {
 
@@ -36,7 +36,7 @@ class Logger {
     }
 
     // TODO: configurable
-    private int maxBytes = 1048576; // 1G
+    private int maxBytes = 10485760; // 10 MB
 
     void startup() {
 

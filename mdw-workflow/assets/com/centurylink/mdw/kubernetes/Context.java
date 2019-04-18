@@ -5,6 +5,7 @@ import java.io.File;
 public class Context {
 
     public static final String K8S_NAMESPACE = "K8S_NAMESPACE";
+    public static final String K8S_POD = "HOSTNAME";
     public static final String K8S_SERVICE_TOKEN = "K8S_SERVICE_TOKEN";
     public static final String API_HOST = "kubernetes.default.svc";
     public static final String INTERNAL_HOST = "kube-apiserver";
@@ -23,6 +24,10 @@ public class Context {
 
     public static String getNamespace() {
         return System.getenv(K8S_NAMESPACE);
+    }
+
+    public static String getPod() {
+        return System.getenv(K8S_POD);
     }
 
     /**

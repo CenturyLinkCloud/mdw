@@ -344,6 +344,7 @@ class DashboardChart extends Component {
           credentials: 'same-origin'
         }))
         .then(response => {
+          this.hostname = response.headers.get('mdw-hostname');
           return response.json();
         })
         .then(data => {
@@ -373,7 +374,16 @@ class DashboardChart extends Component {
   getChartOptions() {
     const breakdown = this.getBreakdown();
     if (breakdown.chartOptions) {
-      return Object.assign({}, this.chartOptions, breakdown.chartOptions);
+      var options = Object.assign({}, this.chartOptions, breakdown.chartOptions);
+      if (this.hostname && options.scales && options.scales.xAxes && options.scales.xAxes.length > 0 
+            && options.scales.xAxes[0].scaleLabel) {
+        const scaleLabel = options.scales.xAxes[0].scaleLabel;
+        const labelString = scaleLabel.labelString;
+        if (labelString && labelString.indexOf('${hostname}') >= 0) {
+          scaleLabel.labelString = labelString.replace('${hostname}', this.hostname);
+        }
+      }
+      return options;
     }
     return this.chartOptions;
   }
