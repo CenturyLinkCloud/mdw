@@ -58,7 +58,7 @@ public class Vercheck extends Setup {
 
     @Parameter(names="--fix", description="Automatically increment versions")
     private boolean fix;
-    public boolean isFix() { return warn; }
+    public boolean isFix() { return fix; }
     public void setFix(boolean fix) { this.fix = fix; }
 
     @Parameter(names="--for-import", description="For import (opposite direction: Git version < Local = ERROR).")
@@ -76,7 +76,8 @@ public class Vercheck extends Setup {
     private static final String ERR_BAD_VERSION_LINE = "Bad version line";
     private static final String ERR_GIT_VER_GT = "Git version greater than asset version";
     private static final String ERR_GIT_VER_LT = "Git version less than asset version";
-    private static final String ERR_SAME_VER_DIFF_CONTENT = "Content changed but version not incremented";
+    private static final String ERR_LOCAL_DIFF_SAME_VER = "Content changed but version not incremented";
+    private static final String ERR_GIT_DIFF_SAME_VER = "Git asset content differs but version not incremented";
     private static final String WARN_EXTRA_VERSION = "Extraneous version entry";
     private static final String[] UNVERSIONED_EXTS = new String[] { ".impl", ".evth"  };
 
@@ -184,7 +185,7 @@ public class Vercheck extends Setup {
                     if (progressMonitor.isSupportsMessage())
                         progressMonitor.message(path);
                 }
-                if (assetFile.error == null && assetFile.file != null) {
+                if ((assetFile.error == null || isFix()) && assetFile.file != null) {
                     Properties gitVerProps = gitVersions.get(assetFile.path);
                     if (gitVerProps == null) {
                         String versionFilePath = getGitPath(new File(assetFile.file.getParentFile() + "/" + META_DIR + "/versions"));
@@ -214,9 +215,13 @@ public class Vercheck extends Setup {
                                     isDifferent = !tagString.equals(fileString);
                                 }
                                 if (isDifferent) {
-                                    assetFile.error = ERR_SAME_VER_DIFF_CONTENT + " (v " + formatVersion(assetFile.version) + ")";
-                                    if (!isForImport() && fix)
-                                        assetFile.fixed = updateVersion(assetFile, ++assetFile.version);
+                                    if (isForImport()) {
+                                        assetFile.error = ERR_GIT_DIFF_SAME_VER + " (v " + formatVersion(assetFile.version) + ")";
+                                    } else {
+                                        assetFile.error = ERR_LOCAL_DIFF_SAME_VER + " (v " + formatVersion(assetFile.version) + ")";
+                                        if (fix)
+                                            assetFile.fixed = updateVersion(assetFile, ++assetFile.version);
+                                    }
                                 }
                             } else {
                                 if (isForImport()) {
@@ -287,12 +292,18 @@ public class Vercheck extends Setup {
                     if (!isForImport()) {
                         if (assetFile.version == 0) {
                             assetFile.error = ERR_UNVERSIONED;
-                            if (fix)
+                            if (fix) {
                                 assetFile.fixed = updateVersion(assetFile, 1);
+                                assetFile.version = 1;
+                            }
                         }
                     }
                 } catch (NumberFormatException ex) {
                     assetFile.error = ERR_BAD_VERSION_LINE + ": " + asset + "=" + verProp;
+                    if (fix) {
+                        assetFile.fixed = updateVersion(assetFile, 1);
+                        assetFile.version = 1;
+                    }
                 }
             }
         }
@@ -306,8 +317,10 @@ public class Vercheck extends Setup {
                         assetFile = new AssetFile(path);
                         if (!isForImport()) {
                             assetFile.error = ERR_UNVERSIONED;
-                            if (fix)
+                            if (fix) {
                                 assetFile.fixed = updateVersion(assetFile, 1);
+                                assetFile.version = 1;
+                            }
                             assetFiles.put(path, assetFile);
                         }
                     }
