@@ -15,27 +15,6 @@
  */
 package com.centurylink.mdw.app;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.management.ManagementFactory;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.util.Date;
-import java.util.List;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-import java.util.zip.ZipEntry;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.naming.NamingException;
-import javax.sql.DataSource;
-
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.YamlPropertyManager;
@@ -56,6 +35,26 @@ import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.yaml.YamlLoader;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.management.ManagementFactory;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.util.Date;
+import java.util.List;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
 
 /**
  * Class that needs to be used when getting the application context
@@ -685,10 +684,20 @@ public class ApplicationContext {
         return mdwCentralUrl;
     }
 
+    /**
+     * Compatibility for disparities in mdw-central hosting mechanism.
+     */
+    public static String getCentralServicesUrl() {
+        String centralServicesUrl = getMdwCentralUrl();
+        if (centralServicesUrl != null && centralServicesUrl.endsWith("/central"))
+            centralServicesUrl = centralServicesUrl.substring(0, centralServicesUrl.length() - 8);
+        return centralServicesUrl;
+    }
+
     public static String getMdwAuthUrl() {
         String mdwAuth = PropertyManager.getProperty(PropertyNames.MDW_CENTRAL_AUTH_URL);
         if (mdwAuth == null)
-            mdwAuth = getMdwCentralUrl() + "/services/com/centurylink/mdw/central/auth";
+            mdwAuth = getCentralServicesUrl() + "/api/com/centurylink/mdw/central/auth";
         return mdwAuth;
     }
 
@@ -699,7 +708,7 @@ public class ApplicationContext {
     public static String getMdwCloudRoutingUrl() {
         String mdwRouting = PropertyManager.getProperty(PropertyNames.MDW_CENTRAL_ROUTING_URL);
         if (mdwRouting == null)
-            mdwRouting = getMdwCentralUrl() + "/services/routing";
+            mdwRouting = getMdwCentralUrl() + "/api/routing";
         return mdwRouting;
     }
 

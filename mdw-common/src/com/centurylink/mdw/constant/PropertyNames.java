@@ -32,8 +32,6 @@ public class PropertyNames {
     public static final String MDW_DB_PASSWORD = "mdw.database.password";
     public static final String MDW_DB_VERSION = "mdw.database.version";
     public static final String MDW_DB_VERSION_SUPPORTED = "mdw.database.version.supported";     // lowest version supported
-    public static final String MDW_DB_POOLSIZE = "mdw.database.poolsize";
-    public static final String MDW_DB_TRACE = "mdw.database.trace";     // none, query, timing
     // If true, then will save datetime/timestamp using microsecond precision - Depends on declaring table columns correctly
     public static final String MDW_DB_MICROSECOND_PRECISION = "mdw.database.microsecond.precision";
     // for embedded db

@@ -16,8 +16,7 @@ mdwMod.factory('mdw', function() {
     roots: {
       services: $mdwServicesRoot,
       hub: $mdwHubRoot,
-      docs: $mdwDocsRoot,
-      central: $mdwCentralRoot
+      docs: $mdwDocsRoot
     },
     git: {
       branch: $mdwGitBranch && $mdwGitBranch != '${mdw.gitBranch}' ? $mdwGitBranch : null,
