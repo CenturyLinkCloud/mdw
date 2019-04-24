@@ -110,7 +110,7 @@ public class Users extends JsonRestService {
                     if (query.getBooleanFilter("mdw-central")) {
                         // get users from central
                         if (centralHelper == null) {
-                            centralHelper = new HttpHelper(new URL(ApplicationContext.getMdwCentralUrl()
+                            centralHelper = new HttpHelper(new URL(ApplicationContext.getCentralServicesUrl()
                                     + "/api/users?find=" + query.getFind() + "&appId=" + ApplicationContext.getAppId()));
                             Map<String,String> hdrs = new HashMap<String,String>();
                             centralHelper.setHeaders(hdrs);

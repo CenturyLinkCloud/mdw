@@ -71,7 +71,6 @@ public class WebAppContext {
             mdw.setAuthMethod(ApplicationContext.getAuthMethod());
             mdw.setDocsRoot(ApplicationContext.getDocsUrl());
 
-            mdw.setCentralRoot(ApplicationContext.getMdwCentralUrl());
             String appId = PropertyManager.getProperty(PropertyNames.MDW_APP_ID);
             mdw.setAppId(appId);
 

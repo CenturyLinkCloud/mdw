@@ -36,10 +36,6 @@ public class Mdw {
     private String servicesRoot;
     public String getServicesRoot() { return servicesRoot; }
 
-    private String centralRoot;
-    public String getCentralRoot() { return centralRoot; }
-    public void setCentralRoot(String centralRoot) { this.centralRoot = centralRoot; }
-
     private String appId;
     public String getAppId() { return appId; }
     public void setAppId(String appId) { this.appId = appId; }
