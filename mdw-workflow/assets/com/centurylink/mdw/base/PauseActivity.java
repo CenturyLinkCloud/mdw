@@ -1,6 +1,6 @@
 package com.centurylink.mdw.base;
 
-import com.centurylink.mdw.activity.types.SuspendibleActivity;
+import com.centurylink.mdw.activity.types.SuspendableActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.workflow.activity.event.EventWaitActivity;
 
@@ -58,7 +58,7 @@ import java.util.List;
                 "    }\n" +
                 "  ]\n" +
                 "}")
-public class PauseActivity extends EventWaitActivity implements SuspendibleActivity {
+public class PauseActivity extends EventWaitActivity implements SuspendableActivity {
 
     @Override
     public List<String[]> getWaitEventSpecs() {

@@ -24,6 +24,6 @@ package com.centurylink.mdw.activity.types;
  * is used to determine whether the condition has been satisfied to move on.
  *
  */
-public interface SynchronizationActivity extends GeneralActivity, SuspendibleActivity {
+public interface SynchronizationActivity extends GeneralActivity, SuspendableActivity {
 
 }

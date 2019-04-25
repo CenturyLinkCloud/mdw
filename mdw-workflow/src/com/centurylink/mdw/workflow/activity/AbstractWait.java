@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.activity.types.SuspendibleActivity;
+import com.centurylink.mdw.activity.types.SuspendableActivity;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.event.EventType;
@@ -40,7 +40,7 @@ import com.centurylink.mdw.util.StringHelper;
  * we can use this activity to pause the flow and the flow can be
  * restarted from an event.
  */
-public abstract class AbstractWait extends DefaultActivityImpl implements SuspendibleActivity {
+public abstract class AbstractWait extends DefaultActivityImpl implements SuspendableActivity {
 
     public List<String[]> getWaitEventSpecs() {
         String attVal = this.getAttributeValue(WorkAttributeConstant.WAIT_EVENT_NAMES);

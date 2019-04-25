@@ -1,10 +1,8 @@
 ClientAdapter.java=1
-ProcessLaunchRequest.java=2
 ServerAdapter.java=2
-TraceActivityMonitor.java=1
+TraceActivityMonitor.java=2
 TraceAdapterMonitor.java=2
 TraceHelper.java=2
-TraceProcessMonitor.java=3
 TraceServiceMonitor.java=2
 TracingLogLine.java=1
 brave-5.6.3.jar=1

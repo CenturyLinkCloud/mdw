@@ -18,7 +18,7 @@ package com.centurylink.mdw.workflow.activity.task;
 import org.apache.xmlbeans.XmlException;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.activity.types.SuspendibleActivity;
+import com.centurylink.mdw.activity.types.SuspendableActivity;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
@@ -31,7 +31,7 @@ import com.centurylink.mdw.service.Parameter;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-public class CustomManualTaskActivity extends ManualTaskActivity implements SuspendibleActivity {
+public class CustomManualTaskActivity extends ManualTaskActivity implements SuspendableActivity {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 

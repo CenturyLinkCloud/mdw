@@ -16,7 +16,7 @@
 package com.centurylink.mdw.services.process;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.activity.types.SuspendibleActivity;
+import com.centurylink.mdw.activity.types.SuspendableActivity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.WorkflowException;
 import com.centurylink.mdw.cache.impl.PackageCache;
@@ -304,12 +304,12 @@ public class ProcessEngineDriver {
             ar = engine.resumeActivityPrepare(procInst, event, resumeOnHold);
             if (ar.getStartCase()!=ActivityRuntime.RESUMECASE_NORMAL) return;
             boolean finished;
-            if (ar.getActivity() instanceof SuspendibleActivity) {
+            if (ar.getActivity() instanceof SuspendableActivity) {
                 if ("true".equalsIgnoreCase(useTransactionOnExecute)) {
                     finished = engine.resumeActivityExecute(ar, event, resumeOnHold);
                 } else {
-                    if (resumeOnHold) finished = ((SuspendibleActivity)ar.activity).resumeWaiting(event);
-                    else finished = ((SuspendibleActivity)ar.activity).resume(event);
+                    if (resumeOnHold) finished = ((SuspendableActivity)ar.activity).resumeWaiting(event);
+                    else finished = ((SuspendableActivity)ar.activity).resume(event);
                 }
             } else finished = true;
             engine.resumeActivityFinish(ar, finished, event, resumeOnHold);
@@ -382,7 +382,7 @@ public class ProcessEngineDriver {
                     // bypass execution due to monitor
                     if (!"null".equals(resCode))
                         ar.getActivity().setReturnCode(resCode);
-                    if (ar.getActivity() instanceof SuspendibleActivity) {
+                    if (ar.getActivity() instanceof SuspendableActivity) {
                         engine.finishActivityInstance(ar.getActivity(), ar.getProcessInstance(), ar.getActivityInstance(), event, true);
                         return;
                     }

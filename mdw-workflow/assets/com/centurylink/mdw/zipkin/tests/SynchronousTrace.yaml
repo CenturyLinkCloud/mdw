@@ -12,12 +12,47 @@ process: # 819
       Retrieve
       Workgroup
     status: Completed
+  activity: # 5 "2019-04-25 17:00:26.906"
+    name: |
+      Just a
+      Second
+    status: Completed
   activity: # 2 "2019-04-12 12:46:12.139"
     name: Stop
     status: Completed
   variable: # 2603
     name: originator
     value: FortuneService
+  variable:
+    name: parentSpanId
+    value: ${~.*}
+  variable:
+    name: requestHeaders
+    value: |
+      {
+        "AuthenticatedUser": "${~.*}",
+        "Content-Type": "application/json",
+        "HttpMethod": "GET",
+        "Protocol": "REST",
+        "RemoteAddr": "${~.*}",
+        "RemoteHost": "${~.*}",
+        "RemotePort": "${~\\d*}",
+        "RequestPath": "com/centurylink/mdw/zipkin/tests/fortune",
+        "RequestURL": "http://localhost:8080/mdw/api/com/centurylink/mdw/zipkin/tests/fortune",
+        "ServiceClass": "com.centurylink.mdw.hub.servlet.RestServlet",
+        "accept": "application/json",
+        "cache-control": "${~.*}",
+        "connection": "keep-alive",
+        "content-type": "${~.*}",
+        "document-id": "${~\\d*}",
+        "host": "${~.*}",
+        "mdw-request-id": "${masterRequestId}",
+        "pragma": "${~.*}",
+        "user-agent": "${~.*}",
+        "x-b3-sampled": "1",
+        "x-b3-spanid": "${spanId}",
+        "x-b3-traceid": "${traceId}"
+      }
   variable: # 2608
     name: spanId
     value: ${~.*}
@@ -90,7 +125,6 @@ process: # 817
         "mdw-request-id": "${masterRequestId}",
         "pragma": "${~.*}",
         "user-agent": "${~.*}",
-        "x-b3-parentspanid": "${traceId}",
         "x-b3-sampled": "1",
         "x-b3-spanid": "${spanId}",
         "x-b3-traceid": "${traceId}"
