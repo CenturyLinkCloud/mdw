@@ -15,18 +15,17 @@
  */
 package com.centurylink.mdw.model.task;
 
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.el.ValueExpression;
-
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 import com.sun.el.ValueExpressionLiteral;
+
+import javax.el.ValueExpression;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The runtime context for a task instance.

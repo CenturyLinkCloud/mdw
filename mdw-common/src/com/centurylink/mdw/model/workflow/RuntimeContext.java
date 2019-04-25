@@ -15,45 +15,46 @@
  */
 package com.centurylink.mdw.model.workflow;
 
+import com.centurylink.mdw.model.Jsonable;
+
 import java.util.Map;
 
 public interface RuntimeContext {
 
-    public Package getPackage();
+    Package getPackage();
 
-    public Process getProcess();
+    Process getProcess();
 
-    public String getMasterRequestId();
+    String getMasterRequestId();
 
-    public Map<String,String> getAttributes();
+    Map<String,String> getAttributes();
 
-    public Map<String,Object> getVariables();
+    Map<String,Object> getVariables();
 
-    public Long getProcessId();
+    Long getProcessId();
 
-    public Long getProcessInstanceId();
+    Long getProcessInstanceId();
 
-    public void logInfo(String message);
+    void logInfo(String message);
 
-    public void logDebug(String message);
+    void logDebug(String message);
 
-    public void logWarn(String message);
+    void logWarn(String message);
 
-    public void logSevere(String message);
+    void logSevere(String message);
 
-    public void logException(String msg, Exception e);
+    void logException(String msg, Exception e);
 
-    public boolean isLogInfoEnabled();
+    boolean isLogInfoEnabled();
 
-    public boolean isLogDebugEnabled();
+    boolean isLogDebugEnabled();
 
-    public String getMdwHubUrl();
+    String getMdwHubUrl();
 
-    public String getMdwVersion();
+    String getMdwVersion();
 
-    public Object evaluate(String expression);
-    public String evaluateToString(String expression);
+    Object evaluate(String expression);
+    String evaluateToString(String expression);
 
-    public String getAttribute(String name);
-
+    String getAttribute(String name);
 }

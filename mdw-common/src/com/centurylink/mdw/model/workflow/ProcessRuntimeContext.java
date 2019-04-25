@@ -439,4 +439,11 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
     public String getJsonName() {
         return "processRuntimeContext";
     }
+
+    private Map<Object,Object> runtimeAttributes;
+    public Map<Object,Object> getRuntimeAttributes() {
+        if (runtimeAttributes == null)
+            runtimeAttributes = new HashMap<>();
+        return runtimeAttributes;
+    }
 }

@@ -610,8 +610,8 @@ class ProcessExecutorImpl {
      */
     private boolean activityNeedsWait(GeneralActivity activity)
             throws ActivityException {
-        if (activity instanceof SuspendibleActivity)
-            return ((SuspendibleActivity) activity).needSuspend();
+        if (activity instanceof SuspendableActivity)
+            return ((SuspendableActivity) activity).needSuspend();
         return false;
     }
 
@@ -893,18 +893,21 @@ class ProcessExecutorImpl {
         if (logger.isInfoEnabled()) logger.info(logtag, WorkStatus.LOGMSG_HOLD);
     }
 
-    private void suspendActivityInstance(ActivityInstance ai, String logtag, String additionalMsg)
+    private void suspendActivityInstance(BaseActivity activity, ActivityInstance ai, String logtag, String additionalMsg)
     throws DataAccessException, SQLException {
         edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_WAITING, null);
         if (logger.isInfoEnabled()) {
-            if (additionalMsg!=null) logger.info(logtag, WorkStatus.LOGMSG_SUSPEND + " - " + additionalMsg);
-            else logger.info(logtag, WorkStatus.LOGMSG_SUSPEND);
+            if (additionalMsg!=null)
+                logger.info(logtag, WorkStatus.LOGMSG_SUSPEND + " - " + additionalMsg);
+            else
+                logger.info(logtag, WorkStatus.LOGMSG_SUSPEND);
         }
+        activity.notifyMonitors(WorkStatus.LOGMSG_SUSPEND);
     }
 
     CompletionCode finishActivityInstance(BaseActivity activity,
             ProcessInstance pi, ActivityInstance ai, InternalEvent event, boolean bypassWait)
-            throws DataAccessException, ProcessException, ActivityException, ServiceLocatorException {
+            throws ProcessException {
         try {
             if (activity.getTimer() != null)
                 activity.getTimer().start("Finish Activity");
@@ -915,7 +918,8 @@ class ProcessExecutorImpl {
             CompletionCode compCode = new CompletionCode();
             compCode.parse(origCompCode);
             Integer actInstStatus = compCode.getActivityInstanceStatus();
-            if (actInstStatus==null && mayNeedWait) actInstStatus = WorkStatus.STATUS_WAITING;
+            if (actInstStatus == null && mayNeedWait)
+                actInstStatus = WorkStatus.STATUS_WAITING;
             String logtag = logtag(pi.getProcessId(), pi.getId(), ai.getActivityId(), ai.getId());
 
             // Step 3a if activity not successful
@@ -932,7 +936,7 @@ class ProcessExecutorImpl {
             }
 
             // Step 3b if activity needs to wait
-            else if (mayNeedWait && actInstStatus!=null && !actInstStatus.equals(WorkStatus.STATUS_COMPLETED)) {
+            else if (mayNeedWait && !actInstStatus.equals(WorkStatus.STATUS_COMPLETED)) {
                 if (actInstStatus.equals(WorkStatus.STATUS_HOLD)) {
                     holdActivityInstance(ai, logtag);
                     InternalEvent outmsg = InternalEvent.createActivityNotifyMessage(ai, compCode.getEventType(),
@@ -941,7 +945,7 @@ class ProcessExecutorImpl {
                 } else if (actInstStatus.equals(WorkStatus.STATUS_WAITING) &&
                         (compCode.getEventType().equals(EventType.ABORT) || compCode.getEventType().equals(EventType.CORRECT)
                                 || compCode.getEventType().equals(EventType.ERROR))) {
-                    suspendActivityInstance(ai, logtag, null);
+                    suspendActivityInstance(activity, ai, logtag, null);
                     InternalEvent outmsg =  InternalEvent.createActivityNotifyMessage(ai, compCode.getEventType(),
                             pi.getMasterRequestId(), compCode.getCompletionCode());
                     sendInternalEvent(outmsg);
@@ -953,7 +957,7 @@ class ProcessExecutorImpl {
                     sendInternalEvent(outmsg);
                 }
                 else {
-                    suspendActivityInstance(ai, logtag, null);
+                    suspendActivityInstance(activity, ai, logtag, null);
                 }
             }
 
@@ -1042,7 +1046,7 @@ class ProcessExecutorImpl {
         try {
             InternalEvent event = InternalEvent.createActivityNotifyMessage(actInst,
                     EventType.RESUME, procInst.getMasterRequestId(), actInst.getStatusCode()==WorkStatus.STATUS_COMPLETED? "Completed" : null);
-            boolean finished = ((SuspendibleActivity)cntrActivity).resumeWaiting(event);
+            boolean finished = ((SuspendableActivity)cntrActivity).resumeWaiting(event);
             this.resumeActivityFinishSub(actInst, (BaseActivity)cntrActivity, procInst,
                     finished, true);
         } catch (Exception e) {
@@ -1305,9 +1309,7 @@ class ProcessExecutorImpl {
     }
 
 
-    private BaseActivity prepareActivityForResume(InternalEvent event,
-                ProcessInstance procInst, ActivityInstance actInst)
-    throws DataAccessException, SQLException
+    private BaseActivity prepareActivityForResume(InternalEvent event, ProcessInstance procInst, ActivityInstance actInst)
     {
         Long actId = actInst.getActivityId();
         Long procInstId = actInst.getProcessInstanceId();
@@ -1356,10 +1358,10 @@ class ProcessExecutorImpl {
     }
 
     private boolean isProcessInstanceResumable(ProcessInstance pInstance) {
-        int statusCd = pInstance.getStatusCode().intValue();
-        if (statusCd == WorkStatus.STATUS_COMPLETED.intValue()) {
+        int statusCd = pInstance.getStatusCode();
+        if (statusCd == WorkStatus.STATUS_COMPLETED) {
             return false;
-        } else if (statusCd == WorkStatus.STATUS_CANCELLED.intValue()) {
+        } else if (statusCd == WorkStatus.STATUS_CANCELLED) {
             return false;
         }
         return true;
@@ -1397,10 +1399,8 @@ class ProcessExecutorImpl {
         }
     }
 
-    private void resumeActivityFinishSub(ActivityInstance actinst,
-            BaseActivity activity, ProcessInstance procinst,
-            boolean finished, boolean resumeOnHold)
-        throws DataAccessException, SQLException, MdwException {
+    private void resumeActivityFinishSub(ActivityInstance actinst, BaseActivity activity, ProcessInstance procinst,
+            boolean finished, boolean resumeOnHold)  throws SQLException, MdwException {
         String logtag = logtag(procinst.getProcessId(),procinst.getId(),
                 actinst.getActivityId(),actinst.getId());
         if (finished) {
@@ -1409,7 +1409,7 @@ class ProcessExecutorImpl {
             if (WorkStatus.STATUS_HOLD.equals(completionCode.getActivityInstanceStatus())) {
                 holdActivityInstance(actinst, logtag);
             } else if (WorkStatus.STATUS_WAITING.equals(completionCode.getActivityInstanceStatus())) {
-                suspendActivityInstance(actinst, logtag, "continue suspend");
+                suspendActivityInstance(activity, actinst, logtag, "continue suspend");
             } else if (WorkStatus.STATUS_CANCELLED.equals(completionCode.getActivityInstanceStatus())) {
                 cancelActivityInstance(actinst, "Cancelled upon resume", procinst, logtag);
             } else if (WorkStatus.STATUS_FAILED.equals(completionCode.getActivityInstanceStatus())) {
@@ -1425,16 +1425,15 @@ class ProcessExecutorImpl {
             sendInternalEvent(event);
         } else {
             if (resumeOnHold) {
-                suspendActivityInstance(actinst, logtag, "resume waiting after hold");
+                suspendActivityInstance(activity, actinst, logtag, "resume waiting after hold");
             } else {
                 if (logger.isInfoEnabled()) logger.info(logtag, "continue suspend");
             }
         }
     }
 
-    void resumeActivityFinish(ActivityRuntime ar,
-            boolean finished, InternalEvent event, boolean resumeOnHold)
-            throws DataAccessException, ProcessException {
+    void resumeActivityFinish(ActivityRuntime ar, boolean finished, InternalEvent event, boolean resumeOnHold)
+            throws ProcessException {
         try {
             if (ar.activity.getTimer() != null)
                 ar.activity.getTimer().start("Resume Activity Finish");
@@ -1450,14 +1449,14 @@ class ProcessExecutorImpl {
         }
     }
 
-    boolean resumeActivityExecute(ActivityRuntime ar,
-            InternalEvent event, boolean resumeOnHold) throws ActivityException {
+    boolean resumeActivityExecute(ActivityRuntime ar, InternalEvent event, boolean resumeOnHold)
+            throws ActivityException {
         boolean finished;
         try {
             if (ar.activity.getTimer() != null)
                 ar.activity.getTimer().start("Resume Activity");
-            if (resumeOnHold) finished = ((SuspendibleActivity)ar.activity).resumeWaiting(event);
-            else finished = ((SuspendibleActivity)ar.activity).resume(event);
+            if (resumeOnHold) finished = ((SuspendableActivity)ar.activity).resumeWaiting(event);
+            else finished = ((SuspendableActivity)ar.activity).resume(event);
         }
         finally {
             if (ar.activity.getTimer() != null)
@@ -1890,7 +1889,7 @@ class ProcessExecutorImpl {
                     }
                     else {
                         if (WorkStatus.LOGMSG_PROC_START.equals(event)) {
-                            Map<String, Object> updated = monitor.onStart(runtimeContext);
+                            Map<String,Object> updated = monitor.onStart(runtimeContext);
                             if (updated != null) {
                                 for (String varName : updated.keySet()) {
                                     if (processInstance.getVariables() == null)
@@ -1955,7 +1954,8 @@ class ProcessExecutorImpl {
             ActivityImplementor activityImplementor = ImplementorCache.get(activity.getImplementor());
             String category = activityImplementor == null ? GeneralActivity.class.getName() : activityImplementor.getCategory();
             ActivityRuntimeContext runtimeContext = new ActivityRuntimeContext(pkg, process, processInst,
-                    getDataAccess().getPerformanceLevel(), isInService(), activity, category, actInstVO);
+                    getDataAccess().getPerformanceLevel(), isInService(), activity, category, actInstVO,
+                    activityImpl instanceof SuspendableActivity);
             // TODO option to suppress variables
             if (activityImpl == null) {
                 try {

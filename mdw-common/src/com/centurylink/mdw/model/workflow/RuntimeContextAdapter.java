@@ -18,6 +18,7 @@ package com.centurylink.mdw.model.workflow;
 import java.util.Map;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.model.Jsonable;
 
 public class RuntimeContextAdapter implements RuntimeContext {
 

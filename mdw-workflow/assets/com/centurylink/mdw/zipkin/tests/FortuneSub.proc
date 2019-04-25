@@ -21,7 +21,7 @@
     {
       "attributes": {
         "Output Documents": "[\"response\"]",
-        "Rule": "import org.json.JSONObject\nimport brave.internal.HexCodec.writeHexLong\nimport com.centurylink.mdw.zipkin.tests.Fortune\nimport com.centurylink.mdw.zipkin.tests.SpanId\n\nval username = (variables[\"request\"] as JSONObject).getString(\"name\")\nruntimeContext.logInfo(\"FortuneSub >> Name: ${username}\")\nvariables[\"username\"] = username\n\nval tracer = brave.Tracing.currentTracer()\nval span = tracer.currentSpan()\nif (span != null) {\n    variables[\"traceId\"] = span.context().traceIdString()\n    variables[\"spanId\"] = SpanId(span.context().spanId()).hexId()\n}\nvariables[\"response\"] = Fortune(username, \"You will acquire great wealth.\")\n",
+        "Rule": "import org.json.JSONObject\nimport brave.internal.HexCodec.writeHexLong\nimport com.centurylink.mdw.zipkin.tests.Fortune\nimport com.centurylink.mdw.zipkin.tests.SpanId\n\nval username = (variables[\"request\"] as JSONObject).getString(\"name\")\nruntimeContext.logInfo(\"FortuneSub >> Name: ${username}\")\nvariables[\"username\"] = username\n\nval span = brave.Tracing.currentTracer().currentSpan()\nif (span != null) {\n    variables[\"traceId\"] = span.context().traceIdString()\n    variables[\"spanId\"] = SpanId(span.context().spanId()).hexId()\n    span.context().parentId()?.let { variables[\"parentSpanId\"] = SpanId(it).hexId() }\n}\nvariables[\"response\"] = Fortune(username, \"You will acquire great wealth.\")\n",
         "SCRIPT": "Kotlin Script",
         "WORK_DISPLAY_INFO": "x=198,y=128,w=110,h=69"
       },
@@ -65,6 +65,10 @@
     "foundUsers": {
       "category": "LOCAL",
       "type": "org.json.JSONObject"
+    },
+    "parentSpanId": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
     },
     "request": {
       "category": "INPUT",

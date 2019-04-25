@@ -920,4 +920,19 @@ public class Process extends Asset implements Jsonable {
         return "application/json";
     }
 
+    /**
+     * For runtime use only since value is cached.
+     */
+    private Boolean hasDelayTransition;
+    public boolean hasDelayTransition() {
+        if (hasDelayTransition == null) {
+            for (Transition transition : getTransitions()) {
+                if (transition.getTransitionDelay() > 0) {
+                    return hasDelayTransition = true;
+                }
+            }
+        }
+        return hasDelayTransition = false;
+    }
+
 }

@@ -21,7 +21,7 @@
     {
       "attributes": {
         "Output Documents": "[\"response\"]",
-        "Rule": "import com.centurylink.mdw.zipkin.tests.SpanId\n\nruntimeContext.logInfo(\"FortuneMain >> Originator: ${variables[\"originator\"]}\")\n\n// populate variables for verifying traceId and spanId\nval tracer = brave.Tracing.currentTracer()\nval span = tracer.currentSpan()\nif (span != null) {\n    variables[\"traceId\"] = span.context().traceIdString()\n    variables[\"spanId\"] = SpanId(span.context().spanId()).hexId()\n}\n\n",
+        "Rule": "import com.centurylink.mdw.zipkin.tests.SpanId\n\nruntimeContext.logInfo(\"FortuneMain >> Originator: ${variables[\"originator\"]}\")\n\n// populate variables for verifying traceId, spanId and parentSpanId\nval span = brave.Tracing.currentTracer().currentSpan()\nif (span != null) {\n    variables[\"traceId\"] = span.context().traceIdString()\n    variables[\"spanId\"] = SpanId(span.context().spanId()).hexId()\n    span.context().parentId()?.let { variables[\"parentSpanId\"] = SpanId(it).hexId() }\n}\n\n",
         "SCRIPT": "Kotlin Script",
         "WORK_DISPLAY_INFO": "x=195,y=128,w=100,h=60"
       },
@@ -65,9 +65,9 @@
       "attributes": {
         "WORK_DISPLAY_INFO": "x=371,y=258,w=100,h=60",
         "processname": "com.centurylink.mdw.zipkin.tests/AsyncSub.proc",
-        "processversion": "[0.1,1)",
+        "processversion": "[0.5,1)",
         "synchronous": "false",
-        "variables": "{\"originator\":\"$originator\"}"
+        "variables": "{\"requestHeaders\":\"$requestHeaders\",\"originator\":\"$originator\"}"
       },
       "id": "A5",
       "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
@@ -102,6 +102,10 @@
   "variables": {
     "originator": {
       "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "parentSpanId": {
+      "category": "LOCAL",
       "type": "java.lang.String"
     },
     "request": {

@@ -13,14 +13,14 @@
       }]
     },
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=586,y=130,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=597,y=239,w=60,h=40"},
       "id": "A2",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
       "name": "Stop"
     },
     {
       "attributes": {
-        "Rule": "import brave.internal.HexCodec.writeHexLong\nimport com.centurylink.mdw.zipkin.tests.SpanId\n\nruntimeContext.logInfo(\"FortuneMain >> Originator: ${variables[\"originator\"]}\")\n\nval tracer = brave.Tracing.currentTracer()\nval span = tracer.currentSpan()\nprintln(\"SPAN2: \" + span)\nif (span != null) {\n    variables[\"traceId\"] = span.context().traceIdString()\n    variables[\"spanId\"] = SpanId(span.context().spanId()).hexId()\n}\n\n",
+        "Rule": "import com.centurylink.mdw.zipkin.tests.SpanId\n\nruntimeContext.logInfo(\"FortuneMain >> Originator: ${variables[\"originator\"]}\")\n\nval span = brave.Tracing.currentTracer().currentSpan()\nif (span != null) {\n    variables[\"traceId\"] = span.context().traceIdString()\n    variables[\"spanId\"] = SpanId(span.context().spanId()).hexId()\n    span.context().parentId()?.let { variables[\"parentSpanId\"] = SpanId(it).hexId() }\n}\n\n",
         "SCRIPT": "Kotlin Script",
         "WORK_DISPLAY_INFO": "x=197,y=120,w=100,h=60"
       },
@@ -28,7 +28,7 @@
       "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
       "name": "Populate",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=343,ly=151,xs=301&386,ys=151&151"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=247,ly=201,xs=247&247,ys=184&219"},
         "event": "FINISH",
         "id": "T2",
         "to": "A4"
@@ -42,15 +42,32 @@
         "PostScriptLang": "Groovy",
         "PreScriptLang": "Groovy",
         "RESPONSE_VARIABLE": "workgroup",
-        "WORK_DISPLAY_INFO": "x=390,y=122,w=100,h=60"
+        "WORK_DISPLAY_INFO": "x=197,y=223,w=105,h=69"
       },
       "id": "A4",
       "implementor": "com.centurylink.mdw.microservice.MicroserviceRestAdapter",
       "name": "Retrieve\nWorkgroup",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=538,ly=151,xs=494&583,ys=151&151"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=347,ly=258,xs=306&389,ys=258&258"},
         "event": "FINISH",
         "id": "T3",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {
+        "STATUS_AFTER_EVENT": "Cancelled",
+        "TIMER_WAIT": "1",
+        "TIMER_WAIT_DISPLAY_UNITS": "Seconds",
+        "WORK_DISPLAY_INFO": "x=392,y=225,w=113,h=68"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+      "name": "Just a\nSecond",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=551,ly=258,xs=509&593,ys=258&258"},
+        "event": "FINISH",
+        "id": "T4",
         "to": "A2"
       }]
     }
@@ -66,6 +83,14 @@
     "originator": {
       "category": "INPUT",
       "type": "java.lang.String"
+    },
+    "parentSpanId": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "requestHeaders": {
+      "category": "INPUT",
+      "type": "java.util.Map<String,String>"
     },
     "spanId": {
       "category": "LOCAL",

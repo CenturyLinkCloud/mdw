@@ -20,6 +20,6 @@ package com.centurylink.mdw.activity.types;
  */
 public interface StartActivity extends GeneralActivity {
     
-    static final String STANDARD_START = "STANDARD_START";     // pseudo completion code indicating standard start
+    String STANDARD_START = "STANDARD_START";     // pseudo completion code indicating standard start
 
 }

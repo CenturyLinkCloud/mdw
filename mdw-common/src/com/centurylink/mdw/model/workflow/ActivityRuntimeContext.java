@@ -55,12 +55,16 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
         return getAttributes().get(name);
     }
 
+    private boolean suspendable;
+    public boolean isSuspendable() { return suspendable; }
+
     public ActivityRuntimeContext(Package pkg, Process process, ProcessInstance processInstance, int performanceLevel,
-            boolean inService, Activity activity, String category, ActivityInstance activityInstance) {
+            boolean inService, Activity activity, String category, ActivityInstance activityInstance, boolean suspendable) {
         super(pkg, process, processInstance, performanceLevel, inService);
         this.activity = activity;
         this.category = category;
         this.activityInstance = activityInstance;
+        this.suspendable = suspendable;
     }
 
     public Long getActivityId() {

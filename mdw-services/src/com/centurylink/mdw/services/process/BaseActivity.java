@@ -17,6 +17,7 @@ package com.centurylink.mdw.services.process;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.GeneralActivity;
+import com.centurylink.mdw.activity.types.SuspendableActivity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
@@ -129,7 +130,8 @@ public abstract class BaseActivity implements GeneralActivity {
                 ActivityImplementor implementor = ImplementorCache.get(activityDef.getImplementor());
                 String category = implementor == null ? GeneralActivity.class.getName() : implementor.getCategory();
                 _runtimeContext = new ActivityRuntimeContext(pkg, getProcessDefinition(), processInst,
-                        getPerformanceLevel(), getEngine().isInService(), activityDef, category, activityInst);
+                        getPerformanceLevel(), getEngine().isInService(), activityDef, category, activityInst,
+                        this instanceof SuspendableActivity);
                 for (VariableInstance var : getParameters())
                     _runtimeContext.getVariables().put(var.getName(), getVariableValue(var.getName()));
             }
@@ -1077,8 +1079,12 @@ public abstract class BaseActivity implements GeneralActivity {
                     else if (event.equals(WorkStatus.LOGMSG_COMPLETE)) {
                         updates = monitor.onFinish(runtimeContext);
                     }
-                    else if (event.equals(WorkStatus.LOGMSG_FAILED))
+                    else if (event.equals(WorkStatus.LOGMSG_FAILED)) {
                         monitor.onError(runtimeContext);
+                    }
+                    else if (event.equals(WorkStatus.LOGMSG_SUSPEND)) {
+                        monitor.onSuspend(runtimeContext);
+                    }
                 }
 
                 if (updates != null) {

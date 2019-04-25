@@ -15,13 +15,28 @@
  */
 package com.centurylink.mdw.model.task;
 
+import com.centurylink.mdw.model.Jsonable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.Category;
+public class TaskCategory implements Jsonable, Comparable<TaskCategory> {
 
-public class TaskCategory extends Category implements Jsonable, Comparable<TaskCategory> {
+    private Long id;
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    private String code;
+    public String getCode() { return code; }
+    public void setCode(String pCode) { this.code = pCode; }
+
+    private String description;
+    public String getDescription() { return this.description; }
+    public void setDescription(String pDesc) { this.description = pDesc; }
+
 
     public TaskCategory(Long id, String code, String name) {
         setId(id);

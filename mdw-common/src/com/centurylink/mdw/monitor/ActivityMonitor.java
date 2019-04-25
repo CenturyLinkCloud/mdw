@@ -17,13 +17,16 @@ package com.centurylink.mdw.monitor;
 
 import com.centurylink.mdw.common.service.RegisteredService;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
-import com.centurylink.mdw.model.workflow.RuntimeContext;
 
 import java.util.Map;
 
 /**
  * Activity monitors can be registered through @Monitor annotations to get
  * (optionally) called whenever an MDW workflow activity is invoked.
+ *
+ * Activities may be dehydrated and then subsequently resumed asynchronously.
+ * These methods are invoked on different instances, and instance-level members should not
+ * be stored for access from lifecycle methods.
  */
 public interface ActivityMonitor extends RegisteredService, Monitor {
 
@@ -58,7 +61,7 @@ public interface ActivityMonitor extends RegisteredService, Monitor {
     default void onError(ActivityRuntimeContext context) {
     }
 
-    default String getCategory(RuntimeContext runtimeContext) {
-        return ((ActivityRuntimeContext)runtimeContext).getCategory();
+    default void onSuspend(ActivityRuntimeContext context) {
     }
+
 }

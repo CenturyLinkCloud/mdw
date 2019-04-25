@@ -26,7 +26,6 @@ try {
                 "mdw-request-id": masterRequestId,
                 "x-b3-traceid": traceId,
                 "x-b3-spanid": spanId,
-                "x-b3-parentspanid": traceId,
                 "x-b3-sampled": "1"
         ]
     }

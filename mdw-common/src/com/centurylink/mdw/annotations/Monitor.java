@@ -15,6 +15,8 @@
  */
 package com.centurylink.mdw.annotations;
 
+import com.centurylink.mdw.model.workflow.Category;
+
 import java.lang.annotation.*;
 
 @Documented
@@ -39,8 +41,6 @@ public @interface Monitor {
      * is enabled unless explicitly deselected in MDW Studio/Hub.
      */
     boolean defaultEnabled() default false;
-
-    String enablementCategory() default "";
 
     /**
      * Default value for user-entered options for this monitor.
