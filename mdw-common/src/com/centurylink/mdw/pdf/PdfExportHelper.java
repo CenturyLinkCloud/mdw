@@ -18,7 +18,7 @@ package com.centurylink.mdw.pdf;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.export.ExportHelper;
 import com.centurylink.mdw.image.ProcessCanvas;
-import com.centurylink.mdw.model.Project;
+import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Activity;

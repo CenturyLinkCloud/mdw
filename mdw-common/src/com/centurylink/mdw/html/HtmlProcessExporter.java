@@ -22,7 +22,7 @@ import java.util.List;
 
 import com.centurylink.mdw.cli.Dependency;
 import com.centurylink.mdw.export.ProcessExporter;
-import com.centurylink.mdw.model.Project;
+import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.workflow.Process;
 
 public class HtmlProcessExporter implements ProcessExporter {

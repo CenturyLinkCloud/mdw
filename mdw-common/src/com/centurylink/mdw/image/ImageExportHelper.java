@@ -22,7 +22,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 import com.centurylink.mdw.export.ExportHelper;
-import com.centurylink.mdw.model.Project;
+import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.workflow.Process;
 
 public class ImageExportHelper extends ExportHelper {

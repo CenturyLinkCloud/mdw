@@ -25,7 +25,7 @@ import java.util.Set;
 
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.html.FlexmarkInstances;
-import com.centurylink.mdw.model.Project;
+import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.Process;
 import com.vladsch.flexmark.ast.Node;

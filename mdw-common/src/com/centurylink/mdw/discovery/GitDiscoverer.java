@@ -1,7 +1,7 @@
 package com.centurylink.mdw.discovery;
 
 import com.centurylink.mdw.model.PackageMeta;
-import com.centurylink.mdw.model.ProjectMeta;
+import com.centurylink.mdw.model.project.ProjectMeta;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.file.Packages;
 import org.json.JSONArray;
