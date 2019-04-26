@@ -164,4 +164,41 @@ public class Data {
                     GeneralActivity.class.getName(), "Dummy Activity", "shape:activity", "{}"));
         }
     }
+
+    public List<String> getDbTables() {
+        List<String> dbTables = project.readDataList("data.db.tables");
+        if (dbTables == null)
+            dbTables = DEFAULT_DB_TABLES;
+        return dbTables;
+    }
+    public static final List<String> DEFAULT_DB_TABLES;
+    static {
+        DEFAULT_DB_TABLES = Arrays.asList(
+                "USER_INFO",
+                "USER_GROUP",
+                "USER_GROUP_MAPPING",
+                "USER_ROLE",
+                "USER_ROLE_MAPPING",
+                "PROCESS_INSTANCE",
+                "ACTIVITY_INSTANCE",
+                "WORK_TRANSITION_INSTANCE",
+                "VARIABLE_INSTANCE",
+                "DOCUMENT",
+                "DOCUMENT_CONTENT",
+                "TASK_INSTANCE",
+                "TASK_INST_GRP_MAPP",
+                "ATTRIBUTE",
+                "VALUE",
+                "ATTACHMENT",
+                "INSTANCE_NOTE",
+                "INSTANCE_INDEX",
+                "EVENT_INSTANCE",
+                "EVENT_WAIT_INSTANCE",
+                "EVENT_LOG",
+                "SOLUTION",
+                "SOLUTION_MAP",
+                "INSTANCE_TIMING",
+                "ASSET_REF"
+        );
+    }
 }

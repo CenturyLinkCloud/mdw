@@ -17,6 +17,8 @@ package com.centurylink.mdw.cli;
 
 import com.beust.jcommander.Parameter;
 import com.centurylink.mdw.config.YamlProperties;
+import com.centurylink.mdw.model.project.Data;
+import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.util.file.Packages;
 import org.json.JSONObject;
 
@@ -647,5 +649,36 @@ public abstract class Setup implements Operation {
         }
         output.append(input.substring(index));
         return output.toString();
+    }
+
+    private Project project;
+    public Project getProject() {
+        if (project == null) {
+            project = new Project();
+        }
+        return project;
+    }
+
+    public class Project implements com.centurylink.mdw.model.project.Project {
+        public File getAssetRoot() {
+            return getAssetRoot();
+        }
+        public String getHubRootUrl() {
+            try {
+                return new Props(Setup.this).get(Props.HUB_URL);
+            }
+            catch (IOException ex) {
+                throw new RuntimeException(ex.getMessage(), ex);
+            }
+        }
+        public MdwVersion getMdwVersion() {
+            return getMdwVersion();
+        }
+        private Data data;
+        public Data getData() {
+            if (data == null)
+                data = new Data(this);
+            return data;
+        }
     }
 }

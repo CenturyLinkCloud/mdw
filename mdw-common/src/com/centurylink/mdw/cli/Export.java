@@ -22,9 +22,6 @@ import com.centurylink.mdw.export.ProcessExporter;
 import com.centurylink.mdw.html.HtmlProcessExporter;
 import com.centurylink.mdw.image.PngProcessExporter;
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.project.Data;
-import com.centurylink.mdw.model.project.Project;
-import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.pdf.PdfProcessExporter;
 
@@ -124,41 +121,12 @@ public class Export extends Setup {
             return new BpmnProcessExporter();
         else {
             final Setup setup = this;
-            Project project = new Project() {
-                public File getAssetRoot() {
-                    try {
-                        return setup.getAssetRoot();
-                    }
-                    catch (IOException ex) {
-                        throw new RuntimeException(ex.getMessage(), ex);
-                    }
-                }
-                public String getHubRootUrl() {
-                    try {
-                        return new Props(setup).get(Props.DISCOVERY_URL);
-                    }
-                    catch (IOException ex) {
-                        throw new RuntimeException(ex.getMessage(), ex);
-                    }
-                }
-                public MdwVersion getMdwVersion() {
-                    try {
-                        return new MdwVersion(setup.getMdwVersion());
-                    }
-                    catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                }
-                public Data getData() {
-                    return null; // TODO
-                }
-            };
             if ("html".equals(format))
-                return new HtmlProcessExporter(project);
+                return new HtmlProcessExporter(getProject());
             else if ("png".equals(format))
-                return new PngProcessExporter(project);
+                return new PngProcessExporter(getProject());
             else if ("pdf".equals(format))
-                return new PdfProcessExporter(project);
+                return new PdfProcessExporter(getProject());
         }
 
         return null;

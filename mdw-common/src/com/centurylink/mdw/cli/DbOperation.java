@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -43,52 +42,11 @@ public class DbOperation extends Setup {
         return oracle;
     }
 
-    /**
-     * TODO: custom tables
-     */
     private List<String> tables;
     protected List<String> getTables() {
         if (tables == null) {
-            tables = Arrays.asList(DEFAULT_TABLES);
+            tables = getProject().getData().getDbTables();
         }
         return tables;
     }
-
-    private final String[] DEFAULT_TABLES = {
-            "USER_INFO",
-            "USER_GROUP",
-            "USER_GROUP_MAPPING",
-            "USER_ROLE",
-            "USER_ROLE_MAPPING",
-
-            "PROCESS_INSTANCE",
-            "ACTIVITY_INSTANCE",
-            "WORK_TRANSITION_INSTANCE",
-            "VARIABLE_INSTANCE",
-
-            "DOCUMENT",
-            "DOCUMENT_CONTENT",
-
-            "TASK_INSTANCE",
-            "TASK_INST_GRP_MAPP",
-
-            "ATTRIBUTE",
-            "VALUE",
-
-            "ATTACHMENT",
-            "INSTANCE_NOTE",
-            "INSTANCE_INDEX",
-
-            "EVENT_INSTANCE",
-            "EVENT_WAIT_INSTANCE",
-            "EVENT_LOG",
-
-            "SOLUTION",
-            "SOLUTION_MAP",
-
-            "INSTANCE_TIMING",
-
-            "ASSET_REF"
-    };
-
 }
