@@ -15,6 +15,11 @@
  */
 package com.centurylink.mdw.image;
 
+import com.centurylink.mdw.model.project.Data;
+import com.centurylink.mdw.model.workflow.ActivityImplementor;
+import org.json.JSONObject;
+
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,13 +27,6 @@ import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.swing.ImageIcon;
-
-import org.json.JSONObject;
-
-import com.centurylink.mdw.draw.model.Data;
-import com.centurylink.mdw.model.workflow.ActivityImplementor;
 
 public class Implementors extends LinkedHashMap<String,ActivityImplementor> {
 
