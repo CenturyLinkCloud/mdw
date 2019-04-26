@@ -22,7 +22,8 @@ import com.centurylink.mdw.export.ProcessExporter;
 import com.centurylink.mdw.html.HtmlProcessExporter;
 import com.centurylink.mdw.image.PngProcessExporter;
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.Project;
+import com.centurylink.mdw.model.project.Data;
+import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.pdf.PdfProcessExporter;
@@ -147,6 +148,9 @@ public class Export extends Setup {
                     catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
+                }
+                public Data getData() {
+                    return null; // TODO
                 }
             };
             if ("html".equals(format))

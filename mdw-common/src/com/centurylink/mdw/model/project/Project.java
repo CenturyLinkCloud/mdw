@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.model;
+package com.centurylink.mdw.model.project;
 
 import com.centurylink.mdw.model.system.MdwVersion;
 
@@ -29,6 +29,8 @@ public interface Project {
 
     MdwVersion getMdwVersion();
 
+    Data getData();
+
     default String readData(String name) {
         return null;
     }
@@ -40,4 +42,5 @@ public interface Project {
     default SortedMap<String,String> readDataMap(String name) {
         return null;
     }
+
 }

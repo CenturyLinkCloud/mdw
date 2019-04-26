@@ -1,4 +1,4 @@
-package com.centurylink.mdw.model;
+package com.centurylink.mdw.model.project;
 
 import com.centurylink.mdw.yaml.YamlLoader;
 
