@@ -22,6 +22,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LayoutManager;
 import java.awt.RenderingHints;
+import java.io.IOException;
 
 import javax.swing.JPanel;
 import javax.swing.UIManager;
@@ -66,9 +67,15 @@ public class ProcessCanvas extends JPanel {
             double scale = (double) this.zoom / 100.0D;
             g2d.scale(scale, scale);
         }
-        final Diagram d = new Diagram(g2d, this.getInitDisplay(), project, process, new Implementors(project.getAssetRoot()), true);
-        diagram = d;
-        d.draw();
+        try {
+            Implementors implementors = new Implementors(project.getAssetRoot());
+            final Diagram d = new Diagram(g2d, this.getInitDisplay(), project, process, implementors, true);
+            diagram = d;
+            d.draw();
+        }
+        catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override

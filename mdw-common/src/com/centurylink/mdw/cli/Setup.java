@@ -660,19 +660,14 @@ public abstract class Setup implements Operation {
     }
 
     public class Project implements com.centurylink.mdw.model.project.Project {
-        public File getAssetRoot() {
-            return getAssetRoot();
+        public File getAssetRoot() throws IOException {
+            return Setup.this.getAssetRoot();
         }
-        public String getHubRootUrl() {
-            try {
-                return new Props(Setup.this).get(Props.HUB_URL);
-            }
-            catch (IOException ex) {
-                throw new RuntimeException(ex.getMessage(), ex);
-            }
+        public String getHubRootUrl() throws IOException {
+            return new Props(Setup.this).get(Props.HUB_URL);
         }
-        public MdwVersion getMdwVersion() {
-            return getMdwVersion();
+        public MdwVersion getMdwVersion() throws IOException {
+            return new MdwVersion(Setup.this.getMdwVersion());
         }
         private Data data;
         public Data getData() {
