@@ -16,12 +16,22 @@
 package com.centurylink.mdw.cli;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
 
 public class Main {
+
+    private static Map<String,Operation> operations = new HashMap<>();
+    private static JCommander.Builder builder = JCommander.newBuilder();
+
+    private static void addOperation(String name, Operation operation) {
+        operations.put(name, operation);
+        builder.addCommand(name, operation);
+    }
 
     public static void main(String[] args) throws IOException {
 
@@ -38,52 +48,32 @@ public class Main {
             }
         }
 
-        // TODO: user reflection to instantiate appropriate command
-        Help help = new Help();
         Main main = new Main();
-        Init init = new Init();
-        Import mport = new Import();
-        Update update = new Update();
-        Install install = new Install();
-        Run run = new Run();
-        Stop stop = new Stop();
-        Git git = new Git();
-        Test test = new Test();
-        Status status = new Status();
-        Version version = new Version();
-        Convert convert = new Convert();
-        Codegen codegen = new Codegen();
-        Vercheck vercheck = new Vercheck();
-        Export export = new Export();
-        BpmnImport bpmnimport = new BpmnImport();
-        Encrypt encrypt = new Encrypt();
-        Decrypt decrypt = new Decrypt();
-        Token token = new Token();
-        Paths paths = new Paths();
+        Help help = new Help();
+        builder.addObject(main).addCommand(help);
+        addOperation("init", new Init());
+        addOperation("import", new Import());
+        addOperation("update", new Update());
+        addOperation("install", new Install());
+        addOperation("run", new Run());
+        addOperation("stop", new Stop());
+        addOperation("version", new Version());
+        addOperation("git", new Git());
+        addOperation("status", new Status());
+        addOperation("test", new Test());
+        addOperation("convert", new Convert());
+        addOperation("codegen", new Codegen());
+        addOperation("vercheck", new Vercheck());
+        addOperation("export", new Export());
+        addOperation("bpmnimport", new BpmnImport());
+        addOperation("encrypt", new Encrypt());
+        addOperation("decrypt", new Decrypt());
+        addOperation("token", new Token());
+        addOperation("paths", new Paths());
+        addOperation("dbexport", new DbExport());
+        addOperation("dbimport", new DbImport());
 
-        JCommander cmd = JCommander.newBuilder()
-            .addObject(main)
-            .addCommand("help", help)
-            .addCommand("init", init)
-            .addCommand("import", mport)
-            .addCommand("update", update)
-            .addCommand("install", install)
-            .addCommand("run", run)
-            .addCommand("stop", stop)
-            .addCommand("version", version)
-            .addCommand("git", git)
-            .addCommand("status", status)
-            .addCommand("test", test)
-            .addCommand("convert", convert)
-            .addCommand("codegen", codegen)
-            .addCommand("vercheck", vercheck)
-            .addCommand("export", export)
-            .addCommand("bpmnimport", bpmnimport)
-            .addCommand("encrypt", encrypt)
-            .addCommand("decrypt", decrypt)
-            .addCommand("token", token)
-            .addCommand("paths", paths)
-            .build();
+        JCommander cmd = builder.build();
 
         cmd.setProgramName("mdw");
 
@@ -95,61 +85,7 @@ public class Main {
                 cmd.usage();
             }
             else {
-                Operation op = null;
-                if (command.equals("init")) {
-                    op = init;
-                }
-                else if (command.equals("import")) {
-                    op = mport;
-                }
-                else if (command.equals("update")) {
-                    op = update;
-                }
-                else if (command.equals("install")) {
-                    op = install;
-                }
-                else if (command.equals("run")) {
-                    op = run;
-                }
-                else if (command.equals("stop")) {
-                    op = stop;
-                }
-                else if (command.equals("status")) {
-                    op = status;
-                }
-                else if (command.equals("test")) {
-                    op = test;
-                }
-                else if (command.equals("version")) {
-                    op = version;
-                }
-                else if (command.equals("convert")) {
-                    op = convert;
-                }
-                else if (command.equals("codegen")) {
-                    op = codegen;
-                }
-                else if (command.equals("vercheck")) {
-                    op = vercheck;
-                }
-                else if (command.equals("export")) {
-                    op = export;
-                }
-                else if (command.equals("bpmnimport")) {
-                    op = bpmnimport;
-                }
-                else if (command.equals("encrypt")) {
-                    op = encrypt;
-                }
-                else if (command.equals("decrypt")) {
-                    op = decrypt;
-                }
-                else if (command.equals("token")) {
-                    op = token;
-                }
-                else if (command.equals("paths")) {
-                    op = paths;
-                }
+                Operation op = operations.get(command);
 
                 if (op == null) {
                     cmd.usage();
@@ -185,6 +121,8 @@ public class Main {
             System.exit(-1);
         }
     }
+
+
 
     @Parameters(commandNames="help", commandDescription="Syntax Help")
     static class Help { }
