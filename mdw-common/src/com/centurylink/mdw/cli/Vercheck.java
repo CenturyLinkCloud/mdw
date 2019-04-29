@@ -340,17 +340,6 @@ public class Vercheck extends Setup {
         return true;
     }
 
-    private Map<String,Properties> getVersionProps(Map<String,File> packageDirs) throws IOException {
-        Map<String,Properties> versionProps = new HashMap<>();
-        for (String pkg : packageDirs.keySet()) {
-            File packageDir = packageDirs.get(pkg);
-            Properties props = new Properties();
-            props.load(new FileInputStream(packageDir + "/" + META_DIR + "/versions"));
-            versionProps.put(pkg, props);
-        }
-        return versionProps;
-    }
-
     private boolean updateVersion(AssetFile assetFile, int newVer) throws IOException {
         File versionsFile = new File(getAssetRoot() + "/" + assetFile.getPackagePath() + "/" + META_DIR + "/versions");
         VersionProperties versionProperties = new VersionProperties(versionsFile);
@@ -365,13 +354,6 @@ public class Vercheck extends Setup {
         versionProperties.remove(assetFile.getAssetName());
         versionProperties.save();
         return true;
-    }
-
-    private static String formatVersion(int version) {
-        if (version == 0)
-            return "0";
-        else
-            return version/1000 + "." + version%1000;
     }
 
     class AssetFile {

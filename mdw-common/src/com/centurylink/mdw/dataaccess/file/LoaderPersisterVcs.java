@@ -15,30 +15,6 @@
  */
 package com.centurylink.mdw.dataaccess.file;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import com.centurylink.mdw.util.file.Packages;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlOptions;
-import org.json.JSONException;
-import org.yaml.snakeyaml.Yaml;
-
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.cache.impl.AssetRefCache;
 import com.centurylink.mdw.config.PropertyManager;
@@ -46,14 +22,7 @@ import com.centurylink.mdw.config.YamlBuilder;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.dataaccess.AssetRef;
-import com.centurylink.mdw.dataaccess.AssetRevision;
-import com.centurylink.mdw.dataaccess.BaselineData;
-import com.centurylink.mdw.dataaccess.DataAccess;
-import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.ProcessLoader;
-import com.centurylink.mdw.dataaccess.ProcessPersister;
-import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.dataaccess.*;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.attribute.Attribute;
@@ -68,7 +37,16 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.AssetRefConverter;
 import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.MdwIgnore;
+import com.centurylink.mdw.util.file.Packages;
 import com.centurylink.mdw.util.timer.ProgressMonitor;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
+import org.json.JSONException;
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.*;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
@@ -1052,70 +1030,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         taskCats.addAll(baselineData.getTaskCategories().values());
         Collections.sort(taskCats);
         return taskCats;
-    }
-
-    public Set<String> getTaskCategorySet() throws DataAccessException {
-        return new HashSet<>(baselineData.getTaskCategoryCodes().values());
-    }
-
-    /**
-     * uses db loader method to avoid code duplication
-     */
-    public List<Process> findCallingProcesses(Process subproc) throws DataAccessException {
-        List<Process> callers = new ArrayList<>();
-        try {
-            Pattern singleProcPattern = Pattern.compile("^.*\"processname\": \".*" + subproc.getName() + ".*\"", Pattern.MULTILINE);
-            Pattern multiProcPattern = Pattern.compile("^.*\"processmap\": \".*" + subproc.getName() + ".*\"", Pattern.MULTILINE);
-            for (PackageDir pkgDir : getPackageDirs()) {
-                for (File procFile : pkgDir.listFiles(procFileFilter)) {
-                    String json = new String(read(procFile));
-                    if (singleProcPattern.matcher(json).find() || multiProcPattern.matcher(json).find()) {
-                        Process procVO = loadProcess(pkgDir, pkgDir.getAssetFile(procFile), true);
-                        for (Activity activity : procVO.getActivities()) {
-                            if (activityInvokesProcess(activity, subproc) && !callers.contains(procVO))
-                                callers.add(procVO);
-                        }
-                        for (Process embedded : procVO.getSubprocesses()) {
-                            for (Activity activity : embedded.getActivities()) {
-                                if (activityInvokesProcess(activity, subproc) && !callers.contains(procVO))
-                                    callers.add(procVO);
-                            }
-                        }
-                    }
-                }
-            }
-            return callers;
-        }
-        catch (Exception ex) {
-            throw new DataAccessException(ex.getMessage(), ex);
-        }
-    }
-
-    /**
-     * uses db loader method to avoid code duplication
-     */
-    public List<Process> findCalledProcesses(Process mainproc) throws DataAccessException {
-        // make sure process is loaded
-        mainproc = loadProcess(mainproc.getId(), false);
-        return findInvoked(mainproc, getProcessList(true));
-    }
-
-    public List<Process> getProcessListForImplementor(Long implementorId, String implementorClass) throws DataAccessException {
-        List<Process> processes = new ArrayList<>();
-        try {
-            String implDecl = "\"implementor\": \"" + implementorClass + "\"";  // crude but fast
-            for (PackageDir pkgDir : getPackageDirs()) {
-                for (File procFile : pkgDir.listFiles(procFileFilter)) {
-                    String json = new String(read(procFile));
-                    if (json.contains(implDecl))
-                        processes.add(loadProcess(pkgDir, pkgDir.getAssetFile(procFile), false));
-                }
-            }
-            return processes;
-        }
-        catch (Exception ex) {
-            throw new DataAccessException(ex.getMessage(), ex);
-        }
     }
 
     /**

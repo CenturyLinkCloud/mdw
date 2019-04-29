@@ -23,6 +23,7 @@ import com.centurylink.mdw.util.file.Packages;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
@@ -31,9 +32,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +42,7 @@ import java.util.regex.Pattern;
 public abstract class Setup implements Operation {
 
     protected static final String META_DIR = ".mdw";
+    protected static final String VERSIONS = "versions";
     protected static final String MDW_COMMON_PATH = "/com/centurylink/mdw/mdw-templates/";
     public static final String MAVEN_CENTRAL_URL = "http://repo.maven.apache.org/maven2";
     public static final String SONATYPE_URL = "https://oss.sonatype.org/service/local/artifact/maven";
@@ -609,6 +611,23 @@ public abstract class Setup implements Operation {
         return assetPackageDirs;
     }
 
+    public Map<String,List<File>> findAllAssets(String ext) throws IOException {
+        Map<String,List<File>> matchingAssets = new HashMap<>();
+        for (String pkg : getAssetPackageDirs().getPackageNames()) {
+            for (File assetFile : getAssetPackageDirs().getAssetFiles(pkg)) {
+                if (assetFile.getName().endsWith("." + ext)) {
+                    List<File> pkgAssets = matchingAssets.get(pkg);
+                    if (pkgAssets == null) {
+                        pkgAssets = new ArrayList<>();
+                        matchingAssets.put(pkg, pkgAssets);
+                    }
+                    pkgAssets.add(assetFile);
+                }
+            }
+        }
+        return matchingAssets;
+    }
+
     protected List<File> getAssetFiles(String packageName) throws IOException {
         return getAssetPackageDirs().getAssetFiles(packageName);
     }
@@ -631,6 +650,46 @@ public abstract class Setup implements Operation {
             Files.write(Paths.get(getProjectDir() + "/build.gradle"),
                     newContents.toString().getBytes());
         }
+    }
+
+    protected Map<String,Properties> getVersionProps(Map<String,File> packageDirs) throws IOException {
+        Map<String,Properties> versionProps = new HashMap<>();
+        for (String pkg : packageDirs.keySet()) {
+            File packageDir = packageDirs.get(pkg);
+            Properties props = new Properties();
+            props.load(new FileInputStream(packageDir + "/" + META_DIR + "/versions"));
+            versionProps.put(pkg, props);
+        }
+        return versionProps;
+    }
+
+    static long getAssetId(String assetPath, int assetVersion) throws IOException {
+        String logicalPath = assetPath + " v" + formatVersion(assetVersion);
+        String blob = "blob " + logicalPath.length() + "\0" + logicalPath;
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
+            byte[] bytes = md.digest(blob.getBytes());
+            String h = byteArrayToHexString(bytes).substring(0, 7);
+            return Long.parseLong(h, 16);
+        }
+        catch (NoSuchAlgorithmException ex) {
+            throw new IOException(ex.getMessage(), ex);
+        }
+    }
+
+    static String formatVersion(int version) {
+        if (version == 0)
+            return "0";
+        else
+            return version/1000 + "." + version%1000;
+    }
+
+    private static String byteArrayToHexString(byte[] b) {
+        String result = "";
+        for (int i = 0; i < b.length; i++) {
+            result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
+        }
+        return result;
     }
 
     /**
