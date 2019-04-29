@@ -48,9 +48,6 @@ public interface ProcessLoader {
     Process loadProcess(Long processID, boolean withSubProcesses)
     throws DataAccessException;
 
-    Process getProcessBase(Long processId)
-    throws DataAccessException;
-
     Process getProcessBase(String name, int version)
     throws DataAccessException;
 
@@ -69,12 +66,6 @@ public interface ProcessLoader {
     List<TaskCategory> getTaskCategories()
     throws DataAccessException;
 
-    List<Process> findCallingProcesses(Process subproc)
-    throws DataAccessException;
-
-    List<Process> findCalledProcesses(Process main)
-    throws DataAccessException;
-
     List<Asset> getAssets()
     throws DataAccessException;
 
@@ -90,9 +81,6 @@ public interface ProcessLoader {
     Asset getAssetForOwner(String ownerType, Long ownerId)
     throws DataAccessException;
 
-    public List<Process> getProcessListForImplementor(Long implementorId, String implementorClass)
-    throws DataAccessException;
-
-    public Map<String,String> getAttributes(String ownerType, Long ownerId)
+    Map<String,String> getAttributes(String ownerType, Long ownerId)
     throws DataAccessException;
 }

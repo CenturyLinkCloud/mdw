@@ -20,7 +20,6 @@ import java.util.List;
 
 /**
  * Represents a workflow process in a hierarchical structure of called/calling processes.
- * TODO: Refactor ProcessHierarchyContentProvider in the Designer UI project to use this model object.
  */
 public class LinkedProcess {
 

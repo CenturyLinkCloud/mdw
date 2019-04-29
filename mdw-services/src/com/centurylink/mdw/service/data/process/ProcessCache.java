@@ -53,9 +53,9 @@ public class ProcessCache implements CacheService {
     private volatile Map<String,Process> procNameLatest;
 
     private ProcessCache() {
-        processMap = new ConcurrentHashMap<Long,Process>();
-        procNameMap = new ConcurrentHashMap<String,List<Process>>();
-        procNameLatest = new ConcurrentHashMap<String,Process>();
+        processMap = new ConcurrentHashMap<>();
+        procNameMap = new ConcurrentHashMap<>();
+        procNameLatest = new ConcurrentHashMap<>();
     }
 
     synchronized private static ProcessCache getSingleton() {
