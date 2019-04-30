@@ -25,7 +25,7 @@ public class ProcessHierarchy implements Jsonable {
                 List<String[]> procmap = StringHelper.parseTable(procMap, ',', ';', 3);
                 for (int i = 0; i < procmap.size(); i++) {
                     String nameSpec = procmap.get(i)[1];
-                    if (nameSpec != null && (nameSpec.equals(subproc.getName()) || nameSpec.endsWith("/" + subproc.getName()))) {
+                    if (nameSpec != null && (nameSpec.equals(subproc.getName()) || nameSpec.endsWith("/" + subproc.getName() + ".proc"))) {
                         String verSpec = procmap.get(i)[2];
                         if (subproc.meetsVersionSpec(verSpec))
                             return true;
@@ -66,7 +66,7 @@ public class ProcessHierarchy implements Jsonable {
                                 if (verSpec != null) {
                                     Process latestMatch = null;
                                     for (Process process : processes) {
-                                        if ((nameSpec.equals(process.getName()) || nameSpec.endsWith("/" + process.getName()))
+                                        if ((nameSpec.equals(process.getName()) || nameSpec.endsWith("/" + process.getName() + ".proc"))
                                                 && (process.meetsVersionSpec(verSpec) && (latestMatch == null || latestMatch.getVersion() < process.getVersion()))) {
                                             latestMatch = process;
                                         }
