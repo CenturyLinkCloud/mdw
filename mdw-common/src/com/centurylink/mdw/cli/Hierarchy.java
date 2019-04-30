@@ -59,6 +59,9 @@ public class Hierarchy extends Setup {
             addCalledHierarchy(topLevelCaller);
         }
         processHierarchy = new JSONObject();
+        processHierarchy.put("hierarchy", new JSONArray());
+        populateProcessHierarchy(topLevelCallers, processHierarchy);
+        System.out.println(processHierarchy);
         return this;
     }
 
@@ -149,6 +152,25 @@ public class Hierarchy extends Setup {
             child.setParent(caller);
             caller.getChildren().add(child);
             addCalledHierarchy(child);
+        }
+    }
+
+    private void populateProcessHierarchy(List<LinkedProcess> processes, JSONObject json) {
+        for (LinkedProcess process : processes) {
+            Process proc = process.getProcess();
+            JSONArray array;
+            if (json.has("hierarchy"))
+                array = json.getJSONArray("hierarchy");
+            else
+                array = json.getJSONArray("children");
+            JSONObject obj = new JSONObject();
+            obj.put("name" , proc.getName());
+            obj.put("version", proc.getVersionString());
+            array.put(obj);
+            if (process.getChildren() != null && process.getChildren().size() > 0) {
+                obj.put("children", new JSONArray());
+                populateProcessHierarchy(process.getChildren(), obj);
+            }
         }
     }
 
