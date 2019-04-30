@@ -233,11 +233,4 @@ ALTER TABLE INSTANCE_TIMING ADD
   PRIMARY KEY(INSTANCE_ID,OWNER_TYPE)
 );
 
--- these reporting indexes may take a long time to run on existing dbs
---CREATE INDEX PROCINST_PROC_ID_IDX
---ON PROCESS_INSTANCE (PROCESS_ID);
---
---CREATE INDEX DOCUMENT_PATH_IDX
---ON DOCUMENT (PATH);
-
 spool off;

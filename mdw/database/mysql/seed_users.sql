@@ -56,7 +56,7 @@ values ((select user_info_id from USER_INFO where cuid = 'jbrojde' and end_date 
 insert into USER_ROLE_MAPPING
 (user_role_mapping_owner, user_role_mapping_owner_id, user_role_id, create_usr, create_dt)
 values ('USER_GROUP_MAP',
-        (select user_group_mapping_id from USER_GROUP_MAPPING ugm, user_group ug, USER_INFO ui
+        (select user_group_mapping_id from USER_GROUP_MAPPING ugm, USER_GROUP ug, USER_INFO ui
          where ugm.user_group_id = ug.user_group_id
          and ui.user_info_id = ugm.user_info_id
          and ui.cuid = 'dxoakes'
@@ -67,7 +67,7 @@ values ('USER_GROUP_MAP',
 insert into USER_ROLE_MAPPING
 (user_role_mapping_owner, user_role_mapping_owner_id, user_role_id, create_usr, create_dt)
 values ('USER_GROUP_MAP',
-        (select user_group_mapping_id from USER_GROUP_MAPPING ugm, user_group ug, USER_INFO ui
+        (select user_group_mapping_id from USER_GROUP_MAPPING ugm, USER_GROUP ug, USER_INFO ui
          where ugm.user_group_id = ug.user_group_id
          and ui.user_info_id = ugm.user_info_id
          and ui.cuid = 'aa56486'
@@ -78,7 +78,7 @@ values ('USER_GROUP_MAP',
 insert into USER_ROLE_MAPPING
 (user_role_mapping_owner, user_role_mapping_owner_id, user_role_id, create_usr, create_dt)
 values ('USER_GROUP_MAP',
-        (select user_group_mapping_id from USER_GROUP_MAPPING ugm, user_group ug, USER_INFO ui
+        (select user_group_mapping_id from USER_GROUP_MAPPING ugm, USER_GROUP ug, USER_INFO ui
          where ugm.user_group_id = ug.user_group_id
          and ui.user_info_id = ugm.user_info_id
          and ui.cuid = 'jbrojde'
