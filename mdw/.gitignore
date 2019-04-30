@@ -12,3 +12,4 @@ mdw.log
 /buildSrc/
 mdw-boot-*.jar
 .idea/**/*.iml
+/data.json

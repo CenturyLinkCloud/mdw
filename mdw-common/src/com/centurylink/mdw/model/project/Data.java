@@ -4,6 +4,7 @@ import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import org.json.JSONArray;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -20,7 +21,7 @@ public class Data {
         this.project = project;
     }
 
-    public List<String> getWorkgroups() {
+    public List<String> getWorkgroups() throws IOException {
         List<String> workgroups = project.readDataList("data.workgroups");
         if (workgroups == null)
             workgroups = DEFAULT_WORKGROUPS;
@@ -37,7 +38,7 @@ public class Data {
         );
     }
 
-    public Map<String,String> getDocumentTypes() {
+    public Map<String,String> getDocumentTypes() throws IOException {
         Map<String,String> documentTypes = project.readDataMap("data.document.types");
         if (documentTypes == null)
             documentTypes = DEFAULT_DOCUMENT_TYPES;
@@ -68,7 +69,7 @@ public class Data {
         }};
     }
 
-    public List<String> getBinaryAssetExts() {
+    public List<String> getBinaryAssetExts() throws IOException {
         List<String> binaryAssetExts = project.readDataList("data.binary.asset.exts");
         if (binaryAssetExts == null)
             binaryAssetExts = DEFAULT_BINARY_ASSET_EXTS;
@@ -93,7 +94,7 @@ public class Data {
         );
     }
 
-    public Map<String,String> getTaskCategories() {
+    public Map<String,String> getTaskCategories() throws IOException {
         Map<String,String> taskCategories = project.readDataMap("data.task.categories");
         if (taskCategories == null)
             taskCategories = DEFAULT_TASK_CATEGORIES;
@@ -165,7 +166,7 @@ public class Data {
         }
     }
 
-    public List<String> getDbTables() {
+    public List<String> getDbTables() throws IOException {
         List<String> dbTables = project.readDataList("data.db.tables");
         if (dbTables == null)
             dbTables = DEFAULT_DB_TABLES;
@@ -187,26 +188,23 @@ public class Data {
                 "DOCUMENT_CONTENT",
                 "TASK_INSTANCE",
                 "TASK_INST_GRP_MAPP",
-                "ATTRIBUTE",
-                "VALUE",
-                "ATTACHMENT",
-                "INSTANCE_NOTE",
-                "INSTANCE_INDEX",
                 "EVENT_INSTANCE",
                 "EVENT_WAIT_INSTANCE",
-                // "EVENT_LOG",
+                "ATTRIBUTE",
+                "VALUE",
+                "INSTANCE_INDEX",
+                "INSTANCE_NOTE",
+                "ATTACHMENT",
                 "SOLUTION",
-                "SOLUTION_MAP",
-                // "INSTANCE_TIMING",
-                "ASSET_REF"
+                "SOLUTION_MAP"
         );
     }
 
     /**
      * Tables excluded from export which need to be purged on import.
      */
-    public List<String> getExcludedTables() {
-        List<String> dbTables = project.readDataList("data.excluded.tables");
+    public List<String> getExcludedTables() throws IOException {
+        List<String> dbTables = project.readDataList("data.db.excluded");
         if (dbTables == null)
             dbTables = DEFAULT_EXCLUDED_TABLES;
         return dbTables;
@@ -216,7 +214,8 @@ public class Data {
     static {
         DEFAULT_EXCLUDED_TABLES = Arrays.asList(
                 "EVENT_LOG",
-                "INSTANCE_TIMING"
+                "INSTANCE_TIMING",
+                "ASSET_REF"
         );
     }
 }

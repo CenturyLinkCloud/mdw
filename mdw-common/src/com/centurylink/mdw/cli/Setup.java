@@ -736,5 +736,30 @@ public abstract class Setup implements Operation {
                 data = new Data(this);
             return data;
         }
+
+        @Override
+        public String readData(String name) throws IOException {
+            YamlProperties projectYaml = getProjectYaml();
+            return projectYaml == null ? null : projectYaml.getString(name);
+        }
+
+        @Override
+        public List<String> readDataList(String name) throws IOException {
+            YamlProperties projectYaml = getProjectYaml();
+            return projectYaml == null ? null : projectYaml.getList(name);
+        }
+
+        @Override
+        public SortedMap<String,String> readDataMap(String name) throws IOException {
+            YamlProperties projectYaml = getProjectYaml();
+            if (projectYaml == null)
+                return null;
+            Map<String,String> map = projectYaml.getMap(name);
+            if (map == null)
+                return null;
+            TreeMap<String,String> sortedMap = new TreeMap<>();
+            sortedMap.putAll(map);
+            return sortedMap;
+        }
     }
 }

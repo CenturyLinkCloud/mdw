@@ -36,11 +36,11 @@ public interface Project {
         return null;
     }
 
-    default List<String> readDataList(String name) {
+    default List<String> readDataList(String name) throws IOException {
         return null;
     }
 
-    default SortedMap<String,String> readDataMap(String name) {
+    default SortedMap<String,String> readDataMap(String name) throws IOException {
         return null;
     }
 
