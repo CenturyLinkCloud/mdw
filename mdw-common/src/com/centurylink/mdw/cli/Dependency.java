@@ -27,6 +27,19 @@ public class Dependency implements Operation {
         if (System.getProperty("mdw.studio.version") != null)
             return this; // dependencies are provided with plugin
 
+        File libDir = getLibDir();
+        File depJar = new File(libDir + "/" + path.substring(path.lastIndexOf('/')));
+        if (!depJar.exists()) {
+            getOut().println("Downloading " + depJar + "...");
+            new Download(new URL(mavenRepoUrl + "/" + path), depJar, size).run(progressMonitors);
+        }
+        return this;
+    }
+
+    /**
+     * Creates libDir and throws IOException if unable.
+     */
+    static File getLibDir() throws IOException {
         String mdwHome = System.getenv("MDW_HOME");
         if (mdwHome == null)
             mdwHome = System.getProperty("mdw.home");
@@ -38,12 +51,6 @@ public class Dependency implements Operation {
         File libDir = new File (mdwDir + "/lib");
         if (!libDir.exists() && !libDir.mkdirs())
             throw new IOException("Cannot create lib dir: " + libDir.getAbsolutePath());
-
-        File depJar = new File(libDir + "/" + path.substring(path.lastIndexOf('/')));
-        if (!depJar.exists()) {
-            getOut().println("Downloading " + depJar + "...");
-            new Download(new URL(mavenRepoUrl + "/" + path), depJar, size).run(progressMonitors);
-        }
-        return this;
+        return libDir;
     }
 }

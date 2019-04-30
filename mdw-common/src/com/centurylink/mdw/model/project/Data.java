@@ -194,11 +194,29 @@ public class Data {
                 "INSTANCE_INDEX",
                 "EVENT_INSTANCE",
                 "EVENT_WAIT_INSTANCE",
-                "EVENT_LOG",
+                // "EVENT_LOG",
                 "SOLUTION",
                 "SOLUTION_MAP",
-                "INSTANCE_TIMING",
+                // "INSTANCE_TIMING",
                 "ASSET_REF"
+        );
+    }
+
+    /**
+     * Tables excluded from export which need to be purged on import.
+     */
+    public List<String> getExcludedTables() {
+        List<String> dbTables = project.readDataList("data.excluded.tables");
+        if (dbTables == null)
+            dbTables = DEFAULT_EXCLUDED_TABLES;
+        return dbTables;
+    }
+
+    public static final List<String> DEFAULT_EXCLUDED_TABLES;
+    static {
+        DEFAULT_EXCLUDED_TABLES = Arrays.asList(
+                "EVENT_LOG",
+                "INSTANCE_TIMING"
         );
     }
 }
