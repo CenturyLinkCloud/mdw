@@ -421,8 +421,10 @@ public abstract class Setup implements Operation {
         return lastSlash < assetPath.length() ? assetPath.substring(lastSlash + 1) : assetPath;
     }
     public File getAssetFile(String assetPath) throws IOException {
-        return new File(getAssetRoot() + "/" + getPackageName(assetPath).replace('.', '/') + "/"
-                + getAssetName(assetPath));
+        String packageName = getPackageName(assetPath);
+        if (packageName == null)
+            return null;
+        return new File(getAssetRoot() + "/" + packageName.replace('.', '/') + "/" + getAssetName(assetPath));
     }
 
     public File getAssetRoot() throws IOException {

@@ -61,6 +61,9 @@ public class DbImport extends DbOperation {
         for (ProgressMonitor monitor : monitors)
             monitor.progress(5);
 
+        List<String> tables = new ArrayList<>(getTables());
+        tables.addAll(getExcludedTables());
+
         // read/insert data (90% progress)
         Connection conn = null;
         try {
@@ -70,7 +73,6 @@ public class DbImport extends DbOperation {
             try (Statement st = conn.createStatement()) {
                 if (!isOracle())
                     st.executeUpdate("set FOREIGN_KEY_CHECKS = 0");
-                List<String> tables = getTables();
                 for (int i = tables.size() - 1; i >= 0; i--) {
                     String table = tables.get(i);
                     String truncate = "truncate table " + table;
