@@ -160,6 +160,7 @@ public class DbImport extends DbOperation {
             }
             for (ProgressMonitor monitor : monitors)
                 monitor.progress(100);
+            System.out.println("Import successful.  Restart server to avoid data cache inconsistencies");
         } catch (SQLException ex) {
             throw new IOException(ex);
         } finally {

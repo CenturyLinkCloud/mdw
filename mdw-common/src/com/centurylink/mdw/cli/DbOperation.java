@@ -55,7 +55,7 @@ public class DbOperation extends Setup {
     }
 
     private List<String> tables;
-    protected List<String> getTables() {
+    protected List<String> getTables() throws IOException {
         if (tables == null) {
             tables = getProject().getData().getDbTables();
         }
@@ -63,7 +63,7 @@ public class DbOperation extends Setup {
     }
 
     private List<String> excludedTables;
-    protected List<String> getExcludedTables() {
+    protected List<String> getExcludedTables() throws IOException {
         if (excludedTables == null) {
             excludedTables = getProject().getData().getExcludedTables();
         }
