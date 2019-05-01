@@ -22,7 +22,6 @@ import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventLog;
@@ -556,23 +555,11 @@ public class EventServicesImpl implements EventServices {
         }
     }
 
-    public Document getDocumentVO(Long docid)
-    throws DataAccessException {
-        try {
-            DatabaseAccess db = new DatabaseAccess(null);
-            RuntimeDataAccess da = DataAccess.getRuntimeDataAccess(db);
-            return da.getDocument(docid);
-        } catch (Exception ex) {
-            throw new DataAccessException(-1, ex.getMessage(), ex);
-        }
-    }
-
     public List<EventLog> getEventLogs(String pEventName, String pEventSource,
             String pEventOwner, Long pEventOwnerId) throws DataAccessException {
         try {
-            DatabaseAccess db = new DatabaseAccess(null);
-            RuntimeDataAccess da = DataAccess.getRuntimeDataAccess(db);
-            return da.getEventLogs(pEventName, pEventSource, pEventOwner, pEventOwnerId);
+            return DataAccess.getRuntimeDataAccess(new DatabaseAccess(null))
+                    .getEventLogs(pEventName, pEventSource, pEventOwner, pEventOwnerId);
         } catch (Exception ex) {
             throw new DataAccessException(-1, ex.getMessage(), ex);
         }

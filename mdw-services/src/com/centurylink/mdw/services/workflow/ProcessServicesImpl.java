@@ -43,21 +43,6 @@ public class ProcessServicesImpl implements ProcessServices {
         return getRuntimeDataAccess().getProcessInstanceBase(processInstanceId);
     }
 
-    public LinkedProcessInstance getCallHierearchy(Long processInstanceId) throws DataAccessException {
-        return getRuntimeDataAccess().getProcessInstanceCallHierarchy(processInstanceId);
-    }
-
-    public void deleteProcessInstances(ProcessList processList) throws DataAccessException {
-        List<Long> ids = new ArrayList<Long>();
-        for (ProcessInstance processInstance : processList.getItems())
-            ids.add(processInstance.getId());
-        getRuntimeDataAccess().deleteProcessInstances(ids);
-    }
-
-    public int deleteProcessInstances(Long processId) throws DataAccessException {
-        return getRuntimeDataAccess().deleteProcessInstancesForProcess(processId);
-    }
-
     private RuntimeDataAccess getRuntimeDataAccess() throws DataAccessException {
         return DataAccess.getRuntimeDataAccess(new DatabaseAccess(null));
     }

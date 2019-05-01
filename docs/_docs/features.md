@@ -7,15 +7,18 @@ overview: true
 ### Straight out of the box MDW gives you:
 
 - Design-time tools for modeling and simulating workflow processes
-- Built for the cloud, enabling users to build in the cloud
-- Declarative business rules in the form of intuitive Excel decision tables
-- Services orchestration for SOAP, REST, JMS, LDAP, JDBC, SMTP and File I/O
-- Web tools for business users to manage manual tasks integrated into their workflows
-- Automated or manual retry and fallout handling
-- Alerts, notifications and jeopardy management based on business-owned due dates and SLAs 
 - Runtime monitoring with the ability to drill down and graphically view runtime state for a particular instance
+- Web tools for business users to manage workflows and manual tasks
+- Built for the cloud, enabling users to design in the cloud
+- Declarative business rules in the form of intuitive Excel decision tables
+- Service orchestration for SOAP, REST, JMS, Kafka, Camel, LDAP, JDBC, SMTP and File I/O
+- Automated or manual bulk retry and fallout handling
+- Alerts, notifications and jeopardy management based on business-owned due dates and SLAs 
 - End-to-end business intelligence and reporting tools that reflect business-defined milestones
-- A discoverable repository of prebuilt workflow assets that can be used as-is or extended 
+- A discoverable repository of prebuilt workflow assets that can be used as-is or extended
+- Readily customizable web UI and dashboard charts
+- In-flight workflow changes to adapt for specific conditions
+- Collaboration features including two-way Slack integration
 
 ### Microservice Orchestration:
 MDW helps you make sense of your microservices.  Included is a easy to use toolkit for stitching together REST 

@@ -182,7 +182,7 @@ public class Activities extends JsonRestService implements JsonExportable {
 
     @Path("/definitions")
     public JSONObject getDefinitions(Query query) throws ServiceException {
-        ActivityList activityVOs = getWorkflowServices().getActivityDefinitions(query);
+        ActivityList activityVOs = ServiceLocator.getDesignServices().getActivityDefinitions(query);
         JSONArray jsonActivities = new JSONArray();
         for (ActivityInstance activityInstance : activityVOs.getActivities()) {
             jsonActivities.put(activityInstance.getJson());

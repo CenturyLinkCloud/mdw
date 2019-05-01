@@ -1,25 +1,21 @@
 package com.centurylink.mdw.microservice;
 
-import java.util.Map;
-
-import javax.ws.rs.Path;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.Path;
+import java.util.Map;
 
 @Path("/summary")
 @Api("Service summary retrieval")
@@ -79,20 +75,15 @@ public class ServiceSummaryApi extends JsonRestService {
     private ServiceSummary findServiceSummary(Query query) throws ServiceException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
         MicroserviceAccess serviceAccess = new MicroserviceAccess();
-        ServiceSummary serviceSummary = null;
+        ServiceSummary serviceSummary;
         String masterRequestId = query.getFilter("masterRequestId");
         if (masterRequestId != null) {
             // Do not assume serviceSummary defined in master process instance
             ProcessInstance masterProcess = workflowServices.getMasterProcess(masterRequestId);
             if (masterProcess == null)
                 throw new ServiceException(ServiceException.NOT_FOUND, "Master process not found for: " + masterRequestId);
-            try {
-                serviceSummary = serviceAccess.findServiceSummary(ServiceLocator
-                        .getProcessServices().getCallHierearchy(masterProcess.getId()));
-            }
-            catch (DataAccessException ex) {
-                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
-            }
+            serviceSummary = serviceAccess.findServiceSummary(ServiceLocator
+                    .getWorkflowServices().getCallHierearchy(masterProcess.getId()));
         }
         else if (query.getFilter("processInstanceId") != null) {
             try {

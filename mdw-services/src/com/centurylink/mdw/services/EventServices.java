@@ -37,23 +37,23 @@ import com.centurylink.mdw.services.event.WorkflowHandler;
 
 public interface EventServices {
 
-    public void createAuditLog(UserAction userAction)
+    void createAuditLog(UserAction userAction)
     throws DataAccessException, EventException;
 
-    public Long createEventLog(String pEventName, String pEventCategory, String pEventSubCat, String pEventSource,
+    Long createEventLog(String pEventName, String pEventCategory, String pEventSubCat, String pEventSource,
         String pEventOwner, Long pEventOwnerId, String user, String modUser, String comments)
     throws DataAccessException, EventException;
 
-    public List<EventLog> getEventLogs(String pEventName, String pEventSource,
+    List<EventLog> getEventLogs(String pEventName, String pEventSource,
             String pEventOwner, Long pEventOwnerId) throws DataAccessException;
 
-    public Integer notifyProcess(String pEventName, Long pEventInstId, String message, int delay)
+    Integer notifyProcess(String pEventName, Long pEventInstId, String message, int delay)
     throws DataAccessException, EventException;
 
     /**
      * get variable instance by its ID
      */
-    public VariableInstance getVariableInstance(Long varInstId)
+    VariableInstance getVariableInstance(Long varInstId)
     throws DataAccessException;
 
     /**
@@ -61,7 +61,7 @@ public interface EventServices {
      * The method does not take care of embedded process, so the caller needs to pass
      * the parent process instance id when looking for variables for embedded process
      */
-    public VariableInstance getVariableInstance(Long procInstId, String name)
+    VariableInstance getVariableInstance(Long procInstId, String name)
     throws DataAccessException;
 
     /**
@@ -77,35 +77,32 @@ public interface EventServices {
      * @return
      * @throws DataAccessException
      */
-    public VariableInstance setVariableInstance(Long procInstId, String name, Object value)
+    VariableInstance setVariableInstance(Long procInstId, String name, Object value)
     throws DataAccessException;
 
-    public Document getDocumentVO(Long documentId)
+    void updateDocumentContent(Long docid, Object doc, String type, Package pkg)
     throws DataAccessException;
 
-    public void updateDocumentContent(Long docid, Object doc, String type, Package pkg)
+    void updateDocumentInfo(Long docid, String documentType, String ownerType, Long ownerId)
     throws DataAccessException;
 
-    public void updateDocumentInfo(Long docid, String documentType, String ownerType, Long ownerId)
+    Long createDocument(String type, String ownerType, Long ownerId, Object doc, Package pkg)
     throws DataAccessException;
 
-    public Long createDocument(String type, String ownerType, Long ownerId, Object doc, Package pkg)
-    throws DataAccessException;
-
-    public Long createDocument(String type, String ownerType, Long ownerId, Object doc, Package pkg, String path)
+    Long createDocument(String type, String ownerType, Long ownerId, Object doc, Package pkg, String path)
             throws DataAccessException;
 
-    public void sendDelayEventsToWaitActivities(String masterRequestId)
+    void sendDelayEventsToWaitActivities(String masterRequestId)
     throws DataAccessException, ProcessException;
 
-    public void retryActivity(Long activityId, Long activityInstId)
+    void retryActivity(Long activityId, Long activityInstId)
     throws DataAccessException, ProcessException;
 
     /**
      * Skip the activity by sending an activity finish event, with the given completion code.
      * The status of the activity instance is ???
      */
-    public void skipActivity(Long activityId, Long activityInstId, String completionCode)
+    void skipActivity(Long activityId, Long activityInstId, String completionCode)
     throws DataAccessException, ProcessException;
 
     /**
@@ -114,7 +111,7 @@ public interface EventServices {
      * @param transInstId
      * @return transition instance object
      */
-    public TransitionInstance getWorkTransitionInstance(Long transInstId)
+    TransitionInstance getWorkTransitionInstance(Long transInstId)
     throws DataAccessException, ProcessException;
 
     /**
@@ -123,7 +120,7 @@ public interface EventServices {
      * @param pActivityInstId
      * @return ActivityInstance
      */
-    public ActivityInstance getActivityInstance(Long pActivityInstId)
+    ActivityInstance getActivityInstance(Long pActivityInstId)
     throws ProcessException, DataAccessException;
 
     /**
@@ -138,7 +135,7 @@ public interface EventServices {
      * @throws ProcessException
      * @throws DataAccessException
      */
-    public List<ActivityInstance> getActivityInstances(String masterRequestId,
+    List<ActivityInstance> getActivityInstances(String masterRequestId,
             String processName, String activityLogicalId)
     throws ProcessException, DataAccessException;
 
@@ -148,7 +145,7 @@ public interface EventServices {
      * @param procInstId
      * @return ProcessInstanceVO
      */
-    public ProcessInstance getProcessInstance(Long procInstId)
+    ProcessInstance getProcessInstance(Long procInstId)
     throws ProcessException, DataAccessException;
 
     /**
@@ -162,41 +159,41 @@ public interface EventServices {
      * @throws ProcessException
      * @throws DataAccessException
      */
-    public List<ProcessInstance> getProcessInstances(String masterRequestId, String processName)
+    List<ProcessInstance> getProcessInstances(String masterRequestId, String processName)
     throws ProcessException, DataAccessException;
 
     /**
      * Load all internal event and scheduled jobs before cutoff time.
      * If cutoff time is null, load only unscheduled events
      */
-    public List<ScheduledEvent> getScheduledEventList(Date cutoffTime)
+    List<ScheduledEvent> getScheduledEventList(Date cutoffTime)
     throws DataAccessException;
 
     /**
      * Load all internal events older than the specified time up to a max of batchSize.
      */
-    public List<UnscheduledEvent> getUnscheduledEventList(Date olderThan, int batchSize)
+    List<UnscheduledEvent> getUnscheduledEventList(Date olderThan, int batchSize)
     throws DataAccessException;
 
-    public void offerScheduledEvent(ScheduledEvent event)
+    void offerScheduledEvent(ScheduledEvent event)
     throws DataAccessException;
 
-    public void processScheduledEvent(String eventName, Date now)
+    void processScheduledEvent(String eventName, Date now)
     throws DataAccessException;
 
-    public boolean processUnscheduledEvent(String eventName);
+    boolean processUnscheduledEvent(String eventName);
 
-    public List<UnscheduledEvent> processInternalEvents(List<UnscheduledEvent> eventList);
+    List<UnscheduledEvent> processInternalEvents(List<UnscheduledEvent> eventList);
 
-    public void updateEventInstance(String eventName,
+    void updateEventInstance(String eventName,
             Long documentId, Integer status, Date consumeDate, String auxdata, String reference, int preserveSeconds)
     throws DataAccessException;
 
-    public void updateEventInstance(String eventName,
+    void updateEventInstance(String eventName,
             Long documentId, Integer status, Date consumeDate, String auxdata, String reference, int preserveSeconds, String comments)
     throws DataAccessException;
 
-    public EventInstance getEventInstance(String eventName)
+    EventInstance getEventInstance(String eventName)
     throws DataAccessException;
 
     /**
@@ -204,13 +201,13 @@ public interface EventServices {
      * The handlers's getProtocol() and getPath() methods are used to uniquely
      * identify the types of requests that it responds to.
      */
-    public void registerServiceHandler(ServiceHandler handler)
+    void registerServiceHandler(ServiceHandler handler)
     throws EventException;
 
-    public void unregisterServiceHandler(ServiceHandler handler)
+    void unregisterServiceHandler(ServiceHandler handler)
     throws EventException;
 
-    public ServiceHandler getServiceHandler(String protocol, String path)
+    ServiceHandler getServiceHandler(String protocol, String path)
     throws EventException;
 
     /**
@@ -219,16 +216,16 @@ public interface EventServices {
      * the types of flows the handler responds to.
      * Note: asset should include the workflow package (eg: MyPackage/MyCamelRoute.xml).
      */
-    public void registerWorkflowHandler(WorkflowHandler handler)
+    void registerWorkflowHandler(WorkflowHandler handler)
     throws EventException;
 
-    public void unregisterWorkflowHandler(WorkflowHandler handler)
+    void unregisterWorkflowHandler(WorkflowHandler handler)
     throws EventException;
 
-    public WorkflowHandler getWorkflowHandler(String asset, Map<String,String> parameters)
+    WorkflowHandler getWorkflowHandler(String asset, Map<String,String> parameters)
     throws EventException;
 
-    public Process findProcessByProcessInstanceId(Long processInstanceId)
+    Process findProcessByProcessInstanceId(Long processInstanceId)
     throws DataAccessException, ProcessException;
 
 }

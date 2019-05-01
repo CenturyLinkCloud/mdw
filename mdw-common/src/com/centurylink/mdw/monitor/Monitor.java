@@ -31,6 +31,8 @@ public interface Monitor {
             return true; // old-style global
         }
         else {
+            if (annotation.isMarker())
+                return false; // marker monitors are always disabled at runtime
             String attr = context.getAttribute(WorkAttributeConstant.MONITORS);
             if (attr == null) {
                 // not explicity specified in attribute

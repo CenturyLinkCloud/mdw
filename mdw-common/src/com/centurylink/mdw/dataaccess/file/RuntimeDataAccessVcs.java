@@ -15,15 +15,6 @@
  */
 package com.centurylink.mdw.dataaccess.file;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
-
 import com.centurylink.mdw.cache.impl.VariableTypeCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
@@ -38,15 +29,13 @@ import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.variable.VariableType;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
-import com.centurylink.mdw.model.workflow.ActivityList;
-import com.centurylink.mdw.model.workflow.LinkedProcessInstance;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.ProcessList;
-import com.centurylink.mdw.model.workflow.TransitionInstance;
-import com.centurylink.mdw.model.workflow.WorkStatus;
-import com.centurylink.mdw.model.workflow.WorkStatuses;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.util.StringHelper;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Used for VCS-based assets in the runtime container (not Designer).
@@ -309,122 +298,6 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         finally {
             db.closeConnection();
         }
-    }
-
-    public int deleteProcessInstances(List<Long> processInstanceIds) throws DataAccessException {
-        try {
-            db.openConnection();
-            int count = 0;
-            // TODO rewrite query to avoid iterating
-            for (Long processInstanceId : processInstanceIds)
-                count += deleteOneProcessInstance(processInstanceId);
-            db.commit();
-            return count;
-        } catch(Exception e) {
-            db.rollback();
-            throw new DataAccessException(0, "failed to delete process instances", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public int deleteProcessInstancesForProcess(Long processId) throws DataAccessException {
-        try {
-            db.openConnection();
-            String query = "select PROCESS_INSTANCE_ID from PROCESS_INSTANCE where PROCESS_ID=?";
-            ResultSet rs = db.runSelect(query, processId);
-            List<String> procInstIdList = new ArrayList<String>();
-            while (rs.next()) {
-                procInstIdList.add(rs.getString(1));
-            }
-            for (String procInstId : procInstIdList) {
-                deleteOneProcessInstance(new Long(procInstId));
-                db.commit();    // commit for each deletion
-            }
-            return procInstIdList.size();
-        } catch(Exception e) {
-            db.rollback();
-            throw new DataAccessException(0, "failed to delete process instance", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    private int deleteOneProcessInstance(Long processInstanceId) throws SQLException {
-        int count = 0, n;
-        String query = "select ATTRIBUTE_VALUE from ATTRIBUTE where ATTRIBUTE_OWNER='SYSTEM' and ATTRIBUTE_NAME='"
-                + PropertyNames.MDW_DB_VERSION + "'";
-        ResultSet rs = db.runSelect(query);
-
-        query = "select PROCESS_INSTANCE_ID"
-                + " from PROCESS_INSTANCE"
-                + " where OWNER='" + OwnerType.PROCESS_INSTANCE + "' and OWNER_ID=?";
-        rs = db.runSelect(query, processInstanceId);
-        List<Long> childProcInstIds = new ArrayList<Long>();
-        while (rs.next()) {
-            childProcInstIds.add(rs.getLong(1));
-        }
-        for (Long childProcInstId : childProcInstIds) {
-            count += deleteOneProcessInstance(childProcInstId);
-        }
-
-        query = "delete from EVENT_WAIT_INSTANCE where WORK_TRANS_INSTANCE_ID in"
-                + " (select wti.WORK_TRANS_INST_ID from WORK_TRANSITION_INSTANCE wti"
-                + " where wti.PROCESS_INST_ID=?)";
-        n = db.runUpdate(query, processInstanceId);
-        count += n;
-
-        query = "delete from WORK_TRANSITION_INSTANCE where PROCESS_INST_ID=?";
-        n = db.runUpdate(query, processInstanceId);
-        count += n;
-        query = "delete from ACTIVITY_INSTANCE where PROCESS_INSTANCE_ID=?";
-        n = db.runUpdate(query, processInstanceId);
-        count += n;
-        query = "delete from VARIABLE_INSTANCE where PROCESS_INST_ID=?";
-        n = db.runUpdate(query, processInstanceId);
-        count += n;
-        query = "delete from INSTANCE_INDEX where OWNER_TYPE='TASK_INSTANCE' and INSTANCE_ID in " +
-                " (select TASK_INSTANCE_ID from TASK_INSTANCE " +
-                "  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
-                "'   and TASK_INSTANCE_OWNER_ID=?)";
-        n = db.runUpdate(query, processInstanceId);
-        count += n;
-        query = "delete from TASK_INST_GRP_MAPP where TASK_INSTANCE_ID in " +
-                " (select TASK_INSTANCE_ID from TASK_INSTANCE " +
-                "  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
-                "'   and TASK_INSTANCE_OWNER_ID=?)";
-        n = db.runUpdate(query, processInstanceId);
-        count += n;
-
-        // delete task instances and related
-        query = "delete from INSTANCE_NOTE where INSTANCE_NOTE_OWNER='"+
-                OwnerType.TASK_INSTANCE + "' and INSTANCE_NOTE_OWNER_ID in " +
-                " (select TASK_INSTANCE_ID from TASK_INSTANCE " +
-                "  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
-                "'   and TASK_INSTANCE_OWNER_ID=?)";
-        n = db.runUpdate(query, processInstanceId);
-        count += n;
-        query = "delete from ATTACHMENT where ATTACHMENT_OWNER='"+
-                OwnerType.TASK_INSTANCE + "' and ATTACHMENT_OWNER_ID in " +
-                " (select TASK_INSTANCE_ID from TASK_INSTANCE " +
-                "  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
-                "'   and TASK_INSTANCE_OWNER_ID=?)";
-        n = db.runUpdate(query, processInstanceId);
-        count += n;
-
-        query = "delete from TASK_INSTANCE " +
-                "  where TASK_INSTANCE_OWNER='" + OwnerType.PROCESS_INSTANCE +
-                "'   and TASK_INSTANCE_OWNER_ID=?";
-        n = db.runUpdate(query, processInstanceId);
-        count += n;
-
-        // finally, delete the process instance itself
-        query = "delete from PROCESS_INSTANCE where PROCESS_INSTANCE_ID=?";
-        n = db.runUpdate(query, processInstanceId);
-        count += n;
-
-
-        return count;
     }
 
     protected String buildCountQuery(Map<String,String> criteria, Map<String,String> variablesCriteria) {
@@ -702,76 +575,6 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         }
     }
 
-    public boolean hasProcessInstances(Long processId) throws DataAccessException {
-        try {
-            db.openConnection();
-            String query;
-            if (db.isMySQL()) query = "select process_instance_id from PROCESS_INSTANCE where PROCESS_ID=? limit 0,1";
-            else query = "select process_instance_id from PROCESS_INSTANCE where PROCESS_ID=? and ROWNUM = 1";
-            ResultSet rs = db.runSelect(query, processId);
-            return rs.next();
-        } catch (Exception e) {
-            throw new DataAccessException(0, e.getMessage(), e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public List<EventLog> getEventLogs(String eventName, String source,
-            String ownerType, Long ownerId) throws DataAccessException {
-        try {
-            db.openConnection();
-            StringBuffer query = new StringBuffer();
-            query.append("select EVENT_LOG_ID, EVENT_NAME, EVENT_LOG_OWNER, EVENT_LOG_OWNER_ID,");
-            query.append("  EVENT_SOURCE, CREATE_DT, EVENT_CATEGORY, EVENT_SUB_CATEGORY,");
-            query.append("  COMMENTS, CREATE_USR ");
-            query.append("  FROM EVENT_LOG ");
-            query.append("where ");
-            Vector<Object> args = new Vector<Object>();
-            if (eventName!=null) {
-                if (args.size()>0) query.append(" and ");
-                query.append("EVENT_NAME=?");
-                args.add(eventName);
-            }
-            if (source!=null) {
-                if (args.size()>0) query.append(" and ");
-                query.append("EVENT_SOURCE=?");
-                args.add(source);
-            }
-            if (ownerType!=null) {
-                if (args.size()>0) query.append(" and ");
-                query.append("EVENT_LOG_OWNER=?");
-                args.add(ownerType);
-            }
-            if (ownerId!=null) {
-                if (args.size()>0) query.append(" and ");
-                query.append("EVENT_LOG_OWNER_ID=?");
-                args.add(ownerId);
-            }
-            ResultSet rs = db.runSelect(query.toString(), args.toArray());
-            List<EventLog> ret = new ArrayList<EventLog>();
-            while (rs.next()) {
-                EventLog el = new EventLog();
-                el.setId(rs.getLong(1));
-                el.setEventName(rs.getString(2));
-                el.setOwnerType(rs.getString(3));
-                el.setOwnerId(rs.getLong(4));
-                el.setSource(rs.getString(5));
-                el.setCreateDate(rs.getTimestamp(6).toString());
-                el.setCategory(rs.getString(7));
-                el.setSubCategory(rs.getString(8));
-                el.setComment(rs.getString(9));
-                el.setCreateUser(rs.getString(10));
-                ret.add(el);
-            }
-            return ret;
-        } catch (Exception e) {
-            throw new DataAccessException(0,"failed to find task instance", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
     protected StringBuilder buildActivityQuery(Query query, Date start) {
         StringBuilder sqlBuff = new StringBuilder();
         if (query.getMax() != Query.MAX_ALL)
@@ -979,4 +782,58 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         }
     }
 
+    public List<EventLog> getEventLogs(String eventName, String source,
+            String ownerType, Long ownerId) throws DataAccessException {
+        try {
+            db.openConnection();
+            StringBuffer query = new StringBuffer();
+            query.append("select EVENT_LOG_ID, EVENT_NAME, EVENT_LOG_OWNER, EVENT_LOG_OWNER_ID,");
+            query.append("  EVENT_SOURCE, CREATE_DT, EVENT_CATEGORY, EVENT_SUB_CATEGORY,");
+            query.append("  COMMENTS, CREATE_USR ");
+            query.append("  FROM EVENT_LOG ");
+            query.append("where ");
+            Vector<Object> args = new Vector<Object>();
+            if (eventName!=null) {
+                if (args.size()>0) query.append(" and ");
+                query.append("EVENT_NAME=?");
+                args.add(eventName);
+            }
+            if (source!=null) {
+                if (args.size()>0) query.append(" and ");
+                query.append("EVENT_SOURCE=?");
+                args.add(source);
+            }
+            if (ownerType!=null) {
+                if (args.size()>0) query.append(" and ");
+                query.append("EVENT_LOG_OWNER=?");
+                args.add(ownerType);
+            }
+            if (ownerId!=null) {
+                if (args.size()>0) query.append(" and ");
+                query.append("EVENT_LOG_OWNER_ID=?");
+                args.add(ownerId);
+            }
+            ResultSet rs = db.runSelect(query.toString(), args.toArray());
+            List<EventLog> ret = new ArrayList<EventLog>();
+            while (rs.next()) {
+                EventLog el = new EventLog();
+                el.setId(rs.getLong(1));
+                el.setEventName(rs.getString(2));
+                el.setOwnerType(rs.getString(3));
+                el.setOwnerId(rs.getLong(4));
+                el.setSource(rs.getString(5));
+                el.setCreateDate(rs.getTimestamp(6).toString());
+                el.setCategory(rs.getString(7));
+                el.setSubCategory(rs.getString(8));
+                el.setComment(rs.getString(9));
+                el.setCreateUser(rs.getString(10));
+                ret.add(el);
+            }
+            return ret;
+        } catch (Exception e) {
+            throw new DataAccessException(0,"failed to find task instance", e);
+        } finally {
+            db.closeConnection();
+        }
+    }
 }

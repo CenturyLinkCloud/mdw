@@ -17,6 +17,7 @@ package com.centurylink.mdw.services;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.report.Hotspot;
 import com.centurylink.mdw.model.report.Insight;
 import com.centurylink.mdw.model.Value;
@@ -148,16 +149,7 @@ public interface WorkflowServices {
     List<ActivityAggregate> getTopActivities(Query query) throws ServiceException;
     TreeMap<Date,List<ActivityAggregate>> getActivityBreakdown(Query query) throws ServiceException;
 
-    List<Process> getProcessDefinitions(Query query) throws ServiceException;
-    Process getProcessDefinition(String assetPath, Query query) throws ServiceException;
-    Process getProcessDefinition(Long id) throws ServiceException;
-
-    ActivityList getActivityDefinitions(Query query) throws ServiceException;
-
     ActivityInstance getActivity(Long instanceId) throws ServiceException;
-
-    List<ActivityImplementor> getImplementors() throws ServiceException;
-    ActivityImplementor getImplementor(String className) throws ServiceException;
 
     Long launchProcess(String name, String masterRequestId, String ownerType,
             Long ownerId, Map<String,Object> params) throws ServiceException;
@@ -210,4 +202,11 @@ public interface WorkflowServices {
     Process getInstanceDefinition(String assetPath, Long instanceId) throws ServiceException;
 
     void saveInstanceDefinition(String assetPath, Long instanceId, Process process) throws ServiceException;
+
+    /**
+     * Returns the top-level linked process in the call chain for the specified instance.
+     * Downstream calls include all routes, whereas upstream calls include only the specific instance stack.
+     */
+    LinkedProcessInstance getCallHierearchy(Long processInstanceId) throws ServiceException;
+
 }
