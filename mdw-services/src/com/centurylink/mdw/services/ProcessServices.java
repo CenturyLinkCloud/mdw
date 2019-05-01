@@ -22,23 +22,16 @@ import com.centurylink.mdw.model.workflow.LinkedProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessList;
 
+@Deprecated
 public interface ProcessServices {
 
-    public ProcessList getInstances(Map<String,String> criteria, Map<String,String> varCriteria, int pageIndex, int pageSize, String orderBy)
+    ProcessList getInstances(Map<String,String> criteria, Map<String,String> varCriteria, int pageIndex, int pageSize, String orderBy)
     throws DataAccessException;
 
-    public ProcessInstance getInstance(Long processInstanceId)
+    ProcessInstance getInstance(Long processInstanceId)
     throws DataAccessException;
 
-    public ProcessInstance getInstanceShallow(Long processInstanceId)
+    ProcessInstance getInstanceShallow(Long processInstanceId)
     throws DataAccessException;
 
-    public void deleteProcessInstances(ProcessList processList)
-    throws DataAccessException;
-
-    public int deleteProcessInstances(Long processId)
-    throws DataAccessException;
-
-    public LinkedProcessInstance getCallHierearchy(Long processInstanceId)
-    throws DataAccessException;
 }

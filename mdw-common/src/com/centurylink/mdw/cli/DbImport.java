@@ -16,6 +16,7 @@ import java.util.Scanner;
 import static java.lang.Math.floor;
 
 /**
+ * TODO: Restrict so that imports an only be run on localhost (embedded) db?
  * TODO: handle DocumentDb
  */
 @Parameters(commandNames = "dbimport", commandDescription = "Import database tables from json", separators = "=")

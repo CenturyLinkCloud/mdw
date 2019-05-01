@@ -178,12 +178,11 @@ public class FallbackEventHandler implements ExternalEventHandler {
             String documentId = XmlPath.evaluate(msgdoc, "/_mdw_document_content/document_id");
             String type = XmlPath.evaluate(msgdoc, "/_mdw_document_content/type");
             try {
-                EventServices eventMgr = ServiceLocator.getEventServices();
-                Document docvo = eventMgr.getDocumentVO(new Long(documentId));
+                Document doc = ServiceLocator.getWorkflowServices().getDocument(new Long(documentId));
                 if (type.equals(Object.class.getName())) {
-                    Object obj = VariableTranslator.realToObject(getPackageVO(docvo), "java.lang.Object", docvo.getContent(getPackageVO(docvo)));
+                    Object obj = VariableTranslator.realToObject(getPackageVO(doc), "java.lang.Object", doc.getContent(getPackageVO(doc)));
                     response = obj.toString();
-                } else response = docvo.getContent(getPackageVO(docvo));
+                } else response = doc.getContent(getPackageVO(doc));
             } catch (Exception e) {
                 logger.severeException(e.getMessage(), e);
                 response = "ERROR: " + e.getClass().getName() + " - " + e.getMessage();

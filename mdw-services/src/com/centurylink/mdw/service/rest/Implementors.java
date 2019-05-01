@@ -32,8 +32,8 @@ import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.monitor.*;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.AssetServices;
+import com.centurylink.mdw.services.DesignServices;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.JsonUtil;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -86,16 +86,16 @@ public class Implementors extends JsonRestService {
         response=ActivityImplementor.class, responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers)
     throws ServiceException, JSONException {
-        WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+        DesignServices designServices = ServiceLocator.getDesignServices();
         try {
             String implClassName = getSegment(path, 1);
             if (implClassName == null) {
-                List<ActivityImplementor> impls = workflowServices.getImplementors();
+                List<ActivityImplementor> impls = designServices.getImplementors();
                 Collections.sort(impls);
                 return JsonUtil.getJsonArray(impls).getJson();
             }
             else {
-                ActivityImplementor impl = workflowServices.getImplementor(implClassName);
+                ActivityImplementor impl = designServices.getImplementor(implClassName);
                 if (impl == null)
                     throw new ServiceException(ServiceException.NOT_FOUND, "Implementor not found: " + implClassName);
                 String pageletStr = impl.getPagelet();

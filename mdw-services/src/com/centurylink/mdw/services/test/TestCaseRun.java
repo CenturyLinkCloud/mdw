@@ -518,7 +518,7 @@ public class TestCaseRun implements Runnable {
         if (process == null) {
             try {
                 Query query = getProcessQuery(target);
-                process = workflowServices.getProcessDefinition(query.getPath(), query);
+                process = ServiceLocator.getDesignServices().getProcessDefinition(query.getPath(), query);
                 if (process == null)
                     throw new FileNotFoundException("Process: " + target + " not found");
                 processCache.put(target, process);

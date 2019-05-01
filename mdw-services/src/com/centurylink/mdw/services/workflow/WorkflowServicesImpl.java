@@ -57,7 +57,6 @@ import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
-import com.centurylink.mdw.service.data.activity.ImplementorCache;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.service.data.process.ProcessCache;
@@ -86,8 +85,6 @@ import org.yaml.snakeyaml.Yaml;
 import javax.xml.bind.JAXBElement;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.*;
@@ -849,138 +846,6 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public Process getProcessDefinition(String assetPath, Query query) throws ServiceException {
-
-        int lastSlash = assetPath.lastIndexOf('/');
-        if (lastSlash <= 0)
-            throw new ServiceException(ServiceException.BAD_REQUEST, "Bad asset path: " + assetPath);
-        String processName = assetPath; //.substring(lastSlash + 1);
-        if (assetPath.endsWith(".proc"))
-            processName = processName.substring(0, processName.length() - ".proc".length());
-
-        int version = query == null ? 0 : query.getIntFilter("version");
-        if (version < 0)
-            version = 0;
-        boolean forUpdate = query == null ? false : query.getBooleanFilter("forUpdate");
-        Process process = ProcessCache.getProcess(processName, version);
-        if (forUpdate) {
-            // load from file
-            try {
-                byte[] bytes = Files.readAllBytes(Paths.get(process.getRawFile().getAbsolutePath()));
-                process = new Process(new JsonObject(new String(bytes)));
-                process.setName(processName.substring(lastSlash + 1));
-                process.setPackageName(processName.substring(0, lastSlash));
-            }
-            catch (Exception ex) {
-                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error reading process: " + process.getRawFile());
-            }
-        }
-        if (process == null)
-            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + assetPath);
-
-        return process;
-    }
-
-    public List<Process> getProcessDefinitions(Query query) throws ServiceException {
-        try {
-            String find = query.getFind();
-            if (find == null) {
-                return ProcessCache.getAllProcesses();
-            }
-            else {
-                List<Process> found = new ArrayList<>();
-                for (Process processVO : ProcessCache.getAllProcesses()) {
-                    if (processVO.getName() != null && processVO.getName().startsWith(find))
-                        found.add(processVO);
-                    else if (find.indexOf(".") > 0 && processVO.getPackageName() != null && processVO.getPackageName().startsWith(find))
-                        found.add(processVO);
-                }
-                return found;
-            }
-        }
-        catch (DataAccessException ex) {
-            throw new ServiceException(500, ex.getMessage(), ex);
-        }
-    }
-
-    public Process getProcessDefinition(Long id) {
-        return ProcessCache.getProcess(id);
-    }
-
-    public ActivityList getActivityDefinitions(Query query) throws ServiceException {
-        try {
-            String find = query.getFind();
-            List<ActivityInstance> activityInstanceList = new ArrayList<>();
-            ActivityList found = new ActivityList(ActivityList.ACTIVITY_INSTANCES, activityInstanceList);
-
-            if (find == null) {
-                List<Process> processes =  ProcessCache.getAllProcesses();
-                for (Process process : processes) {
-                    process =  ProcessCache.getProcess(process.getId());
-                    List<Activity> activities = process.getActivities();
-                    for (Activity activityVO : activities) {
-                        if (activityVO.getName() != null && activityVO.getName().startsWith(find))
-                        {
-                            ActivityInstance ai = new ActivityInstance();
-                            ai.setId(activityVO.getId());
-                            ai.setName(activityVO.getName());
-                            ai.setDefinitionId(activityVO.getLogicalId());
-                            ai.setProcessId(process.getId());
-                            ai.setProcessName(process.getName());
-                            ai.setProcessVersion(process.getVersionString());
-                            activityInstanceList.add(ai);
-                        }
-                    }
-                }
-            }
-            else {
-                for (Process process : ProcessCache.getAllProcesses()) {
-                    process =  ProcessCache.getProcess(process.getId());
-                    List<Activity> activities = process.getActivities();
-                    for (Activity activityVO : activities) {
-                        if (activityVO.getName() != null && activityVO.getName().startsWith(find))
-                        {
-                            ActivityInstance ai = new ActivityInstance();
-                            ai.setId(activityVO.getId());
-                            ai.setName(activityVO.getName());
-                            ai.setDefinitionId(activityVO.getLogicalId());
-                            ai.setProcessId(process.getId());
-                            ai.setProcessName(process.getName());
-                            ai.setProcessVersion(process.getVersionString());
-                            activityInstanceList.add(ai);
-                        }
-                    }
-                }
-            }
-            found.setRetrieveDate(DatabaseAccess.getDbDate());
-            found.setCount(activityInstanceList.size());
-            found.setTotal(activityInstanceList.size());
-            return found;
-        }
-        catch (DataAccessException ex) {
-            throw new ServiceException(500, ex.getMessage(), ex);
-        }
-    }
-
-    public List<ActivityImplementor> getImplementors() {
-        return new ArrayList<>(ImplementorCache.getImplementors().values());
-    }
-
-    public ActivityImplementor getImplementor(String className) throws ServiceException {
-        ActivityImplementor implementor =  ImplementorCache.get(className);
-        if (implementor.getPagelet() == null) {
-            try {
-                for (ActivityImplementor impl : DataAccess.getProcessLoader().getActivityImplementors()) {
-                    if (impl.getImplementorClass().equals(implementor.getImplementorClass()))
-                        return impl; // loaded from .impl file
-                }
-            } catch (DataAccessException ex) {
-                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
-            }
-        }
-        return implementor; // loaded from annotation or not found
-    }
-
     public Long launchProcess(String name, String masterRequestId, String ownerType,
                               Long ownerId, Map<String,Object> parameters) throws ServiceException {
         try {
@@ -1238,7 +1103,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         Long definitionId = runRequest.getDefinitionId();
         if (definitionId == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing definitionId");
-        Process proc = getProcessDefinition(definitionId);
+        Process proc = ServiceLocator.getDesignServices().getProcessDefinition(definitionId);
         if (proc == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found for id: " + definitionId);
 
@@ -1522,4 +1387,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
+    public LinkedProcessInstance getCallHierearchy(Long processInstanceId) throws ServiceException {
+        try {
+            return getRuntimeDataAccess().getProcessInstanceCallHierarchy(processInstanceId);
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
 }

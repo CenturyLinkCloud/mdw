@@ -178,6 +178,6 @@ public class Workflow extends JsonRestService {
 
     @Path("/{packageName}/{processName}/{processVersion}/{processInstanceId}")
     public Process getProcessDefinition(String assetPath, Query query) throws ServiceException {
-        return ServiceLocator.getWorkflowServices().getProcessDefinition(assetPath, query);
+        return ServiceLocator.getDesignServices().getProcessDefinition(assetPath, query);
     }
 }

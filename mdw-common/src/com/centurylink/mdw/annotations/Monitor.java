@@ -48,4 +48,9 @@ public @interface Monitor {
      * JSONArray value from attribute "monitors" in the runtimeContext.
      */
     String defaultOptions() default "";
+
+    /**
+     * Marker monitors exist for design purposes only (always disabled at runtime).
+     */
+    boolean isMarker() default false;
 }

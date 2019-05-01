@@ -260,7 +260,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             else {
               if (runtimeInfo === null || runtimeInfo.length === 0)
                 return null;
-              var url = mdw.roots.services + '/services/Processes?mdw-app=designer&callHierarchyFor=' + runtimeInfo.id;
+              var url = mdw.roots.services + '/services/Processes?callHierarchyFor=' + runtimeInfo.id;
               return $http.get(url).then(function(response) {
                 if (response.status !== 200)
                   return null;

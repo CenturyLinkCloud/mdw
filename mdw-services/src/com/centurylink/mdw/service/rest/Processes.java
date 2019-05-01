@@ -20,7 +20,6 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.*;
 import com.centurylink.mdw.model.Value.Display;
@@ -34,14 +33,12 @@ import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.process.ProcessCache;
-import com.centurylink.mdw.services.ProcessServices;
+import com.centurylink.mdw.services.DesignServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.JsonUtil;
 import com.centurylink.mdw.util.StringHelper;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -59,8 +56,6 @@ import java.util.*;
 @Api("Workflow process instances and values")
 public class Processes extends JsonRestService implements JsonExportable {
 
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
-
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {
         return Entity.ProcessInstance;
@@ -75,6 +70,9 @@ public class Processes extends JsonRestService implements JsonExportable {
 
     private WorkflowServices getWorkflowServices() {
         return ServiceLocator.getWorkflowServices();
+    }
+    private DesignServices getDesignServices() {
+        return ServiceLocator.getDesignServices();
     }
 
     /**
@@ -182,16 +180,15 @@ public class Processes extends JsonRestService implements JsonExportable {
                     // retrieve instance by trigger -- just send summary
                     return getSummaryJson(workflowServices.getProcessForTrigger(triggerId));
                 }
-                else if ("designer".equals(query.getFilter("mdw-app"))) {
-                    try {
-                        ProcessServices processServices = ServiceLocator.getProcessServices();
-                        Object callHierarchyFor = headers.get("callHierarchyFor");
-                        if (callHierarchyFor != null) {
-                            long instanceId = Long.parseLong(callHierarchyFor.toString());
-                            LinkedProcessInstance linkedInstance = processServices.getCallHierearchy(instanceId);
-                            return linkedInstance.getJson();
-                        }
-                        else {
+                else {
+                    long callHierarchyFor = query.getLongFilter("callHierarchyFor");
+                    if (callHierarchyFor != -1) {
+                        LinkedProcessInstance linkedInstance = ServiceLocator.getWorkflowServices().getCallHierearchy(callHierarchyFor);
+                        return linkedInstance.getJson();
+                    }
+                    else if ("designer".equals(query.getFilter("mdw-app"))) {
+                        // designer compatibility service
+                        try {
                             Map<String,String> criteria = getCriteria(headers);
                             Map<String,String> variables = getParameters(headers);
                             variables = getVariables(variables);
@@ -200,27 +197,28 @@ public class Processes extends JsonRestService implements JsonExportable {
                             int pageSize = headers.get("pageSize") == null ? 0 : Integer.parseInt(headers.get("pageSize"));
                             String orderBy = headers.get("orderBy");
 
-                            ProcessList procList = processServices.getInstances(criteria, variables, pageIndex, pageSize, orderBy);
+                            ProcessList procList = ServiceLocator.getProcessServices().getInstances(criteria, variables, pageIndex, pageSize, orderBy);
                             return procList.getJson();
                         }
-                    }
-                    catch (Exception ex) {
-                        throw new ServiceException(ex.getMessage(), ex);
-                    }
-                }
-                else {
-                    ProcessList processList = workflowServices.getProcesses(query);
-                    if (query.getLongFilter("activityInstanceId") > 0) {
-                        // retrieving summary for activity instance
-                        if (processList.getCount() == 0)
-                            throw new ServiceException(ServiceException.NOT_FOUND, "Process instance not found: " + query);
-                        else if (OwnerType.MAIN_PROCESS_INSTANCE.equals(processList.getProcesses().get(0).getOwner())) {
-                            return getSummaryJson(workflowServices.getProcess(processList.getProcesses().get(0).getOwnerId(), true));
+                        catch (Exception ex) {
+                            throw new ServiceException(ex.getMessage(), ex);
                         }
-                        return getSummaryJson(processList.getProcesses().get(0));
                     }
                     else {
-                        return processList.getJson();
+                        // general process instance list query
+                        ProcessList processList = workflowServices.getProcesses(query);
+                        if (query.getLongFilter("activityInstanceId") > 0) {
+                            // retrieving summary for activity instance
+                            if (processList.getCount() == 0)
+                                throw new ServiceException(ServiceException.NOT_FOUND, "Process instance not found: " + query);
+                            else if (OwnerType.MAIN_PROCESS_INSTANCE.equals(processList.getProcesses().get(0).getOwner())) {
+                                return getSummaryJson(workflowServices.getProcess(processList.getProcesses().get(0).getOwnerId(), true));
+                            }
+                            return getSummaryJson(processList.getProcesses().get(0));
+                        }
+                        else {
+                            return processList.getJson();
+                        }
                     }
                 }
             }
@@ -382,56 +380,6 @@ public class Processes extends JsonRestService implements JsonExportable {
         }
     }
 
-    /**
-     * Used by Designer to delete process instance(s).
-     * TODO: delete values
-     */
-    @Path("/{instanceId}")
-    @ApiOperation(value="Delete process instance(s)",
-        notes="If instanceId is missing, body content with list of instanceIds is expected.", response=StatusMessage.class)
-    @ApiImplicitParams({
-        @ApiImplicitParam(name="instanceIds", paramType="body", dataType="com.centurylink.mdw.model.workflow.ProcessList"),
-        @ApiImplicitParam(name="processId", paramType="query")})
-    public JSONObject delete(String path, JSONObject content, Map<String,String> headers)
-            throws ServiceException, JSONException {
-        Query query = new Query(path, headers);
-        try {
-            String procId = query.getFilter("processId");
-            if (procId != null) {
-                ProcessServices processServices = ServiceLocator.getProcessServices();
-                int count = processServices.deleteProcessInstances(new Long(procId));
-                if (logger.isDebugEnabled())
-                    logger.debug("Deleted " + count + " process instances for process id: " + procId);
-            }
-            else {
-                String instanceId = getSegment(path, 1);
-                ProcessList processList;
-                if (instanceId == null) {
-                    // expect content
-                    processList = new ProcessList(ProcessList.PROCESS_INSTANCES, content);
-                }
-                else {
-                    List<ProcessInstance> list = new ArrayList<>();
-                    list.add(new ProcessInstance(Long.parseLong(instanceId)));
-                    processList = new ProcessList(ProcessList.PROCESS_INSTANCES, list);
-                }
-
-                ProcessServices processServices = ServiceLocator.getProcessServices();
-                processServices.deleteProcessInstances(processList);
-                if (logger.isDebugEnabled())
-                    logger.debug("Deleted " + processList.getCount() + " process instances");
-            }
-
-            return null;
-        }
-        catch (NumberFormatException | ParseException ex) {
-            logger.severeException(ex.getMessage(), ex);
-            throw new ServiceException(ServiceException.BAD_REQUEST, ex.getMessage());
-        } catch (DataAccessException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
-        }
-    }
-
     public Jsonable toJsonable(Query query, JSONObject json) throws JSONException {
         try {
             if (json.has(ProcessList.PROCESS_INSTANCES))
@@ -503,7 +451,7 @@ public class Processes extends JsonRestService implements JsonExportable {
 
     @Path("/definitions")
     public JsonArray getDefinitions(Query query) throws ServiceException {
-        List<Process> processVOs = getWorkflowServices().getProcessDefinitions(query);
+        List<Process> processVOs = getDesignServices().getProcessDefinitions(query);
         JSONArray jsonProcesses = new JSONArray();
         for (Process processVO : processVOs) {
             JSONObject jsonProcess = new JsonObject();
@@ -518,7 +466,7 @@ public class Processes extends JsonRestService implements JsonExportable {
 
     @Path("/run/{definitionId}")
     public ProcessRun getProcessRun(Long definitionId, String authUser) throws ServiceException {
-        Process definition = getWorkflowServices().getProcessDefinition(definitionId);
+        Process definition = getDesignServices().getProcessDefinition(definitionId);
         if (definition == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + definitionId);
         return getProcessRun(definition, authUser);
@@ -526,7 +474,7 @@ public class Processes extends JsonRestService implements JsonExportable {
 
     @Path("/run/{package}/{process}")
     public ProcessRun getProcessRun(String assetPath, String authUser) throws ServiceException {
-        Process definition = getWorkflowServices().getProcessDefinition(assetPath, null);
+        Process definition = getDesignServices().getProcessDefinition(assetPath, null);
         if (definition == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + assetPath);
         return getProcessRun(definition, authUser);
