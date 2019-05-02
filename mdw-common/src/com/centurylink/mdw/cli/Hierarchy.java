@@ -34,11 +34,6 @@ public class Hierarchy extends Setup {
     private List<LinkedProcess> topLevelCallers = new ArrayList<>();
     public List<LinkedProcess> getTopLevelCallers() { return topLevelCallers; }
 
-    private JSONObject processHierarchy;
-    public JSONObject getProcessHierarchy() {
-        return processHierarchy;
-    }
-
     Hierarchy() {
 
     }
