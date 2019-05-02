@@ -72,7 +72,7 @@ public class LinkedProcess implements Jsonable {
     }
 
     public String getJsonName() {
-        return "LinkedProcessInstance";
+        return "LinkedProcess";
     }
 
     @Override
