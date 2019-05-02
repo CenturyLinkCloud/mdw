@@ -30,10 +30,6 @@ import com.centurylink.mdw.model.Jsonable;
  */
 public class LinkedProcessInstance implements Jsonable {
 
-    public LinkedProcessInstance(String json) throws JSONException {
-        this(new JsonObject(json));
-    }
-
     public LinkedProcessInstance(JSONObject jsonObj) throws JSONException {
         JSONObject procInstObj = jsonObj.getJSONObject("processInstance");
         this.processInstance = new ProcessInstance(procInstObj);
@@ -53,7 +49,7 @@ public class LinkedProcessInstance implements Jsonable {
     public LinkedProcessInstance getParent() { return parent; }
     public void setParent(LinkedProcessInstance parent) { this.parent = parent; }
 
-    private List<LinkedProcessInstance> children = new ArrayList<LinkedProcessInstance>();
+    private List<LinkedProcessInstance> children = new ArrayList<>();
     public List<LinkedProcessInstance> getChildren() { return children; }
     public void setChildren(List<LinkedProcessInstance> children) { this.children = children; }
 

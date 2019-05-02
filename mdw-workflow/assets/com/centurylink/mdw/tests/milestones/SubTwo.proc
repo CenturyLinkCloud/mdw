@@ -1,0 +1,69 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=42,y=118,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=132,ly=138,xs=106&158,ys=138&138"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=590,y=115,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=290,y=108,w=100,h=60",
+        "processname": "com.centurylink.mdw.tests.milestones/SubTwoSub.proc",
+        "processversion": "[0.1,1)",
+        "synchronous": "true"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Subflow\nMilestone",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=418,ly=136,xs=394&442,ys=136&136"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=162,y=112,w=69,h=50"},
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
+      "name": "Boring",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=260,ly=137,xs=235&286,ys=137&137"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=446,y=113,w=75,h=47"},
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
+      "name": "Snoozefest",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=555,ly=135,xs=525&586,ys=135&135"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=0,h=0"
+  }
+}

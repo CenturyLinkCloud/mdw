@@ -11,11 +11,16 @@ import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.activity.ImplementorCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.DesignServices;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 public class DesignServicesImpl implements DesignServices {
 
@@ -144,6 +149,12 @@ public class DesignServicesImpl implements DesignServices {
             }
         }
         return implementor; // loaded from annotation or not found
+    }
+
+    public List<LinkedProcess> getProcessHierarcy(String processAsset) {
+        List<LinkedProcess> topLevelCallers = new ArrayList<>();
+        // TODO: implement
+        return topLevelCallers;
     }
 
     public List<Process> findCallingProcesses(Process subproc) throws ServiceException {

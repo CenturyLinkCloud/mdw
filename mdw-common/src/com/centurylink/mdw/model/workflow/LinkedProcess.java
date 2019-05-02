@@ -15,13 +15,18 @@
  */
 package com.centurylink.mdw.model.workflow;
 
+import com.centurylink.mdw.model.Jsonable;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Represents a workflow process in a hierarchical structure of called/calling processes.
  */
-public class LinkedProcess {
+public class LinkedProcess implements Jsonable {
 
     private Process process;
     public Process getProcess() { return process; }
@@ -30,11 +35,48 @@ public class LinkedProcess {
     public LinkedProcess getParent() { return parent; }
     public void setParent(LinkedProcess parent) { this.parent = parent; }
 
-    private List<LinkedProcess> children = new ArrayList<LinkedProcess>();
+    private List<LinkedProcess> children = new ArrayList<>();
     public List<LinkedProcess> getChildren() { return children; }
     public void setChildren(List<LinkedProcess> children) { this.children = children; }
 
     public LinkedProcess(Process process) {
         this.process = process;
+    }
+
+    public LinkedProcess(JSONObject jsonObj) throws JSONException {
+        JSONObject procObj = jsonObj.getJSONObject("process");
+        this.process = new Process(procObj);
+        if (jsonObj.has("children")) {
+            JSONArray childrenArr = jsonObj.getJSONArray("children");
+            for (int i = 0; i < childrenArr.length(); i++) {
+                JSONObject childObj = (JSONObject)childrenArr.get(i);
+                this.children.add(new LinkedProcess(childObj));
+            }
+        }
+    }
+
+    /**
+     * Includes children (not parent).
+     */
+    public JSONObject getJson() throws JSONException {
+        JSONObject json = create();
+        json.put("process", process.getSummaryJson());
+        if (!children.isEmpty()) {
+            JSONArray childrenArr = new JSONArray();
+            for (LinkedProcess child : children) {
+                childrenArr.put(child.getJson());
+            }
+            json.put("children", childrenArr);
+        }
+        return json;
+    }
+
+    public String getJsonName() {
+        return "LinkedProcessInstance";
+    }
+
+    @Override
+    public String toString() {
+        return process.getFullLabel();
     }
 }

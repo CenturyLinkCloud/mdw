@@ -1,20 +1,27 @@
 package com.centurylink.mdw.cli;
 
 import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.LinkedProcess;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessHierarchy;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.regex.Pattern;
 
+@Parameters(commandNames="hierarchy", commandDescription="Process definition hierarchy", separators="=")
 public class Hierarchy extends Setup {
+
+    private static final int INDENT = 2;
+
     @Parameter(names = "--process", description = "Process for which heirarchy will be shown.")
     private String process;
     public String getProcess() {
@@ -24,10 +31,10 @@ public class Hierarchy extends Setup {
         this.process = proc;
     }
 
-    private List<LinkedProcess> topLevelCallers;
+    private List<LinkedProcess> topLevelCallers = new ArrayList<>();
+    public List<LinkedProcess> getTopLevelCallers() { return topLevelCallers; }
 
     private JSONObject processHierarchy;
-
     public JSONObject getProcessHierarchy() {
         return processHierarchy;
     }
@@ -36,66 +43,71 @@ public class Hierarchy extends Setup {
 
     }
 
-    Hierarchy (String process) {
+    public Hierarchy(String process) {
         this.process = process;
     }
 
     @Override
     public Operation run(ProgressMonitor... monitors) throws IOException {
-        topLevelCallers = new ArrayList<LinkedProcess>();
-        int index = process.lastIndexOf('/');
-        String pkgName = process.substring(0, index);
-        String pkgFile = getAssetRoot() + "/" + pkgName.replace('.', '/') + "/";
-        String procName = process.substring(index + 1);
-        Process proc = new Process(new JSONObject(Files.readAllBytes(Paths.get(pkgFile + procName))));
-        proc.setName(procName.substring(0, procName.length()-5));
-        proc.setPackageName(pkgName);
-        Map<String,File> packageDirs = getAssetPackageDirs();
-        Map<String,Properties> versionProps = getVersionProps(packageDirs);
-        Properties pkgProps = versionProps.get(pkgName);
-        proc.setVersion(Integer.parseInt(pkgProps.getProperty(procName)));
+        for (ProgressMonitor monitor : monitors)
+            monitor.progress(0);
+
+        Process proc = loadProcess(getPackageName(process), getAssetFile(process), true);
+        for (ProgressMonitor monitor : monitors)
+            monitor.progress(10);
+
+        loadProcesses(monitors);
         addTopLevelCallers(proc);
-        for (LinkedProcess topLevelCaller : topLevelCallers) {
+
+        for (int i = 0; i < topLevelCallers.size(); i++) {
+            LinkedProcess topLevelCaller = topLevelCallers.get(i);
             addCalledHierarchy(topLevelCaller);
+            int prog = 90 + ((int)Math.floor((i * 10)/topLevelCallers.size()));
+            for (ProgressMonitor monitor : monitors)
+                monitor.progress(prog);
         }
-        processHierarchy = new JSONObject();
-        processHierarchy.put("hierarchy", new JSONArray());
-        populateProcessHierarchy(topLevelCallers, processHierarchy);
-        System.out.println(processHierarchy);
+
+        for (ProgressMonitor monitor : monitors)
+            monitor.progress(100);
+
+        // print to stdout if called from command line
+        if (getOut() == System.out) {
+            getOut().println();
+            print(topLevelCallers, 0);
+        }
+
         return this;
     }
 
-    public List<Process> findCallingProcesses(Process subproc, ProgressMonitor... monitors) throws IOException {
+    private void print(List<LinkedProcess> callers, int depth) {
+        for (LinkedProcess caller : callers) {
+            if (depth > 0) {
+                getOut().print(String.format("%1$" + (depth * INDENT) + "s", ""));
+                getOut().print(" - ");
+            }
+            getOut().println(caller);
+            print(caller.getChildren(), depth + 1);
+        }
+    }
+
+    public List<Process> findCallingProcesses(Process subproc) {
         List<Process> callers = new ArrayList<>();
-        Map<String,List<File>> packageProcesses = findAllAssets("proc");
-        for (String pkg : packageProcesses.keySet()) {
-            for (File procFile : packageProcesses.get(pkg)) {
-                Process process = loadProcess(pkg, procFile, true);
-                for (Activity activity : process.getActivities()) {
+        for (Process process : processes) {
+            for (Activity activity : process.getActivities()) {
+                if (ProcessHierarchy.activityInvokesProcess(activity, subproc) && !callers.contains(process))
+                    callers.add(process);
+            }
+            for (Process embedded : process.getSubprocesses()) {
+                for (Activity activity : embedded.getActivities()) {
                     if (ProcessHierarchy.activityInvokesProcess(activity, subproc) && !callers.contains(process))
                         callers.add(process);
-                }
-                for (Process embedded : process.getSubprocesses()) {
-                    for (Activity activity : embedded.getActivities()) {
-                        if (ProcessHierarchy.activityInvokesProcess(activity, subproc) && !callers.contains(process))
-                            callers.add(process);
-                    }
                 }
             }
         }
         return callers;
     }
 
-    /**
-     * Only looks in current processes (not archived).
-     */
-    public List<Process> findCalledProcesses(Process mainproc, ProgressMonitor... monitors) throws IOException {
-        List<Process> processes = new ArrayList<>();
-        for (String pkg : getPackageProcesses().keySet()) {
-            for (File procFile : getPackageProcesses().get(pkg)) {
-                processes.add(loadProcess(pkg, procFile, true));
-            }
-        }
+    public List<Process> findCalledProcesses(Process mainproc) {
         return ProcessHierarchy.findInvoked(mainproc, processes);
     }
 
@@ -118,11 +130,31 @@ public class Hierarchy extends Setup {
         return process;
     }
 
-    private Map<String,List<File>> packageProcesses;
-    private Map<String,List<File>> getPackageProcesses() throws IOException {
-        if (packageProcesses == null)
-            packageProcesses = findAllAssets("proc");
-        return packageProcesses;
+    /**
+     * Only loads current processes (not archived) that contain subprocs.
+     * Starts at 10%, uses 80% monitor progress.
+     */
+    private List<Process> processes;
+    private void loadProcesses(ProgressMonitor... monitors) throws IOException {
+        if (processes == null) {
+            processes = new ArrayList<>();
+            // TODO: only load processes whose contents match these patterns
+            Pattern singleProcPattern = Pattern.compile("^.*\"processname\": \".*\"");
+            Pattern multiProcPattern = Pattern.compile("^.*\"processmap\": \".*\"");
+
+
+
+            Map<String,List<File>> pkgProcFiles = findAllAssets("proc");
+            for (String pkg : pkgProcFiles.keySet()) {
+                List<File> procFiles = pkgProcFiles.get(pkg);
+                for (int i = 0; i < procFiles.size(); i++) {
+                    processes.add(loadProcess(pkg, procFiles.get(i), true));
+                    int prog = 10 + ((int)Math.floor((i * 80)/procFiles.size()));
+                    for (ProgressMonitor monitor : monitors)
+                        monitor.progress(prog);
+                }
+            }
+        }
     }
 
     private Map<String,Properties> packageVersions;
@@ -132,8 +164,7 @@ public class Hierarchy extends Setup {
         return packageVersions;
     }
 
-    private void addTopLevelCallers(Process called)
-            throws IOException {
+    private void addTopLevelCallers(Process called) throws IOException {
         List<Process> immediateCallers = findCallingProcesses(called);
         if (immediateCallers.isEmpty()) {
             topLevelCallers.add(new LinkedProcess(called));
@@ -144,8 +175,7 @@ public class Hierarchy extends Setup {
         }
     }
 
-    private void addCalledHierarchy(LinkedProcess caller)
-            throws IOException {
+    private void addCalledHierarchy(LinkedProcess caller) throws IOException {
         Process callerProcess = caller.getProcess();
         for (Process calledProcess : findCalledProcesses(callerProcess).toArray(new Process[0])) {
             LinkedProcess child = new LinkedProcess(calledProcess);
@@ -153,32 +183,5 @@ public class Hierarchy extends Setup {
             caller.getChildren().add(child);
             addCalledHierarchy(child);
         }
-    }
-
-    private void populateProcessHierarchy(List<LinkedProcess> processes, JSONObject json) {
-        for (LinkedProcess process : processes) {
-            Process proc = process.getProcess();
-            JSONArray array;
-            if (json.has("hierarchy"))
-                array = json.getJSONArray("hierarchy");
-            else
-                array = json.getJSONArray("children");
-            JSONObject obj = new JSONObject();
-            obj.put("name" , proc.getName());
-            obj.put("version", proc.getVersionString());
-            array.put(obj);
-            if (process.getChildren() != null && process.getChildren().size() > 0) {
-                obj.put("children", new JSONArray());
-                populateProcessHierarchy(process.getChildren(), obj);
-            }
-        }
-    }
-
-    public static void main(String[] args) throws IOException {
-        Hierarchy hierarchy = new Hierarchy();
-        hierarchy.setConfigLoc("C:\\workspaces\\mdw6\\mdw\\config");
-        hierarchy.setAssetLoc("C:\\workspaces\\mdw6\\mdw-workflow\\assets");
-        hierarchy.setProcess("com.centurylink.mdw.tests.workflow/SmartProcessChild.proc");
-        hierarchy.run(null);
     }
 }

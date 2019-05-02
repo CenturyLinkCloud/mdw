@@ -3,6 +3,7 @@ package com.centurylink.mdw.model.workflow;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.util.StringHelper;
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;

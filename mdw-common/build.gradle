@@ -154,6 +154,8 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/model/attribute/Attribute.class"
         include "com/centurylink/mdw/model/event/EventType.class"
         include "com/centurylink/mdw/model/variable/Variable.class"
+        include "com/centurylink/mdw/model/Value.class"
+        include "com/centurylink/mdw/model/Value\$*.class"
         include "com/centurylink/mdw/model/asset/Asset.class"
         include "com/centurylink/mdw/model/asset/AssetInfo.class"
         include "com/centurylink/mdw/model/Jsonable.class"
@@ -169,6 +171,8 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/drawio/*.class"
         include "com/centurylink/mdw/util/MiniCrypter.class"
         include "com/centurylink/mdw/util/MiniCrypter.class"
+        include "com/centurylink/mdw/util/StringHelper.class"
+        include "com/centurylink/mdw/util/StringHelper\$*.class"
         include "com/centurylink/mdw/model/asset/Pagelet.class"
         include "com/centurylink/mdw/model/asset/Pagelet\$*.class"
         include "com/centurylink/mdw/model/request/ServicePath.class";
