@@ -30,6 +30,7 @@ public class ScheduledEvent implements Comparable<ScheduledEvent> {
     private String name;
     private String message;
     private String reference;
+    private Integer status;
 
     public Date getScheduledTime() {
         return scheduledTime;
@@ -89,9 +90,8 @@ public class ScheduledEvent implements Comparable<ScheduledEvent> {
     public boolean isScheduledJob() {
         return name.startsWith(SCHEDULED_JOB_PREFIX);
     }
-    
-    public boolean isSpecialEvent() {
-        return name.startsWith(SPECIAL_EVENT_PREFIX) || name.startsWith(EXTERNAL_EVENT_PREFIX);
-    }
+
+    public Integer getStatus() { return status; }
+    public void setStatus(Integer status) { this.status = status; }
     
 }

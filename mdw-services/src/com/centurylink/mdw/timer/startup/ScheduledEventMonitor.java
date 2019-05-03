@@ -46,7 +46,7 @@ public class ScheduledEventMonitor extends TimerTask {
             Date now = new Date(DatabaseAccess.getCurrentTime());
             logger.log(LogLevel.TRACE, "Processing scheduled events at: " + now);
             ScheduledEvent event = queue.getNextReadyEvent(now);
-            while (event!=null && count < batch_size) {
+            while (event != null && count < batch_size) {
                 count++;
                 queue.processEvent(event, now);
                 event = queue.getNextReadyEvent(now);

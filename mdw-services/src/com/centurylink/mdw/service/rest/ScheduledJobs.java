@@ -75,7 +75,7 @@ public class ScheduledJobs extends JsonRestService {
                 }
                 if (logger.isDebugEnabled())
                     logger.debug("Starting Scheduled Job via REST Service: " + className);
-                job.run(url);
+                job.run(url, s -> {});
                 return null;
             }
             else

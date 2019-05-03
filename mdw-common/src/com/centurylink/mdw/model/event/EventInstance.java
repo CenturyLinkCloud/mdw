@@ -30,6 +30,7 @@ public class EventInstance implements Serializable {
     public static final Integer STATUS_FLAG = 4;
     // scheduled jobs (a.k.a timer tasks)
     public static final Integer STATUS_SCHEDULED_JOB = 5;
+    public static final Integer STATUS_SCHEDULED_JOB_RUNNING = 15;
     // internal event - including following 3 types:
     //      a) delayed message:
     //            consumeDate is not null, reference can be null or others,
@@ -176,6 +177,7 @@ public class EventInstance implements Serializable {
         else if (status.equals(STATUS_CERTIFIED_MESSAGE)) return "Certified Message";
         else if (status.equals(STATUS_INTERNAL_EVENT)) return "Internal Event";
         else if (status.equals(STATUS_SCHEDULED_JOB)) return "Scheduled Job";
+        else if (status.equals(STATUS_SCHEDULED_JOB_RUNNING)) return "Scheduled Job Running";
         else if (status.equals(STATUS_CERTIFIED_MESSAGE_CANCEL)) return "CM - Cancelled";
         else if (status.equals(STATUS_CERTIFIED_MESSAGE_DELIVERED)) return "CM - Delivered";
         else if (status.equals(STATUS_CERTIFIED_MESSAGE_RECEIVED)) return "CM - Received";
@@ -192,6 +194,7 @@ public class EventInstance implements Serializable {
         else if (v.equalsIgnoreCase("Certified Message")) return STATUS_CERTIFIED_MESSAGE;
         else if (v.equalsIgnoreCase("Internal Event")) return STATUS_INTERNAL_EVENT;
         else if (v.equalsIgnoreCase("Scheduled Job")) return STATUS_SCHEDULED_JOB;
+        else if (v.equalsIgnoreCase("Scheduled Job Running")) return STATUS_SCHEDULED_JOB_RUNNING;
         else if (v.equalsIgnoreCase("CM - Cancelled")) return STATUS_CERTIFIED_MESSAGE_CANCEL;
         else if (v.equalsIgnoreCase("CM - Delivered")) return STATUS_CERTIFIED_MESSAGE_DELIVERED;
         else if (v.equalsIgnoreCase("CM - Received")) return STATUS_CERTIFIED_MESSAGE_RECEIVED;

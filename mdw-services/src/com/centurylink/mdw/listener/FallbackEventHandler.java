@@ -23,7 +23,6 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.event.ExternalEventHandler;
 import com.centurylink.mdw.model.monitor.LoadBalancedScheduledJob;
 import com.centurylink.mdw.model.monitor.ScheduledJob;
@@ -80,8 +79,7 @@ public class FallbackEventHandler implements ExternalEventHandler {
      * @param metaInfo meta information. The method does not use this.
      * @return the response message
      */
-    public String handleEventMessage(String message, Object msgdoc, Map<String,String> metaInfo)
-            throws EventHandlerException {
+    public String handleEventMessage(String message, Object msgdoc, Map<String,String> metaInfo) {
         String msg;
         int code;
         if (msgdoc == null) {
@@ -114,30 +112,43 @@ public class FallbackEventHandler implements ExternalEventHandler {
         if (rootNodeName.equals("_mdw_property")) {
             String propname = XmlPath.getRootNodeValue(msgdoc);
             response = PropertyManager.getProperty(propname);
-            if (response==null) response = "";
+            if (response == null)
+                response = "";
         } else if (rootNodeName.equals("_mdw_run_job")) {
             String classNameAndArgs = XmlPath.getRootNodeValue(msgdoc);
             CallURL url = new CallURL(classNameAndArgs);
             String className = url.getAction();
-            Object aTimerTask = null;
+            Object aTimerTask;
             try {
                 ScheduledJob job = MdwServiceRegistry.getInstance().getScheduledJob(className);
                 if (job != null) {
                     boolean enabled = true;
+                    boolean exclusive = false; // means only one can run at a time
                     com.centurylink.mdw.annotations.ScheduledJob scheduledJobAnnotation =
                             job.getClass().getAnnotation(com.centurylink.mdw.annotations.ScheduledJob.class);
                     if (scheduledJobAnnotation != null) {
+                        enabled = scheduledJobAnnotation.defaultEnabled();
                         String enabledProp = scheduledJobAnnotation.enabledProp();
                         if (!enabledProp.isEmpty()) {
                             enabled = PropertyManager.getBooleanProperty(enabledProp, false);
                         }
+                        exclusive = scheduledJobAnnotation.isExclusive();
                     }
                     if (enabled) {
                         logger.debug("Running scheduled job: " + job.getClass());
-                        if (job instanceof LoadBalancedScheduledJob)
-                            ((LoadBalancedScheduledJob) job).runOnLoadBalancedInstance(url);
-                        else
-                            job.run(url);
+                        if (job instanceof LoadBalancedScheduledJob) {
+                            ((LoadBalancedScheduledJob)job).runOnLoadBalancedInstance(url);
+                        }
+                        else {
+                            if (exclusive) {
+                                EventServices eventServices = ServiceLocator.getEventServices();
+                                eventServices.runScheduledJobExclusively(job, url);
+                            }
+                            else {
+                                // don't care when or if completed
+                                job.run(url, s -> {});
+                            }
+                        }
                     }
                     else {
                         logger.debug("Scheduled job is disabled: " + job.getClass());
@@ -147,10 +158,12 @@ public class FallbackEventHandler implements ExternalEventHandler {
                     className = Compatibility.getEventHandler(className);
                     aTimerTask = Class.forName(className).newInstance();
                     if (aTimerTask instanceof ScheduledJob) {
-                        if (aTimerTask instanceof LoadBalancedScheduledJob)
-                            ((LoadBalancedScheduledJob)aTimerTask).runOnLoadBalancedInstance(url);
-                        else
-                            ((ScheduledJob)aTimerTask).run(url);
+                        if (aTimerTask instanceof LoadBalancedScheduledJob) {
+                            ((LoadBalancedScheduledJob) aTimerTask).runOnLoadBalancedInstance(url);
+                        }
+                        else {
+                            ((ScheduledJob) aTimerTask).run(url, s -> {});
+                        }
                     }
                     else
                         ((TimerTask) aTimerTask).run(); // for backward compatibility
@@ -164,7 +177,6 @@ public class FallbackEventHandler implements ExternalEventHandler {
         } else if (rootNodeName.equals("_mdw_refresh")) {
             String cachename = XmlPath.getRootNodeValue(msgdoc);
             CacheRegistration.broadcastRefresh(cachename, MessengerFactory.newInternalMessenger());
-//            printServerInfo();
             response = "OK";
         } else if (rootNodeName.equals("_mdw_peer_server_list")) {
             List<String> servers = ApplicationContext.getRoutingServerList().isEmpty() ? ApplicationContext.getServerList().getHostPortList() : ApplicationContext.getRoutingServerList().getHostPortList();

@@ -18,7 +18,6 @@ package com.centurylink.mdw.service.data.process;
 import com.centurylink.mdw.cache.impl.VariableTypeCache;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.TableSequenceName;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventLog;
@@ -43,19 +42,6 @@ import java.util.*;
  * TODO: Remove non-engine-related data access from this class.
  */
 public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAccess {
-
-    private static Map<String,String> _ExternalEventInstanceQueryMap = new HashMap<String, String>();
-
-    static {
-        _ExternalEventInstanceQueryMap.put("eventName", "d.OWNER_TYPE");
-        _ExternalEventInstanceQueryMap.put("externalEventInstanceId", "d.DOCUMENT_ID");
-        _ExternalEventInstanceQueryMap.put("createdDate", "d.CREATE_DT");
-        _ExternalEventInstanceQueryMap.put("eventData", "d.CONTENT");
-        _ExternalEventInstanceQueryMap.put("processInstanceId", "d.PROCESS_INST_ID");
-        _ExternalEventInstanceQueryMap.put("processId", "pi.PROCESS_ID");
-        _ExternalEventInstanceQueryMap.put("processInstanceStatus", "pi.STATUS_CD");
-        _ExternalEventInstanceQueryMap.put("masterRequestId", "pi.MASTER_REQUEST_ID");
-    }
 
     public DatabaseAccess getDatabaseAccess() {
         return db;
@@ -366,7 +352,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             throws SQLException {
         String query = "insert into EVENT_INSTANCE " +
             "(EVENT_NAME, DOCUMENT_ID, STATUS_CD, CREATE_DT, CONSUME_DT, AUXDATA, REFERENCE, PRESERVE_INTERVAL) " +
-            "values (?, ?, ?, "+nowPrecision()+", ?, ?, ?, ?)";
+            "values (?, ?, ?, " + nowPrecision() + ", ?, ?, ?, ?)";
         Object[] args = new Object[7];
         args[0] = eventName;
         args[1] = documentId;
@@ -395,7 +381,9 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             vo.setConsumeDate(rs.getTimestamp(4));
             vo.setPreserveSeconds(rs.getInt(5));
             return vo;
-        } else return null;
+        } else {
+            return null;
+        }
     }
 
     private void consumeEventInstance(EventInstance vo, int preserveSeconds) throws SQLException {
@@ -416,23 +404,27 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         StringBuffer sb = new StringBuffer();
         List<Object> argl = new ArrayList<Object>();
         sb.append("update EVENT_INSTANCE set ");
-        if (documentId!=null) {
-            if (argl.size()>0) sb.append(", ");
+        if (documentId != null) {
+            if (argl.size() > 0)
+                sb.append(", ");
             sb.append("DOCUMENT_ID=?");
             argl.add(documentId);
         }
-        if (status!=null) {
-            if (argl.size()>0) sb.append(", ");
+        if (status != null) {
+            if (argl.size() > 0)
+                sb.append(", ");
             sb.append("STATUS_CD=?");
             argl.add(status);
         }
-        if (consumeDate!=null) {
-            if (argl.size()>0) sb.append(", ");
+        if (consumeDate != null) {
+            if (argl.size() > 0)
+                sb.append(", ");
             sb.append("CONSUME_DT=?");
             argl.add(consumeDate);
         }
-        if (auxdata!=null) {
-            if (argl.size()>0) sb.append(", ");
+        if (auxdata != null) {
+            if (argl.size() > 0)
+                sb.append(", ");
             sb.append("AUXDATA=?");
             argl.add(auxdata);
         }
@@ -441,20 +433,23 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             sb.append("REFERENCE=?");
             argl.add(reference);
         }
-        if (preserveSeconds>0) {
-            if (argl.size()>0) sb.append(", ");
+        if (preserveSeconds > 0) {
+            if (argl.size() > 0)
+                sb.append(", ");
             sb.append("PRESERVE_INTERVAL=?");
             argl.add(new Integer(preserveSeconds));
         }
         if (comments != null) {
-            if (argl.size()>0) sb.append(", ");
+            if (argl.size() > 0)
+                sb.append(", ");
             sb.append("COMMENTS=?");
             argl.add(comments);
         }
         sb.append(" where EVENT_NAME=?");
         argl.add(eventName);
         int count = db.runUpdate(sb.toString(), argl.toArray());
-        if (count==0) throw new SQLException("The event does not exist");
+        if (count == 0)
+            throw new SQLException("The event does not exist");
     }
 
     public int deleteEventInstance(String eventName) throws SQLException {
@@ -678,11 +673,11 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         return id;
     }
 
-    public void recordScheduledJobHistory(String jobName, Date scheduledTime, String wlsServerName) throws SQLException {
+    public void recordScheduledJobHistory(String jobName, Date scheduledTime, String serverName) throws SQLException {
         String subCategory = "Execute";
         String comments = "Scheduled time " + DateHelper.dateToString(scheduledTime);
         recordEventLog(jobName, EventLog.CATEGORY_SCHEDULED_JOB_HISTORY,
-                subCategory, wlsServerName, "N/A", 0L, "MDW", null, comments);
+                subCategory, serverName, "N/A", 0L, "MDW", null, comments);
     }
 
     private void recordEventHistory(String eventName, String subcat,
@@ -1075,6 +1070,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         query.append("from EVENT_INSTANCE ");
         query.append("where STATUS_CD in (");
         query.append(EventInstance.STATUS_SCHEDULED_JOB).append(",");
+        query.append(EventInstance.STATUS_SCHEDULED_JOB_RUNNING).append(",");
         query.append(EventInstance.STATUS_INTERNAL_EVENT).append(")");
         ResultSet rs;
         if (cutofftime==null) {
@@ -1133,7 +1129,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     }
 
     public ScheduledEvent lockScheduledEvent(String name) {
-        String query = "select EVENT_NAME,CREATE_DT,CONSUME_DT,AUXDATA,COMMENTS " +
+        String query = "select EVENT_NAME,CREATE_DT,CONSUME_DT,AUXDATA,COMMENTS,STATUS_CD " +
                         "from EVENT_INSTANCE " +
                         "where EVENT_NAME = ? for update";
         if (!db.isMySQL()) query = query + " nowait";
@@ -1145,7 +1141,9 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                 de.setCreateTime(rs.getTimestamp(2));
                 de.setScheduledTime(rs.getTimestamp(3));
                 de.setMessage(rs.getString(4));
-                if (de.getMessage()==null) de.setMessage(rs.getString(5));
+                if (de.getMessage() == null)
+                    de.setMessage(rs.getString(5));
+                de.setStatus(rs.getInt(6));
                 return de;
             } else return null;
         } catch (SQLException e) {
@@ -1155,35 +1153,8 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 
     public void offerScheduledEvent(ScheduledEvent event) throws SQLException {
         createEventInstance(event.getName(), null,
-                event.isScheduledJob()?EventInstance.STATUS_SCHEDULED_JOB:EventInstance.STATUS_INTERNAL_EVENT,
+                event.isScheduledJob() ? EventInstance.STATUS_SCHEDULED_JOB : EventInstance.STATUS_INTERNAL_EVENT,
                 event.getScheduledTime(), event.getMessage(), event.getReference(), 3600);
-    }
-
-    /**
-     * Get the variable name for a task instance with 'Referred as' name
-     * @param taskInstId
-     * @param name
-     * @return
-     * @throws SQLException
-     */
-    public String getVariableNameForTaskInstance(Long taskInstId, String name) throws SQLException {
-        String query = "select v.VARIABLE_NAME " +
-            "from VARIABLE v, VARIABLE_MAPPING vm, TASK t, TASK_INSTANCE ti " +
-            "where ti.TASK_INSTANCE_ID = ?" +
-            "    and ti.TASK_ID = t.TASK_ID" +
-            "    and vm.MAPPING_OWNER = 'TASK'" +
-            "    and vm.MAPPING_OWNER_ID = t.TASK_ID" +
-            "    and v.VARIABLE_ID = vm.VARIABLE_ID" +
-            "    and (v.VARIABLE_NAME = ? or vm.VAR_REFERRED_AS = ?)";
-        Object[] args = new Object[3];
-        args[0] = taskInstId;
-        args[1] = name;
-        args[2] = name;
-        ResultSet rs = db.runSelect(query, args);
-        if (rs.next()) {
-            /*if (rs.isLast())*/ return rs.getString(1);
-            //else throw new SQLException("getVariableNameForTaskInstance returns non-unique result");
-        } else throw new SQLException("getVariableNameForTaskInstance returns no result");
     }
 
     public Document getDocument(DocumentReference docref, boolean forUpdate) throws SQLException {
@@ -1191,10 +1162,10 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     }
 
     public Integer lockActivityInstance(Long actInstId) throws SQLException {
-        String query =
-                "select STATUS_CD from ACTIVITY_INSTANCE where ACTIVITY_INSTANCE_ID=? for update";
+        String query = "select STATUS_CD from ACTIVITY_INSTANCE where ACTIVITY_INSTANCE_ID=? for update";
         ResultSet rs = db.runSelect(query, actInstId);
-        if (rs.next()) return new Integer(rs.getInt(1));
+        if (rs.next())
+            return new Integer(rs.getInt(1));
         throw new SQLException("Activity instance does not exist: " + actInstId);
     }
 
@@ -1267,47 +1238,9 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         return ret;
     }
 
-    public int deleteTableRow(String tableName, String fieldName, Object fieldValue)
-    throws SQLException {
+    public int deleteTableRow(String tableName, String fieldName, Object fieldValue) throws SQLException {
         String query = "delete from " + tableName + " where " + fieldName + "=?";
         return db.runUpdate(query, fieldValue);
-    }
-
-    public Long createTableRow(String tableName, String[] fieldNames, Object[] fieldValues)
-            throws SQLException {
-        StringBuffer sb = new StringBuffer();
-        Long id = null;
-        sb.append("insert into ").append(tableName).append(" (");
-        for (int i=0; i<fieldNames.length; i++) {
-            if (i>0) sb.append(",");
-            sb.append(fieldNames[i]);
-        }
-        sb.append(") values (");
-        if (db.isMySQL()) {
-            for (int i=0; i<fieldNames.length; i++) {
-                if (i>0) sb.append(",");
-                sb.append("?");
-                if (fieldValues[i] instanceof TableSequenceName) {
-                    fieldValues[i] = null;
-                }
-            }
-            sb.append(")");
-            String query = sb.toString();
-            id = db.runInsertReturnId(query, fieldValues);
-        } else {
-            for (int i=0; i<fieldNames.length; i++) {
-                if (i>0) sb.append(",");
-                sb.append("?");
-                if (fieldValues[i] instanceof TableSequenceName) {
-                    id = this.getNextId(((TableSequenceName)fieldValues[i]).getSequenceName());
-                    fieldValues[i] = id;
-                }
-            }
-            sb.append(")");
-            String query = sb.toString();
-            db.runUpdate(query, fieldValues);
-        }
-        return id;
     }
 
     public int updateTableRow(String tableName, String keyName, Object keyValue,

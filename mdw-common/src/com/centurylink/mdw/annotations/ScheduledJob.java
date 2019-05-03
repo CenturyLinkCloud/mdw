@@ -16,4 +16,7 @@ public @interface ScheduledJob {
 
     String enabledProp() default "";
 
+    boolean defaultEnabled() default true;
+
+    boolean isExclusive() default false;
 }

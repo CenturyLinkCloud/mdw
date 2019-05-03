@@ -28,6 +28,7 @@ import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
+import com.centurylink.mdw.model.monitor.ScheduledJob;
 import com.centurylink.mdw.model.monitor.UnscheduledEvent;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
@@ -47,6 +48,7 @@ import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.services.process.InternalEventDriver;
 import com.centurylink.mdw.services.process.ProcessExecutor;
+import com.centurylink.mdw.util.CallURL;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -612,10 +614,12 @@ public class EventServicesImpl implements EventServices {
             transaction = edao.startTransaction();
             edao.offerScheduledEvent(event);
         } catch (SQLIntegrityConstraintViolationException e) {
-            throw new DataAccessException(23000, "The event is already scheduled", e);
+            throw new DataAccessException(DataAccessException.INTEGRITY_CONSTRAINT_VIOLATION,
+                    "The event is already scheduled", e);
         } catch (SQLException e) {
             if (e.getSQLState().equals("23000")) {
-                throw new DataAccessException(23000, "The event is already scheduled", e);
+                throw new DataAccessException(DataAccessException.INTEGRITY_CONSTRAINT_VIOLATION,
+                        "The event is already scheduled", e);
                 // for unknown reason (may be because of different Oracle driver - ojdbc14),
                 // when running under Tomcat, contraint violation does not throw SQLIntegrityConstraintViolationException
                 // 23000 is ANSI/SQL standard SQL State for constraint violation
@@ -629,14 +633,13 @@ public class EventServicesImpl implements EventServices {
         }
     }
 
-    public void processScheduledEvent(String eventName, Date now)
-    throws DataAccessException {
+    public void processScheduledEvent(String eventName, Date now) throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
             ScheduledEvent event = edao.lockScheduledEvent(eventName);
-            Date currentScheduledTime = event==null?null:event.getScheduledTime();
+            Date currentScheduledTime = event == null ? null : event.getScheduledTime();
             ScheduledEventQueue queue = ScheduledEventQueue.getSingleton();
             boolean processed = queue.processEvent(eventName, event, now, edao);
             if (processed)  {
@@ -644,9 +647,13 @@ public class EventServicesImpl implements EventServices {
                     edao.recordScheduledJobHistory(event.getName(), currentScheduledTime,
                             ApplicationContext.getServer().toString());
                 }
-                if (event.getScheduledTime()==null) edao.deleteEventInstance(event.getName());
-                else edao.updateEventInstance(event.getName(), null, null,
-                        event.getScheduledTime(), null, null, 0, null);
+                if (event.getScheduledTime() == null) {
+                    edao.deleteEventInstance(event.getName());
+                }
+                else {
+                    edao.updateEventInstance(event.getName(), null, null,
+                            event.getScheduledTime(), null, null, 0, null);
+                }
             }     // else do nothing - may be processed by another server
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to process scheduled event", e);
@@ -662,7 +669,7 @@ public class EventServicesImpl implements EventServices {
         try {
             transaction = edao.startTransaction();
             ScheduledEvent event = edao.lockScheduledEvent(eventName);
-            if (event!=null) {
+            if (event != null) {
                 ThreadPoolProvider thread_pool = ApplicationContext.getThreadPoolProvider();
                 InternalEventDriver command = new InternalEventDriver(null, event.getMessage());
                 if (thread_pool.execute(ThreadPoolProvider.WORKER_SCHEDULER, event.getName(), command)) {
@@ -725,7 +732,20 @@ public class EventServicesImpl implements EventServices {
             transaction = edao.startTransaction();
             edao.updateEventInstance(eventName, documentId, status, consumeDate, auxdata, reference, preserveSeconds, comments);
         } catch (SQLException e) {
-            throw new DataAccessException(-1, "Failed to retrieve event instance list", e);
+            throw new DataAccessException(-1, "Failed to update event instance: " + eventName, e);
+        } finally {
+            edao.stopTransaction(transaction);
+        }
+    }
+
+    public void deleteEventInstance(String eventName) throws DataAccessException {
+        TransactionWrapper transaction = null;
+        EngineDataAccessDB edao = new EngineDataAccessDB();
+        try {
+            transaction = edao.startTransaction();
+            edao.deleteEventInstance(eventName);
+        } catch (SQLException e) {
+            throw new DataAccessException("Failed to delete event instance: " + eventName, e);
         } finally {
             edao.stopTransaction(transaction);
         }
@@ -833,5 +853,51 @@ public class EventServicesImpl implements EventServices {
                 process = ProcessCache.getProcess(processInst.getProcessId());
         }
         return process;
+    }
+
+    @Override
+    public void runScheduledJobExclusively(ScheduledJob job, CallURL params) throws DataAccessException {
+        String eventName = ScheduledEvent.SCHEDULED_JOB_PREFIX + params;
+        TransactionWrapper transaction = null;
+        EngineDataAccessDB edao = new EngineDataAccessDB();
+        try {
+            transaction = edao.startTransaction();
+            ScheduledEvent event = edao.lockScheduledEvent(eventName);
+            if (event == null) {
+                logger.error("ScheduledJob not found: " + eventName);
+            }
+            edao.updateEventInstance(event.getName(), null, EventInstance.STATUS_SCHEDULED_JOB_RUNNING,
+                    event.getScheduledTime(), null, null, 0, null);
+        } catch (SQLException e) {
+            throw new DataAccessException(-1, "Failed to update scheduled job", e);
+        } finally {
+            edao.stopTransaction(transaction);
+        }
+        job.run(params, (Integer status) -> {
+            try {
+                completeScheduledJob(eventName, status);
+            }
+            catch (DataAccessException ex) {
+                logger.severeException(ex.getMessage(), ex);
+            }
+        });
+    }
+
+    @Override
+    public void completeScheduledJob(String eventName, Integer status) throws DataAccessException {
+        TransactionWrapper transaction = null;
+        EngineDataAccessDB edao = new EngineDataAccessDB();
+        try {
+            transaction = edao.startTransaction();
+            ScheduledEvent event = edao.lockScheduledEvent(eventName);
+            if (event != null) {
+                edao.updateEventInstance(event.getName(), null, EventInstance.STATUS_SCHEDULED_JOB,
+                        event.getScheduledTime(), null, null, 0, null);
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(-1, "Failed to complete scheduled job", e);
+        } finally {
+            edao.stopTransaction(transaction);
+        }
     }
 }
