@@ -36,7 +36,7 @@ import com.centurylink.mdw.startup.StartupService;
 import com.centurylink.mdw.timer.startup.AssetImportMonitor;
 import com.centurylink.mdw.timer.startup.TimerTaskRegistration;
 import com.centurylink.mdw.timer.startup.UserGroupMonitor;
-import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.DateHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -79,7 +79,7 @@ public class MdwMain {
 
                 // set db time difference so that later call does not go to db
                 long dbtime = db.getDatabaseTime();
-                System.out.println("Database time: " + StringHelper.dateToString(new Date(dbtime)));
+                System.out.println("Database time: " + DateHelper.dateToString(new Date(dbtime)));
 
                 // automatically update the ASSET_REF table as a safety check
                 DataAccess.updateAssetRefs();

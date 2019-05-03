@@ -15,14 +15,15 @@
  */
 package com.centurylink.mdw.services.task;
 
+import com.centurylink.mdw.constant.TaskAttributeConstant;
+import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.task.TaskRuntimeContext;
+import com.centurylink.mdw.observer.task.TaskIndexProvider;
+import org.apache.commons.lang.StringUtils;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.centurylink.mdw.constant.TaskAttributeConstant;
-import com.centurylink.mdw.model.task.TaskRuntimeContext;
-import com.centurylink.mdw.observer.task.TaskIndexProvider;
-import com.centurylink.mdw.util.StringHelper;
 
 /**
  * Standard index provider for custom manual tasks.
@@ -34,11 +35,11 @@ public class CustomTaskIndexProvider implements TaskIndexProvider {
 
         Map<String,String> indexes = null;
         String indicesAttr = runtimeContext.getTaskAttribute(TaskAttributeConstant.INDICES);
-        if (!StringHelper.isEmpty(indicesAttr)) {
-            indexes = new HashMap<String,String>();
-            List<String[]> rows = StringHelper.parseTable(indicesAttr, ',', ';', 2);
+        if (!StringUtils.isBlank(indicesAttr)) {
+            indexes = new HashMap<>();
+            List<String[]> rows = Attribute.parseTable(indicesAttr, ',', ';', 2);
             for (String[] row : rows) {
-                if (!StringHelper.isEmpty(row[0]) && !StringHelper.isEmpty(row[1])) {
+                if (!StringUtils.isBlank(row[0]) && !StringUtils.isBlank(row[1])) {
                     String value = runtimeContext.evaluateToString(row[1]);
                     if (value != null)
                         indexes.put(row[0], value);

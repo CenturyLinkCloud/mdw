@@ -2,10 +2,8 @@ package com.centurylink.mdw.cli;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.LinkedProcess;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.ProcessHierarchy;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -15,14 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.regex.Pattern;
 
 @Parameters(commandNames="hierarchy", commandDescription="Process definition hierarchy", separators="=")
 public class Hierarchy extends Setup {
 
-    private static final int INDENT = 2;
-
-    @Parameter(names = "--process", description = "Process for which heirarchy will be shown.")
+    @Parameter(names="--process", description="Process for which heirarchy will be shown.")
     private String process;
     public String getProcess() {
         return process;
@@ -30,6 +25,11 @@ public class Hierarchy extends Setup {
     public void setProcess(String proc) {
         this.process = proc;
     }
+
+    @Parameter(names="--max-depth", description="Maximum child depth (to avoid StackOverflowErrors)")
+    private int maxDepth = 100;
+    public int getMaxDepth() { return maxDepth; }
+    public void setMaxDepth(int maxDepth) { this.maxDepth = maxDepth; }
 
     private List<LinkedProcess> topLevelCallers = new ArrayList<>();
     public List<LinkedProcess> getTopLevelCallers() { return topLevelCallers; }
@@ -56,7 +56,7 @@ public class Hierarchy extends Setup {
 
         for (int i = 0; i < topLevelCallers.size(); i++) {
             LinkedProcess topLevelCaller = topLevelCallers.get(i);
-            addCalledHierarchy(topLevelCaller);
+            addCalledHierarchy(topLevelCaller, 0);
             int prog = 90 + ((int)Math.floor((i * 10)/topLevelCallers.size()));
             for (ProgressMonitor monitor : monitors)
                 monitor.progress(prog);
@@ -76,34 +76,27 @@ public class Hierarchy extends Setup {
 
     private void print(List<LinkedProcess> callers, int depth) {
         for (LinkedProcess caller : callers) {
-            if (depth > 0) {
-                getOut().print(String.format("%1$" + (depth * INDENT) + "s", ""));
-                getOut().print(" - ");
-            }
-            getOut().println(caller);
-            print(caller.getChildren(), depth + 1);
+            print(caller, depth);
         }
+    }
+
+    private void print(LinkedProcess caller, int depth) {
+        getOut().println(caller.toString(depth));
+        print(caller.getChildren(), depth + 1);
     }
 
     public List<Process> findCallingProcesses(Process subproc) {
         List<Process> callers = new ArrayList<>();
         for (Process process : processes) {
-            for (Activity activity : process.getActivities()) {
-                if (ProcessHierarchy.activityInvokesProcess(activity, subproc) && !callers.contains(process))
-                    callers.add(process);
-            }
-            for (Process embedded : process.getSubprocesses()) {
-                for (Activity activity : embedded.getActivities()) {
-                    if (ProcessHierarchy.activityInvokesProcess(activity, subproc) && !callers.contains(process))
-                        callers.add(process);
-                }
+            if (process.invokesSubprocess(subproc) && !callers.contains(process)) {
+                callers.add(process);
             }
         }
         return callers;
     }
 
     public List<Process> findCalledProcesses(Process mainproc) {
-        return ProcessHierarchy.findInvoked(mainproc, processes);
+        return mainproc.findInvoked(processes);
     }
 
     private Process loadProcess(String pkg, File procFile, boolean deep) throws IOException {
@@ -133,12 +126,6 @@ public class Hierarchy extends Setup {
     private void loadProcesses(ProgressMonitor... monitors) throws IOException {
         if (processes == null) {
             processes = new ArrayList<>();
-            // TODO: only load processes whose contents match these patterns
-            Pattern singleProcPattern = Pattern.compile("^.*\"processname\": \".*\"");
-            Pattern multiProcPattern = Pattern.compile("^.*\"processmap\": \".*\"");
-
-
-
             Map<String,List<File>> pkgProcFiles = findAllAssets("proc");
             for (String pkg : pkgProcFiles.keySet()) {
                 List<File> procFiles = pkgProcFiles.get(pkg);
@@ -170,13 +157,28 @@ public class Hierarchy extends Setup {
         }
     }
 
-    private void addCalledHierarchy(LinkedProcess caller) throws IOException {
+    /**
+     * Find subflow graph for caller.
+     * @param caller - top level starting flow
+     */
+    private void addCalledHierarchy(LinkedProcess caller, int depth) throws IOException {
+        depth++;
         Process callerProcess = caller.getProcess();
-        for (Process calledProcess : findCalledProcesses(callerProcess).toArray(new Process[0])) {
+        for (Process calledProcess : findCalledProcesses(callerProcess)) {
+            // TODO: prevent circularity
             LinkedProcess child = new LinkedProcess(calledProcess);
             child.setParent(caller);
             caller.getChildren().add(child);
-            addCalledHierarchy(child);
+            if (depth > maxDepth) {
+                String message = "Allowable --max-depth (" + maxDepth + ") exceeded.";
+                getOut().println("\n" + message);
+                print(child.getCallChain(), 0);
+                throw new IOException(message + "  See tree output.");
+            }
+            else {
+                addCalledHierarchy(child, depth);
+            }
         }
+        depth--;
     }
 }

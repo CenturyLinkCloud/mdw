@@ -33,7 +33,7 @@ import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.*;
-import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.DateHelper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -680,7 +680,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 
     public void recordScheduledJobHistory(String jobName, Date scheduledTime, String wlsServerName) throws SQLException {
         String subCategory = "Execute";
-        String comments = "Scheduled time " + StringHelper.dateToString(scheduledTime);
+        String comments = "Scheduled time " + DateHelper.dateToString(scheduledTime);
         recordEventLog(jobName, EventLog.CATEGORY_SCHEDULED_JOB_HISTORY,
                 subCategory, wlsServerName, "N/A", 0L, "MDW", null, comments);
     }
@@ -898,8 +898,8 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             workTransInstance.setTransitionInstanceID(transInstId);
             workTransInstance.setProcessInstanceID(rs.getLong(1));
             workTransInstance.setStatusCode(rs.getInt(2));
-            workTransInstance.setStartDate(StringHelper.dateToString(rs.getTimestamp(3)));
-            workTransInstance.setEndDate(StringHelper.dateToString(rs.getTimestamp(4)));
+            workTransInstance.setStartDate(DateHelper.dateToString(rs.getTimestamp(3)));
+            workTransInstance.setEndDate(DateHelper.dateToString(rs.getTimestamp(4)));
             workTransInstance.setTransitionID(rs.getLong(5));
             workTransInstance.setDestinationID(rs.getLong(6));
             return workTransInstance;
@@ -1253,7 +1253,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             for (int j=0; j<types.length; j++) {
                 if (types[j]==Date.class) {
                     Date d = rs.getTimestamp(j+1);
-                    if (d!=null) row[j] = StringHelper.dateToString(d);
+                    if (d!=null) row[j] = DateHelper.dateToString(d);
                 } else if (types[j]==Long.class) {
                     long v = rs.getLong(j+1);
                     if (v!=0L) row[j] = Long.toString(v);

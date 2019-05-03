@@ -17,7 +17,7 @@ package com.centurylink.mdw.model.request;
 
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Response;
-import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.DateHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -134,9 +134,9 @@ public class Request implements Jsonable {
         if (json.has("id"))
             id = json.getLong("id");
         if (json.has("created"))
-            created = StringHelper.stringToDate(json.getString("created"));
+            created = DateHelper.stringToDate(json.getString("created"));
         if (json.has("responded"))
-            responded = StringHelper.stringToDate(json.getString("responded"));
+            responded = DateHelper.stringToDate(json.getString("responded"));
         if (json.has("responseId"))
             responseId = json.getLong("responseId");
         if (json.has("masterRequestId"))
@@ -156,9 +156,9 @@ public class Request implements Jsonable {
         if (json.has("processStatus"))
             processStatus = json.getString("processStatus");
         if (json.has("processStart"))
-            processStart = StringHelper.stringToDate(json.getString("processStart"));
+            processStart = DateHelper.stringToDate(json.getString("processStart"));
         if (json.has("processEnd"))
-            processEnd = StringHelper.stringToDate(json.getString("processEnd"));
+            processEnd = DateHelper.stringToDate(json.getString("processEnd"));
         if (json.has("outbound"))
             outbound = json.getBoolean("outbound");
         if (json.has("content"))
@@ -180,9 +180,9 @@ public class Request implements Jsonable {
         if (id > 0)
             json.put("id", id);
         if (created != null)
-            json.put("created", StringHelper.dateToString(created));
+            json.put("created", DateHelper.dateToString(created));
         if (responded != null)
-            json.put("responded", StringHelper.dateToString(responded));
+            json.put("responded", DateHelper.dateToString(responded));
         if (responseId != null)
             json.put("responseId", responseId);
         if (masterRequestId != null)
@@ -202,9 +202,9 @@ public class Request implements Jsonable {
         if (processStatus != null)
             json.put("processStatus", processStatus);
         if (processStart != null)
-            json.put("processStart", StringHelper.dateToString(processStart));
+            json.put("processStart", DateHelper.dateToString(processStart));
         if (processEnd != null)
-            json.put("processEnd", StringHelper.dateToString(processEnd));
+            json.put("processEnd", DateHelper.dateToString(processEnd));
         if (outbound)
             json.put("outbound", outbound);
         if (content != null)

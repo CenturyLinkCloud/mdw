@@ -28,6 +28,8 @@ import java.util.List;
  */
 public class LinkedProcess implements Jsonable {
 
+    private static final int INDENT = 2;
+
     private Process process;
     public Process getProcess() { return process; }
 
@@ -38,6 +40,10 @@ public class LinkedProcess implements Jsonable {
     private List<LinkedProcess> children = new ArrayList<>();
     public List<LinkedProcess> getChildren() { return children; }
     public void setChildren(List<LinkedProcess> children) { this.children = children; }
+
+    private boolean circular;
+    public boolean isCircular() { return circular; }
+    public void setCircular(boolean snipped) { this.circular = snipped; }
 
     public LinkedProcess(Process process) {
         this.process = process;
@@ -68,6 +74,8 @@ public class LinkedProcess implements Jsonable {
             }
             json.put("children", childrenArr);
         }
+        if (isCircular())
+            json.put("circular", true);
         return json;
     }
 
@@ -77,6 +85,48 @@ public class LinkedProcess implements Jsonable {
 
     @Override
     public String toString() {
-        return process.getFullLabel();
+        return process.getFullLabel() + (isCircular() ? "*" : "");
+    }
+
+    /**
+     * Indented per specified depth
+     */
+    public String toString(int depth) {
+        if (depth == 0) {
+            return toString();
+        }
+        else {
+            StringBuilder out = new StringBuilder();
+            out.append(String.format("%1$" + (depth * INDENT) + "s", ""));
+            out.append(" - ");
+            out.append(this);
+            return out.toString();
+        }
+    }
+
+    /**
+     * @return direct line call chain to me
+     */
+    public LinkedProcess getCallChain() {
+        LinkedProcess parent = getParent();
+        if (parent == null) {
+            return new LinkedProcess(getProcess());
+        }
+        else {
+            LinkedProcess chainedParent = new LinkedProcess(getProcess());
+            while (parent != null) {
+                LinkedProcess newParent = new LinkedProcess(parent.getProcess());
+                newParent.getChildren().add(chainedParent);
+                chainedParent.setParent(newParent);
+                chainedParent = newParent;
+                parent = parent.getParent();
+            }
+            return chainedParent;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof LinkedProcess && ((LinkedProcess)o).process.equals(process);
     }
 }

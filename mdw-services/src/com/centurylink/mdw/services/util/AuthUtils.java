@@ -15,26 +15,6 @@
  */
 package com.centurylink.mdw.services.util;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.URLDecoder;
-import java.security.KeyFactory;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-
-import org.apache.commons.codec.binary.Base64;
-import org.json.JSONObject;
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -52,9 +32,28 @@ import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.util.HmacSha1Signature;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URLDecoder;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AuthUtils {
 
@@ -282,7 +281,7 @@ public class AuthUtils {
                     logger.severeException("Exception trying to retreieve App token from cache", ex);
                 }
                 boolean validated = false;
-                if (!StringHelper.isEmpty(token)) { // Use token if this user was already validated
+                if (!StringUtils.isBlank(token)) { // Use token if this user was already validated
                     try {
                         // Use cached token
                         verifyMdwJWT(token, headers);
@@ -353,7 +352,7 @@ public class AuthUtils {
         }
 
         // Get the user JWT was created for
-        if (!StringHelper.isEmpty(jwt.getSubject()))
+        if (!StringUtils.isBlank(jwt.getSubject()))
             headers.put(Listener.AUTHENTICATED_USER_HEADER, jwt.getSubject());
         else
             throw new Exception("Received valid JWT token, but cannot identify the user");
@@ -363,7 +362,7 @@ public class AuthUtils {
         JWTVerifier tempVerifier = verifier;
         if (tempVerifier == null) {
             String appToken = System.getenv(MDW_APP_TOKEN);
-            if (StringHelper.isEmpty(appToken))
+            if (StringUtils.isBlank(appToken))
                 logger.severe("Exception processing incoming message using MDW Auth token - Missing System environment variable " + MDW_APP_TOKEN);
             else {
                 try {
@@ -403,10 +402,10 @@ public class AuthUtils {
 
         // Get the user JWT was created for (Claim specified in Property) - Check payload and header for the claim
         String user = jwt.getClaim(props.getProperty(PropertyNames.MDW_JWT_USER_CLAIM)).asString();
-        if (StringHelper.isEmpty(user))
+        if (StringUtils.isBlank(user))
             user = jwt.getHeaderClaim(props.getProperty(PropertyNames.MDW_JWT_USER_CLAIM)).asString();
 
-        if (!StringHelper.isEmpty(user))
+        if (!StringUtils.isBlank(user))
             headers.put(Listener.AUTHENTICATED_USER_HEADER, user);
         else
             throw new Exception("Received valid Custom JWT token, but cannot identify the user");
@@ -443,17 +442,17 @@ public class AuthUtils {
             }
 
             String propAlg = props.getProperty(PropertyNames.MDW_JWT_ALGORITHM);
-            if (StringHelper.isEmpty(algorithmName) || (!StringHelper.isEmpty(propAlg) && !algorithmName.equals(propAlg))) {
+            if (StringUtils.isBlank(algorithmName) || (!StringUtils.isBlank(propAlg) && !algorithmName.equals(propAlg))) {
                 String message = "Exception creating Custom JWT Verifier - ";
-                message = StringHelper.isEmpty(algorithmName) ? "Missing 'alg' claim in JWT" : ("Mismatch algorithm with specified Property for " + issuer);
+                message = StringUtils.isBlank(algorithmName) ? "Missing 'alg' claim in JWT" : ("Mismatch algorithm with specified Property for " + issuer);
                 logger.severe(message);
                 return null;
             }
             String key = System.getenv("MDW_JWT_" + getCustomProviderGroupName(issuer).toUpperCase() + "_KEY");
-            if (StringHelper.isEmpty(key)) {
+            if (StringUtils.isBlank(key)) {
                 if (!algorithmName.startsWith("HS")) {  // Only allow use of Key in MDW properties for asymmetric algorithms
                     key = props.getProperty(PropertyNames.MDW_JWT_KEY);
-                    if (StringHelper.isEmpty(key)) {
+                    if (StringUtils.isBlank(key)) {
                         logger.severe("Exception creating Custom JWT Verifier for " + issuer + " - Missing 'key' Property");
                         return null;
                     }
@@ -492,7 +491,7 @@ public class AuthUtils {
                 String subject = props.getProperty(PropertyNames.MDW_JWT_SUBJECT);
 
                 Verification tmp = JWT.require(algorithm).withIssuer(issuer);
-                tmp = StringHelper.isEmpty(subject) ? tmp : tmp.withSubject(subject);
+                tmp = StringUtils.isBlank(subject) ? tmp : tmp.withSubject(subject);
                 tempVerifier = tmp.build();
                 verifierCustom.put(issuer, tempVerifier);
             }

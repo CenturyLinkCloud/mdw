@@ -203,9 +203,7 @@ public class CommonDataAccess {
         ResultSet rs = db.runSelect(query, ownerId);
         List<Attribute> attribs = new ArrayList<Attribute>();
         while (rs.next()) {
-            Attribute vo = new Attribute(rs.getString(2), rs.getString(3));
-            vo.setAttributeId(new Long(rs.getLong(1)));
-            attribs.add(vo);
+            attribs.add(new Attribute(rs.getString(2), rs.getString(3)));
         }
         return attribs;
     }

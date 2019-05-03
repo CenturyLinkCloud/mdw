@@ -25,7 +25,7 @@ import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.Workgroup;
-import com.centurylink.mdw.util.StringHelper;
+import org.apache.commons.lang.StringUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -1020,7 +1020,7 @@ public class UserDataAccess extends CommonDataAccess {
         if (name==null) name = rs.getString(5);
         // Set Cuid as name to handle migrated users from MDW4 to 5
         // and comment is missing in user_info table
-        if (StringHelper.isEmpty(name)) name = rs.getString(2);
+        if (StringUtils.isBlank(name)) name = rs.getString(2);
         user.setEndDate(rs.getString(4));
         user.setName(name);
         user.parseName();

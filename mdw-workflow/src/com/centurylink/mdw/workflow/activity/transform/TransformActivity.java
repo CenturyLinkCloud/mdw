@@ -15,6 +15,16 @@
  */
 package com.centurylink.mdw.workflow.activity.transform;
 
+import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
+import com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
@@ -23,28 +33,17 @@ import groovy.util.XmlNodePrinter;
 import groovy.util.XmlParser;
 import groovy.util.XmlSlurper;
 import groovy.xml.MarkupBuilder;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import org.apache.commons.lang.StringUtils;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
-import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.translator.VariableTranslator;
-import com.centurylink.mdw.util.StringHelper;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
-import com.centurylink.mdw.util.timer.Tracked;
-import com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * Transforms an input xml document into an output document.
@@ -72,18 +71,18 @@ public class TransformActivity extends ScriptExecutorActivity {
             }
 
 
-            if (StringHelper.isEmpty(transformLanguage)) {
+            if (StringUtils.isBlank(transformLanguage)) {
                 throw new ActivityException("Transform language has not been specified.");
             }
             inputDocument = getAttributeValue(INPUT_DOCUMENTS);
-            if (StringHelper.isEmpty(inputDocument)) {
+            if (StringUtils.isBlank(inputDocument)) {
                 throw new ActivityException("Input document has not been specified.");
             }
             String outputDocument = getAttributeValue(OUTPUTDOCS);
-            if (StringHelper.isEmpty(outputDocument)) {
+            if (StringUtils.isBlank(outputDocument)) {
                 throw new ActivityException("Output document has not been specified.");
             }
-            setOutputDocuments(StringHelper.parseList(outputDocument).toArray(new String[0]));
+            setOutputDocuments(Attribute.parseList(outputDocument).toArray(new String[0]));
 
             if (transformLanguage.equals(GPATH)) {
                 executeGPath();
@@ -104,7 +103,7 @@ public class TransformActivity extends ScriptExecutorActivity {
 
     private void executeGPath() throws ActivityException {
         String transform = (String) getAttributeValue(RULE);
-        if (StringHelper.isEmpty(transform)) {
+        if (StringUtils.isBlank(transform)) {
             logger.info("No transform defined for activity: " + getActivityName());
             return;
         }
@@ -135,7 +134,7 @@ public class TransformActivity extends ScriptExecutorActivity {
 
     private void executeXSLT() throws ActivityException {
         String transform = (String) getAttributeValue(RULE);
-        if (StringHelper.isEmpty(transform)) {
+        if (StringUtils.isBlank(transform)) {
             logger.info("No transform defined for activity: " + getActivityName());
             return;
         }

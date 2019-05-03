@@ -270,7 +270,7 @@ public class Asset implements Comparable<Asset> {
 
     public void setAttribute(String name, String value) {
         if (attributes == null)
-          attributes = new ArrayList<Attribute>();
+          attributes = new ArrayList<>();
         Attribute.setAttribute(attributes, name, value);
     }
 

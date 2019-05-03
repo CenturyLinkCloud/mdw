@@ -26,9 +26,9 @@ import com.centurylink.mdw.model.task.*;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.task.types.TaskList;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.commons.lang.StringUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -463,7 +463,7 @@ public class TaskDataAccess extends CommonDataAccess {
             for (String key : indices.keySet()) {
                 args[1] = key;
                 args[2] = indices.get(key);
-                if (!StringHelper.isEmpty((String)args[2])) db.runUpdateWithPreparedStatement(args);
+                if (!StringUtils.isBlank((String)args[2])) db.runUpdateWithPreparedStatement(args);
             }
             db.commit();
         } catch (Exception e) {
@@ -621,13 +621,13 @@ public class TaskDataAccess extends CommonDataAccess {
             }
             else {
                 where = buildTaskInstanceWhere(query);
-                if (!StringHelper.isEmpty(where)) {
+                if (!StringUtils.isBlank(where)) {
                     sql.append(where);
                     countSql.append(where);
                 }
             }
             String orderBy = buildTaskInstanceOrderBy(query);
-            if (!StringHelper.isEmpty(orderBy))
+            if (!StringUtils.isBlank(orderBy))
                 sql.append(orderBy);
 
             Long total = 0L;

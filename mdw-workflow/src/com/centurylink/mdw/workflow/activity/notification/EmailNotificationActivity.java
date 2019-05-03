@@ -15,16 +15,6 @@
  */
 package com.centurylink.mdw.workflow.activity.notification;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.mail.Address;
-import javax.mail.MessagingException;
-import javax.mail.internet.InternetAddress;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.NotificationActivity;
 import com.centurylink.mdw.app.ApplicationContext;
@@ -38,11 +28,20 @@ import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.services.user.ContextEmailRecipients;
 import com.centurylink.mdw.util.ParseException;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.WildcardFilenameFilter;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+import org.apache.commons.lang.StringUtils;
+
+import javax.mail.Address;
+import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Activity for sending HTML email notifications.
@@ -155,7 +154,7 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
         Map<String,File> attachments = new HashMap<>();
 
         String attachmentPatterns = getAttributeValue(WorkAttributeConstant.NOTICE_ATTACHMENTS);
-        if (!StringHelper.isEmpty(attachmentPatterns)) {
+        if (!StringUtils.isBlank(attachmentPatterns)) {
 
             // master req id directory and subdirs
             List<File> dirs = new ArrayList<>();

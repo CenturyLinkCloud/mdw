@@ -133,4 +133,73 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
     public int getSequenceId() { return sequenceId; }
     public void setSequenceId(int sequenceId) { this.sequenceId = sequenceId; }
 
+    /**
+     * TODO: MicroserviceOrchestratorActivity
+     */
+    public boolean invokesSubprocess(Process subproc) {
+        String procName = getAttribute(WorkAttributeConstant.PROCESS_NAME);
+        if (procName != null && (procName.equals(subproc.getName()) || procName.endsWith("/" + subproc.getName()))) {
+            String verSpec = getAttribute(WorkAttributeConstant.PROCESS_VERSION);
+            if (subproc.meetsVersionSpec(verSpec))
+                return true;
+        }
+        else {
+            String procMap = getAttribute(WorkAttributeConstant.PROCESS_MAP);
+            if (procMap != null) {
+                List<String[]> procmap = Attribute.parseTable(procMap, ',', ';', 3);
+                for (int i = 0; i < procmap.size(); i++) {
+                    String nameSpec = procmap.get(i)[1];
+                    if (nameSpec != null && (nameSpec.equals(subproc.getName()) || nameSpec.endsWith("/" + subproc.getName() + ".proc"))) {
+                        String verSpec = procmap.get(i)[2];
+                        if (subproc.meetsVersionSpec(verSpec))
+                            return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public List<Process> findInvoked(List<Process> processes) {
+        List<Process> invoked = new ArrayList<>();
+        String procName = getAttribute(WorkAttributeConstant.PROCESS_NAME);
+        if (procName != null) {
+            String verSpec = getAttribute(WorkAttributeConstant.PROCESS_VERSION);
+            if (verSpec != null) {
+                Process latestMatch = null;
+                for (Process process : processes) {
+                    if ((procName.equals(process.getName()) || procName.endsWith("/" + process.getName()))
+                            && (process.meetsVersionSpec(verSpec) && (latestMatch == null || latestMatch.getVersion() < process.getVersion()))) {
+                        latestMatch = process;
+                    }
+                }
+                if (latestMatch != null && !invoked.contains(latestMatch))
+                    invoked.add(latestMatch);
+            }
+        }
+        else {
+            String procMap = getAttribute(WorkAttributeConstant.PROCESS_MAP);
+            if (procMap != null) {
+                List<String[]> procmap = Attribute.parseTable(procMap, ',', ';', 3);
+                for (int i = 0; i < procmap.size(); i++) {
+                    String nameSpec = procmap.get(i)[1];
+                    if (nameSpec != null) {
+                        String verSpec = procmap.get(i)[2];
+                        if (verSpec != null) {
+                            Process latestMatch = null;
+                            for (Process process : processes) {
+                                if ((nameSpec.equals(process.getName()) || nameSpec.endsWith("/" + process.getName() + ".proc"))
+                                        && (process.meetsVersionSpec(verSpec) && (latestMatch == null || latestMatch.getVersion() < process.getVersion()))) {
+                                    latestMatch = process;
+                                }
+                            }
+                            if (latestMatch != null && !invoked.contains(latestMatch))
+                                invoked.add(latestMatch);
+                        }
+                    }
+                }
+            }
+        }
+        return invoked;
+    }
 }

@@ -15,17 +15,6 @@
  */
 package com.centurylink.mdw.workflow.activity.process;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.w3c.dom.Document;
-import org.yaml.snakeyaml.Yaml;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
@@ -40,6 +29,7 @@ import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.variable.DocumentReference;
@@ -53,9 +43,19 @@ import com.centurylink.mdw.services.process.ProcessExecutor;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
+import org.apache.commons.lang.StringUtils;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.w3c.dom.Document;
+import org.yaml.snakeyaml.Yaml;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * This activity implementor implements invocation of sub processes.
@@ -132,7 +132,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
         String map = getAttributeValue(WorkAttributeConstant.PROCESS_MAP);
         List<String[]> procmap;
         if (map==null) procmap = new ArrayList<String[]>();
-        else procmap = StringHelper.parseTable(map, ',', ';', 3);
+        else procmap = Attribute.parseTable(map, ',', ';', 3);
         for (int i=0; i<procmap.size(); i++) {
             if (procmap.get(i)[0].equals(logicalProcName)) {
                 String subproc_name = procmap.get(i)[1];
@@ -151,7 +151,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             int pDelay = (delayStr==null)?0:Integer.parseInt(delayStr);
             ProcessExecutor engine = getEngine();
             String v = getAttributeValueSmart(SYNCHRONOUS);
-            synchronous = StringHelper.isEmpty(v) || v.equalsIgnoreCase("true");
+            synchronous = StringUtils.isBlank(v) || v.equalsIgnoreCase("true");
             forceParallel = "true".equalsIgnoreCase(getAttributeValue(FORCE_PARALLEL));
             inService = engine.isInService();
             if (inService && forceParallel && synchronous) {
@@ -410,7 +410,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
     private void bindVariable(Parameter param, String value, boolean passDocContent, boolean refreshDocCache) throws ActivityException {
         Process procdef = getMainProcessDefinition();
         String binding = param.getStringValue();
-        if (StringHelper.isEmpty(binding)) return;
+        if (StringUtils.isBlank(binding)) return;
         if (binding.equals("$")) {
             param.setStringValue(value);
         } else if (binding.startsWith("$")) {
@@ -419,7 +419,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             if (var!=null) {
                 Object value0;
                 if (passDocContent && VariableTranslator.isDocumentReferenceVariable(getPackage(), var.getType())) {
-                    if (StringHelper.isEmpty(value)) value0 = null;
+                    if (StringUtils.isBlank(value)) value0 = null;
                     else if (value.startsWith("DOCUMENT:"))
                         value0 = VariableTranslator.toObject(var.getType(), value);
                     else {

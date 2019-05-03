@@ -37,8 +37,8 @@ import com.centurylink.mdw.services.DesignServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.util.DateHelper;
 import com.centurylink.mdw.util.JsonUtil;
-import com.centurylink.mdw.util.StringHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -125,7 +125,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                             json = workflowServices.getProcess(id).getJson();
                         else
                             json = getProcess(id).getJson();
-                        json.put("retrieveDate", StringHelper.serviceDateToString(DatabaseAccess.getDbDate()));
+                        json.put("retrieveDate", DateHelper.serviceDateToString(DatabaseAccess.getDbDate()));
                         return json;
                     }
                 }

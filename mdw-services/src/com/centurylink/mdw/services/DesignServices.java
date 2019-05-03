@@ -21,7 +21,4 @@ public interface DesignServices {
 
     List<ActivityImplementor> getImplementors() throws ServiceException;
     ActivityImplementor getImplementor(String className) throws ServiceException;
-
-    List<Process> findCallingProcesses(Process subproc) throws ServiceException;
-    List<Process> findCalledProcesses(Process mainproc) throws ServiceException;
 }

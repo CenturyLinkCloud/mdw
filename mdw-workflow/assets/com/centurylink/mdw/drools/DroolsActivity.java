@@ -15,29 +15,25 @@
  */
 package com.centurylink.mdw.drools;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.kie.internal.command.CommandFactory;
-import org.kie.api.KieBase;
-import org.kie.api.runtime.StatelessKieSession;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.RuleActivity;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+import org.apache.commons.lang.StringUtils;
+import org.kie.api.KieBase;
+import org.kie.api.runtime.StatelessKieSession;
+import org.kie.internal.command.CommandFactory;
+
+import java.util.*;
 
 @Tracked(LogLevel.TRACE)
 public class DroolsActivity extends DefaultActivityImpl implements RuleActivity {
@@ -61,7 +57,7 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
             throw new ActivityException(ex.getMessage(), ex);
         }
 
-        if (StringHelper.isEmpty(knowledgeBaseName))
+        if (StringUtils.isBlank(knowledgeBaseName))
             throw new ActivityException("Missing attribute: " + KNOWLEDGE_BASE);
 
         KieBase knowledgeBase = getKnowledgeBase(knowledgeBaseName, knowledgeBaseVersion);
@@ -85,7 +81,7 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
         kSession.execute(CommandFactory.newInsertElements(facts));
 
         String temp = getAttributeValue(OUTPUTDOCS);
-        setOutputDocuments(temp == null ? new String[0] : StringHelper.parseList(temp).toArray(new String[0]));
+        setOutputDocuments(temp == null ? new String[0] : Attribute.parseList(temp).toArray(new String[0]));
 
         // TODO handle document variables
         Process processVO = getProcessDefinition();

@@ -50,7 +50,6 @@ import com.centurylink.mdw.service.data.process.EngineDataAccessCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.OfflineMonitorTrigger;
 import com.centurylink.mdw.translator.VariableTranslator;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -1177,7 +1176,7 @@ public abstract class BaseActivity implements GeneralActivity {
             throws ActivityException {
 
         String temp = getAttributeValue(OUTPUTDOCS);
-        outputDocuments = temp == null ? new String[0] : StringHelper.parseList(temp).toArray(new String[0]);
+        outputDocuments = temp == null ? new String[0] : Attribute.parseList(temp).toArray(new String[0]);
         Object retObj;
         try {
             if (Compatibility.hasCodeSubstitutions())

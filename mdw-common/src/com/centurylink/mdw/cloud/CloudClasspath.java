@@ -15,15 +15,17 @@
  */
 package com.centurylink.mdw.cloud;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.util.ClasspathUtil;
-import com.centurylink.mdw.util.StringHelper;
+import org.apache.commons.lang.StringUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 // TODO add the jars in PropertyNames.MDW_JAR_LIBRARY_PATH
 public class CloudClasspath {
@@ -94,7 +96,7 @@ public class CloudClasspath {
             }
             if (tomcatWebAppDir.isDirectory()) {
                 String mdwWarName = PropertyManager.getProperty(PropertyNames.MDW_WAR_NAME);
-                if (StringHelper.isEmpty(mdwWarName))
+                if (StringUtils.isBlank(mdwWarName))
                     mdwWarName = ApplicationContext.getMdwHubContextRoot();
                 File mdwWebInfDir = new File(tomcatWebAppDir + FILE_SEP + mdwWarName + FILE_SEP + "WEB-INF");
                 webappJars.addAll(Arrays.asList(ClasspathUtil.listJarFiles(mdwWebInfDir, true, false)));

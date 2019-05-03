@@ -15,14 +15,6 @@
  */
 package com.centurylink.mdw.listener;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.xmlbeans.XmlObject;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
 import com.centurylink.mdw.common.MdwException;
@@ -51,7 +43,14 @@ import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.test.TestException;
 import com.centurylink.mdw.translator.VariableTranslator;
-import com.centurylink.mdw.util.StringHelper;
+import org.apache.commons.lang.StringUtils;
+import org.apache.xmlbeans.XmlObject;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class RegressionTestEventHandler extends ExternalEventHandlerBase {
 
@@ -88,7 +87,7 @@ public class RegressionTestEventHandler extends ExternalEventHandlerBase {
         for (Parameter param : xmlbean.getActionRequest().getAction().getParameterList()) {
             if (param.getName().equals(name)) {
                 String value = param.getStringValue();
-                if (required && StringHelper.isEmpty(value)) throw new Exception("Parameter is required: " + name);
+                if (required && StringUtils.isBlank(value)) throw new Exception("Parameter is required: " + name);
                 return value;
             }
         }

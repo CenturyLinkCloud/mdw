@@ -15,19 +15,18 @@
  */
 package com.centurylink.mdw.model.monitor;
 
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.util.CallURL;
+import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.json.JSONObject;
-
-import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.util.CallURL;
-import com.centurylink.mdw.util.HttpHelper;
-import com.centurylink.mdw.util.StringHelper;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 
 public abstract class LoadBalancedScheduledJob implements ScheduledJob {
 
@@ -43,7 +42,7 @@ public abstract class LoadBalancedScheduledJob implements ScheduledJob {
         JSONObject json = new JSONObject();
         json.put("className", url.getAction());
         for (String key : url.getParameters().keySet()) {
-            if (!StringHelper.isEmpty(url.getParameter(key)))
+            if (!StringUtils.isBlank(url.getParameter(key)))
                 json.put(key, url.getParameter(key));
         }
 

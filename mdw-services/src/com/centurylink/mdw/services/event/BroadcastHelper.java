@@ -19,17 +19,16 @@ package com.centurylink.mdw.services.event;
  * Copyright (c) 2011 CenturyLink, Inc. All Rights Reserved.
  */
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.task.WaitingForMe;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class BroadcastHelper  {
 
@@ -46,7 +45,7 @@ public class BroadcastHelper  {
             String name = json.getString("NAME");
             String value = json.getString("VALUE");
             PropertyManager propMgr = PropertyManager.getInstance();
-            propMgr.setStringProperty(name, StringHelper.isEmpty(value)?null:value);
+            propMgr.setStringProperty(name, StringUtils.isBlank(value)?null:value);
             LoggerUtil.getStandardLogger().refreshWatcher();
         } else if (action.equals("REFRESH_CACHES")) {
             CacheRegistration cacheRegister = new CacheRegistration();
