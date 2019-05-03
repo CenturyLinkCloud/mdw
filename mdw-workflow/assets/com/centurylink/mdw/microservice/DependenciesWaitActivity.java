@@ -1,20 +1,20 @@
 package com.centurylink.mdw.microservice;
 
-import java.util.List;
-
-import org.json.JSONException;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Status;
+import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.workflow.WorkStatus;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.workflow.activity.event.EventWaitActivity;
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONException;
+
+import java.util.List;
 
 public class DependenciesWaitActivity extends EventWaitActivity {
 
@@ -90,10 +90,10 @@ public class DependenciesWaitActivity extends EventWaitActivity {
      */
     public List<String[]> getMicroserviceAttributes() {
         String attVal = getAttributeValueSmart(DEPENDENCIES);
-        if (StringHelper.isEmpty(attVal))
+        if (StringUtils.isBlank(attVal))
             attVal = this.getAttributeValue(MICROSERVICE_NAMES);
 
-        return StringHelper.parseTable(attVal, ',', ';', 3);
+        return Attribute.parseTable(attVal, ',', ';', 3);
     }
 
     public boolean dependenciesMet() throws ActivityException {
@@ -139,9 +139,9 @@ public class DependenciesWaitActivity extends EventWaitActivity {
                     // if microservice isn't populated then do the check based
                     // on
                     // the expression
-                    if ((StringHelper.isEmpty(microservice[1]) && !expResultBool.booleanValue())
+                    if ((StringUtils.isBlank(microservice[1]) && !expResultBool.booleanValue())
                             || (expResultBool.booleanValue()
-                                    && !StringHelper.isEmpty(microservice[1])
+                                    && !StringUtils.isBlank(microservice[1])
                                     && microServiceSuccess(microservice[1],
                                             serviceSummary) == null)) {
                         // service has been checked, but no successful response

@@ -50,11 +50,11 @@ import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.event.ServiceHandler;
 import com.centurylink.mdw.services.rest.RestService;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 import com.centurylink.mdw.xml.XmlPath;
+import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.json.JSONException;
@@ -328,7 +328,7 @@ public class ListenerHelper {
                     response.setStatusCode(getResponseCode(metaInfo));
                 response.setPath(ServicePaths.getInboundResponsePath(metaInfo));
 
-                if (persistMessage(metaInfo) && !StringHelper.isEmpty(response.getContent())) {
+                if (persistMessage(metaInfo) && !StringUtils.isBlank(response.getContent())) {
                     Long ownerId = createResponseDocument(response, eeid);
                     if (persistMeta(metaInfo)) {
                         response.setMeta(createResponseMeta(metaInfo, reqMetaInfo, ownerId, requestTime));
@@ -459,7 +459,7 @@ public class ListenerHelper {
                 metaInfo.remove(Listener.METAINFO_DOCUMENT_ID);
             }
 
-            if (persistMessage(metaInfo) && !StringHelper.isEmpty(response.getContent())) {
+            if (persistMessage(metaInfo) && !StringUtils.isBlank(response.getContent())) {
                 Long ownerId = createResponseDocument(response, eeid);
                 if (persistMeta(metaInfo))
                     response.setMeta(createResponseMeta(metaInfo, reqMetaInfo, ownerId, requestTime));

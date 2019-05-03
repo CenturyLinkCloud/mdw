@@ -15,8 +15,6 @@
  */
 package com.centurylink.mdw.translator;
 
-import java.util.List;
-
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.cache.impl.VariableTypeCache;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
@@ -24,7 +22,9 @@ import com.centurylink.mdw.model.variable.VariableType;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.provider.ProviderRegistry;
 import com.centurylink.mdw.spring.SpringAppContext;
-import com.centurylink.mdw.util.StringHelper;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.List;
 
 public abstract class VariableTranslator implements com.centurylink.mdw.variable.VariableTranslator {
 
@@ -103,7 +103,7 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
     * @return Translated Object
     */
     public static Object toObject(String type, String value){
-        if(StringHelper.isEmpty(value) || EMPTY_STRING.equals(value)){
+        if (StringUtils.isBlank(value) || EMPTY_STRING.equals(value)){
             return null;
         }
         com.centurylink.mdw.variable.VariableTranslator trans = getTranslator(type);
@@ -155,7 +155,7 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
      * @return deserialized object
      */
     public static Object realToObject(Package pkg, String type, String value) {
-        if (StringHelper.isEmpty(value))
+        if (StringUtils.isBlank(value))
             return null;
         com.centurylink.mdw.variable.VariableTranslator trans = getTranslator(pkg, type);
         if (trans instanceof DocumentReferenceTranslator)

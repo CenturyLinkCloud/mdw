@@ -15,10 +15,7 @@
  */
 package com.centurylink.mdw.workflow.activity.timer;
 
-import java.util.Date;
-
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
@@ -28,12 +25,11 @@ import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.services.process.ProcessExecutor;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.AbstractWait;
 
-
+import java.util.Date;
 
 /**
  * Base class for all the Timer Activities
@@ -57,45 +53,12 @@ public class TimerWaitActivity extends AbstractWait {
      * The method is used to schedule sending an activity resume message
      * after the given number of seconds.
      * @param seconds time for delay
-     * @throws ActivityException
      */
-    protected final void sendDelayedResumeMessage(int seconds)
-        throws ActivityException
-    {
+    protected final void sendDelayedResumeMessage(int seconds) throws ActivityException {
         sendOrUpdateExpirationMessage(seconds, false);
     }
 
-    /**
-     * The method is used to update the expiration time.
-     * Note that for the implementation using JMS delay
-     * (when the delay in minutes is less 5 which can be altered by property mdw.timer.ThresholdForDelay),
-     * the method simply sends another JMS message, so the calling application
-     * needs to take care of the duplicated messages as follows:
-     *   In processTimerExpiration() method, validate if the timer is really expired.
-     *   if the timer is not expired, return the number of seconds remaining + 60.
-     * This has the following impacts:
-     * a) If the new expiration time is later than the original, when the first message
-     *    arrives, the timer is not really expired, a third message is scheduled to
-     *    sent on expiration time + 60. When the 2nd message is received (on expiration time),
-     *    the activity instance is completed. When the third message is received, the
-     *    engine ignores it as the activity instance is already completed.
-     * b) If the new expiration time is earlier than the original, when the second message
-     *    (which arrives first) arrives on expiration time, the activity is completed.
-     *    When the first message arrives later (on original expiration time), the
-     *    engine ignores it as the activity is already completed.
-     *
-     * @param seconds time for delay
-     * @throws ActivityException
-     */
-    protected final void updateDelayedResumeMessage(int seconds)
-    throws ActivityException
-    {
-        sendOrUpdateExpirationMessage(seconds, true);
-    }
-
-    private void sendOrUpdateExpirationMessage(int seconds, boolean isUpdate)
-    throws ActivityException
-    {
+    private void sendOrUpdateExpirationMessage(int seconds, boolean isUpdate) throws ActivityException {
         try {
             ProcessExecutor engine = getEngine();
             long currentTime = DatabaseAccess.getCurrentTime();
@@ -139,14 +102,8 @@ public class TimerWaitActivity extends AbstractWait {
         else if (HOURS.equals(unit)) factor = 3600;
         else if (DAYS.equals(unit)) factor = 86400;
         else factor = 1;  // Means specified value is already in seconds
-        int retTime;
-        String timeAttr;
-        try {
-            timeAttr = super.getAttributeValueSmart(WorkAttributeConstant.TIMER_WAIT);
-        } catch (PropertyException e) {
-            throw new ActivityException(-1, "failed to evaluate time expression", e);
-        }
-        retTime = StringHelper.getInteger(timeAttr, DEFAULT_WAIT);
+
+        int retTime = getAttribute(WorkAttributeConstant.TIMER_WAIT, DEFAULT_WAIT);
         return retTime*factor;
     }
 
@@ -165,8 +122,7 @@ public class TimerWaitActivity extends AbstractWait {
       * @param messageString the entire message content of the external event (from document table)
       * @throws ActivityException
       */
-    protected void processOtherMessage(String messageString)
-         throws ActivityException {
+    protected void processOtherMessage(String messageString) throws ActivityException {
     }
 
     private boolean isOtherEvent(InternalEvent event) {
@@ -215,11 +171,10 @@ public class TimerWaitActivity extends AbstractWait {
      * of waiting. It re-register the event waits including waiting for task to complete.
      * If any event has already arrived, it processes it immediately.
      *
-     * Customization should be done with the methods {@link #processOtherMessage(String, String)},
+     * Customization should be done with the methods {@link #processOtherMessage(String)},
      * {@link #registerWaitEvents()}, and {@link #processTimerExpiration()}.
      */
-    public final boolean resumeWaiting(InternalEvent event)
-        throws ActivityException {
+    public final boolean resumeWaiting(InternalEvent event) throws ActivityException {
         // check if timer is expired at this time?
         try {
             ActivityInstance ai = getEngine().getActivityInstance(getActivityInstanceId());

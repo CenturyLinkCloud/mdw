@@ -15,18 +15,17 @@
  */
 package com.centurylink.mdw.test;
 
+import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.util.DateHelper;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.util.StringHelper;
 
 public class TestCaseList implements Jsonable {
 
@@ -107,7 +106,7 @@ public class TestCaseList implements Jsonable {
         if (json.has("assetRoot"))
             this.assetRoot = new File(json.getString("assetRoot"));
         if (json.has("retrieveDate"))
-            this.retrieveDate = StringHelper.serviceStringToDate(json.getString("retrieveDate"));
+            this.retrieveDate = DateHelper.serviceStringToDate(json.getString("retrieveDate"));
         if (json.has("count"))
             this.count = json.getInt("count");
         if (json.has("packages")) {
@@ -125,7 +124,7 @@ public class TestCaseList implements Jsonable {
             json.put("suite", suite);
         if (assetRoot != null)
             json.put("assetRoot", assetRoot);
-        json.put("retrieveDate", StringHelper.serviceDateToString(getRetrieveDate()));
+        json.put("retrieveDate", DateHelper.serviceDateToString(getRetrieveDate()));
         json.put("count", count);
         JSONArray array = new JSONArray();
         if (packageTests != null) {

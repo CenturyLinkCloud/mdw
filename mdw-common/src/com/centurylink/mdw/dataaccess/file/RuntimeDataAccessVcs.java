@@ -18,7 +18,6 @@ package com.centurylink.mdw.dataaccess.file;
 import com.centurylink.mdw.cache.impl.VariableTypeCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.BaselineData;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
@@ -30,7 +29,8 @@ import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.variable.VariableType;
 import com.centurylink.mdw.model.workflow.*;
-import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.DateHelper;
+import org.apache.commons.lang.StringUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -99,12 +99,12 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             TransitionInstance workTransInstance;
             while (rs.next()) {
                 workTransInstance = new TransitionInstance();
-                workTransInstance.setTransitionInstanceID(new Long(rs.getLong(1)));
+                workTransInstance.setTransitionInstanceID(rs.getLong(1));
                 workTransInstance.setProcessInstanceID(procInstId);
                 workTransInstance.setStatusCode(rs.getInt(2));
-                workTransInstance.setStartDate(StringHelper.dateToString(rs.getTimestamp(3)));
-                workTransInstance.setEndDate(StringHelper.dateToString(rs.getTimestamp(4)));
-                workTransInstance.setTransitionID(new Long(rs.getLong(5)));
+                workTransInstance.setStartDate(DateHelper.dateToString(rs.getTimestamp(3)));
+                workTransInstance.setEndDate(DateHelper.dateToString(rs.getTimestamp(4)));
+                workTransInstance.setTransitionID(rs.getLong(5));
                 workTransInstanceList.add(workTransInstance);
             }
             procInstInfo.setTransitions(workTransInstanceList);
@@ -114,8 +114,8 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             rs = db.runSelect(query, procInstId);
             while (rs.next()) {
                 VariableInstance data = new VariableInstance();
-                data.setInstanceId(new Long(rs.getLong(1)));
-                data.setVariableId(new Long(rs.getLong(2)));
+                data.setInstanceId(rs.getLong(1));
+                data.setVariableId(rs.getLong(2));
                 data.setStringValue(rs.getString(3));
                 data.setName(rs.getString(4));
                 data.setType(getVariableType(rs.getLong(5)));
@@ -170,10 +170,10 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                 pi.setOwnerId(rs.getLong(7));
                 pi.setMasterRequestId(rs.getString(2));
                 pi.setStatusCode(rs.getInt(3));
-                pi.setStartDate(StringHelper.dateToString(rs.getTimestamp(4)));
+                pi.setStartDate(DateHelper.dateToString(rs.getTimestamp(4)));
                 pi.setId(rs.getLong(1));
                 pi.setComment(rs.getString(10));
-                pi.setEndDate(StringHelper.dateToString(rs.getTimestamp(5)));
+                pi.setEndDate(DateHelper.dateToString(rs.getTimestamp(5)));
                 mdwProcessInstanceList.add(pi);
             }
 
@@ -232,10 +232,10 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                 pi.setOwnerId(rs.getLong(7));
                 pi.setMasterRequestId(rs.getString(2));
                 pi.setStatusCode(rs.getInt(3));
-                pi.setStartDate(StringHelper.dateToString(rs.getTimestamp(4)));
+                pi.setStartDate(DateHelper.dateToString(rs.getTimestamp(4)));
                 pi.setId(rs.getLong(1));
                 pi.setComment(rs.getString(10));
-                pi.setEndDate(StringHelper.dateToString(rs.getTimestamp(5)));
+                pi.setEndDate(DateHelper.dateToString(rs.getTimestamp(5)));
                 if (variableNames != null && variableNames.size() > 0) {
                     List<VariableInstance> vars = new ArrayList<VariableInstance>();
                     for (String varName : variableNames) {
@@ -284,10 +284,10 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                 pi.setOwnerId(rs.getLong(3));
                 pi.setMasterRequestId(rs.getString(9));
                 pi.setStatusCode(rs.getInt(4));
-                pi.setStartDate(StringHelper.dateToString(rs.getTimestamp(5)));
+                pi.setStartDate(DateHelper.dateToString(rs.getTimestamp(5)));
                 pi.setId(rs.getLong(1));
                 pi.setComment(rs.getString(10));
-                pi.setEndDate(StringHelper.dateToString(rs.getTimestamp(6)));
+                pi.setEndDate(DateHelper.dateToString(rs.getTimestamp(6)));
                 mdwProcessInstanceList.add(pi);
             }
             return mdwProcessInstanceList;
@@ -417,8 +417,8 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         pi.setOwnerId(rs.getLong("OWNER_ID"));
         pi.setMasterRequestId(rs.getString("MASTER_REQUEST_ID"));
         pi.setStatusCode(rs.getInt("STATUS_CD"));
-        pi.setStartDate(StringHelper.dateToString(rs.getTimestamp("START_DT")));
-        pi.setEndDate(StringHelper.dateToString(rs.getTimestamp("END_DT")));
+        pi.setStartDate(DateHelper.dateToString(rs.getTimestamp("START_DT")));
+        pi.setEndDate(DateHelper.dateToString(rs.getTimestamp("END_DT")));
         pi.setCompletionCode(rs.getString("COMPCODE"));
         pi.setComment(rs.getString("COMMENTS"));
         pi.setTemplate(rs.getString("TEMPLATE"));
@@ -477,8 +477,8 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             pi.setOwnerId(ownerId);
             pi.setMasterRequestId(rs.getString("MASTER_REQUEST_ID"));
             pi.setStatusCode(rs.getInt("STATUS_CD"));
-            pi.setStartDate(StringHelper.dateToString(rs.getTimestamp("START_DT")));
-            pi.setEndDate(StringHelper.dateToString(rs.getTimestamp("END_DT")));
+            pi.setStartDate(DateHelper.dateToString(rs.getTimestamp("START_DT")));
+            pi.setEndDate(DateHelper.dateToString(rs.getTimestamp("END_DT")));
             pi.setCompletionCode(rs.getString("COMPCODE"));
             pi.setComment(comment);
             populateNameVersionStatus(pi);
@@ -727,7 +727,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         if (pMap.containsKey("statusCode")){
             sqlBuff.append(" AND pi.STATUS_CD = "+new Integer((String)pMap.get("statusCode")));
         }
-        if (pMap.containsKey("statusCodeList") && !StringHelper.isEmpty(pMap.get("statusCodeList"))){
+        if (pMap.containsKey("statusCodeList") && !StringUtils.isBlank(pMap.get("statusCodeList"))){
             sqlBuff.append(" AND pi.STATUS_CD in (" + pMap.get("statusCodeList") + ")");
         }
         if (pMap.containsKey("startDatefrom")){

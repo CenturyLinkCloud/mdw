@@ -55,7 +55,7 @@ import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.asset.Renderer;
 import com.centurylink.mdw.services.asset.RenderingException;
 import com.centurylink.mdw.services.cache.CacheRegistration;
-import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.DateHelper;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.file.ZipHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -281,7 +281,7 @@ public class AssetContentServlet extends HttpServlet {
                     File tempDir = new File(ApplicationContext.getTempDirectory());
                     String fileExt = isZip ? ".zip" : ".json";
                     File tempFile = new File(tempDir + "/packageImport_"
-                            + StringHelper.filenameDateToString(new Date()) + fileExt);
+                            + DateHelper.filenameDateToString(new Date()) + fileExt);
                     logger.info("Saving package import temporary file: " + tempFile);
                     FileHelper.writeToFile(request.getInputStream(), tempFile);
                     ProgressMonitor progressMonitor = new LoggerProgressMonitor(logger);

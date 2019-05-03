@@ -65,10 +65,10 @@ import com.centurylink.mdw.task.SubTaskPlanDocument.SubTaskPlan;
 import com.centurylink.mdw.task.types.TaskServiceRegistry;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.HttpHelper;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
+import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.json.JSONObject;
@@ -165,7 +165,7 @@ public class TaskWorkflowHelper {
             String alertIntervalString = ""; //initialize
 
             alertIntervalString = task.getAttribute(TaskAttributeConstant.ALERT_INTERVAL);
-            alertInterval = StringHelper.isEmpty(alertIntervalString)?0:Integer.parseInt(alertIntervalString);
+            alertInterval = StringUtils.isBlank(alertIntervalString)?0:Integer.parseInt(alertIntervalString);
             helper.scheduleTaskSlaEvent(Date.from(due), alertInterval, false);
         }
 
@@ -175,8 +175,8 @@ public class TaskWorkflowHelper {
         }
         // create instance groups for template based tasks
         List<String> groups = helper.determineWorkgroups(indexes);
-        if (groups != null && groups.size() >0) {
-            new TaskDataAccess().setTaskInstanceGroups(ti.getTaskInstanceId(), StringHelper.toStringArray(groups));
+        if (groups != null && groups.size() > 0) {
+            new TaskDataAccess().setTaskInstanceGroups(ti.getTaskInstanceId(), groups.toArray(new String[0]));
             helper.getTaskInstance().setWorkgroups(groups);
         }
 
@@ -232,13 +232,13 @@ public class TaskWorkflowHelper {
 
         if (due!=null) {
             String alertIntervalString = task.getAttribute(TaskAttributeConstant.ALERT_INTERVAL);
-            int alertInterval = StringHelper.isEmpty(alertIntervalString) ? 0 : Integer.parseInt(alertIntervalString);
+            int alertInterval = StringUtils.isBlank(alertIntervalString) ? 0 : Integer.parseInt(alertIntervalString);
             helper.scheduleTaskSlaEvent(Date.from(due), alertInterval, false);
         }
         // create instance groups for template based tasks
         List<String> groups = helper.determineWorkgroups(null);
         if (groups != null && groups.size() > 0)
-            new TaskDataAccess().setTaskInstanceGroups(ti.getTaskInstanceId(), StringHelper.toStringArray(groups));
+            new TaskDataAccess().setTaskInstanceGroups(ti.getTaskInstanceId(), groups.toArray(new String[0]));
 
         helper.notifyTaskAction(TaskAction.CREATE, null, null);   // notification/observer/auto-assign
         helper.auditLog("Create", "MDW");
@@ -272,7 +272,7 @@ public class TaskWorkflowHelper {
     static PrioritizationStrategy getPrioritizationStrategy(TaskTemplate taskTemplate, Long processInstanceId, Map<String,String> indexes)
     throws DataAccessException, StrategyException, ServiceException {
         String priorityStrategyAttr = taskTemplate.getAttribute(TaskAttributeConstant.PRIORITY_STRATEGY);
-        if (StringHelper.isEmpty(priorityStrategyAttr)) {
+        if (StringUtils.isBlank(priorityStrategyAttr)) {
             return null;
         }
         else {
@@ -341,7 +341,7 @@ public class TaskWorkflowHelper {
         }
         else {
             String alertIntervalString = getTemplate().getAttribute(TaskAttributeConstant.ALERT_INTERVAL);
-            int alertInterval = StringHelper.isEmpty(alertIntervalString)?0:Integer.parseInt(alertIntervalString);
+            int alertInterval = StringUtils.isBlank(alertIntervalString)?0:Integer.parseInt(alertIntervalString);
             scheduleTaskSlaEvent(Date.from(due), alertInterval, !hasOldSlaInstance);
         }
         auditLog(UserAction.Action.Change.toString(), cuid, null, "change due date / comments");
@@ -484,7 +484,7 @@ public class TaskWorkflowHelper {
 
     List<SubTask> getSubtaskList(TaskRuntimeContext runtimeContext) throws ServiceException {
         String subtaskStrategyAttr = getTemplate().getAttribute(TaskAttributeConstant.SUBTASK_STRATEGY);
-        if (StringHelper.isEmpty(subtaskStrategyAttr)) {
+        if (StringUtils.isBlank(subtaskStrategyAttr)) {
             return null;
         }
         else {
@@ -742,7 +742,7 @@ public class TaskWorkflowHelper {
     throws ServiceException {
         TaskTemplate taskTemplate = getTemplate();
         String routingStrategyAttr = taskTemplate.getAttribute(TaskAttributeConstant.ROUTING_STRATEGY);
-        if (StringHelper.isEmpty(routingStrategyAttr)) {
+        if (StringUtils.isBlank(routingStrategyAttr)) {
             return taskTemplate.getWorkgroups();
         }
         else {
@@ -907,7 +907,7 @@ public class TaskWorkflowHelper {
     public AutoAssignStrategy getAutoAssignStrategy() throws StrategyException, ServiceException {
         String autoAssignAttr = getTemplate().getAttribute(TaskAttributeConstant.AUTO_ASSIGN);
         AutoAssignStrategy strategy = null;
-        if (StringHelper.isEmpty(autoAssignAttr))
+        if (StringUtils.isBlank(autoAssignAttr))
             return strategy;
         else{
           try {
@@ -939,7 +939,7 @@ public class TaskWorkflowHelper {
             TaskTemplate taskVO = getTemplate();
             if (taskVO != null) {
                 String assigneeVarSpec = taskVO.getAttribute(TaskAttributeConstant.ASSIGNEE_VAR);
-                if (!StringHelper.isEmpty(assigneeVarSpec)) {
+                if (!StringUtils.isBlank(assigneeVarSpec)) {
                     try {
                         User user = UserGroupCache.getUser(userId);
                         String cuid = user == null ? null : user.getCuid();
@@ -1000,7 +1000,7 @@ public class TaskWorkflowHelper {
         TaskTemplate taskVO = getTemplate();
         if (taskVO != null) { // not for invalid tasks
             String assigneeVarSpec = taskVO.getAttribute(TaskAttributeConstant.ASSIGNEE_VAR);
-            if (!StringHelper.isEmpty(assigneeVarSpec)) {
+            if (!StringUtils.isBlank(assigneeVarSpec)) {
                 try {
                     TaskRuntimeContext runtimeContext = getContext();
                     WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();

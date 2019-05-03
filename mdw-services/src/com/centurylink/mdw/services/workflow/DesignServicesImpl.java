@@ -146,34 +146,10 @@ public class DesignServicesImpl implements DesignServices {
         return implementor; // loaded from annotation or not found
     }
 
-    public List<Process> findCallingProcesses(Process subproc) throws ServiceException {
-        try {
-            List<Process> callers = new ArrayList<>();
-            for (Process process : ProcessCache.getAllProcesses()) {
-                for (Activity activity : process.getActivities()) {
-                    if (ProcessHierarchy.activityInvokesProcess(activity, subproc) && !callers.contains(process))
-                        callers.add(process);
-                }
-                for (Process embedded : process.getSubprocesses()) {
-                    for (Activity activity : embedded.getActivities()) {
-                        if (ProcessHierarchy.activityInvokesProcess(activity, subproc) && !callers.contains(process))
-                            callers.add(process);
-                    }
-                }
-            }
-            return callers;
-        }
-        catch (DataAccessException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
-        }
+    public List<LinkedProcess> getProcessHierarchy(String processAsset) {
+        List<LinkedProcess> topLevelCallers = new ArrayList<>();
+        // TODO: implement
+        return topLevelCallers;
     }
 
-    public List<Process> findCalledProcesses(Process mainproc) throws ServiceException {
-        try {
-            return ProcessHierarchy.findInvoked(ProcessCache.getProcess(mainproc.getId()), ProcessCache.getAllProcesses());
-        }
-        catch (DataAccessException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
-        }
-    }
 }

@@ -35,7 +35,6 @@ import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.AssetRefConverter;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.MdwIgnore;
 import com.centurylink.mdw.util.file.Packages;
 import com.centurylink.mdw.util.timer.ProgressMonitor;
@@ -46,7 +45,6 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
@@ -1517,7 +1515,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         else {
             String procMap = activity.getAttribute(WorkAttributeConstant.PROCESS_MAP);
             if (procMap != null) {
-                List<String[]> procmap = StringHelper.parseTable(procMap, ',', ';', 3);
+                List<String[]> procmap = Attribute.parseTable(procMap, ',', ';', 3);
                 for (int i = 0; i < procmap.size(); i++) {
                     String nameSpec = procmap.get(i)[1];
                     if (nameSpec != null && (nameSpec.equals(subproc.getName()) || nameSpec.endsWith("/" + subproc.getName()))) {
@@ -1567,7 +1565,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                 else {
                     String procMap = activity.getAttribute(WorkAttributeConstant.PROCESS_MAP);
                     if (procMap != null) {
-                        List<String[]> procmap = StringHelper.parseTable(procMap, ',', ';', 3);
+                        List<String[]> procmap = Attribute.parseTable(procMap, ',', ';', 3);
                         for (int i = 0; i < procmap.size(); i++) {
                             String nameSpec = procmap.get(i)[1];
                             if (nameSpec != null) {

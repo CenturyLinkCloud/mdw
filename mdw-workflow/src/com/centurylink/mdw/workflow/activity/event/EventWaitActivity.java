@@ -15,13 +15,12 @@
  */
 package com.centurylink.mdw.workflow.activity.event;
 
-import java.util.List;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
@@ -32,12 +31,14 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.process.CompletionCode;
 import com.centurylink.mdw.services.process.ProcessExecutor;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.AbstractWait;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.List;
 
 @Tracked(LogLevel.TRACE)
 public class EventWaitActivity extends AbstractWait implements com.centurylink.mdw.activity.types.EventWaitActivity {
@@ -90,9 +91,9 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
         if (sla == null || sla.length() == 0)
             return 0;
         String unit = getAttributeValue(WorkAttributeConstant.SLA_UNITS);
-        if (StringHelper.isEmpty(unit))
+        if (StringUtils.isBlank(unit))
             unit = getAttributeValue(WorkAttributeConstant.SLA_UNIT);
-        if (StringHelper.isEmpty(unit))
+        if (StringUtils.isBlank(unit))
             unit = ServiceLevelAgreement.INTERVAL_SECONDS;
         return ServiceLevelAgreement.unitsToSeconds(sla, unit);
     }
@@ -102,7 +103,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
      */
     public List<String[]> getWaitEventSpecs() {
         String attVal = this.getAttributeValue(WorkAttributeConstant.WAIT_EVENT_NAMES);
-        return StringHelper.parseTable(attVal, ',', ';', 3);
+        return Attribute.parseTable(attVal, ',', ';', 3);
     }
 
     protected void logMessage(String responseData) {

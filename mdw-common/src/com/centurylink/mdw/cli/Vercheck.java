@@ -24,7 +24,6 @@ import com.centurylink.mdw.util.file.VersionProperties;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
@@ -141,6 +140,8 @@ public class Vercheck extends Setup {
 
         if (errorCount > 0)
             getErr().println("\nversion check failed with " + errorCount + " errors");
+        else
+            getOut().println("\nvercheck completed with no errors");
 
         return this;
     }

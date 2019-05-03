@@ -15,20 +15,11 @@
  */
 package com.centurylink.mdw.service.data;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.cache.CachingException;
-import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskTemplate;
@@ -39,9 +30,13 @@ import com.centurylink.mdw.model.workflow.Solution.MemberType;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.commons.lang.StringUtils;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 public class SolutionsDataAccess extends CommonDataAccess {
 
@@ -63,7 +58,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
             List<Solution> solutions = new ArrayList<Solution>();
             db.openConnection();
             String sql;
-            if (StringHelper.isEmpty(solutionId))
+            if (StringUtils.isBlank(solutionId))
                 sql = "select " + SOLUTION_COLS + " from SOLUTION s";
             else
                 sql = "select " + SOLUTION_COLS + " from SOLUTION s where id like '" + solutionId + "%'";
@@ -481,7 +476,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
                 "\n where s.solution_id = sm.solution_id" +
                 "\n and sm.member_id = '" + memberId + "'" );
 
-            if (memberType != null && !StringHelper.isEmpty(memberType.toString()))
+            if (memberType != null && !StringUtils.isBlank(memberType.toString()))
                 query.append("\n and sm.member_type = '"  + memberType + "'");
 
             ResultSet rs = db.runSelect(query.toString());

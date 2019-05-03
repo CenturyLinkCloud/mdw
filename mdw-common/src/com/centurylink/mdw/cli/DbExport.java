@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * TODO: Handle DocumentDb
  */
-@Parameters(commandNames="dbexport", commandDescription="Export database tables to json (to stdout)", separators="=")
+@Parameters(commandNames="dbexport", commandDescription="Export database tables to json", separators="=")
 public class DbExport extends DbOperation {
 
     @Parameter(names="--output", description="Filename of the exported output", required=true)

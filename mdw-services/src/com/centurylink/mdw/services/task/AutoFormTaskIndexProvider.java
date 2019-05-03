@@ -15,16 +15,17 @@
  */
 package com.centurylink.mdw.services.task;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
+import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 import com.centurylink.mdw.observer.task.TaskIndexProvider;
-import com.centurylink.mdw.util.StringHelper;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Collects index values based on a simple toString() evaluation of the configured variables.
@@ -37,13 +38,13 @@ public class AutoFormTaskIndexProvider implements TaskIndexProvider {
 
         Map<String,String> indexes = null;
         String varAttr = runtimeContext.getTaskAttribute(TaskAttributeConstant.VARIABLES);
-        if (!StringHelper.isEmpty(varAttr)) {
-            List<String[]> parsed = StringHelper.parseTable(varAttr, ',', ';', 5);
+        if (!StringUtils.isBlank(varAttr)) {
+            List<String[]> parsed = Attribute.parseTable(varAttr, ',', ';', 5);
             for (String[] one : parsed) {
                 String varName = one[0];
                 String displayOption = one[2];
                 String indexKey = one[4];
-                if (!displayOption.equals(TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED) && !StringHelper.isEmpty(indexKey)) {
+                if (!displayOption.equals(TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED) && !StringUtils.isBlank(indexKey)) {
                     if (indexes == null)
                         indexes = new HashMap<String,String>();
                     Object value = null;

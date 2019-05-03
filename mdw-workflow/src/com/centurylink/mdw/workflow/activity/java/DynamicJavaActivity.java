@@ -15,27 +15,24 @@
  */
 package com.centurylink.mdw.workflow.activity.java;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.java.CompiledJavaCache;
-import com.centurylink.mdw.java.DynamicJavaImplementor;
-import com.centurylink.mdw.java.JavaExecutor;
-import com.centurylink.mdw.java.JavaNaming;
-import com.centurylink.mdw.java.MdwJavaException;
+import com.centurylink.mdw.java.*;
+import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Tracked(LogLevel.TRACE)
 public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJavaImplementor {
@@ -68,12 +65,12 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
     protected void initialize(ActivityRuntimeContext runtimeContext) throws ActivityException {
         javaCode = runtimeContext.getAttributes().get(JAVA_CODE);
 
-        if (StringHelper.isEmpty(javaCode))
+        if (StringUtils.isBlank(javaCode))
             throw new ActivityException("Missing attribute: " + JAVA_CODE);
 
         // output docs
         String temp = getAttributeValue(OUTPUTDOCS);
-        setOutputDocuments(temp == null ? new String[0] : StringHelper.parseList(temp).toArray(new String[0]));
+        setOutputDocuments(temp == null ? new String[0] : Attribute.parseList(temp).toArray(new String[0]));
 
         // initialize the executor
         try {

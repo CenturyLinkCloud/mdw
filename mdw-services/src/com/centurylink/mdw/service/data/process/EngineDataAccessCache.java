@@ -24,7 +24,7 @@ import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.*;
-import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.DateHelper;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -325,7 +325,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
             ProcessInstance pi = procInstCache.get(processInstId);
             if (status.equals(WorkStatus.STATUS_PENDING_PROCESS)) {
                 status = WorkStatus.STATUS_IN_PROGRESS;
-                pi.setStartDate(StringHelper.dateToString(new Date()));
+                pi.setStartDate(DateHelper.dateToString(new Date()));
             }
             pi.setStatusCode(status);
         } else {

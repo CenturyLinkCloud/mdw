@@ -15,20 +15,20 @@
  */
 package com.centurylink.mdw.common.service;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.util.HttpHelper;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.commons.lang.StringUtils;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * General strategy class to be inherited by all specific routing strategies created.
@@ -72,7 +72,7 @@ public abstract class AbstractRoutingStrategy implements RequestRoutingStrategy 
                     helper.setReadTimeout(1000);
                     String response = helper.get();
 
-                    if (!StringHelper.isEmpty(response) && Integer.parseInt(response) > 0 && !activeServerList.contains(server))
+                    if (!StringUtils.isBlank(response) && Integer.parseInt(response) > 0 && !activeServerList.contains(server))
                         activeServerList.add(server);
                 }
                 catch (Exception ex) {
@@ -115,7 +115,7 @@ public abstract class AbstractRoutingStrategy implements RequestRoutingStrategy 
                 path = "/" + getServicesRoot() + "/Services";
 
             String destUrl = origHttpUrl.getProtocol() + "://" + instanceHostPort + path;
-            if (!StringHelper.isEmpty(headers.get(Listener.METAINFO_REQUEST_QUERY_STRING)))
+            if (!StringUtils.isBlank(headers.get(Listener.METAINFO_REQUEST_QUERY_STRING)))
                 destUrl += "?" + headers.get(Listener.METAINFO_REQUEST_QUERY_STRING);
             return new URL(destUrl);
         }

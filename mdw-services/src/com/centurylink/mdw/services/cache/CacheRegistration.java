@@ -31,7 +31,6 @@ import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.model.system.SystemMessage.Level;
-import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.service.data.activity.ImplementorCache;
 import com.centurylink.mdw.services.bundle.CacheRegistry;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
@@ -39,10 +38,10 @@ import com.centurylink.mdw.services.util.InitialRequest;
 import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.startup.StartupService;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.XmlException;
 import org.json.JSONObject;
 
@@ -299,7 +298,7 @@ public class CacheRegistration implements StartupService {
         try {
             JSONObject json = new JsonObject();
             json.put("ACTION", "REFRESH_CACHES");
-            if (!StringHelper.isEmpty(cacheNames)) json.put("CACHE_NAMES", cacheNames);
+            if (!StringUtils.isBlank(cacheNames)) json.put("CACHE_NAMES", cacheNames);
             messenger.broadcastMessage(json.toString());
         } catch (Exception e) {
             logger.severeException("Failed to publish cashe refresh message", e);

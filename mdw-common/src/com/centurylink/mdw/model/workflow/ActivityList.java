@@ -15,18 +15,17 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import com.centurylink.mdw.model.InstanceList;
+import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.util.DateHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.InstanceList;
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.util.StringHelper;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * A collection of activity instances.
@@ -45,7 +44,7 @@ public class ActivityList implements Jsonable, InstanceList<ActivityInstance> {
     public ActivityList(String name, JSONObject jsonObj) throws JSONException, ParseException {
         this.name = name;
         if (jsonObj.has("retrieveDate"))
-            retrieveDate = StringHelper.serviceStringToDate(jsonObj.getString("retrieveDate"));
+            retrieveDate = DateHelper.serviceStringToDate(jsonObj.getString("retrieveDate"));
         if (jsonObj.has("count"))
             count = jsonObj.getInt("count");
         if (jsonObj.has("total"))
@@ -64,7 +63,7 @@ public class ActivityList implements Jsonable, InstanceList<ActivityInstance> {
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
         if (retrieveDate != null)
-            json.put("retrieveDate", StringHelper.serviceDateToString(getRetrieveDate()));
+            json.put("retrieveDate", DateHelper.serviceDateToString(getRetrieveDate()));
         if (count != -1)
             json.put("count", count);
         if (total != -1) {

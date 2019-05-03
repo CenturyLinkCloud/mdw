@@ -31,10 +31,10 @@ import com.centurylink.mdw.model.system.Server;
 import com.centurylink.mdw.model.system.ServerList;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.util.ClasspathUtil;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.yaml.YamlLoader;
+import org.apache.commons.lang.StringUtils;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -132,7 +132,7 @@ public class ApplicationContext {
             String ds = PropertyManager.getProperty(PropertyNames.MDW_CONTAINER_DATASOURCE_PROVIDER);
             if (ds == null)
                 ds = PropertyManager.getProperty("mdw.container.datasource_provider"); // compatibility
-            if (StringHelper.isEmpty(ds) || ds.equals(DataSourceProvider.TOMCAT)) {
+            if (StringUtils.isBlank(ds) || ds.equals(DataSourceProvider.TOMCAT)) {
                 dataSourceProvider = new TomcatDataSource();
             } else if (DataSourceProvider.MDW.equals(ds)){
                 dataSourceProvider = new MdwDataSource();
@@ -145,7 +145,7 @@ public class ApplicationContext {
             String jms = PropertyManager.getProperty(PropertyNames.MDW_CONTAINER_JMS_PROVIDER);
             if (jms == null)
                 jms = PropertyManager.getProperty("mdw.container.jms_provider"); // compatibility
-            if (StringHelper.isEmpty(jms))
+            if (StringUtils.isBlank(jms))
                 jms = JmsProvider.ACTIVEMQ;
 
             if (JmsProvider.ACTIVEMQ.equals(jms)) {
@@ -164,7 +164,7 @@ public class ApplicationContext {
             String tp = PropertyManager.getProperty(PropertyNames.MDW_CONTAINER_THREADPOOL_PROVIDER);
             if (tp == null)
                 tp = PropertyManager.getProperty("mdw.container.threadpool_provider"); // compatibility
-            if (StringHelper.isEmpty(tp) || ThreadPoolProvider.MDW.equals(tp)) {
+            if (StringUtils.isBlank(tp) || ThreadPoolProvider.MDW.equals(tp)) {
                 threadPoolProvider = new CommonThreadPool();
                 MBeanServer mbs = ManagementFactory.getPlatformMBeanServer();
                 ObjectName mbeanName = new ObjectName("com.centurylink.mdw.container.plugin:type=CommonThreadPool,name=MDW Thread Pool Info");
@@ -414,7 +414,7 @@ public class ApplicationContext {
 
     public static String getMdwHubUrl() {
         String url = PropertyManager.getProperty(PropertyNames.MDW_HUB_URL);
-        if (StringHelper.isEmpty(url) || url.startsWith("@")) {
+        if (StringUtils.isBlank(url) || url.startsWith("@")) {
             url = "http://" + getServer() + "/mdw";
         }
         if (url.endsWith("/"))
@@ -508,7 +508,7 @@ public class ApplicationContext {
      */
     public static void setServiceUser(String user) {
         if (serviceUser == null) {
-            if (StringHelper.isEmpty(user))
+            if (StringUtils.isBlank(user))
                 serviceUser = "N/A";
             else
                 serviceUser = user;

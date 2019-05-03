@@ -15,23 +15,23 @@
  */
 package com.centurylink.mdw.dataaccess.file;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import com.centurylink.mdw.cli.Checkpoint;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.VersionControl;
-import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.DateHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.ProgressMonitor;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class VcsArchiver {
 
@@ -98,7 +98,7 @@ public class VcsArchiver {
             progressMonitor.subTask("Backing up existing package(s) in: " + assetDir);
             progressMonitor.progress(10);
             tempDir = new File(
-                    tempDir + "/AssetBackup_" + StringHelper.filenameDateToString(new Date()));
+                    tempDir + "/AssetBackup_" + DateHelper.filenameDateToString(new Date()));
             if (!tempDir.exists()) {
                 if (!tempDir.mkdirs())
                     throw new IOException(

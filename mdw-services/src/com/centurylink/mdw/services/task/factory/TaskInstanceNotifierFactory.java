@@ -15,14 +15,11 @@
  */
 package com.centurylink.mdw.services.task.factory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.StrategyException;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.Package;
@@ -34,9 +31,13 @@ import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.task.types.TaskServiceRegistry;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public class TaskInstanceNotifierFactory {
 
@@ -60,7 +61,7 @@ public class TaskInstanceNotifierFactory {
         TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(taskId);
         if (taskVO != null) {
             String noticesAttr = taskVO.getAttribute(TaskAttributeConstant.NOTICES);
-            if (!StringHelper.isEmpty(noticesAttr) && !"$DefaultNotices".equals(noticesAttr)) {
+            if (!StringUtils.isBlank(noticesAttr) && !"$DefaultNotices".equals(noticesAttr)) {
                 return parseNoticiesAttr(noticesAttr, outcome);
             }
         }
@@ -91,7 +92,7 @@ public class TaskInstanceNotifierFactory {
                     }
                 }
             }
-            if (!StringHelper.isEmpty(noticesAttr)) {
+            if (!StringUtils.isBlank(noticesAttr)) {
                 return parseNoticiesAttr(noticesAttr, outcome);
               }
             return getNotifierSpecs(taskId, outcome); // For compatibility
@@ -111,12 +112,12 @@ public class TaskInstanceNotifierFactory {
         int columnCount = 4;
         int colon = noticesAttr.indexOf(";");
         if (colon != -1) {
-            columnCount = StringHelper.delimiterColumnCount(noticesAttr.substring(0, colon), ",", "\\,") + 1;
+            columnCount = delimiterColumnCount(noticesAttr.substring(0, colon), ",", "\\,") + 1;
         }
         int notifierClassColIndex = columnCount > 3 ? 3 : 2;
-        List<String[]> rows = StringHelper.parseTable(noticesAttr, ',', ';', columnCount);
+        List<String[]> rows = Attribute.parseTable(noticesAttr, ',', ';', columnCount);
         for (String[] row : rows) {
-            if (!StringHelper.isEmpty(row[1]) && row[0].equals(outcome)) {
+            if (!StringUtils.isBlank(row[1]) && row[0].equals(outcome)) {
                 StringTokenizer st = new StringTokenizer(row[notifierClassColIndex], ",");
                 boolean hasCustomClass = false;
                 String templateVerSpec = columnCount > 3 ? ":" + row[2] : "";
@@ -224,5 +225,13 @@ public class TaskInstanceNotifierFactory {
 
     private boolean isXml(String attrValue) {
         return attrValue.indexOf('<') >= 0 || attrValue.indexOf('>') >= 0;
+    }
+
+    // To count comma separated columns in a row to maintain compatibility
+    public static int delimiterColumnCount(String row, String delimeterChar, String escapeChar) {
+        if (row.indexOf(escapeChar) > 0)
+            return row.replace(escapeChar, " ").length() - row.replace(",", "").length();
+        else
+            return row.length() - row.replace(",", "").length();
     }
 }

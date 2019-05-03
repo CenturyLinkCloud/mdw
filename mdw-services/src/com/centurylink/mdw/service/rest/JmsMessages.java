@@ -15,23 +15,21 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.Path;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.message.JmsMessage;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.JMSServices;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.Path;
+import java.util.List;
+import java.util.Map;
 
 @Path("/JmsMessages")
 public class JmsMessages extends JsonRestService {
@@ -59,11 +57,11 @@ public class JmsMessages extends JsonRestService {
         JMSServices jmsService = JMSServices.getInstance();
 
         try {
-            if (StringHelper.isEmpty(requestMessage.getRequestMessage())) {
+            if (StringUtils.isBlank(requestMessage.getRequestMessage())) {
                 response = "Missing payload for JMS Message \nRequest: " + content;
             }
             else {
-                String contextUrl = StringHelper.isEmpty(requestMessage.getEndpoint()) || requestMessage.getEndpoint().equals("<Internal>") ? null : requestMessage.getEndpoint();
+                String contextUrl = StringUtils.isBlank(requestMessage.getEndpoint()) || requestMessage.getEndpoint().equals("<Internal>") ? null : requestMessage.getEndpoint();
                 response = jmsService.invoke(contextUrl, requestMessage.getQueueName(), requestMessage.getRequestMessage(), requestMessage.getTimeout());
                 code = 0;
             }
@@ -76,7 +74,7 @@ public class JmsMessages extends JsonRestService {
             if (logger.isDebugEnabled())
                 logger.debug("JMS Call replied within time  = " + responseTime);
             requestMessage.setResponseTime(responseTime);
-            if (StringHelper.isEmpty(response))
+            if (StringUtils.isBlank(response))
                 response = "Error: Please check Server side logs";
             requestMessage.setResponse(response);
             requestMessage.setStatusCode(code);

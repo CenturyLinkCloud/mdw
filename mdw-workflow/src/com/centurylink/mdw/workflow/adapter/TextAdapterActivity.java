@@ -47,12 +47,13 @@ import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.event.StubHelper;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.util.DateHelper;
 import com.centurylink.mdw.util.JsonUtil;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -293,9 +294,8 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
      */
     protected int getMaxTries() throws ActivityException {
         try {
-            String v = getAttributeValueSmart(PROP_MAX_TRIES);
-            int ret = StringHelper.getInteger(v, 1);
-            return ret<1?1:ret;
+            int ret = getAttribute(PROP_MAX_TRIES, 1);
+            return ret < 1 ? 1 : ret;
         }
         catch (PropertyException ex) {
             throw new ActivityException(ex.getMessage(), ex);
@@ -308,8 +308,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
      */
     protected int getRetryInterval() throws ActivityException {
         try {
-            String v = getAttributeValueSmart(PROP_RETRY_INTERVAL);
-            return StringHelper.getInteger(v, 600);
+            return getAttribute(PROP_RETRY_INTERVAL,600);
         }
         catch (PropertyException ex) {
             throw new ActivityException(ex.getMessage(), ex);
@@ -419,7 +418,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         ScheduledEventQueue eventQueue = ScheduledEventQueue.getSingleton();
         int retry_interval = this.getRetryInterval();
         Date scheduledTime = new Date(DatabaseAccess.getCurrentTime()+retry_interval*1000);
-        super.loginfo("The activity failed, set to retry at " + StringHelper.dateToString(scheduledTime));
+        super.loginfo("The activity failed, set to retry at " + DateHelper.dateToString(scheduledTime));
         eventQueue.scheduleInternalEvent(ScheduledEvent.INTERNAL_EVENT_PREFIX+this.getActivityInstanceId(),
                 scheduledTime, message.toString(), "procinst:"+this.getProcessInstanceId().toString());
         this.setReturnCode(COMPCODE_AUTO_RETRY);
@@ -683,9 +682,9 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
 
     protected Object executePreScript(Object requestData) throws ActivityException {
         String preScript = getAttributeValue(WorkAttributeConstant.PRE_SCRIPT);
-        if (!StringHelper.isEmpty(preScript)) {
+        if (!StringUtils.isBlank(preScript)) {
             String preScriptLanguage = getAttributeValue(WorkAttributeConstant.PRE_SCRIPT_LANGUAGE);
-            if (StringHelper.isEmpty(preScriptLanguage)) {
+            if (StringUtils.isBlank(preScriptLanguage)) {
                 throw new ActivityException(-1, "Language not defined for the PreScript");
             }
             Object retObj = executeScript(preScript, preScriptLanguage, null, "pre");
@@ -701,9 +700,9 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
 
     protected void executePostScript() throws ActivityException {
         String postScript = getAttributeValue(WorkAttributeConstant.POST_SCRIPT);
-        if (!StringHelper.isEmpty(postScript)){
+        if (!StringUtils.isBlank(postScript)){
             String postScriptLanguage = getAttributeValue(WorkAttributeConstant.POST_SCRIPT_LANGUAGE);
-            if (StringHelper.isEmpty(postScriptLanguage)) {
+            if (StringUtils.isBlank(postScriptLanguage)) {
                 throw new ActivityException(-1, "PostScript Language not defined for the PostScript");
             }
             Object retObj = executeScript(postScript, postScriptLanguage, null, "post");

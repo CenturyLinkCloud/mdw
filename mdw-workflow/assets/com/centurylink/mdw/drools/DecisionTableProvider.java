@@ -15,12 +15,11 @@
  */
 package com.centurylink.mdw.drools;
 
-import java.io.InputStream;
-
+import com.centurylink.mdw.model.asset.Asset;
+import org.apache.commons.lang.StringUtils;
 import org.drools.decisiontable.InputType;
 
-import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.util.StringHelper;
+import java.io.InputStream;
 
 /**
  * Provider wired to handle Excel 2007 format.
@@ -36,7 +35,7 @@ public class DecisionTableProvider {
         SpreadsheetCompiler compiler = new SpreadsheetCompiler();
 
         if (format.equals(Asset.EXCEL) || format.equals(Asset.EXCEL_2007)) {
-            if (StringHelper.isEmpty(worksheetName))
+            if (StringUtils.isBlank(worksheetName))
                 return compiler.compile(inStream, format);
             else
                 return compiler.compile(inStream, format, worksheetName);

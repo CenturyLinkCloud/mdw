@@ -21,6 +21,7 @@ import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.constant.VariableConstants;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.variable.DocumentReference;
@@ -33,10 +34,11 @@ import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
 import com.centurylink.mdw.services.process.ProcessExecutor;
 import com.centurylink.mdw.translator.VariableTranslator;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONObject;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -85,7 +87,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
         for (Variable childVar : childVars) {
             if (!allowInput(childVar)) continue;
             vn = childVar.getName();
-            v = StringHelper.getMapValue(map, vn, ';');
+            v = getMapValue(map, vn, ';');
             if (vn.equals(VariableConstants.REQUEST)) {
                 VariableInstance varinst = getVariableInstance(VariableConstants.REQUEST);
                 v = varinst==null?null:varinst.getStringValue();
@@ -239,7 +241,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                     String varvalue = params.get(varname);
                     Object value;
                     if (passDocContent && VariableTranslator.isDocumentReferenceVariable(getPackage(), var.getType())) {
-                        if (StringHelper.isEmpty(varvalue)) value = null;
+                        if (StringUtils.isBlank(varvalue)) value = null;
                         else if (varvalue.startsWith("DOCUMENT:"))
                             value = VariableTranslator.toObject(var.getType(), varvalue);
                         else {
@@ -277,7 +279,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
 
     private String getActualParameterVariable(String map, String parameterName)
             throws ActivityException {
-        String v = StringHelper.getMapValue(map, parameterName, ';');
+        String v = getMapValue(map, parameterName, ';');
         if (v==null)
             return null;
         if (v.length()<2 || (v.charAt(0)!='$' && v.charAt(0)!='#'))
@@ -354,5 +356,42 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                 return true;
         }
         return false;
+    }
+
+    public static String getMapValue(String map, String name, char delimiter) {
+        if (map.startsWith("{")) {
+            JSONObject json = new JsonObject(map);
+            if (json.has(name))
+                return json.getString(name);
+            else
+                return null;
+        }
+        else {
+            int name_start=0;
+            int n = map.length();
+            int m = name.length();
+            while (name_start>=0) {
+                name_start = map.indexOf(name, name_start);
+                if (name_start>=0) {
+                    if ((name_start==0||map.charAt(name_start-1)==delimiter)
+                            && (name_start+m==n || map.charAt(name_start+m)=='=')) {
+                        int value_start = name_start+m+1;
+                        int k;
+                        char ch;
+                        boolean escaped = false;
+                        for (k=value_start; k<n; k++) {
+                            if (escaped) escaped = false;
+                            else {
+                                ch = map.charAt(k);
+                                if (ch=='\\') escaped = true;
+                                else if (ch==delimiter) break;
+                            }
+                        }
+                        return map.substring(value_start, k);
+                    } else name_start += m;
+                }
+            }
+            return null;
+        }
     }
 }

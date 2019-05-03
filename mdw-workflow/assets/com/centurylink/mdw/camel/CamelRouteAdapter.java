@@ -15,28 +15,26 @@
  */
 package com.centurylink.mdw.camel;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RoutesDefinition;
-
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.camel.CamelRouteCache;
-import com.centurylink.mdw.camel.RoutesDefinitionRuleSet;
 import com.centurylink.mdw.config.PropertyException;
-import com.centurylink.mdw.util.StringHelper;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.event.WorkflowHandler;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutesDefinition;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CamelRouteAdapter extends ObjectAdapterActivity {
 
@@ -162,8 +160,8 @@ public class CamelRouteAdapter extends ObjectAdapterActivity {
 
         Map<String,String> customAttrs = null;
         String customAttrString = getAttributeValue(CUSTOM_ATTRIBUTES);
-        if (!StringHelper.isEmpty(customAttrString)) {
-            customAttrs = StringHelper.parseMap(customAttrString);
+        if (!StringUtils.isBlank(customAttrString)) {
+            customAttrs = Attribute.parseMap(customAttrString);
         }
 
         RoutesDefinitionRuleSet rdrs;

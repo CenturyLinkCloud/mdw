@@ -15,16 +15,15 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import java.util.Date;
-import java.util.List;
-
+import com.centurylink.mdw.model.InstanceList;
+import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.util.DateHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.InstanceList;
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.util.StringHelper;
+import java.util.Date;
+import java.util.List;
 
 public class SolutionList implements Jsonable, InstanceList<Solution> {
 
@@ -62,7 +61,7 @@ public class SolutionList implements Jsonable, InstanceList<Solution> {
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
-        json.put("retrieveDate", StringHelper.serviceDateToString(getRetrieveDate()));
+        json.put("retrieveDate", DateHelper.serviceDateToString(getRetrieveDate()));
         json.put("count", count);
         if (total != -1)
             json.put("total", total);

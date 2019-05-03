@@ -15,19 +15,18 @@
  */
 package com.centurylink.mdw.model.asset;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.dataaccess.file.PackageDir;
+import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.util.DateHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.dataaccess.file.PackageDir;
-import com.centurylink.mdw.util.StringHelper;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 /**
  * List of packages that reflect the result of filtering (eg: by type of asset).
@@ -67,7 +66,7 @@ public class AssetPackageList implements Jsonable {
 
     public AssetPackageList(JSONObject json) throws JSONException {
         if (json.has("retrieveDate"))
-            this.retrieveDate = StringHelper.serviceStringToDate(json.getString("retrieveDate"));
+            this.retrieveDate = DateHelper.serviceStringToDate(json.getString("retrieveDate"));
         if (json.has("count"))
             this.count = json.getInt("count");
         if (json.has("packages")) {
@@ -83,7 +82,7 @@ public class AssetPackageList implements Jsonable {
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
-        json.put("retrieveDate", StringHelper.serviceDateToString(getRetrieveDate()));
+        json.put("retrieveDate", DateHelper.serviceDateToString(getRetrieveDate()));
         json.put("count", count);
         JSONArray array = new JSONArray();
         if (packageAssetList != null) {

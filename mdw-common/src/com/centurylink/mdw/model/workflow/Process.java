@@ -729,22 +729,6 @@ public class Process extends Asset implements Jsonable {
         return toKeep;
     }
 
-    public void removeEmptyAttributes() {
-        setAttributes(removeEmptyAttrs(getAttributes()));
-        if (getActivities() != null) {
-            for (Activity activity : getActivities())
-                activity.setAttributes(removeEmptyAttrs(activity.getAttributes()));
-        }
-        if (getTransitions() != null) {
-            for (Transition trans : getTransitions())
-                trans.setAttributes(removeEmptyAttrs(trans.getAttributes()));
-        }
-        if (getSubprocesses() != null) {
-            for (Process embedded : getSubprocesses())
-                embedded.removeEmptyAttributes();
-        }
-    }
-
     private List<Attribute> removeEmptyAttrs(List<Attribute> attrs) {
         if (attrs == null)
             return null;
@@ -774,8 +758,8 @@ public class Process extends Asset implements Jsonable {
             this.attributes = Attribute.getAttributes(json.getJSONObject("attributes"));
         }
         // many places don't check for null arrays, so we must instantiate
-        this.activities = new ArrayList<Activity>();
-        this.transitions = new ArrayList<Transition>();
+        this.activities = new ArrayList<>();
+        this.transitions = new ArrayList<>();
         if (json.has("activities")) {
             JSONArray activitiesJson = json.getJSONArray("activities");
             for (int i = 0; i < activitiesJson.length(); i++) {
@@ -792,7 +776,7 @@ public class Process extends Asset implements Jsonable {
                 }
             }
         }
-        this.subprocesses = new ArrayList<Process>();
+        this.subprocesses = new ArrayList<>();
         if (json.has("subprocesses")) {
             JSONArray subprocsJson = json.getJSONArray("subprocesses");
             for (int i = 0; i < subprocsJson.length(); i++) {
@@ -806,13 +790,13 @@ public class Process extends Asset implements Jsonable {
                 this.subprocesses.add(subproc);
             }
         }
-        this.textNotes = new ArrayList<TextNote>();
+        this.textNotes = new ArrayList<>();
         if (json.has("textNotes")) {
             JSONArray textNotesJson = json.getJSONArray("textNotes");
             for (int i = 0; i < textNotesJson.length(); i++)
                 this.textNotes.add(new TextNote(textNotesJson.getJSONObject(i)));
         }
-        this.variables = new ArrayList<Variable>();
+        this.variables = new ArrayList<>();
         if (json.has("variables")) {
             JSONObject variablesJson = json.getJSONObject("variables");
             Map<String,JSONObject> objects = getJsonObjects(variablesJson);
@@ -882,6 +866,14 @@ public class Process extends Asset implements Jsonable {
         return json;
     }
 
+    public JSONObject getSummaryJson() {
+        JSONObject json = create();
+        json.put("name", getName());
+        json.put("package", getPackageName());
+        json.put("version", getVersionString());
+        return json;
+    }
+
     public String getJsonName() {
         return getName();
     }
@@ -906,7 +898,7 @@ public class Process extends Asset implements Jsonable {
     }
 
     public static Map<String,JSONObject> getJsonObjects(JSONObject json) throws JSONException {
-        Map<String,JSONObject> objects = new HashMap<String,JSONObject>();
+        Map<String,JSONObject> objects = new HashMap<>();
         Iterator<?> keys = json.keys();
         while (keys.hasNext()) {
             String key = keys.next().toString();
@@ -933,6 +925,54 @@ public class Process extends Asset implements Jsonable {
             }
         }
         return hasDelayTransition = false;
+    }
+
+    public boolean invokesSubprocess(Process subprocess) {
+        if (activities != null) {
+            for (Activity activity : activities) {
+                if (activity.invokesSubprocess(subprocess))
+                    return true;
+            }
+        }
+        if (subprocesses != null) {
+            for (Process embedded : subprocesses) {
+                if (embedded.getActivities() != null) {
+                    for (Activity activity : embedded.getActivities()) {
+                        if (activity.invokesSubprocess(subprocess))
+                            return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Find all subprocesses invoked by me.
+     */
+    public List<Process> findInvoked(List<Process> processes) {
+        List<Process> invoked = new ArrayList<>();
+        if (activities != null) {
+            for (Activity activity : activities) {
+                for (Process subproc : activity.findInvoked(processes)) {
+                    if (!invoked.contains(subproc))
+                        invoked.add(subproc);
+                }
+            }
+        }
+        if (subprocesses != null) {
+            for (Process embedded : subprocesses) {
+                if (embedded.getActivities() != null) {
+                    for (Activity activity : embedded.getActivities()) {
+                        for (Process subproc : activity.findInvoked(processes)) {
+                            if (invoked.contains(subproc))
+                                invoked.add(subproc);
+                        }
+                    }
+                }
+            }
+        }
+        return invoked;
     }
 
 }

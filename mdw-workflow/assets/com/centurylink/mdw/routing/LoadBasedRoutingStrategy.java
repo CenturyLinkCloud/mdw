@@ -15,14 +15,6 @@
  */
 package com.centurylink.mdw.routing;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.AbstractRoutingStrategy;
@@ -31,9 +23,13 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.util.HttpHelper;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.commons.lang.StringUtils;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 /**
  * Routing strategy that determines the appropriate destination based on instances' loads.
@@ -83,7 +79,7 @@ public class LoadBasedRoutingStrategy extends AbstractRoutingStrategy {
     }
 
     public URL getDestination(Object request, Map<String,String> headers) {
-        if (StringHelper.isEmpty(PropertyManager.getProperty(PropertyNames.MDW_ROUTING_REQUESTS_DEFAULT_STRATEGY)) || !this.getClass().getName().equalsIgnoreCase(PropertyManager.getProperty(PropertyNames.MDW_ROUTING_REQUESTS_DEFAULT_STRATEGY)))
+        if (StringUtils.isBlank(PropertyManager.getProperty(PropertyNames.MDW_ROUTING_REQUESTS_DEFAULT_STRATEGY)) || !this.getClass().getName().equalsIgnoreCase(PropertyManager.getProperty(PropertyNames.MDW_ROUTING_REQUESTS_DEFAULT_STRATEGY)))
             return null;
 
         String instance = null;
@@ -135,7 +131,7 @@ public class LoadBasedRoutingStrategy extends AbstractRoutingStrategy {
                 helper.setReadTimeout(2000);
                 String response = helper.get();
 
-                if (StringHelper.isEmpty(response))
+                if (StringUtils.isBlank(response))
                     threadCountbyInstance.put(instance, Integer.MAX_VALUE);
                 else
                     threadCountbyInstance.put(instance, Integer.parseInt(response));

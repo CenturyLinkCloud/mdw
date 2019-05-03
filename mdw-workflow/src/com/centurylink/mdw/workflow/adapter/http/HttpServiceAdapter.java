@@ -25,8 +25,8 @@ import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.service.data.ServicePaths;
 import com.centurylink.mdw.util.HttpConnection;
 import com.centurylink.mdw.util.HttpHelper;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.workflow.adapter.TextAdapterActivity;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.util.Map;
@@ -78,7 +78,7 @@ public class HttpServiceAdapter extends TextAdapterActivity {
             if (httpConn.getResponse() != null) {
                 response.setStatusCode(httpConn.getResponse().getCode());
                 response.setStatusMessage(httpConn.getResponse().getMessage());
-                if (response.getStatusCode() > 0 && StringHelper.isEmpty(response.getStatusMessage())) {
+                if (response.getStatusCode() > 0 && StringUtils.isBlank(response.getStatusMessage())) {
                     response.setStatusMessage(StatusResponse.getMessage(response.getStatusCode()));
                 }
                 response.setPath(ServicePaths.getOutboundResponsePath(httpConn.getUrl(), httpConn.getMethod()));

@@ -15,34 +15,24 @@
  */
 package com.centurylink.mdw.model;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
+import com.centurylink.mdw.common.service.Query;
+import com.centurylink.mdw.util.DateHelper;
+import com.centurylink.mdw.util.JsonUtil;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Query;
-import com.centurylink.mdw.util.JsonUtil;
-import com.centurylink.mdw.util.StringHelper;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * TODO: other formats (eg: CSV)
@@ -244,7 +234,7 @@ public class JsonExport {
                         }
                         catch (ParseException ex) {
                             // try StringHelper date
-                            Date d = StringHelper.stringToDate(stringVal);
+                            Date d = DateHelper.stringToDate(stringVal);
                             if (d == null) {
                                 cell.setCellValue(stringVal);
                             }

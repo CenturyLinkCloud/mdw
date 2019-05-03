@@ -15,31 +15,22 @@
  */
 package com.centurylink.mdw.html;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.imageio.ImageIO;
-
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.image.ImageExportHelper;
-import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.ActivityNodeSequencer;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.util.StringHelper;
 import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
+
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 public class HtmlExportHelper {
 
@@ -164,7 +155,7 @@ public class HtmlExportHelper {
                             cols.remove(0);
                         }
                         String[] headers = cols.toArray(new String[0]);
-                        List<String[]> rows = StringHelper.parseTable(escapeXml(val), colDelim, ';',
+                        List<String[]> rows = Attribute.parseTable(escapeXml(val), colDelim, ';',
                                 headers.length);
                         String[][] values = new String[headers.length][rows.size()];
                         for (int i = 0; i < headers.length; i++) {

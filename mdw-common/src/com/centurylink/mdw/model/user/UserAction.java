@@ -15,13 +15,11 @@
  */
 package com.centurylink.mdw.model.user;
 
-import java.io.ByteArrayInputStream;
-import java.io.Serializable;
-import java.util.Date;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
+import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.util.DateHelper;
+import com.centurylink.mdw.util.ParseException;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xml.sax.Attributes;
@@ -29,12 +27,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.util.ParseException;
-import com.centurylink.mdw.util.StringHelper;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.ByteArrayInputStream;
+import java.io.Serializable;
+import java.util.Date;
 
 @ApiModel(value="UserAction", description="MDW user action")
 public class UserAction implements Serializable, Comparable<UserAction>, Jsonable {
@@ -229,9 +226,9 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
         return "<Action\n"
          + (id == null ? "" : ("  id=\"" + id + "\"\n"))
          + "  name=\"" + (action.equals(Action.Other) ? extendedAction : action) + "\"\n"
-         + "  date=\"" + StringHelper.dateToString(date) + "\"\n"
+         + "  date=\"" + DateHelper.dateToString(date) + "\"\n"
          + "  description=\"" + description + "\"\n"
-         + "  retrieveDate=\"" + StringHelper.dateToString(retrieveDate) + "\"\n"
+         + "  retrieveDate=\"" + DateHelper.dateToString(retrieveDate) + "\"\n"
          + "  user=\"" + user + "\"\n"
          + "  source=\"" + source + "\""
          + (destination == null ? ">\n" : ("\n  destination=\"" + destination + "\">\n"))
@@ -253,9 +250,9 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
                         catch (NumberFormatException ex) {
                         }
                         action = getAction(attrs.getValue("name"));
-                        date = StringHelper.stringToDate(attrs.getValue("date"));
+                        date = DateHelper.stringToDate(attrs.getValue("date"));
                         description = attrs.getValue("description");
-                        retrieveDate = StringHelper.stringToDate(attrs.getValue("retrieveDate"));
+                        retrieveDate = DateHelper.stringToDate(attrs.getValue("retrieveDate"));
                         user = attrs.getValue("user");
                         destination = attrs.getValue("destination");
                     }
@@ -280,10 +277,10 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
         if (id != null)
           json.put("id", id);
         json.put("name", (action.equals(Action.Other) ? extendedAction : action));
-        json.put("date", StringHelper.dateToString(date));
+        json.put("date", DateHelper.dateToString(date));
         json.put("description", description);
         if (retrieveDate != null)
-            json.put("retrieveDate", StringHelper.dateToString(retrieveDate));
+            json.put("retrieveDate", DateHelper.dateToString(retrieveDate));
         json.put("user", user);
         json.put("source", source);
         if (destination != null)
@@ -301,10 +298,10 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
         if (id != null)
           json.put("id", id);
         json.put("name", (action.equals(Action.Other) ? extendedAction : action));
-        json.put("date", StringHelper.dateToString(date));
+        json.put("date", DateHelper.dateToString(date));
         json.put("description", description);
         if (retrieveDate != null)
-            json.put("retrieveDate", StringHelper.dateToString(retrieveDate));
+            json.put("retrieveDate", DateHelper.dateToString(retrieveDate));
         json.put("user", user);
         json.put("source", source);
         if (destination != null)
@@ -327,11 +324,11 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
         if (json.has("name"))
             action = getAction(json.getString("name"));
         if (json.has("date"))
-            date = StringHelper.stringToDate(json.getString("date"));
+            date = DateHelper.stringToDate(json.getString("date"));
         if (json.has("description"))
             description = json.getString("description");
         if (json.has("retrieveDate"))
-            retrieveDate = StringHelper.stringToDate(json.getString("retrieveDate"));
+            retrieveDate = DateHelper.stringToDate(json.getString("retrieveDate"));
         if (json.has("user"))
             user = json.getString("user");
         if (json.has("destination"))

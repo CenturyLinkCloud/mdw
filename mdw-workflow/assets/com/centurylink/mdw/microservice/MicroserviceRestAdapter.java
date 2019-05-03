@@ -11,8 +11,8 @@ import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
+import org.apache.commons.lang.StringUtils;
 
 import java.sql.SQLException;
 import java.time.Instant;
@@ -157,7 +157,7 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
     protected String getMicroservice(ServiceSummary summary) throws ActivityException {
         // configured through attribute - attribute default is supposed to be $microservice
         String microservice = getAttributeValueSmart("Microservice");
-        if (StringHelper.isEmpty(microservice)) {
+        if (StringUtils.isBlank(microservice)) {
             String microserviceVarName = getAttribute("microserviceVariable", "microservice");
             if (getMainProcessDefinition().getVariable(microserviceVarName) == null) {
                 microservice = getMicroserviceById(summary);

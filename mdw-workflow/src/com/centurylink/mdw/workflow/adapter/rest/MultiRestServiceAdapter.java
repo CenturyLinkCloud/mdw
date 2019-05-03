@@ -15,6 +15,17 @@
  */
 package com.centurylink.mdw.workflow.adapter.rest;
 
+import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.connector.adapter.AdapterException;
+import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.model.Response;
+import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.util.HttpAltConnection;
+import com.centurylink.mdw.util.HttpConnection;
+import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -22,17 +33,6 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.model.Response;
-import com.centurylink.mdw.util.HttpAltConnection;
-import com.centurylink.mdw.util.HttpConnection;
-import com.centurylink.mdw.util.HttpHelper;
-import com.centurylink.mdw.util.StringHelper;
-import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
-import com.centurylink.mdw.util.timer.Tracked;
 
 @Tracked(LogLevel.TRACE)
 public class MultiRestServiceAdapter extends RestServiceAdapter {
@@ -90,7 +90,7 @@ public class MultiRestServiceAdapter extends RestServiceAdapter {
 
     /**
      * Returns the endpoint URLs for the RESTful service.  Supports property specifiers
-     * via the syntax for {@link #AdapterActivityBase.getAttributeValueSmart(String)}.
+     * via the syntax for {@link #getAttribute(String)}.
      * @throws ActivityException
      */
     protected List<String> getEndpointUris() throws AdapterException {
@@ -101,7 +101,7 @@ public class MultiRestServiceAdapter extends RestServiceAdapter {
             if (map==null)
                 urlmaparray = new ArrayList<String[]>();
                 else
-                    urlmaparray = StringHelper.parseTable(map, ',', ';', 1);
+                    urlmaparray = Attribute.parseTable(map, ',', ';', 1);
 
             for (String[] entry : urlmaparray)
                 urlmap.add(getValueSmart(entry[0], ""));

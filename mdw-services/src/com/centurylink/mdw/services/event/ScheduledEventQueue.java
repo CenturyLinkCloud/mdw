@@ -33,7 +33,7 @@ import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.IntraMDWMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
-import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.DateHelper;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -69,7 +69,7 @@ public class ScheduledEventQueue implements CacheService {
             List<ScheduledEvent> eventlist = eventManager.getScheduledEventList(cutoffTime);
             for (ScheduledEvent event: eventlist) {
                 logger.info("Previously scheduled event " + event.getName() + " at "
-                        + StringHelper.dateToString(event.getScheduledTime()) + " (database time)");
+                        + DateHelper.dateToString(event.getScheduledTime()) + " (database time)");
                 eventQueue.offer(event);
             }
         }
@@ -157,7 +157,7 @@ public class ScheduledEventQueue implements CacheService {
         if (nextDate!=null) {
             eventQueue.offer(event);
             logger.info("Reschedules event " + event.getName() + " at "
-                    + StringHelper.dateToString(event.getScheduledTime()) + " (database time)");
+                    + DateHelper.dateToString(event.getScheduledTime()) + " (database time)");
         } // else event manager will delete the database entry
         return true;
     }
@@ -204,7 +204,7 @@ public class ScheduledEventQueue implements CacheService {
             if (time!=null) {
                 eventQueue.offer(event);
                 logger.info("Schedules event " + event.getName() + " at "
-                        + StringHelper.dateToString(event.getScheduledTime()) + " (database time)");
+                        + DateHelper.dateToString(event.getScheduledTime()) + " (database time)");
             } else {
                 logger.info("Add unscheduled event " + event.getName());
             }
@@ -244,7 +244,7 @@ public class ScheduledEventQueue implements CacheService {
             removeEvent(name);
             eventQueue.offer(event);
             logger.info("Reschedules event " + event.getName() + " at "
-                    + StringHelper.dateToString(event.getScheduledTime()) + " (database time)");
+                    + DateHelper.dateToString(event.getScheduledTime()) + " (database time)");
         } catch (Exception e) {
             logger.severeException("Failed to reschedule event " + name, e);
         }
@@ -329,7 +329,7 @@ public class ScheduledEventQueue implements CacheService {
                 nextDate = this.calculateNextDate(schedule, event.getScheduledTime());
                 while (nextDate!=null && nextDate.before(now)) {
                     logger.debug("Skip scheduled event " + event.getName() + " at " +
-                            StringHelper.dateToString(nextDate));
+                            DateHelper.dateToString(nextDate));
                     nextDate = this.calculateNextDate(schedule, nextDate);
                 }
             } catch (Exception e) {

@@ -15,14 +15,6 @@
  */
 package com.centurylink.mdw.timer.cleanup;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledJob;
@@ -35,10 +27,18 @@ import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
 import com.centurylink.mdw.util.CallURL;
-import com.centurylink.mdw.util.StringHelper;
+import com.centurylink.mdw.util.DateHelper;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Scheduled job that sweeps for expired process SLAs and triggers the
@@ -168,7 +168,7 @@ public class ProcessSlaScheduledJob implements ScheduledJob {
                 ProcessInstance processInstVO = new ProcessInstance();
                 processInstVO.setId(rs.getLong(1));
                 processInstVO.setProcessId(rs.getLong(2));
-                processInstVO.setStartDate(StringHelper.dateToString(rs.getTimestamp(8)));
+                processInstVO.setStartDate(DateHelper.dateToString(rs.getTimestamp(8)));
                 processInstVO.setOwnerId(rs.getLong(4));
                 processInstVO.setMasterRequestId(rs.getString(15));
                 processInstVO.setActivities(getProcessInstanceActivity(rs.getLong(1)));

@@ -15,27 +15,27 @@
  */
 package com.centurylink.mdw.workflow.activity.template;
 
+import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+import com.centurylink.mdw.util.timer.Tracked;
+import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+import org.apache.commons.lang.StringUtils;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.exception.ParseErrorException;
+
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.exception.ParseErrorException;
-
-import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.cache.impl.AssetCache;
-import com.centurylink.mdw.config.PropertyException;
-import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.util.StringHelper;
-import com.centurylink.mdw.util.file.FileHelper;
-import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
-import com.centurylink.mdw.util.timer.Tracked;
-import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 
 @Tracked(LogLevel.TRACE)
 public class VelocityTemplateActivity extends DefaultActivityImpl {
@@ -69,7 +69,7 @@ public class VelocityTemplateActivity extends DefaultActivityImpl {
         mergeTemplate();
 
         String script = getAttributeValue(RULE);
-        if (!StringHelper.isEmpty(script))
+        if (!StringUtils.isBlank(script))
             executeScript(script);
     }
 
@@ -92,7 +92,7 @@ public class VelocityTemplateActivity extends DefaultActivityImpl {
     protected void mergeTemplate() throws ActivityException {
         try {
             String temp = getAttributeValue(OUTPUTDOCS);
-            setOutputDocuments(temp == null ? new String[0] : StringHelper.parseList(temp).toArray(new String[0]));
+            setOutputDocuments(temp == null ? new String[0] : Attribute.parseList(temp).toArray(new String[0]));
 
             // get the template from the cache
             Asset templateVO = getTemplate(templateName);
