@@ -32,7 +32,7 @@ import java.util.List;
 public abstract class RoundRobinScheduledJob extends LoadBalancedScheduledJob {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-    private static List<String> serverInstQueue  = new ArrayList<String>();
+    private static List<String> serverInstQueue  = new ArrayList<>();
 
     public void runOnLoadBalancedInstance(CallURL args) {
         try {
@@ -66,7 +66,7 @@ public abstract class RoundRobinScheduledJob extends LoadBalancedScheduledJob {
                 if (nextServerInst.equals(ApplicationContext.getServer().toString())) {
                     break;
                 } else {
-                    success = super.runOnDifferentManagedServer(args, nextServerInst); // if one instance is offline, user next in the queue
+                    success = runOnDifferentManagedServer(args, nextServerInst); // if one instance is offline, user next in the queue
                     if (success) {
                         runOnCurrentInstance = false;
                         break;
@@ -77,7 +77,7 @@ public abstract class RoundRobinScheduledJob extends LoadBalancedScheduledJob {
                 if (logger.isDebugEnabled())
                     logger.debug("Scheduled job running on instance : " + ApplicationContext.getServer());
                 eventManager.updateEventInstance(eventName, null, null, null, null, null, 0, ApplicationContext.getServer().toString());
-                run(args);
+                run(args, s -> {});
             }
         }
         catch (DataAccessException ex) {

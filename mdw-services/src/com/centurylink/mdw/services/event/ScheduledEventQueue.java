@@ -23,6 +23,7 @@ import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
@@ -63,7 +64,7 @@ public class ScheduledEventQueue implements CacheService {
     }
 
     private synchronized void loadScheduledEvents() {
-        eventQueue = new PriorityQueue<ScheduledEvent>();
+        eventQueue = new PriorityQueue<>();
         try {
             EventServices eventManager = ServiceLocator.getEventServices();
             List<ScheduledEvent> eventlist = eventManager.getScheduledEventList(cutoffTime);
@@ -86,9 +87,9 @@ public class ScheduledEventQueue implements CacheService {
         } else if (eventQueue == null) {
             loadScheduledEvents();
         }
-        if (eventQueue!= null) {
+        if (eventQueue != null) {
             ScheduledEvent event = eventQueue.peek();
-            if (event!=null && event.getScheduledTime().compareTo(now)<0)
+            if (event != null && event.getScheduledTime().compareTo(now) < 0)
                 return eventQueue.poll();
         }
         return null;
@@ -109,13 +110,13 @@ public class ScheduledEventQueue implements CacheService {
     public boolean processEvent(String eventName, ScheduledEvent event, Date now, EngineDataAccessDB edao) {
         // when this is called, the database has locked the event, or it is null
         // lock and remove in database, and refresh the copy
-        if (event==null) {
+        if (event == null) {
             logger.debug("Event has already been processed: " + eventName);
             return false;
         }
-        if (event.getScheduledTime().compareTo(now)>0) {
-            logger.debug("Event has already been rescheduled: " + eventName
-                    + " at " + event.getScheduledTime().toString());
+        if (event.getScheduledTime().compareTo(now) > 0) {
+            logger.debug("Event has already been rescheduled: " + eventName + " at " +
+                    event.getScheduledTime().toString());
             eventQueue.offer(event);
             return false;
         }
@@ -124,24 +125,31 @@ public class ScheduledEventQueue implements CacheService {
             if (event.isInternalEvent()) {
                 // long-delayed internal events, form timer/event wait activities
                 if (processInternalEventInThisJVM) {
-                    if (!MessageServices.getInstance().sendInternalMessageCheck(ThreadPoolProvider.WORKER_SCHEDULER, null, event.getName(), event.getMessage()))
+                    if (!MessageServices.getInstance().sendInternalMessageCheck(ThreadPoolProvider.WORKER_SCHEDULER,
+                            null, event.getName(), event.getMessage())) {
                         return false;  // Don't remove event from DB since it couldn't be processed (no thread available)
+                    }
                 } else {
                     InternalMessenger msgbroker = MessengerFactory.newInternalMessenger();
                     msgbroker.sendMessage(new InternalEvent(event.getMessage()), edao);
                 }
             } else if (event.isScheduledJob()) {
-                // timer task
-                // send a message to listener to actually run the task
-                String timerClassAndArgs = event.getName().substring(ScheduledEvent.SCHEDULED_JOB_PREFIX.length());
-                StringBuffer calldoc = new StringBuffer();
-                calldoc.append("<_mdw_run_job>");
-                calldoc.append(timerClassAndArgs.replaceAll("&", "&amp;").replaceAll("<", "&lt;"));
-                calldoc.append("</_mdw_run_job>");
-                IntraMDWMessenger msgbroker = MessengerFactory.newIntraMDWMessenger(null);
-                msgbroker.sendMessage(calldoc.toString());
+                if (EventInstance.STATUS_SCHEDULED_JOB_RUNNING.equals(event.getStatus())) {
+                    logger.error("Scheduled job still in progress, so execution skipped at " +
+                            DateHelper.dateToString(now) + ": " + event.getName());
+                }
+                else {
+                    // send message to listener to run the job
+                    String jobClassAndArgs = event.getName().substring(ScheduledEvent.SCHEDULED_JOB_PREFIX.length());
+                    StringBuffer calldoc = new StringBuffer();
+                    calldoc.append("<_mdw_run_job>");
+                    calldoc.append(jobClassAndArgs.replaceAll("&", "&amp;").replaceAll("<", "&lt;"));
+                    calldoc.append("</_mdw_run_job>");
+                    IntraMDWMessenger msgbroker = MessengerFactory.newIntraMDWMessenger(null);
+                    msgbroker.sendMessage(calldoc.toString());
+                }
             } else {        // is scheduled external event
-                if (event.getMessage()==null || !event.getMessage().startsWith("<"))
+                if (event.getMessage() == null || !event.getMessage().startsWith("<"))
                     throw new Exception("Scheduled external event message is null or non-XML. Event name " + event.getName());
                 IntraMDWMessenger msgbroker = MessengerFactory.newIntraMDWMessenger(null);
                 msgbroker.sendMessage(event.getMessage());
@@ -152,9 +160,11 @@ public class ScheduledEventQueue implements CacheService {
         Date nextDate;
         if (event.isScheduledJob()) {
             nextDate = getNextDate(event, now, logger);
-        } else nextDate = null;
+        } else {
+            nextDate = null;
+        }
         event.setScheduledTime(nextDate);
-        if (nextDate!=null) {
+        if (nextDate != null) {
             eventQueue.offer(event);
             logger.info("Reschedules event " + event.getName() + " at "
                     + DateHelper.dateToString(event.getScheduledTime()) + " (database time)");
@@ -201,7 +211,7 @@ public class ScheduledEventQueue implements CacheService {
         try {
             EventServices eventManager = ServiceLocator.getEventServices();
             eventManager.offerScheduledEvent(event);
-            if (time!=null) {
+            if (time != null) {
                 eventQueue.offer(event);
                 logger.info("Schedules event " + event.getName() + " at "
                         + DateHelper.dateToString(event.getScheduledTime()) + " (database time)");
@@ -209,7 +219,7 @@ public class ScheduledEventQueue implements CacheService {
                 logger.info("Add unscheduled event " + event.getName());
             }
         } catch (DataAccessException e) {
-            if (e.getCode()==23000)
+            if (e.getCode() == DataAccessException.INTEGRITY_CONSTRAINT_VIOLATION)
                 logger.info("To schedule the event but it is already scheduled: " + event.getName());
             else
                 logger.severeException("Failed to schedule event " + name, e);
@@ -271,14 +281,15 @@ public class ScheduledEventQueue implements CacheService {
 
     public void scheduleCronJob(String name, String cronExpression) throws Exception {
         Date now = new Date(DatabaseAccess.getCurrentTime());
-        Date nextTime = this.calculateNextDate(cronExpression, now);
-        if (nextTime!=null) schedule(name, nextTime, cronExpression, null);
+        Date nextTime = calculateNextDate(cronExpression, now);
+        if (nextTime != null)
+            schedule(name, nextTime, cronExpression, null);
     }
 
     public void rescheduleCronJob(String name, String cronExpression) throws Exception {
         Date now = new Date(DatabaseAccess.getCurrentTime());
-        Date nextTime = this.calculateNextDate(cronExpression, now);
-        if (nextTime!=null) {
+        Date nextTime = calculateNextDate(cronExpression, now);
+        if (nextTime != null) {
             reschedule(name, nextTime, cronExpression);
         } else {
             unschedule(name);
@@ -323,14 +334,15 @@ public class ScheduledEventQueue implements CacheService {
     private Date getNextDate(ScheduledEvent event, Date now, StandardLogger logger) {
         Date nextDate;
         String schedule = event.getMessage();
-        if (schedule==null) nextDate = null;
+        if (schedule == null)
+            nextDate = null;
         else {
             try {
-                nextDate = this.calculateNextDate(schedule, event.getScheduledTime());
-                while (nextDate!=null && nextDate.before(now)) {
+                nextDate = calculateNextDate(schedule, event.getScheduledTime());
+                while (nextDate != null && nextDate.before(now)) {
                     logger.debug("Skip scheduled event " + event.getName() + " at " +
                             DateHelper.dateToString(nextDate));
-                    nextDate = this.calculateNextDate(schedule, nextDate);
+                    nextDate = calculateNextDate(schedule, nextDate);
                 }
             } catch (Exception e) {
                 logger.severeException("Failed to calculated next run time", e);

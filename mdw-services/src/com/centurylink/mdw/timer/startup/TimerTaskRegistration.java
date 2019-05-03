@@ -127,13 +127,13 @@ public class TimerTaskRegistration implements StartupService {
             com.centurylink.mdw.annotations.ScheduledJob scheduledJobAnnotation =
                     scheduledJob.getClass().getAnnotation(com.centurylink.mdw.annotations.ScheduledJob.class);
             if (scheduledJobAnnotation != null) {
-                boolean enabled = true;
+                boolean enabled = scheduledJobAnnotation.defaultEnabled();
                 String enabledProp = scheduledJobAnnotation.enabledProp();
                 if (!enabledProp.isEmpty()) {
                     enabled = PropertyManager.getBooleanProperty(enabledProp, false);
                 }
                 String name = scheduledJobAnnotation.value();
-                if (enabled && !timerTasks.containsKey(name)) {
+                if (!timerTasks.containsKey(name)) {
                     Properties spec = new Properties();
                     spec.put("TimerClass", scheduledJob.getClass().getName());
                     String eventName = SCHEDULED_JOB + "." + scheduledJob.getClass().getName();
@@ -141,18 +141,23 @@ public class TimerTaskRegistration implements StartupService {
                     try {
                         EventServices eventServices = ServiceLocator.getEventServices();
                         EventInstance eventInstance = eventServices.getEventInstance(eventName);
-                        if (eventInstance != null && !scheduledJobAnnotation.schedule().equals(eventInstance.getAuxdata())) {
+                        // update in case schedule has changed, job is disabled, or status shows job running
+                        if (eventInstance != null) {
                             logger.info("Updating schedule for " + scheduledJob.getClass() + ": " + scheduledJobAnnotation.schedule());
                             eventServices.updateEventInstance(eventName, eventInstance.getDocumentId(),
-                                    eventInstance.getStatus(), eventInstance.getConsumeDate(), eventInstance.getAuxdata(),
+                                    EventInstance.STATUS_SCHEDULED_JOB, eventInstance.getConsumeDate(), eventInstance.getAuxdata(),
                                     eventInstance.getReference(), eventInstance.getPreserveSeconds());
-                            ScheduledEventQueue.getSingleton().rescheduleCronJob(eventName, scheduledJobAnnotation.schedule());
+                            if (enabled)
+                                ScheduledEventQueue.getSingleton().rescheduleCronJob(eventName, scheduledJobAnnotation.schedule());
+                            else
+                                eventServices.deleteEventInstance(eventInstance.getEventName());
                         }
                     }
                     catch (Exception ex) {
                         logger.error("Unable to retrieve/update scheduled event: " + eventName, ex);
                     }
-                    timerTasks.put(name, spec);
+                    if (enabled)
+                        timerTasks.put(name, spec);
                 }
             }
         }
