@@ -15,17 +15,15 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import java.io.Serializable;
-import java.util.Date;
-
+import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.util.DateHelper;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.util.StringHelper;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.util.Date;
 
 // TODO: redundant values: definitionId/activityId, status/statusCode, result/completionCode
 @ApiModel(value="Activity", description="MDW runtime activity instance")
@@ -117,9 +115,9 @@ public class ActivityInstance implements Jsonable, Serializable {
         if (json.has("name"))
             name = json.getString("name");
         if (json.has("startDate"))
-            startDate = StringHelper.stringToDate(json.getString("startDate"));
+            startDate = DateHelper.stringToDate(json.getString("startDate"));
         if (json.has("endDate"))
-            endDate = StringHelper.stringToDate(json.getString("endDate"));
+            endDate = DateHelper.stringToDate(json.getString("endDate"));
         if (json.has("statusCode"))
             statusCode = json.getInt("statusCode");
         if (json.has("status"))
@@ -153,9 +151,9 @@ public class ActivityInstance implements Jsonable, Serializable {
         if (name != null)
             json.put("name", name);
         if (startDate != null)
-            json.put("startDate", StringHelper.dateToString(startDate));
+            json.put("startDate", DateHelper.dateToString(startDate));
         if (endDate != null)
-            json.put("endDate", StringHelper.dateToString(endDate));
+            json.put("endDate", DateHelper.dateToString(endDate));
         if (statusCode > 0)
             json.put("statusCode", statusCode);
         if (status != null)

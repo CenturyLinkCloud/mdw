@@ -15,18 +15,11 @@
  */
 package com.centurylink.mdw.services.process;
 
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.transaction.SystemException;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.MdwException;
-import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.RetryableTransaction;
@@ -35,12 +28,9 @@ import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.Transition;
-import com.centurylink.mdw.model.workflow.TransitionInstance;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
@@ -48,11 +38,17 @@ import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.util.ServiceLocatorException;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.TransactionUtil;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.commons.lang.StringUtils;
+
+import javax.transaction.SystemException;
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class ProcessExecutor implements RetryableTransaction {
 
@@ -84,7 +80,7 @@ public class ProcessExecutor implements RetryableTransaction {
         Process process = ProcessCache.getProcess(processId);
         if (process != null) {
             String pkgName = process.getPackageName();
-            if (StringHelper.isEmpty(pkgName)) { // This should never happen, but just in case
+            if (StringUtils.isBlank(pkgName)) { // This should never happen, but just in case
                 Package pkg = PackageCache.getProcessPackage(processId);
                 if (pkg != null && !pkg.isDefaultPackage())
                     pkgName = pkg.getName();
@@ -94,12 +90,12 @@ public class ProcessExecutor implements RetryableTransaction {
                 label = parameters.get(process.getName());
                 parameters.remove(process.getName());
                 template = process.getLabel();
-                if (!StringHelper.isEmpty(pkgName))
+                if (!StringUtils.isBlank(pkgName))
                     template = pkgName + "/" + template;
             }
             else {
                 label = process.getLabel();
-                if (!StringHelper.isEmpty(pkgName))
+                if (!StringUtils.isBlank(pkgName))
                     label = pkgName + "/" + label;
             }
         }

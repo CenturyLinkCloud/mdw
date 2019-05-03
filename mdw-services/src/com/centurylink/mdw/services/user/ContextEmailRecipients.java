@@ -15,17 +15,17 @@
  */
 package com.centurylink.mdw.services.user;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.workflow.RuntimeContext;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.ParseException;
-import com.centurylink.mdw.util.StringHelper;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ContextEmailRecipients {
 
@@ -44,7 +44,7 @@ public class ContextEmailRecipients {
         if (workgroupsAttr != null) {
             String workgroups = context.getAttribute(workgroupsAttr);
             if (workgroups != null && !workgroups.isEmpty()) {
-                for (String groupEmail : getGroupEmails(StringHelper.parseList(workgroups))) {
+                for (String groupEmail : getGroupEmails(Attribute.parseList(workgroups))) {
                     if (!recipients.contains(groupEmail))
                         recipients.add(groupEmail);
                 }

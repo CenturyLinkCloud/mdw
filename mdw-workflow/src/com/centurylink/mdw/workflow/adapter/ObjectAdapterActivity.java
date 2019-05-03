@@ -40,10 +40,10 @@ import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.services.event.StubHelper;
 import com.centurylink.mdw.translator.TranslationException;
 import com.centurylink.mdw.translator.VariableTranslator;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -226,7 +226,7 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl
     protected Object getRequestData() throws ActivityException {
         String varname = getAttributeValue(REQUEST_VARIABLE);
         Object request = varname == null ? null : getParameterValue(varname);
-        if (!StringHelper.isEmpty(getPreScript())) {
+        if (!StringUtils.isBlank(getPreScript())) {
             Object returnVal = executePreScript(request);
             if (returnVal == null) {
                 // nothing returned; requestVar may have been assigned by script
@@ -647,9 +647,9 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl
     }
 
     protected Object executePreScript(Object request) throws ActivityException {
-        if (!StringHelper.isEmpty(getPreScript())){
+        if (!StringUtils.isBlank(getPreScript())){
             String preScriptLanguage = getAttributeValue(WorkAttributeConstant.PRE_SCRIPT_LANGUAGE);
-            if (StringHelper.isEmpty(preScriptLanguage)) {
+            if (StringUtils.isBlank(preScriptLanguage)) {
                 throw new ActivityException(-1, "PreScript Language not defined for the PreScript");
             }
             Object retObj = executeScript(getPreScript(), preScriptLanguage, getPreScriptBindings(request), "pre");
@@ -661,9 +661,9 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl
     }
 
     protected void executePostScript(Object response) throws ActivityException {
-        if (!StringHelper.isEmpty(getPostScript())){
+        if (!StringUtils.isBlank(getPostScript())){
             String postScriptLanguage = getAttributeValue(WorkAttributeConstant.POST_SCRIPT_LANGUAGE);
-            if (StringHelper.isEmpty(postScriptLanguage)) {
+            if (StringUtils.isBlank(postScriptLanguage)) {
                 throw new ActivityException(-1, "PostScript Language not defined for the PostScript");
             }
             Object retObj = executeScript(getPostScript(), postScriptLanguage, getPostScriptBindings(response), "post");

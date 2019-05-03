@@ -23,8 +23,6 @@ public interface TaskNotifier extends RegisteredService {
 
     /**
      * Notifies when an action has been performed on a task instance.
-     * @param taskInstanceVO
-     * @param outcome
      */
-    public void sendNotice(TaskRuntimeContext runtimeContext, String taskAction, String outcome) throws ObserverException;
+    void sendNotice(TaskRuntimeContext runtimeContext, String taskAction, String outcome) throws ObserverException;
 }

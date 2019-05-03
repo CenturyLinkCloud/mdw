@@ -17,12 +17,12 @@ package com.centurylink.mdw.workflow.activity.script;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.ScriptActivity;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Executes a script.
@@ -66,7 +66,7 @@ public class ScriptExecutorActivity extends DefaultActivityImpl implements Scrip
 
     protected String getScript() throws ActivityException {
         String script = getAttributeValue(RULE);
-        if (StringHelper.isEmpty(script)){
+        if (StringUtils.isBlank(script)){
             throw new  ActivityException("Script content has not been defined");
         }
         return script;

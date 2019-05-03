@@ -45,8 +45,8 @@ import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.test.*;
 import com.centurylink.mdw.test.TestCase.Status;
+import com.centurylink.mdw.util.DateHelper;
 import com.centurylink.mdw.util.HttpHelper;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.file.FileHelper;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
@@ -386,7 +386,7 @@ public class TestCaseRun implements Runnable {
                     });
                 }
                 for (ActivityInstance act : orderedList) {
-                    yaml.append("  activity: # ").append(act.getActivityId()).append(" \"").append(StringHelper.dateToString(act.getStartDate())).append("\"").newLine();
+                    yaml.append("  activity: # ").append(act.getActivityId()).append(" \"").append(DateHelper.dateToString(act.getStartDate())).append("\"").newLine();
                     String actNameKey = procInst.getProcessId() + "-" + act.getActivityId();
                     yaml.append("    name: " ).appendMulti("      ", activityNames.get(actNameKey)).newLine();
                     yaml.append("    status: ").append(WorkStatuses.getWorkStatuses().get(act.getStatusCode())).newLine();
@@ -666,7 +666,7 @@ public class TestCaseRun implements Runnable {
             }
             Object stillthere = monitor.remove(key);
             if (stillthere != null) {
-                log.println("wait command times out after: " + timeout + "s at: " + StringHelper.dateToString(new Date()));
+                log.println("wait command times out after: " + timeout + "s at: " + DateHelper.dateToString(new Date()));
             }
             else {
                 Thread.sleep(2000);  // to get around race condition

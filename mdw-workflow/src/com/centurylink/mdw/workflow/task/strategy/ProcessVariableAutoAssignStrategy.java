@@ -25,7 +25,7 @@ import com.centurylink.mdw.observer.task.AutoAssignStrategy;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.util.StringHelper;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Assign tasks based on the CUID contained in process variable. The variable
@@ -39,7 +39,7 @@ public class ProcessVariableAutoAssignStrategy implements AutoAssignStrategy {
     public User selectAssignee(TaskInstance taskInstance) throws ObserverException {
         TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
         String assigneeVarSpec = taskVO.getAttribute(TaskAttributeConstant.ASSIGNEE_VAR);
-        if (StringHelper.isEmpty(assigneeVarSpec))
+        if (StringUtils.isBlank(assigneeVarSpec))
             throw new ObserverException("Missing task attribute: " + TaskAttributeConstant.ASSIGNEE_VAR);
 
         try {

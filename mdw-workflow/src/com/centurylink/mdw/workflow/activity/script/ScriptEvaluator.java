@@ -19,12 +19,12 @@ import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.script.ExecutionException;
 import com.centurylink.mdw.script.ScriptNaming;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.AbstractEvaluator;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * Class that evaluates the value of a script expression
@@ -48,7 +48,7 @@ public class ScriptEvaluator extends AbstractEvaluator  {
         try {
             scriptLanguage = getAttributeValue(SCRIPT_LANGUAGE);
             expression = getAttributeValue(EXPRESSION);
-            if (StringHelper.isEmpty(expression)){
+            if (StringUtils.isBlank(expression)){
                 throw new ActivityException("Expression content has not been defined");
             }
 

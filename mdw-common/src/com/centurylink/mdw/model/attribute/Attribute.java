@@ -15,21 +15,17 @@
  */
 package com.centurylink.mdw.model.attribute;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.util.JsonUtil;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.model.JsonObject;
+import java.util.*;
 
 public class Attribute implements Comparable<Attribute> {
 
-    private Long id;
     private String name;
     private String value;
     private String group;
@@ -38,23 +34,8 @@ public class Attribute implements Comparable<Attribute> {
     }
 
     public Attribute(String name, String value) {
-        this.id = null;
         this.name = name;
         this.value = value;
-    }
-
-    public Attribute(Long id, String name, String value) {
-        this.id = id;
-        this.name = name;
-        this.value = value;
-    }
-
-    public Long getAttributeId() {
-        return id;
-    }
-
-    public void setAttributeId(Long id) {
-        this.id = id;
     }
 
     public String getAttributeName() {
@@ -96,25 +77,22 @@ public class Attribute implements Comparable<Attribute> {
      * If the attribute does not exist and the value is not null, the attribute
      * is created.
      * @param name attribute name
-     * @param v value to be set. When it is null, the attribute is removed
+     * @param value value to be set. When it is null, the attribute is removed
      */
-    public static void setAttribute(List<Attribute> attrs, String name, String v) {
+    public static void setAttribute(List<Attribute> attrs, String name, String value) {
         for (Attribute attr : attrs) {
             if (name.equals(attr.getAttributeName())) {
-                if (v!=null) attr.setAttributeValue(v);
-                else attrs.remove(attr);  // TODO this will throw a concurrent modification exception
+                if (value != null)
+                    attr.setAttributeValue(value);
+                else
+                    attrs.remove(attr);  // TODO this will throw a concurrent modification exception
                 return;
             }
         }
-        if (v!=null) {
-            Attribute attr = new Attribute(null, name, v);
+        if (value != null) {
             // TODO: need to retire attribute type concept
-            attrs.add(attr);
+            attrs.add(new Attribute(name, value));
         }
-    }
-
-    public static void removeAttribute(List<Attribute> attrs, String name) {
-        setAttribute(attrs, name, null);
     }
 
     @Override
@@ -233,4 +211,132 @@ public class Attribute implements Comparable<Attribute> {
         return attrsJson;
     }
 
+    public static List<String> parseList(String value) {
+        List<String> list = new ArrayList<>();
+        if (value.startsWith("[")) {
+            JSONArray jsonArr = new JSONArray(value);
+            for (int i = 0; i < jsonArr.length(); i++)
+                list.add(jsonArr.getString(i));
+        }
+        else {
+            StringTokenizer st = new StringTokenizer(value, "#");
+            while (st.hasMoreTokens())
+                list.add(st.nextToken());
+        }
+        return list;
+    }
+
+    public static Map<String,String> parseMap(String map) {
+        HashMap<String,String> hash = new LinkedHashMap<>();
+        if (map != null) {
+            if (map.startsWith("{")) {
+                return JsonUtil.getMap(new JsonObject(map));
+            }
+            else {
+                int name_start = 0;
+                int n = map.length();
+                int m;
+                while (name_start<n) {
+                    m = name_start;
+                    char ch = map.charAt(m);
+                    while (ch!='=' && ch!=';' && m<n-1) {
+                        m++;
+                        ch = map.charAt(m);
+                    }
+                    if (ch=='=') {
+                        int value_start = m+1;
+                        boolean escaped = false;
+                        for (m=value_start; m<n; m++) {
+                            if (escaped) escaped = false;
+                            else {
+                                ch = map.charAt(m);
+                                if (ch=='\\') escaped = true;
+                                else if (ch==';') break;
+                            }
+                        }
+                        hash.put(map.substring(name_start,value_start-1).trim(),
+                                map.substring(value_start, m).trim());
+                        name_start = m+1;
+                    } else if (ch==';') {
+                        if (m>name_start) {
+                            hash.put(map.substring(name_start, m).trim(), null);
+                        }
+                        name_start = m+1;
+                    } else {    // m == n-1
+                        if (m>name_start) {
+                            hash.put(map.substring(name_start, m).trim(), null);
+                        }
+                        name_start = m+1;
+                    }
+                }
+            }
+        }
+        return hash;
+    }
+
+    public static List<String[]> parseTable(String string,
+            char field_delimiter, char row_delimiter, int columnCount) {
+        List<String[]> table = new ArrayList<>();
+        if (string != null) {
+            if (string.startsWith("[")) {
+                List<String[]> rows = new ArrayList<>();
+                JSONArray outer = new JSONArray(string);
+                for (int i = 0; i < outer.length(); i++) {
+                    String[] row = new String[columnCount];
+                    JSONArray inner = outer.getJSONArray(i);
+                    for (int j = 0; j < row.length; j++) {
+                        if (inner.length() > j)
+                            row[j] = inner.getString(j);
+                        else
+                            row[j] = "";
+                    }
+                    rows.add(row);
+                }
+                return rows;
+            }
+            else {
+                int row_start = 0;
+                int field_start;
+                int n = string.length();
+                String[] row;
+                int m, j;
+                StringBuffer sb;
+                while (row_start<n) {
+                    row = new String[columnCount];
+                    table.add(row);
+                    j = 0;
+                    field_start = row_start;
+                    char ch=field_delimiter;
+                    while (ch==field_delimiter) {
+                        sb = new StringBuffer();
+                        boolean escaped = false;
+                        for (m=field_start; m<n; m++) {
+                            ch = string.charAt(m);
+                            if (ch=='\\' && !escaped) {
+                                escaped = true;
+                            }
+                            else {
+                                if (!escaped && (ch==field_delimiter || ch==row_delimiter)) {
+                                    break;
+                                }
+                                else {
+                                    sb.append(ch);
+                                    escaped = false;
+                                }
+                            }
+                        }
+                        if (j<columnCount) row[j] = sb.toString();
+                        if (m>=n || ch==row_delimiter) {
+                            row_start = m+1;
+                            break;
+                        } else {  // ch==field_delimiter
+                            field_start = m+1;
+                            j++;
+                        }
+                    }
+                }
+            }
+        }
+        return table;
+    }
 }

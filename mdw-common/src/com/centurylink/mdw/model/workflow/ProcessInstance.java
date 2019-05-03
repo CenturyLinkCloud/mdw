@@ -15,25 +15,19 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.util.DateHelper;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.util.StringHelper;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import java.io.Serializable;
+import java.util.*;
 
 @ApiModel(value="Process", description="MDW workflow process instance")
 public class ProcessInstance implements Serializable, Jsonable {
@@ -215,7 +209,7 @@ public class ProcessInstance implements Serializable, Jsonable {
     public void setStartDate(String d) { startDate = d; }
     @ApiModelProperty(hidden=true)
     public void setStartDate(Date d) {
-        startDate = StringHelper.dateToISOString(d);
+        startDate = DateHelper.dateToString(d);
     }
 
     private String completionCode;
@@ -231,7 +225,7 @@ public class ProcessInstance implements Serializable, Jsonable {
     public void setEndDate(String d) { endDate = d; }
     @ApiModelProperty(hidden=true)
     public void setEndDate(Date d) {
-        endDate = StringHelper.dateToString(d);
+        endDate = DateHelper.dateToString(d);
     }
 
     private String comment;

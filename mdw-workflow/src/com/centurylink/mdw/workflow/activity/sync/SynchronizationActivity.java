@@ -15,11 +15,6 @@
  */
 package com.centurylink.mdw.workflow.activity.sync;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
@@ -32,13 +27,18 @@ import com.centurylink.mdw.model.workflow.Transition;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.process.ProcessExecutor;
 import com.centurylink.mdw.sync.SyncExpressionEvaluator;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.AbstractWait;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Synchronization gateway activity.
@@ -74,7 +74,7 @@ public class SynchronizationActivity extends AbstractWait implements com.century
             List<Transition> incomingTransitions =
                 getIncomingTransitions(procdef, this.getActivityId(), idToEscapedName);
             engine.determineCompletedTransitions(getProcessInstanceId(), incomingTransitions);
-            if (StringHelper.isEmpty(syncExpression)) {
+            if (StringUtils.isBlank(syncExpression)) {
                 yes = true;
                 for (Transition one : incomingTransitions) {
                     if (!one.getEventType().equals(EventType.FINISH)) {

@@ -15,20 +15,19 @@
  */
 package com.centurylink.mdw.test;
 
+import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.util.DateHelper;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.asset.AssetInfo;
-import com.centurylink.mdw.util.StringHelper;
 
 /**
  * Simple test case model for automated testing services.
@@ -140,9 +139,9 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
         this.asset = new AssetInfo(assetRoot, pkg + "/" + json.getString("name"));
         this.pkg = pkg;
         if (json.has("start"))
-            this.start = StringHelper.serviceStringToDate(json.getString("start"));
+            this.start = DateHelper.serviceStringToDate(json.getString("start"));
         if (json.has("end"))
-            this.end = StringHelper.serviceStringToDate(json.getString("end"));
+            this.end = DateHelper.serviceStringToDate(json.getString("end"));
         if (json.has("status"))
             this.status = Status.valueOf(json.getString("status"));
         if (json.has("message"))
@@ -166,9 +165,9 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
         JSONObject json = create();
         json.put("name", getName());
         if (start != null)
-            json.put("start", StringHelper.serviceDateToString(start));
+            json.put("start", DateHelper.serviceDateToString(start));
         if (end != null)
-            json.put("end", StringHelper.serviceDateToString(end));
+            json.put("end", DateHelper.serviceDateToString(end));
         if (status != null)
             json.put("status", status.toString());
         if (message != null)

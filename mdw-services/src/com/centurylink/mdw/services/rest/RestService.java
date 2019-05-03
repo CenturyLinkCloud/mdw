@@ -29,9 +29,9 @@ import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -139,7 +139,7 @@ public abstract class RestService {
         if (requestUrl == null)
             throw new ServiceException("Missing header: " + Listener.METAINFO_REQUEST_URL);
         String queryStr = "";
-        if (!StringHelper.isEmpty(headers.get(Listener.METAINFO_REQUEST_QUERY_STRING)))
+        if (!StringUtils.isBlank(headers.get(Listener.METAINFO_REQUEST_QUERY_STRING)))
             queryStr = "?" + headers.get(Listener.METAINFO_REQUEST_QUERY_STRING);
         try {
             return new URL(requestUrl + queryStr);

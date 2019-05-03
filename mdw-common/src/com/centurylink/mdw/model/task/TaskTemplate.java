@@ -15,19 +15,18 @@
  */
 package com.centurylink.mdw.model.task;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.util.StringHelper;
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Value object for the Task persistable.
@@ -105,7 +104,7 @@ public class TaskTemplate extends Asset implements Jsonable {
       List<String> groups = new ArrayList<String>();
       String groupsString = this.getAttribute(groupAttributeName);
       if (groupsString != null && groupsString.length() > 0) {
-          return StringHelper.parseList(groupsString);
+          return Attribute.parseList(groupsString);
       }
       return groups;
     }
@@ -154,7 +153,7 @@ public class TaskTemplate extends Asset implements Jsonable {
 
     public int getAlertIntervalSeconds() {
         String alertIntervalString = getAttribute(TaskAttributeConstant.ALERT_INTERVAL);
-        return StringHelper.isEmpty(alertIntervalString) ? 0 : Integer.parseInt(alertIntervalString);
+        return StringUtils.isBlank(alertIntervalString) ? 0 : Integer.parseInt(alertIntervalString);
     }
 
     public void setAlertIntervalSeconds(int alertIntervalSeconds) {
@@ -247,9 +246,9 @@ public class TaskTemplate extends Asset implements Jsonable {
     }
 
     public void setVariablesFromString(String str, List<Variable> processVariables) {
-        variables = new ArrayList<Variable>();
+        variables = new ArrayList<>();
         if (str == null) return;
-        List<String[]> parsed = StringHelper.parseTable(str, FIELD_DELIMITER, ROW_DELIMITER, 6);
+        List<String[]> parsed = Attribute.parseTable(str, FIELD_DELIMITER, ROW_DELIMITER, 6);
         for (String[] one : parsed) {
             if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED)) continue;
             Variable taskVar = new Variable();
@@ -257,7 +256,7 @@ public class TaskTemplate extends Asset implements Jsonable {
             Variable var = findVariable(processVariables, taskVar);
             if (var!=null) taskVar.setType(var.getType());
             if (one[3].isEmpty())
-                taskVar.setDisplaySequence(new Integer(0));
+                taskVar.setDisplaySequence(0);
             else
                 taskVar.setDisplaySequence(new Integer(one[3]));
             if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_READONLY)) {
@@ -272,8 +271,8 @@ public class TaskTemplate extends Asset implements Jsonable {
             if (var!=null) taskVar.setId(var.getId());
             taskVar.setLabel(one[1]);
             taskVar.setDescription(one[4]);        // reused as index key
-            if (StringHelper.isEmpty(taskVar.getType())) {  // should have been set based on proc var type
-                if (StringHelper.isEmpty(one[5])) taskVar.setType(String.class.getName());
+            if (StringUtils.isBlank(taskVar.getType())) {  // should have been set based on proc var type
+                if (StringUtils.isBlank(one[5])) taskVar.setType(String.class.getName());
                 else taskVar.setType(one[5]);
             }
             int i, n = variables.size();

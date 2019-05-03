@@ -15,18 +15,17 @@
  */
 package com.centurylink.mdw.model.user;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
+import com.centurylink.mdw.model.InstanceList;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.util.DateHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.InstanceList;
-import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.util.StringHelper;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class UserList implements Jsonable, InstanceList<User> {
 
@@ -38,7 +37,7 @@ public class UserList implements Jsonable, InstanceList<User> {
     public UserList(String json) throws JSONException {
         JSONObject jsonObj = new JsonObject(json);
         if (jsonObj.has("retrieveDate"))
-            retrieveDate = StringHelper.serviceStringToDate(jsonObj.getString("retrieveDate"));
+            retrieveDate = DateHelper.serviceStringToDate(jsonObj.getString("retrieveDate"));
         if (jsonObj.has("count"))
             count = jsonObj.getInt("count");
         if (jsonObj.has("total"))
@@ -88,7 +87,7 @@ public class UserList implements Jsonable, InstanceList<User> {
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
-        json.put("retrieveDate", StringHelper.serviceDateToString(getRetrieveDate()));
+        json.put("retrieveDate", DateHelper.serviceDateToString(getRetrieveDate()));
         json.put("count", count);
         if (total != -1)
             json.put("total", total);

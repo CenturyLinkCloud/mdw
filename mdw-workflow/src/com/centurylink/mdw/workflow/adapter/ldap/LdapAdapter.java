@@ -15,37 +15,28 @@
  */
 package com.centurylink.mdw.workflow.adapter.ldap;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-
-import javax.naming.Context;
-import javax.naming.NamingEnumeration;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.ExpressionUtil;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity;
+
+import javax.naming.Context;
+import javax.naming.NamingEnumeration;
+import javax.naming.directory.*;
+import java.util.*;
 
 @Tracked(LogLevel.TRACE)
 public class LdapAdapter extends ObjectAdapterActivity {
@@ -151,8 +142,8 @@ public class LdapAdapter extends ObjectAdapterActivity {
     protected void handleAdapterSuccess(Object response) throws ActivityException, AdapterException {
 
         NamingEnumeration<SearchResult> results = (NamingEnumeration<SearchResult>) response;
-        Map<String,String> bindings = StringHelper.parseMap(getAttributeValue(BINDINGS));
-        ldapResults = new HashMap<String,List<Object>>();
+        Map<String,String> bindings = Attribute.parseMap(getAttributeValue(BINDINGS));
+        ldapResults = new HashMap<>();
 
         try {
             while (results.hasMore()) {

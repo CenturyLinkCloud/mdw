@@ -15,20 +15,15 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.request.Request;
+import com.centurylink.mdw.model.task.TaskInstance;
+import com.centurylink.mdw.util.DateHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.request.Request;
-import com.centurylink.mdw.model.task.TaskInstance;
-import com.centurylink.mdw.util.StringHelper;
+import java.util.*;
 
 /**
  * End-to-end composite relating requests, processes, tasks, or other solutions.
@@ -194,10 +189,10 @@ public class Solution implements Jsonable {
             json.put("name", name);
         json.put("ownerType", ownerType);
         json.put("ownerId", ownerId);
-        json.put("created", StringHelper.serviceDateToString(created));
+        json.put("created", DateHelper.serviceDateToString(created));
         json.put("createdBy", createdBy);
         if (modified != null)
-            json.put("modified", StringHelper.serviceDateToString(modified));
+            json.put("modified", DateHelper.serviceDateToString(modified));
         if (modifiedBy != null)
             json.put("modifiedBy", modifiedBy);
         if (description != null)

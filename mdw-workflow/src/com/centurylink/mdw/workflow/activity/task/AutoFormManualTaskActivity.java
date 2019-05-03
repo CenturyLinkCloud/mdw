@@ -15,15 +15,11 @@
  */
 package com.centurylink.mdw.workflow.activity.task;
 
-import java.util.List;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.task.TaskAction;
@@ -32,9 +28,12 @@ import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.CallURL;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.List;
 
 @Tracked(LogLevel.TRACE)
 public class AutoFormManualTaskActivity extends ManualTaskActivity {
@@ -169,8 +168,8 @@ public class AutoFormManualTaskActivity extends ManualTaskActivity {
      */
     protected String extractFormData(JSONObject datadoc)
             throws ActivityException, JSONException {
-        String varstring = this.getAttributeValue(TaskActivity.ATTRIBUTE_TASK_VARIABLES);
-        List<String[]> parsed = StringHelper.parseTable(varstring, ',', ';', 5);
+        String varstring = getAttributeValue(TaskActivity.ATTRIBUTE_TASK_VARIABLES);
+        List<String[]> parsed = Attribute.parseTable(varstring, ',', ';', 5);
         for (String[] one : parsed) {
             String varname = one[0];
             String displayOption = one[2];

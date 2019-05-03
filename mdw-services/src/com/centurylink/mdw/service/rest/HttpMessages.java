@@ -15,16 +15,6 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.Path;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.message.HttpMessage;
@@ -32,9 +22,17 @@ import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.HttpHelper;
-import com.centurylink.mdw.util.StringHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.commons.lang.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.Path;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
 
 @Path("/HttpMessages")
 public class HttpMessages extends JsonRestService {
@@ -62,7 +60,7 @@ public class HttpMessages extends JsonRestService {
         HttpHelper httpClient = null;
 
         try {
-            if (StringHelper.isEmpty(requestMessage.getRequestMessage())) {
+            if (StringUtils.isBlank(requestMessage.getRequestMessage())) {
                 response = "Missing payload for HTTP POST method \nRequest: " + content;
             }
             else {
@@ -86,7 +84,7 @@ public class HttpMessages extends JsonRestService {
             if (logger.isDebugEnabled())
                 logger.debug("Post Call replied with a response: [" + response + "] in time  = " + responseTime);
             requestMessage.setResponseTime(responseTime);
-            if (StringHelper.isEmpty(response))
+            if (StringUtils.isBlank(response))
                 response = "Error: Please check Server side logs";
             requestMessage.setResponse(response);
             requestMessage.setStatusCode(code);
@@ -129,7 +127,7 @@ public class HttpMessages extends JsonRestService {
             if (logger.isDebugEnabled())
                 logger.debug("Get Call replied with a response: [" + response + "] in time  = " + responseTime);
             requestMessage.setResponseTime(responseTime);
-            if (StringHelper.isEmpty(response))
+            if (StringUtils.isBlank(response))
                 response = "Error: Please check Server side logs";
             requestMessage.setResponse(response);
             requestMessage.setStatusCode(code);
@@ -147,7 +145,7 @@ public class HttpMessages extends JsonRestService {
         HttpHelper httpClient = null;
 
         try {
-            if (StringHelper.isEmpty(requestMessage.getRequestMessage())) {
+            if (StringUtils.isBlank(requestMessage.getRequestMessage())) {
                 response = "Missing payload for HTTP PUT method \nRequest: " + content;
             }
             else {
@@ -172,7 +170,7 @@ public class HttpMessages extends JsonRestService {
             if (logger.isDebugEnabled())
                 logger.debug("PUT Call replied with a response: [" + response + "] in time  = " + responseTime);
             requestMessage.setResponseTime(responseTime);
-            if (StringHelper.isEmpty(response))
+            if (StringUtils.isBlank(response))
                 response = "Error: Please check Server side logs";
             requestMessage.setResponse(response);
             requestMessage.setStatusCode(code);
@@ -220,7 +218,7 @@ public class HttpMessages extends JsonRestService {
             if (logger.isDebugEnabled())
                 logger.debug("DELETE Call replied with a response: [" + response + "] in time  = " + responseTime);
             requestMessage.setResponseTime(responseTime);
-            if (StringHelper.isEmpty(response))
+            if (StringUtils.isBlank(response))
                 response = "Error: Please check Server side logs";
             requestMessage.setResponse(response);
             requestMessage.setStatusCode(code);
@@ -238,7 +236,7 @@ public class HttpMessages extends JsonRestService {
         HttpHelper httpClient = null;
 
         try {
-            if (StringHelper.isEmpty(requestMessage.getRequestMessage())) {
+            if (StringUtils.isBlank(requestMessage.getRequestMessage())) {
                 response = "Missing payload for HTTP PATCH method \nRequest: " + content;
             }
             else {
@@ -263,7 +261,7 @@ public class HttpMessages extends JsonRestService {
             if (logger.isDebugEnabled())
                 logger.debug("PATCH Call replied with a response: [" + response + "] in time  = " + responseTime);
             requestMessage.setResponseTime(responseTime);
-            if (StringHelper.isEmpty(response))
+            if (StringUtils.isBlank(response))
                 response = "Error: Please check Server side logs";
             requestMessage.setResponse(response);
             requestMessage.setStatusCode(code);
