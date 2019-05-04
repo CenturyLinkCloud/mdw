@@ -85,7 +85,7 @@ public class LinkedProcess implements Jsonable {
 
     @Override
     public String toString() {
-        return process.getFullLabel() + (isCircular() ? "*" : "");
+        return process.getFullLabel() + (isCircular() ? " (+)" : "");
     }
 
     /**
@@ -96,11 +96,7 @@ public class LinkedProcess implements Jsonable {
             return toString();
         }
         else {
-            StringBuilder out = new StringBuilder();
-            out.append(String.format("%1$" + (depth * INDENT) + "s", ""));
-            out.append(" - ");
-            out.append(this);
-            return out.toString();
+            return String.format("%1$" + (depth * INDENT) + "s", "") + " - " + toString();
         }
     }
 
@@ -123,6 +119,22 @@ public class LinkedProcess implements Jsonable {
             }
             return chainedParent;
         }
+    }
+
+    public boolean checkCircular() {
+        LinkedProcess p = getCallChain();
+        List<Process> called = new ArrayList<>();
+        List<LinkedProcess> c;
+        while (!(c = p.children).isEmpty()) {
+            LinkedProcess child = c.get(0);
+            if (called.contains(child.process)) {
+                this.circular = true;
+                return true;
+            }
+            called.add(child.process);
+            p = child;
+        }
+        return false;
     }
 
     @Override

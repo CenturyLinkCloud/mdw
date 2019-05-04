@@ -20,6 +20,8 @@ import java.util.Map;
 
 import javax.ws.rs.Path;
 
+import com.centurylink.mdw.model.workflow.LinkedProcess;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -94,11 +96,27 @@ public class Workflow extends JsonRestService {
             String[] segments = getSegments(path);
 
             if (segments.length == 1) {
-                // definitions -- with start pages
-                Query procQuery = new Query();
-                procQuery.setFilter("extension", "proc");
-                AssetPackageList procPkgList = ServiceLocator.getAssetServices().getAssetPackageList(procQuery);
-                return procPkgList.getJson();
+                long callHierarchyFor = query.getLongFilter("callHierarchyFor");
+                if (callHierarchyFor != -1) {
+                    Process process = ProcessCache.getProcess(callHierarchyFor);
+                    if (process == null)
+                        throw new ServiceException(ServiceException.NOT_FOUND, "Definition not found: " + callHierarchyFor);
+                    String assetPath = process.getPackageName() + "/" + process.getName();
+                    JSONObject hierarchyJson = new JSONObject();
+                    JSONArray callersJson = new JSONArray();
+                    hierarchyJson.put("hierarchy", callersJson);
+                    for (LinkedProcess caller : ServiceLocator.getDesignServices().getProcessHierarchy(assetPath)) {
+                        callersJson.put(caller.getJson());
+                    }
+                    return hierarchyJson;
+                }
+                else {
+                    // definitions -- with start pages
+                    Query procQuery = new Query();
+                    procQuery.setFilter("extension", "proc");
+                    AssetPackageList procPkgList = ServiceLocator.getAssetServices().getAssetPackageList(procQuery);
+                    return procPkgList.getJson();
+                }
             }
 
             if (segments.length < 3)

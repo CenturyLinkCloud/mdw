@@ -42,6 +42,60 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
         },
         Monitoring: {
           '_template': mdw.roots.services + '/template/configurator/processMonitoring.json'
+        },
+        Hierarchy: {
+          'hierarchy': [{
+            Process: '${it.treeLabel}',
+            ID: '${it.id}',
+            '_url': '${"#/workflow/definitions/" + it.packageName + "/" + it.name + "/" + it.version}',
+            '': '${it.thisFlag}'
+          }],
+          'getHierarchyList': function(diagramObject, workflowObject, runtimeInfo) {
+            var url = mdw.roots.services + '/services/Workflow?callHierarchyFor=' + workflowObject.definitionId;
+            return $http.get(url).then(function(response) {
+              if (response.status !== 200)
+                return null;
+              var result = {
+                  status: response.status,
+                  maxWidth: 150,
+                  data: {
+                    hierarchy: []
+                  }
+              };
+              var top = true;
+              var pad = '';
+              var addChildren = function(caller) {
+                if (caller.process) {
+                  var treeLabel = pad;
+                  if (!top) {
+                    treeLabel += '- ';
+                  }
+                  treeLabel += caller.process.packageName + "/" + caller.process.name + " v" + caller.process.version;
+                  caller.process.treeLabel = treeLabel;
+                  caller.process.thisFlag = caller.process.id === workflowObject.definitionId ? '*' : '';
+                  result.data.hierarchy.push(caller.process);
+                }
+                if (caller.children) {
+                  pad += '  ';
+                  if (top) {
+                    top = false;
+                  }
+                  else {
+                    pad += '  ';
+                  }
+                  caller.children.forEach(function(child) {
+                    addChildren(child);
+                  });
+                  pad = pad.substring(4);
+                }
+              };
+
+              response.data.hierarchy.forEach(function(caller) {
+                addChildren(caller);
+              });
+              return result;
+            });
+          }
         }
       },
       activity: {
