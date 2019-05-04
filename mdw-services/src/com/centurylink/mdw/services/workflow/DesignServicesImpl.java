@@ -1,5 +1,6 @@
 package com.centurylink.mdw.services.workflow;
 
+import com.centurylink.mdw.cli.Hierarchy;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccess;
@@ -12,6 +13,7 @@ import com.centurylink.mdw.service.data.activity.ImplementorCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.DesignServices;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ import java.util.List;
 
 public class DesignServicesImpl implements DesignServices {
 
+    @Override
     public Process getProcessDefinition(String assetPath, Query query) throws ServiceException {
         int lastSlash = assetPath.lastIndexOf('/');
         if (lastSlash <= 0)
@@ -50,6 +53,7 @@ public class DesignServicesImpl implements DesignServices {
         return process;
     }
 
+    @Override
     public List<Process> getProcessDefinitions(Query query) throws ServiceException {
         try {
             String find = query.getFind();
@@ -72,10 +76,12 @@ public class DesignServicesImpl implements DesignServices {
         }
     }
 
+    @Override
     public Process getProcessDefinition(Long id) {
         return ProcessCache.getProcess(id);
     }
 
+    @Override
     public ActivityList getActivityDefinitions(Query query) throws ServiceException {
         try {
             String find = query.getFind();
@@ -127,10 +133,12 @@ public class DesignServicesImpl implements DesignServices {
         }
     }
 
+    @Override
     public List<ActivityImplementor> getImplementors() {
         return new ArrayList<>(ImplementorCache.getImplementors().values());
     }
 
+    @Override
     public ActivityImplementor getImplementor(String className) throws ServiceException {
         ActivityImplementor implementor =  ImplementorCache.get(className);
         if (implementor.getPagelet() == null) {
@@ -146,10 +154,24 @@ public class DesignServicesImpl implements DesignServices {
         return implementor; // loaded from annotation or not found
     }
 
-    public List<LinkedProcess> getProcessHierarchy(String processAsset) {
-        List<LinkedProcess> topLevelCallers = new ArrayList<>();
-        // TODO: implement
-        return topLevelCallers;
-    }
+    @Override
+    public List<LinkedProcess> getProcessHierarchy(String processAsset) throws ServiceException {
+        Process process = ProcessCache.getProcess(processAsset);
+        if (process == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + processAsset);
 
+        try {
+            // all must be loaded
+            List<Process> processes = new ArrayList<>();
+            for (Process proc : ProcessCache.getAllProcesses()) {
+                processes.add(ProcessCache.getProcess(proc.getId()));
+            }
+            Hierarchy hierarchy = new Hierarchy(process, processes);
+            hierarchy.run();
+            return hierarchy.getTopLevelCallers();
+        }
+        catch (DataAccessException | IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Hierarchy error for " + processAsset, ex);
+        }
+    }
 }

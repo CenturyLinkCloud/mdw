@@ -9,10 +9,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 @Parameters(commandNames="hierarchy", commandDescription="Process definition hierarchy", separators="=")
 public class Hierarchy extends Setup {
@@ -34,6 +31,9 @@ public class Hierarchy extends Setup {
     private List<LinkedProcess> topLevelCallers = new ArrayList<>();
     public List<LinkedProcess> getTopLevelCallers() { return topLevelCallers; }
 
+    private List<Process> processes;
+    private Process start;
+
     Hierarchy() {
 
     }
@@ -42,17 +42,24 @@ public class Hierarchy extends Setup {
         this.process = process;
     }
 
+    public Hierarchy(Process process, List<Process> processes) {
+        this.start = process;
+        this.processes = processes;
+    }
+
     @Override
     public Operation run(ProgressMonitor... monitors) throws IOException {
         for (ProgressMonitor monitor : monitors)
             monitor.progress(0);
 
-        Process proc = loadProcess(getPackageName(process), getAssetFile(process), true);
+        if (start == null)
+            start = loadProcess(getPackageName(process), getAssetFile(process), true);
         for (ProgressMonitor monitor : monitors)
             monitor.progress(10);
 
-        loadProcesses(monitors);
-        addTopLevelCallers(proc);
+        if (processes == null)
+            loadProcesses(monitors);
+        addTopLevelCallers(start);
 
         for (int i = 0; i < topLevelCallers.size(); i++) {
             LinkedProcess topLevelCaller = topLevelCallers.get(i);
@@ -65,8 +72,8 @@ public class Hierarchy extends Setup {
         for (ProgressMonitor monitor : monitors)
             monitor.progress(100);
 
-        // print to stdout if called from command line
-        if (getOut() == System.out) {
+        if (isCommandLine()) {
+            // print output
             getOut().println();
             print(topLevelCallers, 0);
         }
@@ -122,7 +129,6 @@ public class Hierarchy extends Setup {
      * Only loads current processes (not archived) that contain subprocs.
      * Starts at 10%, uses 80% monitor progress.
      */
-    private List<Process> processes;
     private void loadProcesses(ProgressMonitor... monitors) throws IOException {
         if (processes == null) {
             processes = new ArrayList<>();
@@ -165,18 +171,19 @@ public class Hierarchy extends Setup {
         depth++;
         Process callerProcess = caller.getProcess();
         for (Process calledProcess : findCalledProcesses(callerProcess)) {
-            // TODO: prevent circularity
             LinkedProcess child = new LinkedProcess(calledProcess);
             child.setParent(caller);
             caller.getChildren().add(child);
-            if (depth > maxDepth) {
-                String message = "Allowable --max-depth (" + maxDepth + ") exceeded.";
-                getOut().println("\n" + message);
-                print(child.getCallChain(), 0);
-                throw new IOException(message + "  See tree output.");
-            }
-            else {
-                addCalledHierarchy(child, depth);
+            if (!child.checkCircular()) {
+                if (depth > maxDepth) {
+                    String message = "Allowable --max-depth (" + maxDepth + ") exceeded.";
+                    getOut().println("\n" + message);
+                    print(child.getCallChain(), 0);
+                    throw new IOException(message + "  See tree output.");
+                }
+                else {
+                    addCalledHierarchy(child, depth);
+                }
             }
         }
         depth--;

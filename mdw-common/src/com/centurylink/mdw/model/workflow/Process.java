@@ -868,8 +868,9 @@ public class Process extends Asset implements Jsonable {
 
     public JSONObject getSummaryJson() {
         JSONObject json = create();
+        json.put("id", getId());
         json.put("name", getName());
-        json.put("package", getPackageName());
+        json.put("packageName", getPackageName());
         json.put("version", getVersionString());
         return json;
     }

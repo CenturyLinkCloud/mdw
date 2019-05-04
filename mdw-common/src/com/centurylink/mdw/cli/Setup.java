@@ -712,6 +712,12 @@ public abstract class Setup implements Operation {
         return output.toString();
     }
 
+    protected boolean isCommandLine() {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        StackTraceElement start = stackTrace[stackTrace.length - 1];
+        return start.getClassName().equals(Main.class.getName()) && start.getMethodName().equals("main");
+    }
+
     private Project project;
     public Project getProject() {
         if (project == null) {

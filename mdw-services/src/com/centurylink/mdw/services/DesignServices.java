@@ -4,6 +4,7 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.model.workflow.ActivityList;
+import com.centurylink.mdw.model.workflow.LinkedProcess;
 import com.centurylink.mdw.model.workflow.Process;
 
 import java.util.List;
@@ -21,4 +22,6 @@ public interface DesignServices {
 
     List<ActivityImplementor> getImplementors() throws ServiceException;
     ActivityImplementor getImplementor(String className) throws ServiceException;
+
+    List<LinkedProcess> getProcessHierarchy(String processAsset) throws ServiceException;
 }
