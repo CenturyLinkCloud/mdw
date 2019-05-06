@@ -3,7 +3,7 @@ import PropTypes from '../node/node_modules/prop-types';
 import { BrowserRouter as Router} from '../node/node_modules/react-router-dom';
 import Header from '../react/Header.jsx';
 import Footer from '../react/Footer.jsx';
-import Nav from './Nav.jsx';
+import Nav from '../react/Nav.jsx';
 // To add custom charts, override Routes.jsx and Index.jsx in custom UI package.
 import Routes from './Routes.jsx';
 
@@ -41,7 +41,7 @@ class Index extends Component {
           <Router>
             <div className="row">
               <div className="col-md-2 mdw-sidebar">
-                <Nav />
+                <Nav tab="dashboardTab" />
               </div>
               <div className="col-md-10">
                 <Routes />
