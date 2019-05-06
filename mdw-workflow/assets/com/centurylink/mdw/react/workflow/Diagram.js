@@ -103,58 +103,58 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
         });
         if ($mdwWebSocketUrl && $mdwWebSocketUrl !== '${mdwWebSocketUrl}') {
           const socket = new WebSocket($mdwWebSocketUrl);
-           socket.addEventListener('open', function(event) {
+          socket.addEventListener('open', function(event) {
              socket.send(diagram.instance.id);
-           });
-           socket.addEventListener('message', function(event) {
-             var message = JSON.parse(event.data);
-             if (message.subtype === 'a') {
-               var step = diagram.getStep('A' + message.id);
-               if (step) {
-                 if (!step.instances)
-                   step.instances = [];
-                 var actInst = step.instances.find(function(inst) {
-                   return inst.id === message.instId;
-                 });
-                 if (actInst) {
-                   actInst.statusCode = message.status;
-                 }
-                 else {
-                   var ai = {
-                     activityId: message.id,
-                     id: message.instId,
-                     statusCode: message.status
-                   };
-                   step.instances.push(ai);
-                   diagram.instance.activities.push(ai);
-                 }
-                 step.draw();
-                 diagram.scrollIntoView(step);
-               }
-             }
-             else if (message.subtype === 't') {
-               var link = diagram.getLink('T' + message.id);
-               if (link) {
-                 if (!link.instances)
-                   link.instances = [];
-                 var linkInst = link.instances.find(function(inst) {
-                   return inst.id === message.instId;
-                 });
-                 if (linkInst) {
-                   linkInst.statusCode = message.status;
-                 }
-                 else {
-                   link.instances.push({
-                     transitionId: message.id,
-                     id: message.instId,
-                     statusCode: message.status
-                   });
-                 }
-                 link.draw();
-                 diagram.scrollIntoView(link);
-               }
-             }
-           });
+          });
+          socket.addEventListener('message', function(event) {
+            var message = JSON.parse(event.data);
+            if (message.subtype === 'a') {
+              var step = diagram.getStep('A' + message.id);
+              if (step) {
+                if (!step.instances)
+                  step.instances = [];
+                var actInst = step.instances.find(function(inst) {
+                  return inst.id === message.instId;
+                });
+                if (actInst) {
+                  actInst.statusCode = message.status;
+                }
+                else {
+                  var ai = {
+                    activityId: message.id,
+                    id: message.instId,
+                    statusCode: message.status
+                  };
+                  step.instances.push(ai);
+                  diagram.instance.activities.push(ai);
+                }
+                step.draw();
+                diagram.scrollIntoView(step);
+              }
+            }
+            else if (message.subtype === 't') {
+              var link = diagram.getLink('T' + message.id);
+              if (link) {
+                if (!link.instances)
+                  link.instances = [];
+                var linkInst = link.instances.find(function(inst) {
+                  return inst.id === message.instId;
+                });
+                if (linkInst) {
+                  linkInst.statusCode = message.status;
+                }
+                else {
+                  link.instances.push({
+                    transitionId: message.id,
+                    id: message.instId,
+                    statusCode: message.status
+                  });
+                }
+                link.draw();
+                diagram.scrollIntoView(link);
+              }
+            }
+          });
         }
       });
     }
