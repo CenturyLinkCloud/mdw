@@ -43,8 +43,8 @@ public class LogMessageMonitor extends SoccomServer {
         super(String.valueOf(port), (PrintStream)null);
         activityPattern = Pattern.compile("\\[\\(.\\)([0-9.:]+) p([0-9]+)\\.([0-9]+) a([0-9]+)\\.([0-9]+)\\] (.*)", 0);
         procPattern = Pattern.compile("\\[\\(.\\)([0-9.:]+) p([0-9]+)\\.([0-9]+) m.([^\\]]+)\\] (.*)", 0);
-        waitingObjects = new HashMap<String,Object>();
-        procInstMasterRequestMap = new HashMap<String,String>();
+        waitingObjects = new HashMap<>();
+        procInstMasterRequestMap = new HashMap<>();
     }
 
     public String createKey(String masterRequestId, Long processId, Long activityId, String status) {
@@ -120,8 +120,7 @@ public class LogMessageMonitor extends SoccomServer {
     }
 
     @Override
-    protected void requestProc(String threadId, String msgId, byte[] msg, int msgSize,
-            OutputStream out) throws IOException, SoccomException {
+    protected void requestProc(String threadId, String msgId, byte[] msg, int msgSize, OutputStream out) {
         String msgstr = new String(msg, 0, msgSize);
         handleMessage(msgstr);
     }

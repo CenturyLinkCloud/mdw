@@ -8,6 +8,7 @@ import brave.http.HttpTracing;
 import brave.propagation.TraceContext;
 import com.centurylink.mdw.annotations.Monitor;
 import com.centurylink.mdw.common.MdwException;
+import com.centurylink.mdw.listener.ListenerHelper;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.monitor.ServiceMonitor;
@@ -27,7 +28,7 @@ public class TraceServiceMonitor implements ServiceMonitor {
      */
     @Override
     public Object onRequest(Object request, Map<String,String> headers) {
-        if (headers.containsKey(Listener.METAINFO_HTTP_METHOD)) {
+        if (headers.containsKey(Listener.METAINFO_HTTP_METHOD) && !Listener.isHealthCheck(headers)) {
             Tracing tracing = TraceHelper.getTracing("mdw-service");
             HttpTracing httpTracing = HttpTracing.create(tracing);
             handler = HttpServerHandler.create(httpTracing, new ServerAdapter());

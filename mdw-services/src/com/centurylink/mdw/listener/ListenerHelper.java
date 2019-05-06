@@ -65,8 +65,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-//import java.io.StringReader;
-
 public class ListenerHelper {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
@@ -335,7 +333,7 @@ public class ListenerHelper {
                     }
                 }
 
-                if (logger.isDebugEnabled() && eeid > 0) {
+                if (logger.isDebugEnabled() && eeid > 0 && !Listener.isHealthCheck(metaInfo)) {
                     logger.debug("", "<< Request " + eeid + " processed: " + (System.currentTimeMillis() - requestTime) + " ms");
                 }
 
@@ -465,7 +463,7 @@ public class ListenerHelper {
                     response.setMeta(createResponseMeta(metaInfo, reqMetaInfo, ownerId, requestTime));
             }
 
-            if (logger.isDebugEnabled() && eeid > 0) {
+            if (logger.isDebugEnabled() && eeid > 0 && !Listener.isHealthCheck(metaInfo)) {
                 logger.debug("", "<< Request " + eeid + " processed: " + (System.currentTimeMillis() - requestTime) + " ms");
             }
 

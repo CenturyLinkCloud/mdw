@@ -9,6 +9,9 @@ import javax.annotation.Nonnull;
  */
 @FunctionalInterface
 public interface LogLineInjector extends RegisteredService {
+    /**
+     * Prefix should be enclosed in square brackets so as not to break log watchers.
+     */
     String prefix();
     default String suffix() { return null; }
 }

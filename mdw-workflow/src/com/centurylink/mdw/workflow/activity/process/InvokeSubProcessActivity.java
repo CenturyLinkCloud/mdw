@@ -103,8 +103,8 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
         return validParams;
     }
 
-    public void execute() throws ActivityException{
-        try{
+    public void execute() throws ActivityException {
+        try {
             Process subprocdef = getSubprocess();
             if (isLogDebugEnabled())
               logdebug("Invoking subprocess: " + subprocdef.getLabel());
@@ -116,7 +116,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
             String secondaryOwnerType = OwnerType.ACTIVITY_INSTANCE;
             Long secondaryOwnerId = getActivityInstanceId();
             Long ownerId = this.getProcessInstanceId();
-            if (! this.needSuspend()) {
+            if (!needSuspend()) {
                 secondaryOwnerId = null;
                 secondaryOwnerType = null;
             }
@@ -344,8 +344,10 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
         }
     }
 
-    protected Process getSubprocess() throws DataAccessException {
+    protected Process getSubprocess() throws ActivityException, DataAccessException {
         String name = getAttributeValue(WorkAttributeConstant.PROCESS_NAME);
+        if (name == null)
+            throw new ActivityException("Missing attribute: " + WorkAttributeConstant.PROCESS_NAME);
         String verSpec = getAttributeValue(WorkAttributeConstant.PROCESS_VERSION);
         return getSubprocess(name, verSpec);
     }

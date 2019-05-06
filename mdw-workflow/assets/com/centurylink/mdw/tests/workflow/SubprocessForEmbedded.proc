@@ -20,7 +20,7 @@
     },
     {
       "attributes": {
-        "Rule": "print 'value of fromParent: ' + fromParent;\r\ntoParent = 'returnedValue';\r\n\r\nreturn null;",
+        "Rule": "print 'value of fromParent: ' + fromParent\ntoParent = 'returnedValue'\n",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=245,y=78,w=100,h=60"
       },
