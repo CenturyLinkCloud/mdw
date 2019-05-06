@@ -9,8 +9,8 @@ import com.centurylink.mdw.util.log.StandardLogger;
  * Run every minute and sleep for 90 seconds, to force schedule overlap.
  * There is no test to execute this.  Can be manually exercised via prop overlapping.job.enabled.
  */
-@ScheduledJob(value="OverlappingJob", schedule="* * * * * *", enabledProp="mdw.overlapping.job.enabled",
-        isExclusive=true)
+@ScheduledJob(value="OverlappingJob", schedule="${props['mdw.overlapping.job.schedule']}",
+        enabled="${props['mdw.overlapping.job.enabled']}", isExclusive=true)
 public class OverlappingJob implements com.centurylink.mdw.model.monitor.ScheduledJob {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
