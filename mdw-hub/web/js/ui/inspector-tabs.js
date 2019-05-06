@@ -46,11 +46,11 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
         Hierarchy: {
           'hierarchy': [{
             Process: '${it.treeLabel}',
-            ID: '${it.id}',
+            Definition: '${it.id}',
             '_url': '${"#/workflow/definitions/" + it.packageName + "/" + it.name + "/" + it.version}',
             '': '${it.thisFlag}'
           }],
-          'getHierarchyList': function(diagramObject, workflowObject, runtimeInfo) {
+          'getHierarchyList': function(diagramObject, workflowObject) {
             var url = mdw.roots.services + '/services/Workflow?callHierarchyFor=' + workflowObject.definitionId;
             return $http.get(url).then(function(response) {
               if (response.status !== 200)
@@ -62,8 +62,8 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
                     hierarchy: []
                   }
               };
-              var top = true;
-              var pad = '';
+              var top;
+              var pad;
               var addChildren = function(caller) {
                 if (caller.process) {
                   var treeLabel = pad;
@@ -91,6 +91,8 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
               };
 
               response.data.hierarchy.forEach(function(caller) {
+                top = true;
+                pad = '';
                 addChildren(caller);
               });
               return result;

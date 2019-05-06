@@ -9,12 +9,15 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 @Parameters(commandNames="hierarchy", commandDescription="Process definition hierarchy", separators="=")
 public class Hierarchy extends Setup {
 
-    @Parameter(names="--process", description="Process for which heirarchy will be shown.")
+    @Parameter(names="--process", description="Process for which heirarchy will be shown.", required=true)
     private String process;
     public String getProcess() {
         return process;
@@ -52,8 +55,13 @@ public class Hierarchy extends Setup {
         for (ProgressMonitor monitor : monitors)
             monitor.progress(0);
 
-        if (start == null)
+
+        if (start == null) {
+            if (!process.endsWith(".proc"))
+                process += ".proc";
             start = loadProcess(getPackageName(process), getAssetFile(process), true);
+        }
+
         for (ProgressMonitor monitor : monitors)
             monitor.progress(10);
 
@@ -64,9 +72,14 @@ public class Hierarchy extends Setup {
         for (int i = 0; i < topLevelCallers.size(); i++) {
             LinkedProcess topLevelCaller = topLevelCallers.get(i);
             addCalledHierarchy(topLevelCaller, 0);
-            int prog = 90 + ((int)Math.floor((i * 10)/topLevelCallers.size()));
+            int prog = 85 + ((int)Math.floor((i * 10)/topLevelCallers.size()));
             for (ProgressMonitor monitor : monitors)
                 monitor.progress(prog);
+        }
+
+        // weed out paths that don't contain starting process
+        for (LinkedProcess topLevelCaller : topLevelCallers) {
+            topLevelCaller.prune(start);
         }
 
         for (ProgressMonitor monitor : monitors)

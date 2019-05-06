@@ -103,22 +103,26 @@ public class LinkedProcess implements Jsonable {
     /**
      * @return direct line call chain to me
      */
+    private LinkedProcess callChain;  // cached
     public LinkedProcess getCallChain() {
-        LinkedProcess parent = getParent();
-        if (parent == null) {
-            return new LinkedProcess(getProcess());
-        }
-        else {
-            LinkedProcess chainedParent = new LinkedProcess(getProcess());
-            while (parent != null) {
-                LinkedProcess newParent = new LinkedProcess(parent.getProcess());
-                newParent.getChildren().add(chainedParent);
-                chainedParent.setParent(newParent);
-                chainedParent = newParent;
-                parent = parent.getParent();
+        if (callChain == null) {
+            LinkedProcess parent = getParent();
+            if (parent == null) {
+                callChain = new LinkedProcess(getProcess());
             }
-            return chainedParent;
+            else {
+                LinkedProcess chainedParent = new LinkedProcess(getProcess());
+                while (parent != null) {
+                    LinkedProcess newParent = new LinkedProcess(parent.getProcess());
+                    newParent.getChildren().add(chainedParent);
+                    chainedParent.setParent(newParent);
+                    chainedParent = newParent;
+                    parent = parent.getParent();
+                }
+                callChain = chainedParent;
+            }
         }
+        return callChain;
     }
 
     public boolean checkCircular() {
@@ -133,6 +137,36 @@ public class LinkedProcess implements Jsonable {
             }
             called.add(child.process);
             p = child;
+        }
+        return false;
+    }
+
+    /**
+     * Remove all branches that don't lead to specified process.
+     */
+    public void prune(Process process) {
+        if (process.equals(this.process))
+            return;
+        LinkedProcess caller = this;
+        List<LinkedProcess> toRemove = new ArrayList<>();
+        for (LinkedProcess child : caller.children) {
+            if (!child.contains(process)) {
+                toRemove.add(child);
+            }
+            child.prune(process);
+        }
+        caller.children.removeAll(toRemove);
+    }
+
+    /**
+     * Returns true if the call hierarchy contains the specified process.
+     */
+    public boolean contains(Process process) {
+        if (process.equals(this.process))
+            return true;
+        for (LinkedProcess child : children) {
+            if (child.contains(process))
+                return true;
         }
         return false;
     }
