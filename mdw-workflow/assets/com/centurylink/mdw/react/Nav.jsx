@@ -1,12 +1,12 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
-import NavLink from '../react/NavLink.jsx';
+import NavLink from './NavLink.jsx';
 
 class Nav extends Component {
 
   constructor(...args) {
     super(...args);
-    this.state = { dashLinks: [] };
+    this.state = { navLinks: [] };
   }
 
   componentDidMount() {
@@ -19,9 +19,9 @@ class Nav extends Component {
       return response.json();
     })
     .then(navs => {
-      const dashNav = navs.find(nav => nav.id === 'dashboardTab');
+      const navTab = navs.find(nav => nav.id === this.props.tab);
       this.setState({
-        dashLinks: dashNav.navs
+        navLinks: navTab.navs
       });
     });
   }
@@ -30,14 +30,14 @@ class Nav extends Component {
     return (
       <div>
       {
-        this.state.dashLinks.map((dashSection, index) => {
+        this.state.navLinks.map((navSection, index) => {
           return (
             <ul key={index} className="nav mdw-nav">
             {
-              dashSection.links.map((dashLink, index) => {
+              navSection.links.map((navLink, index) => {
                 return (
-                  <NavLink key={index} to={this.context.hubRoot + dashLink.href}>
-                    {dashLink.label}
+                  <NavLink key={index} to={this.context.hubRoot + navLink.href}>
+                    {navLink.label}
                   </NavLink>
                 );
               })
