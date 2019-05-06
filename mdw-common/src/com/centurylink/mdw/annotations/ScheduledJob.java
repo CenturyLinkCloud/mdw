@@ -12,9 +12,12 @@ public @interface ScheduledJob {
      */
     String value();
 
+    /**
+     * Use an expression for dynamic values.
+     */
     String schedule();
 
-    String enabledProp() default "";
+    String enabled() default "";
 
     boolean defaultEnabled() default true;
 

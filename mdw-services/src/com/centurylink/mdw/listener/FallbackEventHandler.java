@@ -128,9 +128,13 @@ public class FallbackEventHandler implements ExternalEventHandler {
                             job.getClass().getAnnotation(com.centurylink.mdw.annotations.ScheduledJob.class);
                     if (scheduledJobAnnotation != null) {
                         enabled = scheduledJobAnnotation.defaultEnabled();
-                        String enabledProp = scheduledJobAnnotation.enabledProp();
-                        if (!enabledProp.isEmpty()) {
+                        String enabledProp = scheduledJobAnnotation.enabled();
+                        if (enabledProp.startsWith("${props['") && enabledProp.endsWith("']}")) {
+                            enabledProp = enabledProp.substring(9, enabledProp.length() - 3);
                             enabled = PropertyManager.getBooleanProperty(enabledProp, false);
+                        }
+                        else if (!enabledProp.isEmpty()) {
+                            enabled = "true".equalsIgnoreCase(enabledProp);
                         }
                         exclusive = scheduledJobAnnotation.isExclusive();
                     }

@@ -128,27 +128,38 @@ public class TimerTaskRegistration implements StartupService {
                     scheduledJob.getClass().getAnnotation(com.centurylink.mdw.annotations.ScheduledJob.class);
             if (scheduledJobAnnotation != null) {
                 boolean enabled = scheduledJobAnnotation.defaultEnabled();
-                String enabledProp = scheduledJobAnnotation.enabledProp();
-                if (!enabledProp.isEmpty()) {
+                String enabledProp = scheduledJobAnnotation.enabled();
+                if (enabledProp.startsWith("${props['") && enabledProp.endsWith("']}")) {
+                    enabledProp = enabledProp.substring(9, enabledProp.length() - 3);
                     enabled = PropertyManager.getBooleanProperty(enabledProp, false);
+                }
+                else if (!enabledProp.isEmpty()) {
+                    enabled = "true".equalsIgnoreCase(enabledProp);
                 }
                 String name = scheduledJobAnnotation.value();
                 if (!timerTasks.containsKey(name)) {
                     Properties spec = new Properties();
                     spec.put("TimerClass", scheduledJob.getClass().getName());
                     String eventName = SCHEDULED_JOB + "." + scheduledJob.getClass().getName();
-                    spec.put("Schedule", scheduledJobAnnotation.schedule());
+                    String schedule = scheduledJobAnnotation.schedule();
+                    if (schedule != null && schedule.startsWith("${props['") && schedule.endsWith("']}")) {
+                        schedule = PropertyManager.getProperty(schedule.substring(9, schedule.length() - 3));
+                    }
+                    if (schedule == null)
+                        enabled = false;
+                    else
+                        spec.put("Schedule", schedule);
                     try {
                         EventServices eventServices = ServiceLocator.getEventServices();
                         EventInstance eventInstance = eventServices.getEventInstance(eventName);
                         // update in case schedule has changed, job is disabled, or status shows job running
                         if (eventInstance != null) {
-                            logger.info("Updating schedule for " + scheduledJob.getClass() + ": " + scheduledJobAnnotation.schedule());
+                            logger.info("Updating schedule for " + scheduledJob.getClass() + ": " + schedule);
                             eventServices.updateEventInstance(eventName, eventInstance.getDocumentId(),
                                     EventInstance.STATUS_SCHEDULED_JOB, eventInstance.getConsumeDate(), eventInstance.getAuxdata(),
                                     eventInstance.getReference(), eventInstance.getPreserveSeconds());
                             if (enabled)
-                                ScheduledEventQueue.getSingleton().rescheduleCronJob(eventName, scheduledJobAnnotation.schedule());
+                                ScheduledEventQueue.getSingleton().rescheduleCronJob(eventName, schedule);
                             else
                                 eventServices.deleteEventInstance(eventInstance.getEventName());
                         }
