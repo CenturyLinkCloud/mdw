@@ -231,9 +231,14 @@ public class Processes extends JsonRestService implements JsonExportable {
         }
     }
 
+    /**
+     * Returns main process instance if embedded instance.
+     */
     @Path("/{instanceId}/summary")
     public JSONObject getSummary(Long instanceId) throws ServiceException {
-        ProcessInstance process = getWorkflowServices().getProcess(instanceId, false);
+        ProcessInstance process = getWorkflowServices().getProcess(instanceId);
+        if (process.isEmbedded())
+            process = getWorkflowServices().getProcess(process.getOwnerId());
         return getSummaryJson(process);
     }
 

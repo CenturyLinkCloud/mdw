@@ -154,13 +154,13 @@ public class Data {
         public static final List<ActivityImplementor> PSEUDO_IMPLEMENTORS = new ArrayList<>();
         static {
             PSEUDO_IMPLEMENTORS.add(new ActivityImplementor("Exception Handler", "subflow", "" +
-                    "Exception Handler Subflow", "${Data.BASE_PKG}/subflow.png", null));
+                    "Exception Handler Subflow", BASE_PKG + "/subflow.png", null));
             PSEUDO_IMPLEMENTORS.add(new ActivityImplementor("Cancellation Handler", "subflow",
-                    "Cancellation Handler Subflow", "${Data.BASE_PKG}/subflow.png", null));
+                    "Cancellation Handler Subflow", BASE_PKG + "/subflow.png", null));
             PSEUDO_IMPLEMENTORS.add(new ActivityImplementor("Delay Handler", "subflow",
-                    "Delay Handler Subflow", "${Data.BASE_PKG}/subflow.png", null));
+                    "Delay Handler Subflow", BASE_PKG + "/subflow.png", null));
             PSEUDO_IMPLEMENTORS.add(new ActivityImplementor("TextNote", "note",
-                    "Text Note", "$BASE_PKG/note.png", null));
+                    "Text Note", BASE_PKG + "/note.png", null));
             PSEUDO_IMPLEMENTORS.add(new ActivityImplementor("com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
                     GeneralActivity.class.getName(), "Dummy Activity", "shape:activity", "{}"));
         }

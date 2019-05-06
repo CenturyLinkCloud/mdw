@@ -37,7 +37,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
 
     public ProcessList getProcessInstances(Query query) throws DataAccessException {
         try {
-            List<ProcessInstance> procInsts = new ArrayList<ProcessInstance>();
+            List<ProcessInstance> procInsts = new ArrayList<>();
             db.openConnection();
             long count = -1;
             String where;
@@ -107,8 +107,10 @@ public class WorkflowDataAccess extends CommonDataAccess {
                 sb.append(" and pi.owner NOT IN ( '").append(OwnerType.PROCESS_INSTANCE).append("' , '").append(OwnerType.ERROR).append("' )\n");
         }
         else {
+            sb.append(" and pi.owner = '").append(owner).append("'");
             String ownerId = query.getFilter("ownerId");
-            sb.append(" and pi.owner = '").append(owner).append("' and pi.owner_id = ").append(ownerId).append("\n");
+            if (ownerId != null)
+                sb.append(" and pi.owner_id = ").append(ownerId).append("\n");
         }
 
         // processId
@@ -130,7 +132,10 @@ public class WorkflowDataAccess extends CommonDataAccess {
             }
         }
 
-        // SecondaryOwnerId
+        // secondaryOwnerId
+        String secondaryOwner = query.getFilter("secondaryOwner");
+        if (secondaryOwner != null)
+            sb.append(" and pi.secondary_owner = '").append(secondaryOwner).append("'");
         long secondaryOwnerId = query.getLongFilter("secondaryOwnerId");
         if (secondaryOwnerId > 0) {
             sb.append(" and (pi.secondary_owner_id is null or pi.secondary_owner_id = ");

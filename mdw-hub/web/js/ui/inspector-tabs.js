@@ -421,9 +421,9 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
                   }
                 }
                 subprocs.forEach(function(subproc) {
-                  var url = mdw.roots.services + '/services/Processes?definition=' + encodeURIComponent(subproc) + '&owner=PROCESS_INSTANCE&ownerId=';
+                  var url = mdw.roots.services + '/services/Processes?definition=' + encodeURIComponent(subproc) + '&owner=PROCESS_INSTANCE&secondaryOwner=ACTIVITY_INSTANCE';
                   runtimeInfo.forEach(function(instance) {
-                    gets.push($http.get(url + instance.processInstanceId + '&secondaryOwnerId=' + instance.id));
+                    gets.push($http.get(url + '&secondaryOwnerId=' + instance.id));
                   });
                 });
               }

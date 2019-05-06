@@ -60,7 +60,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
     }
 
     protected String generateLogLine(char type, String tag, String message) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (LogLineInjector injector : getInjectors()) {
             String prefix = injector.prefix();
             if (prefix != null)
@@ -78,12 +78,12 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
             sb.append(Thread.currentThread().getId());
         }
         sb.append("] ");
+        sb.append(message);
         for (LogLineInjector injector : getInjectors()) {
             String suffix = injector.suffix();
             if (suffix != null)
                 sb.append(suffix).append(" ");
         }
-        sb.append(message);
         return sb.toString();
     }
 
@@ -138,12 +138,16 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
             obj.put("status", TransitionStatus.STATUS_COMPLETED);
         }
         else if ("m".equals(subtype)) {
-
+            // TODO
         }
         return obj;
     }
 
     protected void sendToWatchers(String message) {
+        // injector compatibility for watchers and websocket clients
+        if (message.startsWith("[") && !message.startsWith("[("))
+            message = message.substring(message.indexOf(']') + 1).trim();
+
         if (watching())
             sendToWatcher(message);
 
@@ -161,7 +165,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
         catch (Throwable e) {
             System.out.println("Error building log watcher json for: '" + message + "' -> " + e);
             e.printStackTrace();
-        };
+        }
     }
 
     protected void sendToWatcher(String message) {
@@ -177,7 +181,8 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
             System.out.println("Exception when sending log messages to watcher - turn it off");
             e.printStackTrace();
         } finally {
-            if (client!=null) client.close();
+            if (client != null)
+                client.close();
         }
     }
 
