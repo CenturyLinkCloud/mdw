@@ -279,6 +279,7 @@ var SubflowFactory = function(DC, Shape, Step, Link) {
               actInsts.push(actInst);
               // needed for subprocess & task instance retrieval
               actInst.processInstanceId = procInstId;
+              actInst.embeddedProcessInstanceId = inst.id;
             }
           });
         }
