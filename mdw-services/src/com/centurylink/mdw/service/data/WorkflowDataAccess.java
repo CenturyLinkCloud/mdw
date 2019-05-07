@@ -133,9 +133,11 @@ public class WorkflowDataAccess extends CommonDataAccess {
         }
 
         // secondaryOwnerId
+        // for async subprocess invokers, secondary_owner is null so must match that case as well
         String secondaryOwner = query.getFilter("secondaryOwner");
-        if (secondaryOwner != null)
-            sb.append(" and pi.secondary_owner = '").append(secondaryOwner).append("'");
+        if (secondaryOwner != null) {
+            sb.append(" and (pi.secondary_owner is null or pi.secondary_owner = '").append(secondaryOwner).append("')\n");
+        }
         long secondaryOwnerId = query.getLongFilter("secondaryOwnerId");
         if (secondaryOwnerId > 0) {
             sb.append(" and (pi.secondary_owner_id is null or pi.secondary_owner_id = ");
