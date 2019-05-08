@@ -22,7 +22,6 @@ class InboundRequests extends Component {
       location = this.context.hubRoot + '/#/workflow/requests';
       }
     else if (breakdown === 'Status') {
-      console.log("STATUS");
       reqFilter.status = selection.id;
       sessionStorage.setItem('workflow_requestFilter', JSON.stringify(reqFilter));
       location = this.context.hubRoot + '/#/workflow/requests';
