@@ -22,6 +22,7 @@ import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Response;
+import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.request.RequestList;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
@@ -42,22 +43,14 @@ public class RequestDataAccess extends CommonDataAccess {
 
             String where = getMasterRequestsWhere(query);
 
-            StringBuilder count = new StringBuilder();
-            count.append("select count(*)\n");
-            count.append("from PROCESS_INSTANCE pi, DOCUMENT d\n");
-            count.append(where);
-            int total = 0;
-            ResultSet countRs = db.runSelect(count.toString());
+            int total;
+            String count = "select count(*)\nfrom PROCESS_INSTANCE pi, DOCUMENT d\n" + where;
+            ResultSet countRs = db.runSelect(count);
             countRs.next();
             total = countRs.getInt(1);
 
-            List<Request> requests = new ArrayList<Request>();
+            List<Request> requests = new ArrayList<>();
             RequestList requestList = new RequestList(RequestList.MASTER_REQUESTS, requests);
-
-            //If the total count is 0, stop further execution to prevent it from erroring out while running to get the Responses query.
-            if(total == 0){
-              return requestList;
-            }
 
             StringBuilder q = new StringBuilder(db.pagingQueryPrefix());
             q.append("select ").append(PROC_INST_COLS).append(", d.document_id, d.create_dt, d.owner_type, d.status_code, d.status_message, d.path\n");
@@ -67,16 +60,14 @@ public class RequestDataAccess extends CommonDataAccess {
             if (query.getMax() != Query.MAX_ALL)
                 q.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
 
-            Map<Long,Request> requestMap = new HashMap<Long,Request>();
-            List<Long> listenerRequestIds = new ArrayList<Long>();
+            Map<Long,Request> requestMap = new HashMap<>();
+            List<Long> listenerRequestIds = new ArrayList<>();
             ResultSet rs = db.runSelect(q.toString());
             while (rs.next()) {
                 ProcessInstance pi = buildProcessInstance(rs);
                 Request request = new Request(rs.getLong("document_id"));
                 request.setCreated(rs.getTimestamp("create_dt"));
-                Integer statusCode = rs.getInt("status_code");
-                if (statusCode != null && statusCode > 0)
-                    request.setStatusCode(statusCode);
+                request.setStatusCode(rs.getInt("status_code"));
                 String statusMessage = rs.getString("status_message");
                 if (statusMessage != null && !statusMessage.isEmpty())
                     request.setStatusMessage(statusMessage);
@@ -132,14 +123,14 @@ public class RequestDataAccess extends CommonDataAccess {
         String path = query.getFilter("path");
         if (find != null) {
             // ignore other criteria
-            clause.append(" and pi.master_request_id like '" + find + "%' or d.path like '" + find + "%' \n");
+            clause.append(" and pi.master_request_id like '").append(find).append("%' or d.path like '").append(find).append("%' \n");
         }
         else if (masterRequestId != null) {
             // ignore other criteria
-            clause.append(" and pi.master_request_id = '" + masterRequestId + "' \n");
+            clause.append(" and pi.master_request_id = '").append(masterRequestId).append("' \n");
         }
         else if (path != null) {
-            clause.append(" or d.path = '" + path + "' \n");
+            clause.append(" or d.path = '").append(path).append("' \n");
         }
         else {
             // status
@@ -187,8 +178,8 @@ public class RequestDataAccess extends CommonDataAccess {
         query.append("where pi.owner_id = d.document_id\n");
         // query.append("and pi.owner = 'DOCUMENT'\n");  (eg: 'TESTER')
         query.append("and pi.master_request_id = ?");
-        Long requestId = null;
-        Long processInstanceId = null;
+        Long requestId;
+        Long processInstanceId;
         try {
             db.openConnection();
             ResultSet rs = db.runSelect(query.toString(), masterRequestId);
@@ -218,9 +209,9 @@ public class RequestDataAccess extends CommonDataAccess {
             query += " from DOCUMENT where document_id = ?";
             db.openConnection();
             ResultSet rs = db.runSelect(query, id);
-            Request request = null;
-            String ownerType = null;
-            Long ownerId = null;
+            Request request;
+            String ownerType;
+            Long ownerId;
             if (rs.next()) {
                 request = new Request(id);
                 request.setCreated(rs.getTimestamp("create_dt"));
@@ -273,7 +264,7 @@ public class RequestDataAccess extends CommonDataAccess {
             ResultSet responseRs = null;
             String responseQuery = "select document_id, create_dt, status_code, status_message, path";
             String responseOwnerType = null;
-            if (OwnerType.ADAPTER_REQUEST.equals(ownerType) && ownerId != null) {
+            if (OwnerType.ADAPTER_REQUEST.equals(ownerType)) {
                 responseOwnerType = OwnerType.ADAPTER_RESPONSE;
                 request.setOutbound(true);
                 responseQuery += " from DOCUMENT where owner_type='" + responseOwnerType + "' and owner_id = ?";
@@ -342,7 +333,7 @@ public class RequestDataAccess extends CommonDataAccess {
                 }
             }
 
-            if (ownerId != null && ownerId > 0 && (withContent || withResponseContent)) {
+            if (ownerId > 0 && (withContent || withResponseContent)) {
                 if (OwnerType.ADAPTER_REQUEST.equals(ownerType)) {
                     query = "select activity_instance_id, process_instance_id from ACTIVITY_INSTANCE where activity_instance_id = ?";
                     rs = db.runSelect(query, ownerId);
@@ -373,51 +364,35 @@ public class RequestDataAccess extends CommonDataAccess {
 
             String where = getInboundRequestsWhere(query);
 
-            StringBuilder count = new StringBuilder();
-            count.append("select count(*)\n");
-            count.append("from DOCUMENT d\n");
-            count.append(where);
-            int total = 0;
-            ResultSet countRs = db.runSelect(count.toString());
+            int total;
+            String count = "select count(*)\nfrom DOCUMENT d\n" +
+                    "left join DOCUMENT d2 on d2.owner_id = d.document_id\n" + where;
+            ResultSet countRs = db.runSelect(count);
             countRs.next();
             total = countRs.getInt(1);
 
-            StringBuilder q = new StringBuilder(db.pagingQueryPrefix());
-            q.append("select d.document_id, d.create_dt, d.status_code, d.status_message, d.path\n");
-            q.append("from DOCUMENT d\n");
-            q.append(where).append(buildOrderBy(query));
-            q.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
-
-            Map<Long,Request> requestMap = new HashMap<Long,Request>();
-            List<Request> requests = new ArrayList<Request>();
-            List<Long> requestIds = new ArrayList<Long>();
-            ResultSet rs = db.runSelect(q.toString());
+            List<Request> requests = new ArrayList<>();
+            String q = db.pagingQueryPrefix() + "select d.document_id, d.create_dt, d.path, " +
+                    "d2.document_id response_id, d2.create_dt responded, d2.status_code, d2.status_message\n" +
+                    "from DOCUMENT d\n" +
+                    "left join DOCUMENT d2 on d2.owner_id = d.document_id\n" +
+                    where + buildOrderBy(query) +
+                    db.pagingQuerySuffix(query.getStart(), query.getMax());
+            ResultSet rs = db.runSelect(q);
             while (rs.next()) {
                 Request request = new Request(rs.getLong("document_id"));
                 request.setCreated(rs.getTimestamp("create_dt"));
-                Integer statusCode = rs.getInt("status_code");
-                if (statusCode != null && statusCode > 0)
-                    request.setStatusCode(statusCode);
+                request.setStatusCode(rs.getInt("status_code"));
                 String statusMessage = rs.getString("status_message");
                 if (statusMessage != null && !statusMessage.isEmpty())
                     request.setStatusMessage(statusMessage);
+                else
+                    request.setStatusMessage(StatusResponse.getMessage(request.getStatusCode()));
                 request.setPath(rs.getString("path"));
-                requestMap.put(request.getId(), request);
+                request.setResponseId(rs.getLong("response_id"));
+                request.setResponded(rs.getTimestamp("responded"));
+                request.setStatusCode(rs.getInt("status_code"));
                 requests.add(request);
-                requestIds.add(request.getId());
-            }
-
-            // This join takes forever on MySQL, so a separate query is used to populate response info:
-            // -- left join document d2 on (d2.owner_id = d.document_id)
-            if (query.getMax() != Query.MAX_ALL && !requestIds.isEmpty()) {
-                ResultSet respRs = db.runSelect(getResponsesQuery(OwnerType.LISTENER_RESPONSE, requestIds));
-                while (respRs.next()) {
-                    Request request = requestMap.get(respRs.getLong("owner_id"));
-                    if (request != null) {
-                        request.setResponseId(respRs.getLong("document_id"));
-                        request.setResponded(respRs.getTimestamp("create_dt"));
-                    }
-                }
             }
 
             RequestList requestList = new RequestList(RequestList.INBOUND_REQUESTS, requests);
@@ -434,33 +409,49 @@ public class RequestDataAccess extends CommonDataAccess {
         }
     }
 
-    /**
-     * TODO: honor status in query
-     */
     private String getInboundRequestsWhere(Query query) {
         StringBuilder clause = new StringBuilder();
         clause.append("where d.owner_type = '" + OwnerType.LISTENER_REQUEST + "'\n");
+        clause.append("and d2.owner_type = '" + OwnerType.LISTENER_RESPONSE + "'\n");
+        boolean healthCheck = query.getBooleanFilter("healthCheck");
+        if (!healthCheck)
+            clause.append(" and d.path != 'AppSummary'");
 
         String find = query.getFind();
         Long id = query.getLongFilter("id");
         String path = query.getFilter("path");
         if (find != null) {
             try {
-                Long docId = Long.parseLong(find);
-                clause.append(" and d.document_id like '" + docId + "%'\n");
+                long docId = Long.parseLong(find);
+                clause.append(" and d.document_id like '").append(docId).append("%'\n");
             }
             catch (NumberFormatException e) {
-                clause.append(" and d.path like '" + find + "%'\n");
+                clause.append(" and d.path like '").append(find).append("%'\n");
             }
         }
-        else if (id != null && id > 0) {
-            clause.append(" and d.document_id = " + id + "\n");
+        else if (id > 0) {
+            clause.append(" and d.document_id = ").append(id).append("\n");
         }
         else if (path != null) {
-            clause.append(" and d.path like '" + path + "%'\n");
+            clause.append(" and d.path like '").append(path).append("%'\n");
         }
         else if (query.getFilter("ownerId") != null) {
-            clause.append(" and d.owner_id = " + query.getLongFilter("ownerId") + "\n");
+            clause.append(" and d.owner_id = ").append(query.getLongFilter("ownerId")).append("\n");
+        }
+        int status = query.getIntFilter("status");
+        if (status > 0) {
+            clause.append(" and d2.status_code = ").append(status).append("\n");
+        }
+        try {
+            Date date = query.getDateFilter("receivedDate");
+            if (date != null) {
+                String start = db.isMySQL() ? getMySqlDt(date) : getOracleDt(date);
+                date.setTime(date.getTime() + 86400000);
+                String end = db.isMySQL() ? getMySqlDt(date) : getOracleDt(date);;
+                clause.append(" and d.create_dt >= '").append(start).append("' and d.create_dt < '").append(end).append("'\n");
+            }
+        }
+        catch (ParseException ex) {
         }
 
         return clause.toString();
@@ -473,53 +464,33 @@ public class RequestDataAccess extends CommonDataAccess {
 
             String where = getOutboundRequestsWhere(query);
 
-            StringBuilder count = new StringBuilder();
-            count.append("select count(*)\n");
-            count.append("from DOCUMENT d\n");
-            count.append(where);
-            int total = 0;
-            ResultSet countRs = db.runSelect(count.toString());
+            int total;
+            String count = "select count(*)\nfrom DOCUMENT d\n" +
+                    "left join DOCUMENT d2 on d2.owner_id = d.document_id\n" + where;
+            ResultSet countRs = db.runSelect(count);
             countRs.next();
             total = countRs.getInt(1);
 
-            StringBuilder q = new StringBuilder(db.pagingQueryPrefix());
-            q.append("select d.document_id, d.create_dt, d.owner_id, d.status_code, d.status_message, d.path\n");
-            q.append("from DOCUMENT d\n");
-            q.append(where).append(buildOrderBy(query));
-            q.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
-
-            Map<Long,Request> requestMap = new HashMap<Long,Request>();
-            List<Request> requests = new ArrayList<Request>();
-            List<Long> activityIds = new ArrayList<Long>();
-            ResultSet rs = db.runSelect(q.toString());
+            List<Request> requests = new ArrayList<>();
+            String q = db.pagingQueryPrefix() + "select d.document_id, d.create_dt, d.path, " +
+                    "d2.document_id response_id, d2.create_dt responded, d2.status_code, d2.status_message\n" +
+                    "from DOCUMENT d\n" +
+                    "left join DOCUMENT d2 on d2.owner_id = d.owner_id\n" +
+                    where + buildOrderBy(query) +
+                    db.pagingQuerySuffix(query.getStart(), query.getMax());
+            ResultSet rs = db.runSelect(q);
             while (rs.next()) {
-                Long activityId = rs.getLong("owner_id");
                 Request request = new Request(rs.getLong("document_id"));
                 request.setCreated(rs.getTimestamp("create_dt"));
-                Integer statusCode = rs.getInt("status_code");
-                if (statusCode != null && statusCode > 0)
-                    request.setStatusCode(statusCode);
+                request.setStatusCode(rs.getInt("status_code"));
                 String statusMessage = rs.getString("status_message");
                 if (statusMessage != null && !statusMessage.isEmpty())
                     request.setStatusMessage(statusMessage);
+                else
+                    request.setStatusMessage(StatusResponse.getMessage(request.getStatusCode()));
                 request.setPath(rs.getString("path"));
                 request.setOutbound(true);
-                requestMap.put(activityId, request);
                 requests.add(request);
-                activityIds.add(activityId);
-            }
-
-            // This join takes forever on MySQL, so a separate query is used to populate response info:
-            // -- left join document d2 on (d2.owner_id = d.document_id)
-            if (query.getMax() != Query.MAX_ALL && !activityIds.isEmpty()) {
-                ResultSet respRs = db.runSelect(getResponsesQuery(OwnerType.ADAPTER_RESPONSE, activityIds));
-                while (respRs.next()) {
-                    Request request = requestMap.get(respRs.getLong("owner_id"));
-                    if (request != null) {
-                        request.setResponseId(respRs.getLong("document_id"));
-                        request.setResponded(respRs.getTimestamp("create_dt"));
-                    }
-                }
             }
 
             RequestList requestList = new RequestList(RequestList.OUTBOUND_REQUESTS, requests);
@@ -536,12 +507,10 @@ public class RequestDataAccess extends CommonDataAccess {
         }
     }
 
-    /**
-     * TODO: honor status in query
-     */
     private String getOutboundRequestsWhere(Query query) {
         StringBuilder clause = new StringBuilder();
         clause.append("where d.owner_type = '" + OwnerType.ADAPTER_REQUEST + "'\n");
+        clause.append("and d2.owner_type = '" + OwnerType.ADAPTER_RESPONSE + "'\n");
 
         String find = query.getFind();
         Long id = query.getLongFilter("id");
@@ -549,20 +518,20 @@ public class RequestDataAccess extends CommonDataAccess {
         if (find != null) {
             try {
                 Long docId = Long.parseLong(find);
-                clause.append(" and d.document_id like '" + docId + "%'\n");
+                clause.append(" and d.document_id like '").append(docId).append("%'\n");
             }
             catch (NumberFormatException e) {
-                clause.append(" and d.path like '" + find + "%'\n");
+                clause.append(" and d.path like '").append(find).append("%'\n");
             }
         }
-        else if (id != null && id > 0) {
-            clause.append(" and d.document_id = " + id + "\n");
+        else if (id > 0) {
+            clause.append(" and d.document_id = ").append(id).append("\n");
         }
         else if (path != null) {
-            clause.append(" and d.path like '" + path + "%'\n");
+            clause.append(" and d.path like '%").append(path).append("%'\n");
         }
         else if (query.getFilter("ownerId") != null) {
-            clause.append(" and d.owner_id = " + query.getLongFilter("ownerId") + "\n");
+            clause.append(" and d.owner_id = ").append(query.getLongFilter("ownerId")).append("\n");
         }
         else {
             Long[] ownerIds = query.getLongArrayFilter("ownerIds");
@@ -576,13 +545,28 @@ public class RequestDataAccess extends CommonDataAccess {
                 clause.append(")\n");
             }
         }
+        int status = query.getIntFilter("status");
+        if (status > 0) {
+            clause.append(" and d2.status_code = ").append(status).append("\n");
+        }
+        try {
+            Date date = query.getDateFilter("receivedDate");
+            if (date != null) {
+                String start = db.isMySQL() ? getMySqlDt(date) : getOracleDt(date);
+                date.setTime(date.getTime() + 86400000);
+                String end = db.isMySQL() ? getMySqlDt(date) : getOracleDt(date);;
+                clause.append(" and d.create_dt >= '").append(start).append("' and d.create_dt < '").append(end).append("'\n");
+            }
+        }
+        catch (ParseException ex) {
+        }
 
         return clause.toString();
     }
 
     private String getResponsesQuery(String type, List<Long> ids) {
         StringBuilder resp = new StringBuilder("select document_id, owner_id, create_dt from DOCUMENT\n");
-        resp.append("where owner_type = '" + type + "'\n");
+        resp.append("where owner_type = '").append(type).append("'\n");
         resp.append("and owner_id in (");
         int i = 0;
         for (Long id : ids) {

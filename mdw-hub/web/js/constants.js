@@ -6,10 +6,10 @@ constantsMod.constant('PROCESS_STATUSES', ['Pending', 'In Progress', 'Failed', '
 constantsMod.constant('TASK_STATUSES', ['Open', 'Assigned', 'In Progress', 'Completed', 'Canceled']);
 constantsMod.constant('ACTIVITY_STATUSES', ['In Progress', 'Failed', 'Waiting']);
 constantsMod.constant('STUCK_ACTIVITY_STATUSES', ['In Progress', 'Failed', 'Canceled', 'Waiting']);
-constantsMod.constant('REQUEST_STATUSES', ['In Progress', 'Failed', 'Waiting', 'Completed']);
 // these are simplified
 constantsMod.constant('TASK_ADVISORIES', ['Jeopardy', 'Alert', 'Invalid']);
 constantsMod.constant('HTTP_METHODS', ['POST', 'PUT', 'GET', 'DELETE', 'PATCH']);
+constantsMod.constant('REQUEST_STATUSES', [200, 201, 202, 400, 401, 403, 404, 405, 409, 500, 501, 502, 503]);
 
 constantsMod.constant('QUEUE_NAMES', [
   'com.centurylink.mdw.external.event.queue',

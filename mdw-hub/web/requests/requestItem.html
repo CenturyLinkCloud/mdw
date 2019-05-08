@@ -25,9 +25,9 @@
       </div>
     </div>
   </div>
-  <div class="mdw-flex-item-right">
+  <div class="mdw-flex-item-right" ng-if="item.statusCode != 0">
     <div class="mdw-item">
-      <span>{{item.processStatus}}</span>
+      <span ng-class="{'mdw-error': item.statusCode >= 400}">{{item.statusCode}}</span>
     </div>
   </div>
 </div>

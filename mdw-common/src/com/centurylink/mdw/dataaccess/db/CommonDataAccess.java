@@ -1041,4 +1041,14 @@ public class CommonDataAccess {
         else
             return "select date(" + column + ")";
     }
+
+    @SuppressWarnings("deprecation")
+    protected static Date getRoundDate(Date date) {
+        Date roundDate = new Date(date.getTime());
+        roundDate.setHours(0);
+        roundDate.setMinutes(0);
+        roundDate.setSeconds(0);
+        roundDate.setTime((roundDate.getTime() / 1000) * 1000);
+        return roundDate;
+    }
 }

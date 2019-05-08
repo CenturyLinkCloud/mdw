@@ -18,8 +18,6 @@ package com.centurylink.mdw.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.Jsonable;
-
 /**
  * Standard status response.
  * Lighter-weight, compatible alternative to StatusMessage object.
@@ -102,6 +100,7 @@ public class StatusResponse implements Jsonable {
             case 503: return Status.SERVICE_UNAVAILABLE.getMessage();
             case 504: return Status.GATEWAY_TIMEOUT.getMessage();
             case 505: return Status.HTTP_VERSION_NOT_SUPPORTED.getMessage();
+            case 0: return "";
         }
         return "Unrecognized HTTP code";
     }

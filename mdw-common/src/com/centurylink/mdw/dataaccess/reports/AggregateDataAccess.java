@@ -75,16 +75,6 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
         }
     }
 
-    @SuppressWarnings("deprecation")
-    protected static Date getRoundDate(Date date) {
-        Date roundDate = new Date(date.getTime());
-        roundDate.setHours(0);
-        roundDate.setMinutes(0);
-        roundDate.setSeconds(0);
-        roundDate.setTime((roundDate.getTime() / 1000) * 1000);
-        return roundDate;
-    }
-
     protected PreparedWhere getInCondition(List<?> elements) {
         StringBuilder in = new StringBuilder();
         List<Object> params = new ArrayList<>();
