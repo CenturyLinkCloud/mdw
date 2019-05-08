@@ -17,8 +17,6 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import static com.centurylink.mdw.dataaccess.reports.AggregateDataAccess.getRoundDate;
-
 public class ProcessInsights extends CommonDataAccess {
 
     public List<Insight> getInsights(Query query) throws SQLException, ParseException, ServiceException {

@@ -1,6 +1,7 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import statuses from '../react/statuses';
+import paths from '../react/paths';
 import DashboardChart from './DashboardChart.jsx';
 
 class InboundRequests extends Component {
@@ -15,13 +16,16 @@ class InboundRequests extends Component {
     reqFilter = reqFilter ? JSON.parse(reqFilter) : {};
     reqFilter.type = 'inboundRequests';
     if (breakdown === 'Throughput' || breakdown == 'Completion Time') {
-      reqFilter.path = selection.id;
-      reqFilter.status = filters.Status ? filters.Status : '[Active]';
+      reqFilter.path = paths.trim(selection.id);
+      reqFilter.status = filters.Status ? filters.Status : null;
       sessionStorage.setItem('workflow_requestFilter', JSON.stringify(reqFilter));
       location = this.context.hubRoot + '/#/workflow/requests';
       }
-    else {
-      // TODO request list status filter
+    else if (breakdown === 'Status') {
+      console.log("STATUS");
+      reqFilter.status = selection.id;
+      sessionStorage.setItem('workflow_requestFilter', JSON.stringify(reqFilter));
+      location = this.context.hubRoot + '/#/workflow/requests';
     }
   }
 

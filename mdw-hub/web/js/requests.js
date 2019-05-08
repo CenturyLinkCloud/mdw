@@ -2,8 +2,9 @@
 
 var requestMod = angular.module('requests', ['mdw']);
 
-requestMod.controller('RequestsController', ['$scope', '$http', '$location', 'mdw', 'util', 'REQUEST_STATUSES',
-                                             function($scope, $http, $location, mdw, util, REQUEST_STATUSES) {
+requestMod.controller('RequestsController',
+    ['$scope', '$http', '$location', 'mdw', 'util', 'REQUEST_STATUSES',
+    function($scope, $http, $location, mdw, util, REQUEST_STATUSES) {
   
   // is this in the context of the Workflow or Services tab?
   $scope.context = $location.path().startsWith('/service') ? 'service' : 'workflow';
@@ -16,7 +17,6 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', 'md
         $scope.requestFilter = JSON.parse($scope.requestFilter);
   if (!$scope.requestFilter) {
     $scope.requestFilter = {
-        status: '[Active]',
         sort: 'receivedDate',
         type: $scope.defaultType,
         descending: true
@@ -42,9 +42,8 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', 'md
       outboundRequests: 'Outbound'
     };
   }
-  
-  // pseudo-status [Active] means non-final
-  $scope.allStatuses = ['[Active]'].concat(REQUEST_STATUSES);
+
+  $scope.allStatuses = REQUEST_STATUSES;
 
   if ($scope.requestFilter.path) {
       $scope.typeaheadMatchSelection = $scope.requestFilter.path;
@@ -57,6 +56,7 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', 'md
   }
 
   $scope.setRequestType = function(requestType) {
+    console.log("setRequestType()");
     $scope.typeaheadMatchSelection = null;
     $scope.clearTypeaheadFilters();
     $scope.requestFilter.type = requestType;
@@ -121,6 +121,12 @@ requestMod.controller('RequestsController', ['$scope', '$http', '$location', 'md
 
   $scope.goChart = function() {
     window.location = $scope.requestFilter.type === 'outboundRequests' ? 'dashboard/outboundRequests' : 'dashboard/inboundRequests';
+  };
+
+  $scope.resetFilter = function() {
+    $scope.requestFilter.status = null;
+    $scope.requestFilter.receivedDate = null;
+    $scope.closePopover();
   };
 }]);
 
