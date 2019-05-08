@@ -15,15 +15,12 @@
  */
 package com.centurylink.mdw.dataaccess;
 
-import java.util.Map;
-
-import org.apache.xmlbeans.XmlException;
-
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.event.ExternalEvent;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
+import org.apache.xmlbeans.XmlException;
 
 /**
  * common interface for all process persistence
@@ -109,11 +106,5 @@ public interface ProcessPersister {
     throws DataAccessException;
 
     void deleteAsset(Long assetId)
-    throws DataAccessException;
-
-    Long setAttribute(String ownerType, Long ownerId, String attrname, String attrvalue)
-    throws DataAccessException;
-
-    void setAttributes(String ownerType, Long ownerId, Map<String,String> attributes)
     throws DataAccessException;
 }

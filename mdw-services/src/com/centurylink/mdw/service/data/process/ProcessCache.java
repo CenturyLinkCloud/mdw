@@ -15,15 +15,8 @@
  */
 package com.centurylink.mdw.service.data.process;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.impl.AssetRefCache;
-import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -38,6 +31,11 @@ import com.centurylink.mdw.util.AssetRefConverter;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Lazily loads the Processes for use by the RuntimeEngine.
@@ -257,12 +255,6 @@ public class ProcessCache implements CacheService {
                 if (assetRef != null)
                     proc = AssetRefConverter.getProcess(assetRef);
             }
-            if (proc != null) {
-                // all db attributes are override attributes
-                Map<String,String> attributes = getWorkflowDao().getAttributes(OwnerType.PROCESS, id);
-                if (attributes != null)
-                    proc.applyOverrideAttributes(attributes);
-            }
             return proc;
         }
         catch (Exception ex) {
@@ -286,12 +278,6 @@ public class ProcessCache implements CacheService {
                 AssetRef assetRef = AssetRefCache.getAssetRef(refName);
                 if (assetRef != null)
                     proc = AssetRefConverter.getProcess(assetRef);
-            }
-            if (proc != null) {
-                // all db attributes are override attributes
-                Map<String,String> attributes = getWorkflowDao().getAttributes(OwnerType.PROCESS, proc.getId());
-                if (attributes != null)
-                    proc.applyOverrideAttributes(attributes);
             }
             if (proc == null && exceptionWhenNotFound)
                 throw new Exception("Process not found " + name + (version == 0 ? "" : " v" + Asset.formatVersion(version)));

@@ -259,7 +259,7 @@ public class BpmnImportHelper {
 
     private void parseShapeData(Node node, Process proc) {
         String actId = parseAttributeValue(node, "bpmnElement");
-        Activity act = proc.getActivityById(actId);
+        Activity act = proc.getActivity(actId);
         if (act != null) {
             Node bounds = getNode(node, "dc:Bounds");
             String value = "x=" + Double.valueOf(parseAttributeValue(bounds, "x")).intValue()

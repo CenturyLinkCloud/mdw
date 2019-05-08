@@ -720,7 +720,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             }
             else {
                 String logicalId = activityInstance.getDefinitionId();
-                Activity actdef = process.getActivityById(logicalId);
+                Activity actdef = process.getActivity(logicalId);
                 if (actdef != null) {
                     if (!decodedActName.isEmpty() && actdef.getName().startsWith(decodedActName))
                         matchActivities.add(activityInstance);
@@ -776,7 +776,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 ac.setVersion(Asset.formatVersion(process.getVersion()));
                 ac.setPackageName(process.getPackageName());
                 String logicalId = ac.getDefinitionId();
-                Activity actdef = process.getActivityById(logicalId);
+                Activity actdef = process.getActivity(logicalId);
                 if (actdef != null) {
                     String actName = actdef.getName().replaceAll("\\r", "").replace('\n', ' ');
                     ac.setActivityName(actName);

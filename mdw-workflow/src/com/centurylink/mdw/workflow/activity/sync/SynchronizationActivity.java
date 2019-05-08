@@ -133,7 +133,7 @@ public class SynchronizationActivity extends AbstractWait implements com.century
             if (trans.getToId().equals(activityId)) {
                 Transition sync = new Transition();
                 sync.setId(trans.getId());
-                Activity act = procdef.getActivityVO(trans.getFromId());
+                Activity act = procdef.getActivity(trans.getFromId());
                 String logicalId = act.getLogicalId();
                 // id to escaped name map is for backward compatibility
                 idToEscapedName.put(logicalId, escape(act.getName()));

@@ -287,7 +287,7 @@ class ProcessExecutorImpl {
             if (OwnerType.MAIN_PROCESS_INSTANCE.equals(ownerType)) {
                 ProcessInstance parentPi = getDataAccess().getProcessInstance(ownerId);
                 Process parentProcdef = ProcessCache.getProcess(parentPi.getProcessId());
-                processVO = parentProcdef.getSubProcessVO(processId);
+                processVO = parentProcdef.getSubProcess(processId);
                 pi = new ProcessInstance(parentPi.getProcessId(), processVO.getName());
                 String comment = processId.toString();
                 if (parentPi.getProcessInstDefId() > 0L)  // Indicates instance definition
@@ -430,7 +430,7 @@ class ProcessExecutorImpl {
         if (procdef == null)
             procdef = ProcessCache.getProcess(procinst.getProcessId());
         if (procinst.isEmbedded())
-            procdef = procdef.getSubProcessVO(new Long(procinst.getComment()));
+            procdef = procdef.getSubProcess(new Long(procinst.getComment()));
         return procdef;
     }
 
@@ -724,7 +724,7 @@ class ProcessExecutorImpl {
             }
 
             Process processVO = getProcessDefinition(ar.procinst);
-            Activity actVO = processVO.getActivityVO(activityId);
+            Activity actVO = processVO.getActivity(activityId);
             Package pkg = PackageCache.getProcessPackage(getMainProcessDefinition(procInst).getId());
             try {
                 GeneralActivity activity = pkg.getActivityImplementor(actVO.getImplementor());
@@ -846,7 +846,7 @@ class ProcessExecutorImpl {
 
     private void removeActivitySLA(ActivityInstance ai, ProcessInstance procInst) {
         Process procdef = getProcessDefinition(procInst);
-        Activity actVO = procdef.getActivityVO(ai.getActivityId());
+        Activity actVO = procdef.getActivity(ai.getActivityId());
         String sla = actVO==null?null:actVO.getAttribute(WorkAttributeConstant.SLA);
         if (sla != null && !"0".equals(sla)) {
             ScheduledEventQueue eventQueue = ScheduledEventQueue.getSingleton();
@@ -1005,7 +1005,7 @@ class ProcessExecutorImpl {
                 ProcessInstance pi = edao.getProcessInstance(event.getWorkInstanceId());
                 Process subProcVO = getProcessDefinition(pi);
                 if (pi.isEmbedded()) {
-                    subProcVO.getSubProcessVO(event.getWorkId());
+                    subProcVO.getSubProcess(event.getWorkId());
                     String embeddedProcType = subProcVO.getAttribute(WorkAttributeConstant.EMBEDDED_PROCESS_TYPE);
                     if (ProcessVisibilityConstant.EMBEDDED_ABORT_PROCESS.equals(embeddedProcType)) {
                         Long parentProcInstId = event.getOwnerId();
@@ -1324,7 +1324,7 @@ class ProcessExecutorImpl {
             logger.info(logtag(procInst.getProcessId(), procInstId, actId, actInst.getId()), "Activity to resume");
 
         Process processVO = getProcessDefinition(procInst);
-        Activity actVO = processVO.getActivityVO(actId);
+        Activity actVO = processVO.getActivity(actId);
 
         TrackingTimer activityTimer = null;
         try {
@@ -1949,7 +1949,7 @@ class ProcessExecutorImpl {
             Package pkg = getPackage(process);
             if (pkg != null)
                 processInst.setPackageName(pkg.getName());
-            Activity activity = process.getActivityVO(actInstVO.getActivityId());
+            Activity activity = process.getActivity(actInstVO.getActivityId());
 
             ActivityImplementor activityImplementor = ImplementorCache.get(activity.getImplementor());
             String category = activityImplementor == null ? GeneralActivity.class.getName() : activityImplementor.getCategory();

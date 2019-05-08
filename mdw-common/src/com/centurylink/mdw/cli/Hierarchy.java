@@ -165,7 +165,7 @@ public class Hierarchy extends Setup {
         return packageVersions;
     }
 
-    private void addTopLevelCallers(Process called) throws IOException {
+    private void addTopLevelCallers(Process called) {
         List<Process> immediateCallers = findCallingProcesses(called);
         if (immediateCallers.isEmpty()) {
             topLevelCallers.add(new LinkedProcess(called));
