@@ -204,4 +204,14 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
         }
         return invoked;
     }
+
+    public boolean isMilestone() {
+        String monitorsAttr = getAttribute(WorkAttributeConstant.MONITORS);
+        if (monitorsAttr == null) {
+            return false;
+        }
+        else {
+            return false; // TODO
+        }
+    }
 }

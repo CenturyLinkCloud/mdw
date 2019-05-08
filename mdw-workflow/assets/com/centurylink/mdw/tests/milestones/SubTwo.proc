@@ -64,6 +64,11 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "PerformanceLevel": "0",
     "WORK_DISPLAY_INFO": "x=50,y=50,w=0,h=0"
-  }
+  },
+  "variables": {"inputVar": {
+    "category": "INPUT",
+    "type": "java.lang.String"
+  }}
 }

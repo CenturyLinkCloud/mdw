@@ -155,10 +155,10 @@ public class DesignServicesImpl implements DesignServices {
     }
 
     @Override
-    public List<LinkedProcess> getProcessHierarchy(String processAsset) throws ServiceException {
-        Process process = ProcessCache.getProcess(processAsset);
+    public List<LinkedProcess> getProcessHierarchy(Long processId) throws ServiceException {
+        Process process = ProcessCache.getProcess(processId);
         if (process == null)
-            throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + processAsset);
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + processId);
 
         try {
             // all must be loaded
@@ -171,7 +171,7 @@ public class DesignServicesImpl implements DesignServices {
             return hierarchy.getTopLevelCallers();
         }
         catch (DataAccessException | IOException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Hierarchy error for " + processAsset, ex);
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Hierarchy error for " + processId, ex);
         }
     }
 }

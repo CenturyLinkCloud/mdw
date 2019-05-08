@@ -1,0 +1,14 @@
+package com.centurylink.mdw.tests.milestones
+
+start process("MilestonesMain") {
+    variables = [
+        subOneInput: "hello",
+        subTwoInput: "two"
+    ]
+}
+wait process
+verify processes(
+    "MilestonesMain",
+    "SubOne",
+    "SubTwo",
+    "SubTwoSub")

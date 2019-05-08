@@ -46,6 +46,10 @@ public class ServiceException extends MdwException {
         super(message, cause);
     }
 
+    public ServiceException(int code, Throwable cause) {
+        super(code, cause.getMessage(), cause);
+    }
+
     public ServiceException(int code, String message, Throwable cause) {
         super(code, message, cause);
     }

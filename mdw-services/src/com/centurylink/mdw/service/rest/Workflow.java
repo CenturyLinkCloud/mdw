@@ -15,16 +15,6 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.Path;
-
-import com.centurylink.mdw.model.workflow.LinkedProcess;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
@@ -35,17 +25,25 @@ import com.centurylink.mdw.model.asset.AssetPackageList;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
+import com.centurylink.mdw.model.workflow.LinkedProcess;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.service.data.process.HierarchyCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.asset.CustomPageLookup;
 import com.centurylink.mdw.services.rest.JsonRestService;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.Path;
+import java.util.List;
+import java.util.Map;
 
 @Path("/Workflow")
 @Api("MDW process definitions")
@@ -101,11 +99,10 @@ public class Workflow extends JsonRestService {
                     Process process = ProcessCache.getProcess(callHierarchyFor);
                     if (process == null)
                         throw new ServiceException(ServiceException.NOT_FOUND, "Definition not found: " + callHierarchyFor);
-                    String assetPath = process.getPackageName() + "/" + process.getName();
                     JSONObject hierarchyJson = new JSONObject();
                     JSONArray callersJson = new JSONArray();
                     hierarchyJson.put("hierarchy", callersJson);
-                    for (LinkedProcess caller : ServiceLocator.getDesignServices().getProcessHierarchy(assetPath)) {
+                    for (LinkedProcess caller : HierarchyCache.getHierarchy(callHierarchyFor)) {
                         callersJson.put(caller.getJson());
                     }
                     return hierarchyJson;

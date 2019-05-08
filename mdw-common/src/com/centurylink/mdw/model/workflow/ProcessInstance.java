@@ -93,28 +93,28 @@ public class ProcessInstance implements Serializable, Jsonable {
         // detail info
         if (jsonObj.has("activities")) {
             JSONArray activitiesJson = jsonObj.getJSONArray("activities");
-            activities = new ArrayList<ActivityInstance>();
+            activities = new ArrayList<>();
             for (int i = 0; i < activitiesJson.length(); i++) {
                 activities.add(new ActivityInstance(activitiesJson.getJSONObject(i)));
             }
         }
         if (jsonObj.has("transitions")) {
             JSONArray transitionsJson = jsonObj.getJSONArray("transitions");
-            transitions = new ArrayList<TransitionInstance>();
+            transitions = new ArrayList<>();
             for (int i = 0; i < transitionsJson.length(); i++) {
                 transitions.add(new TransitionInstance(transitionsJson.getJSONObject(i)));
             }
         }
         if (jsonObj.has("variables")) {
             JSONArray variablesJson = jsonObj.getJSONArray("variables");
-            variables = new ArrayList<VariableInstance>();
+            variables = new ArrayList<>();
             for (int i = 0; i < variablesJson.length(); i++) {
                 variables.add(new VariableInstance(variablesJson.getJSONObject(i)));
             }
         }
         if (jsonObj.has("subprocesses")) {
             JSONArray subprocsJson = jsonObj.getJSONArray("subprocesses");
-            subprocessInstances = new ArrayList<ProcessInstance>();
+            subprocessInstances = new ArrayList<>();
             for (int i = 0; i < subprocsJson.length(); i++)
                 subprocessInstances.add(new ProcessInstance(subprocsJson.getJSONObject(i)));
         }
@@ -249,12 +249,6 @@ public class ProcessInstance implements Serializable, Jsonable {
             getComment();  // This parses the comment for instance definition
         return processInstanceDefId;
     }
-
-    // for run time information display only
-    @ApiModelProperty(hidden=true)
-    private String remoteServer;
-    public String getRemoteServer() { return remoteServer; }
-    public void setRemoteServer(String s) { remoteServer = s; }
 
     // for run time information display only
     @ApiModelProperty(hidden=true)
