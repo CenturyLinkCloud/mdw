@@ -132,11 +132,11 @@ public class WebAppContext {
         try {
             JSONArray inArr = new JSONArray(str);
             JSONArray addedArr = new JSONArray();
+            for (int i = 0; i < inArr.length(); i++)
+                addedArr.put(inArr.get(i));
             addedArr.put(getContainerInfo(request.getSession().getServletContext()).getJson());
             addedArr.put(getRequestInfo(request).getJson());
             addedArr.put(getSessionInfo(request.getSession()).getJson());
-            for (int i = 0; i < inArr.length(); i++)
-                addedArr.put(inArr.get(i));
             return addedArr.toString(2);
         }
         catch (Exception ex) {
