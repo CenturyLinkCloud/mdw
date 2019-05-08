@@ -15,23 +15,6 @@
  */
 package com.centurylink.mdw.hub.servlet;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.codec.binary.Base64;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
@@ -42,6 +25,17 @@ import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
+import org.apache.commons.codec.binary.Base64;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @WebServlet(urlPatterns={"/api/*", "/services/*", "/Services/*", "/REST/*"}, loadOnStartup=1)
 public class RestServlet extends ServiceServlet {
@@ -116,7 +110,7 @@ public class RestServlet extends ServiceServlet {
                 }
             }
             else {
-                if ("/System/sysInfo".equals(request.getPathInfo())
+                if (("/System/sysInfo".equals(request.getPathInfo()) || "/System/System".equals(request.getPathInfo()))
                         && "application/json".equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE))) {
                     responseString = WebAppContext.addContextInfo(responseString, request);
                 }
