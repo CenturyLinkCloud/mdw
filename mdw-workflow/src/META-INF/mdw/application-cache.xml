@@ -44,4 +44,7 @@
   <Cache Name="ServicePaths" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.service.data.ServicePaths</Property>
   </Cache>
+  <Cache Name="HierarchyCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.service.data.process.HierarchyCache</Property>
+  </Cache>
 </ApplicationCache>

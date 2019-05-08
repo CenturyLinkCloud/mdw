@@ -140,16 +140,6 @@ public class Process extends Asset implements Jsonable {
         this.activities = activities;
     }
 
-    public boolean hasDynamicJavaActivity() {
-        if (activities != null) {
-            for (Activity activity : activities) {
-                if (activity.getImplementor() != null && activity.getImplementor().endsWith("DynamicJavaActivity"))
-                    return true;
-            }
-        }
-        return false;
-    }
-
     public List<TextNote> getTextNotes() {
         return textNotes;
     }
@@ -247,9 +237,6 @@ public class Process extends Asset implements Jsonable {
 
     /**
      * Finds one work transition for this process matching the specified parameters
-     * @param fromId
-     * @param eventType
-     * @param completionCode
      * @return the work transition value object (or null if not found)
      */
     public Transition getTransition(Long fromId, Integer eventType, String completionCode) {
@@ -313,9 +300,6 @@ public class Process extends Asset implements Jsonable {
      * A DEFAULT completion code matches any completion
      * code if and only if there is no other matches
      *
-     * @param fromWorkId
-     * @param eventType
-     * @parame completionCode
      * @return the matching work transition value objects
      */
     public List<Transition> getTransitions(Long fromWorkId, Integer eventType, String completionCode) {
@@ -331,7 +315,7 @@ public class Process extends Asset implements Jsonable {
             return returnSet;
         // look for resume transition
         if (eventType.equals(EventType.FINISH)) {
-            returnSet = new ArrayList<Transition>();
+            returnSet = new ArrayList<>();
             for (Transition trans : allTransitions) {
                 if (trans.getEventType().equals(EventType.RESUME))
                     returnSet.add(trans);
@@ -341,7 +325,7 @@ public class Process extends Asset implements Jsonable {
     }
 
     public List<Transition> getAllTransitions(Long fromWorkId) {
-        List<Transition> allTransitions = new ArrayList<Transition>();
+        List<Transition> allTransitions = new ArrayList<>();
         for (Transition workTransitionVO : getTransitions()) {
             if (workTransitionVO.getFromId().equals(fromWorkId)) {
                 allTransitions.add(workTransitionVO);
@@ -352,7 +336,7 @@ public class Process extends Asset implements Jsonable {
 
     private List<Transition> findTransitions(List<Transition> all,
             Integer eventType, String compcode) {
-        List<Transition> set = new ArrayList<Transition>();
+        List<Transition> set = new ArrayList<>();
         for (Transition trans : all) {
             if (trans.match(eventType, compcode)) set.add(trans);
         }
@@ -361,8 +345,7 @@ public class Process extends Asset implements Jsonable {
 
     /**
      * Find a work transition based on its id value
-     * @param id
-     * @return the matching transition VO, or null if not found
+     * @return the matching transition, or null if not found
      */
     public Transition getTransition(Long id) {
         for (Transition transition : getTransitions()) {
@@ -374,7 +357,6 @@ public class Process extends Asset implements Jsonable {
 
     /**
      * Returns the value of a process attribute.
-     * @param attrname
      * @return the value of the attribute, or null if the attribute does not exist
      */
     public String getAttribute(String attrname) {
@@ -386,12 +368,10 @@ public class Process extends Asset implements Jsonable {
      * If the value is null, the attribute is removed.
      * If the attribute does not exist and the value is not null, the attribute
      * is created.
-     * @param attrname
-     * @param value
      */
     public void setAttribute(String attrname, String value) {
         if (attributes == null)
-            attributes = new ArrayList<Attribute>();
+            attributes = new ArrayList<>();
         Attribute.setAttribute(attributes, attrname, value);
     }
 
@@ -479,7 +459,7 @@ public class Process extends Asset implements Jsonable {
     }
 
     public List<Activity> getDownstreamActivities(Activity activity) {
-        List<Activity> downstreamActivities = new ArrayList<Activity>();
+        List<Activity> downstreamActivities = new ArrayList<>();
         for (Transition transition : getAllTransitions(activity.getId()))
             downstreamActivities.add(getActivity(transition.getToId()));
         return downstreamActivities;

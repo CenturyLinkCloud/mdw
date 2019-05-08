@@ -63,6 +63,7 @@
   ],
   "attributes": {
     "ArrowStyle": "ArrowEnd",
+    "Monitors": "[[\"false\",\"Due Date Monitor\",\"com.centurylink.mdw.base/ProcessDueDateMonitor.java\",\"\"],[\"false\",\"Microservice Status Monitor\",\"com.centurylink.mdw.microservice/MicroserviceStatusProcessMonitor.java\",\"\"]]",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
     "PerformanceLevel": "0",

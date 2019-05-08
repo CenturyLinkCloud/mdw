@@ -1,10 +1,10 @@
 package com.centurylink.mdw.milestones;
 
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,11 +16,18 @@ import java.util.Map;
 @Api("Workflow milestones")
 public class MilestonesApi extends JsonRestService {
 
-    @Path("/{processAsset}")
-    @ApiOperation(value="Retrieve past and future milestones from the designated starting point")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name="futures", paramType="query", dataType="Boolean", defaultValue="true")})
+    @Path("/{masterRequestId}")
+    @ApiOperation(value="Retrieve for a master request, or all milestones")
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
-        return super.get(path, headers);
+
+        Query query = getQuery(path, headers);
+        String masterRequestId = getSegment(path, 1);
+        if (masterRequestId != null) {
+            // TODO
+            return null;
+        }
+        else {
+            return ServiceLocator.getWorkflowServices().getMilestones(query).getJson();
+        }
     }
 }

@@ -59,6 +59,7 @@ import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
+import com.centurylink.mdw.service.data.process.HierarchyCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ProcessException;
@@ -1395,4 +1396,33 @@ public class WorkflowServicesImpl implements WorkflowServices {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
+
+    /**
+     * Returns milestone instances.
+     */
+    public MilestoneList getMilestones(Query query) throws ServiceException {
+        query.setFilter("master", true);
+        ProcessList masterProcessList = getProcesses(query);
+        for (ProcessInstance masterProcessInstance : masterProcessList.getProcesses()) {
+            LinkedProcessInstance linkedInstance = getCallHierearchy(masterProcessInstance.getId());
+            while (linkedInstance != null) {
+                ProcessInstance processInstance = linkedInstance.getProcessInstance();
+                Process process = ProcessCache.getProcess(processInstance.getProcessId());
+                for (Activity activity : process.getActivities()) {
+                    if (activity.isMilestone()) {
+                        Milestone milestone = new Milestone();
+                    }
+                }
+            }
+
+            Long masterProcessId = masterProcessInstance.getProcessId();
+            List<LinkedProcess> hierarchy = HierarchyCache.getHierarchy(masterProcessId);
+            LinkedProcess parent = hierarchy.stream().filter(it -> it.getProcess().getId().equals(masterProcessId))
+                    .findAny().get();
+
+
+        }
+        return null;
+    }
+
 }

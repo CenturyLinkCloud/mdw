@@ -17,11 +17,10 @@ package com.centurylink.mdw.services;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.model.report.Hotspot;
-import com.centurylink.mdw.model.report.Insight;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.event.Event;
+import com.centurylink.mdw.model.report.Hotspot;
+import com.centurylink.mdw.model.report.Insight;
 import com.centurylink.mdw.model.report.Timepoint;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.workflow.Package;
@@ -208,5 +207,7 @@ public interface WorkflowServices {
      * Downstream calls include all routes, whereas upstream calls include only the specific instance stack.
      */
     LinkedProcessInstance getCallHierearchy(Long processInstanceId) throws ServiceException;
+
+    MilestoneList getMilestones(Query query) throws ServiceException;
 
 }

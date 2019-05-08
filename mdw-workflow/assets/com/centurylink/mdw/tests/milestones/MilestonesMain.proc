@@ -38,7 +38,7 @@
     {
       "attributes": {
         "Output Documents": "[\"executionPlan\"]",
-        "Rule": "import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument\nimport com.centurylink.mdw.bpm.ParameterDocument.Parameter\nimport com.centurylink.mdw.bpm.ProcessExecutionPlanDocument.ProcessExecutionPlan\nimport com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance\nimport com.centurylink.mdw.model.workflow.WorkStatus\n\nexecutionPlan = ProcessExecutionPlanDocument.Factory.newInstance()\nProcessExecutionPlan exeplan = executionPlan.addNewProcessExecutionPlan()\nSubprocessInstance subprocinst = exeplan.addNewSubprocessInstance()\nsubprocinst.setLogicalProcessName(\"SubOne\")\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\naddParameter(subprocinst, \"inputVar\", \"\\$subOneInput\")\nsubprocinst.setLogicalProcessName(\"SubTwo\")\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\n\nvoid addParameter(SubprocessInstance subprocinst, String name, String value) {\n    Parameter param = subprocinst.addNewParameter()\n    param.setName(name)\n    param.setStringValue(value)\n}\n",
+        "Rule": "import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument\nimport com.centurylink.mdw.bpm.ParameterDocument.Parameter\nimport com.centurylink.mdw.bpm.ProcessExecutionPlanDocument.ProcessExecutionPlan\nimport com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance\nimport com.centurylink.mdw.model.workflow.WorkStatus\n\nexecutionPlan = ProcessExecutionPlanDocument.Factory.newInstance()\nProcessExecutionPlan exeplan = executionPlan.addNewProcessExecutionPlan()\n\nSubprocessInstance subprocinst = exeplan.addNewSubprocessInstance()\nsubprocinst.setLogicalProcessName(\"SubOne\")\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\naddParameter(subprocinst, \"inputVar\", \"\\$subOneInput\")\n\nsubprocinst = exeplan.addNewSubprocessInstance()\nsubprocinst.setLogicalProcessName(\"SubTwo\")\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\naddParameter(subprocinst, \"inputVar\", \"\\$subTwoInput\")\n\nvoid addParameter(SubprocessInstance subprocinst, String name, String value) {\n    Parameter param = subprocinst.addNewParameter()\n    param.setName(name)\n    param.setStringValue(value)\n}\n",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=195,y=205,w=100,h=60"
       },
@@ -80,9 +80,13 @@
   "variables": {
     "executionPlan": {
       "category": "LOCAL",
-      "type": "org.yaml.snakeyaml.Yaml"
+      "type": "org.apache.xmlbeans.XmlObject"
     },
     "subOneInput": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "subTwoInput": {
       "category": "INPUT",
       "type": "java.lang.String"
     }

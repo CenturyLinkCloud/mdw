@@ -1,4 +1,6 @@
-MilestonesMain.proc=1
-SubOne.proc=1
-SubTwo.proc=1
+Milestones.test=1
+Milestones.yaml=1
+MilestonesMain.proc=2
+SubOne.proc=2
+SubTwo.proc=2
 SubTwoSub.proc=1
