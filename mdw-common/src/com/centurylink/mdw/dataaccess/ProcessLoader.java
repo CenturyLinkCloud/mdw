@@ -15,9 +15,6 @@
  */
 package com.centurylink.mdw.dataaccess;
 
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.event.ExternalEvent;
 import com.centurylink.mdw.model.task.TaskCategory;
@@ -27,6 +24,8 @@ import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.timer.ProgressMonitor;
+
+import java.util.List;
 
 /**
  * common interface for all process loading
@@ -79,8 +78,5 @@ public interface ProcessLoader {
     throws DataAccessException;
 
     Asset getAssetForOwner(String ownerType, Long ownerId)
-    throws DataAccessException;
-
-    Map<String,String> getAttributes(String ownerType, Long ownerId)
     throws DataAccessException;
 }

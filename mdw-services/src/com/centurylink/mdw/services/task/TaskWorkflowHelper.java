@@ -1185,7 +1185,7 @@ public class TaskWorkflowHelper {
                 if (processVO == null)
                     processVO = ProcessCache.getProcess(processInstance.getProcessId());
                 if (processInstance.isEmbedded())
-                    processVO = processVO.getSubProcessVO(new Long(processInstance.getComment()));
+                    processVO = processVO.getSubProcess(new Long(processInstance.getComment()));
                 List<Transition> outgoingWorkTransVOs = processVO.getAllTransitions(activityInstance.getActivityId());
                 boolean foundNullResultCode = false;
                 for (Transition workTransVO : outgoingWorkTransVOs) {
@@ -1244,7 +1244,7 @@ public class TaskWorkflowHelper {
                 if (processVO == null)
                     processVO = ProcessCache.getProcess(processInstance.getProcessId());
                 if (processInstance.isEmbedded())
-                    processVO = processVO.getSubProcessVO(new Long(processInstance.getComment()));
+                    processVO = processVO.getSubProcess(new Long(processInstance.getComment()));
                 List<Transition> outgoingWorkTransVOs = processVO.getAllTransitions(activityInstance.getActivityId());
                 for (Transition workTransVO : outgoingWorkTransVOs) {
                     String resultCode = workTransVO.getCompletionCode();

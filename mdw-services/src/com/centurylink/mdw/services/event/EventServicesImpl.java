@@ -411,14 +411,17 @@ public class EventServicesImpl implements EventServices {
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             Process procdef = ProcessCache.getProcess(processName, 0);
-            if (procdef==null) return null;
-            Activity actdef = procdef.getActivityByLogicalId(activityLogicalId);
-            if (actdef==null) return null;
+            if (procdef == null)
+                return null;
+            Activity actdef = procdef.getActivity(activityLogicalId, false);
+            if (actdef == null)
+                return null;
             transaction = edao.startTransaction();
             List<ActivityInstance> actInstList = new ArrayList<ActivityInstance>();
             List<ProcessInstance> procInstList =
                 edao.getProcessInstancesByMasterRequestId(masterRequestId, procdef.getId());
-            if (procInstList.size()==0) return actInstList;
+            if (procInstList.size() == 0)
+                return actInstList;
             for (ProcessInstance pi : procInstList) {
                 List<ActivityInstance> actInsts = edao.getActivityInstances(actdef.getId(), pi.getId(), false, false);
                 for (ActivityInstance ai : actInsts) {

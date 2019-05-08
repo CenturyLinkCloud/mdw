@@ -422,7 +422,7 @@ public class ProcessEngineDriver {
 
             Integer actInstStatus = WorkStatus.STATUS_CANCELLED;
             Process procdef = getProcessDefinition(processInstance);
-            Activity activity = procdef.getActivityVO(ai.getActivityId());
+            Activity activity = procdef.getActivity(ai.getActivityId());
             String status = activity.getAttribute(WorkAttributeConstant.STATUS_AFTER_TIMEOUT);
             if (status!=null) {
                 for (int i=0; i<WorkStatus.allStatusNames.length; i++) {
@@ -1010,7 +1010,7 @@ public class ProcessEngineDriver {
         if (procdef == null)
             procdef = ProcessCache.getProcess(procinst.getProcessId());
         if (procinst.isEmbedded())
-            procdef = procdef.getSubProcessVO(new Long(procinst.getComment()));
+            procdef = procdef.getSubProcess(new Long(procinst.getComment()));
         return procdef;
     }
 

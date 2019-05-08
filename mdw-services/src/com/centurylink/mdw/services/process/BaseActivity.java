@@ -385,7 +385,7 @@ public abstract class BaseActivity implements GeneralActivity {
             if (procDef == null)
                 procDef = ProcessCache.getProcess(processInst.getProcessId());
             if (processInst.isEmbedded())
-                procDef = procDef.getSubProcessVO(new Long(processInst.getComment()));
+                procDef = procDef.getSubProcess(new Long(processInst.getComment()));
         }
         return procDef;
     }

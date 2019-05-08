@@ -138,10 +138,14 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
      */
     public boolean invokesSubprocess(Process subproc) {
         String procName = getAttribute(WorkAttributeConstant.PROCESS_NAME);
-        if (procName != null && (procName.equals(subproc.getName()) || procName.endsWith("/" + subproc.getName()))) {
-            String verSpec = getAttribute(WorkAttributeConstant.PROCESS_VERSION);
-            if (subproc.meetsVersionSpec(verSpec))
-                return true;
+        if (procName != null) {
+            if (procName.endsWith(".proc"))
+                procName = procName.substring(0, procName.length() - 5);
+            if (procName.equals(subproc.getQualifiedName())) {
+                String verSpec = getAttribute(WorkAttributeConstant.PROCESS_VERSION);
+                if (subproc.meetsVersionSpec(verSpec))
+                    return true;
+            }
         }
         else {
             String procMap = getAttribute(WorkAttributeConstant.PROCESS_MAP);
@@ -149,10 +153,14 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
                 List<String[]> procmap = Attribute.parseTable(procMap, ',', ';', 3);
                 for (int i = 0; i < procmap.size(); i++) {
                     String nameSpec = procmap.get(i)[1];
-                    if (nameSpec != null && (nameSpec.equals(subproc.getName()) || nameSpec.endsWith("/" + subproc.getName() + ".proc"))) {
-                        String verSpec = procmap.get(i)[2];
-                        if (subproc.meetsVersionSpec(verSpec))
-                            return true;
+                    if (nameSpec != null) {
+                        if (nameSpec.endsWith(".proc"))
+                            nameSpec = nameSpec.substring(0, nameSpec.length() - 5);
+                        if (nameSpec.equals(subproc.getQualifiedName())) {
+                            String verSpec = procmap.get(i)[2];
+                            if (subproc.meetsVersionSpec(verSpec))
+                                return true;
+                        }
                     }
                 }
             }
@@ -164,18 +172,14 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
         List<Process> invoked = new ArrayList<>();
         String procName = getAttribute(WorkAttributeConstant.PROCESS_NAME);
         if (procName != null) {
-            String verSpec = getAttribute(WorkAttributeConstant.PROCESS_VERSION);
-            if (verSpec != null) {
-                Process latestMatch = null;
-                for (Process process : processes) {
-                    if ((procName.equals(process.getName()) || procName.endsWith("/" + process.getName()))
-                            && (process.meetsVersionSpec(verSpec) && (latestMatch == null || latestMatch.getVersion() < process.getVersion()))) {
-                        latestMatch = process;
-                    }
+            Process latestMatch = null;
+            for (Process process : processes) {
+                if (invokesSubprocess(process) && (latestMatch == null || latestMatch.getVersion() < process.getVersion())) {
+                    latestMatch = process;
                 }
-                if (latestMatch != null && !invoked.contains(latestMatch))
-                    invoked.add(latestMatch);
             }
+            if (latestMatch != null && !invoked.contains(latestMatch))
+                invoked.add(latestMatch);
         }
         else {
             String procMap = getAttribute(WorkAttributeConstant.PROCESS_MAP);
@@ -184,18 +188,16 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
                 for (int i = 0; i < procmap.size(); i++) {
                     String nameSpec = procmap.get(i)[1];
                     if (nameSpec != null) {
-                        String verSpec = procmap.get(i)[2];
-                        if (verSpec != null) {
-                            Process latestMatch = null;
-                            for (Process process : processes) {
-                                if ((nameSpec.equals(process.getName()) || nameSpec.endsWith("/" + process.getName() + ".proc"))
-                                        && (process.meetsVersionSpec(verSpec) && (latestMatch == null || latestMatch.getVersion() < process.getVersion()))) {
-                                    latestMatch = process;
-                                }
+                        Process latestMatch = null;
+                        for (Process process : processes) {
+                            if (nameSpec.endsWith(".proc"))
+                                nameSpec = nameSpec.substring(0, nameSpec.length() - 5);
+                            if (nameSpec.equals(process.getQualifiedName()) && (latestMatch == null || latestMatch.getVersion() < process.getVersion())) {
+                                latestMatch = process;
                             }
-                            if (latestMatch != null && !invoked.contains(latestMatch))
-                                invoked.add(latestMatch);
                         }
+                        if (latestMatch != null && !invoked.contains(latestMatch))
+                            invoked.add(latestMatch);
                     }
                 }
             }

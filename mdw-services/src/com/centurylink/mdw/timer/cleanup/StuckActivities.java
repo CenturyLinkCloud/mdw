@@ -125,7 +125,7 @@ public class StuckActivities implements ScheduledJob {
                 procDef = ProcessCache.getProcess(act.getProcessId());
                 if (procDef == null)
                     act.setMessage("Auto-failed by StuckActivities job - No Retry due to missing Process definition");
-                else if (procDef.getActivityByLogicalId("A" + act.getActivityId()) == null)
+                else if (procDef.getActivity("A" + act.getActivityId(), false) == null)
                     act.setMessage("Auto-failed by StuckActivities job - No Retry due to missing Activity for Process definition");
                 else if (procDef.isService())
                     act.setMessage("Auto-failed by StuckActivities job - No Retry due to being Service Process");

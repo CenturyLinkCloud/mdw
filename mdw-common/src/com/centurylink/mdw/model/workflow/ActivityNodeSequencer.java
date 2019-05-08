@@ -15,14 +15,9 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.constant.WorkAttributeConstant;
+
+import java.util.*;
 
 /**
  * Assigns geographical sequence numbers to activities and subprocesses for a process.
@@ -76,7 +71,7 @@ public class ActivityNodeSequencer {
     private void setDownstreamNodeSequenceIds(Process process, Activity start) {
         List<Activity> downstreamNodes = new ArrayList<Activity>(); // create a copy to avoid side effects
         for (Activity activity : process.getDownstreamActivities(start))
-            downstreamNodes.add(process.getActivityById(activity.getLogicalId()));
+            downstreamNodes.add(process.getActivity(activity.getLogicalId()));
         Collections.sort(downstreamNodes, new Comparator<Activity>() {
             public int compare(Activity a1, Activity a2) {
                 DisplayInfo d1 = getDisplayInfo(a1.getLogicalId(), a1.getAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO));
