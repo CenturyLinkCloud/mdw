@@ -132,10 +132,6 @@ public class CamelRouteAdapter extends ObjectAdapterActivity {
 
     protected Map<String,String> getHandlerParameters() {
         return null;
-//        Map<String,String> params = new HashMap<String,String>();
-//        params.put("process", getProcessDefinition().getLabel().replaceAll(" ", ""));
-//        params.put("attributeId", getAttributeValue(WorkAttributeConstant.LOGICAL_ID));
-//        return params;
     }
 
     /**

@@ -767,7 +767,7 @@ public class TaskWorkflowHelper {
     private static void populateStrategyParams(ParameterizedStrategy strategy,
             TaskTemplate template, Long processInstanceId, Map<String, String> indexes) throws ServiceException {
         for (Attribute attr : template.getAttributes()) {
-            strategy.setParameter(attr.getAttributeName(), attr.getAttributeValue());
+            strategy.setParameter(attr.getName(), attr.getValue());
         }
         ProcessRuntimeContext context = ServiceLocator.getWorkflowServices().getContext(processInstanceId);
         for (String name : context.getVariables().keySet()) {

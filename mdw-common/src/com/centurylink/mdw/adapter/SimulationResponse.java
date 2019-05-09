@@ -26,7 +26,7 @@ public class SimulationResponse {
     private Attribute attr;
     
     public SimulationResponse(Attribute attr) {
-        this(attr.getAttributeValue());
+        this(attr.getValue());
         this.attr = attr;
     }
 
@@ -59,7 +59,7 @@ public class SimulationResponse {
     }
         
     private void updateAttr() {
-        attr.setAttributeValue(
+        attr.setValue(
                 (returnCode!=null?returnCode:"")
                 +','
                 +(chance!=null?Integer.toString(chance):"0")

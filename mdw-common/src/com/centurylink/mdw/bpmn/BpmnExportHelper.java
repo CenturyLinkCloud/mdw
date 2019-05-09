@@ -635,10 +635,10 @@ public class BpmnExportHelper {
                 Attribute attribute = (Attribute) attr;
                 if (elements.getLocalName() == null
                         || "mdw:ProcessExtensions".equals(elements.getNodeName())
-                        || (!"WORK_DISPLAY_INFO".equals(attribute.getAttributeName())
-                                && !"LOGICAL_ID".equals(attribute.getAttributeName())))
-                    elements.appendChild(getNode(doc, MDW_ATTRIBUTE, attribute.getAttributeName(),
-                            attribute.getAttributeValue()));
+                        || (!"WORK_DISPLAY_INFO".equals(attribute.getName())
+                                && !"LOGICAL_ID".equals(attribute.getName())))
+                    elements.appendChild(getNode(doc, MDW_ATTRIBUTE, attribute.getName(),
+                            attribute.getValue()));
             }
             else if (attr instanceof Variable) {
                 Variable var = (Variable) attr;

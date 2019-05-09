@@ -92,10 +92,10 @@ public class Package implements Serializable, Jsonable {
         List<Attribute> groupAttributes = new ArrayList<>();
         for (Attribute attribute : attributes) {
             if (attributeGroup == null) {
-                if (attribute.getAttributeGroup() == null)
+                if (attribute.getGroup() == null)
                     groupAttributes.add(attribute);
             }
-            else if (attributeGroup.equals(attribute.getAttributeGroup())) {
+            else if (attributeGroup.equals(attribute.getGroup())) {
                 groupAttributes.add(attribute);
             }
         }
@@ -112,8 +112,8 @@ public class Package implements Serializable, Jsonable {
     public String getAttribute(String name) {
         if (attributes != null) {
             for (Attribute attr : attributes) {
-                if (attr.getAttributeName().equals(name))
-                    return attr.getAttributeValue();
+                if (attr.getName().equals(name))
+                    return attr.getValue();
             }
         }
         return null;

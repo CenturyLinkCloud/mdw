@@ -18,6 +18,7 @@ package com.centurylink.mdw.model.workflow;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.monitor.MonitorAttributes;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -151,13 +152,13 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
             String procMap = getAttribute(WorkAttributeConstant.PROCESS_MAP);
             if (procMap != null) {
                 List<String[]> procmap = Attribute.parseTable(procMap, ',', ';', 3);
-                for (int i = 0; i < procmap.size(); i++) {
-                    String nameSpec = procmap.get(i)[1];
+                for (String[] strings : procmap) {
+                    String nameSpec = strings[1];
                     if (nameSpec != null) {
                         if (nameSpec.endsWith(".proc"))
                             nameSpec = nameSpec.substring(0, nameSpec.length() - 5);
                         if (nameSpec.equals(subproc.getQualifiedName())) {
-                            String verSpec = procmap.get(i)[2];
+                            String verSpec = strings[2];
                             if (subproc.meetsVersionSpec(verSpec))
                                 return true;
                         }
@@ -174,7 +175,8 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
         if (procName != null) {
             Process latestMatch = null;
             for (Process process : processes) {
-                if (invokesSubprocess(process) && (latestMatch == null || latestMatch.getVersion() < process.getVersion())) {
+                if (invokesSubprocess(process) &&
+                        (latestMatch == null || latestMatch.getVersion() < process.getVersion())) {
                     latestMatch = process;
                 }
             }
@@ -192,7 +194,8 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
                         for (Process process : processes) {
                             if (nameSpec.endsWith(".proc"))
                                 nameSpec = nameSpec.substring(0, nameSpec.length() - 5);
-                            if (nameSpec.equals(process.getQualifiedName()) && (latestMatch == null || latestMatch.getVersion() < process.getVersion())) {
+                            if (nameSpec.equals(process.getQualifiedName()) &&
+                                    (latestMatch == null || latestMatch.getVersion() < process.getVersion())) {
                                 latestMatch = process;
                             }
                         }
@@ -205,13 +208,17 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
         return invoked;
     }
 
-    public boolean isMilestone() {
+    private static final String MONITOR_CLASS = "com.centurylink.mdw.milestones.ActivityMilestone";
+
+    public Milestone getMilestone() {
         String monitorsAttr = getAttribute(WorkAttributeConstant.MONITORS);
-        if (monitorsAttr == null) {
-            return false;
+        if (monitorsAttr != null) {
+            MonitorAttributes monitorAttributes = new MonitorAttributes(monitorsAttr);
+            if (monitorAttributes.isEnabled(MONITOR_CLASS)) {
+                Milestone milestone = new Milestone(this);
+                milestone.setText(monitorAttributes.getOptions(MONITOR_CLASS));
+            }
         }
-        else {
-            return false; // TODO
-        }
+        return null;
     }
 }

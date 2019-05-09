@@ -103,7 +103,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         if (attributes == null) {
             attributes = new HashMap<>();
             for (Attribute attribute : process.getAttributes()) {
-                attributes.put(attribute.getAttributeName(), attribute.getAttributeValue());
+                attributes.put(attribute.getName(), attribute.getValue());
             }
         }
         return attributes;

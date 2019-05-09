@@ -103,11 +103,11 @@ public class PdfExportHelper extends ExportHelper {
         Section subsection = section.addSection(sTitle, parentLevel == 0 ? 0 : (parentLevel + 1));
         com.itextpdf.text.List list = new com.itextpdf.text.List(false, false, 20.0f);
         for (Attribute attr : attrs) {
-            if (excludeAttribute(attr.getAttributeName(), attr.getAttributeValue()))
+            if (excludeAttribute(attr.getName(), attr.getValue()))
                 continue;
             Phrase phrase = new com.itextpdf.text.Phrase();
-            phrase.add(new Chunk(attr.getAttributeName(), fixedWidthFont));
-            String v = attr.getAttributeValue();
+            phrase.add(new Chunk(attr.getName(), fixedWidthFont));
+            String v = attr.getValue();
             if (v == null)
                 v = "";
             phrase.add(new Chunk(": " + v, normalFont));

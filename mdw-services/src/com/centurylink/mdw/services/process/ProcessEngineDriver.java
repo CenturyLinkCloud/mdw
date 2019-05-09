@@ -195,7 +195,7 @@ public class ProcessEngineDriver {
                     Map<String,String> params = new HashMap<>();
                     Variable exVar = packageHandlerProc.getVariable("exception");
                     if (exVar == null || !exVar.isInput()) {
-                        logger.warn("Handler proc " + packageHandlerProc.getFullLabel() + " does not declare input var: 'exception'");
+                        logger.warn("Handler proc " + packageHandlerProc.getQualifiedLabel() + " does not declare input var: 'exception'");
                     }
                     else {
                         params.put("exception", new DocumentReference(messageDoc.getSecondaryOwnerId()).toString());

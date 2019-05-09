@@ -538,16 +538,16 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         }
     }
 
-    public LinkedProcessInstance getProcessInstanceCallHierarchy(Long processInstanceId) throws DataAccessException {
+    public Linked<ProcessInstance> getProcessInstanceCallHierarchy(Long processInstanceId) throws DataAccessException {
         try {
             db.openConnection();
             ProcessInstance startingInstance = getProcessInstanceBase0(processInstanceId);
-            LinkedProcessInstance startingLinked = new LinkedProcessInstance(startingInstance);
-            LinkedProcessInstance top = startingLinked;
+            Linked<ProcessInstance> startingLinked = new Linked<>(startingInstance);
+            Linked<ProcessInstance> top = startingLinked;
             // callers
-            while (OwnerType.PROCESS_INSTANCE.equals(top.getProcessInstance().getOwner())) {
-                ProcessInstance caller = getProcessInstanceBase0(top.getProcessInstance().getOwnerId());
-                LinkedProcessInstance callerLinked = new LinkedProcessInstance(caller);
+            while (OwnerType.PROCESS_INSTANCE.equals(top.get().getOwner())) {
+                ProcessInstance caller = getProcessInstanceBase0(top.get().getOwnerId());
+                Linked<ProcessInstance> callerLinked = new Linked<>(caller);
                 top.setParent(callerLinked);
                 callerLinked.getChildren().add(top);
                 top = callerLinked;
@@ -562,12 +562,12 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         }
     }
 
-    private void addCalledHierarchy(LinkedProcessInstance caller) throws SQLException, DataAccessException {
-        ProcessInstance callerProcInst = caller.getProcessInstance();
+    private void addCalledHierarchy(Linked<ProcessInstance> caller) throws SQLException, DataAccessException {
+        ProcessInstance callerProcInst = caller.get();
         List<ProcessInstance> calledInsts = getProcessInstancesForOwner(OwnerType.PROCESS_INSTANCE, callerProcInst.getId());
         if (calledInsts != null) {
             for (ProcessInstance calledInst : calledInsts) {
-                LinkedProcessInstance child = new LinkedProcessInstance(calledInst);
+                Linked<ProcessInstance> child = new Linked<>(calledInst);
                 child.setParent(caller);
                 caller.getChildren().add(child);
                 addCalledHierarchy(child);
@@ -605,8 +605,8 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                 // otherwise master request id
                 sqlBuff.append(" and pi.master_request_id like '" + query.getFind() + "%'\n");
             }
-            sqlBuff.append(" and pi.STATUS_CD NOT IN (" +  WorkStatus.STATUS_COMPLETED.intValue() + "," + WorkStatus.STATUS_CANCELLED.intValue() + "," + WorkStatus.STATUS_PURGE.intValue() + ")");
-            sqlBuff.append(" and ai.STATUS_CD IN (" +  WorkStatus.STATUS_FAILED.intValue() + "," + WorkStatus.STATUS_WAITING.intValue() + "," + WorkStatus.STATUS_IN_PROGRESS.intValue() + "," + WorkStatus.STATUS_HOLD.intValue() + ")");
+            sqlBuff.append(" and pi.STATUS_CD NOT IN (" +  WorkStatus.STATUS_COMPLETED + "," + WorkStatus.STATUS_CANCELLED + "," + WorkStatus.STATUS_PURGE + ")");
+            sqlBuff.append(" and ai.STATUS_CD IN (" +  WorkStatus.STATUS_FAILED + "," + WorkStatus.STATUS_WAITING + "," + WorkStatus.STATUS_IN_PROGRESS + "," + WorkStatus.STATUS_HOLD + ")");
         } else {
             // actInstId
             String actInstId = query.getFilter("instanceId");

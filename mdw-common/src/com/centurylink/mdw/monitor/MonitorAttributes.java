@@ -62,6 +62,15 @@ public class MonitorAttributes {
         return null;
     }
 
+    public String getOptions(String className) {
+        JSONArray row = getRow(className);
+        if (row != null) {
+            if (row.length() >= 3)
+                return row.getString(3);
+        }
+        return null;
+    }
+
     public static JSONArray getRowDefault(AssetInfo implAsset, Class<? extends com.centurylink.mdw.monitor.Monitor> monitorClass) {
         Monitor monitorAnnotation = monitorClass.getAnnotation(Monitor.class);
         if (monitorAnnotation == null)

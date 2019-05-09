@@ -26,11 +26,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.*;
 
 @ApiModel(value="Process", description="MDW workflow process instance")
-public class ProcessInstance implements Serializable, Jsonable {
+public class ProcessInstance implements Jsonable, Linkable {
 
     /**
      * Creates a skeleton process instance VO (without an ID).
@@ -114,9 +113,9 @@ public class ProcessInstance implements Serializable, Jsonable {
         }
         if (jsonObj.has("subprocesses")) {
             JSONArray subprocsJson = jsonObj.getJSONArray("subprocesses");
-            subprocessInstances = new ArrayList<>();
+            subprocesses = new ArrayList<>();
             for (int i = 0; i < subprocsJson.length(); i++)
-                subprocessInstances.add(new ProcessInstance(subprocsJson.getJSONObject(i)));
+                subprocesses.add(new ProcessInstance(subprocsJson.getJSONObject(i)));
         }
         if (jsonObj.has("processName"))
             processName = jsonObj.getString("processName");
@@ -250,8 +249,6 @@ public class ProcessInstance implements Serializable, Jsonable {
         return processInstanceDefId;
     }
 
-    // for run time information display only
-    @ApiModelProperty(hidden=true)
     private List<ActivityInstance> activities;
     public List<ActivityInstance> getActivities() { return activities; }
     public void setActivities(List<ActivityInstance> activities) { this.activities = activities; }
@@ -264,9 +261,19 @@ public class ProcessInstance implements Serializable, Jsonable {
         }
         return null;
     }
+    public List<ActivityInstance> getActivities(String logicalId) {
+        List<ActivityInstance> instances = new ArrayList<>();
+        if (activities != null) {
+            for (ActivityInstance instance : activities) {
+                if (("A" + instance.getActivityId()).equals(logicalId))
+                    instances.add(instance);
+            }
+        }
+        // latest first
+        instances.sort(Comparator.comparingLong(ActivityInstance::getId).reversed());
+        return instances;
+    }
 
-    // for run time information display only
-    @ApiModelProperty(hidden=true)
     private List<TransitionInstance> transitions;
     public List<TransitionInstance> getTransitions() { return transitions; }
     public void setTransitions(List<TransitionInstance> t) { this.transitions = t; }
@@ -375,12 +382,33 @@ public class ProcessInstance implements Serializable, Jsonable {
             }
             json.put("variables", variablesJson);
         }
-        if (subprocessInstances != null) {
+        if (subprocesses != null) {
             JSONArray subprocsJson = new JSONArray();
-            for (ProcessInstance subproc : subprocessInstances) {
+            for (ProcessInstance subproc : subprocesses) {
                 subprocsJson.put(subproc.getJson());
             }
             json.put("subprocesses", subprocsJson);
+        }
+        return json;
+    }
+
+    @Override
+    public JSONObject getSummaryJson() throws JSONException {
+        JSONObject json = create();
+        json.put("id", this.id);
+        if (processName != null)
+            json.put("processName", processName);
+        if (processVersion != null)
+            json.put("processVersion", processVersion);
+        if (packageName != null)
+            json.put("packageName", packageName);
+        if (status != null)
+            json.put("status", status);
+        if (startDate != null)
+            json.put("startDate", startDate);
+        if (endDate != null) {
+            json.put("endDate", endDate);
+            json.put("completionCode", completionCode == null ? "null" : completionCode);
         }
         return json;
     }
@@ -389,8 +417,14 @@ public class ProcessInstance implements Serializable, Jsonable {
         return "ProcessInstance";
     }
 
-    // embedded subprocesses only for new REST API
-    private List<ProcessInstance> subprocessInstances;
-    public List<ProcessInstance> getSubprocessInstances() { return subprocessInstances; }
-    public void setSubprocessInstances(List<ProcessInstance> subinsts) { this.subprocessInstances = subinsts; }
+    private List<ProcessInstance> subprocesses;
+    public List<ProcessInstance> getSubprocesses() { return subprocesses; }
+    public void setSubprocesses(List<ProcessInstance> subinsts) { this.subprocesses = subinsts; }
+
+    @Override
+    public String getQualifiedLabel() {
+        String label = getPackageName() == null ? getProcessName() : getPackageName() + "/" + getProcessName();
+        label += " " + getId();
+        return label;
+    }
 }

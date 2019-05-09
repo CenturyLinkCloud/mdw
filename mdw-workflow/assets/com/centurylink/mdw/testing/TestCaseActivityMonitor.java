@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.centurylink.mdw.annotations.Monitor;
-import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.ActivityStubRequest;
@@ -83,7 +82,7 @@ public class TestCaseActivityMonitor implements ActivityMonitor {
                             Process process = runtimeContext.getProcess();
                             Variable variable = process.getVariable(name);
                             if (variable == null)
-                                throw new IllegalStateException("Variable: " + name + " not defined for process: " + process.getFullLabel());
+                                throw new IllegalStateException("Variable: " + name + " not defined for process: " + process.getQualifiedLabel());
                             boolean isDoc = VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), variable.getType());
                             Object value;
                             if (isDoc)

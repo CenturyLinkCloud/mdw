@@ -7,11 +7,8 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.model.workflow.Activity;
-import com.centurylink.mdw.model.workflow.LinkedProcessInstance;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.ProcessList;
-import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 import com.centurylink.mdw.services.ServiceLocator;
 
 /**
@@ -44,11 +41,11 @@ public class MicroserviceAccess {
         return processList;
     }
 
-    public ServiceSummary findServiceSummary(LinkedProcessInstance parentInstance) throws ServiceException {
-        ProcessRuntimeContext runtimeContext = ServiceLocator.getWorkflowServices().getContext(parentInstance.getProcessInstance().getId());
+    public ServiceSummary findServiceSummary(Linked<ProcessInstance> parentInstance) throws ServiceException {
+        ProcessRuntimeContext runtimeContext = ServiceLocator.getWorkflowServices().getContext(parentInstance.get().getId());
         ServiceSummary serviceSummary = findServiceSummary(runtimeContext);
         if (serviceSummary == null && !parentInstance.getChildren().isEmpty()) {
-            for (LinkedProcessInstance childInstance : parentInstance.getChildren()) {
+            for (Linked<ProcessInstance> childInstance : parentInstance.getChildren()) {
                 serviceSummary = findServiceSummary(childInstance);
                 if (serviceSummary != null) {
                     if (serviceSummary.findParent(runtimeContext.getProcessInstanceId()) != null)

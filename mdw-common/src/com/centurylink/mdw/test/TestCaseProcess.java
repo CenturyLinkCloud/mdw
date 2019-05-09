@@ -53,7 +53,7 @@ public class TestCaseProcess extends GroovyObjectSupport implements Verifiable {
     }
 
     public String getLabel() {
-        return process.getFullLabel() + (activityLogicalId == null ? "" : ":" + activityLogicalId);
+        return process.getQualifiedLabel() + (activityLogicalId == null ? "" : ":" + activityLogicalId);
     }
 
     private boolean success;

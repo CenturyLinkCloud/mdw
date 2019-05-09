@@ -155,7 +155,7 @@ public class DesignServicesImpl implements DesignServices {
     }
 
     @Override
-    public List<LinkedProcess> getProcessHierarchy(Long processId) throws ServiceException {
+    public List<Linked<Process>> getProcessHierarchy(Long processId) throws ServiceException {
         Process process = ProcessCache.getProcess(processId);
         if (process == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + processId);
