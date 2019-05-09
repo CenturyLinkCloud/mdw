@@ -64,7 +64,7 @@ public abstract class ManualTaskActivity extends AbstractWait implements TaskAct
                 if (exception instanceof ActivityException) {
                     ActivityRuntimeContext rc = ((ActivityException)exception).getRuntimeContext();
                     if (rc != null && rc.getProcess() != null) {
-                        comments = rc.getProcess().getFullLabel() + "\n" + comments;
+                        comments = rc.getProcess().getQualifiedLabel() + "\n" + comments;
                     }
                 }
             }

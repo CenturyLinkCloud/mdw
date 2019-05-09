@@ -9,6 +9,10 @@ import java.time.Instant;
  */
 public class Milestone implements Jsonable {
 
+    public Milestone(Activity activity) {
+        this.activity = activity;
+    }
+
     private Activity activity;
     public Activity getActivity() { return activity; }
     public void setActivity(Activity activity) { this.activity = activity; }

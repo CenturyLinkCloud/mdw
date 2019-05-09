@@ -142,8 +142,8 @@ public class HtmlExportHelper {
             sb.append("<h3>Activity Attributes</h3>\n");
             sb.append("<ul>\n");
             for (Attribute attr : sortedAttrs) {
-                String name = attr.getAttributeName();
-                String val = attr.getAttributeValue();
+                String name = attr.getName();
+                String val = attr.getValue();
                 if (!excludeAttribute(name, val)) {
                     sb.append("<li>");
                     if (tabularAttributes.containsKey(name)) {

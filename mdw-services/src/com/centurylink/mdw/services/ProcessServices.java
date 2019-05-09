@@ -18,7 +18,6 @@ package com.centurylink.mdw.services;
 import java.util.Map;
 
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.model.workflow.LinkedProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessList;
 

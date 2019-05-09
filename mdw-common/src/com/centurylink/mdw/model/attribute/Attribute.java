@@ -26,10 +26,6 @@ import java.util.*;
 
 public class Attribute implements Comparable<Attribute> {
 
-    private String name;
-    private String value;
-    private String group;
-
     public Attribute(){
     }
 
@@ -38,35 +34,32 @@ public class Attribute implements Comparable<Attribute> {
         this.value = value;
     }
 
-    public String getAttributeName() {
+    private String name;
+    public String getName() {
         return name;
     }
 
-    public void setAttributeName(String name) {
-        this.name = name;
-    }
-
-    public String getAttributeValue() {
+    private String value;
+    public String getValue() {
         return value;
     }
-
-    public void setAttributeValue(String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
-    public String getAttributeGroup() {
+    private String group;
+    public String getGroup() {
         return group;
     }
-
-    public void setAttributeGroup(String group) {
+    public void setGroup(String group) {
         this.group = group;
     }
 
     public static String findAttribute(List<Attribute> attrs, String name) {
         if (attrs==null) return null;
         for (Attribute attr : attrs) {
-            if (name.equals(attr.getAttributeName()))
-                return attr.getAttributeValue();
+            if (name.equals(attr.getName()))
+                return attr.getValue();
         }
         return null;
     }
@@ -81,9 +74,9 @@ public class Attribute implements Comparable<Attribute> {
      */
     public static void setAttribute(List<Attribute> attrs, String name, String value) {
         for (Attribute attr : attrs) {
-            if (name.equals(attr.getAttributeName())) {
+            if (name.equals(attr.getName())) {
                 if (value != null)
-                    attr.setAttributeValue(value);
+                    attr.setValue(value);
                 else
                     attrs.remove(attr);  // TODO this will throw a concurrent modification exception
                 return;
@@ -101,19 +94,19 @@ public class Attribute implements Comparable<Attribute> {
             return false;
         Attribute other = (Attribute) o;
 
-        if (getAttributeName() == null)
-            return other.getAttributeName() == null;
+        if (getName() == null)
+            return other.getName() == null;
         else
-            return getAttributeName().equals(other.getAttributeName());
+            return getName().equals(other.getName());
     }
 
     public int compareTo(Attribute other) {
-        if (other == null || other.getAttributeName() == null)
+        if (other == null || other.getName() == null)
             return 1;
-        if (this.getAttributeName() == null)
+        if (this.getName() == null)
             return -1;
 
-        return this.getAttributeName().compareTo(other.getAttributeName());
+        return this.getName().compareTo(other.getName());
     }
 
     public static List<Attribute> getAttributes(JSONObject attributesJson) throws JSONException {
@@ -123,7 +116,7 @@ public class Attribute implements Comparable<Attribute> {
     public static List<Attribute> getAttributes(String group, JSONObject attributesJson) throws JSONException {
         if (attributesJson == null)
             return null;
-        List<Attribute> attributes = new ArrayList<Attribute>();
+        List<Attribute> attributes = new ArrayList<>();
         if (group == null) {
             Iterator<?> keys = attributesJson.keys();
             while (keys.hasNext()) {
@@ -135,7 +128,7 @@ public class Attribute implements Comparable<Attribute> {
                     while (groupKeys.hasNext()) {
                         String groupKey = groupKeys.next().toString();
                         Attribute attr = new Attribute(groupKey, groupJson.getString(groupKey));
-                        attr.setAttributeGroup(key);
+                        attr.setGroup(key);
                         attributes.add(attr);
                     }
                 }
@@ -151,7 +144,7 @@ public class Attribute implements Comparable<Attribute> {
             while (keys.hasNext()) {
                 String key = keys.next().toString();
                 Attribute attr = new Attribute(key, groupJson.getString(key));
-                attr.setAttributeGroup(group);
+                attr.setGroup(group);
                 attributes.add(attr);
             }
         }
@@ -168,41 +161,41 @@ public class Attribute implements Comparable<Attribute> {
         JSONObject attrsJson = new JsonObject();
         boolean hasSla = false;
         if (grouped) {
-            Map<String,List<Attribute>> byGroup = new HashMap<String,List<Attribute>>();
+            Map<String,List<Attribute>> byGroup = new HashMap<>();
             for (Attribute attr : attributes) {
-                List<Attribute> groupAttrs = byGroup.get(attr.getAttributeGroup());
+                List<Attribute> groupAttrs = byGroup.get(attr.getGroup());
                 if (groupAttrs == null) {
-                    groupAttrs = new ArrayList<Attribute>();
-                    byGroup.put(attr.getAttributeGroup(), groupAttrs);
+                    groupAttrs = new ArrayList<>();
+                    byGroup.put(attr.getGroup(), groupAttrs);
                 }
                 groupAttrs.add(attr);
             }
             for (String group : byGroup.keySet()) {
                 if (group == null) {
                     for (Attribute ungroupedAttr : byGroup.get(group))
-                        attrsJson.put(ungroupedAttr.getAttributeName(), ungroupedAttr.getAttributeValue());
+                        attrsJson.put(ungroupedAttr.getName(), ungroupedAttr.getValue());
                 }
                 else {
                     JSONObject groupJson = new JsonObject();
                     attrsJson.put(group, groupJson);
                     for (Attribute groupedAttr : byGroup.get(group))
-                        groupJson.put(groupedAttr.getAttributeName(), groupedAttr.getAttributeValue());
+                        groupJson.put(groupedAttr.getName(), groupedAttr.getValue());
                 }
             }
         }
         else {
             for (Attribute attr : attributes) {
-                if (WorkAttributeConstant.SLA.equals(attr.getAttributeName())) {
+                if (WorkAttributeConstant.SLA.equals(attr.getName())) {
                     // special handling to avoid adding zero SLAs
-                    if (attr.getAttributeValue() != null && !attr.getAttributeValue().equals("0")) {
+                    if (attr.getValue() != null && !attr.getValue().equals("0")) {
                         hasSla = true;
-                        attrsJson.put(attr.getAttributeName(), attr.getAttributeValue());
+                        attrsJson.put(attr.getName(), attr.getValue());
                     }
                 }
                 else {
                     // don't add empty attributes or zero slas or logical ids (which are stored as "id" field)
-                    if (!WorkAttributeConstant.LOGICAL_ID.equals(attr.getAttributeName()) && attr.getAttributeValue() != null)
-                        attrsJson.put(attr.getAttributeName(), attr.getAttributeValue());
+                    if (!WorkAttributeConstant.LOGICAL_ID.equals(attr.getName()) && attr.getValue() != null)
+                        attrsJson.put(attr.getName(), attr.getValue());
                 }
             }
             if (!hasSla && attrsJson.has(WorkAttributeConstant.SLA_UNIT))
@@ -217,8 +210,7 @@ public class Attribute implements Comparable<Attribute> {
             JSONArray jsonArr = new JSONArray(value);
             for (int i = 0; i < jsonArr.length(); i++)
                 list.add(jsonArr.getString(i));
-        }
-        else {
+        } else {
             StringTokenizer st = new StringTokenizer(value, "#");
             while (st.hasMoreTokens())
                 list.add(st.nextToken());
@@ -226,47 +218,46 @@ public class Attribute implements Comparable<Attribute> {
         return list;
     }
 
-    public static Map<String,String> parseMap(String map) {
-        HashMap<String,String> hash = new LinkedHashMap<>();
+    public static Map<String, String> parseMap(String map) {
+        HashMap<String, String> hash = new LinkedHashMap<>();
         if (map != null) {
             if (map.startsWith("{")) {
                 return JsonUtil.getMap(new JsonObject(map));
-            }
-            else {
+            } else {
                 int name_start = 0;
                 int n = map.length();
                 int m;
-                while (name_start<n) {
+                while (name_start < n) {
                     m = name_start;
                     char ch = map.charAt(m);
-                    while (ch!='=' && ch!=';' && m<n-1) {
+                    while (ch != '=' && ch != ';' && m < n - 1) {
                         m++;
                         ch = map.charAt(m);
                     }
-                    if (ch=='=') {
-                        int value_start = m+1;
+                    if (ch == '=') {
+                        int value_start = m + 1;
                         boolean escaped = false;
-                        for (m=value_start; m<n; m++) {
+                        for (m = value_start; m < n; m++) {
                             if (escaped) escaped = false;
                             else {
                                 ch = map.charAt(m);
-                                if (ch=='\\') escaped = true;
-                                else if (ch==';') break;
+                                if (ch == '\\') escaped = true;
+                                else if (ch == ';') break;
                             }
                         }
-                        hash.put(map.substring(name_start,value_start-1).trim(),
+                        hash.put(map.substring(name_start, value_start - 1).trim(),
                                 map.substring(value_start, m).trim());
-                        name_start = m+1;
-                    } else if (ch==';') {
-                        if (m>name_start) {
+                        name_start = m + 1;
+                    } else if (ch == ';') {
+                        if (m > name_start) {
                             hash.put(map.substring(name_start, m).trim(), null);
                         }
-                        name_start = m+1;
+                        name_start = m + 1;
                     } else {    // m == n-1
-                        if (m>name_start) {
+                        if (m > name_start) {
                             hash.put(map.substring(name_start, m).trim(), null);
                         }
-                        name_start = m+1;
+                        name_start = m + 1;
                     }
                 }
             }
@@ -293,44 +284,42 @@ public class Attribute implements Comparable<Attribute> {
                     rows.add(row);
                 }
                 return rows;
-            }
-            else {
+            } else {
                 int row_start = 0;
                 int field_start;
                 int n = string.length();
                 String[] row;
                 int m, j;
                 StringBuffer sb;
-                while (row_start<n) {
+                while (row_start < n) {
                     row = new String[columnCount];
                     table.add(row);
                     j = 0;
                     field_start = row_start;
-                    char ch=field_delimiter;
-                    while (ch==field_delimiter) {
+                    char ch = field_delimiter;
+                    while (ch == field_delimiter) {
                         sb = new StringBuffer();
                         boolean escaped = false;
-                        for (m=field_start; m<n; m++) {
+                        for (m = field_start; m < n; m++) {
                             ch = string.charAt(m);
-                            if (ch=='\\' && !escaped) {
+                            if (ch == '\\' && !escaped) {
                                 escaped = true;
-                            }
-                            else {
-                                if (!escaped && (ch==field_delimiter || ch==row_delimiter)) {
+                            } else {
+                                if (!escaped && (ch == field_delimiter || ch == row_delimiter)) {
                                     break;
-                                }
-                                else {
+                                } else {
                                     sb.append(ch);
                                     escaped = false;
                                 }
                             }
                         }
-                        if (j<columnCount) row[j] = sb.toString();
-                        if (m>=n || ch==row_delimiter) {
-                            row_start = m+1;
+                        if (j < columnCount)
+                            row[j] = sb.toString();
+                        if (m >= n || ch == row_delimiter) {
+                            row_start = m + 1;
                             break;
                         } else {  // ch==field_delimiter
-                            field_start = m+1;
+                            field_start = m + 1;
                             j++;
                         }
                     }

@@ -115,8 +115,8 @@ public class TaskServicesImpl implements TaskServices {
                 processInstanceIds.add(String.valueOf(processInstanceId));
                 // implies embedded subprocess instances also
                 ProcessInstance processInstance = ServiceLocator.getWorkflowServices().getProcess(processInstanceId, true);
-                if (processInstance.getSubprocessInstances() != null) {
-                    for (ProcessInstance subproc : processInstance.getSubprocessInstances()) {
+                if (processInstance.getSubprocesses() != null) {
+                    for (ProcessInstance subproc : processInstance.getSubprocesses()) {
                         processInstanceIds.add(String.valueOf(subproc.getId()));
                     }
                 }
@@ -165,8 +165,8 @@ public class TaskServicesImpl implements TaskServices {
             for (Long activityInstanceId : activityInstanceIds) {
                 ProcessInstance procInstTemp = processInstance;
                 ActivityInstance activityInstance = processInstance.getActivity(activityInstanceId);
-                if (activityInstance == null && processInstance.getSubprocessInstances() != null) {
-                    for (ProcessInstance subproc : processInstance.getSubprocessInstances()) {
+                if (activityInstance == null && processInstance.getSubprocesses() != null) {
+                    for (ProcessInstance subproc : processInstance.getSubprocesses()) {
                         activityInstance = subproc.getActivity(activityInstanceId);
                         if (activityInstance != null) {
                             procInstTemp = subproc;

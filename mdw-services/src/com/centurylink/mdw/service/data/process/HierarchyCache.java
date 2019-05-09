@@ -3,8 +3,9 @@ package com.centurylink.mdw.service.data.process;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.workflow.LinkedProcess;
+import com.centurylink.mdw.model.workflow.Linked;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.model.workflow.Process;
 
 import java.util.List;
 import java.util.Map;
@@ -12,11 +13,11 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class HierarchyCache implements CacheService {
 
-    private static volatile Map<Long,List<LinkedProcess>> hierarchies = new ConcurrentHashMap<>();
+    private static volatile Map<Long,List<Linked<Process>>> hierarchies = new ConcurrentHashMap<>();
 
-    public static List<LinkedProcess> getHierarchy(Long processId) {
-        List<LinkedProcess> hierarchy;
-        Map<Long,List<LinkedProcess>> hierarchyMap = hierarchies;
+    public static List<Linked<Process>> getHierarchy(Long processId) {
+        List<Linked<Process>> hierarchy;
+        Map<Long,List<Linked<Process>>> hierarchyMap = hierarchies;
         if (hierarchyMap.containsKey(processId)){
             hierarchy = hierarchyMap.get(processId);
         } else {
@@ -35,7 +36,7 @@ public class HierarchyCache implements CacheService {
         return hierarchy;
     }
 
-    private static List<LinkedProcess> loadHierarchy(Long processId) {
+    private static List<Linked<Process>> loadHierarchy(Long processId) {
         try {
             return ServiceLocator.getDesignServices().getProcessHierarchy(processId);
         }

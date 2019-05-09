@@ -206,7 +206,7 @@ public interface WorkflowServices {
      * Returns the top-level linked process in the call chain for the specified instance.
      * Downstream calls include all routes, whereas upstream calls include only the specific instance stack.
      */
-    LinkedProcessInstance getCallHierearchy(Long processInstanceId) throws ServiceException;
+    Linked<ProcessInstance> getCallHierearchy(Long processInstanceId) throws ServiceException;
 
     MilestoneList getMilestones(Query query) throws ServiceException;
 

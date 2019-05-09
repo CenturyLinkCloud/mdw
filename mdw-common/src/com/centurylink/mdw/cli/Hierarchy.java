@@ -2,7 +2,7 @@ package com.centurylink.mdw.cli;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.centurylink.mdw.model.workflow.LinkedProcess;
+import com.centurylink.mdw.model.workflow.Linked;
 import com.centurylink.mdw.model.workflow.Process;
 import org.json.JSONObject;
 
@@ -31,8 +31,8 @@ public class Hierarchy extends Setup {
     public int getMaxDepth() { return maxDepth; }
     public void setMaxDepth(int maxDepth) { this.maxDepth = maxDepth; }
 
-    private List<LinkedProcess> topLevelCallers = new ArrayList<>();
-    public List<LinkedProcess> getTopLevelCallers() { return topLevelCallers; }
+    private List<Linked<Process>> topLevelCallers = new ArrayList<>();
+    public List<Linked<Process>> getTopLevelCallers() { return topLevelCallers; }
 
     private List<Process> processes;
     private Process start;
@@ -70,7 +70,7 @@ public class Hierarchy extends Setup {
         addTopLevelCallers(start);
 
         for (int i = 0; i < topLevelCallers.size(); i++) {
-            LinkedProcess topLevelCaller = topLevelCallers.get(i);
+            Linked<Process> topLevelCaller = topLevelCallers.get(i);
             addCalledHierarchy(topLevelCaller, 0);
             int prog = 85 + ((int)Math.floor((i * 10)/topLevelCallers.size()));
             for (ProgressMonitor monitor : monitors)
@@ -78,7 +78,7 @@ public class Hierarchy extends Setup {
         }
 
         // weed out paths that don't contain starting process
-        for (LinkedProcess topLevelCaller : topLevelCallers) {
+        for (Linked<Process> topLevelCaller : topLevelCallers) {
             topLevelCaller.prune(start);
         }
 
@@ -94,13 +94,13 @@ public class Hierarchy extends Setup {
         return this;
     }
 
-    private void print(List<LinkedProcess> callers, int depth) {
-        for (LinkedProcess caller : callers) {
+    private void print(List<Linked<Process>> callers, int depth) {
+        for (Linked<Process> caller : callers) {
             print(caller, depth);
         }
     }
 
-    private void print(LinkedProcess caller, int depth) {
+    private void print(Linked<Process> caller, int depth) {
         getOut().println(caller.toString(depth));
         print(caller.getChildren(), depth + 1);
     }
@@ -168,7 +168,7 @@ public class Hierarchy extends Setup {
     private void addTopLevelCallers(Process called) {
         List<Process> immediateCallers = findCallingProcesses(called);
         if (immediateCallers.isEmpty()) {
-            topLevelCallers.add(new LinkedProcess(called));
+            topLevelCallers.add(new Linked<>(called));
         }
         else {
             for (Process caller : immediateCallers)
@@ -180,11 +180,11 @@ public class Hierarchy extends Setup {
      * Find subflow graph for caller.
      * @param caller - top level starting flow
      */
-    private void addCalledHierarchy(LinkedProcess caller, int depth) throws IOException {
+    private void addCalledHierarchy(Linked<Process> caller, int depth) throws IOException {
         depth++;
-        Process callerProcess = caller.getProcess();
+        Process callerProcess = caller.get();
         for (Process calledProcess : findCalledProcesses(callerProcess)) {
-            LinkedProcess child = new LinkedProcess(calledProcess);
+            Linked<Process> child = new Linked<>(calledProcess);
             child.setParent(caller);
             caller.getChildren().add(child);
             if (!child.checkCircular()) {
@@ -199,6 +199,5 @@ public class Hierarchy extends Setup {
                 }
             }
         }
-        depth--;
     }
 }

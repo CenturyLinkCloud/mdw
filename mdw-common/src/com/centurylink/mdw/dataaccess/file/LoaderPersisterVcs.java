@@ -730,7 +730,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             List<Attribute> attributes = new ArrayList<>();
             List<String> obsoleteAttributes = Arrays.asList(TaskActivity.ATTRIBUTES_MOVED_TO_TASK_TEMPLATE);
             for (Attribute attribute : manualTaskActivity.getAttributes()) {
-                if (!obsoleteAttributes.contains(attribute.getAttributeName()))
+                if (!obsoleteAttributes.contains(attribute.getName()))
                     attributes.add(attribute);
             }
             manualTaskActivity.setAttributes(attributes);

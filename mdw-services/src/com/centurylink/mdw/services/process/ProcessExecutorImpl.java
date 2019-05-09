@@ -1896,9 +1896,9 @@ class ProcessExecutorImpl {
                                         processInstance.setVariables(new ArrayList<>());
                                     Variable varVO = processVO.getVariable(varName);
                                     if (varVO == null || !varVO.isInput())
-                                        throw new ProcessException("Process '" + processVO.getFullLabel() + "' has no such input variable defined: " + varName);
+                                        throw new ProcessException("Process '" + processVO.getQualifiedLabel() + "' has no such input variable defined: " + varName);
                                     if (processInstance.getVariable(varName) != null)
-                                        throw new ProcessException("Process '" + processVO.getFullLabel() + "' input variable already populated: " + varName);
+                                        throw new ProcessException("Process '" + processVO.getQualifiedLabel() + "' input variable already populated: " + varName);
                                     if (VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), varVO.getType())) {
                                         DocumentReference docRef = createDocument(varVO.getType(), OwnerType.VARIABLE_INSTANCE, new Long(0),
                                                 updated.get(varName));

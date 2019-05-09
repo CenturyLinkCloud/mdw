@@ -188,7 +188,7 @@ public class CommonDataAccess {
                 return null;
             Map<String,String> attributes = new HashMap<String,String>();
             for (Attribute attr : attrs)
-                attributes.put(attr.getAttributeName(), attr.getAttributeValue());
+                attributes.put(attr.getName(), attr.getValue());
             return attributes;
         }
         finally {
@@ -221,12 +221,12 @@ public class CommonDataAccess {
         ResultSet rs;
         String query = "select RULE_SET_DETAILS from RULE_SET where RULE_SET_ID=?";
         for (Attribute attr : attrs) {
-            String v = attr.getAttributeValue();
+            String v = attr.getValue();
             if (v!=null && v.startsWith(Asset.ATTRIBUTE_OVERFLOW)) {
                 Long assetId = new Long(v.substring(Asset.ATTRIBUTE_OVERFLOW.length()+1));
                 rs = db.runSelect(query, assetId);
                 if (rs.next()) {
-                    attr.setAttributeValue(rs.getString(1));
+                    attr.setValue(rs.getString(1));
                 }
             }
         }
@@ -343,11 +343,11 @@ public class CommonDataAccess {
         db.prepareStatement(query);
         Object[] args = new Object[4];
         for (Attribute vo : pAttributes) {
-            String v = vo.getAttributeValue();
+            String v = vo.getValue();
             if (v==null||v.length()==0) continue;
             args[0] = pOwner;
             args[1] = pOwnerId;
-            args[2] = vo.getAttributeName();
+            args[2] = vo.getName();
             args[3] = v;
             db.addToBatch(args);
         }

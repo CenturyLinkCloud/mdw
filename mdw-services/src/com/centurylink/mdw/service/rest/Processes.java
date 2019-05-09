@@ -183,7 +183,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                 else {
                     long callHierarchyFor = query.getLongFilter("callHierarchyFor");
                     if (callHierarchyFor != -1) {
-                        LinkedProcessInstance linkedInstance = ServiceLocator.getWorkflowServices().getCallHierearchy(callHierarchyFor);
+                        Linked<ProcessInstance> linkedInstance = ServiceLocator.getWorkflowServices().getCallHierearchy(callHierarchyFor);
                         return linkedInstance.getJson();
                     }
                     else if ("designer".equals(query.getFilter("mdw-app"))) {

@@ -35,7 +35,7 @@ import java.util.*;
 /**
  * Value object representing a process definition.
  */
-public class Process extends Asset implements Jsonable {
+public class Process extends Asset implements Jsonable, Linkable {
 
     public static final String TRANSITION_ON_NULL = "Matches Null Return Code";
     public static final String TRANSITION_ON_DEFAULT = "Acts as Default";
@@ -108,17 +108,43 @@ public class Process extends Asset implements Jsonable {
          if (this.activities == null) {
              return null;
          }
-         for (int i = 0; i < activities.size(); i++) {
-             if (id.longValue() == activities.get(i).getId().longValue()) {
-                 return activities.get(i);
+         for (Activity activity : activities) {
+             if (id.longValue() == activity.getId().longValue()) {
+                 return activity;
              }
          }
          return null;
     }
 
     /**
-     * @return the activities
+     * Also searches subprocs.
      */
+    public Activity getActivity(String logicalId) {
+        return getActivity(logicalId, true);
+
+    }
+
+    public Activity getActivity(String logicalId, boolean subprocs) {
+        for (Activity activity : getActivities()) {
+            if (activity.getLogicalId().equals(logicalId)) {
+                activity.setProcessName(getName());
+                return activity;
+            }
+        }
+        if (subprocs) {
+            for (Process subProc : this.subprocesses) {
+                for (Activity activity : subProc.getActivities()) {
+                    if (activity.getLogicalId().equals(logicalId)) {
+                        activity.setProcessName(getName() + ":" + subProc.getName());
+                        return activity;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
     public List<Activity> getActivities() {
         return activities;
     }
@@ -128,8 +154,7 @@ public class Process extends Asset implements Jsonable {
      */
     public List<Activity> getActivitiesOrderBySeq() {
         List<Activity> sorted = new ArrayList<>(activities);
-        Collections.sort(sorted, (act1, act2) -> Integer.compare(act1.getSequenceId(),
-                act2.getSequenceId()));
+        sorted.sort(Comparator.comparingInt(Activity::getSequenceId));
         return sorted;
     }
 
@@ -386,35 +411,6 @@ public class Process extends Asset implements Jsonable {
         return (subtype==null || subtype.equals(ProcessVisibilityConstant.EMBEDDED_ERROR_PROCESS));
     }
 
-    /**
-     * Also searches subprocs.
-     */
-    public Activity getActivity(String logicalId) {
-        return getActivity(logicalId, true);
-
-    }
-
-    public Activity getActivity(String logicalId, boolean subprocs) {
-        for (Activity activity : getActivities()) {
-            if (activity.getLogicalId().equals(logicalId)) {
-                activity.setProcessName(getName());
-                return activity;
-            }
-        }
-        if (subprocs) {
-            for (Process subProc : this.subprocesses) {
-                for (Activity activity : subProc.getActivities()) {
-                    if (activity.getLogicalId().equals(logicalId)) {
-                        activity.setProcessName(getName() + ":" + subProc.getName());
-                        return activity;
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
     public String getTransitionWithNoLabel() {
         String v = this.getAttribute(WorkAttributeConstant.TRANSITION_WITH_NO_LABEL);
         return (v == null) ? TRANSITION_ON_NULL : v;
@@ -427,10 +423,6 @@ public class Process extends Asset implements Jsonable {
 
     public String getLabel() {
         return getName() + (getVersion() == 0 ? "" : " v" + getVersionString());
-    }
-
-    public String getFullLabel() {
-        return getQualifiedName() + (getVersion() == 0 ? "" : " v" + getVersionString());
     }
 
     public boolean isLoaded() {
@@ -493,11 +485,11 @@ public class Process extends Asset implements Jsonable {
             return null;
         List<Attribute> toKeep = new ArrayList<>();
         for (Attribute attr : attrs) {
-            if (attr.getAttributeName() != null && attr.getAttributeName().trim().length() > 0 &&
-                    attr.getAttributeValue() != null && attr.getAttributeValue().trim().length() > 0 &&
-                    !WorkAttributeConstant.isOverrideAttribute(attr.getAttributeName()) &&
-                    !attr.getAttributeName().equals("REFERENCED_ACTIVITIES") &&
-                    !attr.getAttributeName().equals("REFERENCED_PROCESSES")) {
+            if (attr.getName() != null && attr.getName().trim().length() > 0 &&
+                    attr.getValue() != null && attr.getValue().trim().length() > 0 &&
+                    !WorkAttributeConstant.isOverrideAttribute(attr.getName()) &&
+                    !attr.getName().equals("REFERENCED_ACTIVITIES") &&
+                    !attr.getName().equals("REFERENCED_PROCESSES")) {
                 toKeep.add(attr);
             }
         }

@@ -150,7 +150,7 @@ public class Asset implements Comparable<Asset> {
         if (cloneFrom.attributes != null) {
             this.attributes = new ArrayList<Attribute>();
             for (Attribute attr : cloneFrom.attributes) {
-                this.attributes.add(new Attribute(attr.getAttributeName(), attr.getAttributeValue()));
+                this.attributes.add(new Attribute(attr.getName(), attr.getValue()));
             }
         }
         this.loadDate = cloneFrom.loadDate;
@@ -281,7 +281,7 @@ public class Asset implements Comparable<Asset> {
         if (getAttributes() != null) {
             List<Attribute> toRemove = new ArrayList<Attribute>();
             for (Attribute attr : getAttributes()) {
-                if (attr.getAttributeName().equals(name))
+                if (attr.getName().equals(name))
                     toRemove.add(attr);
             }
             for (Attribute attr : toRemove)
@@ -455,6 +455,10 @@ public class Asset implements Comparable<Asset> {
             return getName();
         else
             return getPackageName() + "/" + getName();
+    }
+
+    public String getQualifiedLabel() {
+        return getQualifiedName() + (getVersion() == 0 ? "" : " v" + getVersionString());
     }
 
     public String getRevisionComment() {

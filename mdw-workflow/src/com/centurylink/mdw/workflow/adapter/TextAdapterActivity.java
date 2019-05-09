@@ -596,8 +596,8 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
 
         List<SimulationResponse> responses = new ArrayList<SimulationResponse>();
         for (Attribute attr : this.getAttributes()) {
-            if (attr.getAttributeName().startsWith(WorkAttributeConstant.SIMULATION_RESPONSE)) {
-                SimulationResponse r = new SimulationResponse(attr.getAttributeValue());
+            if (attr.getName().startsWith(WorkAttributeConstant.SIMULATION_RESPONSE)) {
+                SimulationResponse r = new SimulationResponse(attr.getValue());
                 responses.add(r);
             }
         }

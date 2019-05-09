@@ -25,7 +25,7 @@ import com.centurylink.mdw.model.asset.AssetPackageList;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
-import com.centurylink.mdw.model.workflow.LinkedProcess;
+import com.centurylink.mdw.model.workflow.Linked;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.process.HierarchyCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
@@ -102,7 +102,7 @@ public class Workflow extends JsonRestService {
                     JSONObject hierarchyJson = new JSONObject();
                     JSONArray callersJson = new JSONArray();
                     hierarchyJson.put("hierarchy", callersJson);
-                    for (LinkedProcess caller : HierarchyCache.getHierarchy(callHierarchyFor)) {
+                    for (Linked<Process> caller : HierarchyCache.getHierarchy(callHierarchyFor)) {
                         callersJson.put(caller.getJson());
                     }
                     return hierarchyJson;
