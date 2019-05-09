@@ -6,9 +6,9 @@ start process("MilestonesMain") {
         subTwoInput: "two"
     ]
 }
-wait process
-verify processes(
-    "MilestonesMain",
-    "SubOne",
-    "SubTwo",
-    "SubTwoSub")
+//wait process
+//verify processes(
+//    "MilestonesMain",
+//    "SubOne",
+//    "SubTwo",
+//    "SubTwoSub")
