@@ -196,7 +196,8 @@ public class Data {
                 "INSTANCE_NOTE",
                 "ATTACHMENT",
                 "SOLUTION",
-                "SOLUTION_MAP"
+                "SOLUTION_MAP",
+                "ASSET_REF"
         );
     }
 
@@ -214,8 +215,7 @@ public class Data {
     static {
         DEFAULT_EXCLUDED_TABLES = Arrays.asList(
                 "EVENT_LOG",
-                "INSTANCE_TIMING",
-                "ASSET_REF"
+                "INSTANCE_TIMING"
         );
     }
 }

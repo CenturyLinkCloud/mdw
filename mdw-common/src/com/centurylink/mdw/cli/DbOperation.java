@@ -30,6 +30,7 @@ public class DbOperation extends Setup {
                 new Copy(oracleDriverAsset, oraJar).run();
             }
         }
+        new Dependency(getReleasesUrl(), "com/google/guava/guava/23.0/guava-23.0.jar", 2614708L).run(monitors);
         return this;
     }
 

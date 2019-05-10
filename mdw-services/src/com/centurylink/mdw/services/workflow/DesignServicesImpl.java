@@ -164,7 +164,9 @@ public class DesignServicesImpl implements DesignServices {
             // all must be loaded
             List<Process> processes = new ArrayList<>();
             for (Process proc : ProcessCache.getAllProcesses()) {
-                processes.add(ProcessCache.getProcess(proc.getId()));
+                Process loaded = ProcessCache.getProcess(proc.getId());
+                if (loaded != null)
+                    processes.add(loaded);
             }
             Hierarchy hierarchy = new Hierarchy(process, processes);
             hierarchy.run();

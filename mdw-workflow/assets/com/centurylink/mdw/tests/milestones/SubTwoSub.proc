@@ -23,7 +23,7 @@
       "id": "A3",
       "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
       "name": "Not\nInterested",
-      "transitions": [{å
+      "transitions": [{
         "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=429,ly=114,xs=405&454,ys=114&114"},
         "event": "FINISH",
         "id": "T3",

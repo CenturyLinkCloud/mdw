@@ -71,6 +71,8 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
                     treeLabel += '- ';
                   }
                   treeLabel += caller.process.packageName + "/" + caller.process.name + " v" + caller.process.version;
+                  if (caller.circular)
+                    treeLabel += ' (+)';
                   caller.process.treeLabel = treeLabel;
                   caller.process.thisFlag = caller.process.id === workflowObject.definitionId ? '*' : '';
                   result.data.hierarchy.push(caller.process);

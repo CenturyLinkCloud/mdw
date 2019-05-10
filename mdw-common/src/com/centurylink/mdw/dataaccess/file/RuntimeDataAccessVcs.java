@@ -464,7 +464,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         String query = "select pi.PROCESS_INSTANCE_ID, pi.PROCESS_ID, pi.MASTER_REQUEST_ID," +
                 " pi.STATUS_CD, pi.START_DT, pi.END_DT, pi.COMPCODE, pi.COMMENTS" +
                 " from PROCESS_INSTANCE pi" +
-                " where pi.OWNER = '" + ownerType + "' and pi.OWNER_ID = ?";
+                " where pi.OWNER = '" + ownerType + "' and pi.OWNER_ID = ? order by pi.PROCESS_INSTANCE_ID";
         ResultSet rs = db.runSelect(query, ownerId);
         while (rs.next()) {
             if (instanceList == null)
