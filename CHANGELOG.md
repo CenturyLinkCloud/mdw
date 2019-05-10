@@ -1,7 +1,36 @@
 # Change Log
 
+## [6.1.17](https://github.com/CenturyLinkCloud/mdw/tree/6.1.17) (2019-05-10)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.16...6.1.17)
+
+**Compatibility Notes:**
+  - Class com.centurylink.mdw.util.StringHelper is deprecated.  See javadocs for alternatives.
+  - Methods com.centurylink.mdw.model.attribute.Attribute.getAttributeName()/getAttributeValue() are replaced by getName()/getValue().
+  - Override attributes are no longer supported.
+
+**Implemented enhancements:**
+
+- ASSET\_REF auto-population disabled by default in dev mode [\#658](https://github.com/CenturyLinkCloud/mdw/issues/658)
+- Process definition hierarchy in MDWHub and CLI [\#651](https://github.com/CenturyLinkCloud/mdw/issues/651)
+- CLI DB export/import capability [\#650](https://github.com/CenturyLinkCloud/mdw/issues/650)
+- Dashboard charts for live system monitoring [\#646](https://github.com/CenturyLinkCloud/mdw/issues/646)
+- Display MBean info on Hub's System tab [\#645](https://github.com/CenturyLinkCloud/mdw/issues/645)
+- CLI vercheck should default to only scanning updated assets [\#643](https://github.com/CenturyLinkCloud/mdw/issues/643)
+- Option to prevent overlap in Scheduled Job execution [\#642](https://github.com/CenturyLinkCloud/mdw/issues/642)
+- Zipkin instrumentation for subflows [\#580](https://github.com/CenturyLinkCloud/mdw/issues/580)
+
+**Closed issues:**
+
+- Dashboard chart drill into requests by path is broken [\#656](https://github.com/CenturyLinkCloud/mdw/issues/656)
+- Subprocess instances from embedded subflow not displayed in Inspector [\#654](https://github.com/CenturyLinkCloud/mdw/issues/654)
+- Prevent Hub asset import from failing due to OS newline differences [\#649](https://github.com/CenturyLinkCloud/mdw/issues/649)
+- Default Package is not recreated upon cache refresh [\#644](https://github.com/CenturyLinkCloud/mdw/issues/644)
+- Support for in-flight dynamic java activity java code [\#641](https://github.com/CenturyLinkCloud/mdw/issues/641)
+- Activities API returns incorrect total count [\#640](https://github.com/CenturyLinkCloud/mdw/issues/640)
+- Vercheck should ignore line-ending diffs for text assets [\#638](https://github.com/CenturyLinkCloud/mdw/issues/638)
+
 ## [6.1.16](https://github.com/CenturyLinkCloud/mdw/tree/6.1.16) (2019-03-29)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.16-SNAPSHOT...6.1.16)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.15...6.1.16)
 
 **Implemented enhancements:**
 
@@ -26,14 +55,14 @@
 ## [6.1.15](https://github.com/CenturyLinkCloud/mdw/tree/6.1.15) (2019-02-21)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.14...6.1.15)
 
-**Implemented enhancements:**
-
 **Compatibility Notes:**
   - To take advantage of enhanced dashboard charts introduced by issue #582, it's highly recommended that you add the indexes
     commented out at the bottom of the update scripts:
      - https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/database/mysql/mdw_upgrade_6.0_To_6.1.sql
      - https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/database/oracle/mdw_upgrade_6.0_To_6.1.sql
     Depending on how much existing data is present, these indexes may take a while to create.
+
+**Implemented enhancements:**
 
 - Apply needed MongoDB options whenever not present in specified URI [\#616](https://github.com/CenturyLinkCloud/mdw/issues/616)
 - Ability to specify high priority in SMTP emails [\#614](https://github.com/CenturyLinkCloud/mdw/issues/614)
