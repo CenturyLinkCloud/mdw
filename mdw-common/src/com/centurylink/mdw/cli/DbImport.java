@@ -67,6 +67,7 @@ public class DbImport extends DbOperation {
 
         // read/insert data (90% progress)
         Connection conn = null;
+        int lineNum = 0;
         try {
             conn = getDbConnection();
 
@@ -93,7 +94,6 @@ public class DbImport extends DbOperation {
                 }
             }
 
-            int lineNum = 0;
             try (FileReader fr = new FileReader(input);
                  BufferedReader br = new BufferedReader(fr);
                  Statement stmt = conn.createStatement()) {
@@ -145,8 +145,21 @@ public class DbImport extends DbOperation {
                             }
                             insert += ")\n";
                             values += ")\n";
-                            stmt.executeUpdate(insert + values);
-
+                            try {
+                                stmt.executeUpdate(insert + values);
+                            }
+                            catch (SQLIntegrityConstraintViolationException ex) {
+                                // why do we get erroneous duplicate primary key violation on DOCUMENT?
+                                try {
+                                    // try again after half a sec -- seems to work
+                                    Thread.sleep(500);
+                                    stmt.executeUpdate(insert + values);
+                                }
+                                catch (SQLIntegrityConstraintViolationException | InterruptedException ex2) {
+                                    getErr().print("ERROR line=" + lineNum + ": ");
+                                    ex.printStackTrace(getErr());
+                                }
+                            }
                         }
                         else if (line.equals("]") || line.equals("],")) {
                             // end of table
@@ -163,7 +176,7 @@ public class DbImport extends DbOperation {
                 monitor.progress(100);
             System.out.println("Import successful.  Restart server to avoid data cache inconsistencies");
         } catch (SQLException ex) {
-            throw new IOException(ex);
+            throw new IOException("Error processing line: " + lineNum, ex);
         } finally {
             if (conn != null) {
                 try {

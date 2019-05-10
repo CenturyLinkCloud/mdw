@@ -225,7 +225,9 @@ public class DataAccess {
 
     public static void updateAssetRefs() throws DataAccessException {
         StandardLogger logger = LoggerUtil.getStandardLogger();
-        if (assetVersionControl != null && !PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_AUTO_PULL, false)) {
+        // asset ref autopopulation disabled by default for dev envs
+        boolean autopop = PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_REF_AUTOPOP, !ApplicationContext.isDevelopment());
+        if (autopop && assetVersionControl != null && !PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_AUTO_PULL, false)) {
             // Automatically update ASSET_REF DB table in case application doesn't do an Import - safety measure
             File assetLoc = ApplicationContext.getAssetRoot();
             VersionControlGit vcGit = (VersionControlGit) assetVersionControl;
@@ -248,9 +250,9 @@ public class DataAccess {
         }
         else {
             String message = "";
-            if (assetVersionControl == null) message = " AssetVersionControl is null";
-            if ("true".equals(PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL))) message = message.length() == 0 ? " mdw.git.auto.pull=true" : ", mdw.git.auto.pull=true";
-            logger.info("ASSET_REF table not auto-populated during startup due to: " + message);
+            if (assetVersionControl == null) message = " (AssetVersionControl is null)";
+            if ("true".equals(PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL))) message = message.length() == 0 ? " (mdw.git.auto.pull=true)" : ", (mdw.git.auto.pull=true";
+            logger.info("ASSET_REF table not auto-populated during startup. " + message);
         }
     }
 

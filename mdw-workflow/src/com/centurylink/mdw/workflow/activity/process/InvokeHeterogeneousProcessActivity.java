@@ -210,7 +210,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
         } catch (Exception ex) {
             piplan.setStatusCode(WorkStatus.STATUS_FAILED);
             super.logexception(ex.getMessage(), ex);
-            throw new ActivityException(ex.getMessage());
+            throw new ActivityException("Error loading subproc: " + piplan.getLogicalProcessName(), ex);
         }
     }
 
