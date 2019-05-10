@@ -18,16 +18,13 @@ package com.centurylink.mdw.model.workflow;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.attribute.Attribute;
-import com.centurylink.mdw.monitor.MonitorAttributes;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Activity implements Serializable, Comparable<Activity>, Jsonable {
-
+public class Activity implements Comparable<Activity>, Jsonable, Linkable {
     public static final String DEFAULT_IMPL = "com.centurylink.mdw.workflow.activity.DefaultActivityImpl";
 
     public Activity() {
@@ -47,6 +44,11 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
     }
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String getQualifiedLabel() {
+        return getLogicalId() + ": " + oneLineName();
     }
 
     private String description;
@@ -118,6 +120,15 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
         json.put("implementor", getImplementor());
         if (attributes != null && !attributes.isEmpty())
             json.put("attributes", Attribute.getAttributesJson(attributes));
+        return json;
+    }
+
+    @Override
+    public JSONObject getSummaryJson() {
+        JSONObject json = create();
+        json.put("name", getName());
+        json.put("id", getLogicalId());
+        json.put("implementor", getImplementor());
         return json;
     }
 
@@ -206,19 +217,5 @@ public class Activity implements Serializable, Comparable<Activity>, Jsonable {
             }
         }
         return invoked;
-    }
-
-    private static final String MONITOR_CLASS = "com.centurylink.mdw.milestones.ActivityMilestone";
-
-    public Milestone getMilestone() {
-        String monitorsAttr = getAttribute(WorkAttributeConstant.MONITORS);
-        if (monitorsAttr != null) {
-            MonitorAttributes monitorAttributes = new MonitorAttributes(monitorsAttr);
-            if (monitorAttributes.isEnabled(MONITOR_CLASS)) {
-                Milestone milestone = new Milestone(this);
-                milestone.setText(monitorAttributes.getOptions(MONITOR_CLASS));
-            }
-        }
-        return null;
     }
 }

@@ -22,12 +22,11 @@ import io.swagger.annotations.ApiModelProperty;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.Date;
 
 // TODO: redundant values: definitionId/activityId, status/statusCode, result/completionCode
-@ApiModel(value="Activity", description="MDW runtime activity instance")
-public class ActivityInstance implements Jsonable, Serializable {
+@ApiModel(value="ActivityInstance", description="MDW runtime activity instance")
+public class ActivityInstance implements Jsonable, Linkable {
 
     private Long id;
     public Long getId() { return id; }
@@ -160,8 +159,6 @@ public class ActivityInstance implements Jsonable, Serializable {
             json.put("status", status);
         if (message != null)
             json.put("message", message);
-        if (status != null)
-            json.put("status", status);
         if (completionCode != null)
             json.put("completionCode", completionCode);
         if (result != null)
@@ -179,9 +176,28 @@ public class ActivityInstance implements Jsonable, Serializable {
         return json;
     }
 
+    @Override
+    public JSONObject getSummaryJson() {
+        JSONObject json = create();
+        if (id != null)
+            json.put("id", id);
+        if (activityId != null)
+            json.put("activityId", activityId);
+        if (name != null)
+            json.put("name", name);
+        if (status != null)
+            json.put("status", status);
+        if (result != null)
+            json.put("result", result);
+        return json;
+    }
+
     public String getJsonName() {
         return "ActivityInstance";
     }
 
-
+    @Override
+    public String getQualifiedLabel() {
+        return "A" + activityId + ": " + id;
+    }
 }

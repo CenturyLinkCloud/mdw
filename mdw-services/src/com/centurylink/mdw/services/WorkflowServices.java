@@ -36,8 +36,6 @@ import java.util.TreeMap;
 
 public interface WorkflowServices {
 
-    static final int PAGE_SIZE = 50; // must match Query.DEFAULT_MAX
-
     Map<String,String> getAttributes(String ownerType, Long ownerId) throws ServiceException;
     /**
      * Replace <b>all</b> attributes for this ownerId
@@ -208,6 +206,6 @@ public interface WorkflowServices {
      */
     Linked<ProcessInstance> getCallHierearchy(Long processInstanceId) throws ServiceException;
 
-    MilestoneList getMilestones(Query query) throws ServiceException;
+    MilestonesList getMilestones(Query query) throws ServiceException;
 
 }

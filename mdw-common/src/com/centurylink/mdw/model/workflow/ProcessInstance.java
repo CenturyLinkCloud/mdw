@@ -28,7 +28,7 @@ import org.json.JSONObject;
 
 import java.util.*;
 
-@ApiModel(value="Process", description="MDW workflow process instance")
+@ApiModel(value="ProcessInstance", description="MDW workflow process instance")
 public class ProcessInstance implements Jsonable, Linkable {
 
     /**
@@ -190,9 +190,6 @@ public class ProcessInstance implements Jsonable, Linkable {
 
     private Long secondaryOwnerId;
     public Long getSecondaryOwnerId() { return secondaryOwnerId; }
-    public long getSecondaryOwnerIdLongValue() {
-        return secondaryOwnerId == null ? 0 : secondaryOwnerId.longValue();
-    }
     public void setSecondaryOwnerId(Long l) { secondaryOwnerId = l; }
 
     private Integer statusCode;
@@ -214,10 +211,6 @@ public class ProcessInstance implements Jsonable, Linkable {
     private String completionCode;
     public String getCompletionCode() { return completionCode; }
     public void setCompletionCode(String s) { this.completionCode = s; }
-
-    private List<VariableInstance> variables = null;
-    public List<VariableInstance> getVariables() { return variables; }
-    public void setVariables(List<VariableInstance> variables) { this.variables = variables; }
 
     private String endDate;
     public String getEndDate() { return endDate; }
@@ -277,6 +270,14 @@ public class ProcessInstance implements Jsonable, Linkable {
     private List<TransitionInstance> transitions;
     public List<TransitionInstance> getTransitions() { return transitions; }
     public void setTransitions(List<TransitionInstance> t) { this.transitions = t; }
+
+    private List<ProcessInstance> subprocesses;
+    public List<ProcessInstance> getSubprocesses() { return subprocesses; }
+    public void setSubprocesses(List<ProcessInstance> subinsts) { this.subprocesses = subinsts; }
+
+    private List<VariableInstance> variables = null;
+    public List<VariableInstance> getVariables() { return variables; }
+    public void setVariables(List<VariableInstance> variables) { this.variables = variables; }
 
     @ApiModelProperty(hidden=true)
     public VariableInstance getVariable(String name) {
@@ -404,12 +405,6 @@ public class ProcessInstance implements Jsonable, Linkable {
             json.put("packageName", packageName);
         if (status != null)
             json.put("status", status);
-        if (startDate != null)
-            json.put("startDate", startDate);
-        if (endDate != null) {
-            json.put("endDate", endDate);
-            json.put("completionCode", completionCode == null ? "null" : completionCode);
-        }
         return json;
     }
 
@@ -417,14 +412,36 @@ public class ProcessInstance implements Jsonable, Linkable {
         return "ProcessInstance";
     }
 
-    private List<ProcessInstance> subprocesses;
-    public List<ProcessInstance> getSubprocesses() { return subprocesses; }
-    public void setSubprocesses(List<ProcessInstance> subinsts) { this.subprocesses = subinsts; }
-
     @Override
     public String getQualifiedLabel() {
         String label = getPackageName() == null ? getProcessName() : getPackageName() + "/" + getProcessName();
-        label += " " + getId();
+        label += ": " + getId();
         return label;
+    }
+
+    public Linked<ActivityInstance> getLinkedActivities(Process process) {
+        List<ActivityInstance> starts = getActivities(process.getStartActivity().getLogicalId());
+        if (starts.isEmpty())
+            return null;
+        else
+            return getLinkedActivities(process, starts.get(0));
+    }
+
+    public Linked<ActivityInstance> getLinkedActivities(Process process, ActivityInstance start) {
+        Linked<ActivityInstance> parent = new Linked<>(start);
+        linkActivities(process, parent);
+        return parent;
+    }
+
+    private void linkActivities(Process process, Linked<ActivityInstance> parent) {
+        for (Activity downstream : process.getDownstreamActivities(process.getActivity(parent.get().getActivityId()))) {
+            List<ActivityInstance> instances = getActivities(downstream.getLogicalId());
+            if (!instances.isEmpty()) {
+                Linked<ActivityInstance> child = new Linked<>(instances.get(0));
+                child.setParent(parent);
+                parent.getChildren().add(child);
+                linkActivities(process, child);
+            }
+        }
     }
 }

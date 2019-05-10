@@ -2,7 +2,7 @@
   "activities": [
     {
       "attributes": {
-        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
+        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Activity Timing\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"]]",
         "WORK_DISPLAY_INFO": "x=56,y=141,w=60,h=40"
       },
       "id": "A1",
@@ -18,7 +18,7 @@
     {
       "attributes": {
         "DoNotNotifyCaller": "false",
-        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
+        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Activity Timing\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"]]",
         "WORK_DISPLAY_INFO": "x=686,y=173,w=60,h=40"
       },
       "id": "A2",
@@ -28,7 +28,7 @@
     {
       "attributes": {
         "Expression": "#{testCase}",
-        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
+        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Activity Timing\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"]]",
         "SCRIPT": "javax.el",
         "WORK_DISPLAY_INFO": "x=181,y=138,w=89,h=46"
       },
@@ -54,7 +54,7 @@
     },
     {
       "attributes": {
-        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
+        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Activity Timing\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"]]",
         "Output Documents": "executionPlan",
         "Rule": "import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument\nimport com.centurylink.mdw.bpm.ParameterDocument.Parameter\nimport com.centurylink.mdw.bpm.ProcessExecutionPlanDocument.ProcessExecutionPlan\nimport com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance\nimport com.centurylink.mdw.model.workflow.WorkStatus\n\nexecutionPlan = ProcessExecutionPlanDocument.Factory.newInstance();\nProcessExecutionPlan exeplan = executionPlan.addNewProcessExecutionPlan();\nSubprocessInstance subprocinst = exeplan.addNewSubprocessInstance();\nsubprocinst.setLogicalProcessName(\"SmartProcessChild\");\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());\naddParameter(subprocinst, \"inputVar\", \"child11\");\naddParameter(subprocinst, \"procName\", \"\\$\");\naddParameter(subprocinst, \"procVer\", \"\\$\");\nsubprocinst = exeplan.addNewSubprocessInstance();\nsubprocinst.setLogicalProcessName(\"SmartProcessChild\");\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());\naddParameter(subprocinst, \"inputVar\", \"child12\");\nsubprocinst = exeplan.addNewSubprocessInstance();\nsubprocinst.setLogicalProcessName(\"SmartProcessChild2\");\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());\naddParameter(subprocinst, \"inputVar\", \"\\$subprocInputVar\");\naddParameter(subprocinst, \"procName\", \"\\$\");\naddParameter(subprocinst, \"procVer\", \"\\$\");\n\nvoid addParameter(SubprocessInstance subprocinst, String name, String value) {\n Parameter param = subprocinst.addNewParameter();\n param.setName(name);\n param.setStringValue(value);\n}\n",
         "SCRIPT": "Groovy",
@@ -72,7 +72,7 @@
     },
     {
       "attributes": {
-        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
+        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Activity Timing\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"]]",
         "Rule": "import com.centurylink.mdw.bpm.ParameterDocument.Parameter\r\nimport com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance\r\n\r\nSubprocessInstance subprocinst = executionPlan.getProcessExecutionPlan().getSubprocessInstanceList().get(0);\r\nmultipleSubprocName = getParameter(subprocinst, \"procName\");\r\nmultipleSubprocVer = getParameter(subprocinst, \"procVer\");\r\nsubprocinst = executionPlan.getProcessExecutionPlan().getSubprocessInstanceList().get(2);\r\nmultipleSubprocName2 = getParameter(subprocinst, \"procName\");\r\nmultipleSubprocVer2 = getParameter(subprocinst, \"procVer\");\r\n\r\nprotected String getParameter(SubprocessInstance subprocinst, String name) {\r\n if (subprocinst.getParameterList()==null) return null;\r\n for (Parameter p : subprocinst.getParameterList()) {\r\n  if (p.getName().equals(name)) return p.getStringValue();\r\n }\r\n return null;\r\n}",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=535,y=337,w=100,h=60"
@@ -91,7 +91,7 @@
       "attributes": {
         "DELAY_BETWEEN": "1",
         "Execution Plan": "executionPlan",
-        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"]]",
+        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Activity Timing\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"]]",
         "WORK_DISPLAY_INFO": "x=355,y=332,w=109,h=65",
         "processmap": "[[\"SmartProcessChild\",\"com.centurylink.mdw.tests.workflow/SmartProcessChild.proc\",\"[2.4,3)\"],[\"SmartProcessChild2\",\"com.centurylink.mdw.tests.workflow/SmartProcessChild2.proc\",\"[0.4,1)\"]]",
         "synchronous": "true"
@@ -108,7 +108,7 @@
     },
     {
       "attributes": {
-        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"]]",
+        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Activity Timing\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"]]",
         "WORK_DISPLAY_INFO": "x=382,y=61,w=100,h=60",
         "processname": "com.centurylink.mdw.tests.workflow/SmartProcessChild.proc",
         "processversion": "[2.4,3)",
@@ -128,6 +128,7 @@
   ],
   "attributes": {
     "ArrowStyle": "ArrowEnd",
+    "Monitors": "[[\"false\",\"Due Date Monitor\",\"com.centurylink.mdw.base/ProcessDueDateMonitor.java\",\"\"],[\"false\",\"Microservice Status Monitor\",\"com.centurylink.mdw.microservice/MicroserviceStatusProcessMonitor.java\",\"\"]]",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
     "PerformanceLevel": "0",

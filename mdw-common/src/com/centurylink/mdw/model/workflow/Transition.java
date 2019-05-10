@@ -15,28 +15,23 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.constant.WorkTransitionAttributeConstant;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventType;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Transition implements Jsonable {
 
     public static final String DELAY_UNIT_SECOND = "s";
     public static final String DELAY_UNIT_MINUTE = "m";
     public static final String DELAY_UNIT_HOUR = "h";
-
-    public static final int STATE_REQUIRED = 0;
-    public static final int STATE_IN_PROGRESS = 1;
-    public static final int STATE_INVALID = 2;
 
     private Long id;
     private Long fromId;
