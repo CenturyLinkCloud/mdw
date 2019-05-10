@@ -15,14 +15,13 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import java.io.Serializable;
-
+import com.centurylink.mdw.model.Jsonable;
+import io.swagger.annotations.ApiModel;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.Jsonable;
-
-public class TransitionInstance implements Jsonable, Serializable {
+@ApiModel(value="TransitionInstance", description="MDW transition instance")
+public class TransitionInstance implements Jsonable {
 
     private Long transitionInstanceID;
     private Long transitionID;

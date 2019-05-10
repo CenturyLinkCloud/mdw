@@ -732,4 +732,22 @@ public class Process extends Asset implements Jsonable, Linkable {
         return invoked;
     }
 
+    public Linked<Activity> getLinkedActivities() {
+        return getLinkedActivities(getStartActivity());
+    }
+
+    public Linked<Activity> getLinkedActivities(Activity start) {
+        Linked<Activity> linked = new Linked<>(start);
+        linkActivities(linked);
+        return linked;
+    }
+
+    private void linkActivities(Linked<Activity> parent) {
+        for (Activity downstream : getDownstreamActivities(parent.get())) {
+            Linked<Activity> child = new Linked<>(downstream);
+            child.setParent(parent);
+            parent.getChildren().add(child);
+            linkActivities(child);
+        }
+    }
 }

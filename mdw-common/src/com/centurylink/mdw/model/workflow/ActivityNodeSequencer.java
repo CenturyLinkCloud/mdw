@@ -36,18 +36,16 @@ public class ActivityNodeSequencer {
         int currentActivitySeq = assignNodeSequenceIds(this.process, 1);
         // subprocesses
         if (process.getSubprocesses() != null && !process.getSubprocesses().isEmpty()) {
-            List<Process> subprocesses = new ArrayList<Process>(); // create a copy to avoid side effects
-            subprocesses.addAll(process.getSubprocesses());
-            Collections.sort(subprocesses, new Comparator<Process>() {
-                public int compare(Process sp1, Process sp2) {
-                    DisplayInfo d1 = getDisplayInfo("T" + sp1.getId(), sp1.getAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO));
-                    DisplayInfo d2 = getDisplayInfo("T" + sp2.getName(), sp2.getAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO));
-                    // TODO: something better
-                    if (Math.abs(d1.y - d2.y) > 100)
-                        return d1.y - d2.y;
-                    // otherwise closest to top-left of canvas
-                    return (int)(Math.sqrt(Math.pow(d1.x,2) + Math.pow(d1.y,2)) - Math.sqrt(Math.pow(d2.x,2) + Math.pow(d2.y,2)));
-                }
+            // create a copy to avoid side effects
+            List<Process> subprocesses = new ArrayList<>(process.getSubprocesses());
+            subprocesses.sort((sp1, sp2) -> {
+                DisplayInfo d1 = getDisplayInfo("T" + sp1.getId(), sp1.getAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO));
+                DisplayInfo d2 = getDisplayInfo("T" + sp2.getName(), sp2.getAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO));
+                // TODO: something better
+                if (Math.abs(d1.y - d2.y) > 100)
+                    return d1.y - d2.y;
+                // otherwise closest to top-left of canvas
+                return (int)(Math.sqrt(Math.pow(d1.x, 2) + Math.pow(d1.y, 2)) - Math.sqrt(Math.pow(d2.x, 2) + Math.pow(d2.y, 2)));
             });
             for (int i = 0; i < subprocesses.size(); i++) {
                 Process subprocess = subprocesses.get(i);
@@ -69,19 +67,17 @@ public class ActivityNodeSequencer {
     }
 
     private void setDownstreamNodeSequenceIds(Process process, Activity start) {
-        List<Activity> downstreamNodes = new ArrayList<Activity>(); // create a copy to avoid side effects
+        List<Activity> downstreamNodes = new ArrayList<>(); // create a copy to avoid side effects
         for (Activity activity : process.getDownstreamActivities(start))
             downstreamNodes.add(process.getActivity(activity.getLogicalId()));
-        Collections.sort(downstreamNodes, new Comparator<Activity>() {
-            public int compare(Activity a1, Activity a2) {
-                DisplayInfo d1 = getDisplayInfo(a1.getLogicalId(), a1.getAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO));
-                DisplayInfo d2 = getDisplayInfo(a2.getLogicalId(), a2.getAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO));
-                // TODO: something better
-                if (Math.abs(d1.y - d2.y) > 100)
-                    return d1.y - d2.y;
-                // otherwise closest to top-left of canvas
-                return (int)(Math.sqrt(Math.pow(d1.x,2) + Math.pow(d1.y,2)) - Math.sqrt(Math.pow(d2.x,2) + Math.pow(d2.y,2)));
-            }
+        downstreamNodes.sort((a1, a2) -> {
+            DisplayInfo d1 = getDisplayInfo(a1.getLogicalId(), a1.getAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO));
+            DisplayInfo d2 = getDisplayInfo(a2.getLogicalId(), a2.getAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO));
+            // TODO: something better
+            if (Math.abs(d1.y - d2.y) > 100)
+                return d1.y - d2.y;
+            // otherwise closest to top-left of canvas
+            return (int)(Math.sqrt(Math.pow(d1.x,2) + Math.pow(d1.y,2)) - Math.sqrt(Math.pow(d2.x,2) + Math.pow(d2.y,2)));
         });
         for (Activity downstreamNode : downstreamNodes) {
             // may have been already set due to converging paths
@@ -92,7 +88,7 @@ public class ActivityNodeSequencer {
         }
     }
 
-    private Map<String,DisplayInfo> nodeDisplayInfo = new HashMap<String,DisplayInfo>();
+    private Map<String,DisplayInfo> nodeDisplayInfo = new HashMap<>();
     private DisplayInfo getDisplayInfo(String logicalId, String attr) {
         DisplayInfo displayInfo = nodeDisplayInfo.get(logicalId);
         if (displayInfo == null) {
@@ -102,18 +98,19 @@ public class ActivityNodeSequencer {
                 String [] tmps = attr.split(",");
                 int k;
                 String an, av;
-                for (int i = 0; i < tmps.length; i++) {
-                    k = tmps[i].indexOf('=');
+                for (String tmp : tmps) {
+                    k = tmp.indexOf('=');
                     if (k <= 0)
                         continue;
-                    an = tmps[i].substring(0, k);
-                    av = tmps[i].substring(k + 1);
+                    an = tmp.substring(0, k);
+                    av = tmp.substring(k + 1);
                     if (an.equals("x"))
                         displayInfo.x = Integer.parseInt(av);
                     else if (an.equals("y"))
                         displayInfo.y = Integer.parseInt(av);
                 }
             }
+            nodeDisplayInfo.put(logicalId, displayInfo);
         }
         return displayInfo;
     }

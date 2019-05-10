@@ -1,6 +1,6 @@
 Milestones.test=2
 Milestones.yaml=1
-MilestonesMain.proc=2
-SubOne.proc=2
-SubTwo.proc=2
-SubTwoSub.proc=1
+MilestonesMain.proc=3
+SubOne.proc=3
+SubTwo.proc=3
+SubTwoSub.proc=2

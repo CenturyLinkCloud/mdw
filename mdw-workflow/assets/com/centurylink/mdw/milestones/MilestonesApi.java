@@ -12,7 +12,7 @@ import org.json.JSONObject;
 import javax.ws.rs.Path;
 import java.util.Map;
 
-@Path("/milestones")
+@Path("/")
 @Api("Workflow milestones")
 public class MilestonesApi extends JsonRestService {
 
@@ -21,7 +21,7 @@ public class MilestonesApi extends JsonRestService {
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
 
         Query query = getQuery(path, headers);
-        String masterRequestId = getSegment(path, 1);
+        String masterRequestId = getSegment(path, 4);
         if (masterRequestId != null) {
             // TODO
             return null;

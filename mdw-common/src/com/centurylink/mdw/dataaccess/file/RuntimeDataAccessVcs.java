@@ -468,7 +468,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         ResultSet rs = db.runSelect(query, ownerId);
         while (rs.next()) {
             if (instanceList == null)
-                instanceList = new ArrayList<ProcessInstance>();
+                instanceList = new ArrayList<>();
             Long processId = rs.getLong("PROCESS_ID");
             String comment = rs.getString("COMMENTS");
             ProcessInstance pi = new ProcessInstance(processId, "");

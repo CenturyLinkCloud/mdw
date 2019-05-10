@@ -2,7 +2,7 @@
   "activities": [
     {
       "attributes": {
-        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
+        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"]]",
         "WORK_DISPLAY_INFO": "x=45,y=108,w=60,h=40"
       },
       "id": "A1",
@@ -18,7 +18,7 @@
     {
       "attributes": {
         "DoNotNotifyCaller": "false",
-        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
+        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"]]",
         "WORK_DISPLAY_INFO": "x=425,y=105,w=60,h=40"
       },
       "id": "A2",
@@ -27,7 +27,7 @@
     },
     {
       "attributes": {
-        "Monitors": "[[\"true\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"]]",
+        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"]]",
         "Rule": "procName = runtimeContext.getProcess().getName();\r\nprocVer = runtimeContext.getProcess().getVersionString();",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=217,y=96,w=100,h=60"

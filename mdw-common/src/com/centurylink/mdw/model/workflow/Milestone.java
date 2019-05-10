@@ -1,25 +1,29 @@
 package com.centurylink.mdw.model.workflow;
 
 import com.centurylink.mdw.model.Jsonable;
+import org.json.JSONObject;
 
 import java.time.Instant;
 
 /**
  * Milestone definition.
  */
-public class Milestone implements Jsonable {
+public class Milestone implements Linkable, Jsonable {
 
-    public Milestone(Activity activity) {
+    public static final String MONITOR_CLASS = "com.centurylink.mdw.milestones.ActivityMilestone";
+
+    public Milestone(Process process, Activity activity) {
+        this.process = process;
         this.activity = activity;
     }
-
-    private Activity activity;
-    public Activity getActivity() { return activity; }
-    public void setActivity(Activity activity) { this.activity = activity; }
 
     private Process process;
     public Process getProcess() { return process; }
     public void setProcess(Process process) { this.process = process; }
+
+    private Activity activity;
+    public Activity getActivity() { return activity; }
+    public void setActivity(Activity activity) { this.activity = activity; }
 
     private String text;
     public String getText() { return text; }
@@ -42,14 +46,44 @@ public class Milestone implements Jsonable {
     public Instant getFinish() { return finish; }
     public void setFinish(Instant finish) { this.finish = finish; }
 
-    private ActivityInstance activityInstance;
-    public ActivityInstance getActivityInstance() { return activityInstance; }
-    public void setActivityInstance(ActivityInstance activityInstance) { this.activityInstance = activityInstance; }
-
     private ProcessInstance processInstance;
     public ProcessInstance getProcessInstance() { return processInstance; }
     public void setProcessInstance(ProcessInstance processInstance) { this.processInstance = processInstance; }
 
+    private ActivityInstance activityInstance;
+    public ActivityInstance getActivityInstance() { return activityInstance; }
+    public void setActivityInstance(ActivityInstance activityInstance) { this.activityInstance = activityInstance; }
 
+    @Override
+    public JSONObject getJson() {
+        JSONObject json = create();
+        json.put("process", process.getSummaryJson());
+        json.put("activity", activity.getSummaryJson());
+        if (text != null)
+            json.put("text", text);
+        if (masterRequestId != null)
+            json.put("masterRequestId", masterRequestId);
+        if (status != null)
+            json.put("status", status);
+        if (start != null)
+            json.put("start", start.toString());
+        if (finish != null)
+            json.put("finish", finish.toString());
+        if (processInstance != null)
+            json.put("processInstance", processInstance.getSummaryJson());
+        if (activityInstance != null)
+            json.put("activityInstance", activityInstance.getSummaryJson());
 
+        return json;
+    }
+
+    @Override
+    public JSONObject getSummaryJson() {
+        return getJson();
+    }
+
+    @Override
+    public String getQualifiedLabel() {
+        return text;
+    }
 }
