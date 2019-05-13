@@ -15,21 +15,10 @@
  */
 package com.centurylink.mdw.service.handler;
 
-import java.util.Map;
-
-import org.apache.xmlbeans.XmlObject;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.common.service.JsonService;
-import com.centurylink.mdw.common.service.MdwServiceRegistry;
-import com.centurylink.mdw.common.service.RegisteredService;
-import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.service.TextService;
-import com.centurylink.mdw.common.service.XmlService;
+import com.centurylink.mdw.common.service.*;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.event.EventHandler;
-import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.asset.AssetRequest;
@@ -42,6 +31,10 @@ import com.centurylink.mdw.services.rest.ProcessInvoker;
 import com.centurylink.mdw.services.rest.RestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.xmlbeans.XmlObject;
+import org.json.JSONObject;
+
+import java.util.Map;
 
 public class ServiceRequestHandler implements EventHandler {
 
@@ -59,8 +52,7 @@ public class ServiceRequestHandler implements EventHandler {
     }
 
     @Override
-    public Response handleEventMessage(Request req, Object requestObj, Map<String,String> metaInfo)
-    throws EventHandlerException {
+    public Response handleEventMessage(Request req, Object requestObj, Map<String,String> metaInfo) {
 
         TextService service = null;
         String path = metaInfo.get(Listener.METAINFO_REQUEST_PATH);
@@ -79,13 +71,11 @@ public class ServiceRequestHandler implements EventHandler {
                 metaInfo.put(Listener.METAINFO_CONTENT_TYPE, "application/json");
             }
 
-            if (service == null) {
-                service = getServiceInstance(metaInfo);
-                if (service == null)
-                    throw new ServiceException(ServiceException.NOT_FOUND, "Unable to handle service request: " + path);
-            }
+            service = getServiceInstance(metaInfo);
+            if (service == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Unable to handle service request: " + path);
 
-            Response response = null;
+            Response response;
 
             if (format == Format.json || (service instanceof JsonService && !(service instanceof XmlService))) {
                 JsonService jsonService = (JsonService) service;
@@ -148,11 +138,12 @@ public class ServiceRequestHandler implements EventHandler {
         }
     }
 
-    protected Response createErrorResponse(int code, String message, Format format) throws EventHandlerException {
+    @SuppressWarnings("unused")
+    protected Response createErrorResponse(int code, String message, Format format) {
         return createResponse(code, message, format);
     }
 
-    protected Response createErrorResponse(Throwable t, Format f) throws EventHandlerException {
+    protected Response createErrorResponse(Throwable t, Format f) {
         if (t instanceof ServiceException && ((ServiceException)t).getCode() >= 400)
             return createResponse(((ServiceException)t).getCode(), t.getMessage(), f);
         Throwable cause = t;
@@ -161,11 +152,11 @@ public class ServiceRequestHandler implements EventHandler {
         return createResponse(-1, cause.toString(), f);
     }
 
-    protected Response createSuccessResponse(Format format) throws EventHandlerException {
+    protected Response createSuccessResponse(Format format) {
         return createResponse(0, "Success", format);
     }
 
-    protected Response createResponse(int code, String message, Format format) throws EventHandlerException {
+    protected Response createResponse(int code, String message, Format format) {
         Response response = new Response();
         StatusMessage statusMessage = new StatusMessage();
         statusMessage.setCode(code);
@@ -214,10 +205,13 @@ public class ServiceRequestHandler implements EventHandler {
                         pkgName += "." + pathSegment;
                     Package pkg = PackageCache.getPackage(pkgName);
                     if (pkg != null) {
-                        // try without any subpath first (@Path="/")
-                        TextService service = (TextService)registry.getDynamicServiceForPath(pkg, serviceType, "/");
-                        if (service == null && i < pathSegments.length - 1) {
+                        TextService service = null;
+                        if (i < pathSegments.length - 1) {
                             service = (TextService)registry.getDynamicServiceForPath(pkg, serviceType, "/" + pathSegments[i + 1]);
+                        }
+                        if (service == null) {
+                            // fallback -- try without any subpath (@Path="/")
+                            service = (TextService) registry.getDynamicServiceForPath(pkg, serviceType, "/");
                         }
                         if (service != null)
                             return service;
@@ -244,7 +238,7 @@ public class ServiceRequestHandler implements EventHandler {
     protected Format getFormat(Map<String,String> metaInfo) {
         Format format = Format.json;
         metaInfo.put(Listener.METAINFO_CONTENT_TYPE, Listener.CONTENT_TYPE_JSON);
-        String formatParam = (String) metaInfo.get("format");
+        String formatParam = metaInfo.get("format");
         if (formatParam != null) {
             if (formatParam.equals("xml")) {
                 format = Format.xml;

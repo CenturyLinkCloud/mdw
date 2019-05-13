@@ -31,17 +31,17 @@ public class ServiceRegistry {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private Map<String,List<RegisteredService>> services = new HashMap<String,List<RegisteredService>>();
-    private Map<String,Set<String>> dynamicServices = new HashMap<String,Set<String>>(); // Dynamic java Registered services
-    private Map<String,String> pathToDynamicServiceClass = new HashMap<String,String>(); // resource paths
+    private Map<String,List<RegisteredService>> services = new HashMap<>();
+    private Map<String,Set<String>> dynamicServices = new HashMap<>(); // Dynamic java Registered services
+    private Map<String,String> pathToDynamicServiceClass = new HashMap<>(); // resource paths
 
     protected ServiceRegistry(List<Class<? extends RegisteredService>> serviceInterfaces) {
         for (Class<? extends RegisteredService> serviceInterface : serviceInterfaces) {
-            services.put(serviceInterface.getName(), new ArrayList<RegisteredService>());
+            services.put(serviceInterface.getName(), new ArrayList<>());
         }
     }
     public <T extends RegisteredService> List<T> getServices(Class<T> serviceInterface) {
-        List<T> list = new ArrayList<T>();
+        List<T> list = new ArrayList<>();
         for (RegisteredService service : services.get(serviceInterface.getName())) {
             T rs = serviceInterface.cast(service);
             list.add(rs);
@@ -85,8 +85,6 @@ public class ServiceRegistry {
     /**
      * To get List of dynamic java registered services based on service interface
      * Example: To get list of registered process Monitors
-     * @param serviceInterface
-     * @return
      */
     public <T extends RegisteredService> List<T> getDynamicServices(Class<T> serviceInterface) {
         List<T> dynServices = new ArrayList<>();
@@ -112,9 +110,9 @@ public class ServiceRegistry {
 
     @SuppressWarnings("unchecked")
     public <T extends RegisteredService> List<Class<T>> getDynamicServiceClasses(Class<T> serviceInterface) {
-        List<Class<T>> dynServiceClasses = new ArrayList<Class<T>>();
+        List<Class<T>> dynServiceClasses = new ArrayList<>();
         if (dynamicServices.containsKey(serviceInterface.getName())) {
-            Set<String> deregister = new HashSet<String>();
+            Set<String> deregister = new HashSet<>();
             for (String serviceClassName : dynamicServices.get(serviceInterface.getName())) {
                 try {
                     Class<?> clazz = CompiledJavaCache.getClassFromAssetName(null, serviceClassName);
@@ -134,15 +132,13 @@ public class ServiceRegistry {
 
     /**
      * Add Dynamic Java Registered Service class names for each service
-     * @param serviceInterface
-     * @param className
      */
     public void addDynamicService(String serviceInterface, String className) {
         if (dynamicServices.containsKey(serviceInterface)) {
             dynamicServices.get(serviceInterface).add(className);
         }
         else {
-            Set<String> classNamesSet = new HashSet<String>();
+            Set<String> classNamesSet = new HashSet<>();
             classNamesSet.add(className);
             dynamicServices.put(serviceInterface, classNamesSet);
         }
@@ -180,6 +176,7 @@ public class ServiceRegistry {
     /**
      * Default is true
      */
+    @SuppressWarnings("unused")
     protected boolean isEnabled(RegisteredService service) {
         return true;
     }
