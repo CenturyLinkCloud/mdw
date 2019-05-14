@@ -150,6 +150,7 @@ public class Data {
         public static final String STOP_IMPL = "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity";
         public static final String PAUSE_IMPL = "com.centurylink.mdw.base.PauseActivity";
         public static final String DYNAMIC_JAVA = "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity";
+        public static final String DUMMY_ACTIVITY = "com.centurylink.mdw.workflow.activity.DefaultActivityImpl";
 
         public static final List<ActivityImplementor> PSEUDO_IMPLEMENTORS = new ArrayList<>();
         static {

@@ -112,7 +112,6 @@ public class Implementors extends JsonRestService {
                             throw new FileNotFoundException("No pagelet asset: " + pageletAssetPath);
                         pageletStr = pageletAsset.getStringContent();
                     }
-                    impl.setPagelet(null);
                     Pagelet pagelet = new Pagelet(impl.getCategory(), pageletStr);
                     pagelet.addWidgetProvider(new PrePostWidgetProvider());
                     pagelet.addWidgetProvider(implCategory -> {

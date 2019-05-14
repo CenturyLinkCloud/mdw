@@ -59,6 +59,7 @@ import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
+import com.centurylink.mdw.service.data.process.HierarchyCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ProcessException;
@@ -88,6 +89,7 @@ import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class WorkflowServicesImpl implements WorkflowServices {
 
@@ -1457,12 +1459,15 @@ public class WorkflowServicesImpl implements WorkflowServices {
      * Returns milestone instances.
      */
     public MilestonesList getMilestones(Query query) throws ServiceException {
-        query.setFilter("master", true);
-        ProcessList masterProcessList = getProcesses(query);
-        List<Linked<Milestone>> milestones = new ArrayList<>();
-        for (ProcessInstance masterProcessInstance : masterProcessList.getProcesses()) {
-            Process masterProcess = ProcessCache.getProcess(masterProcessInstance.getProcessId());
-            if (masterProcess != null) {
+        MilestonesList milestonesList = new MilestonesList(new ArrayList<>(), 0);
+        String[] milestonedProcesses = HierarchyCache.getMilestoned().stream()
+                .map(String::valueOf).collect(Collectors.toList()).toArray(new String[0]);
+        if (milestonedProcesses.length > 0) {
+            query.setArrayFilter("processIds", milestonedProcesses);
+            query.setFilter("master", true);
+            ProcessList masterProcessList = getProcesses(query);
+            for (ProcessInstance masterProcessInstance : masterProcessList.getProcesses()) {
+                Process masterProcess = ProcessCache.getProcess(masterProcessInstance.getProcessId());
                 // retrieve full
                 ProcessInstance processInstance = getProcess(masterProcessInstance.getId());
                 Activity masterStartActivity = masterProcess.getStartActivity();
@@ -1473,10 +1478,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 Linked<Milestone> masterMilestones = new Linked<>(startMilestone);
                 Linked<ProcessInstance> parentInstance = getCallHierearchy(masterProcessInstance.getId());
                 addMilestones(masterMilestones, parentInstance);
-                milestones.add(masterMilestones);
+                milestonesList.getMilestones().add(masterMilestones);
             }
+            milestonesList.setTotal(masterProcessList.getTotal());
         }
-        return new MilestonesList(milestones, masterProcessList.getTotal());
+
+        return milestonesList;
     }
 
     private void addMilestones(Linked<Milestone> parent, Linked<ProcessInstance> parentInstance)
@@ -1485,9 +1492,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
         if (process != null) {
             ProcessInstance processInstance = getProcess(parentInstance.get().getId());
             MilestoneFactory milestoneFactory = new MilestoneFactory(process);
-            milestoneFactory.addMilestones(parent, processInstance);
+            Linked<Milestone> newParent = milestoneFactory.addMilestones(parent, processInstance);
             for (Linked<ProcessInstance> subInstance : parentInstance.getChildren()) {
-                addMilestones(parent, subInstance);
+                addMilestones(newParent, subInstance);
             }
         }
     }

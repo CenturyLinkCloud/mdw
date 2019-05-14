@@ -31,6 +31,12 @@ public class Hierarchy extends Setup {
     public int getMaxDepth() { return maxDepth; }
     public void setMaxDepth(int maxDepth) { this.maxDepth = maxDepth; }
 
+    @Parameter(names="--downward", description="Only search downward from process")
+    private boolean downward;
+    public boolean isDownward() { return downward; }
+    public void setDownward(boolean downward) { this.downward = downward; }
+
+
     private List<Linked<Process>> topLevelCallers = new ArrayList<>();
     public List<Linked<Process>> getTopLevelCallers() { return topLevelCallers; }
 
@@ -67,7 +73,12 @@ public class Hierarchy extends Setup {
 
         if (processes == null)
             loadProcesses(monitors);
-        addTopLevelCallers(start);
+        if (downward) {
+            topLevelCallers.add(new Linked<>(start));
+        }
+        else {
+            addTopLevelCallers(start);
+        }
 
         for (int i = 0; i < topLevelCallers.size(); i++) {
             Linked<Process> topLevelCaller = topLevelCallers.get(i);
@@ -171,8 +182,9 @@ public class Hierarchy extends Setup {
             topLevelCallers.add(new Linked<>(called));
         }
         else {
-            for (Process caller : immediateCallers)
+            for (Process caller : immediateCallers) {
                 addTopLevelCallers(caller);
+            }
         }
     }
 

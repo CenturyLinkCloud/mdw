@@ -154,6 +154,9 @@ public class DesignServicesImpl implements DesignServices {
         return implementor; // loaded from annotation or not found
     }
 
+    /**
+     * For top-level processId (only searches downward).
+     */
     @Override
     public List<Linked<Process>> getProcessHierarchy(Long processId) throws ServiceException {
         Process process = ProcessCache.getProcess(processId);
@@ -169,6 +172,7 @@ public class DesignServicesImpl implements DesignServices {
                     processes.add(loaded);
             }
             Hierarchy hierarchy = new Hierarchy(process, processes);
+            hierarchy.setDownward(true);
             hierarchy.run();
             return hierarchy.getTopLevelCallers();
         }
