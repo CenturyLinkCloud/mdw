@@ -9,6 +9,7 @@ import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.project.Data;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.services.AssetServices;
@@ -76,6 +77,9 @@ public class ImplementorCache implements PreloadableCache {
                         implementors.put(impl.getImplementorClass(), impl);
                 }
             }
+
+            implementors.put(Data.Implementors.DUMMY_ACTIVITY, new ActivityImplementor(Data.Implementors.DUMMY_ACTIVITY,
+                    GeneralActivity.class.getName(), "Dummy Activity", "shape:activity", "{}"));
         }
         catch (DataAccessException | ServiceException ex) {
             throw new CachingException(ex.getMessage(), ex);
