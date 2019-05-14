@@ -206,6 +206,20 @@ public interface WorkflowServices {
      */
     Linked<ProcessInstance> getCallHierearchy(Long processInstanceId) throws ServiceException;
 
+    /**
+     * Returns milestone instances (not linked) for master processes that have milestones in their hierarchies.
+     */
     MilestonesList getMilestones(Query query) throws ServiceException;
+
+    /**
+     * Returns deep-linked milestones for a master process.
+     */
+    Linked<Milestone> getMilestones(String masterRequestId) throws ServiceException;
+
+    /**
+     * Returns deep-linked milestones for a master process.
+     */
+    Linked<Milestone> getMilestones(Long masterProcessInstanceId) throws ServiceException;
+
 
 }

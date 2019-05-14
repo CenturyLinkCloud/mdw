@@ -1,0 +1,20 @@
+<ul class="dropdown-menu mdw-popover-menu mdw-check-menu">
+  <li ng-if="milestonesFilter.descending">
+    <div class="mdw-checked">
+      <i class="glyphicon glyphicon-ok"></i>
+      <a class="mdw-drop-selected" href="">Newest First</a>
+    </div>
+  </li>
+  <li ng-if="!milestonesFilter.descending">
+    <a href="" ng-click="milestonesFilter.descending=true">Newest First</a>
+  </li>
+  <li ng-if="!milestonesFilter.descending">
+    <div class="mdw-checked">
+      <i class="glyphicon glyphicon-ok"></i>
+      <a class="mdw-drop-selected" href="">Oldest First</a>
+    </div>
+  </li>
+  <li ng-if="milestonesFilter.descending">
+    <a href="" ng-click="milestonesFilter.descending=false">Oldest First</a>
+  </li>
+</ul>

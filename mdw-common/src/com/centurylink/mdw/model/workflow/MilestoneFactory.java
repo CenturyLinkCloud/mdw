@@ -18,6 +18,13 @@ public class MilestoneFactory {
         return new Linked<>(new Milestone(process, process.getStartActivity(), "Start"));
     }
 
+    public Milestone createMilestone(ProcessInstance processInstance) {
+        Milestone milestone = new Milestone(process);
+        milestone.setProcessInstance(processInstance);
+        milestone.setMasterRequestId(processInstance.getMasterRequestId());
+        return milestone;
+    }
+
     public Milestone createMilestone(ProcessInstance processInstance, ActivityInstance activityInstance, String text) {
         Activity activity = process.getActivity(activityInstance.getActivityId());
         Milestone milestone = new Milestone(process, activity, text);

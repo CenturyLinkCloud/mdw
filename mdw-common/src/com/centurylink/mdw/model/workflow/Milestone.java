@@ -12,6 +12,10 @@ public class Milestone implements Linkable, Jsonable {
 
     public static final String MONITOR_CLASS = "com.centurylink.mdw.milestones.ActivityMilestone";
 
+    public Milestone(Process process) {
+        this.process = process;
+    }
+
     public Milestone(Process process, Activity activity, String text) {
         this.process = process;
         this.activity = activity;
@@ -59,7 +63,8 @@ public class Milestone implements Linkable, Jsonable {
     public JSONObject getJson() {
         JSONObject json = create();
         json.put("process", process.getSummaryJson());
-        json.put("activity", activity.getSummaryJson());
+        if (activity != null)
+            json.put("activity", activity.getSummaryJson());
         if (text != null)
             json.put("text", text);
         if (masterRequestId != null)

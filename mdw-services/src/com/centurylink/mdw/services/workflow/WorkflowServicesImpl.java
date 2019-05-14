@@ -1455,9 +1455,6 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    /**
-     * Returns milestone instances.
-     */
     public MilestonesList getMilestones(Query query) throws ServiceException {
         MilestonesList milestonesList = new MilestonesList(new ArrayList<>(), 0);
         String[] milestonedProcesses = HierarchyCache.getMilestoned().stream()
@@ -1468,22 +1465,41 @@ public class WorkflowServicesImpl implements WorkflowServices {
             ProcessList masterProcessList = getProcesses(query);
             for (ProcessInstance masterProcessInstance : masterProcessList.getProcesses()) {
                 Process masterProcess = ProcessCache.getProcess(masterProcessInstance.getProcessId());
-                // retrieve full
-                ProcessInstance processInstance = getProcess(masterProcessInstance.getId());
-                Activity masterStartActivity = masterProcess.getStartActivity();
-                ActivityInstance masterStartInstance =
-                        processInstance.getActivities(masterStartActivity.getLogicalId()).get(0);
-                Milestone startMilestone = new MilestoneFactory(masterProcess).createMilestone(masterProcessInstance,
-                        masterStartInstance, "Start");
-                Linked<Milestone> masterMilestones = new Linked<>(startMilestone);
-                Linked<ProcessInstance> parentInstance = getCallHierearchy(masterProcessInstance.getId());
-                addMilestones(masterMilestones, parentInstance);
-                milestonesList.getMilestones().add(masterMilestones);
+                Milestone milestone = new MilestoneFactory(masterProcess).createMilestone(masterProcessInstance);
+                milestonesList.getMilestones().add(milestone);
             }
             milestonesList.setTotal(masterProcessList.getTotal());
         }
-
         return milestonesList;
+    }
+
+    public Linked<Milestone> getMilestones(String masterRequestId) throws ServiceException {
+        ProcessInstance masterProcessInstance = getMasterProcess(masterRequestId);
+        if (masterProcessInstance == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Master process not found: " + masterRequestId);
+        return getMilestones(masterProcessInstance);
+    }
+
+    public Linked<Milestone> getMilestones(Long masterProcessInstanceId) throws ServiceException {
+        ProcessInstance masterProcessInstance = getProcess(masterProcessInstanceId);
+        if (masterProcessInstance == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + masterProcessInstanceId);
+        return getMilestones(masterProcessInstance);
+    }
+
+    private Linked<Milestone> getMilestones(ProcessInstance masterProcessInstance) throws ServiceException {
+        Process masterProcess = ProcessCache.getProcess(masterProcessInstance.getProcessId());
+        // retrieve full
+        ProcessInstance processInstance = getProcess(masterProcessInstance.getId());
+        Activity masterStartActivity = masterProcess.getStartActivity();
+        ActivityInstance masterStartInstance =
+                processInstance.getActivities(masterStartActivity.getLogicalId()).get(0);
+        Milestone startMilestone = new MilestoneFactory(masterProcess).createMilestone(masterProcessInstance,
+                masterStartInstance, "Start");
+        Linked<Milestone> masterMilestones = new Linked<>(startMilestone);
+        Linked<ProcessInstance> parentInstance = getCallHierearchy(masterProcessInstance.getId());
+        addMilestones(masterMilestones, parentInstance);
+        return masterMilestones;
     }
 
     private void addMilestones(Linked<Milestone> parent, Linked<ProcessInstance> parentInstance)
