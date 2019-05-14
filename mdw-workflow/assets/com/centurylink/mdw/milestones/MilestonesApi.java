@@ -32,9 +32,8 @@ public class MilestonesApi extends JsonRestService {
                 return getDefinition(Long.parseLong(procId));
             }
             else {
-                // TODO
-                System.out.println("masterRequestId: " + seg4);
-                return null;
+                // by masterRequestId
+                return ServiceLocator.getWorkflowServices().getMilestones(seg4).getJson();
             }
         } else {
 

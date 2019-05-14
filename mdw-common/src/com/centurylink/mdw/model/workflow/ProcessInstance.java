@@ -16,6 +16,7 @@
 package com.centurylink.mdw.model.workflow;
 
 import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.variable.VariableInstance;
@@ -397,14 +398,16 @@ public class ProcessInstance implements Jsonable, Linkable {
     public JSONObject getSummaryJson() throws JSONException {
         JSONObject json = create();
         json.put("id", this.id);
-        if (processName != null)
-            json.put("processName", processName);
-        if (processVersion != null)
-            json.put("processVersion", processVersion);
-        if (packageName != null)
-            json.put("packageName", packageName);
         if (status != null)
             json.put("status", status);
+        else if (statusCode > 0)
+            json.put("status", WorkStatuses.getWorkStatuses().get(statusCode));
+        if (completionCode != null)
+            json.put("result", completionCode);
+        if (startDate != null)
+            json.put("start", new Date(DateHelper.stringToDate(startDate).getTime() + DatabaseAccess.getDbTimeDiff()).toInstant());
+        if (endDate != null)
+            json.put("finish", new Date(DateHelper.stringToDate(endDate).getTime() + DatabaseAccess.getDbTimeDiff()).toInstant());
         return json;
     }
 

@@ -16,6 +16,7 @@
 package com.centurylink.mdw.model.workflow;
 
 import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.StatusCode;
 import com.centurylink.mdw.util.DateHelper;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -187,6 +188,8 @@ public class ActivityInstance implements Jsonable, Linkable {
             json.put("name", name);
         if (status != null)
             json.put("status", status);
+        else if (statusCode > 0)
+            json.put("status", WorkStatuses.getWorkStatuses().get(statusCode));
         if (result != null)
             json.put("result", result);
         return json;

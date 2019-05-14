@@ -21,12 +21,6 @@
             "priority": 1
           },
           {
-            "label": "Milestones",
-            "path": "workflow/milestones",
-            "href": "#/workflow/milestones",
-            "priority": 1
-          },
-          {
             "label": "Activities",
             "path": "workflow/activities",
             "href": "#/workflow/activities"
@@ -45,6 +39,12 @@
       },
       {
         "links": [
+          {
+            "label": "Milestones",
+            "path": "workflow/milestones",
+            "href": "#/milestones",
+            "priority": 1
+          },
           {
             "label": "Solutions",
             "path": "solutions/*",

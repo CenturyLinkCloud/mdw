@@ -1,0 +1,27 @@
+<div class="mdw-flex-item">
+  <div class="mdw-flex-item-left">
+    <div>
+      <div>
+        <div>
+          <a href="#/milestones/{{item.masterRequestId}}" class="mdw-item-link">{{item.masterRequestId}}</a>
+          (<a href="#/workflow/masterRequests/{{item.masterRequestId}}" class="mdw-link">request</a>)
+        </div>
+        <div>
+          {{item.process.packageName}}/
+          <a ng-class="['mdw-item-link', 'mdw-item-nowrap', {'mdw-template': item.template}]" style="margin-left:-3px"
+             href="#/workflow/processes/{{item.id}}">
+            {{item.process.name}} {{item.process.version == '0' ? '' : 'v' + item.process.version}} &nbsp;{{item.processInstance.id}}</a>
+        </div>
+        <div class="mdw-item-sub">Started {{item.startDate}}<span ng-if="item.due">, &nbsp;Due <i class="mdw-item-highlight">{{item.due}}</i></span>
+          <img class="mdw-item-alert" ng-if="item.alert" src="images/alert.png" alt="alert" />
+        </div>
+        <div class="mdw-item-sub" ng-if="item.endDate">{{item.processInstance.status}} {{item.endDate}}</div>
+      </div>
+    </div>
+  </div>
+  <div class="mdw-flex-item-right">
+    <div class="mdw-item">
+      <span>{{item.processInstance.status}}</span>
+    </div>
+  </div>
+</div>
