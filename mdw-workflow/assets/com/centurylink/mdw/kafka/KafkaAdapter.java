@@ -103,8 +103,9 @@ public class KafkaAdapter extends TextAdapterActivity {
      * Object should be based on what is set as KEY_SERIALIZER_CLASS_CONFIG, We are assuming value is of String type
      */
     protected ProducerRecord<Object, Object> createKafkaMessage(Object pRequestString, Map<String, String> headers) {
-        if (headers == null)
+        if (headers == null || headers.isEmpty()) {
             recordProps = getRecordProps();
+        }
         else {
             recordProps = new Properties();
             recordProps.putAll(headers);

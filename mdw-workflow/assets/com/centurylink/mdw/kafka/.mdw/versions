@@ -1,4 +1,4 @@
-KafkaAdapter.java=8
+KafkaAdapter.java=9
 KafkaProducer.proc=5
 KafkaProducer.test=1
 KafkaProducer.yaml=3 Auto-created
