@@ -132,6 +132,7 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
                     String oldClassName = className;
                     className = className + "_" + getProcessId();
                     javaCode = javaCode.replace(oldClassName, className);
+                    className = tempPkg.getName() + "." + className;
                 }
 
                 setExecutorClassLoader(tempPkg.getCloudClassLoader());
