@@ -407,7 +407,7 @@ public class ProcessInstance implements Jsonable, Linkable {
         if (startDate != null)
             json.put("start", new Date(DateHelper.stringToDate(startDate).getTime() + DatabaseAccess.getDbTimeDiff()).toInstant());
         if (endDate != null)
-            json.put("finish", new Date(DateHelper.stringToDate(endDate).getTime() + DatabaseAccess.getDbTimeDiff()).toInstant());
+            json.put("end", new Date(DateHelper.stringToDate(endDate).getTime() + DatabaseAccess.getDbTimeDiff()).toInstant());
         return json;
     }
 

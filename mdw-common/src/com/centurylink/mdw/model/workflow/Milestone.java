@@ -16,10 +16,10 @@ public class Milestone implements Linkable, Jsonable {
         this.process = process;
     }
 
-    public Milestone(Process process, Activity activity, String text) {
+    public Milestone(Process process, Activity activity, String label) {
         this.process = process;
         this.activity = activity;
-        this.text = text;
+        this.label = label;
     }
 
     private Process process;
@@ -30,9 +30,9 @@ public class Milestone implements Linkable, Jsonable {
     public Activity getActivity() { return activity; }
     public void setActivity(Activity activity) { this.activity = activity; }
 
-    private String text;
-    public String getText() { return text; }
-    public void setText(String text) { this.text = text; }
+    private String label;
+    public String getLabel() { return label; }
+    public void setLabel(String label) { this.label = label; }
 
     // below is for instance-level
     private String masterRequestId;
@@ -47,9 +47,9 @@ public class Milestone implements Linkable, Jsonable {
     public Instant getStart() { return start; }
     public void setStart(Instant start) { this.start = start; }
 
-    private Instant finish;
-    public Instant getFinish() { return finish; }
-    public void setFinish(Instant finish) { this.finish = finish; }
+    private Instant end;
+    public Instant getEnd() { return end; }
+    public void setEnd(Instant finish) { this.end = end; }
 
     private ProcessInstance processInstance;
     public ProcessInstance getProcessInstance() { return processInstance; }
@@ -65,16 +65,16 @@ public class Milestone implements Linkable, Jsonable {
         json.put("process", process.getSummaryJson());
         if (activity != null)
             json.put("activity", activity.getSummaryJson());
-        if (text != null)
-            json.put("text", text);
+        if (label != null)
+            json.put("label", label);
         if (masterRequestId != null)
             json.put("masterRequestId", masterRequestId);
         if (status != null)
             json.put("status", status);
         if (start != null)
             json.put("start", start.toString());
-        if (finish != null)
-            json.put("finish", finish.toString());
+        if (end != null)
+            json.put("end", end.toString());
         if (processInstance != null)
             json.put("processInstance", processInstance.getSummaryJson());
         if (activityInstance != null)
@@ -90,6 +90,10 @@ public class Milestone implements Linkable, Jsonable {
 
     @Override
     public String getQualifiedLabel() {
-        return text;
+        String qlabel = process.getQualifiedLabel();
+        if (activity != null)
+            qlabel += " " + activity.getQualifiedLabel();
+        qlabel += " " + label;
+        return qlabel;
     }
 }

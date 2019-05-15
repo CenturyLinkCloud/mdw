@@ -117,8 +117,8 @@ milestonesMod.controller('MilestonesController',
     // start date and end date
     milestonesList.milestones.forEach(function(milestone) {
       milestone.startDate = util.formatDateTime(new Date(milestone.processInstance.start));
-      if (milestone.processInstance.finish)
-        milestone.endDate = util.formatDateTime(new Date(milestone.processInstance.finish));
+      if (milestone.processInstance.end)
+        milestone.endDate = util.formatDateTime(new Date(milestone.processInstance.end));
     });
     if ($scope.milestonesFilter.processId) {
       if (milestonesList.milestones.length > 0) {
