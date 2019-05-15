@@ -50,4 +50,9 @@ public class StringHelper {
     public static Date serviceStringToDate(String s) {
         return DateHelper.serviceStringToDate(s);
     }
+
+    @Deprecated
+    public static boolean isEqual(String s1, String s2) {
+        return StringUtils.equals(s1, s2);
+    }
 }
