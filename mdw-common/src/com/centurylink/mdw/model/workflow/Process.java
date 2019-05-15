@@ -452,8 +452,11 @@ public class Process extends Asset implements Jsonable, Linkable {
 
     public List<Activity> getDownstreamActivities(Activity activity) {
         List<Activity> downstreamActivities = new ArrayList<>();
-        for (Transition transition : getAllTransitions(activity.getId()))
-            downstreamActivities.add(getActivity(transition.getToId()));
+        for (Transition transition : getAllTransitions(activity.getId())) {
+            Activity downstreamActivity = getActivity(transition.getToId());
+            if (downstreamActivity != null)
+                downstreamActivities.add(downstreamActivity);
+        }
         return downstreamActivities;
     }
 
