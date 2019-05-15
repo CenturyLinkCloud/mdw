@@ -28,6 +28,8 @@ public class Linked<T extends Linkable> implements Jsonable {
     public void setCircular(boolean snipped) { this.circular = snipped; }
 
     public Linked(T element) {
+        if (element == null)
+            throw new NullPointerException("null element");
         this.element = element;
     }
 
