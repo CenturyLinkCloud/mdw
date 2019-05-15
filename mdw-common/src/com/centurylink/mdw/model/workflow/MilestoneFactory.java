@@ -35,7 +35,7 @@ public class MilestoneFactory {
         milestone.setStart(startDate.toInstant());
         if (activityInstance.getEndDate() != null) {
             Date endDate = new Date(activityInstance.getEndDate().getTime() + DatabaseAccess.getDbTimeDiff());
-            milestone.setFinish(endDate.toInstant());
+            milestone.setEnd(endDate.toInstant());
         }
         milestone.setStatus(activityInstance.getStatus());
         return milestone;
