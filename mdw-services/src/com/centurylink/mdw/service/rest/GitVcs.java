@@ -44,8 +44,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.ws.rs.Path;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +59,6 @@ public class GitVcs extends JsonRestService {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private Thread thread;
     private VersionControlGit vcGit;
     private File gitRoot;
     String assetPath;
@@ -142,7 +143,7 @@ public class GitVcs extends JsonRestService {
                         hard = content.getBoolean("gitHard");
 
                     GitVcs importer = this;
-                    thread = new Thread() {
+                    Thread thread = new Thread() {
                         @Override
                         public void run() {
                             this.setName("GitVcsAssetImporter-thread");
@@ -225,6 +226,7 @@ public class GitVcs extends JsonRestService {
 
     private void importAssets() {
         Bulletin bulletin = null;
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try (DbAccess dbAccess = new DbAccess()) {
             bulletin = SystemMessages.bulletinOn("Asset import in progress...");
             Import gitImporter = new Import(gitRoot, vcGit, branch, hard, dbAccess.getConnection());
@@ -232,13 +234,21 @@ public class GitVcs extends JsonRestService {
             gitImporter.setAssetLoc(ApplicationContext.getAssetRoot().getAbsolutePath());
             gitImporter.setConfigLoc(PropertyManager.getConfigLocation());
             gitImporter.setGitRoot(gitRoot);
+            PrintStream ps = new PrintStream(baos);
+            gitImporter.setOut(ps);
+            gitImporter.setErr(ps);
             gitImporter.importAssetsFromGit();
+
             SystemMessages.bulletinOff(bulletin, "Asset import completed");
             CacheRegistration.getInstance().refreshCaches(null);
         }
         catch (Throwable e) {
             logger.severeException("Exception during asset import", e);
             SystemMessages.bulletinOff(bulletin, Level.Error, "Asset import failed: " + e.getMessage());
+        }
+        finally {
+            // log importer and vercheck output
+            logger.error(new String(baos.toByteArray()));
         }
     }
 }

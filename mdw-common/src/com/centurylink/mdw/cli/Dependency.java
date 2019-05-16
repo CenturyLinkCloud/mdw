@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.
+/*
+ * Copyright (c) 2019 CenturyLink, Inc. All Rights Reserved.
  */
 package com.centurylink.mdw.cli;
 
@@ -24,8 +24,8 @@ public class Dependency implements Operation {
 
     @Override
     public Dependency run(ProgressMonitor... progressMonitors) throws IOException {
-        if (System.getProperty("mdw.studio.version") != null)
-            return this; // dependencies are provided with plugin
+        if (System.getProperty("mdw.studio.version") != null || System.getProperty("mdw.runtime.env") != null)
+            return this; // dependencies are provided by studio and runtime
 
         File libDir = getLibDir();
         File depJar = new File(libDir + "/" + path.substring(path.lastIndexOf('/')));

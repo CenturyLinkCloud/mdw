@@ -23,9 +23,7 @@ import com.centurylink.mdw.drawio.DrawIoProcessImporter;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.procimport.ProcessImporter;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Files;
 import java.sql.Connection;
@@ -222,6 +220,8 @@ public class Import extends Setup {
             vercheck.setGitRoot(getGitRoot());
             vercheck.setForImport(true);
             vercheck.setDebug(true);
+            vercheck.setOut(getOut());
+            vercheck.setErr(getErr());
             vercheck.run();
             if (vercheck.getErrorCount() > 0) {
                 throw new IOException("Asset version conflict(s).  See log for details");
@@ -258,7 +258,7 @@ public class Import extends Setup {
      */
     public void importGit(ProgressMonitor... monitors) throws IOException {
         if (inProgress)
-            throw new IOException("Asset already in progress...");
+            throw new IOException("Import already in progress...");
 
         try {
             inProgress = true;
@@ -268,7 +268,7 @@ public class Import extends Setup {
             getOut().println("Importing from Git into: " + getProjectDir() + "...");
 
             // CLI dependencies
-            Git git = new Git(getReleasesUrl(), vcInfo, "checkVersionConsistency", vcInfo.getBranch(), getAssetLoc());
+            Git git = new Git(getReleasesUrl(), vcInfo, "toString");
             git.run(monitors);
 
             // Check Asset inconsistencies
@@ -276,6 +276,7 @@ public class Import extends Setup {
             vercheck.setConfigLoc(getConfigLoc());
             vercheck.setAssetLoc(getAssetLoc());
             vercheck.setGitRoot(getGitRoot());
+            vercheck.setForImport(true);
             vercheck.setDebug(true);
             vercheck.run();
             if (vercheck.getErrorCount() > 0) {

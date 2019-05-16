@@ -764,10 +764,6 @@ public class AssetServicesImpl implements AssetServices {
         public void hardCheckout(String branch, Boolean hard) {
         }
 
-        public Map<String, List<String>> checkVersionConsistency(String branch, String path) {
-            return null;
-        }
-
         public String getCommit() {
             return null;
         }
