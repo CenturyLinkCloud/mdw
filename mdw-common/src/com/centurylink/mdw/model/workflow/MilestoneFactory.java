@@ -57,21 +57,21 @@ public class MilestoneFactory {
         ActivityInstance activityInstance = start.get();
         Activity activity = process.getActivity(activityInstance.getActivityId());
         Milestone milestone = getMilestone(activity);
+        Linked<Milestone> newParent = parent;
         if (milestone != null) {
             Linked<Milestone> linkedMilestone = new Linked<>(milestone);
             linkedMilestone.setParent(parent);
             parent.getChildren().add(linkedMilestone);
             for (Linked<ActivityInstance> child : start.getChildren()) {
-                return addMilestones(linkedMilestone, processInstance, child);
+                newParent = addMilestones(linkedMilestone, processInstance, child);
             }
-            return linkedMilestone;
         }
         else {
             for (Linked<ActivityInstance> child : start.getChildren()) {
-                return addMilestones(parent, processInstance, child);
+                newParent = addMilestones(parent, processInstance, child);
             }
-            return parent;
         }
+        return newParent;
     }
 
     /**

@@ -1473,21 +1473,24 @@ public class WorkflowServicesImpl implements WorkflowServices {
         return milestonesList;
     }
 
-    public Linked<Milestone> getMilestones(String masterRequestId) throws ServiceException {
+    @Override
+    public Linked<Milestone> getMilestones(String masterRequestId, boolean future) throws ServiceException {
         ProcessInstance masterProcessInstance = getMasterProcess(masterRequestId);
         if (masterProcessInstance == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Master process not found: " + masterRequestId);
-        return getMilestones(masterProcessInstance);
+        return getMilestones(masterProcessInstance, future);
     }
 
-    public Linked<Milestone> getMilestones(Long masterProcessInstanceId) throws ServiceException {
+    @Override
+    public Linked<Milestone> getMilestones(Long masterProcessInstanceId, boolean future) throws ServiceException {
         ProcessInstance masterProcessInstance = getProcess(masterProcessInstanceId);
         if (masterProcessInstance == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + masterProcessInstanceId);
-        return getMilestones(masterProcessInstance);
+        return getMilestones(masterProcessInstance, future);
     }
 
-    private Linked<Milestone> getMilestones(ProcessInstance masterProcessInstance) throws ServiceException {
+    private Linked<Milestone> getMilestones(ProcessInstance masterProcessInstance, boolean future)
+            throws ServiceException {
         Process masterProcess = ProcessCache.getProcess(masterProcessInstance.getProcessId());
         // retrieve full
         ProcessInstance processInstance = getProcess(masterProcessInstance.getId());
@@ -1499,6 +1502,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
         Linked<Milestone> masterMilestones = new Linked<>(startMilestone);
         Linked<ProcessInstance> parentInstance = getCallHierearchy(masterProcessInstance.getId());
         addMilestones(masterMilestones, parentInstance);
+        if (future) {
+            // TODO
+
+        }
         return masterMilestones;
     }
 

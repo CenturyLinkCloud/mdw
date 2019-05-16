@@ -1,10 +1,10 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
+import '../node/node_modules/style-loader!../node/node_modules/vis/dist/vis.css';
+import {Network} from '../node/node_modules/vis/dist/vis';
 import Heading from './Heading.jsx';
 import UserDate from '../react/UserDate.jsx';
-import '../node/node_modules/style-loader!../node/node_modules/vis/dist/vis.css';
-import Data from './Data.js';
-import {Network,DataSet} from '../node/node_modules/vis/dist/vis';
+import options from './options.js';
 
 class Milestone extends Component {
     
@@ -12,28 +12,19 @@ class Milestone extends Component {
     super(...args);
   }  
 
-  componentDidMount() {
-  }
-  
   render() {
     // TODO: this refBase doesn't work for non-hash (react) locations
     const refBase = location.hash ? '#/' : location.origin + this.context.hubRoot + '/#/';
-    const milestone = this.props.milestone.milestone ? this.props.milestone.milestone : {};
+    const milestone = this.props.milestone;
 
-    var container = document.getElementById('milestone-graph');
+    const container = document.getElementById('milestone-graph');
     if (container) {
-      const data = new Data(this.props.milestone);
-      var options = {
-        height: (data.maxDepth * 100) + 'px',
-        nodes: {
-          shape: 'dot'
-        },
-        layout: {
-          hierarchical: true
-        }
+      const graphOptions = Object.assign({}, {height: (this.props.data.maxDepth * 100) + 'px'}, options.graph);
+      const graphData = {
+        nodes: this.props.data.items, 
+        edges: this.props.data.edges
       };
-      const networkData = {nodes: data.items, edges: data.edges};
-      const network = new Network(container, networkData, options);
+      const network = new Network(container, graphData, graphOptions);
     }
 
     return (

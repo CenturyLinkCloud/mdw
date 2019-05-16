@@ -2,7 +2,7 @@ import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import Heading from './Heading.jsx';
 
-class Gantt extends Component {
+class Timeline extends Component {
     
   constructor(...args) {
     super(...args);
@@ -14,17 +14,17 @@ class Gantt extends Component {
   render() {
     return (
       <div>
-        <Heading task={this.props.milestone} />
+        <Heading milestone={this.props.milestone} />
         <div className="mdw-section">
-          Gantt
+          Timeline
         </div>
       </div>
     );
   }
 }
 
-Gantt.contextTypes = {
+Timeline.contextTypes = {
   hubRoot: PropTypes.string,
   serviceRoot: PropTypes.string
 };
-export default Gantt; 
+export default Timeline; 
