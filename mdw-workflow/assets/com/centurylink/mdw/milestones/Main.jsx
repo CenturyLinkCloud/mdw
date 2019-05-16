@@ -4,17 +4,18 @@ import {
   BrowserRouter as Router, Route
 } from '../node/node_modules/react-router-dom';
 import Nav from './Nav.jsx';
+import Data from './Data.js';
 import Milestone from './Milestone.jsx';
-import Gantt from './Gantt.jsx';
+import Timeline from './Timeline.jsx';
+import Definition from './Definition.jsx';
 
 class Main extends Component {
   constructor(...args) {
     super(...args);
-    this.state = { milestone: {} };
+    this.state = { milestone: {}, data: {} };
   }
   
   componentDidMount() {
-    $mdwUi.clearMessage();
     const masterRequestId = window.location.hash.substring(13);
     const url = this.getChildContext().serviceRoot + '/com/centurylink/mdw/milestones/' + masterRequestId;
     fetch(new Request(url, {
@@ -27,7 +28,8 @@ class Main extends Component {
     })
     .then(milestone => {
       this.setState({
-        milestone: milestone
+        milestone: milestone.milestone,
+        data: new Data(milestone)
       });
     });
   }
@@ -43,11 +45,13 @@ class Main extends Component {
           <div className="col-md-10">
             <div className="panel panel-default mdw-panel">
               <Route exact path={hub}
-                render={(props) => <Milestone {...props} milestone={this.state.milestone} />} />
+                render={(props) => <Milestone {...props} milestone={this.state.milestone} data={this.state.data}/>} />
               <Route exact path={hub + 'milestones/:masterRequestId'} 
-                render={(props) => <Milestone {...props} milestone={this.state.milestone} />} />
-              <Route exact path={hub + 'milestones/:masterRequestId/gantt'} 
-                render={(props) => <Gantt {...props} milestone={this.state.milestone} />} />
+                render={(props) => <Milestone {...props} milestone={this.state.milestone} data={this.state.data}/>} />
+              <Route exact path={hub + 'milestones/:masterRequestId/timeline'} 
+                render={(props) => <Timeline {...props} milestone={this.state.milestone} data={this.state.data}/>} />
+              <Route exact path={hub + 'milestones/definitions/:processId'} 
+                render={(props) => <Definition {...props} milestone={this.state.milestone} data={this.state.data}/>} />
             </div>
           </div>
         </div>

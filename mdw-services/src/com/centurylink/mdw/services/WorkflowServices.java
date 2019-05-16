@@ -213,13 +213,15 @@ public interface WorkflowServices {
 
     /**
      * Returns deep-linked milestones for a master process.
+     * @param future whether potential downstream milestones should be included
      */
-    Linked<Milestone> getMilestones(String masterRequestId) throws ServiceException;
+    Linked<Milestone> getMilestones(String masterRequestId, boolean future) throws ServiceException;
 
     /**
      * Returns deep-linked milestones for a master process.
+     * @param future whether potential downstream milestones should be included
      */
-    Linked<Milestone> getMilestones(Long masterProcessInstanceId) throws ServiceException;
+    Linked<Milestone> getMilestones(Long masterProcessInstanceId, boolean future) throws ServiceException;
 
 
 }

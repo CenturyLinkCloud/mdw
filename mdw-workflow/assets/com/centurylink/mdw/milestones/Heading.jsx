@@ -9,14 +9,13 @@ class Heading extends Component {
   }  
 
   render() {
-    const milestone = this.props.milestone.milestone ? this.props.milestone.milestone : {};
     return (
       <div className="panel-heading mdw-heading">
         <div className="mdw-heading-label">
-          {milestone.title}
+          {this.props.milestone.title}
           <Link className="mdw-id"
-            to={this.context.hubRoot + '/milestones/' + milestone.masterRequestId}>
-            {milestone.masterRequestId}
+            to={this.context.hubRoot + '/milestones/' + this.props.milestone.masterRequestId}>
+            {this.props.milestone.masterRequestId}
           </Link>
         </div>
         <div className="mdw-heading-actions">
