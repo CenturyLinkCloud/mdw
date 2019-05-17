@@ -122,7 +122,7 @@ public class MilestoneFactory {
             if (monitorAttributes.isEnabled(Milestone.MONITOR_CLASS)) {
                 String text = monitorAttributes.getOptions(Milestone.MONITOR_CLASS);
                 if (text == null || text.trim().isEmpty())
-                    text = activity.oneLineName();
+                    text = activity.getName();
                 return new Milestone(process, activity, text);
             }
         }

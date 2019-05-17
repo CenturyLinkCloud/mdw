@@ -11,9 +11,10 @@ class Data {
   }
   
   add(milestone) {
-    this.depth++;
     let item = milestone.milestone;
     item.id = this.idCtr;
+    item.level = this.depth;
+    this.depth++;
     this.items.push(item);
     if (milestone.children) {
       milestone.children.forEach(child => {

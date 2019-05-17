@@ -4,20 +4,25 @@ module.exports = {
       shape: 'dot'
     },
     edges: {
-      arrows: 'to'
+      arrows: 'to',
+      smooth: {
+        type: 'cubicBezier',
+        forceDirection: 'vertical',
+        roundness: 0.4
+      }      
     },
     layout: {
       hierarchical: {
         enabled: true,
         sortMethod: 'directed',
         blockShifting: true,
-        edgeMinimization: true,
+        edgeMinimization: false,
         parentCentralization: true
 
       }
     },
     physics: {
-      enabled: true
+      enabled: false
     }
   }
 };

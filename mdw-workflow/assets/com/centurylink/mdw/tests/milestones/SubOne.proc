@@ -13,7 +13,7 @@
       }]
     },
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=753,y=371,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=906,y=334,w=60,h=40"},
       "id": "A2",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
       "name": "Stop"
@@ -36,16 +36,16 @@
     {
       "attributes": {
         "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=547,y=357,w=108,h=67"
+        "WORK_DISPLAY_INFO": "x=577,y=115,w=108,h=67"
       },
       "id": "A4",
       "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
       "name": "Waiting\nMilestone",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=704,ly=392,xs=659&749,ys=392&392"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=718,ly=195,xs=689&747,ys=148&242"},
         "event": "FINISH",
         "id": "T3",
-        "to": "A2"
+        "to": "A9"
       }]
     },
     {
@@ -95,7 +95,7 @@
       "implementor": "com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity",
       "name": "Sync",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=499,ly=390,xs=455&543,ys=390&390"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=543,ly=287,xs=455&631,ys=390&185"},
         "event": "FINISH",
         "id": "T7",
         "to": "A4"
@@ -111,6 +111,39 @@
         "event": "FINISH",
         "id": "T10",
         "to": "A7"
+      }]
+    },
+    {
+      "attributes": {
+        "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=752,y=206,w=103,h=73"
+      },
+      "id": "A9",
+      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
+      "name": "Future\nMilestone",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=805,ly=303,xs=805&805,ys=283&324"},
+        "event": "FINISH",
+        "id": "T11",
+        "to": "A10"
+      }]
+    },
+    {
+      "attributes": {
+        "Monitors": "[[\"false\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=756,y=327,w=100,h=60",
+        "processname": "com.centurylink.mdw.tests.milestones/SubThree.proc",
+        "processversion": "[0.1,1)",
+        "synchronous": "true"
+      },
+      "id": "A10",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "SubThree",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=881,ly=354,xs=860&902,ys=354&354"},
+        "event": "FINISH",
+        "id": "T12",
+        "to": "A2"
       }]
     }
   ],
