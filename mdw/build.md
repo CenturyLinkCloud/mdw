@@ -32,7 +32,7 @@
   - Compilation or testing errors will prevent the build from being published.
 
 7. After success:
-  Manually close/release from [Nexus Repository Manager](https://oss.sonatype.org/#welcome) (don't want to automating this).
+  Manually close/release from [Nexus Repository Manager](https://oss.sonatype.org/#welcome) (don't want to automate this).
   Verify repository contains artifacts:
   7a. (Formal Build)
     - Repository: http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (20-30 min)
@@ -42,7 +42,7 @@
 8. (Formal builds only) On GitHub:
   - Make sure all the closed issues have the current milestone assigned; otherwise they will not be included in release notes.
   - Create a milestone marker for the next build. (https://github.com/CenturyLinkCloud/mdw/milestones/new)
-  - Assign any un-delivered issues and pull request for current build's milestone to the next build's milestone.
+  - Assign any un-delivered issues and pull requests for the current build's milestone to the next build's milestone.
   - Close this build's milestone in GitHub.
 
 9. Release Notes

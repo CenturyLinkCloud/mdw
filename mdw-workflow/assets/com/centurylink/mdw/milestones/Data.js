@@ -13,7 +13,7 @@ class Data {
   add(milestone) {
     let item = milestone.milestone;
     item.id = this.idCtr;
-    item.level = this.depth;
+    item.level = this.depth;  
     this.depth++;
     this.items.push(item);
     if (milestone.children) {

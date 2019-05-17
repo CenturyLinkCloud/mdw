@@ -45,7 +45,6 @@ class Definition extends Component {
   }
 
   render() {
-    console.log("DATA: " + JSON.stringify(this.state.data, null, 2));
     this.drawGraph();
     return (
       <div>
