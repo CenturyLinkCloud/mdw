@@ -2,7 +2,7 @@ import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import '../node/node_modules/style-loader!../node/node_modules/vis/dist/vis.css';
 import {Network} from '../node/node_modules/vis/dist/vis';
-import Heading from './Heading.jsx';
+import {Link} from '../node/node_modules/react-router-dom';
 import Data from './Data.js';
 import options from './options.js';
 
@@ -12,6 +12,18 @@ class Definition extends Component {
     super(...args);
     this.state = { milestone: {}, data: {} };
   }  
+
+  drawGraph() {
+    const container = document.getElementById('definition-graph');
+    if (container) {
+      const graphOptions = Object.assign({}, {height: (this.state.data.maxDepth * 100) + 'px'}, options.graph);
+      const graphData = {
+        nodes: this.state.data.items, 
+        edges: this.state.data.edges
+      };
+      const network = new Network(container, graphData, graphOptions);
+    }
+  }
 
   componentDidMount() {
     const processId = this.props.match.params.processId;
@@ -28,24 +40,25 @@ class Definition extends Component {
       this.setState({
         milestone: milestone.milestone,
         data: new Data(milestone)
-      });
+      }, this.drawGraph());
     });
   }
 
   render() {
-    const container = document.getElementById('definition-graph');
-    if (container) {
-      const graphOptions = Object.assign({}, {height: (this.state.data.maxDepth * 100) + 'px'}, options.graph);
-      const graphData = {
-        nodes: this.state.data.items, 
-        edges: this.state.data.edges
-      };
-      const network = new Network(container, graphData, graphOptions);
-    }
-
+    this.drawGraph();
     return (
       <div>
-        <Heading milestone={this.state.milestone} />
+        <div className="panel-heading mdw-heading">
+          {this.props.milestone.process &&
+            <div className="mdw-heading-label">
+              {this.props.milestone.process.packageName} /
+              <Link className="mdw-id"
+                to={this.context.hubRoot + '/todo'}>
+                {this.props.milestone.process.name}
+              </Link>
+            </div>
+          }
+        </div>
         <div className="mdw-section">
           <div id="definition-graph">
           </div>

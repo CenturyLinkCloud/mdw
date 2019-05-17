@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class HierarchyCache implements CacheService {
 
@@ -127,7 +126,9 @@ public class HierarchyCache implements CacheService {
 
     @Override
     public void clearCache() {
-        hierarchies = new ConcurrentHashMap<>();
+        hierarchies = new HashMap<>();
+        milestones = new HashMap<>();
+        milestoned = null;
     }
 
     @Override

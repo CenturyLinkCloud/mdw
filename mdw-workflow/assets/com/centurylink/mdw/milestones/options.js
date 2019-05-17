@@ -9,8 +9,15 @@ module.exports = {
     layout: {
       hierarchical: {
         enabled: true,
-        sortMethod: 'directed'
+        sortMethod: 'directed',
+        blockShifting: true,
+        edgeMinimization: true,
+        parentCentralization: true
+
       }
+    },
+    physics: {
+      enabled: true
     }
   }
 };

@@ -1,0 +1,129 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=40,y=33,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=157,ly=54,xs=104&211,ys=54&54"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=321,y=458,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=215,y=32,w=258,h=41"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
+      "name": "One",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=249,ly=132,xs=249&249,ys=78&187"},
+          "event": "FINISH",
+          "id": "T2",
+          "to": "A4"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=340,ly=131,xs=340&340,ys=78&185"},
+          "event": "FINISH",
+          "id": "T3",
+          "to": "A5"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=437,ly=131,xs=437&437,ys=78&185"},
+          "event": "FINISH",
+          "id": "T4",
+          "to": "A6"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=219,y=190,w=60,h=40"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
+      "name": "Two",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=249,ly=256,xs=249&249,ys=235&277"},
+        "event": "FINISH",
+        "id": "T5",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=310,y=188,w=60,h=40"},
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
+      "name": "Not",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=340,ly=255,xs=340&340,ys=233&277"},
+        "event": "FINISH",
+        "id": "T6",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {
+        "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=407,y=188,w=60,h=40"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
+      "name": "Three",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=437,ly=255,xs=437&437,ys=233&277"},
+        "event": "FINISH",
+        "id": "T7",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {
+        "Monitors": "[[\"false\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=219,y=280,w=264,h=52"
+      },
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity",
+      "name": "Sync",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=350,ly=354,xs=350&350,ys=336&372"},
+        "event": "FINISH",
+        "id": "T8",
+        "to": "A8"
+      }]
+    },
+    {
+      "attributes": {
+        "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=320,y=375,w=60,h=40"
+      },
+      "id": "A8",
+      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
+      "name": "Four",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=350,ly=436,xs=350&350,ys=419&454"},
+        "event": "FINISH",
+        "id": "T9",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=57,y=159,w=46,h=26"
+  }
+}

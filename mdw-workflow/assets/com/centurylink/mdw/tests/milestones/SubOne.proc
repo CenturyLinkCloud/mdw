@@ -13,7 +13,7 @@
       }]
     },
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=753,y=316,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=753,y=371,w=60,h=40"},
       "id": "A2",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
       "name": "Stop"
@@ -36,13 +36,13 @@
     {
       "attributes": {
         "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=545,y=299,w=108,h=67"
+        "WORK_DISPLAY_INFO": "x=547,y=357,w=108,h=67"
       },
       "id": "A4",
       "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
       "name": "Waiting\nMilestone",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=704,ly=336,xs=658&750,ys=336&336"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=704,ly=392,xs=659&749,ys=392&392"},
         "event": "FINISH",
         "id": "T3",
         "to": "A2"
@@ -76,7 +76,7 @@
     },
     {
       "attributes": {
-        "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"Custom label\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
+        "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"Custom Label\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
         "WORK_DISPLAY_INFO": "x=416,y=65,w=106,h=60"
       },
       "id": "A3",
@@ -95,7 +95,7 @@
       "implementor": "com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity",
       "name": "Sync",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=498,ly=364,xs=455&541,ys=364&364"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=499,ly=390,xs=455&543,ys=390&390"},
         "event": "FINISH",
         "id": "T7",
         "to": "A4"
