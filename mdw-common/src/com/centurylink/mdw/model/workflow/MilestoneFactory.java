@@ -42,6 +42,41 @@ public class MilestoneFactory {
     }
 
     /**
+     * Linked milestones for this process definition.
+     * @return new parent
+     */
+    public Linked<Milestone> addMilestones(Linked<Milestone> parent) {
+        return addMilestones(parent, process.getLinkedActivities());
+    }
+
+    /**
+     * @return new parent
+     */
+    public Linked<Milestone> addMilestones(Linked<Milestone> parent, Linked<Activity> start) {
+        Activity activity = start.get();
+        Milestone milestone = getMilestone(activity);
+        Linked<Milestone> newParent = parent;
+        if (milestone != null) {
+            Linked<Milestone> linkedMilestone = new Linked<>(milestone);
+            linkedMilestone.setParent(parent);
+            parent.getChildren().add(linkedMilestone);
+            for (Linked<Activity> child : start.getChildren()) {
+                Linked<Milestone> np = addMilestones(linkedMilestone, child);
+                if (!np.equals(parent))
+                    newParent = np;
+            }
+        }
+        else {
+            for (Linked<Activity> child : start.getChildren()) {
+                Linked<Milestone> np = addMilestones(parent, child);
+                if (!np.equals(parent))
+                    newParent = np;
+            }
+        }
+        return newParent;
+    }
+    
+    /**
      * Linked milestones for process instance.
      * @return new parent
      */
@@ -56,53 +91,28 @@ public class MilestoneFactory {
             Linked<ActivityInstance> start) {
         ActivityInstance activityInstance = start.get();
         Activity activity = process.getActivity(activityInstance.getActivityId());
-        Milestone milestone = getMilestone(activity);
         Linked<Milestone> newParent = parent;
+        Milestone milestone = getMilestone(activity);
         if (milestone != null) {
+            milestone.setProcessInstance(processInstance);
+            milestone.setActivityInstance(activityInstance);
             Linked<Milestone> linkedMilestone = new Linked<>(milestone);
             linkedMilestone.setParent(parent);
             parent.getChildren().add(linkedMilestone);
             for (Linked<ActivityInstance> child : start.getChildren()) {
-                newParent = addMilestones(linkedMilestone, processInstance, child);
+                Linked<Milestone> np = addMilestones(linkedMilestone, processInstance, child);
+                if (!np.equals(parent))
+                    newParent = np;
             }
         }
         else {
             for (Linked<ActivityInstance> child : start.getChildren()) {
-                newParent = addMilestones(parent, processInstance, child);
+                Linked<Milestone> np = addMilestones(parent, processInstance, child);
+                if (!np.equals(parent))
+                    newParent = np;
             }
         }
         return newParent;
-    }
-
-    /**
-     * Linked milestones for this process definition.
-     * @return new parent
-     */
-    public Linked<Milestone> addMilestones(Linked<Milestone> parent) {
-        return addMilestones(parent, process.getLinkedActivities());
-    }
-
-    /**
-     * @return new parent
-     */
-    public Linked<Milestone> addMilestones(Linked<Milestone> parent, Linked<Activity> start) {
-        Activity activity = start.get();
-        Milestone milestone = getMilestone(activity);
-        if (milestone != null) {
-            Linked<Milestone> linkedMilestone = new Linked<>(milestone);
-            linkedMilestone.setParent(parent);
-            parent.getChildren().add(linkedMilestone);
-            for (Linked<Activity> child : start.getChildren()) {
-                return addMilestones(linkedMilestone, child);
-            }
-            return linkedMilestone;
-        }
-        else {
-            for (Linked<Activity> child : start.getChildren()) {
-                return addMilestones(parent, child);
-            }
-            return parent;
-        }
     }
 
     private Milestone getMilestone(Activity activity) {

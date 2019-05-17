@@ -12,14 +12,11 @@ class Heading extends Component {
     return (
       <div className="panel-heading mdw-heading">
         <div className="mdw-heading-label">
-          {this.props.milestone.title}
+        {this.props.milestone.title}
           <Link className="mdw-id"
             to={this.context.hubRoot + '/milestones/' + this.props.milestone.masterRequestId}>
             {this.props.milestone.masterRequestId}
           </Link>
-        </div>
-        <div className="mdw-heading-actions">
-          {this.props.children}
         </div>
       </div>
     );

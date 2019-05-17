@@ -92,8 +92,8 @@ public class Milestone implements Linkable, Jsonable {
     public String getQualifiedLabel() {
         String qlabel = process.getQualifiedLabel();
         if (activity != null)
-            qlabel += " " + activity.getQualifiedLabel();
-        qlabel += " " + label;
+            qlabel += " " + activity.getLogicalId() + ":'";
+        qlabel += label + "'";
         return qlabel;
     }
 }

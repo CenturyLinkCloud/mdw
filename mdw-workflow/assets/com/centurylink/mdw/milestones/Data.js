@@ -17,11 +17,22 @@ class Data {
     this.items.push(item);
     if (milestone.children) {
       milestone.children.forEach(child => {
-        this.edges.push({
-          from: item.id,
-          to: ++this.idCtr
+        let exist = this.items.find(it => {
+          return it.process.id == child.milestone.process.id && it.activity.id == child.milestone.activity.id;
         });
-        this.add(child);
+        if (exist) {
+          this.edges.push({
+            from: item.id,
+            to: exist.id
+          });
+        }
+        else {
+          this.edges.push({
+            from: item.id,
+            to: ++this.idCtr
+          });
+          this.add(child);
+        }
       }, this);
     }
     if (this.depth > this.maxDepth) {
@@ -29,6 +40,7 @@ class Data {
     }
     this.depth--;
   }
+
 }
 
 export default Data; 
