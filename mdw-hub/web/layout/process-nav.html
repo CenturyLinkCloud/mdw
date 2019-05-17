@@ -19,6 +19,11 @@
       Template
     </a>
   </li>
+  <li nav-link="/milestones/definition" ng-if="process.hasMilestones && !process.id">
+    <a href="#/milestones/definitions/{{process.packageName}}/{{processVersion ? process.name + '/v' + process.version : process.name}}">
+      Milestones
+    </a>
+  </li>
 </ul>
 <ul class="nav mdw-nav" ng-style="getNavMenuWidthStyle(165)">
   <li nav-link="workflow/processes">

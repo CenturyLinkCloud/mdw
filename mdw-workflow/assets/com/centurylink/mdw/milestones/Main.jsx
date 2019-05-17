@@ -7,7 +7,6 @@ import Nav from './Nav.jsx';
 import Data from './Data.js';
 import Milestone from './Milestone.jsx';
 import Timeline from './Timeline.jsx';
-import Definition from './Definition.jsx';
 
 class Main extends Component {
   constructor(...args) {
@@ -16,22 +15,25 @@ class Main extends Component {
   }
   
   componentDidMount() {
-    const masterRequestId = window.location.hash.substring(13);
-    const url = this.getChildContext().serviceRoot + '/com/centurylink/mdw/milestones/' + masterRequestId;
-    fetch(new Request(url, {
-      method: 'GET',
-      headers: { Accept: 'application/json'},
-      credentials: 'same-origin'
-    }))
-    .then(response => {
-      return response.json();
-    })
-    .then(milestone => {
-      this.setState({
-        milestone: milestone.milestone,
-        data: new Data(milestone)
+    const isDef = location.hash.startsWith('#/milestones/definitions');
+    if (!isDef) {
+      const masterRequestId = location.hash.substring(13);
+      const url = this.getChildContext().serviceRoot + '/com/centurylink/mdw/milestones/' + masterRequestId;
+      fetch(new Request(url, {
+        method: 'GET',
+        headers: { Accept: 'application/json'},
+        credentials: 'same-origin'
+      }))
+      .then(response => {
+        return response.json();
+      })
+      .then(milestone => {
+        this.setState({
+          milestone: milestone.milestone,
+          data: new Data(milestone)
+        });
       });
-    });
+    }
   }
   
   render() {
@@ -50,8 +52,6 @@ class Main extends Component {
                 render={(props) => <Milestone {...props} milestone={this.state.milestone} data={this.state.data}/>} />
               <Route exact path={hub + 'milestones/:masterRequestId/timeline'} 
                 render={(props) => <Timeline {...props} milestone={this.state.milestone} data={this.state.data}/>} />
-              <Route exact path={hub + 'milestones/definitions/:processId'} 
-                render={(props) => <Definition {...props} milestone={this.state.milestone} data={this.state.data}/>} />
             </div>
           </div>
         </div>

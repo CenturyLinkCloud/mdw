@@ -449,6 +449,7 @@ processMod.controller('ProcessDefController',
     $scope.process.status = summary.status;
     $scope.process.definitionId = summary.definitionId;
     $scope.process.template = summary.template;
+    $scope.process.hasMilestones = summary.hasMilestones;
     $scope.process.archived = summary.archived;
     if ($scope.process.archived)
       $scope.process.version = summary.template ? summary.templateVersion : summary.version;
@@ -459,6 +460,7 @@ processMod.controller('ProcessDefController',
         $scope.process.definitionId = defSum.id;
         $scope.definitionId = $scope.process.definitionId;
         $scope.template = $scope.process.template;
+        $scope.process.hasMilestones = defSum.hasMilestones;
     });
   }
 

@@ -65,8 +65,6 @@ public class NotFoundServlet extends HttpServlet {
                     String[] pathSegs = path.substring(1).split("/");
                     if (pathSegs.length > 2)
                         redirectPath = "/" + pathSegs[0] + "/" + pathSegs[1];
-                    if (pathSegs[1].equals("definitions"))
-                        redirectPath += "/" + pathSegs[2];
                     response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/#" + redirectPath);
                     return;
                 }
