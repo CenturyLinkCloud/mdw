@@ -40,12 +40,6 @@
       {
         "links": [
           {
-            "label": "Milestones",
-            "path": "workflow/milestones",
-            "href": "#/milestones",
-            "priority": 1
-          },
-          {
             "label": "Solutions",
             "path": "solutions/*",
             "href": "#/solutions"
