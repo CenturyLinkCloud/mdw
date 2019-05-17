@@ -1,5 +1,15 @@
 # Change Log
 
+## [6.1.18](https://github.com/CenturyLinkCloud/mdw/tree/6.1.18) (2019-05-17)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.17...6.1.18)
+
+**Closed issues:**
+
+- Vercheck issues when invoked programmatically [\#664](https://github.com/CenturyLinkCloud/mdw/issues/664)
+- Fix KafkaAdapter initialization [\#663](https://github.com/CenturyLinkCloud/mdw/issues/663)
+- REST annotations should prefer qualified paths over root [\#662](https://github.com/CenturyLinkCloud/mdw/issues/662)
+- Support for in-flight dynamic java activity java code [\#641](https://github.com/CenturyLinkCloud/mdw/issues/641)
+
 ## [6.1.17](https://github.com/CenturyLinkCloud/mdw/tree/6.1.17) (2019-05-10)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.16...6.1.17)
 
@@ -25,7 +35,6 @@
 - Subprocess instances from embedded subflow not displayed in Inspector [\#654](https://github.com/CenturyLinkCloud/mdw/issues/654)
 - Prevent Hub asset import from failing due to OS newline differences [\#649](https://github.com/CenturyLinkCloud/mdw/issues/649)
 - Default Package is not recreated upon cache refresh [\#644](https://github.com/CenturyLinkCloud/mdw/issues/644)
-- Support for in-flight dynamic java activity java code [\#641](https://github.com/CenturyLinkCloud/mdw/issues/641)
 - Activities API returns incorrect total count [\#640](https://github.com/CenturyLinkCloud/mdw/issues/640)
 - Vercheck should ignore line-ending diffs for text assets [\#638](https://github.com/CenturyLinkCloud/mdw/issues/638)
 
