@@ -1497,8 +1497,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
         Activity masterStartActivity = masterProcess.getStartActivity();
         ActivityInstance masterStartInstance =
                 processInstance.getActivities(masterStartActivity.getLogicalId()).get(0);
+        // TODO: ability to define top label (from runtime expression)
+        String label = masterProcessInstance.getMasterRequestId();
         Milestone startMilestone = new MilestoneFactory(masterProcess).createMilestone(masterProcessInstance,
-                masterStartInstance, "Start");
+                masterStartInstance, label);
         Linked<Milestone> masterMilestones = new Linked<>(startMilestone);
         Linked<ProcessInstance> parentInstance = getCallHierearchy(masterProcessInstance.getId());
         addMilestones(masterMilestones, parentInstance);

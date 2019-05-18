@@ -4,6 +4,7 @@ import {
   BrowserRouter as Router, Route
 } from '../node/node_modules/react-router-dom';
 import Nav from './Nav.jsx';
+import DefNav from './DefNav.jsx';
 import Data from './Data.js';
 import Milestone from './Milestone.jsx';
 import Timeline from './Timeline.jsx';
@@ -11,12 +12,18 @@ import Timeline from './Timeline.jsx';
 class Main extends Component {
   constructor(...args) {
     super(...args);
-    this.state = { milestone: {}, data: {} };
+    this.state = { 
+      milestone: {}, 
+      data: {} 
+    };
+  }
+
+  isDef() {
+    return location.hash.startsWith('#/milestones/definitions');
   }
   
   componentDidMount() {
-    const isDef = location.hash.startsWith('#/milestones/definitions');
-    if (!isDef) {
+    if (!this.isDef()) {
       const masterRequestId = location.hash.substring(13);
       const url = this.getChildContext().serviceRoot + '/com/centurylink/mdw/milestones/' + masterRequestId;
       fetch(new Request(url, {
@@ -40,11 +47,16 @@ class Main extends Component {
     var hub = this.getChildContext().hubRoot + '/';
     return (
       <Router>
-        <div>
-          <div className="col-md-2 mdw-sidebar">
-            <Nav milestone={this.state.milestone} />
+        <div style={{display:'flex'}}>
+          <div className="mdw-sidebar">
+            {this.isDef() &&
+              <DefNav />
+            }
+            {!this.isDef() &&
+              <Nav milestone={this.state.milestone} />
+            }
           </div>
-          <div className="col-md-10">
+          <div className="mdw-panel-full-width">
             <div className="panel panel-default mdw-panel">
               <Route exact path={hub}
                 render={(props) => <Milestone {...props} milestone={this.state.milestone} data={this.state.data}/>} />

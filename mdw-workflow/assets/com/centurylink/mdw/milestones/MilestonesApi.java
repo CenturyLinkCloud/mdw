@@ -4,7 +4,9 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.workflow.Linked;
 import com.centurylink.mdw.model.workflow.Milestone;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.process.HierarchyCache;
+import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import io.swagger.annotations.Api;
@@ -26,10 +28,19 @@ public class MilestonesApi extends JsonRestService {
         String seg4 = getSegment(path, 4);
         if (seg4 != null) {
             if (seg4.equals("definitions")) {
-                String procId = getSegment(path, 5);
-                if (procId == null)
-                    throw new ServiceException(ServiceException.BAD_REQUEST, "{processId} required");
-                return getDefinition(Long.parseLong(procId));
+                String seg5 = getSegment(path, 5);
+                if (seg5 != null) {
+                    try {
+                        // by process id
+                        return getDefinition(Long.parseLong(seg5));
+                    } catch (NumberFormatException ex) {
+                        String proc = getSegment(path, 6);
+                        if (proc != null) {
+                            // process asset path
+                            return getDefinition(seg5 + "/" + proc);
+                        }
+                    }
+                }
             } else {
                 // by masterRequestId
                 boolean withFuture = query.getBooleanFilter("future");
@@ -38,6 +49,7 @@ public class MilestonesApi extends JsonRestService {
         } else {
             return ServiceLocator.getWorkflowServices().getMilestones(query).getJson();
         }
+        throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + path);
     }
 
     @Path("/definitions/{processId}")
@@ -46,5 +58,13 @@ public class MilestonesApi extends JsonRestService {
         if (milestones == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Milestones not found: " + processId);
         return milestones.getJson();
+    }
+
+    @Path("/definitions/{package}/{process}")
+    public JSONObject getDefinition(String assetPath) throws ServiceException {
+        Process process = ProcessCache.getProcess(assetPath);
+        if (process == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + assetPath);
+        return getDefinition(process.getId());
     }
 }

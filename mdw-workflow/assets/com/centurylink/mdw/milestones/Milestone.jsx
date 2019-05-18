@@ -1,9 +1,11 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
+import {Glyphicon} from '../node/node_modules/react-bootstrap';
+import {Link} from '../node/node_modules/react-router-dom';
 import '../node/node_modules/style-loader!../node/node_modules/vis/dist/vis.css';
 import {Network} from '../node/node_modules/vis/dist/vis';
-import Heading from './Heading.jsx';
-import Data from './Data.js';
+import ButtonLink from '../react/ButtonLink.jsx';
+import Definition from './Definition.jsx';
 import options from './options.js';
 
 class Milestone extends Component {
@@ -20,53 +22,61 @@ class Milestone extends Component {
   drawGraph() {
     const container = document.getElementById('milestone-graph');
     if (container) {
-      const data = this.isDef() ? this.state.data : this.props.data;
-      const graphOptions = Object.assign({}, { height: (data.maxDepth * 100) + 'px' }, options.graph);
+      const graphOptions = Object.assign({}, { 
+        height: (this.props.data.maxDepth * 100) + 'px' 
+      }, options.graph);
       const graphData = {
-        nodes: data.items, 
-        edges: data.edges
+        nodes: this.props.data.items, 
+        edges: this.props.data.edges
       };
       const network = new Network(container, graphData, graphOptions);
     }
   }
 
   componentDidMount() {
-    const isDef = location.hash.startsWith('#/milestones/definitions');
-    if (isDef) {
-      const processId = '49349280'; // TODO: use asset path
-      const url = this.context.serviceRoot + '/com/centurylink/mdw/milestones/definitions/' + processId;
-      fetch(new Request(url, {
-        method: 'GET',
-        headers: { Accept: 'application/json'},
-        credentials: 'same-origin'
-      }))
-      .then(response => {
-        return response.json();
-      })
-      .then(milestone => {
-        this.setState({
-          milestone: milestone.milestone,
-          data: new Data(milestone)
-        }, this.drawGraph());
-      });  
-    }
-    else {
+    if (!this.isDef()) {
       this.drawGraph();
     }
   }
 
   render() {
-    this.drawGraph();
-    const milestone = this.props.milestone;
-    return (
-      <div>
-        <Heading milestone={this.props.milestone} />
-        <div className="mdw-section">
-          <div id="milestone-graph">
+    if (this.isDef()) {
+      return (
+        <Definition />
+      );
+    }
+    else {
+      this.drawGraph();
+      const milestone = this.props.milestone;
+      const process = milestone.process;
+      const hubRoot = this.context.hubRoot;
+      return (
+        <div>
+          <div className="panel-heading mdw-heading" style={{borderColor:'#ddd'}}>
+            <div className="mdw-heading-label">
+              {'Milestones: '}
+              <Link
+                to={hubRoot + '/milestones/' + milestone.masterRequestId}>
+                {milestone.label}
+              </Link>
+            </div>
+            {process &&
+              <div style={{float:'right'}}>
+                <ButtonLink style={{padding:'4px 8px',fontWeight:'normal',textDecoration:'none'}} 
+                  to={hubRoot + '/#/milestones/definitions/' + process.packageName + '/' + process.name}>
+                  <Glyphicon className="mdw-icon-btn" glyph="pencil" />
+                  {' Edit'}
+                </ButtonLink>
+              </div>
+            }
+          </div>
+          <div className="mdw-section">
+             <div id="milestone-graph">
+            </div>
           </div>
         </div>
-      </div>
-    );
+      );  
+    }
   }
 }
 

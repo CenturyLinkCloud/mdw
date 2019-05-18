@@ -129,6 +129,8 @@ public class Workflow extends JsonRestService {
                 json.put("name", process.getName());
                 json.put("package", process.getPackageName());
                 json.put("version", process.getVersionString());
+                if (process.getId() != null && HierarchyCache.getMilestones(process.getId()) != null)
+                    json.put("hasMilestones", true);
                 return json;
             }
             else {

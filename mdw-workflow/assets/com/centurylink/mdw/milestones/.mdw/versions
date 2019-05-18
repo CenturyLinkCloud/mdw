@@ -1,9 +1,10 @@
 ActivityMilestone.java=2
 Data.js=4
-Heading.jsx=3
-Main.jsx=3
-Milestone.jsx=5
-MilestonesApi.java=6
-Nav.jsx=3
-Timeline.jsx=1
+DefNav.jsx=1
+Definition.jsx=3
+Main.jsx=4
+Milestone.jsx=6
+MilestonesApi.java=7
+Nav.jsx=4
+Timeline.jsx=2
 options.js=3
