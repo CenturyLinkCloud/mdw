@@ -29,6 +29,18 @@ class Definition extends Component {
         assetPath: this.state.assetPath
       };
       const network = new Network(container, graphData, graphOptions);
+      network.on('doubleClick', params => {
+        if (params.nodes && params.nodes.length === 1) {
+          let node = graphData.nodes[params.nodes[0]];
+          if (node.process) {
+            let path = node.process.packageName + '/' + node.process.name;
+            if (node.process.version) {
+              path += '/' + node.process.version;
+            }
+            location = this.context.hubRoot + '/#/workflow/definitions/' + path; 
+          }
+        }
+      });
     }
   }
 

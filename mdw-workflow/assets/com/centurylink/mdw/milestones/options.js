@@ -1,7 +1,11 @@
 module.exports = {
   graph: {
     nodes: {
-      shape: 'dot'
+      shape: 'dot',
+      size: 30,
+      font: {
+        size: 16
+      }
     },
     edges: {
       arrows: 'to',
@@ -15,8 +19,9 @@ module.exports = {
       hierarchical: {
         enabled: true,
         sortMethod: 'directed',
+        nodeSpacing: 125,
         blockShifting: true,
-        edgeMinimization: false,
+        edgeMinimization: true,
         parentCentralization: true
 
       }

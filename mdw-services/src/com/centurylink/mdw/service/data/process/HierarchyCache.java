@@ -154,19 +154,47 @@ public class HierarchyCache implements CacheService {
         return milestonedTemp;
     }
 
-    public static List<Long> loadMilestoned() {
+    private static List<Long> loadMilestoned() {
         List<Long> milestoned = new ArrayList<>();
         try {
             for (Process process : ProcessCache.getAllProcesses()) {
-                Linked<Milestone> milestones = getMilestones(process.getId());
-                if (milestones != null) {
-                    milestoned.add(process.getId());
+                List<Linked<Process>> hierarchyList = getHierarchy(process.getId());
+                if (!hierarchyList.isEmpty()) {
+                    if (hasMilestones(hierarchyList.get(0))) {
+                        milestoned.add(process.getId());
+                    }
                 }
             }
             return milestoned;
         } catch (DataAccessException ex) {
             throw new CachingException(ex.getMessage(), ex);
         }
+    }
+
+    private static boolean hasMilestones(Linked<Process> hierarchy) {
+
+        Process process = hierarchy.get();
+        Linked<Activity> start = process.getLinkedActivities();
+
+        if (hasMilestones(new MilestoneFactory(process), start))
+            return true;
+
+        for (Linked<Process> child : hierarchy.getChildren()) {
+            if (hasMilestones(child))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static boolean hasMilestones(MilestoneFactory factory, Linked<Activity> start) {
+        if (factory.getMilestone(start.get()) != null)
+            return true;
+        for (Linked<Activity> child : start.getChildren()) {
+            if (hasMilestones(factory, child))
+                return true;
+        }
+        return false;
     }
 
     @Override

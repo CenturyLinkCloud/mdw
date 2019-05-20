@@ -49,6 +49,8 @@ public class MilestoneFactory {
                 String text = monitorAttributes.getOptions(Milestone.MONITOR_CLASS);
                 if (text == null || text.trim().isEmpty())
                     text = activity.getName();
+                else
+                    text = text.replaceAll("\\\\n", "\n");
                 return new Milestone(process, activity, text);
             }
         }
