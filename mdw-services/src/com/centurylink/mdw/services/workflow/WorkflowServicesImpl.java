@@ -1494,33 +1494,89 @@ public class WorkflowServicesImpl implements WorkflowServices {
         Process masterProcess = ProcessCache.getProcess(masterProcessInstance.getProcessId());
         // retrieve full
         ProcessInstance processInstance = getProcess(masterProcessInstance.getId());
-        Activity masterStartActivity = masterProcess.getStartActivity();
-        ActivityInstance masterStartInstance =
-                processInstance.getActivities(masterStartActivity.getLogicalId()).get(0);
-        // TODO: ability to define top label (from runtime expression)
-        String label = masterProcessInstance.getMasterRequestId();
-        Milestone startMilestone = new MilestoneFactory(masterProcess).createMilestone(masterProcessInstance,
-                masterStartInstance, label);
-        Linked<Milestone> masterMilestones = new Linked<>(startMilestone);
-        Linked<ProcessInstance> parentInstance = getCallHierearchy(masterProcessInstance.getId());
-        addMilestones(masterMilestones, parentInstance);
-        if (future) {
-            // TODO
 
+        Linked<ActivityInstance> endToEndActivities = processInstance.getLinkedActivities(masterProcess);
+        Linked<ProcessInstance> parentInstance = getCallHierearchy(masterProcessInstance.getId());
+        try {
+            addSubprocActivities(endToEndActivities, parentInstance);
+            Activity masterStartActivity = masterProcess.getStartActivity();
+            ActivityInstance masterStartInstance =
+                    processInstance.getActivities(masterStartActivity.getLogicalId()).get(0);
+            // TODO: ability to define top label (from runtime expression)
+            String label = masterProcessInstance.getMasterRequestId();
+            Milestone startMilestone = new MilestoneFactory(masterProcess).createMilestone(masterProcessInstance,
+                    masterStartInstance, label);
+            Linked<Milestone> masterMilestones = new Linked<>(startMilestone);
+            addMilestones(masterMilestones, endToEndActivities, parentInstance);
+            if (future) {
+                // TODO
+
+            }
+            return masterMilestones;
         }
-        return masterMilestones;
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
     }
 
-    private void addMilestones(Linked<Milestone> parent, Linked<ProcessInstance> parentInstance)
-            throws ServiceException {
-        Process process = ProcessCache.getProcess(parentInstance.get().getProcessId());
-        if (process != null) {
-            ProcessInstance processInstance = getProcess(parentInstance.get().getId());
-            MilestoneFactory milestoneFactory = new MilestoneFactory(process);
-            Linked<Milestone> newParent = milestoneFactory.addMilestones(parent, processInstance);
-            for (Linked<ProcessInstance> subInstance : parentInstance.getChildren()) {
-                addMilestones(newParent, subInstance);
+    private void addSubprocActivities(Linked<ActivityInstance> start, Linked<ProcessInstance> instanceHierarchy)
+            throws ServiceException, DataAccessException {
+        Process process = ProcessCache.getProcess(instanceHierarchy.get().getProcessId());
+        for (Linked<ActivityInstance> child : start.getChildren()) {
+            addSubprocActivities(child, instanceHierarchy);
+            ActivityInstance activityInstance = child.get();
+            Activity activity = process.getActivity(activityInstance.getActivityId());
+            List<Process> subprocesses = activity.findInvoked(ProcessCache.getAllProcesses());
+            for (Linked<ProcessInstance> childProcess : instanceHierarchy.getChildren()) {
+                for (Process subprocess : subprocesses) {
+                    ProcessInstance subInst = childProcess.get();
+                    if (subInst.getProcessId().equals(subprocess.getId()) &&
+                            (subInst.getSecondaryOwner() == null || subInst.getSecondaryOwner().equals(OwnerType.ACTIVITY_INSTANCE)) &&
+                            (subInst.getSecondaryOwnerId() == null || subInst.getSecondaryOwnerId().equals(activityInstance.getId()))) {
+                        subInst = getProcess(subInst.getId());
+                        Linked<ActivityInstance> childStart = subInst.getLinkedActivities(ProcessCache.getProcess(subInst.getProcessId()));
+                        child.getChildren().add(childStart);
+                        childStart.setParent(child);
+                        addSubprocActivities(childStart, childProcess);
+                    }
+                }
             }
         }
     }
+
+    public void addMilestones(Linked<Milestone> parent, Linked<ActivityInstance> start,
+            Linked<ProcessInstance> instanceHierarchy) {
+        ActivityInstance activityInstance = start.get();
+        ProcessInstance processInstance = findProcessInstance(instanceHierarchy, activityInstance.getProcessInstanceId());
+        Process process = ProcessCache.getProcess(processInstance.getProcessId());
+        Activity activity = process.getActivity(activityInstance.getActivityId());
+        Milestone milestone = new MilestoneFactory(process).getMilestone(activity);
+        if (milestone != null) {
+            milestone.setProcessInstance(processInstance);
+            milestone.setActivityInstance(activityInstance);
+            Linked<Milestone> linkedMilestone = new Linked<>(milestone);
+            linkedMilestone.setParent(parent);
+            parent.getChildren().add(linkedMilestone);
+            for (Linked<ActivityInstance> child : start.getChildren()) {
+                addMilestones(linkedMilestone, child, instanceHierarchy);
+            }
+        }
+        else {
+            for (Linked<ActivityInstance> child : start.getChildren()) {
+                addMilestones(parent, child, instanceHierarchy);
+            }
+        }
+    }
+
+    private ProcessInstance findProcessInstance(Linked<ProcessInstance> instanceHierarchy, Long instanceId) {
+        if (instanceHierarchy.get().getId().equals(instanceId))
+            return instanceHierarchy.get();
+        for (Linked<ProcessInstance> subHierarchy : instanceHierarchy.getChildren()) {
+            ProcessInstance childInstance = findProcessInstance(subHierarchy, instanceId);
+            if (childInstance != null)
+                return childInstance;
+        }
+        return null;
+    }
+
 }
