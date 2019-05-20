@@ -117,7 +117,7 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
         $scope.getExportPackagesParam();
   };
 
-  $scope.repositoryUrls = $cookieStore.get('discoveryUrls');
+  $scope.discoveryUrls = $cookieStore.get('discoveryUrls');
   $scope.discoveryType = 'central';
   $scope.groupId = $cookieStore.get('groupId');
   if (!$scope.discoveryUrls)
@@ -125,27 +125,29 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
   if (!$scope.groupId)
     $scope.groupId = 'com.centurylink.mdw.assets';
 
-  $scope.repositoriesList = Assets.get({discoveryUrls: $scope.discoveryUrls, discoveryType: 'git'},
-    function(data) {
-      $scope.discoveryMessage = null;
-      $scope.repositoriesList.repositories.forEach(function(repository) {
-        var url = repository.url;
-        if (url.indexOf('?') != -1)
-          url = url.substr(0, url.indexOf('?'));
-        var lines = url.split('@');
-        if (lines[1] != null)
-           url = lines[0].substr(0, lines[0].indexOf("//")+2) + lines[1];
-        repository.repoUrl = url;
-      });
-      $scope.applyRepoCollapsedState();
-      $scope.applyBranchCollapsedState();
-      $scope.applyTagCollapsedState();
-    },
-    function(error) {
-      if (error.data.status)
-        $scope.discoveryMessage = 'Discovery failed: ' + error.data.status.message;
-    }
-  );
+  $scope.discoverGitAssets = function() {
+      $scope.repositoriesList = Assets.get({discoveryUrls: $scope.discoveryUrls, discoveryType: 'git'},
+        function(data) {
+          $scope.discoveryMessage = null;
+          $scope.repositoriesList.repositories.forEach(function(repository) {
+            var url = repository.url;
+            if (url.indexOf('?') != -1)
+              url = url.substr(0, url.indexOf('?'));
+            var lines = url.split('@');
+            if (lines[1] != null)
+               url = lines[0].substr(0, lines[0].indexOf("//")+2) + lines[1];
+            repository.repoUrl = url;
+          });
+          $scope.applyRepoCollapsedState();
+          $scope.applyBranchCollapsedState();
+          $scope.applyTagCollapsedState();
+        },
+        function(error) {
+          if (error.data.status)
+            $scope.discoveryMessage = 'Discovery failed: ' + error.data.status.message;
+        }
+      );
+  };
 
   $scope.saveRepoCollapsedState = function() {
     var st = {};
