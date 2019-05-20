@@ -6,7 +6,7 @@
       <form name="discoveryForm" class="form-horizontal" role="form">
       <div class="form-group mdw-static-group" style="padding:15px 0 0 35px">
         <label class="radio-inline col-xs-3"><input type="radio" ng-model="discoveryType" value="central" ng-change='clear()'>Central Discovery</label>
-        <label class="radio-inline col-xs-3"><input type="radio" ng-model="discoveryType" value="git" ng-change='clear()' uib-popover-template="'assets/repositories.html'" popover-placement="bottom" pop-click>Git Discovery</label>
+        <label class="radio-inline col-xs-3"><input type="radio" ng-model="discoveryType" value="git" ng-click="discoverGitAssets()" ng-change='clear()' uib-popover-template="'assets/repositories.html'" popover-placement="bottom" pop-click>Git Discovery</label>
       </div>
         <div class="form-group mdw-static-group" style="padding:15px 15px 0 0">
           <label class="control-label col-xs-2"  ng-if="discoveryType === 'central'">Group Id:</label>
