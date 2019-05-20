@@ -56,7 +56,6 @@ requestMod.controller('RequestsController',
   }
 
   $scope.setRequestType = function(requestType) {
-    console.log("setRequestType()");
     $scope.typeaheadMatchSelection = null;
     $scope.clearTypeaheadFilters();
     $scope.requestFilter.type = requestType;
