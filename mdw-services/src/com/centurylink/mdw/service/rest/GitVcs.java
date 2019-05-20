@@ -239,16 +239,17 @@ public class GitVcs extends JsonRestService {
             gitImporter.setErr(ps);
             gitImporter.importAssetsFromGit();
 
+            // log importer and vercheck output
+            logger.error(new String(baos.toByteArray()));
+
             SystemMessages.bulletinOff(bulletin, "Asset import completed");
             CacheRegistration.getInstance().refreshCaches(null);
         }
         catch (Throwable e) {
-            logger.severeException("Exception during asset import", e);
-            SystemMessages.bulletinOff(bulletin, Level.Error, "Asset import failed: " + e.getMessage());
-        }
-        finally {
             // log importer and vercheck output
             logger.error(new String(baos.toByteArray()));
+            logger.severeException("Exception during asset import", e);
+            SystemMessages.bulletinOff(bulletin, Level.Error, "Asset import failed: " + e.getMessage());
         }
     }
 }
