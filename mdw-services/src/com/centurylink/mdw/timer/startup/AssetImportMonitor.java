@@ -15,13 +15,8 @@
  */
 package com.centurylink.mdw.timer.startup;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Timestamp;
-
+import com.centurylink.mdw.cli.Import;
+import com.centurylink.mdw.cli.Props;
 import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -36,8 +31,14 @@ import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.startup.StartupService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.cli.Import;
 import org.eclipse.jgit.api.errors.CheckoutConflictException;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
 
 /**
  * Checks for asset imports performed on other instances
@@ -191,7 +192,10 @@ public class AssetImportMonitor implements StartupService {
     private void performImport(File gitRoot, File assetDir, VersionControlGit vcs, String branch, boolean gitHardReset, Connection conn) throws IOException {
         Bulletin bulletin = SystemMessages.bulletinOn("Asset import in progress...");
         Import importer = new Import(gitRoot, vcs, branch, gitHardResetOverride ? gitHardResetOverride : gitHardReset, conn);
-        importer.setAssetLoc(vcs.getRelativePath(assetDir));
+        Props.init("mdw.yaml");
+        importer.setAssetLoc(assetDir.getPath());
+        importer.setConfigLoc(PropertyManager.getConfigLocation());
+        importer.setGitRoot(gitRoot);
         importer.importAssetsFromGit();
         SystemMessages.bulletinOff(bulletin, "Asset import completed");
         gitHardResetOverride = false;   // Import successful, so reset back to use gitHardReset property

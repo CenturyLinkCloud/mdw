@@ -62,6 +62,8 @@ public class Packages extends TreeMap<String,File> {
     public File getAssetRoot() { return assetRoot; }
 
     public Packages(File assetRoot) throws IOException {
+        if (!assetRoot.isDirectory())
+            throw new IOException("Asset root is not a directory: " + assetRoot.getAbsolutePath());
         this.assetRoot = assetRoot;
         List<File> packageDirs = new ArrayList<>();
         findAssetPackageDirs(getAssetRoot(), packageDirs);
