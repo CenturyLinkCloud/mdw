@@ -30,6 +30,17 @@ class Milestone extends Component {
         edges: this.props.data.edges
       };
       const network = new Network(container, graphData, graphOptions);
+      network.on('doubleClick', params => {
+        if (params.nodes && params.nodes.length === 1) {
+          let node = graphData.nodes[params.nodes[0]];
+          if (node.processInstance) {
+            if (node.activityInstance) {
+              sessionStorage.setItem('mdw-activityInstance', node.activityInstance.id);
+            }
+            location = this.context.hubRoot + '/#/workflow/processes/' + node.processInstance.id;
+          }
+        }
+      });
     }
   }
 

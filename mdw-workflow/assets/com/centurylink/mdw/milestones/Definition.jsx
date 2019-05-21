@@ -37,6 +37,9 @@ class Definition extends Component {
             if (node.process.version) {
               path += '/' + node.process.version;
             }
+            if (node.activity) {
+              sessionStorage.setItem('mdw-activity', node.activity.id);
+            }
             location = this.context.hubRoot + '/#/workflow/definitions/' + path; 
           }
         }

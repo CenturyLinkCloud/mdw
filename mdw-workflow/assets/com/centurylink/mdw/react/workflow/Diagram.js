@@ -41,6 +41,7 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
 
     this.label.draw();
     var highlighted = null;
+
     if (animate && !this.instance) {
       var sequence = this.getSequence();
       let i = 0;
@@ -92,7 +93,7 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
         subflow.draw();
       });
       if (highlighted) {
-        this.scrollIntoView(highlighted, 500);
+        this.scrollIntoView(highlighted, diagram.activityId ? 0 : 500);
       }
     }
 
@@ -364,7 +365,7 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
       else {
         sequence.forEach(update);
         if (highlighted) {
-          this.scrollIntoView(highlighted, 500);
+          this.scrollIntoView(highlighted, diagram.activityInstanceId ? 0 : 500);
         }
         callback();
       }
@@ -1115,6 +1116,11 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
       if (centeringVScroll > 0) {
         var vScroll = centeringVScroll > maxVScroll ? maxVScroll : centeringVScroll;
         var vDelta = vScroll - container.scrollTop;
+        // not sure about other logic, but force scroll for these conditions
+        if (timeSlice === 0 && container === document.body) {
+          window.scroll(0, vDelta);
+          return;
+        }
         var winDelta = 0;
         var bottomY = canvasTopY + shape.display.y + shape.display.h - vDelta + DC.HIGHLIGHT_MARGIN*2;
         if (document.documentElement.clientHeight < bottomY) {
@@ -1127,8 +1133,8 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
           container.scrollTop += vDelta/slices;
           if (winDelta > 0) {
             winScrollY += winDelta/slices;
-            window.scroll(0, winScrollY);
           }
+          window.scroll(0, winScrollY);
           i++;
           if (i < slices) {
             window.requestAnimationFrame(scroll);

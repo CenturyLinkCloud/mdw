@@ -231,7 +231,11 @@ processMod.controller('ProcessController',
     ['$scope', '$route', '$routeParams', '$filter', 'mdw', 'util', 'Process', 'ProcessSummary', 'DOCUMENT_TYPES', 'WORKFLOW_STATUSES',
      function($scope, $route, $routeParams, $filter, mdw, util, Process, ProcessSummary, DOCUMENT_TYPES, WORKFLOW_STATUSES) {
 
-  $scope.activity = util.urlParams().activity; // (will be highlighted in rendering)
+  var activity = sessionStorage.getItem('mdw-activityInstance');
+  if (activity) {
+    $scope.activity = activity;
+    sessionStorage.removeItem('mdw-activityInstance');
+  }
 
   $scope.retrieveProcess = function() {
     if ($routeParams.triggerId) {
@@ -412,7 +416,11 @@ processMod.controller('ProcessDefController',
     ['$scope', '$routeParams', '$route', '$location', '$filter', 'mdw', 'util', 'ProcessDef', 'ProcessSummary',
     function($scope, $routeParams, $route, $location, $filter, mdw, util, ProcessDef, ProcessSummary) {
 
-  $scope.activity = util.urlParams().activity; // (will be highlighted in rendering)
+  var activity = sessionStorage.getItem('mdw-activity');
+  if (activity) {
+    $scope.activity = activity;  // (will be highlighted in rendering)
+    sessionStorage.removeItem('mdw-activity');
+  }
 
   $scope.process = {
     packageName: $routeParams.packageName,
