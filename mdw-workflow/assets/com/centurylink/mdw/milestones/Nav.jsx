@@ -11,13 +11,14 @@ class Nav extends Component {
   render() {
     var milestoneRoot = this.context.hubRoot + '/milestones/';
     if (this.props.milestone.masterRequestId) {
-        milestoneRoot += this.props.milestone.masterRequestId + '/';
+        milestoneRoot += this.props.milestone.masterRequestId;
     }
     return (
       <div>
         <ul className="nav mdw-nav">
           <NavLink to={milestoneRoot} match={milestoneRoot}>Milestones</NavLink>
-          <NavLink to={milestoneRoot + 'timeline'}>Timeline</NavLink>
+          <NavLink to={milestoneRoot + '/all'}>All Steps</NavLink>
+          <NavLink to={milestoneRoot + '/timeline'}>Timeline</NavLink>
         </ul>
         <ul className="nav mdw-nav">
           <li><a href={this.context.hubRoot + '/#/milestones'} target="_self">Milestones List</a></li>

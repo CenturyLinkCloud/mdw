@@ -704,6 +704,8 @@ public class Process extends Asset implements Jsonable, Linkable {
         Activity parentActivity = parent.get();
         parentActivity.setProcessId(getId());
         parentActivity.setProcessName(getName());
+        parentActivity.setProcessVersion(getVersionString());
+        parentActivity.setPackageName(getPackageName());
         parentActivity.setMilestoneName(parentActivity.milestoneName());
         parentActivity.setMilestoneGroup(parentActivity.milestoneGroup());
         for (Activity downstream : getDownstreamActivities(parent.get())) {

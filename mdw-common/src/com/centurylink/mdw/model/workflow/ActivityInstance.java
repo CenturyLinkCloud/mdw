@@ -102,6 +102,14 @@ public class ActivityInstance implements Jsonable, Linkable {
     public String getPackageName() { return packageName; }
     public void setPackageName(String pkg) { this.packageName = pkg; }
 
+    private String milestoneGroup;
+    public String getMilestoneGroup() { return milestoneGroup; }
+    public void setMilestoneGroup(String group) { this.milestoneGroup = group; }
+
+    private String milestoneName;
+    public String getMilestoneName() { return milestoneName; }
+    public void setMilestoneName(String milestoneName) { this.milestoneName = milestoneName; }
+
     public ActivityInstance() {
     }
 
@@ -197,9 +205,12 @@ public class ActivityInstance implements Jsonable, Linkable {
     @Override
     public JSONObject getSummaryJson(int detail) {
         JSONObject json = getSummaryJson();
+        json.remove("name");
         if (detail > 0) {
             if (processId != null)
                 json.put("processId", processId);
+            if (name != null)
+                json.put("activityName", name);
             if (processName != null)
                 json.put("processName", processName);
             if (processVersion != null)
@@ -208,6 +219,12 @@ public class ActivityInstance implements Jsonable, Linkable {
                 json.put("packageName", packageName);
             if (processInstanceId != null)
                 json.put("processInstanceId", processInstanceId);
+        }
+        if (detail > 1) {
+            if (milestoneName != null)
+                json.put("milestoneName", milestoneName);
+            if (milestoneGroup != null)
+                json.put("milestoneGroup", milestoneGroup);
         }
         return json;
     }
