@@ -10,24 +10,47 @@ class Definition extends Component {
     
   constructor(...args) {
     super(...args);
-    this.state = { milestone: {}, data: {} };
+    this.state = {
+      milestone: {}, 
+      data: {},
+      assetPath: location.hash.substring(25)
+    };
   }  
 
   drawGraph() {
-    const container = document.getElementById('definition-graph');
+    const container = document.getElementById('milestone-def-graph');
     if (container) {
-      const graphOptions = Object.assign({}, {height: (this.state.data.maxDepth * 100) + 'px'}, options.graph);
+      const graphOptions = Object.assign({}, { 
+        height: (this.state.data.maxDepth * 100) + 'px' 
+      }, options.graph);
       const graphData = {
         nodes: this.state.data.items, 
-        edges: this.state.data.edges
+        edges: this.state.data.edges,
+        assetPath: this.state.assetPath
       };
       const network = new Network(container, graphData, graphOptions);
+      network.on('doubleClick', params => {
+        if (params.nodes && params.nodes.length === 1) {
+          let node = graphData.nodes[params.nodes[0]];
+          if (node.process) {
+            let path = node.process.packageName + '/' + node.process.name;
+            if (node.process.version) {
+              path += '/' + node.process.version;
+            }
+            if (node.activity) {
+              sessionStorage.setItem('mdw-activity', node.activity.id);
+            }
+            location = this.context.hubRoot + '/#/workflow/definitions/' + path; 
+          }
+        }
+      });
     }
   }
 
   componentDidMount() {
-    const processId = this.props.match.params.processId;
-    const url = this.context.serviceRoot + '/com/centurylink/mdw/milestones/definitions/' + processId;
+    // retrieve milestones definition
+    const url = this.context.serviceRoot + '/com/centurylink/mdw/milestones/definitions/' + 
+        this.state.assetPath;
     fetch(new Request(url, {
       method: 'GET',
       headers: { Accept: 'application/json'},
@@ -41,30 +64,36 @@ class Definition extends Component {
         milestone: milestone.milestone,
         data: new Data(milestone)
       }, this.drawGraph());
-    });
+    });  
   }
 
   render() {
     this.drawGraph();
+    const milestone = this.state.milestone;
+
+    const slash = this.state.assetPath.lastIndexOf('/');
+    const pkg = this.state.assetPath.substring(0, slash);
+    const proc = this.state.assetPath.substring(slash + 1);
+    const hubRoot = this.context.hubRoot;
     return (
       <div>
-        <div className="panel-heading mdw-heading">
-          {this.props.milestone.process &&
-            <div className="mdw-heading-label">
-              {this.props.milestone.process.packageName} /
-              <Link className="mdw-id"
-                to={this.context.hubRoot + '/todo'}>
-                {this.props.milestone.process.name}
-              </Link>
-            </div>
-          }
+        <div className="panel-heading mdw-heading" style={{borderColor:'#ddd'}}>
+          <div className="mdw-heading-label">
+            <Link to={hubRoot + '/#/packages/' + pkg}>
+              {pkg}
+            </Link>
+            {' / '}
+            <Link to={hubRoot + '/#/workflow/definitions/' + this.state.assetPath}>
+              {proc}
+            </Link>
+          </div>
         </div>
         <div className="mdw-section">
-          <div id="definition-graph">
+          <div id="milestone-def-graph">
           </div>
         </div>
       </div>
-    );
+    );  
   }
 }
 

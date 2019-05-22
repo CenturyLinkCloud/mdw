@@ -24,7 +24,6 @@ import com.centurylink.mdw.model.asset.AssetRequest;
 import com.centurylink.mdw.model.asset.AssetRequest.HttpMethod;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventType;
-import com.centurylink.mdw.model.event.ExternalEvent;
 import com.centurylink.mdw.model.variable.Variable;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,14 +39,12 @@ public class Process extends Asset implements Jsonable, Linkable {
     public static final String TRANSITION_ON_NULL = "Matches Null Return Code";
     public static final String TRANSITION_ON_DEFAULT = "Acts as Default";
 
-    private List<ExternalEvent> externalEvents;
     private List<Variable> variables;
     private List<Transition> transitions;
     private List<Process> subprocesses;
     private List<Activity> activities;
     private List<TextNote> textNotes;
     private List<Attribute> attributes;
-    private List<ActivityImplementor> implementors;
 
     public Process() {
         setLanguage(Asset.PROCESS);
@@ -58,25 +55,11 @@ public class Process extends Asset implements Jsonable, Linkable {
         setId(id);
     }
 
-    public Process(Long pProcessId, String pPrName, String pDesc, List<ExternalEvent> externalEvents) {
+    public Process(Long id, String name, String description) {
         setLanguage(Asset.PROCESS);
-        this.setId(pProcessId);
-        this.setName(pPrName);
-        this.setComment(pDesc);
-        this.externalEvents = externalEvents;
-    }
-
-    public Process(Process cloneFrom) {
-        super(cloneFrom);
-        setExternalEvents(cloneFrom.getExternalEvents());
-        setVariables(cloneFrom.getVariables());
-        setTransitions(cloneFrom.getTransitions());
-        setSubprocesses(cloneFrom.getSubprocesses());
-        setActivities(cloneFrom.getActivities());
-        setAttributes(cloneFrom.getAttributes());
-        setImplementors(cloneFrom.getImplementors());
-        setTextNotes(cloneFrom.getTextNotes());
-        overrideAttributesApplied = cloneFrom.overrideAttributesApplied();
+        this.setId(id);
+        this.setName(name);
+        this.setComment(description);
     }
 
     public void set(List<Attribute> attributes,  List<Variable> variables, List<Transition> transitions,
@@ -227,29 +210,6 @@ public class Process extends Asset implements Jsonable, Linkable {
     }
     public void setVariables(List<Variable> variables) {
         this.variables = variables;
-    }
-
-    public List<ExternalEvent> getExternalEvents() {
-        return this.externalEvents;
-    }
-    public void setExternalEvents(List<ExternalEvent> externalEvents) {
-        this.externalEvents = externalEvents;
-    }
-
-    public List<ActivityImplementor> getImplementors(){
-        return this.implementors;
-    }
-    public void setImplementors(List<ActivityImplementor> imps){
-        this.implementors = imps;
-    }
-    private ActivityImplementor getImplementor(Activity activity) {
-        if (implementors != null) {
-            for (ActivityImplementor impl : implementors) {
-                if (impl.getImplementorClass().equals(activity.getImplementor()))
-                    return impl;
-            }
-        }
-        return null;
     }
 
     @Override
@@ -439,14 +399,7 @@ public class Process extends Asset implements Jsonable, Linkable {
     }
 
     public Activity getStartActivity() {
-        if (implementors != null) {
-            for (Activity activity : getActivities()) {
-                ActivityImplementor impl = getImplementor(activity);
-                if (impl != null && impl.isStart())
-                    return activity;
-            }
-        }
-        // revert to old logic of assuming first activity in asset is start
+        // assumes first activity in asset is start
         return getActivities().get(0);
     }
 
@@ -498,9 +451,6 @@ public class Process extends Asset implements Jsonable, Linkable {
         }
         return toKeep;
     }
-
-    private boolean overrideAttributesApplied;
-    public boolean overrideAttributesApplied() { return overrideAttributesApplied; }
 
     public Process(String packageName, String processName, JSONObject json) {
         this(json);
@@ -746,6 +696,7 @@ public class Process extends Asset implements Jsonable, Linkable {
     }
 
     private void linkActivities(Linked<Activity> parent) {
+        parent.get().setProcessId(getId());
         for (Activity downstream : getDownstreamActivities(parent.get())) {
             Linked<Activity> child = new Linked<>(downstream);
             child.setParent(parent);

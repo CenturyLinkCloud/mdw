@@ -4,10 +4,8 @@ import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.model.workflow.Linked;
-import com.centurylink.mdw.model.workflow.Milestone;
-import com.centurylink.mdw.model.workflow.MilestoneFactory;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.services.ServiceLocator;
 
 import java.util.ArrayList;
@@ -50,7 +48,7 @@ public class HierarchyCache implements CacheService {
     }
 
     /**
-     * Should be top-level (master) process.
+     * Descending milestones starting with the specified process.
      */
     public static Linked<Milestone> getMilestones(Long processId) {
         Linked<Milestone> processMilestones;
@@ -77,21 +75,68 @@ public class HierarchyCache implements CacheService {
         if (process != null) {
             MilestoneFactory milestoneFactory = new MilestoneFactory(process);
             Linked<Milestone> start = milestoneFactory.start();
-            List<Linked<Process>> hierarchy = getHierarchy(process.getId());
-            if (hierarchy != null && !hierarchy.isEmpty()) {
-                addMilestones(start, hierarchy.get(0));
+            try {
+                Linked<Activity> endToEndActivities = process.getLinkedActivities();
+                addSubprocActivities(endToEndActivities);
+                addMilestones(start, endToEndActivities);
+                if (!start.getChildren().isEmpty())
+                    return start;
             }
-            if (!start.getChildren().isEmpty())
-                return start;
+            catch (DataAccessException ex) {
+                throw new CachingException(ex.getMessage(), ex);
+            }
+
         }
         return null;
     }
 
-    private static void addMilestones(Linked<Milestone> parent, Linked<Process> hierarchy) {
-        Process process = hierarchy.get();
-        Linked<Milestone> newParent = new MilestoneFactory(process).addMilestones(parent);
-        for (Linked<Process> child : hierarchy.getChildren()) {
-            addMilestones(newParent, child);
+    private static void addMilestones(Linked<Milestone> head, Linked<Activity> start) {
+        Activity activity = start.get();
+        Process process = ProcessCache.getProcess(activity.getProcessId());
+        Milestone milestone = new MilestoneFactory(process).getMilestone(activity);
+        if (milestone != null) {
+            Linked<Milestone> linkedMilestone = new Linked<>(milestone);
+            linkedMilestone.setParent(head);
+            head.getChildren().add(linkedMilestone);
+            for (Linked<Activity> child : start.getChildren()) {
+                addMilestones(linkedMilestone, child);
+            }
+        }
+        else {
+            for (Linked<Activity> child : start.getChildren()) {
+                addMilestones(head, child);
+            }
+        }
+    }
+
+    private static void addSubprocActivities(Linked<Activity> start) throws DataAccessException {
+        for (Linked<Activity> child : start.getChildren()) {
+            Activity activity = child.get();
+            List<Process> subprocesses = activity.findInvoked(ProcessCache.getAllProcesses());
+            for (Process subprocess : subprocesses) {
+                addSubprocActivities(child, ProcessCache.getProcess(subprocess.getId()));
+            }
+            if (!child.checkCircular()) {
+                addSubprocActivities(child);
+            }
+        }
+    }
+
+    /**
+     * Build an end-to-end list of linked activities.
+     */
+    private static void addSubprocActivities(Linked<Activity> subprocInvoke, Process process) throws DataAccessException {
+        Linked<Activity> processActivities = process.getLinkedActivities();
+        subprocInvoke.getChildren().add(processActivities);
+        processActivities.setParent(subprocInvoke);
+        if (!processActivities.checkCircular()) {
+            for (Linked<Activity> child : subprocInvoke.getChildren()) {
+                Activity activity = child.get();
+                List<Process> subprocesses = activity.findInvoked(ProcessCache.getAllProcesses());
+                for (Process subprocess : subprocesses) {
+                    addSubprocActivities(child, ProcessCache.getProcess(subprocess.getId()));
+                }
+            }
         }
     }
 
@@ -109,19 +154,47 @@ public class HierarchyCache implements CacheService {
         return milestonedTemp;
     }
 
-    public static List<Long> loadMilestoned() {
+    private static List<Long> loadMilestoned() {
         List<Long> milestoned = new ArrayList<>();
         try {
             for (Process process : ProcessCache.getAllProcesses()) {
-                Linked<Milestone> milestones = getMilestones(process.getId());
-                if (milestones != null) {
-                    milestoned.add(process.getId());
+                List<Linked<Process>> hierarchyList = getHierarchy(process.getId());
+                if (!hierarchyList.isEmpty()) {
+                    if (hasMilestones(hierarchyList.get(0))) {
+                        milestoned.add(process.getId());
+                    }
                 }
             }
             return milestoned;
         } catch (DataAccessException ex) {
             throw new CachingException(ex.getMessage(), ex);
         }
+    }
+
+    private static boolean hasMilestones(Linked<Process> hierarchy) {
+
+        Process process = hierarchy.get();
+        Linked<Activity> start = process.getLinkedActivities();
+
+        if (hasMilestones(new MilestoneFactory(process), start))
+            return true;
+
+        for (Linked<Process> child : hierarchy.getChildren()) {
+            if (hasMilestones(child))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static boolean hasMilestones(MilestoneFactory factory, Linked<Activity> start) {
+        if (factory.getMilestone(start.get()) != null)
+            return true;
+        for (Linked<Activity> child : start.getChildren()) {
+            if (hasMilestones(factory, child))
+                return true;
+        }
+        return false;
     }
 
     @Override

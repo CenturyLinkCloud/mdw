@@ -1,7 +1,9 @@
-Easy.proc=1
+Easy.proc=2
+EasySub.proc=1
 Milestones.test=2
 Milestones.yaml=1
 MilestonesMain.proc=4
-SubOne.proc=5
+SubOne.proc=7
+SubThree.proc=2
 SubTwo.proc=3
 SubTwoSub.proc=3

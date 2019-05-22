@@ -30,7 +30,6 @@ public class PropertyNames {
     public static final String MDW_DB_URL = "mdw.database.url";
     public static final String MDW_DB_USERNAME = "mdw.database.username";
     public static final String MDW_DB_PASSWORD = "mdw.database.password";
-    public static final String MDW_DB_VERSION = "mdw.database.version";
     public static final String MDW_DB_VERSION_SUPPORTED = "mdw.database.version.supported";     // lowest version supported
     // If true, then will save datetime/timestamp using microsecond precision - Depends on declaring table columns correctly
     public static final String MDW_DB_MICROSECOND_PRECISION = "mdw.database.microsecond.precision";
@@ -192,4 +191,7 @@ public class PropertyNames {
     public static final String MDW_SYSTEM_METRICS_PERIOD = "mdw.system.metrics.period";
     public static final String MDW_SYSTEM_METRICS_RETENTION = "mdw.system.metrics.retention";
     public static final String MDW_SYSTEM_METRICS_ENABLED = "mdw.system.metrics.enabled";
+
+    // milestones
+    public static final String MDW_MILESTONE_GROUPS = "mdw.milestone.groups";
 }

@@ -141,6 +141,11 @@ public class Activity implements Comparable<Activity>, Jsonable, Linkable {
     public String getProcessName() { return processName; }
     public void setProcessName(String processName) { this.processName = processName; }
 
+    // transient for milestones
+    private Long processId;
+    public Long getProcessId() { return processId; }
+    public void setProcessId(Long processId) { this.processId = processId; }
+
     private int sequenceId;
     public int getSequenceId() { return sequenceId; }
     public void setSequenceId(int sequenceId) { this.sequenceId = sequenceId; }

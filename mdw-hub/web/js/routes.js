@@ -204,6 +204,14 @@ routesSvc.factory('routes', function() {
         controller: 'MilestonesController'
       },
       {
+        path: '/milestones/definitions/:packageName/:processName',
+        templateUrl: 'workflow/milestone.html'
+      },
+      {
+        path: '/milestones/definitions/:packageName/:processName/:version',
+        templateUrl: 'workflow/milestone.html'
+      },
+      {
         path: '/milestones/:masterRequestId',
         templateUrl: 'workflow/milestone.html'
       },
