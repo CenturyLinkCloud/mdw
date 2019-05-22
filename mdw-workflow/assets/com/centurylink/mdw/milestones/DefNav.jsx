@@ -14,7 +14,7 @@ class DefNav extends Component {
       <div>
         <ul className="nav mdw-nav">
           <li><a href={hubRoot + '#/workflow/definitions/' + assetPath}>Definition</a></li>
-          <li className="mdw-active"><a>Milestones</a></li>
+          <li className="mdw-active"><a>Milestones Def.</a></li>
         </ul>
         <ul className="nav mdw-nav">
           <li><a href={hubRoot + '#/workflow/processes'}>Process List</a></li>

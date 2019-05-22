@@ -47,10 +47,6 @@ public class MilestoneFactory {
             MonitorAttributes monitorAttributes = new MonitorAttributes(monitorsAttr);
             if (monitorAttributes.isEnabled(Milestone.MONITOR_CLASS)) {
                 String text = monitorAttributes.getOptions(Milestone.MONITOR_CLASS);
-                if (text == null || text.trim().isEmpty())
-                    text = activity.getName();
-                else
-                    text = text.replaceAll("\\\\n", "\n");
                 return new Milestone(process, activity, text);
             }
         }

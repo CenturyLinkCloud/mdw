@@ -1,6 +1,7 @@
 package com.centurylink.mdw.model.workflow;
 
 import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.project.Data;
 import org.json.JSONObject;
 
 import java.time.Instant;
@@ -16,10 +17,28 @@ public class Milestone implements Linkable, Jsonable {
         this.process = process;
     }
 
-    public Milestone(Process process, Activity activity, String label) {
+    public Milestone(Process process, Activity activity, String text) {
         this.process = process;
         this.activity = activity;
-        this.label = label;
+        this.label = activity.getName();
+        if (text != null) {
+            String l = parseLabel(text);
+            if (l != null)
+                this.label = l;
+            String c = parseColor(text);
+            if (c != null) {
+                this.color = c;
+            }
+            else if (Data.Implementors.START_IMPL.equals(activity.getImplementor())) {
+                this.color = "#aff7a2";
+            }
+            else if (Data.Implementors.STOP_IMPL.equals(activity.getImplementor())) {
+                this.color = "#f0928a";
+            }
+            else if (Data.Implementors.PAUSE_IMPL.equals(activity.getImplementor())) {
+                this.color = "";
+            }
+        }
     }
 
     private Process process;
@@ -33,6 +52,35 @@ public class Milestone implements Linkable, Jsonable {
     private String label;
     public String getLabel() { return label; }
     public void setLabel(String label) { this.label = label; }
+    public static String parseLabel(String text) {
+        String t = text.trim();
+        if (!t.isEmpty()) {
+            int bracket = t.indexOf('[');
+            if (bracket > 0) {
+                t = t.substring(0, bracket);
+            }
+            return t.trim().replaceAll("\\\\n", "\n");
+        }
+        return null;
+    }
+
+    private String color = "#d2e5ff";
+    public String getColor() { return color; }
+    public void setColor(String color) { this.color = color; }
+    public String parseColor(String text) {
+        String t = text.trim();
+        if (!t.isEmpty()) {
+            int bracket = t.indexOf('[');
+            if (bracket >= 0) {
+                String c = t.substring(bracket + 1);
+                bracket = c.indexOf(']');
+                if (bracket > 0)
+                    c = c.substring(0, bracket);
+                return c.trim();
+            }
+        }
+        return null;
+    }
 
     // below is for instance-level
     private String masterRequestId;
@@ -67,6 +115,8 @@ public class Milestone implements Linkable, Jsonable {
             json.put("activity", activity.getSummaryJson());
         if (label != null)
             json.put("label", label);
+        if (color != null)
+            json.put("color", color);
         if (masterRequestId != null)
             json.put("masterRequestId", masterRequestId);
         if (status != null)

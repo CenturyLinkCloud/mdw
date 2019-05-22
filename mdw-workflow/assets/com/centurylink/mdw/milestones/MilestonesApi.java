@@ -2,6 +2,9 @@ package com.centurylink.mdw.milestones;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.config.PropertyGroup;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.workflow.Linked;
 import com.centurylink.mdw.model.workflow.Milestone;
 import com.centurylink.mdw.model.workflow.Process;
@@ -15,6 +18,7 @@ import org.json.JSONObject;
 
 import javax.ws.rs.Path;
 import java.util.Map;
+import java.util.Properties;
 
 @Path("/")
 @Api("Workflow milestones")
@@ -41,6 +45,8 @@ public class MilestonesApi extends JsonRestService {
                         }
                     }
                 }
+            } else if (seg4.equals("groups")) {
+                return getGroups();
             } else {
                 // by masterRequestId
                 boolean withFuture = query.getBooleanFilter("future");
@@ -66,5 +72,11 @@ public class MilestonesApi extends JsonRestService {
         if (process == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + assetPath);
         return getDefinition(process.getId());
+    }
+
+    @Path("/groups")
+    public JSONObject getGroups() {
+        Properties props = PropertyManager.getInstance().getProperties(PropertyNames.MDW_MILESTONE_GROUPS);
+        return new PropertyGroup("milestone.groups", PropertyNames.MDW_MILESTONE_GROUPS, props).getJson();
     }
 }
