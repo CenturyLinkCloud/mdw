@@ -4,6 +4,7 @@ import '../node/node_modules/style-loader!../node/node_modules/vis/dist/vis.css'
 import {Network} from '../node/node_modules/vis/dist/vis';
 import {Link} from '../node/node_modules/react-router-dom';
 import Data from './Data.js';
+import Groups from './Groups.js';
 import options from './options.js';
 
 class Definition extends Component {
@@ -48,23 +49,26 @@ class Definition extends Component {
   }
 
   componentDidMount() {
-    // retrieve milestones definition
-    const url = this.context.serviceRoot + '/com/centurylink/mdw/milestones/definitions/' + 
-        this.state.assetPath;
-    fetch(new Request(url, {
-      method: 'GET',
-      headers: { Accept: 'application/json'},
-      credentials: 'same-origin'
-    }))
-    .then(response => {
-      return response.json();
-    })
-    .then(milestone => {
-      this.setState({
-        milestone: milestone.milestone,
-        data: new Data(milestone)
-      }, this.drawGraph());
-    });  
+    new Groups(this.context.serviceRoot).getGroups()
+    .then(groups => {
+      // retrieve milestones definition
+      const url = this.context.serviceRoot + '/com/centurylink/mdw/milestones/definitions/' + 
+          this.state.assetPath;
+      fetch(new Request(url, {
+        method: 'GET',
+        headers: { Accept: 'application/json'},
+        credentials: 'same-origin'
+      }))
+      .then(response => {
+        return response.json();
+      })
+      .then(milestone => {
+        this.setState({
+          milestone: milestone.milestone,
+          data: new Data(groups, milestone)
+        }, this.drawGraph());
+      });  
+    });
   }
 
   render() {

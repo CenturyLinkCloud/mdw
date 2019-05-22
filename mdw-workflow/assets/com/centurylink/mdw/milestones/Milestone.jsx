@@ -5,14 +5,15 @@ import {Link} from '../node/node_modules/react-router-dom';
 import '../node/node_modules/style-loader!../node/node_modules/vis/dist/vis.css';
 import {Network} from '../node/node_modules/vis/dist/vis';
 import ButtonLink from '../react/ButtonLink.jsx';
+import HeaderPopButton from '../react/HeaderPopButton.jsx';
 import Definition from './Definition.jsx';
+import InfoPop from './InfoPop.jsx';
 import options from './options.js';
 
 class Milestone extends Component {
     
   constructor(...args) {
     super(...args);
-    this.state = { data: {} };  // for def
   }  
 
   isDef() {
@@ -75,9 +76,13 @@ class Milestone extends Component {
               <div style={{float:'right'}}>
                 <ButtonLink style={{padding:'4px 8px',fontWeight:'normal',textDecoration:'none'}} 
                   to={hubRoot + '/#/milestones/definitions/' + process.packageName + '/' + process.name}>
-                  <Glyphicon className="mdw-icon-btn" glyph="pencil" />
+                  <Glyphicon glyph="pencil" />
                   {' Edit'}
                 </ButtonLink>
+                <HeaderPopButton label="Info" glyph="info-sign"
+                  popover={
+                    <InfoPop groups={this.props.data.groups} />
+                  } />
               </div>
             }
           </div>

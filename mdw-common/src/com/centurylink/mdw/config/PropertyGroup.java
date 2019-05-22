@@ -11,7 +11,7 @@ public class PropertyGroup implements Jsonable {
     private String root;
     public String getRoot() { return root; }
 
-    public String name;
+    private String name;
     public String getName() { return name; }
 
     private Properties properties = new Properties();

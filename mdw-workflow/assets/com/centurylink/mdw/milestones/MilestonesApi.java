@@ -7,6 +7,7 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.workflow.Linked;
 import com.centurylink.mdw.model.workflow.Milestone;
+import com.centurylink.mdw.model.workflow.MilestoneFactory;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.process.HierarchyCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
@@ -77,6 +78,20 @@ public class MilestonesApi extends JsonRestService {
     @Path("/groups")
     public JSONObject getGroups() {
         Properties props = PropertyManager.getInstance().getProperties(PropertyNames.MDW_MILESTONE_GROUPS);
-        return new PropertyGroup("milestone.groups", PropertyNames.MDW_MILESTONE_GROUPS, props).getJson();
+        PropertyGroup milestonesGroup = new PropertyGroup("milestone.groups", PropertyNames.MDW_MILESTONE_GROUPS, props);
+        for (PropertyGroup defaultGroup : MilestoneFactory.DEFAULT_GROUPS) {
+            boolean overridden = false;
+            for (PropertyGroup subgroup : milestonesGroup.getSubgroups()) {
+                if (subgroup.getName().equals(defaultGroup.getName())) {
+                    overridden = true;
+                    break;
+                }
+            }
+            if (!overridden) {
+                milestonesGroup.getSubgroups().add(defaultGroup);
+            }
+        }
+
+        return milestonesGroup.getJson();
     }
 }

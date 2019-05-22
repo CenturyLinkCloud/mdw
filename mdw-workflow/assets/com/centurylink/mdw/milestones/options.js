@@ -5,7 +5,8 @@ module.exports = {
       size: 30,
       font: {
         size: 16
-      }
+      },
+      color: '#d2e5ff'
     },
     edges: {
       arrows: 'to',
