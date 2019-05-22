@@ -71,20 +71,6 @@ var StepFactory = function(DC, Shape) {
     if (this.implementor.icon && this.implementor.icon.startsWith('shape:'))
       shape = this.implementor.icon.substring(6);
 
-    // runtime state first
-    if (this.instances) {
-      var adj = 0;
-      if (shape == 'start' || shape == 'stop' || shape == 'pause')
-        adj = 2;
-      var color = null;
-      if (shape == 'pause')
-        color = '#ffea00';
-      this.diagram.drawState(this.display, this.instances, !this.diagram.drawBoxes, adj, animationTimeSlice, color);
-    }
-    else if (this.data) {
-      this.diagram.drawData(this.display, 10 * this.data.heat, this.data.color, 0.8);
-    }
-
     // TODO Milestones may not have been populated in sessionStorage (unless Milestones link visited).
     var title, fill;
     var milestoneGroups = sessionStorage.getItem('mdw-milestoneGroups');
@@ -103,6 +89,21 @@ var StepFactory = function(DC, Shape) {
           }
         }
       }
+    }
+
+    // runtime state first
+    if (this.instances) {
+      var adj = 0;
+      if (shape == 'start' || shape == 'stop' || shape == 'pause')
+        adj = 2;
+      var color = null;
+      if (shape == 'pause')
+        color = '#ffea00';
+      this.diagram.drawState(this.display, this.instances, !this.diagram.drawBoxes, adj, animationTimeSlice, color, fill);
+      fill = null; // otherwise runtime info lost below
+    }
+    else if (this.data) {
+      this.diagram.drawData(this.display, 10 * this.data.heat, this.data.color, 0.8);
     }
 
     var yAdjust = -2;

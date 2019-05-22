@@ -394,7 +394,6 @@ public class ProcessInstance implements Jsonable, Linkable {
         return json;
     }
 
-    @Override
     public JSONObject getSummaryJson() throws JSONException {
         JSONObject json = create();
         json.put("id", this.id);
@@ -408,15 +407,24 @@ public class ProcessInstance implements Jsonable, Linkable {
             json.put("start", new Date(DateHelper.stringToDate(startDate).getTime() + DatabaseAccess.getDbTimeDiff()).toInstant());
         if (endDate != null)
             json.put("end", new Date(DateHelper.stringToDate(endDate).getTime() + DatabaseAccess.getDbTimeDiff()).toInstant());
-        // these are needed for process instance hierarchy
-        if (processName != null)
-            json.put("processName", processName);
-        if (processVersion != null)
-            json.put("processVersion", processVersion);
-        if (packageName != null)
-            json.put("packageName", packageName);
         return json;
     }
+
+    @Override
+    public JSONObject getSummaryJson(int detail) {
+        JSONObject json = getSummaryJson();
+        if (detail > 0) {
+            // these are needed for process instance hierarchy
+            if (processName != null)
+                json.put("processName", processName);
+            if (processVersion != null)
+                json.put("processVersion", processVersion);
+            if (packageName != null)
+                json.put("packageName", packageName);
+        }
+        return json;
+    }
+
 
     public String getJsonName() {
         return "ProcessInstance";

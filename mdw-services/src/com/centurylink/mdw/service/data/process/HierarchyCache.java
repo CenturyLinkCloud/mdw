@@ -17,6 +17,7 @@ public class HierarchyCache implements CacheService {
 
     private static volatile Map<Long,List<Linked<Process>>> hierarchies = new HashMap<>();
     private static volatile Map<Long,Linked<Milestone>> milestones = new HashMap<>();
+    private static volatile Map<Long,Linked<Activity>> endToEndActivities = new HashMap<>();
     private static volatile List<Long> milestoned = null;
 
     public static List<Linked<Process>> getHierarchy(Long processId) {
@@ -75,17 +76,43 @@ public class HierarchyCache implements CacheService {
         if (process != null) {
             MilestoneFactory milestoneFactory = new MilestoneFactory(process);
             Linked<Milestone> start = milestoneFactory.start();
+            addMilestones(start, getEndToEndActivities(processId));
+            if (!start.getChildren().isEmpty())
+                return start;
+        }
+        return null;
+    }
+
+    public static Linked<Activity> getEndToEndActivities(Long processId) {
+        Linked<Activity> endToEnd;
+        Map<Long,Linked<Activity>> endToEndMap = endToEndActivities;
+        if (endToEndMap.containsKey(processId)) {
+            endToEnd = endToEndMap.get(processId);
+        } else {
+            synchronized (HierarchyCache.class) {
+                endToEndMap = endToEndActivities;
+                if (endToEndMap.containsKey(processId)) {
+                    endToEnd = endToEndMap.get(processId);
+                } else {
+                    endToEnd = loadEndToEndActivities(processId);
+                    endToEndActivities.put(processId, endToEnd);
+                }
+            }
+        }
+        return endToEnd;
+    }
+
+    private static Linked<Activity> loadEndToEndActivities(Long processId) {
+        Process process = ProcessCache.getProcess(processId);
+        if (process != null) {
             try {
                 Linked<Activity> endToEndActivities = process.getLinkedActivities();
                 addSubprocActivities(endToEndActivities);
-                addMilestones(start, endToEndActivities);
-                if (!start.getChildren().isEmpty())
-                    return start;
+                return endToEndActivities;
             }
             catch (DataAccessException ex) {
                 throw new CachingException(ex.getMessage(), ex);
             }
-
         }
         return null;
     }
@@ -201,6 +228,7 @@ public class HierarchyCache implements CacheService {
     public void clearCache() {
         hierarchies = new HashMap<>();
         milestones = new HashMap<>();
+        endToEndActivities = new HashMap<>();
         milestoned = null;
     }
 

@@ -56,33 +56,6 @@ class Data {
     }
     this.depth--;
   }
-
-  /**
-   * Retrieves if necessary.  Returns a promise.
-   */
-  getGroups(serviceRoot) {
-    return new Promise(resolve => {
-      let sessionGroups = sessionStorage.getItem("mdw-milestoneGroups");
-      if (sessionGroups) {
-        resolve(JSON.parse(sessionGroups));
-      }
-      else {
-        const url = serviceRoot + '/com/centurylink/mdw/milestones/groups';
-        fetch(new Request(url, {
-          method: 'GET',
-          headers: { Accept: 'application/json'},
-          credentials: 'same-origin'
-        }))
-        .then(response => {
-          return response.json();
-        })
-        .then(groups => {
-          sessionStorage.setItem("mdw-milestoneGroups", JSON.stringify(groups));
-          resolve(groups);
-        });
-      }  
-    });
-  }
 }
 
 export default Data; 

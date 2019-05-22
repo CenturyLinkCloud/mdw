@@ -177,7 +177,6 @@ public class ActivityInstance implements Jsonable, Linkable {
         return json;
     }
 
-    @Override
     public JSONObject getSummaryJson() {
         JSONObject json = create();
         if (id != null)
@@ -192,6 +191,24 @@ public class ActivityInstance implements Jsonable, Linkable {
             json.put("status", WorkStatuses.getWorkStatuses().get(statusCode));
         if (result != null)
             json.put("result", result);
+        return json;
+    }
+
+    @Override
+    public JSONObject getSummaryJson(int detail) {
+        JSONObject json = getSummaryJson();
+        if (detail > 0) {
+            if (processId != null)
+                json.put("processId", processId);
+            if (processName != null)
+                json.put("processName", processName);
+            if (processVersion != null)
+                json.put("processVersion", processVersion);
+            if (packageName != null)
+                json.put("packageName", packageName);
+            if (processInstanceId != null)
+                json.put("processInstanceId", processInstanceId);
+        }
         return json;
     }
 

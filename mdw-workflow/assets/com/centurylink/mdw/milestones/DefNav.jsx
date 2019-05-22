@@ -9,12 +9,20 @@ class DefNav extends Component {
 
   render() {
     const hubRoot = this.context.hubRoot;
-    const assetPath = location.hash.substring(25);
+    const e2e = location.hash.startsWith('#/milestones/definitions/e2e/')
+    const assetPath = location.hash.substring(e2e ? 29 : 25);
     return (
       <div>
         <ul className="nav mdw-nav">
-          <li><a href={hubRoot + '#/workflow/definitions/' + assetPath}>Definition</a></li>
-          <li className="mdw-active"><a>Milestones Def.</a></li>
+          <li>
+            <a href={hubRoot + '#/workflow/definitions/' + assetPath}>Definition</a>
+          </li>
+          <li className={e2e ? '' : 'mdw-active'}>
+            <a href={hubRoot + '#/milestones/definitions/' + assetPath}>Milestones Def.</a>
+          </li>
+          <li className={e2e ? 'mdw-active' : ''}>
+            <a href={hubRoot + '#/milestones/definitions/e2e/' + assetPath}>Everything</a>
+          </li>
         </ul>
         <ul className="nav mdw-nav">
           <li><a href={hubRoot + '#/workflow/processes'}>Process List</a></li>

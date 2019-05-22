@@ -134,7 +134,7 @@ public class Milestone implements Linkable, Jsonable {
     }
 
     @Override
-    public JSONObject getSummaryJson() {
+    public JSONObject getSummaryJson(int detail) {
         return getJson();
     }
 

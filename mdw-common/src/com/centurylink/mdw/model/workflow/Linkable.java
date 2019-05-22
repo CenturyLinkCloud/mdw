@@ -5,7 +5,10 @@ import org.json.JSONObject;
 
 public interface Linkable extends Jsonable {
 
-    JSONObject getSummaryJson();
+    /**
+     * @param detail level to include in json
+     */
+    JSONObject getSummaryJson(int detail);
 
     String getQualifiedLabel();
 
