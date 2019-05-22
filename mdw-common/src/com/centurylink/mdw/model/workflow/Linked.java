@@ -33,16 +33,21 @@ public class Linked<T extends Linkable> implements Jsonable {
         this.element = element;
     }
 
+    public JSONObject getJson() throws JSONException {
+        return getJson(0);
+    }
+
     /**
      * Includes children (not parent).
+     * @param detail level of detail to include in element summary
      */
-    public JSONObject getJson() throws JSONException {
+    public JSONObject getJson(int detail) throws JSONException {
         JSONObject json = create();
-        json.put(element.getObjectName(), element.getSummaryJson());
+        json.put(element.getObjectName(), element.getSummaryJson(detail));
         if (!children.isEmpty()) {
             JSONArray childrenArr = new JSONArray();
             for (Linked<T> child : children) {
-                childrenArr.put(child.getJson());
+                childrenArr.put(child.getJson(detail));
             }
             json.put("children", childrenArr);
         }

@@ -584,6 +584,11 @@ public class Process extends Asset implements Jsonable, Linkable {
         return json;
     }
 
+    @Override
+    public JSONObject getSummaryJson(int detail) {
+        return getSummaryJson();
+    }
+
     public String getJsonName() {
         return getName();
     }
@@ -696,7 +701,11 @@ public class Process extends Asset implements Jsonable, Linkable {
     }
 
     private void linkActivities(Linked<Activity> parent) {
-        parent.get().setProcessId(getId());
+        Activity parentActivity = parent.get();
+        parentActivity.setProcessId(getId());
+        parentActivity.setProcessName(getName());
+        parentActivity.setMilestoneName(parentActivity.milestoneName());
+        parentActivity.setMilestoneGroup(parentActivity.milestoneGroup());
         for (Activity downstream : getDownstreamActivities(parent.get())) {
             Linked<Activity> child = new Linked<>(downstream);
             child.setParent(parent);

@@ -26,9 +26,10 @@ import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
-import com.centurylink.mdw.model.workflow.ActivityAggregate;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
-import com.centurylink.mdw.model.workflow.ActivityList;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.*;
+import com.centurylink.mdw.service.data.process.HierarchyCache;
+import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
@@ -83,7 +84,18 @@ public class Activities extends JsonRestService implements JsonExportable {
                     // path must be special
                     Query query = getQuery(path, headers);
                     if (segOne.equals("definitions")) {
-                        return getDefinitions(query);
+                        if ("e2e".equals(getSegment(path, 2))) {
+                            String pkg = getSegment(path, 3);
+                            String proc = getSegment(path, 4);
+                            if (proc != null) {
+                                // process asset path
+                                return getDefinitionE2e(pkg + "/" + proc);
+                            }
+                            throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + path);
+                        }
+                        else {
+                            return getDefinitions(query);
+                        }
                     }
                     else if (segOne.equals("tops")) {
                         return getTops(query).getJson();
@@ -231,5 +243,16 @@ public class Activities extends JsonRestService implements JsonExportable {
     public void actionActivity(Long instanceId, String action, String result, String authUser) throws ServiceException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
         workflowServices.actionActivity(instanceId, action, result, authUser);
+    }
+
+    @Path("/definitions/e2e/{package}/{process}")
+    public JSONObject getDefinitionE2e(String assetPath) throws ServiceException {
+        Process process = ProcessCache.getProcess(assetPath);
+        if (process == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + assetPath);
+        Linked<Activity> activities = HierarchyCache.getEndToEndActivities(process.getId());
+        if (activities == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Activities not found: " + process.getId());
+        return activities.getJson(2);
     }
 }

@@ -827,7 +827,7 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
     }
   };
 
-  Diagram.prototype.drawState = function(display, instances, ext, adj, animationSlice /* not used */, color) {
+  Diagram.prototype.drawState = function(display, instances, ext, adj, animationSlice /* not used */, color, fill) {
     if (instances) {
       var count = instances.length > Step.MAX_INSTS ? Step.MAX_INSTS : instances.length;
       for (var i = 0; i < count; i++) {
@@ -889,8 +889,14 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
             y1 += Step.OLD_INST_W - 1;
             w1 -= 2 * Step.OLD_INST_W - 2;
             h1 -= 2 * Step.OLD_INST_W - 2;
-            if (w1 > 0 && h1 > 0)
-              this.context.clearRect(x1, y1, w1, h1);
+            if (w1 > 0 && h1 > 0) {
+              if (fill) {
+                this.rect(x1, y1, w1, h1, statusColor, fill);
+              }
+              else {
+                this.context.clearRect(x1, y1, w1, h1);
+              }
+            }
           }
         }
       }

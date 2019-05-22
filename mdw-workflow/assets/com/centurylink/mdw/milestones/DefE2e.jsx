@@ -1,25 +1,25 @@
-import React, {Component} from '../node/node_modules/react';
+import React, {Component} from '../node/node_modules/react/react';
 import PropTypes from '../node/node_modules/prop-types';
 import '../node/node_modules/style-loader!../node/node_modules/vis/dist/vis.css';
 import {Network} from '../node/node_modules/vis/dist/vis';
 import {Link} from '../node/node_modules/react-router-dom';
-import Data from './Data.js';
+import DataE2e from './DataE2e.js';
 import Groups from './Groups.js';
 import options from './options.js';
 
-class Definition extends Component {
+class DefE2e extends Component {
     
   constructor(...args) {
     super(...args);
     this.state = {
-      milestone: {}, 
+      activity: {}, 
       data: {},
-      assetPath: location.hash.substring(25)
+      assetPath: location.hash.substring(29)
     };
   }  
 
   drawGraph() {
-    const container = document.getElementById('milestone-def-graph');
+    const container = document.getElementById('milestone-e2e-graph');
     if (container) {
       const graphOptions = Object.assign({}, { 
         height: (this.state.data.maxDepth * 100) + 'px' 
@@ -51,9 +51,8 @@ class Definition extends Component {
   componentDidMount() {
     new Groups(this.context.serviceRoot).getGroups()
     .then(groups => {
-      // retrieve milestones definition
-      const url = this.context.serviceRoot + '/com/centurylink/mdw/milestones/definitions/' + 
-          this.state.assetPath;
+      // retrieve definition activities e2e
+      const url = this.context.serviceRoot + '/Activities/definitions/e2e/' + this.state.assetPath;
       fetch(new Request(url, {
         method: 'GET',
         headers: { Accept: 'application/json'},
@@ -62,10 +61,10 @@ class Definition extends Component {
       .then(response => {
         return response.json();
       })
-      .then(milestone => {
+      .then(activities => {
         this.setState({
-          milestone: milestone.milestone,
-          data: new Data(groups, milestone)
+          activity: activities.activity,
+          data: new DataE2e(groups, activities)
         }, this.drawGraph());
       });  
     });
@@ -91,16 +90,16 @@ class Definition extends Component {
           </div>
         </div>
         <div className="mdw-section">
-          <div id="milestone-def-graph">
+          <div id="milestone-e2e-graph">
           </div>
         </div>
       </div>
-    );  
+    );
   }
 }
 
-Definition.contextTypes = {
+DefE2e.contextTypes = {
   hubRoot: PropTypes.string,
   serviceRoot: PropTypes.string
 };
-export default Definition; 
+export default DefE2e; 

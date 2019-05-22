@@ -18,6 +18,8 @@ package com.centurylink.mdw.model.workflow;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.project.Data;
+import com.centurylink.mdw.monitor.MonitorAttributes;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -123,13 +125,75 @@ public class Activity implements Comparable<Activity>, Jsonable, Linkable {
         return json;
     }
 
-    @Override
     public JSONObject getSummaryJson() {
         JSONObject json = create();
         json.put("name", getName());
         json.put("id", getLogicalId());
         json.put("implementor", getImplementor());
         return json;
+    }
+
+    @Override
+    public JSONObject getSummaryJson(int detail) {
+        JSONObject json = getSummaryJson();
+        if (detail > 0) {
+            if (processId != null)
+                json.put("processId", processId);
+            if (processName != null)
+                json.put("processName", processName);
+        }
+        if (detail > 1) {
+            if (milestoneName != null)
+                json.put("milestoneName", milestoneName);
+            if (milestoneGroup != null)
+                json.put("milestoneGroup", milestoneGroup);
+        }
+        return json;
+    }
+
+    public String milestoneGroup() {
+        String monitorsAttr = getAttribute(WorkAttributeConstant.MONITORS);
+        if (monitorsAttr != null) {
+            MonitorAttributes monitorAttributes = new MonitorAttributes(monitorsAttr);
+            if (monitorAttributes.isEnabled(Milestone.MONITOR_CLASS)) {
+                String text = monitorAttributes.getOptions(Milestone.MONITOR_CLASS);
+                if (text != null && !text.isEmpty()) {
+                    int bracket = text.lastIndexOf('[');
+                    if (bracket >= 0) {
+                        text = text.substring(bracket + 1);
+                        bracket = text.indexOf(']');
+                        if (bracket > 0) {
+                            return text.substring(0, bracket);
+                        }
+                    }
+                }
+            }
+        }
+        if (Data.Implementors.START_IMPL.equals(getImplementor()))
+            return "Start";
+        else if (Data.Implementors.STOP_IMPL.equals(getImplementor()))
+            return "Stop";
+        else if (Data.Implementors.PAUSE_IMPL.equals(getImplementor()))
+            return "Pause";
+        return null;
+    }
+
+    public String milestoneName() {
+        String monitorsAttr = getAttribute(WorkAttributeConstant.MONITORS);
+        if (monitorsAttr != null) {
+            MonitorAttributes monitorAttributes = new MonitorAttributes(monitorsAttr);
+            if (monitorAttributes.isEnabled(Milestone.MONITOR_CLASS)) {
+                String text = monitorAttributes.getOptions(Milestone.MONITOR_CLASS);
+                if (text != null) {
+                    int bracket = text.lastIndexOf('[');
+                    if (bracket >= 0) {
+                        text = text.substring(0, bracket);
+                    }
+                    return text.trim().replaceAll("\\\\n", "\n");
+                }
+            }
+        }
+        return null;
     }
 
     public String oneLineName() {
@@ -145,6 +209,14 @@ public class Activity implements Comparable<Activity>, Jsonable, Linkable {
     private Long processId;
     public Long getProcessId() { return processId; }
     public void setProcessId(Long processId) { this.processId = processId; }
+
+    private String milestoneGroup;
+    public String getMilestoneGroup() { return milestoneGroup; }
+    public void setMilestoneGroup(String group) { this.milestoneGroup = group; }
+
+    private String milestoneName;
+    public String getMilestoneName() { return milestoneName; }
+    public void setMilestoneName(String milestoneName) { this.milestoneName = milestoneName; }
 
     private int sequenceId;
     public int getSequenceId() { return sequenceId; }

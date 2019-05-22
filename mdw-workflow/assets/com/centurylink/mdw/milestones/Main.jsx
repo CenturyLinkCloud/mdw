@@ -22,6 +22,9 @@ class Main extends Component {
   isDef() {
     return location.hash.startsWith('#/milestones/definitions');
   }
+  isDefE2e() {
+    return location.hash.startsWith('#/milestones/definitions/e2e/');
+  }
   
   componentDidMount() {
     new Groups(this.getChildContext().serviceRoot).getGroups()

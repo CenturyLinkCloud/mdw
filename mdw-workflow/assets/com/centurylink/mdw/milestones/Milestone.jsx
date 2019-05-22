@@ -7,6 +7,7 @@ import {Network} from '../node/node_modules/vis/dist/vis';
 import ButtonLink from '../react/ButtonLink.jsx';
 import HeaderPopButton from '../react/HeaderPopButton.jsx';
 import Definition from './Definition.jsx';
+import DefE2e from './DefE2e.jsx';
 import InfoPop from './InfoPop.jsx';
 import options from './options.js';
 
@@ -18,6 +19,9 @@ class Milestone extends Component {
 
   isDef() {
     return location.hash.startsWith('#/milestones/definitions');
+  }
+  isDefE2e() {
+    return location.hash.startsWith('#/milestones/definitions/e2e/');
   }
 
   drawGraph() {
@@ -53,9 +57,16 @@ class Milestone extends Component {
 
   render() {
     if (this.isDef()) {
-      return (
-        <Definition />
-      );
+      if (this.isDefE2e()) {
+        return (
+          <DefE2e />
+        );
+      }
+      else {
+        return (
+          <Definition />
+        );
+      }
     }
     else {
       this.drawGraph();
