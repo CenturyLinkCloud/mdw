@@ -6,6 +6,7 @@ import {
 import Nav from './Nav.jsx';
 import DefNav from './DefNav.jsx';
 import Data from './Data.js';
+import Groups from './Groups.js';
 import Milestone from './Milestone.jsx';
 import Timeline from './Timeline.jsx';
 
@@ -23,26 +24,29 @@ class Main extends Component {
   }
   
   componentDidMount() {
-    if (!this.isDef()) {
-      const masterRequestId = location.hash.substring(13);
-      const url = this.getChildContext().serviceRoot + '/com/centurylink/mdw/milestones/' + masterRequestId;
-      fetch(new Request(url, {
-        method: 'GET',
-        headers: { Accept: 'application/json'},
-        credentials: 'same-origin'
-      }))
-      .then(response => {
-        return response.json();
-      })
-      .then(milestone => {
-        this.setState({
-          milestone: milestone.milestone,
-          data: new Data(milestone)
-        });
-      });
-    }
+    new Groups(this.getChildContext().serviceRoot).getGroups()
+    .then(groups => {
+      if (!this.isDef()) {
+        const masterRequestId = location.hash.substring(13);
+        const url = this.getChildContext().serviceRoot + '/com/centurylink/mdw/milestones/' + masterRequestId;
+        fetch(new Request(url, {
+          method: 'GET',
+          headers: { Accept: 'application/json'},
+          credentials: 'same-origin'
+        }))
+        .then(response => {
+          return response.json();
+        })
+        .then(milestone => {
+          this.setState({
+            milestone: milestone.milestone,
+            data: new Data(groups, milestone)
+          });
+        });    
+      }  
+    });
   }
-  
+
   render() {
     var hub = this.getChildContext().hubRoot + '/';
     return (

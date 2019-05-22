@@ -1,12 +1,41 @@
 package com.centurylink.mdw.model.workflow;
 
+import com.centurylink.mdw.config.PropertyGroup;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.monitor.MonitorAttributes;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 
 public class MilestoneFactory {
+
+    public static final List<PropertyGroup> DEFAULT_GROUPS = new ArrayList<>();
+    public static final PropertyGroup START_GROUP;
+    public static final PropertyGroup STOP_GROUP;
+    public static final PropertyGroup PAUSE_GROUP;
+    static {
+        String startRoot = PropertyNames.MDW_MILESTONE_GROUPS + ".Start";
+        Properties startProps = new Properties();
+        startProps.setProperty(startRoot + ".color", "#aff7a2");
+        START_GROUP = new PropertyGroup("Start", startRoot, startProps);
+        DEFAULT_GROUPS.add(START_GROUP);
+
+        String stopRoot = PropertyNames.MDW_MILESTONE_GROUPS + ".Stop";
+        Properties stopProps = new Properties();
+        stopProps.setProperty(stopRoot + ".color", "#f0928a");
+        STOP_GROUP = new PropertyGroup("Stop", stopRoot, stopProps);
+        DEFAULT_GROUPS.add(STOP_GROUP);
+
+        String pauseRoot = PropertyNames.MDW_MILESTONE_GROUPS + ".Pause";
+        Properties pauseProps = new Properties();
+        pauseProps.setProperty(pauseRoot + ".color", "#fffc7c");
+        PAUSE_GROUP = new PropertyGroup("Pause", pauseRoot, pauseProps);
+        DEFAULT_GROUPS.add(PAUSE_GROUP);
+    }
 
     private Process process;
 

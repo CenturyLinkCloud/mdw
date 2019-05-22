@@ -1,6 +1,7 @@
 class Data {
     
-  constructor(milestones) {
+  constructor(groups, milestones) {
+    this.groups = groups;
     this.milestones = milestones;
     this.items = [];
     this.edges = [];
@@ -14,6 +15,14 @@ class Data {
     let item = milestone.milestone;
     item.id = this.idCtr;
     item.level = this.depth;
+    if (item.group) {
+      let group = item.group;
+      delete item.group;
+      let milestoneGroup = this.groups.find(g => g.name === group);
+      if (milestoneGroup && milestoneGroup.props) {
+        item.color = milestoneGroup.props.color;
+      }
+    }
     if (item.process) {
       item.title = item.process.name;
       if (item.activity) {
@@ -48,6 +57,32 @@ class Data {
     this.depth--;
   }
 
+  /**
+   * Retrieves if necessary.  Returns a promise.
+   */
+  getGroups(serviceRoot) {
+    return new Promise(resolve => {
+      let sessionGroups = sessionStorage.getItem("mdw-milestoneGroups");
+      if (sessionGroups) {
+        resolve(JSON.parse(sessionGroups));
+      }
+      else {
+        const url = serviceRoot + '/com/centurylink/mdw/milestones/groups';
+        fetch(new Request(url, {
+          method: 'GET',
+          headers: { Accept: 'application/json'},
+          credentials: 'same-origin'
+        }))
+        .then(response => {
+          return response.json();
+        })
+        .then(groups => {
+          sessionStorage.setItem("mdw-milestoneGroups", JSON.stringify(groups));
+          resolve(groups);
+        });
+      }  
+    });
+  }
 }
 
 export default Data; 

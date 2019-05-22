@@ -25,18 +25,18 @@ public class Milestone implements Linkable, Jsonable {
             String l = parseLabel(text);
             if (l != null)
                 this.label = l;
-            String c = parseColor(text);
-            if (c != null) {
-                this.color = c;
+            String g = parseGroup(text);
+            if (g != null) {
+                this.group = g;
             }
             else if (Data.Implementors.START_IMPL.equals(activity.getImplementor())) {
-                this.color = "#aff7a2";
+                this.group = MilestoneFactory.START_GROUP.getName();
             }
             else if (Data.Implementors.STOP_IMPL.equals(activity.getImplementor())) {
-                this.color = "#f0928a";
+                this.group = MilestoneFactory.STOP_GROUP.getName();
             }
             else if (Data.Implementors.PAUSE_IMPL.equals(activity.getImplementor())) {
-                this.color = "";
+                this.group = MilestoneFactory.PAUSE_GROUP.getName();
             }
         }
     }
@@ -64,19 +64,19 @@ public class Milestone implements Linkable, Jsonable {
         return null;
     }
 
-    private String color = "#d2e5ff";
-    public String getColor() { return color; }
-    public void setColor(String color) { this.color = color; }
-    public String parseColor(String text) {
+    private String group;
+    public String getGroup() { return group; }
+    public void setGroup(String group) { this.group = group; }
+    public String parseGroup(String text) {
         String t = text.trim();
         if (!t.isEmpty()) {
             int bracket = t.indexOf('[');
             if (bracket >= 0) {
-                String c = t.substring(bracket + 1);
-                bracket = c.indexOf(']');
+                String g = t.substring(bracket + 1);
+                bracket = g.indexOf(']');
                 if (bracket > 0)
-                    c = c.substring(0, bracket);
-                return c.trim();
+                    g = g.substring(0, bracket);
+                return g.trim();
             }
         }
         return null;
@@ -97,7 +97,7 @@ public class Milestone implements Linkable, Jsonable {
 
     private Instant end;
     public Instant getEnd() { return end; }
-    public void setEnd(Instant finish) { this.end = end; }
+    public void setEnd(Instant end) { this.end = end; }
 
     private ProcessInstance processInstance;
     public ProcessInstance getProcessInstance() { return processInstance; }
@@ -115,8 +115,8 @@ public class Milestone implements Linkable, Jsonable {
             json.put("activity", activity.getSummaryJson());
         if (label != null)
             json.put("label", label);
-        if (color != null)
-            json.put("color", color);
+        if (group != null)
+            json.put("group", group);
         if (masterRequestId != null)
             json.put("masterRequestId", masterRequestId);
         if (status != null)
