@@ -10,20 +10,14 @@ class Nav extends Component {
 
   render() {
     var milestoneRoot = this.context.hubRoot + '/milestones/';
-    var definition = milestoneRoot + "definitions/";
     if (this.props.milestone.masterRequestId) {
         milestoneRoot += this.props.milestone.masterRequestId + '/';
     }
-    if (this.props.milestone.process) {
-      definition += this.props.milestone.process.id;
-    }
-
     return (
       <div>
         <ul className="nav mdw-nav">
           <NavLink to={milestoneRoot} match={milestoneRoot}>Milestones</NavLink>
           <NavLink to={milestoneRoot + 'timeline'}>Timeline</NavLink>
-          <NavLink to={definition}>Definition</NavLink>
         </ul>
         <ul className="nav mdw-nav">
           <li><a href={this.context.hubRoot + '/#/milestones'} target="_self">Milestones List</a></li>

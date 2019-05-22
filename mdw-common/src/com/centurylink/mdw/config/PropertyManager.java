@@ -34,8 +34,8 @@ public abstract class PropertyManager {
     public static final String MDW_PROPERTY_MANAGER = "mdw.property.manager";
 
     private static PropertyManager instance = null;
-    private Map<String, String> sources = new HashMap<String, String>();
-    protected Map<String, String> getSources() {
+    private Map<String,String> sources = new HashMap<>();
+    protected Map<String,String> getSources() {
         return sources;
     }
 

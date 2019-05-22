@@ -24,7 +24,6 @@ import com.centurylink.mdw.model.asset.AssetHeader;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 import com.centurylink.mdw.util.TransactionUtil;
@@ -478,44 +477,6 @@ public class CommonDataAccess {
         else {
             throw new SQLException("Document with ID " + documentId + " does not exist");
         }
-    }
-
-    public Process getProcessBase0(String processName, int version)
-            throws SQLException,DataAccessException {
-        String query;
-        if (version>0) {
-            query = "select RULE_SET_ID, COMMENTS, VERSION_NO, MOD_DT, MOD_USR" +
-                " from RULE_SET where RULE_SET_NAME=? and LANGUAGE='"+Asset.PROCESS+"' and VERSION_NO=" + version;
-        } else {
-            query = "select RULE_SET_ID, COMMENTS, VERSION_NO, MOD_DT, MOD_USR" +
-                " from RULE_SET where RULE_SET_NAME=? and LANGUAGE='"+Asset.PROCESS+"' order by VERSION_NO desc";
-        }
-        ResultSet rs = db.runSelect(query, processName);
-        String processComment;
-        Long processId;
-        if (rs.next()) {
-            processId = new Long(rs.getLong(1));
-            processComment = rs.getString(2);
-            version = rs.getInt(3);
-        } else throw new DataAccessException("Process does not exist; name=" + processName);
-        Process retVO= new Process(processId, processName, processComment, null);   // external events - load later
-        retVO.setVersion(version);
-        retVO.setModifyDate(rs.getTimestamp(4));
-        retVO.setModifyingUser(rs.getString(5));
-        return retVO;
-    }
-
-    protected int countRows(String tableName, String keyElement, String whereCondition)
-    throws SQLException {
-        StringBuffer buff = new StringBuffer();
-
-        buff.append("select count(").append(keyElement).append(") from ").append(tableName);
-        if (whereCondition!=null) buff.append(" where ").append(whereCondition);
-        String query = buff.toString();
-        ResultSet rs = db.runSelect(query);
-        if (rs.next()) {
-            return rs.getInt(1);
-        } else throw new SQLException("Failed to count rows");
     }
 
     protected List<String[]> queryRows(String tableName, String[] fields, String whereCondition,

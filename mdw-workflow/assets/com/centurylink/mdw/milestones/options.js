@@ -1,15 +1,25 @@
 module.exports = {
   graph: {
     nodes: {
-      shape: 'dot'
+      shape: 'dot',
+      size: 30,
+      font: {
+        size: 16
+      }
     },
     edges: {
-      arrows: 'to'
+      arrows: 'to',
+      smooth: {
+        type: 'cubicBezier',
+        forceDirection: 'vertical',
+        roundness: 0.4
+      }      
     },
     layout: {
       hierarchical: {
         enabled: true,
         sortMethod: 'directed',
+        nodeSpacing: 125,
         blockShifting: true,
         edgeMinimization: true,
         parentCentralization: true
@@ -17,7 +27,7 @@ module.exports = {
       }
     },
     physics: {
-      enabled: true
+      enabled: false
     }
   }
 };

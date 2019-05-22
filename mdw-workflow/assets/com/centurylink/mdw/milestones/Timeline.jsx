@@ -1,6 +1,6 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
-import Heading from './Heading.jsx';
+import {Link} from '../node/node_modules/react-router-dom';
 
 class Timeline extends Component {
     
@@ -12,9 +12,18 @@ class Timeline extends Component {
   }
   
   render() {
+    const milestone = this.props.milestone;
     return (
       <div>
-        <Heading milestone={this.props.milestone} />
+        <div className="panel-heading mdw-heading">
+          <div className="mdw-heading-label">
+            {'Timeline: '}
+            <Link
+              to={this.context.hubRoot + '/milestones/' + milestone.masterRequestId}>
+              {milestone.label}
+            </Link>
+          </div>
+        </div>
         <div className="mdw-section">
           Timeline
         </div>

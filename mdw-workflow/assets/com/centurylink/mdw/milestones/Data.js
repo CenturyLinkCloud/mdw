@@ -11,9 +11,16 @@ class Data {
   }
   
   add(milestone) {
-    this.depth++;
     let item = milestone.milestone;
     item.id = this.idCtr;
+    item.level = this.depth;
+    if (item.process) {
+      item.title = item.process.name;
+      if (item.activity) {
+        item.title += ': ' + item.activity.id;
+      }
+    }
+    this.depth++;
     this.items.push(item);
     if (milestone.children) {
       milestone.children.forEach(child => {

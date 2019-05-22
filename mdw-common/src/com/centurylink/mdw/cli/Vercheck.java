@@ -129,7 +129,7 @@ public class Vercheck extends Setup {
                 } else {
                     if (assetFile.file == null && warn) {
                         if (fix && removeVersion(assetFile)) {
-                            getErr().println("FIXED: " + path + " --> " + WARN_EXTRA_VERSION);
+                            getOut().println("FIXED: " + path + " --> " + WARN_EXTRA_VERSION);
                         } else {
                             getErr().println("WARNING: " + path + " --> " + WARN_EXTRA_VERSION);
                         }
