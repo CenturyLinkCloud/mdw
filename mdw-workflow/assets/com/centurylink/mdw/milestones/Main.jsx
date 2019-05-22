@@ -8,6 +8,7 @@ import DefNav from './DefNav.jsx';
 import Data from './Data.js';
 import Groups from './Groups.js';
 import Milestone from './Milestone.jsx';
+import E2e from './E2e.jsx';
 import Timeline from './Timeline.jsx';
 
 class Main extends Component {
@@ -69,6 +70,8 @@ class Main extends Component {
                 render={(props) => <Milestone {...props} milestone={this.state.milestone} data={this.state.data}/>} />
               <Route exact path={hub + 'milestones/:masterRequestId'} 
                 render={(props) => <Milestone {...props} milestone={this.state.milestone} data={this.state.data}/>} />
+              <Route exact path={hub + 'milestones/:masterRequestId/all'} 
+                render={(props) => <E2e {...props} />} />
               <Route exact path={hub + 'milestones/:masterRequestId/timeline'} 
                 render={(props) => <Timeline {...props} milestone={this.state.milestone} data={this.state.data}/>} />
             </div>

@@ -141,6 +141,10 @@ public class Activity implements Comparable<Activity>, Jsonable, Linkable {
                 json.put("processId", processId);
             if (processName != null)
                 json.put("processName", processName);
+            if (processVersion != null)
+                json.put("processVersion", processVersion);
+            if (packageName != null)
+                json.put("packageName", packageName);
         }
         if (detail > 1) {
             if (milestoneName != null)
@@ -206,6 +210,14 @@ public class Activity implements Comparable<Activity>, Jsonable, Linkable {
     public void setProcessName(String processName) { this.processName = processName; }
 
     // transient for milestones
+    private String packageName;
+    public String getPackageName() { return packageName; }
+    public void setPackageName(String packageName) { this.packageName = packageName; }
+
+    private String processVersion;
+    public String getProcessVersion() { return processVersion; }
+    public void setProcessVersion(String version) { this.processVersion = version; }
+
     private Long processId;
     public Long getProcessId() { return processId; }
     public void setProcessId(Long processId) { this.processId = processId; }

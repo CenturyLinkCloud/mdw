@@ -1495,24 +1495,32 @@ public class WorkflowServicesImpl implements WorkflowServices {
         // retrieve full
         ProcessInstance processInstance = getProcess(masterProcessInstance.getId());
 
-        Linked<ActivityInstance> endToEndActivities = processInstance.getLinkedActivities(masterProcess);
+        Linked<ActivityInstance> endToEndActivities = getEndToEndActivities(processInstance);
         Linked<ProcessInstance> parentInstance = getCallHierearchy(masterProcessInstance.getId());
+        Activity masterStartActivity = masterProcess.getStartActivity();
+        ActivityInstance masterStartInstance =
+                processInstance.getActivities(masterStartActivity.getLogicalId()).get(0);
+        // TODO: ability to define top label (from runtime expression)
+        String label = masterProcessInstance.getMasterRequestId();
+        Milestone startMilestone = new MilestoneFactory(masterProcess).createMilestone(masterProcessInstance,
+                masterStartInstance, label);
+        Linked<Milestone> masterMilestones = new Linked<>(startMilestone);
+        addMilestones(masterMilestones, endToEndActivities, parentInstance);
+        if (future) {
+            // TODO
+
+        }
+        return masterMilestones;
+    }
+
+    @Override
+    public Linked<ActivityInstance> getEndToEndActivities(ProcessInstance processInstance) throws ServiceException {
+        Process process = ProcessCache.getProcess(processInstance.getProcessId());
+        Linked<ActivityInstance> endToEndActivities = processInstance.getLinkedActivities(process);
+        Linked<ProcessInstance> parentInstance = getCallHierearchy(processInstance.getId());
         try {
             addSubprocActivities(endToEndActivities, parentInstance);
-            Activity masterStartActivity = masterProcess.getStartActivity();
-            ActivityInstance masterStartInstance =
-                    processInstance.getActivities(masterStartActivity.getLogicalId()).get(0);
-            // TODO: ability to define top label (from runtime expression)
-            String label = masterProcessInstance.getMasterRequestId();
-            Milestone startMilestone = new MilestoneFactory(masterProcess).createMilestone(masterProcessInstance,
-                    masterStartInstance, label);
-            Linked<Milestone> masterMilestones = new Linked<>(startMilestone);
-            addMilestones(masterMilestones, endToEndActivities, parentInstance);
-            if (future) {
-                // TODO
-
-            }
-            return masterMilestones;
+            return endToEndActivities;
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);

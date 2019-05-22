@@ -103,6 +103,12 @@ public class Activities extends JsonRestService implements JsonExportable {
                     else if (segOne.equals("breakdown")) {
                         return getBreakdown(query).getJson();
                     }
+                    else if (segOne.equals("e2e")) {
+                        String masterRequestId = getSegment(path, 2);
+                        if (masterRequestId == null)
+                            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing masterRequestId");
+                        return getE2e(masterRequestId);
+                    }
                     else {
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path segment: " + segOne);
                     }
@@ -243,6 +249,15 @@ public class Activities extends JsonRestService implements JsonExportable {
     public void actionActivity(Long instanceId, String action, String result, String authUser) throws ServiceException {
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
         workflowServices.actionActivity(instanceId, action, result, authUser);
+    }
+
+    @Path("/e2e/{masterRequestId}")
+    public JSONObject getE2e(String masterRequestId) throws ServiceException {
+        WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+        ProcessInstance masterProcessInstance = workflowServices.getMasterProcess(masterRequestId);
+        // retrieve full
+        masterProcessInstance = workflowServices.getProcess(masterProcessInstance.getId());
+        return workflowServices.getEndToEndActivities(masterProcessInstance).getJson(2);
     }
 
     @Path("/definitions/e2e/{package}/{process}")

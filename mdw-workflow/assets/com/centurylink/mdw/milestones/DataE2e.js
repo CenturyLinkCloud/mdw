@@ -12,10 +12,14 @@ class DataE2e {
   }
   
   add(activities) {
-    let item = activities.activity;
-    item.activityId = item.id;
+    let isInstance = activities.activityInstance;
+    let item = isInstance ? activities.activityInstance : activities.activity;
+    item.activityId = isInstance ? item.activityId : item.id;
+    if (isInstance) {
+      item.activityInstanceId = item.id;
+    }
     item.id = this.idCtr;
-    item.label = item.name;
+    item.label = isInstance ? item.activityName : item.name;
     item.level = this.depth;
     if (item.milestoneName || "" === item.milestoneName) {
       item.color = '#4cafea';
@@ -38,7 +42,12 @@ class DataE2e {
     if (activities.children) {
       activities.children.forEach(child => {
         let exist = this.items.find(it => {
-          return it.processId === child.activity.processId && it.activityId === child.activity.id;
+          if (isInstance) {
+            return it.activityInstanceId === child.activityInstance.id;
+          }
+          else {
+            return it.processId === child.activity.processId && it.activityId === child.activity.id;
+          }
         });
         if (exist) {
           this.edges.push({
