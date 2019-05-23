@@ -6,14 +6,14 @@
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Start",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=183,ly=156,xs=124&242,ys=156&156"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=173,ly=154,xs=124&222,ys=154&154"},
         "event": "FINISH",
         "id": "T1",
-        "to": "A3"
+        "to": "A4"
       }]
     },
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=431,y=140,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=608,y=141,w=60,h=40"},
       "id": "A2",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
       "name": "Stop"
@@ -21,16 +21,33 @@
     {
       "attributes": {
         "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=247,y=139,w=60,h=40"
+        "WORK_DISPLAY_INFO": "x=473,y=140,w=60,h=40"
       },
       "id": "A3",
       "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
       "name": "Milestone",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=368,ly=159,xs=310&427,ys=159&159"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=571,ly=160,xs=538&604,ys=160&160"},
         "event": "FINISH",
         "id": "T2",
         "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=226,y=128,w=100,h=60",
+        "processname": "com.centurylink.mdw.tests.milestones/Grandchild.proc",
+        "processversion": "[0.1,1)",
+        "synchronous": "true"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke\nGrandchild",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=399,ly=160,xs=330&469,ys=160&160"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A3"
       }]
     }
   ],
