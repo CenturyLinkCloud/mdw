@@ -24,7 +24,7 @@
         "WORK_DISPLAY_INFO": "x=290,y=108,w=100,h=60",
         "processname": "com.centurylink.mdw.tests.milestones/SubTwoSub.proc",
         "processversion": "[0.1,1)",
-        "synchronous": "true"
+        "synchronous": "false"
       },
       "id": "A3",
       "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",

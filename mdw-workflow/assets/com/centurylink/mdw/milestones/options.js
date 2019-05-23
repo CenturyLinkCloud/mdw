@@ -29,6 +29,11 @@ module.exports = {
     },
     physics: {
       enabled: false
+    },
+    interaction: {
+      zoomView: false,
+      dragView: false,
+      navigationButtons: true
     }
   }
 };

@@ -33,8 +33,8 @@ class DataE2e {
     }
     if (item.processName) {
       item.title = item.processName;
-      if (item.id) {
-        item.title += ': ' + item.id;
+      if (item.activityId) {
+        item.title += ': ' + item.activityId;
       }
     }
     this.depth++;
