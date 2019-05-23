@@ -7,5 +7,5 @@ MilestonesMain.proc=5
 Parent.proc=1
 SubOne.proc=8
 SubThree.proc=2
-SubTwo.proc=3
+SubTwo.proc=4
 SubTwoSub.proc=3
