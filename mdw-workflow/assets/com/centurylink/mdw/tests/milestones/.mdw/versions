@@ -1,6 +1,7 @@
-Child.proc=1
+Child.proc=2
 Easy.proc=3
 EasySub.proc=1
+Grandchild.proc=1
 Milestones.test=2
 Milestones.yaml=1
 MilestonesMain.proc=5
