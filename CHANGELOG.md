@@ -1,5 +1,13 @@
 # Change Log
 
+## [6.1.19](https://github.com/CenturyLinkCloud/mdw/tree/6.1.19) (2019-05-23)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.18...6.1.19)
+
+**Closed issues:**
+
+- Request tab is broken for inbound requests [\#670](https://github.com/CenturyLinkCloud/mdw/issues/670)
+- AssetImportMonitor Vercheck exception [\#669](https://github.com/CenturyLinkCloud/mdw/issues/669)
+
 ## [6.1.18](https://github.com/CenturyLinkCloud/mdw/tree/6.1.18) (2019-05-17)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.17...6.1.18)
 
