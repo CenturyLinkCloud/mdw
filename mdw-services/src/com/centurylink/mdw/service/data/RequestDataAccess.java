@@ -489,6 +489,8 @@ public class RequestDataAccess extends CommonDataAccess {
                 else
                     request.setStatusMessage(StatusResponse.getMessage(request.getStatusCode()));
                 request.setPath(rs.getString("path"));
+                request.setResponseId(rs.getLong("response_id"));
+                request.setResponded(rs.getTimestamp("responded"));
                 request.setOutbound(true);
                 requests.add(request);
             }
