@@ -88,6 +88,25 @@ public class HierarchyCache implements CacheService {
         return null;
     }
 
+    private static void addMilestones(Linked<Milestone> head, Linked<Activity> start) {
+        Activity activity = start.get();
+        Process process = ProcessCache.getProcess(activity.getProcessId());
+        Milestone milestone = new MilestoneFactory(process).getMilestone(activity);
+        if (milestone != null) {
+            Linked<Milestone> linkedMilestone = new Linked<>(milestone);
+            linkedMilestone.setParent(head);
+            head.getChildren().add(linkedMilestone);
+            for (Linked<Activity> child : start.getChildren()) {
+                addMilestones(linkedMilestone, child);
+            }
+        }
+        else {
+            for (Linked<Activity> child : start.getChildren()) {
+                addMilestones(head, child);
+            }
+        }
+    }
+
     public static Linked<Activity> getEndToEndActivities(Long processId) {
         Linked<Activity> endToEnd;
         Map<Long,Linked<Activity>> endToEndMap = endToEndActivities;
@@ -122,25 +141,6 @@ public class HierarchyCache implements CacheService {
             }
         }
         return null;
-    }
-
-    private static void addMilestones(Linked<Milestone> head, Linked<Activity> start) {
-        Activity activity = start.get();
-        Process process = ProcessCache.getProcess(activity.getProcessId());
-        Milestone milestone = new MilestoneFactory(process).getMilestone(activity);
-        if (milestone != null) {
-            Linked<Milestone> linkedMilestone = new Linked<>(milestone);
-            linkedMilestone.setParent(head);
-            head.getChildren().add(linkedMilestone);
-            for (Linked<Activity> child : start.getChildren()) {
-                addMilestones(linkedMilestone, child);
-            }
-        }
-        else {
-            for (Linked<Activity> child : start.getChildren()) {
-                addMilestones(head, child);
-            }
-        }
     }
 
     private static void addSubprocActivities(Linked<Activity> start)

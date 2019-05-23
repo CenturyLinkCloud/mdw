@@ -458,7 +458,7 @@ public class ProcessInstance implements Jsonable, Linkable {
         Activity activity = process.getActivity(parentInst.getActivityId());
         parentInst.setName(activity.getName());
         parentInst.setMilestoneName(activity.milestoneName());
-        parentInst.setMilestoneGroup(activity.getMilestoneGroup());
+        parentInst.setMilestoneGroup(activity.milestoneGroup());
         for (Activity downstream : process.getDownstreamActivities(process.getActivity(parentInst.getActivityId()))) {
             List<ActivityInstance> instances = getActivities(downstream.getLogicalId());
             if (!instances.isEmpty()) {
