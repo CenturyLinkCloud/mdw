@@ -32,8 +32,7 @@ module.exports = {
     },
     interaction: {
       zoomView: false,
-      dragView: false,
-      navigationButtons: true
+      dragView: false
     }
   }
 };

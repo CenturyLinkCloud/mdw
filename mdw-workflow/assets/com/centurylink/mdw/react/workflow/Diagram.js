@@ -41,7 +41,6 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
 
     this.label.draw();
     var highlighted = null;
-
     if (animate && !this.instance) {
       var sequence = this.getSequence();
       let i = 0;
@@ -396,7 +395,7 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
             }
           });
         });
-      }  
+      }
     }
   };
 
@@ -1139,8 +1138,8 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
           container.scrollTop += vDelta/slices;
           if (winDelta > 0) {
             winScrollY += winDelta/slices;
+            window.scroll(0, winScrollY);
           }
-          window.scroll(0, winScrollY);
           i++;
           if (i < slices) {
             window.requestAnimationFrame(scroll);

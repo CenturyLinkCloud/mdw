@@ -158,7 +158,7 @@ var StepFactory = function(DC, Shape) {
   };
 
   Step.prototype.getMilestone = function() {
-    if (this.activity.attributes.Monitors) {
+    if (this.activity.attributes && this.activity.attributes.Monitors) {
       var monitors = JSON.parse(this.activity.attributes.Monitors);
       if (monitors.length > 0) {
         var activity = this;
