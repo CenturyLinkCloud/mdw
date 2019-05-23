@@ -153,4 +153,20 @@ public class Linked<T extends Linkable> implements Jsonable {
         return false;
     }
 
+    /**
+     * Returns all end-of-the-line elements (no children)
+     */
+    public List<Linked<T>> getEnds() {
+        List<Linked<T>> ends = new ArrayList<>();
+        for (Linked<T> child : children) {
+            if (child.getChildren().isEmpty()) {
+                ends.add(child);
+            }
+            else {
+                ends.addAll(child.getEnds());
+            }
+        }
+        return ends;
+    }
+
 }

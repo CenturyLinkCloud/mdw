@@ -2,6 +2,7 @@ package com.centurylink.mdw.service.data.process;
 
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.workflow.Process;
@@ -14,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 public class HierarchyCache implements CacheService {
+
+    private static final String MILESTONES_PACKAGE = "com.centurylink.mdw.milestones";
 
     private static volatile Map<Long,List<Linked<Process>>> hierarchies = new HashMap<>();
     private static volatile Map<Long,Linked<Milestone>> milestones = new HashMap<>();
@@ -72,6 +75,8 @@ public class HierarchyCache implements CacheService {
     }
 
     private static Linked<Milestone> loadMilestones(Long processId) {
+        if (PackageCache.getPackage(MILESTONES_PACKAGE) == null)
+            return null; // don't bother and save some time
         Process process = ProcessCache.getProcess(processId);
         if (process != null) {
             MilestoneFactory milestoneFactory = new MilestoneFactory(process);
@@ -103,6 +108,8 @@ public class HierarchyCache implements CacheService {
     }
 
     private static Linked<Activity> loadEndToEndActivities(Long processId) {
+        if (PackageCache.getPackage(MILESTONES_PACKAGE) == null)
+            return null; // don't bother and save some time
         Process process = ProcessCache.getProcess(processId);
         if (process != null) {
             try {
@@ -136,12 +143,29 @@ public class HierarchyCache implements CacheService {
         }
     }
 
-    private static void addSubprocActivities(Linked<Activity> start) throws DataAccessException {
+    private static void addSubprocActivities(Linked<Activity> start)
+            throws DataAccessException {
         for (Linked<Activity> child : start.getChildren()) {
             Activity activity = child.get();
             List<Process> subprocesses = activity.findInvoked(ProcessCache.getAllProcesses());
-            for (Process subprocess : subprocesses) {
-                addSubprocActivities(child, ProcessCache.getProcess(subprocess.getId()));
+            if (!subprocesses.isEmpty()) {
+                if (activity.isSynchronous()) {
+                    // move other children downstream of subproc stops
+                    List<Linked<Activity>> downstreamChildren = child.getChildren();
+                    child.setChildren(new ArrayList<>());
+                    for (Process subprocess : subprocesses) {
+                        List<Linked<Activity>> finalStops = addSubprocActivities(child,
+                                ProcessCache.getProcess(subprocess.getId()));
+                        for (Linked<Activity> stop : finalStops) {
+                            stop.getChildren().addAll(downstreamChildren);
+                        }
+                    }
+                }
+                else {
+                    for (Process subprocess : subprocesses) {
+                        addSubprocActivities(child, ProcessCache.getProcess(subprocess.getId()));
+                    }
+                }
             }
             if (!child.checkCircular()) {
                 addSubprocActivities(child);
@@ -150,10 +174,20 @@ public class HierarchyCache implements CacheService {
     }
 
     /**
-     * Build an end-to-end list of linked activities.
+     * Adds subproc linked activities as children to an invoker.
+     * Returns list of final stop activities for subproc for sync invokers, empty for async.
      */
-    private static void addSubprocActivities(Linked<Activity> subprocInvoke, Process process) throws DataAccessException {
+    private static List<Linked<Activity>> addSubprocActivities(Linked<Activity> subprocInvoke, Process process)
+            throws DataAccessException {
+        List<Linked<Activity>> finalStops = new ArrayList<>();
         Linked<Activity> processActivities = process.getLinkedActivities();
+        if (subprocInvoke.get().isSynchronous()) {
+            for (Linked<Activity> end : processActivities.getEnds()) {
+                if (end.get().isStop()) {
+                    finalStops.add(end);
+                }
+            }
+        }
         subprocInvoke.getChildren().add(processActivities);
         processActivities.setParent(subprocInvoke);
         if (!processActivities.checkCircular()) {
@@ -161,10 +195,13 @@ public class HierarchyCache implements CacheService {
                 Activity activity = child.get();
                 List<Process> subprocesses = activity.findInvoked(ProcessCache.getAllProcesses());
                 for (Process subprocess : subprocesses) {
-                    addSubprocActivities(child, ProcessCache.getProcess(subprocess.getId()));
+                    List<Linked<Activity>> nextStops = addSubprocActivities(child, ProcessCache.getProcess(subprocess.getId()));
+                    finalStops.addAll(nextStops);
                 }
             }
         }
+
+        return finalStops;
     }
 
     /**
@@ -184,11 +221,13 @@ public class HierarchyCache implements CacheService {
     private static List<Long> loadMilestoned() {
         List<Long> milestoned = new ArrayList<>();
         try {
-            for (Process process : ProcessCache.getAllProcesses()) {
-                List<Linked<Process>> hierarchyList = getHierarchy(process.getId());
-                if (!hierarchyList.isEmpty()) {
-                    if (hasMilestones(hierarchyList.get(0))) {
-                        milestoned.add(process.getId());
+            if (PackageCache.getPackage(MILESTONES_PACKAGE) != null) {
+                for (Process process : ProcessCache.getAllProcesses()) {
+                    List<Linked<Process>> hierarchyList = getHierarchy(process.getId());
+                    if (!hierarchyList.isEmpty()) {
+                        if (hasMilestones(hierarchyList.get(0))) {
+                            milestoned.add(process.getId());
+                        }
                     }
                 }
             }

@@ -170,7 +170,7 @@ public class Workflow extends JsonRestService {
                     AssetVersionSpec startPageSpec = AssetVersionSpec.parse(assetSpec);
                     json.put("startPageUrl", new CustomPageLookup(startPageSpec, null).getUrl());
                 }
-                if (process.getId() != null && HierarchyCache.getMilestones(process.getId()) != null)
+                if (process.getId() != null && HierarchyCache.getMilestoned().contains(process.getId()))
                     json.put("hasMilestones", true);
 
                 return json;

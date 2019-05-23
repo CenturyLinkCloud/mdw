@@ -200,6 +200,13 @@ public class Activity implements Comparable<Activity>, Jsonable, Linkable {
         return null;
     }
 
+    /**
+     * TODO: expressions not supported here.
+     */
+    public final boolean isSynchronous() {
+       return "true".equalsIgnoreCase(getAttribute("synchronous"));
+    }
+
     public String oneLineName() {
         return getName().replaceAll("\r", "").replace('\n', ' ');
     }
@@ -306,5 +313,9 @@ public class Activity implements Comparable<Activity>, Jsonable, Linkable {
             }
         }
         return invoked;
+    }
+
+    public final boolean isStop() {
+        return Data.Implementors.STOP_IMPL.equals(getImplementor());
     }
 }
