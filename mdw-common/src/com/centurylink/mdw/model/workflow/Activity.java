@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Activity implements Comparable<Activity>, Jsonable, Linkable {
     public static final String DEFAULT_IMPL = "com.centurylink.mdw.workflow.activity.DefaultActivityImpl";
@@ -317,5 +318,16 @@ public class Activity implements Comparable<Activity>, Jsonable, Linkable {
 
     public final boolean isStop() {
         return Data.Implementors.STOP_IMPL.equals(getImplementor());
+    }
+
+    public boolean equals(Object other) {
+        if (!(other instanceof Activity))
+            return false;
+        Activity activity = (Activity) other;
+        if (!activity.id.equals(id))
+            return false;
+        if (Objects.equals(activity.processId, processId))
+            return true;
+        return super.equals(other);
     }
 }

@@ -23,5 +23,9 @@ public interface DesignServices {
     List<ActivityImplementor> getImplementors() throws ServiceException;
     ActivityImplementor getImplementor(String className) throws ServiceException;
 
-    List<Linked<Process>> getProcessHierarchy(Long processId) throws ServiceException;
+    /**
+     * @param processId process ID
+     * @param downward only searches downward (returns list with single element)
+     */
+    List<Linked<Process>> getProcessHierarchy(Long processId, boolean downward) throws ServiceException;
 }

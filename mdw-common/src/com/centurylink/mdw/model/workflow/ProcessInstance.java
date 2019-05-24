@@ -293,7 +293,7 @@ public class ProcessInstance implements Jsonable, Linkable {
     private Map<String,Object> varMap;
     public Map<String,Object> getVariable() {
         if (varMap == null) {
-            varMap = new HashMap<String,Object>();
+            varMap = new HashMap<>();
             for (VariableInstance var : getVariables())
                 varMap.put(var.getName(), var.getData());
         }
@@ -301,13 +301,8 @@ public class ProcessInstance implements Jsonable, Linkable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof ProcessInstance) {
-            return ((ProcessInstance)obj).id.equals(id);
-        }
-        else {
-            return false;
-        }
+    public boolean equals(Object other) {
+        return other instanceof ProcessInstance && ((ProcessInstance)other).id.equals(id);
     }
 
     public int hashCode() {
@@ -472,4 +467,5 @@ public class ProcessInstance implements Jsonable, Linkable {
             }
         }
     }
+
 }

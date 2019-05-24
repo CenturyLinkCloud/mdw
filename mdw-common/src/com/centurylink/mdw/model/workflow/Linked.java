@@ -75,7 +75,7 @@ public class Linked<T extends Linkable> implements Jsonable {
 
     @Override
     public boolean equals(Object o) {
-        return o.getClass() == getClass() && ((Linked)o).element.equals(element);
+        return o != null && o.getClass() == getClass() && ((Linked)o).element.equals(element);
     }
 
     public String getJsonName() {
@@ -159,14 +159,30 @@ public class Linked<T extends Linkable> implements Jsonable {
     public List<Linked<T>> getEnds() {
         List<Linked<T>> ends = new ArrayList<>();
         for (Linked<T> child : children) {
-            if (child.getChildren().isEmpty()) {
+            if (child.getChildren().isEmpty() && !ends.contains(child)) {
                 ends.add(child);
             }
             else {
-                ends.addAll(child.getEnds());
+                for (Linked<T> end : child.getEnds()) {
+                    if (!ends.contains(end))
+                        ends.add(end);
+                }
             }
         }
         return ends;
     }
 
+    /**
+     * Navigates this hierarchy to find first matching element.
+     */
+    public Linked<T> find(T element) {
+        if (this.get().equals(element))
+            return this;
+        for (Linked<T> child : getChildren()) {
+            Linked<T> found = child.find(element);
+            if (found != null)
+                return found;
+        }
+        return null;
+    }
 }

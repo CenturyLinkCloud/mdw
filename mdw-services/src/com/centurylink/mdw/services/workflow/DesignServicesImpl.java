@@ -154,11 +154,8 @@ public class DesignServicesImpl implements DesignServices {
         return implementor; // loaded from annotation or not found
     }
 
-    /**
-     * For top-level processId (only searches downward).
-     */
     @Override
-    public List<Linked<Process>> getProcessHierarchy(Long processId) throws ServiceException {
+    public List<Linked<Process>> getProcessHierarchy(Long processId, boolean downward) throws ServiceException {
         Process process = ProcessCache.getProcess(processId);
         if (process == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + processId);
@@ -172,7 +169,7 @@ public class DesignServicesImpl implements DesignServices {
                     processes.add(loaded);
             }
             Hierarchy hierarchy = new Hierarchy(process, processes);
-            hierarchy.setDownward(true);
+            hierarchy.setDownward(downward);
             hierarchy.run();
             return hierarchy.getTopLevelCallers();
         }
