@@ -109,7 +109,6 @@ public class HierarchyCache implements CacheService {
 
     public static Linked<Activity> getEndToEndActivities(Long processId) {
         Linked<Activity> endToEnd;
-        // endToEndActivities = new HashMap<>();
         Map<Long,Linked<Activity>> endToEndMap = endToEndActivities;
         if (endToEndMap.containsKey(processId)) {
             endToEnd = endToEndMap.get(processId);

@@ -15,7 +15,7 @@
     {
       "attributes": {
         "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=633,y=132,w=60,h=40"
+        "WORK_DISPLAY_INFO": "x=665,y=134,w=60,h=40"
       },
       "id": "A2",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
@@ -50,7 +50,7 @@
       "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity",
       "name": "Invoke\nSubs",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=568,ly=153,xs=508&629,ys=153&153"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=585,ly=154,xs=508&662,ys=154&154"},
         "event": "FINISH",
         "id": "T4",
         "to": "A2"
