@@ -34,7 +34,7 @@ public class HierarchyCache implements CacheService {
                 if (hierarchyMap.containsKey(processId)) {
                     hierarchy = hierarchyMap.get(processId);
                 } else {
-                    hierarchy = loadHierarchy(processId);
+                    hierarchy = loadHierarchy(processId, true);
                     // null values are stored to avoid repeated processing
                     hierarchies.put(processId, hierarchy);
                 }
@@ -43,9 +43,9 @@ public class HierarchyCache implements CacheService {
         return hierarchy;
     }
 
-    private static List<Linked<Process>> loadHierarchy(Long processId) {
+    private static List<Linked<Process>> loadHierarchy(Long processId, boolean downward) {
         try {
-            return ServiceLocator.getDesignServices().getProcessHierarchy(processId);
+            return ServiceLocator.getDesignServices().getProcessHierarchy(processId, downward);
         } catch (ServiceException ex) {
             throw new CachingException("Failed to load hierarchy for: " + processId, ex);
         }
@@ -109,6 +109,7 @@ public class HierarchyCache implements CacheService {
 
     public static Linked<Activity> getEndToEndActivities(Long processId) {
         Linked<Activity> endToEnd;
+        // endToEndActivities = new HashMap<>();
         Map<Long,Linked<Activity>> endToEndMap = endToEndActivities;
         if (endToEndMap.containsKey(processId)) {
             endToEnd = endToEndMap.get(processId);
@@ -131,9 +132,10 @@ public class HierarchyCache implements CacheService {
             return null; // don't bother and save some time
         Process process = ProcessCache.getProcess(processId);
         if (process != null) {
+            Linked<Process> hierarchy = getHierarchy(processId).get(0);
             try {
                 Linked<Activity> endToEndActivities = process.getLinkedActivities();
-                addSubprocActivities(endToEndActivities);
+                addSubprocActivities(endToEndActivities, hierarchy, null);
                 return endToEndActivities;
             }
             catch (DataAccessException ex) {
@@ -143,65 +145,65 @@ public class HierarchyCache implements CacheService {
         return null;
     }
 
-    private static void addSubprocActivities(Linked<Activity> start)
-            throws DataAccessException {
+    /**
+     * Hierarchy is passed to avoid process invocation circularity.
+     */
+    private static void addSubprocActivities(Linked<Activity> start, Linked<Process> hierarchy,
+            List<Linked<Activity>> downstreams) throws DataAccessException {
+
+        List<Linked<Activity>> furtherDown = downstreams;
+
         for (Linked<Activity> child : start.getChildren()) {
             Activity activity = child.get();
-            List<Process> subprocesses = activity.findInvoked(ProcessCache.getAllProcesses());
-            if (!subprocesses.isEmpty()) {
-                if (activity.isSynchronous()) {
-                    // move other children downstream of subproc stops
-                    List<Linked<Activity>> downstreamChildren = child.getChildren();
-                    child.setChildren(new ArrayList<>());
-                    for (Process subprocess : subprocesses) {
-                        List<Linked<Activity>> finalStops = addSubprocActivities(child,
-                                ProcessCache.getProcess(subprocess.getId()));
-                        for (Linked<Activity> stop : finalStops) {
-                            stop.getChildren().addAll(downstreamChildren);
+            List<Linked<Process>> subhierarchies = findInvoked(activity, hierarchy);
+            if (!subhierarchies.isEmpty()) {
+                // link downstream children
+                if (downstreams != null) {
+                    for (Linked<Activity> downstreamChild : child.getChildren()) {
+                        for (Linked<Activity> end : downstreamChild.getEnds()) {
+                            if (end.get().isStop()) {
+                                end.setChildren(furtherDown);
+                            }
                         }
                     }
                 }
-                else {
-                    for (Process subprocess : subprocesses) {
-                        addSubprocActivities(child, ProcessCache.getProcess(subprocess.getId()));
-                    }
+                if (activity.isSynchronous()) {
+                    furtherDown = child.getChildren();
+                    child.setChildren(new ArrayList<>());
+                }
+                for (Linked<Process> subhierarchy : subhierarchies) {
+                    Process loadedSub = ProcessCache.getProcess(subhierarchy.get().getId());
+                    Linked<Activity> subprocActivities = loadedSub.getLinkedActivities();
+                    child.getChildren().add(subprocActivities);
+                    subprocActivities.setParent(child);
+                    addSubprocActivities(subprocActivities, subhierarchy, furtherDown);
                 }
             }
-            if (!child.checkCircular()) {
-                addSubprocActivities(child);
+            else {
+                // non-invoker
+                if (child.getChildren().isEmpty() && child.get().isStop()) {
+                    if (furtherDown != null) {
+                        child.setChildren(furtherDown);
+                        furtherDown = null;
+                    }
+                }
+                addSubprocActivities(child, hierarchy, furtherDown);
             }
         }
     }
 
     /**
-     * Adds subproc linked activities as children to an invoker.
-     * Returns list of final stop activities for subproc for sync invokers, empty for async.
+     * Omits invoked subflows that would cause circularity by consulting process hierarchy.
      */
-    private static List<Linked<Activity>> addSubprocActivities(Linked<Activity> subprocInvoke, Process process)
+    private static List<Linked<Process>> findInvoked(Activity activity, Linked<Process> hierarchy)
             throws DataAccessException {
-        List<Linked<Activity>> finalStops = new ArrayList<>();
-        Linked<Activity> processActivities = process.getLinkedActivities();
-        if (subprocInvoke.get().isSynchronous()) {
-            for (Linked<Activity> end : processActivities.getEnds()) {
-                if (end.get().isStop()) {
-                    finalStops.add(end);
-                }
-            }
+        List<Linked<Process>> invoked = new ArrayList<>();
+        for (Process subprocess : activity.findInvoked(ProcessCache.getAllProcesses())) {
+            Linked<Process> found = hierarchy.find(subprocess);
+            if (found != null)
+                invoked.add(found);
         }
-        subprocInvoke.getChildren().add(processActivities);
-        processActivities.setParent(subprocInvoke);
-        if (!processActivities.checkCircular()) {
-            for (Linked<Activity> child : subprocInvoke.getChildren()) {
-                Activity activity = child.get();
-                List<Process> subprocesses = activity.findInvoked(ProcessCache.getAllProcesses());
-                for (Process subprocess : subprocesses) {
-                    List<Linked<Activity>> nextStops = addSubprocActivities(child, ProcessCache.getProcess(subprocess.getId()));
-                    finalStops.addAll(nextStops);
-                }
-            }
-        }
-
-        return finalStops;
+        return invoked;
     }
 
     /**

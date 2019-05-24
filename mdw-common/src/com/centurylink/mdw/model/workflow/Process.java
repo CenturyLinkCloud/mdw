@@ -213,11 +213,8 @@ public class Process extends Asset implements Jsonable, Linkable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Process))
-            return false;
-        Process p = (Process)obj;
-        return getId().longValue() == p.getId().longValue();
+    public boolean equals(Object other) {
+        return other instanceof Process && ((Process)other).getId().equals(getId());
     }
 
     /**

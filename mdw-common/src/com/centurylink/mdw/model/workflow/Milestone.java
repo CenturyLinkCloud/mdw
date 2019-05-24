@@ -146,4 +146,9 @@ public class Milestone implements Linkable, Jsonable {
         qlabel += label + "'";
         return qlabel;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof Milestone && ((Milestone)other).masterRequestId.equals(masterRequestId);
+    }
 }

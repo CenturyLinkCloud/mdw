@@ -237,4 +237,9 @@ public class ActivityInstance implements Jsonable, Linkable {
     public String getQualifiedLabel() {
         return "A" + activityId + ": " + id;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof ActivityInstance && ((ActivityInstance)other).id.equals(id);
+    }
 }
