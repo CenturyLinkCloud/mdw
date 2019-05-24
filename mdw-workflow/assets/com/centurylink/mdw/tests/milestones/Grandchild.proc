@@ -6,10 +6,10 @@
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Start",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=316,ly=130,xs=140&492,ys=130&130"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=195,ly=129,xs=140&251,ys=129&129"},
         "event": "FINISH",
         "id": "T1",
-        "to": "A2"
+        "to": "A3"
       }]
     },
     {
@@ -17,6 +17,23 @@
       "id": "A2",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
       "name": "Stop"
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=255,y=106,w=100,h=60",
+        "processname": "com.centurylink.mdw.tests.milestones/GreatGrand.proc",
+        "processversion": "[0.1,1)",
+        "synchronous": "true"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke\nGreatGrand",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=425,ly=129,xs=359&492,ys=129&129"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
     }
   ],
   "attributes": {

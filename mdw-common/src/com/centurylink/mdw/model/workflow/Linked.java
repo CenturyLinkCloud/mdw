@@ -158,6 +158,9 @@ public class Linked<T extends Linkable> implements Jsonable {
      */
     public List<Linked<T>> getEnds() {
         List<Linked<T>> ends = new ArrayList<>();
+        if (getChildren().isEmpty()) {
+            ends.add(this);
+        }
         for (Linked<T> child : children) {
             if (child.getChildren().isEmpty() && !ends.contains(child)) {
                 ends.add(child);
