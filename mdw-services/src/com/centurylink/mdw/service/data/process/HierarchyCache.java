@@ -184,6 +184,7 @@ public class HierarchyCache implements CacheService {
                     if (furtherDown != null) {
                         child.setChildren(furtherDown);
                         furtherDown = null;
+                        hierarchy = hierarchy.getParent();
                     }
                 }
                 addSubprocActivities(child, hierarchy, furtherDown);

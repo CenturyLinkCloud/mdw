@@ -151,11 +151,10 @@ public class DbImport extends DbOperation {
                             catch (SQLIntegrityConstraintViolationException ex) {
                                 // why do we get erroneous duplicate primary key violation on DOCUMENT?
                                 try {
-                                    // try again after half a sec -- seems to work
-                                    Thread.sleep(500);
+                                    // try again -- seems to work
                                     stmt.executeUpdate(insert + values);
                                 }
-                                catch (SQLIntegrityConstraintViolationException | InterruptedException ex2) {
+                                catch (SQLIntegrityConstraintViolationException ex2) {
                                     getErr().print("ERROR line=" + lineNum + ": ");
                                     ex.printStackTrace(getErr());
                                 }
