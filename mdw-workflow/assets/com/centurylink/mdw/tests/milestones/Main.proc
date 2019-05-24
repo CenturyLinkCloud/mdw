@@ -24,7 +24,7 @@
     {
       "attributes": {
         "Output Documents": "[\"executionPlan\"]",
-        "Rule": "import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument\nimport com.centurylink.mdw.bpm.ParameterDocument.Parameter\nimport com.centurylink.mdw.bpm.ProcessExecutionPlanDocument.ProcessExecutionPlan\nimport com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance\nimport com.centurylink.mdw.model.workflow.WorkStatus\n\nexecutionPlan = ProcessExecutionPlanDocument.Factory.newInstance()\nProcessExecutionPlan exeplan = executionPlan.addNewProcessExecutionPlan()\n\nSubprocessInstance subprocinst = exeplan.addNewSubprocessInstance()\nsubprocinst.setLogicalProcessName(\"Child\")\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\n\nsubprocinst = exeplan.addNewSubprocessInstance()\nsubprocinst.setLogicalProcessName(\"Kid\")\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\n\n",
+        "Rule": "import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument\nimport com.centurylink.mdw.bpm.ParameterDocument.Parameter\nimport com.centurylink.mdw.bpm.ProcessExecutionPlanDocument.ProcessExecutionPlan\nimport com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance\nimport com.centurylink.mdw.model.workflow.WorkStatus\n\nexecutionPlan = ProcessExecutionPlanDocument.Factory.newInstance()\nProcessExecutionPlan exeplan = executionPlan.addNewProcessExecutionPlan()\n\nSubprocessInstance subprocinst = exeplan.addNewSubprocessInstance()\nsubprocinst.setLogicalProcessName(\"SubA\")\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\n\nsubprocinst = exeplan.addNewSubprocessInstance()\nsubprocinst.setLogicalProcessName(\"SubB\")\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\n\n",
         "SCRIPT": "Groovy",
         "WORK_DISPLAY_INFO": "x=196,y=122,w=100,h=60"
       },
@@ -32,7 +32,7 @@
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
       "name": "Create\nPlan",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=350,ly=153,xs=300&400,ys=153&153"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=363,ly=152,xs=300&427,ys=152&152"},
         "event": "FINISH",
         "id": "T3",
         "to": "A5"
@@ -42,15 +42,15 @@
       "attributes": {
         "Execution Plan": "executionPlan",
         "Monitors": "[[\"false\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=404,y=123,w=100,h=60",
-        "processmap": "[[\"Child\",\"com.centurylink.mdw.tests.milestones/Child.proc\",\"[0.2,1)\"],[\"Kid\",\"com.centurylink.mdw.tests.milestones/Kid.proc\",\"[0.1,1)\"]]",
+        "WORK_DISPLAY_INFO": "x=430,y=122,w=100,h=60",
+        "processmap": "[[\"SubA\",\"com.centurylink.mdw.tests.milestones/SubA.proc\",\"[0.1,1)\"],[\"SubB\",\"com.centurylink.mdw.tests.milestones/SubB.proc\",\"[0.1,1)\"]]",
         "synchronous": "true"
       },
       "id": "A5",
       "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity",
       "name": "Invoke\nSubs",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=585,ly=154,xs=508&662,ys=154&154"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=598,ly=154,xs=535&661,ys=154&154"},
         "event": "FINISH",
         "id": "T4",
         "to": "A2"
