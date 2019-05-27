@@ -9,10 +9,7 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.services.ServiceLocator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class HierarchyCache implements CacheService {
 
@@ -109,6 +106,7 @@ public class HierarchyCache implements CacheService {
 
     public static Linked<Activity> getEndToEndActivities(Long processId) {
         Linked<Activity> endToEnd;
+        // endToEndActivities.clear(); // TODO FIXME temp
         Map<Long,Linked<Activity>> endToEndMap = endToEndActivities;
         if (endToEndMap.containsKey(processId)) {
             endToEnd = endToEndMap.get(processId);
@@ -153,9 +151,8 @@ public class HierarchyCache implements CacheService {
             List<Linked<Activity>> downstreams) throws DataAccessException {
 
         // we particularly care about these processes
-        if (start.get().getProcessName().equals("ProcessCPEOrderDirect")) {
-            MAX_DEPTH = 7500;
-        }
+        MAX_DEPTH += getImportance(start);
+
         if (start.depth() > MAX_DEPTH)
             return;
 
@@ -206,13 +203,24 @@ public class HierarchyCache implements CacheService {
         boolean apply = true;
         if (apply) {
             if (linkedActivity.get().getProcessName().equals("Parent") && linkedActivity.get().getLogicalId().equals("A14"))
-                return hierarchy.getParent();
+                return hierarchy.getParent() == null ? hierarchy : hierarchy.getParent();
             else if (linkedActivity.get().getProcessName().equals("ProcessFPMainFlowAprilia") && linkedActivity.get().getLogicalId().equals("A7"))
-                return hierarchy.getParent();
+                return hierarchy.getParent() == null ? hierarchy : hierarchy.getParent();
             else if (linkedActivity.get().getProcessName().equals("ProcessCPEOrderDirect") && linkedActivity.get().getLogicalId().equals("A43")) {
                 Linked<Process> h = hierarchy;
                 while (h != null) {
                     if (h.get().getName().equals("ProcessCPEOrderDirect") || h.get().getName().equals("ProcessFPMainFlowAprilia")) {
+                        return h;
+                    }
+                    h = h.getParent();
+                }
+            }
+            else if (
+                    ((linkedActivity.get().getProcessName().equals("LocalNetworkProvisioning") &&
+                            (linkedActivity.get().getLogicalId().equals("A11")) ||  linkedActivity.get().getLogicalId().equals("A12")))) {
+                Linked<Process> h = hierarchy;
+                while (h != null) {
+                    if (h.get().getName().equals("LocalNetworkProvisioning") || h.get().getName().equals("ProcessFPMainFlowAprilia")) {
                         return h;
                     }
                     h = h.getParent();
@@ -245,6 +253,25 @@ public class HierarchyCache implements CacheService {
         return invoked;
     }
 
+    /**
+     * Only returns true the first time so depth boost is applied once.
+     */
+    private static Map<String,Integer> importance;
+    private static int getImportance(Linked<Activity> linkedActivity) {
+        if (importance == null) {
+            importance = new HashMap<>();
+            importance.put("ctl.aprilia/ProcessCPEOrderDirect.proc", 2500);
+            importance.put("ctl.aprilia/ProvisionUplinkAndNational.proc", 5000);
+            importance.put("com.centurylink.oc.ethernet.workflow/LocalNetworkProvisioning.proc", 10000);
+        }
+        String path = linkedActivity.get().getPackageName() + "/" + linkedActivity.get().getProcessName() + ".proc";
+        if (importance.containsKey(path)) {
+            int value = importance.remove(path);
+            return value;
+        }
+        return 0;
+    }
+
     private static boolean isIgnored(Process process) {
         String path = process.getPackageName() + "/" + process.getName() + ".proc";
         return path.equals("ctl.aprilia/AddCoreComment.proc") ||
@@ -254,7 +281,11 @@ public class HierarchyCache implements CacheService {
                 path.equals("ctl.aprilia/DGWDispatchTech.proc") ||
                 path.equals("com.centurylink.oc.ethernet.workflow/EmailNotification.proc") ||
                 path.equals("com.centurylink.oc.ethernet.workflow/StatusUpdate.proc") ||
-                path.equals("ctl.aprilia.service.testing/EMNotify.proc");
+                path.equals("ctl.aprilia.service.testing/EMNotify.proc") ||
+                path.equals("ctl.aprilia/GetCodResponse.proc") ||
+                path.equals("ctl.aprilia.order.status/UpdateFBPOrderStatus.proc") ||
+                path.equals("ctl.aprilia/PerformSiteSurvey.proc") ||
+                path.equals("com.centurylink.oc.ethernet.workflow/StatusSubmit.proc");
 
         // TODO ignored asset paths in mdw.yaml
     }

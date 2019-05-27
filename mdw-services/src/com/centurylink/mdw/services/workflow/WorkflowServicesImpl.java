@@ -1568,7 +1568,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 activity = process.getActivity(activityInstance.getActivityId());
             }
 
-            List<Linked<ProcessInstance>> subhierarchies = findInvoked(activity, activityInstance, instanceHierarchy);
+            List<Linked<ProcessInstance>> subhierarchies = activity == null ? new ArrayList<>() : findInvoked(activity, activityInstance, instanceHierarchy);
             if (!subhierarchies.isEmpty()) {
                 // link downstream children
                 if (furtherDowns != null) {
