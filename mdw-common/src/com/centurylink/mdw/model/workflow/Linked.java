@@ -47,9 +47,9 @@ public class Linked<T extends Linkable> implements Jsonable, Iterable<Linked<T>>
     public JSONObject getJson(int detail) throws JSONException {
         JSONObject json = create();
         json.put(element.getObjectName(), element.getSummaryJson(detail));
-        if (!children.isEmpty()) {
+        if (!getChildren().isEmpty()) {
             JSONArray childrenArr = new JSONArray();
-            for (Linked<T> child : children) {
+            for (Linked<T> child : getChildren()) {
                 childrenArr.put(child.getJson(detail));
             }
             json.put("children", childrenArr);
@@ -67,12 +67,12 @@ public class Linked<T extends Linkable> implements Jsonable, Iterable<Linked<T>>
     /**
      * Indented per specified depth
      */
-    public String toString(int depth, String prefix) {
+    public String toString(int depth) {
         if (depth == 0) {
             return toString();
         }
         else {
-            return String.format("%1$" + (depth * INDENT) + "s", "") + " - " + prefix + toString();
+            return String.format("%1$" + (depth * INDENT) + "s", "") + " - " + toString();
         }
     }
 
@@ -93,13 +93,13 @@ public class Linked<T extends Linkable> implements Jsonable, Iterable<Linked<T>>
             return;
         Linked<T> caller = this;
         List<Linked<T>> toRemove = new ArrayList<>();
-        for (Linked<T> child : caller.children) {
+        for (Linked<T> child : caller.getChildren()) {
             if (!child.contains(element)) {
                 toRemove.add(child);
             }
             child.prune(element);
         }
-        caller.children.removeAll(toRemove);
+        caller.getChildren().removeAll(toRemove);
     }
 
     /**
@@ -108,7 +108,7 @@ public class Linked<T extends Linkable> implements Jsonable, Iterable<Linked<T>>
     public boolean contains(T element) {
         if (element.equals(this.element))
             return true;
-        for (Linked<T> child : children) {
+        for (Linked<T> child : getChildren()) {
             if (child.contains(element))
                 return true;
         }
@@ -164,7 +164,7 @@ public class Linked<T extends Linkable> implements Jsonable, Iterable<Linked<T>>
         if (getChildren().isEmpty()) {
             ends.add(this);
         }
-        for (Linked<T> child : children) {
+        for (Linked<T> child : getChildren()) {
             if (child.getChildren().isEmpty() && !ends.contains(child)) {
                 ends.add(child);
             }
@@ -263,10 +263,10 @@ public class Linked<T extends Linkable> implements Jsonable, Iterable<Linked<T>>
 
     protected void print(PrintStream out, Linked<T> parent, int depth, int max) {
         if (max != 0 && depth > max) {
-            out.println(parent.toString(depth, parent.get().prefix()) + " (" + depth + " > " + max + ")");
+            out.println(parent.toString(depth) + " (" + depth + " > " + max + ")");
             return;
         }
-        out.println(parent.toString(depth, parent.get().prefix()));
+        out.println(parent.toString(depth));
         print(out, parent.getChildren(), depth + 1, max);
     }
 

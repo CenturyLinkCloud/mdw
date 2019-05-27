@@ -53,10 +53,6 @@ public class Activity implements Comparable<Activity>, Jsonable, Linkable {
     public String getQualifiedLabel() {
         return getLogicalId() + ": " + oneLineName();
     }
-    @Override
-    public String prefix() {
-        return processName == null ? "" : processName + (processVersion == null ? "" : " v" + processVersion) + " ";
-    }
 
     private String description;
     public String getDescription() {
