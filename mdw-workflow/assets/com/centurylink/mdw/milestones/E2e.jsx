@@ -75,7 +75,7 @@ class E2e extends Component {
       <div>
         <div className="panel-heading mdw-heading" style={{borderColor:'#ddd'}}>
           <div className="mdw-heading-label">
-            {'All Steps: '}
+            {'Traversed: '}
             <Link
               to={hubRoot + '/milestones/' + masterRequestId}>
               {masterRequestId}

@@ -14,7 +14,7 @@ class DataE2e {
   add(activities) {
     let isInstance = activities.activityInstance;
     let item = isInstance ? activities.activityInstance : activities.activity;
-    item.activityId = isInstance ? item.activityId : item.id;
+    item.activityId = isInstance ? 'A' + item.activityId : item.id;
     if (isInstance) {
       item.activityInstanceId = item.id;
     }

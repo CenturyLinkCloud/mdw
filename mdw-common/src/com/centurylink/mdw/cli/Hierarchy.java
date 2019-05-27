@@ -112,7 +112,7 @@ public class Hierarchy extends Setup {
     }
 
     private void print(Linked<Process> caller, int depth) {
-        getOut().println(caller.toString(depth));
+        getOut().println(caller.toString(depth, caller.get().prefix()));
         print(caller.getChildren(), depth + 1);
     }
 

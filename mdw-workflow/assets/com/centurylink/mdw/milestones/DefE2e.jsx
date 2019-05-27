@@ -55,7 +55,7 @@ class DefE2e extends Component {
       const url = this.context.serviceRoot + '/Activities/definitions/e2e/' + this.state.assetPath;
       fetch(new Request(url, {
         method: 'GET',
-        headers: { Accept: 'application/json'},
+        headers: { Accept: 'application/json', NoPersistence: 'true'},
         credentials: 'same-origin'
       }))
       .then(response => {

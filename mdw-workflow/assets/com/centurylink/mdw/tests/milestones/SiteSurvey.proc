@@ -1,0 +1,201 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=41,y=184,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=129,ly=204,type=Elbow,xs=105&153,ys=204&204"},
+        "event": "FINISH",
+        "id": "T7",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=873,y=486,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "AuthAppId": "${props['mdw.remoteapp.id']}",
+        "AuthPassword": "${env['mdw.app.password']}",
+        "AuthUser": "${props['mdw.app.user']}",
+        "ConnectTimeout": "prop:sitesurvey.connectTimeout",
+        "EndpointUri": "#{props['sitesurvey.url']}?DSRNumber=#{dsrNumber}&opportunityId=#{siteOpportunityId}&addLine1=#{serviceAddLine1}&city=#{svcCity}&state=#{svcAddressState}&zipCode=#{svcAddressPostal}",
+        "HttpMethod": "GET",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
+        "RESPONSE_VARIABLE": "restSiteUrlResponse",
+        "ReadTimeout": "prop:sitesurvey.readTimeout",
+        "WORK_DISPLAY_INFO": "x=477,y=169,w=362,h=54",
+        "max_tries": "prop:sitesurvey.maxTries",
+        "retry_interval": "prop:sitesurvey.retryIntervel"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter",
+      "name": "Site Survey REST Service",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=703,ly=352,type=Elbow,xs=703&703,ys=227&478"},
+        "event": "FINISH",
+        "id": "T16",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {
+        "Java": "/**\n* Copyright (c) 2016 CenturyLink, Inc. All Rights Reserved.\n*/\n\npackage ctl.aprilia;\n\nimport java.util.ArrayList;\nimport java.util.HashMap;\nimport java.util.List;\nimport java.util.Map;\n\nimport org.apache.commons.lang.StringEscapeUtils;\nimport org.json.JSONObject;\n\nimport com.centurylink.mdw.java.JavaExecutionException;\nimport com.centurylink.mdw.java.JavaExecutor;\nimport com.centurylink.mdw.java.MdwJavaException;\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\n\nimport ctl.aprilia.helpers.BasicJavaUtils;\nimport ctl.aprilia.helpers.SiteSurveyResponseParser;\n\nimport com.centurylink.mdw.util.StringHelper;\nimport com.centurylink.mdw.util.log.LoggerUtil;\nimport com.centurylink.mdw.util.log.StandardLogger;\n\n/**\n * Dynamic Java executor.\n */\npublic class ParseSiteSurvey_A4 implements JavaExecutor {\n\tStandardLogger logger = LoggerUtil.getStandardLogger();\n\n\tpublic void initialize(ActivityRuntimeContext context) throws MdwJavaException {\n\t\t// TODO Auto-generated method stub\n\t}\n\n\tpublic Object execute(Map<String, Object> variables) throws JavaExecutionException {\n\t\t// TODO Auto-generated method stub\n\t\t// get json object\n\t\tlogger.info(\"Inside ParseSiteSurvey class\");\n\t\tBasicJavaUtils basicJavaUtils = new BasicJavaUtils();\n\t\tSiteSurveyResponseParser siteSurveyResponseParser = new SiteSurveyResponseParser();\n\t\tString restSiteResponse = (String) variables.get(\"restSiteUrlResponse\");\n\t\tString trnsportTypeFromCOD = (String) variables.get(\"trnsportTypeFromCOD\");\n\t\tBoolean isClearPathNeeded = (Boolean) variables.get(\"clearPath\");\n\t\tJSONObject restSiteResponseJSON = new JSONObject(restSiteResponse);\n\t\tif (!isClearPathNeeded\n\t\t\t\t&& (restSiteResponseJSON.has(\"SS_COMP_DATE\")\n\t\t\t\t\t\t&& !StringHelper.isEmpty(restSiteResponseJSON.getString(\"SS_COMP_DATE\")))\n\t\t\t\t&& (!restSiteResponseJSON.has(\"FIBER_BUILD_REQUIRED\") || (restSiteResponseJSON\n\t\t\t\t\t\t.has(\"FIBER_BUILD_REQUIRED\")\n\t\t\t\t\t\t&& (StringHelper.isEmpty(restSiteResponseJSON.getString(\"FIBER_BUILD_REQUIRED\"))\n\t\t\t\t\t\t\t\t|| !restSiteResponseJSON.getString(\"FIBER_BUILD_REQUIRED\").toUpperCase().equals(\"YES\")\n\t\t\t\t\t\t\t\t|| !restSiteResponseJSON.getString(\"FIBER_BUILD_REQUIRED\").toUpperCase()\n\t\t\t\t\t\t\t\t\t\t.equals(\"NO\"))))) {\n\t\t\trestSiteResponseJSON.put(\"FIBER_BUILD_REQUIRED\", \"No\");\n\t\t\trestSiteResponse = restSiteResponseJSON.toString();\n\t\t}\n\n\t\tvariables.put(\"response\", restSiteResponse);\n\n\t\tHashMap<String, String> parseSiteResponse = siteSurveyResponseParser.jsonToMap(restSiteResponse);\n\t\tString parseSiteResponseStr = basicJavaUtils.convertMapToString(parseSiteResponse);\n\t\tvariables.put(\"parseSiteResponseStr\", parseSiteResponseStr);\n\t\tvariables.put(\"siteSurveyParsedResponse\", parseSiteResponse);\n\t\tHashMap<String, String> siteResponse = (HashMap<String, String>) variables.get(\"siteSurveyParsedResponse\");\n\t\tif (!(siteResponse.containsKey(\"SS_COMP_DATE\") && !StringHelper.isEmpty(siteResponse.get(\"SS_COMP_DATE\")))\n\t\t\t\t&& variables.get(\"locationNameDataList\") != null) {\n\t\t\tList<String> locationArray = (List<String>) variables.get(\"locationNameDataList\");\n\t\t\tif (locationArray != null && locationArray.size() > 0) {\n\t\t\t\tString newSiteLocationName = filterLocationName((List<String>) variables.get(\"locationNameDataList\"));\n\t\t\t\tif (!StringHelper.isEqual(newSiteLocationName, (String) variables.get(\"siteLocationName\"))) {\n\t\t\t\t\tvariables.put(\"siteLocationName\", newSiteLocationName);\n\t\t\t\t\tif (isClearPathNeeded) {\n\t\t\t\t\t\treturn \"RETRY CLEAR PATH\";\n\t\t\t\t\t} else {\n\t\t\t\t\t\treturn \"RETRY\";\n\t\t\t\t\t}\n\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\n\t\t// variables.put(\"temp_siteSurveyParsedResponse\",basicJavaUtils.convertMapToString(parseSiteResponse));\n\t\t// logger.debug(\"parsed site response\"+parseSiteResponse);\n\n\t\tMap<String, String> validatedSiteSurvey = new HashMap<String, String>();\n\t\tvalidatedSiteSurvey = siteSurveyResponseParser.validateSiteSurvey(parseSiteResponse, trnsportTypeFromCOD);\n\n\t\tString siteSurveyStatus = \"\";\n\t\tString manualTaskMsg = \"\";\n\t\tString result = \"VALID\";\n\t\tif (validatedSiteSurvey != null && validatedSiteSurvey.get(\"siteSurveyStatus\") != null) {\n\t\t\tsiteSurveyStatus = validatedSiteSurvey.get(\"siteSurveyStatus\").toString();\n\t\t\tif (siteSurveyStatus.equalsIgnoreCase(\"N\") && validatedSiteSurvey.get(\"siteSurveyStatus\") != null) {\n\t\t\t\tresult = \"INVALID\";\n\t\t\t\tmanualTaskMsg = validatedSiteSurvey.get(\"manualTaskMsg\").toString();\n\t\t\t\tvariables.put(\"manualTaskMessage\", manualTaskMsg);\n\t\t\t} else {\n\t\t\t\tresult = \"VALID\";\n\t\t\t}\n\t\t} else {\n\t\t\tresult = \"INVALID\";\n\t\t}\n\n\t\tlogger.info(\"completed executing ParseSiteSurvey class\");\n\t\t// return result;\n\t\treturn null;\n\t}\n\n\tprivate String filterLocationName(List<String> data) {\n\t\tString locationName = \"\";\n\t\tfor (String locationAttribute : data) {\n\t\t\tif (locationAttribute.startsWith(\"L\") && Character.isDigit(locationAttribute.charAt(1)))\n\t\t\t\tlocationAttribute = locationAttribute.substring(1);\n\t\t\tlocationName = locationName + locationAttribute + \" \";\n\n\t\t}\n\t\tlocationName = locationName.trim();\n\t\tlocationName = locationName.replace(\" \", \"%20\");\n\t\tlocationName = StringEscapeUtils.escapeHtml(locationName);\n\t\treturn locationName;\n\t}\n\n\t/*\n\t * public String convertMapToString(Map<String, String> myMap) { Set<String>\n\t * mapKeySet = myMap.keySet(); String key__Val = \"\"; String final_map = \"\";\n\t * for(String myKey:mapKeySet) { String mapVal = myMap.get(myKey).toString();\n\t * key__Val = myKey+\"__\"+mapVal; final_map = final_map+key__Val+\"##\"; }\n\t * System.out.println(\"final_map befoer....\"+final_map); final_map =\n\t * final_map.substring(0, final_map.lastIndexOf(\"##\"));\n\t * System.out.println(\"final_map after....\"+final_map);\n\t * \n\t * return final_map; }\n\t */\n}\n",
+        "Output Documents": "[\"siteSurveyParsedResponse\",\"response\",\"restSiteUrlResponse\"]",
+        "WORK_DISPLAY_INFO": "x=607,y=482,w=192,h=67"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+      "name": "Parse\r\nSite Survey",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=839,ly=506,type=Elbow,xs=803&869,ys=506&506"},
+          "event": "FINISH",
+          "id": "T3",
+          "to": "A2"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=420,ly=459,type=Straight,xs=608&280,ys=504&505"},
+          "event": "FINISH",
+          "id": "T11",
+          "resultCode": "RETRY CLEAR PATH",
+          "to": "A6"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=596,ly=270,type=Elbow,xs=639&586,ys=478&221"},
+          "event": "FINISH",
+          "id": "T15",
+          "resultCode": "RETRY",
+          "to": "A3"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "Expression": "clearPath?'YES':'NO'",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=157,y=155,w=104,h=92"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "Is Clear Path ?",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=374,ly=196,type=Elbow,xs=265&473,ys=196&196"},
+          "event": "FINISH",
+          "id": "T8",
+          "resultCode": "NO",
+          "to": "A3"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "lx=209,ly=353,type=Elbow,xs=209&209,ys=251&471"},
+          "event": "FINISH",
+          "id": "T9",
+          "resultCode": "YES",
+          "to": "A6"
+        }
+      ]
+    },
+    {
+      "attributes": {
+        "AuthAppId": "${props['mdw.remoteapp.id']}",
+        "AuthPassword": "${env['mdw.app.password']}",
+        "AuthUser": "${props['mdw.app.user']}",
+        "ConnectTimeout": "prop:sitesurvey.connectTimeout",
+        "EndpointUri": "#{props['sitesurvey.url']}?DSRNumber=#{dsrNumber}&opportunityId=#{siteOpportunityId}&addLine1=#{serviceAddLine1}&city=#{svcCity}&state=#{svcAddressState}&zipCode=#{svcAddressPostal}&includeClearpath=true",
+        "HttpMethod": "GET",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
+        "RESPONSE_VARIABLE": "restSiteUrlResponse",
+        "ReadTimeout": "prop:sitesurvey.readTimeout",
+        "WORK_DISPLAY_INFO": "x=130,y=475,w=154,h=98",
+        "max_tries": "prop:sitesurvey.maxTries",
+        "retry_interval": "prop:sitesurvey.retryIntervel"
+      },
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter",
+      "name": "Site Survey REST Service",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=445,ly=515,type=Elbow,xs=288&603,ys=515&515"},
+        "event": "FINISH",
+        "id": "T17",
+        "to": "A4"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=101,h=27"
+  },
+  "description": "Capture the site survey rest response",
+  "variables": {
+    "clearPath": {
+      "category": "INPUT",
+      "type": "java.lang.Boolean"
+    },
+    "dsrNumber": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "locationNameDataList": {
+      "category": "INPUT",
+      "type": "java.util.List<String>"
+    },
+    "manualTaskMessage": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "parseSiteResponseStr": {
+      "category": "OUTPUT",
+      "type": "java.lang.String"
+    },
+    "response": {
+      "category": "OUTPUT",
+      "type": "com.centurylink.mdw.model.StringDocument"
+    },
+    "restSiteUrlResponse": {
+      "category": "OUTPUT",
+      "type": "com.centurylink.mdw.model.StringDocument"
+    },
+    "serviceAddLine1": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "siteLocationName": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "siteOpportunityId": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "siteSurveyParsedResponse": {
+      "category": "OUTPUT",
+      "type": "java.util.Map<String,String>"
+    },
+    "svcAddressPostal": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "svcAddressState": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "svcCity": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    },
+    "trnsportTypeFromCOD": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    }
+  }
+}

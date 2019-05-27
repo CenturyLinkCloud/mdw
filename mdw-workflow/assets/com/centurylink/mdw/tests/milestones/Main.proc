@@ -1,12 +1,12 @@
 {
   "activities": [
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=40,y=123,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=47,y=133,w=60,h=40"},
       "id": "A1",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Start",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=148,ly=144,xs=104&192,ys=144&144"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=151,ly=152,xs=111&192,ys=152&152"},
         "event": "FINISH",
         "id": "T5",
         "to": "A4"
@@ -15,11 +15,11 @@
     {
       "attributes": {
         "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=665,y=134,w=60,h=40"
+        "WORK_DISPLAY_INFO": "x=581,y=132,w=60,h=40"
       },
       "id": "A2",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
-      "name": "Stop"
+      "name": "StopMain"
     },
     {
       "attributes": {
@@ -32,7 +32,7 @@
       "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
       "name": "Create\nPlan",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=363,ly=152,xs=300&427,ys=152&152"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=335,ly=152,xs=300&370,ys=152&152"},
         "event": "FINISH",
         "id": "T3",
         "to": "A5"
@@ -42,7 +42,7 @@
       "attributes": {
         "Execution Plan": "executionPlan",
         "Monitors": "[[\"false\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=430,y=122,w=100,h=60",
+        "WORK_DISPLAY_INFO": "x=373,y=122,w=100,h=60",
         "processmap": "[[\"SubA\",\"com.centurylink.mdw.tests.milestones/SubA.proc\",\"[0.1,1)\"],[\"SubB\",\"com.centurylink.mdw.tests.milestones/SubB.proc\",\"[0.1,1)\"]]",
         "synchronous": "true"
       },
@@ -50,7 +50,7 @@
       "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity",
       "name": "Invoke\nSubs",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=598,ly=154,xs=535&661,ys=154&154"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=527,ly=152,xs=477&578,ys=152&152"},
         "event": "FINISH",
         "id": "T4",
         "to": "A2"

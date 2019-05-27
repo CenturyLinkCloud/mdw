@@ -144,30 +144,39 @@ public class HierarchyCache implements CacheService {
         return null;
     }
 
+    private static int MAX_DEPTH = 5000;
+
     /**
      * Hierarchy is passed to avoid process invocation circularity.
      */
     private static void addSubprocActivities(Linked<Activity> start, Linked<Process> hierarchy,
             List<Linked<Activity>> downstreams) throws DataAccessException {
 
-        List<Linked<Activity>> furtherDown = downstreams;
+        // we particularly care about these processes
+        if (start.get().getProcessName().equals("ProcessCPEOrderDirect")) {
+            MAX_DEPTH = 7500;
+        }
+        if (start.depth() > MAX_DEPTH)
+            return;
+
+        List<Linked<Activity>> furtherDowns = downstreams;
 
         for (Linked<Activity> child : start.getChildren()) {
             Activity activity = child.get();
-            List<Linked<Process>> subhierarchies = findInvoked(activity, hierarchy);
+            List<Linked<Process>> subhierarchies = findInvoked(activity, tempSpecial(child, hierarchy));
             if (!subhierarchies.isEmpty()) {
                 // link downstream children
-                if (downstreams != null) {
+                if (furtherDowns != null) {
                     for (Linked<Activity> downstreamChild : child.getChildren()) {
                         for (Linked<Activity> end : downstreamChild.getEnds()) {
                             if (end.get().isStop()) {
-                                end.setChildren(furtherDown);
+                                end.setChildren(furtherDowns);
                             }
                         }
                     }
                 }
                 if (activity.isSynchronous()) {
-                    furtherDown = child.getChildren();
+                    furtherDowns = child.getChildren();
                     child.setChildren(new ArrayList<>());
                 }
                 for (Linked<Process> subhierarchy : subhierarchies) {
@@ -175,22 +184,44 @@ public class HierarchyCache implements CacheService {
                     Linked<Activity> subprocActivities = loadedSub.getLinkedActivities();
                     child.getChildren().add(subprocActivities);
                     subprocActivities.setParent(child);
-                    addSubprocActivities(subprocActivities, subhierarchy, furtherDown);
+                    addSubprocActivities(subprocActivities, subhierarchy, furtherDowns);
                 }
+                furtherDowns = downstreams;
             }
             else {
                 // non-invoker
-                if (child.getChildren().isEmpty() && child.get().isStop()) {
-                    if (furtherDown != null) {
-                        child.setChildren(furtherDown);
-                        furtherDown = null;
-                        hierarchy = hierarchy.getParent();
+                if (child.get().isStop() && child.getChildren().isEmpty() ) {
+                    if (furtherDowns != null) {
+                        child.setChildren(furtherDowns);
+                        hierarchy  = hierarchy.getParent();
+                        furtherDowns = null;
                     }
                 }
-                addSubprocActivities(child, hierarchy, furtherDown);
+                addSubprocActivities(child, hierarchy, furtherDowns);
             }
         }
     }
+
+    private static Linked<Process> tempSpecial(Linked<Activity> linkedActivity, Linked<Process> hierarchy) {
+        boolean apply = true;
+        if (apply) {
+            if (linkedActivity.get().getProcessName().equals("Parent") && linkedActivity.get().getLogicalId().equals("A14"))
+                return hierarchy.getParent();
+            else if (linkedActivity.get().getProcessName().equals("ProcessFPMainFlowAprilia") && linkedActivity.get().getLogicalId().equals("A7"))
+                return hierarchy.getParent();
+            else if (linkedActivity.get().getProcessName().equals("ProcessCPEOrderDirect") && linkedActivity.get().getLogicalId().equals("A43")) {
+                Linked<Process> h = hierarchy;
+                while (h != null) {
+                    if (h.get().getName().equals("ProcessCPEOrderDirect") || h.get().getName().equals("ProcessFPMainFlowAprilia")) {
+                        return h;
+                    }
+                    h = h.getParent();
+                }
+            }
+        }
+        return hierarchy;
+    }
+
 
     /**
      * Omits invoked subflows that would cause circularity by consulting process hierarchy.
@@ -199,11 +230,33 @@ public class HierarchyCache implements CacheService {
             throws DataAccessException {
         List<Linked<Process>> invoked = new ArrayList<>();
         for (Process subprocess : activity.findInvoked(ProcessCache.getAllProcesses())) {
-            Linked<Process> found = hierarchy.find(subprocess);
-            if (found != null)
-                invoked.add(found);
+        Linked<Process> found = null;
+            for (Linked<Process> child : hierarchy.getChildren()) {
+                if (!isIgnored(child.get())) {
+                    if (child.get().getId().equals(subprocess.getId())) {
+                        found = child;
+                        break;
+                    }
+                }
+            }
+        if (found != null)
+            invoked.add(found);
         }
         return invoked;
+    }
+
+    private static boolean isIgnored(Process process) {
+        String path = process.getPackageName() + "/" + process.getName() + ".proc";
+        return path.equals("ctl.aprilia/AddCoreComment.proc") ||
+                path.equals("ctl.aprilia/EMGenric.proc") ||
+                path.equals("ctl.aprilia/MileStone.proc") ||
+                path.equals("ctl.aprilia/GettingDispatchTicketDetails.proc") ||
+                path.equals("ctl.aprilia/DGWDispatchTech.proc") ||
+                path.equals("com.centurylink.oc.ethernet.workflow/EmailNotification.proc") ||
+                path.equals("com.centurylink.oc.ethernet.workflow/StatusUpdate.proc") ||
+                path.equals("ctl.aprilia.service.testing/EMNotify.proc");
+
+        // TODO ignored asset paths in mdw.yaml
     }
 
     /**
