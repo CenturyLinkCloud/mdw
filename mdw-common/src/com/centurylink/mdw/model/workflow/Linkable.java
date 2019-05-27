@@ -16,13 +16,4 @@ public interface Linkable extends Jsonable {
         String simpleName = getClass().getSimpleName();
         return String.valueOf(simpleName.charAt(0)).toLowerCase() + simpleName.substring(1);
     }
-
-    /**
-     * Prefix to include with dump().
-     */
-    default String prefix() {
-        return "";
-    }
-
-
 }

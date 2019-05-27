@@ -9,7 +9,10 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.services.ServiceLocator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class HierarchyCache implements CacheService {
 
@@ -17,7 +20,7 @@ public class HierarchyCache implements CacheService {
 
     private static volatile Map<Long,List<Linked<Process>>> hierarchies = new HashMap<>();
     private static volatile Map<Long,Linked<Milestone>> milestones = new HashMap<>();
-    private static volatile Map<Long,Linked<Activity>> endToEndActivities = new HashMap<>();
+    private static volatile Map<Long,Linked<Activity>> activityHierarchies = new HashMap<>();
     private static volatile List<Long> milestoned = null;
 
     public static List<Linked<Process>> getHierarchy(Long processId) {
@@ -78,7 +81,7 @@ public class HierarchyCache implements CacheService {
         if (process != null) {
             MilestoneFactory milestoneFactory = new MilestoneFactory(process);
             Linked<Milestone> start = milestoneFactory.start();
-            addMilestones(start, getEndToEndActivities(processId));
+            addMilestones(start, getActivityHierarchy(processId));
             if (!start.getChildren().isEmpty())
                 return start;
         }
@@ -104,27 +107,27 @@ public class HierarchyCache implements CacheService {
         }
     }
 
-    public static Linked<Activity> getEndToEndActivities(Long processId) {
-        Linked<Activity> endToEnd;
-        // endToEndActivities.clear(); // TODO FIXME temp
-        Map<Long,Linked<Activity>> endToEndMap = endToEndActivities;
+    public static Linked<Activity> getActivityHierarchy(Long processId) {
+        Linked<Activity> hierarchy;
+        // activityHierarchies.clear(); // TODO FIXME temp
+        Map<Long,Linked<Activity>> endToEndMap = activityHierarchies;
         if (endToEndMap.containsKey(processId)) {
-            endToEnd = endToEndMap.get(processId);
+            hierarchy = endToEndMap.get(processId);
         } else {
             synchronized (HierarchyCache.class) {
-                endToEndMap = endToEndActivities;
+                endToEndMap = activityHierarchies;
                 if (endToEndMap.containsKey(processId)) {
-                    endToEnd = endToEndMap.get(processId);
+                    hierarchy = endToEndMap.get(processId);
                 } else {
-                    endToEnd = loadEndToEndActivities(processId);
-                    endToEndActivities.put(processId, endToEnd);
+                    hierarchy = loadActivityHierarchy(processId);
+                    activityHierarchies.put(processId, hierarchy);
                 }
             }
         }
-        return endToEnd;
+        return hierarchy;
     }
 
-    private static Linked<Activity> loadEndToEndActivities(Long processId) {
+    private static Linked<Activity> loadActivityHierarchy(Long processId) {
         if (PackageCache.getPackage(MILESTONES_PACKAGE) == null)
             return null; // don't bother and save some time
         Process process = ProcessCache.getProcess(processId);
@@ -132,7 +135,8 @@ public class HierarchyCache implements CacheService {
             Linked<Process> hierarchy = getHierarchy(processId).get(0);
             try {
                 Linked<Activity> endToEndActivities = process.getLinkedActivities();
-                addSubprocActivities(endToEndActivities, hierarchy, null);
+                ScopedActivity scoped = new ScopedActivity(hierarchy, endToEndActivities);
+                addSubprocessActivities(scoped, null);
                 return endToEndActivities;
             }
             catch (DataAccessException ex) {
@@ -145,10 +149,10 @@ public class HierarchyCache implements CacheService {
     private static int MAX_DEPTH = 5000;
 
     /**
-     * Hierarchy is passed to avoid process invocation circularity.
+     * Activities are scoped to avoid process invocation circularity.
      */
-    private static void addSubprocActivities(Linked<Activity> start, Linked<Process> hierarchy,
-            List<Linked<Activity>> downstreams) throws DataAccessException {
+    private static void addSubprocessActivities(ScopedActivity start, List<ScopedActivity> downstreams)
+            throws DataAccessException {
 
         // we particularly care about these processes
         MAX_DEPTH += getImportance(start);
@@ -156,99 +160,59 @@ public class HierarchyCache implements CacheService {
         if (start.depth() > MAX_DEPTH)
             return;
 
-        List<Linked<Activity>> furtherDowns = downstreams;
+        List<ScopedActivity> furtherDowns = downstreams;
 
-        for (Linked<Activity> child : start.getChildren()) {
-            Activity activity = child.get();
-            List<Linked<Process>> subhierarchies = findInvoked(activity, tempSpecial(child, hierarchy));
+        for (ScopedActivity scopedChild : start.getScopedChildren()) {
+            Activity activity = scopedChild.get();
+            List<Linked<Process>> subhierarchies = getInvoked(scopedChild);
             if (!subhierarchies.isEmpty()) {
                 // link downstream children
                 if (furtherDowns != null) {
-                    for (Linked<Activity> downstreamChild : child.getChildren()) {
+                    for (Linked<Activity> downstreamChild : scopedChild.getChildren()) {
                         for (Linked<Activity> end : downstreamChild.getEnds()) {
                             if (end.get().isStop()) {
-                                end.setChildren(furtherDowns);
+                                end.setChildren(new ArrayList<>(furtherDowns));
                             }
                         }
                     }
                 }
                 if (activity.isSynchronous()) {
-                    furtherDowns = child.getChildren();
-                    child.setChildren(new ArrayList<>());
+                    furtherDowns = scopedChild.getScopedChildren();
+                    scopedChild.setChildren(new ArrayList<>());
                 }
                 for (Linked<Process> subhierarchy : subhierarchies) {
                     Process loadedSub = ProcessCache.getProcess(subhierarchy.get().getId());
                     Linked<Activity> subprocActivities = loadedSub.getLinkedActivities();
-                    child.getChildren().add(subprocActivities);
-                    subprocActivities.setParent(child);
-                    addSubprocActivities(subprocActivities, subhierarchy, furtherDowns);
+                    scopedChild.getChildren().add(subprocActivities);
+                    subprocActivities.setParent(scopedChild);
+                    ScopedActivity subprocScoped = new ScopedActivity(subhierarchy, subprocActivities);
+                    addSubprocessActivities(subprocScoped, furtherDowns);
                 }
                 furtherDowns = downstreams;
             }
             else {
                 // non-invoker
-                if (child.get().isStop() && child.getChildren().isEmpty() ) {
+                if (scopedChild.get().isStop() && scopedChild.getChildren().isEmpty() ) {
                     if (furtherDowns != null) {
-                        child.setChildren(furtherDowns);
-                        hierarchy  = hierarchy.getParent();
+                        scopedChild.setChildren(new ArrayList<>(furtherDowns));
                         furtherDowns = null;
                     }
                 }
-                addSubprocActivities(child, hierarchy, furtherDowns);
+                addSubprocessActivities(scopedChild, furtherDowns);
             }
         }
-    }
-
-    private static Linked<Process> tempSpecial(Linked<Activity> linkedActivity, Linked<Process> hierarchy) {
-        boolean apply = true;
-        if (apply) {
-            if (linkedActivity.get().getProcessName().equals("Parent") && linkedActivity.get().getLogicalId().equals("A14"))
-                return hierarchy.getParent() == null ? hierarchy : hierarchy.getParent();
-            else if (linkedActivity.get().getProcessName().equals("ProcessFPMainFlowAprilia") && linkedActivity.get().getLogicalId().equals("A7"))
-                return hierarchy.getParent() == null ? hierarchy : hierarchy.getParent();
-            else if (linkedActivity.get().getProcessName().equals("ProcessCPEOrderDirect") && linkedActivity.get().getLogicalId().equals("A43")) {
-                Linked<Process> h = hierarchy;
-                while (h != null) {
-                    if (h.get().getName().equals("ProcessCPEOrderDirect") || h.get().getName().equals("ProcessFPMainFlowAprilia")) {
-                        return h;
-                    }
-                    h = h.getParent();
-                }
-            }
-            else if (
-                    ((linkedActivity.get().getProcessName().equals("LocalNetworkProvisioning") &&
-                            (linkedActivity.get().getLogicalId().equals("A11")) ||  linkedActivity.get().getLogicalId().equals("A12")))) {
-                Linked<Process> h = hierarchy;
-                while (h != null) {
-                    if (h.get().getName().equals("LocalNetworkProvisioning") || h.get().getName().equals("ProcessFPMainFlowAprilia")) {
-                        return h;
-                    }
-                    h = h.getParent();
-                }
-            }
-        }
-        return hierarchy;
     }
 
 
     /**
-     * Omits invoked subflows that would cause circularity by consulting process hierarchy.
+     * Omits invoked subflows that would cause circularity by consulting relevant process hierarchy.
      */
-    private static List<Linked<Process>> findInvoked(Activity activity, Linked<Process> hierarchy)
+    private static List<Linked<Process>> getInvoked(ScopedActivity scopedActivity)
             throws DataAccessException {
         List<Linked<Process>> invoked = new ArrayList<>();
-        for (Process subprocess : activity.findInvoked(ProcessCache.getAllProcesses())) {
-        Linked<Process> found = null;
-            for (Linked<Process> child : hierarchy.getChildren()) {
-                if (!isIgnored(child.get())) {
-                    if (child.get().getId().equals(subprocess.getId())) {
-                        found = child;
-                        break;
-                    }
-                }
-            }
-        if (found != null)
-            invoked.add(found);
+        for (Linked<Process> subprocess : scopedActivity.findInvoked(ProcessCache.getAllProcesses())) {
+            if (!isIgnored(subprocess.get()))
+                invoked.add(subprocess);
         }
         return invoked;
     }
@@ -281,11 +245,19 @@ public class HierarchyCache implements CacheService {
                 path.equals("ctl.aprilia/DGWDispatchTech.proc") ||
                 path.equals("com.centurylink.oc.ethernet.workflow/EmailNotification.proc") ||
                 path.equals("com.centurylink.oc.ethernet.workflow/StatusUpdate.proc") ||
+                path.equals("com.centurylink.oc.ethernet.workflow/AddCoreComment.proc") ||
+                path.equals("com.centurylink.oc.ethernet.workflow/OrderStatusChange.proc") ||
+                path.equals("com.centurylink.oc.ethernet.workflow/AFOP_JobStep.proc") ||
+                path.equals("com.centurylink.oc.ethernet.workflow/SMEStatusSubmit.proc") ||
+                path.equals("com.centurylink.oc.ethernet.workflow/CODResponseSME.proc") ||
+                path.equals("com.centurylink.oc.ethernet.workflow/EmailNotification.proc") ||
                 path.equals("ctl.aprilia.service.testing/EMNotify.proc") ||
                 path.equals("ctl.aprilia/GetCodResponse.proc") ||
                 path.equals("ctl.aprilia.order.status/UpdateFBPOrderStatus.proc") ||
                 path.equals("ctl.aprilia/PerformSiteSurvey.proc") ||
-                path.equals("com.centurylink.oc.ethernet.workflow/StatusSubmit.proc");
+                path.equals("com.centurylink.oc.ethernet.workflow/StatusSubmit.proc") ||
+                path.equals("ctl.aprilia/OESService.proc");
+
 
         // TODO ignored asset paths in mdw.yaml
     }
@@ -353,7 +325,7 @@ public class HierarchyCache implements CacheService {
     public void clearCache() {
         hierarchies = new HashMap<>();
         milestones = new HashMap<>();
-        endToEndActivities = new HashMap<>();
+        activityHierarchies = new HashMap<>();
         milestoned = null;
     }
 

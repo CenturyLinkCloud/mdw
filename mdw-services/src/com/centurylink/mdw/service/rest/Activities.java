@@ -265,9 +265,9 @@ public class Activities extends JsonRestService implements JsonExportable {
         Process process = ProcessCache.getProcess(assetPath);
         if (process == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + assetPath);
-        Linked<Activity> activities = HierarchyCache.getEndToEndActivities(process.getId());
-        if (activities == null)
+        Linked<Activity> hierarchy = HierarchyCache.getActivityHierarchy(process.getId());
+        if (hierarchy == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Activities not found: " + process.getId());
-        return activities.getJson(2);
+        return hierarchy.getJson(2);
     }
 }
