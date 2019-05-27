@@ -1,28 +1,87 @@
 {
   "activities": [
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=60,y=260,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=58,y=104,w=60,h=40"},
       "id": "A1",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
       "name": "Start",
       "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=300,ly=280,type=Elbow,xs=124&476,ys=280&280"},
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=146,ly=125,xs=122&170,ys=125&125"},
         "event": "FINISH",
         "id": "T1",
-        "to": "A2"
+        "to": "A4"
       }]
     },
     {
-      "attributes": {"WORK_DISPLAY_INFO": "x=480,y=260,w=60,h=40"},
+      "attributes": {"WORK_DISPLAY_INFO": "x=676,y=112,w=60,h=40"},
       "id": "A2",
       "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
-      "name": "Stop"
+      "name": "StopA"
+    },
+    {
+      "attributes": {
+        "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=174,y=107,w=60,h=40"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
+      "name": "Split",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=257,ly=101,xs=238&277,ys=127&76"},
+          "event": "FINISH",
+          "id": "T2",
+          "to": "A5"
+        },
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=275,ly=160,xs=238&312,ys=127&194"},
+          "event": "FINISH",
+          "id": "T3",
+          "to": "A6"
+        }
+      ]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=281,y=55,w=60,h=40"},
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
+      "name": "s1",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=371,ly=105,xs=345&398,ys=75&136"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=282,y=197,w=60,h=40"},
+      "id": "A6",
+      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
+      "name": "s2",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=372,ly=176,xs=346&398,ys=217&136"},
+        "event": "FINISH",
+        "id": "T5",
+        "to": "A7"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=402,y=110,w=77,h=53"},
+      "id": "A7",
+      "implementor": "com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity",
+      "name": "Sync",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=577,ly=132,xs=483&672,ys=132&132"},
+        "event": "FINISH",
+        "id": "T6",
+        "to": "A2"
+      }]
     }
   ],
   "attributes": {
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
-    "WORK_DISPLAY_INFO": "x=50,y=50,w=0,h=0"
+    "WORK_DISPLAY_INFO": "x=42,y=29,w=51,h=26"
   }
 }

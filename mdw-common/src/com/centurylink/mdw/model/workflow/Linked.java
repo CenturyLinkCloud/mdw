@@ -5,10 +5,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
-public class Linked<T extends Linkable> implements Jsonable {
+public class Linked<T extends Linkable> implements Jsonable, Iterable<Linked<T>> {
 
     protected static final int INDENT = 2;
 
@@ -64,12 +67,12 @@ public class Linked<T extends Linkable> implements Jsonable {
     /**
      * Indented per specified depth
      */
-    public String toString(int depth) {
+    public String toString(int depth, String prefix) {
         if (depth == 0) {
             return toString();
         }
         else {
-            return String.format("%1$" + (depth * INDENT) + "s", "") + " - " + toString();
+            return String.format("%1$" + (depth * INDENT) + "s", "") + " - " + prefix + toString();
         }
     }
 
@@ -187,5 +190,97 @@ public class Linked<T extends Linkable> implements Jsonable {
                 return found;
         }
         return null;
+    }
+
+    @Override
+    public Iterator<Linked<T>> iterator() {
+        return new LinkedIterator(getTop());
+    }
+
+    public Linked<T> getTop() {
+        Linked<T> next = this;
+        Linked<T> parent = getParent();
+        while (parent != null) {
+            next = parent;
+            parent = next.getParent();
+        }
+        return next;
+    }
+
+    private class LinkedIterator implements Iterator<Linked<T>> {
+        List<Linked<T>> currents;
+        int position;
+        LinkedIterator(Linked<T> top) {
+            currents = new ArrayList<>();
+            currents.add(top);
+        }
+        public boolean hasNext() {
+            if (position < currents.size()) {
+                return true;
+            }
+            else {
+                for (Linked<T> current : currents) {
+                    if (!current.getChildren().isEmpty())
+                        return true;
+                }
+                return false;
+            }
+        }
+        public Linked<T> next() {
+            Linked<T> next;
+            if (position < currents.size()) {
+                next = currents.get(position);
+                position++;
+            }
+            else {
+                List<Linked<T>> allChildren = new ArrayList<>();
+                for (Linked<T> current : currents) {
+                    allChildren.addAll(current.getChildren());
+                }
+                currents = allChildren;
+                if (allChildren.isEmpty())
+                    throw new NoSuchElementException(String.valueOf(position));
+                next = allChildren.get(0);
+                position = 1;
+            }
+            return next;
+        }
+    }
+
+    public void dump(PrintStream out, boolean fromTop) {
+        dump(out, fromTop, 0);
+    }
+
+    public void dump(PrintStream out, boolean fromTop, int maxDepth) {
+        print(out, fromTop ? getTop() : this, 0, maxDepth);
+    }
+
+    private void print(PrintStream out, List<Linked<T>> parents, int depth, int max) {
+        for (Linked<T> caller : parents) {
+            print(out, caller, depth, max);
+        }
+    }
+
+    protected void print(PrintStream out, Linked<T> parent, int depth, int max) {
+        if (max != 0 && depth > max) {
+            out.println(parent.toString(depth, parent.get().prefix()) + " (" + depth + " > " + max + ")");
+            return;
+        }
+        out.println(parent.toString(depth, parent.get().prefix()));
+        print(out, parent.getChildren(), depth + 1, max);
+    }
+
+    public int depth() {
+        return getTop().depth(1);
+    }
+
+    private int depth(int depth) {
+        if (!getChildren().isEmpty()) {
+            depth++;
+            for (Linked<T> child : getChildren()) {
+                depth = child.depth(depth);
+            }
+        }
+        return depth;
     }
 }

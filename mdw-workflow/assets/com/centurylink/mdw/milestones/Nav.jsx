@@ -17,7 +17,7 @@ class Nav extends Component {
       <div>
         <ul className="nav mdw-nav">
           <NavLink to={milestoneRoot} match={milestoneRoot}>Milestones</NavLink>
-          <NavLink to={milestoneRoot + '/all'}>All Steps</NavLink>
+          <NavLink to={milestoneRoot + '/all'}>Traversed</NavLink>
           <NavLink to={milestoneRoot + '/timeline'}>Timeline</NavLink>
         </ul>
         <ul className="nav mdw-nav">

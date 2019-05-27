@@ -1,0 +1,48 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=57,y=113,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start\nSimple",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=178,ly=134,xs=121&236,ys=134&134"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "Monitors": "[[\"false\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
+        "WORK_DISPLAY_INFO": "x=480,y=117,w=60,h=40"
+      },
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop\nSimple"
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=240,y=114,w=100,h=60",
+        "processname": "com.centurylink.mdw.tests.milestones/SubC.proc",
+        "processversion": "[0.1,1)",
+        "synchronous": "true"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
+      "name": "Invoke\nSubC",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=410,ly=137,xs=344&476,ys=137&137"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=48,y=43,w=66,h=26"
+  }
+}
