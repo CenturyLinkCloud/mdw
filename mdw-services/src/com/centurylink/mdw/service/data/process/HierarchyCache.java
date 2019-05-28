@@ -4,6 +4,7 @@ import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.config.PropertyGroup;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -11,10 +12,7 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.services.ServiceLocator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class HierarchyCache implements CacheService {
 
@@ -111,7 +109,6 @@ public class HierarchyCache implements CacheService {
 
     public static Linked<Activity> getActivityHierarchy(Long processId) {
         Linked<Activity> hierarchy;
-        // activityHierarchies.clear(); // TODO FIXME temp
         Map<Long,Linked<Activity>> endToEndMap = activityHierarchies;
         if (endToEndMap.containsKey(processId)) {
             hierarchy = endToEndMap.get(processId);
@@ -220,30 +217,6 @@ public class HierarchyCache implements CacheService {
     }
 
     /**
-     * Only returns true the first time so depth boost is applied once.
-     */
-    private static Map<String,Integer> importance;
-    private static int getImportance(Linked<Activity> linkedActivity) {
-        if (importance == null) {
-            importance = new HashMap<>();
-            importance.put("ctl.aprilia/ProcessCPEOrderDirect.proc", 5000);
-            importance.put("ctl.aprilia/ProvisionUplinkAndNational.proc", 5000);
-            importance.put("com.centurylink.oc.ethernet.workflow/LocalNetworkProvisioning.proc", 10000);
-        }
-        String path = linkedActivity.get().getPackageName() + "/" + linkedActivity.get().getProcessName() + ".proc";
-        if (importance.containsKey(path)) {
-            int value = importance.remove(path);
-            return value;
-        }
-        return 0;
-    }
-
-    private static boolean isIgnored(Process process) {
-        List<String> ignores = PropertyManager.getListProperty(PropertyNames.MDW_MILESTONE_IGNORES);
-        return ignores != null && ignores.contains(process.getPackageName() + "/" + process.getName() + ".proc");
-    }
-
-    /**
      * Processes with milestones in their hierarchies.
      */
     public static List<Long> getMilestoned() {
@@ -315,4 +288,39 @@ public class HierarchyCache implements CacheService {
         // hierarchies are lazily loaded
         clearCache();
     }
+
+    /**
+     * Only returns value the first time so depth boost is applied just once.
+     */
+    private static Map<String,Integer> importance;
+    private static int getImportance(Linked<Activity> linkedActivity) {
+        if (importance == null) {
+            importance = new HashMap<>();
+            Properties props = PropertyManager.getInstance().getProperties(PropertyNames.MDW_MILESTONE_IMPORTANCE);
+            PropertyGroup importanceGroup = new PropertyGroup("milestone.groups", PropertyNames.MDW_MILESTONE_IMPORTANCE, props);
+            for (String value : importanceGroup.getProperties().stringPropertyNames()) {
+                String path = value;
+                int slash = value.indexOf('/');
+                if (slash > 0) {
+                    path = path.substring(0,slash).replace('_', '.') + path.substring(slash);
+                }
+                if (path.endsWith("_proc"))
+                    path = path.substring(0, path.length() - 5) + ".proc";
+                importance.put(path, Integer.parseInt(importanceGroup.getProperties().getProperty(value)));
+            }
+        }
+        String path = linkedActivity.get().getPackageName() + "/" + linkedActivity.get().getProcessName() + ".proc";
+        if (importance.containsKey(path)) {
+            int value = importance.remove(path);
+            return value;
+        }
+        return 0;
+    }
+
+    private static boolean isIgnored(Process process) {
+        List<String> ignores = PropertyManager.getListProperty(PropertyNames.MDW_MILESTONE_IGNORES);
+        return ignores != null && ignores.contains(process.getPackageName() + "/" + process.getName() + ".proc");
+    }
+
+
 }

@@ -1,0 +1,5 @@
+.vis-item .vis-item-content {
+  white-space: nowrap;
+  box-sizing: border-box;
+  padding: 1px;
+}

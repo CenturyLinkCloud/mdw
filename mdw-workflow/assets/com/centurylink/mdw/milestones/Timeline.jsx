@@ -2,7 +2,7 @@ import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import {Link} from '../node/node_modules/react-router-dom';
 import {Timeline as VisTimeline, DataSet} from '../node/node_modules/vis/dist/vis';
-
+import '../node/node_modules/style-loader!./milestones.css';
 
 class Timeline extends Component {
     
@@ -14,6 +14,10 @@ class Timeline extends Component {
     const container = document.getElementById('milestone-timeline');
     if (container) {
       const timelineOptions = {
+        interaction: {
+          zoomView: false,
+          dragView: false
+        }    
       };
       const timelineData = new DataSet(this.props.data.items.filter(item => item.start));
 
