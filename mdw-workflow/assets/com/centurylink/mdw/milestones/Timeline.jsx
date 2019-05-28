@@ -1,6 +1,8 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import {Link} from '../node/node_modules/react-router-dom';
+import {Timeline as VisTimeline, DataSet} from '../node/node_modules/vis/dist/vis';
+
 
 class Timeline extends Component {
     
@@ -8,10 +10,34 @@ class Timeline extends Component {
     super(...args);
   }  
 
+  drawTimeline() {
+    const container = document.getElementById('milestone-timeline');
+    if (container) {
+      const timelineOptions = {
+      };
+      const timelineData = new DataSet(this.props.data.items.filter(item => item.start));
+
+      const timeline = new VisTimeline(container, timelineData, timelineOptions);
+      timeline.on('doubleClick', params => {
+        if (params.item) {
+          let item = this.props.data.items[params.item];
+          if (item.processInstance) {
+            if (item.activityInstance) {
+              sessionStorage.setItem('mdw-activityInstance', item.activityInstance.id);
+            }
+            location = this.context.hubRoot + '/#/workflow/processes/' + item.processInstance.id;
+          }
+        }
+      });
+    }
+  }  
+
   componentDidMount() {
+    this.drawTimeline();
   }
-  
+
   render() {
+    this.drawTimeline();
     const milestone = this.props.milestone;
     return (
       <div>
@@ -25,7 +51,8 @@ class Timeline extends Component {
           </div>
         </div>
         <div className="mdw-section">
-          Timeline
+          <div id="milestone-timeline">
+          </div>
         </div>
       </div>
     );

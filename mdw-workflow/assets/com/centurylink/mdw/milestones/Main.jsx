@@ -32,7 +32,8 @@ class Main extends Component {
     .then(groups => {
       if (!this.isDef()) {
         const masterRequestId = location.hash.substring(13);
-        const url = this.getChildContext().serviceRoot + '/com/centurylink/mdw/milestones/' + masterRequestId;
+        var url = this.getChildContext().serviceRoot + '/com/centurylink/mdw/milestones/' + masterRequestId;
+        url += "?future=true";
         fetch(new Request(url, {
           method: 'GET',
           headers: { Accept: 'application/json'},

@@ -1,10 +1,12 @@
 package com.centurylink.mdw.model.workflow;
 
+import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.project.Data;
 import org.json.JSONObject;
 
 import java.time.Instant;
+import java.util.Date;
 
 /**
  * Milestone definition.
@@ -105,7 +107,13 @@ public class Milestone implements Linkable, Jsonable {
 
     private ActivityInstance activityInstance;
     public ActivityInstance getActivityInstance() { return activityInstance; }
-    public void setActivityInstance(ActivityInstance activityInstance) { this.activityInstance = activityInstance; }
+    public void setActivityInstance(ActivityInstance activityInstance) {
+        this.activityInstance = activityInstance;
+        this.start = new Date(activityInstance.getStartDate().getTime() + DatabaseAccess.getDbTimeDiff()).toInstant();
+        if (activityInstance.getEndDate() != null) {
+            this.end = new Date(activityInstance.getEndDate().getTime() + DatabaseAccess.getDbTimeDiff()).toInstant();
+        }
+    }
 
     @Override
     public JSONObject getJson() {
@@ -149,6 +157,12 @@ public class Milestone implements Linkable, Jsonable {
 
     @Override
     public boolean equals(Object other) {
-        return other instanceof Milestone && ((Milestone)other).masterRequestId.equals(masterRequestId);
+        if (!(other instanceof Milestone))
+            return false;
+        Milestone otherMilestone = (Milestone) other;
+        if (activityInstance != null) {
+            return activityInstance.equals(otherMilestone.activityInstance);
+        }
+        return activity.equals(otherMilestone.activity);
     }
 }

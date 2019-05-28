@@ -239,8 +239,8 @@ public class HierarchyCache implements CacheService {
     }
 
     private static boolean isIgnored(Process process) {
-        String path = process.getPackageName() + "/" + process.getName() + ".proc";
-        return PropertyManager.getListProperty(PropertyNames.MDW_MILESTONE_IGNORES).contains(path);
+        List<String> ignores = PropertyManager.getListProperty(PropertyNames.MDW_MILESTONE_IGNORES);
+        return ignores != null && ignores.contains(process.getPackageName() + "/" + process.getName() + ".proc");
     }
 
     /**

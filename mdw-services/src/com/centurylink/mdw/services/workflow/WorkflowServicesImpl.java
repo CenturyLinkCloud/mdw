@@ -1507,8 +1507,15 @@ public class WorkflowServicesImpl implements WorkflowServices {
         Linked<Milestone> masterMilestones = new Linked<>(startMilestone);
         addMilestones(masterMilestones, endToEndActivities, parentInstance);
         if (future) {
-            // TODO
-
+            for (Linked<Milestone> end : masterMilestones.getEnds()) {
+                Linked<Milestone> futureMilestones = HierarchyCache.getMilestones(end.get().getProcess().getId());
+                Linked<Milestone> futureMilestone = futureMilestones.find(m -> {
+                    return m.getActivity().getId().equals(end.get().getActivity().getId()) &&
+                            m.getProcess().getId().equals(end.get().getProcess().getId());
+                });
+                end.setChildren(futureMilestone.getChildren());
+                futureMilestone.setParent(end);
+            }
         }
         return masterMilestones;
     }
@@ -1555,8 +1562,6 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     private void addSubprocessActivities(ScopedActivityInstance start, List<ScopedActivityInstance> downstreams)
             throws ServiceException, DataAccessException {
-
-        System.out.println("-> " + start + " (" + start.get().getName() + ") p" + start.get().getProcessInstanceId());
 
         List<ScopedActivityInstance> furtherDowns = downstreams;
 
@@ -1622,7 +1627,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     private boolean isIgnored(ProcessInstance processInstance) {
-        String path = processInstance.getPackageName() + "/" + processInstance.getProcessName() + ".proc";
-        return PropertyManager.getListProperty(PropertyNames.MDW_MILESTONE_IGNORES).contains(path);
+        List<String> ignores = PropertyManager.getListProperty(PropertyNames.MDW_MILESTONE_IGNORES);
+        return ignores != null &&
+                ignores.contains(processInstance.getPackageName() + "/" + processInstance.getProcessName() + ".proc");
     }
 }

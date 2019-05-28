@@ -8,7 +8,10 @@ class Data {
     this.idCtr = 0;
     this.depth = 0;
     this.maxDepth = 0;
-    this.add(milestones);
+    if (milestones.milestone) {
+      this.isInstance = milestones.milestone.masterRequestId !== undefined;
+      this.add(milestones);
+    }
   }
   
   add(milestone) {
@@ -24,12 +27,26 @@ class Data {
         item.color = milestoneGroup.props.color;
       }
     }
+    if (this.isInstance) {
+      if (!item.activityInstance) {
+        item.color = '#ffffff';
+      }
+      else if (!item.end) {
+        item.color = '#ffff00';
+      }
+      if (item.start) {
+        if (item.end && (new Date(item.end).getTime() - new Date(item.start).getTime()) < 600000)  {
+          item.type = 'point';
+        }
+      }
+    }
     if (item.process) {
       item.title = item.process.name;
       if (item.activity) {
         item.title += ': ' + item.activity.id;
       }
     }
+    item.content = '<div style="background-color:' + this.shade(item.color, 0.5) + ';padding:5px;">' + item.label + '</div>';
     this.depth++;
     this.items.push(item);
     if (milestone.children) {
@@ -56,6 +73,11 @@ class Data {
       this.maxDepth = this.depth;
     }
     this.depth--;
+  }
+
+  shade(color, percent) {   
+    var f = parseInt(color.slice(1), 16), t = percent < 0 ? 0 : 255, p = percent < 0 ? percent * -1 : percent, R = f >> 16, G = f >> 8 & 0x00FF, B = f & 0x0000FF;
+    return "#" + (0x1000000 + (Math.round((t - R) * p) + R) * 0x10000 + (Math.round((t - G) * p) + G) * 0x100 + (Math.round((t - B) * p) + B)).toString(16).slice(1);
   }
 }
 
