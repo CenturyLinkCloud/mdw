@@ -456,15 +456,17 @@ public class ProcessInstance implements Jsonable, Linkable {
         parentInst.setName(activity.getName());
         parentInst.setMilestoneName(activity.milestoneName());
         parentInst.setMilestoneGroup(activity.milestoneGroup());
-        for (Activity downstream : process.getDownstreamActivities(process.getActivity(parentInst.getActivityId()))) {
-            List<ActivityInstance> instances = getActivities(downstream.getLogicalId());
-            if (!instances.isEmpty()) {
-                ActivityInstance instance = instances.get(0);
-                Linked<ActivityInstance> child = new Linked<>(instance);
-                child.setParent(parent);
-                parent.getChildren().add(child);
-                if (!child.checkCircular()) {
-                    linkActivities(process, child);
+        for (TransitionInstance ti : transitions) {
+            for (Transition t : process.getAllTransitions(parentInst.getActivityId())) {
+                if (t.getId().equals(ti.getTransitionID())) {
+                    List<ActivityInstance> instances = getActivities("A" + t.getToId());
+                    ActivityInstance instance = instances.get(0); // latest instance
+                    Linked<ActivityInstance> child = new Linked<>(instance);
+                    child.setParent(parent);
+                    parent.getChildren().add(child);
+                    if (!child.checkCircular()) {
+                        linkActivities(process, child);
+                    }
                 }
             }
         }

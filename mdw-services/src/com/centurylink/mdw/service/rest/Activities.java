@@ -257,7 +257,7 @@ public class Activities extends JsonRestService implements JsonExportable {
         ProcessInstance masterProcessInstance = workflowServices.getMasterProcess(masterRequestId);
         // retrieve full
         masterProcessInstance = workflowServices.getProcess(masterProcessInstance.getId());
-        return workflowServices.getEndToEndActivities(masterProcessInstance).getJson(2);
+        return workflowServices.getActivityHierarchy(masterProcessInstance).getJson(2);
     }
 
     @Path("/definitions/e2e/{package}/{process}")

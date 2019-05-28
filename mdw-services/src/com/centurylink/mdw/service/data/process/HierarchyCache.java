@@ -4,6 +4,8 @@ import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
@@ -224,7 +226,7 @@ public class HierarchyCache implements CacheService {
     private static int getImportance(Linked<Activity> linkedActivity) {
         if (importance == null) {
             importance = new HashMap<>();
-            importance.put("ctl.aprilia/ProcessCPEOrderDirect.proc", 2500);
+            importance.put("ctl.aprilia/ProcessCPEOrderDirect.proc", 5000);
             importance.put("ctl.aprilia/ProvisionUplinkAndNational.proc", 5000);
             importance.put("com.centurylink.oc.ethernet.workflow/LocalNetworkProvisioning.proc", 10000);
         }
@@ -238,28 +240,7 @@ public class HierarchyCache implements CacheService {
 
     private static boolean isIgnored(Process process) {
         String path = process.getPackageName() + "/" + process.getName() + ".proc";
-        return path.equals("ctl.aprilia/AddCoreComment.proc") ||
-                path.equals("ctl.aprilia/EMGenric.proc") ||
-                path.equals("ctl.aprilia/MileStone.proc") ||
-                path.equals("ctl.aprilia/GettingDispatchTicketDetails.proc") ||
-                path.equals("ctl.aprilia/DGWDispatchTech.proc") ||
-                path.equals("com.centurylink.oc.ethernet.workflow/EmailNotification.proc") ||
-                path.equals("com.centurylink.oc.ethernet.workflow/StatusUpdate.proc") ||
-                path.equals("com.centurylink.oc.ethernet.workflow/AddCoreComment.proc") ||
-                path.equals("com.centurylink.oc.ethernet.workflow/OrderStatusChange.proc") ||
-                path.equals("com.centurylink.oc.ethernet.workflow/AFOP_JobStep.proc") ||
-                path.equals("com.centurylink.oc.ethernet.workflow/SMEStatusSubmit.proc") ||
-                path.equals("com.centurylink.oc.ethernet.workflow/CODResponseSME.proc") ||
-                path.equals("com.centurylink.oc.ethernet.workflow/EmailNotification.proc") ||
-                path.equals("ctl.aprilia.service.testing/EMNotify.proc") ||
-                path.equals("ctl.aprilia/GetCodResponse.proc") ||
-                path.equals("ctl.aprilia.order.status/UpdateFBPOrderStatus.proc") ||
-                path.equals("ctl.aprilia/PerformSiteSurvey.proc") ||
-                path.equals("com.centurylink.oc.ethernet.workflow/StatusSubmit.proc") ||
-                path.equals("ctl.aprilia/OESService.proc");
-
-
-        // TODO ignored asset paths in mdw.yaml
+        return PropertyManager.getListProperty(PropertyNames.MDW_MILESTONE_IGNORES).contains(path);
     }
 
     /**

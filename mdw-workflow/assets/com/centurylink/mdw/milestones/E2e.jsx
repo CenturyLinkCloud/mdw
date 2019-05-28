@@ -52,7 +52,7 @@ class E2e extends Component {
       const url = this.context.serviceRoot + '/Activities/e2e/' + masterRequestId;
       fetch(new Request(url, {
         method: 'GET',
-        headers: { Accept: 'application/json'},
+        headers: { Accept: 'application/json', NoPersistence: 'true'},
         credentials: 'same-origin'
       }))
       .then(response => {

@@ -2,7 +2,7 @@ module.exports = {
   graph: {
     nodes: {
       shape: 'dot',
-      size: 30,
+      size: 32,
       font: {
         size: 16
       },

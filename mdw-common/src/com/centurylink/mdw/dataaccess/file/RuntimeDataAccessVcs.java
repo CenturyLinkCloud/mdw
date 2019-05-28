@@ -462,7 +462,7 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
     protected List<ProcessInstance> getProcessInstancesForOwner(String ownerType, Long ownerId) throws SQLException, DataAccessException {
         List<ProcessInstance> instanceList = null;
         String query = "select pi.PROCESS_INSTANCE_ID, pi.PROCESS_ID, pi.MASTER_REQUEST_ID," +
-                " pi.STATUS_CD, pi.START_DT, pi.END_DT, pi.COMPCODE, pi.COMMENTS" +
+                " pi.STATUS_CD, pi.START_DT, pi.END_DT, pi.COMPCODE, pi.COMMENTS, pi.SECONDARY_OWNER, pi.SECONDARY_OWNER_ID" +
                 " from PROCESS_INSTANCE pi" +
                 " where pi.OWNER = '" + ownerType + "' and pi.OWNER_ID = ? order by pi.PROCESS_INSTANCE_ID";
         ResultSet rs = db.runSelect(query, ownerId);
@@ -481,6 +481,8 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
             pi.setEndDate(DateHelper.dateToString(rs.getTimestamp("END_DT")));
             pi.setCompletionCode(rs.getString("COMPCODE"));
             pi.setComment(comment);
+            pi.setSecondaryOwner(rs.getString("SECONDARY_OWNER"));
+            pi.setSecondaryOwnerId(rs.getLong("SECONDARY_OWNER_ID"));
             populateNameVersionStatus(pi);
             instanceList.add(pi);
         }
