@@ -50,8 +50,8 @@ public class MilestonesApi extends JsonRestService {
                 return getGroups();
             } else {
                 // by masterRequestId
-                boolean withFuture = query.getBooleanFilter("future");
-                return ServiceLocator.getWorkflowServices().getMilestones(seg4, withFuture).getJson();
+                boolean future = query.getBooleanFilter("future");
+                return ServiceLocator.getWorkflowServices().getMilestones(seg4, future).getJson();
             }
         } else {
             return ServiceLocator.getWorkflowServices().getMilestones(query).getJson();

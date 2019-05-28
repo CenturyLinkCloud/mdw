@@ -98,7 +98,7 @@ class Milestone extends Component {
             }
           </div>
           <div className="mdw-section">
-             <div id="milestone-graph">
+            <div id="milestone-graph">
             </div>
           </div>
         </div>

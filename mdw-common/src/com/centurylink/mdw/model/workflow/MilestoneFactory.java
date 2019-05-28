@@ -17,6 +17,7 @@ public class MilestoneFactory {
     public static final PropertyGroup START_GROUP;
     public static final PropertyGroup STOP_GROUP;
     public static final PropertyGroup PAUSE_GROUP;
+    public static final PropertyGroup OTHER_GROUP;
     static {
         String startRoot = PropertyNames.MDW_MILESTONE_GROUPS + ".Start";
         Properties startProps = new Properties();
@@ -35,6 +36,12 @@ public class MilestoneFactory {
         pauseProps.setProperty(pauseRoot + ".color", "#fffc7c");
         PAUSE_GROUP = new PropertyGroup("Pause", pauseRoot, pauseProps);
         DEFAULT_GROUPS.add(PAUSE_GROUP);
+
+        String otherRoot = PropertyNames.MDW_MILESTONE_GROUPS + ".Other";
+        Properties otherProps = new Properties();
+        otherProps.setProperty(otherRoot + ".color", "#4cafea");
+        OTHER_GROUP = new PropertyGroup("Other", otherRoot, otherProps);
+        DEFAULT_GROUPS.add(OTHER_GROUP);
     }
 
     private Process process;

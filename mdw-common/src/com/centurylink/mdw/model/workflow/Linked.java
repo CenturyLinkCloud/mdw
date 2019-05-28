@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.function.Predicate;
 
 public class Linked<T extends Linkable> implements Jsonable, Iterable<Linked<T>> {
 
@@ -182,10 +183,14 @@ public class Linked<T extends Linkable> implements Jsonable, Iterable<Linked<T>>
      * Navigates this hierarchy to find first matching element.
      */
     public Linked<T> find(T element) {
-        if (this.get().equals(element))
+        return find(t -> t.equals(element));
+    }
+
+    public Linked<T> find(Predicate<T> predicate) {
+        if (predicate.test(this.get()))
             return this;
         for (Linked<T> child : getChildren()) {
-            Linked<T> found = child.find(element);
+            Linked<T> found = child.find(predicate);
             if (found != null)
                 return found;
         }
