@@ -3,6 +3,7 @@ package com.centurylink.mdw.model.workflow;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * Wraps a linked activity to include its place in the process hierarchy.
  */
@@ -69,4 +70,8 @@ public class ScopedActivity extends Linked<Activity> {
         return invoked;
     }
 
+    @Override
+    public String toString() {
+        return processHierarchy.get().getName() + " " + super.toString();
+    }
 }

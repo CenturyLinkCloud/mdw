@@ -1495,7 +1495,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         // retrieve full
         ProcessInstance processInstance = getProcess(masterProcessInstance.getId());
 
-        Linked<ActivityInstance> endToEndActivities = getEndToEndActivities(processInstance);
+        Linked<ActivityInstance> endToEndActivities = getActivityHierarchy(processInstance);
         Linked<ProcessInstance> parentInstance = getCallHierearchy(masterProcessInstance.getId());
         Activity masterStartActivity = masterProcess.getStartActivity();
         ActivityInstance masterStartInstance =
@@ -1539,12 +1539,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     @Override
-    public Linked<ActivityInstance> getEndToEndActivities(ProcessInstance processInstance) throws ServiceException {
+    public Linked<ActivityInstance> getActivityHierarchy(ProcessInstance processInstance) throws ServiceException {
         Process process = ProcessCache.getProcess(processInstance.getProcessId());
         Linked<ActivityInstance> endToEndActivities = processInstance.getLinkedActivities(process);
         Linked<ProcessInstance> instanceHierarchy = getCallHierearchy(processInstance.getId());
         try {
-            addSubprocActivities(endToEndActivities, instanceHierarchy, null);
+            ScopedActivityInstance scoped = new ScopedActivityInstance(instanceHierarchy, endToEndActivities);
+            addSubprocessActivities(scoped, null);
             return endToEndActivities;
         }
         catch (DataAccessException ex) {
@@ -1552,153 +1553,76 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    private void addSubprocActivities(Linked<ActivityInstance> start, Linked<ProcessInstance> instanceHierarchy,
-            List<Linked<ActivityInstance>> downstreams) throws ServiceException, DataAccessException {
+    private void addSubprocessActivities(ScopedActivityInstance start, List<ScopedActivityInstance> downstreams)
+            throws ServiceException, DataAccessException {
 
-        List<Linked<ActivityInstance>> furtherDowns = downstreams;
+        System.out.println("-> " + start + " (" + start.get().getName() + ") p" + start.get().getProcessInstanceId());
 
-        for (Linked<ActivityInstance> child : start.getChildren()) {
-            ActivityInstance activityInstance = child.get();
-            Process process = ProcessCache.getProcess(instanceHierarchy.get().getProcessId());
+        List<ScopedActivityInstance> furtherDowns = downstreams;
+
+        for (ScopedActivityInstance scopedChild : start.getScopedChildren()) {
+            ActivityInstance activityInstance = scopedChild.get();
+            Process process = ProcessCache.getProcess(scopedChild.get().getProcessId());
             Activity activity = process.getActivity(activityInstance.getActivityId());
-            if (activity == null && instanceHierarchy.getParent() != null) {
-                // TODO: this is no good
-                instanceHierarchy = instanceHierarchy.getParent();
-                process = ProcessCache.getProcess(instanceHierarchy.get().getProcessId());
-                activity = process.getActivity(activityInstance.getActivityId());
-            }
 
-            List<Linked<ProcessInstance>> subhierarchies = activity == null ? new ArrayList<>() : findInvoked(activity, activityInstance, instanceHierarchy);
+            List<Linked<ProcessInstance>> subhierarchies = getInvoked(scopedChild, activity);
             if (!subhierarchies.isEmpty()) {
                 // link downstream children
                 if (furtherDowns != null) {
-                    for (Linked<ActivityInstance> downstreamChild : child.getChildren()) {
+                    for (Linked<ActivityInstance> downstreamChild : scopedChild.getChildren()) {
                         for (Linked<ActivityInstance> end : downstreamChild.getEnds()) {
                             Process endProcess = ProcessCache.getProcess(downstreamChild.get().getProcessId());
                             boolean isStop = endProcess.getActivity(end.get().getActivityId()).isStop();
                             if (isStop) {
-                                end.setChildren(furtherDowns);
+                                end.setChildren(new ArrayList<>(furtherDowns));
                             }
                         }
                     }
                 }
                 if (activity.isSynchronous()) {
-                    furtherDowns = child.getChildren();
-                    child.setChildren(new ArrayList<>());
+                    furtherDowns = scopedChild.getScopedChildren();
+                    scopedChild.setChildren(new ArrayList<>());
                 }
                 for (Linked<ProcessInstance> subhierarchy : subhierarchies) {
                     ProcessInstance loadedSub = getProcess(subhierarchy.get().getId());
                     Process subProcess = ProcessCache.getProcess(loadedSub.getProcessId());
                     Linked<ActivityInstance> subprocActivities = loadedSub.getLinkedActivities(subProcess);
-                    child.getChildren().add(subprocActivities);
-                    subprocActivities.setParent(child);
-                    addSubprocActivities(subprocActivities, subhierarchy, furtherDowns);
+                    scopedChild.getChildren().add(subprocActivities);
+                    subprocActivities.setParent(scopedChild);
+                    ScopedActivityInstance subprocScoped = new ScopedActivityInstance(subhierarchy, subprocActivities);
+                    addSubprocessActivities(subprocScoped, furtherDowns);
                 }
                 furtherDowns = downstreams;
             }
             else {
                 // non-invoker
-                boolean isStop = process.getActivity(child.get().getActivityId()).isStop();
-                if (isStop && child.getChildren().isEmpty() ) {
+                boolean isStop = process.getActivity(scopedChild.get().getActivityId()).isStop();
+                if (isStop && scopedChild.getChildren().isEmpty() ) {
                     if (furtherDowns != null) {
-                        child.setChildren(furtherDowns);
-                        instanceHierarchy  = instanceHierarchy.getParent();
+                        scopedChild.setChildren(new ArrayList<>(furtherDowns));
                         furtherDowns = null;
                     }
                 }
-                addSubprocActivities(child, instanceHierarchy, furtherDowns);
+                addSubprocessActivities(scopedChild, furtherDowns);
             }
         }
     }
 
-    private void addSubprocActivitiesx(Linked<ActivityInstance> start, Linked<ProcessInstance> instanceHierarchy)
-            throws ServiceException, DataAccessException {
-        for (Linked<ActivityInstance> child : start.getChildren()) {
-//            addSubprocActivities(child, instanceHierarchy);
-            ActivityInstance activityInstance = child.get();
-            Process process = ProcessCache.getProcess(instanceHierarchy.get().getProcessId());
-            Activity activity = process.getActivity(activityInstance.getActivityId());
-            List<Linked<ProcessInstance>> subprocesses = findInvoked(activity, activityInstance, instanceHierarchy);
-            if (!subprocesses.isEmpty()) {
-                if (activity.isSynchronous()) {
-                    // move other children downstream of subproc stops
-                    List<Linked<ActivityInstance>> downstreamChildren = child.getChildren();
-                    child.setChildren(new ArrayList<>());
-                    for (Linked<ProcessInstance> subprocess : subprocesses) {
-                        List<Linked<ActivityInstance>> stops = addInvokerSubprocActivities(child, subprocess);
-                        for (Linked<ActivityInstance> stop : stops) {
-                            stop.getChildren().addAll(downstreamChildren);
-                        }
-                    }
-                }
-                else {
-                    for (Linked<ProcessInstance> subprocess : subprocesses) {
-                        addInvokerSubprocActivities(child, subprocess);
-                    }
-                }
-            }
-            else {
-                addSubprocActivitiesx(child, instanceHierarchy);
-            }
+    /**
+     * Finds subprocess instances by consulting relevant process hierarchy (excludes ignored).
+     */
+    private List<Linked<ProcessInstance>> getInvoked(ScopedActivityInstance scopedInstance, Activity activity)
+            throws DataAccessException {
+        List<Linked<ProcessInstance>> invoked = new ArrayList<>();
+        for (Linked<ProcessInstance> subprocess : scopedInstance.findInvoked(activity, ProcessCache.getAllProcesses())) {
+            if (!isIgnored(subprocess.get()))
+                invoked.add(subprocess);
         }
+        return invoked;
     }
 
-    private List<Linked<ActivityInstance>> addInvokerSubprocActivities(Linked<ActivityInstance> subprocInvoke,
-            Linked<ProcessInstance> instanceHierarchy) throws ServiceException, DataAccessException {
-        List<Linked<ActivityInstance>> finalStops = new ArrayList<>();
-
-        ProcessInstance parentInstance = getProcess(instanceHierarchy.getParent().get().getId());
-        Process parentProcess = ProcessCache.getProcess(parentInstance.getProcessId());
-        Activity invokerActivity = parentProcess.getActivity(subprocInvoke.get().getActivityId());
-
-        ProcessInstance subInstance = getProcess(instanceHierarchy.get().getId());
-        Process subProcess = ProcessCache.getProcess(subInstance.getProcessId());
-        Linked<ActivityInstance> subActivities = subInstance.getLinkedActivities(subProcess);
-        if (!invokerActivity.isSynchronous()) {
-            for (Linked<ActivityInstance> end : subActivities.getEnds()) {
-                Activity endActivity = subProcess.getActivity(end.get().getActivityId());
-                if (endActivity.isStop()) {
-                    finalStops.add(end);
-                }
-            }
-        }
-        subprocInvoke.getChildren().add(subActivities);
-        subActivities.setParent(subprocInvoke);
-        for (Linked<ActivityInstance> child : subprocInvoke.getChildren()) {
-            // TODO
-            ActivityInstance ai = child.get();
-            ProcessInstance pi = getProcess(ai.getProcessInstanceId());
-            Process p = ProcessCache.getProcess(pi.getProcessId());
-            Activity a = p.getActivity(ai.getActivityId());
-            Linked<ProcessInstance> ih = instanceHierarchy;
-
-            List<Linked<ProcessInstance>> subprocesses = findInvoked(a, ai, ih);
-            for (Linked<ProcessInstance> subprocess : subprocesses) {
-                List<Linked<ActivityInstance>> nextStops = addInvokerSubprocActivities(child, subprocess);
-                finalStops.addAll(nextStops);
-            }
-        }
-
-        return finalStops;
+    private boolean isIgnored(ProcessInstance processInstance) {
+        String path = processInstance.getPackageName() + "/" + processInstance.getProcessName() + ".proc";
+        return PropertyManager.getListProperty(PropertyNames.MDW_MILESTONE_IGNORES).contains(path);
     }
-
-    private List<Linked<ProcessInstance>> findInvoked(Activity activity, ActivityInstance activityInstance,
-            Linked<ProcessInstance> instanceHierarchy) throws DataAccessException {
-        List<Linked<ProcessInstance>> subprocs = new ArrayList<>();
-        List<Process> subprocesses = activity.findInvoked(ProcessCache.getAllProcesses());
-        for (Linked<ProcessInstance> childProcess : instanceHierarchy.getChildren()) {
-            for (Process subprocess : subprocesses) {
-                ProcessInstance subInst = childProcess.get();
-                if (subInst.getProcessId().equals(subprocess.getId()) &&
-                        (subInst.getSecondaryOwner() == null || subInst.getSecondaryOwner().equals(OwnerType.ACTIVITY_INSTANCE)) &&
-                        (subInst.getSecondaryOwnerId() == null || subInst.getSecondaryOwnerId().equals(activityInstance.getId()))) {
-                    subprocs.add(childProcess);
-
-                }
-            }
-        }
-        return subprocs;
-    }
-
-
 }

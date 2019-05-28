@@ -15,6 +15,7 @@ class Data {
     let item = milestone.milestone;
     item.id = this.idCtr;
     item.level = this.depth;
+    item.color = '#4cafea';
     if (item.group) {
       let group = item.group;
       delete item.group;
