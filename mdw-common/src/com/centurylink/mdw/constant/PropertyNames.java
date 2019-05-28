@@ -195,4 +195,5 @@ public class PropertyNames {
     // milestones
     public static final String MDW_MILESTONE_GROUPS = "mdw.milestone.groups";
     public static final String MDW_MILESTONE_IGNORES = "mdw.milestone.ignores";
+    public static final String MDW_MILESTONE_IMPORTANCE = "mdw.milestone.importance";
 }
