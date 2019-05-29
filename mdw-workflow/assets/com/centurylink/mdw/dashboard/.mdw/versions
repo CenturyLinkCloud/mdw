@@ -1,10 +1,9 @@
 Activities.jsx=4
-ChartHeader.jsx=13
+ChartHeader.jsx=14
 ChartLegend.jsx=5
 CpuMetric.java=3
-DashboardChart.jsx=31
+DashboardChart.jsx=32
 DbConnectionsMetric.java=1
-FilterPop.jsx=5
 HeapMemoryMetric.java=2
 InboundRequests.jsx=10
 Index.jsx=5

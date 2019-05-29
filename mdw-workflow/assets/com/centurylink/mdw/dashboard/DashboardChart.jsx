@@ -499,7 +499,7 @@ class DashboardChart extends Component {
     const topsLoading = breakdown.tops && !this.state.tops.length;
 
     return (
-      <div>
+      <div className="panel panel-default mdw-panel" style={{border:'none'}}>
         <ChartHeader title={this.props.title}
           breakdownConfig={this.props.breakdownConfig}
           breakdown={this.state.breakdown}

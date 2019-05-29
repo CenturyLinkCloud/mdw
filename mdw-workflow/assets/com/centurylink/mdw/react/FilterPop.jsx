@@ -1,7 +1,7 @@
-import React, {Component} from '../node/node_modules/react';
-import {Popover, Button} from '../node/node_modules/react-bootstrap';
-import Dropdown from '../react/Dropdown.jsx';
-import DatePicker from '../react/DatePicker.jsx';
+import React, {Component} from '../node/node_modules/react/react';
+import {Popover, Button} from '../node/node_modules/react-bootstrap/lib';
+import Dropdown from './Dropdown.jsx';
+import DatePicker from './DatePicker.jsx';
 
 class FilterPop extends Component {
 

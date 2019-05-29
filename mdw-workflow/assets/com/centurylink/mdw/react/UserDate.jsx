@@ -147,7 +147,7 @@ class UserDate extends Component {
     return (
       <span>
         {(date || !this.props.notLabel) && this.props.label &&
-          <label title={title}>
+          <label title={title} style={{marginRight:'3px'}}>
             {this.props.label}:
           </label>
         }
