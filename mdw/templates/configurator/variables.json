@@ -76,7 +76,13 @@
           "name": "sequence",
           "type": "number",
           "vw": 60
-        }        
+        },
+        {
+          "label": "Index Key",
+          "name": "indexKey",
+          "type": "text",
+          "vw": 150
+        }
       ]
     },
     {

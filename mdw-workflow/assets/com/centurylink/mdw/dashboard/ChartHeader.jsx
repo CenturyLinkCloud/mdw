@@ -7,7 +7,7 @@ import HeaderButtons from '../react/HeaderButtons.jsx';
 import HeaderButton from '../react/HeaderButton.jsx';
 import HeaderPopButton from '../react/HeaderPopButton.jsx';
 import SelectPop from './SelectPop.jsx';
-import FilterPop from './FilterPop.jsx';
+import FilterPop from '../react/FilterPop.jsx';
 
 class ChartHeader extends Component {
 
