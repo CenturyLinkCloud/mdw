@@ -8,7 +8,10 @@ import org.json.JSONObject;
 import javax.ws.rs.Path;
 import java.util.Map;
 
-@Path("/")
+/**
+ * TODO: changing below to "/" path breaks SwaggerValidatorActivity
+ */
+@Path("/todo")
 public class RootPath extends JsonRestService {
 
     @Override
