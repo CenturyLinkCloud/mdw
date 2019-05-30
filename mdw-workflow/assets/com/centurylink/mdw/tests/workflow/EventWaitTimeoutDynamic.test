@@ -1,0 +1,15 @@
+package com.centurylink.mdw.tests.workflow
+
+def timeout = 30
+start process('EventWaitTimeoutDynamic') {
+    variables = [timeout: timeout]
+}
+wait process
+verify process
+
+// verify timeout duration (+/- 10%)
+def before = masterProcessInstance.variable['before']
+def after = masterProcessInstance.variable['after']
+def actual = after - before
+println 'actual timeout -> ' + actual
+assert Math.abs(actual - 30000) < 3000
