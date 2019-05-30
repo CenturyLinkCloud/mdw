@@ -1,5 +1,4 @@
 Child.proc=2
-EMGenric.proc=1
 Easy.proc=3
 EasySub.proc=1
 Grandchild.proc=2
@@ -15,9 +14,7 @@ Multi3.proc=1
 MultiBak.proc=1
 Multistop.proc=1
 Parent.proc=4
-PerformSiteSurvey.proc=1
 Simple.proc=1
-SiteSurvey.proc=1
 SubA.proc=2
 SubB.proc=2
 SubC.proc=1
