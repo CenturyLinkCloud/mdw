@@ -12,6 +12,7 @@
       "name": "TRANSITION_DELAY",
       "applier": "TransitionDelayApplier",
       "label": "Delay (seconds)",
+      "max": 3600,
       "vw": 50
     },
     {

@@ -172,7 +172,7 @@ public class TimerWaitActivity extends AbstractWait {
      * If any event has already arrived, it processes it immediately.
      *
      * Customization should be done with the methods {@link #processOtherMessage(String)},
-     * {@link #registerWaitEvents()}, and {@link #processTimerExpiration()}.
+     * and {@link #processTimerExpiration()}.
      */
     public final boolean resumeWaiting(InternalEvent event) throws ActivityException {
         // check if timer is expired at this time?

@@ -49,6 +49,8 @@
     {
       "attributes": {
         "STATUS_AFTER_EVENT": "Cancelled",
+        "TIMER_WAIT": "600",
+        "TIMER_WAIT_DISPLAY_UNITS": "Minutes",
         "WORK_DISPLAY_INFO": "x=414,y=151,w=100,h=60"
       },
       "id": "A4",
@@ -116,6 +118,8 @@
     {
       "attributes": {
         "STATUS_AFTER_EVENT": "Cancelled",
+        "TIMER_WAIT": "60",
+        "TIMER_WAIT_DISPLAY_UNITS": "Minutes",
         "WORK_DISPLAY_INFO": "x=104,y=294,w=100,h=60"
       },
       "id": "A12",
@@ -131,6 +135,8 @@
     {
       "attributes": {
         "STATUS_AFTER_EVENT": "Cancelled",
+        "TIMER_WAIT": "${number}",
+        "TIMER_WAIT_DISPLAY_UNITS": "Hours",
         "WORK_DISPLAY_INFO": "x=245,y=294,w=100,h=60"
       },
       "id": "A13",
@@ -146,6 +152,8 @@
     {
       "attributes": {
         "STATUS_AFTER_EVENT": "Cancelled",
+        "TIMER_WAIT": "7200",
+        "TIMER_WAIT_DISPLAY_UNITS": "Hours",
         "WORK_DISPLAY_INFO": "x=377,y=293,w=100,h=60"
       },
       "id": "A14",
@@ -172,6 +180,7 @@
     "ArrowStyle": "ArrowEnd",
     "NodeStyle": "BoxIcon",
     "PROCESS_VISIBILITY": "PUBLIC",
+    "PerformanceLevel": "0",
     "SLA": "24",
     "SLA_UNIT": "Hours",
     "WORK_DISPLAY_INFO": "x=23,y=15,w=149,h=27"
@@ -233,8 +242,12 @@
   }],
   "variables": {
     "flowPath": {
-      "category": "LOCAL",
+      "category": "INPUT",
       "type": "java.lang.String"
+    },
+    "number": {
+      "category": "INPUT",
+      "type": "java.lang.Integer"
     },
     "updatedDoc": {
       "category": "LOCAL",

@@ -1,0 +1,28 @@
+process: # 10365
+  name: EventWaitTimeoutDynamic
+  instance: 1
+  activity: # 1 "2019-05-30 12:58:05.012"
+    name: Start
+    status: Completed
+  activity: # 5 "2019-05-30 12:58:05.167"
+    name: Before
+    status: Completed
+  activity: # 3 "2019-05-30 12:58:05.625"
+    name: Never
+    status: Cancelled
+    result: Cancelled due to time out
+  activity: # 4 "2019-05-30 12:58:26.026"
+    name: After
+    status: Completed
+  activity: # 2 "2019-05-30 12:58:26.232"
+    name: Stop
+    status: Completed
+  variable: # 10676
+    name: after
+    value: ${~\\d+}
+  variable: # 10675
+    name: before
+    value: ${~\\d+}
+  variable: # 10674
+    name: timeout
+    value: 30

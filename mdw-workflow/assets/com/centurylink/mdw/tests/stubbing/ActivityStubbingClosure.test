@@ -10,7 +10,7 @@ def timerStubMatcher = { Object runtimeContext -> // instance of ActivityRuntime
 }
 
 start process("TestActivityStub") {
-    variables = [flowPath: "all timers"]
+    variables = [flowPath: "all timers", number: 10]
     activityStubs = [
         activity(timerStubMatcher) { // logical id for timer activity
             return null // default transition
