@@ -86,7 +86,7 @@ application data with your workflow.  For detailed documentation on how to use M
 values, check out the MDW online help **Workflow Design** section (especially the *Processes*
 and *Variables* topics).
 
-If you decide that you really do need to maintain a custom db, then you'll need to create an
+If you decide that you really do need to maintain a custom db, then you'll have to create an
 asset package dedicated to this purpose.  This is where you'll keep the SQL scripts for creating
 your tables and populating any required reference data.  In this package you also need a Dynamic
 Java class that implements EmbeddedDbExtension.  Provided that you add the @RegisteredService
