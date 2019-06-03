@@ -1,5 +1,8 @@
 AdminApisWorkgroups.test=8
 AdminApisWorkgroups.yaml=7
+AutoRetry.proc=1
+AutoRetry.test=1
+AutoRetry.yaml=1
 DEL_asset.yaml=3
 DEL_workgroups_{group-name}.yaml=5
 DeleteNon200.test=2
@@ -66,6 +69,7 @@ RestfulAdapterPatch.yaml=4
 RestfulAdapterPost.test=2
 RestfulAdapterPost.yaml=4
 RestfulServiceAdapter.proc=4
+RetryableService.java=1
 RootPath.java=2
 ServiceAsyncSub1.test=3
 ServiceAsyncSub1.yaml=12

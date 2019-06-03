@@ -46,6 +46,7 @@ import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.*;
 
 /**
@@ -495,9 +496,9 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl
      *      can be retried.
      */
     protected abstract Object invoke(Object pConnection, Object request)
-    throws AdapterException,ConnectionException;
+    throws AdapterException, ConnectionException;
 
-    private Response doInvoke(Object connection, Object request) throws AdapterException {
+    private Response doInvoke(Object connection, Object request) throws AdapterException, ConnectionException {
         ActivityRuntimeContext runtimeContext = null;
         List<AdapterMonitor> monitors = null;
         try {
@@ -560,6 +561,8 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl
                 throw (RuntimeException)ex;
             if (ex instanceof AdapterException)
                 throw (AdapterException)ex;
+            if (ex instanceof ConnectionException)
+                throw (ConnectionException)ex;
             throw new AdapterException(ex.getMessage(), ex);
         }
     }

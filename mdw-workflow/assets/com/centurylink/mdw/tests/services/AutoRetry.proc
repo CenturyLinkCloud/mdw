@@ -1,0 +1,80 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=82,y=121,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=168,ly=141,xs=146&190,ys=141&141"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=504,y=120,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "EndpointUri": "${serviceUrl}",
+        "HttpMethod": "POST",
+        "REQUEST_VARIABLE": "serviceRequest",
+        "RESPONSE_VARIABLE": "serviceResponse",
+        "WORK_DISPLAY_INFO": "x=341,y=111,w=100,h=60",
+        "max_tries": "3",
+        "retry_interval": "10"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter",
+      "name": "Invoke\nRetryable",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=472,ly=140,xs=445&500,ys=140&140"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {
+        "Output Documents": "[\"serviceRequest\"]",
+        "Rule": "serviceRequest = new org.json.JSONObject()\nserviceRequest.put(\"something\", \"unimportant\")",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=194,y=111,w=100,h=60"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "Create\nRequest",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=317,ly=141,xs=298&337,ys=141&141"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A3"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "PerformanceLevel": "0",
+    "WORK_DISPLAY_INFO": "x=48,y=41,w=95,h=26"
+  },
+  "variables": {
+    "serviceRequest": {
+      "category": "LOCAL",
+      "type": "org.json.JSONObject"
+    },
+    "serviceResponse": {
+      "category": "LOCAL",
+      "type": "org.json.JSONObject"
+    },
+    "serviceUrl": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    }
+  }
+}

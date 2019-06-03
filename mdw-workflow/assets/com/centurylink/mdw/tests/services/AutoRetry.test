@@ -1,0 +1,35 @@
+import com.centurylink.mdw.config.PropertyManager
+
+def retryableUrl = PropertyManager.getProperty("mdw.services.url") + "/api/com/centurylink/mdw/tests/services/retryable"
+
+start process("AutoRetry") {
+    variables = [
+            serviceUrl: retryableUrl
+    ]
+}
+
+sleep(20)
+
+def badHostUrl = "http://aljfljasldkjflkasjljfasilkddfiasaljdflk/jalkjlkds"
+
+start process("AutoRetry") {
+    variables = [
+            serviceUrl: badHostUrl
+    ]
+}
+
+sleep(20)
+
+def nonRetryUrl = PropertyManager.getProperty("mdw.services.url") + "/api/com/centurylink/mdw/notfound"
+
+start process("AutoRetry") {
+    variables = [
+            serviceUrl: nonRetryUrl
+    ]
+}
+
+sleep(120)
+
+verify process
+
+

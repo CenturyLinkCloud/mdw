@@ -1,0 +1,93 @@
+process: # 10400
+  name: AutoRetry
+  instance: 1
+  activity: # 1 "2019-06-03 14:21:24.513"
+    name: Start
+    status: Completed
+  activity: # 4 "2019-06-03 14:21:24.523"
+    name: |
+      Create
+      Request
+    status: Completed
+  activity: # 3 "2019-06-03 14:21:24.535"
+    name: |
+      Invoke
+      Retryable
+    status: Failed
+    result: com.centurylink.mdw.activity.ActivityException:(code=404): Server returned HTTP response code: 404...
+  variable: # 10739
+    name: serviceRequest
+    value: {"something": "unimportant"}
+  variable: # 10738
+    name: serviceUrl
+    value: http://localhost:8080/mdw/api/com/centurylink/mdw/notfound
+process: # 10399
+  name: AutoRetry
+  instance: 2
+  activity: # 1 "2019-06-03 14:21:04.504"
+    name: Start
+    status: Completed
+  activity: # 4 "2019-06-03 14:21:04.512"
+    name: |
+      Create
+      Request
+    status: Completed
+  activity: # 3 "2019-06-03 14:21:04.522"
+    name: |
+      Invoke
+      Retryable
+    status: Failed
+    result: com.centurylink.mdw.activity.ActivityException: aljfljasldkjflkasjljfasilkddfiasaljdflk...
+  activity: # 3 "2019-06-03 14:21:48.359"
+    name: |
+      Invoke
+      Retryable
+    status: Failed
+    result: com.centurylink.mdw.activity.ActivityException: aljfljasldkjflkasjljfasilkddfiasaljdflk...
+  activity: # 3 "2019-06-03 14:22:48.356"
+    name: |
+      Invoke
+      Retryable
+    status: Failed
+    result: com.centurylink.mdw.activity.ActivityException:(code=41282): Maximum number of tries/retries reached...
+  variable: # 10737
+    name: serviceRequest
+    value: {"something": "unimportant"}
+  variable: # 10736
+    name: serviceUrl
+    value: http://aljfljasldkjflkasjljfasilkddfiasaljdflk/jalkjlkds
+process: # 10398
+  name: AutoRetry
+  instance: 3
+  activity: # 1 "2019-06-03 14:20:44.509"
+    name: Start
+    status: Completed
+  activity: # 4 "2019-06-03 14:20:44.523"
+    name: |
+      Create
+      Request
+    status: Completed
+  activity: # 3 "2019-06-03 14:20:44.539"
+    name: |
+      Invoke
+      Retryable
+    status: Failed
+    result: com.centurylink.mdw.activity.ActivityException: Server returned HTTP response code: 500...
+  activity: # 3 "2019-06-03 14:21:48.353"
+    name: |
+      Invoke
+      Retryable
+    status: Failed
+    result: com.centurylink.mdw.activity.ActivityException: Server returned HTTP response code: 500...
+  activity: # 3 "2019-06-03 14:22:48.362"
+    name: |
+      Invoke
+      Retryable
+    status: Failed
+    result: com.centurylink.mdw.activity.ActivityException:(code=41282): Maximum number of tries/retries reached...
+  variable: # 10735
+    name: serviceRequest
+    value: {"something": "unimportant"}
+  variable: # 10734
+    name: serviceUrl
+    value: http://localhost:8080/mdw/api/com/centurylink/mdw/tests/services/retryable
