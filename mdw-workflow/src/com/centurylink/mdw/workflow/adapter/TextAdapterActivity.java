@@ -714,7 +714,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
 
     @Override
     public Response doInvoke(Object connection, Request request, int timeout,
-            Map<String,String> headers) throws AdapterException {
+            Map<String,String> headers) throws AdapterException, ConnectionException {
         ActivityRuntimeContext runtimeContext = null;
         List<AdapterMonitor> monitors = null;
         try {
@@ -775,6 +775,8 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
                 throw (RuntimeException)ex;
             if (ex instanceof AdapterException)
                 throw (AdapterException)ex;
+            if (ex instanceof ConnectionException)
+                throw (ConnectionException)ex;
             throw new AdapterException(ex.getMessage(), ex);
         }
     }
