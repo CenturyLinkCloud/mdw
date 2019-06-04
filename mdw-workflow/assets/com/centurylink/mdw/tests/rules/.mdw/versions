@@ -1,4 +1,3 @@
-Cheapskates.json=1
 DroolsActivity.proc=16
 DroolsActivity.test=3
 DroolsActivity.yaml=1
@@ -9,7 +8,7 @@ DroolsDecisionTableMultisheet.proc=4
 DroolsMultisheetDecisionTable.test=3
 DroolsMultisheetDecisionTable.yaml=1
 Order.java=2
-OrderApi.test=3
+OrderApi.test=4
 OrderApi.yaml=2
 OrderRequest.json=1
 drools-multiSheetDecisionTable.xlsx=2

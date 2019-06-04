@@ -4,6 +4,10 @@ import com.centurylink.mdw.model.StatusResponse
 import com.centurylink.mdw.model.Status
 import org.json.JSONObject
 
+/**
+ * Also tests process service request mapping
+ */
+
 def response = post http("api/com/centurylink/mdw/tests/services/Person") {
     payload = '''{
   "firstName": "Douglas",

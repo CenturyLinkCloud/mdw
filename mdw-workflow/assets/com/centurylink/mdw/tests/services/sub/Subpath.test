@@ -1,0 +1,15 @@
+package com.centurylink.mdw.tests.services.sub
+
+// services root
+response = get http("api/com/centurylink/mdw/tests/services")
+assert response.code == 200
+verify response {
+    expected = '{"impl": "com.centurylink.mdw.tests.services.RootPath"}'
+}
+
+// services sub
+response = get http("api/com/centurylink/mdw/tests/services/sub/sub")
+assert response.code == 200
+verify response {
+    expected = '{"impl": "com.centurylink.mdw.tests.services.sub.SubPath"}'
+}
