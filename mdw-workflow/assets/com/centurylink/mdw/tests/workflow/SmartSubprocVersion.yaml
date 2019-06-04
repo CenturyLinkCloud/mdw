@@ -46,3 +46,6 @@ process: # 10306
   variable: # 10832
     name: testCase
     value: single
+  variable: # 10792
+    name: testCaseJson
+    value: {"name": "single"}

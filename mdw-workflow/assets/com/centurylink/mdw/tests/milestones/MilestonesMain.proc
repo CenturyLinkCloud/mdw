@@ -59,6 +59,7 @@
       "attributes": {
         "Execution Plan": "executionPlan",
         "Monitors": "[[\"false\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
+        "STATUS_AFTER_EVENT": "Hold",
         "WORK_DISPLAY_INFO": "x=403,y=206,w=100,h=60",
         "processmap": "[[\"SubOne\",\"com.centurylink.mdw.tests.milestones/SubOne.proc\",\"[0,1)\"],[\"SubTwo\",\"com.centurylink.mdw.tests.milestones/SubTwo.proc\",\"[0.1,1)\"]]",
         "synchronous": "true"

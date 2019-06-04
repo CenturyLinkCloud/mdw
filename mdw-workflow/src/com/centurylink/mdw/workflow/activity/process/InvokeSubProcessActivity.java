@@ -280,12 +280,14 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
     private String getActualParameterVariable(String map, String parameterName)
             throws ActivityException {
         String v = getMapValue(map, parameterName, ';');
-        if (v==null)
+        if (v == null)
             return null;
-        if (v.length()<2 || (v.charAt(0)!='$' && v.charAt(0)!='#'))
+        else if (v.startsWith("${") && v.endsWith("}"))
+            return v.substring(2, v.length() - 1);
+        else if (v.length() < 2 || (v.charAt(0) != '$' && v.charAt(0) != '#'))
             throw new ActivityException(ERR_OUTPARA + ": " + parameterName);
-        for (int i=1; i<v.length(); i++) {
-            if (!Character.isLetterOrDigit(v.charAt(i))&& v.charAt(i)!='_')
+        for (int i = 1; i < v.length(); i++) {
+            if (!Character.isLetterOrDigit(v.charAt(i)) && v.charAt(i) != '_')
                 throw new ActivityException(ERR_OUTPARA + ": " + parameterName);
         }
         return v.substring(1);

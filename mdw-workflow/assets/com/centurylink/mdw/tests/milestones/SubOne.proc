@@ -38,6 +38,7 @@
         "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"Waiting [Pause]\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
         "SLA_DISPLAY_UNITS": "Hours",
         "STATUS_AFTER_TIMEOUT": "Cancelled",
+        "WAIT_EVENT_NAMES": "[[\"milestoneWait-${masterRequestId}\",\"\"]]",
         "WORK_DISPLAY_INFO": "x=577,y=115,w=108,h=67"
       },
       "id": "A4",

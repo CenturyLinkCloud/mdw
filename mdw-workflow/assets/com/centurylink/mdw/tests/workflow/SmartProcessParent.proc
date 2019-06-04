@@ -113,7 +113,7 @@
         "processname": "com.centurylink.mdw.tests.workflow/SmartProcessChild.proc",
         "processversion": "[2.4,3)",
         "synchronous": "true",
-        "variables": "{\"procVer\":\"$singleSubprocVer\",\"inputVar\":\"$testCase\",\"procName\":\"$singleSubprocName\"}"
+        "variables": "{\"procVer\":\"${singleSubprocVer}\",\"inputVar\":\"${testCaseJson.name}\",\"procName\":\"${singleSubprocName}\"}"
       },
       "id": "A11",
       "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
@@ -178,6 +178,10 @@
     "testCase": {
       "category": "INPUT",
       "type": "java.lang.String"
+    },
+    "testCaseJson": {
+      "category": "INPUT",
+      "type": "com.centurylink.mdw.model.Jsonable"
     }
   }
 }
