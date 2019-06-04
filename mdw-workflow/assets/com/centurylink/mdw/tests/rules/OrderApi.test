@@ -5,7 +5,7 @@ println 'masterRequestId:: ' + masterRequestId
 
 // illustrates how to mix service/workflow testing by specifying masterRequestId
 
-def response = post http('api/com/centurylink/mdw/tests/rules/order') {
+response = post http('api/com/centurylink/mdw/tests/rules/order') {
     headers = [
         'Content-Type': 'application/json',
         'mdw-request-id': masterRequestId,
@@ -16,9 +16,9 @@ def response = post http('api/com/centurylink/mdw/tests/rules/order') {
 }
 
 assert response.code == 200
-// verify response {
-//   expected = asset("Cheapskates.json").text
-// }
+verify response {
+  expected = '{"workgroup": "Cheapskates"}'
+}
 
 wait process('DroolsDecisionTable')
 verify process('DroolsDecisionTable')

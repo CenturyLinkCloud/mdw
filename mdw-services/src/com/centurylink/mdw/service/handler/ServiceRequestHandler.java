@@ -197,6 +197,12 @@ public class ServiceRequestHandler implements EventHandler {
                 Class<? extends RegisteredService> serviceType = Listener.CONTENT_TYPE_JSON.equals(contentType) ? JsonService.class : XmlService.class;
                 MdwServiceRegistry registry = MdwServiceRegistry.getInstance();
                 String pkgName = null;
+                TextService matchingService = null;
+                // process request (but @Paths take precedence)
+                AssetRequest processRequest = ProcessRequests.getRequest(headers.get(Listener.METAINFO_HTTP_METHOD), requestPath);
+                if (processRequest != null) {
+                    matchingService = new ProcessInvoker(processRequest);
+                }
                 for (int i = 0; i < pathSegments.length; i++) {
                     String pathSegment = pathSegments[i];
                     if (i == 0)
@@ -209,20 +215,18 @@ public class ServiceRequestHandler implements EventHandler {
                         if (i < pathSegments.length - 1) {
                             service = (TextService)registry.getDynamicServiceForPath(pkg, serviceType, "/" + pathSegments[i + 1]);
                         }
-                        if (service == null) {
+                        if (service == null && processRequest == null) {
                             // fallback -- try without any subpath (@Path="/")
                             service = (TextService) registry.getDynamicServiceForPath(pkg, serviceType, "/");
                         }
                         if (service != null)
-                            return service;
+                            matchingService = service;
                     }
                 }
 
-                // lastly, try process invoker mapping
-                AssetRequest processRequest = ProcessRequests.getRequest(headers.get(Listener.METAINFO_HTTP_METHOD), requestPath);
-                if (processRequest != null) {
-                    return new ProcessInvoker(processRequest);
-                }
+                if (matchingService != null)
+                    return matchingService;
+
 
                 return null;
             }
