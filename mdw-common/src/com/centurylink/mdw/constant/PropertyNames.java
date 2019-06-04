@@ -117,9 +117,10 @@ public class PropertyNames {
 
     // vcs-based asset persistence
     public static final String MDW_ASSET_LOCATION = "mdw.asset.location";
+    public static final String MDW_ASSET_SYNC_ENABLED = "mdw.asset.sync.enabled";
     public static final String MDW_ASSET_SYNC_INTERVAL = "mdw.asset.sync.interval";
-    public static final String MDW_ASSET_REF_AUTOPOP = "mdw.asset.ref.autopop";
     public static final String MDW_ASSET_SYNC_GITRESET = "mdw.asset.sync.gitreset";
+    public static final String MDW_ASSET_REF_AUTOPOP = "mdw.asset.ref.autopop";
     public static final String MDW_GIT_LOCAL_PATH = "mdw.git.local.path";
     public static final String MDW_GIT_REMOTE_URL = "mdw.git.remote.url";
     public static final String MDW_GIT_USER = "mdw.git.user";

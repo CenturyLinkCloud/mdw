@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.timer.startup;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cli.Import;
 import com.centurylink.mdw.cli.Props;
 import com.centurylink.mdw.common.service.SystemMessages;
@@ -55,16 +56,23 @@ public class AssetImportMonitor implements StartupService {
      * Invoked when the server starts up.
      */
     public void onStartup() throws StartupException {
+        boolean enabled = PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_SYNC_ENABLED,
+                !ApplicationContext.isDevelopment());
         if (monitor == null) {
             monitor = this;
-            thread = new Thread() {
-                @Override
-                public void run() {
-                    this.setName("AssetImportMonitor-thread");
-                    monitor.start();
-                }
-            };
-            thread.start();
+            if (enabled) {
+                thread = new Thread() {
+                    @Override
+                    public void run() {
+                        this.setName("AssetImportMonitor-thread");
+                        monitor.start();
+                    }
+                };
+                thread.start();
+            }
+            else {
+                logger.info("Asset Import Monitor disabled");
+            }
         }
     }
 
