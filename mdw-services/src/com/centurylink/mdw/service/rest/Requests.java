@@ -157,6 +157,7 @@ public class Requests extends JsonRestService implements JsonExportable {
         }
     }
 
+    @Override
     public Jsonable toJsonable(Query query, JSONObject json) throws JSONException {
         try {
             if (json.has("requests") && RequestList.MASTER_REQUESTS.equals(query.getFilters().get("type")))
@@ -174,6 +175,9 @@ public class Requests extends JsonRestService implements JsonExportable {
             throw new JSONException(ex);
         }
     }
+
+    @Override
+    public String getExportName() { return "Requests"; }
 
     @Path("/tops")
     public JsonArray getTops(Query query) throws ServiceException {

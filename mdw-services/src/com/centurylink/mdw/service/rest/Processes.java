@@ -385,6 +385,7 @@ public class Processes extends JsonRestService implements JsonExportable {
         }
     }
 
+    @Override
     public Jsonable toJsonable(Query query, JSONObject json) throws JSONException {
         try {
             if (json.has(ProcessList.PROCESS_INSTANCES))
@@ -398,6 +399,9 @@ public class Processes extends JsonRestService implements JsonExportable {
             throw new JSONException(ex);
         }
     }
+
+    @Override
+    public String getExportName() { return "Processes"; }
 
     private Map<String,String> getVariables(Map<String,String> params) {
         Map<String,String> variables = new HashMap<>();

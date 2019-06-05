@@ -157,13 +157,14 @@ public class SystemMetrics {
         String rootName = systemMetric.getName() + "_" + hostName;
         File file = new File(outputDir + "/" + rootName + ".csv");
         MetricDataList dataList = metricDataLists.get(systemMetric.getName());
-        if (!file.isFile() || file.length() == 0) {
-            Files.write(file.toPath(), dataList.getHeadings().getBytes(), StandardOpenOption.TRUNCATE_EXISTING,
-                    StandardOpenOption.CREATE_NEW);
-        }
+        if (!file.isFile())
+            Files.write(file.toPath(), dataList.getHeadings().getBytes(), StandardOpenOption.CREATE_NEW);
+        else if (file.length() == 0)
+            Files.write(file.toPath(), dataList.getHeadings().getBytes(), StandardOpenOption.APPEND);
 
         if (isShutdown) {
-            Files.write(file.toPath(), dataList.getCsv(dataList.getTotal() % datapoints).getBytes(), StandardOpenOption.APPEND);
+            Files.write(file.toPath(), dataList.getCsv(dataList.getTotal() % datapoints).getBytes(),
+                    StandardOpenOption.APPEND);
         }
         else {
             Files.write(file.toPath(), dataList.getCsv().getBytes(), StandardOpenOption.APPEND);

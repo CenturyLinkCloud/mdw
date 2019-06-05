@@ -20,10 +20,9 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.JsonExportable;
-import com.centurylink.mdw.model.JsonListMap;
 import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.report.Metric;
 import com.centurylink.mdw.model.report.MetricDataList;
+import com.centurylink.mdw.model.report.MetricsRow;
 import com.centurylink.mdw.model.system.SysInfoCategory;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -38,7 +37,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.ws.rs.Path;
-import java.net.InetAddress;
 import java.util.List;
 import java.util.Map;
 
@@ -95,6 +93,23 @@ public class System extends JsonRestService implements JsonExportable {
 
     @Override
     public Jsonable toJsonable(Query query, JSONObject json) throws JSONException {
-        return new JsonListMap<>(json, Metric.class);
+        if (query.getPath().startsWith("System/metrics/")) {
+            JSONArray rows = new JSONArray();
+            for (String key : json.keySet()) {
+                rows.put(new MetricsRow(key, json.getJSONArray(key)).getJson());
+            }
+            return new JsonArray(rows);
+        }
+        throw new JSONException("Unsupported path: " + query.getPath());
     }
+
+    @Override
+    public String getExportName() {
+        String name = ApplicationContext.getHostname();
+        int port = ApplicationContext.getServerPort();
+        if (port != 0 && port != 8080)
+            name += "_" + port;
+        return name;
+    }
+
 }
