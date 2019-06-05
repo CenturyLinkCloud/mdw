@@ -125,8 +125,22 @@ public class MetricDataList {
     }
 
     public String getCsv() {
+        return getCsv(0);
+    }
+
+    /**
+     * @param datapoints zero for all
+     */
+    public String getCsv(int datapoints) {
         StringBuilder sb = new StringBuilder();
-        for (MetricData data : dataList) {
+        List<MetricData> list;
+        if (datapoints > 0) {
+            list = getData(datapoints * period);
+        }
+        else {
+            list = dataList;
+        }
+        for (MetricData data : list) {
             sb.append(data.getTime());
             for (Metric metric : data.getMetrics()) {
                 sb.append(",").append(metric.getValue());

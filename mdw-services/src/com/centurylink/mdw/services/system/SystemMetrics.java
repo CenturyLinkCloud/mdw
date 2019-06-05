@@ -97,7 +97,7 @@ public class SystemMetrics {
                         doCollect(time.minusSeconds(time.getSecond() % period).minusNanos(time.getNano()), systemMetric);
                         if (outputDir != null && (metricDataLists.get(systemMetric.getName()).getTotal() % datapoints == 0)) {
                             try {
-                                doOutput(systemMetric);
+                                doOutput(systemMetric, false);
                             }
                             catch (IOException ex) {
                                 logger.error(ex.getMessage(), ex);
@@ -108,10 +108,20 @@ public class SystemMetrics {
             }
         }
     }
+
     public synchronized void deactivate() {
         if (active) {
             active = false;
             scheduler.shutdown();
+            for (String name : systemMetrics.keySet()) {
+                try {
+                    // log any remaining in-memory datapoints
+                    doOutput(systemMetrics.get(name), true);
+                }
+                catch (IOException ex) {
+                    logger.severeException(ex.getMessage(), ex);
+                }
+            }
         }
     }
 
@@ -140,7 +150,7 @@ public class SystemMetrics {
         }
     }
 
-    private void doOutput(SystemMetric systemMetric) throws IOException {
+    private void doOutput(SystemMetric systemMetric, boolean isShutdown) throws IOException {
         if (!outputDir.isDirectory() && !outputDir.mkdirs()) {
             throw new IOException("Unable to create metrics output directory: " + outputDir.getAbsolutePath());
         }
@@ -151,8 +161,15 @@ public class SystemMetrics {
             Files.write(file.toPath(), dataList.getHeadings().getBytes(), StandardOpenOption.TRUNCATE_EXISTING,
                     StandardOpenOption.CREATE_NEW);
         }
-        Files.write(file.toPath(), dataList.getCsv().getBytes(), StandardOpenOption.APPEND);
-        if (file.length() > outputSize) {
+
+        if (isShutdown) {
+            Files.write(file.toPath(), dataList.getCsv(dataList.getTotal() % datapoints).getBytes(), StandardOpenOption.APPEND);
+        }
+        else {
+            Files.write(file.toPath(), dataList.getCsv().getBytes(), StandardOpenOption.APPEND);
+        }
+
+        if (file.length() > outputSize && !isShutdown) {
             Files.copy(file.toPath(), new File(outputDir + "/" + rootName + "_old.csv").toPath(),
                     StandardCopyOption.REPLACE_EXISTING);
             Files.write(file.toPath(), new byte[0], StandardOpenOption.TRUNCATE_EXISTING);

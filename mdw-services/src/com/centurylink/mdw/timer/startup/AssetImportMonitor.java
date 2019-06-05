@@ -78,7 +78,8 @@ public class AssetImportMonitor implements StartupService {
 
     public void onShutdown() {
         _terminating = true;
-        thread.interrupt();
+        if (thread != null)
+            thread.interrupt();
     }
 
     public void start() {
