@@ -203,7 +203,7 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
             if (map.get(roundStartDate) == null)
                 map.put(roundStartDate, new ArrayList<>());
             // gaps at end
-            Date endDate = getEndDate(query);
+            Date endDate = getRoundDate(getEndDate(query));
             while ((endDate != null) && ((endDate.getTime() - prevStartDate.getTime()) > DAY_MS)) {
                 prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
                 map.put(getRoundDate(prevStartDate), new ArrayList<>());
@@ -256,14 +256,6 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
         StringBuilder where = new StringBuilder("where path is not null\n");
         List<Object> params = new ArrayList<>();
 
-        boolean includeHealthCheck = query.getBooleanFilter("Health Check");
-        if (!includeHealthCheck) {
-            where.append("  and path != ?");
-            params.add("AppSummary");
-            where.append(" and path != ?\n");
-            params.add("Get->AppSummary");
-        }
-
         String ownerType;
         String direction = query.getFilter("direction");
         if ("out".equals(direction)) {
@@ -274,6 +266,18 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
         }
         else {
             ownerType = OwnerType.LISTENER_RESPONSE;
+
+            boolean includeHealthCheck = query.getBooleanFilter("Health Check");
+            if (!includeHealthCheck) {
+                where.append("  and path != ?");
+                params.add("AppSummary");
+                where.append(" and path != ?\n");
+                params.add("GET->AppSummary");
+                where.append("  and path != ?");
+                params.add("GetAppSummary");
+                where.append(" and path != ?\n");
+                params.add("GET->GetAppSummary");
+            }
         }
 
         if ("completionTime".equals(by)) {

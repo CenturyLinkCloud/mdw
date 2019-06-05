@@ -295,7 +295,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
             if (map.get(roundStartDate) == null)
                 map.put(roundStartDate, new ArrayList<>());
             // gaps at end
-            Date endDate = getEndDate(query);
+            Date endDate = getRoundDate(getEndDate(query));
             while ((endDate != null) && ((endDate.getTime() - prevStartDate.getTime()) > DAY_MS)) {
                 prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
                 map.put(getRoundDate(prevStartDate), new ArrayList<>());

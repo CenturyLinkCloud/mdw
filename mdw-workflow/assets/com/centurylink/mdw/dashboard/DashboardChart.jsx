@@ -15,6 +15,7 @@ class DashboardChart extends Component {
     this.defaultTimespan = 'Week';
     this.chartColors = ['#3366CC','#FF9900','#DC3912','#109618','#990099','#3B3EAC','#0099C6','#DD4477','#66AA00','#B82E2E','#316395','#994499','#22AA99','#AAAA11','#6633CC','#E67300','#8B0707','#329262','#5574A6','#3B3EAC'];
     this.chartOptions = {legend: {display: false, position: 'bottom'}};
+    this.day_ms = 24 * 3600 * 1000;
 
     this.state = {
       timespan: this.defaultTimespan,
@@ -72,7 +73,7 @@ class DashboardChart extends Component {
 
   getStart() {
     if (this.state.filters.Ending) {
-      var spanMs = 24 * 3600 * 1000; // one day
+      var spanMs = this.day_ms;
       if (this.state.timespan === 'Week') {
         spanMs = spanMs * 6;
       }
@@ -168,6 +169,7 @@ class DashboardChart extends Component {
       filters.Ending.setHours(new Date().getHours());
     }
     else {
+      // midnight of the next day
       filters.Ending.setHours(0);
     }
     this.setState({
@@ -218,6 +220,12 @@ class DashboardChart extends Component {
       let val = this.state.filters[key];
       if (val) {
         if (val instanceof Date) {
+          if (key == 'Ending') {
+            if (this.state.timespan === 'Week' || this.state.timespan === 'Month') {
+              // midnight of the day after the selected date
+              val = new Date(val.getTime() + this.day_ms);
+            }
+          }
           url += '&' + key + '=' + val.toISOString();
         }
         else {
