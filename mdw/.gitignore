@@ -8,6 +8,7 @@ local.gradle
 .temp/
 temp/
 mdw.log
+logs/
 /deps.txt
 /buildSrc/
 mdw-boot-*.jar
