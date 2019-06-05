@@ -16,7 +16,7 @@ public class Metric implements Jsonable {
     private String name;
     public String getName() { return name; }
 
-    public long value;
+    private long value;
     public long getValue() { return value; }
     public void setValue(long value) { this.value = value; }
 

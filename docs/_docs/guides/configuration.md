@@ -175,6 +175,9 @@ title: MDW Configuration
       exclude.patterns: **/temp/*
       masked.lines: 'password:'  # default=mdw.database.password=,LDAP-AppPassword=,password:
 
+    # Dashboard system metrics history
+    system.metrics.location: ./logs  # if not specified, no history will be retained
+
     # https://centurylinkcloud.github.io/mdw/docs/guides/tuning/
     threadpool:
       max_threads: 10  # default=10
@@ -196,8 +199,13 @@ title: MDW Configuration
       library.path: '/opt/custom:/opt/other'
       runtime.classpath: '/opt/important/impl.jar'
 
-    services:
-      http.basic.auth: true  # default=false
+    milestone:
+      groups:  # list of milestone groups
+        GroupOne:
+          color: '#990099'
+        GroupTwo:
+          color: '#ff9900'
+          description: 'Describe me'
 
     activity:
       resume.delay: 3  # (seconds) default=2

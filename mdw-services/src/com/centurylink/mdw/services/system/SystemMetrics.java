@@ -1,5 +1,6 @@
 package com.centurylink.mdw.services.system;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.MdwServiceRegistry;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.WebSocketMessenger;
@@ -10,7 +11,11 @@ import com.centurylink.mdw.model.system.SystemMetric;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,12 +24,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static com.centurylink.mdw.config.PropertyManager.getBooleanProperty;
-import static com.centurylink.mdw.config.PropertyManager.getIntegerProperty;
+import static com.centurylink.mdw.config.PropertyManager.*;
 
 public class SystemMetrics {
 
-    private int period;
+    private int period;      // capture interval (seconds)
+    private int datapoints;  // datapoints to keep in memory
+    private File outputDir;  // history output location
+    private int outputSize;  // max output file size
+    private String hostName;
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
@@ -50,7 +58,18 @@ public class SystemMetrics {
     private void initialize() {
         period = getIntegerProperty(PropertyNames.MDW_SYSTEM_METRICS_PERIOD, 5);
         if (period > 0) {
-            int retain = getIntegerProperty(PropertyNames.MDW_SYSTEM_METRICS_RETENTION, 3600) / period;
+            hostName = ApplicationContext.getHostname();
+            int port = ApplicationContext.getServerPort();
+            if (port != 0 && port != 8080)
+                hostName += "_" + port;
+            // seconds worth of data to keep in memory
+            int retention = getIntegerProperty(PropertyNames.MDW_SYSTEM_METRICS_RETENTION, 3600);
+            datapoints = retention / period;
+            String logLoc = getProperty(PropertyNames.MDW_SYSTEM_METRICS_LOCATION);
+            if (logLoc != null) {
+                outputDir = new File(logLoc);
+            }
+            outputSize = getIntegerProperty(PropertyNames.MDW_SYSTEM_METRICS_BYTES, 10485760);
             systemMetrics = new TreeMap<>();
             metricDataLists = new HashMap<>();
             for (SystemMetric systemMetric :
@@ -58,7 +77,7 @@ public class SystemMetrics {
                 if (getBooleanProperty(PropertyNames.MDW_SYSTEM_METRICS_ENABLED + "." + systemMetric.getName(),
                         true)) {
                     systemMetrics.put(systemMetric.getName(), systemMetric);
-                    metricDataLists.put(systemMetric.getName(), new MetricDataList(period, retain));
+                    metricDataLists.put(systemMetric.getName(), new MetricDataList(period, datapoints));
                 }
             }
             scheduler = Executors.newScheduledThreadPool(systemMetrics.size());
@@ -75,7 +94,15 @@ public class SystemMetrics {
                 scheduler.scheduleAtFixedRate(() -> {
                     if (active) {
                         LocalDateTime time = LocalDateTime.now();
-                        doCollect(time.minusSeconds(time.getSecond() % period), systemMetric);
+                        doCollect(time.minusSeconds(time.getSecond() % period).minusNanos(time.getNano()), systemMetric);
+                        if (outputDir != null && (metricDataLists.get(systemMetric.getName()).getTotal() % datapoints == 0)) {
+                            try {
+                                doOutput(systemMetric);
+                            }
+                            catch (IOException ex) {
+                                logger.error(ex.getMessage(), ex);
+                            }
+                        }
                     }
                 }, period - (LocalDateTime.now().getSecond() % period), period, TimeUnit.SECONDS);
             }
@@ -100,7 +127,7 @@ public class SystemMetrics {
 
     private void doCollect(LocalDateTime time, SystemMetric systemMetric) {
         if (logger.isTraceEnabled())
-            logger.trace("Collecting system metrics: " + systemMetric.getName());
+            logger.trace("Collecting system metrics (" + time + "):"  + systemMetric.getName());
 
         MetricData data = new MetricData(time, systemMetric.collect());
         MetricDataList dataList = metricDataLists.get(systemMetric.getName());
@@ -110,6 +137,25 @@ public class SystemMetrics {
                     dataList.getJson(300).toString()); // TODO param
         } catch (IOException ex) {
             logger.severeException(ex.getMessage(), ex);
+        }
+    }
+
+    private void doOutput(SystemMetric systemMetric) throws IOException {
+        if (!outputDir.isDirectory() && !outputDir.mkdirs()) {
+            throw new IOException("Unable to create metrics output directory: " + outputDir.getAbsolutePath());
+        }
+        String rootName = systemMetric.getName() + "_" + hostName;
+        File file = new File(outputDir + "/" + rootName + ".csv");
+        MetricDataList dataList = metricDataLists.get(systemMetric.getName());
+        if (!file.isFile() || file.length() == 0) {
+            Files.write(file.toPath(), dataList.getHeadings().getBytes(), StandardOpenOption.TRUNCATE_EXISTING,
+                    StandardOpenOption.CREATE_NEW);
+        }
+        Files.write(file.toPath(), dataList.getCsv().getBytes(), StandardOpenOption.APPEND);
+        if (file.length() > outputSize) {
+            Files.copy(file.toPath(), new File(outputDir + "/" + rootName + "_old.csv").toPath(),
+                    StandardCopyOption.REPLACE_EXISTING);
+            Files.write(file.toPath(), new byte[0], StandardOpenOption.TRUNCATE_EXISTING);
         }
     }
 }

@@ -192,6 +192,8 @@ public class PropertyNames {
     public static final String MDW_SYSTEM_METRICS_PERIOD = "mdw.system.metrics.period";
     public static final String MDW_SYSTEM_METRICS_RETENTION = "mdw.system.metrics.retention";
     public static final String MDW_SYSTEM_METRICS_ENABLED = "mdw.system.metrics.enabled";
+    public static final String MDW_SYSTEM_METRICS_LOCATION = "mdw.system.metrics.location";
+    public static final String MDW_SYSTEM_METRICS_BYTES = "mdw.system.metrics.bytes";
 
     // milestones
     public static final String MDW_MILESTONE_GROUPS = "mdw.milestone.groups";
