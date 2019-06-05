@@ -18,8 +18,11 @@ public class MetricDataList {
 
     private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss");
 
-    private int max;
-    private int period;
+    private int period;    // capture interval
+    private int max;       // max datapoints to keep in memory
+    private int total;     // total datapoints collected
+    public int getTotal() { return total; }
+
     private List<MetricData> dataList;
 
     public MetricDataList(int period, int max) {
@@ -33,6 +36,7 @@ public class MetricDataList {
             dataList.remove(0);
         }
         dataList.add(metricData);
+        total++;
     }
 
     public MetricData get(int i) {
@@ -106,6 +110,30 @@ public class MetricDataList {
         else {
             return dataList.subList(dataList.size() - count, dataList.size() - 1);
         }
+    }
+
+    public String getHeadings() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Time");
+        if (!dataList.isEmpty()) {
+            for (Metric metric : dataList.get(0).getMetrics()) {
+                sb.append(",").append(metric.getName());
+            }
+        }
+        sb.append("\n");
+        return sb.toString();
+    }
+
+    public String getCsv() {
+        StringBuilder sb = new StringBuilder();
+        for (MetricData data : dataList) {
+            sb.append(data.getTime());
+            for (Metric metric : data.getMetrics()) {
+                sb.append(",").append(metric.getValue());
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 
     public int size() {
