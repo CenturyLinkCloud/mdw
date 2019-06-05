@@ -175,7 +175,8 @@ public abstract class JsonRestService extends RestService implements JsonService
                 String path = headers.get(Listener.METAINFO_REQUEST_PATH);
                 JSONObject response = service(path, null, headers);
                 Jsonable jsonable = ((JsonExportable)this).toJsonable(getQuery(path, headers), response);
-                return new JsonExport(jsonable);
+                String name = ((JsonExportable)this).getExportName();
+                return new JsonExport(jsonable, name);
             }
             else {
                 throw new ServiceException(HTTP_404_NOT_FOUND, "Service not exportable");

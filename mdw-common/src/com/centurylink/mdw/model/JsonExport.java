@@ -42,8 +42,10 @@ public class JsonExport {
     private static final int ZIP_BUFFER_KB = 16;
 
     private Jsonable jsonable;
-    public JsonExport(Jsonable json) {
+    private String name;
+    public JsonExport(Jsonable json, String name) {
         this.jsonable = json;
+        this.name = name;
     }
 
     // TODO: more flexible approach to support ordering, types, etc (com.centurylink.mdw.model.Value?)
@@ -53,10 +55,10 @@ public class JsonExport {
         this.labels = labels;
     }
 
-    private List<String> names = new ArrayList<String>();
+    private List<String> names = new ArrayList<>();
 
     public String exportXlsxBase64() throws JSONException, IOException {
-        return exportXlsxBase64(null);
+        return exportXlsxBase64(name);
     }
 
     /**
@@ -106,13 +108,9 @@ public class JsonExport {
     }
 
     public String exportXlsxBase64(String name) throws JSONException, IOException {
-        Workbook xlsx = exportXlsx();
+        Workbook xlsx = exportXlsx(name);
         byte[] bytes = writeExcel(xlsx);
         return new String(Base64.encodeBase64(bytes));
-    }
-
-    public Workbook exportXlsx() throws JSONException {
-        return exportXlsx(null);
     }
 
     public Workbook exportXlsx(String name) throws JSONException {
@@ -142,8 +140,7 @@ public class JsonExport {
         else if (jsonable instanceof JsonListMap) {
             JsonListMap<?> listMap = (JsonListMap<?>) jsonable;
             int row = 1;
-            List<String> keys = new ArrayList<String>();
-            keys.addAll(listMap.getJsonables().keySet());
+            List<String> keys = new ArrayList<>(listMap.getJsonables().keySet());
             Collections.sort(keys);
             for (String key : keys) {
                 List<? extends Jsonable> jsonableList = listMap.getJsonables().get(key);

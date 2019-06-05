@@ -25,6 +25,9 @@ import com.centurylink.mdw.common.service.Query;
  */
 public interface JsonExportable {
 
-    public Jsonable toJsonable(Query query, JSONObject json) throws JSONException;
+    Jsonable toJsonable(Query query, JSONObject json) throws JSONException;
+    default String getExportName() {
+        return null;
+    }
 
 }

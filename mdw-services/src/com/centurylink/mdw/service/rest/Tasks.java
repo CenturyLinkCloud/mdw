@@ -367,6 +367,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
         }
     }
 
+    @Override
     public Jsonable toJsonable(Query query, JSONObject json) throws JSONException {
         try {
             if (json.has(TaskList.TASKS))
@@ -380,6 +381,9 @@ public class Tasks extends JsonRestService implements JsonExportable {
             throw new JSONException(ex);
         }
     }
+
+    @Override
+    public String getExportName() { return "Tasks"; }
 
     @Override
     public List<String> getRoles(String path) {

@@ -165,6 +165,7 @@ public class Activities extends JsonRestService implements JsonExportable {
 
     }
 
+    @Override
     public Jsonable toJsonable(Query query, JSONObject json) throws JSONException {
         try {
             if (json.has(ActivityList.ACTIVITY_INSTANCES))
@@ -178,6 +179,9 @@ public class Activities extends JsonRestService implements JsonExportable {
             throw new JSONException(ex);
         }
     }
+
+    @Override
+    public String getExportName() { return "Activities"; }
 
     @Override
     protected Long getEntityId(String path, Object content, Map<String,String> headers) {
