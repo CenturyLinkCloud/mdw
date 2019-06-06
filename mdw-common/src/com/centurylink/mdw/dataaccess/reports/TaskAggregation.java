@@ -6,11 +6,9 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.PreparedSelect;
 import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.model.task.TaskAggregate;
-import com.centurylink.mdw.model.task.TaskStatus;
 import com.centurylink.mdw.model.task.TaskStatuses;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.*;
@@ -55,7 +53,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
                 "order by ct desc\n";
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "TaskAggregation.getTopsByThroughput()");
-        return getTopAggregates(query, preparedSelect, resultSet -> {
+        return getTopAggregates(preparedSelect, query, resultSet -> {
             long ct = Math.round(resultSet.getDouble("ct"));
             TaskAggregate taskAggregate = new TaskAggregate(ct);
             taskAggregate.setCount(ct);
@@ -77,7 +75,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
                 "order by ct desc";
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "TaskAggregation.getTopsByWorkgroup()");
-        return getTopAggregates(query, preparedSelect, resultSet -> {
+        return getTopAggregates(preparedSelect, query, resultSet -> {
             long ct = Math.round(resultSet.getDouble("ct"));
             TaskAggregate taskAggregate = new TaskAggregate(ct);
             taskAggregate.setCount(ct);
@@ -100,7 +98,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
                 "order by ct desc";
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "TaskAggregation.getTopsByAssignee()");
-        return getTopAggregates(query, preparedSelect, resultSet -> {
+        return getTopAggregates(preparedSelect, query, resultSet -> {
             long ct = Math.round(resultSet.getDouble("ct"));
             TaskAggregate taskAggregate = new TaskAggregate(ct);
             taskAggregate.setCount(ct);
@@ -119,7 +117,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
                 "order by ct desc\n";
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "TaskAggregation.getTopsByStatus()");
-        return getTopAggregates(query, preparedSelect, resultSet -> {
+        return getTopAggregates(preparedSelect, query, resultSet -> {
             long ct = Math.round(resultSet.getDouble("ct"));
             TaskAggregate taskAggregate = new TaskAggregate(ct);
             taskAggregate.setCount(ct);
@@ -140,7 +138,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
                 "order by elapsed desc\n";
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "TaskAggregation.getTopsByCompletionTime()");
-        return getTopAggregates(query, preparedSelect, resultSet -> {
+        return getTopAggregates(preparedSelect, query, resultSet -> {
             Long elapsed = Math.round(resultSet.getDouble("elapsed") / 1000);
             TaskAggregate taskAggregate = new TaskAggregate(elapsed);
             taskAggregate.setCount(resultSet.getLong("ct"));
@@ -248,23 +246,8 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
             else
                 sql.append("\norder by to_date(st, 'DD-Mon-yyyy')\n");
 
-            db.openConnection();
-            ResultSet rs = db.runSelect("Breakdown by " + by, sql.toString(), params.toArray());
-            TreeMap<Date,List<TaskAggregate>> map = new TreeMap<>();
-            Date prevStartDate = getStartDate(query);
-            while (rs.next()) {
-                String startDateStr = rs.getString("st");
-                Date startDate = getDateFormat().parse(startDateStr);
-                // fill in gaps
-                while (startDate.getTime() - prevStartDate.getTime() > DAY_MS) {
-                    prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
-                    map.put(getRoundDate(prevStartDate), new ArrayList<>());
-                }
-                List<TaskAggregate> taskAggregates = map.get(startDate);
-                if (taskAggregates == null) {
-                    taskAggregates = new ArrayList<>();
-                    map.put(startDate, taskAggregates);
-                }
+            PreparedSelect select = new PreparedSelect(sql.toString(), params.toArray(), "Breakdown by " + by);
+            return handleBreakdownResult(select, query, rs -> {
                 TaskAggregate taskAggregate = new TaskAggregate(rs.getLong("val"));
                 if (by.equals("throughput")) {
                     taskAggregate.setId(rs.getLong("task_id"));
@@ -287,29 +270,14 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
                     taskAggregate.setUserId(rs.getString("cuid"));
                     taskAggregate.setName(rs.getString("name"));
                 }
-                taskAggregates.add(taskAggregate);
-                prevStartDate = startDate;
-            }
-            // missing start date
-            Date roundStartDate = getRoundDate(getStartDate(query));
-            if (map.get(roundStartDate) == null)
-                map.put(roundStartDate, new ArrayList<>());
-            // gaps at end
-            Date endDate = getRoundDate(getEndDate(query));
-            while ((endDate != null) && ((endDate.getTime() - prevStartDate.getTime()) > DAY_MS)) {
-                prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
-                map.put(getRoundDate(prevStartDate), new ArrayList<>());
-            }
-            return map;
+                return taskAggregate;
+            });
         }
         catch (DataAccessException ex) {
             throw ex;
         }
         catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);
-        }
-        finally {
-            db.closeConnection();
         }
     }
 
