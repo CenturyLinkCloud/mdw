@@ -42,6 +42,11 @@ public class SystemMessages {
     }
 
     public static Bulletin bulletinOn(Level level, String message) {
+        if (level == Level.Info)
+            logger.info(message);
+        else if (level == Level.Error)
+            logger.error(message);
+
         return bulletinOn(new Bulletin(level, message));
     }
 
