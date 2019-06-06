@@ -9,7 +9,6 @@ import com.centurylink.mdw.model.workflow.ActivityAggregate;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.*;
@@ -48,7 +47,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
                 "order by ct desc\n";
 
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),"ActivityAggregation.getTopsByStuck()");
-        return getTopAggregates(query, preparedSelect, resultSet -> {
+        return getTopAggregates(preparedSelect, query, resultSet -> {
             ActivityAggregate activityAggregate = new ActivityAggregate(resultSet.getLong("ct"));
             String actId = resultSet.getString("act_unique_id");
             activityAggregate.setActivityId(actId);
@@ -75,7 +74,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
                 "group by status_cd\n" +
                 "order by ct desc\n";
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),"ActivityAggregation.getTopsByStatus()");
-        return getTopAggregates(query, preparedSelect, resultSet -> {
+        return getTopAggregates(preparedSelect, query, resultSet -> {
             long ct = Math.round(resultSet.getDouble("ct"));
             ActivityAggregate activityAggregate = new ActivityAggregate(ct);
             activityAggregate.setCount(ct);
@@ -93,11 +92,11 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
             PreparedWhere preparedWhere = getActivityWhere(query);
             StringBuilder sql = new StringBuilder();
             if (by.equals("status"))
-                sql.append("select count(a.status_cd) as ct, a.st, a.status_cd\n");
+                sql.append("select count(a.status_cd) as val, a.st, a.status_cd\n");
             else if (by.equals("throughput"))
-                sql.append("select count(a.act_unique_id) as ct, a.st, a.act_unique_id\n");
+                sql.append("select count(a.act_unique_id) as val, a.st, a.act_unique_id\n");
             else if (by.equals("total"))
-                sql.append("select count(a.st) as ct, a.st\n");
+                sql.append("select count(a.st) as val, a.st\n");
 
             if (db.isMySQL())
                 sql.append("from (select date(ai.start_dt) as st");
@@ -151,24 +150,10 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
             else
                 sql.append("\norder by to_date(st, 'DD-Mon-yyyy')");
 
-            db.openConnection();
-            ResultSet rs = db.runSelect("Breakdown by " + by, sql.toString(), params.toArray());
-            TreeMap<Date,List<ActivityAggregate>> map = new TreeMap<>();
-            Date prevStartDate = getStartDate(query);
-            while (rs.next()) {
-                String startDateStr = rs.getString("st");
-                Date startDate = getDateFormat().parse(startDateStr);
-                // fill in gaps
-                while (startDate.getTime() - prevStartDate.getTime() > DAY_MS) {
-                    prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
-                    map.put(getRoundDate(prevStartDate), new ArrayList<>());
-                }
-                List<ActivityAggregate> activityAggregates = map.get(startDate);
-                if (activityAggregates == null) {
-                    activityAggregates = new ArrayList<>();
-                    map.put(startDate, activityAggregates);
-                }
-                ActivityAggregate activityAggregate = new ActivityAggregate(rs.getLong("ct"));
+            PreparedSelect select = new PreparedSelect(sql.toString(), params.toArray(), "Breakdown by " + by);
+
+            return handleBreakdownResult(select, query, rs -> {
+                ActivityAggregate activityAggregate = new ActivityAggregate(rs.getLong("val"));
                 if (by.equals("status")) {
                     int statusCode = rs.getInt("status_cd");
                     activityAggregate.setName(WorkStatuses.getName(statusCode));
@@ -183,30 +168,14 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
                 }
                 else if (!by.equals("total")) {
                 }
-
-                activityAggregates.add(activityAggregate);
-                prevStartDate = startDate;
-            }
-            // missing start date
-            Date roundStartDate = getRoundDate(getStartDate(query));
-            if (map.get(roundStartDate) == null)
-                map.put(roundStartDate, new ArrayList<>());
-            // gaps at end
-            Date endDate = getRoundDate(getEndDate(query));
-            while (endDate != null && endDate.getTime() - prevStartDate.getTime() > DAY_MS) {
-                prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
-                map.put(getRoundDate(prevStartDate), new ArrayList<>());
-            }
-            return map;
+                return activityAggregate;
+            });
         }
         catch (DataAccessException ex) {
             throw ex;
         }
         catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);
-        }
-        finally {
-            db.closeConnection();
         }
     }
 

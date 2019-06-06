@@ -53,7 +53,7 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "RequestAggregation.getTopsByThroughput()");
 
-        return getTopAggregates(query, preparedSelect, resultSet -> {
+        return getTopAggregates(preparedSelect, query, resultSet -> {
             long ct = Math.round(resultSet.getDouble("ct"));
             RequestAggregate requestAggregate = new RequestAggregate(ct);
             requestAggregate.setCount(ct);
@@ -73,7 +73,7 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
                 db.pagingQuerySuffix(query.getStart(), query.getMax());
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "RequestAggregation.getTopsByStatus()");
-        return getTopAggregates(query, preparedSelect, resultSet -> {
+        return getTopAggregates(preparedSelect, query, resultSet -> {
             long ct = Math.round(resultSet.getDouble("ct"));
             RequestAggregate requestAggregate = new RequestAggregate(ct);
             requestAggregate.setCount(ct);
@@ -97,7 +97,7 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
                 db.pagingQuerySuffix(query.getStart(), query.getMax());
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "RequestAggregation.getTopsByCompletionTime()");
-        return getTopAggregates(query, preparedSelect, resultSet -> {
+        return getTopAggregates(preparedSelect, query, resultSet -> {
             Long elapsed = Math.round(resultSet.getDouble("elapsed"));
             RequestAggregate requestAggregate = new RequestAggregate(elapsed);
             requestAggregate.setCount(resultSet.getLong("ct"));
@@ -169,23 +169,9 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
             else
                 sql.append("\norder by to_date(st, 'DD-Mon-yyyy')\n");
 
-            db.openConnection();
-            ResultSet rs = db.runSelect("Breakdown by " + by, sql.toString(), params.toArray());
-            TreeMap<Date,List<RequestAggregate>> map = new TreeMap<>();
-            Date prevStartDate = getStartDate(query);
-            while (rs.next()) {
-                String startDateStr = rs.getString("st");
-                Date startDate = getDateFormat().parse(startDateStr);
-                // fill in gaps
-                while (startDate.getTime() - prevStartDate.getTime() > DAY_MS) {
-                    prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
-                    map.put(getRoundDate(prevStartDate), new ArrayList<>());
-                }
-                List<RequestAggregate> requestAggregates = map.get(startDate);
-                if (requestAggregates == null) {
-                    requestAggregates = new ArrayList<>();
-                    map.put(startDate, requestAggregates);
-                }
+            PreparedSelect select = new PreparedSelect(sql.toString(), params.toArray(), "Breakdown by " + by);
+
+            return handleBreakdownResult(select, query, rs -> {
                 RequestAggregate requestAggregate = new RequestAggregate(rs.getLong("val"));
                 if (by.equals("status")) {
                     int statusCode = rs.getInt("status_code");
@@ -195,29 +181,14 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
                 else if (!by.equals("total")) {
                     requestAggregate.setPath(rs.getString("path"));
                 }
-                requestAggregates.add(requestAggregate);
-                prevStartDate = startDate;
-            }
-            // missing start date
-            Date roundStartDate = getRoundDate(getStartDate(query));
-            if (map.get(roundStartDate) == null)
-                map.put(roundStartDate, new ArrayList<>());
-            // gaps at end
-            Date endDate = getRoundDate(getEndDate(query));
-            while ((endDate != null) && ((endDate.getTime() - prevStartDate.getTime()) > DAY_MS)) {
-                prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
-                map.put(getRoundDate(prevStartDate), new ArrayList<>());
-            }
-            return map;
+                return requestAggregate;
+            });
         }
         catch (DataAccessException ex) {
             throw ex;
         }
         catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);
-        }
-        finally {
-            db.closeConnection();
         }
     }
 

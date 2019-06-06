@@ -8,7 +8,6 @@ import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.model.workflow.ProcessAggregate;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.*;
@@ -50,7 +49,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
                 db.pagingQuerySuffix(query.getStart(), query.getMax());
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "ProcessAggregation.getTopsByThroughput()");
-        return getTopAggregates(query, preparedSelect, resultSet -> {
+        return getTopAggregates(preparedSelect, query, resultSet -> {
             long ct = Math.round(resultSet.getDouble("ct"));
             ProcessAggregate processAggregate = new ProcessAggregate(ct);
             processAggregate.setCount(ct);
@@ -70,7 +69,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
                 db.pagingQuerySuffix(query.getStart(), query.getMax());
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "ProcessAggregation.getTopsByStatus()");
-        return getTopAggregates(query, preparedSelect, resultSet -> {
+        return getTopAggregates(preparedSelect, query, resultSet -> {
             long ct = Math.round(resultSet.getDouble("ct"));
             ProcessAggregate processAggregate = new ProcessAggregate(ct);
             processAggregate.setCount(ct);
@@ -92,7 +91,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
                 db.pagingQuerySuffix(query.getStart(), query.getMax());
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "ProcessAggregation.getTopsByCompletionTime()");
-        return getTopAggregates(query, preparedSelect, resultSet -> {
+        return getTopAggregates(preparedSelect, query, resultSet -> {
             Long elapsed = Math.round(resultSet.getDouble("elapsed"));
             ProcessAggregate processAggregate = new ProcessAggregate(elapsed);
             processAggregate.setCount(resultSet.getLong("ct"));
@@ -164,23 +163,8 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
             else
                 sql.append("\norder by to_date(st, 'DD-Mon-yyyy')\n");
 
-            db.openConnection();
-            ResultSet rs = db.runSelect("Breakdown by " + by, sql.toString(), params.toArray());
-            TreeMap<Date,List<ProcessAggregate>> map = new TreeMap<>();
-            Date prevStartDate = getStartDate(query);
-            while (rs.next()) {
-                String startDateStr = rs.getString("st");
-                Date startDate = getDateFormat().parse(startDateStr);
-                // fill in gaps
-                while (startDate.getTime() - prevStartDate.getTime() > DAY_MS) {
-                    prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
-                    map.put(getRoundDate(prevStartDate), new ArrayList<>());
-                }
-                List<ProcessAggregate> processAggregates = map.get(startDate);
-                if (processAggregates == null) {
-                    processAggregates = new ArrayList<>();
-                    map.put(startDate, processAggregates);
-                }
+            PreparedSelect select = new PreparedSelect(sql.toString(), params.toArray(), "Breakdown by " + by);
+            return handleBreakdownResult(select, query, rs -> {
                 ProcessAggregate processAggregate = new ProcessAggregate(rs.getLong("val"));
                 if (by.equals("status")) {
                     int statusCode = rs.getInt("status_cd");
@@ -190,29 +174,14 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
                 else if (!by.equals("total")) {
                     processAggregate.setId(rs.getLong("process_id"));
                 }
-                processAggregates.add(processAggregate);
-                prevStartDate = startDate;
-            }
-            // missing start date
-            Date roundStartDate = getRoundDate(getStartDate(query));
-            if (map.get(roundStartDate) == null)
-                map.put(roundStartDate, new ArrayList<>());
-            // gaps at end
-            Date endDate = getRoundDate(getEndDate(query));
-            while ((endDate != null) && ((endDate.getTime() - prevStartDate.getTime()) > DAY_MS)) {
-                prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
-                map.put(getRoundDate(prevStartDate), new ArrayList<>());
-            }
-            return map;
+                return processAggregate;
+            });
         }
         catch (DataAccessException ex) {
             throw ex;
         }
         catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);
-        }
-        finally {
-            db.closeConnection();
         }
     }
 
