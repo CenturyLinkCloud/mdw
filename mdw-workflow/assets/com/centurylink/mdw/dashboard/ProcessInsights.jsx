@@ -74,15 +74,17 @@ class ProcessInsights extends Component {
       process: this.state.process,
       data: {}
     }, () => {
-      this.retrieveData()
-      .then(data => {
-        this.setState({
+      if (this.state.processDef.id !== undefined) {
+        this.retrieveData()
+        .then(data => {
+          this.setState({
           packages: this.state.packages,
           sample: sampleSize,
           process: this.state.process,
           data: data
+          });
         });
-      });
+      }
     });
   }
 
