@@ -1,16 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="EntryPointsManager">
-    <list size="7">
-      <item index="0" class="java.lang.String" itemvalue="com.centurylink.mdw.annotations.Activity" />
-      <item index="1" class="java.lang.String" itemvalue="com.centurylink.mdw.annotations.Monitor" />
-      <item index="2" class="java.lang.String" itemvalue="com.centurylink.mdw.annotations.RegisteredService" />
-      <item index="3" class="java.lang.String" itemvalue="com.centurylink.mdw.annotations.ScheduledJob" />
-      <item index="4" class="java.lang.String" itemvalue="javax.servlet.annotation.WebFilter" />
-      <item index="5" class="java.lang.String" itemvalue="org.springframework.context.annotation.Bean" />
-      <item index="6" class="java.lang.String" itemvalue="org.springframework.stereotype.Controller" />
-    </list>
-  </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
