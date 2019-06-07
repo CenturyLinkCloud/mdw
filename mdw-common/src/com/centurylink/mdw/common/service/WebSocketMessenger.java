@@ -68,7 +68,7 @@ public class WebSocketMessenger {
 
     @OnError
     public void onError(Session session, Throwable t) {
-        if (t instanceof EOFException && (t.getMessage() != null || "null".equals(t.getMessage()))) {
+        if (t instanceof EOFException && (t.getMessage() == null || "null".equals(t.getMessage()))) {
             // avoid nuisance logging when browser closes connection
             if (logger.isMdwDebugEnabled())
                 logger.warn(t.getMessage());
