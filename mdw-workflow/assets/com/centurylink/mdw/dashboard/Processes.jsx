@@ -39,7 +39,6 @@ class Processes extends Component {
   }
 
   render() {
-    
     const breakdownConfig = {
       breakdowns: [
         {

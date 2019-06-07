@@ -98,10 +98,8 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
             else if (by.equals("total"))
                 sql.append("select count(a.st) as val, a.st\n");
 
-            if (db.isMySQL())
-                sql.append("from (select date(ai.start_dt) as st");
-            else
-                sql.append("from (select to_char(ai.start_dt,'DD-Mon-yyyy') as st");
+            sql.append("from (select ").append(getSt("ai.start_dt", query));
+
             if (by.equals("status"))
                 sql.append(", ai.status_cd ");
             else if (by.equals("throughput")) {

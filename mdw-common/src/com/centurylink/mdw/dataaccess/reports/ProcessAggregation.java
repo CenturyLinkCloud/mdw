@@ -116,10 +116,8 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
             else if (by.equals("total"))
                 sql.append("select count(pi.st) as val, pi.st\n");
 
-            if (db.isMySQL())
-                sql.append("from (select date(start_dt) as st");
-            else
-                sql.append("from (select to_char(start_dt,'DD-Mon-yyyy') as st");
+            sql.append("from (select ").append(getSt("start_dt", query));
+
             if (by.equals("status"))
                 sql.append(", status_cd ");
             else if (!by.equals("total"))

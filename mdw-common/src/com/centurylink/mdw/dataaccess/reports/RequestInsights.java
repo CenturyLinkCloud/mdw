@@ -30,6 +30,7 @@ public class RequestInsights extends CommonDataAccess {
         try {
             db.openConnection();
             List<Insight> insights = new ArrayList<>();
+            TimeIncrement increment = TimeIncrement.day;
             Date prevStart = getStartDate(query);
             ResultSet rs = db.runSelect("Request insights ", sql, where.getParams());
             while (rs.next()) {
@@ -39,13 +40,13 @@ public class RequestInsights extends CommonDataAccess {
                 // fill in gaps
                 while (start.getTime() - prevStart.getTime() > Query.Timespan.Day.millis()) {
                     prevStart = new Date(prevStart.getTime() + Query.Timespan.Day.millis());
-                    insights.add(new Insight(getRoundDate(prevStart).toInstant(), new LinkedHashMap<>()));
+                    insights.add(new Insight(getRoundDate(prevStart, increment).toInstant(), new LinkedHashMap<>()));
                 }
 
                 Insight insight = insights.stream().filter(in -> in.getTime().equals(start.toInstant())).findAny().orElse(null);
                 if (insight == null) {
                     LinkedHashMap<String,Integer> map = new LinkedHashMap<>();
-                    insight = new Insight(getRoundDate(start).toInstant(), map);
+                    insight = new Insight(getRoundDate(start, increment).toInstant(), map);
                     insights.add(insight);
                 }
 
@@ -58,7 +59,7 @@ public class RequestInsights extends CommonDataAccess {
             Date endDate = new Date(System.currentTimeMillis() + DatabaseAccess.getDbTimeDiff());
             while ((endDate.getTime() - prevStart.getTime()) > Query.Timespan.Day.millis()) {
                 prevStart = new Date(prevStart.getTime() + Query.Timespan.Day.millis());
-                insights.add(new Insight(getRoundDate(prevStart).toInstant(), new LinkedHashMap<>()));
+                insights.add(new Insight(getRoundDate(prevStart, increment).toInstant(), new LinkedHashMap<>()));
             }
 
             return insights;
@@ -83,7 +84,8 @@ public class RequestInsights extends CommonDataAccess {
             while (rs.next()) {
                 String startStr = rs.getString("st");
                 Date start = getDateFormat().parse(startStr);
-                timepoints.add(new Timepoint(getRoundDate(start).toInstant(), Math.round(rs.getDouble("ms"))));
+                timepoints.add(new Timepoint(getRoundDate(start, TimeIncrement.day).toInstant(),
+                        Math.round(rs.getDouble("ms"))));
             }
             return timepoints;
         }

@@ -77,7 +77,7 @@ class ChartHeader extends Component {
         }
         {this.props.title &&
           <HeaderDropdown id="timespan-dropdown"
-            items={[/*'Day',*/'Week','Month']}
+            items={['Hour','Day','Week','Month']}
             selected={this.props.timespan}
             onSelect={this.handleDropdownSelect} />
         }

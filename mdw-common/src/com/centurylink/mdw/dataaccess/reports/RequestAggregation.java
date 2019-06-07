@@ -122,10 +122,8 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
             else if (by.equals("total"))
                 sql.append("select count(req.st) as val, req.st\n");
 
-            if (db.isMySQL())
-                sql.append("from (select date(create_dt) as st");
-            else
-                sql.append("from (select to_char(create_dt,'DD-Mon-yyyy') as st");
+            sql.append("from (select ").append(getSt("create_dt", query));
+
             if (by.equals("status"))
                 sql.append(", status_code ");
             else if (!by.equals("total"))
