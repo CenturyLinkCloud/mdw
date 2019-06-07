@@ -156,6 +156,12 @@ public class SystemMetrics {
         }
         String rootName = systemMetric.getName() + "_" + hostName;
         File file = new File(outputDir + "/" + rootName + ".csv");
+        if (file.length() > outputSize && !isShutdown) {
+            Files.copy(file.toPath(), new File(outputDir + "/" + rootName + "_old.csv").toPath(),
+                    StandardCopyOption.REPLACE_EXISTING);
+            Files.write(file.toPath(), new byte[0], StandardOpenOption.TRUNCATE_EXISTING);
+        }
+
         MetricDataList dataList = metricDataLists.get(systemMetric.getName());
         if (!file.isFile())
             Files.write(file.toPath(), dataList.getHeadings().getBytes(), StandardOpenOption.CREATE_NEW);
@@ -168,12 +174,6 @@ public class SystemMetrics {
         }
         else {
             Files.write(file.toPath(), dataList.getCsv().getBytes(), StandardOpenOption.APPEND);
-        }
-
-        if (file.length() > outputSize && !isShutdown) {
-            Files.copy(file.toPath(), new File(outputDir + "/" + rootName + "_old.csv").toPath(),
-                    StandardCopyOption.REPLACE_EXISTING);
-            Files.write(file.toPath(), new byte[0], StandardOpenOption.TRUNCATE_EXISTING);
         }
     }
 }
