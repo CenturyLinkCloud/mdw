@@ -78,15 +78,17 @@ class ProcessHotspots extends Component {
       processDef: this.state.processDef,
       data: {}
     }, () => {
-      this.retrieveData()
-      .then(data => {
-        this.setState({
+      if (this.state.processDef.id !== undefined) {
+        this.retrieveData()
+        .then(data => {
+          this.setState({
           packages: this.state.packages,
           sample: sampleSize,
           processDef: this.state.processDef,
           data: data
+          });
         });
-      });
+      }
     });
   }
 

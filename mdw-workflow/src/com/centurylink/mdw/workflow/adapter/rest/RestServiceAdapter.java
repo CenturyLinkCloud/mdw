@@ -354,7 +354,11 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                 if (headersObj != null) {
                     headers = new HashMap<>();
                     for (Object key : ((Map<?,?>)headersObj).keySet()) {
-                        headers.put(key.toString(), ((Map<?,?>)headersObj).get(key).toString());
+                        if (key != null) {
+                            Object value = ((Map<?, ?>) headersObj).get(key);
+                            if (value != null)
+                                headers.put(key.toString(), value.toString());
+                        }
                     }
                 }
             }

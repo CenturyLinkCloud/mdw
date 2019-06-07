@@ -61,17 +61,12 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
     /**
      * This is not completion date.  It's ending start date.
      */
-    @SuppressWarnings("deprecation")
     protected Date getEndDate(Query query) {
         Instant instant = query.getInstantFilter("Ending");
         if (instant == null)
             return null;
         else {
-            Date end = new Date(Date.from(instant).getTime() + DatabaseAccess.getDbTimeDiff());
-            if (end.getHours() == 0) {
-                end = new Date(end.getTime() + DAY_MS);  // end of day
-            }
-            return end;
+            return new Date(Date.from(instant).getTime() + DatabaseAccess.getDbTimeDiff());
         }
     }
 
@@ -96,7 +91,7 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
 
     private static final int MAX_LIMIT = 100;
 
-    protected List<T> getTopAggregates(Query query, PreparedSelect select, AggregateSupplier<T> supplier)
+    protected List<T> getTopAggregates(PreparedSelect select, Query query, AggregateSupplier<T> supplier)
             throws SQLException, ServiceException {
         ResultSet rs = db.runSelect(select);
         List<T> list = new ArrayList<>();
@@ -109,5 +104,55 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
             idx++;
         }
         return list;
+    }
+
+    /**
+     * Common logic for handling breakdown results and filling in gaps.
+     * Relies on convention that resultSet start date column name is "st", and value
+     * column is identified as "val".
+     */
+    protected TreeMap<Date,List<T>> handleBreakdownResult(PreparedSelect select, Query query, AggregateSupplier supplier)
+            throws DataAccessException, SQLException, ParseException {
+        try {
+            db.openConnection();
+            ResultSet resultSet = db.runSelect(select);
+
+            TreeMap<Date,List<T>> map = new TreeMap<>();
+            Date start = getStartDate(query);
+            Date prevStartDate = start;
+            while (resultSet.next()) {
+                String startDateStr = resultSet.getString("st");
+                Date startDate = getDateFormat().parse(startDateStr);
+                // fill in gaps
+                while (startDate.getTime() - prevStartDate.getTime() > DAY_MS) {
+                    prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
+                    map.put(getRoundDate(prevStartDate), new ArrayList<>());
+                }
+                List<T> aggregates = map.get(startDate);
+                if (aggregates == null) {
+                    aggregates = new ArrayList<>();
+                    map.put(startDate, aggregates);
+                }
+
+                aggregates.add((T) supplier.get(resultSet));
+
+                prevStartDate = startDate;
+            }
+            // missing start date
+            Date roundStartDate = getRoundDate(start);
+            if (map.get(roundStartDate) == null)
+                map.put(roundStartDate, new ArrayList<>());
+            // gaps at end
+            Date end = getEndDate(query);
+            while ((end != null) && ((end.getTime() - prevStartDate.getTime()) > DAY_MS)) {
+                prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
+                map.put(getRoundDate(prevStartDate), new ArrayList<>());
+            }
+
+            return map;
+        }
+        finally {
+            db.closeConnection();
+        }
     }
 }
