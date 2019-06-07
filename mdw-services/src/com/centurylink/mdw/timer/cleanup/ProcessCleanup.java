@@ -58,7 +58,7 @@ timer.task:
  * this sql:  select * from event_instance where event_name like '%ScheduledJob%'
  * Then re-start the server/instance for new clean-up properties to be effective.
  */
-
+@Deprecated
 public class ProcessCleanup extends RoundRobinScheduledJob {
 
     private StandardLogger logger;

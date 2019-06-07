@@ -52,7 +52,7 @@ timer.task:
  */
 //Moved this class to base package to enable the process clean up to delete the data from DB
 //added the @scheduledjob to enable it by default
-@ScheduledJob(value="ProcessCleanup", schedule="${props['mdw.cleanup.job.cleanupscheduler']}", enabled="${props['mdw.cleanup.job.enabled']}", isExclusive=true)
+@ScheduledJob(value="ProcessCleanup", schedule="${props['mdw.cleanup.job.cleanupscheduler']}", enabled="${props['mdw.cleanup.job.enabled']}", defaultEnabled= false, isExclusive=true)
 public class ProcessCleanup extends RoundRobinScheduledJob implements com.centurylink.mdw.model.monitor.ScheduledJob  {
 
     private StandardLogger logger;
@@ -94,6 +94,7 @@ public class ProcessCleanup extends RoundRobinScheduledJob implements com.centur
                     maxProcesses = PropertyManager.getIntegerProperty("mdw.cleanup.job.maxProcesses", 0);
                     eventExpirationDays = PropertyManager.getIntegerProperty("mdw.cleanup.job.eventExpirationDays", 180);
                     commitInterval = PropertyManager.getIntegerProperty("mdw.cleanup.job.commitInterval", 180);
+                    cleanupScript = PropertyManager.getProperty("mdw.cleanup.job.RuntimeCleanupScript","Cleanup-Runtime.sql" );
                 }
             } catch (PropertyException e) {
                 logger.info("ProcessCleanup.run() : Properties not found" + e.getMessage());
