@@ -172,10 +172,8 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
             else if (by.equals("total"))
                 sql.append("select count(ti.st) as val, ti.st\n");
 
-            if (db.isMySQL())
-                sql.append("from (select date(task_start_dt) as st");
-            else
-                sql.append("from (select to_char(task_start_dt,'DD-Mon-yyyy') as st");
+            sql.append("from (select ").append(getSt("task_start_dt", query));
+
             if (by.equals("status"))
                 sql.append(", task_instance_status ");
             else if (taskIds != null)

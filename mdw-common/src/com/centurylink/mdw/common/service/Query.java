@@ -121,6 +121,10 @@ public class Query {
     public String getFilter(String key) {
         return filters.get(key);
     }
+    public String getFilter(String key, String defaultValue) {
+        String v = getFilter(key);
+        return v == null ? defaultValue : v;
+    }
 
     /**
      * Empty list returns null;

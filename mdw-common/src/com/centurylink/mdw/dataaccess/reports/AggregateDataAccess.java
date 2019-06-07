@@ -27,6 +27,7 @@ import com.centurylink.mdw.model.report.Aggregate;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,8 +35,6 @@ import java.util.List;
 import java.util.TreeMap;
 
 public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDataAccess {
-
-    int DAY_MS = 24 * 60 * 60 * 1000;
 
     /**
      * Return the top matches according to the query conditions.
@@ -68,6 +67,10 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
         else {
             return new Date(Date.from(instant).getTime() + DatabaseAccess.getDbTimeDiff());
         }
+    }
+
+    protected TimeIncrement getIncrement(Query query) {
+        return TimeIncrement.valueOf(query.getFilter("Increment", "day"));
     }
 
     protected PreparedWhere getInCondition(List<?> elements) {
@@ -119,14 +122,17 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
 
             TreeMap<Date,List<T>> map = new TreeMap<>();
             Date start = getStartDate(query);
+            TimeIncrement increment = getIncrement(query);
+
             Date prevStartDate = start;
             while (resultSet.next()) {
                 String startDateStr = resultSet.getString("st");
-                Date startDate = getDateFormat().parse(startDateStr);
+                Date startDate = parseSt(startDateStr, increment);
+
                 // fill in gaps
-                while (startDate.getTime() - prevStartDate.getTime() > DAY_MS) {
-                    prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
-                    map.put(getRoundDate(prevStartDate), new ArrayList<>());
+                while (startDate.getTime() - prevStartDate.getTime() > increment.ms) {
+                    prevStartDate = new Date(prevStartDate.getTime() + increment.ms);
+                    map.put(getRoundDate(prevStartDate, increment), new ArrayList<>());
                 }
                 List<T> aggregates = map.get(startDate);
                 if (aggregates == null) {
@@ -139,20 +145,56 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
                 prevStartDate = startDate;
             }
             // missing start date
-            Date roundStartDate = getRoundDate(start);
+            Date roundStartDate = getRoundDate(start, increment);
             if (map.get(roundStartDate) == null)
                 map.put(roundStartDate, new ArrayList<>());
             // gaps at end
             Date end = getEndDate(query);
-            while ((end != null) && ((end.getTime() - prevStartDate.getTime()) > DAY_MS)) {
-                prevStartDate = new Date(prevStartDate.getTime() + DAY_MS);
-                map.put(getRoundDate(prevStartDate), new ArrayList<>());
+            while ((end != null) && ((end.getTime() - prevStartDate.getTime()) > increment.ms)) {
+                prevStartDate = new Date(prevStartDate.getTime() + increment.ms);
+                map.put(getRoundDate(prevStartDate, increment), new ArrayList<>());
             }
 
             return map;
         }
         finally {
             db.closeConnection();
+        }
+    }
+
+    protected Date parseSt(String st, TimeIncrement increment) throws ParseException {
+        if (increment == TimeIncrement.minute || increment == TimeIncrement.hour) {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(st);
+        }
+        else {
+            return new SimpleDateFormat("yyyy-MM-dd").parse(st);
+        }
+    }
+
+    protected String getSt(String col, Query query) {
+        TimeIncrement increment = getIncrement(query);
+        if (db.isOracle()) {
+            if (increment == TimeIncrement.minute) {
+                return "to_char(" + col + ",'YYYY-MM-DD HH24:MI') as st";
+            }
+            else if (increment == TimeIncrement.hour) {
+                return "to_char(" + col + ",'YYYY-MM-DD HH24:00') as st";
+
+            }
+            else {
+                return "to_char(" + col + ",'YYYY-MM-DD') as st";
+            }
+        }
+        else {
+            if (increment == TimeIncrement.minute) {
+                return "time_format(" + col + ", '%Y-%m-%d %H:%i') as st";
+            }
+            else if (increment == TimeIncrement.hour) {
+                return "time_format(" + col + ", '%Y-%m-%d %H:00') as st";
+            }
+            else {
+                return "date(" + col + ") as st";
+            }
         }
     }
 }

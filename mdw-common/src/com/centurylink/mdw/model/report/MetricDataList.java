@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public class MetricDataList {
 
-    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss");
+    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     private int period;    // capture interval
     private int max;       // max datapoints to keep in memory

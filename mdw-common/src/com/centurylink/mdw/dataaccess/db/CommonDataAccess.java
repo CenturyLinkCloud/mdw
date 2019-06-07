@@ -54,6 +54,17 @@ public class CommonDataAccess {
     protected DocumentDbAccess documentDbAccess;
     public DocumentDbAccess getDocumentDbAccess() { return documentDbAccess; }
 
+    public enum TimeIncrement {
+        minute(60 * 1000),
+        hour(60 * minute.ms),
+        day(24 * hour.ms);
+
+        public final int ms;
+        TimeIncrement(int ms) {
+            this.ms = ms;
+        }
+    }
+
     public CommonDataAccess() {
         this(null);
     }
@@ -1004,11 +1015,13 @@ public class CommonDataAccess {
     }
 
     @SuppressWarnings("deprecation")
-    protected static Date getRoundDate(Date date) {
+    protected static Date getRoundDate(Date date, TimeIncrement increment) {
         Date roundDate = new Date(date.getTime());
-        roundDate.setHours(0);
-        roundDate.setMinutes(0);
         roundDate.setSeconds(0);
+        if (increment != TimeIncrement.minute)
+            roundDate.setMinutes(0);
+        else if (increment == TimeIncrement.hour)
+            roundDate.setHours(0);
         roundDate.setTime((roundDate.getTime() / 1000) * 1000);
         return roundDate;
     }
