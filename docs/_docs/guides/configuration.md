@@ -134,14 +134,6 @@ title: MDW Configuration
 
     # scheduled jobs registration    
     timer.task:
-      ProcessCleanup:   # process cleanup
-        TimerClass: com.centurylink.mdw.timer.cleanup.ProcessCleanup
-        Schedule: 30 2 * * ? * # run daily at 2:30 am
-        RuntimeCleanupScript: Cleanup-Runtime.sql
-        ProcessExpirationAgeInDays: 180
-        ExternalEventExpirationAgeInDays: 180
-        MaximumProcessExpiration: 10000
-        CommitInterval: 10000
       StuckActivities:  # auto-retry of stuck activities
         TimerClass: com.centurylink.mdw.timer.cleanup.StuckActivities
         Schedule: 15 * * ? * # run hourly at 15 mins past the hour
@@ -151,7 +143,19 @@ title: MDW Configuration
     timer.InitialDelay: 120  # (seconds) default=120
     timer.CheckInterval: 60  # (seconds) default=60
     timer.ThresholdForDelay: 30  # (minutes) default=60
-    
+
+    # scheduled job for periodic cleanup of old completed mdw data from the DB
+
+     cleanup:
+       job:
+         enabled: true   # this enables the scheduling of the cleanup job
+         cleanupscheduler: 30 00 * * ? * # the schedule to run . this runs at 12:30 AM
+         ProcessExpirationAgeInDays: 180
+         maxProcesses: 0
+         eventExpirationDays: 180
+         commitInterval: 1000
+         RuntimeCleanupScript: Cleanup-Runtime.sql
+
     # Custom JWT Providers   
     jwt:
       custom:   # Example of a custom JWT provider

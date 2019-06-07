@@ -38,7 +38,3 @@ cleanup:
   job:
     enabled: true
     cleanupscheduler: 30 00 * * ? *
-    ProcessExpirationAgeInDays: 180
-    maxProcesses: 0
-    eventExpirationDays: 180
-    commitInterval: 1000
