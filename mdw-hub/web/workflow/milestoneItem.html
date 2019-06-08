@@ -9,7 +9,7 @@
         <div>
           {{item.process.packageName}}/
           <a ng-class="['mdw-item-link', 'mdw-item-nowrap', {'mdw-template': item.template}]" style="margin-left:-3px"
-             href="#/workflow/processes/{{item.id}}">
+             href="#/workflow/processes/{{item.processInstance.id}}">
             {{item.process.name}} {{item.process.version == '0' ? '' : 'v' + item.process.version}} &nbsp;{{item.processInstance.id}}</a>
         </div>
         <div class="mdw-item-sub">Started {{item.startDate}}<span ng-if="item.due">, &nbsp;Due <i class="mdw-item-highlight">{{item.due}}</i></span>

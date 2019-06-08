@@ -26,7 +26,7 @@
       Template
     </a>
   </li>
-  <li nav-link="/milestones/definition" ng-if="process.hasMilestones">
+  <li nav-link="/milestones/definition" ng-if="authUser.hasRole('Milestone Design') && process.hasMilestones">
     <a href="#/milestones/definitions/{{process.packageName}}/{{processVersion ? process.name + '/v' + process.version : process.name}}">
       Milestones Def.
     </a>

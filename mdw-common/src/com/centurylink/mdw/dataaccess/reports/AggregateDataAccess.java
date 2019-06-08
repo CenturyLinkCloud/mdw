@@ -155,7 +155,7 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
     }
 
     /**
-     * Converts back to server time from db time.
+     * Parse db-selected datetime to an Instant.
      */
     protected Instant parseDbSt(String st, TimeIncrement increment) throws ParseException {
         if (increment == TimeIncrement.minute || increment == TimeIncrement.hour) {
@@ -187,13 +187,13 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
         }
         else {
             if (increment == TimeIncrement.minute) {
-                return "time_format(" + col + ", '%Y-%m-%d %H:%i') as st";
+                return "time_format(date_sub(" + col + ", interval " + hoursDiff + " hour),'%Y-%m-%d %H:%i') as st";
             }
             else if (increment == TimeIncrement.hour) {
-                return "time_format(" + col + ", '%Y-%m-%d %H:00') as st";
+                return "time_format(date_sub(" + col + ", interval " + hoursDiff + " hour),'%Y-%m-%d %H:00') as st";
             }
             else {
-                return "date(" + col + ") as st";
+                return "time_format(date_sub(" + col + ", interval " + hoursDiff + " hour), '%Y-%m-%d') as st";
             }
         }
     }
