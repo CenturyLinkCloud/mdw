@@ -1,5 +1,25 @@
 # Change Log
 
+## [6.1.20](https://github.com/CenturyLinkCloud/mdw/tree/6.1.20) (2019-06-08)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.19...6.1.20)
+
+**Implemented enhancements:**
+
+- AssetImportMonitor disabled by default in development [\#680](https://github.com/CenturyLinkCloud/mdw/issues/680)
+- Daily/Hourly timespan option for Dashboard [\#668](https://github.com/CenturyLinkCloud/mdw/issues/668)
+- Ugly exception stack traces due to WebSocket timeouts [\#667](https://github.com/CenturyLinkCloud/mdw/issues/667)
+- History retention for System Monitor dashboard tracking [\#665](https://github.com/CenturyLinkCloud/mdw/issues/665)
+- Enable db cleanup scheduled job by default [\#661](https://github.com/CenturyLinkCloud/mdw/issues/661)
+- Workflow milestones [\#652](https://github.com/CenturyLinkCloud/mdw/issues/652)
+
+**Closed issues:**
+
+- Null values in adapter requestHeaders prevent meta data persistence [\#682](https://github.com/CenturyLinkCloud/mdw/issues/682)
+- Adapter activity auto-retry is broken [\#678](https://github.com/CenturyLinkCloud/mdw/issues/678)
+- Dashboard NumberFormatExceptions when Sample changed with no Process selected [\#675](https://github.com/CenturyLinkCloud/mdw/issues/675)
+- REST service assets may be incorrectly resolved according to shortest package path [\#674](https://github.com/CenturyLinkCloud/mdw/issues/674)
+- Process count in Dashboard chart can differ from that shown in process list [\#673](https://github.com/CenturyLinkCloud/mdw/issues/673)
+
 ## [6.1.19](https://github.com/CenturyLinkCloud/mdw/tree/6.1.19) (2019-05-23)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.18...6.1.19)
 
