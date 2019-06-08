@@ -151,8 +151,8 @@ public class SystemMetrics {
     }
 
     private void doOutput(SystemMetric systemMetric, boolean isShutdown) throws IOException {
-        if (!outputDir.isDirectory() && !outputDir.mkdirs()) {
-            throw new IOException("Unable to create metrics output directory: " + outputDir.getAbsolutePath());
+        if (!outputDir.isDirectory()) {
+            outputDir.mkdirs();
         }
         String rootName = systemMetric.getName() + "_" + hostName;
         File file = new File(outputDir + "/" + rootName + ".csv");

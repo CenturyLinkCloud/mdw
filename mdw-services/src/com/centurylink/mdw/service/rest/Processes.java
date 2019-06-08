@@ -50,6 +50,7 @@ import org.json.JSONObject;
 import javax.ws.rs.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 
 @Path("/Processes")
@@ -514,11 +515,11 @@ public class Processes extends JsonRestService implements JsonExportable {
 
     @Path("/breakdown")
     public JsonListMap<ProcessAggregate> getBreakdown(Query query) throws ServiceException {
-        TreeMap<Date,List<ProcessAggregate>> dateMap = getWorkflowServices().getProcessBreakdown(query);
+        TreeMap<Instant,List<ProcessAggregate>> instMap = getWorkflowServices().getProcessBreakdown(query);
         LinkedHashMap<String,List<ProcessAggregate>> listMap = new LinkedHashMap<>();
-        for (Date date : dateMap.keySet()) {
-            List<ProcessAggregate> processAggregates = dateMap.get(date);
-            listMap.put(Query.getString(date), processAggregates);
+        for (Instant instant : instMap.keySet()) {
+            List<ProcessAggregate> processAggregates = instMap.get(instant);
+            listMap.put(Query.getString(instant), processAggregates);
         }
 
         return new JsonListMap<>(listMap);

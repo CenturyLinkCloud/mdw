@@ -408,12 +408,12 @@ public class TaskServicesImpl implements TaskServices {
         }
     }
 
-    public TreeMap<Date,List<TaskAggregate>> getTaskBreakdown(Query query) throws ServiceException {
+    public TreeMap<Instant,List<TaskAggregate>> getTaskBreakdown(Query query) throws ServiceException {
         try {
-            TreeMap<Date,List<TaskAggregate>> map = getAggregateDataAccess().getBreakdown(query);
+            TreeMap<Instant,List<TaskAggregate>> map = getAggregateDataAccess().getBreakdown(query);
             if (query.getFilters().get("taskIds") != null) {
-                for (Date date : map.keySet())
-                    populateTasks(map.get(date));
+                for (Instant instant : map.keySet())
+                    populateTasks(map.get(instant));
             }
             return map;
         }

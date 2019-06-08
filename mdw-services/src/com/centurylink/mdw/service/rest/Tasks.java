@@ -500,11 +500,11 @@ public class Tasks extends JsonRestService implements JsonExportable {
 
     @Path("/breakdown")
     public JsonListMap<TaskAggregate> getBreakdown(Query query) throws ServiceException {
-        TreeMap<Date,List<TaskAggregate>> dateMap = getTaskServices().getTaskBreakdown(query);
+        TreeMap<Instant,List<TaskAggregate>> instMap = getTaskServices().getTaskBreakdown(query);
         LinkedHashMap<String,List<TaskAggregate>> listMap = new LinkedHashMap<>();
-        for (Date date : dateMap.keySet()) {
-            List<TaskAggregate> taskAggregates = dateMap.get(date);
-            listMap.put(Query.getString(date), taskAggregates);
+        for (Instant instant : instMap.keySet()) {
+            List<TaskAggregate> taskAggregates = instMap.get(instant);
+            listMap.put(Query.getString(instant), taskAggregates);
         }
         return new JsonListMap<>(listMap);
     }

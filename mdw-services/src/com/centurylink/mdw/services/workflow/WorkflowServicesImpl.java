@@ -88,6 +88,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -606,12 +607,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public TreeMap<Date,List<ProcessAggregate>> getProcessBreakdown(Query query) throws ServiceException {
+    public TreeMap<Instant,List<ProcessAggregate>> getProcessBreakdown(Query query) throws ServiceException {
         try {
-            TreeMap<Date,List<ProcessAggregate>> map = getProcessAggregation().getBreakdown(query);
+            TreeMap<Instant,List<ProcessAggregate>> map = getProcessAggregation().getBreakdown(query);
             if (query.getFilters().get("processIds") != null) {
-                for (Date date : map.keySet())
-                    populateProcesses(map.get(date));
+                for (Instant instant : map.keySet())
+                    populateProcesses(map.get(instant));
             }
             return map;
         }
@@ -861,12 +862,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public TreeMap<Date,List<ActivityAggregate>> getActivityBreakdown(Query query) throws ServiceException {
+    public TreeMap<Instant,List<ActivityAggregate>> getActivityBreakdown(Query query) throws ServiceException {
         try {
-            TreeMap<Date,List<ActivityAggregate>> map = getActivityAggregation().getBreakdown(query);
+            TreeMap<Instant,List<ActivityAggregate>> map = getActivityAggregation().getBreakdown(query);
             if (query.getFilters().get("activityIds") != null) {
-                for (Date date : map.keySet())
-                    populateActivities(map.get(date));
+                for (Instant instant : map.keySet())
+                    populateActivities(map.get(instant));
             }
             return map;
         }

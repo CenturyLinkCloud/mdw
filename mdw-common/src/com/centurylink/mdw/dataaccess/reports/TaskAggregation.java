@@ -10,8 +10,11 @@ import com.centurylink.mdw.model.task.TaskStatuses;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.*;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TreeMap;
 
 public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
 
@@ -35,7 +38,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
             else
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported filter: by=" + by);
         }
-        catch (SQLException | ParseException ex) {
+        catch (SQLException ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
         finally {
@@ -44,7 +47,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
     }
 
     private List<TaskAggregate> getTopsByThroughput(Query query)
-            throws ParseException, DataAccessException, SQLException, ServiceException {
+            throws DataAccessException, SQLException, ServiceException {
         PreparedWhere preparedWhere = getTaskWhere(query);
         String sql = "select task_id, count(task_id) as ct\n" +
                 "from TASK_INSTANCE\n" +
@@ -63,7 +66,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
     }
 
     public List<TaskAggregate> getTopsByWorkgroup(Query query)
-            throws ParseException, DataAccessException, SQLException, ServiceException {
+            throws DataAccessException, SQLException, ServiceException {
         PreparedWhere preparedWhere = getTaskWhere(query);
         String sql = "select count(tii.group_name) as ct, tii.group_name\n" +
                 "from (select ug.group_name from TASK_INST_GRP_MAPP tigm, TASK_INSTANCE ti, USER_GROUP ug\n   " +
@@ -87,7 +90,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
     }
 
     public List<TaskAggregate> getTopsByAssignee(Query query)
-            throws ParseException, DataAccessException, SQLException, ServiceException {
+            throws DataAccessException, SQLException, ServiceException {
         PreparedWhere preparedWhere = getTaskWhere(query);
         String sql = "select count(tii.cuid) as ct, tii.cuid, tii.name\n" +
                 "from (select ui.cuid, ui.name from TASK_INSTANCE ti, USER_INFO ui\n   " +
@@ -109,7 +112,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
     }
 
     private List<TaskAggregate> getTopsByStatus(Query query)
-            throws ParseException, DataAccessException, SQLException, ServiceException {
+            throws DataAccessException, SQLException, ServiceException {
         PreparedWhere preparedWhere = getTaskWhere(query);
         String sql = "select task_instance_status, count(task_instance_status) as ct from TASK_INSTANCE\n" +
                 preparedWhere.getWhere() + " " +
@@ -129,7 +132,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
     }
 
     private List<TaskAggregate> getTopsByCompletionTime(Query query)
-            throws ParseException, DataAccessException, SQLException, ServiceException {
+            throws DataAccessException, SQLException, ServiceException {
         PreparedWhere preparedWhere = getTaskWhere(query);
         String sql = "select task_id, avg(elapsed_ms) as elapsed, count(task_id) as ct\n" +
                 "from TASK_INSTANCE, INSTANCE_TIMING\n" +
@@ -147,7 +150,7 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
         });
     }
 
-    public TreeMap<Date,List<TaskAggregate>> getBreakdown(Query query) throws DataAccessException, ServiceException {
+    public TreeMap<Instant,List<TaskAggregate>> getBreakdown(Query query) throws DataAccessException, ServiceException {
         String by = query.getFilter("by");
         if (by == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing required filter: 'by'");
@@ -239,10 +242,8 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
                 sql.append(", group_name");
             else if (by.equals("assignee"))
                 sql.append(", cuid, name ");
-            if (db.isMySQL())
-                sql.append("\norder by st\n");
-            else
-                sql.append("\norder by to_date(st, 'DD-Mon-yyyy')\n");
+
+            sql.append("\norder by st\n");
 
             PreparedSelect select = new PreparedSelect(sql.toString(), params.toArray(), "Breakdown by " + by);
             return handleBreakdownResult(select, query, rs -> {
@@ -279,9 +280,9 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
         }
     }
 
-    protected PreparedWhere getTaskWhere(Query query) throws ParseException, DataAccessException {
+    protected PreparedWhere getTaskWhere(Query query) throws DataAccessException {
         String by = query.getFilter("by");
-        Date start = getStartDate(query);
+        Instant start = getStart(query);
 
         StringBuilder where = new StringBuilder();
         List<Object> params = new ArrayList<>();
@@ -293,12 +294,12 @@ public class TaskAggregation extends AggregateDataAccess<TaskAggregate> {
         where.append(where.length() > 0 ? "  and " : "where ");
 
         where.append("task_start_dt >= ?\n");
-        params.add(getDt(start));
+        params.add(getDbDt(start));
 
-        Date end = getEndDate(query);
+        Instant end = getEnd(query);
         if (end != null) {
             where.append("  and task_start_dt <= ?\n");
-            params.add(getDt(end));
+            params.add(getDbDt(end));
         }
 
         String status = query.getFilter("Status");

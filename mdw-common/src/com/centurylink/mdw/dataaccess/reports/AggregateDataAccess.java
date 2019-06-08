@@ -29,8 +29,8 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.temporal.TemporalField;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
 
@@ -46,27 +46,20 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
      * Return the data according to the user-selected values from getTops()
      * @return TreeMap where the Date keys are sorted according to natural ordering.
      */
-    abstract TreeMap<Date,List<T>> getBreakdown(Query query) throws DataAccessException, ServiceException;
+    abstract TreeMap<Instant,List<T>> getBreakdown(Query query) throws DataAccessException, ServiceException;
 
-    protected Date getStartDate(Query query) throws ParseException, DataAccessException {
-        Instant instant = query.getInstantFilter("Starting");
-        Date start = instant == null ? query.getDateFilter("startDate") : Date.from(instant);
+    protected Instant getStart(Query query) throws DataAccessException {
+        Instant start = query.getInstantFilter("Starting");
         if (start == null)
             throw new DataAccessException("Parameter Starting is required");
-        // adjust to db time
-        return new Date(start.getTime() + DatabaseAccess.getDbTimeDiff());
+        return start;
     }
 
     /**
      * This is not completion date.  It's ending start date.
      */
-    protected Date getEndDate(Query query) {
-        Instant instant = query.getInstantFilter("Ending");
-        if (instant == null)
-            return null;
-        else {
-            return new Date(Date.from(instant).getTime() + DatabaseAccess.getDbTimeDiff());
-        }
+    protected Instant getEnd(Query query) {
+        return query.getInstantFilter("Ending");
     }
 
     protected TimeIncrement getIncrement(Query query) {
@@ -114,25 +107,25 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
      * Relies on convention that resultSet start date column name is "st", and value
      * column is identified as "val".
      */
-    protected TreeMap<Date,List<T>> handleBreakdownResult(PreparedSelect select, Query query, AggregateSupplier supplier)
+    protected TreeMap<Instant,List<T>> handleBreakdownResult(PreparedSelect select, Query query, AggregateSupplier supplier)
             throws DataAccessException, SQLException, ParseException {
         try {
             db.openConnection();
             ResultSet resultSet = db.runSelect(select);
 
-            TreeMap<Date,List<T>> map = new TreeMap<>();
-            Date start = getStartDate(query);
+            TreeMap<Instant,List<T>> map = new TreeMap<>();
+            Instant start = getStart(query);
             TimeIncrement increment = getIncrement(query);
 
-            Date prevStartDate = start;
+            Instant prevStartDate = start;
             while (resultSet.next()) {
                 String startDateStr = resultSet.getString("st");
-                Date startDate = parseSt(startDateStr, increment);
+                Instant startDate = parseDbSt(startDateStr, increment);
 
                 // fill in gaps
-                while (startDate.getTime() - prevStartDate.getTime() > increment.ms) {
-                    prevStartDate = new Date(prevStartDate.getTime() + increment.ms);
-                    map.put(getRoundDate(prevStartDate, increment), new ArrayList<>());
+                while (startDate.toEpochMilli() - prevStartDate.toEpochMilli() > increment.ms) {
+                    prevStartDate = Instant.ofEpochMilli(prevStartDate.toEpochMilli() + increment.ms);
+                    map.put(prevStartDate, new ArrayList<>());
                 }
                 List<T> aggregates = map.get(startDate);
                 if (aggregates == null) {
@@ -145,14 +138,13 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
                 prevStartDate = startDate;
             }
             // missing start date
-            Date roundStartDate = getRoundDate(start, increment);
-            if (map.get(roundStartDate) == null)
-                map.put(roundStartDate, new ArrayList<>());
+            if (map.get(start) == null)
+                map.put(start, new ArrayList<>());
             // gaps at end
-            Date end = getEndDate(query);
-            while ((end != null) && ((end.getTime() - prevStartDate.getTime()) > increment.ms)) {
-                prevStartDate = new Date(prevStartDate.getTime() + increment.ms);
-                map.put(getRoundDate(prevStartDate, increment), new ArrayList<>());
+            Instant end = getEnd(query);
+            while ((end != null) && ((end.toEpochMilli() - prevStartDate.toEpochMilli()) > increment.ms)) {
+                prevStartDate = Instant.ofEpochMilli(prevStartDate.toEpochMilli() + increment.ms);
+                map.put(prevStartDate, new ArrayList<>());
             }
 
             return map;
@@ -162,27 +154,35 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
         }
     }
 
-    protected Date parseSt(String st, TimeIncrement increment) throws ParseException {
+    /**
+     * Converts back to server time from db time.
+     */
+    protected Instant parseDbSt(String st, TimeIncrement increment) throws ParseException {
         if (increment == TimeIncrement.minute || increment == TimeIncrement.hour) {
-            return new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(st);
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(st).toInstant();
         }
         else {
-            return new SimpleDateFormat("yyyy-MM-dd").parse(st);
+            return new SimpleDateFormat("yyyy-MM-dd").parse(st).toInstant();
         }
     }
 
+    /**
+     * Start datetime to select, adjusted for discrepancy between db time and server time.
+     */
     protected String getSt(String col, Query query) {
         TimeIncrement increment = getIncrement(query);
+        long hoursDiff = DatabaseAccess.getDbTimeDiff() / 3600000;
         if (db.isOracle()) {
             if (increment == TimeIncrement.minute) {
-                return "to_char(" + col + ",'YYYY-MM-DD HH24:MI') as st";
+                return "to_char(" + col + " - interval '" + hoursDiff + "' hour,'YYYY-MM-DD HH24:MI') as st";
             }
             else if (increment == TimeIncrement.hour) {
-                return "to_char(" + col + ",'YYYY-MM-DD HH24:00') as st";
+                return "to_char(" + col + " - interval '" + hoursDiff + "' hour,'YYYY-MM-DD HH24:\"00\"') as st";
 
             }
             else {
-                return "to_char(" + col + ",'YYYY-MM-DD') as st";
+
+                return "to_char(" + col + " - interval '" + hoursDiff + "' hour,'YYYY-MM-DD') as st";
             }
         }
         else {

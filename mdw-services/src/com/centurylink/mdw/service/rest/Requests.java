@@ -37,6 +37,7 @@ import org.json.JSONObject;
 
 import javax.ws.rs.Path;
 import java.text.ParseException;
+import java.time.Instant;
 import java.util.*;
 
 @Path("/Requests")
@@ -191,11 +192,11 @@ public class Requests extends JsonRestService implements JsonExportable {
 
     @Path("/breakdown")
     public JsonListMap<RequestAggregate> getBreakdown(Query query) throws ServiceException {
-        TreeMap<Date,List<RequestAggregate>> dateMap = getRequestServices().getRequestBreakdown(query);
+        TreeMap<Instant,List<RequestAggregate>> instMap = getRequestServices().getRequestBreakdown(query);
         LinkedHashMap<String,List<RequestAggregate>> listMap = new LinkedHashMap<>();
-        for (Date date : dateMap.keySet()) {
-            List<RequestAggregate> reqCounts = dateMap.get(date);
-            listMap.put(Query.getString(date), reqCounts);
+        for (Instant instant : instMap.keySet()) {
+            List<RequestAggregate> reqCounts = instMap.get(instant);
+            listMap.put(Query.getString(instant), reqCounts);
         }
         return new JsonListMap<>(listMap);
     }

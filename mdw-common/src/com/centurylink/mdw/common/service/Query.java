@@ -304,6 +304,10 @@ public class Query {
         }
     }
 
+    public static String getString(Instant instant) {
+        return instant == null ? null : instant.toString();
+    }
+
     /**
      * Builds a path/query string for an endpoint.
      * Don't change this without extensive regression testing.
