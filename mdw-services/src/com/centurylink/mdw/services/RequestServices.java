@@ -24,6 +24,7 @@ import com.centurylink.mdw.model.request.RequestAggregate;
 import com.centurylink.mdw.model.request.RequestList;
 import com.centurylink.mdw.model.request.ServicePath;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.TreeMap;
@@ -43,7 +44,7 @@ public interface RequestServices {
     Request getMasterRequestResponse(String masterReqeustId) throws ServiceException;
 
     List<RequestAggregate> getTopRequests(Query query) throws ServiceException;
-    TreeMap<Date,List<RequestAggregate>> getRequestBreakdown(Query query) throws ServiceException;
+    TreeMap<Instant,List<RequestAggregate>> getRequestBreakdown(Query query) throws ServiceException;
     List<Insight> getRequestInsights(Query query) throws ServiceException;
     List<Timepoint> getRequestTrend(Query query) throws ServiceException;
 

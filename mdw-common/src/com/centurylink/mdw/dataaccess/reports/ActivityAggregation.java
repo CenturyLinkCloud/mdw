@@ -10,8 +10,11 @@ import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.*;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TreeMap;
 
 public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> {
 
@@ -28,7 +31,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
             else
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported filter: by=" + by);
         }
-        catch (SQLException | ParseException ex) {
+        catch (SQLException ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
         finally {
@@ -37,7 +40,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
     }
 
     private List<ActivityAggregate> getTopsByStuck(Query query)
-            throws ParseException, DataAccessException, SQLException, ServiceException {
+            throws DataAccessException, SQLException, ServiceException {
         PreparedWhere preparedWhere = getActivityWhere(query);
         String sql = "select count(act_unique_id) as ct, act_unique_id\n" +
                 getUniqueIdFrom() +
@@ -66,7 +69,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
     }
 
     private List<ActivityAggregate> getTopsByStatus(Query query)
-            throws ParseException, DataAccessException, SQLException, ServiceException {
+            throws DataAccessException, SQLException, ServiceException {
         PreparedWhere preparedWhere = getActivityWhere(query);
         String sql = "select status_cd, count(status_cd) as ct " +
                 "from ACTIVITY_INSTANCE ai\n" +
@@ -83,7 +86,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
         });
     }
 
-    public TreeMap<Date,List<ActivityAggregate>> getBreakdown(Query query) throws DataAccessException, ServiceException {
+    public TreeMap<Instant,List<ActivityAggregate>> getBreakdown(Query query) throws DataAccessException, ServiceException {
         String by = query.getFilter("by");
         if (by == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing required filter: 'by'");
@@ -143,10 +146,8 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
                 sql.append(", status_cd");
             else if (by.equals("throughput"))
                 sql.append(", act_unique_id");
-            if (db.isMySQL())
-                sql.append("\norder by st");
-            else
-                sql.append("\norder by to_date(st, 'DD-Mon-yyyy')");
+
+            sql.append("\norder by st\n");
 
             PreparedSelect select = new PreparedSelect(sql.toString(), params.toArray(), "Breakdown by " + by);
 
@@ -177,9 +178,9 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
         }
     }
 
-    protected PreparedWhere getActivityWhere(Query query) throws ParseException, DataAccessException {
+    protected PreparedWhere getActivityWhere(Query query) throws DataAccessException {
         String by = query.getFilter("by");
-        Date start = getStartDate(query);
+        Instant start = getStart(query);
 
         StringBuilder where = new StringBuilder();
         List<Object> params = new ArrayList<>();
@@ -187,11 +188,11 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
             where.append(" where ai.process_instance_id = pi.process_instance_id ");
         where.append(where.length() > 0 ? "  and " : "where ");
         where.append("ai.start_dt >= ? ");
-        params.add(getDt(start));
-        Date end = getEndDate(query);
+        params.add(getDbDt(start));
+        Instant end = getEnd(query);
         if (end != null) {
             where.append("  and ai.start_dt <= ?");
-            params.add(getDt(end));
+            params.add(getDbDt(end));
         }
 
         String status = query.getFilter("Status");

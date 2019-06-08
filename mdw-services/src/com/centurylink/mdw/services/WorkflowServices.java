@@ -29,6 +29,7 @@ import com.centurylink.mdw.model.workflow.*;
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -158,7 +159,7 @@ public interface WorkflowServices {
 
     List<ProcessAggregate> getTopProcesses(Query query) throws ServiceException;
 
-    TreeMap<Date, List<ProcessAggregate>> getProcessBreakdown(Query query) throws ServiceException;
+    TreeMap<Instant,List<ProcessAggregate>> getProcessBreakdown(Query query) throws ServiceException;
 
     List<Insight> getProcessInsights(Query query) throws ServiceException;
 
@@ -168,7 +169,7 @@ public interface WorkflowServices {
 
     List<ActivityAggregate> getTopActivities(Query query) throws ServiceException;
 
-    TreeMap<Date, List<ActivityAggregate>> getActivityBreakdown(Query query) throws ServiceException;
+    TreeMap<Instant,List<ActivityAggregate>> getActivityBreakdown(Query query) throws ServiceException;
 
     ActivityInstance getActivity(Long instanceId) throws ServiceException;
 

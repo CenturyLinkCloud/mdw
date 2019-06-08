@@ -71,7 +71,7 @@ public interface TaskServices {
 
     List<TaskAggregate> getTopTasks(Query query) throws ServiceException;
 
-    TreeMap<Date,List<TaskAggregate>> getTaskBreakdown(Query query) throws ServiceException;
+    TreeMap<Instant,List<TaskAggregate>> getTaskBreakdown(Query query) throws ServiceException;
 
     TaskRuntimeContext getContext(Long instanceId) throws ServiceException;
     TaskRuntimeContext getContext(TaskInstance taskInstance) throws ServiceException;

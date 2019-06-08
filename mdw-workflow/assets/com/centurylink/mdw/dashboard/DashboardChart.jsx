@@ -15,7 +15,8 @@ class DashboardChart extends Component {
     this.defaultTimespan = 'Week';
     this.chartColors = ['#3366CC','#FF9900','#DC3912','#109618','#990099','#3B3EAC','#0099C6','#DD4477','#66AA00','#B82E2E','#316395','#994499','#22AA99','#AAAA11','#6633CC','#E67300','#8B0707','#329262','#5574A6','#3B3EAC'];
     this.chartOptions = {legend: {display: false, position: 'bottom'}};
-    this.hour_ms = 3600 * 1000;
+    this.minute_ms = 60 * 1000;
+    this.hour_ms = 60 * this.minute_ms;
     this.day_ms = 24 * this.hour_ms;
 
     this.state = {
@@ -75,10 +76,10 @@ class DashboardChart extends Component {
     if (this.state.filters.Ending) {
       var spanMs;
       if (this.state.timespan === 'Hour') {
-        spanMs = this.hour_ms;
+        spanMs = this.minute_ms * 59;
       }
       else if (this.state.timespan === 'Day') {
-        spanMs = this.day_ms;
+        spanMs = this.hour_ms * 23;
       }
       else if (this.state.timespan === 'Week') {
         spanMs = this.day_ms * 6;
@@ -174,7 +175,7 @@ class DashboardChart extends Component {
     if (!filters.Ending) {
       filters.Ending = this.getDefaultEnd(this.state.timespan);
     }
-    if (this.state.timespan === 'Hour') {
+    if (this.state.timespan === 'Hour' || this.state.timespan === 'Day') {
       filters.Ending.setHours(new Date().getHours());
     }
     else {
@@ -236,7 +237,13 @@ class DashboardChart extends Component {
       if (val) {
         if (val instanceof Date) {
           if (key == 'Ending') {
-            if (this.state.timespan === 'Week' || this.state.timespan === 'Month') {
+            if (this.state.timespan === 'Hour') {
+              val = new Date(val.getTime() + this.minute_ms);
+            }
+            else if (this.state.timespan === 'Day') {
+              val = new Date(val.getTime() + this.hour_ms);
+            }
+            else {
               // midnight of the day after the selected date
               val = new Date(val.getTime() + this.day_ms);
             }
@@ -451,14 +458,26 @@ class DashboardChart extends Component {
     return overallData;
   }
 
+  getLabel(date) {
+    const now = new Date();
+    let lab = date.getFullYear() === now.getFullYear() ? '' : date.getFullYear() + ' ';
+    if (this.state.timespan === 'Hour' || this.state.timespan === 'Day') {
+      if (date.getMonth() !== now.getMonth() || date.getDate() !== now.getDate()) {
+        lab += constants.months[date.getMonth()] + ' ' + date.getDate() + ' ';
+      }
+      lab += date.getHours() + ':' + (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes());
+    }
+    else {
+      lab += constants.months[date.getMonth()] + ' ' + date.getDate();
+    }
+    return lab;
+  }
+
   getMainData() {
     const breakdown = this.getBreakdown();
     const lineData = {labels: [], datasets: []};
     var datasets = {}; // id to dataset
     const chartColors = this.getChartColors();
-    const now = new Date();
-    let year = now.getFullYear();
-    let monthDay = constants.months[now.getMonth()] + '-' + (now.getDate() < 10 ? '0' + now.getDate() : now.getDate());
     if (this.state.selected.length > 0) {
       this.state.selected.forEach((sel, i) => {
         let fill = breakdown.fill && (!Array.isArray(breakdown.fill) || breakdown.fill[i]);
@@ -470,16 +489,7 @@ class DashboardChart extends Component {
         lineData.datasets.push(dataset);
         Object.keys(this.state.data).forEach((key, j) => {
           if (i === 0) {
-            let lab = key.startsWith(year + '-') ? key.substring(5) : key;
-            if (this.state.timespan === 'Hour') {
-              if (lab.startsWith(monthDay + ' ')) {
-                lab = lab.substring(monthDay.length + 1);
-              }
-              if (lab.endsWith(':00')) {
-                lab = lab.substring(0, lab.length - 3);
-              }
-            }
-            lineData.labels.push(lab);
+            lineData.labels.push(key.endsWith('00Z') ? this.getLabel(new Date(key)) : key);
           }
           const aggs = this.state.data[key];
           const selAgg = aggs.find(agg => agg.id === sel.id);
@@ -496,7 +506,7 @@ class DashboardChart extends Component {
       let dataset = {borderColor: chartColors[0], data: [], fill: breakdown.fill ? breakdown.fill : false};
       lineData.datasets.push(dataset);
       Object.keys(this.state.data).forEach(key => {
-        lineData.labels.push(key.startsWith(year + '-') ? key.substring(5) : key);
+        lineData.labels.push(key.endsWith('00Z') ? this.getLabel(new Date(key)) : key);
         let point = this.state.data[key][0];
         if (point) {
           dataset.data.push(point.value);

@@ -38,6 +38,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.*;
 
 public class CommonDataAccess {
@@ -1001,6 +1002,10 @@ public class CommonDataAccess {
 
     protected static String getOracleDt(Date date) {
         return new SimpleDateFormat(ORACLE_DT_FORMAT).format(date);
+    }
+
+    protected String getDbDt(Instant instant) {
+        return getDt(Date.from(instant.plusMillis(DatabaseAccess.getDbTimeDiff())));
     }
 
     protected String getDt(Date date) {

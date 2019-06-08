@@ -9,8 +9,11 @@ import com.centurylink.mdw.model.workflow.ProcessAggregate;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.*;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.TreeMap;
 
 public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
 
@@ -29,7 +32,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
             else
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported filter: by=" + by);
         }
-        catch (SQLException | ParseException ex) {
+        catch (SQLException ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
         finally {
@@ -38,7 +41,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
     }
 
     private List<ProcessAggregate> getTopsByThroughput(Query query)
-            throws ParseException, DataAccessException, SQLException, ServiceException {
+            throws DataAccessException, SQLException, ServiceException {
         PreparedWhere preparedWhere = getProcessWhere(query);
         String sql = db.pagingQueryPrefix() +
                 "select process_id, count(process_id) as ct\n" +
@@ -59,7 +62,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
     }
 
     private List<ProcessAggregate> getTopsByStatus(Query query)
-            throws ParseException, DataAccessException, SQLException, ServiceException {
+            throws DataAccessException, SQLException, ServiceException {
         PreparedWhere preparedWhere = getProcessWhere(query);
         String sql = db.pagingQueryPrefix() +
                 "select status_cd, count(status_cd) as ct from PROCESS_INSTANCE\n" +
@@ -79,7 +82,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
     }
 
     private List<ProcessAggregate> getTopsByCompletionTime(Query query)
-            throws ParseException, DataAccessException, SQLException, ServiceException {
+            throws DataAccessException, SQLException, ServiceException {
         PreparedWhere preparedWhere = getProcessWhere(query);
         String sql = db.pagingQueryPrefix() +
                 "select process_id, avg(elapsed_ms) as elapsed, count(process_id) as ct\n" +
@@ -100,7 +103,7 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
         });
     }
 
-    public TreeMap<Date,List<ProcessAggregate>> getBreakdown(Query query) throws DataAccessException, ServiceException {
+    public TreeMap<Instant,List<ProcessAggregate>> getBreakdown(Query query) throws DataAccessException, ServiceException {
         String by = query.getFilter("by");
         if (by == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing required filter: 'by'");
@@ -156,10 +159,8 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
                 sql.append(", status_cd");
             else if (!by.equals("total"))
                 sql.append(", process_id");
-            if (db.isMySQL())
-                sql.append("\norder by st\n");
-            else
-                sql.append("\norder by to_date(st, 'DD-Mon-yyyy')\n");
+
+            sql.append("\norder by st\n");
 
             PreparedSelect select = new PreparedSelect(sql.toString(), params.toArray(), "Breakdown by " + by);
             return handleBreakdownResult(select, query, rs -> {
@@ -183,9 +184,9 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
         }
     }
 
-    protected PreparedWhere getProcessWhere(Query query) throws ParseException, DataAccessException {
+    protected PreparedWhere getProcessWhere(Query query) throws DataAccessException {
         String by = query.getFilter("by");
-        Date start = getStartDate(query);
+        Instant start = getStart(query);
 
         StringBuilder where = new StringBuilder();
         List<Object> params = new ArrayList<>();
@@ -197,12 +198,12 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
         where.append(where.length() > 0 ? "  and " : "where ");
 
         where.append("start_dt >= ?\n");
-        params.add(getDt(start));
+        params.add(getDbDt(start));
 
-        Date end = getEndDate(query);
+        Instant end = getEnd(query);
         if (end != null) {
             where.append("  and start_dt <= ?\n");
-            params.add(getDt(end));
+            params.add(getDbDt(end));
         }
 
         where.append("  and owner not in (?");

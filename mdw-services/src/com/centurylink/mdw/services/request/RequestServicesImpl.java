@@ -33,7 +33,7 @@ import com.centurylink.mdw.util.timer.CodeTimer;
 
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.Date;
+import java.time.Instant;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -141,7 +141,7 @@ public class RequestServicesImpl implements RequestServices {
         }
     }
 
-    public TreeMap<Date,List<RequestAggregate>> getRequestBreakdown(Query query) throws ServiceException {
+    public TreeMap<Instant,List<RequestAggregate>> getRequestBreakdown(Query query) throws ServiceException {
         try {
             return getRequestAggregation().getBreakdown(query);
         }
