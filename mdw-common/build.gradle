@@ -42,7 +42,7 @@ dependencies {
     compile(group: "log4j", name: "log4j", version: "1.2.15") { exclude(module: "jmxtools"); exclude(module: "jmxri"); exclude(module: "jms") }
     compile group: "junit", name: "junit", version: "4.8.1"
     compile group: "org.eclipse.jgit", name: "org.eclipse.jgit", version: "4.8.0.201706111038-r"
-    compile(group: "org.eclipse.jgit", name: "org.eclipse.jgit.pgm", version: "4.8.0.201706111038-r") { transitive = false; } // cli-only
+    compile(group: "org.eclipse.jgit", name: "org.eclipse.jgit.pgm", version: "4.8.0.201706111038-r") { transitive = false } // cli-only
     compile group: "com.jcraft", name: "jsch", version: "0.1.54" // for jgit
     compile group: "dom4j", name: "dom4j", version: "1.6.1"
     compile group: "org.glassfish", name: "javax.el", version: "3.0.0"
@@ -52,6 +52,10 @@ dependencies {
     compile group: "org.mariadb.jdbc", name: "mariadb-java-client", version: "2.2.3"
     compile group: "org.slf4j", name: "slf4j-api", version: "1.7.25"
     compile group: "org.slf4j", name: "slf4j-simple", version: "1.7.25"
+
+    // jaxb
+    compile group: "javax.xml.bind", name: "jaxb-api", version: "2.3.1"
+    compile group: "org.glassfish.jaxb", name: "jaxb-runtime", version: "2.3.1"
 
     // swagger
     compile group: "io.swagger", name: "swagger-annotations", version: "1.5.19"
