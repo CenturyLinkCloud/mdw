@@ -104,11 +104,12 @@ public class DomHelper {
         transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
         DOMSource source = new DOMSource(domNode);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         StreamResult result = new StreamResult(baos);
         transformer.transform(source, result);
-        return baos.toString();
+        return baos.toString().replaceAll("\\r", "").replaceAll("\n[ \t]*\n", "\n");
     }
 
     public static String toXmlNoWhiteSpace(Node domNode) throws TransformerException {
@@ -117,12 +118,14 @@ public class DomHelper {
         transformer.setOutputProperty(OutputKeys.INDENT, "no");
         transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
         DOMSource source = new DOMSource(domNode);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         StreamResult result = new StreamResult(baos);
         transformer.transform(source, result);
-        return baos.toString();
+        return baos.toString().replaceAll("\\r", "").replaceAll("\n[ \t]*\n", "\n");
     }
+
     public static Document toDomDocument(Node domNode)
     throws ParserConfigurationException, SAXException, IOException, TransformerException {
         // TODO other way than to reparse?
