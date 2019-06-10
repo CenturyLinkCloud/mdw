@@ -15,17 +15,6 @@
  */
 package com.centurylink.mdw.services.test;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.codehaus.groovy.control.CompilerConfiguration;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
@@ -35,24 +24,10 @@ import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.test.ApiRequest;
-import com.centurylink.mdw.test.ApiResponse;
-import com.centurylink.mdw.test.PreFilter;
-import com.centurylink.mdw.test.TestCase;
+import com.centurylink.mdw.test.*;
 import com.centurylink.mdw.test.TestCase.Status;
-import com.centurylink.mdw.test.TestCaseActivityStub;
-import com.centurylink.mdw.test.TestCaseAdapterStub;
-import com.centurylink.mdw.test.TestCaseEvent;
-import com.centurylink.mdw.test.TestCaseHttp;
-import com.centurylink.mdw.test.TestCaseItem;
-import com.centurylink.mdw.test.TestCaseMessage;
-import com.centurylink.mdw.test.TestCaseProcess;
-import com.centurylink.mdw.test.TestCaseResponse;
-import com.centurylink.mdw.test.TestCaseTask;
-import com.centurylink.mdw.test.TestException;
-import com.centurylink.mdw.test.Verifiable;
+import com.centurylink.mdw.xml.DomHelper;
 import com.centurylink.mdw.xml.XmlPath;
-
 import groovy.json.JsonSlurper;
 import groovy.lang.Binding;
 import groovy.lang.Closure;
@@ -61,6 +36,16 @@ import groovy.lang.Script;
 import groovy.util.DelegatingScript;
 import groovy.util.XmlSlurper;
 import groovy.util.slurpersupport.GPathResult;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public abstract class TestCaseScript extends Script {
 
@@ -453,6 +438,21 @@ public abstract class TestCaseScript extends Script {
             this.response = response;
             response.setExpected(substitute(response.getExpected()));
             response.setSuccess(getTestCaseRun().verifyResponse(response));
+        }
+        return response;
+    }
+
+    public Verifiable verifyXml(TestCaseResponse response) throws TestException {
+        if (!getTestCaseRun().isLoadTest()) {
+            this.response = response;
+            try {
+                response.setActual(DomHelper.toXml(DomHelper.toDomDocument(response.getActual())));
+                response.setExpected(DomHelper.toXml(DomHelper.toDomDocument(substitute(response.getExpected()))));
+                response.setSuccess(getTestCaseRun().verifyResponse(response));
+            }
+            catch (Exception ex) {
+                throw new TestException(ex.getMessage(), ex);
+            }
         }
         return response;
     }

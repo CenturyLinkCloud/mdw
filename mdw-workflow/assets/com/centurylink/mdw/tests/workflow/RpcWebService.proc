@@ -24,6 +24,10 @@
     {
       "attributes": {
         "DO_LOGGING": "True",
+        "Output Documents": "[\"responseDoc\"]",
+        "PostScript": "import com.centurylink.mdw.xml.DomHelper\n\nresponseDoc = DomHelper.toXml(DomHelper.toDomDocument(responseDoc.toString()))",
+        "PostScriptLang": "Groovy",
+        "PreScriptLang": "Groovy",
         "REQUEST_VARIABLE": "requestDoc",
         "RESPONSE_VARIABLE": "responseDoc",
         "WORK_DISPLAY_INFO": "x=273,y=80,w=111,h=67",
