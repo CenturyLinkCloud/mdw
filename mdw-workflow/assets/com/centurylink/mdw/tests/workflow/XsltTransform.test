@@ -8,8 +8,7 @@ send message("REST") {
 
 sleep 30
 
-verify response {
-    expected = '''<html xmlns="http://www.cramer.com/centurylink/srpf"
+response.expected = '''<html xmlns="http://www.cramer.com/centurylink/srpf"
     xmlns:bim="http://www.centurylink.com/XMLSchema/BIM"
     xmlns:q="http://mdw.centurylink.com/XMLSchema" xmlns:s="http://www.cramer.com/centurylink/srpf">
     <body>
@@ -27,4 +26,5 @@ verify response {
         </table>
     </body>
 </html>'''
-}
+assert verifyXml(response).success
+
