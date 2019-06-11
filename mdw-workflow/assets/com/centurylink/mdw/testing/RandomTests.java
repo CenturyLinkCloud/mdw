@@ -79,7 +79,7 @@ public class RandomTests implements com.centurylink.mdw.model.monitor.ScheduledJ
             }
         }
 
-        Random random = new Random();
+        Random random = new Random(); // NOSONAR
         List<Integer> randomIndexes = new ArrayList<>();
         while (randomIndexes.size() < count) {
             randomIndexes.add(random.nextInt(allCases.size()));

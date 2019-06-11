@@ -350,7 +350,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
                     String msg = ThreadPoolProvider.WORKER_ENGINE  + " has no thread available to launch subflow";
                     logexception(msg, new Exception(msg));
                     loginfo(threadPool.currentStatus());
-                    Thread.sleep(pollInterval * 1000);
+                    Thread.sleep(pollInterval * 1000L);
                 }
                 catch (InterruptedException e) {
                 }

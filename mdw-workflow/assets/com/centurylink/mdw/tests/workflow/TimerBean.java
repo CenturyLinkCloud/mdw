@@ -38,7 +38,14 @@ public class TimerBean implements java.io.Serializable {
         return "{ timerDelaySeconds: " + timerDelaySeconds + " }";
     }
 
+    @Override
     public boolean equals(Object other) {
-        return toString().equals(other.toString());
+        return other != null && toString().equals(other.toString());
     }
+
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
 }

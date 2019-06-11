@@ -30,6 +30,11 @@ public class MyWorkflowModel implements java.io.Serializable {
     }
 
     @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    @Override
     public String toString() {
         return "flowmaster: " + flowmaster;
     }

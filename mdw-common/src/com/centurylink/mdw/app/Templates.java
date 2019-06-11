@@ -57,7 +57,7 @@ public class Templates {
             }
             else {
                 byte[] targetArray = new byte[stream.available()];
-                stream.read(targetArray);
+                stream.read(targetArray); // NOSONAR
                 return targetArray;
             }
         }

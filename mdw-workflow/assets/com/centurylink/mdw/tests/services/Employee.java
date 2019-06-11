@@ -55,12 +55,18 @@ public class Employee implements Serializable, Jsonable
     return sapId + ": " + lastName + ", " + firstName;
   }
 
+  @Override
   public boolean equals(Object other)
   {
     if (!(other instanceof Employee))
       return false;
     else
       return toString().equals(other.toString());
+  }
+
+  @Override
+  public int hashCode() {
+    return toString().hashCode();
   }
 
   public Employee() {

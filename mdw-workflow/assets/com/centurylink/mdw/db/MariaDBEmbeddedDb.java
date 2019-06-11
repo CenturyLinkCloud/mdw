@@ -34,6 +34,7 @@ import java.sql.*;
 import java.util.List;
 import java.util.Scanner;
 
+@SuppressWarnings({"unused","squid:S2095"}) // sonarqube false positives on S2095
 public class MariaDBEmbeddedDb implements EmbeddedDb {
 
     private String url;

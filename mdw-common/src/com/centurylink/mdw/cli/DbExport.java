@@ -104,7 +104,7 @@ public class DbExport extends DbOperation {
                     int rows = rs.getInt(1);
                     if (rows > rowLimit)
                         throw new IOException("Table " + table + " exceeds --row-limit of " + rowLimit);
-                    int prog = 10 + ((int)Math.floor((i * 5)/tables.size()));
+                    int prog = 10 + ((int)Math.floor((i * 5d)/tables.size()));
                     for (ProgressMonitor monitor : monitors)
                         monitor.progress(prog);
                     allRows += rows;
@@ -147,7 +147,7 @@ public class DbExport extends DbOperation {
                             }
                             bw.write(" }");
                             tableRow++;
-                            int prog = 15 + ((int)Math.floor((overallRow * 85) / allRows));
+                            int prog = 15 + ((int)Math.floor((overallRow * 85d) / allRows));
                             for (ProgressMonitor monitor : monitors)
                                 monitor.progress(prog);
                             overallRow++;

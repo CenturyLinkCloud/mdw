@@ -32,6 +32,7 @@ import org.apache.xmlbeans.XmlOptions;
 
 import com.centurylink.mdw.util.file.FileHelper;
 
+@SuppressWarnings("squid:S2259")
 public class Compatibility {
 
     public static final String NAMESPACES_MAP = "namespaces.map";

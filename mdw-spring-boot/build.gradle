@@ -1,3 +1,4 @@
+
 dependencies {
     // hub is compileOnly -- otherwise war ends up in client jar
     compileOnly(project(":mdw-hub")) { 
