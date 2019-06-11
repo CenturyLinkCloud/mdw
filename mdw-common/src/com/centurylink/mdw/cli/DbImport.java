@@ -56,7 +56,7 @@ public class DbImport extends DbOperation {
         int totalLines = 0;
         try (FileReader fr = new FileReader(input);
              BufferedReader br = new BufferedReader(fr)) {
-            while (br.readLine() != null)
+            while (br.readLine() != null) // NOSONAR
                 totalLines++;
         }
         for (ProgressMonitor monitor : monitors)
@@ -81,7 +81,7 @@ public class DbImport extends DbOperation {
                     if (isOracle())
                         truncate += " cascade";
                     st.executeUpdate(truncate);
-                    int prog = 5 + (int) floor((tables.size() - i) * 5) / tables.size();
+                    int prog = 5 + (int) floor((tables.size() - i) * 5d) / tables.size();
                     for (ProgressMonitor monitor : monitors)
                         monitor.progress(prog);
                 }
@@ -165,7 +165,7 @@ public class DbImport extends DbOperation {
                             table = null;
                         }
                     }
-                    int prog = 10 + (int) floor((lineNum * 90) / totalLines);
+                    int prog = 10 + (int) floor((lineNum * 90d) / totalLines);
                     for (ProgressMonitor monitor : monitors)
                         monitor.progress(prog);
                     lineNum++;
@@ -181,7 +181,7 @@ public class DbImport extends DbOperation {
                 try {
                     conn.close();
                 } catch (SQLException ex) {
-                    throw new IOException(ex);
+                    throw new IOException(ex); // NOSONAR
                 }
             }
         }

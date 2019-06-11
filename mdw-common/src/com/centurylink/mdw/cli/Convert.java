@@ -64,7 +64,7 @@ public class Convert extends Setup {
     @Parameter(names="--language", description="Output language for impls")
     private String language;
     public String getLanguage() {
-        return prefix;
+        return language;
     }
 
     Convert() {

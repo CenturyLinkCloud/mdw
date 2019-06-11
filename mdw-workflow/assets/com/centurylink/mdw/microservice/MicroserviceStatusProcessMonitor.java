@@ -26,7 +26,7 @@ public class MicroserviceStatusProcessMonitor implements ProcessMonitor {
             for (VariableInstance varInst : context.getProcessInstance().getVariables()) {
                 if (Jsonable.class.getName().equals(varInst.getType())) {
                     Jsonable jsonable = (Jsonable) context.getVariables().get(varInst.getName());
-                    if (jsonable.getClass().getName().equals(ServiceSummary.class.getName())) {
+                    if (ServiceSummary.class.isAssignableFrom(jsonable.getClass())) {
                         serviceSummaryVarName = varInst.getName();
                         summary = (ServiceSummary) jsonable;
                         break;

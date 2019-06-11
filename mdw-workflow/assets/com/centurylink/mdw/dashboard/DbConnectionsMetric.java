@@ -40,9 +40,11 @@ public class DbConnectionsMetric  implements SystemMetric {
         }
 
         List<Metric> metrics = new ArrayList<>();
-        metrics.add(new Metric("active", "Active", dataSource.getNumActive()));
-        metrics.add(new Metric("idle", "Idle", dataSource.getNumIdle()));
-        metrics.add(new Metric("poolSize", "Pool Size", dataSource.getMaxTotal()));
+        if (dataSource != null) {
+            metrics.add(new Metric("active", "Active", dataSource.getNumActive()));
+            metrics.add(new Metric("idle", "Idle", dataSource.getNumIdle()));
+            metrics.add(new Metric("poolSize", "Pool Size", dataSource.getMaxTotal()));
+        }
         return metrics;
     }
 }

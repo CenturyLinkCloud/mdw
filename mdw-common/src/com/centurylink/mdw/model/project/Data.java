@@ -65,7 +65,6 @@ public class Data {
             put("java.util.List<Long>", "json");
             put("java.util.List<String>", "json");
             put("java.util.Map<String,String>", "json");
-
         }};
     }
 
