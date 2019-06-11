@@ -15,14 +15,6 @@
  */
 package com.centurylink.mdw.workflow.activity.validate;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.StatusResponse;
@@ -37,7 +29,6 @@ import com.centurylink.mdw.service.api.SwaggerModelValidator;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
-
 import io.limberest.service.http.Status;
 import io.limberest.validate.Result;
 import io.limberest.validate.ValidationException;
@@ -45,6 +36,13 @@ import io.swagger.models.HttpMethod;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.Swagger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Tracked(LogLevel.TRACE)
 public class SwaggerValidatorActivity extends DefaultActivityImpl {
@@ -69,21 +67,14 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
             throw new ActivityException("Missing request headers: " + serviceValues.getRequestHeadersVariableName());
 
         String httpMethod = serviceValues.getHttpMethod();
-        String requestPath = getAttribute(PATH);
-        if (requestPath == null) {
-            // try process-defined request path
-            AssetRequest processRequest = getProcessDefinition().getRequest();
-            if (processRequest != null) {
-                String processPath = processRequest.getPath();
-                if (!processPath.startsWith("/"))
-                    processPath = "/" + processPath;
-                requestPath = "/" + getPackage().getName().replace('.', '/') + processPath;
-            }
-        }
-        if (requestPath == null) {
-            // fallback is actual request path
-            requestPath = serviceValues.getRequestPath();
-        }
+        String requestPath = getRequestPath(runtimeContext);
+        if (requestPath == null)
+            throw new ActivityException("Request path not found");
+
+        String lookupPath = requestPath.replaceAll("\\{.*}", "");
+        while (lookupPath.endsWith(("/")))
+            lookupPath = lookupPath.substring(0, lookupPath.length() - 1);
+        logdebug("Swagger validation for lookupPath=" + lookupPath + " and requestPath=" + requestPath);
 
         Object request = null;
         if (!"GET".equalsIgnoreCase(httpMethod)) {
@@ -91,7 +82,7 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
         }
 
         try {
-            Swagger swagger = MdwSwaggerCache.getSwagger(requestPath);
+            Swagger swagger = MdwSwaggerCache.getSwagger(lookupPath);
             Path swaggerPath = swagger.getPath(requestPath);
             if (swaggerPath == null)
                 throw new ValidationException(Status.NOT_FOUND.getCode(), "No swagger found: " + requestPath);
@@ -111,7 +102,7 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
                     result.also(Status.BAD_REQUEST, "Missing request: " + serviceValues.getRequestVariableName());
                 }
                 else {
-                    JSONObject requestJson = serviceValues.toJson(serviceValues.getRequestVariableName(), request);
+                    JSONObject requestJson = getRequestJson(request, runtimeContext);
                     result.also(validator.validateBody(requestJson, isStrict()));
                 }
             }
@@ -121,6 +112,30 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
             logger.debugException(ex.getMessage(), ex);
             return handleResult(ex.getResult());
         }
+    }
+
+    public String getRequestPath(ActivityRuntimeContext runtimeContext) throws ActivityException {
+        String requestPath = getAttribute(PATH);
+        if (requestPath == null) {
+            // try process-defined request path
+            AssetRequest processRequest = getProcessDefinition().getRequest();
+            if (processRequest != null) {
+                String processPath = processRequest.getPath();
+                if (!processPath.startsWith("/"))
+                    processPath = "/" + processPath;
+                requestPath = "/" + getPackage().getName().replace('.', '/') + processPath;
+            }
+        }
+        if (requestPath == null) {
+            // fallback is actual request path
+            requestPath = runtimeContext.getServiceValues().getRequestPath();
+        }
+        return requestPath;
+    }
+
+    public JSONObject getRequestJson(Object request, ActivityRuntimeContext runtimeContext) throws ActivityException {
+        ServiceValuesAccess serviceValues = runtimeContext.getServiceValues();
+        return serviceValues.toJson(serviceValues.getRequestVariableName(), request);
     }
 
     /**
