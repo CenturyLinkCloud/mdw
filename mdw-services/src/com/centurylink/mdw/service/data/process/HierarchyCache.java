@@ -249,8 +249,17 @@ public class HierarchyCache implements CacheService {
         }
     }
 
-    private static boolean hasMilestones(Linked<Process> hierarchy) {
+    public static boolean hasMilestones(Long processId) {
+        if (PackageCache.getPackage(MILESTONES_PACKAGE) != null) {
+            List<Linked<Process>> hierarchy = getHierarchy(processId);
+            if (hierarchy != null && !hierarchy.isEmpty()) {
+                return hasMilestones(hierarchy.get(0));
+            }
+        }
+        return false;
+    }
 
+    private static boolean hasMilestones(Linked<Process> hierarchy) {
         Process process = hierarchy.get();
         Linked<Activity> start = process.getLinkedActivities();
 
