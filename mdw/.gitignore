@@ -12,5 +12,9 @@ logs/
 /deps.txt
 /buildSrc/
 mdw-boot-*.jar
-.idea/**/*.iml
 /data.json
+.idea/**/*.iml
+**/.idea/workspace.xml
+**/.idea/tasks.xml
+**/.idea/uiDesigner.xml
+.idea/**/libraries
