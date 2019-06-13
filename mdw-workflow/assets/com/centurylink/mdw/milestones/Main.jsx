@@ -34,19 +34,28 @@ class Main extends Component {
         const masterRequestId = location.hash.substring(13);
         var url = this.getChildContext().serviceRoot + '/com/centurylink/mdw/milestones/' + masterRequestId;
         url += "?future=true";
+        $mdwUi.hubLoading(true);
+        var ok = false;
         fetch(new Request(url, {
           method: 'GET',
           headers: { Accept: 'application/json'},
           credentials: 'same-origin'
         }))
         .then(response => {
+          ok = response.ok;
+          $mdwUi.hubLoading(false);
           return response.json();
         })
         .then(milestone => {
-          this.setState({
-            milestone: milestone.milestone,
-            data: new Data(groups, milestone)
-          });
+          if (ok) {
+            this.setState({
+              milestone: milestone.milestone,
+              data: new Data(groups, milestone)
+            });
+          }
+          else {
+            $mdwUi.showMessage(json.status.message);
+          }
         });    
       }  
     });

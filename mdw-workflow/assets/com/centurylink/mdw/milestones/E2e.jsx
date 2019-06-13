@@ -22,14 +22,24 @@ class E2e extends Component {
   drawGraph() {
     const container = document.getElementById('milestone-all-graph');
     if (container) {
+      $mdwUi.hubLoading(true);
       const graphOptions = Object.assign({}, { 
-        height: (this.state.data.maxDepth * 100) + 'px' 
+        height: (this.state.data.maxDepth * 100) + 'px'
       }, options.graph);
       const graphData = {
         nodes: this.state.data.items, 
         edges: this.state.data.edges
       };
       const network = new Network(container, graphData, graphOptions);
+      // adjust top margin for large depth
+      const canvas = container.querySelector('div > canvas');
+      if (canvas) {
+        var top = '0px';
+        if (this.state.data.maxDepth) {
+          top = '-' + Math.round(this.state.data.maxDepth * 4.3) + 'px';
+        }    
+        canvas.style.top = top;
+      }
       network.on('doubleClick', params => {
         if (params.nodes && params.nodes.length === 1) {
           let node = graphData.nodes[params.nodes[0]];
@@ -41,6 +51,7 @@ class E2e extends Component {
           }
         }
       });
+      $mdwUi.hubLoading(false);
     }
   }
 
@@ -50,19 +61,28 @@ class E2e extends Component {
     .then(groups => {
       // retrieve activities e2e
       const url = this.context.serviceRoot + '/Activities/e2e/' + masterRequestId;
+      $mdwUi.hubLoading(true);
+      var ok = false;
       fetch(new Request(url, {
         method: 'GET',
         headers: { Accept: 'application/json', NoPersistence: 'true'},
         credentials: 'same-origin'
       }))
       .then(response => {
+        ok = response.ok;
+        $mdwUi.hubLoading(false);
         return response.json();
       })
       .then(activities => {
-        this.setState({
-          activityInstance: activities.activityInstance,
-          data: new DataE2e(groups, activities)
-        }, this.drawGraph());
+        if (ok) {
+          this.setState({
+            activityInstance: activities.activityInstance,
+            data: new DataE2e(groups, activities)
+          }, this.drawGraph());
+        }
+        else {
+          $mdwUi.showMessage(json.status.message);
+        }
       });  
     });
   }
@@ -71,6 +91,7 @@ class E2e extends Component {
     this.drawGraph();
     const hubRoot = this.context.hubRoot;
     const masterRequestId = this.props.match.params.masterRequestId;
+
     return (
       <div>
         <div className="panel-heading mdw-heading" style={{borderColor:'#ddd'}}>
