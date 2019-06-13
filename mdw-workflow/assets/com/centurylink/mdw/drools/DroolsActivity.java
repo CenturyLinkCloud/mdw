@@ -67,14 +67,17 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
         // TODO stateful session option
         StatelessKieSession kSession = knowledgeBase.newStatelessKieSession();
 
-        List<Object> facts = new ArrayList<Object>();
-        Map<String,Object> values = new HashMap<String,Object>();
+        List<Object> facts = new ArrayList<>();
+        Map<String,Object> values = new HashMap<>();
 
         for (VariableInstance variableInstance : getParameters()) {
             Object value = getVariableValue(variableInstance.getName());
             values.put(variableInstance.getName(), value);
         }
+        logdebug("Drools values: " + values);
+
         facts.add(values);
+        logdebug("Drools facts: " + facts);
 
         setGlobalValues(kSession);
 

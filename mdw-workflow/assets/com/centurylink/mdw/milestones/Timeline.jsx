@@ -14,10 +14,6 @@ class Timeline extends Component {
     const container = document.getElementById('milestone-timeline');
     if (container) {
       const timelineOptions = {
-        interaction: {
-          zoomView: false,
-          dragView: false
-        }    
       };
       const timelineData = new DataSet(this.props.data.items.filter(item => item.start));
 
