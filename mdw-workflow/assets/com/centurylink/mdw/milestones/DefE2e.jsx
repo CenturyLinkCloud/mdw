@@ -30,6 +30,15 @@ class DefE2e extends Component {
         assetPath: this.state.assetPath
       };
       const network = new Network(container, graphData, graphOptions);
+      // adjust top margin for large depth
+      const canvas = container.querySelector('div > canvas');
+      if (canvas) {
+        var top = '0px';
+        if (this.state.data.maxDepth) {
+          top = '-' + Math.round(this.state.data.maxDepth * 4.3) + 'px';
+        }    
+        canvas.style.top = top;
+      }
       network.on('doubleClick', params => {
         if (params.nodes && params.nodes.length === 1) {
           let node = graphData.nodes[params.nodes[0]];

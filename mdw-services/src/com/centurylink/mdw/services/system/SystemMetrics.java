@@ -113,13 +113,14 @@ public class SystemMetrics {
         if (active) {
             active = false;
             scheduler.shutdown();
-            for (String name : systemMetrics.keySet()) {
-                try {
-                    // log any remaining in-memory datapoints
-                    doOutput(systemMetrics.get(name), true);
-                }
-                catch (IOException ex) {
-                    logger.severeException(ex.getMessage(), ex);
+            if (outputDir != null) {
+                for (String name : systemMetrics.keySet()) {
+                    try {
+                        // log any remaining in-memory datapoints
+                        doOutput(systemMetrics.get(name), true);
+                    } catch (IOException ex) {
+                        logger.severeException(ex.getMessage(), ex);
+                    }
                 }
             }
         }
