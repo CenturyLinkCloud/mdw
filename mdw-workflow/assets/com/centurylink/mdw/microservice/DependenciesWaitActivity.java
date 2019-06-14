@@ -46,9 +46,7 @@ public class DependenciesWaitActivity extends EventWaitActivity {
                 && (compCode.length() == 0 || compCode.equals(EventType.EVENTNAME_FINISH)))
             compCode = null;
         String actInstStatusName;
-        if (exitStatus == null)
-            actInstStatusName = null;
-        else if (exitStatus.equals(WorkStatus.STATUS_CANCELLED))
+        if (exitStatus.equals(WorkStatus.STATUS_CANCELLED))
             actInstStatusName = WorkStatus.STATUSNAME_CANCELLED;
         else if (exitStatus.equals(WorkStatus.STATUS_WAITING))
             actInstStatusName = WorkStatus.STATUSNAME_WAITING;
@@ -71,15 +69,12 @@ public class DependenciesWaitActivity extends EventWaitActivity {
                 logger.info("Error in registerWaitEvents - " + e.getMessage());
                 e.printStackTrace();
             }
-            if (compCode
+            return compCode
                     .startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
                     || compCode.startsWith(
-                            WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ABORT)
+                    WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ABORT)
                     || compCode.startsWith(
-                            WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ERROR))
-                return true;
-            else
-                return false;
+                    WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ERROR);
         }
         else
             return true;
@@ -132,15 +127,15 @@ public class DependenciesWaitActivity extends EventWaitActivity {
                 }
 
                 Boolean expResultBool = (Boolean) expResult;
-                logger.info(getActivityName() + "  *** expString " + (String) expString + " is "
+                logger.info(getActivityName() + "  *** expString " + expString + " is "
                         + expResultBool);
                 if (Boolean.parseBoolean(microservice[0])) {
                     // check it
                     // if microservice isn't populated then do the check based
                     // on
                     // the expression
-                    if ((StringUtils.isBlank(microservice[1]) && !expResultBool.booleanValue())
-                            || (expResultBool.booleanValue()
+                    if ((StringUtils.isBlank(microservice[1]) && !expResultBool)
+                            || (expResultBool
                                     && !StringUtils.isBlank(microservice[1])
                                     && microServiceSuccess(microservice[1],
                                             serviceSummary) == null)) {
@@ -177,7 +172,7 @@ public class DependenciesWaitActivity extends EventWaitActivity {
      * @see ServiceSummary
      * @return a Jsonable as a future-proof in case we need to know which
      *         invocation/update was successful
-     * @throws JSONException
+     * @throws JSONException JSONException
      */
     public Jsonable microServiceSuccess(String microservice, ServiceSummary serviceSummary) {
         MicroserviceList microserviceList = serviceSummary.getMicroservices(microservice);

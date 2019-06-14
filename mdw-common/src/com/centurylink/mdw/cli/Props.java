@@ -170,7 +170,7 @@ public class Props {
             if (obj != null)
                 value = obj.toString();
         }
-        if (value == null) {
+        if (value == null && setup != null) {
             // read from prop file (if exists)
             File propFile;
             if (prop.inProjectDir)
@@ -181,7 +181,7 @@ public class Props {
             if (properties != null) {
                 value = properties.getProperty(prop.getProperty());
             }
-            if (value == null && setup != null && prop.getName() != null) {
+            if (value == null && prop.getName() != null) {
                 // fall back to default (non-specified) value
                 Object obj = setup.getValue(prop.getName());
                 if (obj != null)

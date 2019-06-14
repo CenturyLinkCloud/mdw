@@ -50,11 +50,11 @@ public class AssetCache implements PreloadableCache {
         if (params != null) {
             String preLoadString = params.get("PreInitialized");
             if (preLoadString != null && preLoadString.trim().length() > 0) {
-                String[] preLoadedArr = preLoadString.split("\\\n");
+                String[] preLoadedArr = preLoadString.split("\n");
                 for (String preLoad : preLoadedArr) {
                     if (preLoad.trim().length() > 0) {
                         if (preLoaded == null)
-                            preLoaded = new ArrayList<String>();
+                            preLoaded = new ArrayList<>();
                         preLoaded.add(preLoad.trim());
                     }
                 }
@@ -102,7 +102,7 @@ public class AssetCache implements PreloadableCache {
 
     public static synchronized Map<AssetKey,Asset> getAssetMap() {
         if (assetMap == null) {
-            assetMap = Collections.synchronizedMap(new TreeMap<AssetKey,Asset>());
+            assetMap = Collections.synchronizedMap(new TreeMap<>());
         }
         return assetMap;
     }
@@ -267,7 +267,7 @@ public class AssetCache implements PreloadableCache {
             }
         }
 
-        Asset asset = null;
+        Asset asset;
         asset = loadAsset(key);
         if (asset != null) {
             synchronized(assetMap) {
@@ -295,7 +295,7 @@ public class AssetCache implements PreloadableCache {
     }
 
     public static List<Asset> getAssets(String language) {
-        List<Asset> assets = new ArrayList<Asset>();
+        List<Asset> assets = new ArrayList<>();
         try {
             for (Asset asset : getLatestAssets()) {
                 if (asset.getLanguage() != null && asset.getLanguage().equals(language)) {
@@ -312,7 +312,7 @@ public class AssetCache implements PreloadableCache {
 
     public static synchronized List<Asset> getLatestAssets() throws DataAccessException, CachingException {
         if (latestAssets == null) {
-            latestAssets = new ArrayList<Asset>();
+            latestAssets = new ArrayList<>();
             for (Asset asset : getAllAssets()) {
                 Package assetPkg = PackageCache.getAssetPackage(asset.getId());
                 // relies on getAllAssets() being ordered by version descending
@@ -321,12 +321,12 @@ public class AssetCache implements PreloadableCache {
                     Package rsPkg = PackageCache.getAssetPackage(rs.getId());
                     if (rs.getName().equals(asset.getName())) {
                         // potential match
-                        boolean languageMatch = false;
+                        boolean languageMatch;
                         if (rs.getLanguage() == null)
                           languageMatch = asset.getLanguage() == null;
                         else
                           languageMatch = rs.getLanguage().equals(asset.getLanguage());
-                        boolean packageMatch = false;
+                        boolean packageMatch;
                         if (rsPkg == null)
                           packageMatch = assetPkg == null;
                         else if (assetPkg == null)
@@ -386,7 +386,7 @@ public class AssetCache implements PreloadableCache {
     }
 
     public static Set<String> getRuleNames(String ruleNameRegex) {
-        Set<String> matchedRuleNames = new HashSet<String>();
+        Set<String> matchedRuleNames = new HashSet<>();
         try {
             for(Asset asset : getAllAssets()){
                 if(asset.getName().matches(ruleNameRegex)){
@@ -506,12 +506,12 @@ class AssetKey implements Comparable<AssetKey> {
     }
 
     public int compareTo(AssetKey otherKey) {
-        if (id != null && otherKey!=null)
+        if (id != null && otherKey != null)
             return -id.compareTo(otherKey.getId());  // id is specified so compare based on that (reverse order)
 
-        if (name == null && otherKey.getName() != null)
+        if (name == null && otherKey != null && otherKey.getName() != null)
             return -1;
-        if (otherKey.getName() == null && name != null)
+        if (otherKey != null && otherKey.getName() == null && name != null)
             return 1;
         if ((name!=null) && (!name.equals(otherKey.getName())))
             return name.compareTo(otherKey.getName());

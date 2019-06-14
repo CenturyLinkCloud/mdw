@@ -332,7 +332,7 @@ public abstract class Setup implements Operation {
                     Object value = getValue(match.substring(2, match.length() - 2));
                     if (value == null)
                         value = match;
-                    newContents.append(value == null ? "" : value);
+                    newContents.append(value);
                     index = matcher.end();
                 }
                 newContents.append(contents.substring(index));
@@ -688,9 +688,8 @@ public abstract class Setup implements Operation {
 
     private static String byteArrayToHexString(byte[] b) {
         String result = "";
-        for (int i = 0; i < b.length; i++) {
-            result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
-        }
+        for (byte value : b)
+            result += Integer.toString((value & 0xff) + 0x100, 16).substring(1);
         return result;
     }
 
