@@ -15,20 +15,20 @@
  */
 package com.centurylink.mdw.slack;
 
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONObject;
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.NotificationActivity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
+import org.json.JSONObject;
+
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple activity for sending slack Notification using webhook.
@@ -36,13 +36,32 @@ import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
  * Posts any notice/exception message onto a Slack channel using webhook
  * </p>
  */
-public class SlackActivity extends DefaultActivityImpl {
+public class SlackActivity extends DefaultActivityImpl implements NotificationActivity {
 
     public static String END_POINT_URI = "endpointUri";
     public static final String SLACK_MESSAGE = "slackMessage";
     // Prefix that identifies where the Slack message came from
     private static String SLACK_PREFIX = "slackPrefix";
-    private ActivityRuntimeContext context;
+
+    @Override
+    public void sendNotices() throws ActivityException {
+        try {
+            Map<String, String> hdrs = getRequestHeaders();
+            HttpHelper helper = new HttpHelper(new URL(getWebhookUrl()));
+            helper.setHeaders(hdrs);
+            String response = helper.post(getMessage().toString(2));
+            if (helper.getResponseCode() != 200)
+                throw new ServiceException(helper.getResponseCode(),
+                        "Slack notification failed with response:" + response);
+        }
+        catch (Exception ex) {
+            logexception(ex.getMessage(), ex);
+            if (!"true".equalsIgnoreCase(getAttributeValueSmart(
+                    WorkAttributeConstant.CONTINUE_DESPITE_MESSAGING_EXCEPTION))) {
+                throw new ActivityException(ex.getMessage(), ex);
+            }
+        }
+    }
 
     /*
      * Make sure it's a JSON request
@@ -65,7 +84,7 @@ public class SlackActivity extends DefaultActivityImpl {
     }
 
     /*
-     * The source of Slack message can be either Json asset or  process variable.
+     * The source of Slack message can be either Json asset or process variable.
      */
     public JSONObject getMessage() throws ActivityException {
         String message = null;
@@ -78,7 +97,7 @@ public class SlackActivity extends DefaultActivityImpl {
             message = slackMessageName;
         }
         else {
-            message = context.evaluateToString(template.getStringContent());
+            message = getRuntimeContext().evaluateToString(template.getStringContent());
         }
 
         JSONObject json = new JSONObject();
@@ -105,29 +124,6 @@ public class SlackActivity extends DefaultActivityImpl {
         if (url == null)
             throw new ActivityException("Missing configuration: Slack End Point uri");
         return url;
-    }
-
-    @Override
-    public Object execute(ActivityRuntimeContext context) throws ActivityException {
-        try {
-            this.context = context;
-            Map<String, String> hdrs = getRequestHeaders();
-
-            HttpHelper helper = new HttpHelper(new URL(getWebhookUrl()));
-            helper.setHeaders(hdrs);
-            String response = helper.post(getMessage().toString(2));
-            if (helper.getResponseCode() != 200)
-                throw new ServiceException(helper.getResponseCode(),
-                        "Slack notification failed with response:" + response);
-        }
-        catch (Exception ex) {
-            logexception(ex.getMessage(), ex);
-            if (!"true".equalsIgnoreCase(getAttributeValueSmart(
-                    WorkAttributeConstant.CONTINUE_DESPITE_MESSAGING_EXCEPTION))) {
-                throw new ActivityException(ex.getMessage(), ex);
-            }
-        }
-        return null;
     }
 
 }

@@ -30,17 +30,13 @@ public interface GeneralActivity extends ActivityCategory {
      * The implementation in the default implementation does nothing.
      *
      * @return the activity result (aka completion code)
-     *
-     * @throws ActivityException
      */
-    public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException;
+    Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException;
 
     /**
      * This method will be deprecated soon.
      * The preferred method to override is the execute() that takes an ActivityRuntimeContext and returns Object.
-     *
-     * @throws ActivityException
      */
-    public void execute() throws ActivityException;
+    void execute() throws ActivityException;
 
 }

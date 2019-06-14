@@ -1452,4 +1452,11 @@ public abstract class BaseActivity implements GeneralActivity {
         String v = getAttribute(name);
         return v == null ? defaultValue : v;
     }
+
+    protected String getRequiredAttribute(String name) throws ActivityException {
+        String v = getAttribute(name);
+        if (v == null)
+            throw new ActivityException("Missing required attribute: " + name);
+        return v;
+    }
 }
