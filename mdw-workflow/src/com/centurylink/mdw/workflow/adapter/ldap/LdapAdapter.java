@@ -65,12 +65,12 @@ public class LdapAdapter extends ObjectAdapterActivity {
         try {
             String ldapHost = getAttributeValueSmart(LDAP_HOST);
             String ldapPort = getAttributeValueSmart(LDAP_PORT);
-            String baseDn = getAttributeValueSmart(BASE_DN);;
+            String baseDn = getAttributeValueSmart(BASE_DN);
             String appCuid = getAttributeValueSmart(APP_CUID);
             String appPassword = getAttributeValueSmart(APP_PASSWORD);
             String ldapUrl = "ldap://" + ldapHost + ":" + ldapPort + "/" + baseDn;
 
-            Hashtable<String,String> env = new Hashtable<String,String>();
+            Hashtable<String,String> env = new Hashtable<>();
             env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
             env.put(Context.PROVIDER_URL, ldapUrl);
             env.put(Context.SECURITY_PROTOCOL, "ssl");
@@ -160,7 +160,7 @@ public class LdapAdapter extends ObjectAdapterActivity {
                      }
                      List<Object> resultList = ldapResults.get(mappedAttr);
                      if (resultList == null) {
-                         resultList = new ArrayList<Object>();
+                         resultList = new ArrayList<>();
                          ldapResults.put(mappedAttr, resultList);
                      }
                      resultList.add(val);
@@ -193,15 +193,15 @@ public class LdapAdapter extends ObjectAdapterActivity {
                             setVariableValue(varName, resultList);
                         }
                         else if (varType.equals("java.util.List<Integer>")) {
-                            List<Integer> value = new ArrayList<Integer>();
-                            for (int i = 0; i < resultList.size(); i++)
-                                value.add(new Integer(resultList.get(i).toString()));
+                            List<Integer> value = new ArrayList<>();
+                            for (Object object : resultList)
+                                value.add(new Integer(object.toString()));
                             setVariableValue(varName, value);
                         }
                         else if (varType.equals("java.util.List<Long>")) {
-                            List<Long> value = new ArrayList<Long>();
-                            for (int i = 0; i < resultList.size(); i++)
-                                value.add(new Long(resultList.get(i).toString()));
+                            List<Long> value = new ArrayList<>();
+                            for (Object object : resultList)
+                                value.add(new Long(object.toString()));
                             setVariableValue(varName, value);
                         }
                         else {

@@ -183,8 +183,8 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
      * You can also return WorkStatus.STATUS_HOLD or return WorkStatus.STATUS_CANCELLED.
      *
      * @return see above
-     * @param message
-     * @throws ActivityException
+     * @param message received message
+     * @throws ActivityException ActivityException
      */
     protected void processMessage(String message) throws ActivityException {
         try {
@@ -198,11 +198,9 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
                     this.setParameterValueAsDocument(rcvdMsgDocVar, variableVO.getType(), message);
                 }
             }
-            return;
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
-            return;
         }
     }
 
@@ -223,11 +221,9 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
         setReturnCode(compCode);
         if (WorkStatus.STATUS_WAITING.equals(exitStatus)) {
             this.registerWaitEvents(true, true);
-            if (compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
+            return compCode != null && (compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
                     || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ABORT)
-                    || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ERROR))
-                return true;
-            else return false;
+                    || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ERROR));
         } else return true;
     }
 
@@ -254,7 +250,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
     /**
      * Update SLA of this
      * @param seconds number of seconds from now as the new SLA
-     * @throws ActivityException
+     * @throws ActivityException ActivityException
      */
     protected void updateSLA(int seconds) throws ActivityException {
         try {

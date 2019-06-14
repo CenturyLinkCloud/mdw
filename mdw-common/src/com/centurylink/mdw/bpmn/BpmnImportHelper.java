@@ -42,11 +42,12 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.TextNote;
 import com.centurylink.mdw.model.workflow.Transition;
 
-public class BpmnImportHelper {
+class BpmnImportHelper {
 
-    private static final Map<String, String> activityMap = new HashMap<>();
+    private static final Map<String, String> activityMap;
 
     static {
+        activityMap = new HashMap<>();
         activityMap.put("startEvent",
                 "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity");
         activityMap.put("endEvent",
@@ -72,7 +73,7 @@ public class BpmnImportHelper {
                 "com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity");
     }
 
-    public String importProcess(File process) throws IOException {
+    String importProcess(File process) throws IOException {
         Process proc = new Process();
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -80,15 +81,12 @@ public class BpmnImportHelper {
             builder = factory.newDocumentBuilder();
             Document document = builder.parse(
                     new ByteArrayInputStream(Files.readAllBytes(Paths.get(process.getPath()))));
-            proc.setSubprocesses(new ArrayList<Process>());
+            proc.setSubprocesses(new ArrayList<>());
             Node procNode = getNode(document.getDocumentElement(), "process");
             if (procNode != null)
                 parseProcessData(document.getDocumentElement(), procNode, proc);
         }
-        catch (ParserConfigurationException e) {
-            System.err.println("unable to import process ---" + process.getPath());
-        }
-        catch (SAXException e) {
+        catch (ParserConfigurationException | SAXException e) {
             System.err.println("unable to import process ---" + process.getPath());
         }
         return proc.getJson().toString(2);
@@ -136,7 +134,7 @@ public class BpmnImportHelper {
 
     private void parseSubprocesses(Element element, Node node, Process proc) {
         Process subProc = new Process();
-        subProc.setSubprocesses(new ArrayList<Process>());
+        subProc.setSubprocesses(new ArrayList<>());
         subProc.setName(parseAttributeValue(node, "name"));
         parseProcessData(element, node, subProc);
         proc.getSubprocesses().add(subProc);
@@ -144,7 +142,7 @@ public class BpmnImportHelper {
 
     private void parseActivityData(Node node, Process proc) {
         if (proc.getActivities() == null)
-            proc.setActivities(new ArrayList<Activity>());
+            proc.setActivities(new ArrayList<>());
         Activity act = new Activity();
         proc.getActivities().add(act);
         act.setId(Long.parseLong(parseAttributeValue(node, "id").substring(1)));
@@ -171,7 +169,7 @@ public class BpmnImportHelper {
 
     private void parseSequenceFlowData(Node node, Process proc) {
         if (proc.getTransitions() == null)
-            proc.setTransitions(new ArrayList<Transition>());
+            proc.setTransitions(new ArrayList<>());
         Transition trans = new Transition();
         String seqId = parseAttributeValue(node, "id");
         trans.setId(Long.parseLong(seqId.substring(1)));
@@ -215,18 +213,21 @@ public class BpmnImportHelper {
 
     private void parseVaraibleData(Node node, Process proc) {
         if (proc.getVariables() == null)
-            proc.setVariables(new ArrayList<Variable>());
+            proc.setVariables(new ArrayList<>());
         Variable var = new Variable();
         var.setName(parseAttributeValue(node, "name"));
         var.setDisplaySequence(Integer.parseInt(parseAttributeValue(node, "dispaySequence")));
         var.setVariableCategory(var.getCategoryCode(parseAttributeValue(node, "category")));
-        var.setType(parseAttributeValue(getNode(node, "mdw:type"), "name"));
+        Node typeNode = getNode(node, "mdw:type");
+        if (typeNode != null) {
+            var.setType(parseAttributeValue(typeNode, "name"));
+        }
         proc.getVariables().add(var);
     }
 
     private void parseTextNotesData(Node node, Process proc) {
         if (proc.getTextNotes() == null)
-            proc.setTextNotes(new ArrayList<TextNote>());
+            proc.setTextNotes(new ArrayList<>());
         TextNote notes = new TextNote();
         notes.setContent(parseAttributeValue(node, "content"));
         NodeList nodeList = node.getChildNodes();
@@ -262,11 +263,13 @@ public class BpmnImportHelper {
         Activity act = proc.getActivity(actId);
         if (act != null) {
             Node bounds = getNode(node, "dc:Bounds");
-            String value = "x=" + Double.valueOf(parseAttributeValue(bounds, "x")).intValue()
-                    + ",y=" + Double.valueOf(parseAttributeValue(bounds, "y")).intValue() + ",w="
-                    + Double.valueOf(parseAttributeValue(bounds, "width")).intValue() + ",h="
-                    + Double.valueOf(parseAttributeValue(bounds, "height")).intValue();
-            act.setAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO, value);
+            if (bounds != null) {
+                String value = "x=" + Double.valueOf(parseAttributeValue(bounds, "x")).intValue()
+                        + ",y=" + Double.valueOf(parseAttributeValue(bounds, "y")).intValue() + ",w="
+                        + Double.valueOf(parseAttributeValue(bounds, "width")).intValue() + ",h="
+                        + Double.valueOf(parseAttributeValue(bounds, "height")).intValue();
+                act.setAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO, value);
+            }
         }
     }
 

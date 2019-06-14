@@ -71,12 +71,12 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
         if (params != null) {
             String preCompString = params.get("PreCompiled");
             if (preCompString != null && preCompString.trim().length() > 0) {
-                List<String> preCompList = new ArrayList<String>();
-                preCompiled = preCompString.split("\\\n");
-                for (int i = 0; i < preCompiled.length; i++) {
-                    String preLoad = preCompiled[i].trim();
+                List<String> preCompList = new ArrayList<>();
+                preCompiled = preCompString.split("\n");
+                for (String s : preCompiled) {
+                    String preLoad = s.trim();
                     if (!preLoad.isEmpty())
-                      preCompList.add(preLoad);
+                        preCompList.add(preLoad);
                 }
                 preCompiled = preCompList.toArray(new String[]{});
             }
@@ -199,16 +199,9 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                 compileJavaCode(parentLoader, currentPackage, className, javaCode, cache);
                 clazz = DynamicJavaClassLoader.getInstance(parentLoader, currentPackage, cache).loadClass(className);
             }
-            catch (ClassNotFoundException ex) {
+            catch (ClassNotFoundException | IOException | MdwJavaException ex) {
                 throw ex;
-            }
-            catch (IOException ex) {
-                throw ex;
-            }
-            catch (MdwJavaException ex) {
-                throw ex;
-            }
-            catch (Throwable t) {
+            } catch (Throwable t) {
                 logger.severeException(t.getMessage(), t);
                 // don't let compilation errors prevent startup
             }
@@ -402,8 +395,8 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
 
         CompilationTask compileTask = compiler.getTask(null, mdwFileManager, diagnostics, options, null, jfos);
         boolean hasErrors = false;
-        List<String> erroredClasses = new ArrayList<String>();
-        List<String> compilableClasses = null;
+        List<String> erroredClasses = new ArrayList<>();
+        List<String> compilableClasses;
         if (!compileTask.call()) {
             for (Diagnostic<?> diagnostic : diagnostics.getDiagnostics()) {
                 String msg = "\nJava Compilation " + diagnostic.getKind() + ":" + diagnostic.getSource()
@@ -422,7 +415,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
             if (hasErrors) {
                 logger.debug("Dynamic Java Compiler Classpath: " + classpath);
                 logger.severe("Compilation errors in Dynamic Java. See compiler output in log for details.");
-                compilableClasses = new ArrayList<String>();
+                compilableClasses = new ArrayList<>();
                 for (String className : javaSources.keySet()) {
                     if (!erroredClasses.contains(className))
                         compilableClasses.add(className);
@@ -688,7 +681,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
 
         @Override
         public Class<?> loadClass(String name) throws ClassNotFoundException {
-            Class<?> loaded = null;
+            Class<?> loaded;
             try {
                 synchronized (getStaticClassLoadingLock(name)) {  // Only allow 1 class loader instance to load same class
                     // Look in assets first (overrides classes provided by built-in JARs), unless classicLoading is true
@@ -713,7 +706,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
          * the same class at the same time
          */
         private Object getStaticClassLoadingLock(String className) {
-            Object lock = null;
+            Object lock;
             Object newLock = new Object();
             lock = parallelLockMap.putIfAbsent(className, newLock);
             if (lock == null) {
@@ -737,15 +730,15 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
     }
 
     /**
-     * @param parentClassLoader
-     * @param className
-     * @throws CachingException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws MdwJavaException
+     * @param parentClassLoader parentClassLoader
+     * @param className className
+     * @throws CachingException CachingException
+     * @throws IOException IOException
+     * @throws ClassNotFoundException ClassNotFoundException
+     * @throws MdwJavaException MdwJavaException
      */
     public static Class<?> getClassFromAssetName(ClassLoader parentClassLoader, String className) throws CachingException, MdwJavaException, ClassNotFoundException, IOException {
-        Class<?> clazz = null;
+        Class<?> clazz;
         Package javaAssetPackage = PackageCache.getJavaAssetPackage(className);
         Asset javaAsset = AssetCache.getAsset(className, Asset.JAVA);
         if (parentClassLoader == null) {

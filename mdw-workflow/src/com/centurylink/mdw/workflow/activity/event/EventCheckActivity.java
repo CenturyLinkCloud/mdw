@@ -28,8 +28,6 @@ import com.centurylink.mdw.util.timer.Tracked;
 public class EventCheckActivity extends EventWaitActivity {
 
     private Integer exitStatus;
-    public static final String RECEIVED_MESSAGE_DOC_VAR = "rcvdMsgDocVar";
-
 
     /**
      * Method that executes the logic based on the work
@@ -83,11 +81,9 @@ public class EventCheckActivity extends EventWaitActivity {
         setReturnCode(compCode);
         if (WorkStatus.STATUS_WAITING.equals(exitStatus)) {
             this.registerWaitEvents(true, true);
-            if (compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
+            return compCode != null && (compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
                     || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ABORT)
-                    || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ERROR))
-                return true;
-            else return false;
+                    || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ERROR));
         } else return true;
     }
 
