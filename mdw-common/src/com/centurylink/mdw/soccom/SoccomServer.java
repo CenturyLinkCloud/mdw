@@ -60,7 +60,7 @@ public class SoccomServer extends ServerSocket {
             mainThread.interrupt();
         try {
             this.close();
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
     }
 
@@ -82,9 +82,9 @@ public class SoccomServer extends ServerSocket {
     }
 
     /**
-     * @param threadId
-     * @param thread
-     * @return
+     * @param threadId threadId
+     * @param thread thread
+     * @return int
      */
     int addThread(String threadId, ServerThread thread) {
         threads.put(threadId, thread);
@@ -123,7 +123,7 @@ public class SoccomServer extends ServerSocket {
     private void startSub() {
         ServerThread thread;
         shutdown = false;
-        threads = new Hashtable<String, ServerThread>();
+        threads = new Hashtable<>();
         while (!shutdown) {
             try {
                 setSoTimeout(0);
@@ -241,7 +241,7 @@ public class SoccomServer extends ServerSocket {
             OutputStream out) throws IOException, SoccomException {
         String msgstr = new String(msg, 0, msgSize);
         if (msgstr.length() >= 5 && msgstr.substring(0, 5).equals("SLEEP")) {
-            int seconds = Integer.parseInt(msgstr.substring(6));
+            long seconds = Integer.parseInt(msgstr.substring(6));
             try {
                 if (seconds >= 0) {
                     Thread.sleep(seconds * 1000);
@@ -256,7 +256,7 @@ public class SoccomServer extends ServerSocket {
                     }
                 }
             }
-            catch (InterruptedException e) {
+            catch (InterruptedException ignored) {
             }
             putResp(threadId, out, msgId, msgstr);
         }
