@@ -132,19 +132,20 @@ public class MongoDocumentDb implements DocumentDb {
                 mongoClient = new MongoClient(new ServerAddress(dbHost, dbPort), options.connectionsPerHost(maxConnections).writeConcern(WriteConcern.ACKNOWLEDGED).build());
             }
 
-            for (String name : MongoDocumentDb.getMongoDb().listCollectionNames()) {
-                if (name.startsWith(MDW_PREFIX)) {
-                    boolean needsIndex = true;
-                    for (Document doc : MongoDocumentDb.getMongoDb().getCollection(name).listIndexes()) {
-                        if ("document_id_1".equals(doc.getString("name"))) {
-                            needsIndex = false;
-                            collectionDocIdIndexed.putIfAbsent(name, true);
+            if (MongoDocumentDb.getMongoDb() != null)
+                for (String name : MongoDocumentDb.getMongoDb().listCollectionNames()) {
+                    if (name.startsWith(MDW_PREFIX)) {
+                        boolean needsIndex = true;
+                        for (Document doc : MongoDocumentDb.getMongoDb().getCollection(name).listIndexes()) {
+                            if ("document_id_1".equals(doc.getString("name"))) {
+                                needsIndex = false;
+                                collectionDocIdIndexed.putIfAbsent(name, true);
+                            }
                         }
+                        if (needsIndex)
+                            createMongoDocIdIndex(name);
                     }
-                    if (needsIndex)
-                        createMongoDocIdIndex(name);
                 }
-            }
             LoggerUtil.getStandardLogger().info(mongoClient.getMongoClientOptions().toString());
         }
     }
@@ -157,7 +158,7 @@ public class MongoDocumentDb implements DocumentDb {
     public String getDocumentContent(String ownerType, Long documentId) {
         CodeTimer timer = new CodeTimer("Load from documentDb", true);
         try {
-            MongoCollection<org.bson.Document> mongoCollection = getMongoDb().getCollection(getCollectionName(ownerType));
+            MongoCollection<Document> mongoCollection = getMongoDb().getCollection(getCollectionName(ownerType));
             org.bson.Document mongoQuery = new org.bson.Document("document_id", documentId);
             org.bson.Document c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
             if (c == null) {
