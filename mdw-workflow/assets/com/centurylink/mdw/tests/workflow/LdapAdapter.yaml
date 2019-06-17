@@ -38,7 +38,7 @@ process: # 1504
     value: dxoakes
   variable: # 3799
     name: department
-    value: OSS_NTWK FUL_TRANSPORT
+    value: ${~.*}
   variable: # 3800
     name: emailAddress
     value: Donald.Oakes@CenturyLink.com
@@ -50,19 +50,19 @@ process: # 1504
     value: Oakes
   variable: # 3805
     name: matchingCuids
-    value: ["dxoakes"]
+    value: ["dxoakes","ac25868"]
   variable: # 3806
     name: matchingMnetIds
-    value: [420104]
+    value: [${~.*}]
   variable: # 3802
     name: mnetId
-    value: 420104
+    value: ${~.*}
   variable: # 3804
     name: sapId
-    value: DHO115360
+    value: ${~.*}
   variable: # 3798
     name: sapIdInput
-    value: DHO115360
+    value: ${~.*}
   variable: # 3803
     name: state
     value: CO
@@ -71,39 +71,39 @@ process: # 1504
     value: |
       {
         "attributes": {
-          "tier3": "VIDEO OPS ENGINEERING - MDU/AD INSERTION",
-          "roomNumber": "COQ184SD00E20.10",
-          "telephoneNumber": "+13039929747",
-          "tier2": "IT",
+          "tier3": "${~.*}",
+          "roomNumber": "${~.*}",
+          "telephoneNumber": "${~.*}",
+          "tier2": "${~.*}",
           "mail": "Donald.Oakes@CenturyLink.com",
           "displayName": "Oakes, Donald H",
-          "postalCode": "80120",
-          "companynumber": "T600",
+          "postalCode": "${~.*}",
+          "companynumber": "${~.*}",
           "preferredname": "Donald",
-          "joblevel": "8",
+          "joblevel": "${~.*}",
           "nationname": "United States",
-          "title": "SR LEAD SOFTWARE DEVELOPER",
-          "employeeNumber": "00115360",
-          "legacycompany": "Q",
-          "mnetid": "420104",
-          "street": "700 W MINERAL AVE",
-          "tier1": "PRODUCT DEVELOPMENT & TECHNOLOGY",
-          "costcenter": "T6009513",
-          "st": "CO",
-          "docshareaccess": "TRUE",
+          "title": "${~.*}",
+          "employeeNumber": "${~.*}",
+          "legacycompany": "${~.*}",
+          "mnetid": "${~.*}",
+          "street": "${~.*}",
+          "tier1": "${~.*}",
+          "costcenter": "${~.*}",
+          "st": "${~.*}",
+          "docshareaccess": "${~.*}",
           "manager": "${~.*}",
-          "sAMAccountName": "dxoakes",
+          "sAMAccountName": "${~.*}",
           "initials": "H",
           "objectClass": "top",
           "cn": "Donald Oakes",
-          "l": "LITTLETON",
-          "nationnumber": "USA",
-          "employeeType": "Management",
-          "saploginid": "DHO115360",
-          "companyname": "QWEST CORPORATION",
-          "departmentname": "OSS_NTWK FUL_TRANSPORT",
-          "departmentNumber": "2.32.09.08"
+          "l": "${~.*}",
+          "nationnumber": "${~.*}",
+          "employeeType": "${~.*}",
+          "saploginid": "${~.*}",
+          "companyname": "${~.*}",
+          "departmentname": "${~.*}",
+          "departmentNumber": "${~.*}"
         },
-        "cuid": "dxoakes",
+        "cuid": "${~.*}",
         "name": "Donald Oakes"
       }
