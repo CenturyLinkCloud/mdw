@@ -337,6 +337,10 @@ public class DatabaseAccess {
             else
                 return null;
         }
+        catch (SQLException ex) {
+            logger.error("ERRORED SQL: " + DbAccess.substitute(query, arguments));
+            throw ex;
+        }
         finally {
             if (IS_TRACE) {
                 long after = System.currentTimeMillis();
@@ -370,8 +374,12 @@ public class DatabaseAccess {
                         LoggerUtil.getStandardLogger().info("Sleep was interrupted.");
                     }
                 }
-                else
+                else {
+                    if (e instanceof SQLException) {
+                        logger.error("ERRORED SQL: " + DbAccess.substitute(query, arguments));
+                    }
                     throw e;  // Can't retry anymore, throw the exception
+                }
             }
             finally {
                 if (IS_TRACE) {
@@ -392,6 +400,10 @@ public class DatabaseAccess {
                 return ps.executeBatch();
             else
                 return null;
+        }
+        catch (SQLException ex) {
+            logger.error("ERRORED SQL: " + query);
+            throw ex;
         }
         finally {
             if (IS_TRACE) {
