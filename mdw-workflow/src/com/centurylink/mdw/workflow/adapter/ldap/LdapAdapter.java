@@ -46,7 +46,7 @@ public class LdapAdapter extends ObjectAdapterActivity {
     public static final String LDAP_HOST = "LdapHost";
     public static final String LDAP_PORT = "LdapPort";
     public static final String BASE_DN = "BaseDn";
-    public static final String APP_CUID = "AppCuid";
+    public static final String APP_USER = "AppCuid";
     public static final String APP_PASSWORD = "AppPassword";
     public static final String SEARCH_CONTEXT = "SearchContext";
     public static final String SEARCH_FILTER = "SearchFilter";
@@ -66,7 +66,7 @@ public class LdapAdapter extends ObjectAdapterActivity {
             String ldapHost = getAttributeValueSmart(LDAP_HOST);
             String ldapPort = getAttributeValueSmart(LDAP_PORT);
             String baseDn = getAttributeValueSmart(BASE_DN);
-            String appCuid = getAttributeValueSmart(APP_CUID);
+            String appCuid = getAttributeValueSmart(APP_USER);
             String appPassword = getAttributeValueSmart(APP_PASSWORD);
             String ldapUrl = "ldap://" + ldapHost + ":" + ldapPort + "/" + baseDn;
 
