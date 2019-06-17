@@ -32,7 +32,7 @@ import java.util.*;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
-;
+
 
 @Parameters(commandNames="test", commandDescription="Run Automated Test(s)", separators="=")
 public class Test extends Setup {
@@ -147,7 +147,7 @@ public class Test extends Setup {
                         String contents = new String(Files.readAllBytes(resultsPath));
                         if (contents.isEmpty())
                             continue; // why does this happen?
-                        JSONObject jsonObj = null;
+                        JSONObject jsonObj;
                         try {
                             jsonObj = new JSONObject(contents);
                         }
@@ -195,10 +195,8 @@ public class Test extends Setup {
                             }
                         }
                         done = finished(statuses) == statuses.size();
-                        if (done) {
+                        if (done)
                             printSummary(statuses, System.currentTimeMillis() - before);
-                            continue;
-                        }
                     }
                 }
                 key.reset();
@@ -295,7 +293,7 @@ public class Test extends Setup {
                 EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
                     @Override
                     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                        if (dir.getFileName().equals("node_modules"))
+                        if (dir.getFileName().toString().equals("node_modules"))
                             return FileVisitResult.SKIP_SUBTREE;
                         else
                             return FileVisitResult.CONTINUE;
@@ -390,7 +388,7 @@ public class Test extends Setup {
         return json;
     }
 
-    private JSONObject getConfigRequest() throws IOException {
+    private JSONObject getConfigRequest() {
         JSONObject json = new JSONObject();
         json.put("threads", threads);
         json.put("interval", interval);

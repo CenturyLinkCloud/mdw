@@ -91,7 +91,7 @@ public class DatabaseAccess {
 
     private static DocumentDb documentDb;
     public static void initDocumentDb() {
-            documentDb = (DocumentDb) SpringAppContext.getInstance().getBean(DocumentDb.class);
+            documentDb =  SpringAppContext.getInstance().getBean(DocumentDb.class);
             boolean hasDocDb = documentDb != null && documentDb.isEnabled();
             if (hasDocDb) {
                 LoggerUtil.getStandardLogger().info("Using documentDb: " + documentDb.getClass().getName() + " " + documentDb);
@@ -275,7 +275,7 @@ public class DatabaseAccess {
             if (connectionIsOpen() && !connection.getAutoCommit()) {
                 connection.rollback();
             }
-        } catch (SQLException e) {
+        } catch (SQLException ignored) {
         }
     }
 
@@ -290,7 +290,7 @@ public class DatabaseAccess {
 //                temp.commit();    // commit at close connection
                 temp.close();
             }
-        } catch (Throwable e) {
+        } catch (Throwable ignored) {
         }
     }
 
@@ -303,7 +303,7 @@ public class DatabaseAccess {
         try {
             if (ps != null)
                 ps.close();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         ps = null;
     }
@@ -312,7 +312,7 @@ public class DatabaseAccess {
         try {
             if (rs != null)
                 rs.close();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         rs = null;
     }
@@ -332,7 +332,10 @@ public class DatabaseAccess {
             ps.setQueryTimeout(queryTimeout);
         long before = System.currentTimeMillis();
         try {
-            return ps.executeQuery();
+            if (ps != null)
+                return ps.executeQuery();
+            else
+                return null;
         }
         finally {
             if (IS_TRACE) {
@@ -353,7 +356,10 @@ public class DatabaseAccess {
 
         while (retriesRemaining >= 0) {
             try {
-                return ps.executeUpdate();
+                if (ps != null)
+                    return ps.executeUpdate();
+                else
+                    return -1;
             }
             catch (Exception e) {
                 if (retriesRemaining-- > 0) {
@@ -382,7 +388,10 @@ public class DatabaseAccess {
             ps.setQueryTimeout(queryTimeout);
         long before = System.currentTimeMillis();
         try {
-            return ps.executeBatch();
+            if (ps != null)
+                return ps.executeBatch();
+            else
+                return null;
         }
         finally {
             if (IS_TRACE) {
@@ -569,7 +578,7 @@ public class DatabaseAccess {
 
     /**
      * This should be only used by CommonDataAccess.startTransaction()
-     * @param conn
+     * @param conn connection
      */
     public void setConnection(Connection conn) {
         connection = conn;
@@ -594,14 +603,14 @@ public class DatabaseAccess {
             long r = (raw_diff + 30000) % 1800000; // Remaining millisecs after dividing by 1/2 hour
             long q = (raw_diff + 30000) / 1800000; // quotient after dividing by 1/2 hour
              // ignore remainder if the difference millisec is less than a minute and return nearest half-hour
-            db_time_diff = new Long(Math.abs(r) < 60000 ? q*1800000 : raw_diff);
+            db_time_diff = (Math.abs(r) < 60000) ? (q * 1800000) : raw_diff;
             System.out.println("Database time difference: " + db_time_diff/1000.0 + " seconds (raw diff=" + raw_diff + ")");
         }
-        return System.currentTimeMillis() + db_time_diff.longValue();
+        return System.currentTimeMillis() + db_time_diff;
     }
 
     public static long getCurrentTime() {
-        return System.currentTimeMillis() + db_time_diff.longValue();
+        return System.currentTimeMillis() + db_time_diff;
     }
     /**
      * The current database Date/Time.  If db_time_diff is not known (eg Designer), server time is returned.
@@ -624,8 +633,8 @@ public class DatabaseAccess {
     /**
      *
      * @param startRow the first row to display, index starting from 0
-     * @param rowCount
-     * @return
+     * @param rowCount number of roes
+     * @return String
      */
     public String pagingQuerySuffix(int startRow, int rowCount) {
         if (isMySQL)

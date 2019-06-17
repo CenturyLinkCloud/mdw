@@ -67,12 +67,12 @@ public class CloudClasspath {
                 try {
                     if (pkgPath.equals(o1.getParentFile().getCanonicalPath()) && !pkgPath.equals(o2.getParentFile().getCanonicalPath()))
                         return -1;
-                    else if (pkgPath.equals(o1.getParentFile().getCanonicalPath()) && !pkgPath.equals(o2.getParentFile().getCanonicalPath()))
+                    else if (!pkgPath.equals(o1.getParentFile().getCanonicalPath()) && pkgPath.equals(o2.getParentFile().getCanonicalPath()))
                         return 1;
                     else
                         return 0;
                 }
-                catch (Exception e) {}
+                catch (Exception ignored) {}
                 return 0;
             });
         }
@@ -133,7 +133,7 @@ public class CloudClasspath {
 
     @Override
     public String toString() {
-        StringBuffer classpath = new StringBuffer(systemClasspath);
+        StringBuilder classpath = new StringBuilder(systemClasspath);
         // user-specified classpath entries come first
         String compilerClasspath = PropertyManager.getProperty(PropertyNames.MDW_JAVA_COMPILER_CLASSPATH);
         if (compilerClasspath != null)

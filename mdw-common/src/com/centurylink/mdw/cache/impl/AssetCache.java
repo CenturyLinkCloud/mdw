@@ -513,26 +513,29 @@ class AssetKey implements Comparable<AssetKey> {
             return -1;
         if (otherKey != null && otherKey.getName() == null && name != null)
             return 1;
-        if ((name!=null) && (!name.equals(otherKey.getName())))
+        if ((name!=null) && (otherKey != null && !name.equals(otherKey.getName())))
             return name.compareTo(otherKey.getName());
 
-        if (otherKey.getLanguage() == null)
+        if (otherKey != null && otherKey.getLanguage() == null)
           otherKey.setLanguage(language);  // language not specified
 
-        if (language == null && otherKey.getLanguage() != null)
+        if (otherKey != null && language == null && otherKey.getLanguage() != null)
             return -1;
-        if (otherKey.getLanguage() == null && language != null)
+        if (otherKey != null && otherKey.getLanguage() == null && language != null)
             return 1;
-        if ((language != null) &&(!language.equals(otherKey.getLanguage())))
+        if ((language != null) &&(otherKey != null && !language.equals(otherKey.getLanguage())))
             return language.compareTo(otherKey.getLanguage());
 
         if (version == 0 && (id == null || name == null))
             return 0; // search for latest version
-        if (otherKey.getVersion() == 0 && (otherKey.getId() == null || otherKey.getName() == null))
+        if (otherKey != null && otherKey.getVersion() == 0 && (otherKey.getId() == null || otherKey.getName() == null))
             return 0; // search for latest version
 
         // name and language are the same, sort by version descending
-        return otherKey.getVersion() - version;
+        if (otherKey != null)
+            return otherKey.getVersion() - version;
+        else
+            return 0;
     }
 
     public String toString() {
