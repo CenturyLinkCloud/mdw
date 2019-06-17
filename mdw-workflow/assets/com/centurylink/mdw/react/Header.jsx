@@ -112,7 +112,7 @@ class Header extends Component {
                           }
                         </div>
                         <div>
-                          {tab.index < userTabs.length &&
+                          {tab.index < userTabs.length - 1 &&
                             <img src={this.context.hubRoot + '/images/tab_spacer.png'} style={{height:'36px'}}></img>
                           }
                         </div>
