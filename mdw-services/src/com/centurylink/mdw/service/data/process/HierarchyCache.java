@@ -81,7 +81,9 @@ public class HierarchyCache implements CacheService {
         if (process != null) {
             MilestoneFactory milestoneFactory = new MilestoneFactory(process);
             Linked<Milestone> start = milestoneFactory.start();
-            addMilestones(start, getActivityHierarchy(processId));
+            Linked<Activity> activityHierarchy = getActivityHierarchy(processId);
+            if (activityHierarchy != null)
+                addMilestones(start, activityHierarchy);
             if (!start.getChildren().isEmpty())
                 return start;
         }

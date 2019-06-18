@@ -76,8 +76,10 @@ public class HttpMessages extends JsonRestService {
             response = e.getMessage() + " \nURL: " + requestMessage.getUrl();
         }
         catch (Exception ex) {
-            response = ex.getMessage() + " \nResponse: "+ httpClient.getResponse();
-            code = httpClient.getResponseCode();
+            if (httpClient != null) {
+                response = ex.getMessage() + " \nResponse: " + httpClient.getResponse();
+                code = httpClient.getResponseCode();
+            }
         }
         finally{
             int responseTime= (int)(java.lang.System.currentTimeMillis() - before);
@@ -117,10 +119,12 @@ public class HttpMessages extends JsonRestService {
             response = e.getMessage() + " \nURL: " + requestMessage.getUrl();
         }
         catch (Exception ex) {
-            response = ex.getMessage() + " \nResponse: "+ httpClient.getResponse();
-            code = httpClient.getResponseCode();
-            if (code != 200)
-                throw new ServiceException(response);
+            if (httpClient != null) {
+                response = ex.getMessage() + " \nResponse: " + httpClient.getResponse();
+                code = httpClient.getResponseCode();
+                if (code != 200)
+                    throw new ServiceException(response);
+            }
         }
         finally{
             int responseTime= (int)(java.lang.System.currentTimeMillis() - before);
@@ -162,8 +166,10 @@ public class HttpMessages extends JsonRestService {
             response = e.getMessage() + " \nURL: " + requestMessage.getUrl();
         }
         catch (Exception ex) {
-            response = ex.getMessage() + " \nResponse: "+ httpClient.getResponse();
-            code = httpClient.getResponseCode();
+            if (httpClient != null) {
+                response = ex.getMessage() + " \nResponse: " + httpClient.getResponse();
+                code = httpClient.getResponseCode();
+            }
         }
         finally{
             int responseTime= (int)(java.lang.System.currentTimeMillis() - before);
@@ -210,8 +216,10 @@ public class HttpMessages extends JsonRestService {
             response = e.getMessage() + " \nURL: " + requestMessage.getUrl();
         }
         catch (Exception ex) {
-            response = ex.getMessage() + " \nResponse: "+ httpClient.getResponse();
-            code = httpClient.getResponseCode();
+            if (httpClient != null) {
+                response = ex.getMessage() + " \nResponse: " + httpClient.getResponse();
+                code = httpClient.getResponseCode();
+            }
         }
         finally{
             int responseTime= (int)(java.lang.System.currentTimeMillis() - before);
@@ -253,8 +261,10 @@ public class HttpMessages extends JsonRestService {
             response = e.getMessage() + " \nURL: " + requestMessage.getUrl();
         }
         catch (Exception ex) {
-            response = ex.getMessage() + " \nResponse: "+ httpClient.getResponse();
-            code = httpClient.getResponseCode();
+            if (httpClient != null) {
+                response = ex.getMessage() + " \nResponse: " + httpClient.getResponse();
+                code = httpClient.getResponseCode();
+            }
         }
         finally{
             int responseTime= (int)(java.lang.System.currentTimeMillis() - before);

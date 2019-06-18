@@ -47,9 +47,9 @@ public abstract class JmsListener  {
     private MessageConsumer consumer;
 
     /**
-     * @param name
-     * @param queueName
-     * @param threadPool
+     * @param name name
+     * @param queueName queue name
+     * @param threadPool thread pool
      */
     public JmsListener(String name, String queueName, ThreadPoolProvider threadPool) {
         this.name = name;
@@ -98,9 +98,10 @@ public abstract class JmsListener  {
                         TextMessage message = (TextMessage)consumer.receive(receiveTimeout*1000);
                         if (message!=null) {
                             message = filterMessage(message);
-                            if (message!=null)
+                            if (message!=null) {
                                 getProcesser(message).run();
-                            message.acknowledge();        // commit later after persistence?
+                                message.acknowledge();// commit later after persistence?
+                            }
                         }
                     }
                     catch (InterruptedException e) {

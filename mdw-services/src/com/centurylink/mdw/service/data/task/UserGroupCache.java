@@ -49,10 +49,10 @@ public class UserGroupCache implements PreloadableCache {
     private List<String> workgroupAttributeNames;
 
     // these are loaded on demand
-    private volatile Map<String,User> usersByCuid = new HashMap<String,User>(); // includes group-roles and attributes
-    private volatile Map<Long,User> usersById = new HashMap<Long,User>(); // TODO: remove usages
-    private volatile Map<String,Workgroup> groupsByName = new HashMap<String,Workgroup>(); // includes (shallow) users
-    private volatile Map<String,Role> rolesByName = new HashMap<String,Role>();
+    private volatile Map<String,User> usersByCuid = new HashMap<>(); // includes group-roles and attributes
+    private volatile Map<Long,User> usersById = new HashMap<>(); // TODO: remove usages
+    private volatile Map<String,Workgroup> groupsByName = new HashMap<>(); // includes (shallow) users
+    private volatile Map<String,Role> rolesByName = new HashMap<>();
 
     // used to determine if a user/group/role change has happened in another instance of cluster
     private long lastUserSync = 0;
@@ -154,7 +154,7 @@ public class UserGroupCache implements PreloadableCache {
 
     public static List<User> findUsers(String prefix) {
         int limit = 15;
-        List<User> matches = new ArrayList<User>();
+        List<User> matches = new ArrayList<>();
         prefix = prefix.toLowerCase();
         for (int i = 0; i < instance.users.size() && matches.size() <= limit; i++) {
             User user = instance.users.get(i);
@@ -168,17 +168,19 @@ public class UserGroupCache implements PreloadableCache {
 
     public static List<User> findUsers(String[] workgroups, String prefix) throws CachingException {
         int limit = 15;
-        List<User> matches = new ArrayList<User>();
+        List<User> matches = new ArrayList<>();
         prefix = prefix.toLowerCase();
         int count = 0;
         for (String groupName : workgroups) {
             Workgroup workgroup = getWorkgroup(groupName);
-            for (User user : workgroup.getUsers()) {
-                user = getUser(user.getId()); // load full user
-                if (user != null && isMatch(user, prefix) && !matches.contains(user)) {
-                    matches.add(user);
-                    if (++count > limit)
-                        return matches;
+            if (workgroup != null) {
+                for (User user : workgroup.getUsers()) {
+                    user = getUser(user.getId()); // load full user
+                    if (user != null && isMatch(user, prefix) && !matches.contains(user)) {
+                        matches.add(user);
+                        if (++count > limit)
+                            return matches;
+                    }
                 }
             }
         }
@@ -340,7 +342,8 @@ public class UserGroupCache implements PreloadableCache {
             throw new CachingException(ex.getMessage(), ex);
         }
         finally {
-            timer.stopAndLogTiming("UserGroupCache.load()");
+            if (timer != null)
+                timer.stopAndLogTiming("UserGroupCache.load()");
         }
     }
 

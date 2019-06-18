@@ -245,18 +245,24 @@ public class Assets extends JsonRestService {
                     URL url = new URL(discoveryUrl);
                     String[] userInfo = url.getUserInfo().split(":");
                     File test = new File(gitLocalPath.getAbsolutePath()).getParentFile();
-                    if (test != null && gitLocalPath.getPath().length() <= 3)
-                        test = new File( gitLocalPath.getAbsolutePath()).getParentFile().getParentFile().getParentFile();
-                    File tempfile = new File ( test.getAbsolutePath() + "/" + "mdw_git_discovery_" + java.lang.System.currentTimeMillis());
+                    File tempfile = null;
+
+                    if (test != null) {
+                        if (gitLocalPath.getPath().length() <= 3)
+                            test = new File(gitLocalPath.getAbsolutePath()).getParentFile().getParentFile().getParentFile();
+                        tempfile = new File(test.getAbsolutePath() + "/" + "mdw_git_discovery_" + java.lang.System.currentTimeMillis());
+                    }
                     vcGit.connect(discoveryUrl, null, null, tempfile);
                     vcGit.setCredentialsProvider(new UsernamePasswordCredentialsProvider(userInfo[0], userInfo[1]));
                     vcGit.cloneBranch(branch);
                     for (String pkg : pkgs) {
                         String pkgPath = pkg.replace(".", "/");
-                        String src = tempfile.getAbsolutePath() + "/" + assetPath + "/" + pkgPath;
-                        String dest = ApplicationContext.getAssetRoot().getAbsolutePath() + "/" + pkgPath;
-                        Files.createDirectories(Paths.get(dest));
-                        Files.move(Paths.get(src), Paths.get(dest), StandardCopyOption.REPLACE_EXISTING);
+                        if (tempfile != null) {
+                            String src = tempfile.getAbsolutePath() + "/" + assetPath + "/" + pkgPath;
+                            String dest = ApplicationContext.getAssetRoot().getAbsolutePath() + "/" + pkgPath;
+                            Files.createDirectories(Paths.get(dest));
+                            Files.move(Paths.get(src), Paths.get(dest), StandardCopyOption.REPLACE_EXISTING);
+                        }
                     }
                     new Delete(tempfile).run();
                 }
