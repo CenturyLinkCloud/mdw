@@ -1,0 +1,75 @@
+<html>
+<head>
+  <title>MS Teams Activity</title>
+  <link rel="stylesheet" type="text/css" href="docstyle.css"/>
+</head>
+<body>
+<h1>MS Teams Activity</h1>
+<p>
+  The Microsoft Teams activity gives you the ability to send <a href="notification.html">MDW notifications</a>
+  to a Teams channel through a connector with an incoming webhook.
+</p>
+
+
+<h3><a id="prerequisite">Prerequisite</a></h3>
+<p>
+  MS Teams integration depends on the <code>com.centurylink.mdw.msteams</code> asset package.  To get started with MS Teams
+  notifications, discover and import this package as described in the
+  <a href="https://centurylinkcloud.github.io/mdw/docs/guides/mdw-studio/#4-discover-and-import-asset-packages">
+    MDW Studio User Guide
+  </a>
+</p>
+
+<h3><a id="incomingWebhook">Incoming Webhook</a></h3>
+<p>
+  To create an incoming webhook for a channel in the MS Teams app, click on the 'More options' ellipses for the channel,
+  then select Connectors.  In the connectors list find Incoming Webhook and click Configure.  Detailed instructions
+  are available in <a href="https://docs.microsoft.com/en-us/outlook/actionable-messages/send-via-connectors">
+  Microsoft's documentation</a> on the topic.  Once you've got a webhook URL configured, add it to your mdw.yaml
+  config file as 'mdwteams.webhook.url'.  <strong>Note</strong>: it's highly recommended to encrypt this value as described in the
+  <a href="https://centurylinkcloud.github.io/mdw/docs/guides/configuration/#mdwyaml">MDW Configuration Guide</a>.
+</p>
+
+<h3><a id="activityDesign">Activity Design</a></h3>
+<p>
+  In MDW Studio, after dragging an MS Teams activity from the Toolbox onto your process canvas, select it and click
+  on the Configurator Design tab.  Here you'll specify the notification template asset, which is a JSON asset with
+  your message content.
+</p>
+<img src="images/msTeamsActivity.png" style="width:1000px"/>
+<p>
+Message content is formatted according to
+  <a href="https://docs.microsoft.com/en-us/outlook/actionable-messages/send-via-connectors">Microsoft's Documentation</a>.
+  Here's the <a href="https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/msteams/message.json">
+  sample notification</a> included in the <code>com.centurylink.mdw.msteams</code> asset package:
+<pre>
+{
+  "@context": "https://schema.org/extensions",
+  "@type": "MessageCard",
+  "themeColor": "0072C6",
+  "title": "A message from MDW",
+  "text": "Something important has happened!",
+  "potentialAction": [
+    {
+      "@type": "OpenUri",
+      "name": "Open in MDWHub",
+      "targets": [
+        { "os": "default", "uri": "${props['mdw.hub.url']}" }
+      ]
+    }
+  ]
+}
+</pre>
+<p>
+  Notice that this template contains the expression <code>${props['mdw.hub.url']}</code>.  Values from the activity's
+  <a href="../javadoc/com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html">ActivityRuntimeContext</a>
+  are available to reference in your template's <a href="bindingExpressions.html">expressions</a>.
+</p>
+<p>
+  The MDW <a href="https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-workflow/assets/com/centurylink/mdw/tests/notifications">
+  notifications automated tests</a> contain a functional workflow process with an MS Teams notification activity as well as a
+  manual task configured with the Teams task notifier (see MsTeams.proc).
+</p>
+
+</body>
+</html>
