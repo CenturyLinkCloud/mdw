@@ -1,0 +1,66 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=53,y=148,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=144,ly=167,xs=117&172,ys=167&167"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=519,y=148,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=176,y=138,w=100,h=60",
+        "message": "com.centurylink.mdw.msteams/message.json",
+        "message_assetVersion": "[0.1,1)",
+        "webhookUrl": "${props['mdw.msteams.webhook.url']}"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.msteams.MsTeamsActivity",
+      "name": "Notify",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=311,ly=168,xs=281&341,ys=168&168"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.notifications/MsTeamsTask.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+        "WORK_DISPLAY_INFO": "x=345,y=138,w=100,h=60"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+      "name": "MS Teams\nTask",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=482,ly=167,xs=449&515,ys=167&167"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=42,y=48,w=91,h=26"
+  },
+  "textNotes": [{
+    "attributes": {"WORK_DISPLAY_INFO": "x=199,y=49,w=187,h=28"},
+    "content": "For manual testing",
+    "id": "N1"
+  }]
+}

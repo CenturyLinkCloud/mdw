@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.slack;
+package com.centurylink.mdw.msteams;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.cache.impl.AssetCache;
@@ -67,51 +67,24 @@ public class TaskNotifier extends TemplatedNotifier {
         }
     }
 
+    public String getWebhookUrl() throws IOException {
+        String url = PropertyManager.getProperty("mdw.msteams.webhook.url");
+        if (url == null)
+            throw new IOException("Missing configuration: mdw.msteams.webhook.url");
+        return url;
+    }
+
     protected Map<String,String> getRequestHeaders() {
         Map<String,String> headers = new HashMap<>();
-        // TODO re-enable two way slack interactions
-        // hdrs.put(Listener.METAINFO_CLOUD_ROUTING, "SlackWebHook");
-        // hdrs.put(Listener.METAINFO_MDW_APP_ID, ApplicationContext.getAppId());
-        // hdrs.put(Listener.METAINFO_MDW_APP_TOKEN, System.getenv("MDW_APP_TOKEN"));
         headers.put("Content-Type", "application/json");
         return headers;
     }
 
-    /**
-     * TODO: no need if the mdw slack app is installed
-     */
-    public String getWebhookUrl() throws IOException {
-        String url = PropertyManager.getProperty("mdw.slack.webhook.url");
-        if (url == null)
-            throw new IOException("Missing configuration: mdw.slack.webhook.url");
-        return url;
-    }
-
-    public JSONObject getMessage() throws IOException {
+    protected JSONObject getMessage() throws IOException {
         Asset template = AssetCache.getAsset(getTemplateSpec());
         if (template == null)
             throw new IOException("Missing template: " + getTemplateSpec());
         String message = context.evaluateToString(template.getStringContent());
         return new JsonObject(message);
-
-        // TODO: re-enable two-way slack interaction
-        // JSONObject json;
-        //  if (template.getLanguage().equals(Asset.JSON)) {
-        //    json = new JSONObject(message);
-        // }
-        // else {
-        //     json = new JSONObject();
-        //     json.put("text", message);
-        // }
-        // String altText = null;
-        // if (json.has("text")) {
-        //     String text = json.getString("text");
-        //     if (text.length() > 200)
-        //         altText = text.substring(0, 197) + "...";
-        // }
-        // if (altText != null)
-        //     json.put("text", altText);
-        // return json;
     }
-
 }

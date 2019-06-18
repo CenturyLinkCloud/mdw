@@ -91,7 +91,7 @@
       "attributes": {
         "STATUS_AFTER_EVENT": "Cancelled",
         "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
-        "TASK_TEMPLATE": "com.centurylink.mdw.tests.workflow/SmtpTask.task",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.notifications/SmtpTask.task",
         "TASK_TEMPLATE_assetVersion": "[0.1,1)",
         "WORK_DISPLAY_INFO": "x=153,y=349,w=103,h=68",
         "Wait for Task": "true"
@@ -110,7 +110,7 @@
       "attributes": {
         "STATUS_AFTER_EVENT": "Cancelled",
         "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
-        "TASK_TEMPLATE": "com.centurylink.mdw.tests.workflow/SendgridTask.task",
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.notifications/SendgridTask.task",
         "TASK_TEMPLATE_assetVersion": "[0.1,1)",
         "WORK_DISPLAY_INFO": "x=495,y=348,w=102,h=70",
         "Wait for Task": "true"
@@ -139,8 +139,8 @@
     "WORK_DISPLAY_INFO": "x=61,y=26,w=63,h=27"
   },
   "textNotes": [{
-    "attributes": {"WORK_DISPLAY_INFO": "x=28,y=81,w=277,h=38"},
-    "content": "For manual Testing.\r\nNo tests exist for these features.",
+    "attributes": {"WORK_DISPLAY_INFO": "x=52,y=70,w=174,h=26"},
+    "content": "For manual testing",
     "id": "N9"
   }],
   "variables": {

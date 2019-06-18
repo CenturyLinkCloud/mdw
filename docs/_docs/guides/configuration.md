@@ -126,6 +126,12 @@ title: MDW Configuration
       user: smtpuser
       password: smtppass
 
+    # Slack notifications
+    slack.webhook.url: ~[encrypted_webhook_url]
+
+    # MS Teams notifications
+    msteams.webhook.url: ~[encrypted_webhook_url]
+
     # for LDAP adapter activity
     ldap:
       host: ldap.myorg.com

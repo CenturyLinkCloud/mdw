@@ -1,0 +1,11 @@
+{
+  "attributes": {
+    "FormName": "Autoform",
+    "Groups": "[\"Developers\"]",
+    "Notices": "[[\"Open\",\"com.centurylink.mdw.msteams/taskOpenNotice.json\",\"[0.1,1)\",\"com.centurylink.mdw.msteams.TaskNotifier\"],[\"Assigned\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Completed\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Cancelled\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"In Progress\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Alert\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Jeopardy\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Forward\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"]]"
+  },
+  "category": "GEN",
+  "logicalId": "MsTeamsTask",
+  "name": "MsTeamsTask",
+  "version": "0"
+}
