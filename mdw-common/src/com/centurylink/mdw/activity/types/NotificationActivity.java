@@ -16,14 +16,8 @@
 package com.centurylink.mdw.activity.types;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 
 public interface NotificationActivity extends GeneralActivity {
-
-    default Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
-        sendNotices();
-        return null;
-    }
 
     void sendNotices() throws ActivityException;
 }

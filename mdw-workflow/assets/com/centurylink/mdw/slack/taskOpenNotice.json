@@ -1,0 +1,3 @@
+{
+  "text": "*MDW Task ${taskInstanceId}*\\n${taskName}\\n<${taskInstanceUrl}|Open in MDWHub>"
+}

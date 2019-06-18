@@ -1,3 +1,0 @@
-{
-  "text": "*<${taskInstanceUrl}|${name} \#${taskInstance.taskInstanceId}>*\\n${taskTemplate.comment}"
-} 

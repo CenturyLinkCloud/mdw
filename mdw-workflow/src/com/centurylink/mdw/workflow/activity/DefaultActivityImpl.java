@@ -26,7 +26,6 @@ import com.centurylink.mdw.services.process.BaseActivity;
  */
 public class DefaultActivityImpl extends BaseActivity  {
 
-
     /**
      * Executes the workflow activity.
      * This method is the main method that subclasses need to override.

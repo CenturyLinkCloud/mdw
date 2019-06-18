@@ -1,0 +1,66 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=54,y=145,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=152,ly=165,xs=118&186,ys=165&165"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=533,y=146,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "WORK_DISPLAY_INFO": "x=189,y=135,w=100,h=60",
+        "message": "com.centurylink.mdw.slack/message.json",
+        "message_assetVersion": "[0.1,1)",
+        "webhookUrl": "${props['mdw.slack.webhook.url']}"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.slack.SlackActivity",
+      "name": "Notify",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=319,ly=166,xs=294&344,ys=166&166"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {
+        "TASK_TEMPLATE": "com.centurylink.mdw.tests.notifications/SlackTask.task",
+        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
+        "WORK_DISPLAY_INFO": "x=348,y=138,w=100,h=60"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+      "name": "Slack\nTask",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=490,ly=166,xs=452&528,ys=166&166"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A2"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=47,y=47,w=52,h=26"
+  },
+  "textNotes": [{
+    "attributes": {"WORK_DISPLAY_INFO": "x=144,y=47,w=190,h=28"},
+    "content": "For manual testing",
+    "id": "N1"
+  }]
+}

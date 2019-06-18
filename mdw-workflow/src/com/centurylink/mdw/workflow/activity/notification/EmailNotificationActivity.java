@@ -50,6 +50,12 @@ import java.util.Map;
 public class EmailNotificationActivity extends DefaultActivityImpl implements NotificationActivity {
 
     @Override
+    public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
+        sendNotices();
+        return null;
+    }
+
+    @Override
     public void sendNotices() throws ActivityException {
         try {
             String noticeType = getAttributeValue(WorkAttributeConstant.NOTICE_TYPE);

@@ -1,0 +1,3 @@
+{
+  "text": "*A message from MDW*\\nSomething important has happened!\\n<${props['mdw.hub.url']}|Open in MDWHub>"
+}
