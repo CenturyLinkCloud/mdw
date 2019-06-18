@@ -8,14 +8,10 @@
 
 The MDW LDAP Adapter Activity provides the ability to query an LDAP directory for entities and attributes, and to bind the results to process variables.
 <br/>
-<b>Note:</b> In order to connect to the LDAP servers, your ServiceMix/Fuse or Tomcat server must be configured with the CenturyLinkQCA trust keystore.
-Ecom environments are usually configured with the appropriate certificates by default.
+<b>Note:</b> In order to connect to the LDAP servers, your ServiceMix/Fuse or Tomcat server must be configured with the configured with the appropriate certificates by default.
 For ServiceMix/Fuse reference the jks file as follows in etc/system.properties:<br/>
-javax.net.ssl.trustStore=etc/CenturyLinkQCA.jks<br/>
+javax.net.ssl.trustStore=etc/MyCA.jks<br/>
 In your local development environment this should happen automatically when you run the buildConfig Ant target.  
-<br/>
-For Tomcat edit the MDW Tomcat server and add the following Java Option (substitute your workspace location): <br/>
--Djavax.net.ssl.trustStore=c:\workspaces\mdw\mdw-framework\deploy\certs\CenturyLinkQCA.jks
 <br/>
 <h3>Design Attributes</h3>
 The basic design parameters for configuring an LDAP Adapter Activity are illustrated in the screenshot below.
