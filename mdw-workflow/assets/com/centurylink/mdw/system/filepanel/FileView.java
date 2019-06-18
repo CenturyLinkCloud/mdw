@@ -225,7 +225,9 @@ public class FileView implements Jsonable {
         for (String masked : getMaskedLines()) {
             if (line.trim().startsWith(masked)) {
                 int lineLen = line.length();
-                line = line.substring(0, masked.length());
+                int maskStart = line.indexOf(masked);
+                line = line.substring(0, masked.length() + maskStart);
+                line += " ";
                 for (int i = 0; i < lineLen - masked.length(); i++)
                   line += "*";
             }
