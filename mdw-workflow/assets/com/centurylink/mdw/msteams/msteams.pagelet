@@ -4,6 +4,7 @@
       "name": "webhookUrl",
       "label": "Webhook URL",
       "type": "text",
+      "default": "${props['mdw.msteams.webhook.url']}",
       "vw": 350
     },
     {

@@ -16,8 +16,11 @@ permalink: /docs/help/
 
 <h3>Workflow Design</h3>
 <ul>
+  <li><a href='process.html'>Processes</a></li>
+  <li><a href='variable.html'>Variables</a></li>
   <li><a href='assets.html'>Assets</a></li>
   <li><a href='assetPersistence.html'>Asset Persistence</a></li>
+  <li><a href='notification.html'>Notifications</a></li>
   <li><a href='crossmap.html'>Crossmap Activity</a></li>
   <li><a href='customAttributes.html'>Custom Attributes</a></li>
   <li><a href='documentTransform.html'>Document Transform Activity</a></li>
@@ -26,23 +29,23 @@ permalink: /docs/help/
   <li><a href='dynamicJavaActivity.html'>Dynamic Java Activity</a></li>
   <li><a href='EventWaitActivity.html'>Event Wait Activity</a></li>  
   <li><a href='FileWriterActivity.html'>File Writer Activity</a></li>      
-  <li><a href='InvokeMultipleSubprocesses.html'>Invoke Multiple Subprocesses</a></li>
   <li><a href='InvokeSubProcessActivity.html'>Invoke SubProcess Activity</a></li>
+  <li><a href='InvokeMultipleSubprocesses.html'>Invoke Multiple Subprocesses</a></li>
   <li><a href='JmsAdapter.html'>JMS Adapter Activity</a></li>
   <li><a href='listener.html'>Listeners and Event Handlers</a></li>
   <li><a href='MDWWebServiceAdapter.html'>MDW Web Service Adapter Activity</a></li>
   <li><a href='MicroserviceOrchestrator.html'>Microservice Orchestrator</a></li>
   <li><a href='ProcessFinishActivity.html'>Process Finish</a></li> 
   <li><a href='ProcessStartActivity.html'>Process Start</a></li> 
-  <li><a href='process.html'>Processes</a></li>
-  <li><a href='RestfulAdapter.html'>RESTful Adapter Activity</a></li>
+  <li><a href='RestfulAdapter.html'>REST Adapter Activity</a></li>
   <li><a href='KafkaAdapter.html'>Kafka Adapter Activity</a></li>
   <li><a href='scriptActivity.html'>Script Activity</a></li>       
   <li><a href='sqlAdapter.html'>SQL Adapter Activity</a></li>
   <li><a href='synchronization.html'>Synchronization Activity</a></li>
   <li><a href='TimerWaitActivity.html'>Timer Wait Activity</a></li>
-  <li><a href='variable.html'>Variables</a></li>
-  <li><a href='packageConfig.html'>Workflow Package Configuration</a></li>
+  <li><a href='SlackActivity.html'>Slack Activity</a></li>
+  <li><a href='MsTeamsActivity.html'>MS Teams Activity</a></li>
+  <li><a href='SwaggerValidator.html'>Swagger Validator Activity</a></li>
 </ul>
 
 <h3>MDWHub and Manual Tasks</h3>

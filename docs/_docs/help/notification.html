@@ -34,6 +34,16 @@
   </tr>
 </table>
 
+<h2>Workflow Activity Notifications</h2>
+Notification activities generally rely on a template asset.  Dynamic value expressions are substituted according to the
+<a href="../javadoc/com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html">ActivityRuntimeContext</a>.
+Refer to <a href="bindingExpressions">Binding Expressions</a> for a discussion of this syntax and available values.
+<br/>
+<h2>Task Notifications</h2>
+Task notifiers also use a template asset for their content.  Dynamic value expressions are substituted according to the
+<li><a href="../javadoc/com/centurylink/mdw/model/task/TaskRuntimeContext.html">TaskRuntimeContext</a></li>.
+Refer to <a href="bindingExpressions">Binding Expressions</a> for a discussion of this syntax and available values.
+<br/>
 <h2>Workflow Email Notices</h2>
 An email notification activity is used in a process definition at locations where you want to send an email to interested parties.
 <br/>
@@ -76,7 +86,10 @@ If you require customized behavior, you can extend EmailNotificationActivity and
 <br/><br/>
 
 <h2>Slack Notifications</h2>
-Import asset package com.centurylink.mdw.slack, and use the Slack Notify activity in your workflow.
-TODO: <a href="https://github.com/CenturyLinkCloud/mdw/issues/270">https://github.com/CenturyLinkCloud/mdw/issues/270</a>.
+The Slack notification activity is documented under <a href="SlackActivity.html">Slack Activity</a>.
+<br/>
+<h2>MS Teams Notifications</h2>
+The MS Teams notification activity is documented under <a href="MsTeamsActivity.html">MS Teams Activity</a>.
+<br/>
 </body>
 </html>

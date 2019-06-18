@@ -10,6 +10,6 @@ TaskHandler.java=8
 TaskNotifier.java=10
 message.json=1
 slack-hash.png=1
-slack.pagelet=1
+slack.pagelet=2
 slack.png=2
 taskOpenNotice.json=1
