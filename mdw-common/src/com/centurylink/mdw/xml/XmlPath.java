@@ -54,9 +54,9 @@ public class XmlPath {
      * NOTE!!!! To use this code, need to include
      * xbean_xpath.jar, saxon9.jar, saxon9-dom.jar in CLASSPATH
      * in startWebLogic.cmd
-     * @param xmlbean
-     * @param path
-     * @return
+     * @param xmlbean xmlbean
+     * @param path path
+     * @return string
      */
 
     public static String evaluate(XmlObject xmlbean, String path) {
@@ -142,7 +142,7 @@ public class XmlPath {
         boolean isAttribute;
     }
     
-    enum TokenKind { NAME, AT, VALUE, EQ, LBRACKET, RBRACKET, SLASH, STAR };
+    enum TokenKind { NAME, AT, VALUE, EQ, LBRACKET, RBRACKET, SLASH, STAR }
     
     private static class Token {
         TokenKind kind;
@@ -323,7 +323,7 @@ public class XmlPath {
     }
     
     private String evaluate_recursive_descent(XmlCursor cursor, PathSegment path) {
-        String value = null;
+        String value;
         XmlBookmark bookmark = new XmlBookmark(){};
         cursor.setBookmark(bookmark);
         value = evaluate_segment(cursor, path);
@@ -360,7 +360,7 @@ public class XmlPath {
     
     /**
      * Test code
-     * @param args
+     * @param args command line arguments
      */
     public static void main(String[] args) {
         String xml = "<Ping xmlns:ps='http:'><G a='8'><ps:H> asf\n</ps:H></G><ps:EventName>START</ps:EventName></Ping>";

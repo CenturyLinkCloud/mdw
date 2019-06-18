@@ -26,11 +26,7 @@ import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -185,9 +181,13 @@ public class Grep {
 
         for (Path path : pathMatches.keySet()) {
             System.out.println(path + ":");
-            int maxIndex = pathMatches.get(path).stream().reduce((max, lineMatches) -> {
-                return max == null || lineMatches.index > max.index ? lineMatches : max;
-            }).get().index;
+            Optional<LineMatches> lineMatch = pathMatches.get(path).stream().reduce((max, lineMatches) -> {
+                return lineMatches.index > max.index ? lineMatches : max;
+            });
+            int maxIndex = 0;
+            if (lineMatch.isPresent()) {
+                maxIndex = lineMatch.get().index;
+            }
             int padLen = 2 + String.valueOf(maxIndex).length();
             for (LineMatches lineMatches : pathMatches.get(path)) {
                 String idx = String.valueOf(lineMatches.index);

@@ -39,7 +39,7 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
 
     /**
      * Converts the passed in object to a string
-     * @param pObject
+     * @param pObject object
      * @return String
      */
     public abstract String toString(Object pObject)
@@ -47,7 +47,7 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
 
     /**
      * converts the passed in string to an equivalent object
-     * @param pStr
+     * @param pStr string
      * @return Object
      */
     public abstract Object toObject(String pStr)
@@ -57,7 +57,7 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
 
     /**
     * Returns the translator for the passed in pType
-    * @param type
+    * @param type type
     * @return Translator
     */
     public static final com.centurylink.mdw.variable.VariableTranslator getTranslator(Package packageVO, String type) {
@@ -98,8 +98,8 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
     /**
     * Translates the Passed in String value based on the
     * Passed in type
-    * @param type
-    * @param value
+    * @param type type
+    * @param value value
     * @return Translated Object
     */
     public static Object toObject(String type, String value){
@@ -107,7 +107,10 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
             return null;
         }
         com.centurylink.mdw.variable.VariableTranslator trans = getTranslator(type);
-        return trans.toObject(value);
+        if (trans != null)
+            return trans.toObject(value);
+        else
+            return null;
     }
 
     @Deprecated
@@ -126,7 +129,10 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
             return EMPTY_STRING;
         }
         com.centurylink.mdw.variable.VariableTranslator trans = getTranslator(pkg, type);
-        return trans.toString(value);
+        if (trans != null)
+            return trans.toString(value);
+        else
+            return "";
     }
 
     /**
@@ -140,6 +146,8 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
         if (value == null)
             return "";
         com.centurylink.mdw.variable.VariableTranslator trans = getTranslator(pkg, type);
+        if (trans == null)
+            return "";
         if (trans instanceof DocumentReferenceTranslator)
             return ((DocumentReferenceTranslator)trans).realToString(value);
         else
@@ -158,6 +166,8 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
         if (StringUtils.isBlank(value))
             return null;
         com.centurylink.mdw.variable.VariableTranslator trans = getTranslator(pkg, type);
+        if (trans == null)
+            return null;
         if (trans instanceof DocumentReferenceTranslator)
             return ((DocumentReferenceTranslator)trans).realToObject(value);
         else

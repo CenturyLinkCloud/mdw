@@ -49,7 +49,7 @@ public class RequestList implements Jsonable, InstanceList<Request> {
     public String getName() { return name;}
     public void setName(String name) { this.name = name; }
 
-    private List<Request> requests = new ArrayList<Request>();
+    private List<Request> requests = new ArrayList<>();
     public List<Request> getRequests() { return requests; }
     public void setRequests(List<Request> requests) { this.requests = requests; }
 
@@ -77,7 +77,7 @@ public class RequestList implements Jsonable, InstanceList<Request> {
 
     public int getIndex(String id) {
         for (int i = 0; i < requests.size(); i++) {
-            if (requests.get(i).getId().equals(id))
+            if (requests.get(i).getId().toString().equals(id))
                 return i;
         }
         return -1;

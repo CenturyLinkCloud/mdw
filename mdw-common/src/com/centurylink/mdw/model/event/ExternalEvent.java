@@ -80,7 +80,7 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
         this.eventMessagePattern = eventMessagePattern;
     }
 
-    public Boolean isContentRouting() { return isContentRouting == null || isContentRouting == true; }
+    public Boolean isContentRouting() { return isContentRouting == null || isContentRouting; }
 
     public Long getId() {
         return id;
@@ -96,7 +96,7 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
     }
 
     public String getSimpleName() {
-        eventHandler.replace('?', '_').replace('/', '-');
+        eventHandler = eventHandler.replace('?', '_').replace('/', '-');
         String simpleName = eventName.replace('/', '-') ;
         return FileHelper.stripDisallowedFilenameChars(simpleName);
     }
@@ -123,7 +123,7 @@ public class ExternalEvent implements Serializable, Comparable<ExternalEvent>, J
     public ExternalEvent(JSONObject json) throws JSONException {
         this.eventMessagePattern = json.getString("path");
         this.eventHandler = json.getString("handlerClass");
-        this.isContentRouting = "path".equalsIgnoreCase(json.optString("routing")) ? false : true;
+        this.isContentRouting = !"path".equalsIgnoreCase(json.optString("routing"));
     }
 
     /**

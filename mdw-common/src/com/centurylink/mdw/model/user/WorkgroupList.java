@@ -64,7 +64,7 @@ public class WorkgroupList implements Jsonable, InstanceList<Workgroup> {
 
     public long getTotal() { return count; }  // no pagination
 
-    private List<Workgroup> groups = new ArrayList<Workgroup>();
+    private List<Workgroup> groups = new ArrayList<>();
     public List<Workgroup> getGroups() { return groups; }
     public void setGroups(List<Workgroup> groups) { this.groups = groups; }
 
@@ -74,7 +74,7 @@ public class WorkgroupList implements Jsonable, InstanceList<Workgroup> {
 
     public int getIndex(String id) {
         for (int i = 0; i < groups.size(); i++) {
-            if (groups.get(i).getId().equals(id))
+            if (groups.get(i).getId().toString().equals(id))
                 return i;
         }
         return -1;

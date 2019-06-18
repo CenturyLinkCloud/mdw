@@ -101,7 +101,7 @@ public class TaskTemplate extends Asset implements Jsonable {
     }
 
     private List<String> getGroups(String groupAttributeName) {
-      List<String> groups = new ArrayList<String>();
+      List<String> groups = new ArrayList<>();
       String groupsString = this.getAttribute(groupAttributeName);
       if (groupsString != null && groupsString.length() > 0) {
           return Attribute.parseList(groupsString);
@@ -116,7 +116,7 @@ public class TaskTemplate extends Asset implements Jsonable {
         if (userGroups==null || userGroups.size()==0) {
             this.setAttribute(TaskAttributeConstant.GROUPS, null);
         } else {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             boolean first = true;
             for (String grp : userGroups) {
                 if (first) first = false;
@@ -201,7 +201,7 @@ public class TaskTemplate extends Asset implements Jsonable {
 
     /**
      * Checked if the passed in GroupIName is mapped to the task
-     * @param pGroupName
+     * @param pGroupName group name
      * @return boolean results
      */
     public boolean isGroupMapped(String pGroupName){
@@ -214,7 +214,7 @@ public class TaskTemplate extends Asset implements Jsonable {
 
      /**
      * Checked if the passed in Var Name is mapped to the task
-     * @param pVarName
+     * @param pVarName variable name
      * @return boolean results
      */
     public boolean isVariableMapped(String pVarName){
@@ -278,7 +278,7 @@ public class TaskTemplate extends Asset implements Jsonable {
             int i, n = variables.size();
             for (i=0; i<n; i++) {
                 Variable next = variables.get(i);
-                if (taskVar.getDisplaySequence().intValue()<next.getDisplaySequence().intValue())
+                if (taskVar.getDisplaySequence() < next.getDisplaySequence())
                     break;
             }
             if (i<n) variables.add(i, taskVar);

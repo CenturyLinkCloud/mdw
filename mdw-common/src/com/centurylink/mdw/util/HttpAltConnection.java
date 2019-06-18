@@ -146,7 +146,7 @@ public class HttpAltConnection extends HttpConnection {
             if (response != null && httpResponse != null) {
                 response.setCode(httpResponse.getStatusLine().getStatusCode());
                 response.setMessage(httpResponse.getStatusLine().getReasonPhrase());
-                headers = new HashMap<String,String>();
+                headers = new HashMap<>();
                 for (Header header : httpResponse.getAllHeaders()) {
                     headers.put(header.getName(), header.getValue());
                 }
@@ -156,21 +156,17 @@ public class HttpAltConnection extends HttpConnection {
 
     private byte[] extractResponseBytes(InputStream is) throws IOException {
         BufferedInputStream bis = null;
-        BufferedReader br = null;
         try {
             ByteArrayBuffer baf = new ByteArrayBuffer(1024);
             bis = new BufferedInputStream(is);
-            int b = 0;
+            int b;
             while ((b = bis.read()) != -1)
                 baf.append((byte) b);
-            byte[] bytes = baf.toByteArray();
-            return bytes;
+            return baf.toByteArray();
         }
         finally {
             if (bis != null)
                 bis.close();
-            if (br != null)
-                br.close();
         }
     }
 

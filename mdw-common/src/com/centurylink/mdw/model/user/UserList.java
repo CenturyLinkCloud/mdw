@@ -61,7 +61,7 @@ public class UserList implements Jsonable, InstanceList<User> {
     public long getTotal() { return total; }
     public void setTotal(long total) { this.total = total; }
 
-    private List<User> users = new ArrayList<User>();
+    private List<User> users = new ArrayList<>();
     public List<User> getUsers() { return users; }
     public void setUsers(List<User> users) { this.users = users; }
 
@@ -71,7 +71,7 @@ public class UserList implements Jsonable, InstanceList<User> {
 
     public int getIndex(String id) {
         for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getId().equals(id))
+            if (users.get(i).getId().toString().equals(id))
                 return i;
         }
         return -1;
