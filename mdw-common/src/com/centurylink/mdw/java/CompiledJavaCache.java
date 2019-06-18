@@ -32,7 +32,6 @@ import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.XmlService;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.monitor.MonitorRegistry;
@@ -226,16 +225,9 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
             List<Class<?>> classes = compileJava(parentLoader, currentPackage, javaSources, cache);
             return classes;
         }
-        catch (ClassNotFoundException ex) {
+        catch (ClassNotFoundException | MdwJavaException | IOException ex) {
             throw ex;
-        }
-        catch (IOException ex) {
-            throw ex;
-        }
-        catch (MdwJavaException ex) {
-            throw ex;
-        }
-        catch (Throwable t) {
+        } catch (Throwable t) {
             logger.severeException(t.getMessage(), t);
             // don't let compilation errors prevent startup
             return null;
@@ -290,7 +282,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
 
         final JavaFileObject jfo = new StringJavaFileObject(className, javaCode);
 
-        DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
+        DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
         JavaFileManager standardFileManager = compiler.getStandardFileManager(diagnostics, null, null);
         MdwJavaFileManager<JavaFileManager> mdwFileManager = new MdwJavaFileManager<JavaFileManager>(standardFileManager);
@@ -487,7 +479,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
         if (classpath == null) {
             synchronized(compilerClasspaths) {
                 classpath = compilerClasspaths.get(key);
-                if (classpath == null) {
+                if (classpath == null && packageVO != null) {
                     CloudClasspath cloudClsPath = new CloudClasspath(packageVO.getCloudClassLoader());
                     cloudClsPath.read();
                     classpath = cloudClsPath.toString();
@@ -502,7 +494,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
      * Writes the java-language assets into the temporary directory.
      * This is only needed for compilation dependencies.
      */
-    private static void initializeJavaSourceArtifacts() throws DataAccessException, IOException, CachingException {
+    private static void initializeJavaSourceArtifacts() throws IOException, CachingException {
         logger.info("Initializing Java source assets...");
         long before = System.currentTimeMillis();
 

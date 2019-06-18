@@ -67,9 +67,11 @@ public class SwaggerWorkflowReader {
         if (processRequest.getParameters() != null) {
             for (Parameter parameter : processRequest.getParameters()) {
                 io.swagger.models.parameters.Parameter swaggerParam = createParam(parameter.getType());
-                swaggerParam.setName(parameter.getName());
-                swaggerParam.setRequired(parameter.isRequired());
-                swaggerParam.setDescription(parameter.getDescription());
+                if (swaggerParam != null) {
+                    swaggerParam.setName(parameter.getName());
+                    swaggerParam.setRequired(parameter.isRequired());
+                    swaggerParam.setDescription(parameter.getDescription());
+                }
                 if (parameter.getDataType() != null) {
                     if (swaggerParam instanceof SerializableParameter) {
                         ((SerializableParameter)swaggerParam).setType(parameter.getDataType());

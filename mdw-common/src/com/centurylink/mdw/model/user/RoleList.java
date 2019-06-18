@@ -62,7 +62,7 @@ public class RoleList implements Jsonable, InstanceList<Role> {
 
     public long getTotal() { return count; }  // no pagination
 
-    private List<Role> roles = new ArrayList<Role>();
+    private List<Role> roles = new ArrayList<>();
     public List<Role> getRoles() { return roles; }
     public void setRoles(List<Role> roles) { this.roles = roles; }
 
@@ -72,7 +72,7 @@ public class RoleList implements Jsonable, InstanceList<Role> {
 
     public int getIndex(String id) {
         for (int i = 0; i < roles.size(); i++) {
-            if (roles.get(i).getId().equals(id))
+            if (roles.get(i).getId().toString().equals(id))
                 return i;
         }
         return -1;
