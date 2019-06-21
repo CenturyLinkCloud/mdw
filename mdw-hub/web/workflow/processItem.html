@@ -18,7 +18,7 @@
             <a href="#/solutions/{{item.solutionId}}" class="mdw-link">{{item.solutionId}}</a>
           </span>
         </div>
-        <div class="mdw-item-sub">Started {{item.startDate}}<span ng-if="item.due">, &nbsp;Due <i class="mdw-item-highlight">{{item.due}}</i></span>
+        <div class="mdw-item-sub">Started {{item.startDate}} (db time)<span ng-if="item.due">, &nbsp;Due <i class="mdw-item-highlight">{{item.due}}</i></span>
           <img class="mdw-item-alert" ng-if="item.alert" src="images/alert.png" alt="alert" />
         </div>
         <div class="mdw-item-sub" ng-if="item.endDate">{{item.status}} {{item.endDate}}</div>

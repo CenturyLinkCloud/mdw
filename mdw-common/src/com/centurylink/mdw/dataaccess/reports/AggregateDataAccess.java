@@ -28,8 +28,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.temporal.TemporalField;
+import java.time.*;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
@@ -121,6 +122,12 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
             while (resultSet.next()) {
                 String startDateStr = resultSet.getString("st");
                 Instant startDate = parseDbSt(startDateStr, increment);
+                if (increment == TimeIncrement.day) {
+                    // adjust from server time to same hour offset as request
+                    int plusHours = LocalDateTime.ofInstant(start, ZoneId.systemDefault()).get(ChronoField.HOUR_OF_DAY) -
+                            LocalDateTime.ofInstant(startDate, ZoneId.systemDefault()).get(ChronoField.HOUR_OF_DAY);
+                    startDate = startDate.plus(plusHours, ChronoUnit.HOURS);
+                }
 
                 // fill in gaps
                 while (startDate.toEpochMilli() - prevStartDate.toEpochMilli() > increment.ms) {
@@ -169,7 +176,7 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
     /**
      * Start datetime to select, adjusted for discrepancy between db time and server time.
      */
-    protected String getSt(String col, Query query) {
+    protected String getSt(String col, Query query) throws DataAccessException {
         TimeIncrement increment = getIncrement(query);
         long hoursDiff = DatabaseAccess.getDbTimeDiff() / 3600000;
         if (db.isOracle()) {
@@ -181,7 +188,10 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
 
             }
             else {
-
+                // adjust from server time to same hour offset as request
+                LocalDateTime serverMidnight = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
+                hoursDiff += LocalDateTime.ofInstant(getStart(query), ZoneId.systemDefault()).get(ChronoField.HOUR_OF_DAY) -
+                        serverMidnight.get(ChronoField.HOUR_OF_DAY);
                 return "to_char(" + col + " - interval '" + hoursDiff + "' hour,'YYYY-MM-DD') as st";
             }
         }
@@ -193,6 +203,10 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
                 return "time_format(date_sub(" + col + ", interval " + hoursDiff + " hour),'%Y-%m-%d %H:00') as st";
             }
             else {
+                // adjust from server time to same hour offset as request
+                LocalDateTime serverMidnight = LocalDateTime.of(LocalDate.now(), LocalTime.MIDNIGHT);
+                hoursDiff += LocalDateTime.ofInstant(getStart(query), ZoneId.systemDefault()).get(ChronoField.HOUR_OF_DAY) -
+                        serverMidnight.get(ChronoField.HOUR_OF_DAY);
                 return "time_format(date_sub(" + col + ", interval " + hoursDiff + " hour), '%Y-%m-%d') as st";
             }
         }
