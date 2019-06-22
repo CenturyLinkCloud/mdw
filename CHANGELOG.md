@@ -1,5 +1,19 @@
 # Change Log
 
+## [6.1.21](https://github.com/CenturyLinkCloud/mdw/tree/6.1.21) (2019-06-22)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.20...6.1.21)
+
+**Implemented enhancements:**
+
+- Allow path expressions for SwaggerValidatorActivity [\#688](https://github.com/CenturyLinkCloud/mdw/issues/688)
+- Microsoft Teams webhook notifications [\#672](https://github.com/CenturyLinkCloud/mdw/issues/672)
+
+**Closed issues:**
+
+- Dashboard charts inaccurate when server time differs from browser time [\#694](https://github.com/CenturyLinkCloud/mdw/issues/694)
+- Milestones and Traversed sequence not displayed for previous subprocess versions [\#691](https://github.com/CenturyLinkCloud/mdw/issues/691)
+- Include milestones/Main.jsx in React asset precompilation [\#690](https://github.com/CenturyLinkCloud/mdw/issues/690)
+
 ## [6.1.20](https://github.com/CenturyLinkCloud/mdw/tree/6.1.20) (2019-06-08)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.19...6.1.20)
 
