@@ -174,7 +174,7 @@ public class ResourceReaderExtension extends ServletReaderExtension implements R
         final ApiImplicitParams implicitParams = method.getAnnotation(ApiImplicitParams.class);
         if (implicitParams != null && implicitParams.value().length > 0) {
             for (ApiImplicitParam param : implicitParams.value()) {
-                final Parameter p = readImplicitParam(context.getSwagger(), param);
+                final Parameter p = readImplicitParameter(context.getSwagger(), param);
                 if (p != null) {
                     if (p instanceof BodyParameter && param.format() != null)
                         p.getVendorExtensions().put("format", param.format());
@@ -184,7 +184,7 @@ public class ResourceReaderExtension extends ServletReaderExtension implements R
         }
     }
 
-    private Parameter readImplicitParam(Swagger swagger, ApiImplicitParam param) {
+    private Parameter readImplicitParameter(Swagger swagger, ApiImplicitParam param) {
         final Parameter p = createParam(param.paramType());
         if (p == null) {
             return null;
