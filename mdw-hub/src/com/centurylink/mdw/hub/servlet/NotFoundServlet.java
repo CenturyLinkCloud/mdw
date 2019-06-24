@@ -98,10 +98,11 @@ public class NotFoundServlet extends HttpServlet {
                             } else {
                                 in = new FileInputStream(page.getFile());
                             }
-                            int read = 0;
+                            int read;
                             byte[] bytes = new byte[1024];
-                            while ((read = in.read(bytes)) != -1)
-                                out.write(bytes, 0, read);
+                            if (in != null)
+                                while ((read = in.read(bytes)) != -1)
+                                    out.write(bytes, 0, read);
                         } catch (MdwException ex) {
                             throw new IOException(ex.getMessage(), ex);
                         } finally {
