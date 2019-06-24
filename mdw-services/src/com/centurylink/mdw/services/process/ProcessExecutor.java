@@ -1265,7 +1265,7 @@ public class ProcessExecutor implements RetryableTransaction {
                     ProcessExecutorImpl.logger.warn("Encountered the following MySQL issue - will retry transaction (Attempt " + (transactionRetryCount+1) + " of " + transactionRetryMax + "): " + e.getMessage());
                     return true;
                 }
-                while (e.getCause() != null)
+                if (e.getCause() != null)
                     return canRetryTransaction(e.getCause());
             }
         }

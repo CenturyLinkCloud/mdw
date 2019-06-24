@@ -188,7 +188,7 @@ public class TaskServicesImpl implements TaskServices {
                                         break;
                                 }
                             }
-                            if (workTrans.getToId().equals(activityId))
+                            if (workTrans != null && workTrans.getToId().equals(activityId))
                                 taskInstances.add(taskInstance);
                         }
                     }

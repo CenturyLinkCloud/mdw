@@ -55,29 +55,26 @@ public class RulesBasedAutoAssignStrategy extends RulesBasedStrategy implements 
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
+      if (knowledgeBase != null) {
+          StatelessKieSession knowledgeSession = knowledgeBase.newStatelessKieSession();
+          List<Object> facts = new ArrayList<>();
+          facts.add(getParameters());
+          knowledgeSession.setGlobal("user", user);
 
-      StatelessKieSession knowledgeSession = knowledgeBase.newStatelessKieSession();
-
-      List<Object> facts = new ArrayList<Object>();
-      facts.add(getParameters());
-      knowledgeSession.setGlobal("user", user);
-
-      knowledgeSession.execute(CommandFactory.newInsertElements(facts));
-
-      logger.info("Getting UserVO ::"+ user);
-
-      try
-      {
-        user = ServiceLocator.getUserServices().getUser(user.getCuid());
-        logger.info("Got UserVO ::"+ user);
-      }
-      catch (DataAccessException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+          knowledgeSession.execute(CommandFactory.newInsertElements(facts));
       }
 
+      logger.info("Getting UserVO ::" + user);
+
+      try {
+          user = ServiceLocator.getUserServices().getUser(user.getCuid());
+          logger.info("Got UserVO ::" + user);
+      } catch (DataAccessException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+      }
       return user;
+
 
     }
 

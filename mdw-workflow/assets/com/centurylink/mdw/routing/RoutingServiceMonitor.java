@@ -148,15 +148,17 @@ public class RoutingServiceMonitor implements ServiceMonitor {
                 catch (MalformedURLException e) {
                     logger.severeException("Malformed original RequestURL", e);
                 }
-                String origHost = origRequestUrl.getHost().indexOf(".") > 0 ? origRequestUrl.getHost().substring(0, origRequestUrl.getHost().indexOf(".")) : origRequestUrl.getHost();
-                int origPort = origRequestUrl.getPort() == 80 || origRequestUrl.getPort() == 443 ? -1 : origRequestUrl.getPort();
-                String origQuery = headers.get(Listener.METAINFO_REQUEST_QUERY_STRING) == null ? "" : headers.get(Listener.METAINFO_REQUEST_QUERY_STRING);
-                String newHost = destination.getHost().indexOf(".") > 0 ? destination.getHost().substring(0, destination.getHost().indexOf(".")) : destination.getHost();
-                int newPort = destination.getPort() == 80 || destination.getPort() == 443 ? -1 : destination.getPort();
-                String newQuery = destination.getQuery() == null ? "" : destination.getQuery();
+                if (origRequestUrl != null) {
+                    String origHost = origRequestUrl.getHost().indexOf(".") > 0 ? origRequestUrl.getHost().substring(0, origRequestUrl.getHost().indexOf(".")) : origRequestUrl.getHost();
+                    int origPort = origRequestUrl.getPort() == 80 || origRequestUrl.getPort() == 443 ? -1 : origRequestUrl.getPort();
+                    String origQuery = headers.get(Listener.METAINFO_REQUEST_QUERY_STRING) == null ? "" : headers.get(Listener.METAINFO_REQUEST_QUERY_STRING);
+                    String newHost = destination.getHost().indexOf(".") > 0 ? destination.getHost().substring(0, destination.getHost().indexOf(".")) : destination.getHost();
+                    int newPort = destination.getPort() == 80 || destination.getPort() == 443 ? -1 : destination.getPort();
+                    String newQuery = destination.getQuery() == null ? "" : destination.getQuery();
 
-                if (!newHost.equalsIgnoreCase(origHost) || !(newPort == origPort) || !newQuery.equalsIgnoreCase(origQuery) || !origRequestUrl.getPath().equals(destination.getPath()))
-                    return destination;
+                    if (!newHost.equalsIgnoreCase(origHost) || !(newPort == origPort) || !newQuery.equalsIgnoreCase(origQuery) || !origRequestUrl.getPath().equals(destination.getPath()))
+                        return destination;
+                }
             }
         }
         return null;

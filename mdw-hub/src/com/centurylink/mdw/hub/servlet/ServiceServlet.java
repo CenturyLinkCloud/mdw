@@ -72,7 +72,7 @@ public abstract class ServiceServlet extends HttpServlet {
     }
 
     protected Map<String,String> buildMetaInfo(HttpServletRequest request) {
-        Map<String,String> metaInfo = new HashMap<String,String>();
+        Map<String,String> metaInfo = new HashMap<>();
         metaInfo.put(Listener.METAINFO_PROTOCOL, Listener.METAINFO_PROTOCOL_REST);
         metaInfo.put(Listener.METAINFO_SERVICE_CLASS, this.getClass().getName());
         metaInfo.put(Listener.METAINFO_REQUEST_URL, request.getRequestURL().toString());
@@ -125,7 +125,7 @@ public abstract class ServiceServlet extends HttpServlet {
             while (paramNames.hasMoreElements()) {
                 String key = (String) paramNames.nextElement();
                 if (!Listener.AUTHENTICATED_USER_HEADER.equals(key)) // do not allow this to be injected
-                    metaInfo.put(key, request.getParameter(key).toString());
+                    metaInfo.put(key, request.getParameter(key));
             }
         }
 
@@ -155,7 +155,7 @@ public abstract class ServiceServlet extends HttpServlet {
                     if (AuthUtils.authenticate(AuthUtils.SLACK_TOKEN, headers, payload))
                         return;
                     else {
-                        List<InetAddress> mdwCentral = null;
+                        List<InetAddress> mdwCentral;
                         String forwardIps = null;
                         InetAddress remote = null;
                         try {
@@ -172,7 +172,7 @@ public abstract class ServiceServlet extends HttpServlet {
                                     headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp");
                                     return;
                                 }
-                                else {
+                                else if (forwardIps != null) {
                                     for (String ip : forwardIps.split("[,\\s]+")) {
                                         if (mdwCentral.contains(InetAddress.getByName(ip))) {
                                             headers.put(Listener.AUTHENTICATED_USER_HEADER, "mdwapp");

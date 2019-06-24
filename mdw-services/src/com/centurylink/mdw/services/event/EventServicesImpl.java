@@ -80,11 +80,11 @@ public class EventServicesImpl implements EventServices {
     /**
      * Method that creates the event log based on the passed in params
      *
-     * @param pEventName
-     * @param pEventCategory
-     * @param pEventSource
-     * @param pEventOwner
-     * @param pEventOwnerId
+     * @param pEventName event name
+     * @param pEventCategory event category
+     * @param pEventSource event source
+     * @param pEventOwner event owner
+     * @param pEventOwnerId event owner id
      * @return EventLog
      */
     public Long createEventLog(String pEventName, String pEventCategory, String pEventSubCat, String pEventSource,
@@ -94,9 +94,8 @@ public class EventServicesImpl implements EventServices {
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
-            Long id = edao.recordEventLog(pEventName, pEventCategory, pEventSubCat,
+            return edao.recordEventLog(pEventName, pEventCategory, pEventSubCat,
                     pEventSource, pEventOwner, pEventOwnerId, user, modUser, comments);
-            return id;
         } catch (SQLException e) {
             edao.rollbackTransaction(transaction);
             throw new EventException("Failed to create event log", e);
@@ -172,7 +171,7 @@ public class EventServicesImpl implements EventServices {
                     else varInst.setData(value);
 
                     edao.createVariableInstance(varInst, procInstId);
-                } else varInst = null;
+                }
             }
             return varInst;
         } catch (SQLException e) {
@@ -212,7 +211,7 @@ public class EventServicesImpl implements EventServices {
 
     /**
      * This is for regression tester only.
-     * @param masterRequestId
+     * @param masterRequestId master request id.
      */
     public void sendDelayEventsToWaitActivities(String masterRequestId)
             throws DataAccessException, ProcessException {
@@ -224,7 +223,7 @@ public class EventServicesImpl implements EventServices {
             for (ProcessInstance pi : procInsts) {
                 List<ActivityInstance> actInsts = edao.getActivityInstancesForProcessInstance(pi.getId());
                 for (ActivityInstance ai : actInsts) {
-                    if (ai.getStatusCode()==WorkStatus.STATUS_WAITING.intValue()) {
+                    if (ai.getStatusCode()==WorkStatus.STATUS_WAITING) {
                         InternalEvent event = InternalEvent.createActivityDelayMessage(ai,
                                 masterRequestId);
                         this.sendInternalEvent(event, edao);
@@ -263,9 +262,7 @@ public class EventServicesImpl implements EventServices {
                     activityId, procInstId, null, pi.getMasterRequestId(), ActivityResultCodeConstant.RESULT_RETRY);
             edao.setProcessInstanceStatus(pi.getId(), WorkStatus.STATUS_IN_PROGRESS);
             this.sendInternalEvent(outgoingMsg, edao);
-        } catch (SQLException e) {
-            throw new ProcessException(0, "Failed to remove event waits", e);
-        } catch (MdwException e) {
+        } catch (SQLException | MdwException e) {
             throw new ProcessException(0, "Failed to remove event waits", e);
         } finally {
             edao.stopTransaction(transaction);
@@ -316,9 +313,7 @@ public class EventServicesImpl implements EventServices {
                         pi.getMasterRequestId(), completionCode);
             this.sendInternalEvent(outgoingMsg, edao);
             edao.setProcessInstanceStatus(pi.getId(), WorkStatus.STATUS_IN_PROGRESS);
-        } catch (SQLException e) {
-            throw new ProcessException(0, "Failed to remove event waits", e);
-        } catch (MdwException e) {
+        } catch (SQLException | MdwException e) {
             throw new ProcessException(0, "Failed to remove event waits", e);
         } finally {
             edao.stopTransaction(transaction);
@@ -329,24 +324,21 @@ public class EventServicesImpl implements EventServices {
     /**
      * Checks if the process inst is resumable
      *
-     * @param pInstance
+     * @param pInstance process instance
      * @return boolean status
      */
     private boolean isProcessInstanceResumable(ProcessInstance pInstance) {
 
-        int statusCd = pInstance.getStatusCode().intValue();
-        if (statusCd == WorkStatus.STATUS_COMPLETED.intValue()) {
+        int statusCd = pInstance.getStatusCode();
+        if (statusCd == WorkStatus.STATUS_COMPLETED) {
             return false;
-        } else if (statusCd == WorkStatus.STATUS_CANCELLED.intValue()) {
-            return false;
-        }
-        return true;
+        } else return statusCd != WorkStatus.STATUS_CANCELLED;
     }
 
     /**
      * Returns the ProcessInstance identified by the passed in Id
      *
-     * @param procInstId
+     * @param procInstId process instance id
      * @return ProcessInstance
      */
     public ProcessInstance getProcessInstance(Long procInstId)
@@ -367,13 +359,13 @@ public class EventServicesImpl implements EventServices {
     /**
      * Returns the process instances by process name and master request ID.
      *
-     * @param processName
-     * @param masterRequestId
+     * @param processName process name.
+     * @param masterRequestId master request id.
      * @return the list of process instances. If the process definition is not found, null
      *         is returned; if process definition is found but no process instances are found,
      *         an empty list is returned.
-     * @throws ProcessException
-     * @throws DataAccessException
+     * @throws ProcessException process exception.
+     * @throws DataAccessException data access exception.
      */
     @Override
     public List<ProcessInstance> getProcessInstances(String masterRequestId, String processName)
@@ -395,15 +387,15 @@ public class EventServicesImpl implements EventServices {
     /**
      * Returns the activity instances by process name, activity logical ID, and  master request ID.
      *
-     * @param processName
-     * @param activityLogicalId
-     * @param masterRequestId
+     * @param processName process name.
+     * @param activityLogicalId activity logical id.
+     * @param masterRequestId master request id.
      * @return the list of activity instances. If the process definition or the activity
      *         with the given logical ID is not found, null
      *         is returned; if process definition is found but no process instances are found,
      *         or no such activity instances are found, an empty list is returned.
-     * @throws ProcessException
-     * @throws DataAccessException
+     * @throws ProcessException process exception.
+     * @throws DataAccessException data access exception.
      */
     public List<ActivityInstance> getActivityInstances(String masterRequestId, String processName, String activityLogicalId)
     throws ProcessException, DataAccessException {
@@ -417,16 +409,14 @@ public class EventServicesImpl implements EventServices {
             if (actdef == null)
                 return null;
             transaction = edao.startTransaction();
-            List<ActivityInstance> actInstList = new ArrayList<ActivityInstance>();
+            List<ActivityInstance> actInstList = new ArrayList<>();
             List<ProcessInstance> procInstList =
                 edao.getProcessInstancesByMasterRequestId(masterRequestId, procdef.getId());
             if (procInstList.size() == 0)
                 return actInstList;
             for (ProcessInstance pi : procInstList) {
                 List<ActivityInstance> actInsts = edao.getActivityInstances(actdef.getId(), pi.getId(), false, false);
-                for (ActivityInstance ai : actInsts) {
-                    actInstList.add(ai);
-                }
+                actInstList.addAll(actInsts);
             }
             return actInstList;
         } catch (SQLException e) {
@@ -439,7 +429,7 @@ public class EventServicesImpl implements EventServices {
     /**
      * Returns the ActivityInstance identified by the passed in Id
      *
-     * @param pActivityInstId
+     * @param pActivityInstId activity instance id
      * @return ActivityInstance
      */
     public ActivityInstance getActivityInstance(Long pActivityInstId)
@@ -461,7 +451,7 @@ public class EventServicesImpl implements EventServices {
     /**
      * Returns the WorkTransitionVO based on the passed in params
      *
-     * @param pId
+     * @param pId WorkTransitionInstance id
      * @return WorkTransitionINstance
      */
     public TransitionInstance getWorkTransitionInstance(Long pId)
@@ -645,7 +635,7 @@ public class EventServicesImpl implements EventServices {
             Date currentScheduledTime = event == null ? null : event.getScheduledTime();
             ScheduledEventQueue queue = ScheduledEventQueue.getSingleton();
             boolean processed = queue.processEvent(eventName, event, now, edao);
-            if (processed)  {
+            if (event != null && processed)  {
                 if (event.isScheduledJob()) {
                     edao.recordScheduledJobHistory(event.getName(), currentScheduledTime,
                             ApplicationContext.getServer().toString());
@@ -699,7 +689,7 @@ public class EventServicesImpl implements EventServices {
     }
 
     public List<UnscheduledEvent> processInternalEvents(List<UnscheduledEvent> eventList) {
-        List<UnscheduledEvent> returnList = new ArrayList<UnscheduledEvent>();
+        List<UnscheduledEvent> returnList = new ArrayList<>();
         ThreadPoolProvider thread_pool = ApplicationContext.getThreadPoolProvider();
         for (UnscheduledEvent one : eventList) {
             if (EventInstance.ACTIVE_INTERNAL_EVENT.equals(one.getReference())) {
@@ -782,7 +772,7 @@ public class EventServicesImpl implements EventServices {
         }
     }
 
-    private static List<ServiceHandler> serviceHandlers = new ArrayList<ServiceHandler>();
+    private static List<ServiceHandler> serviceHandlers = new ArrayList<>();
 
     public void registerServiceHandler(ServiceHandler handler) throws EventException {
         if (!serviceHandlers.contains(handler))
@@ -804,7 +794,7 @@ public class EventServicesImpl implements EventServices {
         return null;
     }
 
-    private static List<WorkflowHandler> workflowHandlers = new ArrayList<WorkflowHandler>();
+    private static List<WorkflowHandler> workflowHandlers = new ArrayList<>();
 
     public void registerWorkflowHandler(WorkflowHandler handler) throws EventException {
         if (!workflowHandlers.contains(handler))
@@ -868,9 +858,9 @@ public class EventServicesImpl implements EventServices {
             ScheduledEvent event = edao.lockScheduledEvent(eventName);
             if (event == null) {
                 logger.error("ScheduledJob not found: " + eventName);
-            }
-            edao.updateEventInstance(event.getName(), null, EventInstance.STATUS_SCHEDULED_JOB_RUNNING,
-                    event.getScheduledTime(), null, null, 0, null);
+            } else
+                edao.updateEventInstance(event.getName(), null, EventInstance.STATUS_SCHEDULED_JOB_RUNNING,
+                        event.getScheduledTime(), null, null, 0, null);
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to update scheduled job", e);
         } finally {
