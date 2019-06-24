@@ -46,8 +46,8 @@ public class SpreadsheetCompiler extends org.drools.decisiontable.SpreadsheetCom
         else if (format.equals(Asset.EXCEL_2007))
             parser = new Excel2007Parser(listener);
 
-
-        parser.parseFile(xlsStream);
+        if (parser != null)
+            parser.parseFile(xlsStream);
         Package rulePackage = listener.getRuleSet();
         DRLOutput out = new DRLOutput();
         rulePackage.renderDRL(out);
@@ -56,16 +56,19 @@ public class SpreadsheetCompiler extends org.drools.decisiontable.SpreadsheetCom
 
     public String compile(InputStream stream, String format, String worksheetName) {
         RuleSheetListener listener = getRuleSheetListener(stream, format, worksheetName);
-        Package rulePackage = listener.getRuleSet();
-        DRLOutput out = new DRLOutput();
-        rulePackage.renderDRL(out);
-        return out.getDRL();
+        if (listener != null) {
+            Package rulePackage = listener.getRuleSet();
+            DRLOutput out = new DRLOutput();
+            rulePackage.renderDRL(out);
+            return out.getDRL();
+        }
+        return null;
     }
 
     private RuleSheetListener getRuleSheetListener(InputStream stream, String format, String worksheetName) {
         RuleSheetListener listener = new DefaultRuleSheetListener();
-        Map<String, List<DataListener>> sheetListeners = new HashMap<String, List<DataListener>>();
-        List<DataListener> listeners = new ArrayList<DataListener>();
+        Map<String, List<DataListener>> sheetListeners = new HashMap<>();
+        List<DataListener> listeners = new ArrayList<>();
         listeners.add(listener);
         sheetListeners.put(worksheetName, listeners);
 
