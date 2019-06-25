@@ -13,10 +13,10 @@ class Timeline extends Component {
   drawTimeline() {
     const container = document.getElementById('milestone-timeline');
     if (container) {
-      const timelineOptions = {
-      };
       const timelineData = new DataSet(this.props.data.items.filter(item => item.start));
-
+      const timelineOptions = {
+        zoomable: false
+      };
       const timeline = new VisTimeline(container, timelineData, timelineOptions);
       timeline.on('doubleClick', params => {
         if (params.item) {

@@ -32,6 +32,9 @@ class Data {
         item.color = '#ffffff';
       }
       else if (!item.end) {
+        if (item.activityInstance && item.activityInstance.status === 'Waiting') {
+          item.end = new Date();
+        }
         item.color = '#ffff00';
       }
       if (item.start) {
@@ -55,10 +58,12 @@ class Data {
           return it.process.id == child.milestone.process.id && it.activity.id == child.milestone.activity.id;
         });
         if (exist) {
-          this.edges.push({
-            from: item.id,
-            to: exist.id
-          });
+          if (!this.edges.find(edge => edge.from === item.id && edge.to === exist.id)) {
+            this.edges.push({
+              from: item.id,
+              to: exist.id
+            });
+          }
         }
         else {
           this.edges.push({
