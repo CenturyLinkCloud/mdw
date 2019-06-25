@@ -76,9 +76,9 @@ public class ProcessSlaScheduledJob implements ScheduledJob {
             systcalendar.setTimeInMillis(dbtime);
 
             for (Process processVO : ProcessCache.getAllProcesses()) {
-                int sla = 0;
+                int sla;
                 processVO = ProcessCache.getProcess(processVO.getId());
-                if ((processVO.getAttribute("SLA") != null && processVO.getAttribute("SLA") != "")) {
+                if ((processVO.getAttribute("SLA") != null && processVO.getAttribute("SLA").equals(""))) {
 
                     sla = Integer.parseInt(processVO.getAttribute("SLA"));
                     boolean dealyHandlerDefined = false;
@@ -87,7 +87,7 @@ public class ProcessSlaScheduledJob implements ScheduledJob {
                         for (Process sProcess : subProcess){
                             if(sProcess.getName().contains("Delay Handler")){
                                 dealyHandlerDefined = true;
-                                if (dealyHandlerDefined) break;
+                                break;
                             }
                         }
                       if (dealyHandlerDefined){
@@ -116,9 +116,8 @@ public class ProcessSlaScheduledJob implements ScheduledJob {
                                         .getActivities();
                                 for (ActivityInstance tempActivityInstanceVO : activityList) {
                                     if (tempActivityInstanceVO.getStatusCode() == WorkStatus.STATUS_WAITING
-                                            .intValue()
                                             || tempActivityInstanceVO.getStatusCode() == WorkStatus.STATUS_IN_PROGRESS
-                                                    .intValue()) {
+                                                    ) {
                                         InternalEvent event = InternalEvent
                                                 .createActivityDelayMessage(tempActivityInstanceVO,
                                                         tempProcessVO.getMasterRequestId());
@@ -157,7 +156,7 @@ public class ProcessSlaScheduledJob implements ScheduledJob {
         String getProInstances = "select * from PROCESS_INSTANCE where process_id=? and END_DT is null and (status_cd=7 or status_cd=2)"; // Workstatus 2,7
 
         DatabaseAccess db = new DatabaseAccess(null);
-        final ArrayList<ProcessInstance> processVoList = new ArrayList<ProcessInstance>();
+        final ArrayList<ProcessInstance> processVoList = new ArrayList<>();
         try {
             db.openConnection();
             Object[] args = new Object[1];
@@ -186,7 +185,7 @@ public class ProcessSlaScheduledJob implements ScheduledJob {
     }
 
     private List<ActivityInstance> getProcessInstanceActivity(Long procInstId) {
-        List<ActivityInstance> actInstList = new ArrayList<ActivityInstance>();
+        List<ActivityInstance> actInstList = new ArrayList<>();
 
         DatabaseAccess db = new DatabaseAccess(null);
         String query = "select ACTIVITY_INSTANCE_ID,STATUS_CD,START_DT,END_DT,STATUS_MESSAGE,ACTIVITY_ID"
@@ -201,12 +200,12 @@ public class ProcessSlaScheduledJob implements ScheduledJob {
             ActivityInstance actInst;
             while (rs.next()) {
                 actInst = new ActivityInstance();
-                actInst.setId(new Long(rs.getLong(1)));
+                actInst.setId(rs.getLong(1));
                 actInst.setStatusCode(rs.getInt(2));
                 actInst.setStartDate(rs.getTimestamp(3));
                 actInst.setEndDate(rs.getTimestamp(4));
                 actInst.setMessage(rs.getString(5));
-                actInst.setActivityId(new Long(rs.getLong(6)));
+                actInst.setActivityId(rs.getLong(6));
                 actInst.setProcessInstanceId(procInstId);
                 actInstList.add(actInst);
             }

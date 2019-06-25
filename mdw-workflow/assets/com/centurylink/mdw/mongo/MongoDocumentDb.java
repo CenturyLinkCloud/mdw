@@ -132,11 +132,12 @@ public class MongoDocumentDb implements DocumentDb {
                 mongoClient = new MongoClient(new ServerAddress(dbHost, dbPort), options.connectionsPerHost(maxConnections).writeConcern(WriteConcern.ACKNOWLEDGED).build());
             }
 
-            if (MongoDocumentDb.getMongoDb() != null)
-                for (String name : MongoDocumentDb.getMongoDb().listCollectionNames()) {
+            MongoDatabase mongoDb = MongoDocumentDb.getMongoDb();
+            if (mongoDb != null)
+                for (String name : mongoDb.listCollectionNames()) {
                     if (name.startsWith(MDW_PREFIX)) {
                         boolean needsIndex = true;
-                        for (Document doc : MongoDocumentDb.getMongoDb().getCollection(name).listIndexes()) {
+                        for (Document doc : mongoDb.getCollection(name).listIndexes()) {
                             if ("document_id_1".equals(doc.getString("name"))) {
                                 needsIndex = false;
                                 collectionDocIdIndexed.putIfAbsent(name, true);
@@ -158,18 +159,20 @@ public class MongoDocumentDb implements DocumentDb {
     public String getDocumentContent(String ownerType, Long documentId) {
         CodeTimer timer = new CodeTimer("Load from documentDb", true);
         try {
-            MongoCollection<Document> mongoCollection = getMongoDb().getCollection(getCollectionName(ownerType));
-            org.bson.Document mongoQuery = new org.bson.Document("document_id", documentId);
-            org.bson.Document c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT","isJSON"), excludeId())).first();
-            if (c == null) {
-                return null;
+            MongoDatabase mongoDb =  getMongoDb();
+            if (mongoDb != null) {
+                MongoCollection<Document> mongoCollection = mongoDb.getCollection(getCollectionName(ownerType));
+                org.bson.Document mongoQuery = new org.bson.Document("document_id", documentId);
+                org.bson.Document c = mongoCollection.find(mongoQuery).limit(1).projection(fields(include("CONTENT", "isJSON"), excludeId())).first();
+                if (c == null) {
+                    return null;
+                } else if (c.getBoolean("isJSON", false)) {
+                    return decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(JsonWriterSettings.builder().indent(true).build());
+                } else {
+                    return c.getString("CONTENT");
+                }
             }
-            else if (c.getBoolean("isJSON", false)) {
-                return decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(JsonWriterSettings.builder().indent(true).build());
-            }
-            else {
-                return c.getString("CONTENT");
-            }
+            return null;
         }
         finally {
             timer.stopAndLogTiming(null);
@@ -179,7 +182,10 @@ public class MongoDocumentDb implements DocumentDb {
     @Override
     public void createDocument(String ownerType, Long documentId, String content) {
         String collectionName = getCollectionName(ownerType);
-        MongoCollection<org.bson.Document> collection = getMongoDb().getCollection(collectionName);
+        MongoCollection<org.bson.Document> collection = null;
+        MongoDatabase mongoDb =  getMongoDb();
+        if (mongoDb != null)
+            collection = mongoDb.getCollection(collectionName);
         org.bson.Document myDoc = null;
         if (content != null && content.startsWith("{")) {
             try {
@@ -198,8 +204,8 @@ public class MongoDocumentDb implements DocumentDb {
             // Create BSON document with Raw content if it wasn't JSON, plus append _id and isJSON:false
             myDoc = new org.bson.Document("CONTENT", content).append("document_id", documentId).append("isJSON", false);
         }
-
-        collection.insertOne(myDoc);
+        if (collection != null)
+            collection.insertOne(myDoc);
         if (!checkForDocIdIndex(collectionName))
             createMongoDocIdIndex(collectionName);
     }
@@ -207,7 +213,10 @@ public class MongoDocumentDb implements DocumentDb {
 
     @Override
     public boolean updateDocument(String ownerType, Long documentId, String content) {
-        MongoCollection<org.bson.Document> collection = getMongoDb().getCollection(getCollectionName(ownerType));
+        MongoCollection<org.bson.Document> collection = null;
+        MongoDatabase mongoDb =  getMongoDb();
+        if (mongoDb != null)
+            collection = mongoDb.getCollection(getCollectionName(ownerType));
         org.bson.Document myDoc = null;
         if (content != null && content.startsWith("{")) {
             try {
@@ -224,27 +233,37 @@ public class MongoDocumentDb implements DocumentDb {
         }
         if (myDoc == null)   // Create BSON document with Raw content if it wasn't JSON plus append isJSON:false
             myDoc = new org.bson.Document("CONTENT", content).append("document_id", documentId).append("isJSON", false);
-        if (collection.findOneAndReplace(eq("document_id", documentId), myDoc) != null)
+        if (collection != null && collection.findOneAndReplace(eq("document_id", documentId), myDoc) != null)
             return true;
-        else {  // Must have been null content initially and being updated now to non-null
-            collection.insertOne(myDoc);
+        else {
+            // Must have been null content initially and being updated now to non-null
+            if (collection != null)
+                collection.insertOne(myDoc);
             return true;
         }
     }
 
     @Override
     public boolean deleteDocument(String ownerType, Long documentId) {
-        MongoCollection<org.bson.Document> collection = getMongoDb().getCollection(getCollectionName(ownerType));
-        return collection.findOneAndDelete(eq("document_id", documentId)) != null;
+        MongoDatabase mongoDb =  getMongoDb();
+        if (mongoDb != null) {
+            MongoCollection<org.bson.Document> collection = mongoDb.getCollection(getCollectionName(ownerType));
+            return collection.findOneAndDelete(eq("document_id", documentId)) != null;
+        }
+        else
+            return false;
     }
 
     public static void createMongoDocIdIndex(String collectionName) {
         try {
-            IndexOptions indexOptions = new IndexOptions().unique(true).background(true).name("document_id_1");
-            MongoCollection<org.bson.Document> collection = MongoDocumentDb.getMongoDb().getCollection(collectionName);
-            String indexName = collection.createIndex(Indexes.ascending("document_id"), indexOptions);
-            LoggerUtil.getStandardLogger().mdwDebug("Created Index : " + indexName + " on collection : " + collectionName);
-            collectionDocIdIndexed.putIfAbsent(collectionName, true);
+            MongoDatabase mongoDb =  getMongoDb();
+            if (mongoDb != null) {
+                IndexOptions indexOptions = new IndexOptions().unique(true).background(true).name("document_id_1");
+                MongoCollection<org.bson.Document> collection = mongoDb.getCollection(collectionName);
+                String indexName = collection.createIndex(Indexes.ascending("document_id"), indexOptions);
+                LoggerUtil.getStandardLogger().mdwDebug("Created Index : " + indexName + " on collection : " + collectionName);
+                collectionDocIdIndexed.putIfAbsent(collectionName, true);
+            }
         }
         catch (Exception e) {
             LoggerUtil.getStandardLogger().info("Failed to create index for 'document_id' on " + collectionName + " collection", e);

@@ -87,7 +87,7 @@ public class StubServer extends SoccomServer {
     }
 
     @Override
-    public void shutdown() {
+    public synchronized void shutdown() {
         if (running) {
             try {
                 running = false;
@@ -119,10 +119,7 @@ public class StubServer extends SoccomServer {
                 throw new IOException("Unexpected stub request content");
             }
         }
-        catch (JSONException ex) {
-            throw new IOException(ex.getMessage(), ex);
-        }
-        catch (TestException ex) {
+        catch (JSONException | TestException ex) {
             throw new IOException(ex.getMessage(), ex);
         }
     }
