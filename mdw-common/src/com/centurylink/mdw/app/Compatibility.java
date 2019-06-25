@@ -352,7 +352,7 @@ public class Compatibility {
         private final Map<Object,Object> orderedMap = new LinkedHashMap<Object,Object>();
         Map<Object,Object> getOrderedMap() { return orderedMap; }
 
-        public Object put(Object key, Object value) {
+        public synchronized Object put(Object key, Object value) {
             orderedMap.put(key, value);
             return super.put(key, value);
         }

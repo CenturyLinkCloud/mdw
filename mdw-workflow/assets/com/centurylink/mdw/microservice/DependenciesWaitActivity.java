@@ -69,12 +69,12 @@ public class DependenciesWaitActivity extends EventWaitActivity {
                 logger.info("Error in registerWaitEvents - " + e.getMessage());
                 e.printStackTrace();
             }
-            return compCode != null && compCode
+            return compCode != null && (compCode
                     .startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
                     || compCode.startsWith(
                     WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ABORT)
                     || compCode.startsWith(
-                    WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ERROR);
+                    WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ERROR));
         }
         else
             return true;

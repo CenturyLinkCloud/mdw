@@ -111,8 +111,8 @@ public class AuthUtils {
      * TODO: call this from every protocol channel
      * If nothing else we should to this to avoid spoofing the AUTHENTICATED_USER_HEADER.
      * </p>
-     * @param headers
-     * @return
+     * @param headers headers.
+     * @return boolean.
      */
     private static boolean authenticateAuthorizationHeader(Map<String,String> headers) {
         String hdr = headers.get(Listener.AUTHORIZATION_HEADER_NAME);
@@ -148,7 +148,7 @@ public class AuthUtils {
     }
 
     private static boolean authenticateSlackToken(Map<String,String> headers, String payload) {
-        boolean okay = false;
+        boolean okay;
         if (payload.startsWith("payload=")) {  // TODO: handle multiple params
             try {
                 String decodedPayload = URLDecoder.decode(payload.substring(8), "utf-8");
@@ -286,7 +286,7 @@ public class AuthUtils {
                         // Use cached token
                         verifyMdwJWT(token, headers);
                         validated = true;
-                    } catch (Exception e) {}  // Token might be expired or some other issue with it - re-authenticate
+                    } catch (Exception ignored) {}  // Token might be expired or some other issue with it - re-authenticate
                 }
                 if (!validated) {
                     // Authenticate using com/centurylink/mdw/central/auth service hosted in MDW Central
@@ -414,7 +414,7 @@ public class AuthUtils {
     private static synchronized JWTVerifier createCustomTokenVerifier(String algorithmName, String issuer) {
         JWTVerifier tempVerifier = verifierCustom.get(issuer);
         if (tempVerifier == null) {
-            Properties props = null;
+            Properties props;
             if (customProviders == null) {
                 props = PropertyManager.getInstance().getProperties(PropertyNames.MDW_JWT);
                 customProviders = new HashMap<>();
@@ -448,7 +448,10 @@ public class AuthUtils {
                 logger.severe(message);
                 return null;
             }
-            String key = System.getenv("MDW_JWT_" + getCustomProviderGroupName(issuer).toUpperCase() + "_KEY");
+            String customProvider = getCustomProviderGroupName(issuer);
+            if (customProvider != null)
+                customProvider = customProvider.toUpperCase();
+            String key = System.getenv("MDW_JWT_" + customProvider + "_KEY");
             if (StringUtils.isBlank(key)) {
                 if (!algorithmName.startsWith("HS")) {  // Only allow use of Key in MDW properties for asymmetric algorithms
                     key = props.getProperty(PropertyNames.MDW_JWT_KEY);
@@ -466,8 +469,8 @@ public class AuthUtils {
             try {
                 maxAge = PropertyManager.getIntegerProperty(PropertyNames.MDW_AUTH_TOKEN_MAX_AGE, 0) * 1000L;
 
-                Algorithm algorithm = null;
-                Method algMethod = null;
+                Algorithm algorithm;
+                Method algMethod;
                 if (algorithmName.startsWith("HS")) {  // HMAC
                     String methodName = "HMAC" + algorithmName.substring(2);
                     algMethod = Algorithm.none().getClass().getMethod(methodName, String.class);

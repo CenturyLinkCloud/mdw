@@ -187,10 +187,12 @@ public class VersionControlGit implements VersionControl {
 
     public void deleteRev(File file) throws IOException {
         VersionProperties verProps = getVersionProps(file.getParentFile());
-        String val = verProps.getProperty(file.getName());
-        if (val != null) {
-            verProps.remove(file.getName());
-            verProps.save();
+        if (verProps != null){
+            String val = verProps.getProperty(file.getName());
+            if (val != null) {
+                verProps.remove(file.getName());
+                verProps.save();
+            }
         }
     }
 
