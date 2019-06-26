@@ -7,6 +7,7 @@
 
 - Allow path expressions for SwaggerValidatorActivity [\#688](https://github.com/CenturyLinkCloud/mdw/issues/688)
 - Microsoft Teams webhook notifications [\#672](https://github.com/CenturyLinkCloud/mdw/issues/672)
+- Support Java 11 [\#358](https://github.com/CenturyLinkCloud/mdw/issues/358)
 
 **Closed issues:**
 
