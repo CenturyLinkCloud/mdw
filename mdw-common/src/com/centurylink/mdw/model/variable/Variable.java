@@ -210,8 +210,6 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
         value.setType(getType());
         if (getDisplay() != null)
             value.setDisplay(getDisplay());
-        else if (getDisplayMode() != null)
-            value.setDisplay(Value.getDisplay(getDisplayMode()));
         if (getDisplaySequence() != null)
             value.setSequence(getDisplaySequence());
         if (getLabel() != null)
