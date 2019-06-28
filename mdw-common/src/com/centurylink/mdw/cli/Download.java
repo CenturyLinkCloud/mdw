@@ -83,7 +83,7 @@ public class Download implements Operation {
 
             while (true) {
                 if (size > 0 && progressMonitors.length > 0 && sofar < size) {
-                    int prog = (int) Math.floor((sofar * 100)/size);
+                    int prog = (int) Math.floor((double)(sofar * 100)/size);
                     for (ProgressMonitor progressMonitor : progressMonitors)
                         progressMonitor.progress(prog);
                 }

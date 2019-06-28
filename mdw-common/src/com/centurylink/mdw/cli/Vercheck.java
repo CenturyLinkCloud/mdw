@@ -243,7 +243,7 @@ public class Vercheck extends Setup {
                     }
                 }
             }
-            int prog = (int) Math.floor((i * 100)/assetFiles.size());
+            int prog = (int) Math.floor((double)(i * 100)/assetFiles.size());
             for (ProgressMonitor progressMonitor : progressMonitors)
                 progressMonitor.progress(prog);
             i++;

@@ -239,7 +239,7 @@ public class Query {
     }
 
     public enum Timespan {
-        Day (24*3600*1000),
+        Day ((long)24*3600*1000),
         Week (Day.millis * 7),
         Month (Day.millis * 30);
 
