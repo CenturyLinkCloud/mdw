@@ -83,7 +83,7 @@ public class Hierarchy extends Setup {
         for (int i = 0; i < topLevelCallers.size(); i++) {
             Linked<Process> topLevelCaller = topLevelCallers.get(i);
             addCalledHierarchy(topLevelCaller, 0);
-            int prog = 85 + ((int)Math.floor((i * 10)/topLevelCallers.size()));
+            int prog =  (85 + ((int)Math.floor((double )(i * 10)/topLevelCallers.size())));
             for (ProgressMonitor monitor : monitors)
                 monitor.progress(prog);
         }
@@ -161,7 +161,7 @@ public class Hierarchy extends Setup {
                 List<File> procFiles = pkgProcFiles.get(pkg);
                 for (int i = 0; i < procFiles.size(); i++) {
                     processes.add(loadProcess(pkg, procFiles.get(i), true));
-                    int prog = 10 + ((int)Math.floor((i * 80)/procFiles.size()));
+                    int prog = 10 + ((int)Math.floor((double)(i * 80)/procFiles.size()));
                     for (ProgressMonitor monitor : monitors)
                         monitor.progress(prog);
                 }

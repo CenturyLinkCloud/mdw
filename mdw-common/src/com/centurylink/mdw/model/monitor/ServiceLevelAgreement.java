@@ -82,9 +82,9 @@ public class ServiceLevelAgreement {
     */
    public static String secondsToUnits(int seconds, String unit) {
        if (unit == null) return String.valueOf(seconds);
-       else if (unit.equals(INTERVAL_DAYS)) return String.valueOf(Math.round(seconds/86400));
-       else if (unit.equals(INTERVAL_HOURS)) return String.valueOf(Math.round(seconds/3600));
-       else if (unit.equals(INTERVAL_MINUTES)) return String.valueOf(Math.round(seconds/60));
+       else if (unit.equals(INTERVAL_DAYS)) return String.valueOf(Math.round((float)seconds/86400));
+       else if (unit.equals(INTERVAL_HOURS)) return String.valueOf(Math.round((float)seconds/3600));
+       else if (unit.equals(INTERVAL_MINUTES)) return String.valueOf(Math.round((float)seconds/60));
        else  return String.valueOf(seconds);
    }
 
