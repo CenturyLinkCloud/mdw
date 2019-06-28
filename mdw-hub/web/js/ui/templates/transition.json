@@ -9,7 +9,7 @@
     },
     {
       "type": "text",
-      "name": "TRANSITION_DELAY",
+      "name": "_transitionDelay",
       "label": "Delay (seconds)",
       "vw": 100
     },

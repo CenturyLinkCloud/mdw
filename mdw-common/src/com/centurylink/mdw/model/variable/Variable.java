@@ -15,22 +15,16 @@
  */
 package com.centurylink.mdw.model.variable;
 
-import java.io.Serializable;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.StringDocument;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.Value.Display;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.Serializable;
 
 public class Variable implements Serializable, Comparable<Variable>, Jsonable {
-
-    public static final String[] Categories =
-        {"Local", "Input", "Output", "Input/Output", "Static"};
-    public static final String[] DisplayModes =
-        {"Required", "Optional", "Read Only", "Hidden", "Excluded"};
 
     public static final int CAT_LOCAL = 0;
     public static final int CAT_INPUT = 1;
@@ -43,15 +37,11 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
     public static final String PROCESS_INSTANCE_ID = "ProcessInstanceID";
     public static final String ACTIVITY_INSTANCE_ID = "ActivityInstanceID";
 
-    // the data sources is only for backward compatibility
-    public static final String DATA_SOURCE_READONLY = "workflow";
-    public static final String DATA_SOURCE_OTHERS = "task_user";
-
-    public static final Integer DATA_REQUIRED = new Integer(0);
-    public static final Integer DATA_OPTIONAL =  new Integer(1);
-    public static final Integer DATA_READONLY =  new Integer(2);
-    public static final Integer DATA_HIDDEN =  new Integer(3);
-    public static final Integer DATA_EXCLUDED =  new Integer(4);
+    public static final Integer DATA_REQUIRED = 0;
+    public static final Integer DATA_OPTIONAL = 1;
+    public static final Integer DATA_READONLY = 2;
+    public static final Integer DATA_HIDDEN = 3;
+    public static final Integer DATA_EXCLUDED = 4;
 
     private Long id;
     private String type;
@@ -125,19 +115,10 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
         return getDisplayMode().equals(Variable.DATA_REQUIRED);
     }
 
-
-    /**
-     * See important note in getDisplayMode()
-     * @return variable category, a.k.a variable mode (Input/Output/etc)
-     */
     public Integer getVariableCategory() {
         return displayMode;
     }
 
-    /**
-     * See important note in getDisplayMode()
-     * @param variableCategory
-     */
     public void setVariableCategory(Integer variableCategory) {
         this.displayMode = variableCategory;
     }
@@ -187,7 +168,6 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
             return "LOCAL";
     }
 
-    // for json (instead of old optionality )
     private Display display;
     public Display getDisplay() { return display; }
     public void setDisplay(Display display) { this.display = display; }

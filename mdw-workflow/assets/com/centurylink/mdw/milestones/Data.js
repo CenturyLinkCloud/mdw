@@ -33,7 +33,7 @@ class Data {
       }
       else if (!item.end) {
         if (item.activityInstance && item.activityInstance.status === 'Waiting') {
-          item.end = new Date();
+          item.end = new Date(); // otherwise timeline does not show full span
         }
         item.color = '#ffff00';
       }

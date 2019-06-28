@@ -118,9 +118,9 @@ subprojects {
 sonarqube {
     properties {
         property "sonar.projectBaseDir", "$projectDir/.."
-        property "sonar.sources", "**/*.java"
+        property "sonar.sources", "src"
         // skip searching node_modules
-        property "sonar.exclusions", "**/node_modules/**,**/*.jsx,**/*.js,**/*.css,assets/com/centurylink/mdw/camel/**/*"
+        property "sonar.exclusions", "**/node_modules/**,**/*.html,**/*.jsx,**/*.js,**/*.css,assets/com/centurylink/mdw/camel/**/*"
 
         // ignore these rules
         property "sonar.issue.ignore.multicriteria", "e1,e2,e3,e4,e5"
