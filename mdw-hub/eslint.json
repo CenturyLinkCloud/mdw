@@ -31,5 +31,10 @@
     "location": true,
     "Int8Array": false,
     "Promise": false
+  },
+  "settings": {
+    "react": {
+      "version": "^15.6.1"
+    }
   }
 }

@@ -77,6 +77,13 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
           widget.value = this.diagramObj.getDisplay().type;
         else if (widget.name === '_controlPoints')
           widget.value = this.diagramObj.getDisplay().xs.length;
+        else if (widget.name === '_transitionDelay') {
+          var attrVal = this.workflowObj.attributes.TRANSITION_DELAY;
+          if (attrVal)
+            widget.value = isNaN(attrVal) ? attrVal.substring(0, attrVal.length - 1) : attrVal;
+          else
+            widget.value = attrVal;
+        }
         else
           widget.value = this.workflowObj.attributes[widget.name];
         if (widget.type === 'asset')
@@ -409,6 +416,9 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
       }
       else if (widget.name === '_controlPoints') {
         this.diagramObj.calc(widget.value);
+      }
+      else if (widget.name === '_transitionDelay') {
+        this.workflowObj.attributes.TRANSITION_DELAY = widget.value ? widget.value + 's' : widget.value;
       }
       else if (widget.parent && widget.parent.type === 'table') {
         var tblWdg = widget.parent;
