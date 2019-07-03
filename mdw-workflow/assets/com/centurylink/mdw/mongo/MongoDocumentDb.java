@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.mongodb.*;
 import org.bson.Document;
 import org.bson.json.JsonWriterSettings;
@@ -167,7 +169,8 @@ public class MongoDocumentDb implements DocumentDb {
                 if (c == null) {
                     return null;
                 } else if (c.getBoolean("isJSON", false)) {
-                    return decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(JsonWriterSettings.builder().indent(true).build());
+                    boolean isIndent = PropertyManager.getBooleanProperty(PropertyNames.MDW_MONGODB_FORMAT_JSON , false);
+                    return decodeMongoDoc(c.get("CONTENT", org.bson.Document.class)).toJson(JsonWriterSettings.builder().indent(isIndent).build());
                 } else {
                     return c.getString("CONTENT");
                 }
