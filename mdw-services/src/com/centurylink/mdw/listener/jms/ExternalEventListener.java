@@ -59,7 +59,7 @@ public class ExternalEventListener extends JmsListener {
                 }
                 String resp;
                 ListenerHelper helper = new ListenerHelper();
-                Map<String, String> metaInfo = new HashMap<String, String>();
+                Map<String, String> metaInfo = new HashMap<>();
                 metaInfo.put(Listener.METAINFO_PROTOCOL, Listener.METAINFO_PROTOCOL_JMS);
                 metaInfo.put(Listener.METAINFO_REQUEST_PATH, getQueueName());
                 metaInfo.put(Listener.METAINFO_SERVICE_CLASS, this.getClass().getName());
@@ -76,11 +76,15 @@ public class ExternalEventListener extends JmsListener {
                         QueueConnectionFactory qcf
                             = JMSServices.getInstance().getQueueConnectionFactory(null);
                         connection = qcf.createQueueConnection();
-                        QueueSession session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
-                        QueueSender sender = session.createSender(respQueue);
-                        Message respMsg = session.createTextMessage(resp);
-                        respMsg.setJMSCorrelationID(correlId);
-                        sender.send(respMsg);
+
+                        Message respMsg;
+                        try (QueueSession session = connection.createQueueSession(false, Session.AUTO_ACKNOWLEDGE)) {
+                            try (QueueSender sender = session.createSender(respQueue)) {
+                                respMsg = session.createTextMessage(resp);
+                                respMsg.setJMSCorrelationID(correlId);
+                                sender.send(respMsg);
+                            }
+                        }
                         if (logger.isDebugEnabled()) {
                             logger.debug("JMS Listener sends response (corr id='" +
                                     correlId + "'): " + resp);

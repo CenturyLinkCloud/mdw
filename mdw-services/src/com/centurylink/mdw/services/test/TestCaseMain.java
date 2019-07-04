@@ -80,63 +80,62 @@ public class TestCaseMain {
 
         File resultsFile = testingServices.getTestResultsFile(null);
 
-        LogMessageMonitor monitor = new LogMessageMonitor();
-        monitor.start(true);
+        try (LogMessageMonitor monitor = new LogMessageMonitor()) {
+            monitor.start(true);
 
-        final Map<String,TestCaseRun> masterRequestRuns = new HashMap<>();
+            final Map<String, TestCaseRun> masterRequestRuns = new HashMap<>();
 
-        if (StubServer.isRunning())
-            StubServer.stop();
-        if (execConfig.isStubbing())
-            StubServer.start(new TestStubber(masterRequestRuns));
+            if (StubServer.isRunning())
+                StubServer.stop();
+            if (execConfig.isStubbing())
+                StubServer.start(new TestStubber(masterRequestRuns));
 
-        Map<String,Process> processCache = new HashMap<>();
-        TestCaseRun run = new StandaloneTestCaseRun(testCase, user, resultsFile.getParentFile(), 0,
-                masterRequestId, monitor, processCache, execConfig);
-        masterRequestRuns.put(masterRequestId, run);
-        run.setMasterRequestListener(new MasterRequestListener() {
-            public void syncMasterRequestId(String oldId, String newId) {
-                TestCaseRun run = masterRequestRuns.remove(oldId);
-                if (run != null) {
-                    masterRequestRuns.put(newId, run);
+            Map<String, Process> processCache = new HashMap<>();
+            TestCaseRun run = new StandaloneTestCaseRun(testCase, user, resultsFile.getParentFile(), 0,
+                    masterRequestId, monitor, processCache, execConfig);
+            masterRequestRuns.put(masterRequestId, run);
+            run.setMasterRequestListener(new MasterRequestListener() {
+                public void syncMasterRequestId(String oldId, String newId) {
+                    TestCaseRun run = masterRequestRuns.remove(oldId);
+                    if (run != null) {
+                        masterRequestRuns.put(newId, run);
+                    }
                 }
+            });
+
+            try {
+                // tell the server we're monitoring
+                HttpHelper httpHelper = new HttpHelper(new URL(execConfig.getServerUrl() + "/services/System/config"));
+                JSONObject configJson = new JsonObject();
+                configJson.put(PropertyNames.MDW_LOGGING_WATCHER, InetAddress.getLocalHost().getHostAddress());
+                if (execConfig.isStubbing())
+                    configJson.put(PropertyNames.MDW_STUB_SERVER, InetAddress.getLocalHost().getHostAddress());
+                StatusMessage msg = new StatusMessage(new JsonObject(httpHelper.put(configJson.toString(2))));
+                if (!msg.isSuccess())
+                    System.out.println("Error setting server config: " + msg.getMessage());
+
+                run.run();
+
+                // stop monitoring
+                httpHelper = new HttpHelper(new URL(execConfig.getServerUrl() + "/services/System/config"));
+                configJson.put(PropertyNames.MDW_LOGGING_WATCHER, "");
+                if (execConfig.isStubbing())
+                    configJson.put(PropertyNames.MDW_STUB_SERVER, "");
+                msg = new StatusMessage(new JsonObject(httpHelper.put(configJson.toString(2))));
+                if (!msg.isSuccess())
+                    System.out.println("Error setting server config: " + msg.getMessage());
+
+                if (run.getTestCase().getStatus() == Status.Passed)
+                    System.exit(0);
+                else
+                    System.exit(1); // fail
+
+            } catch (Throwable th) {
+                th.printStackTrace(run.getLog());
+                throw th;
+            } finally {
+                monitor.shutdown();
             }
-        });
-
-        try {
-            // tell the server we're monitoring
-            HttpHelper httpHelper = new HttpHelper(new URL(execConfig.getServerUrl() + "/services/System/config"));
-            JSONObject configJson = new JsonObject();
-            configJson.put(PropertyNames.MDW_LOGGING_WATCHER, InetAddress.getLocalHost().getHostAddress());
-            if (execConfig.isStubbing())
-                configJson.put(PropertyNames.MDW_STUB_SERVER, InetAddress.getLocalHost().getHostAddress());
-            StatusMessage msg = new StatusMessage(new JsonObject(httpHelper.put(configJson.toString(2))));
-            if (!msg.isSuccess())
-                System.out.println("Error setting server config: " + msg.getMessage());
-
-            run.run();
-
-            // stop monitoring
-            httpHelper = new HttpHelper(new URL(execConfig.getServerUrl() + "/services/System/config"));
-            configJson.put(PropertyNames.MDW_LOGGING_WATCHER, "");
-            if (execConfig.isStubbing())
-                configJson.put(PropertyNames.MDW_STUB_SERVER, "");
-            msg = new StatusMessage(new JsonObject(httpHelper.put(configJson.toString(2))));
-            if (!msg.isSuccess())
-                System.out.println("Error setting server config: " + msg.getMessage());
-
-            if (run.getTestCase().getStatus() == Status.Passed)
-                System.exit(0);
-            else
-                System.exit(1); // fail
-
-        }
-        catch (Throwable th) {
-            th.printStackTrace(run.getLog());
-            throw th;
-        }
-        finally {
-            monitor.shutdown();
         }
 
         // reach here only when error
