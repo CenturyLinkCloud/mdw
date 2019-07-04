@@ -261,20 +261,17 @@ public class HttpHelper {
             connection.setHeader("Content-Type", "application/octet-stream");
         }
 
-        OutputStream outStream = connection.getOutputStream();
-        InputStream inStream = new FileInputStream(file);
+        try (InputStream inStream = new FileInputStream(file); OutputStream outStream = connection.getOutputStream()
+        ) {
 
-        byte[] buf = new byte[1024];
-        int len = 0;
-        while (len != -1)
-        {
-          len = inStream.read(buf);
-          if (len > 0)
-            outStream.write(buf, 0, len);
+            byte[] buf = new byte[1024];
+            int len = 0;
+            while (len != -1) {
+                len = inStream.read(buf);
+                if (len > 0)
+                    outStream.write(buf, 0, len);
+            }
         }
-
-        inStream.close();
-        outStream.close();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getConnection().getInputStream()));
         StringBuffer responseBuffer = new StringBuffer();

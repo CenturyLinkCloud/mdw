@@ -510,9 +510,9 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
             String javaCode = javaSource.getStringContent();
             if (javaCode != null) {
                 javaCode = doCompatibilityCodeSubstitutions(packageName + "." + className, javaCode);
-                FileWriter writer = new FileWriter(file);
-                writer.write(javaCode);
-                writer.close();
+                try (FileWriter writer = new FileWriter(file)) {
+                    writer.write(javaCode);
+                }
             }
         }
         if (logger.isDebugEnabled())

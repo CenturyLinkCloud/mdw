@@ -225,9 +225,7 @@ public class CloudClassLoader extends ClassLoader {
     private byte[] findInJarFile(File jar, String path) throws IOException {
         byte[] b = null;
         InputStream is = null;
-        JarFile jf = null;
-        try {
-            jf = new JarFile(jar);
+        try (JarFile jf = new JarFile(jar)){
             ZipEntry ze = jf.getEntry(path);
             if (ze != null) {
                 int k, n, m;
@@ -250,8 +248,7 @@ public class CloudClassLoader extends ClassLoader {
         finally {
             if (is != null)
                 is.close();
-            if (jf != null)
-                jf.close();
+
         }
         return b;
     }

@@ -98,21 +98,11 @@ public class Unzip implements Operation {
                             }
                         }
                     }
-                    InputStream is = null;
-                    OutputStream os = null;
-                    try {
-                        is = zip.getInputStream(entry);
-                        os = new FileOutputStream(outfile);
-                        int read = 0;
+                    try (OutputStream os = new FileOutputStream(outfile); InputStream is = zip.getInputStream(entry)) {
+                        int read;
                         byte[] bytes = new byte[BUFFER_KB * 1024];
-                        while((read = is.read(bytes)) != -1)
+                        while ((read = is.read(bytes)) != -1)
                             os.write(bytes, 0, read);
-                    }
-                    finally {
-                        if (is != null)
-                            is.close();
-                        if (os != null)
-                          os.close();
                     }
                 }
             }

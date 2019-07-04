@@ -235,9 +235,9 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
             if (content != null) {
                 if (Compatibility.hasCodeSubstitutions())
                     content = doCompatibilityCodeSubstitutions(groovy.getLabel(), content);
-                FileWriter writer = new FileWriter(file);
-                writer.write(content);
-                writer.close();
+                try (FileWriter writer = new FileWriter(file)) {
+                    writer.write(content);
+                }
             }
         }
         logger.info("Groovy script assets initialized.");
@@ -266,9 +266,9 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
             if (content != null) {
                 if (Compatibility.hasCodeSubstitutions())
                     content = doCompatibilityCodeSubstitutions(java.getLabel(), content);
-                FileWriter writer = new FileWriter(file);
-                writer.write(content);
-                writer.close();
+                try (FileWriter writer = new FileWriter(file)) {
+                    writer.write(content);
+                }
             }
         }
         logger.info("Dynamic Java assets initialized for groovy.");
