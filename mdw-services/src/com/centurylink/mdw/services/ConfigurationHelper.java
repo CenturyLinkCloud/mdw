@@ -38,10 +38,10 @@ public class ConfigurationHelper implements Serializable {
 
         String filepath = System.getProperty("mdw.config.location") + "/" + fileName;
 
-        FileWriter wr = new FileWriter(new File(filepath));
-        wr.write(contents);
-        wr.flush();
-        wr.close();
+        try (FileWriter wr = new FileWriter(new File(filepath))) {
+            wr.write(contents);
+            wr.flush();
+        }
         if (!react)
             return true;
         else

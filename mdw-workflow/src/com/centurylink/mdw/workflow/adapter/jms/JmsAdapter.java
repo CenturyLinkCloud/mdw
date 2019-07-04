@@ -171,36 +171,43 @@ public class JmsAdapter extends ObjectAdapterActivity {
             else {
                 QueueSession qSession = (QueueSession)conn;
                 Queue replyQueue;
+                MessageConsumer consumer = null;
                 boolean replyIsTemporaryQueue = false;
-                QueueSender qSender = qSession.createSender(queue);
-                TextMessage msg = qSession.createTextMessage((String)requestData);
-                String responseQueueName = this.getAttributeValueSmart(RESPONSE_QUEUE_NAME);
-                if (responseQueueName!=null && responseQueueName.length()>0) {
-                    replyQueue = (Queue)ApplicationContext.getNamingProvider().lookup(null,responseQueueName,Queue.class);
-                    msg.setJMSReplyTo(replyQueue);
-                } else if (this.isSynchronous()) {
-                    replyQueue = qSession.createTemporaryQueue();
-                    msg.setJMSReplyTo(replyQueue);
-                    replyIsTemporaryQueue = true;
-                } else replyQueue = null;
-                String correlationId = getCorrelationId();
-                if (correlationId!=null) msg.setJMSCorrelationID(correlationId);
-                qSender.send(msg);
-                if (this.isSynchronous()) {
-                    MessageConsumer consumer;
-                    if (replyIsTemporaryQueue) {
-                        consumer = qSession.createConsumer(replyQueue);
-                    } else {
-                        String messageSelector = "JMSCorrelationID = '" + correlationId + "'";
-                        consumer = qSession.createConsumer(replyQueue, messageSelector);
-                    }
-                    msg = (TextMessage)consumer.receive(getTimeoutForResponse()*1000);
-                    if (msg==null) {
-                        throw new ActivityException("Synchronous JMS call times out while waiting for response");
-                    } else {
-                        result = msg.getText();
-                    }
-                } else result = null;
+                TextMessage msg;
+                String correlationId;
+                try (QueueSender qSender = qSession.createSender(queue)) {
+                    msg = qSession.createTextMessage((String) requestData);
+                    String responseQueueName = this.getAttributeValueSmart(RESPONSE_QUEUE_NAME);
+                    if (responseQueueName != null && responseQueueName.length() > 0) {
+                        replyQueue = (Queue) ApplicationContext.getNamingProvider().lookup(null, responseQueueName, Queue.class);
+                        msg.setJMSReplyTo(replyQueue);
+                    } else if (this.isSynchronous()) {
+                        replyQueue = qSession.createTemporaryQueue();
+                        msg.setJMSReplyTo(replyQueue);
+                        replyIsTemporaryQueue = true;
+                    } else replyQueue = null;
+                    correlationId = getCorrelationId();
+                    if (correlationId != null) msg.setJMSCorrelationID(correlationId);
+                    qSender.send(msg);
+                    if (this.isSynchronous()) {
+                        if (replyIsTemporaryQueue) {
+                            consumer = qSession.createConsumer(replyQueue);
+                        } else {
+                            String messageSelector = "JMSCorrelationID = '" + correlationId + "'";
+                            consumer = qSession.createConsumer(replyQueue, messageSelector);
+                        }
+                        msg = (TextMessage)consumer.receive(getTimeoutForResponse()*1000);
+                        if (msg==null) {
+                            throw new ActivityException("Synchronous JMS call times out while waiting for response");
+                        } else {
+                            result = msg.getText();
+                        }
+                    } else result = null;
+                }
+                finally {
+                    if (consumer != null)
+                        consumer.close();
+                }
             }
             return result;
         } catch (Exception e) {
@@ -250,7 +257,7 @@ public class JmsAdapter extends ObjectAdapterActivity {
         try {
             if (qSession!=null) qSession.close();
             if (qConnection!=null) qConnection.close();
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         qSession = null;
         qConnection = null;
