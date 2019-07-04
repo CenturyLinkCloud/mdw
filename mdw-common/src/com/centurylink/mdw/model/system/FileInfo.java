@@ -123,13 +123,14 @@ public class FileInfo implements Jsonable, Comparable<FileInfo> {
      * TODO: validate
      */
     public static boolean isBinary(File f) throws IOException {
-        FileInputStream in = new FileInputStream(f);
-        int size = in.available();
-        if (size > 1024)
-            size = 1024;
-        byte[] data = new byte[size];
-        in.read(data);
-        in.close();
+        byte[] data;
+        try (FileInputStream in = new FileInputStream(f)) {
+            int size = in.available();
+            if (size > 1024)
+                size = 1024;
+            data = new byte[size];
+            in.read(data);
+        }
 
         int ascii = 0;
         int other = 0;

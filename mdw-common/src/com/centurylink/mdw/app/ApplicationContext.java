@@ -40,10 +40,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -190,7 +187,7 @@ public class ApplicationContext {
 
     /**
      * Verifies a class
-     * @param className
+     * @param className class name.
      * @return boolean status
      */
     public static boolean verifyClass(String className){
@@ -223,7 +220,7 @@ public class ApplicationContext {
         if (serverHost == null) {
             try {
                 // unravel cloud deployment host name
-                String localIp = new String(InetAddress.getLocalHost().getHostAddress());
+                String localIp = InetAddress.getLocalHost().getHostAddress();
                 for (Server server : getServerList().getServers()) {
                     String host = server.getHost();
                     if (host.equals("localhost")) {
@@ -305,6 +302,7 @@ public class ApplicationContext {
             return mdwVersion;
 
         mdwVersion = "Unknown";
+        JarFile jarFile = null;
         try {
             String cpUtilLoc = ClasspathUtil.locate(ClasspathUtil.class.getName());
             int jarBangIdx = cpUtilLoc.indexOf(".jar!");
@@ -314,7 +312,7 @@ public class ApplicationContext {
                     jarFilePath = jarFilePath.substring(6);
                 if (!jarFilePath.startsWith("/"))
                     jarFilePath = "/" + jarFilePath;
-                JarFile jarFile = new JarFile(new File(jarFilePath));
+                jarFile = new JarFile(new File(jarFilePath));
                 String subpath = cpUtilLoc.substring(jarBangIdx + 5);
                 int subjarBang = subpath.indexOf(".jar!");
                 if (subjarBang > 0) {
@@ -325,16 +323,16 @@ public class ApplicationContext {
                     try (InputStream is = jarFile.getInputStream(subjar);
                             OutputStream os = new FileOutputStream(tempjar)) {
                         int bufSize = 16 * 1024;
-                        int read = 0;
+                        int read;
                         byte[] bytes = new byte[bufSize];
                         while((read = is.read(bytes)) != -1)
                             os.write(bytes, 0, read);
                     }
-                    JarFile tempJarFile = new JarFile(tempjar);
-                    Manifest manifest = tempJarFile.getManifest();
-                    mdwVersion = manifest.getMainAttributes().getValue("MDW-Version");
-                    mdwBuildTimestamp = manifest.getMainAttributes().getValue("MDW-Build");
-                    tempJarFile.close();
+                    try (JarFile tempJarFile = new JarFile(tempjar)) {
+                        Manifest manifest = tempJarFile.getManifest();
+                        mdwVersion = manifest.getMainAttributes().getValue("MDW-Version");
+                        mdwBuildTimestamp = manifest.getMainAttributes().getValue("MDW-Build");
+                    }
                     tempjar.delete();
                 }
                 else {
@@ -342,7 +340,6 @@ public class ApplicationContext {
                     mdwVersion = manifest.getMainAttributes().getValue("MDW-Version");
                     mdwBuildTimestamp = manifest.getMainAttributes().getValue("MDW-Build");
                 }
-                jarFile.close();
             }
             else {
                 // try tomcat deploy structure
@@ -370,6 +367,14 @@ public class ApplicationContext {
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
+        }
+        finally{
+            try {
+                if (jarFile != null)
+                    jarFile.close();
+            } catch (IOException e) {
+                logger.severeException(e.getMessage(), e);
+            }
         }
 
         return mdwVersion;

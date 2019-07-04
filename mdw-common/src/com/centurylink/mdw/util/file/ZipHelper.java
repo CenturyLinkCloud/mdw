@@ -39,7 +39,7 @@ public class ZipHelper {
       Error,
       Overwrite,
       Ignore
-    };
+    }
 
     private static final int ZIP_BUFFER_KB = 16;
 
@@ -69,13 +69,11 @@ public class ZipHelper {
                     zos.putNextEntry(ze);
 
                     if (file.isFile()) {
-                        FileInputStream in = new FileInputStream(file);
-
-                        int len;
-                        while ((len = in.read(buffer)) > 0)
-                            zos.write(buffer, 0, len);
-
-                        in.close();
+                        try (FileInputStream in = new FileInputStream(file)) {
+                            int len;
+                            while ((len = in.read(buffer)) > 0)
+                                zos.write(buffer, 0, len);
+                        }
                     }
                 }
             }
@@ -130,13 +128,11 @@ public class ZipHelper {
                     zos.putNextEntry(ze);
 
                     if (file.isFile()) {
-                        FileInputStream in = new FileInputStream(file);
-
-                        int len;
-                        while ((len = in.read(buffer)) > 0)
-                            zos.write(buffer, 0, len);
-
-                        in.close();
+                        try (FileInputStream in = new FileInputStream(file)) {
+                            int len;
+                            while ((len = in.read(buffer)) > 0)
+                                zos.write(buffer, 0, len);
+                        }
                     }
                 }
             }
@@ -161,8 +157,7 @@ public class ZipHelper {
         if (!destDir.exists() || !destDir.isDirectory())
             throw new IOException("Destination directory does not exist: " + destDir);
 
-        ZipFile zip = new ZipFile(zipFile);
-        try {
+        try (ZipFile zip = new ZipFile(zipFile)) {
             if (baseLoc != null && !baseLoc.endsWith("/"))
                 baseLoc += "/";
 
@@ -183,43 +178,27 @@ public class ZipHelper {
                     if (outfile.exists()) {
                         if (exist == Exist.Error) {
                             throw new IOException("Output file already exists: " + outfile);
-                        }
-                        else if (exist == Exist.Overwrite) {
+                        } else if (exist == Exist.Overwrite) {
                             if (entry.isDirectory()) {
                                 FileHelper.deleteRecursive(outfile);
                             }
-                        }
-                        else if (exist == Exist.Ignore) {
+                        } else if (exist == Exist.Ignore) {
                             continue;
                         }
                     }
                     if (entry.isDirectory()) {
                         if (!outfile.mkdirs())
                             throw new IOException("Unable to create directory: " + outfile);
-                    }
-                    else {
-                        InputStream is = null;
-                        OutputStream os = null;
-                        try {
-                            is = zip.getInputStream(entry);
-                            os = new FileOutputStream(outfile);
-                            int read = 0;
+                    } else {
+                        try (InputStream is = zip.getInputStream(entry); OutputStream os = new FileOutputStream(outfile)) {
+                            int read;
                             byte[] bytes = new byte[1024];
-                            while((read = is.read(bytes)) != -1)
+                            while ((read = is.read(bytes)) != -1)
                                 os.write(bytes, 0, read);
-                        }
-                        finally {
-                            if (is != null)
-                                is.close();
-                            if (os != null)
-                              os.close();
                         }
                     }
                 }
             }
-        }
-        finally {
-            zip.close();
         }
     }
 
@@ -228,35 +207,21 @@ public class ZipHelper {
     }
 
     public static void zip(File directory, File zipFile, List<File> excludes) throws IOException {
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(zipFile);
+        try(FileOutputStream fos = new FileOutputStream(zipFile)) {
             ZipHelper.writeZip(directory, fos, excludes);
-        }
-        finally {
-            if (fos != null)
-                fos.close();
         }
     }
 
     public static void zipWith(File directory, File zipFile, List<File> includes) throws IOException {
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(zipFile);
+        try (FileOutputStream fos = new FileOutputStream(zipFile)) {
             ZipHelper.writeZipWith(directory, fos, includes);
-        }
-        finally {
-            if (fos != null)
-                fos.close();
         }
     }
 
     public static void unzip(URL fromUrl, File destDir) throws IOException {
-        InputStream urlIn = null;
         OutputStream tempOut = null;
-        File tempZip = null;;
-        try {
-            urlIn = new BufferedInputStream(fromUrl.openStream());
+        File tempZip;
+        try (InputStream urlIn = new BufferedInputStream(fromUrl.openStream())){
             tempZip = File.createTempFile("mdw", ".zip", null);
             tempOut = new BufferedOutputStream(new FileOutputStream(tempZip));
             byte[] buffer = new byte[ZIP_BUFFER_KB * 1024];
@@ -267,13 +232,9 @@ public class ZipHelper {
             }
         }
         finally {
-            if(urlIn!=null){
-                urlIn.close();
-              }
             if(tempOut!=null){
                 tempOut.close();
             }
-
         }
 
         unzip(tempZip, destDir);

@@ -65,9 +65,9 @@ public class JMSServices {
         this.namingProvider = namingProvider;
         this.jmsProvider = jmsProvider;
         logger = LoggerUtil.getStandardLogger();
-        queueCache = new Hashtable<String, Queue>();
-        queueConnFactoryCache = new Hashtable<String, QueueConnectionFactory>();
-        topicConnFactoryCache = new Hashtable<String, TopicConnectionFactory>();
+        queueCache = new Hashtable<>();
+        queueConnFactoryCache = new Hashtable<>();
+        topicConnFactoryCache = new Hashtable<>();
         try {
             mdwMessageProducer = (MessageProducer) SpringAppContext.getInstance()
                     .getBean(SpringAppContext.MDW_SPRING_MESSAGE_PRODUCER);
@@ -82,9 +82,9 @@ public class JMSServices {
     }
 
     public void clearCached() {
-        queueCache = new Hashtable<String, Queue>();
-        queueConnFactoryCache = new Hashtable<String, QueueConnectionFactory>();
-        topicConnFactoryCache = new Hashtable<String, TopicConnectionFactory>();
+        queueCache = new Hashtable<>();
+        queueConnFactoryCache = new Hashtable<>();
+        topicConnFactoryCache = new Hashtable<>();
     }
 
     public static JMSServices getInstance() {
@@ -112,7 +112,7 @@ public class JMSServices {
      *            the message string
      * @param delaySeconds
      *            0 for immediate
-     * @throws ServiceLocatorException
+     * @throws ServiceLocatorException ServiceLocatorException.
      */
     public void sendTextMessage(String queueName, String message, int delaySeconds)
             throws NamingException, JMSException, ServiceLocatorException {
@@ -130,7 +130,7 @@ public class JMSServices {
      *            the message string
      * @param delaySeconds
      *            0 for immediate
-     * @throws ServiceLocatorException
+     * @throws ServiceLocatorException ServiceLocatorException.
      */
     public void sendTextMessage(String contextUrl, String queueName, String message,
             int delaySeconds, String correlationId)
@@ -148,7 +148,7 @@ public class JMSServices {
             QueueConnection connection = null;
             QueueSession session = null;
             QueueSender sender = null;
-            Queue queue = null;
+            Queue queue ;
 
             try {
                 QueueConnectionFactory connectionFactory = getQueueConnectionFactory(contextUrl);
@@ -194,7 +194,7 @@ public class JMSServices {
      */
     public QueueConnectionFactory getQueueConnectionFactory(String contextUrl)
             throws ServiceLocatorException {
-        QueueConnectionFactory factory = (QueueConnectionFactory) queueConnFactoryCache
+        QueueConnectionFactory factory = queueConnFactoryCache
                 .get(contextUrl == null ? THIS_SERVER : contextUrl);
         if (factory == null) {
             try {
@@ -219,7 +219,7 @@ public class JMSServices {
      * @return javax.jms.Queue
      */
     public Queue getQueue(Session session, String commonName) throws ServiceLocatorException {
-        Queue queue = (Queue) queueCache.get(commonName);
+        Queue queue = queueCache.get(commonName);
         if (queue == null) {
             try {
                 String name = namingProvider.qualifyJmsQueueName(commonName);
@@ -245,7 +245,7 @@ public class JMSServices {
      */
     public Queue getQueue(String contextUrl, String queueName) throws ServiceLocatorException {
         try {
-            String jndiName = null;
+            String jndiName;
             if (contextUrl == null) {
                 jndiName = namingProvider.qualifyJmsQueueName(queueName);
             }
@@ -261,7 +261,7 @@ public class JMSServices {
 
     public TopicConnectionFactory getTopicConnectionFactory(String contextUrl)
             throws ServiceLocatorException {
-        TopicConnectionFactory factory = (TopicConnectionFactory) topicConnFactoryCache
+        TopicConnectionFactory factory =  topicConnFactoryCache
                 .get(contextUrl == null ? THIS_SERVER : contextUrl);
         if (factory == null) {
             try {
@@ -291,9 +291,9 @@ public class JMSServices {
     /**
      * Sends the passed in text message to a local topic
      *
-     * @param topicName
-     * @param pMessage
-     * @param delaySeconds
+     * @param topicName topic name.
+     * @param pMessage message.
+     * @param delaySeconds delay in seconds.
      * @throws ServiceLocatorException
      */
     public void broadcastTextMessage(String topicName, String textMessage, int delaySeconds)
@@ -302,7 +302,7 @@ public class JMSServices {
             mdwMessageProducer.broadcastMessageToTopic(topicName, textMessage);
         }
         else {
-            TopicConnectionFactory tFactory = null;
+            TopicConnectionFactory tFactory;
             TopicConnection tConnection = null;
             TopicSession tSession = null;
             TopicPublisher tPublisher = null;
@@ -382,8 +382,8 @@ public class JMSServices {
         QueueConnection connection = null;
         QueueSession session = null;
         QueueSender sender = null;
-        Queue reqqueue = null;
-        Queue respqueue = null;
+        Queue reqqueue;
+        Queue respqueue;
         try {
             if (logger.isDebugEnabled())
                 logger.debug("Invoke jms request message: " + request);
@@ -409,8 +409,9 @@ public class JMSServices {
             connection.start();
             textMessage.setText(request);
             sender.send(textMessage);
-            MessageConsumer consumer = session.createConsumer(respqueue);
-            textMessage = (TextMessage) consumer.receive(timeoutSeconds * 1000);
+            try (MessageConsumer consumer = session.createConsumer(respqueue)) {
+                textMessage = (TextMessage) consumer.receive(timeoutSeconds * 1000);
+            }
             if (textMessage == null) {
                 throw new JMSException("Synchronous JMS call times out while waiting for response");
             }

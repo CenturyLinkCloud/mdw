@@ -45,21 +45,11 @@ public final class FileHelper {
         if (out.exists() && !overwrite)
             throw new IOException("Output file exists: " + out);
 
-        InputStream is = null;
-        OutputStream os = null;
-        try {
-            is = new FileInputStream(in);
-            os = new FileOutputStream(out);
+        try (InputStream is = new FileInputStream(in); OutputStream os = new FileOutputStream(out)){
             int read = 0;
             byte[] bytes = new byte[1024];
             while((read = is.read(bytes)) != -1)
                 os.write(bytes, 0, read);
-        }
-        finally {
-            if (is != null)
-                is.close();
-            if (os != null)
-                os.close();
         }
     }
 
@@ -131,22 +121,22 @@ public final class FileHelper {
         }
     }
 
-    /**     * Method that returns the file contents
+    /**
+     * Method that returns the file contents
      * @param pFileName
      * @return FileContents
      */
     public static String getFileContents(String pFileName) throws IOException{
          String fileContents = null;
-         InputStream is = new FileInputStream(pFileName);
-         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-         StringBuffer xml = new StringBuffer();
-         String aLine = null;
-         while((aLine = reader.readLine()) != null){
-           xml.append(aLine);
-           xml.append("\n");
-
-         }
-        reader.close();
+        StringBuffer xml;
+        try (InputStream is = new FileInputStream(pFileName); BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+            xml = new StringBuffer();
+            String aLine;
+            while ((aLine = reader.readLine()) != null) {
+                xml.append(aLine);
+                xml.append("\n");
+            }
+        }
         fileContents = xml.toString();
         return fileContents;
     }
@@ -205,12 +195,10 @@ public final class FileHelper {
      */
     public static void writeToFile(String pFileName, String pContents, boolean pAppend)
      throws IOException{
-         FileWriter writer = null;
-         writer = new FileWriter(pFileName, pAppend);
-         writer.write(pContents);
-         writer.flush();
-         writer.close();
-
+        try (FileWriter writer = new FileWriter(pFileName, pAppend)) {
+            writer.write(pContents);
+            writer.flush();
+        }
     }
 
     private static final int FILE_BUFFER_KB = 16;

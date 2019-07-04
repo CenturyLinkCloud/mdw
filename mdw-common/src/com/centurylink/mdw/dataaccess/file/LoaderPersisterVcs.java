@@ -243,20 +243,11 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     protected void write(byte[] contents, File file) throws IOException {
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(file);
+        try (FileOutputStream fos = new FileOutputStream(file)){
             fos.write(contents);
         }
         catch (FileNotFoundException ex) {
-            // dimensions annoyingly makes files read-only
-            file.setWritable(true);
-            fos = new FileOutputStream(file);
-            fos.write(contents);
-        }
-        finally {
-            if (fos != null)
-                fos.close();
+            throw new IOException("Unable to write to the file : " + file);
         }
     }
 
