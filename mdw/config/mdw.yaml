@@ -1,6 +1,9 @@
 app:
   id: mdw6
-  
+
+container:
+  classic.classloading: true
+
 database:
   driver: org.mariadb.jdbc.Driver
   url: jdbc:mariadb://localhost:3308/mdw
