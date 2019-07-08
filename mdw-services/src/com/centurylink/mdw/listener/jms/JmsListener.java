@@ -95,7 +95,7 @@ public abstract class JmsListener  {
             if (threadPool == null) {  // This is for ConfigurationEventListener
                 while (!terminating) {
                     try {
-                        TextMessage message = (TextMessage)consumer.receive(receiveTimeout*1000);
+                        TextMessage message = (TextMessage)consumer.receive(receiveTimeout*1000L);
                         if (message!=null) {
                             message = filterMessage(message);
                             if (message!=null) {
@@ -119,7 +119,7 @@ public abstract class JmsListener  {
                         // If message == null, then we successfully processed previous message, so get next one from queue
                         // If NOT null, then we couldn't process previously received message (no available thread), so try again
                         if (message == null) {
-                            message = (TextMessage)consumer.receive(receiveTimeout*1000);
+                            message = (TextMessage)consumer.receive(receiveTimeout*1000L);
 
                             if (message!=null)
                                 message = filterMessage(message);
@@ -134,7 +134,7 @@ public abstract class JmsListener  {
                                 // make this stand out
                                 logger.severeException(msg, new Exception(msg));
                                 logger.info(threadPool.currentStatus());
-                                Thread.sleep(pollInterval*1000);  // Will try to process same message after waking up
+                                Thread.sleep(pollInterval*1000L);  // Will try to process same message after waking up
                             }
                         }
                     }

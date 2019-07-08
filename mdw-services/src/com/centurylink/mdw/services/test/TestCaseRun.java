@@ -662,7 +662,7 @@ public class TestCaseRun implements Runnable {
         try {
             synchronized (this) {
                 monitor.register(this, key);
-                this.wait(timeout*1000);
+                this.wait(timeout*1000L);
             }
             Object stillthere = monitor.remove(key);
             if (stillthere != null) {
@@ -787,7 +787,7 @@ public class TestCaseRun implements Runnable {
 
         if (oneThreadPerCase) {
             try {
-                Thread.sleep(seconds * 1000);
+                Thread.sleep(seconds * 1000L);
             }
             catch (InterruptedException e) {
                 log.println("Sleep interrupted");

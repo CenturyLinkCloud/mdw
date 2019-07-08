@@ -64,7 +64,7 @@ public class StubHelper {
                 delaySecs = ((ActivityStubResponse)response).getDelay();
             }
             if (delaySecs > 0)
-                Thread.sleep(delaySecs * 1000);
+                Thread.sleep(delaySecs * 1000L);
             return response;
         }
         catch (Exception e) {

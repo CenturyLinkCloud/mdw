@@ -52,12 +52,12 @@ public abstract class FileListener {
         if (!_directory.exists() || !_directory.isDirectory())
             throw new ListenerException("Directory does not exist: " + _directory);
 
-        long period = Integer.parseInt(props.getProperty("IntervalMinutes")) * 60 * 1000;
+        long period = Integer.parseInt(props.getProperty("IntervalMinutes")) * 60 * 1000L;
 
         String delayMinutes = props.getProperty("DelayMinutes");
         if (delayMinutes == null)
             delayMinutes = "0";
-        long delay = Integer.parseInt(delayMinutes) * 60 * 1000;
+        long delay = Integer.parseInt(delayMinutes) * 60 * 1000L;
 
         _filenamePattern = props.getProperty("FilenamePattern");
         if (_filenamePattern == null)

@@ -80,7 +80,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
             running = false;
             if (testCaseList != null) {
                 try {
-                    Thread.sleep(PAUSE * 2);
+                    Thread.sleep(PAUSE * 2L);
                     for (TestCase testCase : testCaseList.getTestCases()) {
                         if (testCase.getStatus() == Status.InProgress)
                             testCase.setStatus(Status.Stopped);
@@ -145,7 +145,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
                 if (updateResults() || !running)
                     return;
 
-                Thread.sleep(config.getInterval() * 1000);
+                Thread.sleep(config.getInterval() * 1000L);
             }
 
             // wait for all tests to finish

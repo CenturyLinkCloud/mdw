@@ -104,7 +104,7 @@ public class SystemMetrics {
                             }
                         }
                     }
-                }, period - (LocalDateTime.now().getSecond() % period), period, TimeUnit.SECONDS);
+                }, (long) period - (LocalDateTime.now().getSecond() % period), period, TimeUnit.SECONDS);
             }
         }
     }

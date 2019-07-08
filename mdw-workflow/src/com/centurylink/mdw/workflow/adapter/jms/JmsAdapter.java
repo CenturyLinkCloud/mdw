@@ -149,7 +149,7 @@ public class JmsAdapter extends ObjectAdapterActivity {
                 });
                 if (this.isSynchronous()) {
                     Message message = null;
-                    jmsSenderReceiver.setReceiveTimeout(getTimeoutForResponse() * 1000);
+                    jmsSenderReceiver.setReceiveTimeout(getTimeoutForResponse() * 1000L);
                     if (replyIsTemporaryQueue) {
                         message = jmsSenderReceiver.receive(replyQueue);
                     }
@@ -196,7 +196,7 @@ public class JmsAdapter extends ObjectAdapterActivity {
                             String messageSelector = "JMSCorrelationID = '" + correlationId + "'";
                             consumer = qSession.createConsumer(replyQueue, messageSelector);
                         }
-                        msg = (TextMessage)consumer.receive(getTimeoutForResponse()*1000);
+                        msg = (TextMessage)consumer.receive(getTimeoutForResponse()*1000L);
                         if (msg==null) {
                             throw new ActivityException("Synchronous JMS call times out while waiting for response");
                         } else {

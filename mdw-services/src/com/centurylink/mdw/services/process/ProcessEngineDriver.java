@@ -564,7 +564,7 @@ public class ProcessEngineDriver {
                     int retries = 0;
                     while (!success && retries < 2) {
                         logger.debug("Failed to consume internal event " + msgid + " - retry in 2 seconds");
-                        Thread.sleep(eventConsumeRetrySleep * 1000);
+                        Thread.sleep(eventConsumeRetrySleep * 1000L);
                         retries++;
                         success = engine.deleteInternalEvent(msgid);
                     }

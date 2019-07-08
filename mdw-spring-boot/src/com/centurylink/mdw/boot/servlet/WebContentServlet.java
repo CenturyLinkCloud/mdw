@@ -74,7 +74,7 @@ public class WebContentServlet  extends HttpServlet {
                 }
                 else {
                     response.setContentType(URLConnection.guessContentTypeFromName(file.getName()));
-                    response.setContentLength(Long.valueOf(file.length()).intValue());
+                    response.setContentLength((int)file.length());
                     response.setHeader("ETag", String.valueOf(file.lastModified()));
                     try (OutputStream out = response.getOutputStream()) {
                         Files.copy(file.toPath(), out);

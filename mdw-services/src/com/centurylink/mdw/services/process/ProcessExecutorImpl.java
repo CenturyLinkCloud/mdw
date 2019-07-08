@@ -674,7 +674,7 @@ class ProcessExecutorImpl {
         int count = 0;
         while (count<max_retry && actInst.getStatusCode()==WorkStatus.STATUS_IN_PROGRESS) {
             logger.debug("wait for synch activity to finish: " + actInst.getId());
-            Thread.sleep(retry_interval*1000);
+            Thread.sleep(retry_interval*1000L);
             actInst = getDataAccess().getActivityInstance(actInst.getId());
             count++;
         }
