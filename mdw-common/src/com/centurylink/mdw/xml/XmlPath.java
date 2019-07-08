@@ -223,7 +223,7 @@ public class XmlPath {
             path.name = path_string.substring(token.start, token.end);
             token = getNextToken();
             if (token!=null && token.kind==TokenKind.LBRACKET) {
-                token = parse_condition(path_string, n, token, path);
+                token = parse_condition(path_string, path);
             } else path.condition = null;
             if (token!=null && token.kind==TokenKind.SLASH) {
                 path.rest = parse_path_segment(getNextToken());
@@ -235,7 +235,7 @@ public class XmlPath {
             path.name = "*";
             token = getNextToken();
             if (token!=null && token.kind==TokenKind.LBRACKET) {
-                token = parse_condition(path_string, n, token, path);
+                token = parse_condition(path_string, path);
             } else path.condition = null;
             if (token!=null && token.kind==TokenKind.SLASH) {
                 path.rest = parse_path_segment(getNextToken());
@@ -261,9 +261,9 @@ public class XmlPath {
         return path;
     }
     
-    private Token parse_condition(String path_string, int n, Token token, PathSegment path) 
+    private Token parse_condition(String path_string, PathSegment path)
             throws XmlException {
-        token = getNextToken();
+        Token token = getNextToken();
         if (token==null)
             throw new XmlException("Invalid XPath Pattern: " + path_string);
         path.condition = new Condition();

@@ -410,7 +410,7 @@ public class JMSServices {
             textMessage.setText(request);
             sender.send(textMessage);
             try (MessageConsumer consumer = session.createConsumer(respqueue)) {
-                textMessage = (TextMessage) consumer.receive(timeoutSeconds * 1000);
+                textMessage = (TextMessage) consumer.receive(timeoutSeconds * 1000L);
             }
             if (textMessage == null) {
                 throw new JMSException("Synchronous JMS call times out while waiting for response");

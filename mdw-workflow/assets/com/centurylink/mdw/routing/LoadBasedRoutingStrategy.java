@@ -160,12 +160,12 @@ public class LoadBasedRoutingStrategy extends AbstractRoutingStrategy {
         // Finally let's make a weighted/factor array to determine percentage of requests to be sent to each instance based on
         // number of instances to use (utilization factor) and proportional load of each instance against the most loaded instance
         percentageThresholds = new double[instancesToUse];
-        double baseline = 1 / super.getWorkerInstances().size();
+        double baseline = 1d / super.getWorkerInstances().size();
         percentageThresholds[instancesToUse-1] = baseline;
         percentageThresholds[0] = 1.0;
 
         for (int j=instancesToUse-2; j > 0; j--) {
-            percentageThresholds[j] = percentageThresholds[j+1] + (baseline * (threadCountbyInstance.get(instanceSortedList.get(instancesToUse-1)) / threadCountbyInstance.get(instanceSortedList.get(j))));
+            percentageThresholds[j] = percentageThresholds[j+1] + (baseline * (threadCountbyInstance.get(instanceSortedList.get(instancesToUse-1)) / (double) threadCountbyInstance.get(instanceSortedList.get(j))));
         }
     }
 }

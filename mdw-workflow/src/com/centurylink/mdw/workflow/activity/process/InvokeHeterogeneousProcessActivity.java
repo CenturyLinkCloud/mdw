@@ -327,7 +327,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
                     // make this stand out
                     logger.warnException(msg, new Exception(msg));
                     logger.info(thread_pool.currentStatus());
-                    Thread.sleep(poll_interval*1000);
+                    Thread.sleep(poll_interval*1000L);
                 }
                 catch (InterruptedException e) {}
             }

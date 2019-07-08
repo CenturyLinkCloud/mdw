@@ -213,6 +213,9 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
     }
 
     public boolean equals(Object pTaskInstanceVO) {
+        if (pTaskInstanceVO != null && this.getClass() != pTaskInstanceVO.getClass())
+            return false;
+
         if (this == pTaskInstanceVO)
             return true;
         TaskInstance myTIVO = (TaskInstance) pTaskInstanceVO;
