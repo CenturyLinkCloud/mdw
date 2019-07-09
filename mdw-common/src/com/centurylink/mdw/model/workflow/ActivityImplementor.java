@@ -109,6 +109,11 @@ public class ActivityImplementor implements Comparable<ActivityImplementor>, Jso
         return id.equals(((ActivityImplementor)obj).id);
     }
 
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
     public int compareTo(ActivityImplementor other) {
         if (this.getLabel() == null)
           return -1;

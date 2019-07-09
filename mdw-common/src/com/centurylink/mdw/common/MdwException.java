@@ -142,6 +142,7 @@ public class MdwException extends Exception implements Jsonable {
         return cause;
     }
 
+    @Override
     public boolean equals(Object obj) {
         if (super.equals(obj))
             return true;
@@ -156,5 +157,10 @@ public class MdwException extends Exception implements Jsonable {
         catch (JSONException ex) {
             return false;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return this.toString().hashCode();
     }
 }

@@ -101,8 +101,8 @@ public class XPathHelper {
      * multiple matches are found or the match has children, will return a List
      * <XPathHelper>.
      *
-     * @param xpath
-     *            the expression indicating the document location
+     * @param doc DOM document
+     * @param xpathExpr the expression indicating the document location
      * @return a String, List<XPathHelper>, or null depending on how many
      *         matches are found
      */
@@ -147,8 +147,15 @@ public class XPathHelper {
                     return otherDoc.toString().equals(this.toString());
             }
         }
-
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        if (isJavaObject())
+            return getObject().hashCode();
+        else
+            return toString().hashCode();
     }
 
     public String toString() {

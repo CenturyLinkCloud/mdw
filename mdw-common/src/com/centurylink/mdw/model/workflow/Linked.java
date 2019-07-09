@@ -82,6 +82,11 @@ public class Linked<T extends Linkable> implements Jsonable, Iterable<Linked<T>>
         return o != null && o.getClass() == getClass() && ((Linked)o).element.equals(element);
     }
 
+    @Override
+    public int hashCode() {
+        return element.hashCode();
+    }
+
     public String getJsonName() {
         return getClass().getSimpleName();
     }

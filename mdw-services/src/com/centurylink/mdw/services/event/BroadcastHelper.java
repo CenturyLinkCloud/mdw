@@ -40,7 +40,8 @@ public class BroadcastHelper  {
         if (action.equals("NOTIFY")) {
             String correlationId = json.getString("CORRELATION_ID");
             WaitingForMe waiter = WaitingForMe.getWaitOn(correlationId);
-            if (waiter!=null) waiter.notifyEvent(json.getString("MESSAGE"));
+            if (waiter != null)
+                waiter.notifyEvent(json.getString("MESSAGE"));
         } else if (action.equals("REFRESH_PROPERTY")) {
             String name = json.getString("NAME");
             String value = json.getString("VALUE");

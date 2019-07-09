@@ -79,8 +79,15 @@ public class ScheduledEvent implements Comparable<ScheduledEvent> {
     
     @Override
     public boolean equals(Object o) {
-        if (o instanceof ScheduledEvent) return ((ScheduledEvent)o).name.equals(name);
-        else return false;
+        if (o instanceof ScheduledEvent)
+            return ((ScheduledEvent)o).name.equals(name);
+        else
+            return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
     }
     
     public boolean isInternalEvent() {

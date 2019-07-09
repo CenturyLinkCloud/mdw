@@ -100,6 +100,11 @@ public class Attribute implements Comparable<Attribute> {
             return getName().equals(other.getName());
     }
 
+    @Override
+    public int hashCode() {
+        return getName() == null ? super.hashCode() : getName().hashCode();
+    }
+
     public int compareTo(Attribute other) {
         if (other == null || other.getName() == null)
             return 1;

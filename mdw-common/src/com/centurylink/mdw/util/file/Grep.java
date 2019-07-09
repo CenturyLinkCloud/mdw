@@ -15,23 +15,16 @@
  */
 package com.centurylink.mdw.util.file;
 
+import com.centurylink.mdw.model.Jsonable;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.nio.file.FileSystems;
-import java.nio.file.FileVisitOption;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
-
-import com.centurylink.mdw.model.Jsonable;
 
 /**
  * Recursively searches linewise through all files matching a glob pattern.
@@ -54,8 +47,8 @@ public class Grep {
     }
 
     /**
-     * @param search expression
-     * @param glob files pattern(s)
+     * @param root root path
+     * @param globs files pattern(s)
      */
     public Grep(Path root, String... globs) {
         this.root = root;
@@ -123,7 +116,7 @@ public class Grep {
                 lineIndex++;
             });
             List<LineMatches> lineMatches = null;
-            if (matchMap != null) {
+            if (matchMap != null) { // NOSONAR
                 lineMatches = new ArrayList<>();
                 for (int index : matchMap.keySet()) {
                     lineMatches.add(matchMap.get(index));

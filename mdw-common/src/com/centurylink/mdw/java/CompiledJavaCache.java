@@ -268,7 +268,8 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
     }
 
     public static Object getInstance(String resourceClassName, ClassLoader parentLoader, Package currentPackage) throws ClassNotFoundException, IOException, InstantiationException, IllegalAccessException, MdwJavaException  {
-        return getResourceClass(resourceClassName, parentLoader, currentPackage).newInstance();
+        Class resourceClass = getResourceClass(resourceClassName, parentLoader, currentPackage);
+        return resourceClass == null ? null : resourceClass.newInstance();
     }
 
     private static void compileJavaCode(ClassLoader parentLoader, final Package currentPackage, String className, String javaCode, boolean cache)
