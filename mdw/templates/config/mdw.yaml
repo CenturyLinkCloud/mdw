@@ -11,6 +11,9 @@ database:
   poolMaxIdle: 3
   validationQuery: select 1 from dual
 
+container:
+  classic.classloading: true
+
 asset:
   location: {{asset-loc}}
 

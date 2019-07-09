@@ -371,3 +371,29 @@ title: MDW Configuration
       ]
     }    
     ```
+## *.spring assets
+  - Include .spring assets in any package to make resources like datasources available to your application.
+  - Here's an example .spring asset that declares a datasource:
+    ```xml
+    <?xml version="1.0" encoding="UTF-8"?>
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ctx="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+      <bean id="myDataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('my.database.driver')}" />
+        <property name="url" value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('my.db.url')}" />
+        <property name="username" value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('my.db.username')}" />
+        <property name="password" value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('my.db.password')}" />
+        <property name="maxTotal" value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('my.database.poolsize')}" />
+        <property name="maxIdle" value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('my.database.poolMaxIdle')}" />
+        <property name="validationQuery" value="SELECT 1 FROM DUAL" />
+        <property name="testOnBorrow" value="true" />
+        <property name="testWhileIdle" value="true" />
+        <property name="removeAbandonedOnBorrow" value="true" />
+        <property name="logAbandoned" value="true" />
+        <property name="removeAbandonedTimeout" value="#{T(com.centurylink.mdw.config.PropertyManager).getIntegerProperty('mdw.database.timeout',1000)}" />
+      </bean>
+    </bean>
+    ```
