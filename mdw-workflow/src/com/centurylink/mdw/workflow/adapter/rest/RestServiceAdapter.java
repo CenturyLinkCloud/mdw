@@ -29,6 +29,9 @@ import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.ServicePaths;
+import com.centurylink.mdw.translator.JsonTranslator;
+import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.util.HttpAltConnection;
 import com.centurylink.mdw.util.HttpConnection;
 import com.centurylink.mdw.util.HttpHelper;
@@ -55,6 +58,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
     public static final String AUTH_APP_ID = "AuthAppId";
     public static final String AUTH_USER = "AuthUser";
     public static final String AUTH_PASSWORD = "AuthPassword";
+    public static final String REQUEST_VARIABLE = "REQUEST_VARIABLE";
 
     @Override
     public Object openConnection() throws ConnectionException {
@@ -193,7 +197,8 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                 AuthTokenProvider authProvider = (AuthTokenProvider)getAuthProvider();
                 authProvider.invalidateToken(endpoint, user);
                 String token = new String(authProvider.getToken(endpoint, user, password));
-                headers.put("Authorization", "Bearer " + token);
+                if (headers != null)
+                    headers.put("Authorization", "Bearer " + token);
                 conn = openConnection();
                 httpHelper = getHttpHelper(conn);
                 httpHelper.setHeaders(headers);
@@ -208,7 +213,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                     try {
                         codeThreshold = Integer.parseInt(retryCodes);
                     }
-                    catch (NumberFormatException ex) {} // Use default in this case
+                    catch (NumberFormatException ignored) {} // Use default in this case
                 }
                 // HTTP code threshold for error
                 int errorCodeThreshold = DEFAULT_ERROR_HTTP_CODE;
@@ -217,7 +222,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                     try {
                         errorCodeThreshold = Integer.parseInt(errorCodes);
                     }
-                    catch (NumberFormatException ex) {} // Use default in this case
+                    catch (NumberFormatException ignored) {} // Use default in this case
                 }
                 Response httpResponse = super.getResponse(conn, response);
                 if (httpResponse.getStatusCode() >= codeThreshold)
@@ -236,9 +241,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                         httpHelper.getConnection().getMethod()));
                 logResponse(response);
             }
-            /**
-             * Plugs into automatic retrying
-             */
+             // Plugs into automatic retrying
             logexception(ex.getMessage(), ex);
             throw new ConnectionException(-1, ex.getMessage(), ex);
         }
@@ -277,7 +280,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
             httpHelper.setReadTimeout(readTimeout);
 
         String httpMethod = getHttpMethod();
-        String response = null;
+        String response;
         if (httpMethod.equals("GET"))
             response = httpHelper.get();
         else if (httpMethod.equals("POST"))
@@ -339,7 +342,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
         // If we already set the headers when logging request metadata, use them
         if (super.getRequestHeaders() != null)
             return super.getRequestHeaders();
-
+        boolean isHeadersPresent = false;
         try {
             Map<String,String> headers = null;
             String headersVar = getAttributeValueSmart(HEADERS_VARIABLE);
@@ -352,6 +355,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                     throw new ActivityException("Headers variable '" + headersVar + "' must be of type java.util.Map");
                 Object headersObj = getVariableValue(headersVar);
                 if (headersObj != null) {
+                    isHeadersPresent = true;
                     headers = new HashMap<>();
                     for (Object key : ((Map<?,?>)headersObj).keySet()) {
                         if (key != null) {
@@ -360,6 +364,29 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                                 headers.put(key.toString(), value.toString());
                         }
                     }
+                }
+            }
+            if (!isHeadersPresent) {
+                String requestVar = getAttributeValueSmart(REQUEST_VARIABLE);
+                if (requestVar != null) {
+                    Process process = getProcessDefinition();
+                    Variable reqVariable = process.getVariable(requestVar);
+                    if (reqVariable == null)
+                        throw new ActivityException("Request variable '" + reqVariable + "' is not defined for process " + process.getLabel());
+                    String contentType;
+                    com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator
+                            .getTranslator(reqVariable.getType());
+                    if (translator instanceof XmlDocumentTranslator)
+                        contentType = "text/xml";
+                    else if (translator instanceof JsonTranslator)
+                        contentType = "application/json";
+                    else
+                        contentType = "text/plain";
+                    headers = new HashMap<>();
+                    if ("GET".equals(getHttpMethod()))
+                        headers.put("Accept", contentType);
+                    else
+                        headers.put("Content-Type", contentType);
                 }
             }
             Object authProvider = getAuthProvider();
