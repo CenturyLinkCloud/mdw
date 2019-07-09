@@ -9,11 +9,13 @@ title: Spring Boot
      - 1.2 [Maven](#12-maven)
      - 1.3 [MDW Studio](#13-mdw-studio)
      - 1.4 [MDW CLI](#14-mdw-cli)
-  2. [Project Build Considerations](#2-project-build-considerations)
-     - 2.1 [Asset jar dependencies](#21-asset-jar-dependencies)
-     - 2.2 [Boot jar generation](#22-boot-jar-generation)
-     - 2.3 [Runtime class loading](#23-runtime-class-loading)
-
+  2. [Spring Assets](#2-spring-assets)
+     - 2.1 [Spring config assets](#21-spring-config-assets)
+     - 2.2 [Spring-annotated Java assets](#22-spring-annotated-java-assets)
+  3. [Project Build Considerations](#3-project-build-considerations)
+     - 3.1 [Asset jar dependencies](#31-asset-jar-dependencies)
+     - 3.2 [Boot jar generation](#32-boot-jar-generation)
+     - 3.3 [Runtime class loading](#33-runtime-class-loading)
 
 ## 1. MDW as a Spring Boot Dependency
 
@@ -76,11 +78,43 @@ title: Spring Boot
   mdw init --spring-boot
   ``` 
   Check out the [Quick Start](../../getting-started/quick-start) guide for a walk through describing this approach.
+
+## 2. Spring Assets
+
+### 2.1 Spring config assets
+  A Spring config asset is an XML file identified by the .spring extension.  It contains standard Spring config content as
+  in this datasource example:
+  ```xml
+  <?xml version="1.0" encoding="UTF-8"?>
+  xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:ctx="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    <bean id="myDataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+      <property name="driverClassName" value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('my.database.driver')}" />
+      <property name="url" value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('my.db.url')}" />
+      <property name="username" value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('my.db.username')}" />
+      <property name="password" value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('my.db.password')}" />
+      <property name="maxTotal" value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('my.database.poolsize')}" />
+      <property name="maxIdle" value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('my.database.poolMaxIdle')}" />
+      <property name="validationQuery" value="SELECT 1 FROM DUAL" />
+      <property name="testOnBorrow" value="true" />
+      <property name="testWhileIdle" value="true" />
+      <property name="removeAbandonedOnBorrow" value="true" />
+      <property name="logAbandoned" value="true" />
+      <property name="removeAbandonedTimeout" value="#{T(com.centurylink.mdw.config.PropertyManager).getIntegerProperty('mdw.database.timeout',1000)}" />
+    </bean>
+  </bean>
+  ```
+
+### 2.2 Spring-annotated Java assets
+  Coming soon.
+
+## 3. Project Build Considerations
     
-## 2. Project Build Considerations
-    
-### 2.1 Asset jar dependencies
-  Notice the compileOnly `fileTree` dependency on jar files among your assets:
+### 3.1 Asset jar dependencies
+  In the example Gradle build script in section 1, notice the compileOnly `fileTree` dependency on jar files among your assets:
   ```gradle
       compileOnly fileTree(dir: "${assetLoc}", includes: ["**/*.jar"])
   ```
@@ -88,7 +122,7 @@ title: Spring Boot
   its dependency resolution on Gradle or Maven.  The reason for **compileOnly** is so that these jars do not get bundled
   into your generated boot jar, which would defeat the purpose of treating them as dynamic assets.
 
-### 2.2 Boot jar generation
+### 3.2 Boot jar generation
   To avoid runtime [NoClassDefFoundErrors](https://docs.oracle.com/javase/8/docs/api/java/lang/NoClassDefFoundError.html),
   it's **imperative** that you customize the `bootJar` task as in the example:
   ```gradle
@@ -104,7 +138,7 @@ title: Spring Boot
   The purpose of this is to exclude all asset packages from your generated boot jar.  Read on if you're curious about
   why this is needed.
 
-### 2.3 Runtime class loading
+### 3.3 Runtime class loading
   Aside from asset jars, you can of course also have regular old static dependencies that are built into your boot jar:
   ```gradle
      compile 'com.google.code.gson:gson:2.8.5'
@@ -125,6 +159,3 @@ title: Spring Boot
   your boot jar's BOOT-INF/classes directory. The MDW [Packages]((../../javadoc/com/centurylink/mdw/util/file/Packages.html))
   utility makes this easy, but it relies on an ironclad rule that there is no naming overlap between your src/main/java packages
   and MDW asset packages.
-
-  
-   
