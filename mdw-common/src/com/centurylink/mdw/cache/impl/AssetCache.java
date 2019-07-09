@@ -497,16 +497,23 @@ class AssetKey implements Comparable<AssetKey> {
         this.version = asset.getVersion();
     }
 
+    @Override
     public boolean equals(Object other) {
         if (other != null && this.getClass() != other.getClass())
             return false;
         AssetKey otherKey = (AssetKey) other;
-        if (id != null && otherKey!=null)
+        if (id != null && otherKey != null)
           return id.equals(otherKey.getId());  // if id is specified, base equality only on that
 
         return compareTo(otherKey) == 0;
     }
 
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    @SuppressWarnings({"squid:S2676"})
     public int compareTo(AssetKey otherKey) {
         if (id != null && otherKey != null)
             return -id.compareTo(otherKey.getId());  // id is specified so compare based on that (reverse order)

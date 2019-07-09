@@ -195,7 +195,7 @@ public class DatabaseAccess {
     }
 
     public void checkAndUpgradeSchema() {
-        synchronized(getClass()) {
+        synchronized(DatabaseAccess.class) {
             if (checkUpgradePerformed)
                 return;
             StandardLogger logger = LoggerUtil.getStandardLogger();

@@ -274,17 +274,21 @@ public class User implements Serializable, Comparable<User>, Jsonable {
         }
     }
 
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof User))
           return false;
         return getId().equals(((User)o).getId());
     }
 
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
+
     /**
      * This is only used when UserVO is a member of UserGroupVO.
      * Only that group is populated as a substructure to store roles.
-     * @param groupId
-     * @param roleName
      */
     public void addRoleForGroup(String groupName, String roleName) {
         if (workgroups==null) {

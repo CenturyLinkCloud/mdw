@@ -232,10 +232,16 @@ public class Workgroup implements Serializable, Comparable<Workgroup>, Jsonable 
             return this.name.compareToIgnoreCase(other.getName());
     }
 
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof Workgroup))
             return false;
         return getId().equals(((Workgroup)o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
     }
 
     public String getJsonName() { return "Group"; }

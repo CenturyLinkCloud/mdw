@@ -111,6 +111,11 @@ public class ServicePath implements Jsonable, Comparable<ServicePath> {
     }
 
     @Override
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    @Override
     public String toString() {
         if (method == null)
             return path;

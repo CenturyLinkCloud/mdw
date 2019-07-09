@@ -121,6 +121,11 @@ public class MdwVersion implements Comparable<MdwVersion> {
         return obj instanceof MdwVersion && ((MdwVersion)obj).version.equals(version);
     }
 
+    @Override
+    public int hashCode() {
+        return version.hashCode();
+    }
+
     /**
      * Includes build timestamp.
      * Finds info from META-INF/manifest.mf via classloader.  Does not work from

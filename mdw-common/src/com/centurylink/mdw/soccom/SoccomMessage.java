@@ -33,53 +33,59 @@ class SoccomMessage
         try {
             InetAddress addr = InetAddress.getLocalHost();
             hostname = addr.getHostName();
-            hostname = (hostname+"**********").substring(0,10);
+            hostname = (hostname + "**********").substring(0,10);
         } catch (UnknownHostException e) {
             hostname = "**********";
         }
     }
 
-    static byte[] makeMessage(String msgbody, String msgid)
-    {
-    StringBuffer sb = new StringBuffer();
-    int length = msgbody.length();
-    if (_seqno==0) {
-        if (hostname==null) setHostName();
-        Random ran = new Random();
-        _randomId = new DecimalFormat(nf6).format(ran.nextInt(1000000));
-    }
-    if (msgid!=null) {
-        sb.append(msgid);
-    } else {
-        sb.append("#@");
-        sb.append(hostname);
-        sb.append(_randomId);
-        sb.append(new DecimalFormat(nf6).format(nextSeqNo()));
-    }
-    sb.append(new SimpleDateFormat(df).format(new Date()));
-    sb.append(new DecimalFormat(nf8).format(length));
-    sb.append(msgbody);
-    return sb.toString().getBytes();
+    private static Random random;
+    static Random getRandom() {
+        if (random == null)
+            random = new Random();
+        return random;
     }
 
-    static byte[] makeMessageSpecial(String special, String msgid)
-    {
-    StringBuffer sb = new StringBuffer();
-    if (_seqno==0) {
-        Random ran = new Random();
-        _randomId = new DecimalFormat(nf6).format(ran.nextInt(1000000));
+    static byte[] makeMessage(String msgbody, String msgid) {
+        StringBuffer sb = new StringBuffer();
+        int length = msgbody.length();
+        if (_seqno==0) {
+            if (hostname == null)
+                setHostName();
+            Random ran = getRandom();
+            _randomId = new DecimalFormat(nf6).format(ran.nextInt(1000000));
+        }
+        if (msgid!=null) {
+            sb.append(msgid);
+        } else {
+            sb.append("#@");
+            sb.append(hostname);
+            sb.append(_randomId);
+            sb.append(new DecimalFormat(nf6).format(nextSeqNo()));
+        }
+        sb.append(new SimpleDateFormat(df).format(new Date()));
+        sb.append(new DecimalFormat(nf8).format(length));
+        sb.append(msgbody);
+        return sb.toString().getBytes();
     }
-    if (msgid!=null) {
-        sb.append(msgid);
-    } else {
-        sb.append("#@");
-        sb.append(hostname);
-        sb.append(_randomId);
-        sb.append(new DecimalFormat(nf6).format(nextSeqNo()));
-    }
-    sb.append(new SimpleDateFormat(df).format(new Date()));
-    sb.append(special);
-    return sb.toString().getBytes();
+
+    static byte[] makeMessageSpecial(String special, String msgid) {
+        StringBuffer sb = new StringBuffer();
+        if (_seqno==0) {
+            Random ran = getRandom();
+            _randomId = new DecimalFormat(nf6).format(ran.nextInt(1000000));
+        }
+        if (msgid!=null) {
+            sb.append(msgid);
+        } else {
+            sb.append("#@");
+            sb.append(hostname);
+            sb.append(_randomId);
+            sb.append(new DecimalFormat(nf6).format(nextSeqNo()));
+        }
+        sb.append(new SimpleDateFormat(df).format(new Date()));
+        sb.append(special);
+        return sb.toString().getBytes();
     }
 
     synchronized static int nextSeqNo()

@@ -319,7 +319,8 @@ public class Activity implements Comparable<Activity>, Jsonable, Linkable {
     public final boolean isStop() {
         return Data.Implementors.STOP_IMPL.equals(getImplementor());
     }
-    
+
+    @Override
     public boolean equals(Object other) {
         if (!(other instanceof Activity))
             return false;
@@ -329,5 +330,10 @@ public class Activity implements Comparable<Activity>, Jsonable, Linkable {
         if (Objects.equals(activity.processId, processId))
             return true;
         return super.equals(other);
+    }
+
+    @Override
+    public int hashCode() {
+        return ("" + id + (processId == null ? "" : processId)).hashCode();
     }
 }

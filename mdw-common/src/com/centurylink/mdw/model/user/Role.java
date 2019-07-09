@@ -91,10 +91,17 @@ public class Role implements Serializable, Comparable<Role>, Jsonable  {
             return this.name.compareToIgnoreCase(other.getName());
     }
 
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof Role))
             return false;
         return getId().equals(((Role)o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+
     }
 
     public JSONObject getJson() throws JSONException {

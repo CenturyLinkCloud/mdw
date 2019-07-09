@@ -206,6 +206,7 @@ public class AuthenticatedUser extends User {
         return getCuid() != null && getName() != null;
     }
 
+    @Override
     public boolean equals(Object other) {
         if (!(other instanceof AuthenticatedUser))
             return false;
@@ -214,6 +215,11 @@ public class AuthenticatedUser extends User {
         if (otherUser.getCuid() == null)
             return getCuid() == null;
         return otherUser.getCuid().equals(getCuid());
+    }
+
+    @Override
+    public int hashCode() {
+        return getCuid().hashCode();
     }
 
     // these are only used for the samples demo

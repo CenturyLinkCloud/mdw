@@ -242,4 +242,10 @@ public class ActivityInstance implements Jsonable, Linkable {
     public boolean equals(Object other) {
         return other instanceof ActivityInstance && ((ActivityInstance)other).id.equals(id);
     }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
 }

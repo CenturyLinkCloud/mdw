@@ -123,7 +123,7 @@ sonarqube {
         property "sonar.exclusions", "**/node_modules/**,**/*.html,**/*.jsx,**/*.js,**/*.css,assets/com/centurylink/mdw/camel/**/*"
 
         // ignore these rules
-        property "sonar.issue.ignore.multicriteria", "e1,e2,e3,e4,e5"
+        property "sonar.issue.ignore.multicriteria", "e1,e2,e3,e4,e5,e6"
         // Use an instanceOf() comparison instead (avoid build-time dependency)
         property "sonar.issue.ignore.multicriteria.e1.ruleKey", "squid:S1872"
         property "sonar.issue.ignore.multicriteria.e1.resourceKey", "**/*.java"
@@ -139,6 +139,9 @@ sonarqube {
         // Double brace initialization
         property "sonar.issue.ignore.multicriteria.e5.ruleKey", "squid:S3599"
         property "sonar.issue.ignore.multicriteria.e5.resourceKey", "**/*.java"
+        // volatile keyword
+        property "sonar.issue.ignore.multicriteria.e6.ruleKey", "squid:S3077"
+        property "sonar.issue.ignore.multicriteria.e6.resourceKey", "**/*.java"
     }
 }
 

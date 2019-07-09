@@ -81,6 +81,7 @@ public class TaskAction implements Serializable, Jsonable, Comparable<TaskAction
     public List<ForTask> getForTasks() { return forTasks; }
     public void setForTasks(List<ForTask> forTasks) { this.forTasks = forTasks; }
 
+    @Override
     public boolean equals(Object o) {
         if (o == null || !(o instanceof TaskAction))
             return false;
@@ -88,6 +89,11 @@ public class TaskAction implements Serializable, Jsonable, Comparable<TaskAction
         if (taskAction.getTaskActionName() == null)
             return getTaskActionName() == null;
         return (taskAction.getTaskActionName().equals(getTaskActionName()));
+    }
+
+    @Override
+    public int hashCode() {
+        return getTaskActionName() == null ? super.hashCode() : getTaskActionName().hashCode();
     }
 
     public int compareTo(TaskAction other)

@@ -165,4 +165,13 @@ public class Milestone implements Linkable, Jsonable {
         }
         return activity.equals(otherMilestone.activity);
     }
+
+    @Override
+    public int hashCode() {
+        if (activityInstance != null)
+            return activityInstance.hashCode();
+        else
+            return activity.hashCode();
+    }
+
 }

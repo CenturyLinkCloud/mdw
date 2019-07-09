@@ -217,6 +217,11 @@ public class Process extends Asset implements Jsonable, Linkable {
         return other instanceof Process && ((Process)other).getId().equals(getId());
     }
 
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
+
     /**
      * Finds one work transition for this process matching the specified parameters
      * @return the work transition value object (or null if not found)

@@ -212,6 +212,7 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
         return TASK_INSTANCE_JSONNAME;
     }
 
+    @Override
     public boolean equals(Object pTaskInstanceVO) {
         if (pTaskInstanceVO != null && this.getClass() != pTaskInstanceVO.getClass())
             return false;
@@ -219,10 +220,15 @@ public class TaskInstance implements Serializable, Jsonable, Instance {
         if (this == pTaskInstanceVO)
             return true;
         TaskInstance myTIVO = (TaskInstance) pTaskInstanceVO;
-        if( myTIVO!=null)
+        if (myTIVO != null)
             return this.taskInstanceId.longValue() == myTIVO.taskInstanceId.longValue();
-           else
+        else
             return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return taskInstanceId.hashCode();
     }
 
     @ApiModelProperty(hidden=true)

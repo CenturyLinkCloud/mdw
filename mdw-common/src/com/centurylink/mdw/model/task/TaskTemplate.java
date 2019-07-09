@@ -286,15 +286,22 @@ public class TaskTemplate extends Asset implements Jsonable {
         }
     }
 
-    public int compareTo(TaskTemplate other) {
-        return this.getTaskName().compareTo(other.getTaskName());
+    @Override
+    public int compareTo(Asset other) {
+        return this.getTaskName().compareTo(((TaskTemplate)other).getTaskName());
     }
 
+    @Override
     public boolean equals(Object other) {
         if (!(other instanceof TaskTemplate))
           return false;
 
         return getTaskId().equals(((TaskTemplate)other).getTaskId());
+    }
+
+    @Override
+    public int hashCode() {
+        return getTaskId().hashCode();
     }
 
     public Long getId() {
