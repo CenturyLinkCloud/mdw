@@ -83,7 +83,7 @@ public class AssetContentServlet extends HttpServlet {
 
     private static final StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private File assetRoot;
+    private static File assetRoot;
 
     public void init() throws ServletException {
         assetRoot = ApplicationContext.getAssetRoot();

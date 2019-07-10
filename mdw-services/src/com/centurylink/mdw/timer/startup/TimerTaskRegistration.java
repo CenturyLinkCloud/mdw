@@ -59,8 +59,8 @@ public class TimerTaskRegistration implements StartupService {
         try {
             String v = PropertyManager.getProperty(PropertyNames.MDW_CONTAINER_MESSENGER);
             int period_default = (v == null || "jms".equalsIgnoreCase(v)) ? 60 : 5;
-            int delay = PropertyManager.getIntegerProperty(PropertyNames.MDW_TIMER_INITIAL_DELAY, 120);
-            int unschedDelay = PropertyManager.getIntegerProperty(PropertyNames.UNSCHEDULED_EVENTS_CHECK_DELAY, 90);
+            int delay = PropertyManager.getIntegerProperty(PropertyNames.MDW_TIMER_INITIAL_DELAY, 300);
+            int unschedDelay = PropertyManager.getIntegerProperty(PropertyNames.UNSCHEDULED_EVENTS_CHECK_DELAY, 300);
             int unschedPeriod = PropertyManager.getIntegerProperty(PropertyNames.UNSCHEDULED_EVENTS_CHECK_INTERVAL, 300);
             int period = PropertyManager.getIntegerProperty(PropertyNames.MDW_TIMER_CHECK_INTERVAL, period_default);
             Map<String, Properties> timers = getAllScheduledEvents();
