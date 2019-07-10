@@ -2,6 +2,9 @@ import com.centurylink.mdw.config.PropertyManager
 
 def retryableUrl = PropertyManager.getProperty("mdw.services.url") + "/api/com/centurylink/mdw/tests/services/retryable"
 
+// allow TimerTaskRegistration time to initialize
+sleep(90)
+
 start process("AutoRetry") {
     variables = [
             serviceUrl: retryableUrl
