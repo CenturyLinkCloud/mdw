@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.dataaccess.file;
 
-import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.cache.impl.AssetRefCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.YamlBuilder;
@@ -24,12 +23,10 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.*;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.ExternalEvent;
 import com.centurylink.mdw.model.task.TaskCategory;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.variable.VariableType;
-import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
@@ -419,33 +416,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     public long save(Process process, PackageDir pkgDir) throws IOException, XmlException, JSONException, DataAccessException {
         process.removeEmptyAndOverrideAttributes();
-        // save task templates
-        List<ActivityImplementor> impls = getActivityImplementors();  // TODO maybe cache these
-        for (Activity activity : process.getActivities()) {
-            for (ActivityImplementor impl : impls) {
-                if (activity.getImplementor().equals(impl.getImplementorClass())) {
-                    if (activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null &&
-                            activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_NAME) != null) {
-                        removeObsoleteTaskActivityAttributes(activity);
-                    }
-                }
-            }
-        }
-        if (process.getSubprocesses() != null) {
-            for (Process embedded : process.getSubprocesses()) {
-                for (Activity activity : embedded.getActivities()) {
-                    for (ActivityImplementor impl : impls) {
-                        if (activity.getImplementor().equals(impl.getImplementorClass())) {
-                            if (activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null &&
-                                    activity.getAttribute(TaskActivity.ATTRIBUTE_TASK_NAME) != null) {
-                                removeObsoleteTaskActivityAttributes(activity);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         String content = process.getJson().toString(2);
         AssetFile assetFile = pkgDir.getAssetFile(getProcessFile(process), getAssetRevision(process));
         write(content.getBytes(), assetFile);
@@ -714,18 +684,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         rev.setModUser(user);
         rev.setComment(comment);
         return rev;
-    }
-
-    protected void removeObsoleteTaskActivityAttributes(Activity manualTaskActivity) {
-        if (manualTaskActivity.getAttribute(TaskActivity.ATTRIBUTE_TASK_TEMPLATE) != null) {
-            List<Attribute> attributes = new ArrayList<>();
-            List<String> obsoleteAttributes = Arrays.asList(TaskActivity.ATTRIBUTES_MOVED_TO_TASK_TEMPLATE);
-            for (Attribute attribute : manualTaskActivity.getAttributes()) {
-                if (!obsoleteAttributes.contains(attribute.getName()))
-                    attributes.add(attribute);
-            }
-            manualTaskActivity.setAttributes(attributes);
-        }
     }
 
     // loader api methods
@@ -1469,4 +1427,5 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     public void removeTaskTemplateFromPackage(Long taskId, Long packageId) throws DataAccessException {
         deleteTaskTemplate(taskId);
     }
+
 }

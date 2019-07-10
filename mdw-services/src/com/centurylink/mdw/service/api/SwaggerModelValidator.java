@@ -61,6 +61,7 @@ public class SwaggerModelValidator extends SwaggerValidator {
         return super.validatePath(new ResourcePath(path), strict);
     }
 
+    @SuppressWarnings({"squid:S2177"})
     public Result validateQuery(Query query, boolean strict) throws ValidationException {
         return super.validateQuery(new io.limberest.service.Query(query.getFilters()), strict);
     }

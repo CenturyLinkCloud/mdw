@@ -54,7 +54,7 @@ public class AttachmentServlet extends HttpServlet {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static final int FILE_BUFFER_KB = 16;
 
-    private File attachmentsRoot;
+    private static File attachmentsRoot;
 
     public void init() throws ServletException {
         attachmentsRoot = new File(ApplicationContext.getAttachmentsDirectory());
