@@ -51,17 +51,6 @@ public class EventCheckActivity extends EventWaitActivity {
         return !WorkStatus.STATUS_COMPLETED.equals(exitStatus);
     }
 
-    private void setReturnCodeAndExitStatus(String code) {
-        CompletionCode compcode = new CompletionCode();
-        compcode.parse(code);
-        exitStatus = compcode.getActivityInstanceStatus();
-        if (compcode.getEventType().equals(EventType.FINISH)) {
-            setReturnCode(compcode.getCompletionCode());
-        } else {
-            setReturnCode(compcode.getEventTypeName() + ":" +
-                    (compcode.getCompletionCode()==null?"":compcode.getCompletionCode()));
-        }
-    }
 
     protected boolean handleCompletionCode() throws ActivityException {
         String compCode = this.getReturnCode();

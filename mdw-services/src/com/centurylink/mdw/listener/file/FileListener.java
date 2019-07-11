@@ -106,12 +106,10 @@ public abstract class FileListener {
             final int FINISHED = 4;
 
             DataSource ds = ApplicationContext.getMdwDataSource();
-            Connection conn = ds.getConnection();
-            Statement stmt=null;
+
             ResultSet rs=null;
-            try {
+            try (Connection conn = ds.getConnection();Statement stmt = conn.createStatement()){
                 conn.setAutoCommit(false);
-                stmt = conn.createStatement();
                 stmt.executeQuery(getSelectSql(file, true));
                 rs = stmt.executeQuery(getSelectSql(file, false));
                 if (!rs.next()) {
@@ -129,10 +127,6 @@ public abstract class FileListener {
             finally {
                 if(rs!=null)
                     rs.close();
-                if(stmt!=null)
-                    stmt.close();
-                if(conn!=null)
-                   conn.close();
             }
         }
 

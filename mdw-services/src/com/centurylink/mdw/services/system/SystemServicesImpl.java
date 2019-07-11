@@ -411,8 +411,10 @@ public class SystemServicesImpl implements SystemServices {
         DatabaseAccess dbAccess = null;
         try {
             dbAccess = new DatabaseAccess(null);
-            Connection conn = dbAccess.openConnection();
-            DatabaseMetaData metadata = conn.getMetaData();
+            DatabaseMetaData metadata;
+            try (Connection conn = dbAccess.openConnection()) {
+                metadata = conn.getMetaData();
+            }
             dbInfos.add(new SysInfo("Database", metadata.getDatabaseProductName()));
             dbInfos.add(new SysInfo("DB version", metadata.getDatabaseProductVersion()));
             dbInfos.add(new SysInfo("JDBC Driver", metadata.getDriverName()));
