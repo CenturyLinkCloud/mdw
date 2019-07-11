@@ -51,7 +51,7 @@ public class EventCheckActivity extends EventWaitActivity {
         return !WorkStatus.STATUS_COMPLETED.equals(exitStatus);
     }
 
-    private void setReturnCodeAndExitStatus(String code) {
+    protected void setReturnCodeAndExitStatus(String code) {
         CompletionCode compcode = new CompletionCode();
         compcode.parse(code);
         exitStatus = compcode.getActivityInstanceStatus();
