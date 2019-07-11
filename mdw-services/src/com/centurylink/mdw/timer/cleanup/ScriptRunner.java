@@ -143,49 +143,44 @@ public class ScriptRunner {
 
     private void execCommand(Connection conn, StringBuffer command,
                              LineNumberReader lineReader) throws SQLException {
-        Statement statement = conn.createStatement();
+        boolean hasResults;
+        try (Statement statement = conn.createStatement(); ResultSet rs = statement.getResultSet()) {
 
-        logger.debug(command.toString());
+            logger.debug(command.toString());
 
-        boolean hasResults = false;
-        try {
-            hasResults = statement.execute(command.toString());
-        } catch (SQLException e) {
-            final String errText = String.format("Error executing '%s' (line %d): %s",
-                    command, lineReader.getLineNumber(), e.getMessage());
-            logger.debug(errText);
-            System.err.println(errText);
-            if (stopOnError) {
-                throw new SQLException(errText, e);
+            hasResults = false;
+            try {
+                hasResults = statement.execute(command.toString());
+            } catch (SQLException e) {
+                final String errText = String.format("Error executing '%s' (line %d): %s",
+                        command, lineReader.getLineNumber(), e.getMessage());
+                logger.debug(errText);
+                System.err.println(errText);
+                if (stopOnError) {
+                    throw new SQLException(errText, e);
+                }
             }
-        }
 
-        if (autoCommit && !conn.getAutoCommit()) {
-            conn.commit();
-        }
-
-        ResultSet rs = statement.getResultSet();
-        if (hasResults && rs != null) {
-            ResultSetMetaData md = rs.getMetaData();
-            int cols = md.getColumnCount();
-            for (int i = 1; i <= cols; i++) {
-                String name = md.getColumnLabel(i);
-                logger.debug(name + "\t");
+            if (autoCommit && !conn.getAutoCommit()) {
+                conn.commit();
             }
-            logger.debug("");
-            while (rs.next()) {
+
+            if (hasResults && rs != null) {
+                ResultSetMetaData md = rs.getMetaData();
+                int cols = md.getColumnCount();
                 for (int i = 1; i <= cols; i++) {
-                    String value = rs.getString(i);
-                    logger.debug(value + "\t");
+                    String name = md.getColumnLabel(i);
+                    logger.debug(name + "\t");
                 }
                 logger.debug("");
+                while (rs.next()) {
+                    for (int i = 1; i <= cols; i++) {
+                        String value = rs.getString(i);
+                        logger.debug(value + "\t");
+                    }
+                    logger.debug("");
+                }
             }
-        }
-
-        try {
-            statement.close();
-        } catch (Exception e) {
-            // Ignore to workaround a bug in Jakarta DBCP
         }
     }
 
