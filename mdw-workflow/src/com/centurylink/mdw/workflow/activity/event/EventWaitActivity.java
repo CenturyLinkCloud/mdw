@@ -123,7 +123,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
     }
 
 
-    protected void setReturnCodeAndExitStatus(String code) {
+    private void setReturnCodeAndExitStatus(String code) {
         CompletionCode compcode = new CompletionCode();
         compcode.parse(code);
         exitStatus = compcode.getActivityInstanceStatus();
