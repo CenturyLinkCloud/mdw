@@ -17,6 +17,7 @@ package com.centurylink.mdw.model.workflow;
 
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.project.Data;
 import com.centurylink.mdw.monitor.MonitorAttributes;
@@ -25,9 +26,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
-public class Activity implements Comparable<Activity>, Jsonable, Linkable {
+public class Activity implements Comparable<Activity>, Jsonable, Yamlable, Linkable {
     public static final String DEFAULT_IMPL = "com.centurylink.mdw.workflow.activity.DefaultActivityImpl";
 
     public Activity() {
@@ -115,6 +117,25 @@ public class Activity implements Comparable<Activity>, Jsonable, Linkable {
         setAttribute(WorkAttributeConstant.LOGICAL_ID, logicalId);
     }
 
+    @SuppressWarnings("unchecked")
+    public Activity(Map<String,Object> yaml) {
+        setName((String)yaml.get("name"));
+        String logicalId = (String)yaml.get("id");
+        if (logicalId.startsWith("Activity"))
+            logicalId = "A" + logicalId.substring(8);
+        id = Long.valueOf(logicalId.substring(1));
+        if (yaml.containsKey("implementor"))
+            setImplementor((String)yaml.get("implementor"));
+        else
+            setImplementor(DEFAULT_IMPL);
+        if (yaml.containsKey("description"))
+            setDescription((String)yaml.get("description"));
+        if (yaml.containsKey("attributes"))
+            this.attributes = Attribute.getAttributes((Map<String,Object>)yaml.get("attributes"));
+        setAttribute(WorkAttributeConstant.LOGICAL_ID, logicalId);
+    }
+
+    @Override
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
         json.put("name", getName());
@@ -124,6 +145,20 @@ public class Activity implements Comparable<Activity>, Jsonable, Linkable {
         if (attributes != null && !attributes.isEmpty())
             json.put("attributes", Attribute.getAttributesJson(attributes));
         return json;
+    }
+
+    @Override
+    public Map<String,Object> getYaml() {
+        Map<String,Object> yaml = Yamlable.create();
+        yaml.put("id", getLogicalId());
+        yaml.put("name", getName());
+        if (description != null)
+            yaml.put("description", getDescription());
+        yaml.put("implementor", getImplementor());
+        if (attributes != null && !attributes.isEmpty()) {
+            yaml.put("attributes", Attribute.getAttributesYaml(attributes));
+        }
+        return yaml;
     }
 
     public JSONObject getSummaryJson() {

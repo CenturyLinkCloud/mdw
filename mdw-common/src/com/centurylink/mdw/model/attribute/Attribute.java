@@ -17,6 +17,7 @@ package com.centurylink.mdw.model.attribute;
 
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.util.JsonUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -154,6 +155,25 @@ public class Attribute implements Comparable<Attribute> {
             }
         }
         return attributes;
+    }
+
+    public static List<Attribute> getAttributes(Map<String,Object> yaml) {
+        if (yaml == null)
+            return null;
+        List<Attribute> attributes = new ArrayList<>();
+        for (String name : yaml.keySet()) {
+            attributes.add(new Attribute(name, (String)yaml.get(name)));
+        }
+        return attributes;
+    }
+
+    public static Map<String,Object> getAttributesYaml(List<Attribute> attributes) {
+        Map<String,Object> yaml = new TreeMap<>(); // sorted
+        for (Attribute attr : attributes) {
+            if (!WorkAttributeConstant.LOGICAL_ID.equals(attr.getName()) && attr.getValue() != null)
+                yaml.put(attr.getName(), attr.getValue());
+        }
+        return yaml;
     }
 
     public static JSONObject getAttributesJson(List<Attribute> attributes) throws JSONException {

@@ -17,7 +17,9 @@ package com.centurylink.mdw.model.workflow;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import com.centurylink.mdw.model.Yamlable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,7 +27,7 @@ import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.attribute.Attribute;
 
-public class TextNote implements Jsonable {
+public class TextNote implements Jsonable, Yamlable {
 
     private String content;
     private String reference;
@@ -102,6 +104,15 @@ public class TextNote implements Jsonable {
         setLogicalId(json.getString("id"));
     }
 
+    @SuppressWarnings("unchecked")
+    public TextNote(Map<String,Object> yaml) {
+        this.content = (String)yaml.get("content");
+        if (yaml.containsKey("attributes"))
+            this.attributes = Attribute.getAttributes((Map<String,Object>)yaml.get("attributes"));
+        setLogicalId((String)yaml.get("id"));
+    }
+
+    @Override
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
         json.put("id", getLogicalId());
@@ -109,5 +120,15 @@ public class TextNote implements Jsonable {
         if (attributes != null && !attributes.isEmpty())
             json.put("attributes", Attribute.getAttributesJson(attributes));
         return json;
+    }
+
+    @Override
+    public Map<String,Object> getYaml() {
+        Map<String,Object> yaml = Yamlable.create();
+        yaml.put("id", getLogicalId());
+        yaml.put("content", content);
+        if (attributes != null && !attributes.isEmpty())
+            yaml.put("attributes", Attribute.getAttributesYaml(attributes));
+        return yaml;
     }
 }
