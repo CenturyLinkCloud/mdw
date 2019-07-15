@@ -197,6 +197,14 @@ war {
     from("../mdw") {
         include "cli/mdw-cli.jar"
     }
+    from('web/auth') {
+        include '*.html'
+        into 'WEB-INF/classes/auth'
+    }
+    from('web') {
+        include 'index.html'
+        into 'WEB-INF/classes'
+    }
 
     webXml = file("web/WEB-INF/web.xml")
     exclude "**/.*ignore";
