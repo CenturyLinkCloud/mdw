@@ -15,7 +15,18 @@
  */
 package com.centurylink.mdw.hub.servlet;
 
-import java.io.IOException;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Status;
+import com.centurylink.mdw.model.StatusResponse;
+import com.centurylink.mdw.service.api.MdwSwaggerCache;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import io.swagger.models.HttpMethod;
+import io.swagger.models.Operation;
+import io.swagger.models.Path;
+import io.swagger.models.Swagger;
+import io.swagger.util.Json;
+import io.swagger.util.Yaml;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -23,20 +34,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.Status;
-import com.centurylink.mdw.model.StatusResponse;
-import com.centurylink.mdw.service.api.MdwSwaggerCache;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
-
-import io.swagger.models.HttpMethod;
-import io.swagger.models.Operation;
-import io.swagger.models.Path;
-import io.swagger.models.Swagger;
-import io.swagger.util.Json;
-import io.swagger.util.Yaml;
+import java.io.IOException;
 
 /**
  * Scans a service path for Swagger annotations and generates the service spec in JSON or YAML.
@@ -87,7 +85,12 @@ public class ServiceApiServlet extends HttpServlet {
             try {
                 boolean pretty = !"false".equals(request.getParameter(PRETTY_PRINT_PARAM));
                 Swagger swagger = MdwSwaggerCache.getSwagger(svcPath, pretty);
-                Path nullPath = swagger.getPaths().get(null);
+                if (swagger.getPaths() == null) {
+                    logger.debug("Swagger paths not found for service path: " + svcPath);
+                    response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                    return;
+                }
+                Path nullPath = swagger.getPaths() == null ? null : swagger.getPaths().get(null);
                 if (nullPath != null) {
                     logger.severe("WARNING: Swagger spec null path: ");
                     for (HttpMethod meth : nullPath.getOperationMap().keySet()) {

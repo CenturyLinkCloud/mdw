@@ -17,6 +17,7 @@ package com.centurylink.mdw.service.api;
 
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.MdwServiceRegistry;
+import com.centurylink.mdw.common.service.TextService;
 import com.centurylink.mdw.common.service.XmlService;
 import com.centurylink.mdw.service.rest.Assets;
 import io.swagger.annotations.Api;
@@ -69,48 +70,50 @@ public class MdwScanner implements Scanner {
             }
         }
 
-        // model packages are processed automatically if they're used
-        // resourcePackages.add(AuthenticatedUser.class.getPackage().getName());
-        // classes.addAll(new Reflections(resourcePackage).getTypesAnnotatedWith(ApiModel.class));
+        // model packages are processed automatically if they're used in dynamic java services
 
         // dynamic java service classes
         for (Class<? extends JsonService> jsonServiceClass : MdwServiceRegistry.getInstance().getDynamicServiceClasses((JsonService.class))) {
             if (jsonServiceClass.getAnnotation(Api.class) != null && !classes.contains(jsonServiceClass)) {
-                if ("/".equals(servicePath))
+                if (isMatch(jsonServiceClass, servicePath)) {
                     classes.add(jsonServiceClass);
-                else {
-                    String path = jsonServiceClass.getName().replace('.', '/');
-                    Path pathAnnotation = jsonServiceClass.getAnnotation(Path.class);
-                    if (pathAnnotation != null) {
-                        path = jsonServiceClass.getPackage().getName().replace('.', '/');
-                        if (!pathAnnotation.value().startsWith("/"))
-                            path += "/";
-                        if (!pathAnnotation.value().equals("/"))
-                            path += pathAnnotation.value();
-                    }
-                    if (path.equals(servicePath) || ("/" + path).equals(servicePath))
-                        classes.add(jsonServiceClass);
                 }
             }
         }
         for (Class<? extends XmlService> xmlServiceClass : MdwServiceRegistry.getInstance().getDynamicServiceClasses((XmlService.class))) {
             if (xmlServiceClass.getAnnotation(Api.class) != null && !classes.contains(xmlServiceClass)) {
-                if ("/".equals(servicePath))
+                if (isMatch(xmlServiceClass, servicePath)) {
                     classes.add(xmlServiceClass);
-                else {
-                    String path = xmlServiceClass.getName().replace('.', '/');
-                    Path pathAnnotation = xmlServiceClass.getAnnotation(Path.class);
-                    if (pathAnnotation != null) {
-                        path = xmlServiceClass.getPackage().getName();
-                        if (!pathAnnotation.value().startsWith("/"))
-                            path += "/";
-                        path += pathAnnotation.value();
-                    }
-                    if (path.startsWith(servicePath) || ("/" + path).startsWith(servicePath))
-                        classes.add(xmlServiceClass);
                 }
             }
         }
         return classes;
+    }
+
+    private boolean isMatch(Class<? extends TextService> serviceClass, String servicePath) {
+        if ("/".equals(servicePath)) {
+            return true;
+        }
+        else {
+            String path = serviceClass.getName().replace('.', '/');
+            Path pathAnnotation = serviceClass.getAnnotation(Path.class);
+            if (pathAnnotation != null) {
+                path = serviceClass.getPackage().getName().replace('.', '/');
+                if (!pathAnnotation.value().startsWith("/"))
+                    path += "/";
+                if (!pathAnnotation.value().equals("/"))
+                    path += pathAnnotation.value();
+            }
+            if (path.equals(servicePath) || ("/" + path).equals(servicePath)) {
+                return true;
+            }
+            else if (servicePath.contains("/{") && servicePath.endsWith("}")) {
+                // parameterized -- matches if all remaining path segments are parameterized
+                String nonparam = servicePath.substring(0, servicePath.indexOf("/{"));
+                if (path.equals(nonparam) || ("/" + path).equals(nonparam))
+                    return true;
+            }
+        }
+        return false;
     }
 }

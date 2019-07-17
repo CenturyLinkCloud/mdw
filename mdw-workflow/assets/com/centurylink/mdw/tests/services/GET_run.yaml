@@ -17,7 +17,6 @@ response:
       "masterRequestId": "${~.*}",
       "values": {
         "inputVar": {
-          "display": "Optional",
           "type": "java.lang.String"
         }
       }
