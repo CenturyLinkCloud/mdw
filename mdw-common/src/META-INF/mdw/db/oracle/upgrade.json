@@ -9,6 +9,11 @@
       "name": "instance timing",
       "check": "SELECT * FROM all_tab_cols WHERE table_name ='INSTANCE_TIMING'",
       "upgrade":"CREATE TABLE INSTANCE_TIMING (INSTANCE_ID  NUMBER(16)   NOT NULL,  OWNER_TYPE  VARCHAR(30)  NOT NULL, ELAPSED_MS   NUMBER(24)   NOT NULL);ALTER TABLE INSTANCE_TIMING ADD(CONSTRAINT timing_primary_key PRIMARY KEY(INSTANCE_ID,OWNER_TYPE))"                              
+    },
+    {
+      "name": "task instance title",
+      "check": "SELECT * FROM all_tab_cols WHERE table_name ='TASK_INSTANCE' and column_name='TASK_TITLE'",
+      "upgrade": "alter table TASK_INSTANCE add TASK_TITLE VARCHAR2(512 BYTE)"
     }
   ]  
 }
