@@ -4,7 +4,6 @@ MdwRpcWebService.wsdl=2
 PauseActivity.java=4
 ProcessCleanup.java=3
 ProcessDueDateMonitor.java=5
-Test.java=1
 activity.png=1
 adapter.png=1
 calendar.gif=2
