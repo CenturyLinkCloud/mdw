@@ -84,16 +84,16 @@ public class ProcessCleanup extends RoundRobinScheduledJob implements com.centur
             try {
                 Properties cleanupTaskProperties = PropertyManager.getInstance().getProperties(PropertyNames.MDW_TIMER_TASK);
                 if (cleanupTaskProperties !=null && cleanupTaskProperties.size() != 0) {
-                    processExpirationDays = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".ProcessCleanup.ProcessExpirationAgeInDays", "0"));
+                    processExpirationDays = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".ProcessCleanup.ProcessExpirationAgeInDays", "180"));
                     maxProcesses = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".ProcessCleanup.MaximumProcessExpiration", "0"));
-                    eventExpirationDays = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".ProcessCleanup.ExternalEventExpirationAgeInDays", "0"));
+                    eventExpirationDays = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".ProcessCleanup.ExternalEventExpirationAgeInDays", "180"));
                     commitInterval = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".ProcessCleanup.CommitInterval", "10000"));
                     cleanupScript = cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".ProcessCleanup.RuntimeCleanupScript", "Cleanup-Runtime.sql");
                 } else {
                     processExpirationDays = PropertyManager.getIntegerProperty("mdw.cleanup.job.ProcessExpirationAgeInDays", 180);
                     maxProcesses = PropertyManager.getIntegerProperty("mdw.cleanup.job.maxProcesses", 0);
                     eventExpirationDays = PropertyManager.getIntegerProperty("mdw.cleanup.job.eventExpirationDays", 180);
-                    commitInterval = PropertyManager.getIntegerProperty("mdw.cleanup.job.commitInterval", 180);
+                    commitInterval = PropertyManager.getIntegerProperty("mdw.cleanup.job.commitInterval", 10000);
                     cleanupScript = PropertyManager.getProperty("mdw.cleanup.job.RuntimeCleanupScript","Cleanup-Runtime.sql" );
                 }
             } catch (PropertyException e) {
@@ -101,11 +101,11 @@ public class ProcessCleanup extends RoundRobinScheduledJob implements com.centur
             }
         } else {
             processExpirationDays = PropertyManager.getIntegerProperty(
-                    PropertyNames.PROCESS_CLEANUP + "/ProcessExpirationAgeInDays", 0);
+                    PropertyNames.PROCESS_CLEANUP + "/ProcessExpirationAgeInDays", 180);
             maxProcesses = PropertyManager.getIntegerProperty(
                     PropertyNames.PROCESS_CLEANUP + "/MaximumProcessExpiration", 0);
             eventExpirationDays = PropertyManager.getIntegerProperty(
-                    PropertyNames.PROCESS_CLEANUP + "/ExternalEventExpirationAgeInDays", 0);
+                    PropertyNames.PROCESS_CLEANUP + "/ExternalEventExpirationAgeInDays", 180);
             commitInterval = PropertyManager
                     .getIntegerProperty(PropertyNames.PROCESS_CLEANUP + "/CommitInterval", 10000);
             cleanupScript = PropertyManager
