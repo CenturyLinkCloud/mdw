@@ -37,6 +37,7 @@ import com.centurylink.mdw.util.DateHelper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * TODO: Remove non-engine-related data access from this class.
@@ -624,8 +625,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 
     /**
      * remove existing waiters when a new waiter is registered for the same event
-     * @param eventName
-     * @throws SQLException
+     * @param eventName unique event name
      */
     private void removeEventWait(String eventName) throws SQLException {
         String query = "delete from EVENT_WAIT_INSTANCE where EVENT_NAME=?";
@@ -636,16 +636,27 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 
     public void removeEventWaitForProcessInstance(Long processInstanceId) throws SQLException {
         String query;
-        if (db.isMySQL()) // This is to separate the row locking from delete statement of impacted rows, to avoid deadlock in MySQL
-            query = "delete E1 from EVENT_WAIT_INSTANCE E1 " +
-                "join EVENT_WAIT_INSTANCE E2 using (EVENT_WAIT_INSTANCE_ID) " +
-                "where E2.EVENT_WAIT_INSTANCE_OWNER_ID in " +
-                "(select ACTIVITY_INSTANCE_ID from ACTIVITY_INSTANCE where PROCESS_INSTANCE_ID=?)";
-        else
+        if (db.isMySQL()) {
+            // This is to separate the row locking from delete statement of impacted rows, to avoid deadlock in MySQL
+            query = "select E.EVENT_WAIT_INSTANCE_ID from EVENT_WAIT_INSTANCE E, ACTIVITY_INSTANCE A " +
+                    "where  E.EVENT_WAIT_INSTANCE_OWNER_ID = A.ACTIVITY_INSTANCE_ID and A.PROCESS_INSTANCE_ID = ?";
+            List<Long> eventWaitInstanceIds = new ArrayList<>();
+            ResultSet rs = db.runSelect(query, processInstanceId);
+            while (rs.next()) {
+                eventWaitInstanceIds.add(rs.getLong(1));
+            }
+            if (!eventWaitInstanceIds.isEmpty()) {
+                String instances = eventWaitInstanceIds.stream().map(Object::toString).collect(Collectors.joining(","));
+                query = "delete from EVENT_WAIT_INSTANCE where EVENT_WAIT_INSTANCE_ID in (" + instances + ")";
+                db.runUpdate(query);
+            }
+        }
+        else {
             query = "delete from EVENT_WAIT_INSTANCE " +
-                "where EVENT_WAIT_INSTANCE_OWNER_ID in " +
-                "  (select ACTIVITY_INSTANCE_ID from ACTIVITY_INSTANCE where PROCESS_INSTANCE_ID=?)";
-        db.runUpdate(query, processInstanceId);
+                    "where EVENT_WAIT_INSTANCE_OWNER_ID in " +
+                    "  (select ACTIVITY_INSTANCE_ID from ACTIVITY_INSTANCE where PROCESS_INSTANCE_ID=?)";
+            db.runUpdate(query, processInstanceId);
+        }
         this.recordEventHistory("All Events", EventLog.SUBCAT_DEREGISTER,
                 OwnerType.PROCESS_INSTANCE, processInstanceId, "process completed or cancelled");
     }
