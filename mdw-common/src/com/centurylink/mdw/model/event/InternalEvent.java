@@ -15,22 +15,21 @@
  */
 package com.centurylink.mdw.model.event;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlOptions;
-
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.EventMessageDocument;
 import com.centurylink.mdw.bpm.EventMessageDocument.EventMessage;
 import com.centurylink.mdw.bpm.EventParametersDocument.EventParameters;
 import com.centurylink.mdw.bpm.EventTypeDocument;
 import com.centurylink.mdw.bpm.ParameterDocument.Parameter;
-import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.bpm.WorkTypeDocument;
+import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class InternalEvent {
 
@@ -149,10 +148,22 @@ public class InternalEvent {
         return event;
     }
 
-    public static InternalEvent createProcessAbortMessage(ProcessInstance processInst){
+    public static InternalEvent createProcessAbortMessage(ProcessInstance processInstance) {
+        InternalEvent event = new InternalEvent();
+        event.eventType = EventType.ABORT;
+        event.isProcess = true;
+        event.workId = processInstance.getProcessId();
+        event.workInstanceId = processInstance.getId();
+        event.ownerType = processInstance.getOwner();
+        event.ownerId = processInstance.getOwnerId();
+        event.masterRequestId = processInstance.getMasterRequestId();
+        return event;
+    }
+
+    public static InternalEvent createProcessAbortMessage(Long processInstanceId){
         InternalEvent event = new InternalEvent();
         event.isProcess = true;
-        event.workInstanceId = processInst.getId();
+        event.workInstanceId = processInstanceId;
         return event;
     }
 

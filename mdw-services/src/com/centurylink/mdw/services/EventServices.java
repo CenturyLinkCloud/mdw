@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.services;
 
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventLog;
@@ -70,11 +71,6 @@ public interface EventServices {
      * The method does not take care of embedded process, so the caller needs to pass
      * the parent process instance id when looking for variables for embedded process
      *
-     * @param procInstId
-     * @param name
-     * @param value
-     * @return
-     * @throws DataAccessException
      */
     VariableInstance setVariableInstance(Long procInstId, String name, Object value)
             throws DataAccessException;
@@ -94,6 +90,8 @@ public interface EventServices {
     void sendDelayEventsToWaitActivities(String masterRequestId)
             throws DataAccessException, ProcessException;
 
+    void cancelProcess(Long processInstanceId) throws DataAccessException, ServiceException;
+
     void retryActivity(Long activityId, Long activityInstId)
             throws DataAccessException, ProcessException;
 
@@ -107,7 +105,6 @@ public interface EventServices {
     /**
      * Returns the transition instance object by ID
      *
-     * @param transInstId
      * @return transition instance object
      */
     TransitionInstance getWorkTransitionInstance(Long transInstId)
@@ -115,9 +112,6 @@ public interface EventServices {
 
     /**
      * Returns the ActivityInstance identified by the passed in Id
-     *
-     * @param pActivityInstId
-     * @return ActivityInstance
      */
     ActivityInstance getActivityInstance(Long pActivityInstId)
             throws ProcessException, DataAccessException;
@@ -125,14 +119,9 @@ public interface EventServices {
     /**
      * Returns the activity instances by process name, activity logical ID, and  master request ID.
      *
-     * @param processName
-     * @param activityLogicalId
-     * @param masterRequestId
      * @return the list of activity instances. If the process definition or the activity
      * with the given logical ID is not found, null
      * or no such activity instances are found, an empty list is returned.
-     * @throws ProcessException
-     * @throws DataAccessException
      */
     List<ActivityInstance> getActivityInstances(String masterRequestId,
             String processName, String activityLogicalId)
@@ -140,9 +129,6 @@ public interface EventServices {
 
     /**
      * Returns the Process instance object identified by the passed in Id
-     *
-     * @param procInstId
-     * @return ProcessInstanceVO
      */
     ProcessInstance getProcessInstance(Long procInstId)
             throws ProcessException, DataAccessException;
@@ -150,13 +136,9 @@ public interface EventServices {
     /**
      * Returns the process instances by process name and master request ID.
      *
-     * @param processName
-     * @param masterRequestId
      * @return the list of process instances. If the process definition is not found, null
      * is returned; if process definition is found but no process instances are found,
      * an empty list is returned.
-     * @throws ProcessException
-     * @throws DataAccessException
      */
     List<ProcessInstance> getProcessInstances(String masterRequestId, String processName)
             throws ProcessException, DataAccessException;

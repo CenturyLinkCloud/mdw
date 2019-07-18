@@ -213,7 +213,7 @@ public class ProcessEngineDriver {
                 }
                 else if (eventType.equals(EventType.ABORT)) {
                     // abort the root process instance
-                    InternalEvent event = InternalEvent.createProcessAbortMessage(processInstVO);
+                    InternalEvent event = InternalEvent.createProcessAbortMessage(processInstVO.getId());
                     engine.abortProcessInstance(event);
                 }
                 else {

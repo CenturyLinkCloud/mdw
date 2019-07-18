@@ -228,8 +228,8 @@ processMod.controller('ProcessesController',
 }]);
 
 processMod.controller('ProcessController',
-    ['$scope', '$route', '$routeParams', '$filter', 'mdw', 'util', 'Process', 'ProcessSummary', 'DOCUMENT_TYPES', 'WORKFLOW_STATUSES',
-     function($scope, $route, $routeParams, $filter, mdw, util, Process, ProcessSummary, DOCUMENT_TYPES, WORKFLOW_STATUSES) {
+    ['$scope', '$route', '$routeParams', '$filter', '$http', 'mdw', 'util', 'uiUtil', 'Process', 'ProcessSummary', 'DOCUMENT_TYPES', 'WORKFLOW_STATUSES',
+     function($scope, $route, $routeParams, $filter, $http, mdw, util, uiUtil, Process, ProcessSummary, DOCUMENT_TYPES, WORKFLOW_STATUSES) {
 
   var activity = sessionStorage.getItem('mdw-activityInstance');
   if (activity) {
@@ -335,6 +335,19 @@ processMod.controller('ProcessController',
   $scope.instanceCancelAllowed = function() {
     return $scope.authUser.hasRole('Process Execution') && $scope.process &&
         ($scope.process.status == 'In Progress' || $scope.process.status == "Waiting");
+  };
+  $scope.confirmCancel = function() {
+    var msg = 'Cancel process ' + $scope.process.id + '?  (Cannot be undone.)';
+    uiUtil.confirm('Confirm Cancel', msg, function(res) {
+      if (res) {
+        $http.delete(mdw.roots.services + '/services/Processes/' + $scope.process.id + '?app=mdw-admin')
+        .then(function(response) {
+        }, function(response) {
+          if (response.data.status)
+            mdw.messages = 'Process cancel failed: ' + response.data.status.message;
+        });
+      }
+    });
   };
   $scope.instanceEditAllowed = function() {
     return $scope.authUser.hasRole('Process Execution') && $scope.process &&

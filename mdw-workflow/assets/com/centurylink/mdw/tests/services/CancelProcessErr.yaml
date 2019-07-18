@@ -1,0 +1,23 @@
+process: # 12317
+  name: CancelMain
+  instance: 1
+  activity: # 1 "2019-07-18 14:35:44.006"
+    name: Start
+    status: Completed
+  activity: # 3 "2019-07-18 14:35:44.014"
+    name: |
+      Which
+      Case?
+    status: Completed
+    result: err
+  activity: # 4 "2019-07-18 14:35:44.024"
+    name: Error Sub
+    status: Completed
+  activity: # 6 "2019-07-18 14:35:44.033"
+    name: |
+      Wait
+      Forever
+    status: Waiting
+  variable: # 16080
+    name: testCase
+    value: err
