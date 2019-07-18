@@ -58,29 +58,16 @@ public class TaskDataAccess extends CommonDataAccess {
                     " ti.TASK_INSTANCE_REFERRED_AS, " +
                     " ti.DUE_DATE, " +
                     " ti.PRIORITY, " +
-                    " ti.MASTER_REQUEST_ID";
+                    " ti.MASTER_REQUEST_ID, " +
+                    " ti.TASK_TITLE";
 
-    private static String TASK_INSTANCE_SELECT;
-    private static boolean hasTaskTitleColumn;
+    private static String TASK_INSTANCE_SELECT = "distinct " + TASK_INSTANCE_SELECT_SHALLOW + ", " +
+            " ti.TASK_INSTANCE_OWNER_ID as PROCESS_INSTANCE_ID, ui.CUID, ui.NAME as USER_NAME";
 
     private String getTaskInstanceSelect() throws SQLException {
         return getTaskInstanceSelect(false);
     }
     private String getTaskInstanceSelect(boolean deep) throws SQLException {
-        if (TASK_INSTANCE_SELECT == null) {
-            // need to check if task_title supported
-            String q;
-            if (db.isMySQL())
-                q = "SHOW COLUMNS FROM `TASK_INSTANCE` LIKE 'task_title'";
-            else
-                q = "select column_name from ALL_TAB_COLUMNS where table_name='TASK_INSTANCE' AND column_name='TASK_TITLE'";
-            if (db.runSelect(q).next()) {
-                hasTaskTitleColumn = true;
-                TASK_INSTANCE_SELECT_SHALLOW += ", ti.TASK_TITLE";
-            }
-            TASK_INSTANCE_SELECT = "distinct " + TASK_INSTANCE_SELECT_SHALLOW + ", " +
-                    " ti.TASK_INSTANCE_OWNER_ID as PROCESS_INSTANCE_ID, ui.CUID, ui.NAME as USER_NAME";
-        }
         return deep ? TASK_INSTANCE_SELECT : TASK_INSTANCE_SELECT_SHALLOW;
     }
 
@@ -134,8 +121,7 @@ public class TaskDataAccess extends CommonDataAccess {
         if (task.getTaskName() == null) {
             task.setTaskName(template.getTaskName());
         }
-        if (hasTaskTitleColumn)
-            task.setTitle(rs.getString("TASK_TITLE"));
+        task.setTitle(rs.getString("TASK_TITLE"));
         if (isVOversion) {
             task.setAssigneeCuid(rs.getString("CUID"));
             if (template != null)
@@ -836,7 +822,7 @@ public class TaskDataAccess extends CommonDataAccess {
         if (indexes != null) {
             for (String varName : indexes.keySet()) {
                 where.append(" and (select count(*) from INSTANCE_INDEX tidx where tidx.instance_id = ti.task_instance_id and tidx.owner_type='TASK_INSTANCE' and index_key='"
-                    + varName + "' and index_value='" + indexes.get(varName) + "') > 0\n");
+                        + varName + "' and index_value='" + indexes.get(varName) + "') > 0\n");
             }
         }
 
