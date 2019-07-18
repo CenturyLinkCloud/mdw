@@ -18,7 +18,8 @@
             <span class="glyphicon glyphicon-pencil mdw-icon-btn"></span>
             Edit
           </button>
-          <button type="button" class="btn btn-primary mdw-btn" ng-if="instanceCancelAllowed()">
+          <button type="button" class="btn btn-primary mdw-btn" ng-if="instanceCancelAllowed()"
+            ng-click="confirmCancel()">
             <span class="glyphicon glyphicon-remove"></span>
             Cancel
           </button>

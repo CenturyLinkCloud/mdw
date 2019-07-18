@@ -17,6 +17,7 @@ package com.centurylink.mdw.services.event;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.MdwException;
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccess;
@@ -111,25 +112,6 @@ public class EventServicesImpl implements EventServices {
         InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
         ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
         return engine.notifyProcess(pEventName, pEventInstId, message, delay);
-    }
-
-    /**
-     * Method that returns distinct event log sources
-     *
-     * @return String[]
-     */
-    public String[] getDistinctEventLogEventSources()
-    throws DataAccessException, EventException {
-        TransactionWrapper transaction = null;
-        EngineDataAccessDB edao = new EngineDataAccessDB();
-        try {
-            transaction = edao.startTransaction();
-            return edao.getDistinctEventLogEventSources();
-        } catch (SQLException e) {
-            throw new EventException("Failed to notify events", e);
-        } finally {
-            edao.stopTransaction(transaction);
-        }
     }
 
     /**
@@ -243,9 +225,30 @@ public class EventServicesImpl implements EventServices {
         msgbroker.sendMessage(pMsg, edao);
     }
 
+    public void cancelProcess(Long processInstanceId) throws DataAccessException, ServiceException {
+        TransactionWrapper transaction = null;
+        EngineDataAccessDB edao = new EngineDataAccessDB();
+        try {
+            transaction = edao.startTransaction();
+            try {
+                ProcessInstance pi = edao.getProcessInstance(processInstanceId);
+                if (!isProcessInstanceResumable(pi))
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Process not cancelable: " + pi.getId());
+                InternalEvent internalEvent = InternalEvent.createProcessAbortMessage(pi);
+                this.sendInternalEvent(internalEvent, edao);
+            }
+            catch (SQLException ex) {
+                throw new ServiceException(ServiceException.NOT_FOUND, ex.getMessage());
+            }
+        } catch (ProcessException ex) {
+            throw new ServiceException(0, "Failed to cancel process: " + processInstanceId, ex);
+        } finally {
+            edao.stopTransaction(transaction);
+        }
+    }
+
     public void retryActivity(Long activityId, Long activityInstId)
     throws DataAccessException, ProcessException {
-        CodeTimer timer = new CodeTimer("WorkManager.retryActivity", true);
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -255,7 +258,6 @@ public class EventServicesImpl implements EventServices {
             ProcessInstance pi = edao.getProcessInstance(procInstId);
             if (!this.isProcessInstanceResumable(pi)) {
                 logger.info("ProcessInstance in NOT resumable. ProcessInstanceId:" + pi.getId());
-                timer.stopAndLogTiming("NotResumable");
                 throw new ProcessException("The process instance is not resumable");
             }
             InternalEvent outgoingMsg = InternalEvent.createActivityStartMessage(
@@ -267,7 +269,6 @@ public class EventServicesImpl implements EventServices {
         } finally {
             edao.stopTransaction(transaction);
         }
-        timer.stopAndLogTiming("");
     }
 
     public void skipActivity(Long activityId, Long activityInstId, String completionCode)
@@ -328,7 +329,6 @@ public class EventServicesImpl implements EventServices {
      * @return boolean status
      */
     private boolean isProcessInstanceResumable(ProcessInstance pInstance) {
-
         int statusCd = pInstance.getStatusCode();
         if (statusCd == WorkStatus.STATUS_COMPLETED) {
             return false;
@@ -774,16 +774,16 @@ public class EventServicesImpl implements EventServices {
 
     private static List<ServiceHandler> serviceHandlers = new ArrayList<>();
 
-    public void registerServiceHandler(ServiceHandler handler) throws EventException {
+    public void registerServiceHandler(ServiceHandler handler) {
         if (!serviceHandlers.contains(handler))
             serviceHandlers.add(handler);
     }
 
-    public void unregisterServiceHandler(ServiceHandler handler) throws EventException {
+    public void unregisterServiceHandler(ServiceHandler handler) {
         serviceHandlers.remove(handler);
     }
 
-    public ServiceHandler getServiceHandler(String protocol, String path) throws EventException {
+    public ServiceHandler getServiceHandler(String protocol, String path) {
         for (ServiceHandler serviceHandler : serviceHandlers) {
             if (protocol.equals(serviceHandler.getProtocol())
                 && ((path == null && serviceHandler.getPath() == null)
@@ -796,16 +796,16 @@ public class EventServicesImpl implements EventServices {
 
     private static List<WorkflowHandler> workflowHandlers = new ArrayList<>();
 
-    public void registerWorkflowHandler(WorkflowHandler handler) throws EventException {
+    public void registerWorkflowHandler(WorkflowHandler handler) {
         if (!workflowHandlers.contains(handler))
             workflowHandlers.add(handler);
     }
 
-    public void unregisterWorkflowHandler(WorkflowHandler handler) throws EventException {
+    public void unregisterWorkflowHandler(WorkflowHandler handler) {
         workflowHandlers.remove(handler);
     }
 
-    public WorkflowHandler getWorkflowHandler(String asset, Map<String,String> parameters) throws EventException {
+    public WorkflowHandler getWorkflowHandler(String asset, Map<String,String> parameters) {
         for (WorkflowHandler workflowHandler : workflowHandlers) {
             if (asset.equals(workflowHandler.getAsset())) {
                 if (parameters == null) {

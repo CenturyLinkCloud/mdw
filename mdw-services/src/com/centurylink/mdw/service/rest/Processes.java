@@ -20,6 +20,7 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.*;
 import com.centurylink.mdw.model.Value.Display;
@@ -383,6 +384,25 @@ public class Processes extends JsonRestService implements JsonExportable {
         }
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    @Path("/{instanceId}")
+    @ApiOperation(value="Cancel a process instance")
+    public JSONObject delete(String path, JSONObject content, Map<String, String> headers) throws ServiceException {
+        String processInstanceSegment = getSegment(path, 1);
+        if (processInstanceSegment == null)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing path segment: instanceId");
+        try {
+            Long processInstanceId = Long.parseLong(processInstanceSegment);
+            ServiceLocator.getEventServices().cancelProcess(processInstanceId);
+            headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(Status.ACCEPTED.getCode()));
+            return null;
+        } catch (NumberFormatException ex) {
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid instanceId: " + processInstanceSegment);
+        } catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
         }
     }
 

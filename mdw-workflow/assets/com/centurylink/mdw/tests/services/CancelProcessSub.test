@@ -1,0 +1,38 @@
+package com.centurylink.mdw.tests.services
+
+start process('CancelMain') {
+    variables = [ testCase: 'sub' ]
+}
+
+sleep 10
+
+load process // make masterProcessInstance available
+
+response = delete http("api/Processes/${masterProcessInstance.id}") {
+    headers = [ Accept: "application/json" ]
+}
+assert response.code == 202
+
+verify processes('CancelMain', 'CancelSub')
+
+// confirm process was canceled
+assert masterProcessInstance.status == 'Cancelled'
+
+// confirm subflow was canceled
+response = get http("api/Processes?owner=PROCESS_INSTANCE&ownerId=${masterProcessInstance.id}")
+assert response.code == 200
+def procList = new groovy.json.JsonSlurper().parseText(response.actual)
+assert procList.processInstances.size() == 1
+def sub = procList.processInstances[0]
+assert sub.status == 'Cancelled'
+
+// confirm subproc task canceled
+response = get http("api/Tasks?processInstanceId=${sub.id}")
+assert response.code == 200
+def taskList = new groovy.json.JsonSlurper().parseText(response.actual)
+assert taskList.tasks.size() == 1
+def task = taskList.tasks[0]
+assert task.status == 'Cancelled'
+
+
+
