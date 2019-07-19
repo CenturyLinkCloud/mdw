@@ -1,5 +1,24 @@
 # Change Log
 
+## [6.1.22](https://github.com/CenturyLinkCloud/mdw/tree/6.1.22) (2019-07-19)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.21...6.1.22)
+
+**Implemented enhancements:**
+
+- Swagger retrieval by path should support classes with parameterized segments [\#708](https://github.com/CenturyLinkCloud/mdw/issues/708)
+- Ability to skip comparison for specified variables in autotest expected yaml [\#701](https://github.com/CenturyLinkCloud/mdw/issues/701)
+- Option to avoid formatting MongoDB JSON document content [\#693](https://github.com/CenturyLinkCloud/mdw/issues/693)
+
+**Closed issues:**
+
+- Inefficient query for MySQL in retrieving EVENT\_WAIT\_INSTANCE rows [\#707](https://github.com/CenturyLinkCloud/mdw/issues/707)
+- RestServiceAdapter content type defaulted incorrectly [\#702](https://github.com/CenturyLinkCloud/mdw/issues/702)
+- Some standalone Tomcat deployments fail to load Hub's login and index pages [\#698](https://github.com/CenturyLinkCloud/mdw/issues/698)
+- In Hub process instance Values nav link, output variables cannot be edited [\#697](https://github.com/CenturyLinkCloud/mdw/issues/697)
+- Hub process instance Cancel button not functional [\#696](https://github.com/CenturyLinkCloud/mdw/issues/696)
+- Startup race condition in TaskDataAccess results in query with duplicate columns [\#648](https://github.com/CenturyLinkCloud/mdw/issues/648)
+- Transition delay value is wrong when entered via Hub [\#631](https://github.com/CenturyLinkCloud/mdw/issues/631)
+
 ## [6.1.21](https://github.com/CenturyLinkCloud/mdw/tree/6.1.21) (2019-06-22)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.20...6.1.21)
 

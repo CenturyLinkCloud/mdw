@@ -1,0 +1,13 @@
+package com.centurylink.mdw.tests.workflow
+
+start process('StartStopProcess') {
+    variables = [
+            inputVar: 'I will not be ignored',
+            ignoredString: "I'm not checked by test",
+            ignoredJson: '{ "message": "Ignore me as well" }'
+    ]
+}
+wait process
+verify process {
+    excludeVariables = ['ignoredString','ignoredJson']
+}

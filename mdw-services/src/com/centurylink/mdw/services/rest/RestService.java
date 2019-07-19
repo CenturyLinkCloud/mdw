@@ -119,7 +119,7 @@ public abstract class RestService {
      * @return list of role names or null if authorization not required
      */
     protected List<String> getRoles(String path) {
-        List<String> defaultRoles = new ArrayList<String>();
+        List<String> defaultRoles = new ArrayList<>();
         defaultRoles.add(Workgroup.SITE_ADMIN_GROUP);
         return defaultRoles;
     }
