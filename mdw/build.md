@@ -40,7 +40,7 @@
     - Snapshot repo: https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/
 
 8. (Formal builds only) On GitHub:
-  - Make sure all the closed issues have the current milestone assigned; otherwise they will not be included in release notes.
+  - Make sure all closed issues have the current milestone assigned; otherwise they will not be included in release notes.
   - Create a milestone marker for the next build. (https://github.com/CenturyLinkCloud/mdw/milestones/new)
   - Assign any un-delivered issues and pull requests for the current build's milestone to the next build's milestone.
   - Close this build's milestone in GitHub.
