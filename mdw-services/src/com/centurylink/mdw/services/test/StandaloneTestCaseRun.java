@@ -15,28 +15,9 @@
  */
 package com.centurylink.mdw.services.test;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import org.codehaus.groovy.control.CompilerConfiguration;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.common.service.Query;
-import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
@@ -44,25 +25,27 @@ import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.UserTaskAction;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.ProcessList;
-import com.centurylink.mdw.model.workflow.ProcessRun;
-import com.centurylink.mdw.model.workflow.WorkStatuses;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.task.types.TaskList;
-import com.centurylink.mdw.test.TestCase;
-import com.centurylink.mdw.test.TestCaseEvent;
-import com.centurylink.mdw.test.TestCaseProcess;
-import com.centurylink.mdw.test.TestCaseTask;
-import com.centurylink.mdw.test.TestException;
-import com.centurylink.mdw.test.TestExecConfig;
+import com.centurylink.mdw.test.*;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.file.FileHelper;
-
 import groovy.lang.Binding;
 import groovy.lang.GroovyCodeSource;
 import groovy.lang.GroovyShell;
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.text.ParseException;
+import java.util.*;
 
 /**
  * Executes a test outside of the runtime container.
@@ -134,11 +117,11 @@ public class StandaloneTestCaseRun extends TestCaseRun {
     }
 
     @Override
-    protected List<ProcessInstance> loadResults(List<Process> processes, Asset expectedResults, boolean orderById)
-    throws DataAccessException, IOException, ServiceException, JSONException, ParseException {
-        List<ProcessInstance> mainProcessInsts = new ArrayList<ProcessInstance>();
-        Map<String,List<ProcessInstance>> fullProcessInsts = new TreeMap<String,List<ProcessInstance>>();
-        Map<String,String> fullActivityNameMap = new HashMap<String,String>();
+    protected List<ProcessInstance> loadResults(List<Process> processes, Asset expectedResults, TestCaseProcess mainTestProc)
+    throws IOException, JSONException, ParseException {
+        List<ProcessInstance> mainProcessInsts = new ArrayList<>();
+        Map<String,List<ProcessInstance>> fullProcessInsts = new TreeMap<>();
+        Map<String,String> fullActivityNameMap = new HashMap<>();
         for (Process proc : processes) {
             Query query = new Query();
             query.setFilter("masterRequestId", getMasterRequestId());
@@ -149,7 +132,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
             String response = httpHelper.get();
             ProcessList processList = new ProcessList(ProcessList.PROCESS_INSTANCES, new JsonObject(response));
             List<ProcessInstance> processInstances = processList.getProcesses();
-            Map<Long,String> activityNameMap = new HashMap<Long,String>();
+            Map<Long,String> activityNameMap = new HashMap<>();
             for (Activity act : proc.getActivities()) {
                 activityNameMap.put(act.getId(), act.getName());
                 fullActivityNameMap.put(proc.getId() + "-" + act.getId(), act.getName());
@@ -168,7 +151,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
                 mainProcessInsts.add(procInst);
                 List<ProcessInstance> procInsts = fullProcessInsts.get(proc.getName());
                 if (procInsts == null)
-                    procInsts = new ArrayList<ProcessInstance>();
+                    procInsts = new ArrayList<>();
                 procInsts.add(procInst);
                 fullProcessInsts.put(proc.getName(), procInsts);
                 if (proc.getSubprocesses() != null) {
@@ -195,7 +178,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
                         }
                         List<ProcessInstance> pis = fullProcessInsts.get(childProcName);
                         if (pis == null)
-                            pis = new ArrayList<ProcessInstance>();
+                            pis = new ArrayList<>();
                         pis.add(fullChildInfo);
                         fullProcessInsts.put(childProcName, pis);
                     }
@@ -209,11 +192,11 @@ public class StandaloneTestCaseRun extends TestCaseRun {
             }
             else {
                 // try to determine newline chars from expectedResultsFile
-                if (expectedResults.getStringContent().indexOf("\r\n") >= 0)
+                if (expectedResults.getStringContent().contains("\r\n"))
                     newLine = "\r\n";
             }
         }
-        String yaml = translateToYaml(fullProcessInsts, fullActivityNameMap, orderById, newLine);
+        String yaml = translateToYaml(fullProcessInsts, fullActivityNameMap, mainTestProc, newLine);
         if (isCreateReplace()) {
             getLog().println("creating expected results: " + expectedResults.getRawFile());
             FileHelper.writeToFile(expectedResults.getRawFile().toString(), yaml, false);
@@ -224,10 +207,8 @@ public class StandaloneTestCaseRun extends TestCaseRun {
             getLog().println("creating actual results file: " + fileName);
         FileHelper.writeToFile(fileName, yaml, false);
         // set friendly statuses
-        if (mainProcessInsts != null) {
-            for (ProcessInstance pi : mainProcessInsts)
-                pi.setStatus(WorkStatuses.getWorkStatuses().get(pi.getStatusCode()));
-        }
+        for (ProcessInstance pi : mainProcessInsts)
+            pi.setStatus(WorkStatuses.getWorkStatuses().get(pi.getStatusCode()));
         return mainProcessInsts;
     }
 

@@ -24,7 +24,6 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.YamlBuilder;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
@@ -248,7 +247,7 @@ public class TestCaseRun implements Runnable {
         if (isLoadTest())
             throw new TestException("Not supported for load tests");
         try {
-            List<Process> processVos = new ArrayList<Process>();
+            List<Process> processVos = new ArrayList<>();
             if (isVerbose())
                 log.println("loading runtime data for processes:");
             for (TestCaseProcess process : processes) {
@@ -256,7 +255,7 @@ public class TestCaseRun implements Runnable {
                     log.println("  - " + process.getLabel());
                 processVos.add(process.getProcess());
             }
-            processInstances = loadResults(processVos, expectedResults, processes[0].isResultsById());
+            processInstances = loadResults(processVos, expectedResults, processes[0]);
             return processInstances;
         }
         catch (Exception ex) {
@@ -276,18 +275,18 @@ public class TestCaseRun implements Runnable {
         }
     }
 
-    protected List<ProcessInstance> loadResults(List<Process> processes, Asset expectedResults, boolean orderById)
-    throws DataAccessException, IOException, ServiceException, JSONException, ParseException {
-        List<ProcessInstance> mainProcessInsts = new ArrayList<ProcessInstance>();
-        Map<String,List<ProcessInstance>> fullProcessInsts = new TreeMap<String,List<ProcessInstance>>();
-        Map<String,String> fullActivityNameMap = new HashMap<String,String>();
+    protected List<ProcessInstance> loadResults(List<Process> processes, Asset expectedResults, TestCaseProcess mainTestProc)
+    throws IOException, ServiceException, JSONException, ParseException {
+        List<ProcessInstance> mainProcessInsts = new ArrayList<>();
+        Map<String,List<ProcessInstance>> fullProcessInsts = new TreeMap<>();
+        Map<String,String> fullActivityNameMap = new HashMap<>();
         for (Process proc : processes) {
             Query query = new Query();
             query.setFilter("masterRequestId", masterRequestId);
             query.setFilter("processId", proc.getId().toString());
             query.setDescending(true);
             List<ProcessInstance> procInstList = workflowServices.getProcesses(query).getProcesses();
-            Map<Long,String> activityNameMap = new HashMap<Long,String>();
+            Map<Long,String> activityNameMap = new HashMap<>();
             for (Activity act : proc.getActivities()) {
                 activityNameMap.put(act.getId(), act.getName());
                 fullActivityNameMap.put(proc.getId() + "-" + act.getId(), act.getName());
@@ -305,7 +304,7 @@ public class TestCaseRun implements Runnable {
                 mainProcessInsts.add(procInst);
                 List<ProcessInstance> procInsts = fullProcessInsts.get(proc.getName());
                 if (procInsts == null)
-                    procInsts = new ArrayList<ProcessInstance>();
+                    procInsts = new ArrayList<>();
                 procInsts.add(procInst);
                 fullProcessInsts.put(proc.getName(), procInsts);
                 if (proc.getSubprocesses() != null) {
@@ -327,7 +326,7 @@ public class TestCaseRun implements Runnable {
                         }
                         List<ProcessInstance> pis = fullProcessInsts.get(childProcName);
                         if (pis == null)
-                            pis = new ArrayList<ProcessInstance>();
+                            pis = new ArrayList<>();
                         pis.add(fullChildInfo);
                         fullProcessInsts.put(childProcName, pis);
                     }
@@ -341,11 +340,11 @@ public class TestCaseRun implements Runnable {
             }
             else {
                 // try to determine newline chars from expectedResultsFile
-                if (expectedResults.getStringContent().indexOf("\r\n") >= 0)
+                if (expectedResults.getStringContent().contains("\r\n"))
                     newLine = "\r\n";
             }
         }
-        String yaml = translateToYaml(fullProcessInsts, fullActivityNameMap, orderById, newLine);
+        String yaml = translateToYaml(fullProcessInsts, fullActivityNameMap, mainTestProc, newLine);
         if (isCreateReplace()) {
             log.println("creating expected results: " + expectedResults.getRawFile());
             FileHelper.writeToFile(expectedResults.getRawFile().toString(), yaml, false);
@@ -356,15 +355,15 @@ public class TestCaseRun implements Runnable {
             log.println("creating actual results file: " + fileName);
         FileHelper.writeToFile(fileName, yaml, false);
         // set friendly statuses
-        if (mainProcessInsts != null) {
-            for (ProcessInstance pi : mainProcessInsts)
-                pi.setStatus(WorkStatuses.getWorkStatuses().get(pi.getStatusCode()));
-        }
+        for (ProcessInstance pi : mainProcessInsts)
+            pi.setStatus(WorkStatuses.getWorkStatuses().get(pi.getStatusCode()));
         return mainProcessInsts;
     }
 
-    protected String translateToYaml(Map<String,List<ProcessInstance>> processInstances, Map<String,String> activityNames, boolean orderById, String newLineChars)
-    throws IOException, DataAccessException {
+    protected String translateToYaml(Map<String,List<ProcessInstance>> processInstances,
+            Map<String,String> activityNames, TestCaseProcess mainTestProc, String newLineChars) {
+
+        boolean orderById = mainTestProc.isResultsById();
 
         YamlBuilder yaml = new YamlBuilder(newLineChars);
 
@@ -375,15 +374,10 @@ public class TestCaseRun implements Runnable {
                 yaml.append("process: # ").append(procInst.getId()).newLine();
                 yaml.append("  name: ").append(procName).newLine();
                 yaml.append("  instance: ").append((i + 1)).newLine();
-                LinkedList<ActivityInstance> orderedList = new LinkedList<ActivityInstance>();
-                for (ActivityInstance act : procInst.getActivities())
-                    orderedList.add(act);
+                LinkedList<ActivityInstance> orderedList = new LinkedList<>();
+                orderedList.addAll(procInst.getActivities());
                 if (orderById) {
-                    Collections.sort(orderedList, new Comparator<ActivityInstance>() {
-                        public int compare(ActivityInstance ai1, ActivityInstance ai2) {
-                            return (int)(ai1.getActivityId() - ai2.getActivityId());
-                        }
-                    });
+                    orderedList.sort((ai1, ai2) -> (int)(ai1.getActivityId() - ai2.getActivityId()));
                 }
                 for (ActivityInstance act : orderedList) {
                     yaml.append("  activity: # ").append(act.getActivityId()).append(" \"").append(DateHelper.dateToString(act.getStartDate())).append("\"").newLine();
@@ -391,7 +385,7 @@ public class TestCaseRun implements Runnable {
                     yaml.append("    name: " ).appendMulti("      ", activityNames.get(actNameKey)).newLine();
                     yaml.append("    status: ").append(WorkStatuses.getWorkStatuses().get(act.getStatusCode())).newLine();
                     if (act.getMessage() != null) {
-                        String msgLines[] = act.getMessage().split("\\r\\n|\\n|\\r");
+                        String[] msgLines = act.getMessage().split("\\r\\n|\\n|\\r");
                         String result = msgLines[0];
                         if (msgLines.length > 1)
                             result += "...";
@@ -399,20 +393,22 @@ public class TestCaseRun implements Runnable {
                     }
                 }
                 for (VariableInstance var : procInst.getVariables()) {
-                    yaml.append("  variable: # ").append(var.getInstanceId()).newLine();
-                    yaml.append("    name: ").append(var.getName()).newLine();
-                    yaml.append("    value: ");
-                    try {
-                        var.setProcessInstanceId(procInst.getId());
-                        String val = getStringValue(var);
-                        if (var.isDocument())
-                            procInst.getVariable().put(var.getName(), val); // pre-populate document values
-                        yaml.appendMulti("      ", val).newLine();
-                    }
-                    catch (Throwable t) {
-                        log.println("Failed to translate variable instance: " + var.getInstanceId() + " to string with the following exception");
-                        t.printStackTrace(log);
-                        yaml.append(" \"").append(var.getStringValue()).append("\"").newLine();
+                    if (mainTestProc.getExcludeVariables() == null || !mainTestProc.getExcludeVariables().contains(var.getName())) {
+                        yaml.append("  variable: # ").append(var.getInstanceId()).newLine();
+                        yaml.append("    name: ").append(var.getName()).newLine();
+                        yaml.append("    value: ");
+                        try {
+                            var.setProcessInstanceId(procInst.getId());
+                            String val = getStringValue(var);
+                            if (var.isDocument())
+                                procInst.getVariable().put(var.getName(), val); // pre-populate document values
+                            yaml.appendMulti("      ", val).newLine();
+                        }
+                        catch (Throwable t) {
+                            log.println("Failed to translate variable instance: " + var.getInstanceId() + " to string with the following exception");
+                            t.printStackTrace(log);
+                            yaml.append(" \"").append(var.getStringValue()).append("\"").newLine();
+                        }
                     }
                 }
             }
@@ -442,7 +438,7 @@ public class TestCaseRun implements Runnable {
             return false;
 
         try {
-            List<Process> processVos = new ArrayList<Process>();
+            List<Process> processVos = new ArrayList<>();
             if (isVerbose())
                 log.println("loading runtime data for processes:");
             for (TestCaseProcess process : processes) {
@@ -450,7 +446,7 @@ public class TestCaseRun implements Runnable {
                     log.println("  - " + process.getLabel());
                 processVos.add(process.getProcess());
             }
-            processInstances = loadResults(processVos, expectedResults, processes[0].isResultsById());
+            processInstances = loadResults(processVos, expectedResults, processes[0]);
             if (processInstances.isEmpty())
                 throw new IllegalStateException("No process instances found for masterRequestId: " + masterRequestId);
             return verifyProcesses(expectedResults);
@@ -473,7 +469,7 @@ public class TestCaseRun implements Runnable {
     }
 
     protected boolean verifyProcesses(Asset resultsAsset)
-    throws TestException, IOException, DataAccessException, ParseException {
+    throws TestException, IOException {
         if (!resultsAsset.getRawFile().exists()) {
             message = "Expected results not found: " + resultsAsset;
             log.println("+++++ " + message);
@@ -586,7 +582,7 @@ public class TestCaseRun implements Runnable {
                 helper = getHttpHelper(http.getMethod(), http.getUri());
             }
 
-            Map<String,String> headers = new HashMap<String,String>();
+            Map<String,String> headers = new HashMap<>();
             if (http.getMessage() != null) {
                 if (http.getMessage().getPayload() != null && http.getMessage().getPayload().startsWith("{"))
                     headers.put("Content-Type", "application/json");
@@ -718,7 +714,7 @@ public class TestCaseRun implements Runnable {
     }
 
     protected boolean executeVerifyResponse(String expected, String actual)
-    throws TestException,IOException,DataAccessException,ParseException {
+    throws TestException {
         expected = expected.replaceAll("\r", "");
         if (isVerbose())
             log.println("comparing response...");
@@ -796,7 +792,7 @@ public class TestCaseRun implements Runnable {
         // else do nothing - already slept
     }
 
-    private List<TestCaseAdapterStub> adapterStubs = new ArrayList<TestCaseAdapterStub>();
+    private List<TestCaseAdapterStub> adapterStubs = new ArrayList<>();
     void addAdapterStub(TestCaseAdapterStub adapterStub) {
         adapterStubs.add(adapterStub);
     }
@@ -830,7 +826,7 @@ public class TestCaseRun implements Runnable {
                     else if (activityStub.getDelay() > 0)
                         activityStubResponse.setDelay(activityStub.getDelay());
                     if (activityStub.getVariables() != null) {
-                        Map<String,String> responseVariables = new HashMap<String,String>();
+                        Map<String,String> responseVariables = new HashMap<>();
                         Map<String,Object> variables = activityStub.getVariables();
                         for (String name : variables.keySet()) {
                             Object value = variables.get(name);
@@ -1058,7 +1054,7 @@ public class TestCaseRun implements Runnable {
      */
     protected Map<String,String> getDefaultMessageHeaders(String payload) {
         if (getMasterRequestId() != null) {
-            Map<String,String> headers = new HashMap<String,String>();
+            Map<String,String> headers = new HashMap<>();
             headers.put("mdw-request-id", getMasterRequestId());
             if (payload != null && payload.startsWith("{"))
                 headers.put("Content-Type", "application/json");
@@ -1107,7 +1103,7 @@ public class TestCaseRun implements Runnable {
      */
     private String firstLine(String msg) {
         if (msg == null)
-            return msg;
+            return null;
         int newLine = msg.indexOf("\r\n");
         if (newLine == -1)
             newLine = msg.indexOf("\n");
