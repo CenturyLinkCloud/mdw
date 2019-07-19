@@ -25,6 +25,7 @@ import org.yaml.snakeyaml.representer.Representer;
 public class YamlBuilder {
 
     private StringBuilder stringBuilder;
+    private int indent = 2;
 
     private String newLine = "\n";
 
@@ -32,8 +33,18 @@ public class YamlBuilder {
         stringBuilder = new StringBuilder();
     }
 
+    public YamlBuilder(int indent) {
+        this.indent = indent;
+        stringBuilder = new StringBuilder();
+    }
+
     public YamlBuilder(Map<?,?> map) {
         this();
+        append(map);
+    }
+
+    public YamlBuilder(int indent, Map<?,?> map) {
+        this(indent);
         append(map);
     }
 
@@ -112,7 +123,7 @@ public class YamlBuilder {
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setPrettyFlow(true);
-        options.setIndent(2);
+        options.setIndent(indent);
         options.setSplitLines(false);
         return options;
     }

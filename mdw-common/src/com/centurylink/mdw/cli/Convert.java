@@ -21,7 +21,9 @@ import com.centurylink.mdw.config.OrderedProperties;
 import com.centurylink.mdw.config.YamlBuilder;
 import com.centurylink.mdw.config.YamlProperties;
 import com.centurylink.mdw.dataaccess.AssetRevision;
+import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.asset.Pagelet;
+import com.centurylink.mdw.model.workflow.Process;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -32,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -42,6 +45,11 @@ public class Convert extends Setup {
     private boolean packages;
     public boolean isPackages() { return packages; }
     public void setPackages(boolean packages) { this.packages = packages; }
+
+    @Parameter(names="--processes", description="Update .proc json files to yaml format (ignores other options)")
+    private boolean processes;
+    public boolean isProcesses() { return processes; }
+    public void setProcesses(boolean processes) { this.processes = processes; }
 
     @Parameter(names="--input", description="Input property file or impl file")
     private File input;
@@ -81,6 +89,9 @@ public class Convert extends Setup {
         if (isPackages()) {
             convertPackages();
         }
+        else if (isProcesses()) {
+            convertProcesses();
+        }
         else {
             if (input != null && input.getName().endsWith(".impl")) {
                 convertImplementor();
@@ -95,7 +106,7 @@ public class Convert extends Setup {
 
     protected void convertPackages() throws IOException {
 
-        getOut().println("Processing packages:");
+        getOut().println("Converting packages:");
         Map<String,File> packageDirs = getAssetPackageDirs();
         for (String packageName : packageDirs.keySet()) {
             getOut().println("  " + packageName);
@@ -130,6 +141,22 @@ public class Convert extends Setup {
                 Files.write(Paths.get(yamlFile.getPath()), yamlBuilder.toString().getBytes());
                 getOut().println("    Deleting: " + jsonFile);
                 new Delete(jsonFile).run();
+            }
+        }
+    }
+
+    protected void convertProcesses() throws IOException {
+        getOut().println("Converting processes:");
+        Map<String,List<File>> pkgProcFiles = findAllAssets("proc");
+        for (String pkg : pkgProcFiles.keySet()) {
+            List<File> procFiles = pkgProcFiles.get(pkg);
+            for (File procFile : procFiles) {
+                if (new String(Files.readAllBytes(procFile.toPath())).startsWith("{")) {
+                    Process process = loadProcess(pkg, procFile, true);
+                    String yaml = Yamlable.toString(process, 2);
+                    // TODO save the yaml file instead of printing
+                    System.out.println("\n\n" + pkg + "/" + process.getName() + ".proc:\n" + yaml);
+                }
             }
         }
     }

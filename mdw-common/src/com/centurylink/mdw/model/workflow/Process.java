@@ -18,7 +18,9 @@ package com.centurylink.mdw.model.workflow;
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetRequest;
 import com.centurylink.mdw.model.asset.AssetRequest.HttpMethod;
@@ -34,7 +36,7 @@ import java.util.*;
 /**
  * Value object representing a process definition.
  */
-public class Process extends Asset implements Jsonable, Linkable {
+public class Process extends Asset implements Jsonable, Yamlable, Linkable {
 
     public static final String TRANSITION_ON_NULL = "Matches Null Return Code";
     public static final String TRANSITION_ON_DEFAULT = "Acts as Default";
@@ -45,6 +47,13 @@ public class Process extends Asset implements Jsonable, Linkable {
     private List<Activity> activities;
     private List<TextNote> textNotes;
     private List<Attribute> attributes;
+
+    public static Process fromString(String contents) {
+        if (contents.startsWith("{"))
+            return new Process(new JsonObject(contents));
+        else
+            return new Process(Yamlable.fromString(contents));
+    }
 
     public Process() {
         setLanguage(Asset.PROCESS);
@@ -519,6 +528,62 @@ public class Process extends Asset implements Jsonable, Linkable {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public Process(Map<String,Object> yaml) {
+        if (yaml.containsKey("name"))
+            setName((String)yaml.get("name"));
+        if (yaml.containsKey("description"))
+            setDescription((String)yaml.get("description"));
+        if (yaml.containsKey("attributes")) {
+            this.attributes = Attribute.getAttributes((Map<String,Object>)yaml.get("attributes"));
+        }
+        this.activities = new ArrayList<>();
+        this.transitions = new ArrayList<>();
+        if (yaml.containsKey("activities")) {
+            List<Map<String,Object>> activitiesList = (List<Map<String,Object>>) yaml.get("activities");
+            for (Map<String,Object> activityYaml : activitiesList) {
+                Activity activity = new Activity(activityYaml);
+                this.activities.add(activity);
+                if (activityYaml.containsKey("transitions")) {
+                    List<Map<String,Object>> transitionsList = (List<Map<String,Object>>) activityYaml.get("transitions");
+                    for (Map<String,Object> transitionYaml : transitionsList) {
+                        Transition transition = new Transition(transitionYaml);
+                        transition.setFromId(activity.getId());
+                        this.transitions.add(transition);
+                    }
+                }
+            }
+        }
+        this.subprocesses = new ArrayList<>();
+        if (yaml.containsKey("subprocesses")) {
+            List<Map<String,Object>> subprocsList = (List<Map<String,Object>>) yaml.get("subprocesses");
+            for (Map<String,Object> subprocYaml : subprocsList) {
+                Process subproc = new Process(subprocYaml);
+                String logicalId = (String)subprocYaml.get("id");
+                if (logicalId.startsWith("SubProcess"))
+                    logicalId = "P" + logicalId.substring(10);
+                subproc.setId(Long.valueOf(logicalId.substring(1)));
+                subproc.setAttribute(WorkAttributeConstant.LOGICAL_ID, (String)subprocYaml.get("id"));
+                this.subprocesses.add(subproc);
+            }
+        }
+        this.textNotes = new ArrayList<>();
+        if (yaml.containsKey("textNotes")) {
+            List<Map<String,Object>> textNotesList = (List<Map<String,Object>>)yaml.get("textNotes");
+            for (Map<String,Object> textNoteYaml : textNotesList)
+                this.textNotes.add(new TextNote(textNoteYaml));
+        }
+        this.variables = new ArrayList<>();
+        if (yaml.containsKey("variables")) {
+            Map<String,Object> variablesMap = (Map<String,Object>) yaml.get("variables");
+            for (String name : variablesMap.keySet()) {
+                Variable variable = new Variable((Map<String,Object>)variablesMap.get(name));
+                variable.setName(name);
+                this.variables.add(variable);
+            }
+        }
+    }
+
     /**
      * JSON name = getName(), so not included.
      */
@@ -575,6 +640,65 @@ public class Process extends Asset implements Jsonable, Linkable {
         }
 
         return json;
+    }
+
+    @Override
+    public Map<String,Object> getYaml() {
+        // ensure correct ordering
+        Map<String,Object> yaml = Yamlable.create();
+
+        if (getDescription() != null && !getDescription().isEmpty())
+            yaml.put("description", getDescription());
+        if (activities != null && !activities.isEmpty()) {
+            List<Map<String,Object>> activitiesList = new ArrayList<>();
+            for (Activity activity : activities) {
+                Map<String,Object> activityYaml = activity.getYaml();
+                List<Transition> transitions = getAllTransitions(activity.getId());
+                if (transitions != null && !transitions.isEmpty()) {
+                    List<Map<String,Object>> transitionsList = new ArrayList<>();
+                    for (Transition transition : transitions) {
+                        Map<String,Object> transitionYaml = transition.getYaml();
+                        if (transition.getToId() < 0) // newly created
+                            transitionYaml.put("to", getActivity(transition.getToId()).getLogicalId());
+                        transitionsList.add(transitionYaml);
+                    }
+                    activityYaml.put("transitions", transitionsList);
+                }
+                activitiesList.add(activityYaml);
+            }
+            yaml.put("activities", activitiesList);
+        }
+        if (subprocesses != null && !subprocesses.isEmpty()) {
+            List<Map<String,Object>> subprocsList = new ArrayList<>();
+            for (Process subproc : subprocesses) {
+                String logicalId = subproc.getAttribute(WorkAttributeConstant.LOGICAL_ID);
+                Map<String,Object> subprocYaml = Yamlable.create();
+                subprocYaml.put("id", logicalId);
+                subprocYaml.put("name", subproc.getName());
+                subprocYaml.putAll(subproc.getYaml());
+                if (subprocYaml.containsKey("version"))
+                    subprocYaml.remove("version");
+                subprocsList.add(subprocYaml);
+            }
+            yaml.put("subprocesses", subprocsList);
+        }
+        if (variables != null && !variables.isEmpty()) {
+            Map<String,Object> variablesYaml = new TreeMap<>(); // sorted
+            for (Variable variable : variables)
+                variablesYaml.put(variable.getName(), variable.getYaml());
+            yaml.put("variables", variablesYaml);
+        }
+        if (attributes != null && !attributes.isEmpty()) {
+            yaml.put("attributes", Attribute.getAttributesYaml(attributes));
+        }
+        if (textNotes != null && !textNotes.isEmpty()) {
+            List<Map<String,Object>> textNotesList = new ArrayList<>();
+            for (TextNote textNote : textNotes)
+                textNotesList.add(textNote.getYaml());
+            yaml.put("textNotes", textNotesList);
+        }
+
+        return yaml;
     }
 
     public JSONObject getSummaryJson() {

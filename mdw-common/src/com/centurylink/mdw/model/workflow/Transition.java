@@ -19,6 +19,7 @@ import com.centurylink.mdw.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.constant.WorkTransitionAttributeConstant;
 import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventType;
 import org.json.JSONException;
@@ -26,8 +27,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class Transition implements Jsonable {
+public class Transition implements Jsonable, Yamlable {
 
     public static final String DELAY_UNIT_SECOND = "s";
     public static final String DELAY_UNIT_MINUTE = "m";
@@ -220,9 +222,28 @@ public class Transition implements Jsonable {
         setAttribute(WorkAttributeConstant.LOGICAL_ID, logicalId);
     }
 
+    @SuppressWarnings("unchecked")
+    public Transition(Map<String,Object> yaml) {
+        String logicalId = (String)yaml.get("id");
+        if (logicalId.startsWith("Transition"))
+            logicalId = "T" + logicalId.substring(10);
+        id = Long.valueOf(logicalId.substring(1));
+        this.toId = Long.parseLong(((String)yaml.get("to")).substring(1));
+        if (yaml.containsKey("resultCode") && yaml.get("resultCode").toString().length() > 0)
+            this.completionCode = (String)yaml.get("resultCode");
+        if (yaml.containsKey("event"))
+            this.eventType = EventType.getEventTypeFromName((String)yaml.get("event"));
+        else
+            this.eventType = EventType.FINISH;
+        if (yaml.containsKey("attributes"))
+            this.attributes = Attribute.getAttributes((Map<String,Object>)yaml.get("attributes"));
+        setAttribute(WorkAttributeConstant.LOGICAL_ID, logicalId);
+    }
+
     /**
      * Does not populate from field since JSON transitions are children of activities.
      */
+    @Override
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
         json.put("id", getLogicalId());
@@ -234,6 +255,21 @@ public class Transition implements Jsonable {
         if (attributes != null && ! attributes.isEmpty())
             json.put("attributes", Attribute.getAttributesJson(attributes));
         return json;
+    }
+
+    @Override
+    public Map<String,Object> getYaml() {
+        Map<String,Object> yaml = Yamlable.create();
+        yaml.put("id", getLogicalId());
+        yaml.put("to", "A" + toId);
+        if (eventType != null)
+            yaml.put("event", EventType.getEventTypeName(eventType));
+        if (completionCode != null)
+            yaml.put("resultCode", completionCode);
+        if (attributes != null && ! attributes.isEmpty()) {
+            yaml.put("attributes", Attribute.getAttributesYaml(attributes));
+        }
+        return yaml;
     }
 
 }

@@ -4,15 +4,12 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.model.workflow.Linked;
 import com.centurylink.mdw.model.workflow.Process;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 @Parameters(commandNames="hierarchy", commandDescription="Process definition hierarchy", separators="=")
 public class Hierarchy extends Setup {
@@ -130,25 +127,6 @@ public class Hierarchy extends Setup {
         return mainproc.findInvoked(processes);
     }
 
-    private Process loadProcess(String pkg, File procFile, boolean deep) throws IOException {
-        Properties versionProps = getPackageVersions().get(pkg);
-        Process process;
-        if (deep) {
-            process = new Process(new JSONObject(new String(Files.readAllBytes(procFile.toPath()))));
-        }
-        else {
-            process = new Process();
-        }
-        int lastDot = procFile.getName().lastIndexOf('.');
-        String assetPath = pkg + "/" + procFile.getName();
-        process.setName(procFile.getName().substring(0, lastDot));
-        process.setPackageName(pkg);
-        String verProp = versionProps == null ? null : versionProps.getProperty(procFile.getName());
-        process.setVersion(verProp == null ? 0 : Integer.parseInt(verProp.split(" ")[0]));
-        process.setId(getAssetId(assetPath, process.getVersion()));
-        return process;
-    }
-
     /**
      * Only loads current processes (not archived) that contain subprocs.
      * Starts at 10%, uses 80% monitor progress.
@@ -167,13 +145,6 @@ public class Hierarchy extends Setup {
                 }
             }
         }
-    }
-
-    private Map<String,Properties> packageVersions;
-    private Map<String,Properties> getPackageVersions() throws IOException {
-        if (packageVersions == null)
-            packageVersions = getVersionProps(getAssetPackageDirs());
-        return packageVersions;
     }
 
     private void addTopLevelCallers(Process called) {

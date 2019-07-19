@@ -17,8 +17,10 @@ package com.centurylink.mdw.cli;
 
 import com.beust.jcommander.Parameter;
 import com.centurylink.mdw.config.YamlProperties;
+import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.project.Data;
 import com.centurylink.mdw.model.system.MdwVersion;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.file.Packages;
 import org.json.JSONObject;
 
@@ -723,6 +725,38 @@ public abstract class Setup implements Operation {
             project = new Project();
         }
         return project;
+    }
+
+    Process loadProcess(String pkg, File procFile, boolean deep) throws IOException {
+        Properties versionProps = getPackageVersions().get(pkg);
+        Process process;
+        if (deep) {
+            String contents = new String(Files.readAllBytes(procFile.toPath()));
+            if (contents.startsWith("{")) {
+                process = new Process(new JSONObject(contents));
+            }
+            else {
+                process = new Process(Yamlable.fromString(contents));
+            }
+        }
+        else {
+            process = new Process();
+        }
+        int lastDot = procFile.getName().lastIndexOf('.');
+        String assetPath = pkg + "/" + procFile.getName();
+        process.setName(procFile.getName().substring(0, lastDot));
+        process.setPackageName(pkg);
+        String verProp = versionProps == null ? null : versionProps.getProperty(procFile.getName());
+        process.setVersion(verProp == null ? 0 : Integer.parseInt(verProp.split(" ")[0]));
+        process.setId(getAssetId(assetPath, process.getVersion()));
+        return process;
+    }
+
+    private Map<String,Properties> packageVersions;
+    private Map<String,Properties> getPackageVersions() throws IOException {
+        if (packageVersions == null)
+            packageVersions = getVersionProps(getAssetPackageDirs());
+        return packageVersions;
     }
 
     public class Project implements com.centurylink.mdw.model.project.Project {
