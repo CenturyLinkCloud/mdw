@@ -17,5 +17,5 @@ response:
       "id": ${process-id},
       "name": "StartStopProcess",
       "package": "com.centurylink.mdw.tests.workflow",
-      "version": "0.7"
+      "version": "0.8"
     }

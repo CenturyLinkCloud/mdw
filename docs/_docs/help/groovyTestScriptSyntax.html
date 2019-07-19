@@ -221,7 +221,24 @@ activities in the results YAML by ID rather than the default sort of start time:
 verify process {
   resultsById = true
 }
-</pre> 
+</pre>
+<br/>
+<strong>Screened Results</strong>
+<p>Beyond using regular expressions to substitute known dynamic values as described above, you can also exclude selected
+variables from comparison altogether.  Here's the syntax for excluding some values from output results YAML:</p>
+<pre>
+verify process {
+    excludeVariables = ['ignoredString','ignoredJson']
+}
+</pre>
+<p>To exclude variables from multiple processes:</p>
+<pre>
+verify(processes('SmartProcessParent', 'SmartProcessChild'), {
+    excludeVariables = ['testCase', 'inputVar']
+})
+</pre>
+<p>Note: Values in the excludeVariables list are omitted from the output of all processes/subprocesses.</p>
+
 <p>Some cases need to compare only specific values from a complex document variable instead of the entire results.
 The result document may have many subelements that are dynamic and yet are not relevant to the test's success.
 Here's an example of how to handle that scenario:</p>
@@ -238,6 +255,7 @@ assert jaxbVar.RequiredElement.text() == 'requiredElementValue'
 </pre>
 <p>In this example "load process" is used instead of "verify process" (which would fail due to unrelated dynamic elements).
 Then the master process instance status is checked, along with selected values from a specific jaxb variable.</p>
+
 
 <h3><a id="stubAdapterResponse">Stub an Adapter Response</a></h3>
 <p>If your test process involves an adapter activity, you may want to inject a stubbed response
