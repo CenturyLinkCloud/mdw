@@ -18,6 +18,7 @@ package com.centurylink.mdw.model.workflow;
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.asset.Asset;
@@ -46,6 +47,13 @@ public class Process extends Asset implements Jsonable, Yamlable, Linkable {
     private List<Activity> activities;
     private List<TextNote> textNotes;
     private List<Attribute> attributes;
+
+    public static Process fromString(String contents) {
+        if (contents.startsWith("{"))
+            return new Process(new JsonObject(contents));
+        else
+            return new Process(Yamlable.fromString(contents));
+    }
 
     public Process() {
         setLanguage(Asset.PROCESS);
@@ -663,10 +671,11 @@ public class Process extends Asset implements Jsonable, Yamlable, Linkable {
         if (subprocesses != null && !subprocesses.isEmpty()) {
             List<Map<String,Object>> subprocsList = new ArrayList<>();
             for (Process subproc : subprocesses) {
-                Map<String,Object> subprocYaml = subproc.getYaml();
                 String logicalId = subproc.getAttribute(WorkAttributeConstant.LOGICAL_ID);
+                Map<String,Object> subprocYaml = Yamlable.create();
                 subprocYaml.put("id", logicalId);
                 subprocYaml.put("name", subproc.getName());
+                subprocYaml.putAll(subproc.getYaml());
                 if (subprocYaml.containsKey("version"))
                     subprocYaml.remove("version");
                 subprocsList.add(subprocYaml);
