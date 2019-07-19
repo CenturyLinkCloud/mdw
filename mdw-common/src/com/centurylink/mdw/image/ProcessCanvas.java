@@ -15,22 +15,15 @@
  */
 package com.centurylink.mdw.image;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.LayoutManager;
-import java.awt.RenderingHints;
-import java.io.IOException;
-
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-
 import com.centurylink.mdw.draw.Diagram;
 import com.centurylink.mdw.draw.Display;
+import com.centurylink.mdw.draw.model.DrawProps;
 import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.workflow.Process;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.IOException;
 
 public class ProcessCanvas extends JPanel {
     private Diagram diagram;
@@ -44,7 +37,7 @@ public class ProcessCanvas extends JPanel {
     }
 
     public ProcessCanvas(Project project, Process process) {
-        super((LayoutManager) (new BorderLayout()));
+        super(new BorderLayout());
         this.project = project;
         this.process = process;
         this.zoom = 100;
@@ -69,7 +62,7 @@ public class ProcessCanvas extends JPanel {
         }
         try {
             Implementors implementors = new Implementors(project.getAssetRoot());
-            final Diagram d = new Diagram(g2d, this.getInitDisplay(), project, process, implementors, true);
+            final Diagram d = new Diagram(g2d, this.getInitDisplay(), project, process, implementors, new DrawProps(true, false));
             diagram = d;
             d.draw();
         }
