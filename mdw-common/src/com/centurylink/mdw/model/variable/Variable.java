@@ -19,12 +19,13 @@ import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.StringDocument;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.Value.Display;
+import com.centurylink.mdw.model.Yamlable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
+import java.util.Map;
 
-public class Variable implements Serializable, Comparable<Variable>, Jsonable {
+public class Variable implements Comparable<Variable>, Jsonable, Yamlable {
 
     public static final int CAT_LOCAL = 0;
     public static final int CAT_INPUT = 1;
@@ -212,9 +213,25 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
         this.setId(0L);
     }
 
+    public Variable(Map<String,Object> yaml) {
+        if (yaml.containsKey("name"))
+            this.name = (String)yaml.get("name");
+        this.type = (String)yaml.get("type");
+        if (yaml.containsKey("category"))
+            this.setVariableCategory(getCategoryCode((String)yaml.get("category")));
+        if (yaml.containsKey("label"))
+            this.label = (String)yaml.get("label");
+        if (yaml.containsKey("sequence"))
+            this.displaySequence = (int)yaml.get("sequence");
+        if (yaml.containsKey("display"))
+            this.display = Display.valueOf((String)yaml.get("display"));
+        this.setId(0L);
+    }
+
     /**
      * Serialized as an object, so name is not included.
      */
+    @Override
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
         json.put("type", type);
@@ -230,6 +247,20 @@ public class Variable implements Serializable, Comparable<Variable>, Jsonable {
 
     public String getJsonName() {
         return getName();
+    }
+
+    @Override
+    public Map<String,Object> getYaml() {
+        Map<String,Object> yaml = Yamlable.create();
+        yaml.put("type", type);
+        yaml.put("category", getCategory());
+        if (label != null && !label.isEmpty())
+            yaml.put("label", label);
+        if (displaySequence != null && displaySequence > 0)
+            yaml.put("sequence", displaySequence);
+        if (display != null)
+            yaml.put("display", display.toString());
+        return yaml;
     }
 
     public String toString() {
