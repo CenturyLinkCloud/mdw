@@ -146,9 +146,6 @@ public abstract class TestCaseScript extends Script {
 
             return apiRequest;
         }
-        catch (TestException ex) {
-            throw ex;
-        }
         catch (ServiceException ex) {
             throw new TestException(ex.getMessage(), ex);
         }
@@ -216,7 +213,7 @@ public abstract class TestCaseScript extends Script {
     }
 
     public TestCaseProcess[] processes(String... targets) throws TestException {
-        List<TestCaseProcess> processes = new ArrayList<TestCaseProcess>();
+        List<TestCaseProcess> processes = new ArrayList<>();
         for (int i = 0; i < targets.length; i++) {
             try {
                 Process process = getTestCaseRun().getProcess(targets[i]);
@@ -305,15 +302,11 @@ public abstract class TestCaseScript extends Script {
     }
 
     public Verifiable verify(TestCaseProcess process, Closure<?> cl) throws TestException {
-        return verify(new TestCaseProcess[]{(TestCaseProcess)process}, cl);
+        return verify(new TestCaseProcess[]{process}, cl);
     }
 
     public Verifiable verify(TestCaseProcess[] processes, Closure<?> cl) throws TestException {
-        getTestCaseRun().setPreFilter(new PreFilter(){
-            public String apply(String before) {
-                return substitute(before);
-            }
-        });
+        getTestCaseRun().setPreFilter(before -> substitute(before));
 
         if (cl != null) {
             cl.setResolveStrategy(Closure.DELEGATE_FIRST);
@@ -547,7 +540,7 @@ public abstract class TestCaseScript extends Script {
                 public String call(Object request) {
                     // binding for request
                     final TestCaseRun testCaseRun = getTestCaseRun();
-                    if (adapterStub.getResponse().indexOf("${") >= 0) {
+                    if (adapterStub.getResponse().contains("${")) {
                         try {
                             Binding binding = getBinding();
                             if (request.toString().startsWith("{")) {
@@ -687,7 +680,7 @@ public abstract class TestCaseScript extends Script {
      * performs groovy substitutions with this as delegate and inherited bindings
      */
     protected String substitute(String before) {
-        if (before.indexOf("${") == -1)
+        if (!before.contains("${"))
             return before;
         // escape all $ not followed by curly braces on same line
         before = before.replaceAll("\\$(?!\\{)", "\\\\\\$");

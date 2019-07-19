@@ -32,6 +32,10 @@ public class TestCaseProcess extends GroovyObjectSupport implements Verifiable {
     public Map<String,Object> getVariables() { return variables; }
     public void setVariables(Map<String,Object> variables) { this.variables = variables; }
 
+    private List<String> excludeVariables;
+    public List<String> getExcludeVariables() { return excludeVariables; }
+    public void setExcludeVariables(List<String> excludeVariables) { this.excludeVariables = excludeVariables; }
+
     private List<TestCaseActivityStub> activityStubs;
     public List<TestCaseActivityStub> getActivityStubs() { return activityStubs; }
     public void setActivityStubs(List<TestCaseActivityStub> stubs) { this.activityStubs = stubs; }

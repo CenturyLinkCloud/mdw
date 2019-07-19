@@ -26,8 +26,22 @@
     "NodeStyle": "BoxIcon",
     "WORK_DISPLAY_INFO": "x=23,y=18,w=156,h=27"
   },
-  "variables": {"inputVar": {
-    "category": "INPUT",
-    "type": "java.lang.String"
-  }}
+  "variables": {
+    "ignoredJson": {
+      "category": "INPUT",
+      "display": "Hidden",
+      "label": "(see IgnoredVariables.test)",
+      "type": "org.json.JSONObject"
+    },
+    "ignoredString": {
+      "category": "INPUT",
+      "display": "Hidden",
+      "label": "(see IgnoredVariables.test)",
+      "type": "java.lang.String"
+    },
+    "inputVar": {
+      "category": "INPUT",
+      "type": "java.lang.String"
+    }
+  }
 }

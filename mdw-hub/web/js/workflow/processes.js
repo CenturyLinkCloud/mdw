@@ -342,6 +342,7 @@ processMod.controller('ProcessController',
       if (res) {
         $http.delete(mdw.roots.services + '/services/Processes/' + $scope.process.id + '?app=mdw-admin')
         .then(function(response) {
+          $scope.process.status = 'Canceled';  // prevent Cancel button still showing
         }, function(response) {
           if (response.data.status)
             mdw.messages = 'Process cancel failed: ' + response.data.status.message;

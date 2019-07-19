@@ -1,0 +1,12 @@
+process: # 12342
+  name: StartStopProcess
+  instance: 1
+  activity: # 1 "2019-07-18 15:48:47.006"
+    name: Start
+    status: Completed
+  activity: # 2 "2019-07-18 15:48:47.014"
+    name: Stop
+    status: Completed
+  variable: # 16119
+    name: inputVar
+    value: I will not be ignored
