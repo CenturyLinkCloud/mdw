@@ -315,6 +315,8 @@ public abstract class TestCaseScript extends Script {
         }
         if (process.getExpectedResults() == null)
             process.setExpectedResults(getDefaultExpectedResults());
+        if (process.getExcludeVariables() != null && !process.getExcludeVariables().isEmpty())
+            processes[0].setExcludeVariables(process.getExcludeVariables());
 
         process.setSuccess(getTestCaseRun().verifyProcess(processes, process.getExpectedResults()));
         return process;

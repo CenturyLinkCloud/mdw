@@ -1,0 +1,17 @@
+package com.centurylink.mdw.tests.workflow
+
+start process('SmartProcessParent') {
+    variables = [ testCase: 'single',
+                  testCaseJson: '''{
+    "_type": "com.centurylink.mdw.tests.workflow.TestCase",
+    "testCase": {
+        "name": "single"
+    } 
+}''']
+}
+wait process
+
+verify(processes('SmartProcessParent', 'SmartProcessChild'), {
+    // exclude from results for master and all subflows
+    excludeVariables = ['testCase', 'inputVar']
+})

@@ -9,6 +9,5 @@ start process('StartStopProcess') {
 }
 wait process
 verify process {
-    // exclude from results for master and all subflows
     excludeVariables = ['ignoredString','ignoredJson']
 }
