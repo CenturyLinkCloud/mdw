@@ -43,9 +43,11 @@ public class ImageExportHelper extends ExportHelper {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
         ProcessCanvas canvas = new ProcessCanvas(project, process);
+        canvas.prepare();
         Color bgsave = canvas.getBackground();
         canvas.paintComponent(g2d);
         canvas.setBackground(bgsave);
+        canvas.dispose();
         g2d.dispose();
         Runtime r = Runtime.getRuntime();
         r.gc();

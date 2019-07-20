@@ -82,7 +82,9 @@ public class PdfExportHelper extends ExportHelper {
         Chapter chapter = new Chapter(cTitle, chapterNumber);
         // print image
         ProcessCanvas canvas = new ProcessCanvas(project, process);
+        canvas.prepare();
         printGraph(writer, canvas, process, pageSize, chapter);
+        canvas.dispose();
         // print documentation text
         printGraphDocumentation(process, chapter);
         for (Activity node : process.getActivitiesOrderBySeq()) {
