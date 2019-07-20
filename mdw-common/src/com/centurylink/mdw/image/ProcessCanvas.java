@@ -30,6 +30,7 @@ public class ProcessCanvas extends JPanel {
     private int zoom;
     private Project project;
     private Process process;
+    private Color background;
 
     private Display getInitDisplay() {
         return new Display(0, 0, ProcessCanvas.this.getSize().width - 1,
@@ -41,15 +42,22 @@ public class ProcessCanvas extends JPanel {
         this.project = project;
         this.process = process;
         this.zoom = 100;
-        Display.Companion.setDEFAULT_COLOR(UIManager.getColor("EditorPane.foreground"));
-        Display.Companion.setGRID_COLOR(Color.WHITE);
-        Display.Companion.setOUTLINE_COLOR(UIManager.getColor("EditorPane.foreground"));
-        Display.Companion.setSHADOW_COLOR(new Color(0, 0, 0, 50));
-        Display.Companion.setMETA_COLOR(Color.GRAY);
-        Display.Companion.setBACKGROUND_COLOR(UIManager.getColor("EditorPane.background"));
-        this.setBackground(Display.Companion.getBACKGROUND_COLOR());
+        this.setBackground(Color.WHITE);
         this.setFocusable(true);
         this.setAutoscrolls(true);
+    }
+
+    public void prepare() {
+        Display.Companion.setDEFAULT_COLOR(new Color(29, 29, 29));
+        Display.Companion.setOUTLINE_COLOR(Color.BLACK);
+        background = Display.Companion.getBACKGROUND_COLOR();
+        Display.Companion.setBACKGROUND_COLOR(Color.WHITE);
+    }
+
+    public void dispose() {
+        Display.Companion.setDEFAULT_COLOR(UIManager.getColor("EditorPane.foreground"));
+        Display.Companion.setOUTLINE_COLOR(UIManager.getColor("EditorPane.foreground"));
+        Display.Companion.setBACKGROUND_COLOR(background);
     }
 
     @Override
@@ -62,7 +70,8 @@ public class ProcessCanvas extends JPanel {
         }
         try {
             Implementors implementors = new Implementors(project.getAssetRoot());
-            final Diagram d = new Diagram(g2d, this.getInitDisplay(), project, process, implementors, new DrawProps(true, false));
+            final Diagram d = new Diagram(g2d, getInitDisplay(), project, process, implementors, new DrawProps(true, false));
+            d.setShowGrid(false);
             diagram = d;
             d.draw();
         }
