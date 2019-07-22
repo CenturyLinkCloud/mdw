@@ -145,7 +145,7 @@ public class ResourceReaderExtension extends ServletReaderExtension implements R
                 ApiImplicitParams implicitParams = ReflectionUtils.getAnnotation(method, ApiImplicitParams.class);
                 if (implicitParams != null && implicitParams.value() != null && implicitParams.value().length == 1) {
                     ApiImplicitParam implicitParam = implicitParams.value()[0];
-                    if (implicitParam.name() != null && !"body".equals(implicitParam.paramType()) && !"query".equals(implicitParam.paramType()))
+                    if (implicitParam.name() != null && !"body".equals(implicitParam.paramType()) && !"query".equals(implicitParam.paramType()) && !"header".equals(implicitParam.paramType()) && !"form".equals(implicitParam.paramType()))
                         p += "/{" + implicitParam.name() + "}";
                 }
             }
