@@ -46,10 +46,10 @@ public class Dependency implements Operation {
         if (mdwHome == null)
             throw new IOException("Missing environment variable: MDW_HOME");
         File mdwDir = new File(mdwHome);
-        if (!mdwDir.isDirectory())
+        if (!mdwDir.isDirectory() && !mdwDir.mkdirs())
             throw new IOException("MDW_HOME is not a directory: " + mdwDir.getAbsolutePath());
         File libDir = new File (mdwDir + "/lib");
-        if (!libDir.exists() && !libDir.mkdirs())
+        if (!libDir.isDirectory() && !libDir.mkdirs())
             throw new IOException("Cannot create lib dir: " + libDir.getAbsolutePath());
         return libDir;
     }
