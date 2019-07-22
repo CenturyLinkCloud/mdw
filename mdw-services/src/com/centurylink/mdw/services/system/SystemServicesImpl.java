@@ -586,7 +586,7 @@ public class SystemServicesImpl implements SystemServices {
         logger.debug("Running MDW CLI command: '" + cmd);
 
         ProcessBuilder builder = new ProcessBuilder(cmd);
-        builder.environment().put("MDW_HOME", mdwHome);
+        builder.environment().put("MDW_HOME", new File(mdwHome).getAbsolutePath());
         builder.directory(new File(PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH)));
         builder.redirectErrorStream(true);
         Process process = builder.start();
