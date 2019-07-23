@@ -28,7 +28,7 @@
                           "id": ${~\\d*},
                           "name": "MilestonesMain",
                           "packageName": "com.centurylink.mdw.tests.milestones",
-                          "version": "0.7"
+                          "version": "0.${~\\d*}"
                         },
                         "processInstance": {
                           "end": "${~.*}",
@@ -56,7 +56,7 @@
                           "id": ${~.\\d*},
                           "name": "MilestonesMain",
                           "packageName": "com.centurylink.mdw.tests.milestones",
-                          "version": "0.7"
+                          "version": "0.${~\\d*}"
                         },
                         "processInstance": {
                           "end": "${~.*}",
@@ -85,7 +85,7 @@
                         "id": ${~\\d*},
                         "name": "SubThree",
                         "packageName": "com.centurylink.mdw.tests.milestones",
-                        "version": "0.2"
+                        "version": "0.${~\\d*}"
                       },
                       "processInstance": {
                         "end": "${~.*}",
@@ -114,7 +114,7 @@
                       "id": ${~\\d*},
                       "name": "SubThree",
                       "packageName": "com.centurylink.mdw.tests.milestones",
-                      "version": "0.2"
+                      "version": "0.${~\\d*}"
                     },
                     "processInstance": {
                       "end": "${~.*}",
@@ -147,7 +147,7 @@
                           "id": ${~\\d*},
                           "name": "MilestonesMain",
                           "packageName": "com.centurylink.mdw.tests.milestones",
-                          "version": "0.7"
+                          "version": "0.${~\\d*}"
                         },
                         "processInstance": {
                           "end": "${~.*}",
@@ -175,7 +175,7 @@
                           "id": ${~\\d*},
                           "name": "MilestonesMain",
                           "packageName": "com.centurylink.mdw.tests.milestones",
-                          "version": "0.7"
+                          "version": "0.${~\\d*}"
                         },
                         "processInstance": {
                           "end": "${~.*}",
@@ -204,7 +204,7 @@
                         "id": ${~\\d*},
                         "name": "SubThree",
                         "packageName": "com.centurylink.mdw.tests.milestones",
-                        "version": "0.2"
+                        "version": "0.${~\\d*}"
                       },
                       "processInstance": {
                         "end": "${~.*}",
@@ -233,7 +233,7 @@
                       "id": ${~\\d*},
                       "name": "SubThree",
                       "packageName": "com.centurylink.mdw.tests.milestones",
-                      "version": "0.2"
+                      "version": "0.${~\\d*}"
                     },
                     "processInstance": {
                       "end": "${~.*}",
@@ -265,7 +265,7 @@
                         "id": ${~\\d*},
                         "name": "MilestonesMain",
                         "packageName": "com.centurylink.mdw.tests.milestones",
-                        "version": "0.7"
+                        "version": "0.${~\\d*}"
                       },
                       "processInstance": {
                         "end": "${~.*}",
@@ -293,7 +293,7 @@
                         "id": ${~\\d*},
                         "name": "MilestonesMain",
                         "packageName": "com.centurylink.mdw.tests.milestones",
-                        "version": "0.7"
+                        "version": "0.${~\\d*}"
                       },
                       "processInstance": {
                         "end": "${~.*}",
@@ -322,7 +322,7 @@
                       "id": ${~\\d*},
                       "name": "SubThree",
                       "packageName": "com.centurylink.mdw.tests.milestones",
-                      "version": "0.2"
+                      "version": "0.${~\\d*}"
                     },
                     "processInstance": {
                       "end": "${~.*}",
@@ -352,7 +352,7 @@
                   "id": ${~\\d*},
                   "name": "SubOne",
                   "packageName": "com.centurylink.mdw.tests.milestones",
-                  "version": "0.9"
+                  "version": "0.${~\\d*}"
                 },
                 "processInstance": {
                   "end": "${~.*}",
@@ -381,7 +381,7 @@
                 "id": ${~\\d*},
                 "name": "SubOne",
                 "packageName": "com.centurylink.mdw.tests.milestones",
-                "version": "0.9"
+                "version": "0.${~\\d*}"
               },
               "processInstance": {
                 "end": "${~.*}",
@@ -411,7 +411,7 @@
               "id": ${~\\d*},
               "name": "SubOne",
               "packageName": "com.centurylink.mdw.tests.milestones",
-              "version": "0.9"
+              "version": "0.${~\\d*}"
             },
             "processInstance": {
               "end": "${~.*}",
@@ -440,7 +440,7 @@
             "id": ${~\\d*},
             "name": "SubOne",
             "packageName": "com.centurylink.mdw.tests.milestones",
-            "version": "0.9"
+            "version": "0.${~\\d*}"
           },
           "processInstance": {
             "end": "${~.*}",
@@ -478,7 +478,7 @@
                           "id": ${~\\d*},
                           "name": "MilestonesMain",
                           "packageName": "com.centurylink.mdw.tests.milestones",
-                          "version": "0.7"
+                          "version": "0.${~\\d*}"
                         },
                         "processInstance": {
                           "end": "${~.*}",
@@ -506,7 +506,7 @@
                           "id": ${~\\d*},
                           "name": "MilestonesMain",
                           "packageName": "com.centurylink.mdw.tests.milestones",
-                          "version": "0.7"
+                          "version": "0.${~\\d*}"
                         },
                         "processInstance": {
                           "end": "${~.*}",
@@ -535,7 +535,7 @@
                         "id": ${~\\d*},
                         "name": "SubThree",
                         "packageName": "com.centurylink.mdw.tests.milestones",
-                        "version": "0.2"
+                        "version": "0.${~\\d*}"
                       },
                       "processInstance": {
                         "end": "${~.*}",
@@ -564,7 +564,7 @@
                       "id": ${~\\d*},
                       "name": "SubThree",
                       "packageName": "com.centurylink.mdw.tests.milestones",
-                      "version": "0.2"
+                      "version": "0.${~\\d*}"
                     },
                     "processInstance": {
                       "end": "${~.*}",
@@ -597,7 +597,7 @@
                           "id": ${~\\d*},
                           "name": "MilestonesMain",
                           "packageName": "com.centurylink.mdw.tests.milestones",
-                          "version": "0.7"
+                          "version": "0.${~\\d*}"
                         },
                         "processInstance": {
                           "end": "${~.*}",
@@ -625,7 +625,7 @@
                           "id": ${~\\d*},
                           "name": "MilestonesMain",
                           "packageName": "com.centurylink.mdw.tests.milestones",
-                          "version": "0.7"
+                          "version": "0.${~\\d*}"
                         },
                         "processInstance": {
                           "end": "${~.*}",
@@ -654,7 +654,7 @@
                         "id": ${~\\d*},
                         "name": "SubThree",
                         "packageName": "com.centurylink.mdw.tests.milestones",
-                        "version": "0.2"
+                        "version": "0.${~\\d*}"
                       },
                       "processInstance": {
                         "end": "${~.*}",
@@ -683,7 +683,7 @@
                       "id": ${~\\d*},
                       "name": "SubThree",
                       "packageName": "com.centurylink.mdw.tests.milestones",
-                      "version": "0.2"
+                      "version": "0.${~\\d*}"
                     },
                     "processInstance": {
                       "end": "${~.*}",
@@ -715,7 +715,7 @@
                         "id": ${~\\d*},
                         "name": "MilestonesMain",
                         "packageName": "com.centurylink.mdw.tests.milestones",
-                        "version": "0.7"
+                        "version": "0.${~\\d*}"
                       },
                       "processInstance": {
                         "end": "${~.*}",
@@ -743,7 +743,7 @@
                         "id": ${~\\d*},
                         "name": "MilestonesMain",
                         "packageName": "com.centurylink.mdw.tests.milestones",
-                        "version": "0.7"
+                        "version": "0.${~\\d*}"
                       },
                       "processInstance": {
                         "end": "${~.*}",
@@ -772,7 +772,7 @@
                       "id": ${~\\d*},
                       "name": "SubThree",
                       "packageName": "com.centurylink.mdw.tests.milestones",
-                      "version": "0.2"
+                      "version": "0.${~\\d*}"
                     },
                     "processInstance": {
                       "end": "${~.*}",
@@ -802,7 +802,7 @@
                   "id": ${~\\d*},
                   "name": "SubOne",
                   "packageName": "com.centurylink.mdw.tests.milestones",
-                  "version": "0.9"
+                  "version": "0.${~\\d*}"
                 },
                 "processInstance": {
                   "end": "${~.*}",
@@ -831,7 +831,7 @@
                 "id": ${~\\d*},
                 "name": "SubOne",
                 "packageName": "com.centurylink.mdw.tests.milestones",
-                "version": "0.9"
+                "version": "0.${~\\d*}"
               },
               "processInstance": {
                 "end": "${~.*}",
@@ -861,7 +861,7 @@
               "id": ${~\\d*},
               "name": "SubOne",
               "packageName": "com.centurylink.mdw.tests.milestones",
-              "version": "0.9"
+              "version": "0.${~\\d*}"
             },
             "processInstance": {
               "end": "${~.*}",
@@ -890,7 +890,7 @@
             "id": ${~\\d*},
             "name": "SubOne",
             "packageName": "com.centurylink.mdw.tests.milestones",
-            "version": "0.9"
+            "version": "0.${~\\d*}"
           },
           "processInstance": {
             "end": "${~.*}",
@@ -927,7 +927,7 @@
                         "id": ${~\\d*},
                         "name": "MilestonesMain",
                         "packageName": "com.centurylink.mdw.tests.milestones",
-                        "version": "0.7"
+                        "version": "0.${~\\d*}"
                       },
                       "processInstance": {
                         "end": "${~.*}",
@@ -955,7 +955,7 @@
                         "id": ${~\\d*},
                         "name": "MilestonesMain",
                         "packageName": "com.centurylink.mdw.tests.milestones",
-                        "version": "0.7"
+                        "version": "0.${~\\d*}"
                       },
                       "processInstance": {
                         "end": "${~.*}",
@@ -984,7 +984,7 @@
                       "id": ${~\\d*},
                       "name": "SubThree",
                       "packageName": "com.centurylink.mdw.tests.milestones",
-                      "version": "0.2"
+                      "version": "0.${~\\d*}"
                     },
                     "processInstance": {
                       "end": "${~.*}",
@@ -1013,7 +1013,7 @@
                     "id": ${~\\d*},
                     "name": "SubThree",
                     "packageName": "com.centurylink.mdw.tests.milestones",
-                    "version": "0.2"
+                    "version": "0.${~\\d*}"
                   },
                   "processInstance": {
                     "end": "${~.*}",
@@ -1046,7 +1046,7 @@
                         "id": ${~\\d*},
                         "name": "MilestonesMain",
                         "packageName": "com.centurylink.mdw.tests.milestones",
-                        "version": "0.7"
+                        "version": "0.${~\\d*}"
                       },
                       "processInstance": {
                         "end": "${~.*}",
@@ -1074,7 +1074,7 @@
                         "id": ${~\\d*},
                         "name": "MilestonesMain",
                         "packageName": "com.centurylink.mdw.tests.milestones",
-                        "version": "0.7"
+                        "version": "0.${~\\d*}"
                       },
                       "processInstance": {
                         "end": "${~.*}",
@@ -1103,7 +1103,7 @@
                       "id": ${~\\d*},
                       "name": "SubThree",
                       "packageName": "com.centurylink.mdw.tests.milestones",
-                      "version": "0.2"
+                      "version": "0.${~\\d*}"
                     },
                     "processInstance": {
                       "end": "${~.*}",
@@ -1132,7 +1132,7 @@
                     "id": ${~\\d*},
                     "name": "SubThree",
                     "packageName": "com.centurylink.mdw.tests.milestones",
-                    "version": "0.2"
+                    "version": "0.${~\\d*}"
                   },
                   "processInstance": {
                     "end": "${~.*}",
@@ -1164,7 +1164,7 @@
                       "id": ${~\\d*},
                       "name": "MilestonesMain",
                       "packageName": "com.centurylink.mdw.tests.milestones",
-                      "version": "0.7"
+                      "version": "0.${~\\d*}"
                     },
                     "processInstance": {
                       "end": "${~.*}",
@@ -1192,7 +1192,7 @@
                       "id": ${~\\d*},
                       "name": "MilestonesMain",
                       "packageName": "com.centurylink.mdw.tests.milestones",
-                      "version": "0.7"
+                      "version": "0.${~\\d*}"
                     },
                     "processInstance": {
                       "end": "${~.*}",
@@ -1221,7 +1221,7 @@
                     "id": ${~\\d*},
                     "name": "SubThree",
                     "packageName": "com.centurylink.mdw.tests.milestones",
-                    "version": "0.2"
+                    "version": "0.${~\\d*}"
                   },
                   "processInstance": {
                     "end": "${~.*}",
@@ -1251,7 +1251,7 @@
                 "id": ${~\\d*},
                 "name": "SubOne",
                 "packageName": "com.centurylink.mdw.tests.milestones",
-                "version": "0.9"
+                "version": "0.${~\\d*}"
               },
               "processInstance": {
                 "end": "${~.*}",
@@ -1280,7 +1280,7 @@
               "id": ${~\\d*},
               "name": "SubOne",
               "packageName": "com.centurylink.mdw.tests.milestones",
-              "version": "0.9"
+              "version": "0.${~\\d*}"
             },
             "processInstance": {
               "end": "${~.*}",
@@ -1310,7 +1310,7 @@
             "id": ${~\\d*},
             "name": "SubOne",
             "packageName": "com.centurylink.mdw.tests.milestones",
-            "version": "0.9"
+            "version": "0.${~\\d*}"
           },
           "processInstance": {
             "end": "${~.*}",
@@ -1343,7 +1343,7 @@
                 "id": ${~\\d*},
                 "name": "MilestonesMain",
                 "packageName": "com.centurylink.mdw.tests.milestones",
-                "version": "0.7"
+                "version": "0.${~\\d*}"
               },
               "processInstance": {
                 "end": "${~.*}",
@@ -1371,7 +1371,7 @@
                 "id": ${~\\d*},
                 "name": "MilestonesMain",
                 "packageName": "com.centurylink.mdw.tests.milestones",
-                "version": "0.7"
+                "version": "0.${~\\d*}"
               },
               "processInstance": {
                 "end": "${~.*}",
@@ -1400,7 +1400,7 @@
               "id": ${~\\d*},
               "name": "SubTwoSub",
               "packageName": "com.centurylink.mdw.tests.milestones",
-              "version": "0.3"
+              "version": "0.${~\\d*}"
             },
             "processInstance": {
               "end": "${~.*}",
@@ -1429,7 +1429,7 @@
             "id": ${~\\d*},
             "name": "SubTwo",
             "packageName": "com.centurylink.mdw.tests.milestones",
-            "version": "0.5"
+            "version": "0.${~\\d*}"
           },
           "processInstance": {
             "end": "${~.*}",
@@ -1459,7 +1459,7 @@
         "id": ${~\\d*},
         "name": "MilestonesMain",
         "packageName": "com.centurylink.mdw.tests.milestones",
-        "version": "0.7"
+        "version": "0.${~\\d*}"
       },
       "processInstance": {
         "end": "${~.*}",
@@ -1490,7 +1490,7 @@
       "id": ${~\\d*},
       "name": "MilestonesMain",
       "packageName": "com.centurylink.mdw.tests.milestones",
-      "version": "0.7"
+      "version": "0.${~\\d*}"
     },
     "processInstance": {
       "end": "${~.*}",

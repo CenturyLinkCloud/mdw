@@ -1,114 +1,120 @@
-{
-  "activities": [
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=55,y=98,w=60,h=40"},
-      "id": "A1",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
-      "name": "Start",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=155,ly=119,xs=119&192,ys=119&119"},
-        "event": "FINISH",
-        "id": "T1",
-        "to": "A3"
-      }]
-    },
-    {
-      "attributes": {
-        "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=735,y=212,w=60,h=40"
-      },
-      "id": "A2",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
-      "name": "Stop"
-    },
-    {
-      "attributes": {
-        "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
-        "Rule": "runtimeContext.logDebug(\"Executing \" + runtimeContext.activity.name)",
-        "SCRIPT": "Groovy",
-        "WORK_DISPLAY_INFO": "x=196,y=89,w=100,h=60"
-      },
-      "id": "A3",
-      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
-      "name": "Milestone\nOne",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=245,ly=178,xs=245&245,ys=154&202"},
-        "event": "FINISH",
-        "id": "T2",
-        "to": "A4"
-      }]
-    },
-    {
-      "attributes": {
-        "Output Documents": "[\"executionPlan\"]",
-        "Rule": "import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument\nimport com.centurylink.mdw.bpm.ParameterDocument.Parameter\nimport com.centurylink.mdw.bpm.ProcessExecutionPlanDocument.ProcessExecutionPlan\nimport com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance\nimport com.centurylink.mdw.model.workflow.WorkStatus\n\nexecutionPlan = ProcessExecutionPlanDocument.Factory.newInstance()\nProcessExecutionPlan exeplan = executionPlan.addNewProcessExecutionPlan()\n\nSubprocessInstance subprocinst = exeplan.addNewSubprocessInstance()\nsubprocinst.setLogicalProcessName(\"SubOne\")\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\naddParameter(subprocinst, \"inputVar\", \"\\$subOneInput\")\n\nsubprocinst = exeplan.addNewSubprocessInstance()\nsubprocinst.setLogicalProcessName(\"SubTwo\")\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())\naddParameter(subprocinst, \"inputVar\", \"\\$subTwoInput\")\n\nvoid addParameter(SubprocessInstance subprocinst, String name, String value) {\n    Parameter param = subprocinst.addNewParameter()\n    param.setName(name)\n    param.setStringValue(value)\n}\n",
-        "SCRIPT": "Groovy",
-        "WORK_DISPLAY_INFO": "x=195,y=205,w=100,h=60"
-      },
-      "id": "A4",
-      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
-      "name": "Create\nPlan",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=349,ly=236,xs=299&399,ys=236&236"},
-        "event": "FINISH",
-        "id": "T3",
-        "to": "A5"
-      }]
-    },
-    {
-      "attributes": {
-        "Execution Plan": "executionPlan",
-        "Monitors": "[[\"false\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
-        "STATUS_AFTER_EVENT": "Hold",
-        "WORK_DISPLAY_INFO": "x=403,y=206,w=100,h=60",
-        "processmap": "[[\"SubOne\",\"com.centurylink.mdw.tests.milestones/SubOne.proc\",\"[0,1)\"],[\"SubTwo\",\"com.centurylink.mdw.tests.milestones/SubTwo.proc\",\"[0.1,1)\"]]",
-        "synchronous": "true"
-      },
-      "id": "A5",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity",
-      "name": "Invoke\nSubs",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=545,ly=235,xs=507&584,ys=235&235"},
-        "event": "FINISH",
-        "id": "T4",
-        "to": "A6"
-      }]
-    },
-    {
-      "attributes": {
-        "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=588,y=214,w=60,h=40"
-      },
-      "id": "A6",
-      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
-      "name": "Lastly",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=691,ly=233,xs=652&731,ys=233&233"},
-        "event": "FINISH",
-        "id": "T5",
-        "to": "A2"
-      }]
-    }
-  ],
-  "attributes": {
-    "ArrowStyle": "ArrowEnd",
-    "NodeStyle": "BoxIcon",
-    "PROCESS_VISIBILITY": "PUBLIC",
-    "PerformanceLevel": "0",
-    "WORK_DISPLAY_INFO": "x=35,y=34,w=149,h=26"
-  },
-  "variables": {
-    "executionPlan": {
-      "category": "LOCAL",
-      "type": "org.apache.xmlbeans.XmlObject"
-    },
-    "subOneInput": {
-      "category": "INPUT",
-      "type": "java.lang.String"
-    },
-    "subTwoInput": {
-      "category": "INPUT",
-      "type": "java.lang.String"
-    }
-  }
-}
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=60,y=100,w=60,h=40
+  transitions:
+  - id: T1
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=158,ly=119,xs=124&192,ys=119&119
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""],["true","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["true","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
+    WORK_DISPLAY_INFO: x=735,y=212,w=60,h=40
+- id: A3
+  name: |-
+    Milestone
+    One
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""],["true","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["true","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
+    Rule: runtimeContext.logDebug("Executing " + runtimeContext.activity.name)
+    SCRIPT: Groovy
+    WORK_DISPLAY_INFO: x=196,y=89,w=100,h=60
+  transitions:
+  - id: T2
+    to: A4
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=245,ly=178,xs=245&245,ys=154&202
+- id: A4
+  name: |-
+    Create
+    Plan
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    Output Documents: '["executionPlan"]'
+    Rule: |
+      import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument
+      import com.centurylink.mdw.bpm.ParameterDocument.Parameter
+      import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument.ProcessExecutionPlan
+      import com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance
+      import com.centurylink.mdw.model.workflow.WorkStatus
+
+      executionPlan = ProcessExecutionPlanDocument.Factory.newInstance()
+      ProcessExecutionPlan exeplan = executionPlan.addNewProcessExecutionPlan()
+
+      SubprocessInstance subprocinst = exeplan.addNewSubprocessInstance()
+      subprocinst.setLogicalProcessName("SubOne")
+      subprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())
+      addParameter(subprocinst, "inputVar", "\$subOneInput")
+
+      subprocinst = exeplan.addNewSubprocessInstance()
+      subprocinst.setLogicalProcessName("SubTwo")
+      subprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue())
+      addParameter(subprocinst, "inputVar", "\$subTwoInput")
+
+      void addParameter(SubprocessInstance subprocinst, String name, String value) {
+          Parameter param = subprocinst.addNewParameter()
+          param.setName(name)
+          param.setStringValue(value)
+      }
+    SCRIPT: Groovy
+    WORK_DISPLAY_INFO: x=195,y=205,w=100,h=60
+  transitions:
+  - id: T3
+    to: A5
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=349,ly=236,xs=299&399,ys=236&236
+- id: A5
+  name: |-
+    Invoke
+    Subs
+  implementor: com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity
+  attributes:
+    Execution Plan: executionPlan
+    Monitors: '[["false","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""],["true","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["true","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
+    STATUS_AFTER_EVENT: Hold
+    WORK_DISPLAY_INFO: x=403,y=206,w=100,h=60
+    processmap: '[["SubOne","com.centurylink.mdw.tests.milestones/SubOne.proc","[0,1)"],["SubTwo","com.centurylink.mdw.tests.milestones/SubTwo.proc","[0.1,1)"]]'
+    synchronous: 'true'
+  transitions:
+  - id: T4
+    to: A6
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=545,ly=235,xs=507&584,ys=235&235
+- id: A6
+  name: Lastly
+  implementor: com.centurylink.mdw.workflow.activity.DefaultActivityImpl
+  attributes:
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""],["true","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["true","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
+    WORK_DISPLAY_INFO: x=588,y=214,w=60,h=40
+  transitions:
+  - id: T5
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=691,ly=233,xs=652&731,ys=233&233
+variables:
+  executionPlan:
+    type: org.apache.xmlbeans.XmlObject
+    category: LOCAL
+  subOneInput:
+    type: java.lang.String
+    category: INPUT
+  subTwoInput:
+    type: java.lang.String
+    category: INPUT
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: PUBLIC
+  PerformanceLevel: '0'
+  WORK_DISPLAY_INFO: x=35,y=34,w=149,h=26
