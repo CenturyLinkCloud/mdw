@@ -1,101 +1,79 @@
-{
-  "activities": [
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=28,y=129,w=60,h=40"},
-      "id": "A1",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
-      "name": "Start",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=117,ly=148,xs=92&142,ys=148&148"},
-        "event": "FINISH",
-        "id": "T1",
-        "to": "A5"
-      }]
-    },
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=638,y=119,w=60,h=40"},
-      "id": "A2",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
-      "name": "Stop"
-    },
-    {
-      "attributes": {
-        "SLA": "${timeout}",
-        "SLA_DISPLAY_UNITS": "Minutes",
-        "STATUS_AFTER_TIMEOUT": "Cancelled",
-        "WAIT_EVENT_NAMES": "[[\"Never\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=338,y=122,w=100,h=60"
-      },
-      "id": "A3",
-      "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
-      "name": "Never",
-      "transitions": [
-        {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=538,ly=140,xs=442&634,ys=140&140"},
-          "event": "FINISH",
-          "id": "T2",
-          "to": "A2"
-        },
-        {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=334,ly=228,xs=388&280,ys=186&271"},
-          "event": "DELAY",
-          "id": "T3",
-          "to": "A4"
-        }
-      ]
-    },
-    {
-      "attributes": {
-        "Rule": "variables[\"after\"] = System.currentTimeMillis()",
-        "SCRIPT": "Kotlin Script",
-        "WORK_DISPLAY_INFO": "x=231,y=275,w=100,h=60"
-      },
-      "id": "A4",
-      "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
-      "name": "After",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=484,ly=222,xs=334&634,ys=305&139"},
-        "event": "FINISH",
-        "id": "T4",
-        "to": "A2"
-      }]
-    },
-    {
-      "attributes": {
-        "Rule": "variables[\"before\"] = System.currentTimeMillis()",
-        "SCRIPT": "Kotlin Script",
-        "WORK_DISPLAY_INFO": "x=146,y=119,w=100,h=60"
-      },
-      "id": "A5",
-      "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
-      "name": "Before",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=292,ly=150,xs=250&334,ys=150&150"},
-        "event": "FINISH",
-        "id": "T5",
-        "to": "A3"
-      }]
-    }
-  ],
-  "attributes": {
-    "ArrowStyle": "ArrowEnd",
-    "NodeStyle": "BoxIcon",
-    "PROCESS_VISIBILITY": "PUBLIC",
-    "PerformanceLevel": "0",
-    "WORK_DISPLAY_INFO": "x=45,y=46,w=252,h=26"
-  },
-  "variables": {
-    "after": {
-      "category": "LOCAL",
-      "type": "java.lang.Long"
-    },
-    "before": {
-      "category": "LOCAL",
-      "type": "java.lang.Long"
-    },
-    "timeout": {
-      "category": "INPUT",
-      "type": "java.lang.Integer"
-    }
-  }
-}
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=28,y=129,w=60,h=40
+  transitions:
+  - id: T1
+    to: A5
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=117,ly=148,xs=92&142,ys=148&148
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=638,y=119,w=60,h=40
+- id: A3
+  name: Never
+  implementor: com.centurylink.mdw.workflow.activity.event.EventWaitActivity
+  attributes:
+    SLA: ${timeout}
+    SLA_DISPLAY_UNITS: Minutes
+    STATUS_AFTER_TIMEOUT: Cancelled
+    WAIT_EVENT_NAMES: '[["Never",""]]'
+    WORK_DISPLAY_INFO: x=338,y=122,w=100,h=60
+  transitions:
+  - id: T2
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=538,ly=140,xs=442&634,ys=140&140
+  - id: T3
+    to: A4
+    event: DELAY
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=334,ly=228,xs=388&280,ys=186&271
+- id: A4
+  name: After
+  implementor: com.centurylink.mdw.kotlin.ScriptActivity
+  attributes:
+    Rule: variables["after"] = System.currentTimeMillis()
+    SCRIPT: Kotlin Script
+    WORK_DISPLAY_INFO: x=231,y=275,w=100,h=60
+  transitions:
+  - id: T4
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=484,ly=222,xs=334&634,ys=305&139
+- id: A5
+  name: Before
+  implementor: com.centurylink.mdw.kotlin.ScriptActivity
+  attributes:
+    Rule: variables["before"] = System.currentTimeMillis()
+    SCRIPT: Kotlin Script
+    WORK_DISPLAY_INFO: x=146,y=119,w=100,h=60
+  transitions:
+  - id: T5
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=292,ly=150,xs=250&334,ys=150&150
+variables:
+  after:
+    type: java.lang.Long
+    category: LOCAL
+  before:
+    type: java.lang.Long
+    category: LOCAL
+  timeout:
+    type: java.lang.Integer
+    category: INPUT
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: PUBLIC
+  PerformanceLevel: '0'
+  WORK_DISPLAY_INFO: x=45,y=46,w=252,h=26

@@ -1,10 +1,10 @@
-DroolsActivity.proc=16
+DroolsActivity.proc=17
 DroolsActivity.test=3
 DroolsActivity.yaml=1
-DroolsDecisionTable.proc=5
+DroolsDecisionTable.proc=6
 DroolsDecisionTable.test=3
 DroolsDecisionTable.yaml=3
-DroolsDecisionTableMultisheet.proc=4
+DroolsDecisionTableMultisheet.proc=5
 DroolsMultisheetDecisionTable.test=3
 DroolsMultisheetDecisionTable.yaml=1
 Order.java=2

@@ -1,55 +1,49 @@
-{
-  "activities": [
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=47,y=94,w=60,h=40"},
-      "id": "A1",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
-      "name": "Start",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=138,ly=113,xs=111&165,ys=113&113"},
-        "event": "FINISH",
-        "id": "T1",
-        "to": "A4"
-      }]
-    },
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=458,y=94,w=60,h=40"},
-      "id": "A2",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
-      "name": "Stop"
-    },
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=316,y=87,w=85,h=53"},
-      "id": "A3",
-      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
-      "name": "Not\nInterested",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=429,ly=114,xs=405&454,ys=114&114"},
-        "event": "FINISH",
-        "id": "T3",
-        "to": "A2"
-      }]
-    },
-    {
-      "attributes": {
-        "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=169,y=85,w=82,h=56"
-      },
-      "id": "A4",
-      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
-      "name": "Hugely\nImportant",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=283,ly=113,xs=255&312,ys=113&113"},
-        "event": "FINISH",
-        "id": "T2",
-        "to": "A3"
-      }]
-    }
-  ],
-  "attributes": {
-    "ArrowStyle": "ArrowEnd",
-    "NodeStyle": "BoxIcon",
-    "PROCESS_VISIBILITY": "PUBLIC",
-    "WORK_DISPLAY_INFO": "x=33,y=14,w=111,h=26"
-  }
-}
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=47,y=94,w=60,h=40
+  transitions:
+  - id: T1
+    to: A4
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=138,ly=113,xs=111&165,ys=113&113
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=458,y=94,w=60,h=40
+- id: A3
+  name: |-
+    Not
+    Interested
+  implementor: com.centurylink.mdw.workflow.activity.DefaultActivityImpl
+  attributes:
+    WORK_DISPLAY_INFO: x=316,y=87,w=85,h=53
+  transitions:
+  - id: T3
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=429,ly=114,xs=405&454,ys=114&114
+- id: A4
+  name: |-
+    Hugely
+    Important
+  implementor: com.centurylink.mdw.workflow.activity.DefaultActivityImpl
+  attributes:
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""],["true","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["true","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
+    WORK_DISPLAY_INFO: x=169,y=85,w=82,h=56
+  transitions:
+  - id: T2
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=283,ly=113,xs=255&312,ys=113&113
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: PUBLIC
+  WORK_DISPLAY_INFO: x=33,y=14,w=111,h=26

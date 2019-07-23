@@ -1,180 +1,155 @@
-{
-  "activities": [
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=70,y=70,w=60,h=40"},
-      "id": "A1",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
-      "name": "Start",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=162,ly=90,xs=134&190,ys=90&90"},
-        "event": "FINISH",
-        "id": "T1",
-        "to": "A5"
-      }]
-    },
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=907,y=392,w=60,h=40"},
-      "id": "A2",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
-      "name": "Stop"
-    },
-    {
-      "attributes": {
-        "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=80,y=203,w=96,h=69"
-      },
-      "id": "A6",
-      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
-      "name": "Milestone\nOne-One",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=274,ly=313,xs=180&369,ys=237&389"},
-        "event": "FINISH",
-        "id": "T8",
-        "to": "A7"
-      }]
-    },
-    {
-      "attributes": {
-        "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"Waiting [Pause]\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
-        "SLA_DISPLAY_UNITS": "Hours",
-        "STATUS_AFTER_TIMEOUT": "Cancelled",
-        "WAIT_EVENT_NAMES": "[[\"milestoneWait-${masterRequestId}\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=577,y=115,w=108,h=67"
-      },
-      "id": "A4",
-      "implementor": "com.centurylink.mdw.workflow.activity.event.EventWaitActivity",
-      "name": "Waiting\nMilestone",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=718,ly=191,xs=689&748,ys=148&235"},
-        "event": "FINISH",
-        "id": "T3",
-        "to": "A9"
-      }]
-    },
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=194,y=56,w=111,h=58"},
-      "id": "A5",
-      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
-      "name": "Unimportant",
-      "transitions": [
-        {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=188,ly=158,xs=249&128,ys=117&199"},
-          "event": "FINISH",
-          "id": "T4",
-          "to": "A6"
-        },
-        {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=360,ly=89,xs=309&412,ys=89&89"},
-          "event": "FINISH",
-          "id": "T5",
-          "to": "A3"
-        },
-        {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=285,ly=143,xs=285&285,ys=118&169"},
-          "event": "FINISH",
-          "id": "T9",
-          "to": "A8"
-        }
-      ]
-    },
-    {
-      "attributes": {
-        "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"Custom Label\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=416,y=65,w=106,h=60"
-      },
-      "id": "A3",
-      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
-      "name": "Spellbinding",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=433,ly=244,xs=433&433,ys=129&359"},
-        "event": "FINISH",
-        "id": "T6",
-        "to": "A7"
-      }]
-    },
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=373,y=363,w=78,h=54"},
-      "id": "A7",
-      "implementor": "com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity",
-      "name": "Sync",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=543,ly=287,xs=455&631,ys=390&185"},
-        "event": "FINISH",
-        "id": "T7",
-        "to": "A4"
-      }]
-    },
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=265,y=172,w=93,h=50"},
-      "id": "A8",
-      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
-      "name": "Uninteresting",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=362,ly=293,xs=312&412,ys=227&359"},
-        "event": "FINISH",
-        "id": "T10",
-        "to": "A7"
-      }]
-    },
-    {
-      "attributes": {
-        "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=752,y=206,w=96,h=59"
-      },
-      "id": "A9",
-      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
-      "name": "Future\nMilestone",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=803,ly=281,xs=803&803,ys=269&293"},
-        "event": "FINISH",
-        "id": "T11",
-        "to": "A11"
-      }]
-    },
-    {
-      "attributes": {
-        "Monitors": "[[\"false\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=754,y=393,w=100,h=60",
-        "processname": "com.centurylink.mdw.tests.milestones/SubThree.proc",
-        "processversion": "[0.1,1)",
-        "synchronous": "true"
-      },
-      "id": "A10",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
-      "name": "SubThree",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=880,ly=412,xs=858&903,ys=412&412"},
-        "event": "FINISH",
-        "id": "T12",
-        "to": "A2"
-      }]
-    },
-    {
-      "attributes": {
-        "Monitors": "[[\"true\",\"Milestone\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Zipkin Activity\",\"com.centurylink.mdw.zipkin/TraceActivityMonitor.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=760,y=297,w=84,h=47"
-      },
-      "id": "A11",
-      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
-      "name": "F2",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=802,ly=368,xs=802&802,ys=348&389"},
-        "event": "FINISH",
-        "id": "T13",
-        "to": "A10"
-      }]
-    }
-  ],
-  "attributes": {
-    "ArrowStyle": "ArrowEnd",
-    "Monitors": "[[\"false\",\"Due Date Monitor\",\"com.centurylink.mdw.base/ProcessDueDateMonitor.java\",\"\"],[\"false\",\"Microservice Status Monitor\",\"com.centurylink.mdw.microservice/MicroserviceStatusProcessMonitor.java\",\"\"]]",
-    "NodeStyle": "BoxIcon",
-    "PROCESS_VISIBILITY": "PUBLIC",
-    "PerformanceLevel": "0",
-    "WORK_DISPLAY_INFO": "x=26,y=14,w=76,h=26"
-  },
-  "variables": {"inputVar": {
-    "category": "INPUT",
-    "type": "java.lang.String"
-  }}
-}
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=70,y=70,w=60,h=40
+  transitions:
+  - id: T1
+    to: A5
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=162,ly=90,xs=134&190,ys=90&90
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=907,y=392,w=60,h=40
+- id: A6
+  name: |-
+    Milestone
+    One-One
+  implementor: com.centurylink.mdw.workflow.activity.DefaultActivityImpl
+  attributes:
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""],["true","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["true","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
+    WORK_DISPLAY_INFO: x=80,y=203,w=96,h=69
+  transitions:
+  - id: T8
+    to: A7
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=274,ly=313,xs=180&369,ys=237&389
+- id: A4
+  name: |-
+    Waiting
+    Milestone
+  implementor: com.centurylink.mdw.workflow.activity.event.EventWaitActivity
+  attributes:
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java","Waiting [Pause]"],["true","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["true","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
+    SLA_DISPLAY_UNITS: Hours
+    STATUS_AFTER_TIMEOUT: Cancelled
+    WAIT_EVENT_NAMES: '[["milestoneWait-${masterRequestId}",""]]'
+    WORK_DISPLAY_INFO: x=577,y=115,w=108,h=67
+  transitions:
+  - id: T3
+    to: A9
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=718,ly=191,xs=689&748,ys=148&235
+- id: A5
+  name: Unimportant
+  implementor: com.centurylink.mdw.workflow.activity.DefaultActivityImpl
+  attributes:
+    WORK_DISPLAY_INFO: x=194,y=56,w=111,h=58
+  transitions:
+  - id: T4
+    to: A6
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=188,ly=158,xs=249&128,ys=117&199
+  - id: T5
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=360,ly=89,xs=309&412,ys=89&89
+  - id: T9
+    to: A8
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=285,ly=143,xs=285&285,ys=118&169
+- id: A3
+  name: Spellbinding
+  implementor: com.centurylink.mdw.workflow.activity.DefaultActivityImpl
+  attributes:
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java","Custom Label"],["true","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["true","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
+    WORK_DISPLAY_INFO: x=416,y=65,w=106,h=60
+  transitions:
+  - id: T6
+    to: A7
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=433,ly=244,xs=433&433,ys=129&359
+- id: A7
+  name: Sync
+  implementor: com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=373,y=363,w=78,h=54
+  transitions:
+  - id: T7
+    to: A4
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=543,ly=287,xs=455&631,ys=390&185
+- id: A8
+  name: Uninteresting
+  implementor: com.centurylink.mdw.workflow.activity.DefaultActivityImpl
+  attributes:
+    WORK_DISPLAY_INFO: x=265,y=172,w=93,h=50
+  transitions:
+  - id: T10
+    to: A7
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=362,ly=293,xs=312&412,ys=227&359
+- id: A9
+  name: |-
+    Future
+    Milestone
+  implementor: com.centurylink.mdw.workflow.activity.DefaultActivityImpl
+  attributes:
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""],["true","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["true","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
+    WORK_DISPLAY_INFO: x=752,y=206,w=96,h=59
+  transitions:
+  - id: T11
+    to: A11
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=803,ly=281,xs=803&803,ys=269&293
+- id: A10
+  name: SubThree
+  implementor: com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity
+  attributes:
+    Monitors: '[["false","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""],["true","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["true","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
+    WORK_DISPLAY_INFO: x=754,y=393,w=100,h=60
+    processname: com.centurylink.mdw.tests.milestones/SubThree.proc
+    processversion: '[0.1,1)'
+    synchronous: 'true'
+  transitions:
+  - id: T12
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=880,ly=412,xs=858&903,ys=412&412
+- id: A11
+  name: F2
+  implementor: com.centurylink.mdw.workflow.activity.DefaultActivityImpl
+  attributes:
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""],["true","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["true","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
+    WORK_DISPLAY_INFO: x=760,y=297,w=84,h=47
+  transitions:
+  - id: T13
+    to: A10
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=802,ly=368,xs=802&802,ys=348&389
+variables:
+  inputVar:
+    type: java.lang.String
+    category: INPUT
+attributes:
+  ArrowStyle: ArrowEnd
+  Monitors: '[["false","Due Date Monitor","com.centurylink.mdw.base/ProcessDueDateMonitor.java",""],["false","Microservice Status Monitor","com.centurylink.mdw.microservice/MicroserviceStatusProcessMonitor.java",""]]'
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: PUBLIC
+  PerformanceLevel: '0'
+  WORK_DISPLAY_INFO: x=26,y=14,w=76,h=26

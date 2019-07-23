@@ -1,63 +1,52 @@
-{
-  "activities": [
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=76,y=92,w=60,h=40"},
-      "id": "A1",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
-      "name": "Start",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=248,ly=53,type=Elbow,xs=140&269,ys=112&112"},
-        "event": "FINISH",
-        "id": "T1",
-        "to": "A3"
-      }]
-    },
-    {
-      "attributes": {
-        "DoNotNotifyCaller": "false",
-        "WORK_DISPLAY_INFO": "x=510,y=92,w=60,h=40"
-      },
-      "id": "A2",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
-      "name": "Stop"
-    },
-    {
-      "attributes": {
-        "DO_LOGGING": "True",
-        "Output Documents": "[\"responseDoc\"]",
-        "PostScript": "import com.centurylink.mdw.xml.DomHelper\n\nresponseDoc = DomHelper.toXml(DomHelper.toDomDocument(responseDoc.toString()))",
-        "PostScriptLang": "Groovy",
-        "PreScriptLang": "Groovy",
-        "REQUEST_VARIABLE": "requestDoc",
-        "RESPONSE_VARIABLE": "responseDoc",
-        "WORK_DISPLAY_INFO": "x=273,y=80,w=111,h=67",
-        "WSDL": "#{props['mdw.services.url']}/SOAP/MDWWebService?WSDL"
-      },
-      "id": "A3",
-      "implementor": "com.centurylink.mdw.workflow.adapter.soap.MdwRpcWebServiceAdapter",
-      "name": "Invoke Employee\r\nService",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=454,ly=112,type=Elbow,xs=388&506,ys=112&112"},
-        "event": "FINISH",
-        "id": "T2",
-        "to": "A2"
-      }]
-    }
-  ],
-  "attributes": {
-    "ArrowStyle": "ArrowEnd",
-    "NodeStyle": "BoxIcon",
-    "PROCESS_VISIBILITY": "PUBLIC",
-    "WORK_DISPLAY_INFO": "x=31,y=26,w=144,h=27"
-  },
-  "variables": {
-    "requestDoc": {
-      "category": "INPUT",
-      "type": "org.w3c.dom.Document"
-    },
-    "responseDoc": {
-      "category": "LOCAL",
-      "type": "com.centurylink.mdw.model.StringDocument"
-    }
-  }
-}
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=76,y=92,w=60,h=40
+  transitions:
+  - id: T1
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=248,ly=53,type=Elbow,xs=140&269,ys=112&112
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    DoNotNotifyCaller: 'false'
+    WORK_DISPLAY_INFO: x=510,y=92,w=60,h=40
+- id: A3
+  name: "Invoke Employee\r\nService"
+  implementor: com.centurylink.mdw.workflow.adapter.soap.MdwRpcWebServiceAdapter
+  attributes:
+    DO_LOGGING: 'True'
+    Output Documents: '["responseDoc"]'
+    PostScript: |-
+      import com.centurylink.mdw.xml.DomHelper
+
+      responseDoc = DomHelper.toXml(DomHelper.toDomDocument(responseDoc.toString()))
+    PostScriptLang: Groovy
+    PreScriptLang: Groovy
+    REQUEST_VARIABLE: requestDoc
+    RESPONSE_VARIABLE: responseDoc
+    WORK_DISPLAY_INFO: x=273,y=80,w=111,h=67
+    WSDL: '#{props[''mdw.services.url'']}/SOAP/MDWWebService?WSDL'
+  transitions:
+  - id: T2
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=454,ly=112,type=Elbow,xs=388&506,ys=112&112
+variables:
+  requestDoc:
+    type: org.w3c.dom.Document
+    category: INPUT
+  responseDoc:
+    type: com.centurylink.mdw.model.StringDocument
+    category: LOCAL
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: PUBLIC
+  WORK_DISPLAY_INFO: x=31,y=26,w=144,h=27

@@ -1,132 +1,121 @@
-{
-  "activities": [
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=67,y=136,w=60,h=40"},
-      "id": "A1",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
-      "name": "Start",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=161,ly=156,xs=131&191,ys=156&156"},
-        "event": "FINISH",
-        "id": "T1",
-        "to": "A3"
-      }]
-    },
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=718,y=138,w=60,h=40"},
-      "id": "A2",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
-      "name": "Stop"
-    },
-    {
-      "attributes": {
-        "Output Documents": "[\"response\"]",
-        "Rule": "import com.centurylink.mdw.zipkin.tests.SpanId\n\nruntimeContext.logInfo(\"FortuneMain >> Originator: ${variables[\"originator\"]}\")\n\n// populate variables for verifying traceId, spanId and parentSpanId\nval span = brave.Tracing.currentTracer().currentSpan()\nif (span != null) {\n    variables[\"traceId\"] = span.context().traceIdString()\n    variables[\"spanId\"] = SpanId(span.context().spanId()).hexId()\n    span.context().parentId()?.let { variables[\"parentSpanId\"] = SpanId(it).hexId() }\n}\n\n",
-        "SCRIPT": "Kotlin Script",
-        "WORK_DISPLAY_INFO": "x=195,y=128,w=100,h=60"
-      },
-      "id": "A3",
-      "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
-      "name": "Populate",
-      "transitions": [
-        {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=332,ly=157,xs=299&366,ys=157&157"},
-          "event": "FINISH",
-          "id": "T2",
-          "to": "A4"
-        },
-        {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "type=ElbowV,lx=248,ly=240,xs=246&246&368,ys=191&289&289"},
-          "event": "FINISH",
-          "id": "T4",
-          "to": "A5"
-        }
-      ]
-    },
-    {
-      "attributes": {
-        "WORK_DISPLAY_INFO": "x=370,y=128,w=100,h=60",
-        "processname": "com.centurylink.mdw.zipkin.tests/FortuneSub.proc",
-        "processversion": "[0.1,1)",
-        "synchronous": "true",
-        "variables": "{\"request\":\"$request\",\"response\":\"$response\"}"
-      },
-      "id": "A4",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
-      "name": "Invoke\nFortuneSub",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=515,ly=157,xs=474&556,ys=157&157"},
-        "event": "FINISH",
-        "id": "T3",
-        "to": "A6"
-      }]
-    },
-    {
-      "attributes": {
-        "WORK_DISPLAY_INFO": "x=371,y=258,w=100,h=60",
-        "processname": "com.centurylink.mdw.zipkin.tests/AsyncSub.proc",
-        "processversion": "[0.5,1)",
-        "synchronous": "false",
-        "variables": "{\"requestHeaders\":\"$requestHeaders\",\"originator\":\"$originator\"}"
-      },
-      "id": "A5",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
-      "name": "Invoke\nAsyncSub",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=ElbowH,lx=515,ly=222,xs=475&556,ys=288&157"},
-        "event": "FINISH",
-        "id": "T5",
-        "to": "A6"
-      }]
-    },
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=560,y=134,w=75,h=45"},
-      "id": "A6",
-      "implementor": "com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity",
-      "name": "Sync",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=676,ly=158,xs=639&714,ys=158&158"},
-        "event": "FINISH",
-        "id": "T6",
-        "to": "A2"
-      }]
-    }
-  ],
-  "attributes": {
-    "ArrowStyle": "ArrowEnd",
-    "NodeStyle": "BoxIcon",
-    "PROCESS_VISIBILITY": "SERVICE",
-    "PerformanceLevel": "0",
-    "WORK_DISPLAY_INFO": "x=48,y=47,w=135,h=26"
-  },
-  "variables": {
-    "originator": {
-      "category": "INPUT",
-      "type": "java.lang.String"
-    },
-    "parentSpanId": {
-      "category": "LOCAL",
-      "type": "java.lang.String"
-    },
-    "request": {
-      "category": "INPUT",
-      "type": "org.json.JSONObject"
-    },
-    "requestHeaders": {
-      "category": "INPUT",
-      "type": "java.util.Map<String,String>"
-    },
-    "response": {
-      "category": "OUTPUT",
-      "type": "com.centurylink.mdw.model.Jsonable"
-    },
-    "spanId": {
-      "category": "LOCAL",
-      "type": "java.lang.String"
-    },
-    "traceId": {
-      "category": "LOCAL",
-      "type": "java.lang.String"
-    }
-  }
-}
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=67,y=136,w=60,h=40
+  transitions:
+  - id: T1
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=161,ly=156,xs=131&191,ys=156&156
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=718,y=138,w=60,h=40
+- id: A3
+  name: Populate
+  implementor: com.centurylink.mdw.kotlin.ScriptActivity
+  attributes:
+    Output Documents: '["response"]'
+    Rule: |+
+      import com.centurylink.mdw.zipkin.tests.SpanId
+
+      runtimeContext.logInfo("FortuneMain >> Originator: ${variables["originator"]}")
+
+      // populate variables for verifying traceId, spanId and parentSpanId
+      val span = brave.Tracing.currentTracer().currentSpan()
+      if (span != null) {
+          variables["traceId"] = span.context().traceIdString()
+          variables["spanId"] = SpanId(span.context().spanId()).hexId()
+          span.context().parentId()?.let { variables["parentSpanId"] = SpanId(it).hexId() }
+      }
+
+    SCRIPT: Kotlin Script
+    WORK_DISPLAY_INFO: x=195,y=128,w=100,h=60
+  transitions:
+  - id: T2
+    to: A4
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=332,ly=157,xs=299&366,ys=157&157
+  - id: T4
+    to: A5
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=ElbowV,lx=248,ly=240,xs=246&246&368,ys=191&289&289
+- id: A4
+  name: |-
+    Invoke
+    FortuneSub
+  implementor: com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=370,y=128,w=100,h=60
+    processname: com.centurylink.mdw.zipkin.tests/FortuneSub.proc
+    processversion: '[0.1,1)'
+    synchronous: 'true'
+    variables: '{"request":"$request","response":"$response"}'
+  transitions:
+  - id: T3
+    to: A6
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=515,ly=157,xs=474&556,ys=157&157
+- id: A5
+  name: |-
+    Invoke
+    AsyncSub
+  implementor: com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=371,y=258,w=100,h=60
+    processname: com.centurylink.mdw.zipkin.tests/AsyncSub.proc
+    processversion: '[0.5,1)'
+    synchronous: 'false'
+    variables: '{"requestHeaders":"$requestHeaders","originator":"$originator"}'
+  transitions:
+  - id: T5
+    to: A6
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=ElbowH,lx=515,ly=222,xs=475&556,ys=288&157
+- id: A6
+  name: Sync
+  implementor: com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=560,y=134,w=75,h=45
+  transitions:
+  - id: T6
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=676,ly=158,xs=639&714,ys=158&158
+variables:
+  originator:
+    type: java.lang.String
+    category: INPUT
+  parentSpanId:
+    type: java.lang.String
+    category: LOCAL
+  request:
+    type: org.json.JSONObject
+    category: INPUT
+  requestHeaders:
+    type: java.util.Map<String,String>
+    category: INPUT
+  response:
+    type: com.centurylink.mdw.model.Jsonable
+    category: OUTPUT
+  spanId:
+    type: java.lang.String
+    category: LOCAL
+  traceId:
+    type: java.lang.String
+    category: LOCAL
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: SERVICE
+  PerformanceLevel: '0'
+  WORK_DISPLAY_INFO: x=48,y=47,w=135,h=26
