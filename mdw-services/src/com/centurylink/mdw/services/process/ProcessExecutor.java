@@ -286,7 +286,7 @@ public class ProcessExecutor implements RetryableTransaction {
             try {
                 stopTransaction(transaction);
             } catch (DataAccessException e) {
-                throw new ActivityException(-1, "Fail to stop transaction in execute()", e);
+                LoggerUtil.getStandardLogger().error("Fail to stop transaction in execute()", e);
             }
         }
     }

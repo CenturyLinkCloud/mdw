@@ -78,6 +78,7 @@ public class CommonDataAccess {
     /**
      * Should only be used with MDW data source
      */
+    @SuppressWarnings("squid:S2095")
     public TransactionWrapper startTransaction() throws DataAccessException {
         TransactionWrapper transaction = new TransactionWrapper();
         TransactionUtil transUtil = TransactionUtil.getInstance();
@@ -122,7 +123,6 @@ public class CommonDataAccess {
 
     /**
      * Should only be used with MDW data source
-     * @param transaction
      */
     public void stopTransaction(TransactionWrapper transaction) throws DataAccessException {
         if (logger.isTraceEnabled()) {

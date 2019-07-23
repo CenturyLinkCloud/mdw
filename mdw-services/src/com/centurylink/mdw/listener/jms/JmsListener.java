@@ -65,6 +65,7 @@ public abstract class JmsListener  {
         return message;
     }
 
+    @SuppressWarnings("squid:S2095")
     protected void startInThread() {
         Connection connection = null;
         Session session = null;

@@ -21,7 +21,7 @@ import java.util.Map;
 public class WaitingForMe  {
     
     private static Map<String,WaitingForMe> waitingThreads 
-        = new HashMap<String,WaitingForMe>();
+        = new HashMap<>();
     
     private long startTime;
     private boolean keepWaiting;
@@ -39,7 +39,8 @@ public class WaitingForMe  {
     public static WaitingForMe getWaitOn(String eventName) {
         return waitingThreads.get(eventName);
     }
-    
+
+    @SuppressWarnings("squid:S2446")
     public synchronized void notifyEvent(String eventContent) {
         keepWaiting = false;
         this.eventContent = eventContent;
