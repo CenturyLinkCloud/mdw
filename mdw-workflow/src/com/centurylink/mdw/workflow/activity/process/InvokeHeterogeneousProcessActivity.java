@@ -72,6 +72,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
     private boolean emptyPlan;
     private boolean inService;
     private boolean forceParallel;
+    @SuppressWarnings("squid:S1845")
     private boolean synchronous;
 
     private Map<String, Boolean> outputVariableUpdated = new HashMap<String, Boolean>();

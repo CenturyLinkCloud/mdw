@@ -29,6 +29,7 @@ public class PropertyNames {
     // database
     public static final String MDW_DB_URL = "mdw.database.url";
     public static final String MDW_DB_USERNAME = "mdw.database.username";
+    @SuppressWarnings("squid:S2068")
     public static final String MDW_DB_PASSWORD = "mdw.database.password";
     public static final String MDW_DB_VERSION_SUPPORTED = "mdw.database.version.supported";     // lowest version supported
     // If true, then will save datetime/timestamp using microsecond precision - Depends on declaring table columns correctly
@@ -124,6 +125,7 @@ public class PropertyNames {
     public static final String MDW_GIT_LOCAL_PATH = "mdw.git.local.path";
     public static final String MDW_GIT_REMOTE_URL = "mdw.git.remote.url";
     public static final String MDW_GIT_USER = "mdw.git.user";
+    @SuppressWarnings("squid:S2068")
     public static final String MDW_GIT_PASSWORD = "mdw.git.password";
     public static final String MDW_GIT_BRANCH = "mdw.git.branch";
     public static final String MDW_GIT_TAG = "mdw.git.tag";

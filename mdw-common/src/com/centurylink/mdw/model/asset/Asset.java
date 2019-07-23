@@ -665,6 +665,7 @@ public class Asset implements Comparable<Asset> {
     public String getText() throws IOException {
         return text();
     }
+    @SuppressWarnings("squid:S1845")
     public String text() throws IOException {
         return getStringContent();
     }

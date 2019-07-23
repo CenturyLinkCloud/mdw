@@ -35,6 +35,7 @@ import groovy.util.XmlSlurper;
 import groovy.xml.MarkupBuilder;
 import org.apache.commons.lang.StringUtils;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -224,7 +225,9 @@ public class TransformActivity extends ScriptExecutorActivity {
 
     private String transform(String xml, String xsl) {
         try {
+            @SuppressWarnings("squid:S4435") // false positive
             TransformerFactory tFactory = TransformerFactory.newInstance();
+            tFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
             Source xslSource = new StreamSource(new ByteArrayInputStream(xsl.getBytes()));
             Transformer transformer = tFactory.newTransformer(xslSource);

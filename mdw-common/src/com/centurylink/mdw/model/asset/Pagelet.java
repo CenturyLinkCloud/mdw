@@ -25,6 +25,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.ByteArrayInputStream;
@@ -97,7 +98,9 @@ public class Pagelet implements Jsonable {
         }
 
         InputSource inputSource = new InputSource(new ByteArrayInputStream(source.getBytes()));
+        @SuppressWarnings("squid:S2755") // false positive
         SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+        parserFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
         SAXParser parser = parserFactory.newSAXParser();
         parser.parse(inputSource, new DefaultHandler() {

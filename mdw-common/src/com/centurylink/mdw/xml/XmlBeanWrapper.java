@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -137,7 +138,9 @@ public abstract class XmlBeanWrapper implements Serializable {
     }
 
     public String transform(String xslt) throws TransformerException {
+        @SuppressWarnings("squid:S4435") // false positive
         TransformerFactory tFactory = TransformerFactory.newInstance();
+        tFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
         Source xslSource = new StreamSource(new ByteArrayInputStream(xslt.getBytes()));
         Transformer transformer = tFactory.newTransformer(xslSource);

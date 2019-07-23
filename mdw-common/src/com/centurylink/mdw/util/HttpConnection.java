@@ -142,6 +142,7 @@ public class HttpConnection {
         connection = (HttpURLConnection)url.openConnection(proxy);
     }
 
+    @SuppressWarnings("squid:S2647") // we need to support basic auth
     public void prepare(String method) throws IOException {
         if (readTimeout >= 0)
             connection.setReadTimeout(readTimeout);
