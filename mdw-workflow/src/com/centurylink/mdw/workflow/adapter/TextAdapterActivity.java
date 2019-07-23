@@ -289,6 +289,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
     }
 
     /**
+     * Retrieves the maximum retries allowed for the activity
      * This is only used by activities, not connection pools
      * @return
      */
@@ -303,6 +304,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
     }
 
     /**
+     * Retrieves the interval between activity retries
      * This is only used by activities, not connection pools
      * @return
      */
@@ -426,6 +428,14 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         throw new ActivityException(errorCode, originalCause.getMessage(), originalCause);
     }
 
+    /**
+     * The method is used to handle the exception thrown from the execute method.
+     * Converts ConnectionException to AdapterException or throw AdapterException when retry enabled and
+     * when exceeding max number of retries.
+     * Otherwise handles retry.
+     * @param errorCause the exception captured
+     * @throws ActivityException
+     */
     protected void handleException(Throwable errorCause)
     throws ActivityException {
         logger.severeException(getAdapterInvocationErrorMessage(), errorCause);
@@ -532,6 +542,10 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         return logRequest(new Request(message));
     }
 
+    /**
+     * Populates response into document and document_content table
+     * @return documentId
+     */
     protected Long logResponse(Response response) {
         try {
             DocumentReference docref = createDocument(String.class.getName(), response.getContent(),
@@ -651,6 +665,14 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
     /**
      * This method is used for directly invoke the adapter activity
      * from code, rather than as part of process execution flow.
+     * If logging is desired, extenders should override logMessage().
+     *
+     * @param request request message
+     * @param timeout value for waiting for responses.
+     * @param meta_data
+     * @return response message
+     * @throws AdapterException
+     * @throws ConnectionException
      */
     public Response directInvoke(String request, int timeout, Map<String,String> meta_data)
             throws AdapterException, ConnectionException {
@@ -680,6 +702,12 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         return getAttributeValue(WorkAttributeConstant.PRE_SCRIPT) != null;
     }
 
+    /**
+     * Executes a script, before invoking the system.
+     * @param requestData incoming request data.
+     * @return retObj if script returns a value, (requestData otherwise).
+     *
+     */
     protected Object executePreScript(Object requestData) throws ActivityException {
         String preScript = getAttributeValue(WorkAttributeConstant.PRE_SCRIPT);
         if (!StringUtils.isBlank(preScript)) {
@@ -694,10 +722,20 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         return requestData;
     }
 
+    /**
+     * Checks if the adapter is configured with a post script.
+     * @return true if adapter has a post script, (false otherwise).
+     *
+     */
     protected boolean hasPostScript() {
         return getAttributeValue(WorkAttributeConstant.POST_SCRIPT) != null;
     }
 
+    /**
+     * Executes a script, after completing the invocation of the system.
+     * If script returns a value, return code will be set (null otherwise).
+     *
+     */
     protected void executePostScript() throws ActivityException {
         String postScript = getAttributeValue(WorkAttributeConstant.POST_SCRIPT);
         if (!StringUtils.isBlank(postScript)){
@@ -712,6 +750,23 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         }
     }
 
+    /**
+     * This method performs the real invocation of external system service.
+     * @param connection
+     * @param request
+     * @paran timeout value for waiting for responses. Used for synchronous mode only
+     * @param headers
+     * @return response if the adapter is synchronous,
+     *    or the underlying protocol is synchronous. Return null
+     *    if the adapter is asynchronous and the underlying
+     *    protocol is asynchronous
+     * @throws AdapterException Adapter exception may or
+     *      may not be retriable, which you can set in the
+     *      exception itself. Default is not retriable.
+     * @throws ConnectionException certain protocol may also
+     *      throw ConnectionException here. ConnectionException
+     *      can be retried.
+     * */
     @Override
     public Response doInvoke(Object connection, Request request, int timeout,
             Map<String,String> headers) throws AdapterException, ConnectionException {
