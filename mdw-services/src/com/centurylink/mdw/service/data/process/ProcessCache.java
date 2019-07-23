@@ -20,7 +20,6 @@ import com.centurylink.mdw.cache.impl.AssetRefCache;
 import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.variable.Document;
@@ -104,7 +103,7 @@ public class ProcessCache implements CacheService {
         processMap.put(process.getId(), process);
         List<Process> vl = procNameMap.get(process.getQualifiedName());
         if (vl == null) {
-            vl = new ArrayList<Process>();
+            vl = new ArrayList<>();
             procNameMap.put(process.getQualifiedName(), vl);
         }
         vl.add(process);
@@ -117,7 +116,8 @@ public class ProcessCache implements CacheService {
         if (procdef != null) {
             try {
                 Document instanceDoc = getWorkflowDao().getDocument(processInstDefId);
-                Process process = (Process) instanceDoc.getObject(Jsonable.class.getName(), null);
+                String content = instanceDoc.getContent(null);
+                Process process = Process.fromString(content);
                 process.setName(procdef.getName());
                 process.setPackageName(procdef.getPackageName());
                 return process;
