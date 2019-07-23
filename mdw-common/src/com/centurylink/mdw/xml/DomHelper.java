@@ -15,48 +15,51 @@
  */
 package com.centurylink.mdw.xml;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
+        import java.io.ByteArrayInputStream;
+        import java.io.ByteArrayOutputStream;
+        import java.io.IOException;
+        import java.io.InputStream;
+        import java.io.InputStreamReader;
+        import java.io.StringWriter;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMResult;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+        import javax.xml.XMLConstants;
+        import javax.xml.parsers.DocumentBuilder;
+        import javax.xml.parsers.DocumentBuilderFactory;
+        import javax.xml.parsers.ParserConfigurationException;
+        import javax.xml.transform.OutputKeys;
+        import javax.xml.transform.Result;
+        import javax.xml.transform.Transformer;
+        import javax.xml.transform.TransformerException;
+        import javax.xml.transform.TransformerFactory;
+        import javax.xml.transform.dom.DOMResult;
+        import javax.xml.transform.dom.DOMSource;
+        import javax.xml.transform.stream.StreamResult;
+        import javax.xml.transform.stream.StreamSource;
+        import javax.xml.xpath.XPath;
+        import javax.xml.xpath.XPathConstants;
+        import javax.xml.xpath.XPathExpression;
+        import javax.xml.xpath.XPathExpressionException;
+        import javax.xml.xpath.XPathFactory;
 
-import org.w3c.dom.Attr;
-import org.w3c.dom.DOMConfiguration;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSOutput;
-import org.w3c.dom.ls.LSSerializer;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+        import org.w3c.dom.Attr;
+        import org.w3c.dom.DOMConfiguration;
+        import org.w3c.dom.DOMImplementation;
+        import org.w3c.dom.Document;
+        import org.w3c.dom.Node;
+        import org.w3c.dom.NodeList;
+        import org.w3c.dom.ls.DOMImplementationLS;
+        import org.w3c.dom.ls.LSOutput;
+        import org.w3c.dom.ls.LSSerializer;
+        import org.xml.sax.InputSource;
+        import org.xml.sax.SAXException;
 
 public class DomHelper {
 
     public static Document toDomDocument(String xml)
-    throws ParserConfigurationException, SAXException, IOException {
+            throws ParserConfigurationException, SAXException, IOException {
+        @SuppressWarnings("squid:S2755") // false positive
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+        docBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         docBuilderFactory.setNamespaceAware(true);
         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
         // wrap with InputSource to help with utf-16
@@ -67,7 +70,9 @@ public class DomHelper {
     }
 
     public static Node toDomNode(String xml) throws TransformerException {
+        @SuppressWarnings("squid:S4435") // false positive
         TransformerFactory tFactory = TransformerFactory.newInstance();
+        tFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         Transformer transformer = tFactory.newTransformer();
         StreamSource source = new StreamSource(new ByteArrayInputStream(xml.getBytes()));
         DOMResult result = new DOMResult();
@@ -93,11 +98,13 @@ public class DomHelper {
                 return stringWriter.toString();
             }
         }
-        return toXml((Node)domDoc);
+        return toXml((Node) domDoc);
     }
 
     public static String toXml(Node domNode) throws TransformerException {
+        @SuppressWarnings("squid:S4435") // false positive
         TransformerFactory tFactory = TransformerFactory.newInstance();
+        tFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         Transformer transformer = tFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
@@ -113,7 +120,9 @@ public class DomHelper {
     }
 
     public static String toXmlNoWhiteSpace(Node domNode) throws TransformerException {
+        @SuppressWarnings("squid:S4435") // false positive
         TransformerFactory tFactory = TransformerFactory.newInstance();
+        tFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         Transformer transformer = tFactory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "no");
         transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
@@ -127,7 +136,7 @@ public class DomHelper {
     }
 
     public static Document toDomDocument(Node domNode)
-    throws ParserConfigurationException, SAXException, IOException, TransformerException {
+            throws ParserConfigurationException, SAXException, IOException, TransformerException {
         // TODO other way than to reparse?
         return toDomDocument(toXml(domNode));
     }
@@ -136,13 +145,19 @@ public class DomHelper {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         DOMSource xmlSource = new DOMSource(domNode);
         Result outputTarget = new StreamResult(outputStream);
-        TransformerFactory.newInstance().newTransformer().transform(xmlSource, outputTarget);
+        @SuppressWarnings("squid:S4435") // false positive
+        TransformerFactory tFactory = TransformerFactory.newInstance();
+        tFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        Transformer transformer = tFactory.newTransformer();
+        transformer.transform(xmlSource, outputTarget);
         return new ByteArrayInputStream(outputStream.toByteArray());
     }
 
     public static Document copyDomDocument(Document originalDomDoc)
-    throws ParserConfigurationException {
+            throws ParserConfigurationException {
+        @SuppressWarnings("squid:S2755") // false positive
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         DocumentBuilder db = dbf.newDocumentBuilder();
         Node originalRoot = originalDomDoc.getDocumentElement();
 
@@ -152,44 +167,36 @@ public class DomHelper {
         return copiedDocument;
     }
 
-    public static void poke(Document doc, String xpathExpr, String value) throws XPathExpressionException
-    {
-      XPathFactory xPathfactory = XPathFactory.newInstance();
-      XPath xpath = xPathfactory.newXPath();
-      XPathExpression expr = xpath.compile(xpathExpr);
-      NodeList nodeSet = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
-      if (nodeSet != null && nodeSet.getLength() > 0)
-      {
-        Node node = nodeSet.item(0); // first match
-        if (node instanceof Attr)
-          ((Attr)node).setValue(value);
-        else
-          node.getChildNodes().item(0).setNodeValue(value);
-      }
+    public static void poke(Document doc, String xpathExpr, String value) throws XPathExpressionException {
+        XPathFactory xPathfactory = XPathFactory.newInstance();
+        XPath xpath = xPathfactory.newXPath();
+        XPathExpression expr = xpath.compile(xpathExpr);
+        NodeList nodeSet = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        if (nodeSet != null && nodeSet.getLength() > 0) {
+            Node node = nodeSet.item(0); // first match
+            if (node instanceof Attr)
+                ((Attr) node).setValue(value);
+            else
+                node.getChildNodes().item(0).setNodeValue(value);
+        }
     }
 
-    public static Object peek(Document doc, String xpathExpr) throws XPathExpressionException
-    {
-      XPathFactory xPathfactory = XPathFactory.newInstance();
-      XPath xpath = xPathfactory.newXPath();
-      XPathExpression expr = xpath.compile(xpathExpr);
-      NodeList nodeList = (NodeList)expr.evaluate(doc, XPathConstants.NODESET);
-      if (nodeList == null || nodeList.getLength() == 0)
-      {
-        return null;
-      }
-      else if (nodeList.getLength() == 1)
-      {
-        Node node = nodeList.item(0);
-        if (node instanceof Attr)
-          return ((Attr)node).getValue();
-        else
-          return node.getChildNodes().item(0).getNodeValue();
-      }
-      else
-      {
-        return nodeList;
-      }
+    public static Object peek(Document doc, String xpathExpr) throws XPathExpressionException {
+        XPathFactory xPathfactory = XPathFactory.newInstance();
+        XPath xpath = xPathfactory.newXPath();
+        XPathExpression expr = xpath.compile(xpathExpr);
+        NodeList nodeList = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+        if (nodeList == null || nodeList.getLength() == 0) {
+            return null;
+        } else if (nodeList.getLength() == 1) {
+            Node node = nodeList.item(0);
+            if (node instanceof Attr)
+                return ((Attr) node).getValue();
+            else
+                return node.getChildNodes().item(0).getNodeValue();
+        } else {
+            return nodeList;
+        }
     }
 
 }

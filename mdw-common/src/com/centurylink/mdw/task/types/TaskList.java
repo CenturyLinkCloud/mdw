@@ -94,7 +94,8 @@ public class TaskList implements Jsonable, InstanceList<TaskInstance> {
     public long getTotal() { return total; }
     public void setTotal(long total) { this.total = total; }
 
-    private List<TaskInstance> tasks = new ArrayList<TaskInstance>();
+    @SuppressWarnings("squid:S1845")
+    private List<TaskInstance> tasks = new ArrayList<>();
     public List<TaskInstance> getTasks() { return tasks; }
     public void setTasks(List<TaskInstance> tasks) { this.tasks = tasks; }
 

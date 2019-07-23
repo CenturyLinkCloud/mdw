@@ -47,6 +47,7 @@ public class LdapAdapter extends ObjectAdapterActivity {
     public static final String LDAP_PORT = "LdapPort";
     public static final String BASE_DN = "BaseDn";
     public static final String APP_USER = "AppCuid";
+    @SuppressWarnings("squid:S2068")
     public static final String APP_PASSWORD = "AppPassword";
     public static final String SEARCH_CONTEXT = "SearchContext";
     public static final String SEARCH_FILTER = "SearchFilter";

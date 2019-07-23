@@ -15,11 +15,27 @@
  */
 package com.centurylink.mdw.bpmn;
 
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
+import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.constant.WorkTransitionAttributeConstant;
+import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.Activity;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.TextNote;
+import com.centurylink.mdw.model.workflow.Transition;
+import org.apache.xmlbeans.*;
+import org.omg.spec.bpmn.x20100524.di.BPMNEdge;
+import org.omg.spec.bpmn.x20100524.di.BPMNEdgeDocument;
+import org.omg.spec.bpmn.x20100524.di.BPMNShape;
+import org.omg.spec.bpmn.x20100524.di.BPMNShapeDocument;
+import org.omg.spec.bpmn.x20100524.model.*;
+import org.omg.spec.dd.x20100524.dc.Bounds;
+import org.omg.spec.dd.x20100524.dc.Point;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,73 +45,15 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
-import org.apache.xmlbeans.SchemaType;
-import org.apache.xmlbeans.XmlError;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
-import org.omg.spec.bpmn.x20100524.di.BPMNEdge;
-import org.omg.spec.bpmn.x20100524.di.BPMNEdgeDocument;
-import org.omg.spec.bpmn.x20100524.di.BPMNShape;
-import org.omg.spec.bpmn.x20100524.di.BPMNShapeDocument;
-import org.omg.spec.bpmn.x20100524.model.BusinessRuleTaskDocument;
-import org.omg.spec.bpmn.x20100524.model.CallActivityDocument;
-import org.omg.spec.bpmn.x20100524.model.DefinitionsDocument;
-import org.omg.spec.bpmn.x20100524.model.EndEventDocument;
-import org.omg.spec.bpmn.x20100524.model.ExclusiveGatewayDocument;
-import org.omg.spec.bpmn.x20100524.model.IntermediateCatchEventDocument;
-import org.omg.spec.bpmn.x20100524.model.IntermediateThrowEventDocument;
-import org.omg.spec.bpmn.x20100524.model.ParallelGatewayDocument;
-import org.omg.spec.bpmn.x20100524.model.ProcessDocument;
-import org.omg.spec.bpmn.x20100524.model.ScriptTaskDocument;
-import org.omg.spec.bpmn.x20100524.model.SequenceFlowDocument;
-import org.omg.spec.bpmn.x20100524.model.ServiceTaskDocument;
-import org.omg.spec.bpmn.x20100524.model.StartEventDocument;
-import org.omg.spec.bpmn.x20100524.model.SubProcessDocument;
-import org.omg.spec.bpmn.x20100524.model.TBaseElement;
-import org.omg.spec.bpmn.x20100524.model.TBusinessRuleTask;
-import org.omg.spec.bpmn.x20100524.model.TCallActivity;
-import org.omg.spec.bpmn.x20100524.model.TDefinitions;
-import org.omg.spec.bpmn.x20100524.model.TEndEvent;
-import org.omg.spec.bpmn.x20100524.model.TExclusiveGateway;
-import org.omg.spec.bpmn.x20100524.model.TIntermediateCatchEvent;
-import org.omg.spec.bpmn.x20100524.model.TIntermediateThrowEvent;
-import org.omg.spec.bpmn.x20100524.model.TParallelGateway;
-import org.omg.spec.bpmn.x20100524.model.TProcess;
-import org.omg.spec.bpmn.x20100524.model.TScriptTask;
-import org.omg.spec.bpmn.x20100524.model.TSequenceFlow;
-import org.omg.spec.bpmn.x20100524.model.TServiceTask;
-import org.omg.spec.bpmn.x20100524.model.TStartEvent;
-import org.omg.spec.bpmn.x20100524.model.TSubProcess;
-import org.omg.spec.bpmn.x20100524.model.TUserTask;
-import org.omg.spec.bpmn.x20100524.model.UserTaskDocument;
-import org.omg.spec.dd.x20100524.dc.Bounds;
-import org.omg.spec.dd.x20100524.dc.Point;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.constant.WorkTransitionAttributeConstant;
-import com.centurylink.mdw.model.attribute.Attribute;
-import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.model.workflow.Activity;
-import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.TextNote;
-import com.centurylink.mdw.model.workflow.Transition;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * <p>
- * Converts an MDW process definition into a BPMN standards xml.
- *
- * Also caters for drawing the activities in the correct place on screen
- *
- * </p>
- *
- * @author aa70413
- *
+ * Converts an MDW process definition into a BPMN2 standard xml.
  */
+
 public class BpmnExportHelper {
 
     // Root element
@@ -193,7 +151,7 @@ public class BpmnExportHelper {
                     TSubProcess subProcess = (TSubProcess) flow.changeType(TSubProcess.type);
                     subProcess.setId("P" + subproc.getId());
                     subProcess.setName(subproc.getName());
-                    subProcess.addNewExtensionElements().set(getExtentionElements(subproc));
+                    subProcess.addNewExtensionElements().set(getExtensionElements(subproc));
                     addProcessElements(subProcess, subproc);
                 }
             }
@@ -217,7 +175,7 @@ public class BpmnExportHelper {
                 seqflow.setName(conn.getCompletionCode());
                 seqflow.setSourceRef("A" + conn.getFromId());
                 seqflow.setTargetRef("A" + conn.getToId());
-                seqflow.addNewExtensionElements().set(getExtentionElements(conn));
+                seqflow.addNewExtensionElements().set(getExtensionElements(conn));
                 // Get coordinates
                 TransitionPoints coords = parseTransitionCoordinates(
                         conn.getAttribute(WorkTransitionAttributeConstant.TRANSITION_DISPLAY_INFO));
@@ -309,7 +267,7 @@ public class BpmnExportHelper {
         process.setId("MainProcess");
         process.setName(processVO.getName());
         process.setIsExecutable(true);
-        process.addNewExtensionElements().set(getExtentionElements(processVO));
+        process.addNewExtensionElements().set(getExtensionElements(processVO));
         return process;
     }
 
@@ -332,7 +290,7 @@ public class BpmnExportHelper {
             TStartEvent startEvent = (TStartEvent) flow.changeType(TStartEvent.type);
             startEvent.setId(act.getLogicalId());
             startEvent.setName(act.getName());
-            startEvent.addNewExtensionElements().set(getExtentionElements(act));
+            startEvent.addNewExtensionElements().set(getExtensionElements(act));
             referrId = startEvent.getId();
             break;
         case "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity":
@@ -340,7 +298,7 @@ public class BpmnExportHelper {
             TEndEvent endEvent = (TEndEvent) flow.changeType(TEndEvent.type);
             endEvent.setId(act.getLogicalId());
             endEvent.setName(act.getName());
-            endEvent.addNewExtensionElements().set(getExtentionElements(act));
+            endEvent.addNewExtensionElements().set(getExtensionElements(act));
             referrId = endEvent.getId();
             break;
         case "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator":
@@ -350,7 +308,7 @@ public class BpmnExportHelper {
                     .changeType(TExclusiveGateway.type);
             xOREvent.setId(act.getLogicalId());
             xOREvent.setName(act.getName());
-            xOREvent.addNewExtensionElements().set(getExtentionElements(act));
+            xOREvent.addNewExtensionElements().set(getExtensionElements(act));
             referrId = xOREvent.getId();
             break;
         case "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity":
@@ -359,7 +317,7 @@ public class BpmnExportHelper {
             TScriptTask scriptTask = (TScriptTask) flow.changeType(TScriptTask.type);
             scriptTask.setId(act.getLogicalId());
             scriptTask.setName(act.getName());
-            scriptTask.addNewExtensionElements().set(getExtentionElements(act));
+            scriptTask.addNewExtensionElements().set(getExtensionElements(act));
             referrId = scriptTask.getId();
             break;
         case "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity":
@@ -368,7 +326,7 @@ public class BpmnExportHelper {
             TSubProcess subProcTask = (TSubProcess) flow.changeType(TSubProcess.type);
             subProcTask.setId(act.getLogicalId());
             subProcTask.setName(act.getName());
-            subProcTask.addNewExtensionElements().set(getExtentionElements(act));
+            subProcTask.addNewExtensionElements().set(getExtensionElements(act));
             referrId = subProcTask.getId();
             break;
         case "com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity":
@@ -377,7 +335,7 @@ public class BpmnExportHelper {
             TCallActivity hetProcTask = (TCallActivity) flow.changeType(TCallActivity.type);
             hetProcTask.setId(act.getLogicalId());
             hetProcTask.setName(act.getName());
-            hetProcTask.addNewExtensionElements().set(getExtentionElements(act));
+            hetProcTask.addNewExtensionElements().set(getExtensionElements(act));
             referrId = hetProcTask.getId();
             break;
         case "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity":
@@ -385,7 +343,7 @@ public class BpmnExportHelper {
             TUserTask autoformTask = (TUserTask) flow.changeType(TUserTask.type);
             autoformTask.setId(act.getLogicalId());
             autoformTask.setName(act.getName());
-            autoformTask.addNewExtensionElements().set(getExtentionElements(act));
+            autoformTask.addNewExtensionElements().set(getExtensionElements(act));
             referrId = autoformTask.getId();
             break;
         case "com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity":
@@ -393,7 +351,7 @@ public class BpmnExportHelper {
             TUserTask customTask = (TUserTask) flow.changeType(TUserTask.type);
             customTask.setId(act.getLogicalId());
             customTask.setName(act.getName());
-            customTask.addNewExtensionElements().set(getExtentionElements(act));
+            customTask.addNewExtensionElements().set(getExtensionElements(act));
             referrId = customTask.getId();
             break;
         case "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity":
@@ -403,7 +361,7 @@ public class BpmnExportHelper {
                     .changeType(TIntermediateCatchEvent.type);
             timerEvent.setId(act.getLogicalId());
             timerEvent.setName(act.getName());
-            timerEvent.addNewExtensionElements().set(getExtentionElements(act));
+            timerEvent.addNewExtensionElements().set(getExtensionElements(act));
             referrId = timerEvent.getId();
             break;
         case "com.centurylink.mdw.drools.DroolsActivity":
@@ -413,7 +371,7 @@ public class BpmnExportHelper {
                     .changeType(TBusinessRuleTask.type);
             brulesTask.setId(act.getLogicalId());
             brulesTask.setName(act.getName());
-            brulesTask.addNewExtensionElements().set(getExtentionElements(act));
+            brulesTask.addNewExtensionElements().set(getExtensionElements(act));
             referrId = brulesTask.getId();
             break;
         case "com.centurylink.mdw.drools.DroolsDecisionTableActivity":
@@ -423,7 +381,7 @@ public class BpmnExportHelper {
                     .changeType(TBusinessRuleTask.type);
             brulesTableTask.setId(act.getLogicalId());
             brulesTableTask.setName(act.getName());
-            brulesTableTask.addNewExtensionElements().set(getExtentionElements(act));
+            brulesTableTask.addNewExtensionElements().set(getExtensionElements(act));
             referrId = brulesTableTask.getId();
             break;
         case "com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity":
@@ -433,7 +391,7 @@ public class BpmnExportHelper {
                     .changeType(TParallelGateway.type);
             parallelGateway.setId(act.getLogicalId());
             parallelGateway.setName(act.getName());
-            parallelGateway.addNewExtensionElements().set(getExtentionElements(act));
+            parallelGateway.addNewExtensionElements().set(getExtensionElements(act));
             referrId = parallelGateway.getId();
             break;
         case "com.centurylink.mdw.workflow.activity.event.EventWaitActivity":
@@ -443,7 +401,7 @@ public class BpmnExportHelper {
                     .changeType(TIntermediateCatchEvent.type);
             waitEvent.setId(act.getLogicalId());
             waitEvent.setName(act.getName());
-            waitEvent.addNewExtensionElements().set(getExtentionElements(act));
+            waitEvent.addNewExtensionElements().set(getExtensionElements(act));
             referrId = waitEvent.getId();
             break;
         case "com.centurylink.mdw.microservice.DependenciesWaitActivity":
@@ -453,7 +411,7 @@ public class BpmnExportHelper {
                     .changeType(TIntermediateCatchEvent.type);
             dependenciesEvent.setId(act.getLogicalId());
             dependenciesEvent.setName(act.getName());
-            dependenciesEvent.addNewExtensionElements().set(getExtentionElements(act));
+            dependenciesEvent.addNewExtensionElements().set(getExtensionElements(act));
             referrId = dependenciesEvent.getId();
             break;
         case "com.centurylink.mdw.workflow.activity.event.EventCheckActivity":
@@ -463,7 +421,7 @@ public class BpmnExportHelper {
                     .changeType(TIntermediateCatchEvent.type);
             checkEevent.setId(act.getLogicalId());
             checkEevent.setName(act.getName());
-            checkEevent.addNewExtensionElements().set(getExtentionElements(act));
+            checkEevent.addNewExtensionElements().set(getExtensionElements(act));
             referrId = checkEevent.getId();
             break;
         case "com.centurylink.mdw.workflow.activity.event.PublishEventMessage":
@@ -473,7 +431,7 @@ public class BpmnExportHelper {
                     .changeType(TIntermediateThrowEvent.type);
             signalThrowEvent.setId(act.getLogicalId());
             signalThrowEvent.setName(act.getName());
-            signalThrowEvent.addNewExtensionElements().set(getExtentionElements(act));
+            signalThrowEvent.addNewExtensionElements().set(getExtensionElements(act));
             referrId = signalThrowEvent.getId();
             break;
         case "com.centurylink.mdw.microservice.ServiceEventPublish":
@@ -483,7 +441,7 @@ public class BpmnExportHelper {
                     .changeType(TIntermediateThrowEvent.type);
             serviceThrowEvent.setId(act.getLogicalId());
             serviceThrowEvent.setName(act.getName());
-            serviceThrowEvent.addNewExtensionElements().set(getExtentionElements(act));
+            serviceThrowEvent.addNewExtensionElements().set(getExtensionElements(act));
             referrId = serviceThrowEvent.getId();
             break;
         case "com.centurylink.mdw.workflow.activity.event.PublishEventMessageRest":
@@ -493,7 +451,7 @@ public class BpmnExportHelper {
                     .changeType(TIntermediateThrowEvent.type);
             publishEvent.setId(act.getLogicalId());
             publishEvent.setName(act.getName());
-            publishEvent.addNewExtensionElements().set(getExtentionElements(act));
+            publishEvent.addNewExtensionElements().set(getExtensionElements(act));
             referrId = publishEvent.getId();
             break;
         default:
@@ -502,7 +460,7 @@ public class BpmnExportHelper {
             TServiceTask bpmnact = (TServiceTask) flow.changeType(TServiceTask.type);
             bpmnact.setId(act.getLogicalId());
             bpmnact.setName(act.getName());
-            bpmnact.addNewExtensionElements().set(getExtentionElements(act));
+            bpmnact.addNewExtensionElements().set(getExtensionElements(act));
             referrId = bpmnact.getId();
         }
         return referrId;
@@ -679,10 +637,12 @@ public class BpmnExportHelper {
         return attribute;
     }
 
-    private XmlObject getExtentionElements(Object obj) {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder builder;
+    private XmlObject getExtensionElements(Object obj) {
         try {
+            @SuppressWarnings("squid:S2755") // false positive
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            DocumentBuilder builder;
             builder = factory.newDocumentBuilder();
             Document doc = builder.newDocument();
             if (obj instanceof Activity) {
@@ -722,7 +682,7 @@ public class BpmnExportHelper {
                 if (!proc.getTextNotes().isEmpty())
                     addElements(doc, elements, proc.getTextNotes());
             }
-            return XmlObject.Factory.parse(getExtensionElemetnsXml(doc));
+            return XmlObject.Factory.parse(getExtensionElementsXml(doc));
         }
         catch (XmlException | ParserConfigurationException e) {
             System.err.println("Unable to add extension elements");
@@ -730,10 +690,12 @@ public class BpmnExportHelper {
         return null;
     }
 
-    private String getExtensionElemetnsXml(Document doc) {
+    private String getExtensionElementsXml(Document doc) {
         StringWriter writer = new StringWriter();
         try {
+            @SuppressWarnings("squid:S4435") // false positive
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             Transformer transformer = transformerFactory.newTransformer();
 
             DOMSource domSource = new DOMSource(doc);

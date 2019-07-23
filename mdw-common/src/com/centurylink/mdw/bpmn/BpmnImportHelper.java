@@ -28,6 +28,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -74,7 +75,9 @@ class BpmnImportHelper {
     Process importProcess(File process) throws IOException {
         Process proc = new Process();
         try {
+            @SuppressWarnings("squid:S2755") // false positive
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             DocumentBuilder builder;
             builder = factory.newDocumentBuilder();
             Document document = builder.parse(

@@ -43,6 +43,7 @@ import com.centurylink.mdw.model.listener.Listener;
 /**
  * Dynamic Java workflow asset.
  */
+@SuppressWarnings("squid:S1845")
 public class MDWKafkaListener {
 
     // Properties outside of kafka consumer

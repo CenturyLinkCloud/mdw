@@ -37,6 +37,7 @@ public class ScriptEvaluator extends AbstractEvaluator  {
     public static final String SCRIPT_LANGUAGE = "SCRIPT";
 
     private String scriptLanguage;
+    @SuppressWarnings("squid:S1845")
     private String expression;
 
    /**
