@@ -6,7 +6,6 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.activity.ImplementorCache;
@@ -39,7 +38,7 @@ public class DesignServicesImpl implements DesignServices {
             // load from file
             try {
                 byte[] bytes = Files.readAllBytes(Paths.get(process.getRawFile().getAbsolutePath()));
-                process = new Process(new JsonObject(new String(bytes)));
+                process = Process.fromString(new String(bytes));
                 process.setName(processName.substring(lastSlash + 1));
                 process.setPackageName(processName.substring(0, lastSlash));
             }

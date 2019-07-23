@@ -20,6 +20,7 @@ import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Value;
+import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.task.TaskInstance;
@@ -237,14 +238,25 @@ public class StandaloneTestCaseRun extends TestCaseRun {
                 Query query = getProcessQuery(target);
                 HttpHelper httpHelper = getHttpHelper("GET", "services/Workflow/" + query);
                 String response = httpHelper.get();
-                JSONObject json = new JsonObject(response);
-                process = new Process(json);
-                if (json.has("id"))
-                    process.setId(json.getLong("id"));
-                else
-                    throw new TestException("Process ID not found for: " + query);
-                if (json.has("package"))
-                    process.setPackageName(json.getString("package"));
+                process = Process.fromString(response);
+                Long id = null;
+                if (response.startsWith("{")) {
+                    JSONObject json = new JSONObject(response);
+                    if (json.has("id"))
+                        id = json.getLong("id");
+                    if (json.has("package"))
+                        process.setPackageName(json.getString("package"));
+                }
+                else {
+                    Map<String,Object> yaml = Yamlable.fromString(response);
+                    if (yaml.containsKey("id"))
+                        id = Long.getLong(yaml.get("id").toString());
+                    if (yaml.containsKey("package"))
+                        process.setPackageName(yaml.get("package").toString());
+                }
+                if (id == null)
+                    throw new TestException("Missing process id");
+                process.setId(id);
                 getProcessCache().put(target, process);
             }
             catch (TestException ex) {

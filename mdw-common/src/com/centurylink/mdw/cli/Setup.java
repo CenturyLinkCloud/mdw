@@ -733,7 +733,7 @@ public abstract class Setup implements Operation {
         if (deep) {
             String contents = new String(Files.readAllBytes(procFile.toPath()));
             if (contents.startsWith("{")) {
-                process = new Process(new JSONObject(contents));
+                process = Process.fromString(contents);
             }
             else {
                 process = new Process(Yamlable.fromString(contents));

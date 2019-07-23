@@ -33,7 +33,6 @@ import com.centurylink.mdw.dataaccess.file.ImporterExporterJson;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
-import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.asset.Asset;
@@ -62,7 +61,6 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.LoggerProgressMonitor;
 import com.centurylink.mdw.util.timer.ProgressMonitor;
-import org.json.JSONObject;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -348,7 +346,7 @@ public class AssetContentServlet extends HttpServlet {
                             long instanceId = Long.parseLong(path.substring(lastSlash + 1));
                             if (assetName.endsWith(".proc")) {
                                 byte[] content = readContent(request);
-                                Process process = new Process(new JSONObject(new String(content)));
+                                Process process = Process.fromString(new String(content));
                                 process.setName(assetName);
                                 process.setPackageName(pkgName);
                                 logger.info("Saving asset instance " + pkgName + "/" + assetName + ": " + instanceId);
@@ -392,7 +390,7 @@ public class AssetContentServlet extends HttpServlet {
                         int ver = asset.getVersion();
 
                         if (asset instanceof Process) {
-                            asset = new Process(new JsonObject(new String(content)));
+                            asset = Process.fromString(new String(content));
                             asset.setName(assetName.substring(0, assetName.length() - 5));
                             asset.setPackageName(pkgName);
                         } else {

@@ -15,17 +15,6 @@
  */
 package com.centurylink.mdw.service.data.process;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import org.json.JSONObject;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
@@ -37,6 +26,15 @@ import com.centurylink.mdw.model.asset.RequestKey;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class ProcessRequests implements PreloadableCache {
 
@@ -77,8 +75,11 @@ public class ProcessRequests implements PreloadableCache {
                     try {
                         Path assetPath = Paths.get(process.file().getPath());
                         String contents = new String(Files.readAllBytes(assetPath));
-                        if (contents.indexOf("\"requestPath\"") > 0) {
-                            process = new Process(packageName, processName, new JSONObject(contents));
+                        if (contents.indexOf("requestPath") > 0) {
+                            process = Process.fromString(contents);
+                            process.setPackageName(packageName);
+                            process.setName(processName);
+
                             AssetRequest assetRequest = process.getRequest();
                             if (assetRequest != null) {
                                 String path = assetRequest.getPath();

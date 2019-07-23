@@ -15,6 +15,22 @@
  */
 package com.centurylink.mdw.bpmn;
 
+import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.constant.WorkTransitionAttributeConstant;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.Activity;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.workflow.TextNote;
+import com.centurylink.mdw.model.workflow.Transition;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -23,24 +39,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.constant.WorkTransitionAttributeConstant;
-import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.model.workflow.Activity;
-import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.TextNote;
-import com.centurylink.mdw.model.workflow.Transition;
 
 class BpmnImportHelper {
 
@@ -73,7 +71,7 @@ class BpmnImportHelper {
                 "com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity");
     }
 
-    String importProcess(File process) throws IOException {
+    Process importProcess(File process) throws IOException {
         Process proc = new Process();
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -89,7 +87,7 @@ class BpmnImportHelper {
         catch (ParserConfigurationException | SAXException e) {
             System.err.println("unable to import process ---" + process.getPath());
         }
-        return proc.getJson().toString(2);
+        return proc;
     }
 
     private void parseProcessData(Element element, Node node, Process proc) {
