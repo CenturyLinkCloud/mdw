@@ -24,6 +24,7 @@ import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.asset.Pagelet;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.util.file.VersionProperties;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -154,8 +155,12 @@ public class Convert extends Setup {
                 if (new String(Files.readAllBytes(procFile.toPath())).startsWith("{")) {
                     Process process = loadProcess(pkg, procFile, true);
                     String yaml = Yamlable.toString(process, 2);
-                    // TODO save the yaml file instead of printing
-                    System.out.println("\n\n" + pkg + "/" + process.getName() + ".proc:\n" + yaml);
+                    getOut().println("  saving " + procFile);
+                    Files.write(procFile.toPath(),yaml.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                    File versionsFile = new File(procFile.getParent() + "/" + META_DIR + "/versions");
+                    VersionProperties versionProperties = new VersionProperties(versionsFile);
+                    versionProperties.setProperty(process.getName() + ".proc", String.valueOf(process.getVersion() + 1));
+                    versionProperties.save();
                 }
             }
         }
