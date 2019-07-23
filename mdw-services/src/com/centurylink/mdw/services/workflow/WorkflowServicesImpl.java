@@ -30,13 +30,12 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
+import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.reports.*;
-import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.StringDocument;
-import com.centurylink.mdw.model.Value;
+import com.centurylink.mdw.model.*;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetHeader;
+import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.event.EventInstance;
@@ -1390,15 +1389,24 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public void saveInstanceDefinition(String assetPath, Long instanceId, Process process)
             throws ServiceException {
+
+        String procPath = process.getPackageName() + "/" + process.getName();
+        AssetInfo processAsset = ServiceLocator.getAssetServices().getAsset(procPath);
+        if (processAsset == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process asset not found: " + procPath);
+
         EngineDataAccessDB dataAccess = new EngineDataAccessDB();
         try {
+            boolean isYaml = !LoaderPersisterVcs.isJson(processAsset.getFile());
+
             EventServices eventServices = ServiceLocator.getEventServices();
             dataAccess.getDatabaseAccess().openConnection();
             ProcessInstance procInst = dataAccess.getProcessInstance(instanceId);
+            String content = isYaml ? Yamlable.toString(process,2) : process.getJson().toString(2);
             long docId = procInst.getProcessInstDefId();
             if (docId == 0L) {
-                docId = eventServices.createDocument(Jsonable.class.getName(), OwnerType.PROCESS_INSTANCE_DEF,
-                        instanceId, process, PackageCache.getPackage(process.getPackageName()));
+                docId = eventServices.createDocument(isYaml ? Yaml.class.getName() : Jsonable.class.getName(), OwnerType.PROCESS_INSTANCE_DEF,
+                        instanceId, content, PackageCache.getPackage(process.getPackageName()));
                 String[] fields = new String[]{"COMMENTS"};
                 String comment = procInst.getComment() == null ? "" : procInst.getComment();
                 Object[] args = new Object[]{comment + "|HasInstanceDef|" + docId, null};
@@ -1406,7 +1414,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                         fields, args);
             }
             else {
-                eventServices.updateDocumentContent(docId, process, Jsonable.class.getName(),
+                eventServices.updateDocumentContent(docId, content, isYaml ? Yaml.class.getName() : Jsonable.class.getName(),
                         PackageCache.getPackage(process.getPackageName()));
             }
             // Update any embedded Sub processes to indicate they have instance definition
@@ -1419,7 +1427,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                         fields, args);
             }
         }
-        catch (DataAccessException | SQLException ex) {
+        catch (DataAccessException | SQLException | IOException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error creating process instance definition " +
                     assetPath + ": " + instanceId, ex);
         }
