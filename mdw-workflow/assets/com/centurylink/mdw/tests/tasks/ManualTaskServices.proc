@@ -1,98 +1,76 @@
-{
-  "activities": [
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=52,y=92,w=60,h=40"},
-      "id": "A1",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
-      "name": "Start",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=158,ly=104,type=Elbow,xs=116&154,ys=112&112"},
-        "event": "FINISH",
-        "id": "T1",
-        "to": "A4"
-      }]
-    },
-    {
-      "attributes": {
-        "DoNotNotifyCaller": "false",
-        "WORK_DISPLAY_INFO": "x=499,y=90,w=60,h=40"
-      },
-      "id": "A2",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
-      "name": "Stop"
-    },
-    {
-      "attributes": {
-        "STATUS_AFTER_EVENT": "Cancelled",
-        "TASK_PAGELET": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
-        "TASK_TEMPLATE": "com.centurylink.mdw.tests.tasks/AutoForm Task for Service Access.task",
-        "TASK_TEMPLATE_assetVersion": "[0.1,1)",
-        "WORK_DISPLAY_INFO": "x=320,y=75,w=124,h=75",
-        "Wait for Task": "TRUE"
-      },
-      "id": "A3",
-      "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
-      "name": "AutoForm Task \r\nfor Service Access",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=472,ly=110,type=Elbow,xs=448&495,ys=110&110"},
-        "event": "FINISH",
-        "id": "T2",
-        "to": "A2"
-      }]
-    },
-    {
-      "attributes": {
-        "Output Documents": "objectVar",
-        "Rule": "objectVar = new com.centurylink.mdw.tests.tasks.MyTaskModel()\r\nobjectVar.setTaskmaster('Manoj')",
-        "SCRIPT": "Groovy",
-        "WORK_DISPLAY_INFO": "x=158,y=81,w=108,h=72"
-      },
-      "id": "A4",
-      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
-      "name": "Assign\r\nObj Var",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=294,ly=115,type=Elbow,xs=270&316,ys=115&115"},
-        "event": "FINISH",
-        "id": "T3",
-        "to": "A3"
-      }]
-    }
-  ],
-  "attributes": {
-    "ArrowStyle": "ArrowEnd",
-    "NodeStyle": "BoxIcon",
-    "PROCESS_VISIBILITY": "PUBLIC",
-    "WORK_DISPLAY_INFO": "x=29,y=21,w=184,h=27"
-  },
-  "description": "Test process for manual task related services.",
-  "variables": {
-    "dateVar": {
-      "category": "INPUT",
-      "type": "java.util.Date"
-    },
-    "docVar": {
-      "category": "INPUT",
-      "type": "org.w3c.dom.Document"
-    },
-    "jaxbVar": {
-      "category": "INPUT",
-      "type": "javax.xml.bind.JAXBElement"
-    },
-    "jsonVar": {
-      "category": "INPUT",
-      "type": "org.json.JSONObject"
-    },
-    "objectVar": {
-      "category": "LOCAL",
-      "type": "java.lang.Object"
-    },
-    "stringVar": {
-      "category": "INPUT",
-      "type": "java.lang.String"
-    },
-    "unassignedVar": {
-      "category": "LOCAL",
-      "type": "java.lang.String"
-    }
-  }
-}
+description: Test process for manual task related services.
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=52,y=92,w=60,h=40
+  transitions:
+  - id: T1
+    to: A4
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=158,ly=104,type=Elbow,xs=116&154,ys=112&112
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    DoNotNotifyCaller: 'false'
+    WORK_DISPLAY_INFO: x=499,y=90,w=60,h=40
+- id: A3
+  name: "AutoForm Task \r\nfor Service Access"
+  implementor: com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity
+  attributes:
+    STATUS_AFTER_EVENT: Cancelled
+    TASK_PAGELET: com.centurylink.mdw.base/AutoFormManualTask.pagelet
+    TASK_TEMPLATE: com.centurylink.mdw.tests.tasks/AutoForm Task for Service Access.task
+    TASK_TEMPLATE_assetVersion: '[0.1,1)'
+    WORK_DISPLAY_INFO: x=320,y=75,w=124,h=75
+    Wait for Task: 'TRUE'
+  transitions:
+  - id: T2
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=472,ly=110,type=Elbow,xs=448&495,ys=110&110
+- id: A4
+  name: "Assign\r\nObj Var"
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    Output Documents: objectVar
+    Rule: "objectVar = new com.centurylink.mdw.tests.tasks.MyTaskModel()\r\nobjectVar.setTaskmaster('Manoj')"
+    SCRIPT: Groovy
+    WORK_DISPLAY_INFO: x=158,y=81,w=108,h=72
+  transitions:
+  - id: T3
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=294,ly=115,type=Elbow,xs=270&316,ys=115&115
+variables:
+  dateVar:
+    type: java.util.Date
+    category: INPUT
+  docVar:
+    type: org.w3c.dom.Document
+    category: INPUT
+  jaxbVar:
+    type: javax.xml.bind.JAXBElement
+    category: INPUT
+  jsonVar:
+    type: org.json.JSONObject
+    category: INPUT
+  objectVar:
+    type: java.lang.Object
+    category: LOCAL
+  stringVar:
+    type: java.lang.String
+    category: INPUT
+  unassignedVar:
+    type: java.lang.String
+    category: LOCAL
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: PUBLIC
+  WORK_DISPLAY_INFO: x=29,y=21,w=184,h=27

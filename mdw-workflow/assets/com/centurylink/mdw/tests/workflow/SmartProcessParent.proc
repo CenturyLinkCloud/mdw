@@ -1,187 +1,176 @@
-{
-  "activities": [
-    {
-      "attributes": {
-        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Activity Timing\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=56,y=141,w=60,h=40"
-      },
-      "id": "A1",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
-      "name": "Start",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=165,ly=106,type=Elbow,xs=120&177,ys=161&161"},
-        "event": "FINISH",
-        "id": "T1",
-        "to": "A5"
-      }]
-    },
-    {
-      "attributes": {
-        "DoNotNotifyCaller": "false",
-        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Activity Timing\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=686,y=173,w=60,h=40"
-      },
-      "id": "A2",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
-      "name": "Stop"
-    },
-    {
-      "attributes": {
-        "Expression": "#{testCase}",
-        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Activity Timing\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"]]",
-        "SCRIPT": "javax.el",
-        "WORK_DISPLAY_INFO": "x=181,y=138,w=89,h=46"
-      },
-      "id": "A5",
-      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
-      "name": "Test\r\nCase?",
-      "transitions": [
-        {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=285,ly=103,xs=274&378,ys=161&90"},
-          "event": "FINISH",
-          "id": "T3",
-          "resultCode": "single",
-          "to": "A11"
-        },
-        {
-          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=300,ly=196,xs=270&297&297&354,ys=173&173&244&244"},
-          "event": "FINISH",
-          "id": "T4",
-          "resultCode": "multiple",
-          "to": "A8"
-        }
-      ]
-    },
-    {
-      "attributes": {
-        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Activity Timing\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"]]",
-        "Output Documents": "executionPlan",
-        "Rule": "import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument\nimport com.centurylink.mdw.bpm.ParameterDocument.Parameter\nimport com.centurylink.mdw.bpm.ProcessExecutionPlanDocument.ProcessExecutionPlan\nimport com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance\nimport com.centurylink.mdw.model.workflow.WorkStatus\n\nexecutionPlan = ProcessExecutionPlanDocument.Factory.newInstance();\nProcessExecutionPlan exeplan = executionPlan.addNewProcessExecutionPlan();\nSubprocessInstance subprocinst = exeplan.addNewSubprocessInstance();\nsubprocinst.setLogicalProcessName(\"SmartProcessChild\");\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());\naddParameter(subprocinst, \"inputVar\", \"child11\");\naddParameter(subprocinst, \"procName\", \"\\$\");\naddParameter(subprocinst, \"procVer\", \"\\$\");\nsubprocinst = exeplan.addNewSubprocessInstance();\nsubprocinst.setLogicalProcessName(\"SmartProcessChild\");\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());\naddParameter(subprocinst, \"inputVar\", \"child12\");\nsubprocinst = exeplan.addNewSubprocessInstance();\nsubprocinst.setLogicalProcessName(\"SmartProcessChild2\");\nsubprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());\naddParameter(subprocinst, \"inputVar\", \"\\$subprocInputVar\");\naddParameter(subprocinst, \"procName\", \"\\$\");\naddParameter(subprocinst, \"procVer\", \"\\$\");\n\nvoid addParameter(SubprocessInstance subprocinst, String name, String value) {\n Parameter param = subprocinst.addNewParameter();\n param.setName(name);\n param.setStringValue(value);\n}\n",
-        "SCRIPT": "Groovy",
-        "WORK_DISPLAY_INFO": "x=358,y=210,w=100,h=60"
-      },
-      "id": "A8",
-      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
-      "name": "Create Plan",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=408,ly=301,xs=408&408,ys=274&328"},
-        "event": "FINISH",
-        "id": "T10",
-        "to": "A10"
-      }]
-    },
-    {
-      "attributes": {
-        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Activity Timing\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"]]",
-        "Rule": "import com.centurylink.mdw.bpm.ParameterDocument.Parameter\r\nimport com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance\r\n\r\nSubprocessInstance subprocinst = executionPlan.getProcessExecutionPlan().getSubprocessInstanceList().get(0);\r\nmultipleSubprocName = getParameter(subprocinst, \"procName\");\r\nmultipleSubprocVer = getParameter(subprocinst, \"procVer\");\r\nsubprocinst = executionPlan.getProcessExecutionPlan().getSubprocessInstanceList().get(2);\r\nmultipleSubprocName2 = getParameter(subprocinst, \"procName\");\r\nmultipleSubprocVer2 = getParameter(subprocinst, \"procVer\");\r\n\r\nprotected String getParameter(SubprocessInstance subprocinst, String name) {\r\n if (subprocinst.getParameterList()==null) return null;\r\n for (Parameter p : subprocinst.getParameterList()) {\r\n  if (p.getName().equals(name)) return p.getStringValue();\r\n }\r\n return null;\r\n}",
-        "SCRIPT": "Groovy",
-        "WORK_DISPLAY_INFO": "x=535,y=337,w=100,h=60"
-      },
-      "id": "A9",
-      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
-      "name": "Assign Output",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "lx=674,ly=285,type=Elbow,xs=639&716,ys=367&217"},
-        "event": "FINISH",
-        "id": "T8",
-        "to": "A2"
-      }]
-    },
-    {
-      "attributes": {
-        "DELAY_BETWEEN": "1",
-        "Execution Plan": "executionPlan",
-        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Activity Timing\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=355,y=332,w=109,h=65",
-        "processmap": "[[\"SmartProcessChild\",\"com.centurylink.mdw.tests.workflow/SmartProcessChild.proc\",\"[2.4,3)\"],[\"SmartProcessChild2\",\"com.centurylink.mdw.tests.workflow/SmartProcessChild2.proc\",\"[0.4,1)\"]]",
-        "synchronous": "true"
-      },
-      "id": "A10",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity",
-      "name": "Invoke Multiple",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=499,ly=367,xs=468&531,ys=367&367"},
-        "event": "FINISH",
-        "id": "T11",
-        "to": "A9"
-      }]
-    },
-    {
-      "attributes": {
-        "Monitors": "[[\"false\",\"Activity Timing\",\"com.centurylink.mdw.base/ActivityTimingMonitor.java\",\"\"],[\"true\",\"Test Cases\",\"com.centurylink.mdw.testing/TestCaseActivityMonitor.java\",\"\"],[\"true\",\"Activity Timing\",\"com.centurylink.mdw.milestones/ActivityMilestone.java\",\"\"]]",
-        "WORK_DISPLAY_INFO": "x=382,y=61,w=100,h=60",
-        "processname": "com.centurylink.mdw.tests.workflow/SmartProcessChild.proc",
-        "processversion": "[2.4,3)",
-        "synchronous": "true",
-        "variables": "{\"procVer\":\"${singleSubprocVer}\",\"inputVar\":\"${testCaseJson.name}\",\"procName\":\"${singleSubprocName}\"}"
-      },
-      "id": "A11",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity",
-      "name": "Invoke Single",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=584,ly=141,xs=486&682,ys=90&193"},
-        "event": "FINISH",
-        "id": "T12",
-        "to": "A2"
-      }]
-    }
-  ],
-  "attributes": {
-    "ArrowStyle": "ArrowEnd",
-    "Monitors": "[[\"false\",\"Due Date Monitor\",\"com.centurylink.mdw.base/ProcessDueDateMonitor.java\",\"\"],[\"false\",\"Microservice Status Monitor\",\"com.centurylink.mdw.microservice/MicroserviceStatusProcessMonitor.java\",\"\"]]",
-    "NodeStyle": "BoxIcon",
-    "PROCESS_VISIBILITY": "PUBLIC",
-    "PerformanceLevel": "0",
-    "WORK_DISPLAY_INFO": "x=50,y=56,w=184,h=27"
-  },
-  "variables": {
-    "executionPlan": {
-      "category": "LOCAL",
-      "type": "org.apache.xmlbeans.XmlObject"
-    },
-    "multipleSubprocName": {
-      "category": "LOCAL",
-      "type": "java.lang.String"
-    },
-    "multipleSubprocName2": {
-      "category": "LOCAL",
-      "type": "java.lang.String"
-    },
-    "multipleSubprocVer": {
-      "category": "LOCAL",
-      "type": "java.lang.String"
-    },
-    "multipleSubprocVer2": {
-      "category": "LOCAL",
-      "type": "java.lang.String"
-    },
-    "singleSubprocName": {
-      "category": "LOCAL",
-      "type": "java.lang.String"
-    },
-    "singleSubprocNameOld": {
-      "category": "LOCAL",
-      "type": "java.lang.String"
-    },
-    "singleSubprocVer": {
-      "category": "LOCAL",
-      "type": "java.lang.String"
-    },
-    "singleSubprocVerOld": {
-      "category": "LOCAL",
-      "type": "java.lang.String"
-    },
-    "subprocInputVar": {
-      "category": "INPUT",
-      "type": "java.lang.String"
-    },
-    "testCase": {
-      "category": "INPUT",
-      "type": "java.lang.String"
-    },
-    "testCaseJson": {
-      "category": "INPUT",
-      "type": "com.centurylink.mdw.model.Jsonable"
-    }
-  }
-}
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Activity Timing","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
+    WORK_DISPLAY_INFO: x=56,y=141,w=60,h=40
+  transitions:
+  - id: T1
+    to: A5
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=165,ly=106,type=Elbow,xs=120&177,ys=161&161
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    DoNotNotifyCaller: 'false'
+    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Activity Timing","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
+    WORK_DISPLAY_INFO: x=686,y=173,w=60,h=40
+- id: A5
+  name: "Test\r\nCase?"
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptEvaluator
+  attributes:
+    Expression: '#{testCase}'
+    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Activity Timing","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
+    SCRIPT: javax.el
+    WORK_DISPLAY_INFO: x=181,y=138,w=89,h=46
+  transitions:
+  - id: T3
+    to: A11
+    event: FINISH
+    resultCode: single
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=285,ly=103,xs=274&378,ys=161&90
+  - id: T4
+    to: A8
+    event: FINISH
+    resultCode: multiple
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=300,ly=196,xs=270&297&297&354,ys=173&173&244&244
+- id: A8
+  name: Create Plan
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Activity Timing","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
+    Output Documents: executionPlan
+    Rule: |
+      import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument
+      import com.centurylink.mdw.bpm.ParameterDocument.Parameter
+      import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument.ProcessExecutionPlan
+      import com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance
+      import com.centurylink.mdw.model.workflow.WorkStatus
+
+      executionPlan = ProcessExecutionPlanDocument.Factory.newInstance();
+      ProcessExecutionPlan exeplan = executionPlan.addNewProcessExecutionPlan();
+      SubprocessInstance subprocinst = exeplan.addNewSubprocessInstance();
+      subprocinst.setLogicalProcessName("SmartProcessChild");
+      subprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());
+      addParameter(subprocinst, "inputVar", "child11");
+      addParameter(subprocinst, "procName", "\$");
+      addParameter(subprocinst, "procVer", "\$");
+      subprocinst = exeplan.addNewSubprocessInstance();
+      subprocinst.setLogicalProcessName("SmartProcessChild");
+      subprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());
+      addParameter(subprocinst, "inputVar", "child12");
+      subprocinst = exeplan.addNewSubprocessInstance();
+      subprocinst.setLogicalProcessName("SmartProcessChild2");
+      subprocinst.setStatusCode(WorkStatus.STATUS_PENDING_PROCESS.intValue());
+      addParameter(subprocinst, "inputVar", "\$subprocInputVar");
+      addParameter(subprocinst, "procName", "\$");
+      addParameter(subprocinst, "procVer", "\$");
+
+      void addParameter(SubprocessInstance subprocinst, String name, String value) {
+       Parameter param = subprocinst.addNewParameter();
+       param.setName(name);
+       param.setStringValue(value);
+      }
+    SCRIPT: Groovy
+    WORK_DISPLAY_INFO: x=358,y=210,w=100,h=60
+  transitions:
+  - id: T10
+    to: A10
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=408,ly=301,xs=408&408,ys=274&328
+- id: A9
+  name: Assign Output
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Activity Timing","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
+    Rule: "import com.centurylink.mdw.bpm.ParameterDocument.Parameter\r\nimport com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance\r\n\r\nSubprocessInstance subprocinst = executionPlan.getProcessExecutionPlan().getSubprocessInstanceList().get(0);\r\nmultipleSubprocName = getParameter(subprocinst, \"procName\");\r\nmultipleSubprocVer = getParameter(subprocinst, \"procVer\");\r\nsubprocinst = executionPlan.getProcessExecutionPlan().getSubprocessInstanceList().get(2);\r\nmultipleSubprocName2 = getParameter(subprocinst, \"procName\");\r\nmultipleSubprocVer2 = getParameter(subprocinst, \"procVer\");\r\n\r\nprotected String getParameter(SubprocessInstance subprocinst, String name) {\r\n if (subprocinst.getParameterList()==null) return null;\r\n for (Parameter p : subprocinst.getParameterList()) {\r\n  if (p.getName().equals(name)) return p.getStringValue();\r\n }\r\n return null;\r\n}"
+    SCRIPT: Groovy
+    WORK_DISPLAY_INFO: x=535,y=337,w=100,h=60
+  transitions:
+  - id: T8
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=674,ly=285,type=Elbow,xs=639&716,ys=367&217
+- id: A10
+  name: Invoke Multiple
+  implementor: com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity
+  attributes:
+    DELAY_BETWEEN: '1'
+    Execution Plan: executionPlan
+    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["true","Activity Timing","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
+    WORK_DISPLAY_INFO: x=355,y=332,w=109,h=65
+    processmap: '[["SmartProcessChild","com.centurylink.mdw.tests.workflow/SmartProcessChild.proc","[2.4,3)"],["SmartProcessChild2","com.centurylink.mdw.tests.workflow/SmartProcessChild2.proc","[0.4,1)"]]'
+    synchronous: 'true'
+  transitions:
+  - id: T11
+    to: A9
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=499,ly=367,xs=468&531,ys=367&367
+- id: A11
+  name: Invoke Single
+  implementor: com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity
+  attributes:
+    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["true","Activity Timing","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
+    WORK_DISPLAY_INFO: x=382,y=61,w=100,h=60
+    processname: com.centurylink.mdw.tests.workflow/SmartProcessChild.proc
+    processversion: '[2.4,3)'
+    synchronous: 'true'
+    variables: '{"procVer":"${singleSubprocVer}","inputVar":"${testCaseJson.name}","procName":"${singleSubprocName}"}'
+  transitions:
+  - id: T12
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=584,ly=141,xs=486&682,ys=90&193
+variables:
+  executionPlan:
+    type: org.apache.xmlbeans.XmlObject
+    category: LOCAL
+  multipleSubprocName:
+    type: java.lang.String
+    category: LOCAL
+  multipleSubprocName2:
+    type: java.lang.String
+    category: LOCAL
+  multipleSubprocVer:
+    type: java.lang.String
+    category: LOCAL
+  multipleSubprocVer2:
+    type: java.lang.String
+    category: LOCAL
+  singleSubprocName:
+    type: java.lang.String
+    category: LOCAL
+  singleSubprocNameOld:
+    type: java.lang.String
+    category: LOCAL
+  singleSubprocVer:
+    type: java.lang.String
+    category: LOCAL
+  singleSubprocVerOld:
+    type: java.lang.String
+    category: LOCAL
+  subprocInputVar:
+    type: java.lang.String
+    category: INPUT
+  testCase:
+    type: java.lang.String
+    category: INPUT
+  testCaseJson:
+    type: com.centurylink.mdw.model.Jsonable
+    category: INPUT
+attributes:
+  ArrowStyle: ArrowEnd
+  Monitors: '[["false","Due Date Monitor","com.centurylink.mdw.base/ProcessDueDateMonitor.java",""],["false","Microservice Status Monitor","com.centurylink.mdw.microservice/MicroserviceStatusProcessMonitor.java",""]]'
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: PUBLIC
+  PerformanceLevel: '0'
+  WORK_DISPLAY_INFO: x=50,y=56,w=184,h=27

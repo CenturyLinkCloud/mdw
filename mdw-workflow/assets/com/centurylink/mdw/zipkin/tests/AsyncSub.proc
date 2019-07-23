@@ -1,108 +1,101 @@
-{
-  "activities": [
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=72,y=131,w=60,h=40"},
-      "id": "A1",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
-      "name": "Start",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=165,ly=151,xs=136&194,ys=151&151"},
-        "event": "FINISH",
-        "id": "T1",
-        "to": "A3"
-      }]
-    },
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=597,y=239,w=60,h=40"},
-      "id": "A2",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
-      "name": "Stop"
-    },
-    {
-      "attributes": {
-        "Rule": "import com.centurylink.mdw.zipkin.tests.SpanId\n\nruntimeContext.logInfo(\"FortuneMain >> Originator: ${variables[\"originator\"]}\")\n\nval span = brave.Tracing.currentTracer().currentSpan()\nif (span != null) {\n    variables[\"traceId\"] = span.context().traceIdString()\n    variables[\"spanId\"] = SpanId(span.context().spanId()).hexId()\n    span.context().parentId()?.let { variables[\"parentSpanId\"] = SpanId(it).hexId() }\n}\n\n",
-        "SCRIPT": "Kotlin Script",
-        "WORK_DISPLAY_INFO": "x=197,y=120,w=100,h=60"
-      },
-      "id": "A3",
-      "implementor": "com.centurylink.mdw.kotlin.ScriptActivity",
-      "name": "Populate",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=247,ly=201,xs=247&247,ys=184&219"},
-        "event": "FINISH",
-        "id": "T2",
-        "to": "A4"
-      }]
-    },
-    {
-      "attributes": {
-        "EndpointUri": "${props['mdw.services.url']}/api/Workgroups/MDW%20Support",
-        "HttpMethod": "GET",
-        "Microservice": "mdw/Workgroups",
-        "PostScriptLang": "Groovy",
-        "PreScriptLang": "Groovy",
-        "RESPONSE_VARIABLE": "workgroup",
-        "WORK_DISPLAY_INFO": "x=197,y=223,w=105,h=69"
-      },
-      "id": "A4",
-      "implementor": "com.centurylink.mdw.microservice.MicroserviceRestAdapter",
-      "name": "Retrieve\nWorkgroup",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=347,ly=258,xs=306&389,ys=258&258"},
-        "event": "FINISH",
-        "id": "T3",
-        "to": "A5"
-      }]
-    },
-    {
-      "attributes": {
-        "STATUS_AFTER_EVENT": "Cancelled",
-        "TIMER_WAIT": "1",
-        "TIMER_WAIT_DISPLAY_UNITS": "Seconds",
-        "WORK_DISPLAY_INFO": "x=392,y=225,w=113,h=68"
-      },
-      "id": "A5",
-      "implementor": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
-      "name": "Just a\nSecond",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=551,ly=258,xs=509&593,ys=258&258"},
-        "event": "FINISH",
-        "id": "T4",
-        "to": "A2"
-      }]
-    }
-  ],
-  "attributes": {
-    "ArrowStyle": "ArrowEnd",
-    "NodeStyle": "BoxIcon",
-    "PROCESS_VISIBILITY": "PUBLIC",
-    "PerformanceLevel": "0",
-    "WORK_DISPLAY_INFO": "x=50,y=50,w=0,h=0"
-  },
-  "variables": {
-    "originator": {
-      "category": "INPUT",
-      "type": "java.lang.String"
-    },
-    "parentSpanId": {
-      "category": "LOCAL",
-      "type": "java.lang.String"
-    },
-    "requestHeaders": {
-      "category": "INPUT",
-      "type": "java.util.Map<String,String>"
-    },
-    "spanId": {
-      "category": "LOCAL",
-      "type": "java.lang.String"
-    },
-    "traceId": {
-      "category": "LOCAL",
-      "type": "java.lang.String"
-    },
-    "workgroup": {
-      "category": "LOCAL",
-      "type": "org.json.JSONObject"
-    }
-  }
-}
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=72,y=131,w=60,h=40
+  transitions:
+  - id: T1
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=165,ly=151,xs=136&194,ys=151&151
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=597,y=239,w=60,h=40
+- id: A3
+  name: Populate
+  implementor: com.centurylink.mdw.kotlin.ScriptActivity
+  attributes:
+    Rule: |+
+      import com.centurylink.mdw.zipkin.tests.SpanId
+
+      runtimeContext.logInfo("FortuneMain >> Originator: ${variables["originator"]}")
+
+      val span = brave.Tracing.currentTracer().currentSpan()
+      if (span != null) {
+          variables["traceId"] = span.context().traceIdString()
+          variables["spanId"] = SpanId(span.context().spanId()).hexId()
+          span.context().parentId()?.let { variables["parentSpanId"] = SpanId(it).hexId() }
+      }
+
+    SCRIPT: Kotlin Script
+    WORK_DISPLAY_INFO: x=197,y=120,w=100,h=60
+  transitions:
+  - id: T2
+    to: A4
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=247,ly=201,xs=247&247,ys=184&219
+- id: A4
+  name: |-
+    Retrieve
+    Workgroup
+  implementor: com.centurylink.mdw.microservice.MicroserviceRestAdapter
+  attributes:
+    EndpointUri: ${props['mdw.services.url']}/api/Workgroups/MDW%20Support
+    HttpMethod: GET
+    Microservice: mdw/Workgroups
+    PostScriptLang: Groovy
+    PreScriptLang: Groovy
+    RESPONSE_VARIABLE: workgroup
+    WORK_DISPLAY_INFO: x=197,y=223,w=105,h=69
+  transitions:
+  - id: T3
+    to: A5
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=347,ly=258,xs=306&389,ys=258&258
+- id: A5
+  name: |-
+    Just a
+    Second
+  implementor: com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity
+  attributes:
+    STATUS_AFTER_EVENT: Cancelled
+    TIMER_WAIT: '1'
+    TIMER_WAIT_DISPLAY_UNITS: Seconds
+    WORK_DISPLAY_INFO: x=392,y=225,w=113,h=68
+  transitions:
+  - id: T4
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=551,ly=258,xs=509&593,ys=258&258
+variables:
+  originator:
+    type: java.lang.String
+    category: INPUT
+  parentSpanId:
+    type: java.lang.String
+    category: LOCAL
+  requestHeaders:
+    type: java.util.Map<String,String>
+    category: INPUT
+  spanId:
+    type: java.lang.String
+    category: LOCAL
+  traceId:
+    type: java.lang.String
+    category: LOCAL
+  workgroup:
+    type: org.json.JSONObject
+    category: LOCAL
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: PUBLIC
+  PerformanceLevel: '0'
+  WORK_DISPLAY_INFO: x=50,y=50,w=0,h=0
