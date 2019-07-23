@@ -238,6 +238,7 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
+    @SuppressWarnings("squid:S3958")
     public AssetPackageList getAssetPackageList(Query query) throws ServiceException {
         try {
             List<PackageAssets> packageAssetList = new ArrayList<>();

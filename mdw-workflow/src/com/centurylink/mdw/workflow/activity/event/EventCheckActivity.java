@@ -35,7 +35,7 @@ public class EventCheckActivity extends EventWaitActivity {
     public void execute() throws ActivityException {
         EventWaitInstance received = registerWaitEvents(false, true);
         if (received!=null) {
-            setReturnCodeAndExitStatus(received.getCompletionCode());
+            setCompCodeAndExitStatus(received.getCompletionCode());
             processMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
             boolean toFinish = handleCompletionCode();
             if (toFinish && exitStatus==null)
@@ -51,7 +51,7 @@ public class EventCheckActivity extends EventWaitActivity {
         return !WorkStatus.STATUS_COMPLETED.equals(exitStatus);
     }
 
-    protected void setReturnCodeAndExitStatus(String code) {
+    protected void setCompCodeAndExitStatus(String code) {
         CompletionCode compcode = new CompletionCode();
         compcode.parse(code);
         exitStatus = compcode.getActivityInstanceStatus();
@@ -96,7 +96,7 @@ public class EventCheckActivity extends EventWaitActivity {
         }
         EventWaitInstance received = registerWaitEvents(true, true);
         if (received!=null) {
-            setReturnCodeAndExitStatus(received.getCompletionCode());
+            setCompCodeAndExitStatus(received.getCompletionCode());
             processMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
             return handleCompletionCode();
         } else {
