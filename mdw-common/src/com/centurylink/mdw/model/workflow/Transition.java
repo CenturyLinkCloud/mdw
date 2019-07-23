@@ -17,7 +17,6 @@ package com.centurylink.mdw.model.workflow;
 
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.constant.WorkTransitionAttributeConstant;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.attribute.Attribute;
@@ -149,42 +148,6 @@ public class Transition implements Jsonable, Yamlable {
             this.completionCode.equals(ActivityResultCodeConstant.RESULT_DEFAULT)
             && this.eventType.equals(EventType.FINISH);
 
-    }
-
-    public int getTransitionDelay() {
-        int secDelay;
-        String delayAttrib = getAttribute(WorkTransitionAttributeConstant.TRANSITION_DELAY);
-        if (delayAttrib != null) {
-            int k, n=delayAttrib.length();
-            for (k=0; k<n; k++) {
-                if (!Character.isDigit(delayAttrib.charAt(k))) break;
-            }
-            if (k<n) {
-                String unit = delayAttrib.substring(k).trim();
-                delayAttrib = delayAttrib.substring(0,k);
-                if (unit.startsWith("s")) secDelay = Integer.parseInt(delayAttrib);
-                else if (unit.startsWith("h")) secDelay = 3600 * Integer.parseInt(delayAttrib);
-                else secDelay = 60 * Integer.parseInt(delayAttrib);
-            } else secDelay = 60 * Integer.parseInt(delayAttrib);
-        } else secDelay = 0;
-        return secDelay;
-    }
-
-    public String getTransitionDelayUnit() {
-        String delayAttrib = getAttribute(WorkTransitionAttributeConstant.TRANSITION_DELAY);
-        String unit = DELAY_UNIT_MINUTE;
-        if (delayAttrib != null) {
-            int k, n=delayAttrib.length();
-            for (k=0; k<n; k++) {
-                if (!Character.isDigit(delayAttrib.charAt(k))) break;
-            }
-            if (k<n) {
-                unit = delayAttrib.substring(k).trim();
-                if (unit.startsWith("s")) unit = DELAY_UNIT_SECOND;
-                else if (unit.startsWith("h")) unit = DELAY_UNIT_HOUR;
-            }
-        }
-        return unit;
     }
 
     public String getLabel() {

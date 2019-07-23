@@ -61,6 +61,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.centurylink.mdw.model.workflow.ProcessRuntimeContext.isExpression;
+
 class ProcessExecutorImpl {
 
     protected static StandardLogger logger = LoggerUtil.getStandardLogger();
@@ -97,7 +99,7 @@ class ProcessExecutorImpl {
     }
 
     ActivityInstance createActivityInstance(Long pActivityId, Long procInstId)
-    throws ProcessException, SQLException, DataAccessException {
+    throws SQLException, DataAccessException {
         ActivityInstance ai = new ActivityInstance();
         ai.setActivityId(pActivityId);
         ai.setProcessInstanceId(procInstId);
@@ -439,13 +441,12 @@ class ProcessExecutorImpl {
     /**
      * Handles the work Transitions for the passed in collection of Items
      */
-    void createTransitionInstances(ProcessInstance processInstanceVO,
-            List<Transition> transitions, Long fromActInstId)
-           throws ProcessException,DataAccessException {
+    void createTransitionInstances(ProcessInstance processInstanceVO, List<Transition> transitions, Long fromActInstId)
+            throws ProcessException {
         TransitionInstance transInst;
         for (Transition transition : transitions) {
             try {
-                if (tooManyMaxTransitionInstances(transition, processInstanceVO.getId())) {
+                if (tooManyTransitions(transition, processInstanceVO)) {
                     // Look for a error transition at this time
                     // In case we find it, raise the error event
                     // Otherwise do not do anything
@@ -457,16 +458,17 @@ class ProcessExecutorImpl {
                     logger.info(tag, "Transition initiated from " + transition.getFromId() + " to " + transition.getToId());
 
                     InternalEvent jmsmsg;
-                    int delay ;
                     jmsmsg = InternalEvent.createActivityStartMessage(
                             transition.getToId(), processInstanceVO.getId(),
                             transInst.getTransitionInstanceID(), processInstanceVO.getMasterRequestId(),
                             transition.getLabel());
-                    delay = transition.getTransitionDelay();
                     String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + processInstanceVO.getId()
                             + "start" + transition.getToId() + "by" + transInst.getTransitionInstanceID();
-                    if (delay>0) this.sendDelayedInternalEvent(jmsmsg, delay, msgid, false);
-                    else sendInternalEvent(jmsmsg);
+                    int delay = getTransitionDelay(transition, processInstanceVO);
+                    if (delay > 0)
+                        sendDelayedInternalEvent(jmsmsg, delay, msgid, false);
+                    else
+                        sendInternalEvent(jmsmsg);
                 }
             } catch (SQLException | MdwException ex) {
                 throw new ProcessException(-1, ex.getMessage(), ex);
@@ -474,25 +476,72 @@ class ProcessExecutorImpl {
         }
     }
 
-    private boolean tooManyMaxTransitionInstances(Transition trans, Long pProcessInstId)
-        throws SQLException {
-        if (inService) return false;
-        String retryAttribVal = trans.getAttribute(WorkTransitionAttributeConstant.TRANSITION_RETRY_COUNT);
-        int retryCount = retryAttribVal==null?-1:Integer.parseInt(retryAttribVal);
-        if (retryCount<0) return false;
-        int count = edao.countTransitionInstances(pProcessInstId, trans.getId());
-        if (count>0 && count >= retryCount) {
-            String msg = "Transition " + trans.getId()
-            + " not made - exceeded allowed retry count of " + retryCount;
+    public int getTransitionDelay(Transition transition, ProcessInstance processInstance) {
+        int secDelay = 0;
+        String delayAttr = transition.getAttribute(WorkTransitionAttributeConstant.TRANSITION_DELAY);
+        if (delayAttr != null) {
+            if (isExpression(delayAttr)) {
+                String expr = delayAttr.endsWith("s") ? delayAttr.substring(0, delayAttr.length() - 1) : delayAttr;
+                secDelay = (Integer) evaluate(expr, processInstance);
+            }
+            else {
+                // moved from Transition.getTransitionDelay()
+                int k, n=delayAttr.length();
+                for (k=0; k<n; k++) {
+                    if (!Character.isDigit(delayAttr.charAt(k))) break;
+                }
+                if (k<n) {
+                    String unit = delayAttr.substring(k).trim();
+                    delayAttr = delayAttr.substring(0,k);
+                    if (unit.startsWith("s")) secDelay = Integer.parseInt(delayAttr);
+                    else if (unit.startsWith("h")) secDelay = 3600 * Integer.parseInt(delayAttr);
+                    else secDelay = 60 * Integer.parseInt(delayAttr);
+                } else secDelay = 60 * Integer.parseInt(delayAttr);
+            }
+        }
+        return secDelay;
+    }
+
+    private boolean tooManyTransitions(Transition trans, ProcessInstance processInstance)
+            throws SQLException {
+        if (inService)
+            return false;
+        int retryCount = -1;
+        String retryAttr = trans.getAttribute(WorkTransitionAttributeConstant.TRANSITION_RETRY_COUNT);
+        if (retryAttr != null) {
+            if (isExpression(retryAttr))
+                retryCount = (Integer) evaluate(retryAttr, processInstance);
+            else
+                retryCount = Integer.parseInt(retryAttr);
+        }
+        if (retryCount < 0)
+            return false;
+        int count = edao.countTransitionInstances(processInstance.getId(), trans.getId());
+        if (count > 0 && count >= retryCount) {
+            String msg = "Transition " + trans.getId() + " not made - exceeded allowed retry count of " + retryCount;
             // log as exception since this message is often overlooked
             logger.severeException(msg, new ProcessException(msg));
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Supports simple expressions only (does not deserialize documents).
+     */
+    private Object evaluate(String expression, ProcessInstance processInstance) {
+        Process process = getProcessDefinition(processInstance);
+        Package pkg = getPackage(process);
+        Map<String,Object> vars = new HashMap<>();
+        for (VariableInstance vi : processInstance.getVariables())
+            vars.put(vi.getName(), vi.getData());
+        return new ProcessRuntimeContext(pkg, process, processInstance,
+                getDataAccess().getPerformanceLevel(), isInService(), vars).evaluate(expression);
     }
 
     private void handleWorkTransitionError(ProcessInstance processInstVO, Long workTransitionId,
-            Long fromActInstId) throws ProcessException, DataAccessException, SQLException
-    {
+            Long fromActInstId) throws ProcessException, DataAccessException, SQLException {
         edao.setProcessInstanceStatus(processInstVO.getId(), WorkStatus.STATUS_WAITING);
         Process processVO = getMainProcessDefinition(processInstVO);
         Process embeddedProcdef = processVO.findSubprocess(EventType.ERROR, null);
@@ -533,7 +582,6 @@ class ProcessExecutorImpl {
      */
     void startProcessInstance(ProcessInstance processInstanceVO, int delay)
       throws ProcessException {
-
         try {
             Process process = getProcessDefinition(processInstanceVO);
             edao.setProcessInstanceStatus(processInstanceVO.getId(), WorkStatus.STATUS_PENDING_PROCESS);
@@ -1116,12 +1164,12 @@ class ProcessExecutorImpl {
                             outgoingWorkTransVO.getToId(), parentInstId,
                               workTransInst.getTransitionInstanceID(), masterRequestId,
                               outgoingWorkTransVO.getLabel());
-                    delay = outgoingWorkTransVO.getTransitionDelay();
+                    delay = getTransitionDelay(outgoingWorkTransVO, parentInst);
                 } else {
                     jmsmsg = InternalEvent.createActivityNotifyMessage(actInst,
                             EventType.FINISH, masterRequestId, null);
                 }
-                if (delay>0) {
+                if (delay > 0) {
                     String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + parentInstId
                         + "start" + outgoingWorkTransVO.getToId();
                     sendDelayedInternalEvent(jmsmsg, delay, msgid, false);

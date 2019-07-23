@@ -18,6 +18,7 @@ package com.centurylink.mdw.model.workflow;
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.constant.WorkTransitionAttributeConstant;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Yamlable;
@@ -756,7 +757,8 @@ public class Process extends Asset implements Jsonable, Yamlable, Linkable {
     public boolean hasDelayTransition() {
         if (hasDelayTransition == null) {
             for (Transition transition : getTransitions()) {
-                if (transition.getTransitionDelay() > 0) {
+                String delayAttr = transition.getAttribute(WorkTransitionAttributeConstant.TRANSITION_DELAY);
+                if (delayAttr != null && !"0".equals(delayAttr)) {
                     return hasDelayTransition = true;
                 }
             }

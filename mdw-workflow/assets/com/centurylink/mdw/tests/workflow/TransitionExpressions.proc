@@ -1,0 +1,105 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=60,y=137,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=154,ly=158,xs=124&184,ys=158&158"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A4"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=533,y=248,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Rule": "if (n == null)\n    n = 0\n\nn++",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=328,y=133,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "increment n",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=381,ly=217,xs=381&381,ys=197&237"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=188,y=140,w=60,h=40"},
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
+      "name": "dummy",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=288,ly=160,xs=252&324,ys=160&160"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {
+        "Expression": "n > loops",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=340,y=241,w=85,h=56"
+      },
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+      "name": "stop?",
+      "transitions": [
+        {
+          "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=459,ly=249,xs=428&529,ys=268&268"},
+          "event": "FINISH",
+          "id": "T2",
+          "resultCode": "true",
+          "to": "A2"
+        },
+        {
+          "attributes": {
+            "TRANSITION_DELAY": "${delay}s",
+            "TRANSITION_DISPLAY_INFO": "type=Elbow,lx=269,ly=249,xs=340&218&218,ys=269&269&180",
+            "TRANSITION_RETRY_COUNT": "${max}"
+          },
+          "event": "FINISH",
+          "id": "T5",
+          "resultCode": "false",
+          "to": "A4"
+        }
+      ]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "PerformanceLevel": "0",
+    "WORK_DISPLAY_INFO": "x=50,y=50,w=0,h=0"
+  },
+  "variables": {
+    "delay": {
+      "category": "INPUT",
+      "type": "java.lang.Integer"
+    },
+    "loops": {
+      "category": "INPUT",
+      "type": "java.lang.Integer"
+    },
+    "max": {
+      "category": "INPUT",
+      "type": "java.lang.Integer"
+    },
+    "n": {
+      "category": "LOCAL",
+      "type": "java.lang.Integer"
+    }
+  }
+}
