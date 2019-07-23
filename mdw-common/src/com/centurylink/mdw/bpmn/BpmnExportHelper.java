@@ -665,13 +665,9 @@ public class BpmnExportHelper {
                 elements.appendChild(getNode(doc, MDW_ATTRIBUTE,
                         WorkTransitionAttributeConstant.TRANSITION_DISPLAY_INFO,
                         displayInfo[0] + "," + displayInfo[1]));
-                if (!trans.getTransitionDelayUnit().isEmpty())
-                    elements.appendChild(getNode(doc, MDW_ATTRIBUTE, "TransitionDelayUnit",
-                            trans.getTransitionDelayUnit()));
-                if (trans.getTransitionDelay() != 0)
-                    elements.appendChild(getNode(doc, MDW_ATTRIBUTE, "TransitionDelay",
-                            String.valueOf(trans.getTransitionDelay())));
-
+                String delayAttr = trans.getAttribute(WorkTransitionAttributeConstant.TRANSITION_DELAY);
+                if (delayAttr != null && !"0".equals(delayAttr))
+                    elements.appendChild(getNode(doc, MDW_ATTRIBUTE, "TransitionDelay", delayAttr));
             }
             else if (obj instanceof Process) {
                 Process proc = (Process) obj;
