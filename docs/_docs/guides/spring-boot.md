@@ -16,6 +16,8 @@ title: Spring Boot
      - 3.1 [Asset jar dependencies](#31-asset-jar-dependencies)
      - 3.2 [Boot jar generation](#32-boot-jar-generation)
      - 3.3 [Runtime class loading](#33-runtime-class-loading)
+  4. [Runtime Issues](#4-runtime-issues)
+     - 4.1 [Excessive ActiveMQ logging](#41-excessive-activemq-logging)
 
 ## 1. MDW as a Spring Boot Dependency
 
@@ -159,3 +161,19 @@ title: Spring Boot
   your boot jar's BOOT-INF/classes directory. The MDW [Packages]((../../javadoc/com/centurylink/mdw/util/file/Packages.html))
   utility makes this easy, but it relies on an ironclad rule that there is no naming overlap between your src/main/java packages
   and MDW asset packages.
+
+## 4. Runtime Issues
+
+### 4.1 Excessive ActiveMQ logging
+  Depending on your dependencies, you may see repeated logging output like this:
+  ```
+  2019-07-14 21:02:44.865  INFO 78232 --- [http-nio-9081-exec-1] o.a.activemq.broker.TransportConnector   : Connector vm://localhost started
+  2019-07-14 21:02:44.877  INFO 78232 --- [http-nio-9081-exec-1] o.a.activemq.broker.TransportConnector   : Connector vm://localhost stopped
+  2019-07-14 21:02:47.004  WARN 78232 --- [http-nio-9081-exec-3] o.apache.activemq.broker.BrokerRegistry  : Broker localhost not started so using mdw-activemq instead
+  ```
+  You can avoid this by adding the following to application.yml:
+  ```yaml
+  spring:
+    activemq:
+      broker-url: vm://mdw-activemq
+  ```
