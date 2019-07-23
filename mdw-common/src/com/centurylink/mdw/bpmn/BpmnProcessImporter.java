@@ -26,6 +26,6 @@ import com.centurylink.mdw.model.workflow.Process;
 public class BpmnProcessImporter implements ProcessImporter{
     @Override
     public Process importProcess(File process) throws IOException {
-        return new Process(new JSONObject(new BpmnImportHelper().importProcess(process)));
+        return new BpmnImportHelper().importProcess(process);
     }
 }

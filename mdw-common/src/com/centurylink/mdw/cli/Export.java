@@ -21,7 +21,6 @@ import com.centurylink.mdw.bpmn.BpmnProcessExporter;
 import com.centurylink.mdw.export.ProcessExporter;
 import com.centurylink.mdw.html.HtmlProcessExporter;
 import com.centurylink.mdw.image.PngProcessExporter;
-import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.pdf.PdfProcessExporter;
 
@@ -99,7 +98,7 @@ public class Export extends Setup {
             }
         }
 
-        Process proc = new Process(new JsonObject(content));
+        Process proc = Process.fromString(content);
         proc.setName(procName.substring(0, procName.length() - 5));
 
         if (exporter instanceof PdfProcessExporter) {

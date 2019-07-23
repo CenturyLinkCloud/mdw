@@ -15,9 +15,6 @@
  */
 package com.centurylink.mdw.util;
 
-import java.io.File;
-import java.util.Date;
-
 import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
@@ -29,6 +26,9 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
+import java.io.File;
+import java.util.Date;
+
 public class AssetRefConverter {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
@@ -37,7 +37,7 @@ public class AssetRefConverter {
         Process proc = null;
         byte[] contentBytes = readAsset(assetRef);
         if (contentBytes != null && contentBytes.length > 0) {
-            proc = new Process(new JsonObject(new String(contentBytes)));
+            proc = Process.fromString(new String(contentBytes));
             proc.setId(assetRef.getDefinitionId());
             int startIdx = assetRef.getName().lastIndexOf('/') + 1;
             int endIdx = assetRef.getName().lastIndexOf(".proc v");

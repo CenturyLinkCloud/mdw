@@ -20,10 +20,13 @@ import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.bpmn.BpmnProcessImporter;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.drawio.DrawIoProcessImporter;
+import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.procimport.ProcessImporter;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.sql.Connection;
@@ -102,6 +105,11 @@ public class Import extends Setup {
         this.artifacts = artifacts;
     }
 
+    @Parameter(names="--yaml", description="Import .proc as YAML")
+    private boolean yaml;
+    public boolean isYaml() { return yaml; }
+    public void setYaml(boolean yaml) { this.yaml = yaml; }
+
     Import() {
         // cli only
     }
@@ -156,7 +164,8 @@ public class Import extends Setup {
             Process proc = importer.importProcess(file);
             if (!outFile.getParentFile().isDirectory() && !outFile.getParentFile().mkdirs())
                 throw new IOException("Unable to create directory: " + outFile.getParentFile().getAbsolutePath());
-            Files.write(outFile.toPath(), proc.getJson().toString(2).getBytes());
+            String procString = isYaml() ? Yamlable.toString(proc,2) : proc.getJson().toString(2);
+            Files.write(outFile.toPath(), procString.getBytes());
         }
         else {
             if (!isForce()) {

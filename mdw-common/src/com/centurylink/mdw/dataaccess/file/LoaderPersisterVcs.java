@@ -22,6 +22,7 @@ import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.*;
 import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.event.ExternalEvent;
 import com.centurylink.mdw.model.task.TaskCategory;
@@ -64,6 +65,18 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     private List<PackageDir> pkgDirs;
     private Comparator<PackageDir> pkgDirComparator;
     private BaselineData baselineData;
+
+    public static boolean isJson(File file) throws IOException {
+        if (!file.isFile())
+            return false;
+        try (FileInputStream fis = new FileInputStream(file);
+                InputStreamReader reader = new InputStreamReader(fis, "UTF-8")) {
+            char[] chars = new char[1];
+            if (reader.read(chars) == -1)
+                return false;
+            return chars[0] == '{';
+        }
+    }
 
     private VersionControl versionControl;
     public VersionControl getVersionControl() throws DataAccessException {
@@ -394,7 +407,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         Process process;
         if (deep) {
             String content = new String(read(assetFile));
-            process = new Process(new JsonObject(content));
+            process = Process.fromString(content);
         }
         else {
             process = new Process();
@@ -416,8 +429,14 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     public long save(Process process, PackageDir pkgDir) throws IOException, XmlException, JSONException, DataAccessException {
         process.removeEmptyAndOverrideAttributes();
-        String content = process.getJson().toString(2);
-        AssetFile assetFile = pkgDir.getAssetFile(getProcessFile(process), getAssetRevision(process));
+
+        boolean isYaml = false;
+        File procFile = getProcessFile(process);
+        if (procFile.isFile()) {
+            isYaml = !isJson(procFile);
+        }
+        String content = isYaml ? Yamlable.toString(process, 2) : process.getJson().toString(2);
+        AssetFile assetFile = pkgDir.getAssetFile(procFile, getAssetRevision(process));
         write(content.getBytes(), assetFile);
         process.setId(versionControl.getId(assetFile.getLogicalFile()));
         process.setVersion(assetFile.getRevision().getVersion());

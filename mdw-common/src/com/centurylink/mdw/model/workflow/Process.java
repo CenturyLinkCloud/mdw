@@ -49,10 +49,12 @@ public class Process extends Asset implements Jsonable, Yamlable, Linkable {
     private List<Attribute> attributes;
 
     public static Process fromString(String contents) {
-        if (contents.startsWith("{"))
+        if (contents.startsWith("{")) {
             return new Process(new JsonObject(contents));
-        else
+        }
+        else {
             return new Process(Yamlable.fromString(contents));
+        }
     }
 
     public Process() {
@@ -461,12 +463,6 @@ public class Process extends Asset implements Jsonable, Yamlable, Linkable {
             }
         }
         return toKeep;
-    }
-
-    public Process(String packageName, String processName, JSONObject json) {
-        this(json);
-        setPackageName(packageName);
-        setName(processName);
     }
 
     public Process(JSONObject json) throws JSONException {
