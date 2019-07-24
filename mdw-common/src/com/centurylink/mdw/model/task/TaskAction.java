@@ -36,6 +36,7 @@ import com.centurylink.mdw.model.user.Role;
 public class TaskAction implements Serializable, Jsonable, Comparable<TaskAction> {
 
     // standard task actions
+    @SuppressWarnings("squid:S1845")
     public static final String CREATE = "Create";
     public static final String ASSIGN = "Assign";
     public static final String CLAIM = "Claim";

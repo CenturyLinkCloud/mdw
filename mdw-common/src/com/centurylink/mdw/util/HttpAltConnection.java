@@ -81,6 +81,7 @@ public class HttpAltConnection extends HttpConnection {
     }
 
     @Override
+    @SuppressWarnings("squid:S2647") // we need to support basic auth
     public void prepare(String method) throws IOException {
 
         RequestConfig.Builder configBuilder = RequestConfig.custom();

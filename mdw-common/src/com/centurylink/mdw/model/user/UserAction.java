@@ -17,19 +17,11 @@ package com.centurylink.mdw.model.user;
 
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.util.DateHelper;
-import com.centurylink.mdw.util.ParseException;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.ByteArrayInputStream;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -166,10 +158,6 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
 
     }
 
-    public UserAction(String xml) throws ParseException {
-        fromXml(xml);
-    }
-
     public UserAction(JSONObject json) throws JSONException {
         fromJson(json);
     }
@@ -221,56 +209,6 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
           Action.Jeopardy,
           Action.Hold
         };
-
-    public String toXml() {
-        return "<Action\n"
-         + (id == null ? "" : ("  id=\"" + id + "\"\n"))
-         + "  name=\"" + (action.equals(Action.Other) ? extendedAction : action) + "\"\n"
-         + "  date=\"" + DateHelper.dateToString(date) + "\"\n"
-         + "  description=\"" + description + "\"\n"
-         + "  retrieveDate=\"" + DateHelper.dateToString(retrieveDate) + "\"\n"
-         + "  user=\"" + user + "\"\n"
-         + "  source=\"" + source + "\""
-         + (destination == null ? ">\n" : ("\n  destination=\"" + destination + "\">\n"))
-         + "  <Entity " + (entityId == null ? "" : ("id=\"" + entityId + "\"")) + " name=\"" + entity + "\" />\n"
-         + "</Action>\n";
-    }
-
-    protected void fromXml(String xml) throws ParseException {
-        InputSource src = new InputSource(new ByteArrayInputStream(xml.getBytes()));
-        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-        try {
-            SAXParser parser = parserFactory.newSAXParser();
-            parser.parse(src, new DefaultHandler() {
-                public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-                    if (qName.equals("UserAction")) {
-                        try {
-                            id = new Long(attrs.getValue("id"));
-                        }
-                        catch (NumberFormatException ex) {
-                        }
-                        action = getAction(attrs.getValue("name"));
-                        date = DateHelper.stringToDate(attrs.getValue("date"));
-                        description = attrs.getValue("description");
-                        retrieveDate = DateHelper.stringToDate(attrs.getValue("retrieveDate"));
-                        user = attrs.getValue("user");
-                        destination = attrs.getValue("destination");
-                    }
-                    else if (qName.equals("Entity")) {
-                        try {
-                          entityId = new Long(attrs.getValue("id"));
-                        }
-                        catch (NumberFormatException ex) {
-                        }
-                        entity = getEntity(attrs.getValue("name"));
-                    }
-                }
-            });
-        }
-        catch (Exception ex) {
-            throw new ParseException(ex.getMessage(), ex);
-        }
-    }
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
@@ -354,12 +292,9 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
     public String getJsonName() {
         return "userAction";
     }
-    /* (non-Javadoc)
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
+
     @Override
     public int compareTo(UserAction o) {
-        // TODO Auto-generated method stub
-        return 0;
+        return id.compareTo(o.getId());
     }
 }

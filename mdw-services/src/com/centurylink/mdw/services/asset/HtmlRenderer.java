@@ -40,6 +40,7 @@ public class HtmlRenderer implements Renderer {
     public static final String STYLES = "styles";
     public static final String HTML_BODY = "html-body";
 
+    @SuppressWarnings("squid:S1845")
     private static String styles = null;
     static String getStyles() throws IOException {
         if (styles == null) {

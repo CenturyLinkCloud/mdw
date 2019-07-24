@@ -57,6 +57,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
     public static final String AUTH_PROVIDER = "AuthProvider";
     public static final String AUTH_APP_ID = "AuthAppId";
     public static final String AUTH_USER = "AuthUser";
+    @SuppressWarnings("squid:S2068")
     public static final String AUTH_PASSWORD = "AuthPassword";
     public static final String REQUEST_VARIABLE = "REQUEST_VARIABLE";
 
