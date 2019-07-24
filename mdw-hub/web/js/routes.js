@@ -61,6 +61,14 @@ routesSvc.factory('routes', function() {
         controller: 'PackagesController'
       },
       {
+        path: '/stage',
+        templateUrl: 'assets/stage.html'
+      },
+      {
+        path: '/stage/:branchId',
+        templateUrl: 'assets/stage.html'
+      },
+      {
         path: '/packages/:packageName',
         templateUrl: 'assets/package.html',
         controller: 'PackageController'
