@@ -30,7 +30,7 @@ public class ProcessCanvas extends JPanel {
     private int zoom;
     private Project project;
     private Process process;
-    private Color background;
+    private Color backgroundColor;
 
     private Display getInitDisplay() {
         return new Display(0, 0, ProcessCanvas.this.getSize().width - 1,
@@ -50,14 +50,14 @@ public class ProcessCanvas extends JPanel {
     public void prepare() {
         Display.Companion.setDEFAULT_COLOR(new Color(29, 29, 29));
         Display.Companion.setOUTLINE_COLOR(Color.BLACK);
-        background = Display.Companion.getBACKGROUND_COLOR();
+        backgroundColor = Display.Companion.getBACKGROUND_COLOR();
         Display.Companion.setBACKGROUND_COLOR(Color.WHITE);
     }
 
     public void dispose() {
         Display.Companion.setDEFAULT_COLOR(UIManager.getColor("EditorPane.foreground"));
         Display.Companion.setOUTLINE_COLOR(UIManager.getColor("EditorPane.foreground"));
-        Display.Companion.setBACKGROUND_COLOR(background);
+        Display.Companion.setBACKGROUND_COLOR(backgroundColor);
     }
 
     @Override

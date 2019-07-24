@@ -61,6 +61,7 @@ public class DesignatedHostSslVerifier {
             }
 
             TrustManager[] trustManager = new TrustManager[] { new BlindTrustManager(defaultTm, host) };
+            @SuppressWarnings("squid:S4423") // must support SSL for LDAP
             SSLContext sc = SSLContext.getInstance("SSL");
             sc.init(null, trustManager, new java.security.SecureRandom());
             HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());

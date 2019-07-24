@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -64,7 +65,9 @@ public class MxGraphParser extends DefaultHandler {
 
     public MxGraphParser read(InputStream input) throws IOException, SAXException, ParserConfigurationException {
         InputSource src = new InputSource(input);
+        @SuppressWarnings("squid:S2755") // false positive
         SAXParserFactory parserFactory = SAXParserFactory.newInstance();
+        parserFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         SAXParser parser = parserFactory.newSAXParser();
         parser.parse(src, this);
 

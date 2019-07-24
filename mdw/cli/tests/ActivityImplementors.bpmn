@@ -84,7 +84,6 @@ Activity">
         <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
           <mdw:Attribute name="Event">2</mdw:Attribute>
           <mdw:Attribute name="TRANSITION_DISPLAY_INFO">type=Elbow,lx=314</mdw:Attribute>
-          <mdw:Attribute name="TransitionDelayUnit">m</mdw:Attribute>
         </mdw:Attributes>
       </extensionElements>
     </sequenceFlow>
@@ -93,7 +92,6 @@ Activity">
         <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
           <mdw:Attribute name="Event">2</mdw:Attribute>
           <mdw:Attribute name="TRANSITION_DISPLAY_INFO">type=Elbow,lx=155</mdw:Attribute>
-          <mdw:Attribute name="TransitionDelayUnit">m</mdw:Attribute>
         </mdw:Attributes>
       </extensionElements>
     </sequenceFlow>
@@ -102,7 +100,6 @@ Activity">
         <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
           <mdw:Attribute name="Event">2</mdw:Attribute>
           <mdw:Attribute name="TRANSITION_DISPLAY_INFO">type=Elbow,lx=228</mdw:Attribute>
-          <mdw:Attribute name="TransitionDelayUnit">m</mdw:Attribute>
         </mdw:Attributes>
       </extensionElements>
     </sequenceFlow>
@@ -111,7 +108,6 @@ Activity">
         <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
           <mdw:Attribute name="Event">2</mdw:Attribute>
           <mdw:Attribute name="TRANSITION_DISPLAY_INFO">type=Elbow,lx=461</mdw:Attribute>
-          <mdw:Attribute name="TransitionDelayUnit">m</mdw:Attribute>
         </mdw:Attributes>
       </extensionElements>
     </sequenceFlow>
@@ -120,7 +116,6 @@ Activity">
         <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
           <mdw:Attribute name="Event">2</mdw:Attribute>
           <mdw:Attribute name="TRANSITION_DISPLAY_INFO">type=Elbow,lx=339</mdw:Attribute>
-          <mdw:Attribute name="TransitionDelayUnit">m</mdw:Attribute>
         </mdw:Attributes>
       </extensionElements>
     </sequenceFlow>
@@ -129,7 +124,6 @@ Activity">
         <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
           <mdw:Attribute name="Event">2</mdw:Attribute>
           <mdw:Attribute name="TRANSITION_DISPLAY_INFO">type=Elbow,lx=67</mdw:Attribute>
-          <mdw:Attribute name="TransitionDelayUnit">m</mdw:Attribute>
         </mdw:Attributes>
       </extensionElements>
     </sequenceFlow>
@@ -138,7 +132,6 @@ Activity">
         <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
           <mdw:Attribute name="Event">2</mdw:Attribute>
           <mdw:Attribute name="TRANSITION_DISPLAY_INFO">type=Elbow,lx=600</mdw:Attribute>
-          <mdw:Attribute name="TransitionDelayUnit">m</mdw:Attribute>
         </mdw:Attributes>
       </extensionElements>
     </sequenceFlow>
@@ -147,7 +140,6 @@ Activity">
         <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
           <mdw:Attribute name="Event">2</mdw:Attribute>
           <mdw:Attribute name="TRANSITION_DISPLAY_INFO">type=Elbow,lx=112</mdw:Attribute>
-          <mdw:Attribute name="TransitionDelayUnit">m</mdw:Attribute>
         </mdw:Attributes>
       </extensionElements>
     </sequenceFlow>
@@ -156,7 +148,6 @@ Activity">
         <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
           <mdw:Attribute name="Event">2</mdw:Attribute>
           <mdw:Attribute name="TRANSITION_DISPLAY_INFO">type=Elbow,lx=524</mdw:Attribute>
-          <mdw:Attribute name="TransitionDelayUnit">m</mdw:Attribute>
         </mdw:Attributes>
       </extensionElements>
     </sequenceFlow>

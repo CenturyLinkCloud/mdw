@@ -1,0 +1,15 @@
+package com.centurylink.mdw.tests.workflow
+
+start process("TransitionExpressions") {
+    variables = [ loops: 3, delay: 2, max: 5 ]
+}
+
+sleep 10 // ensure consistent ordering in results yaml
+
+start process("TransitionExpressions") {
+    variables = [ loops: 5, delay: 1, max: 3 ]
+}
+
+sleep 20
+
+verify process

@@ -159,6 +159,7 @@ public abstract class Setup implements Operation {
         Props.Db.USER.specified = true;
     }
 
+    @SuppressWarnings("squid:S2068")
     @Parameter(names="--database-password", description="DB Password")
     private String databasePassword = "mdw";
     public String getDatabasePassword() { return databasePassword; }

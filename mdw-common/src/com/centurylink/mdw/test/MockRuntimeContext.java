@@ -39,6 +39,7 @@ import com.centurylink.mdw.model.workflow.ProcessInstance;
 /**
  * Mock runtime context for programmatic activity execution during unit tests.
  */
+@SuppressWarnings("squid:S2387")
 public class MockRuntimeContext extends ActivityRuntimeContext {
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd-HHmmssSSS");

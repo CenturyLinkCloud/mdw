@@ -86,6 +86,7 @@ public class LogMessageMonitor extends SoccomServer {
         return status;
     }
 
+    @SuppressWarnings("squid:S2446")
     private void checkWaitCondition(String procInstId, String procId, String actId, String status) {
         String masterRequestId = procInstMasterRequestMap.get(procInstId);
         if (masterRequestId == null)
