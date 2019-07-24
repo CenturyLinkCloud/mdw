@@ -201,8 +201,8 @@
     "label": "Admin",
     "icon": "admin.png",
     "url": "#/users",
-    "routes": ["/users", "/groups", "/roles", "/assets", "/packages", "/asset", "/tests", "/history"],
-    "condition": "user.hasRole('User Admin') || user.hasRole('Process Execution')",
+    "routes": ["/users", "/groups", "/roles", "/assets", "/packages", "/asset", "/tests", "/history", "/stage"],
+    "condition": "user.hasRole('User Admin') || user.hasRole('Process Execution') || user.hasRole('Asset Design')",
     "navs": [
       {
         "id": "admin-nav",
@@ -225,7 +225,8 @@
             "href": "#/roles",
             "priority": 1
           }
-        ]
+        ],
+        "condition": "user.hasRole('User Admin')"
       },
       {
         "id": "asset-nav",
@@ -238,10 +239,18 @@
             "priority": 2
           },
           {
+            "label": "Staging",
+            "path": "/stage/*",
+            "href": "#/stage",
+            "priority": 2,
+            "condition": "user.hasRole('Asset Design')"
+          },
+          {
             "label": "Testing",
             "path": "testing/*",
             "href": "#/tests",
-            "priority": 2
+            "priority": 2,
+            "condition": "user.hasRole('Process Execution')"
           }
         ]
       }
