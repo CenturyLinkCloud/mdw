@@ -234,7 +234,10 @@ artifacts {
 }
 
 task buildAll(type: GradleBuild) {
-    dependsOn(packageSources, zipTemplates)
+    if (mdwVersion.endsWith("-SNAPSHOT"))
+        dependsOn(packageSources, zipTemplates)
+    else
+        dependsOn(packageSources, zipTemplates, javadocs)
     buildFile = "build.gradle"
     tasks = ["build"]
 }
