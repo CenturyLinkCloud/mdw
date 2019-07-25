@@ -62,6 +62,8 @@ public class MdwMain {
         try {
             long before = System.currentTimeMillis();
             System.out.println("MDW initialization...");
+            System.out.println("Java: " + System.getProperty("java.version"));
+            System.out.println(System.getProperty("java.vm.name") + " " + System.getProperty("java.vm.version"));
             System.out.println("  deployPath: " + deployPath);
             System.out.println("  contextPath: " + contextPath);
 
