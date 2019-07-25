@@ -17,7 +17,7 @@ class Values extends Component {
   }  
 
   componentDidMount() {
-    fetch(new Request('/mdw/services/Tasks/' + this.props.task.id + '/values', {
+    fetch(new Request(this.context.serviceRoot + '/Tasks/' + this.props.task.id + '/values', {
       method: 'GET',
       headers: { Accept: 'application/json'},
       credentials: 'same-origin'

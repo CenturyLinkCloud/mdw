@@ -13,7 +13,7 @@ class Subtasks extends Component {
   }  
 
   componentDidMount() {
-    fetch(new Request('/mdw/services/Tasks/' + this.props.task.id + '/subtasks', {
+    fetch(new Request(this.context.serviceRoot + '/Tasks/' + this.props.task.id + '/subtasks', {
       method: 'GET',
       headers: { Accept: 'application/json'},
       credentials: 'same-origin'
