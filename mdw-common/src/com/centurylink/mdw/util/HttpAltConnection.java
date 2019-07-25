@@ -7,6 +7,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.http.Header;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHost;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.*;
 import org.apache.http.entity.ByteArrayEntity;
@@ -82,6 +84,11 @@ public class HttpAltConnection extends HttpConnection {
 
     @Override
     @SuppressWarnings("squid:S2647") // we need to support basic auth
+    /**
+     * Prepares HTTP request.
+     *
+     * @throws IOException in case of a problem or the connection was aborted
+     */
     public void prepare(String method) throws IOException {
 
         RequestConfig.Builder configBuilder = RequestConfig.custom();
@@ -127,6 +134,12 @@ public class HttpAltConnection extends HttpConnection {
         }
     }
 
+    /**
+     * Executes HTTP request.
+     *
+     * @return  the response to the request.
+     * @throws IOException in case of a problem or the connection was aborted
+     */
     @Override
     protected HttpResponse readInput() throws IOException {
         try {
@@ -154,7 +167,12 @@ public class HttpAltConnection extends HttpConnection {
             }
         }
     }
-
+    /**
+     * Converts the inpust stream to byte array.
+     * @param is input stream to be converted
+     * @return  byte[] byte array
+     * @throws IOException in case of a problem
+     */
     private byte[] extractResponseBytes(InputStream is) throws IOException {
         BufferedInputStream bis = null;
         try {
