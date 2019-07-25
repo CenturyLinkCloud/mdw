@@ -689,6 +689,10 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         }
     }
 
+    /**
+     * Returns the value of attribute.
+     * @return the value of the attribute, or null if the attribute does not exist
+     */
     protected String getAttribute(String name, String defval, boolean isSmart) throws AdapterException {
         try {
             String value = (isSmart)?getAttributeValueSmart(name):getAttributeValue(name);
@@ -698,6 +702,11 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         }
     }
 
+    /**
+     * Checks if the adapter is configured with a pre script.
+     * @return true if adapter has a pre script, (false otherwise).
+     *
+     */
     protected boolean hasPreScript() {
         return getAttributeValue(WorkAttributeConstant.PRE_SCRIPT) != null;
     }
