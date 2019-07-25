@@ -234,7 +234,7 @@ artifacts {
 }
 
 task buildAll(type: GradleBuild) {
-    dependsOn(packageSources, zipTemplates)
+    dependsOn(packageSources, zipTemplates, javadocs)
     buildFile = "build.gradle"
     tasks = ["build"]
 }
