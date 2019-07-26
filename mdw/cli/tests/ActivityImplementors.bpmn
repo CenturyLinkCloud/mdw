@@ -2,17 +2,17 @@
   <process id="MainProcess" name="ActivityImplementors" isExecutable="true">
     <extensionElements>
       <mdw:ProcessExtensions xmlns:mdw="http://mdw.centurylink.com/bpm">
-        <mdw:Attribute name="NodeStyle">BoxIcon</mdw:Attribute>
         <mdw:Attribute name="ArrowStyle">ArrowEnd</mdw:Attribute>
-        <mdw:Attribute name="WORK_DISPLAY_INFO">x=39,y=79,w=202,h=26</mdw:Attribute>
+        <mdw:Attribute name="NodeStyle">BoxIcon</mdw:Attribute>
         <mdw:Attribute name="PROCESS_VISIBILITY">PUBLIC</mdw:Attribute>
-        <mdw:Variable category="LOCAL" dispaySequence="0" name="updated">
-          <mdw:type name="java.lang.String"/>
-        </mdw:Variable>
+        <mdw:Attribute name="WORK_DISPLAY_INFO">x=39,y=79,w=202,h=26</mdw:Attribute>
         <mdw:Variable category="LOCAL" dispaySequence="0" name="invader">
           <mdw:type name="java.lang.String"/>
         </mdw:Variable>
         <mdw:Variable category="INPUT" dispaySequence="0" name="testCase">
+          <mdw:type name="java.lang.String"/>
+        </mdw:Variable>
+        <mdw:Variable category="LOCAL" dispaySequence="0" name="updated">
           <mdw:type name="java.lang.String"/>
         </mdw:Variable>
       </mdw:ProcessExtensions>
