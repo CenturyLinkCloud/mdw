@@ -80,6 +80,11 @@ public class ScheduledEventQueue implements CacheService {
         }
     }
 
+    /**
+     * Returns the next event that needs to be processed
+     * @param now current time
+     * @return SecheduledEvent next event
+     */
     public synchronized ScheduledEvent getNextReadyEvent(Date now) {
         if (now.after(cutoffTime)) {
             cutoffTime = new Date(now.getTime() + inMemoryRange);
@@ -95,6 +100,13 @@ public class ScheduledEventQueue implements CacheService {
         return null;
     }
 
+    /**
+     * Processes the event with the current time.
+     *
+     * @param event the scheduled event.
+     * @param now the current time
+     *
+     */
     public void processEvent(ScheduledEvent event, Date now) {
         try {
             EventServices eventManager = ServiceLocator.getEventServices();
@@ -107,6 +119,13 @@ public class ScheduledEventQueue implements CacheService {
         }
     }
 
+    /**
+     * Processes the event and reschedules with the next data.
+     * @param eventName the scheduled event name.
+     * @param event the scheduled event.
+     * @param now the current time
+     * @param edao engine data access
+     */
     public boolean processEvent(String eventName, ScheduledEvent event, Date now, EngineDataAccessDB edao) {
         // when this is called, the database has locked the event, or it is null
         // lock and remove in database, and refresh the copy
@@ -141,12 +160,11 @@ public class ScheduledEventQueue implements CacheService {
                 else {
                     // send message to listener to run the job
                     String jobClassAndArgs = event.getName().substring(ScheduledEvent.SCHEDULED_JOB_PREFIX.length());
-                    StringBuffer calldoc = new StringBuffer();
-                    calldoc.append("<_mdw_run_job>");
-                    calldoc.append(jobClassAndArgs.replaceAll("&", "&amp;").replaceAll("<", "&lt;"));
-                    calldoc.append("</_mdw_run_job>");
                     IntraMDWMessenger msgbroker = MessengerFactory.newIntraMDWMessenger(null);
-                    msgbroker.sendMessage(calldoc.toString());
+                    String calldoc = "<_mdw_run_job>" +
+                            jobClassAndArgs.replaceAll("&", "&amp;").replaceAll("<", "&lt;") +
+                            "</_mdw_run_job>";
+                    msgbroker.sendMessage(calldoc);
                 }
             } else {        // is scheduled external event
                 if (event.getMessage() == null || !event.getMessage().startsWith("<"))
@@ -182,20 +200,44 @@ public class ScheduledEventQueue implements CacheService {
         schedule(name, time, message, reference);
     }
 
+
+    /**
+     * Reschedule a timer task, or a delayed event
+     * @param name event name
+     * @param time this must be database time (such as new Date(DatabaseAccess.getCurrentTime()+difference_in_milliseconds)
+     * @param message message content for delayed event; null o/w
+     */
     public void rescheduleInternalEvent(String name, Date time, String message) throws Exception {
         reschedule(name, time, message);
         this.broadcastInvalidate(name);
     }
 
+    /**
+     * Unschedule a timer task, or a delayed event
+     * @param name event name
+     */
     public void unscheduleEvent(String name) throws Exception {
         unschedule(name);
         broadcastInvalidate(name);
     }
 
+    /**
+     * Schedule external event
+     * @param name event name
+     * @param time time
+     * @param message event message
+     * @param reference reference
+     */
     public void scheduleExternalEvent(String name, Date time, String message, String reference) {
         schedule(name, time, message, reference);
     }
 
+    /**
+     * Reschedule external event
+     * @param name event name
+     * @param time time
+     * @param message event message
+     */
     public void rescheduleExternalEvent(String name, Date time, String message) {
         reschedule(name, time, message);
         this.broadcastInvalidate(name);
@@ -232,9 +274,7 @@ public class ScheduledEventQueue implements CacheService {
         // cannot use eventQueue.remove(event) without setting scheduledTime, as PriorityQueue
         // uses compareTo() rather than equals() to perform remove,
         // guess for optimization
-        Iterator<ScheduledEvent> iter = eventQueue.iterator();
-        while (iter.hasNext()) {
-            ScheduledEvent e = iter.next();
+        for (ScheduledEvent e : eventQueue) {
             if (e.getName().equals(name)) {
                 eventQueue.remove(e);
                 return;
@@ -266,6 +306,15 @@ public class ScheduledEventQueue implements CacheService {
         logger.info("Unchedules event " + name);
     }
 
+    /**
+     * Delete row of the table given
+     * @param tableName name of the table
+     * @param fieldName name of the column
+     * @param fieldValue value of the column
+     * @return int deleted row id.
+     * @throws DataAccessException data access exception
+     */
+
     public int deleteTableRow(String tableName, String fieldName, Object fieldValue) throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
@@ -279,6 +328,11 @@ public class ScheduledEventQueue implements CacheService {
         }
     }
 
+    /**
+     * Schedule cron job
+     * @param name cron job name
+     * @param cronExpression cron expression
+     */
     public void scheduleCronJob(String name, String cronExpression) throws Exception {
         Date now = new Date(DatabaseAccess.getCurrentTime());
         Date nextTime = calculateNextDate(cronExpression, now);
@@ -286,6 +340,11 @@ public class ScheduledEventQueue implements CacheService {
             schedule(name, nextTime, cronExpression, null);
     }
 
+    /**
+     * Reschedule cron job
+     * @param name cron job name
+     * @param cronExpression cron expression
+     */
     public void rescheduleCronJob(String name, String cronExpression) throws Exception {
         Date now = new Date(DatabaseAccess.getCurrentTime());
         Date nextTime = calculateNextDate(cronExpression, now);
@@ -297,15 +356,25 @@ public class ScheduledEventQueue implements CacheService {
         this.broadcastInvalidate(name);
     }
 
+    /**
+     * Refresh schedule event cache
+     */
     public void refreshCache() {
         cutoffTime = new Date(DatabaseAccess.getCurrentTime() + inMemoryRange);
         loadScheduledEvents();
     }
 
+    /**
+     * Clears schedule event cache
+     */
     public void clearCache() {
         eventQueue.clear();
     }
 
+    /**
+     * Removes the schedule event
+     * @param eventName event name.
+     */
     public void invalidate(String eventName) {
         this.removeEvent(eventName);
     }
@@ -491,7 +560,7 @@ public class ScheduledEventQueue implements CacheService {
                     increment = Integer.parseInt(spec.substring(slash+1));
                     spec = spec.substring(0,slash);
                 } else increment = 1;
-                values = new ArrayList<Integer>();
+                values = new ArrayList<>();
                 String[] vs = spec.split(",");
                 for (String v : vs) {
                     int dash = v.indexOf("-");
@@ -511,7 +580,7 @@ public class ScheduledEventQueue implements CacheService {
         int getNextAllowed(int from) {
             if (ignore || all) return from;
             for (Integer one : values) {
-                if (one.intValue()>=from) return one.intValue();
+                if (one >=from) return one;
             }
             return -1;
         }
