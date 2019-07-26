@@ -117,7 +117,7 @@ class Action extends Component {
   }
 
   findAssignee(input) {
-    fetch(new Request('/mdw/services/Tasks/assignees?find=' + input, {
+    fetch(new Request(this.context.serviceRoot + '/Tasks/assignees?find=' + input, {
       method: 'GET',
       headers: { Accept: 'application/json'},
       credentials: 'same-origin'

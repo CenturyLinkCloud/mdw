@@ -59,6 +59,8 @@ userSvc.factory('authUser', ['$http', 'mdw', function($http, mdw) {
         };
         
         user.hasRole = function(role) {
+          if (role === 'Asset Design')
+            return this.hasRole('Process Design');
           if (this.roles) {
             for (var i = 0; i < this.roles.length; i++) {
               if (this.roles[i] == role)
@@ -121,7 +123,15 @@ userSvc.factory('authUser', ['$http', 'mdw', function($http, mdw) {
               userTab.classes.push('mdw_tab_last');
           }
         };
+
+        user.hasLink = function(navLink) {
+          return (!navLink.condition || eval(navLink.condition))  // jshint ignore:line
+        };
         
+        user.hasNav = function(navGroup) {
+          return (!navGroup.condition || eval(navGroup.condition))  // jshint ignore:line
+        };
+
         return user;
       }).then(function(user) {
         return fillTabs(user);

@@ -19,7 +19,7 @@ class NewSubtask extends Component {
   }  
 
   componentDidMount() {
-    fetch(new Request('/mdw/services/Tasks/templates?app=mdw-admin', {
+    fetch(new Request(this.context.serviceRoot + '/Tasks/templates?app=mdw-admin', {
       method: 'GET',
       headers: { Accept: 'application/json'},
       credentials: 'same-origin'
