@@ -37,15 +37,15 @@ import java.util.Properties;
  * This script cleans up old database entries from tables that are older than a specified time
  * Make sure appropriate db package is imported and Cleanup-Runtime.sql is there.
  * Add following to mdw.yaml
-timer.task:
-  ProcessCleanup: # run every 15 min
-    TimerClass: com.centurylink.mdw.timer.cleanup.ProcessCleanup
-    Schedule: 0,15,30,45 * * * *    # to run daily at 2:30 am use : Schedule: 30 2 * * ? *
-    RuntimeCleanupScript: Cleanup-Runtime.sql
-    ProcessExpirationAgeInDays: 225 #How old process instance should be to be a candidate for deleting
-    MaximumProcessExpiration: 1  #How many process instances to be deleted in each run
-    ExternalEventExpirationAgeInDays: 225
-    CommitInterval: 1000
+ timer.task:
+ ProcessCleanup: # run every 15 min
+ TimerClass: com.centurylink.mdw.timer.cleanup.ProcessCleanup
+ Schedule: 0,15,30,45 * * * *    # to run daily at 2:30 am use : Schedule: 30 2 * * ? *
+ RuntimeCleanupScript: Cleanup-Runtime.sql
+ ProcessExpirationAgeInDays: 225 #How old process instance should be to be a candidate for deleting
+ MaximumProcessExpiration: 1  #How many process instances to be deleted in each run
+ ExternalEventExpirationAgeInDays: 225
+ CommitInterval: 1000
  * if you need to make change in above properties then first delete the db entry by identifying the row using
  * this sql:  select * from event_instance where event_name like '%ScheduledJob%'
  * Then re-start the server/instance for new clean-up properties to be effective.
@@ -124,41 +124,47 @@ public class ProcessCleanup extends RoundRobinScheduledJob implements com.centur
 
     private void enable_output(DatabaseAccess db, int bufsize) throws SQLException {
         String query = "begin dbms_output.enable(" + bufsize + "); end;";
-        CallableStatement callStmt = db.getConnection().prepareCall(query);
-        callStmt.executeUpdate();
+        try (CallableStatement callStmt = db.getConnection().prepareCall(query)) {
+            callStmt.executeUpdate();
+        }catch (SQLException e){}
     }
 
     @SuppressWarnings("unused")
     private void disable_output(DatabaseAccess db) throws SQLException {
         String query = "begin dbms_output.disable; end;";
-        CallableStatement callStmt = db.getConnection().prepareCall(query);
-        callStmt.executeUpdate();
+        try (CallableStatement callStmt = db.getConnection().prepareCall(query)) {
+            callStmt.executeUpdate();
+        }catch (SQLException e){}
     }
 
     private void show_output(DatabaseAccess db) throws SQLException {
-        CallableStatement show_stmt = db.getConnection()
-                .prepareCall("declare " + "    l_line varchar2(255); " + "    l_done number; "
-                        + "    l_buffer long; " + "begin " + "  loop "
-                        + "    exit when length(l_buffer)+255 > :maxbytes OR l_done = 1; "
-                        + "    DBMS_OUTPUT.get_line( l_line, l_done ); "
-                        + "    l_buffer := l_buffer || l_line || chr(10); " + "  end loop; "
-                        + " :done := l_done; " + " :buffer := l_buffer; " + "end;");
-        int done = 0;
-        int maxbytes = 4096; // retrieve up to 4096 bytes at a time
-        show_stmt.registerOutParameter(2, Types.INTEGER);
-        show_stmt.registerOutParameter(3, Types.VARCHAR);
-        for (;;) {
-            show_stmt.setInt(1, maxbytes);
-            show_stmt.executeUpdate();
-            if (null == logger) {
-                System.out.println(show_stmt.getString(3));
+        try (
+                CallableStatement show_stmt = db.getConnection()
+                        .prepareCall("declare " + "    l_line varchar2(255); " + "    l_done number; "
+                                + "    l_buffer long; " + "begin " + "  loop "
+                                + "    exit when length(l_buffer)+255 > :maxbytes OR l_done = 1; "
+                                + "    DBMS_OUTPUT.get_line( l_line, l_done ); "
+                                + "    l_buffer := l_buffer || l_line || chr(10); " + "  end loop; "
+                                + " :done := l_done; " + " :buffer := l_buffer; " + "end;")){
+            int done = 0;
+            int maxbytes = 4096; // retrieve up to 4096 bytes at a time
+            show_stmt.registerOutParameter(2, Types.INTEGER);
+            show_stmt.registerOutParameter(3, Types.VARCHAR);
+            for (;;) {
+                show_stmt.setInt(1, maxbytes);
+                show_stmt.executeUpdate();
+                if (null == logger) {
+                    System.out.println(show_stmt.getString(3));
+                }
+                else {
+                    logger.info(show_stmt.getString(3));
+                }
+                done = show_stmt.getInt(2);
+                if (done == 1)
+                    break;
             }
-            else {
-                logger.info(show_stmt.getString(3));
-            }
-            done = show_stmt.getInt(2);
-            if (done == 1)
-                break;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -167,6 +173,8 @@ public class ProcessCleanup extends RoundRobinScheduledJob implements com.centur
         Connection conn = null;
         InputStream is = null;
         String printMsg = "";
+        CallableStatement callStmt = null;
+        ResultSet rs = null;
         try {
             File cleanupScript = null;
             File assetRoot = ApplicationContext.getAssetRoot();
@@ -219,7 +227,7 @@ public class ProcessCleanup extends RoundRobinScheduledJob implements com.centur
             if (query.endsWith("/"))
                 query = query.substring(0, query.length() - 1);
 
-            CallableStatement callStmt = null;
+
             if (jdbcUrl != null || db.isMySQL()) {
                 ScriptRunner runner = new ScriptRunner(conn, false, false);
                 String filePath = cleanupScript.getAbsolutePath().replace("\\","\\\\");
@@ -243,7 +251,7 @@ public class ProcessCleanup extends RoundRobinScheduledJob implements com.centur
             if (db != null && !db.isMySQL())
                 show_output(db);
             else if (db != null && db.isMySQL()) {
-                ResultSet rs = null;
+
                 int updateCount = -1;
                 printMsg = "";
                 if (isResultSet) {
@@ -262,20 +270,22 @@ public class ProcessCleanup extends RoundRobinScheduledJob implements com.centur
                     if (rs != null) {
                         int i = 1;  // Column index
                         while (rs.next()) {
-                           try {
-                               while (true) {
-                                   printMsg = rs.getObject(i).toString();
-                                   if (i != 1)
-                                       printMsg = " | " + printMsg;
-                                   if (null == logger)
-                                       System.out.println(printMsg);
-                                   else
-                                       logger.info(printMsg);
-                                   i++;
-                               }
-                           } catch (SQLException e) {/* Not that many columns in row */ }
-                       }
-                       rs.close();
+                            try {
+                                while (true) {
+                                    printMsg = rs.getObject(i).toString();
+                                    if (i != 1)
+                                        printMsg = " | " + printMsg;
+                                    if (null == logger)
+                                        System.out.println(printMsg);
+                                    else
+                                        logger.info(printMsg);
+                                    i++;
+                                    if(rs.isAfterLast())
+                                        break;
+                                }
+                            } catch (SQLException e) {/* Not that many columns in row */ }
+                        }
+                        rs.close();
                     }
                     else if (updateCount >=0) {
                         if (null == logger)
@@ -286,7 +296,8 @@ public class ProcessCleanup extends RoundRobinScheduledJob implements com.centur
                     isResultSet = callStmt.getMoreResults();
                     rs = isResultSet ? callStmt.getResultSet() : null;
                     updateCount = isResultSet ? -1 : callStmt.getUpdateCount();
-               }
+
+                }
             }
         }
         catch (Exception e) {
@@ -298,15 +309,26 @@ public class ProcessCleanup extends RoundRobinScheduledJob implements com.centur
             e.printStackTrace();
         }
         finally {
+            if (callStmt != null)
+                try{
+                    callStmt.close();
+                }catch (SQLException sqle){
+                }
+            if (rs != null)
+                try{
+                    rs.close();
+                }catch (SQLException sqle){
+                }
             if (db != null)
                 db.closeConnection();
             if (is != null)
                 try {
                     is.close();
                 }
-            catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
+
+                catch (IOException e) {
+                    System.out.println(e.getMessage());
+                }
         }
     }
 
@@ -370,4 +392,4 @@ public class ProcessCleanup extends RoundRobinScheduledJob implements com.centur
     // * for TASK_INSTANCE with no process instance ID, delete them in 7 days
     // * for USER, delete them based on aging parameters
     // * to be done: for misc owner types, delete based on aging parameters
- }
+}

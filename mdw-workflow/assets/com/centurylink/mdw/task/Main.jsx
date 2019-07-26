@@ -55,7 +55,7 @@ class Main extends Component {
   
   refreshTask(id) {
     console.log('retrieving task: ' + id);  // eslint-disable-line no-console
-    fetch(new Request('/mdw/services/Tasks/' + id, {
+    fetch(new Request(this.getChildContext().serviceRoot + '/Tasks/' + id, {
       method: 'GET',
       headers: { Accept: 'application/json'},
       credentials: 'same-origin'

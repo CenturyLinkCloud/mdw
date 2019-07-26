@@ -18,7 +18,7 @@ class Task extends Component {
   }  
 
   componentDidMount() {
-    fetch(new Request('/mdw/services/Workgroups', {
+    fetch(new Request(this.context.serviceRoot + '/Workgroups', {
       method: 'GET',
       headers: { Accept: 'application/json'},
       credentials: 'same-origin'
