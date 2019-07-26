@@ -121,25 +121,28 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
 
     private void enable_output(DatabaseAccess db, int bufsize) throws SQLException {
         String query = "begin dbms_output.enable(" + bufsize + "); end;";
-        CallableStatement callStmt = db.getConnection().prepareCall(query);
+        try (CallableStatement callStmt = db.getConnection().prepareCall(query)) {
         callStmt.executeUpdate();
+        }catch (SQLException e){}
     }
 
     @SuppressWarnings("unused")
     private void disable_output(DatabaseAccess db) throws SQLException {
         String query = "begin dbms_output.disable; end;";
-        CallableStatement callStmt = db.getConnection().prepareCall(query);
+        try (CallableStatement callStmt = db.getConnection().prepareCall(query)) {
         callStmt.executeUpdate();
+        }catch (SQLException e){}
     }
 
     private void show_output(DatabaseAccess db) throws SQLException {
+        try (
         CallableStatement show_stmt = db.getConnection()
                 .prepareCall("declare " + "    l_line varchar2(255); " + "    l_done number; "
                         + "    l_buffer long; " + "begin " + "  loop "
                         + "    exit when length(l_buffer)+255 > :maxbytes OR l_done = 1; "
                         + "    DBMS_OUTPUT.get_line( l_line, l_done ); "
                         + "    l_buffer := l_buffer || l_line || chr(10); " + "  end loop; "
-                        + " :done := l_done; " + " :buffer := l_buffer; " + "end;");
+                                + " :done := l_done; " + " :buffer := l_buffer; " + "end;")){
         int done = 0;
         int maxbytes = 4096; // retrieve up to 4096 bytes at a time
         show_stmt.registerOutParameter(2, Types.INTEGER);
@@ -157,6 +160,9 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
             if (done == 1)
                 break;
         }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void cleanup(DatabaseAccess db, String filename, int maxProcInst,
@@ -164,6 +170,8 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
         Connection conn = null;
         InputStream is = null;
         String printMsg = "";
+        CallableStatement callStmt = null;
+        ResultSet rs = null;
         try {
             File cleanupScript = null;
             File assetRoot = ApplicationContext.getAssetRoot();
@@ -216,7 +224,7 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
             if (query.endsWith("/"))
                 query = query.substring(0, query.length() - 1);
 
-            CallableStatement callStmt = null;
+
             if (jdbcUrl != null || db.isMySQL()) {
                 ScriptRunner runner = new ScriptRunner(conn, false, false);
                 String filePath = cleanupScript.getAbsolutePath().replace("\\","\\\\");
@@ -240,7 +248,7 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
             if (db != null && !db.isMySQL())
                 show_output(db);
             else if (db != null && db.isMySQL()) {
-                ResultSet rs = null;
+
                 int updateCount = -1;
                 printMsg = "";
                 if (isResultSet) {
@@ -269,6 +277,8 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
                                    else
                                        logger.info(printMsg);
                                    i++;
+                                    if(rs.isAfterLast())
+                                        break;
                                }
                            } catch (SQLException e) {/* Not that many columns in row */ }
                        }
@@ -295,6 +305,16 @@ public class ProcessCleanup extends RoundRobinScheduledJob {
             e.printStackTrace();
         }
         finally {
+            if (callStmt != null)
+                try{
+                    callStmt.close();
+                }catch (SQLException sqle){
+                }
+            if (rs != null)
+                try{
+                    rs.close();
+                }catch (SQLException sqle){
+                }
             if (db != null)
                 db.closeConnection();
             if (is != null)
