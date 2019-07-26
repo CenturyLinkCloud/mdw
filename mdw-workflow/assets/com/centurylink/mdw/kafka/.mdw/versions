@@ -1,5 +1,5 @@
 KafkaAdapter.java=9
-KafkaProducer.proc=1
+KafkaProducer.proc=6
 KafkaProducer.test=1
 KafkaProducer.yaml=3 Auto-created
 KafkaProducerTest.java=1
