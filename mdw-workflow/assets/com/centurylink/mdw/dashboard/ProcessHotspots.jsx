@@ -1,4 +1,4 @@
-import React, {Component} from '../node/node_modules/react/react';
+import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import PanelHeader from '../react/PanelHeader.jsx';
 import HeaderLabel from '../react/HeaderLabel.jsx';

@@ -113,11 +113,17 @@ public class WebpackCache implements PreloadableCache {
 
     private void unzipNodeModules(File pkgDir) throws IOException {
         File modulesZip = new File(pkgDir + "/node_modules.zip");
-        long before = System.currentTimeMillis();
-        logger.info("Unzipping " + pkgDir + "/node_modules...");
-        ZipHelper.unzip(modulesZip, pkgDir, null, null, Exist.Ignore);
-        if (logger.isDebugEnabled())
-            logger.debug("  - node_modules unzipped in " + (System.currentTimeMillis() - before) + " ms");
+        if (modulesZip.isFile()) {
+            long before = System.currentTimeMillis();
+            logger.info("Unzipping " + pkgDir + "/node_modules...");
+            ZipHelper.unzip(modulesZip, pkgDir, null, null, Exist.Ignore);
+            if (logger.isDebugEnabled())
+                logger.debug("  - node_modules unzipped in " + (System.currentTimeMillis() - before) + " ms");
+        }
+        else {
+            // sometimes we run without node_modules.zip in development
+            logger.warn("Not found: " + modulesZip.getAbsolutePath());
+        }
     }
 
     @Override
@@ -135,15 +141,14 @@ public class WebpackCache implements PreloadableCache {
         watchedAssets.clear();
     }
 
-    public File getCompiled(AssetInfo asset) throws IOException, ServiceException {
+    public File getCompiled(AssetInfo asset) throws IOException {
         return getCompiled(asset, getStarter(asset));
     }
-
 
     /**
      * Starter file will be compiled, but asset used to compute output path.
      */
-    public File getCompiled(AssetInfo asset, File starter) throws IOException, ServiceException {
+    public File getCompiled(AssetInfo asset, File starter) {
         File file;
         synchronized(WebpackCache.class) {
             file = webpackAssets.get(asset);
@@ -204,25 +209,20 @@ public class WebpackCache implements PreloadableCache {
     /**
      * Returns null except in dev mode.
      */
-    private void compile(AssetInfo asset, File source, File target) throws ServiceException {
+    private void compile(AssetInfo asset, File source, File target) {
         File watched = watchedAssets.get(asset);
         if (watched == null) {
-            if (isDevMode()) {
-                new Thread(() -> {
-                    try {
-                        // avoid recursive compiles
-                        if (isDevMode())
-                            watchedAssets.put(asset, target);
-                        doCompile(asset, source, target);
-                    }
-                    catch (Exception ex) {
-                        logger.severeException(ex.getMessage(), ex);
-                    }
-                }).start();
-            }
-            else {
-                doCompile(asset, source, target);
-            }
+            new Thread(() -> {
+                try {
+                    // avoid recursive compiles
+                    if (isDevMode())
+                        watchedAssets.put(asset, target);
+                    doCompile(asset, source, target);
+                }
+                catch (Exception ex) {
+                    logger.severeException(ex.getMessage(), ex);
+                }
+            }).start();
         }
     }
 
@@ -327,7 +327,7 @@ public class WebpackCache implements PreloadableCache {
             return devMode.equals("true");
     }
 
-    private class Result {
+    private static class Result {
         String status;
         String message;
         public String toString() {

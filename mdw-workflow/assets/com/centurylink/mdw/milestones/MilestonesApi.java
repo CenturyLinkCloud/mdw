@@ -91,6 +91,8 @@ public class MilestonesApi extends JsonRestService {
                 milestonesGroup.getSubgroups().add(defaultGroup);
             }
         }
+        if (props.isEmpty()) // remove Other
+            milestonesGroup.getSubgroups().removeIf(subgroup -> MilestoneFactory.OTHER_GROUP.getName().equals(subgroup.getName()));
 
         return milestonesGroup.getJson();
     }

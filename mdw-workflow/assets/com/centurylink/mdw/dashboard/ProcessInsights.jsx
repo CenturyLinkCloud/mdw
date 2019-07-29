@@ -1,4 +1,4 @@
-import React, {Component} from '../node/node_modules/react/react';
+import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import {Bar} from '../node/node_modules/react-chartjs-2';
 import PanelHeader from '../react/PanelHeader.jsx';

@@ -391,17 +391,19 @@ public class TaskDataAccess extends CommonDataAccess {
         try {
             db.openConnection();
             // get group IDs
-            StringBuffer sb = new StringBuffer();
-            sb.append("select USER_GROUP_ID from USER_GROUP where GROUP_NAME in (");
-            for (int i=0; i<groups.length; i++) {
-                if (i>0) sb.append(",");
-                sb.append("'").append(groups[i]).append("'");
-            }
-            sb.append(")");
-            ResultSet rs = db.runSelect(sb.toString());
-            List<Long> groupIds = new ArrayList<Long>();
-            while (rs.next()) {
-                groupIds.add(rs.getLong(1));
+            List<Long> groupIds = new ArrayList<>();
+            if (groups.length > 0) {
+                StringBuffer sb = new StringBuffer();
+                sb.append("select USER_GROUP_ID from USER_GROUP where GROUP_NAME in (");
+                for (int i=0; i<groups.length; i++) {
+                    if (i>0) sb.append(",");
+                    sb.append("'").append(groups[i]).append("'");
+                }
+                sb.append(")");
+                ResultSet rs = db.runSelect(sb.toString());
+                while (rs.next()) {
+                    groupIds.add(rs.getLong(1));
+                }
             }
             // delete existing groups
             String query = "";
@@ -412,18 +414,22 @@ public class TaskDataAccess extends CommonDataAccess {
             else
                 query = "delete from TASK_INST_GRP_MAPP where TASK_INSTANCE_ID=?";
             db.runUpdate(query, taskInstId);
-            if (db.isMySQL()) db.commit(); // MySQL will lock even when no rows were deleted and using unique index, so commit so that multiple session inserts aren't deadlocked
-            // insert groups
-            query = "insert into TASK_INST_GRP_MAPP " +
-                    "(TASK_INSTANCE_ID,USER_GROUP_ID,CREATE_DT) values (?,?," + now() + ")";
-            db.prepareStatement(query);
-            Object[] args = new Object[2];
-            args[0] = taskInstId;
-            for (Long group : groupIds) {
-                args[1] = group;
-                db.runUpdateWithPreparedStatement(args);
+            if (db.isMySQL())
+                db.commit(); // MySQL will lock even when no rows were deleted and using unique index, so commit so that multiple session inserts aren't deadlocked
+
+            if (!groupIds.isEmpty()) {
+                // insert groups
+                query = "insert into TASK_INST_GRP_MAPP " +
+                        "(TASK_INSTANCE_ID,USER_GROUP_ID,CREATE_DT) values (?,?," + now() + ")";
+                db.prepareStatement(query);
+                Object[] args = new Object[2];
+                args[0] = taskInstId;
+                for (Long group : groupIds) {
+                    args[1] = group;
+                    db.runUpdateWithPreparedStatement(args);
+                }
+                db.commit();
             }
-            db.commit();
         } catch (Exception e) {
             db.rollback();
             throw new DataAccessException(0,"failed to associate task instance groups", e);

@@ -19,6 +19,9 @@
   margin: 20px;
   clear: both;
 }
+.mdw-task-workgroups {
+  min-width: 200px;
+}
 .rbt-body-container .dropdown-menu > li > a:hover {
 	background-color: #bbdefb;
 }

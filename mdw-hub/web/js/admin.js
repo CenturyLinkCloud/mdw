@@ -273,7 +273,10 @@ adminApp.directive('tabLink', ['$window', '$location', function($window, $locati
           scope.$apply();
         }
         else {
-          $window.location.href = url;
+          if (url.startsWith('https://') || url.startsWith('http://'))
+              $window.location.href = url;
+          else
+              $window.location.href = $mdwHubRoot + (url.startsWith('/') ? url : '/' + url);
         }
       });
     }

@@ -78,8 +78,8 @@ function Comment(props, context) {
   const insertAttachment = attachment => {
     const ta = document.getElementById('comment-' + attachment.ownerId + '-textarea');
     var val = ta.value;
-    var url = new URL(context.hubRoot + '/attach/' + attachment.location, location.href);
-    var urlMd = '\n[' + attachment.name + '](' + url.href + ')';
+    var url = context.hubRoot + '/attach/' + attachment.location;
+    var urlMd = '\n[' + attachment.name + '](' + url + ')';
     if (ta.selectionStart || ta.selectionStart == '0') {
       var start = ta.selectionStart;
       var end = ta.selectionEnd;
@@ -212,7 +212,7 @@ function Comment(props, context) {
                 rootClose={true} ref={(ol) => { overlayRef = ol; }}>
                 <Button name="emoji" className="mdw-btn mdw-action-btn" 
                   style={{paddingBottom: "0"}} title="Emoji">
-                  <Emoji emoji=":slightly_smiling_face:" size="18px" />
+                  <Emoji emoji=":slightly_smiling_face:" size={18} />
                 </Button>
               </OverlayTrigger>
             </span>
@@ -255,7 +255,7 @@ function Comment(props, context) {
                 <span key={i} className={segment.emoji ? 'mdw-emoji' : ''} 
                   title={segment.emoji ? segment.emoji : null}>
                 {segment.emoji &&
-                  <Emoji emoji={segment.emoji} size="22px" />
+                  <Emoji emoji={segment.emoji} size={22} />
                 }
                 {segment.text &&
                   <ReactMarkdown source={segment.text} className="mdw-markdown-segment" />

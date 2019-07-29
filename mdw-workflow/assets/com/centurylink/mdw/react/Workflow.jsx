@@ -1,4 +1,4 @@
-import React, {Component} from '../node/node_modules/react/react';
+import React, {Component} from '../node/node_modules/react';
 import implementors from './implementors';
 import ShapeFactory from './workflow/Shape';
 import LabelFactory from './workflow/Label';
