@@ -1,8 +1,7 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import {Popover, OverlayTrigger, Button, Glyphicon} from '../node/node_modules/react-bootstrap';
-import RootCloseWrapper from '../node/node_modules/react-overlays/lib/RootCloseWrapper';
-import {Link} from '../node/node_modules/react-router-dom';
+import RootCloseWrapper from '../node/node_modules/react-overlays/RootCloseWrapper';
 import {AsyncTypeahead, Menu, MenuItem} from '../node/node_modules/react-bootstrap-typeahead';
 import '../node/node_modules/style-loader!../react/typeahead.css';
 
@@ -227,26 +226,26 @@ class Action extends Component {
                   {action.action === 'Assign' &&
                     <OverlayTrigger ref="assigneeTrigger" trigger="click"
                       placement="left" overlay={assigneePopover} rootClose={false}>
-                      <Link to={this.context.hubRoot + '/tasks/' + this.props.task.id}
+                      <a href={this.context.hubRoot + '/tasks/' + this.props.task.id}
                         name={action.action} onClick={this.handlePendingActionClick}>
                         {action.label}
-                      </Link>
+                      </a>
                     </OverlayTrigger>
                   }
                   {action.action !== 'Assign' && action.requireComment &&
                     <OverlayTrigger ref={action.action + '_commentTrigger'} trigger="click"
                       placement="left" overlay={commentPopover} rootClose={false}>
-                      <Link to={this.context.hubRoot + '/tasks/' + this.props.task.id}
+                      <a href={this.context.hubRoot + '/tasks/' + this.props.task.id}
                         name={action.action} onClick={this.handlePendingActionClick}>
                         {action.label}
-                      </Link>
+                      </a>
                     </OverlayTrigger>
                   }
                   {action.action !== 'Assign' && !action.requireComment &&
-                    <Link to={this.context.hubRoot + '/tasks/' + this.props.task.id}
+                    <a href={this.context.hubRoot + '/tasks/' + this.props.task.id}
                       name={action.action} onClick={this.handleActionClick}>
                       {action.label}
-                    </Link>
+                    </a>
                   }
                 </li>
               );
@@ -285,10 +284,10 @@ class AssigneeMenuItem extends MenuItem {
   render() {
     return (
       <li>
-        <Link to={this.props.linkTo} className="dropdown-item"
+        <a href={this.props.linkTo} className="dropdown-item"
           name={this.props.option.cuid} onClick={this.handleClick}>
           {this.props.option.name}
-        </Link>
+        </a>
       </li>
     );
   }

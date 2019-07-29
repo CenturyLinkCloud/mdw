@@ -1,29 +1,15 @@
 ## node js for MDW
-**Note:** the following two node modules have been CUSTOMIZED:
- - react-bootstrap-date-picker
- - react-select
-Make sure they do not get overwritten via `npm install`
-
-Forked modules:
-- react-custom-scrollbars fork:
-   - `git clone https://github.com/mdw-dev/react-custom-scrollbars.git`
-   - `cd react-custom-scrollbars`
-   - `npm install`
-   - `npm run build`
-   - (copy lib dir and top-level files into mdw-workflow/assets/com/centurylink/mdw/node/node_modules/react-custom-scrollbars)
-   - edit package.json to replace `"main": "src/index.js"` with `"main": "lib/index.js"`
+Forked modules (see package.json):
+  - react-bootstrap-date-picker
+  - react-custom-scrollbars
 
 To install a new package:
-  1. Delete node_modules directory
-  2. Unzip node_modules.zip, and copy somewhere as a backup
-  3. Delete node_modules.zip
-  4. npm install <package> --save
-  5. npm install
-  6. Replace these directories into node_modules from backup:
-     - react-bootstrap-date-picker
-     - react-custom-scrollbares
-     - react-select
-  7. Rezip node_modules.zip, then remove node_modules dir
-  8. Delete temp dir to force JSX recompile
-  9. Start server, and test that stuff still works (esp Filepanel)
-  10. Commit node_modules.zip.
+  1. Delete node_modules directory and node_modules.zip
+  2. npm install
+  3. npm install package --save
+  4. Rezip node_modules.zip: 
+     zip -r -X node_modules.zip node_modules -x "*.DS_Store"
+  5. Delete node_modules dir again
+  6. Delete temp dir to force JSX recompile
+  7. Start server, and test that stuff still works (esp filepanel scrolling large files)
+  8. Commit node_modules.zip.

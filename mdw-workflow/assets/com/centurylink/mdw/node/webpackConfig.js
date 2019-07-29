@@ -23,7 +23,7 @@ module.exports = {
               {
                 loader: 'babel-loader',
                 options: {
-                  presets: [nodeLoc + '/node_modules/babel-preset-react'], 
+                  presets: [nodeLoc + '/node_modules/babel-preset-react'],
                   plugins: [nodeLoc + '/node_modules/babel-plugin-transform-object-rest-spread']
                 }
               }

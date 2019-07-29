@@ -2,11 +2,11 @@ import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import {Glyphicon} from '../node/node_modules/react-bootstrap';
 import Select from '../node/node_modules/react-select';
-import '../node/node_modules/style-loader!../react/react-select.css';
 import Heading from './Heading.jsx';
 import NgWorkflow from '../react/NgWorkflow.jsx';
 import UserDate from '../react/UserDate.jsx';
 import '../node/node_modules/style-loader!./task-ui.css';
+import '../node/node_modules/style-loader!../react/multi-select.css';
 
 class Task extends Component {
     
@@ -36,11 +36,8 @@ class Task extends Component {
   }
   
   handleWorkgroupSelectChange(values) {
-    var groups = [];
-    values.split(',').forEach(val => {
-      groups.push(val);
-    });
-    this.props.updateTask({workgroups: groups});
+    const workgroups = values.map(item => item.value);
+    this.props.updateTask({workgroups: workgroups});
   }
   
   handleDueDateChange(dueDate) {
@@ -57,6 +54,7 @@ class Task extends Component {
       animate = false;  // avoid annoying animations every time
     else
       sessionStorage.setItem('taskWorkflowInstanceId', task.ownerId);
+
     return (
       <div>
         <Heading task={this.props.task} refreshTask={this.props.refreshTask} />
@@ -89,17 +87,18 @@ class Task extends Component {
                       </span>
                     }
                   </div>
-                  {task.workgroups &&
-                    <div className="mdw-item-group">
-                      <label>Workgroups:</label>
-                      <div className="mdw-item-select">
-                        <Select multi simpleValue value={task.workgroups} 
-                          placeholder="Select workgroup(s)" 
-                          options={this.state.workgroupOptions} 
-                          onChange={this.handleWorkgroupSelectChange} />
-                      </div>
+                  <div className="mdw-item-group">
+                    <label>Workgroups:</label>
+                    <div className="mdw-item-select">
+                      <Select className="mdw-task-workgroups"
+                        value={task.workgroups ? task.workgroups.map( wg => ({value: wg, label: wg}) ) : []}
+                        isMulti
+                        placeholder="Select workgroup(s)"
+                        options={this.state.workgroupOptions}
+                        classNamePrefix="multi-select"
+                        onChange={this.handleWorkgroupSelectChange} />
                     </div>
-                  }
+                  </div>
                   {task.secondaryOwnerType == 'TASK_INSTANCE' &&
                     <div className="mdw-item-group">
                       Master Task: 

@@ -1,0 +1,23 @@
+.mdw-item-select .multi-select__control {
+  min-height: 32px;
+  height: 32px;
+}
+.mdw-item-select .multi-select__value-container {
+  padding: 0 4px;
+}
+.mdw-item-select .multi-select__indicators {
+  transform: scale(0.9,0.9);
+  height: 28px;
+}
+.mdw-item-select .multi-select__menu {
+  top: 28px;
+  border-radius: 3px;
+}
+.mdw-item-select .multi-select__menu-list {
+  /*
+  background-color: white;
+  border: 1px solid gray;
+  */
+}
+.mdw-item-select .multi-select__option {
+}

@@ -1,4 +1,4 @@
-import React, {Component} from '../node/node_modules/react/react';
+import React, {Component} from '../node/node_modules/react';
 import {Popover, Button} from '../node/node_modules/react-bootstrap/lib';
 import Dropdown from './Dropdown.jsx';
 import DatePicker from './DatePicker.jsx';

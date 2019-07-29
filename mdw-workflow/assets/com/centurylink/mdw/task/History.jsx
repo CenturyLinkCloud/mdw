@@ -81,7 +81,8 @@ function HistoryItem(props, context) {
 }
 
 History.contextTypes = HistoryItem.contextTypes = {
-  hubRoot: PropTypes.string
+  hubRoot: PropTypes.string,
+  serviceRoot: PropTypes.string
 };
 
 export default History; 

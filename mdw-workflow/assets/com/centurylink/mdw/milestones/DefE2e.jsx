@@ -1,4 +1,4 @@
-import React, {Component} from '../node/node_modules/react/react';
+import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import '../node/node_modules/style-loader!../node/node_modules/vis/dist/vis.css';
 import {Network} from '../node/node_modules/vis/dist/vis';
