@@ -84,7 +84,7 @@ title: Performance Tuning
 ## MDW Internal Events Recovery
   The UnscheduledEventsMonitor periodically checks for internal events that have not been processed, and will process those that are older than a designated age.
   The maximum number of events that will be processed per cycle are specified in the batch size.  The settings for controlling this are under unscheduled.events
-  in the [Config Guide](../config).
+  in the [Config Guide](../configuration).
 
   **NOTE**: For high volume/load applications, it could be beneficial in certain cases for the unscheduled.events/max.batch.size value to be set to a
    number that is lower than the mdw.threadpool.max_threads value so as to NOT exceed the number of available threads.

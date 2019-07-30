@@ -16,6 +16,7 @@
 package com.centurylink.mdw.services;
 
 import com.centurylink.mdw.services.asset.AssetServicesImpl;
+import com.centurylink.mdw.services.asset.StagingServicesImpl;
 import com.centurylink.mdw.services.event.EventServicesImpl;
 import com.centurylink.mdw.services.project.CollaborationServicesImpl;
 import com.centurylink.mdw.services.project.SolutionServicesImpl;
@@ -43,23 +44,26 @@ public class ServiceLocator {
     }
 
     public static ProcessServices getProcessServices() {
-        return new ProcessServicesImpl(); // TODO use ServiceRegistry
+        return new ProcessServicesImpl();
     }
 
     public static UserServices getUserServices() {
-        return new UserServicesImpl(); // TODO use ServiceRegistry
+        return new UserServicesImpl();
     }
 
     public static RequestServices getRequestServices() {
-        return new RequestServicesImpl(); // TODO use ServiceRegistry
+        return new RequestServicesImpl();
     }
 
     public static AssetServices getAssetServices() {
-        return new AssetServicesImpl(); // TODO use ServiceRegistry
+        return new AssetServicesImpl();
+    }
+    public static StagingServices getStagingServices() {
+        return new StagingServicesImpl();
     }
 
     public static SolutionServices getSolutionServices() {
-        return new SolutionServicesImpl(); // TODO use ServiceRegistry
+        return new SolutionServicesImpl();
     }
 
     public static CollaborationServices getCollaborationServices() {

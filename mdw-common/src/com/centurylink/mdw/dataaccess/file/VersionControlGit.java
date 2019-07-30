@@ -340,6 +340,16 @@ public class VersionControlGit implements VersionControl {
         return localRepo.getBranch();
     }
 
+    public List<GitBranch> getRemoteBranches() throws Exception {
+        fetch();
+        List<Ref> refs = new Git(localRepo).branchList().setListMode(ListBranchCommand.ListMode.REMOTE).call();
+        List<GitBranch> branches = new ArrayList<>();
+        for (Ref ref : refs) {
+            branches.add(new GitBranch(ref.getName(), ObjectId.toString(ref.getObjectId())));
+        }
+        return branches;
+    }
+
     /**
      * Does not do anything if already on target branch.
      */
