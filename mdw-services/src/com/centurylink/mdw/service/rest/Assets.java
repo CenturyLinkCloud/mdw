@@ -44,8 +44,6 @@ import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.rest.JsonRestService;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -68,8 +66,6 @@ import java.util.Map;
 @Path("/Assets")
 @Api("Workflow assets")
 public class Assets extends JsonRestService {
-
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     protected List<String> getRoles(String path, String method) {
         if (method.equals("GET")) {
@@ -254,7 +250,7 @@ public class Assets extends JsonRestService {
                     }
                     vcGit.connect(discoveryUrl, null, null, tempfile);
                     vcGit.setCredentialsProvider(new UsernamePasswordCredentialsProvider(userInfo[0], userInfo[1]));
-                    vcGit.cloneBranch(branch);
+                    vcGit.clone(branch, null);
                     for (String pkg : pkgs) {
                         String pkgPath = pkg.replace(".", "/");
                         if (tempfile != null) {

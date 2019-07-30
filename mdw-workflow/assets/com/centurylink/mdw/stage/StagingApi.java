@@ -2,6 +2,7 @@ package com.centurylink.mdw.stage;
 
 import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.WebSocketProgressMonitor;
 import com.centurylink.mdw.dataaccess.file.GitBranch;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.listener.Listener;
@@ -17,6 +18,8 @@ import org.json.JSONObject;
 
 import javax.ws.rs.Path;
 import java.util.Map;
+
+import static com.centurylink.mdw.services.StagingServices.STAGE;
 
 @Path("/")
 public class StagingApi extends JsonRestService {
@@ -52,9 +55,10 @@ public class StagingApi extends JsonRestService {
             }
             else if (segments.length == 5) {
                 String stagingUser = segments[4];
-                GitBranch stagingBranch = getStaginServices().getStagingBranch(stagingUser);
+                GitBranch stagingBranch = getStagingServices().getStagingBranch(stagingUser);
                 if (stagingBranch == null)
                     throw new ServiceException(ServiceException.NOT_FOUND, "Staging branch not found for " + stagingUser);
+                return stagingBranch.getJson();
             }
         }
         catch (ServiceException ex) {
@@ -67,14 +71,22 @@ public class StagingApi extends JsonRestService {
     }
 
     @Override
-    public JSONObject post(String path, JSONObject content, Map<String, String> headers)
+    public JSONObject post(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
-        headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(Status.ACCEPTED.getCode()));
+        String stagingUser = getSegment(path, 4);
+        if (stagingUser == null)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
+        else {
+            WebSocketProgressMonitor progressMonitor = new WebSocketProgressMonitor(STAGE + stagingUser,
+                    "Prepare staging area for " + stagingUser);
+            getStagingServices().prepareStagingBranch(stagingUser, progressMonitor);
+            headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(Status.ACCEPTED.getCode()));
+        }
         return null;
     }
 
     private StagingServices stagingServices;
-    private StagingServices getStaginServices() {
+    private StagingServices getStagingServices() {
         if (stagingServices == null)
             stagingServices = ServiceLocator.getStagingServices();
         return stagingServices;
