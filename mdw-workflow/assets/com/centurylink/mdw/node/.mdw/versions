@@ -1,11 +1,10 @@
 .gitignore=3
-.mdwignore=1
+.mdwignore=2
 TestRunner.java=7
 WebpackCache.java=14
 j2v8-4.6.0.jar=1
 libstdc++.so.6=1
 node_modules.zip=17
-package-lock.json=1
 package.json=21
 parser.js=4
 readme.md=6
