@@ -46,11 +46,11 @@ class Main extends Component {
           $mdwUi.hubLoading(false);
           return response.json();
         })
-        .then(milestone => {
+        .then(json => {
           if (ok) {
             this.setState({
-              milestone: milestone.milestone,
-              data: new Data(groups, milestone)
+              milestone: json.milestone,
+              data: new Data(groups, json)
             });
           }
           else {
