@@ -89,16 +89,23 @@ public class StagingServicesImpl implements StagingServices {
 
     public Stage prepareUserStage(String cuid, GitProgressMonitor progressMonitor) throws ServiceException {
         User user = getUser(cuid);
+        Stage userStage = new Stage(user.getCuid(), user.getName());
         String stagingBranchName = STAGE + cuid;
         VersionControlGit stagingVc = getStagingVersionControl(cuid);
         try {
             if (stagingVc.localRepoExists()) {
                 GitBranch stagingBranch = getStagingBranch(cuid, stagingVc);
+                if (stagingBranch != null && stagingVc.getBranch().equals(stagingBranchName)) {
+                    // return synchronously
+                    stagingVc.fetch();
+                    userStage.setBranch(stagingBranch);
+                    return userStage;
+                }
                 new Thread(() -> {
                     try {
                         stagingVc.pull(stagingVc.getBranch(), progressMonitor);
                         if (stagingBranch == null)
-                            stagingVc.createBranch(stagingBranchName, stagingVc.getBranch(),progressMonitor);
+                            stagingVc.createBranch(stagingBranchName, stagingVc.getBranch(), progressMonitor);
                         if (!stagingVc.getBranch().equals(stagingBranchName))
                             stagingVc.checkout(stagingBranchName);
                         if (progressMonitor != null)
@@ -133,7 +140,6 @@ public class StagingServicesImpl implements StagingServices {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
         }
 
-        Stage userStage = new Stage(user.getCuid(), user.getName());
         userStage.setBranch(new GitBranch(null, stagingBranchName));
         return userStage;
     }

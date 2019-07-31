@@ -84,7 +84,10 @@ public class StagingApi extends JsonRestService {
             WebSocketProgressMonitor progressMonitor = new WebSocketProgressMonitor(STAGE + stagingUser,
                     "Prepare staging area for " + user.getName());
             Stage userStage = getStagingServices().prepareUserStage(stagingUser, progressMonitor);
-            headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(Status.ACCEPTED.getCode()));
+            if (userStage.getBranch().getId() == null) {
+                // asynchronous prep
+                headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(Status.ACCEPTED.getCode()));
+            }
             return userStage.getJson();
         }
     }

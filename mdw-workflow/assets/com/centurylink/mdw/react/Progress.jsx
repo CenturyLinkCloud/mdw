@@ -10,9 +10,6 @@ class Progress extends Component {
   }  
 
   componentDidMount() {
-      if (this.websocket) {
-        this.websocket.close();
-      }
       this.websocket = new WebSocket(this.props.webSocketUrl);
       this.websocket.onopen = () => {
         this.websocket.send(this.props.topic);
@@ -53,6 +50,12 @@ class Progress extends Component {
           });
         }
       };
+  }
+
+  componentWillUnmount() {
+    if (this.websocket) {
+      this.websocket.close();
+    }
   }
 
   render() {
