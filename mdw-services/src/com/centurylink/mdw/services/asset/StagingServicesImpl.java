@@ -6,6 +6,9 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.file.GitBranch;
 import com.centurylink.mdw.dataaccess.file.GitProgressMonitor;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.model.asset.Stage;
+import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.service.data.task.UserGroupCache;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.StagingServices;
@@ -58,8 +61,16 @@ public class StagingServicesImpl implements StagingServices {
             }
     }
 
-    public GitBranch getStagingBranch(String cuid) throws ServiceException {
-        return getStagingBranch(cuid, getMainVersionControl());
+    public Stage getUserStage(String cuid) throws ServiceException {
+        GitBranch stagingBranch = getStagingBranch(cuid, getMainVersionControl());
+        if (stagingBranch == null)
+            return null;
+        if (!getStagingVersionControl(cuid).localRepoExists())
+            return null;  // not cloned locally
+        User user = getUser(cuid);
+        Stage userStage = new Stage(user.getCuid(), user.getName());
+        userStage.setBranch(stagingBranch);
+        return userStage;
     }
 
     private GitBranch getStagingBranch(String cuid, VersionControlGit vcGit) throws ServiceException {
@@ -76,7 +87,8 @@ public class StagingServicesImpl implements StagingServices {
         }
     }
 
-    public GitBranch prepareStagingBranch(String cuid, GitProgressMonitor progressMonitor) throws ServiceException {
+    public Stage prepareUserStage(String cuid, GitProgressMonitor progressMonitor) throws ServiceException {
+        User user = getUser(cuid);
         String stagingBranchName = STAGE + cuid;
         VersionControlGit stagingVc = getStagingVersionControl(cuid);
         try {
@@ -103,12 +115,12 @@ public class StagingServicesImpl implements StagingServices {
                     try {
                         stagingVc.clone(mainBranch, progressMonitor);
                         GitBranch stagingBranch = getStagingBranch(cuid, stagingVc);
-                        if (stagingBranch == null) {
+                        if (stagingBranch == null)
                             stagingVc.createBranch(stagingBranchName, mainBranch, progressMonitor);
+                        if (!stagingVc.getBranch().equals(stagingBranchName))
                             stagingVc.checkout(stagingBranchName);
-                            if (progressMonitor != null)
-                                progressMonitor.done();
-                        }
+                        if (progressMonitor != null)
+                            progressMonitor.done();
                     } catch (Exception ex) {
                         logger.error(ex.getMessage(), ex);
                         if (progressMonitor != null)
@@ -121,6 +133,15 @@ public class StagingServicesImpl implements StagingServices {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
         }
 
-        return new GitBranch(null, stagingBranchName);
+        Stage userStage = new Stage(user.getCuid(), user.getName());
+        userStage.setBranch(new GitBranch(null, stagingBranchName));
+        return userStage;
+    }
+
+    private User getUser(String cuid) throws ServiceException {
+        User user = UserGroupCache.getUser(cuid);
+        if (user == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "User not found: " + cuid);
+        return user;
     }
 }

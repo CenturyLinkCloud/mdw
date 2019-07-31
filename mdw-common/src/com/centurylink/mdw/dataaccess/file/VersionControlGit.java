@@ -317,21 +317,16 @@ public class VersionControlGit implements VersionControl {
         return branches;
     }
 
-    public void checkout(String branch) throws Exception {
-        checkout(branch, false);
-    }
-
     /**
      * Does not do anything if already on target branch.
      */
-    public void checkout(String branch, boolean createIfNeeded) throws Exception {
+    public void checkout(String branch) throws Exception {
         if (!branch.equals(getBranch())) {
-            if (createIfNeeded)
-                createBranchIfNeeded(branch);
+            fetch(); // in case the branch is not known locally
+            createBranchIfNeeded(branch);
             CheckoutCommand checkout = git.checkout().setName(branch)
                 .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK);
-            if (createIfNeeded)
-                checkout.setStartPoint("origin/" + branch);
+            checkout.setStartPoint("origin/" + branch);
             checkout.call();
             // for some reason jgit needs this when branch is switched
             git.checkout().setName(branch).call();
@@ -360,7 +355,7 @@ public class VersionControlGit implements VersionControl {
         fetch(); // in case the branch is not known locally
         if (hard)
             hardReset();
-        checkout(branch, true);
+        checkout(branch);
         pull(branch);  // pull before delete or next pull may add non-path items back
     }
 
@@ -380,7 +375,6 @@ public class VersionControlGit implements VersionControl {
      * Create a local branch for remote tracking if it doesn't exist already.
      */
     protected void createBranchIfNeeded(String branch) throws Exception {
-        fetch(); // in case the branch is not known locally
         if (localRepo.findRef(branch) == null) {
             git.branchCreate()
                .setName(branch)

@@ -3,8 +3,8 @@ package com.centurylink.mdw.stage;
 import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.WebSocketProgressMonitor;
-import com.centurylink.mdw.dataaccess.file.GitBranch;
 import com.centurylink.mdw.model.Status;
+import com.centurylink.mdw.model.asset.Stage;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
@@ -55,10 +55,10 @@ public class StagingApi extends JsonRestService {
             }
             else if (segments.length == 5) {
                 String stagingUser = segments[4];
-                GitBranch stagingBranch = getStagingServices().getStagingBranch(stagingUser);
-                if (stagingBranch == null)
+                Stage userStage = getStagingServices().getUserStage(stagingUser);
+                if (userStage == null)
                     throw new ServiceException(ServiceException.NOT_FOUND, "Staging branch not found for " + stagingUser);
-                return stagingBranch.getJson();
+                return userStage.getJson();
             }
         }
         catch (ServiceException ex) {
@@ -78,11 +78,14 @@ public class StagingApi extends JsonRestService {
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
         }
         else {
+            User user = UserGroupCache.getUser(stagingUser);
+            if (user == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "User not found: " + stagingUser);
             WebSocketProgressMonitor progressMonitor = new WebSocketProgressMonitor(STAGE + stagingUser,
-                    "Prepare staging area for " + stagingUser);
-            GitBranch stagingBranch = getStagingServices().prepareStagingBranch(stagingUser, progressMonitor);
+                    "Prepare staging area for " + user.getName());
+            Stage userStage = getStagingServices().prepareUserStage(stagingUser, progressMonitor);
             headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(Status.ACCEPTED.getCode()));
-            return stagingBranch.getJson();
+            return userStage.getJson();
         }
     }
 

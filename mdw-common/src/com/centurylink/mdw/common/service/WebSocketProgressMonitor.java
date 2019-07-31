@@ -75,7 +75,8 @@ public class WebSocketProgressMonitor implements GitProgressMonitor, Jsonable {
     }
 
     public int getCurrentTaskPercentComplete() {
-        return (int)Math.round((double)this.currentTaskCompleted * 100 / this.currentTaskTotalWork);
+        int percent = (int)Math.round((double)this.currentTaskCompleted * 100 / this.currentTaskTotalWork);
+        return percent >= 0 ? percent : 0;  // sometimes jgit reports negative
     }
 
     public void done() {
@@ -106,7 +107,7 @@ public class WebSocketProgressMonitor implements GitProgressMonitor, Jsonable {
         JSONObject json = create();
         json.put("title", this.title);
         if (this.error != null) {
-            json.put("error", this.error.toString());
+            json.put("error", this.error.getMessage());
         }
         else if (this.done) {
             json.put("done", true);
