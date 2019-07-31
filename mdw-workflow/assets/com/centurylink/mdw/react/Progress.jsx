@@ -10,7 +10,6 @@ class Progress extends Component {
   }  
 
   componentDidMount() {
-      var props = this.props; // for access in listeners
       if (this.websocket) {
         this.websocket.close();
       }
@@ -23,7 +22,6 @@ class Progress extends Component {
       };
       this.websocket.onmessage = event => {
         const progress = JSON.parse(event.data);
-        console.log("PROGRESS: " + JSON.stringify(progress));
         if (progress.error) {
           if (this.props.onError) {
             this.props.onError(progress.error);
@@ -68,7 +66,6 @@ class Progress extends Component {
         {
           this.state.progresses.map((progress, i) => {
             const percent = progress.done ? 100 : (progress.progress ? progress.progress : 0);
-            console.log("PERCENT: " + percent);
             return (
               <div key={i} style={{marginTop:'6px'}}>
                 <span style={{marginTop:'3px'}}>
