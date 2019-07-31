@@ -81,7 +81,7 @@ class E2e extends Component {
           }, this.drawGraph());
         }
         else {
-          $mdwUi.showMessage(json.status.message);
+          $mdwUi.showMessage(activities.status.message);
         }
       });  
     });

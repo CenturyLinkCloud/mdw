@@ -74,15 +74,16 @@ public class StagingApi extends JsonRestService {
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         String stagingUser = getSegment(path, 4);
-        if (stagingUser == null)
+        if (stagingUser == null) {
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
+        }
         else {
             WebSocketProgressMonitor progressMonitor = new WebSocketProgressMonitor(STAGE + stagingUser,
                     "Prepare staging area for " + stagingUser);
-            getStagingServices().prepareStagingBranch(stagingUser, progressMonitor);
+            GitBranch stagingBranch = getStagingServices().prepareStagingBranch(stagingUser, progressMonitor);
             headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(Status.ACCEPTED.getCode()));
+            return stagingBranch.getJson();
         }
-        return null;
     }
 
     private StagingServices stagingServices;

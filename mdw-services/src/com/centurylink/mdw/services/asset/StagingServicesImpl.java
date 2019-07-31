@@ -121,6 +121,6 @@ public class StagingServicesImpl implements StagingServices {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
         }
 
-        return null;
+        return new GitBranch(null, stagingBranchName);
     }
 }

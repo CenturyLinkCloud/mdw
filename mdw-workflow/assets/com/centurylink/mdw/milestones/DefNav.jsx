@@ -9,7 +9,7 @@ class DefNav extends Component {
 
   render() {
     const hubRoot = this.context.hubRoot;
-    const e2e = location.hash.startsWith('#/milestones/definitions/e2e/')
+    const e2e = location.hash.startsWith('#/milestones/definitions/e2e/');
     const assetPath = location.hash.substring(e2e ? 29 : 25);
     return (
       <div>
