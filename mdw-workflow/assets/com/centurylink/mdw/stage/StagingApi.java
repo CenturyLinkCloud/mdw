@@ -3,6 +3,7 @@ package com.centurylink.mdw.stage;
 import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.WebSocketProgressMonitor;
+import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.asset.Stage;
 import com.centurylink.mdw.model.listener.Listener;
@@ -49,13 +50,13 @@ public class StagingApi extends JsonRestService {
     public JSONObject get(String path, Map<String, String> headers) throws ServiceException, JSONException {
         String[] segments = getSegments(path);
         try {
+            StagingServices stagingServices = getStagingServices();
             if (segments.length == 4) {
-                // TODO: list staging areas
-                return new JSONObject();
+                return new JsonArray(stagingServices.getStages()).getJson();
             }
             else if (segments.length == 5) {
                 String stagingUser = segments[4];
-                Stage userStage = getStagingServices().getUserStage(stagingUser);
+                Stage userStage = stagingServices.getUserStage(stagingUser);
                 if (userStage == null)
                     throw new ServiceException(ServiceException.NOT_FOUND, "Staging branch not found for " + stagingUser);
                 return userStage.getJson();

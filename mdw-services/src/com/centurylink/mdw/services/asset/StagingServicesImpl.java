@@ -17,6 +17,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,9 +40,13 @@ public class StagingServicesImpl implements StagingServices {
         }
     }
 
-    private File getStagingDir(String cuid) {
+    private File getStagingDir() {
         String tempDir = PropertyManager.getProperty(PropertyNames.MDW_TEMP_DIR);
-        return new File(tempDir + "/git/staging/" + STAGE + cuid);
+        return new File(tempDir + "/git/staging");
+    }
+
+    private File getStagingDir(String cuid) {
+        return new File(getStagingDir() + "/" + STAGE + cuid);
     }
 
     /**
@@ -73,6 +78,20 @@ public class StagingServicesImpl implements StagingServices {
         Stage userStage = new Stage(user.getCuid(), user.getName());
         userStage.setBranch(stagingBranch);
         return userStage;
+    }
+
+    public List<Stage> getStages() {
+        List<Stage> stages = new ArrayList<>();
+        File stagingDir = getStagingDir();
+        for (File file : stagingDir.listFiles()) {
+            if (file.isDirectory() && file.getName().startsWith(STAGE)) {
+                String cuid = file.getName().substring(STAGE.length());
+                User user = UserGroupCache.getUser(cuid);
+                if (user != null)
+                    stages.add(new Stage(user.getCuid(), user.getName()));
+            }
+        }
+        return stages;
     }
 
     private GitBranch getStagingBranch(String cuid, VersionControlGit vcGit) throws ServiceException {
@@ -115,7 +134,7 @@ public class StagingServicesImpl implements StagingServices {
                         inProgressPrepares.remove(user.getCuid());
                     }
                     // return synchronously
-                    stagingVc.fetch();
+                    stagingVc.pull(stagingBranchName);
                     userStage.setBranch(stagingBranch);
                     return userStage;
                 }
