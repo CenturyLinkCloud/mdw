@@ -262,7 +262,7 @@ public class EventServicesImpl implements EventServices {
             }
             InternalEvent outgoingMsg = InternalEvent.createActivityStartMessage(
                     activityId, procInstId, null, pi.getMasterRequestId(), ActivityResultCodeConstant.RESULT_RETRY);
-            edao.setProcessInstanceStatus(pi.getId(), WorkStatus.STATUS_IN_PROGRESS);
+            edao.setProcessInstanceStatus(pi.getId(), WorkStatus.STATUS_IN_PROGRESS, 0);
             this.sendInternalEvent(outgoingMsg, edao);
         } catch (SQLException | MdwException e) {
             throw new ProcessException(0, "Failed to remove event waits", e);
@@ -313,7 +313,7 @@ public class EventServicesImpl implements EventServices {
                 createActivityNotifyMessage(ai, eventType,
                         pi.getMasterRequestId(), completionCode);
             this.sendInternalEvent(outgoingMsg, edao);
-            edao.setProcessInstanceStatus(pi.getId(), WorkStatus.STATUS_IN_PROGRESS);
+            edao.setProcessInstanceStatus(pi.getId(), WorkStatus.STATUS_IN_PROGRESS, 0);
         } catch (SQLException | MdwException e) {
             throw new ProcessException(0, "Failed to remove event waits", e);
         } finally {

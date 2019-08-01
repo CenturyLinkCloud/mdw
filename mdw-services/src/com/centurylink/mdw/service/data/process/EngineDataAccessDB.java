@@ -247,7 +247,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         setElapsedTime0(OwnerType.ACTIVITY_INSTANCE, ai.getId(), elapsedTime);
     }
 
-    public void setProcessInstanceStatus(Long procInstId, Integer status)
+    public void setProcessInstanceStatus(Long procInstId, Integer status, int delay)
         throws SQLException {
         String query;
         if (status.equals(WorkStatus.STATUS_COMPLETED) ||
@@ -257,7 +257,16 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                 " where PROCESS_INSTANCE_ID=?";
         } else if (status.equals(WorkStatus.STATUS_PENDING_PROCESS)) {
             status = WorkStatus.STATUS_IN_PROGRESS;
-            query = "update PROCESS_INSTANCE set STATUS_CD=?, START_DT="+nowPrecision()+" " +
+            String startDate;
+            if (delay > 0) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(new Date());
+                cal.add(Calendar.SECOND, delay);
+                startDate = "'" + DateHelper.dateToString(cal.getTime()) + "'";
+            }
+            else
+                startDate = nowPrecision();
+            query = "update PROCESS_INSTANCE set STATUS_CD=?, START_DT="+ startDate +" " +
                 " where PROCESS_INSTANCE_ID=?";
         } else {
             query = "update PROCESS_INSTANCE set STATUS_CD=?" +

@@ -318,18 +318,23 @@ public class EngineDataAccessCache implements EngineDataAccess {
         }
     }
 
-    public synchronized void setProcessInstanceStatus(Long processInstId, Integer status) throws SQLException {
+    public synchronized void setProcessInstanceStatus(Long processInstId, Integer status, int delay) throws SQLException {
         if (cache_process==CACHE_OFF) {
-            edadb.setProcessInstanceStatus(processInstId, status);
+            edadb.setProcessInstanceStatus(processInstId, status, delay);
         } else if (cache_process==CACHE_ONLY) {
             ProcessInstance pi = procInstCache.get(processInstId);
             if (status.equals(WorkStatus.STATUS_PENDING_PROCESS)) {
                 status = WorkStatus.STATUS_IN_PROGRESS;
-                pi.setStartDate(DateHelper.dateToString(new Date()));
+                if (delay > 0) {
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(new Date());
+                    cal.add(Calendar.SECOND, delay);
+                    pi.setStartDate(DateHelper.dateToString(cal.getTime()));
+                }
             }
             pi.setStatusCode(status);
         } else {
-            edadb.setProcessInstanceStatus(processInstId, status);
+            edadb.setProcessInstanceStatus(processInstId, status, delay);
             if (status.equals(WorkStatus.STATUS_PENDING_PROCESS))
                 status = WorkStatus.STATUS_IN_PROGRESS;
             ProcessInstance pi = procInstCache.get(processInstId);
