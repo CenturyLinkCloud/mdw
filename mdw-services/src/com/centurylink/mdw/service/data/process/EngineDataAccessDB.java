@@ -249,33 +249,29 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 
     public void setProcessInstanceStatus(Long procInstId, Integer status, int delay)
         throws SQLException {
-        String query;
+        StringBuilder query = new StringBuilder("update PROCESS_INSTANCE set STATUS_CD=?");
         if (status.equals(WorkStatus.STATUS_COMPLETED) ||
                 status.equals(WorkStatus.STATUS_CANCELLED) ||
                 status.equals(WorkStatus.STATUS_FAILED)) {
-            query = "update PROCESS_INSTANCE set STATUS_CD=?, END_DT="+nowPrecision()+" " +
-                " where PROCESS_INSTANCE_ID=?";
+            query.append(", END_DT=").append(nowPrecision()).append(" where PROCESS_INSTANCE_ID=?");
         } else if (status.equals(WorkStatus.STATUS_PENDING_PROCESS)) {
             status = WorkStatus.STATUS_IN_PROGRESS;
-            String startDate;
             if (delay > 0) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(new Date());
                 cal.add(Calendar.SECOND, delay);
-                startDate = "'" + DateHelper.dateToString(cal.getTime()) + "'";
+                query.append(", START_DT='").append( DateHelper.dateToString(cal.getTime())).append("'");
             }
             else
-                startDate = nowPrecision();
-            query = "update PROCESS_INSTANCE set STATUS_CD=?, START_DT="+ startDate +" " +
-                " where PROCESS_INSTANCE_ID=?";
+                query.append(", START_DT=").append(nowPrecision());
+            query.append(" where PROCESS_INSTANCE_ID=?");
         } else {
-            query = "update PROCESS_INSTANCE set STATUS_CD=?" +
-                " where PROCESS_INSTANCE_ID=?";
+            query.append(" where PROCESS_INSTANCE_ID=?");
         }
         Object[] args = new Object[2];
         args[0] = status;
         args[1] = procInstId;
-        db.runUpdate(query, args);
+        db.runUpdate(query.toString(), args);
     }
 
     public Long createDocument(Document doc) throws SQLException {
