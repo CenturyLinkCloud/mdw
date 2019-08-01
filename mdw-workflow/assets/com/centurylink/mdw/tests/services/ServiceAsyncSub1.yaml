@@ -133,6 +133,7 @@ process: # 10191
             "packageName": "com.centurylink.mdw.tests.services",
             "processId": ${~\\d+},
             "processName": "ServiceSub",
+            "startDate": "${~.*}",
             "statusCode": 2,
             "variables": [{
               "id": ${~\\d+},

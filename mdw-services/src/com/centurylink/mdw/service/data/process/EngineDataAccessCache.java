@@ -24,7 +24,6 @@ import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.*;
-import com.centurylink.mdw.util.DateHelper;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -318,23 +317,17 @@ public class EngineDataAccessCache implements EngineDataAccess {
         }
     }
 
-    public synchronized void setProcessInstanceStatus(Long processInstId, Integer status, int delay) throws SQLException {
+    public synchronized void setProcessInstanceStatus(Long processInstId, Integer status) throws SQLException {
         if (cache_process==CACHE_OFF) {
-            edadb.setProcessInstanceStatus(processInstId, status, delay);
+            edadb.setProcessInstanceStatus(processInstId, status);
         } else if (cache_process==CACHE_ONLY) {
             ProcessInstance pi = procInstCache.get(processInstId);
             if (status.equals(WorkStatus.STATUS_PENDING_PROCESS)) {
                 status = WorkStatus.STATUS_IN_PROGRESS;
-                if (delay > 0) {
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(new Date());
-                    cal.add(Calendar.SECOND, delay);
-                    pi.setStartDate(DateHelper.dateToString(cal.getTime()));
-                }
             }
             pi.setStatusCode(status);
         } else {
-            edadb.setProcessInstanceStatus(processInstId, status, delay);
+            edadb.setProcessInstanceStatus(processInstId, status);
             if (status.equals(WorkStatus.STATUS_PENDING_PROCESS))
                 status = WorkStatus.STATUS_IN_PROGRESS;
             ProcessInstance pi = procInstCache.get(processInstId);
@@ -383,7 +376,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public int countActivityInstances(Long procInstId, Long activityId, Integer[] statuses)
-    throws SQLException {
+            throws SQLException {
         if (cache_activity_transition==CACHE_ONLY) {
             int count = 0;
             for (ActivityInstance actInst : activityInstCache.values()) {
@@ -602,8 +595,8 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public synchronized Long recordEventWait(String eventName, boolean multipleRecepients,
-                    int preserveSeconds, Long actInstId, String compCode)
-                    throws SQLException {
+            int preserveSeconds, Long actInstId, String compCode)
+            throws SQLException {
         if (cache_event==CACHE_ONLY) {
             EventInstance eventInst = eventInstCache.get(eventName);
             Long documentId;
@@ -704,6 +697,20 @@ public class EngineDataAccessCache implements EngineDataAccess {
         }
     }
 
+    public synchronized void setProcessInstanceStartTime(Long processInstanceId) throws SQLException {
+        if (cache_process == CACHE_OFF) {
+            edadb.setProcessInstanceStartTime(processInstanceId);
+        } else if (cache_process == CACHE_ONLY) {
+            ProcessInstance processInstance = procInstCache.get(processInstanceId);
+            processInstance.setStartDate(new Date());
+        } else {
+            edadb.setProcessInstanceStartTime(processInstanceId);
+            ProcessInstance procInst = procInstCache.get(processInstanceId);
+            if (procInst != null)
+                procInst.setStartDate(new Date(DatabaseAccess.getCurrentTime()));
+        }
+    }
+
     public synchronized void setProcessInstanceCompletionCode(Long procInstId,
             String completionCode) throws SQLException {
         if (cache_process==CACHE_OFF) {
@@ -768,7 +775,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
         } else {
             if (performance_level>=9) {
                 if (memoryOnlyInstance==null) memoryOnlyInstance =
-                    new EngineDataAccessCache(forServiceProcess, performance_level);
+                        new EngineDataAccessCache(forServiceProcess, performance_level);
                 edac = memoryOnlyInstance;
             } else edac = new EngineDataAccessCache(forServiceProcess, performance_level);
         }

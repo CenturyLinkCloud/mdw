@@ -135,6 +135,7 @@ process: # 10203
             "processName": "ServiceSub",
             "secondaryOwner": "ACTIVITY_INSTANCE",
             "secondaryOwnerId": ${~\\d*},
+            "startDate": "${~.*}",
             "statusCode": 2,
             "variables": [{
               "id": ${~\\d*},

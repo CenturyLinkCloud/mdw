@@ -49,8 +49,11 @@ public interface EngineDataAccess {
     ProcessInstance getProcessInstance(Long procInstId)
     throws DataAccessException,SQLException;
 
-    void setProcessInstanceStatus(Long procInstId, Integer status, int delay)
+    void setProcessInstanceStatus(Long procInstId, Integer status)
     throws DataAccessException,SQLException;
+
+    void setProcessInstanceStartTime(Long processInstanceId)
+    throws SQLException;
 
     void setProcessInstanceCompletionCode(Long procInstId, String completionCode)
     throws SQLException;
