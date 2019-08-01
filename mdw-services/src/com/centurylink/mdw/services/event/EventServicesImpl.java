@@ -75,7 +75,7 @@ public class EventServicesImpl implements EventServices {
         if (userAction.getAction() == UserAction.Action.Assign)
             modUser = userAction.getDestination();
         createEventLog(name, EventLog.CATEGORY_AUDIT, "User Action",
-            userAction.getSource(), userAction.getEntity().toString(), userAction.getEntityId(), userAction.getUser(), modUser, comment);
+                userAction.getSource(), userAction.getEntity().toString(), userAction.getEntityId(), userAction.getUser(), modUser, comment);
     }
 
     /**
@@ -89,8 +89,8 @@ public class EventServicesImpl implements EventServices {
      * @return EventLog
      */
     public Long createEventLog(String pEventName, String pEventCategory, String pEventSubCat, String pEventSource,
-        String pEventOwner, Long pEventOwnerId, String user, String modUser, String comments)
-    throws DataAccessException, EventException {
+            String pEventOwner, Long pEventOwnerId, String user, String modUser, String comments)
+            throws DataAccessException, EventException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -107,7 +107,7 @@ public class EventServicesImpl implements EventServices {
 
     public Integer notifyProcess(String pEventName, Long pEventInstId,
             String message, int delay)
-    throws DataAccessException, EventException {
+            throws DataAccessException, EventException {
         EngineDataAccess edao = new EngineDataAccessDB();
         InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
         ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
@@ -120,7 +120,7 @@ public class EventServicesImpl implements EventServices {
      * For document variables, the value must be DocumentReference, not the document content
      */
     public VariableInstance setVariableInstance(Long procInstId, String name, Object value)
-    throws DataAccessException {
+            throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -164,7 +164,7 @@ public class EventServicesImpl implements EventServices {
     }
 
     public VariableInstance getVariableInstance(Long varInstId)
-    throws DataAccessException {
+            throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -178,7 +178,7 @@ public class EventServicesImpl implements EventServices {
     }
 
     public VariableInstance getVariableInstance(Long procInstId, String name)
-    throws DataAccessException {
+            throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -248,7 +248,7 @@ public class EventServicesImpl implements EventServices {
     }
 
     public void retryActivity(Long activityId, Long activityInstId)
-    throws DataAccessException, ProcessException {
+            throws DataAccessException, ProcessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -272,7 +272,7 @@ public class EventServicesImpl implements EventServices {
     }
 
     public void skipActivity(Long activityId, Long activityInstId, String completionCode)
-    throws DataAccessException, ProcessException {
+            throws DataAccessException, ProcessException {
         CodeTimer timer = new CodeTimer("WorkManager.skipActivity", true);
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
@@ -310,8 +310,8 @@ public class EventServicesImpl implements EventServices {
             }
 
             InternalEvent outgoingMsg = InternalEvent.
-                createActivityNotifyMessage(ai, eventType,
-                        pi.getMasterRequestId(), completionCode);
+                    createActivityNotifyMessage(ai, eventType,
+                            pi.getMasterRequestId(), completionCode);
             this.sendInternalEvent(outgoingMsg, edao);
             edao.setProcessInstanceStatus(pi.getId(), WorkStatus.STATUS_IN_PROGRESS);
         } catch (SQLException | MdwException e) {
@@ -342,7 +342,7 @@ public class EventServicesImpl implements EventServices {
      * @return ProcessInstance
      */
     public ProcessInstance getProcessInstance(Long procInstId)
-    throws ProcessException, DataAccessException {
+            throws ProcessException, DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -369,7 +369,7 @@ public class EventServicesImpl implements EventServices {
      */
     @Override
     public List<ProcessInstance> getProcessInstances(String masterRequestId, String processName)
-    throws ProcessException, DataAccessException {
+            throws ProcessException, DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -398,7 +398,7 @@ public class EventServicesImpl implements EventServices {
      * @throws DataAccessException data access exception.
      */
     public List<ActivityInstance> getActivityInstances(String masterRequestId, String processName, String activityLogicalId)
-    throws ProcessException, DataAccessException {
+            throws ProcessException, DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -411,7 +411,7 @@ public class EventServicesImpl implements EventServices {
             transaction = edao.startTransaction();
             List<ActivityInstance> actInstList = new ArrayList<>();
             List<ProcessInstance> procInstList =
-                edao.getProcessInstancesByMasterRequestId(masterRequestId, procdef.getId());
+                    edao.getProcessInstancesByMasterRequestId(masterRequestId, procdef.getId());
             if (procInstList.size() == 0)
                 return actInstList;
             for (ProcessInstance pi : procInstList) {
@@ -433,7 +433,7 @@ public class EventServicesImpl implements EventServices {
      * @return ActivityInstance
      */
     public ActivityInstance getActivityInstance(Long pActivityInstId)
-    throws ProcessException, DataAccessException {
+            throws ProcessException, DataAccessException {
         ActivityInstance ai;
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
@@ -455,7 +455,7 @@ public class EventServicesImpl implements EventServices {
      * @return WorkTransitionINstance
      */
     public TransitionInstance getWorkTransitionInstance(Long pId)
-    throws DataAccessException, ProcessException {
+            throws DataAccessException, ProcessException {
         TransitionInstance wti;
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
@@ -471,7 +471,7 @@ public class EventServicesImpl implements EventServices {
     }
 
     public void updateDocumentContent(Long docid, Object doc, String type, Package pkg)
-    throws DataAccessException {
+            throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -519,7 +519,7 @@ public class EventServicesImpl implements EventServices {
     }
 
     public Long createDocument(String type, String ownerType, Long ownerId, Object doc, Package pkg, String path)
-    throws DataAccessException {
+            throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -600,7 +600,7 @@ public class EventServicesImpl implements EventServices {
     }
 
     public void offerScheduledEvent(ScheduledEvent event)
-    throws DataAccessException {
+            throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -712,13 +712,13 @@ public class EventServicesImpl implements EventServices {
 
     public void updateEventInstance(String eventName,
             Long documentId, Integer status, Date consumeDate, String auxdata, String reference, int preserveSeconds)
-    throws DataAccessException {
+            throws DataAccessException {
         updateEventInstance(eventName, documentId, status, consumeDate, auxdata, reference, preserveSeconds, null);
     }
 
     public void updateEventInstance(String eventName,
             Long documentId, Integer status, Date consumeDate, String auxdata, String reference, int preserveSeconds, String comments)
-    throws DataAccessException {
+            throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -745,7 +745,7 @@ public class EventServicesImpl implements EventServices {
     }
 
     public void setAttribute(String ownerType, Long ownerId, String attrname, String attrvalue)
-    throws DataAccessException {
+            throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -759,7 +759,7 @@ public class EventServicesImpl implements EventServices {
     }
 
     public void setAttributes(String ownerType, Long ownerId, Map<String,String> attributes)
-    throws DataAccessException {
+            throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
@@ -786,8 +786,8 @@ public class EventServicesImpl implements EventServices {
     public ServiceHandler getServiceHandler(String protocol, String path) {
         for (ServiceHandler serviceHandler : serviceHandlers) {
             if (protocol.equals(serviceHandler.getProtocol())
-                && ((path == null && serviceHandler.getPath() == null)
-                     || (path != null && path.equals(serviceHandler.getPath()))) ) {
+                    && ((path == null && serviceHandler.getPath() == null)
+                    || (path != null && path.equals(serviceHandler.getPath()))) ) {
                 return serviceHandler;
             }
         }

@@ -16,6 +16,7 @@
 package com.centurylink.mdw.services.process;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.StartActivity;
 import com.centurylink.mdw.activity.types.SuspendableActivity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.WorkflowException;
@@ -365,6 +366,9 @@ public class ProcessEngineDriver {
                 // Step 2. invoke execute() of the activity
                 String resCode = ar.activity.notifyMonitors(WorkStatus.LOGMSG_EXECUTE);
                 if (resCode == null || resCode.equals("(EXECUTE_ACTIVITY)")) {
+                    if (ar.getActivity() instanceof StartActivity) {
+                        engine.setProcessInstanceStartTime(ar.getProcessInstance().getId());
+                    }
                     // proceed with normal activity execution
                     if ("not_loaded".equals(useTransactionOnExecute)) {
                         useTransactionOnExecute = PropertyManager.getProperty(PropertyNames.MDW_ENGINE_USE_TRANSACTION);

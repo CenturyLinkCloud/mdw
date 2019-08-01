@@ -241,6 +241,30 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
+    public void setProcessInstanceStartTime(Long processInstanceId) throws DataAccessException {
+        TransactionWrapper transaction = null;
+        try {
+            transaction = startTransaction();
+            engineImpl.getDataAccess().setProcessInstanceStartTime(processInstanceId);
+        } catch (DataAccessException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).setProcessInstanceStartTime(processInstanceId);
+            }
+            else
+                throw e;
+        } catch (SQLException e) {
+            if (canRetryTransaction(e)) {
+                transaction = (TransactionWrapper)initTransactionRetry(transaction);
+                ((ProcessExecutor)getTransactionRetrier()).setProcessInstanceStartTime(processInstanceId);
+            }
+            else
+                throw new DataAccessException(0, "Failed to set process instance completion code", e);
+        } finally {
+            stopTransaction(transaction);
+        }
+    }
+
     ///////////////////////////////////////
     // methods about activity instances
     ///////////////////////////////////////
