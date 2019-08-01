@@ -18,7 +18,9 @@ import com.centurylink.mdw.util.log.StandardLogger;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class StagingServicesImpl implements StagingServices {
 
@@ -87,15 +89,31 @@ public class StagingServicesImpl implements StagingServices {
         }
     }
 
+    private static final Map<String,Stage> inProgressPrepares = new ConcurrentHashMap<>();
+
     public Stage prepareUserStage(String cuid, GitProgressMonitor progressMonitor) throws ServiceException {
         User user = getUser(cuid);
         Stage userStage = new Stage(user.getCuid(), user.getName());
         String stagingBranchName = STAGE + cuid;
+        userStage.setBranch(new GitBranch(null, stagingBranchName));
+
+        synchronized (inProgressPrepares) {
+            if (inProgressPrepares.containsKey(user.getCuid())) {
+                return inProgressPrepares.get(user.getCuid());
+            }
+            else {
+                inProgressPrepares.put(user.getCuid(), userStage);
+            }
+        }
+
         VersionControlGit stagingVc = getStagingVersionControl(cuid);
         try {
             if (stagingVc.localRepoExists()) {
                 GitBranch stagingBranch = getStagingBranch(cuid, stagingVc);
                 if (stagingBranch != null && stagingVc.getBranch().equals(stagingBranchName)) {
+                    synchronized (inProgressPrepares) {
+                        inProgressPrepares.remove(user.getCuid());
+                    }
                     // return synchronously
                     stagingVc.fetch();
                     userStage.setBranch(stagingBranch);
@@ -114,6 +132,10 @@ public class StagingServicesImpl implements StagingServices {
                         logger.error(ex.getMessage(), ex);
                         if (progressMonitor != null)
                             progressMonitor.error(ex);
+                    } finally {
+                        synchronized (inProgressPrepares) {
+                            inProgressPrepares.remove(user.getCuid());
+                        }
                     }
                 }).start();
             } else {
@@ -132,6 +154,10 @@ public class StagingServicesImpl implements StagingServices {
                         logger.error(ex.getMessage(), ex);
                         if (progressMonitor != null)
                             progressMonitor.error(ex);
+                    } finally {
+                        synchronized (inProgressPrepares) {
+                            inProgressPrepares.remove(user.getCuid());
+                        }
                     }
                 }).start();
             }
@@ -140,7 +166,6 @@ public class StagingServicesImpl implements StagingServices {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
         }
 
-        userStage.setBranch(new GitBranch(null, stagingBranchName));
         return userStage;
     }
 

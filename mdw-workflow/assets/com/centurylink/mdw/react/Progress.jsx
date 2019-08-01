@@ -6,6 +6,7 @@ class Progress extends Component {
     
   constructor(...args) {
     super(...args);
+    this.getProgressComponent = this.getProgressComponent.bind(this);  
     this.state = { progresses: [] };
   }  
 
@@ -58,29 +59,45 @@ class Progress extends Component {
     }
   }
 
+  getProgressComponent(key, progress) {
+    const percent = progress.done ? 100 : (progress.progress ? progress.progress : 0);
+    return (
+      <div key={key} style={{marginTop:'6px'}}>
+        <span style={{marginTop:'3px'}}>
+          {(progress.task ? progress.task : ' ') + (progress.done ? '... done' : '...')}
+        </span>
+        <ProgressBar style={{width:'480px',marginTop:'3px'}}
+          active={percent !== 0 && percent != 100} 
+          now={percent}
+          label={percent + '%'} />        
+      </div>
+    );
+  }
+
   render() {
     return (
       <div>
         {this.state.progresses.length > 0 &&
-          <span style={{fontWeight:'bold'}}>
-            {this.state.progresses[0].title}:
-          </span>
+          <div>
+            <span style={{fontWeight:'bold'}}>
+              {this.state.progresses[0].title}:
+            </span>
+            {
+              this.state.progresses.map((progress, i) => {
+                return this.getProgressComponent(i, progress)
+              })
+            }
+          </div>
         }
-        {
-          this.state.progresses.map((progress, i) => {
-            const percent = progress.done ? 100 : (progress.progress ? progress.progress : 0);
-            return (
-              <div key={i} style={{marginTop:'6px'}}>
-                <span style={{marginTop:'3px'}}>
-                  {(progress.task ? progress.task : '') + (progress.done ? '... done' : '...')}
-                </span>
-                <ProgressBar style={{width:'480px',marginTop:'3px'}}
-                  active={percent !== 0 && percent != 100} 
-                  now={percent}
-                  label={percent + '%'} />        
-              </div>
-            );
-          })
+        {this.state.progresses.length === 0 &&
+          <div>
+            <span style={{fontWeight:'bold'}}>
+              {this.props.title || 'In progress'}:
+            </span>
+            <div>
+              {this.getProgressComponent(-1, {progress: 0})}
+            </div>
+          </div>
         }
       </div>
     );
@@ -88,6 +105,7 @@ class Progress extends Component {
 }
 
 Progress.propTypes = {
+  title: PropTypes.string,
   webSocketUrl: PropTypes.string.isRequired,
   topic: PropTypes.string.isRequired,
   onStart: PropTypes.func,
