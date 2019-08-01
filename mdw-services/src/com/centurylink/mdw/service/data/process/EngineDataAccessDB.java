@@ -253,21 +253,20 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         if (status.equals(WorkStatus.STATUS_COMPLETED) ||
                 status.equals(WorkStatus.STATUS_CANCELLED) ||
                 status.equals(WorkStatus.STATUS_FAILED)) {
-            query.append(", END_DT=").append(nowPrecision()).append(" where PROCESS_INSTANCE_ID=?");
+            query.append(", END_DT=").append(nowPrecision());
         } else if (status.equals(WorkStatus.STATUS_PENDING_PROCESS)) {
             status = WorkStatus.STATUS_IN_PROGRESS;
+            query.append(", START_DT=");
             if (delay > 0) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(new Date());
                 cal.add(Calendar.SECOND, delay);
-                query.append(", START_DT='").append( DateHelper.dateToString(cal.getTime())).append("'");
+                query.append("'").append( DateHelper.dateToString(cal.getTime())).append("'");
             }
             else
-                query.append(", START_DT=").append(nowPrecision());
-            query.append(" where PROCESS_INSTANCE_ID=?");
-        } else {
-            query.append(" where PROCESS_INSTANCE_ID=?");
+                query.append(nowPrecision());
         }
+        query.append(" where PROCESS_INSTANCE_ID=?");
         Object[] args = new Object[2];
         args[0] = status;
         args[1] = procInstId;
