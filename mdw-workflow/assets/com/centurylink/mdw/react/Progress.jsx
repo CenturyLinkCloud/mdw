@@ -84,7 +84,7 @@ class Progress extends Component {
             </span>
             {
               this.state.progresses.map((progress, i) => {
-                return this.getProgressComponent(i, progress)
+                return this.getProgressComponent(i, progress);
               })
             }
           </div>
@@ -113,4 +113,4 @@ Progress.propTypes = {
   onFinish: PropTypes.func
 };
 
-export default Progress; 
+export default Progress;
