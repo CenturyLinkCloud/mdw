@@ -16,6 +16,16 @@ response:
       "definitionId": ${process-id},
       "masterRequestId": "${~.*}",
       "values": {
+        "ignoredJson": {
+          "display": "Hidden",
+          "label": "(see IgnoredVariables.test)",
+          "type": "org.json.JSONObject"
+        },
+        "ignoredString": {
+          "display": "Hidden",
+          "label": "(see IgnoredVariables.test)",
+          "type": "java.lang.String"
+        },
         "inputVar": {
           "type": "java.lang.String"
         }

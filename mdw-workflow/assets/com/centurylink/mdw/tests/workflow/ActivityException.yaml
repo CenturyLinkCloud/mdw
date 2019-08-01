@@ -49,6 +49,7 @@ process: # 14209
             "processName": "MDWTestSubProcess2",
             "secondaryOwner": "ACTIVITY_INSTANCE",
             "secondaryOwnerId": ${~\\d*},
+            "startDate": "${~.*}",
             "statusCode": 2,
             "variables": []
           }
