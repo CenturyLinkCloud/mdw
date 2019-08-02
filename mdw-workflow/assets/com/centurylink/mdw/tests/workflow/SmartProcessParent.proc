@@ -3,18 +3,19 @@ activities:
   name: Start
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
   attributes:
-    WORK_DISPLAY_INFO: x=56,y=141,w=60,h=40
+    WORK_DISPLAY_INFO: x=58,y=141,w=60,h=40
   transitions:
   - id: T1
     to: A5
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: lx=165,ly=106,type=Elbow,xs=120&177,ys=161&161
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=149,ly=161,xs=122&177,ys=161&161
 - id: A2
   name: Stop
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
   attributes:
     DoNotNotifyCaller: 'false'
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java","Completed"],["false","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["false","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
     WORK_DISPLAY_INFO: x=686,y=173,w=60,h=40
 - id: A5
   name: "Test\r\nCase?"
