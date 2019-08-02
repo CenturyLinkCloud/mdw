@@ -40,6 +40,7 @@ activities:
   name: Create Plan
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
   attributes:
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java","Plan Created"],["false","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["false","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
     Output Documents: executionPlan
     Rule: |
       import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument
@@ -84,6 +85,7 @@ activities:
   name: Assign Output
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
   attributes:
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java","Output Assigned"],["false","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["false","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
     Rule: "import com.centurylink.mdw.bpm.ParameterDocument.Parameter\r\nimport com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance\r\n\r\nSubprocessInstance subprocinst = executionPlan.getProcessExecutionPlan().getSubprocessInstanceList().get(0);\r\nmultipleSubprocName = getParameter(subprocinst, \"procName\");\r\nmultipleSubprocVer = getParameter(subprocinst, \"procVer\");\r\nsubprocinst = executionPlan.getProcessExecutionPlan().getSubprocessInstanceList().get(2);\r\nmultipleSubprocName2 = getParameter(subprocinst, \"procName\");\r\nmultipleSubprocVer2 = getParameter(subprocinst, \"procVer\");\r\n\r\nprotected String getParameter(SubprocessInstance subprocinst, String name) {\r\n if (subprocinst.getParameterList()==null) return null;\r\n for (Parameter p : subprocinst.getParameterList()) {\r\n  if (p.getName().equals(name)) return p.getStringValue();\r\n }\r\n return null;\r\n}"
     SCRIPT: Groovy
     WORK_DISPLAY_INFO: x=535,y=337,w=100,h=60
