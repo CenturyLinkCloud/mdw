@@ -1,0 +1,331 @@
+{
+  "children": [{
+    "children": [
+      {
+        "children": [{
+          "children": [{"milestone": {
+            "activity": {
+              "id": "A2",
+              "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+              "name": "Stop"
+            },
+            "activityInstance": {
+              "activityId": 2,
+              "id": ${~\\d+},
+              "name": "Stop",
+              "status": "Completed"
+            },
+            "end": "${~.*}",
+            "group": "Stop",
+            "label": "Completed",
+            "process": {
+              "id": ${~\\d+},
+              "name": "SmartProcessParent",
+              "packageName": "com.centurylink.mdw.tests.workflow",
+              "version": "${~0\\.?\\d+}"
+            },
+            "processInstance": {
+              "end": "${~.*}",
+              "id": ${~\\d+},
+              "start": "${~.*}",
+              "status": "Completed"
+            },
+            "start": "${~.*}"
+          }}],
+          "milestone": {
+            "activity": {
+              "id": "A9",
+              "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+              "name": "Assign Output"
+            },
+            "activityInstance": {
+              "activityId": 9,
+              "id": ${~\\d+},
+              "name": "Assign Output",
+              "status": "Completed"
+            },
+            "end": "${~.*}",
+            "label": "Output Assigned",
+            "process": {
+              "id": ${~\\d+},
+              "name": "SmartProcessParent",
+              "packageName": "com.centurylink.mdw.tests.workflow",
+              "version": "${~0\\.?\\d+}"
+            },
+            "processInstance": {
+              "end": "${~.*}",
+              "id": ${~\\d+},
+              "start": "${~.*}",
+              "status": "Completed"
+            },
+            "start": "${~.*}"
+          }
+        }],
+        "milestone": {
+          "activity": {
+            "id": "A3",
+            "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+            "name": "Set Info"
+          },
+          "activityInstance": {
+            "activityId": 3,
+            "id": ${~\\d+},
+            "name": "Set Info",
+            "status": "Completed"
+          },
+          "end": "${~.*}",
+          "label": "sub child11",
+          "process": {
+            "id": ${~\\d+},
+            "name": "SmartProcessChild",
+            "packageName": "com.centurylink.mdw.tests.workflow",
+            "version": "2.10"
+          },
+          "processInstance": {
+            "end": "${~.*}",
+            "id": ${~\\d+},
+            "start": "${~.*}",
+            "status": "Completed"
+          },
+          "start": "${~.*}"
+        }
+      },
+      {
+        "children": [{
+          "children": [{"milestone": {
+            "activity": {
+              "id": "A2",
+              "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+              "name": "Stop"
+            },
+            "activityInstance": {
+              "activityId": 2,
+              "id": ${~\\d+},
+              "name": "Stop",
+              "status": "Completed"
+            },
+            "end": "${~.*}",
+            "group": "Stop",
+            "label": "Completed",
+            "process": {
+              "id": ${~\\d+},
+              "name": "SmartProcessParent",
+              "packageName": "com.centurylink.mdw.tests.workflow",
+              "version": "${~0\\.?\\d+}"
+            },
+            "processInstance": {
+              "end": "${~.*}",
+              "id": ${~\\d+},
+              "start": "${~.*}",
+              "status": "Completed"
+            },
+            "start": "${~.*}"
+          }}],
+          "milestone": {
+            "activity": {
+              "id": "A9",
+              "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+              "name": "Assign Output"
+            },
+            "activityInstance": {
+              "activityId": 9,
+              "id": ${~\\d+},
+              "name": "Assign Output",
+              "status": "Completed"
+            },
+            "end": "${~.*}",
+            "label": "Output Assigned",
+            "process": {
+              "id": ${~\\d+},
+              "name": "SmartProcessParent",
+              "packageName": "com.centurylink.mdw.tests.workflow",
+              "version": "${~0\\.?\\d+}"
+            },
+            "processInstance": {
+              "end": "${~.*}",
+              "id": ${~\\d+},
+              "start": "${~.*}",
+              "status": "Completed"
+            },
+            "start": "${~.*}"
+          }
+        }],
+        "milestone": {
+          "activity": {
+            "id": "A3",
+            "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+            "name": "Set Info"
+          },
+          "activityInstance": {
+            "activityId": 3,
+            "id": ${~\\d+},
+            "name": "Set Info",
+            "status": "Completed"
+          },
+          "end": "${~.*}",
+          "label": "sub child12",
+          "process": {
+            "id": ${~\\d+},
+            "name": "SmartProcessChild",
+            "packageName": "com.centurylink.mdw.tests.workflow",
+            "version": "${~2\\.?\\d+}"
+          },
+          "processInstance": {
+            "end": "${~.*}",
+            "id": ${~\\d+},
+            "start": "${~.*}",
+            "status": "Completed"
+          },
+          "start": "${~.*}"
+        }
+      },
+      {
+        "children": [{
+          "children": [{"milestone": {
+            "activity": {
+              "id": "A2",
+              "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+              "name": "Stop"
+            },
+            "activityInstance": {
+              "activityId": 2,
+              "id": ${~\\d+},
+              "name": "Stop",
+              "status": "Completed"
+            },
+            "end": "${~.*}",
+            "group": "Stop",
+            "label": "Completed",
+            "process": {
+              "id": ${~\\d+},
+              "name": "SmartProcessParent",
+              "packageName": "com.centurylink.mdw.tests.workflow",
+              "version": "${~0\\.?\\d+}"
+            },
+            "processInstance": {
+              "end": "${~.*}",
+              "id": ${~\\d+},
+              "start": "${~.*}",
+              "status": "Completed"
+            },
+            "start": "${~.*}"
+          }}],
+          "milestone": {
+            "activity": {
+              "id": "A9",
+              "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+              "name": "Assign Output"
+            },
+            "activityInstance": {
+              "activityId": 9,
+              "id": ${~\\d+},
+              "name": "Assign Output",
+              "status": "Completed"
+            },
+            "end": "${~.*}",
+            "label": "Output Assigned",
+            "process": {
+              "id": ${~\\d+},
+              "name": "SmartProcessParent",
+              "packageName": "com.centurylink.mdw.tests.workflow",
+              "version": "0.19"
+            },
+            "processInstance": {
+              "end": "${~.*}",
+              "id": ${~\\d+},
+              "start": "${~.*}",
+              "status": "Completed"
+            },
+            "start": "${~.*}"
+          }
+        }],
+        "milestone": {
+          "activity": {
+            "id": "A3",
+            "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+            "name": "Set Ver Info"
+          },
+          "activityInstance": {
+            "activityId": 3,
+            "id": ${~\\d+},
+            "name": "Set Ver Info",
+            "status": "Completed"
+          },
+          "end": "${~.*}",
+          "label": "Child 2 Set Info",
+          "process": {
+            "id": ${~\\d+},
+            "name": "SmartProcessChild2",
+            "packageName": "com.centurylink.mdw.tests.workflow",
+            "version": "${~0\\.?\\d+}"
+          },
+          "processInstance": {
+            "end": "${~.*}",
+            "id": ${~\\d+},
+            "start": "${~.*}",
+            "status": "Completed"
+          },
+          "start": "${~.*}"
+        }
+      }
+    ],
+    "milestone": {
+      "activity": {
+        "id": "A8",
+        "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+        "name": "Create Plan"
+      },
+      "activityInstance": {
+        "activityId": 8,
+        "id": ${~\\d+},
+        "name": "Create Plan",
+        "status": "Completed"
+      },
+      "end": "${~.*}",
+      "label": "Plan Created",
+      "process": {
+        "id": ${~\\d+},
+        "name": "SmartProcessParent",
+        "packageName": "com.centurylink.mdw.tests.workflow",
+        "version": "${~0\\.?\\d+}"
+      },
+      "processInstance": {
+        "end": "${~.*}",
+        "id": ${~\\d+},
+        "start": "${~.*}",
+        "status": "Completed"
+      },
+      "start": "${~.*}"
+    }
+  }],
+  "milestone": {
+    "activity": {
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start"
+    },
+    "activityInstance": {
+      "activityId": 1,
+      "id": ${~\\d+},
+      "name": "Start",
+      "status": "Completed"
+    },
+    "end": "${~.*}",
+    "group": "Start",
+    "label": "${~.*}",
+    "masterRequestId": "${~.*}",
+    "process": {
+      "id": ${~\\d+},
+      "name": "SmartProcessParent",
+      "packageName": "com.centurylink.mdw.tests.workflow",
+      "version": "${~0\\.?\\d+}"
+    },
+    "processInstance": {
+      "end": "${~.*}",
+      "id": ${~\\d+},
+      "start": "${~.*}",
+      "status": "Completed"
+    },
+    "start": "${~.*}"
+  }
+}
