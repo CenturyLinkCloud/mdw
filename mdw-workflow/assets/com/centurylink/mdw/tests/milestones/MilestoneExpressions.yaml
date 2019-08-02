@@ -1,0 +1,132 @@
+process: # 426
+  name: SmartProcessChild
+  instance: 1
+  activity: # 1 "2019-08-02 13:31:51.009"
+    name: Start
+    status: Completed
+  activity: # 3 "2019-08-02 13:31:51.020"
+    name: Set Info
+    status: Completed
+  activity: # 2 "2019-08-02 13:31:51.031"
+    name: Stop
+    status: Completed
+  variable: # 1371
+    name: inputVar
+    value: child12
+  variable: # 1375
+    name: procName
+    value: SmartProcessChild
+  variable: # 1376
+    name: procVer
+    value: ${~2\\.?\\d+}
+process: # 425
+  name: SmartProcessChild
+  instance: 2
+  activity: # 1 "2019-08-02 13:31:50.011"
+    name: Start
+    status: Completed
+  activity: # 3 "2019-08-02 13:31:50.022"
+    name: Set Info
+    status: Completed
+  activity: # 2 "2019-08-02 13:31:50.034"
+    name: Stop
+    status: Completed
+  variable: # 1370
+    name: inputVar
+    value: child11
+  variable: # 1373
+    name: procName
+    value: SmartProcessChild
+  variable: # 1374
+    name: procVer
+    value: ${~2\\.?\\d+}
+process: # 427
+  name: SmartProcessChild2
+  instance: 1
+  activity: # 1 "2019-08-02 13:31:52.011"
+    name: Start
+    status: Completed
+  activity: # 3 "2019-08-02 13:31:52.021"
+    name: Set Ver Info
+    status: Completed
+  activity: # 2 "2019-08-02 13:31:52.034"
+    name: Stop
+    status: Completed
+  variable: # 1372
+    name: inputVar
+    value: myInput
+  variable: # 1377
+    name: procName
+    value: SmartProcessChild2
+  variable: # 1378
+    name: procVer
+    value: ${~0\\.?\\d+}
+process: # 424
+  name: SmartProcessParent
+  instance: 1
+  activity: # 1 "2019-08-02 13:31:48.508"
+    name: Start
+    status: Completed
+  activity: # 5 "2019-08-02 13:31:48.520"
+    name: |
+      Test
+      Case?
+    status: Completed
+    result: multiple
+  activity: # 8 "2019-08-02 13:31:48.529"
+    name: Create Plan
+    status: Completed
+  activity: # 10 "2019-08-02 13:31:48.549"
+    name: Invoke Multiple
+    status: Completed
+  activity: # 9 "2019-08-02 13:31:52.057"
+    name: Assign Output
+    status: Completed
+  activity: # 2 "2019-08-02 13:31:52.072"
+    name: Stop
+    status: Completed
+  variable: # 1369
+    name: executionPlan
+    value: |
+      <bpm:ProcessExecutionPlan xmlns:bpm="http://mdw.centurylink.com/bpm">
+          <bpm:SubprocessInstance>
+              <bpm:LogicalProcessName>SmartProcessChild</bpm:LogicalProcessName>
+              <bpm:InstanceId>${~\\d+}</bpm:InstanceId>
+              <bpm:StatusCode>4</bpm:StatusCode>
+              <bpm:Parameter Name="inputVar">child11</bpm:Parameter>
+              <bpm:Parameter Name="procName">SmartProcessChild</bpm:Parameter>
+              <bpm:Parameter Name="procVer">2.10</bpm:Parameter>
+          </bpm:SubprocessInstance>
+          <bpm:SubprocessInstance>
+              <bpm:LogicalProcessName>SmartProcessChild</bpm:LogicalProcessName>
+              <bpm:InstanceId>${~\\d+}</bpm:InstanceId>
+              <bpm:StatusCode>4</bpm:StatusCode>
+              <bpm:Parameter Name="inputVar">child12</bpm:Parameter>
+          </bpm:SubprocessInstance>
+          <bpm:SubprocessInstance>
+              <bpm:LogicalProcessName>SmartProcessChild2</bpm:LogicalProcessName>
+              <bpm:InstanceId>${~\\d+}</bpm:InstanceId>
+              <bpm:StatusCode>4</bpm:StatusCode>
+              <bpm:Parameter Name="inputVar">$subprocInputVar</bpm:Parameter>
+              <bpm:Parameter Name="procName">SmartProcessChild2</bpm:Parameter>
+              <bpm:Parameter Name="procVer">0.9</bpm:Parameter>
+          </bpm:SubprocessInstance>
+      </bpm:ProcessExecutionPlan>
+  variable: # 1379
+    name: multipleSubprocName
+    value: SmartProcessChild
+  variable: # 1380
+    name: multipleSubprocName2
+    value: SmartProcessChild2
+  variable: # 1381
+    name: multipleSubprocVer
+    value: ${~2\\.?\\d+}
+  variable: # 1382
+    name: multipleSubprocVer2
+    value: ${~0\\.?\\d+}
+  variable: # 1367
+    name: subprocInputVar
+    value: myInput
+  variable: # 1368
+    name: testCase
+    value: multiple

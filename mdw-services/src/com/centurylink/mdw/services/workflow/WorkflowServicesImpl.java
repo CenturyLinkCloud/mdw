@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.services.workflow;
 
+import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.app.Templates;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Query;
@@ -56,6 +57,7 @@ import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
+import com.centurylink.mdw.service.data.activity.ImplementorCache;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.service.data.process.HierarchyCache;
@@ -1530,7 +1532,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     public void addMilestones(Linked<Milestone> parent, Linked<ActivityInstance> start,
-            Linked<ProcessInstance> instanceHierarchy) {
+            Linked<ProcessInstance> instanceHierarchy) throws ServiceException {
         ActivityInstance activityInstance = start.get();
         ProcessInstance processInstance = instanceHierarchy.
                 find(new ProcessInstance(activityInstance.getProcessInstanceId())).get();
@@ -1538,6 +1540,18 @@ public class WorkflowServicesImpl implements WorkflowServices {
         Activity activity = process.getActivity(activityInstance.getActivityId());
         Milestone milestone = new MilestoneFactory(process).getMilestone(activity);
         if (milestone != null) {
+            if (ProcessRuntimeContext.isExpression(milestone.getLabel())) {
+                Package pkg = PackageCache.getPackage(process.getPackageName());
+                ProcessInstance loadedInstance = getProcess(processInstance.getId());
+                ActivityImplementor implementor = ImplementorCache.get(activity.getImplementor());
+                String category = implementor == null ? GeneralActivity.class.getName() : implementor.getCategory();
+                ActivityRuntimeContext runtimeContext = new ActivityRuntimeContext(pkg, process, loadedInstance, 0, false,
+                        activity, category, activityInstance, false);
+                // doc variables are not loaded (too expensive)
+                for (VariableInstance variableInstance : loadedInstance.getVariables())
+                    runtimeContext.getVariables().put(variableInstance.getName(), variableInstance.getStringValue());
+                milestone.setLabel(runtimeContext.evaluateToString(milestone.getLabel()));
+            }
             milestone.setProcessInstance(processInstance);
             milestone.setActivityInstance(activityInstance);
             Linked<Milestone> linkedMilestone = new Linked<>(milestone);
@@ -1577,6 +1591,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
         for (ScopedActivityInstance scopedChild : start.getScopedChildren()) {
             ActivityInstance activityInstance = scopedChild.get();
             Process process = ProcessCache.getProcess(scopedChild.get().getProcessId());
+            if (process == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Definition not found for process instance " + activityInstance.getProcessInstanceId());
+
             Activity activity = process.getActivity(activityInstance.getActivityId());
 
             List<Linked<ProcessInstance>> subhierarchies = getInvoked(scopedChild, activity);
@@ -1600,6 +1617,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 for (Linked<ProcessInstance> subhierarchy : subhierarchies) {
                     ProcessInstance loadedSub = getProcess(subhierarchy.get().getId());
                     Process subProcess = ProcessCache.getProcess(loadedSub.getProcessId());
+                    if (subProcess == null)
+                        throw new ServiceException(ServiceException.NOT_FOUND, "Definition not found for process instance " + loadedSub.getId());
                     Linked<ActivityInstance> subprocActivities = loadedSub.getLinkedActivities(subProcess);
                     scopedChild.getChildren().add(subprocActivities);
                     subprocActivities.setParent(scopedChild);

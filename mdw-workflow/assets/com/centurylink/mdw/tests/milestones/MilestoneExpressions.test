@@ -1,0 +1,23 @@
+package com.centurylink.mdw.tests.milestones
+
+start process("com.centurylink.mdw.tests.workflow/SmartProcessParent") {
+    variables = [ testCase: "multiple", subprocInputVar: "myInput" ]
+}
+
+wait process
+verify processes(
+        "com.centurylink.mdw.tests.workflow/SmartProcessParent",
+        "com.centurylink.mdw.tests.workflow/SmartProcessChild",
+        "com.centurylink.mdw.tests.workflow/SmartProcessChild2")
+
+verify processes(
+        "com.centurylink.mdw.tests.workflow/SmartProcessParent",
+        "com.centurylink.mdw.tests.workflow/SmartProcessChild",
+        "com.centurylink.mdw.tests.workflow/SmartProcessChild2")
+
+response = get http("api/com/centurylink/mdw/milestones/${masterRequestId}")
+assert response.code == 200
+verify response {
+    expected = asset("milestone-expressions.json").text
+}
+
