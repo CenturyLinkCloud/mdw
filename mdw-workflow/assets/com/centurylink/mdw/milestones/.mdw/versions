@@ -1,5 +1,5 @@
 ActivityMilestone.java=2
-Data.js=10
+Data.js=11
 DataE2e.js=3
 DefE2e.jsx=5
 DefNav.jsx=3
@@ -7,8 +7,8 @@ Definition.jsx=7
 E2e.jsx=5
 Groups.js=1
 InfoPop.jsx=1
-Main.jsx=10
-Milestone.jsx=9
+Main.jsx=11
+Milestone.jsx=10
 MilestonesApi.java=10
 Nav.jsx=6
 Timeline.jsx=5

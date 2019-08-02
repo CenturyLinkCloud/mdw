@@ -54,7 +54,7 @@ class Main extends Component {
             });
           }
           else {
-            $mdwUi.showMessage(json.status.message);
+            $mdwUi.showMessage(milestone.status.message);
           }
         });    
       }  

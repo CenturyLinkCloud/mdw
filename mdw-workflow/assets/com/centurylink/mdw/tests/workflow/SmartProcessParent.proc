@@ -3,27 +3,25 @@ activities:
   name: Start
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
   attributes:
-    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Activity Timing","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
-    WORK_DISPLAY_INFO: x=56,y=141,w=60,h=40
+    WORK_DISPLAY_INFO: x=58,y=141,w=60,h=40
   transitions:
   - id: T1
     to: A5
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: lx=165,ly=106,type=Elbow,xs=120&177,ys=161&161
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=149,ly=161,xs=122&177,ys=161&161
 - id: A2
   name: Stop
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
   attributes:
     DoNotNotifyCaller: 'false'
-    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Activity Timing","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java","Completed"],["false","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["false","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
     WORK_DISPLAY_INFO: x=686,y=173,w=60,h=40
 - id: A5
   name: "Test\r\nCase?"
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptEvaluator
   attributes:
     Expression: '#{testCase}'
-    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Activity Timing","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
     SCRIPT: javax.el
     WORK_DISPLAY_INFO: x=181,y=138,w=89,h=46
   transitions:
@@ -43,7 +41,7 @@ activities:
   name: Create Plan
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
   attributes:
-    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Activity Timing","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java","Plan Created"],["false","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["false","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
     Output Documents: executionPlan
     Rule: |
       import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument
@@ -88,7 +86,7 @@ activities:
   name: Assign Output
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
   attributes:
-    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Activity Timing","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java","Output Assigned"],["false","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["false","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
     Rule: "import com.centurylink.mdw.bpm.ParameterDocument.Parameter\r\nimport com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance\r\n\r\nSubprocessInstance subprocinst = executionPlan.getProcessExecutionPlan().getSubprocessInstanceList().get(0);\r\nmultipleSubprocName = getParameter(subprocinst, \"procName\");\r\nmultipleSubprocVer = getParameter(subprocinst, \"procVer\");\r\nsubprocinst = executionPlan.getProcessExecutionPlan().getSubprocessInstanceList().get(2);\r\nmultipleSubprocName2 = getParameter(subprocinst, \"procName\");\r\nmultipleSubprocVer2 = getParameter(subprocinst, \"procVer\");\r\n\r\nprotected String getParameter(SubprocessInstance subprocinst, String name) {\r\n if (subprocinst.getParameterList()==null) return null;\r\n for (Parameter p : subprocinst.getParameterList()) {\r\n  if (p.getName().equals(name)) return p.getStringValue();\r\n }\r\n return null;\r\n}"
     SCRIPT: Groovy
     WORK_DISPLAY_INFO: x=535,y=337,w=100,h=60
@@ -104,7 +102,6 @@ activities:
   attributes:
     DELAY_BETWEEN: '1'
     Execution Plan: executionPlan
-    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["true","Activity Timing","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
     WORK_DISPLAY_INFO: x=355,y=332,w=109,h=65
     processmap: '[["SmartProcessChild","com.centurylink.mdw.tests.workflow/SmartProcessChild.proc","[2.4,3)"],["SmartProcessChild2","com.centurylink.mdw.tests.workflow/SmartProcessChild2.proc","[0.4,1)"]]'
     synchronous: 'true'
@@ -118,7 +115,6 @@ activities:
   name: Invoke Single
   implementor: com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity
   attributes:
-    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["true","Activity Timing","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
     WORK_DISPLAY_INFO: x=382,y=61,w=100,h=60
     processname: com.centurylink.mdw.tests.workflow/SmartProcessChild.proc
     processversion: '[2.4,3)'
@@ -169,7 +165,6 @@ variables:
     category: INPUT
 attributes:
   ArrowStyle: ArrowEnd
-  Monitors: '[["false","Due Date Monitor","com.centurylink.mdw.base/ProcessDueDateMonitor.java",""],["false","Microservice Status Monitor","com.centurylink.mdw.microservice/MicroserviceStatusProcessMonitor.java",""]]'
   NodeStyle: BoxIcon
   PROCESS_VISIBILITY: PUBLIC
   PerformanceLevel: '0'

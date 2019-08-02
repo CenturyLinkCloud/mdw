@@ -3,7 +3,6 @@ activities:
   name: Start
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
   attributes:
-    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
     WORK_DISPLAY_INFO: x=60,y=260,w=60,h=40
   transitions:
   - id: T1
@@ -16,14 +15,12 @@ activities:
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
   attributes:
     DoNotNotifyCaller: 'false'
-    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
     WORK_DISPLAY_INFO: x=461,y=118,w=60,h=40
 - id: A3
   name: Which Case?
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptEvaluator
   attributes:
     Expression: processCase
-    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
     SCRIPT: Groovy
     WORK_DISPLAY_INFO: x=153,y=245,w=98,h=68
   transitions:
@@ -42,7 +39,6 @@ activities:
   name: Script with syntax Error
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
   attributes:
-    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
     Rule: "$xmldata.MINUTES = \"2\";\r\n\r\n$intarraytest = \"1~1~2~3~5~8\";\r\n\r\n$maptest = \"R=red~G=green~B=blue\";\r\n\r\nsyntax error here"
     SCRIPT: Groovy
     WORK_DISPLAY_INFO: x=136,y=112,w=133,h=59
@@ -56,7 +52,6 @@ activities:
   name: Invoke Subprocess with Error
   implementor: com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity
   attributes:
-    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
     WORK_DISPLAY_INFO: x=403,y=249,w=176,h=65
     processname: com.centurylink.mdw.tests.workflow/MDWTestSubProcess2
     processversion: '[0.4,1)'
@@ -75,7 +70,6 @@ subprocesses:
     name: Start
     implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
     attributes:
-      Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
       WORK_DISPLAY_INFO: x=557,y=60,w=60,h=40
     transitions:
     - id: T6
@@ -88,13 +82,11 @@ subprocesses:
     implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
     attributes:
       DoNotNotifyCaller: 'false'
-      Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
       WORK_DISPLAY_INFO: x=857,y=60,w=60,h=40
   - id: A11
     name: ActivityException Fallout
     implementor: com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity
     attributes:
-      Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
       STATUS_AFTER_EVENT: Cancelled
       TASK_PAGELET: com.centurylink.mdw.base/AutoFormManualTask.pagelet
       TASK_TEMPLATE: com.centurylink.mdw.tests.workflow/activityExceptionFallout.task

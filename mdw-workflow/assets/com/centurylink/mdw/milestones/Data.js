@@ -55,7 +55,12 @@ class Data {
     if (milestone.children) {
       milestone.children.forEach(child => {
         let exist = this.items.find(it => {
-          return it.process.id == child.milestone.process.id && it.activity.id == child.milestone.activity.id;
+          if (child.milestone.processInstance) {
+            return it.processInstance && it.processInstance.id === child.milestone.processInstance.id && it.activityInstance.id == child.milestone.activityInstance.id;
+          }
+          else {
+            return it.process.id === child.milestone.process.id && it.activity.id === child.milestone.activity.id;
+          }
         });
         if (exist) {
           if (!this.edges.find(edge => edge.from === item.id && edge.to === exist.id)) {
@@ -86,4 +91,4 @@ class Data {
   }
 }
 
-export default Data; 
+export default Data;

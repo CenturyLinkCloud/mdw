@@ -3,26 +3,24 @@ activities:
   name: Start
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
   attributes:
-    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
-    WORK_DISPLAY_INFO: x=45,y=108,w=60,h=40
+    WORK_DISPLAY_INFO: x=45,y=107,w=60,h=40
   transitions:
   - id: T1
     to: A3
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: lx=185,ly=138,type=Elbow,xs=109&213,ys=128&128
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=161,ly=127,xs=109&213,ys=127&127
 - id: A2
   name: Stop
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
   attributes:
     DoNotNotifyCaller: 'false'
-    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
-    WORK_DISPLAY_INFO: x=425,y=105,w=60,h=40
+    WORK_DISPLAY_INFO: x=428,y=106,w=60,h=40
 - id: A3
   name: Set Ver Info
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
   attributes:
-    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java","Child 2 Set Info"],["false","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["false","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
     Rule: "procName = runtimeContext.getProcess().getName();\r\nprocVer = runtimeContext.getProcess().getVersionString();"
     SCRIPT: Groovy
     WORK_DISPLAY_INFO: x=217,y=96,w=100,h=60
@@ -31,7 +29,7 @@ activities:
     to: A2
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: lx=376,ly=125,type=Elbow,xs=321&421,ys=125&125
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=372,ly=126,xs=321&424,ys=126&126
 variables:
   inputVar:
     type: java.lang.String

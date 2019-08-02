@@ -3,26 +3,24 @@ activities:
   name: Start
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
   attributes:
-    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
-    WORK_DISPLAY_INFO: x=60,y=91,w=60,h=40
+    WORK_DISPLAY_INFO: x=60,y=93,w=60,h=40
   transitions:
   - id: T1
     to: A3
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: lx=176,ly=90,type=Elbow,xs=124&220,ys=111&111
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=172,ly=112,xs=124&220,ys=112&112
 - id: A2
   name: Stop
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
   attributes:
     DoNotNotifyCaller: 'false'
-    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
-    WORK_DISPLAY_INFO: x=420,y=94,w=60,h=40
+    WORK_DISPLAY_INFO: x=423,y=94,w=60,h=40
 - id: A3
   name: Set Info
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
   attributes:
-    Monitors: '[["false","Activity Timing","com.centurylink.mdw.base/ActivityTimingMonitor.java",""],["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java",""]]'
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java","sub ${inputVar}"],["false","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["false","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
     Rule: "procName = runtimeContext.getProcess().getName();\r\nprocVer = runtimeContext.getProcess().getVersionString(); "
     SCRIPT: Groovy
     WORK_DISPLAY_INFO: x=224,y=85,w=100,h=60
@@ -31,7 +29,7 @@ activities:
     to: A2
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: lx=376,ly=114,type=Elbow,xs=328&416,ys=114&114
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=373,ly=114,xs=328&418,ys=114&114
 variables:
   inputVar:
     type: java.lang.String
