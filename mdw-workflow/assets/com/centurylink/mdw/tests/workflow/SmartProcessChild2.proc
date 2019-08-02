@@ -20,6 +20,7 @@ activities:
   name: Set Ver Info
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
   attributes:
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java","Child 1 Set Info"],["false","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["false","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
     Rule: "procName = runtimeContext.getProcess().getName();\r\nprocVer = runtimeContext.getProcess().getVersionString();"
     SCRIPT: Groovy
     WORK_DISPLAY_INFO: x=217,y=96,w=100,h=60
