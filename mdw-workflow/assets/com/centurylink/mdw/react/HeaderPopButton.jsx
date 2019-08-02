@@ -18,7 +18,7 @@ class HeaderPopButton extends Component {
     const rootClose = this.props.rootClose !== false ? true : null;
     return (
       <OverlayTrigger trigger="click"
-        placement="left"
+        placement={this.props.placement || 'left'}
         overlay={this.props.popover}
         rootClose={rootClose}
         ref="overlayTriggerRef">
@@ -26,7 +26,9 @@ class HeaderPopButton extends Component {
           {this.props.glyph &&
             <Glyphicon glyph={this.props.glyph} />
           }
-          <span style={{marginLeft:left}}>{this.props.label}</span>
+          {this.props.label &&
+            <span style={{marginLeft:left}}>{this.props.label}</span>
+          }
         </Button>
       </OverlayTrigger>
     );
@@ -34,7 +36,7 @@ class HeaderPopButton extends Component {
 }
 
 HeaderPopButton.propTypes = {
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   glyph: PropTypes.string,
   rootClose: PropTypes.bool
 };
