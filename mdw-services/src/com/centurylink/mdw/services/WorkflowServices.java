@@ -30,7 +30,6 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -65,8 +64,6 @@ public interface WorkflowServices {
     void updateAttributes(String ownerType, Long ownerId, Map<String, String> attributes) throws ServiceException;
 
     Map<String, String> getValues(String ownerType, String ownerId) throws ServiceException;
-
-    String getValue(String ownerType, String ownerId, String name) throws ServiceException;
 
     /**
      * Replace <b>all</b> values for this ownerId

@@ -20,7 +20,7 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.user.*;
-import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.service.data.user.UserDataAccess;
 import com.centurylink.mdw.services.UserServices;
 import com.centurylink.mdw.util.log.LoggerUtil;

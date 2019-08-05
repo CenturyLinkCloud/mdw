@@ -29,7 +29,7 @@ import com.centurylink.mdw.model.workflow.Solution;
 import com.centurylink.mdw.model.workflow.Solution.MemberType;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
-import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import org.apache.commons.lang.StringUtils;

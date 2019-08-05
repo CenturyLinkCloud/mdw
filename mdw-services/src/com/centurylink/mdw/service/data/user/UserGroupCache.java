@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.service.data.task;
+package com.centurylink.mdw.service.data.user;
 
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
@@ -22,7 +22,6 @@ import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.Workgroup;
-import com.centurylink.mdw.service.data.user.UserDataAccess;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;

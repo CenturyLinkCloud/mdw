@@ -23,7 +23,7 @@ import com.centurylink.mdw.model.Attachment;
 import com.centurylink.mdw.model.Comment;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.service.data.CollaborationDataAccess;
-import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.CollaborationServices;
 
 public class CollaborationServicesImpl implements CollaborationServices {

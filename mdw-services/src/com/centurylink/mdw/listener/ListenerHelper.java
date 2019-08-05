@@ -43,7 +43,7 @@ import com.centurylink.mdw.monitor.ServiceMonitor;
 import com.centurylink.mdw.service.data.ServicePaths;
 import com.centurylink.mdw.service.data.event.EventHandlerCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
-import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.service.handler.ServiceRequestHandler;
 import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.EventServices;

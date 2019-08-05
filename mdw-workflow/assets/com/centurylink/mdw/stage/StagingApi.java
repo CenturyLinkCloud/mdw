@@ -4,13 +4,15 @@ import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.WebSocketProgressMonitor;
 import com.centurylink.mdw.model.JsonArray;
+import com.centurylink.mdw.model.JsonListMap;
 import com.centurylink.mdw.model.Status;
+import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.Stage;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.Workgroup;
-import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.StagingServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
@@ -18,6 +20,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.ws.rs.Path;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.centurylink.mdw.services.StagingServices.STAGE;
@@ -46,20 +50,31 @@ public class StagingApi extends JsonRestService {
         return user;
     }
 
+    /**
+     * Paths in case this API becomes public
+     * @param path
+     * @param headers
+     * @return
+     * @throws ServiceException
+     * @throws JSONException
+     */
     @Override
     public JSONObject get(String path, Map<String, String> headers) throws ServiceException, JSONException {
         String[] segments = getSegments(path);
         try {
-            StagingServices stagingServices = getStagingServices();
             if (segments.length == 4) {
-                return new JsonArray(stagingServices.getStages()).getJson();
+                return new JsonArray(getStages()).getJson();
             }
             else if (segments.length == 5) {
-                String stagingUser = segments[4];
-                Stage userStage = stagingServices.getUserStage(stagingUser);
-                if (userStage == null)
-                    throw new ServiceException(ServiceException.NOT_FOUND, "Staging branch not found for " + stagingUser);
-                return userStage.getJson();
+                return getUserStage(segments[4]).getJson();
+            }
+            else if (segments.length == 6) {
+                String userCuid = segments[4];
+                String sub = segments[5];
+                if (sub.equals("assets")) {
+                    LinkedHashMap<String,List<AssetInfo>> stagedAssets = getStagedAssets(userCuid);
+                    return new JsonListMap<>(stagedAssets).getJson();
+                }
             }
         }
         catch (ServiceException ex) {
@@ -69,6 +84,26 @@ public class StagingApi extends JsonRestService {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
         }
         throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
+    }
+
+    private List<Stage> getStages() throws ServiceException {
+        return getStagingServices().getStages();
+    }
+
+    private Stage getUserStage(String cuid) throws ServiceException {
+        Stage userStage = getStagingServices().getUserStage(cuid);
+        if (userStage == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Staging branch not found for " + cuid);
+        return userStage;
+    }
+
+    private LinkedHashMap<String,List<AssetInfo>> getStagedAssets(String cuid) throws ServiceException {
+        LinkedHashMap<String,List<AssetInfo>> linkedHashMap = new LinkedHashMap<>();
+        Map<String,List<AssetInfo>> stagedAssets = getStagingServices().getStagedAssets(cuid);
+        for (String pkg : stagedAssets.keySet()) {
+            linkedHashMap.put(pkg, stagedAssets.get(pkg));
+        }
+        return linkedHashMap;
     }
 
     @Override

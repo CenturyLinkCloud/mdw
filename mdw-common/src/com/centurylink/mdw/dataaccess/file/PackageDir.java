@@ -15,6 +15,17 @@
  */
 package com.centurylink.mdw.dataaccess.file;
 
+import com.centurylink.mdw.dataaccess.AssetRevision;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.workflow.Package;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,19 +35,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.yaml.snakeyaml.Yaml;
-
-import com.centurylink.mdw.dataaccess.AssetRevision;
-import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.VersionControl;
-import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
-import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.workflow.Package;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-
 @ApiModel(value="Package", description="Asset package", parent=Object.class)
 public class PackageDir extends File {
 
@@ -44,10 +42,8 @@ public class PackageDir extends File {
     public static final String PACKAGE_JSON_PATH = META_DIR + "/package.json";
     public static final String PACKAGE_YAML_PATH = META_DIR + "/package.yaml";
     public static final String VERSIONS_PATH = META_DIR + "/versions";
-    public static final String ARCHIVE_SUBDIR = "Archive";
 
     private File storageDir; // main parent for workflow assets
-    private File archiveDir;
     private VersionControl versionControl;
 
     /**
@@ -127,26 +123,9 @@ public class PackageDir extends File {
                     ;
                 }
             }
-            String archivePath = new File(storageDir.toString() + "/Archive/").toString();
-            if (toString().startsWith(archivePath)) {
-                // e:/workspaces/dons/DonsWorkflow/src/main/workflow/Archive/com.centurylink.mdw.demo.intro v0.17
-                int spaceV = toString().lastIndexOf(" v");
-                if (spaceV < 0)
-                    throw new DataAccessException("Misnamed Archive package node dir (missing version): " + getName());
-                String pkgVerFromDir = toString().substring(spaceV + 2);
-                if (pkgVerFromDir != null && !pkgVerFromDir.equals(pkgVersion))
-                    throw new DataAccessException("Package version in " + pkgFile + " is not '" + pkgVerFromDir + "'");
-                String pkgNameFromDir = toString().substring(0, spaceV).substring(archiveDir.toString().length() + 1).replace('\\', '/').replace('/', '.');
-                if (!pkgNameFromDir.equals(pkgName))
-                    throw new DataAccessException("Package name in " + pkgFile + " is not '" + pkgNameFromDir + "'");
-                archive = true;
-            }
-            else {
-                // e:/workspaces/dons/DonsWorkflow/src/main/workflow/com/centurylink/mdw/demo/intro
-                String pkgNameFromDir = toString().substring(storageDir.toString().length() + 1).replace('\\', '/').replace('/', '.');
-                if (!pkgNameFromDir.equals(pkgName))
-                    throw new DataAccessException("Package name in " + pkgFile + " is not '" + pkgNameFromDir + "'");
-            }
+            String pkgNameFromDir = toString().substring(storageDir.toString().length() + 1).replace('\\', '/').replace('/', '.');
+            if (!pkgNameFromDir.equals(pkgName))
+                throw new DataAccessException("Package name in " + pkgFile + " is not '" + pkgNameFromDir + "'");
             logicalDir = new File("/" + pkgName + " v" + pkgVersion);
             if (versionControl != null)
                 pkgId = versionControl.getId(logicalDir);
@@ -163,7 +142,6 @@ public class PackageDir extends File {
     public PackageDir(File storageDir, File pkgNode, VersionControl versionControl) {
         super(pkgNode.toString());
         this.storageDir = storageDir;
-        this.archiveDir = new File(storageDir + "/" + ARCHIVE_SUBDIR);
         this.versionControl = versionControl;
     }
 

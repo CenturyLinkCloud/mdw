@@ -59,6 +59,8 @@ public class VersionControlGit implements VersionControl {
     private String repositoryUrl;
 
     private File localDir;
+    public File getLocalDir() { return localDir; }
+
     private Repository localRepo;
     private Git git;
 

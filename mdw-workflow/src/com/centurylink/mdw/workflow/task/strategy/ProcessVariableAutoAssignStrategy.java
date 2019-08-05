@@ -23,7 +23,7 @@ import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.observer.ObserverException;
 import com.centurylink.mdw.observer.task.AutoAssignStrategy;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
-import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import org.apache.commons.lang.StringUtils;
 

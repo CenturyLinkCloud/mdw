@@ -27,7 +27,7 @@
     <Property Name="dependsOn">CompiledJavaCache,SpringAppCache</Property>
   </Cache>
   <Cache Name="UserGroupCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.service.data.task.UserGroupCache</Property>
+    <Property Name="ClassName">com.centurylink.mdw.service.data.user.UserGroupCache</Property>
   </Cache>
   <Cache Name="MdwSwaggerCache" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.service.api.MdwSwaggerCache</Property>

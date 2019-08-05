@@ -52,7 +52,7 @@ import com.centurylink.mdw.service.Parameter;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.service.data.task.TaskDataAccess;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
-import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.service.data.user.UserDataAccess;
 import com.centurylink.mdw.services.*;
 import com.centurylink.mdw.services.asset.CustomPageLookup;

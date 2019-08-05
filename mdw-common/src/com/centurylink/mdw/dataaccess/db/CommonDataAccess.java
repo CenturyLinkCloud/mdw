@@ -552,27 +552,28 @@ public class CommonDataAccess {
         }
     }
 
-    public String getValue(String ownerType, String ownerId, String name) throws SQLException {
+    public List<String> getValues(String ownerType, String ownerId, String name) throws SQLException {
         try {
             db.openConnection();
-            return getValue0(ownerType, ownerId, name);
+            return getValues0(ownerType, ownerId, name);
         }
         finally {
             db.closeConnection();
         }
     }
 
-    protected String getValue0(String ownerType, String ownerId, String name) throws SQLException {
-        String query = "select value from VALUE where owner_type = ? and ownerId = ? and name = ?";
+    protected List<String> getValues0(String ownerType, String ownerId, String name) throws SQLException {
+        String query = "select value from VALUE where owner_type = ? and owner_id = ? and name = ?";
         Object[] args = new Object[3];
         args[0] = ownerType;
         args[1] = ownerId;
         args[2] = name;
         ResultSet rs = db.runSelect(query, args);
-        if (rs.next())
-            return rs.getString(1);
-        else
-            return null;
+        List<String> values = new ArrayList<>();
+        while (rs.next()) {
+            values.add(rs.getString(1));
+        }
+        return values;
     }
 
     public Map<String,String> getValues(String ownerType, String ownerId) throws SQLException {

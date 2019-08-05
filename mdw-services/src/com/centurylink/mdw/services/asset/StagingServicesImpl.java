@@ -1,14 +1,18 @@
 package com.centurylink.mdw.services.asset;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.dataaccess.file.GitBranch;
 import com.centurylink.mdw.dataaccess.file.GitProgressMonitor;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.Stage;
 import com.centurylink.mdw.model.user.User;
-import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.StagingServices;
@@ -17,10 +21,8 @@ import com.centurylink.mdw.util.log.StandardLogger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.sql.SQLException;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class StagingServicesImpl implements StagingServices {
@@ -40,12 +42,12 @@ public class StagingServicesImpl implements StagingServices {
         }
     }
 
-    private File getStagingDir() {
+    public File getStagingDir() {
         String tempDir = PropertyManager.getProperty(PropertyNames.MDW_TEMP_DIR);
         return new File(tempDir + "/git/staging");
     }
 
-    private File getStagingDir(String cuid) {
+    public File getStagingDir(String cuid) {
         return new File(getStagingDir() + "/" + STAGE + cuid);
     }
 
@@ -53,19 +55,24 @@ public class StagingServicesImpl implements StagingServices {
      * Cloned specifically for user staging.
      */
     private VersionControlGit getStagingVersionControl(String cuid) throws ServiceException {
-            VersionControlGit stagingVersionControl = new VersionControlGit();
-            String gitUrl = PropertyManager.getProperty(PropertyNames.MDW_GIT_REMOTE_URL);
-            String gitUser = PropertyManager.getProperty(PropertyNames.MDW_GIT_USER);
-            String gitPassword = PropertyManager.getProperty(PropertyNames.MDW_GIT_PASSWORD);
-            if (gitUrl == null || gitUser == null || gitPassword == null)
-                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Missing mdw.git configuration");
-            try {
-                stagingVersionControl.connect(gitUrl, gitUser, gitPassword, getStagingDir(cuid));
-                return stagingVersionControl;
-            }
-            catch (IOException ex) {
-                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
-            }
+        VersionControlGit stagingVersionControl = new VersionControlGit();
+        String gitUrl = PropertyManager.getProperty(PropertyNames.MDW_GIT_REMOTE_URL);
+        if (gitUrl == null)
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Missing configuration: " + PropertyNames.MDW_GIT_REMOTE_URL);
+        String gitUser = PropertyManager.getProperty(PropertyNames.MDW_GIT_USER);
+        if (gitUser == null)
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Missing configuration: " + PropertyNames.MDW_GIT_USER);
+        String gitPassword = PropertyManager.getProperty(PropertyNames.MDW_GIT_PASSWORD);
+        if (gitPassword == null)
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Missing configuration: " + PropertyNames.MDW_GIT_PASSWORD);
+
+        try {
+            stagingVersionControl.connect(gitUrl, gitUser, gitPassword, getStagingDir(cuid));
+            return stagingVersionControl;
+        }
+        catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
+        }
     }
 
     public Stage getUserStage(String cuid) throws ServiceException {
@@ -193,5 +200,39 @@ public class StagingServicesImpl implements StagingServices {
         if (user == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "User not found: " + cuid);
         return user;
+    }
+
+    @Override
+    public SortedMap<String,List<AssetInfo>> getStagedAssets(String cuid) throws ServiceException {
+        User user = getUser(cuid);
+        CommonDataAccess dataAccess = new CommonDataAccess();
+        try {
+            SortedMap<String,List<AssetInfo>> stagedAssets = new TreeMap<>();
+            List<String> userAssets = dataAccess.getValues(OwnerType.USER, cuid, STAGED_ASSET);
+            AssetServices assetServices = getAssetServices(cuid);
+            for (String userAsset : userAssets) {
+                String pkg = userAsset.substring(0, userAsset.lastIndexOf('/'));
+                AssetInfo assetInfo = assetServices.getAsset(userAsset, true);
+                if (assetInfo != null) {
+                    List<AssetInfo> pkgAssets = stagedAssets.get(pkg);
+                    if (pkgAssets == null) {
+                        pkgAssets = new ArrayList<>();
+                        stagedAssets.put(pkg, pkgAssets);
+                    }
+                    pkgAssets.add(assetInfo);
+                }
+            }
+            return stagedAssets;
+        }
+        catch (SQLException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
+        }
+    }
+
+    private AssetServices getAssetServices(String cuid) throws ServiceException {
+        VersionControlGit vcGit = getStagingVersionControl(cuid);
+        String assetPath = getMainVersionControl().getRelativePath(ApplicationContext.getAssetRoot().toPath());
+        File stagingAssetDir = new File(vcGit.getLocalDir().toString() + '/' + assetPath);
+        return new AssetServicesImpl(vcGit, stagingAssetDir);
     }
 }

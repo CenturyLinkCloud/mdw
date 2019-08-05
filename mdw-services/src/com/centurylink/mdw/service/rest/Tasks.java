@@ -32,7 +32,7 @@ import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.user.UserList;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.WorkflowServices;
