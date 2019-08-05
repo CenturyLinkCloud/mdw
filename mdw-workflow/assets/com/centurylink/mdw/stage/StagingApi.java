@@ -52,11 +52,9 @@ public class StagingApi extends JsonRestService {
 
     /**
      * Paths in case this API becomes public
-     * @param path
-     * @param headers
-     * @return
-     * @throws ServiceException
-     * @throws JSONException
+     *   / = get all user staging areas
+     *   /&ltcuid> = get staging area for user
+     *   /&ltcuid>/assets = staged assets for user
      */
     @Override
     public JSONObject get(String path, Map<String, String> headers) throws ServiceException, JSONException {
@@ -69,10 +67,10 @@ public class StagingApi extends JsonRestService {
                 return getUserStage(segments[4]).getJson();
             }
             else if (segments.length == 6) {
-                String userCuid = segments[4];
+                Stage userStage = getUserStage(segments[4]);
                 String sub = segments[5];
                 if (sub.equals("assets")) {
-                    LinkedHashMap<String,List<AssetInfo>> stagedAssets = getStagedAssets(userCuid);
+                    LinkedHashMap<String,List<AssetInfo>> stagedAssets = getStagedAssets(userStage.getUserCuid());
                     return new JsonListMap<>(stagedAssets).getJson();
                 }
             }
@@ -93,7 +91,7 @@ public class StagingApi extends JsonRestService {
     private Stage getUserStage(String cuid) throws ServiceException {
         Stage userStage = getStagingServices().getUserStage(cuid);
         if (userStage == null)
-            throw new ServiceException(ServiceException.NOT_FOUND, "Staging branch not found for " + cuid);
+            throw new ServiceException(ServiceException.NOT_FOUND, "Staging area not found for " + cuid);
         return userStage;
     }
 
@@ -106,26 +104,44 @@ public class StagingApi extends JsonRestService {
         return linkedHashMap;
     }
 
+    /**
+     * Prepare staging area, or add assets to staging area.
+     */
     @Override
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
-        String stagingUser = getSegment(path, 4);
-        if (stagingUser == null) {
-            throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
-        }
-        else {
-            User user = UserGroupCache.getUser(stagingUser);
-            if (user == null)
-                throw new ServiceException(ServiceException.NOT_FOUND, "User not found: " + stagingUser);
-            WebSocketProgressMonitor progressMonitor = new WebSocketProgressMonitor(STAGE + stagingUser,
-                    "Prepare staging area for " + user.getName());
-            Stage userStage = getStagingServices().prepareUserStage(stagingUser, progressMonitor);
+        String[] segments = getSegments(path);
+        if (segments.length == 5) {
+            Stage userStage = prepareStagingArea(segments[4]);
             if (userStage.getBranch().getId() == null) {
                 // asynchronous prep
                 headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(Status.ACCEPTED.getCode()));
             }
             return userStage.getJson();
         }
+        else if (segments.length == 6) {
+            Stage userStage = getUserStage(segments[4]);
+            String sub = segments[5];
+            if (sub.equals("assets")) {
+                List<String> assets = new JsonArray(content.getJSONArray("assets")).getList();
+                stageAssets(userStage.getUserCuid(), assets);
+                return null;
+            }
+        }
+        throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
+    }
+
+    private Stage prepareStagingArea(String cuid) throws ServiceException {
+        User user = UserGroupCache.getUser(cuid);
+        if (user == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "User not found: " + cuid);
+        WebSocketProgressMonitor progressMonitor = new WebSocketProgressMonitor(STAGE + cuid,
+                "Prepare staging area for " + user.getName());
+        return getStagingServices().prepareUserStage(cuid, progressMonitor);
+    }
+
+    private void stageAssets(String cuid, List<String> assets) throws ServiceException {
+        getStagingServices().stageAssets(cuid, assets);
     }
 
     private StagingServices stagingServices;

@@ -90,12 +90,14 @@ public class StagingServicesImpl implements StagingServices {
     public List<Stage> getStages() {
         List<Stage> stages = new ArrayList<>();
         File stagingDir = getStagingDir();
-        for (File file : stagingDir.listFiles()) {
-            if (file.isDirectory() && file.getName().startsWith(STAGE)) {
-                String cuid = file.getName().substring(STAGE.length());
-                User user = UserGroupCache.getUser(cuid);
-                if (user != null)
-                    stages.add(new Stage(user.getCuid(), user.getName()));
+        if (stagingDir != null) {
+            for (File file : stagingDir.listFiles()) {
+                if (file.isDirectory() && file.getName().startsWith(STAGE)) {
+                    String cuid = file.getName().substring(STAGE.length());
+                    User user = UserGroupCache.getUser(cuid);
+                    if (user != null)
+                        stages.add(new Stage(user.getCuid(), user.getName()));
+                }
             }
         }
         return stages;
@@ -204,25 +206,63 @@ public class StagingServicesImpl implements StagingServices {
 
     @Override
     public SortedMap<String,List<AssetInfo>> getStagedAssets(String cuid) throws ServiceException {
-        User user = getUser(cuid);
+        getUser(cuid); // throws if not found
         CommonDataAccess dataAccess = new CommonDataAccess();
         try {
             SortedMap<String,List<AssetInfo>> stagedAssets = new TreeMap<>();
-            List<String> userAssets = dataAccess.getValues(OwnerType.USER, cuid, STAGED_ASSET);
+            Map<String,String> userValues = dataAccess.getValues(OwnerType.USER, cuid);
             AssetServices assetServices = getAssetServices(cuid);
-            for (String userAsset : userAssets) {
-                String pkg = userAsset.substring(0, userAsset.lastIndexOf('/'));
-                AssetInfo assetInfo = assetServices.getAsset(userAsset, true);
-                if (assetInfo != null) {
-                    List<AssetInfo> pkgAssets = stagedAssets.get(pkg);
-                    if (pkgAssets == null) {
-                        pkgAssets = new ArrayList<>();
-                        stagedAssets.put(pkg, pkgAssets);
+            for (String userValueKey : userValues.keySet()) {
+                if (STAGED_ASSET.equals(userValues.get(userValueKey))) {
+                    String userAsset = userValueKey;
+                    String pkg = userAsset.substring(0, userAsset.lastIndexOf('/'));
+                    AssetInfo assetInfo = assetServices.getAsset(userAsset, true);
+                    if (assetInfo != null) {
+                        List<AssetInfo> pkgAssets = stagedAssets.computeIfAbsent(pkg, k -> new ArrayList<>());
+                        pkgAssets.add(assetInfo);
                     }
-                    pkgAssets.add(assetInfo);
                 }
             }
             return stagedAssets;
+        }
+        catch (SQLException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
+        }
+    }
+
+    @Override
+    public void stageAssets(String cuid, List<String> assets) throws ServiceException {
+        CommonDataAccess dataAccess = new CommonDataAccess();
+        try {
+            // first check availability
+            for (String asset : assets) {
+                List<String> ownerIds = dataAccess.getValueOwnerIds(OwnerType.USER, asset, STAGED_ASSET);
+                if (ownerIds.size() > 1)
+                    throw new SQLException("Inconsistent db state for asset: " + asset);
+                String owner = ownerIds.isEmpty() ? null : ownerIds.get(0);
+                if (owner != null && !owner.equals(cuid))
+                    throw new ServiceException(ServiceException.CONFLICT, "Asset " + asset + " already staged by " + owner);
+            }
+            // then stage assets
+            for (String asset : assets) {
+                dataAccess.setValue(OwnerType.USER, cuid, asset, STAGED_ASSET);
+            }
+        }
+        catch (ServiceException ex) {
+            throw ex;
+        }
+        catch (SQLException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
+        }
+    }
+
+    @Override
+    public void unStageAssets(String cuid, List<String> assets) throws ServiceException {
+        CommonDataAccess dataAccess = new CommonDataAccess();
+        try {
+            for (String asset : assets) {
+                dataAccess.deleteValue(OwnerType.USER, cuid, asset, STAGED_ASSET);
+            }
         }
         catch (SQLException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);

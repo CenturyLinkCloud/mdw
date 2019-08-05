@@ -1,8 +1,6 @@
 package com.centurylink.mdw.services;
 
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.file.GitProgressMonitor;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.Stage;
@@ -14,7 +12,7 @@ import java.util.SortedMap;
 public interface StagingServices {
 
     String STAGE = "stage_";
-    String STAGED_ASSET = "StagedAsset";
+    String STAGED_ASSET = "Staged";
 
     /**
      * All user stages that exist on the server.
@@ -36,4 +34,7 @@ public interface StagingServices {
     File getStagingDir(String cuid);
 
     SortedMap<String,List<AssetInfo>> getStagedAssets(String cuid) throws ServiceException;
+    void stageAssets(String cuid, List<String> assets) throws ServiceException;
+    void unStageAssets(String cuid, List<String> assets) throws ServiceException;
+
 }

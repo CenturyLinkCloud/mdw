@@ -536,7 +536,7 @@ public class CommonDataAccess {
 
     public List<String> getValueNames(String ownerType) throws DataAccessException {
         try {
-            List<String> names = new ArrayList<String>();
+            List<String> names = new ArrayList<>();
             db.openConnection();
             String sql = "select distinct name from VALUE where owner_type = ?";
             ResultSet rs = db.runSelect(sql, ownerType);
@@ -552,28 +552,27 @@ public class CommonDataAccess {
         }
     }
 
-    public List<String> getValues(String ownerType, String ownerId, String name) throws SQLException {
+    public String getValue(String ownerType, String ownerId, String name) throws SQLException {
         try {
             db.openConnection();
-            return getValues0(ownerType, ownerId, name);
+            return getValue0(ownerType, ownerId, name);
         }
         finally {
             db.closeConnection();
         }
     }
 
-    protected List<String> getValues0(String ownerType, String ownerId, String name) throws SQLException {
+    protected String getValue0(String ownerType, String ownerId, String name) throws SQLException {
         String query = "select value from VALUE where owner_type = ? and owner_id = ? and name = ?";
         Object[] args = new Object[3];
         args[0] = ownerType;
         args[1] = ownerId;
         args[2] = name;
         ResultSet rs = db.runSelect(query, args);
-        List<String> values = new ArrayList<>();
-        while (rs.next()) {
-            values.add(rs.getString(1));
+        if (rs.next()) {
+            return rs.getString(1);
         }
-        return values;
+        return null;
     }
 
     public Map<String,String> getValues(String ownerType, String ownerId) throws SQLException {
@@ -632,48 +631,35 @@ public class CommonDataAccess {
 
     protected void setValue0(String ownerType, String ownerId, String name, String value)
             throws SQLException {
-        String query = "select name from VALUE where " +
-                    "OWNER_type=? and OWNER_ID=? and NAME=?";
-        Object[] args = new Object[3];
-        args[0] = ownerType;
-        args[1] = ownerId;
-        args[2] = name;
-        ResultSet rs = db.runSelect(query, args);
-        if (rs.next()) {
-            if (value==null) {
-                query = "delete VALUE where " +
-                "OWNER_TYPE=? and OWNER_ID=? and NAME=?";
-            } else {
-                query = "update VALUE set VALUE=? where OWNER_type=? and OWNER_ID=? and NAME=?";
-                args = new Object[4];
-                args[0] = value;
-                args[1] = ownerType;
-                args[2] = ownerId;
-                args[3] = name;
-            }
-        } else {
-            query = "insert into VALUE" +
-                " (OWNER_TYPE,OWNER_ID,NAME,VALUE," +
-                        "CREATE_DT,CREATE_USR)"
-                + " values (?,?,?,?," + now() + ",'MDWEngine')";
-            args = new Object[4];
-            args[0] = ownerType;
-            args[1] = ownerId;
-            args[2] = name;
-            args[3] = value;
-        }
-        db.runUpdate(query, args);
-        return;
+        deleteValue0(ownerType, ownerId, name, value);
+        addValue0(ownerType, ownerId, name, value);
     }
 
-    public void addValues(String ownerType, String ownerId, Map<String,String> values) throws SQLException {
+    public void deleteValue(String ownerType, String ownerId, String name, String value) throws SQLException {
         try {
             db.openConnection();
-            addValues0(ownerType, ownerId, values);
+            deleteValue0(ownerType, ownerId, name, value);
             db.commit();
         }
         finally {
             db.closeConnection();
+        }
+    }
+
+    protected void deleteValue0(String ownerType, String ownerId, String name, String value)
+            throws SQLException {
+        String query = "select name from VALUE where " +
+                "OWNER_type=? and OWNER_ID=? and NAME=? and VALUE=?";
+        Object[] args = new Object[4];
+        args[0] = ownerType;
+        args[1] = ownerId;
+        args[2] = name;
+        args[3] = value;
+        ResultSet rs = db.runSelect(query, args);
+        if (rs.next()) {
+            query = "delete VALUE where " +
+                    "OWNER_TYPE=? and OWNER_ID=? and NAME=? and VALUE=?";
+            db.runUpdate(query, args);
         }
     }
 
@@ -695,6 +681,20 @@ public class CommonDataAccess {
             db.addToBatch(args);
         }
         db.runBatchUpdate();
+    }
+
+    protected void addValue0(String ownerType, String ownerId, String name, String value)
+    throws SQLException {
+        String query = "insert into VALUE"
+                + " (owner_type, owner_id, name, value, create_dt,create_usr)"
+                + " values (?, ?, ?, ?, " + now() + ", 'MDW')";
+        db.prepareStatement(query);
+        Object[] args = new Object[4];
+        args[0] = ownerType;
+        args[1] = ownerId;
+        args[2] = name;
+        args[3] = value;
+        db.runUpdate(query, args);
     }
 
     public List<String> getValueOwnerIds(String valueName, String valuePattern) throws SQLException {
