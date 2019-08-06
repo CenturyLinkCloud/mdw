@@ -211,15 +211,17 @@ public class StagingServicesImpl implements StagingServices {
         try {
             SortedMap<String,List<AssetInfo>> stagedAssets = new TreeMap<>();
             Map<String,String> userValues = dataAccess.getValues(OwnerType.USER, cuid);
-            AssetServices assetServices = getAssetServices(cuid);
-            for (String userValueKey : userValues.keySet()) {
-                if (STAGED_ASSET.equals(userValues.get(userValueKey))) {
-                    String userAsset = userValueKey;
-                    String pkg = userAsset.substring(0, userAsset.lastIndexOf('/'));
-                    AssetInfo assetInfo = assetServices.getAsset(userAsset, true);
-                    if (assetInfo != null) {
-                        List<AssetInfo> pkgAssets = stagedAssets.computeIfAbsent(pkg, k -> new ArrayList<>());
-                        pkgAssets.add(assetInfo);
+            if (userValues != null) {
+                AssetServices assetServices = getAssetServices(cuid);
+                for (String userValueKey : userValues.keySet()) {
+                    if (STAGED_ASSET.equals(userValues.get(userValueKey))) {
+                        String userAsset = userValueKey;
+                        String pkg = userAsset.substring(0, userAsset.lastIndexOf('/'));
+                        AssetInfo assetInfo = assetServices.getAsset(userAsset, true);
+                        if (assetInfo != null) {
+                            List<AssetInfo> pkgAssets = stagedAssets.computeIfAbsent(pkg, k -> new ArrayList<>());
+                            pkgAssets.add(assetInfo);
+                        }
                     }
                 }
             }
