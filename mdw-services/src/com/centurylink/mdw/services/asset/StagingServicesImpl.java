@@ -143,8 +143,11 @@ public class StagingServicesImpl implements StagingServices {
                         inProgressPrepares.remove(user.getCuid());
                     }
                     // return synchronously
+                    long before = System.currentTimeMillis();
                     stagingVc.pull(stagingBranchName);
                     userStage.setBranch(stagingBranch);
+                    long elapsed = System.currentTimeMillis() - before;
+                    logger.debug("Branch " + stagingBranchName + " pulled in " + elapsed + " ms");
                     return userStage;
                 }
                 new Thread(() -> {
@@ -211,13 +214,14 @@ public class StagingServicesImpl implements StagingServices {
         try {
             SortedMap<String,List<AssetInfo>> stagedAssets = new TreeMap<>();
             Map<String,String> userValues = dataAccess.getValues(OwnerType.USER, cuid);
+
             if (userValues != null) {
                 AssetServices assetServices = getAssetServices(cuid);
                 for (String userValueKey : userValues.keySet()) {
                     if (STAGED_ASSET.equals(userValues.get(userValueKey))) {
                         String userAsset = userValueKey;
                         String pkg = userAsset.substring(0, userAsset.lastIndexOf('/'));
-                        AssetInfo assetInfo = assetServices.getAsset(userAsset, true);
+                        AssetInfo assetInfo = assetServices.getAsset(userAsset, false);
                         if (assetInfo != null) {
                             List<AssetInfo> pkgAssets = stagedAssets.computeIfAbsent(pkg, k -> new ArrayList<>());
                             pkgAssets.add(assetInfo);
@@ -225,6 +229,7 @@ public class StagingServicesImpl implements StagingServices {
                     }
                 }
             }
+
             return stagedAssets;
         }
         catch (SQLException ex) {

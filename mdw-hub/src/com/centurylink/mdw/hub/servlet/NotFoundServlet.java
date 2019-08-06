@@ -60,8 +60,8 @@ public class NotFoundServlet extends HttpServlet {
                     response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/images/mdw.ico");
                     return;
                 }
-                if (path.indexOf('.') == -1 && path.indexOf('#') == -1 && (path.startsWith("/tasks")
-                        || path.startsWith("/milestones") || path.startsWith("/stage"))) {
+                if (path.startsWith("/stage") || path.startsWith("/milestones")
+                        || (path.indexOf('.') == -1 && path.indexOf('#') == -1 && path.startsWith("/tasks"))) {
                     String redirectPath = path;
                     String[] pathSegs = path.substring(1).split("/");
                     if (pathSegs.length > 2)
@@ -69,9 +69,16 @@ public class NotFoundServlet extends HttpServlet {
                     response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/#" + redirectPath);
                     return;
                 }
+                if (path.startsWith("/edit/")) {
+                    // TODO implement asset editing in React
+                    response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/#" + path);
+                    return;
+                }
 
-                if (path.startsWith("/dashboard/"))
+                if (path.startsWith("/dashboard/")) {
+                    // shortcut for standalone dashboard app
                     path = "/com/centurylink/mdw/dashboard/Index";
+                }
 
                 Mdw mdw = WebAppContext.getMdw();
                 Page page = findPage(mdw, path);

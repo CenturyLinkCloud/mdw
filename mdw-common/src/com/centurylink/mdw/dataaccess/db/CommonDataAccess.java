@@ -594,7 +594,7 @@ public class CommonDataAccess {
         ResultSet rs = db.runSelect(query, args);
         while (rs.next()) {
             if (values == null)
-                values = new HashMap<String,String>();
+                values = new HashMap<>();
             values.put(rs.getString(1), rs.getString(2));
         }
         return values;

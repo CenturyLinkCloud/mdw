@@ -65,7 +65,7 @@ routesSvc.factory('routes', function() {
         templateUrl: 'assets/stage.html'
       },
       {
-        path: '/stage/:branchId',
+        path: '/stage/:cuid',
         templateUrl: 'assets/stage.html'
       },
       {
