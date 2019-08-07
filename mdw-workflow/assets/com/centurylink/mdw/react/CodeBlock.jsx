@@ -15,7 +15,7 @@ class CodeBlock extends Component {
   
   componentDidUpdate() {
     if (this.props.code && this.props.lineNumbers) {
-      var node = ReactDOM.findDOMNode(this);
+      var node = ReactDOM.findDOMNode(this); // eslint-disable-line react/no-find-dom-node
       var lineNumElem = node.firstChild;
       var codeElem = node.getElementsByClassName('code-content')[0].firstChild;
       var overflow = codeElem.scrollWidth > codeElem.clientWidth;

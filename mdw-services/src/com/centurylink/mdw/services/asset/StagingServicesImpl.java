@@ -247,7 +247,7 @@ public class StagingServicesImpl implements StagingServices {
                 if (ownerIds.size() > 1)
                     throw new SQLException("Inconsistent db state for asset: " + asset);
                 String owner = ownerIds.isEmpty() ? null : ownerIds.get(0);
-                if (owner != null && !owner.equals(cuid))
+                if (owner != null)
                     throw new ServiceException(ServiceException.CONFLICT, "Asset " + asset + " already staged by " + owner);
             }
             // then stage assets
