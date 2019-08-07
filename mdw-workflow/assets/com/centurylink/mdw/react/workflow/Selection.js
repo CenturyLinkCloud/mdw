@@ -199,7 +199,7 @@ if (typeof angular !== 'undefined') {
     return SelectionFactory();
   }]);
 }
-else if (module) {
+if (typeof module !== 'undefined') {
   module.exports = SelectionFactory;
 }
 

@@ -113,4 +113,4 @@ Progress.propTypes = {
   onFinish: PropTypes.func
 };
 
-export default Progress;
+export default Progress; 

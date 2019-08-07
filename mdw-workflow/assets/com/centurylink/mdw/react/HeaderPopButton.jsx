@@ -22,7 +22,8 @@ class HeaderPopButton extends Component {
         overlay={this.props.popover}
         rootClose={rootClose}
         ref="overlayTriggerRef">
-        <Button bsStyle="primary" className="mdw-btn" style={{marginLeft:'4px'}}>
+        <Button bsStyle="primary" className="mdw-btn" style={{marginLeft:'4px'}}
+          title={this.props.title}>
           {this.props.glyph &&
             <Glyphicon glyph={this.props.glyph} />
           }

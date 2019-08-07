@@ -67,6 +67,6 @@ if (typeof angular !== 'undefined') {
     return LabelFactory(DC, Shape);
   }]);
 }
-else if (module) {
+if (typeof module !== 'undefined') {
   module.exports = LabelFactory;
 }
