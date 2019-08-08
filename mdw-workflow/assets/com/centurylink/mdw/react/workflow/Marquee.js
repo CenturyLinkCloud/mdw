@@ -79,6 +79,6 @@ if (typeof angular !== 'undefined') {
     return MarqueeFactory(DC, Shape);
   }]);
 }
-else if (module) {
+if (typeof module !== 'undefined') {
   module.exports = MarqueeFactory;
 }

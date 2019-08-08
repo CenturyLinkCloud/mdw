@@ -336,7 +336,7 @@ if (typeof angular !== 'undefined') {
     return SubflowFactory(DC, Shape, Step, Link);
   }]);
 }
-else if (module) {
+if (typeof module !== 'undefined') {
   module.exports = SubflowFactory;
 }
 

@@ -1517,6 +1517,6 @@ if (typeof angular !== 'undefined') {
     return DiagramFactory(DC, Shape, Label, Step, Link, Subflow, Note, Marquee, Selection, Toolbox);
   }]);
 }
-else if (module) {
+if (typeof module !== 'undefined') {
   module.exports = DiagramFactory;
 }

@@ -141,6 +141,6 @@ if (typeof angular !== 'undefined') {
     return ShapeFactory(DC);
   }]);
 }
-else if (module) {
+if (typeof module !== 'undefined') {
   module.exports = ShapeFactory;
 }

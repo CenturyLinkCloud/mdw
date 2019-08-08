@@ -15,22 +15,11 @@
  */
 package com.centurylink.mdw.services;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.discovery.GitDiscoverer;
-import com.centurylink.mdw.model.asset.ArchiveDir;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetPackageList;
 import com.centurylink.mdw.model.asset.PackageAssets;
@@ -38,15 +27,18 @@ import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.services.asset.Renderer;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
+
 /**
  * Services for interacting with design-time workflow assets.
  */
 public interface AssetServices {
 
     File getAssetRoot();
-
-    File getArchiveDir();
-    void deleteArchive() throws ServiceException;
 
     VersionControl getVersionControl() throws IOException;
 
@@ -107,8 +99,6 @@ public interface AssetServices {
     void createAsset(String assetPath) throws ServiceException;
     void createAsset(String assetPath, byte[] content) throws ServiceException;
     void deleteAsset(String assetPath) throws ServiceException;
-
-    List<ArchiveDir> getArchiveDirs() throws ServiceException;
 
     List<String> getExtraPackageNames() throws ServiceException;
 

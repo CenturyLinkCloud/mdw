@@ -53,7 +53,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     private String user;
     private File storageDir;
     public File getStorageDir() { return storageDir; }
-    private File archiveDir;
     private FileFilter pkgDirFilter;
     private FileFilter mdwDirFilter;
     private FileFilter subDirFilter;
@@ -91,7 +90,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         this.storageDir = directory;
         if (storageDir.toString().charAt(1) == ':') // windows: avoid potential drive letter case mismatch
             storageDir = new File(Character.toLowerCase(storageDir.toString().charAt(0)) + storageDir.toString().substring(1));
-        archiveDir = new File(storageDir + "/" + PackageDir.ARCHIVE_SUBDIR);
         this.versionControl = versionControl;  // should already be connected?
         this.baselineData = baselineData;
 
@@ -175,7 +173,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             if (!storageDir.exists() || !storageDir.isDirectory())
                 throw new DataAccessException("Directory does not exist: " + storageDir);
             List<PackageDir> pkgDirsTemp = new ArrayList<>();
-            for (File pkgNode : getPkgDirFiles(storageDir, includeArchive, new ArrayList<>())) {
+            for (File pkgNode : getPkgDirFiles(storageDir, new ArrayList<>())) {
                 PackageDir pkgDir = new PackageDir(storageDir, pkgNode, versionControl);
                 if (pkgDir.parse())
                     pkgDirsTemp.add(pkgDir);
@@ -186,14 +184,10 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return pkgDirs;
     }
 
-    protected List<File> getPkgDirFiles(File parentDir, List<File> excludes) throws DataAccessException {
-        return getPkgDirFiles(parentDir, true, excludes);
-    }
-
     /**
      * For recursively finding package directories based on the filter.
      */
-    protected List<File> getPkgDirFiles(File parentDir, boolean includeArchive, List<File> excludes)
+    protected List<File> getPkgDirFiles(File parentDir, List<File> excludes)
             throws DataAccessException {
         List<File> pkgDirFiles = new ArrayList<>();
         try {
@@ -203,7 +197,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
                     pkgDirFiles.add(pkgDirFile);
             }
             for (File subDir : parentDir.listFiles(subDirFilter)) {
-                if (!excludes.contains(subDir) && !mdwIgnore.isIgnore(subDir) && (includeArchive || !subDir.equals(archiveDir)))
+                if (!excludes.contains(subDir) && !mdwIgnore.isIgnore(subDir))
                     pkgDirFiles.addAll(getPkgDirFiles(subDir, excludes));
             }
             return pkgDirFiles;
@@ -1023,13 +1017,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             else if (persistType == PersistType.IMPORT || persistType == PersistType.IMPORT_JSON) {
                 PackageDir existingTopLevel = getTopLevelPackageDir(packageVO.getName());
                 if (existingTopLevel != null) {
-                    if (!packageVO.getVersionString().equals(existingTopLevel.getPackageVersion())) {
-                        // move the existing package to the archive
-                        File archiveDest = new File(archiveDir + "/" + packageVO.getName() + " v" + existingTopLevel.getPackageVersion());
-                        if (archiveDest.exists())
-                            deletePkg(archiveDest);
-                        copyPkg(existingTopLevel, archiveDest);
-                    }
                     pkgDirs.remove(existingTopLevel);
                     deletePkg(existingTopLevel);
                     getVersionControl().clearId(existingTopLevel.getLogicalDir());
@@ -1050,18 +1037,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
-    }
-
-    private PackageDir archivePackage(PackageDir pkgDir) throws IOException, DataAccessException {
-        File archiveDest = new File(archiveDir + "/" + pkgDir.getPackageName() + " v" + pkgDir.getPackageVersion());
-        if (archiveDest.exists())
-            delete(archiveDest);
-        copyPkg(pkgDir, archiveDest);
-
-        PackageDir archivePkgDir = new PackageDir(storageDir, archiveDest, versionControl);
-        archivePkgDir.parse();
-        pkgDirs.add(archivePkgDir);
-        return archivePkgDir;
     }
 
     /**
@@ -1114,7 +1089,6 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         try {
             PackageDir pkgDir = getTopLevelPackageDir(process.getPackageName());
             if (persistType == PersistType.NEW_VERSION) {
-                archivePackage(pkgDir);
                 // remove old process version from top-level package
                 String prevVer = process.getAttribute("previousProcessVersion");
                 if (prevVer != null) {

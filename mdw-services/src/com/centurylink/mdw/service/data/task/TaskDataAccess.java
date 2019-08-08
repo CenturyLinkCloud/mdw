@@ -25,6 +25,7 @@ import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.task.*;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;

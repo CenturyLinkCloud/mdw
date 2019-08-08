@@ -19,7 +19,7 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.workflow.RuntimeContext;
-import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.ParseException;
 

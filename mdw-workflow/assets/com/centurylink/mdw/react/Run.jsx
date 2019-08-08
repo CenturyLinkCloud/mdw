@@ -86,7 +86,6 @@ class Run extends Component {
         socket.addEventListener('message', function(event) {
           var message = JSON.parse(event.data);
           if (message.subtype === 'm') {
-            console.log("RECEIVED: " + JSON.stringify(message, null, 2)); // eslint-disable-line no-console
             this.setState({
               assetPath: state.assetPath,
               masterRequestId: state.masterRequestId,

@@ -15,19 +15,16 @@
  */
 package com.centurylink.mdw.service.data.process;
 
-import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.model.asset.AssetRequest;
 import com.centurylink.mdw.model.asset.RequestKey;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -65,7 +62,7 @@ public class ProcessRequests implements PreloadableCache {
 
     @Override
     public void loadCache() {
-        synchronized(requests) {
+        synchronized(ProcessRequests.class) {
             requests.clear();
             try {
                 Map<RequestKey,List<AssetRequest>> conflicting = new TreeMap<>();
@@ -88,24 +85,18 @@ public class ProcessRequests implements PreloadableCache {
                                 String servicePath = packageName.replace('.', '/') + path;
                                 RequestKey requestKey = new RequestKey(assetRequest.getMethod(), servicePath);
                                 AssetRequest existing = requests.get(requestKey);
-                                //filter out  archived ones.
-                                if (!assetPath.startsWith(
-                                        Paths.get(new File(ApplicationContext.getAssetRoot() + "/"
-                                                + PackageDir.ARCHIVE_SUBDIR).getPath()))) {
-                                    if (existing == null) {
-                                        requests.put(requestKey, assetRequest);
-                                    }
-                                    else {
-                                        List<AssetRequest> conflicts = conflicting.get(requestKey);
-                                        if (conflicts == null) {
-                                            conflicts = new ArrayList<>();
-                                            conflicts.add(existing);
-                                            conflicting.put(requestKey, conflicts);
-                                        }
-                                        conflicts.add(assetRequest);
-                                    }
+                                if (existing == null) {
+                                    requests.put(requestKey, assetRequest);
                                 }
-
+                                else {
+                                    List<AssetRequest> conflicts = conflicting.get(requestKey);
+                                    if (conflicts == null) {
+                                        conflicts = new ArrayList<>();
+                                        conflicts.add(existing);
+                                        conflicting.put(requestKey, conflicts);
+                                    }
+                                    conflicts.add(assetRequest);
+                                }
                             }
                         }
                     }
@@ -119,7 +110,7 @@ public class ProcessRequests implements PreloadableCache {
                     msg.append("** WARNING: Conflicting process request mappings:\n");
                     for(RequestKey requestKey : conflicting.keySet()) {
                         for (AssetRequest assetRequest : conflicting.get(requestKey)) {
-                            msg.append("** ").append(requestKey + " -> " + assetRequest.getAsset()).append("\n");
+                            msg.append("** ").append(requestKey).append(" -> ").append(assetRequest.getAsset()).append("\n");
                         }
                         msg.append("**\n");
                     }
@@ -142,7 +133,7 @@ public class ProcessRequests implements PreloadableCache {
 
     @Override
     public void clearCache() {
-        synchronized(requests) {
+        synchronized(ProcessRequests.class) {
             requests.clear();
         }
     }

@@ -266,7 +266,7 @@ if (typeof angular !== 'undefined') {
     return StepFactory(DC, Shape);
   }]);
 }
-else if (module) {
+if (typeof module !== 'undefined') {
   module.exports = StepFactory;
 }
 

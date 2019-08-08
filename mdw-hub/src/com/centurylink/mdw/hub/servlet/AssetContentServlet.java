@@ -33,6 +33,8 @@ import com.centurylink.mdw.dataaccess.file.ImporterExporterJson;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.hub.servlet.asset.StagedAssetServer;
+import com.centurylink.mdw.hub.servlet.asset.StagedAssetUpdater;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.asset.Asset;
@@ -47,7 +49,7 @@ import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
@@ -81,35 +83,35 @@ public class AssetContentServlet extends HttpServlet {
 
     private static final StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private static File assetRoot;
-
-    public void init() throws ServletException {
-        assetRoot = ApplicationContext.getAssetRoot();
-    }
-
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!assetRoot.isDirectory())
-            throw new ServletException(assetRoot + " is not a directory");
 
+        File assetRoot = ApplicationContext.getAssetRoot();
+        if (!assetRoot.isDirectory()) {
+            new StatusResponder(response).writeResponse(new StatusResponse(Status.NOT_FOUND));
+            return;
+        }
+        String stagingCuid = request.getParameter("stagingUser");
         String path = request.getPathInfo().substring(1);
         try {
-            authorizeForView(request.getSession(), path);
+            authorizeForView(request.getSession(), path, stagingCuid);
         }
         catch (AuthorizationException ex) {
             logger.severeException(ex.getMessage(), ex);
-            StatusResponse sr = new StatusResponse(ex.getCode(), ex.getMessage());
-            response.setStatus(sr.getStatus().getCode());
-            response.getWriter().println(sr.getJson().toString(2));
+            new StatusResponder(response).writeResponse(new StatusResponse(ex.getCode(), ex.getMessage()));
             return;
         }
 
         if ("packages".equals(path)) {
+            if (stagingCuid != null) {
+                new StatusResponder(response).writeResponse(new StatusResponse(Status.NOT_FOUND));
+                return;
+            }
+
             String packages = request.getParameter("packages");
             if (packages == null) {
-                StatusResponse sr = new StatusResponse(Status.BAD_REQUEST, "Missing parameter: 'packages'");
-                response.setStatus(sr.getStatus().getCode());
-                response.getWriter().println(sr.getJson().toString(2));
+                new StatusResponder(response).writeResponse(new StatusResponse(Status.BAD_REQUEST, "Missing parameter: 'packages'"));
+                return;
             }
             else {
                 String recursive = request.getParameter("recursive");
@@ -125,14 +127,23 @@ public class AssetContentServlet extends HttpServlet {
                 catch (Exception ex) {
                     logger.severeException(ex.getMessage(), ex);
                 }
+                return;
             }
         }
         else {
             if (path.indexOf('/') == -1) {
                 // must be qualified
-                StatusResponse sr = new StatusResponse(Status.NOT_FOUND);
-                response.setStatus(sr.getStatus().getCode());
-                response.getWriter().println(sr.getJson().toString(2));
+                new StatusResponder(response).writeResponse(new StatusResponse(Status.NOT_FOUND));
+                return;
+            }
+            if (stagingCuid != null) {
+                try {
+                    new StagedAssetServer(request, response).serveAsset(stagingCuid, path);
+                }
+                catch (ServiceException ex) {
+                    logger.error(ex.getMessage(), ex);
+                    new StatusResponder(response).writeResponse(new StatusResponse(ex.getCode(), ex.getMessage()));
+                }
                 return;
             }
 
@@ -259,9 +270,13 @@ public class AssetContentServlet extends HttpServlet {
      */
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!assetRoot.isDirectory())
-            throw new ServletException(assetRoot + " is not a directory");
+        File assetRoot = ApplicationContext.getAssetRoot();
+        if (!assetRoot.isDirectory()) {
+            new StatusResponder(response).writeResponse(StatusResponse.forCode(Status.NOT_FOUND.getCode()));
+            return;
+        }
 
+        String stagingCuid = request.getParameter("stagingUser");
         String path = request.getPathInfo().substring(1);
         Bulletin bulletin = null;
         try {
@@ -270,6 +285,10 @@ public class AssetContentServlet extends HttpServlet {
             try {
                 VersionControlGit vcs = (VersionControlGit) assetServices.getVersionControl();
                 if ("packages".equals(path)) {
+                    if (stagingCuid != null) {
+                        new StatusResponder(response).writeResponse(new StatusResponse(Status.NOT_FOUND));
+                        return;
+                    }
                     authorizeForUpdate(request.getSession(), Action.Import, Entity.Package, "Package zip", false);
                     String contentType = request.getContentType();
                     boolean isZip = "application/zip".equals(contentType);
@@ -326,6 +345,12 @@ public class AssetContentServlet extends HttpServlet {
                     boolean isInstance = slashes > 1;
 
                     authorizeForUpdate(request.getSession(), Action.Change, Entity.Asset, path, isInstance);
+
+                    if (stagingCuid != null) {
+                        new StagedAssetUpdater(request).updateAsset(stagingCuid, path);
+                        new StatusResponder(response).writeResponse(new StatusResponse(Status.OK));
+                        return;
+                    }
 
                     // If not Development, asset change will have to be committed, so check if on latest commit
                     if (!isInstance && !ApplicationContext.isDevelopment() && vcs.getCommit() != null && !vcs.getCommit().equals(vcs.getRemoteCommit(vcs.getBranch()))) {
@@ -488,15 +513,11 @@ public class AssetContentServlet extends HttpServlet {
     private void authorizeForUpdate(HttpSession session, Action action, Entity entity,
             String includes, boolean isInstance) throws AuthorizationException, DataAccessException {
         AuthenticatedUser user = (AuthenticatedUser) session.getAttribute("authenticatedUser");
-        if (user == null && ApplicationContext.getServiceUser() != null) {
-            String cuid = ApplicationContext.getServiceUser();
-            user = new AuthenticatedUser(UserGroupCache.getUser(cuid));
-        }
 
         if (user == null)
             throw new AuthorizationException(AuthorizationException.NOT_AUTHORIZED, "Authentication failure");
 
-        if (isInstance) {
+        else if (isInstance) {
             if (!user.hasRole(Role.PROCESS_EXECUTION) && !user.hasRole(Workgroup.SITE_ADMIN_GROUP))
                 throw new AuthorizationException(AuthorizationException.FORBIDDEN,
                         "User " + user.getCuid() + " not authorized for this action");
@@ -516,16 +537,19 @@ public class AssetContentServlet extends HttpServlet {
 
     /**
      * Only if "Asset View" role exists.  Web resource assets are excluded.
+     * Staged assets for different users require Site Admin.
      */
-    private void authorizeForView(HttpSession session, String path) throws AuthorizationException {
-        if (UserGroupCache.getRole(Role.ASSET_VIEW) != null) {
-            if (!path.endsWith(".css") && !path.endsWith(".js") && !path.endsWith(".jpg") && !path.endsWith(".png")
-                    && !path.endsWith(".gif") && !path.endsWith("woff") && !path.endsWith("woff2") && !path.endsWith("ttf")) {
-                AuthenticatedUser user = (AuthenticatedUser) session.getAttribute("authenticatedUser");
-                if (user == null && ApplicationContext.getServiceUser() != null) {
-                    String cuid = ApplicationContext.getServiceUser();
-                    user = new AuthenticatedUser(UserGroupCache.getUser(cuid));
-                }
+    private void authorizeForView(HttpSession session, String path, String stagingCuid) throws AuthorizationException {
+        if (!path.endsWith(".css") && !path.endsWith(".js") && !path.endsWith(".jpg") && !path.endsWith(".png")
+                && !path.endsWith(".gif") && !path.endsWith("woff") && !path.endsWith("woff2") && !path.endsWith("ttf")) {
+            AuthenticatedUser user = (AuthenticatedUser) session.getAttribute("authenticatedUser");
+            if (stagingCuid != null) {
+                if (user == null)
+                    throw new AuthorizationException(AuthorizationException.NOT_AUTHORIZED, "Authentication failure");
+                if (!user.getCuid().equals(stagingCuid) && !user.hasRole(Workgroup.SITE_ADMIN_GROUP))
+                    throw new AuthorizationException(AuthorizationException.NOT_AUTHORIZED, "User " + user.getCuid() + " not authorized");
+            }
+            if (UserGroupCache.getRole(Role.ASSET_VIEW) != null) {
                 if (user == null)
                     throw new AuthorizationException(AuthorizationException.NOT_AUTHORIZED, "Authentication failure");
                 if (!user.hasRole(Role.ASSET_VIEW) && !user.hasRole(Role.ASSET_DESIGN) && !user.hasRole(Workgroup.SITE_ADMIN_GROUP)) {

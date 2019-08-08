@@ -30,7 +30,7 @@ import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.Pagelet;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.Workgroup;
-import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;

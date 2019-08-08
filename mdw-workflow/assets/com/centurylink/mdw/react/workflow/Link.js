@@ -1072,7 +1072,7 @@ if (typeof angular !== 'undefined') {
     return LinkFactory(DC, Label);
   }]);
 }
-else if (module) {
+if (typeof module !== 'undefined') {
   module.exports = LinkFactory;
 }
 

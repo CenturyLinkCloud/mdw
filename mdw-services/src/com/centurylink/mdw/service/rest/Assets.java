@@ -29,8 +29,6 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.discovery.GitDiscoverer;
 import com.centurylink.mdw.model.JsonArray;
-import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.asset.ArchiveDir;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.model.asset.PackageList;
@@ -39,13 +37,11 @@ import com.centurylink.mdw.model.system.SystemMessage.Level;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.user.Workgroup;
-import com.centurylink.mdw.service.data.task.UserGroupCache;
+import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.rest.JsonRestService;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -68,8 +64,6 @@ import java.util.Map;
 @Path("/Assets")
 @Api("Workflow assets")
 public class Assets extends JsonRestService {
-
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     protected List<String> getRoles(String path, String method) {
         if (method.equals("GET")) {
@@ -136,15 +130,6 @@ public class Assets extends JsonRestService {
                 }
             }
 
-            if (query.getBooleanFilter("archiveDirs")) {
-                List<ArchiveDir> archiveDirs = assetServices.getArchiveDirs();
-                JSONObject json = new JsonObject();
-                json.put("root", assetServices.getArchiveDir().getAbsolutePath());
-                for (ArchiveDir archiveDir : archiveDirs)
-                    json.put(archiveDir.getJsonName(), archiveDir.getJson());
-                return json;
-            }
-
             String pkg = getSegment(path, 1);
             String asset = pkg == null ? null : getSegment(path, 2);
 
@@ -153,10 +138,7 @@ public class Assets extends JsonRestService {
                     return assetServices.getAssetPackageList(query).getJson();
                 }
                 else {
-                    JSONObject json = getPackages(query).getJson();
-                    if (assetServices.getArchiveDir().isDirectory())
-                        json.put("hasArchive", true);
-                    return json;
+                    return getPackages(query).getJson();
                 }
             }
             else {
@@ -254,7 +236,7 @@ public class Assets extends JsonRestService {
                     }
                     vcGit.connect(discoveryUrl, null, null, tempfile);
                     vcGit.setCredentialsProvider(new UsernamePasswordCredentialsProvider(userInfo[0], userInfo[1]));
-                    vcGit.cloneBranch(branch);
+                    vcGit.clone(branch, null);
                     for (String pkg : pkgs) {
                         String pkgPath = pkg.replace(".", "/");
                         if (tempfile != null) {
@@ -318,10 +300,7 @@ public class Assets extends JsonRestService {
             throws ServiceException, JSONException {
         String[] segments = getSegments(path);
         if (segments.length == 2) {
-            if ("Archive".equals(segments[1]))
-                ServiceLocator.getAssetServices().deleteArchive();
-            else
-                ServiceLocator.getAssetServices().deletePackage(segments[1]);
+            ServiceLocator.getAssetServices().deletePackage(segments[1]);
         }
         else if (segments.length == 3) {
             ServiceLocator.getAssetServices().deleteAsset(segments[1] + '/' + segments[2]);
