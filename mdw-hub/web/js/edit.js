@@ -23,9 +23,12 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
     };
   }
 
+  $scope.stagingUser = sessionStorage.getItem('stagingUser');
+
   $scope.asset = Assets.get({
       packageName: $routeParams.packageName,
-      assetName: $routeParams.assetName
+      assetName: $routeParams.assetName,
+      stagingUser: $scope.stagingUser
     },
     function(assetData) {
       $scope.asset.language = util.getLanguage($scope.asset.name);
@@ -54,7 +57,8 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
 
       Asset.get({
         packageName: $scope.packageName,
-        assetName: $scope.asset.name
+        assetName: $scope.asset.name,
+        stagingUser: $scope.stagingUser
       },
       function(assetData) {
         $scope.asset.content = assetData.rawResponse;
@@ -75,7 +79,7 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
   $scope.initOptions = function() {
     $scope.options = {
       distributedSave: false,
-      commitAndPush: true
+      commitAndPush: $scope.stagingUser ? false : true
     };
   };
 
@@ -143,7 +147,8 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
       assetName: $scope.asset.name,
       version: $scope.version.selected,
       comment: $scope.version.comment,
-      distributedSave: $scope.options.distributedSave
+      distributedSave: $scope.options.distributedSave,
+      stagingUser: $scope.stagingUser
     },
     $scope.process ? JSON.stringify($scope.process, null, 2) : $scope.asset.content,
     function success(response) {

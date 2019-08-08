@@ -15,22 +15,18 @@
  */
 package com.centurylink.mdw.dataaccess.file;
 
-import com.centurylink.mdw.cli.Delete;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.VersionControl;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.model.asset.CommitInfo;
 import com.centurylink.mdw.util.file.VersionProperties;
-import com.google.common.io.Files;
 import org.eclipse.jgit.api.*;
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.ResetCommand.ResetType;
-import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.api.errors.TransportException;
 import org.eclipse.jgit.diff.DiffEntry;
 import org.eclipse.jgit.diff.DiffEntry.ChangeType;
-import org.eclipse.jgit.dircache.DirCacheIterator;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.*;
 import org.eclipse.jgit.pgm.Main;
@@ -38,15 +34,16 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevTree;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.transport.CredentialsProvider;
+import org.eclipse.jgit.transport.RefSpec;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
-import org.eclipse.jgit.treewalk.EmptyTreeIterator;
 import org.eclipse.jgit.treewalk.TreeWalk;
 import org.eclipse.jgit.treewalk.filter.PathFilter;
-import org.eclipse.jgit.treewalk.filter.PathFilterGroup;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -54,18 +51,16 @@ import java.util.*;
 public class VersionControlGit implements VersionControl {
 
     public static final String VERSIONS_FILE = ".mdw/versions";
-    public static final char NEWLINE_CHAR = 0x0a;
 
     /**
      * should be sufficient, but we could change to 8 or more
      * (com.centurylink.mdw.abbreviated.id.length system property)
      */
-    public static int ABBREVIATED_ID_LENGTH = 7;
-
     private String repositoryUrl;
-    protected String getRepositoryUrl() { return repositoryUrl; }
 
     private File localDir;
+    public File getLocalDir() { return localDir; }
+
     private Repository localRepo;
     private Git git;
 
@@ -75,7 +70,6 @@ public class VersionControlGit implements VersionControl {
     private Map<File,VersionProperties> pkg2versions;
 
     private CredentialsProvider credentialsProvider;
-    public CredentialsProvider getCredentialsProvider() { return this.credentialsProvider; };
     public void setCredentialsProvider(CredentialsProvider provider) { this.credentialsProvider = provider; }
 
     public VersionControlGit() {
@@ -101,13 +95,9 @@ public class VersionControlGit implements VersionControl {
               credentialsProvider = new UsernamePasswordCredentialsProvider(user, password);
         }
 
-        file2id = new HashMap<File,Long>();
-        id2file = new HashMap<Long,File>();
+        file2id = new HashMap<>();
+        id2file = new HashMap<>();
         pkg2versions = new HashMap<>();
-
-        String idLengthProp = System.getProperty("com.centurylink.mdw.abbreviated.id.length");
-        if (idLengthProp != null)
-            ABBREVIATED_ID_LENGTH = Integer.parseInt(idLengthProp);
     }
 
     public synchronized void reconnect() throws IOException {
@@ -164,11 +154,6 @@ public class VersionControlGit implements VersionControl {
         return hash;
     }
 
-    protected long getLongId(ObjectId objectId) {
-        String h = objectId.abbreviate(ABBREVIATED_ID_LENGTH).name();
-        return Long.parseLong(h, 16);
-    }
-
     public File getFile(long id) {
         return id2file.get(id);
     }
@@ -222,7 +207,7 @@ public class VersionControlGit implements VersionControl {
         if (verProps == null) {
             // presumably newly-created package
             File verFile = new File(file.getParentFile() + "/" + VERSIONS_FILE);
-            Files.write("".getBytes(), verFile);
+            Files.write(verFile.toPath(), "".getBytes(), StandardOpenOption.CREATE_NEW);
             verProps = new VersionProperties(verFile);
             pkg2versions.put(file.getParentFile(), verProps);
         }
@@ -236,7 +221,6 @@ public class VersionControlGit implements VersionControl {
         if (firstSpace > 0) {
             // includes comment
             assetRevision.setVersion(Integer.parseInt(propertyValue.substring(0, firstSpace)));
-            assetRevision.setComment(propertyValue.substring(firstSpace + 1).replace(NEWLINE_CHAR, '\n'));
         }
         else {
             assetRevision.setVersion(Integer.parseInt(propertyValue));
@@ -252,7 +236,7 @@ public class VersionControlGit implements VersionControl {
                 props = new VersionProperties(file);
                 pkg2versions.put(pkgDir, props);
             }
-            else if (file.getAbsolutePath().indexOf(localDir.getAbsolutePath()) < 0) {
+            else if (!file.getAbsolutePath().contains(localDir.getAbsolutePath())) {
                 return getVersionProps(new File(localDir.getAbsolutePath() + "/" + pkgDir.getPath()));
             }
         }
@@ -266,29 +250,11 @@ public class VersionControlGit implements VersionControl {
     public Long gitHash(File input) throws IOException {
         String path = getLogicalPath(input);
         String blob = "blob " + path.length() + "\0" + path;
-        MessageDigest md = null;
         try {
-            md = MessageDigest.getInstance("SHA-1");
+            MessageDigest md = MessageDigest.getInstance("SHA-1");
             byte[] bytes = md.digest(blob.getBytes());
             String h = byteArrayToHexString(bytes).substring(0, 7);
             return Long.parseLong(h, 16);
-        }
-        catch (NoSuchAlgorithmException ex) {
-            throw new IOException(ex.getMessage(), ex);
-        }
-    }
-
-    /**
-     * Seems slightly slower than gitHash().
-     */
-    protected ObjectId gitHashJgit(File input) throws IOException {
-        String path = getLogicalPath(input);
-        String blob = "blob " + path.length() + "\0" + path;
-        MessageDigest md = null;
-        try {
-            md = MessageDigest.getInstance("SHA-1");
-            byte[] bytes = md.digest(blob.getBytes());
-            return ObjectId.fromRaw(bytes);
         }
         catch (NoSuchAlgorithmException ex) {
             throw new IOException(ex.getMessage(), ex);
@@ -340,14 +306,30 @@ public class VersionControlGit implements VersionControl {
         return localRepo.getBranch();
     }
 
+    public List<GitBranch> getRemoteBranches() throws Exception {
+        fetch();
+        List<Ref> refs = new Git(localRepo).branchList().setListMode(ListBranchCommand.ListMode.REMOTE).call();
+        List<GitBranch> branches = new ArrayList<>();
+        for (Ref ref : refs) {
+            String name = ref.getName();
+            if (name.startsWith("refs/remotes/origin/"))
+                name = name.substring(20);
+            branches.add(new GitBranch(ObjectId.toString(ref.getObjectId()), name));
+        }
+        return branches;
+    }
+
     /**
      * Does not do anything if already on target branch.
      */
     public void checkout(String branch) throws Exception {
         if (!branch.equals(getBranch())) {
+            fetch(); // in case the branch is not known locally
             createBranchIfNeeded(branch);
-            git.checkout().setName(branch).setStartPoint("origin/" + branch)
-                .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK).call();
+            CheckoutCommand checkout = git.checkout().setName(branch)
+                .setUpstreamMode(CreateBranchCommand.SetupUpstreamMode.TRACK);
+            checkout.setStartPoint("origin/" + branch);
+            checkout.call();
             // for some reason jgit needs this when branch is switched
             git.checkout().setName(branch).call();
         }
@@ -356,25 +338,6 @@ public class VersionControlGit implements VersionControl {
     public void checkoutTag(String tag) throws Exception {
         if (localRepo.getTags().get(tag) != null)
             git.checkout().setName(localRepo.getTags().get(tag).getName()).call();
-    }
-
-    /**
-     * Actually a workaround since JGit does not support sparse checkout:
-     * https://bugs.eclipse.org/bugs/show_bug.cgi?id=383772.
-     * Performs a HARD reset and FORCED checkout then deletes non-path items.
-     * Only to be used on server (not Designer).
-     */
-    public void sparseCheckout(String branch, String path) throws Exception {
-        fetch(); // in case the branch is not known locally
-        hardReset();
-        checkout(branch);
-        pull(branch);  // pull before delete or next pull may add non-path items back
-
-        // delete non-path items
-        List<File> preserveList = new ArrayList<File>();
-        preserveList.add(new File(localDir + "/.git"));
-        preserveList.add(new File(localDir + "/" + path));
-        new Delete(localDir, true).run();
     }
 
     public void hardCheckout(String branch) throws Exception {
@@ -414,7 +377,6 @@ public class VersionControlGit implements VersionControl {
      * Create a local branch for remote tracking if it doesn't exist already.
      */
     protected void createBranchIfNeeded(String branch) throws Exception {
-        fetch(); // in case the branch is not known locally
         if (localRepo.findRef(branch) == null) {
             git.branchCreate()
                .setName(branch)
@@ -443,7 +405,7 @@ public class VersionControlGit implements VersionControl {
     }
 
     public void fetch() throws Exception {
-        FetchCommand fetchCommand = git.fetch();
+        FetchCommand fetchCommand = git.fetch().setRemoveDeletedRefs(true);
         if (credentialsProvider != null)
             fetchCommand.setCredentialsProvider(credentialsProvider);
         try {
@@ -456,35 +418,17 @@ public class VersionControlGit implements VersionControl {
         }
     }
 
-    public void cloneRepo() throws Exception {
-        cloneRepo(null);
-    }
-
-    public void cloneRepo(String branch) throws Exception {
-        CloneCommand cloneCommand = Git.cloneRepository().setURI(repositoryUrl).setDirectory(localRepo.getDirectory().getParentFile());
-        if (branch != null)
-            cloneCommand.setBranch(branch);
-        if (credentialsProvider != null)
-            cloneCommand.setCredentialsProvider(credentialsProvider);
-        cloneCommand.call();
-    }
-
-    /**
-     * Different from cloneRepo in that will clone only a single branch.
-     * For quicker clone of specific branch/tag.
-     */
-    public void cloneBranch(String branch) throws Exception {
-        CloneCommand cloneCommand = Git.cloneRepository()
+    public void clone(String branch, ProgressMonitor progressMonitor) throws Exception {
+        CloneCommand clone = Git.cloneRepository()
                 .setURI(repositoryUrl)
-                .setDirectory(localRepo.getDirectory().getParentFile())
-                .setBranchesToClone(Arrays.asList(branch))
-                .setCloneAllBranches(false)
-                .setBranch(branch);
+                .setDirectory(localRepo.getDirectory().getParentFile());
+        if (branch != null)
+            clone.setBranch(branch);
         if (credentialsProvider != null)
-            cloneCommand.setCredentialsProvider(credentialsProvider);
-        Git git = cloneCommand.call();
-        git.getRepository().close();
-        git.close();
+            clone.setCredentialsProvider(credentialsProvider);
+        if (progressMonitor != null)
+            clone.setProgressMonitor(progressMonitor);
+        clone.call();
     }
 
     public Status getStatus() throws Exception {
@@ -499,10 +443,6 @@ public class VersionControlGit implements VersionControl {
         return sc.call();
     }
 
-    public void add(String filePattern) throws GitAPIException {
-        git.add().addFilepattern(filePattern).call();
-    }
-
     public void add(List<String> paths) throws Exception {
         AddCommand add = git.add();
         for (String path : paths)
@@ -510,21 +450,14 @@ public class VersionControlGit implements VersionControl {
         add.call();
     }
 
-    public void cloneNoCheckout() throws Exception {
-        cloneNoCheckout(false);
-    }
-
     /**
      * In lieu of sparse checkout since it's not yet supported in JGit:
      * https://bugs.eclipse.org/bugs/show_bug.cgi?id=383772
      */
-    public void cloneNoCheckout(boolean withProgress) throws Exception {
+    public void cloneNoCheckout() throws Exception {
         CloneCommand clone = Git.cloneRepository().setURI(repositoryUrl).setDirectory(localRepo.getDirectory().getParentFile()).setNoCheckout(true);
-        // https://bugs.eclipse.org/bugs/show_bug.cgi?id=442029
         if (credentialsProvider != null)
             clone.setCredentialsProvider(credentialsProvider);
-        if (withProgress)
-            clone.setProgressMonitor(new TextProgressMonitor(new PrintWriter(System.out)));
         clone.call();
     }
 
@@ -532,45 +465,44 @@ public class VersionControlGit implements VersionControl {
         return localRepo.getDirectory() != null && localRepo.getDirectory().exists();
     }
 
-    public boolean isTracked(String path) throws IOException {
-        ObjectId objectId = localRepo.resolve(Constants.HEAD);
-        RevTree tree;
-        RevWalk walk = null;
-        if (objectId != null) {
-          walk = new RevWalk(localRepo);
-          tree = walk.parseTree(objectId);
-        }
-        else {
-          tree = null;
-        }
-
-        try (TreeWalk treeWalk = new TreeWalk(localRepo)) {
-            treeWalk.setRecursive(true);
-            if (tree != null)
-              treeWalk.addTree(tree);
-            else
-              treeWalk.addTree(new EmptyTreeIterator());
-
-            treeWalk.addTree(new DirCacheIterator(localRepo.readDirCache()));
-            treeWalk.setFilter(PathFilterGroup.createFromStrings(Collections.singleton(path)));
-            return treeWalk.next();
-        }
-        finally {
-            if (walk != null)
-                walk.close();
-        }
+    public void pull(String branch) throws Exception {
+        pull(branch, null);
     }
 
-    public void pull(String branch) throws Exception {
+    public void pull(String branch, ProgressMonitor progressMonitor) throws Exception {
         PullCommand pull = git.pull().setRemote("origin").setRemoteBranchName(branch);
         if (credentialsProvider != null)
             pull.setCredentialsProvider(credentialsProvider);
+        if (progressMonitor != null)
+            pull.setProgressMonitor(progressMonitor);
         pull.call();
+    }
+
+    /**
+     * Creates a new local branch and pushes to remote.
+     */
+    public void createBranch(String branch, String fromBranch, ProgressMonitor progressMonitor) throws Exception {
+        if (localRepo.findRef(branch) == null) {
+            CreateBranchCommand createBranch = git.branchCreate().setName(branch);
+            if (fromBranch != null)
+                createBranch.setStartPoint(fromBranch);
+            createBranch.call();
+        }
+        PushCommand push = git.push();
+        push.setRemote("origin");
+        push.setRefSpecs(new RefSpec(branch));
+        if (credentialsProvider != null)
+            push.setCredentialsProvider(credentialsProvider);
+        if (progressMonitor != null)
+            push.setProgressMonitor(progressMonitor);
+        push.call();
     }
 
     public static String byteArrayToHexString(byte[] b) {
         String result = "";
+        //noinspection ForLoopReplaceableByForEach
         for (int i = 0; i < b.length; i++) {
+            //noinspection StringConcatenationInLoop
             result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
         }
         return result;
@@ -589,16 +521,9 @@ public class VersionControlGit implements VersionControl {
         return file.getAbsolutePath().substring(localPath.length() + 1).replace('\\', '/');
     }
 
+    @SuppressWarnings("unused")
     public String getRelativePath(Path path) {
         return localDir.toPath().normalize().relativize(path.normalize()).toString().replace('\\', '/');
-    }
-
-    public GitDiffs getDiffsForTag(String tag, String path) throws Exception {
-        fetch();
-        ObjectId obj = localRepo.resolve("refs/tags/" + tag + "^{tree}");
-        if (obj == null)
-            throw new IOException("Unable to determine Git Diffs: path " + path + " not found on tag " + tag);
-        return getDiffs(obj, path);
     }
 
     public GitDiffs getDiffs(String branch, String path) throws Exception {
@@ -702,7 +627,7 @@ public class VersionControlGit implements VersionControl {
             in = getRemoteContentStream(branch, path);
             if (in == null)
                 return null;
-            int read = 0;
+            int read;
             byte[] bytes = new byte[1024];
             while ((read = in.read(bytes)) != -1)
                 out.write(bytes, 0, read);
@@ -721,6 +646,7 @@ public class VersionControlGit implements VersionControl {
     /**
      * Execute an arbitrary git command.
      */
+    @SuppressWarnings("unused")
     public void git(String... args) throws Exception {
         Main.main(args);
     }
@@ -749,6 +675,7 @@ public class VersionControlGit implements VersionControl {
         }
     }
 
+    @SuppressWarnings("unused")
     public byte[] readFromHead(String filePath) throws Exception {
         try {
             return readFromCommit(ObjectId.toString(localRepo.resolve(Constants.HEAD)), filePath);

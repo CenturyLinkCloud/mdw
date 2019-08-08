@@ -6,7 +6,7 @@ Forked modules (see package.json):
 To install a new package:
   1. Delete node_modules directory and node_modules.zip
   2. npm install
-  3. npm install package --save
+  3. npm install `<package>` --save
   4. Rezip node_modules.zip: 
      zip -r -X node_modules.zip node_modules -x "*.DS_Store"
   5. Delete node_modules dir again

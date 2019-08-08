@@ -1,5 +1,5 @@
 .gitignore=3
-.mdwignore=1
+.mdwignore=2
 TestRunner.java=7
 WebpackCache.java=14
 j2v8-4.6.0.jar=1

@@ -1,0 +1,50 @@
+.side-by-side:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+.side-by-side label {
+  margin-left: 10px;
+}
+.line-numbers {
+  color: #888888;
+  background-color: #eeeeee;
+  float: left;
+  text-align: right;
+  padding: 0 10px 0 2px;
+  border-right: none;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  line-height: normal;
+}
+.code-content {
+  background-color: #f3f3f3;
+  padding: 0 4px 0 4px;
+  word-wrap: normal;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  line-height: normal;
+}
+.code-content code {
+  padding: 0;
+  background-color: #f3f3f3;
+}
+.code-content pre code {
+}
+.read-only .code-content {
+  
+}
+.code-compare {
+  width: 50%;
+  float: left;
+  padding: 0;
+}
+.compare-diff {
+  background-color: pink;
+}
+.compare-diff-ignored {
+  background-color: #b9f6ca;
+}
+.changes-diff {
+  background-color: yellow;
+}

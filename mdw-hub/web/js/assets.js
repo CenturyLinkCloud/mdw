@@ -447,9 +447,10 @@ assetMod.controller('PackageController', ['$scope', '$routeParams', '$route', '$
   };
 }]);
 
-assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams', '$location', 'mdw', 'util', 'uiUtil', 'Assets', 'Asset', 
-                                       function($scope, $cookieStore, $routeParams, $location, mdw, util, uiUtil, Assets, Asset) {
-  
+assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams', '$location', '$http', 'mdw', 'util', 'uiUtil', 'Assets', 'Asset',
+                                       function($scope, $cookieStore, $routeParams, $location, $http, mdw, util, uiUtil, Assets, Asset) {
+
+  sessionStorage.removeItem('stagingUser');
   $scope.packageName = $routeParams.packageName;
   $scope.assetName = $routeParams.assetName;
   if ($scope.assetName.endsWith('.proc')) {
@@ -502,6 +503,27 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
 
   $scope.isEditAllowed = function() {
     return $scope.authUser.hasRole('Process Design') && !$scope.asset.isBinary && !mdw.git.tag;
+  };
+
+  $scope.isStageAllowed = function() {
+    return $scope.authUser.hasRole('Process Design');
+  };
+
+  $scope.stageAsset = function() {
+    var stagingCuid = $scope.authUser.cuid;
+    var assets = { assets: [$scope.packageName + '/' + $scope.asset.name] };
+    $http({
+      url: mdw.roots.services + '/services/com/centurylink/mdw/stage/' + stagingCuid + '/assets?app=mdw-admin',
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      data: JSON.stringify(assets, null, 2),
+      transformRequest: []
+    }).then(function success(response) {
+        $location.path('/stage/' + stagingCuid);
+      }, function error(response) {
+        $scope.mdwMessages = response.data.status.message;
+      }
+    );
   };
 
   $scope.viewInstances=function(){

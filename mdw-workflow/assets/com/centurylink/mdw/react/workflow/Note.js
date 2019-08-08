@@ -82,7 +82,7 @@ if (typeof angular !== 'undefined') {
     return NoteFactory(DC, Shape);
   }]);
 }
-else if (module) {
+if (typeof module !== 'undefined') {
   module.exports = NoteFactory;
 }
 

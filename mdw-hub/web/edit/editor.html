@@ -13,14 +13,25 @@
           <a class="mdw-raw-link" ng-if="process" ng-href="{{asset.url}}" target="_blank">Raw</a>  
         </div>
         <div class="mdw-heading-actions mdw-edit-actions">
-          <a class="btn btn-default" href="" ng-disabled="!isDirty()"
+          <a ng-if="stagingUser" class="btn btn-default" href="" ng-disabled="!isDirty()"
+             ng-click="save()">
+            Save
+          </a>
+          <a ng-if="stagingUser" class="btn btn-default" href="" ng-disabled="!isDirty()"
+             ng-click="save(true)">
+            Save &amp; Close
+          </a>
+          <a ng-if="!stagingUser" class="btn btn-default" href="" ng-disabled="!isDirty()"
             uib-popover-template="instanceId ? 'edit/saveInstPop.html' : 'edit/savePop.html'" popover-placement="bottom" pop-click>
             Save
-          </a>            
-          <a ng-if="!instanceId" class="btn btn-default" ng-href="#/asset/{{asset.packageName}}/{{asset.name}}" >
+          </a>
+          <a ng-if="stagingUser" class="btn btn-default" ng-href="#/stage/{{stagingUser}}" >
             Cancel
           </a>
           <a ng-if="instanceId" class="btn btn-default" ng-href="#/workflow/processes/{{instanceId}}" >
+            Cancel
+          </a>
+          <a ng-if="!instanceId && !stagingUser" class="btn btn-default" ng-href="#/asset/{{asset.packageName}}/{{asset.name}}" >
             Cancel
           </a>
         </div>

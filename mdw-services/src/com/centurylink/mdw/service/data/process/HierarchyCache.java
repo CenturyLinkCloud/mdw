@@ -282,10 +282,12 @@ public class HierarchyCache implements CacheService {
 
     @Override
     public void clearCache() {
-        hierarchies = new HashMap<>();
-        milestones = new HashMap<>();
-        activityHierarchies = new HashMap<>();
-        milestoned = null;
+        synchronized(HierarchyCache.class) {
+            hierarchies = new HashMap<>();
+            milestones = new HashMap<>();
+            activityHierarchies = new HashMap<>();
+            milestoned = null;
+        }
     }
 
     @Override
