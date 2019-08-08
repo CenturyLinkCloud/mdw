@@ -342,7 +342,7 @@ CREATE TABLE VALUE
 
 ALTER TABLE VALUE ADD
 (
-  CONSTRAINT value_primary_key PRIMARY KEY (Name,Owner_type,owner_id)
+  CONSTRAINT value_primary_key PRIMARY KEY (Name(250),Owner_type,owner_id)
 );
 
 CREATE TABLE INSTANCE_TIMING
