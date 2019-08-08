@@ -534,6 +534,15 @@ public class VersionControlGit implements VersionControl {
         return getDiffs(obj, path);
     }
 
+    @SuppressWarnings("unused")
+    public GitDiffs getDiffsForTag(String tag, String path) throws Exception {
+        fetch();
+        ObjectId obj = localRepo.resolve("refs/tags/" + tag + "^{tree}");
+        if (obj == null)
+            throw new IOException("Unable to determine Git Diffs: path " + path + " not found on tag " + tag);
+        return getDiffs(obj, path);
+    }
+
     private GitDiffs getDiffs(ObjectId objectId, String path) throws Exception {
         GitDiffs diffs = new GitDiffs();
         CanonicalTreeParser newTreeIter = new CanonicalTreeParser();
