@@ -26,7 +26,7 @@ public class Packages extends TreeMap<String,File> {
     public static final String META_DIR = ".mdw";
     public static final String PACKAGE_YAML = "package.yaml";
     public static final String PACKAGE_JSON = "package.json";
-    public static final String ARCHIVE = "Archive";
+    public static final String VERSIONS = "versions";
     public static final String MDW_BASE = "com.centurylink.mdw.base";
     public static final List<String> DEFAULT_BASE_PACKAGES = new ArrayList<>();
     static {
@@ -76,7 +76,7 @@ public class Packages extends TreeMap<String,File> {
     private void findAssetPackageDirs(File from, List<File> into) throws IOException {
         MdwIgnore mdwIgnore = new MdwIgnore(from);
         for (File file : from.listFiles()) {
-            if (file.isDirectory() && !file.getName().equals(META_DIR) && !file.getName().equals(ARCHIVE) && !mdwIgnore.isIgnore(file)) {
+            if (file.isDirectory() && !file.getName().equals(META_DIR) && !file.getName().equals("Archive") && !mdwIgnore.isIgnore(file)) {
                 File meta = new File(file + "/" + META_DIR);
                 if (meta.isDirectory() && hasPackage(meta)) {
                     if (!mdwIgnore.isIgnore(file))

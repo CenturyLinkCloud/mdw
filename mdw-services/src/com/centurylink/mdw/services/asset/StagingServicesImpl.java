@@ -54,7 +54,7 @@ public class StagingServicesImpl implements StagingServices {
     /**
      * Cloned specifically for user staging.
      */
-    private VersionControlGit getStagingVersionControl(String cuid) throws ServiceException {
+    public VersionControlGit getStagingVersionControl(String cuid) throws ServiceException {
         VersionControlGit stagingVersionControl = new VersionControlGit();
         String gitUrl = PropertyManager.getProperty(PropertyNames.MDW_GIT_REMOTE_URL);
         if (gitUrl == null)
@@ -281,5 +281,10 @@ public class StagingServicesImpl implements StagingServices {
         String assetPath = getMainVersionControl().getRelativePath(ApplicationContext.getAssetRoot().toPath());
         File stagingAssetDir = new File(vcGit.getLocalDir().toString() + '/' + assetPath);
         return new AssetServicesImpl(vcGit, stagingAssetDir);
+    }
+
+    public File getStagingAssetsDir(String cuid) throws ServiceException {
+        String assetPath = getMainVersionControl().getRelativePath(ApplicationContext.getAssetRoot().toPath());
+        return new File(getStagingDir(cuid).toString() + '/' + assetPath);
     }
 }
