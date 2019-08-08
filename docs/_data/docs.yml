@@ -24,7 +24,8 @@
   - guides/configuration
   - guides/mdw-mobile
   - guides/dashboard
-  
+  - guides/asset-staging
+
 - title: Workflow
   docs:
   - workflow/terminology
