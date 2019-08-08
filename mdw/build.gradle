@@ -42,6 +42,8 @@ subprojects {
     apply plugin: 'de.marcphilipp.nexus-publish'
 
     sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
     version = "${mdwVersion}"
 
     libsDirName = "../../${mdwOutputDir}"
