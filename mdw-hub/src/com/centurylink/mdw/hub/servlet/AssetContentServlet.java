@@ -41,12 +41,9 @@ import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.model.system.SystemMessage.Level;
-import com.centurylink.mdw.model.user.AuthenticatedUser;
-import com.centurylink.mdw.model.user.Role;
-import com.centurylink.mdw.model.user.UserAction;
+import com.centurylink.mdw.model.user.*;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
-import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.user.UserGroupCache;
@@ -347,7 +344,10 @@ public class AssetContentServlet extends HttpServlet {
                     authorizeForUpdate(request.getSession(), Action.Change, Entity.Asset, path, isInstance);
 
                     if (stagingCuid != null) {
-                        new StagedAssetUpdater(request).updateAsset(stagingCuid, path);
+                        User stagingUser = UserGroupCache.getUser(stagingCuid);
+                        if (stagingUser == null)
+                            throw new ServiceException(ServiceException.NOT_AUTHORIZED, "User not found: " + stagingCuid);
+                        new StagedAssetUpdater(request).updateAsset(stagingUser, path);
                         new StatusResponder(response).writeResponse(new StatusResponse(Status.OK));
                         return;
                     }

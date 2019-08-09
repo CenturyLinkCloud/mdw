@@ -34,11 +34,14 @@ public interface StagingServices {
     File getStagingDir(String cuid);
     File getStagingAssetsDir(String cuid) throws ServiceException;
     VersionControlGit getStagingVersionControl(String cuid) throws ServiceException;
+    String getVcAssetPath() throws ServiceException;
 
+    AssetInfo getStagedAsset(String cuid, String assetPath) throws ServiceException;
     SortedMap<String, List<AssetInfo>> getStagedAssets(String cuid) throws ServiceException;
 
     void stageAssets(String cuid, List<String> assets) throws ServiceException;
 
     void unStageAssets(String cuid, List<String> assets) throws ServiceException;
+
 
 }

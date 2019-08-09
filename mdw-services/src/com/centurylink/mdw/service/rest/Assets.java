@@ -146,7 +146,7 @@ public class Assets extends JsonRestService {
                     return getPackage(pkg).getJson();
                 }
                 else {
-                    return getAssetInfo(pkg + "/" + asset).getJson();
+                    return getAssetInfo(pkg + "/" + asset, query.getFilter("stagingUser")).getJson();
                 }
             }
         }
@@ -324,8 +324,13 @@ public class Assets extends JsonRestService {
             return pkgAssets;
     }
 
-    public AssetInfo getAssetInfo(String assetPath) throws ServiceException {
-        AssetInfo theAsset = ServiceLocator.getAssetServices().getAsset(assetPath, true);
+    public AssetInfo getAssetInfo(String assetPath, String stagingCuid) throws ServiceException {
+        AssetInfo theAsset;
+        if (stagingCuid != null) {
+            theAsset = ServiceLocator.getStagingServices().getStagedAsset(stagingCuid, assetPath);
+        } else {
+            theAsset = ServiceLocator.getAssetServices().getAsset(assetPath, true);
+        }
         if (theAsset == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "No such asset: " + assetPath);
         else

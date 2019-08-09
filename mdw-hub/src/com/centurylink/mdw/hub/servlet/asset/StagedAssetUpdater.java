@@ -3,9 +3,9 @@ package com.centurylink.mdw.hub.servlet.asset;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.StagingServices;
-import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.util.file.Packages;
 import com.centurylink.mdw.util.file.VersionProperties;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -15,6 +15,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StagedAssetUpdater {
 
@@ -26,11 +28,11 @@ public class StagedAssetUpdater {
         this.servletRequest = servletRequest;
     }
 
-    public void updateAsset(String stagingCuid, String path) throws Exception {
+    public void updateAsset(User stagingUser, String path) throws Exception {
 
         StagingServices stagingServices = ServiceLocator.getStagingServices();
-        VersionControlGit vcs = stagingServices.getStagingVersionControl(stagingCuid);
-        vcs.pull(vcs.getBranch());
+        VersionControlGit vcGit = stagingServices.getStagingVersionControl(stagingUser.getCuid());
+        vcGit.pull(vcGit.getBranch());
 
         int slash = path.indexOf('/');
         if (slash == -1 || slash > path.length() - 2)
@@ -39,7 +41,7 @@ public class StagedAssetUpdater {
         String pkgName = path.substring(0, slash);
         String assetName = path.substring(slash + 1);
 
-        File assetRoot = stagingServices.getStagingAssetsDir(stagingCuid);
+        File assetRoot = stagingServices.getStagingAssetsDir(stagingUser.getCuid());
         File pkgDir = new File(assetRoot.getPath() + "/" + pkgName.replace('.', '/'));
         File assetFile = new File(pkgDir.getPath() + "/" + assetName);
         if (!assetFile.exists())
@@ -55,8 +57,9 @@ public class StagedAssetUpdater {
         // version is always incremented since every saved change for a staging area is pushed
         int newVersion = currentVersion + 1;
         versionProps.setProperty(assetName, String.valueOf(newVersion));
+        String newVer = Asset.formatVersion(newVersion);
 
-        logger.info("Saving asset: " + pkgName + "/" + assetName + " v" + Asset.formatVersion(newVersion));
+        logger.info("Saving asset: " + pkgName + "/" + assetName + " v" + newVer);
 
         InputStream is = servletRequest.getInputStream();
         try (FileOutputStream fos = new FileOutputStream(assetFile)) {
@@ -68,10 +71,17 @@ public class StagedAssetUpdater {
 
         versionProps.save();
 
-        logger.info("Asset saved: " + path + " v" + Asset.formatVersion(newVersion));
+        logger.info("Asset saved: " + path + " v" + newVer);
 
-        new Thread(() -> {
-            CacheRegistration.getInstance().refreshCaches(null);
-        }).start();
+        String comment = "Version " + newVer + " saved to " + vcGit.getBranch() + " by " + stagingUser.getName();
+        String pkgPath = stagingServices.getVcAssetPath() + "/" + pkgName.replace('.', '/');
+        List<String> commitPaths = new ArrayList<>();
+        commitPaths.add(pkgPath + "/" + assetName);
+        commitPaths.add(pkgPath + "/" + Packages.META_DIR + "/" + Packages.VERSIONS);
+        vcGit.add(commitPaths);
+        vcGit.commit(commitPaths, comment);
+        vcGit.push();
+
+        logger.info("Asset pushed: " + path + " v" + newVer);
     }
 }

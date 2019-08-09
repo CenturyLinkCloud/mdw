@@ -7,6 +7,7 @@ import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.dataaccess.file.GitBranch;
+import com.centurylink.mdw.dataaccess.file.GitDiffs;
 import com.centurylink.mdw.dataaccess.file.GitProgressMonitor;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.asset.AssetInfo;
@@ -18,6 +19,7 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.StagingServices;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.util.timer.CodeTimer;
 
 import java.io.File;
 import java.io.IOException;
@@ -208,6 +210,24 @@ public class StagingServicesImpl implements StagingServices {
     }
 
     @Override
+    public AssetInfo getStagedAsset(String cuid, String assetPath) throws ServiceException {
+        getUser(cuid); // throws if not found
+        CommonDataAccess dataAccess = new CommonDataAccess();
+        try {
+            String value = dataAccess.getValue(OwnerType.USER, cuid, assetPath);
+            if (!STAGED_ASSET.equals(value))
+                return null;
+            // TODO version and id not correct
+            AssetInfo stagedAsset = ServiceLocator.getAssetServices().getAsset(assetPath, false);
+            addVersionControlInfo(cuid, stagedAsset);
+            return stagedAsset;
+        }
+        catch (SQLException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
+        }
+    }
+
+    @Override
     public SortedMap<String,List<AssetInfo>> getStagedAssets(String cuid) throws ServiceException {
         getUser(cuid); // throws if not found
         CommonDataAccess dataAccess = new CommonDataAccess();
@@ -276,15 +296,39 @@ public class StagingServicesImpl implements StagingServices {
         }
     }
 
+    public String getVcAssetPath() throws ServiceException {
+        return getMainVersionControl().getRelativePath(ApplicationContext.getAssetRoot().toPath());
+    }
+
     private AssetServices getAssetServices(String cuid) throws ServiceException {
         VersionControlGit vcGit = getStagingVersionControl(cuid);
-        String assetPath = getMainVersionControl().getRelativePath(ApplicationContext.getAssetRoot().toPath());
-        File stagingAssetDir = new File(vcGit.getLocalDir().toString() + '/' + assetPath);
+        File stagingAssetDir = new File(vcGit.getLocalDir().toString() + '/' + getVcAssetPath());
         return new AssetServicesImpl(vcGit, stagingAssetDir);
     }
 
     public File getStagingAssetsDir(String cuid) throws ServiceException {
         String assetPath = getMainVersionControl().getRelativePath(ApplicationContext.getAssetRoot().toPath());
-        return new File(getStagingDir(cuid).toString() + '/' + assetPath);
+        return new File(getStagingDir(cuid).toString() + '/' + getVcAssetPath());
     }
+
+    private void addVersionControlInfo(String cuid, AssetInfo asset) {
+        CodeTimer timer = new CodeTimer("addVersionControlInfo(AssetInfo)", true);
+        try {
+            VersionControlGit versionControl = getStagingVersionControl(cuid);
+            if (versionControl != null) {
+                String assetVcPath = versionControl.getRelativePath(asset.getFile().toPath());
+                asset.setCommitInfo(versionControl.getCommitInfo(assetVcPath));
+                // TODO diffs should be versus main branch
+                GitDiffs diffs = versionControl.getDiffs(getMainVersionControl().getBranch(), assetVcPath);
+                asset.setVcsDiffType(diffs.getDiffType(assetVcPath));
+            }
+        }
+        catch (Exception ex) {
+            logger.severeException("Unable to retrieve Git information for asset packages", ex);
+        }
+        finally {
+            timer.stopAndLogTiming(null);
+        }
+    }
+
 }
