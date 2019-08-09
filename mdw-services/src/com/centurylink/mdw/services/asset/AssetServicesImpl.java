@@ -764,6 +764,9 @@ public class AssetServicesImpl implements AssetServices {
         else if (renderTo.equals(Asset.TEXT)) {
             return new TextRenderer(asset);
         }
+        else if (renderTo.equals(Asset.JSON)) {
+            return new JsonRenderer(asset);
+        }
         return null;
     }
 

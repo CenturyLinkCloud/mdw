@@ -76,10 +76,11 @@ public class StagingServicesImpl implements StagingServices {
     }
 
     public StagingArea getUserStagingArea(String cuid) throws ServiceException {
+        File stagingDir = getStagingDir(cuid); // clone may be in progress
         GitBranch stagingBranch = getStagingBranch(cuid, getMainVersionControl());
-        if (stagingBranch == null)
+        if (stagingBranch == null && !stagingDir.isDirectory())
             return null;
-        if (!getStagingVersionControl(cuid).localRepoExists())
+        if (!getStagingVersionControl(cuid).localRepoExists() && !stagingDir.isDirectory())
             return null;  // not cloned locally
         User user = getUser(cuid);
         StagingArea userStagingArea = new StagingArea(user.getCuid(), user.getName());
@@ -299,7 +300,7 @@ public class StagingServicesImpl implements StagingServices {
         return getMainVersionControl().getRelativePath(ApplicationContext.getAssetRoot().toPath());
     }
 
-    private AssetServices getAssetServices(String cuid) throws ServiceException {
+    public AssetServices getAssetServices(String cuid) throws ServiceException {
         VersionControlGit vcGit = getStagingVersionControl(cuid);
         File stagingAssetDir = new File(vcGit.getLocalDir().toString() + '/' + getVcAssetPath());
         return new AssetServicesImpl(vcGit, stagingAssetDir);
