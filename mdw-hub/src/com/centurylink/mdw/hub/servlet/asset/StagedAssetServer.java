@@ -41,7 +41,7 @@ public class StagedAssetServer {
         String render = servletRequest.getParameter("render");
         if (render != null) {
             try {
-                new AssetRenderer(servletRequest, servletResponse).renderAsset(render, path);
+                new AssetRenderer(servletRequest, servletResponse).renderAsset(render, path, stagingCuid);
             }
             catch (ServiceException ex) {
                 logger.error(ex.getMessage(), ex);

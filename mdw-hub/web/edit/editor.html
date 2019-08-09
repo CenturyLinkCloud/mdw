@@ -25,7 +25,7 @@
             uib-popover-template="instanceId ? 'edit/saveInstPop.html' : 'edit/savePop.html'" popover-placement="bottom" pop-click>
             Save
           </a>
-          <a ng-if="stagingUser" class="btn btn-default" ng-href="#/stage/{{stagingUser}}" >
+          <a ng-if="stagingUser" class="btn btn-default" ng-href="#/staging/{{stagingUser}}" >
             Cancel
           </a>
           <a ng-if="instanceId" class="btn btn-default" ng-href="#/workflow/processes/{{instanceId}}" >
