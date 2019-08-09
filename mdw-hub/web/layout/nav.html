@@ -2,6 +2,9 @@
   ng-if="authUser.hasNav(navGroup)">
   <li ng-repeat="navLink in navGroup.links" nav-link="{{navLink.path}}" full-width="{{navLink['full-width']}}"
     ng-if="authUser.hasLink(navLink)">
-    <a href="{{navLink.href}}" target="{{navLink.target}}">{{navLink.label}}</a>
+    <a href="{{navLink.href}}" target="{{navLink.target}}">
+      {{navLink.label}}
+      <span ng-if="navLink.note" class="mdw-note">{{navLink.note}}</span>
+    </a>
   </li>
 </ul>

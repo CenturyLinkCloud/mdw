@@ -90,6 +90,12 @@
 .mdw-active-nav {
   background-color: #b0bec5;
 }
+.mdw-note {
+  color: blue;
+  font-size: 12px;
+  margin-left: 3px;
+  font-style: italic;
+}
 .mdw-label {
   display: block;
   color: #808080;
