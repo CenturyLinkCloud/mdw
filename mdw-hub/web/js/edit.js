@@ -190,7 +190,12 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
       else {
         $scope.closePopover();
         if (andClose) {
-          window.location = '#/asset/' + $scope.asset.packageName + '/' + $scope.asset.name;
+          if ($scope.stagingUser) {
+            window.location = '#/staging/' + $scope.stagingUser;
+          }
+          else {
+            window.location = '#/asset/' + $scope.asset.packageName + '/' + $scope.asset.name;
+          }
         }
       }
     },

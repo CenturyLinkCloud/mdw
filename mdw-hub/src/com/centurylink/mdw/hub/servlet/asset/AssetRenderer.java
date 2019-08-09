@@ -2,6 +2,7 @@ package com.centurylink.mdw.hub.servlet.asset;
 
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.asset.Renderer;
 import com.centurylink.mdw.services.asset.RenderingException;
@@ -23,8 +24,15 @@ public class AssetRenderer {
         this.servletResponse = servletResponse;
     }
 
-    public void renderAsset(String render, String path) throws IOException, ServiceException {
-        Renderer renderer = ServiceLocator.getAssetServices().getRenderer(path, render.toUpperCase());
+    public void renderAsset(String render, String path, String stagingCuid) throws IOException, ServiceException {
+        AssetServices assetServices;
+        if (stagingCuid != null) {
+            assetServices = ServiceLocator.getStagingServices().getAssetServices(stagingCuid);
+        }
+        else {
+            assetServices = ServiceLocator.getAssetServices();
+        }
+        Renderer renderer = assetServices.getRenderer(path, render.toUpperCase());
         if (renderer == null)
             throw new RenderingException(ServiceException.NOT_FOUND, "Renderer not found: " + render);
         String contentType = Asset.getContentType(render.toUpperCase());

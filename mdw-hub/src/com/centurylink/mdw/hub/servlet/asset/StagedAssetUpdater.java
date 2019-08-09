@@ -1,17 +1,22 @@
 package com.centurylink.mdw.hub.servlet.asset;
 
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.StagingServices;
 import com.centurylink.mdw.util.file.Packages;
 import com.centurylink.mdw.util.file.VersionProperties;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import com.google.common.io.Files;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -61,12 +66,30 @@ public class StagedAssetUpdater {
 
         logger.info("Saving asset: " + pkgName + "/" + assetName + " v" + newVer);
 
-        InputStream is = servletRequest.getInputStream();
-        try (FileOutputStream fos = new FileOutputStream(assetFile)) {
+        if (assetName.endsWith(".proc")) {
+            // save to the original format
+            InputStream is = servletRequest.getInputStream();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
             int read;
             byte[] bytes = new byte[1024];
             while ((read = is.read(bytes)) != -1)
-                fos.write(bytes, 0, read);
+                baos.write(bytes, 0, read);
+            Process process = Process.fromString(baos.toString());
+            String newContent;
+            if (LoaderPersisterVcs.isJson(assetFile))
+                newContent = process.getJson().toString(2);
+            else
+                newContent = Yamlable.toString(process, 2);
+            Files.write(newContent.getBytes(), assetFile);
+        }
+        else {
+            InputStream is = servletRequest.getInputStream();
+            try (FileOutputStream fos = new FileOutputStream(assetFile)) {
+                int read;
+                byte[] bytes = new byte[1024];
+                while ((read = is.read(bytes)) != -1)
+                    fos.write(bytes, 0, read);
+            }
         }
 
         versionProps.save();
