@@ -74,7 +74,7 @@ public class AssetPackageList implements Jsonable {
             this.packageAssetList = new ArrayList<>();
             for (int i = 0; i < pkgsArr.length(); i++) {
                 JSONObject pkgObj = pkgsArr.getJSONObject(i);
-                PackageDir pkgDir = new PackageDir(ApplicationContext.getAssetRoot(), pkgObj.getString("name"), null);
+                PackageDir pkgDir = new PackageDir(ApplicationContext.getAssetRoot(), pkgObj.getString("name"));
                 this.packageAssetList.add(new PackageAssets(pkgDir, pkgObj));
             }
         }

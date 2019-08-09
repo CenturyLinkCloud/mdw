@@ -60,7 +60,7 @@ public class NotFoundServlet extends HttpServlet {
                     response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/images/mdw.ico");
                     return;
                 }
-                if (path.startsWith("/stage") || path.startsWith("/milestones")
+                if (path.startsWith("/staging") || path.startsWith("/milestones")
                         || (path.indexOf('.') == -1 && path.indexOf('#') == -1 && path.startsWith("/tasks"))) {
                     String redirectPath = path;
                     String[] pathSegs = path.substring(1).split("/");

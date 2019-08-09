@@ -61,12 +61,12 @@ routesSvc.factory('routes', function() {
         controller: 'PackagesController'
       },
       {
-        path: '/stage',
-        templateUrl: 'assets/stage.html'
+        path: '/staging',
+        templateUrl: 'assets/staging.html'
       },
       {
-        path: '/stage/:cuid',
-        templateUrl: 'assets/stage.html'
+        path: '/staging/:cuid',
+        templateUrl: 'assets/staging.html'
       },
       {
         path: '/packages/:packageName',

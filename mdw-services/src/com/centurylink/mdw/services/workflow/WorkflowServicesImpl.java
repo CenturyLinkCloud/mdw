@@ -1387,7 +1387,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 String[] fields = new String[]{"COMMENTS"};
                 String comment = procInst.getComment() == null ? "" : procInst.getComment();
                 Object[] args = new Object[]{comment + "|HasInstanceDef|" + docId, null};
-                dataAccess.updateTableRow("process_instance", "process_instance_id", instanceId,
+                dataAccess.updateTableRow("PROCESS_INSTANCE", "process_instance_id", instanceId,
                         fields, args);
             }
             else {
@@ -1400,7 +1400,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 String[] fields = new String[]{"COMMENTS"};
                 String comment = inst.getComment() == null ? "" : inst.getComment();
                 Object[] args = new Object[]{comment + "|HasInstanceDef|" + docId, null};
-                dataAccess.updateTableRow("process_instance", "process_instance_id", inst.getId(),
+                dataAccess.updateTableRow("PROCESS_INSTANCE", "process_instance_id", inst.getId(),
                         fields, args);
             }
         }

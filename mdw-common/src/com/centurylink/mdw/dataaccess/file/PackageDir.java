@@ -158,10 +158,18 @@ public class PackageDir extends File {
     }
 
     /**
+     * For test packages (flattened package names).
+     */
+    public PackageDir(File storageDir, String name) {
+        super(storageDir + "/" + name);
+        this.pkgName = name;
+    }
+
+    /**
      * For placeholder (eg: missing) packages.
      */
     public PackageDir(File storageDir, String name, VersionControl versionControl) {
-        super(storageDir + "/" + name);
+        super(storageDir + "/" + name.replace('.', '/'));
         this.pkgName = name;
         this.versionControl = versionControl;
     }

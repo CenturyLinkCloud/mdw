@@ -3,9 +3,9 @@ package com.centurylink.mdw.model.asset;
 import com.centurylink.mdw.dataaccess.file.GitBranch;
 import com.centurylink.mdw.model.Jsonable;
 
-public class Stage implements Jsonable {
+public class StagingArea implements Jsonable {
 
-    public Stage(String userCuid, String userName) {
+    public StagingArea(String userCuid, String userName) {
         this.userCuid = userCuid;
         this.userName = userName;
     }

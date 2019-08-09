@@ -245,7 +245,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
         TestCaseList fullTestCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JsonObject(jsonString));
         PackageTests pkgTests = fullTestCaseList.getPackageTests(exeTestCase.getPackage());
         if (pkgTests == null) {
-            pkgTests = new PackageTests(new PackageDir(ApplicationContext.getAssetRoot(), exeTestCase.getPackage(), null));
+            pkgTests = new PackageTests(new PackageDir(ApplicationContext.getAssetRoot(), exeTestCase.getPackage()));
             pkgTests.setTestCases(new ArrayList<TestCase>());
             fullTestCaseList.addPackageTests(pkgTests);
         }

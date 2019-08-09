@@ -10,6 +10,6 @@
   },
   "scripts": {
     "jshint": "jshint web/js ../mdw-workflow/assets/com/centurylink/mdw/react/workflow/ --config jshint.json",
-    "eslint": "eslint ../mdw-workflow/assets/com/centurylink/mdw/react/*.jsx ../mdw-workflow/assets/com/centurylink/mdw/react/*.js ../mdw-workflow/assets/com/centurylink/mdw/dashboard/*.jsx ../mdw-workflow/assets/com/centurylink/mdw/task/*.jsx ../mdw-workflow/assets/com/centurylink/mdw/system/filepanel/*.jsx ../mdw-workflow/assets/com/centurylink/mdw/milestones/*.jsx ../mdw-workflow/assets/com/centurylink/mdw/stage/*.jsx -c eslint.json"
+    "eslint": "eslint ../mdw-workflow/assets/com/centurylink/mdw/react/*.jsx ../mdw-workflow/assets/com/centurylink/mdw/react/*.js ../mdw-workflow/assets/com/centurylink/mdw/dashboard/*.jsx ../mdw-workflow/assets/com/centurylink/mdw/task/*.jsx ../mdw-workflow/assets/com/centurylink/mdw/system/filepanel/*.jsx ../mdw-workflow/assets/com/centurylink/mdw/milestones/*.jsx ../mdw-workflow/assets/com/centurylink/mdw/staging/*.jsx -c eslint.json"
   }
 }
