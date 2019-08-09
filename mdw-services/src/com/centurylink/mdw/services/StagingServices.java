@@ -42,4 +42,6 @@ public interface StagingServices {
     void stageAssets(String cuid, List<String> assets) throws ServiceException;
 
     void unStageAssets(String cuid, List<String> assets) throws ServiceException;
+
+    AssetServices getAssetServices(String cuid) throws ServiceException;
 }
