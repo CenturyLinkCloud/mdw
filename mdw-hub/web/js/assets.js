@@ -505,7 +505,7 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
     return $scope.authUser.hasRole('Process Design') && !$scope.asset.isBinary && !mdw.git.tag;
   };
 
-  $scope.isStageAllowed = function() {
+  $scope.isStagingAllowed = function() {
     return $scope.authUser.hasRole('Process Design');
   };
 
@@ -513,13 +513,13 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
     var stagingCuid = $scope.authUser.cuid;
     var assets = { assets: [$scope.packageName + '/' + $scope.asset.name] };
     $http({
-      url: mdw.roots.services + '/services/com/centurylink/mdw/stage/' + stagingCuid + '/assets?app=mdw-admin',
+      url: mdw.roots.services + '/services/com/centurylink/mdw/staging/' + stagingCuid + '/assets?app=mdw-admin',
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       data: JSON.stringify(assets, null, 2),
       transformRequest: []
     }).then(function success(response) {
-        $location.path('/stage/' + stagingCuid);
+        $location.path('/staging/' + stagingCuid);
       }, function error(response) {
         $scope.mdwMessages = response.data.status.message;
       }

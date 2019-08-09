@@ -41,7 +41,7 @@ public class PackageTests implements Jsonable, Comparable<PackageTests> {
 
     public PackageTests(File assetRoot, JSONObject json) throws JSONException {
         String pkgName = json.getString("name");
-        this.packageDir = new PackageDir(assetRoot, pkgName, null);
+        this.packageDir = new PackageDir(assetRoot, pkgName);
         if (json.has("testCases")) {
             JSONArray tcArr = json.getJSONArray("testCases");
             this.testCases = new ArrayList<TestCase>();

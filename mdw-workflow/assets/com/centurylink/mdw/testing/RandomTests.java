@@ -45,7 +45,7 @@ public class RandomTests implements com.centurylink.mdw.model.monitor.ScheduledJ
             testCaseList.setPackageTests(new ArrayList<>());
             Map<String,List<String>> randomCases = getRandomCases(50);
             for (String pkg : randomCases.keySet()) {
-                PackageDir pkgDir = new PackageDir(assetRoot, pkg, null);
+                PackageDir pkgDir = new PackageDir(assetRoot, pkg);
                 PackageTests pkgTests = new PackageTests(pkgDir);
                 testCaseList.getPackageTests().add(pkgTests);
                 List<TestCase> pkgCases = new ArrayList<>();

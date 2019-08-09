@@ -7,11 +7,10 @@ import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.dataaccess.file.GitBranch;
-import com.centurylink.mdw.dataaccess.file.GitDiffs;
 import com.centurylink.mdw.dataaccess.file.GitProgressMonitor;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.asset.AssetInfo;
-import com.centurylink.mdw.model.asset.Stage;
+import com.centurylink.mdw.model.asset.StagingArea;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.AssetServices;
@@ -19,7 +18,6 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.StagingServices;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.util.timer.CodeTimer;
 
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +48,7 @@ public class StagingServicesImpl implements StagingServices {
     }
 
     public File getStagingDir(String cuid) {
-        return new File(getStagingDir() + "/" + STAGE + cuid);
+        return new File(getStagingDir() + "/" + STAGING + cuid);
     }
 
     /**
@@ -77,38 +75,41 @@ public class StagingServicesImpl implements StagingServices {
         }
     }
 
-    public Stage getUserStage(String cuid) throws ServiceException {
+    public StagingArea getUserStagingArea(String cuid) throws ServiceException {
         GitBranch stagingBranch = getStagingBranch(cuid, getMainVersionControl());
         if (stagingBranch == null)
             return null;
         if (!getStagingVersionControl(cuid).localRepoExists())
             return null;  // not cloned locally
         User user = getUser(cuid);
-        Stage userStage = new Stage(user.getCuid(), user.getName());
-        userStage.setBranch(stagingBranch);
-        return userStage;
+        StagingArea userStagingArea = new StagingArea(user.getCuid(), user.getName());
+        userStagingArea.setBranch(stagingBranch);
+        return userStagingArea;
     }
 
-    public List<Stage> getStages() {
-        List<Stage> stages = new ArrayList<>();
+    public List<StagingArea> getStagingAreas() {
+        List<StagingArea> stagingAreas = new ArrayList<>();
         File stagingDir = getStagingDir();
         if (stagingDir != null) {
-            for (File file : stagingDir.listFiles()) {
-                if (file.isDirectory() && file.getName().startsWith(STAGE)) {
-                    String cuid = file.getName().substring(STAGE.length());
-                    User user = UserGroupCache.getUser(cuid);
-                    if (user != null)
-                        stages.add(new Stage(user.getCuid(), user.getName()));
+            File[] files = stagingDir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isDirectory() && file.getName().startsWith(STAGING)) {
+                        String cuid = file.getName().substring(STAGING.length());
+                        User user = UserGroupCache.getUser(cuid);
+                        if (user != null)
+                            stagingAreas.add(new StagingArea(user.getCuid(), user.getName()));
+                    }
                 }
             }
         }
-        return stages;
+        return stagingAreas;
     }
 
     private GitBranch getStagingBranch(String cuid, VersionControlGit vcGit) throws ServiceException {
         try {
             List<GitBranch> branches = vcGit.getRemoteBranches();
-            Optional<GitBranch> opt = branches.stream().filter(b -> b.getName().equals(STAGE + cuid)).findFirst();
+            Optional<GitBranch> opt = branches.stream().filter(b -> b.getName().equals(STAGING + cuid)).findFirst();
             return opt.orElse(null);
         }
         catch (ServiceException ex) {
@@ -119,20 +120,21 @@ public class StagingServicesImpl implements StagingServices {
         }
     }
 
-    private static final Map<String,Stage> inProgressPrepares = new ConcurrentHashMap<>();
+    private static final Map<String, StagingArea> inProgressPrepares = new ConcurrentHashMap<>();
 
-    public Stage prepareUserStage(String cuid, GitProgressMonitor progressMonitor) throws ServiceException {
+    @Override
+    public StagingArea prepareStagingArea(String cuid, GitProgressMonitor progressMonitor) throws ServiceException {
         User user = getUser(cuid);
-        Stage userStage = new Stage(user.getCuid(), user.getName());
-        String stagingBranchName = STAGE + cuid;
-        userStage.setBranch(new GitBranch(null, stagingBranchName));
+        StagingArea userStagingArea = new StagingArea(user.getCuid(), user.getName());
+        String stagingBranchName = STAGING + cuid;
+        userStagingArea.setBranch(new GitBranch(null, stagingBranchName));
 
         synchronized (inProgressPrepares) {
             if (inProgressPrepares.containsKey(user.getCuid())) {
                 return inProgressPrepares.get(user.getCuid());
             }
             else {
-                inProgressPrepares.put(user.getCuid(), userStage);
+                inProgressPrepares.put(user.getCuid(), userStagingArea);
             }
         }
 
@@ -147,10 +149,10 @@ public class StagingServicesImpl implements StagingServices {
                     // return synchronously
                     long before = System.currentTimeMillis();
                     stagingVc.pull(stagingBranchName);
-                    userStage.setBranch(stagingBranch);
+                    userStagingArea.setBranch(stagingBranch);
                     long elapsed = System.currentTimeMillis() - before;
                     logger.debug("Branch " + stagingBranchName + " pulled in " + elapsed + " ms");
-                    return userStage;
+                    return userStagingArea;
                 }
                 new Thread(() -> {
                     try {
@@ -199,7 +201,7 @@ public class StagingServicesImpl implements StagingServices {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
         }
 
-        return userStage;
+        return userStagingArea;
     }
 
     private User getUser(String cuid) throws ServiceException {
@@ -217,10 +219,7 @@ public class StagingServicesImpl implements StagingServices {
             String value = dataAccess.getValue(OwnerType.USER, cuid, assetPath);
             if (!STAGED_ASSET.equals(value))
                 return null;
-            // TODO version and id not correct
-            AssetInfo stagedAsset = ServiceLocator.getAssetServices().getAsset(assetPath, false);
-            addVersionControlInfo(cuid, stagedAsset);
-            return stagedAsset;
+            return getAssetServices(cuid).getAsset(assetPath, true);
         }
         catch (SQLException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
@@ -307,28 +306,7 @@ public class StagingServicesImpl implements StagingServices {
     }
 
     public File getStagingAssetsDir(String cuid) throws ServiceException {
-        String assetPath = getMainVersionControl().getRelativePath(ApplicationContext.getAssetRoot().toPath());
         return new File(getStagingDir(cuid).toString() + '/' + getVcAssetPath());
-    }
-
-    private void addVersionControlInfo(String cuid, AssetInfo asset) {
-        CodeTimer timer = new CodeTimer("addVersionControlInfo(AssetInfo)", true);
-        try {
-            VersionControlGit versionControl = getStagingVersionControl(cuid);
-            if (versionControl != null) {
-                String assetVcPath = versionControl.getRelativePath(asset.getFile().toPath());
-                asset.setCommitInfo(versionControl.getCommitInfo(assetVcPath));
-                // TODO diffs should be versus main branch
-                GitDiffs diffs = versionControl.getDiffs(getMainVersionControl().getBranch(), assetVcPath);
-                asset.setVcsDiffType(diffs.getDiffType(assetVcPath));
-            }
-        }
-        catch (Exception ex) {
-            logger.severeException("Unable to retrieve Git information for asset packages", ex);
-        }
-        finally {
-            timer.stopAndLogTiming(null);
-        }
     }
 
 }

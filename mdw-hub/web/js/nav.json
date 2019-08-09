@@ -201,7 +201,7 @@
     "label": "Admin",
     "icon": "admin.png",
     "url": "#/users",
-    "routes": ["/users", "/groups", "/roles", "/assets", "/packages", "/asset", "/tests", "/history", "/stage"],
+    "routes": ["/users", "/groups", "/roles", "/assets", "/packages", "/asset", "/tests", "/history", "/staging"],
     "condition": "user.hasRole('User Admin') || user.hasRole('Process Execution') || user.hasRole('Asset Design')",
     "navs": [
       {
@@ -240,8 +240,8 @@
           },
           {
             "label": "Staging",
-            "path": "/stage/*",
-            "href": "#/stage",
+            "path": "/staging/*",
+            "href": "#/staging",
             "priority": 2,
             "condition": "user.hasRole('Asset Design')",
             "note": "beta"

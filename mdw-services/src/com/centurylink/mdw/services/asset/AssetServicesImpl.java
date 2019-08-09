@@ -30,7 +30,6 @@ import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.discovery.GitDiscoverer;
 import com.centurylink.mdw.discovery.GitHubDiscoverer;
 import com.centurylink.mdw.discovery.GitLabDiscoverer;
-import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.PackageMeta;
 import com.centurylink.mdw.model.asset.*;
 import com.centurylink.mdw.model.workflow.Package;
@@ -42,6 +41,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -402,7 +402,7 @@ public class AssetServicesImpl implements AssetServices {
                         String pkgVcPath = versionControl.getRelativePath(pkgDir.toPath());
                         // check for extra packages
                         for (String extraPath : diffs.getDiffs(DiffType.EXTRA)) {
-                            if (extraPath.equals(pkgVcPath + "/" + PackageDir.PACKAGE_JSON_PATH)) {
+                            if (extraPath.equals(pkgVcPath + "/" + PackageDir.PACKAGE_YAML_PATH)) {
                                 pkgDir.setVcsDiffType(DiffType.EXTRA);
                                 break;
                             }
@@ -424,13 +424,14 @@ public class AssetServicesImpl implements AssetServices {
 
                     // check for missing packages
                     for (String missingDiff : diffs.getDiffs(DiffType.MISSING)) {
-                        if (missingDiff.endsWith(PackageDir.PACKAGE_JSON_PATH)) {
-                            int trim = PackageDir.PACKAGE_JSON_PATH.length();
+                        if (missingDiff.endsWith(PackageDir.PACKAGE_YAML_PATH)) {
+                            int trim = PackageDir.PACKAGE_YAML_PATH.length();
                             // add a ghost package
                             String pkgName = missingDiff.substring(getAssetPath().length() + 1, missingDiff.length() - trim - 1).replace('/', '.');
                             PackageDir pkgDir = getGhostPackage(pkgName);
-                            if (pkgDir != null)
+                            if (pkgDir != null) {
                                 pkgList.getPackageDirs().add(pkgDir);
+                            }
                         }
                     }
                 }
@@ -636,7 +637,7 @@ public class AssetServicesImpl implements AssetServices {
         String pkgPath = pkgName.replace('.', '/');
         VersionControlGit gitVc = (VersionControlGit) getVersionControl();
         if (gitVc != null && getGitUser() != null && getGitBranch() != null) {
-            String pkgMetaFilePath = getAssetPath() + "/" + pkgPath + "/" + PackageDir.PACKAGE_JSON_PATH;
+            String pkgMetaFilePath = getAssetPath() + "/" + pkgPath + "/" + PackageDir.PACKAGE_YAML_PATH;
             GitDiffs diffs = gitVc.getDiffs(getGitBranch(), pkgMetaFilePath);
             if (DiffType.MISSING.equals(diffs.getDiffType(pkgMetaFilePath))) {
                 VersionControl vc = null;
@@ -651,13 +652,8 @@ public class AssetServicesImpl implements AssetServices {
                 pkgDir.setVcsDiffType(DiffType.MISSING);
                 String metaContent = ((VersionControlGit)getVersionControl()).getRemoteContentString(getGitBranch(), pkgMetaFilePath);
                 if (metaContent != null) {
-                    if (metaContent.trim().startsWith("{")) {
-                        Package pkgVO = new Package(new JsonObject(metaContent));
-                        pkgDir.setPackageVersion(pkgVO.getVersionString());
-                    }
-                    else {
-                        throw new IOException("Unsupported package content: " + pkgMetaFilePath);
-                    }
+                    Package pkg = new Package((Map<String,Object>)new Yaml().load(metaContent));
+                    pkgDir.setPackageVersion(pkg.getVersionString());
                 }
             }
             else {
