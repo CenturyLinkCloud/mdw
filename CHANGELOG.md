@@ -1,5 +1,29 @@
 # Change Log
 
+## [6.1.23](https://github.com/CenturyLinkCloud/mdw/tree/6.1.23) (2019-08-10)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.22...6.1.23)
+
+**Implemented enhancements:**
+
+- Milestone labels should support runtime expressions [\#725](https://github.com/CenturyLinkCloud/mdw/issues/725)
+- Upgrade React and provide reproducibility for node\_modules.zip [\#719](https://github.com/CenturyLinkCloud/mdw/issues/719)
+- Allow expressions for transition delay and maxRetries attributes [\#715](https://github.com/CenturyLinkCloud/mdw/issues/715)
+- Support yaml-format .proc assets [\#706](https://github.com/CenturyLinkCloud/mdw/issues/706)
+- Javadocs improvements [\#705](https://github.com/CenturyLinkCloud/mdw/issues/705)
+
+**Closed issues:**
+
+- Cannot save process instance definition on MySQL without lower\_case\_table\_names [\#729](https://github.com/CenturyLinkCloud/mdw/issues/729)
+- Milestones for multiple instances of same subflow [\#723](https://github.com/CenturyLinkCloud/mdw/issues/723)
+- Context root is hardcoded in some Task JSX assets [\#718](https://github.com/CenturyLinkCloud/mdw/issues/718)
+- Full support for dynamic java activity code [\#714](https://github.com/CenturyLinkCloud/mdw/issues/714)
+- Swagger header params incorrectly appended to path [\#713](https://github.com/CenturyLinkCloud/mdw/issues/713)
+- Cannot resolve Spring XSDs for dynamic .spring assets when disconnected from the internet [\#712](https://github.com/CenturyLinkCloud/mdw/issues/712)
+- Subprocesses Inspector tab for Microservice Orchestrator shows misleading start time [\#666](https://github.com/CenturyLinkCloud/mdw/issues/666)
+
+**Compatibility Notes:**
+  - MDW Designer is no longer supported from 6.1.23.  Please use [MDW Studio](https://centurylinkcloud.github.io/mdw/docs/guides/mdw-studio/) instead.
+
 ## [6.1.22](https://github.com/CenturyLinkCloud/mdw/tree/6.1.22) (2019-07-19)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.21...6.1.22)
 
