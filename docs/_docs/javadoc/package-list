@@ -40,6 +40,7 @@ com.centurylink.mdw.html
 com.centurylink.mdw.hub
 com.centurylink.mdw.hub.context
 com.centurylink.mdw.hub.servlet
+com.centurylink.mdw.hub.servlet.asset
 com.centurylink.mdw.image
 com.centurylink.mdw.java
 com.centurylink.mdw.jaxb
@@ -112,6 +113,7 @@ com.centurylink.mdw.services.workflow
 com.centurylink.mdw.slack
 com.centurylink.mdw.soccom
 com.centurylink.mdw.spring
+com.centurylink.mdw.staging
 com.centurylink.mdw.startup
 com.centurylink.mdw.sync
 com.centurylink.mdw.system.filepanel

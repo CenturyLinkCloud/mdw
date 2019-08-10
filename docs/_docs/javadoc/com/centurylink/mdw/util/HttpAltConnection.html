@@ -197,7 +197,7 @@ extends <a href="../../../../com/centurylink/mdw/util/HttpConnection.html" title
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../com/centurylink/mdw/util/HttpResponse.html" title="class in com.centurylink.mdw.util">HttpResponse</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/HttpAltConnection.html#readInput--">readInput</a></span>()</code>
-<div class="block">Populates the response member.</div>
+<div class="block">Executes HTTP request.</div>
 </td>
 </tr>
 <tr id="i7" class="rowColor">
@@ -361,13 +361,14 @@ extends <a href="../../../../com/centurylink/mdw/util/HttpConnection.html" title
 <h4>readInput</h4>
 <pre>protected&nbsp;<a href="../../../../com/centurylink/mdw/util/HttpResponse.html" title="class in com.centurylink.mdw.util">HttpResponse</a>&nbsp;readInput()
                           throws java.io.IOException</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../com/centurylink/mdw/util/HttpConnection.html#readInput--">HttpConnection</a></code></span></div>
-<div class="block">Populates the response member.  Closes the connection.</div>
+<div class="block">Executes HTTP request.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/util/HttpConnection.html#readInput--">readInput</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/centurylink/mdw/util/HttpConnection.html" title="class in com.centurylink.mdw.util">HttpConnection</a></code></dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the response to the request.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd>
+<dd><code>java.io.IOException</code> - in case of a problem or the connection was aborted</dd>
 </dl>
 </li>
 </ul>
