@@ -60,7 +60,6 @@
 <li><a href="com/centurylink/mdw/app/ApplicationContext.html" title="class in com.centurylink.mdw.app">ApplicationContext</a></li>
 <li><a href="com/centurylink/mdw/model/AppSummary.html" title="class in com.centurylink.mdw.model">AppSummary</a></li>
 <li><a href="com/centurylink/mdw/service/rest/AppSummary.html" title="class in com.centurylink.mdw.service.rest">AppSummary</a></li>
-<li><a href="com/centurylink/mdw/model/asset/ArchiveDir.html" title="class in com.centurylink.mdw.model.asset">ArchiveDir</a></li>
 <li><a href="com/centurylink/mdw/model/asset/Asset.html" title="class in com.centurylink.mdw.model.asset">Asset</a></li>
 <li><a href="com/centurylink/mdw/cache/impl/AssetCache.html" title="class in com.centurylink.mdw.cache.impl">AssetCache</a></li>
 <li><a href="com/centurylink/mdw/hub/servlet/AssetContentServlet.html" title="class in com.centurylink.mdw.hub.servlet">AssetContentServlet</a></li>
@@ -72,6 +71,7 @@
 <li><a href="com/centurylink/mdw/dataaccess/AssetRef.html" title="class in com.centurylink.mdw.dataaccess">AssetRef</a></li>
 <li><a href="com/centurylink/mdw/cache/impl/AssetRefCache.html" title="class in com.centurylink.mdw.cache.impl">AssetRefCache</a></li>
 <li><a href="com/centurylink/mdw/util/AssetRefConverter.html" title="class in com.centurylink.mdw.util">AssetRefConverter</a></li>
+<li><a href="com/centurylink/mdw/hub/servlet/asset/AssetRenderer.html" title="class in com.centurylink.mdw.hub.servlet.asset">AssetRenderer</a></li>
 <li><a href="com/centurylink/mdw/model/asset/AssetRequest.html" title="class in com.centurylink.mdw.model.asset">AssetRequest</a></li>
 <li><a href="com/centurylink/mdw/model/asset/AssetRequest.HttpMethod.html" title="enum in com.centurylink.mdw.model.asset">AssetRequest.HttpMethod</a></li>
 <li><a href="com/centurylink/mdw/model/asset/AssetRequest.ParameterType.html" title="enum in com.centurylink.mdw.model.asset">AssetRequest.ParameterType</a></li>
@@ -297,11 +297,13 @@
 <li><a href="com/centurylink/mdw/activity/types/GeneralActivity.html" title="interface in com.centurylink.mdw.activity.types"><span class="interfaceName">GeneralActivity</span></a></li>
 <li><a href="com/centurylink/mdw/tests/services/GetEmployee.html" title="class in com.centurylink.mdw.tests.services">GetEmployee</a></li>
 <li><a href="com/centurylink/mdw/cli/Git.html" title="class in com.centurylink.mdw.cli">Git</a></li>
+<li><a href="com/centurylink/mdw/dataaccess/file/GitBranch.html" title="class in com.centurylink.mdw.dataaccess.file">GitBranch</a></li>
 <li><a href="com/centurylink/mdw/dataaccess/file/GitDiffs.html" title="class in com.centurylink.mdw.dataaccess.file">GitDiffs</a></li>
 <li><a href="com/centurylink/mdw/dataaccess/file/GitDiffs.DiffType.html" title="enum in com.centurylink.mdw.dataaccess.file">GitDiffs.DiffType</a></li>
 <li><a href="com/centurylink/mdw/discovery/GitDiscoverer.html" title="class in com.centurylink.mdw.discovery">GitDiscoverer</a></li>
 <li><a href="com/centurylink/mdw/discovery/GitHubDiscoverer.html" title="class in com.centurylink.mdw.discovery">GitHubDiscoverer</a></li>
 <li><a href="com/centurylink/mdw/discovery/GitLabDiscoverer.html" title="class in com.centurylink.mdw.discovery">GitLabDiscoverer</a></li>
+<li><a href="com/centurylink/mdw/dataaccess/file/GitProgressMonitor.html" title="interface in com.centurylink.mdw.dataaccess.file"><span class="interfaceName">GitProgressMonitor</span></a></li>
 <li><a href="com/centurylink/mdw/service/rest/GitVcs.html" title="class in com.centurylink.mdw.service.rest">GitVcs</a></li>
 <li><a href="com/centurylink/mdw/util/file/Grep.html" title="class in com.centurylink.mdw.util.file">Grep</a></li>
 <li><a href="com/centurylink/mdw/script/GroovyExecutor.html" title="class in com.centurylink.mdw.script">GroovyExecutor</a></li>
@@ -390,6 +392,7 @@
 <li><a href="com/centurylink/mdw/model/JsonListMap.html" title="class in com.centurylink.mdw.model">JsonListMap</a></li>
 <li><a href="com/centurylink/mdw/model/JsonObject.html" title="class in com.centurylink.mdw.model">JsonObject</a></li>
 <li><a href="com/centurylink/mdw/common/translator/impl/JsonObjectTranslator.html" title="class in com.centurylink.mdw.common.translator.impl">JsonObjectTranslator</a></li>
+<li><a href="com/centurylink/mdw/services/asset/JsonRenderer.html" title="class in com.centurylink.mdw.services.asset">JsonRenderer</a></li>
 <li><a href="com/centurylink/mdw/services/rest/JsonRestService.html" title="class in com.centurylink.mdw.services.rest">JsonRestService</a></li>
 <li><a href="com/centurylink/mdw/common/service/JsonService.html" title="interface in com.centurylink.mdw.common.service"><span class="interfaceName">JsonService</span></a></li>
 <li><a href="com/centurylink/mdw/script/JsonSlurper.html" title="class in com.centurylink.mdw.script">JsonSlurper</a></li>
@@ -742,6 +745,13 @@
 <li><a href="com/centurylink/mdw/drools/SpreadsheetCompiler.html" title="class in com.centurylink.mdw.drools">SpreadsheetCompiler</a></li>
 <li><a href="com/centurylink/mdw/spring/SpringAppContext.html" title="class in com.centurylink.mdw.spring">SpringAppContext</a></li>
 <li><a href="com/centurylink/mdw/hub/SpringBootApplication.html" title="class in com.centurylink.mdw.hub">SpringBootApplication</a></li>
+<li><a href="com/centurylink/mdw/staging/StagedAssetCache.html" title="class in com.centurylink.mdw.staging">StagedAssetCache</a></li>
+<li><a href="com/centurylink/mdw/hub/servlet/asset/StagedAssetServer.html" title="class in com.centurylink.mdw.hub.servlet.asset">StagedAssetServer</a></li>
+<li><a href="com/centurylink/mdw/hub/servlet/asset/StagedAssetUpdater.html" title="class in com.centurylink.mdw.hub.servlet.asset">StagedAssetUpdater</a></li>
+<li><a href="com/centurylink/mdw/staging/StagingApi.html" title="class in com.centurylink.mdw.staging">StagingApi</a></li>
+<li><a href="com/centurylink/mdw/model/asset/StagingArea.html" title="class in com.centurylink.mdw.model.asset">StagingArea</a></li>
+<li><a href="com/centurylink/mdw/services/StagingServices.html" title="interface in com.centurylink.mdw.services"><span class="interfaceName">StagingServices</span></a></li>
+<li><a href="com/centurylink/mdw/services/asset/StagingServicesImpl.html" title="class in com.centurylink.mdw.services.asset">StagingServicesImpl</a></li>
 <li><a href="com/centurylink/mdw/services/test/StandaloneTestCaseRun.html" title="class in com.centurylink.mdw.services.test">StandaloneTestCaseRun</a></li>
 <li><a href="com/centurylink/mdw/util/log/StandardLogger.html" title="interface in com.centurylink.mdw.util.log"><span class="interfaceName">StandardLogger</span></a></li>
 <li><a href="com/centurylink/mdw/util/log/StandardLogger.LogLevel.html" title="enum in com.centurylink.mdw.util.log">StandardLogger.LogLevel</a></li>
@@ -757,6 +767,7 @@
 <li><a href="com/centurylink/mdw/model/Status.html" title="class in com.centurylink.mdw.model">Status</a></li>
 <li><a href="com/centurylink/mdw/model/StatusCode.html" title="class in com.centurylink.mdw.model">StatusCode</a></li>
 <li><a href="com/centurylink/mdw/common/service/types/StatusMessage.html" title="class in com.centurylink.mdw.common.service.types">StatusMessage</a></li>
+<li><a href="com/centurylink/mdw/hub/servlet/StatusResponder.html" title="class in com.centurylink.mdw.hub.servlet">StatusResponder</a></li>
 <li><a href="com/centurylink/mdw/model/StatusResponse.html" title="class in com.centurylink.mdw.model">StatusResponse</a></li>
 <li><a href="com/centurylink/mdw/cli/Stop.html" title="class in com.centurylink.mdw.cli">Stop</a></li>
 <li><a href="com/centurylink/mdw/common/StrategyException.html" title="class in com.centurylink.mdw.common">StrategyException</a></li>
@@ -929,6 +940,7 @@
 <li><a href="com/centurylink/mdw/service/data/user/UserDataAccess.html" title="class in com.centurylink.mdw.service.data.user">UserDataAccess</a></li>
 <li><a href="com/centurylink/mdw/services/UserException.html" title="class in com.centurylink.mdw.services">UserException</a></li>
 <li><a href="com/centurylink/mdw/service/data/task/UserGroupCache.html" title="class in com.centurylink.mdw.service.data.task">UserGroupCache</a></li>
+<li><a href="com/centurylink/mdw/service/data/user/UserGroupCache.html" title="class in com.centurylink.mdw.service.data.user">UserGroupCache</a></li>
 <li><a href="com/centurylink/mdw/timer/startup/UserGroupMonitor.html" title="class in com.centurylink.mdw.timer.startup">UserGroupMonitor</a></li>
 <li><a href="com/centurylink/mdw/model/user/UserList.html" title="class in com.centurylink.mdw.model.user">UserList</a></li>
 <li><a href="com/centurylink/mdw/service/rest/Users.html" title="class in com.centurylink.mdw.service.rest">Users</a></li>
@@ -963,6 +975,7 @@
 <li><a href="com/centurylink/mdw/node/WebpackCache.html" title="class in com.centurylink.mdw.node">WebpackCache</a></li>
 <li><a href="com/centurylink/mdw/common/service/WebSocketConfig.html" title="class in com.centurylink.mdw.common.service">WebSocketConfig</a></li>
 <li><a href="com/centurylink/mdw/common/service/WebSocketMessenger.html" title="class in com.centurylink.mdw.common.service">WebSocketMessenger</a></li>
+<li><a href="com/centurylink/mdw/common/service/WebSocketProgressMonitor.html" title="class in com.centurylink.mdw.common.service">WebSocketProgressMonitor</a></li>
 <li><a href="com/centurylink/mdw/model/asset/WidgetAdapter.html" title="interface in com.centurylink.mdw.model.asset"><span class="interfaceName">WidgetAdapter</span></a></li>
 <li><a href="com/centurylink/mdw/model/asset/WidgetProvider.html" title="interface in com.centurylink.mdw.model.asset"><span class="interfaceName">WidgetProvider</span></a></li>
 <li><a href="com/centurylink/mdw/util/file/WildcardFilenameFilter.html" title="class in com.centurylink.mdw.util.file">WildcardFilenameFilter</a></li>

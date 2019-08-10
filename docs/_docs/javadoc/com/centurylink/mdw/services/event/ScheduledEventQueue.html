@@ -134,17 +134,23 @@ implements <a href="../../../../../com/centurylink/mdw/cache/CacheService.html" 
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html#clearCache--">clearCache</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html#clearCache--">clearCache</a></span>()</code>
+<div class="block">Clears schedule event cache</div>
+</td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html#deleteTableRow-java.lang.String-java.lang.String-java.lang.Object-">deleteTableRow</a></span>(java.lang.String&nbsp;tableName,
               java.lang.String&nbsp;fieldName,
-              java.lang.Object&nbsp;fieldValue)</code>&nbsp;</td>
+              java.lang.Object&nbsp;fieldValue)</code>
+<div class="block">Delete row of the table given</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/monitor/ScheduledEvent.html" title="class in com.centurylink.mdw.model.monitor">ScheduledEvent</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html#getNextReadyEvent-java.util.Date-">getNextReadyEvent</a></span>(java.util.Date&nbsp;now)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html#getNextReadyEvent-java.util.Date-">getNextReadyEvent</a></span>(java.util.Date&nbsp;now)</code>
+<div class="block">Returns the next event that needs to be processed</div>
+</td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html" title="class in com.centurylink.mdw.services.event">ScheduledEventQueue</a></code></td>
@@ -152,52 +158,70 @@ implements <a href="../../../../../com/centurylink/mdw/cache/CacheService.html" 
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html#invalidate-java.lang.String-">invalidate</a></span>(java.lang.String&nbsp;eventName)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html#invalidate-java.lang.String-">invalidate</a></span>(java.lang.String&nbsp;eventName)</code>
+<div class="block">Removes the schedule event</div>
+</td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html#processEvent-com.centurylink.mdw.model.monitor.ScheduledEvent-java.util.Date-">processEvent</a></span>(<a href="../../../../../com/centurylink/mdw/model/monitor/ScheduledEvent.html" title="class in com.centurylink.mdw.model.monitor">ScheduledEvent</a>&nbsp;event,
-            java.util.Date&nbsp;now)</code>&nbsp;</td>
+            java.util.Date&nbsp;now)</code>
+<div class="block">Processes the event with the current time.</div>
+</td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html#processEvent-java.lang.String-com.centurylink.mdw.model.monitor.ScheduledEvent-java.util.Date-com.centurylink.mdw.service.data.process.EngineDataAccessDB-">processEvent</a></span>(java.lang.String&nbsp;eventName,
             <a href="../../../../../com/centurylink/mdw/model/monitor/ScheduledEvent.html" title="class in com.centurylink.mdw.model.monitor">ScheduledEvent</a>&nbsp;event,
             java.util.Date&nbsp;now,
-            <a href="../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html" title="class in com.centurylink.mdw.service.data.process">EngineDataAccessDB</a>&nbsp;edao)</code>&nbsp;</td>
+            <a href="../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html" title="class in com.centurylink.mdw.service.data.process">EngineDataAccessDB</a>&nbsp;edao)</code>
+<div class="block">Processes the event and reschedules with the next data.</div>
+</td>
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html#refreshCache--">refreshCache</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html#refreshCache--">refreshCache</a></span>()</code>
+<div class="block">Refresh schedule event cache</div>
+</td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html#rescheduleCronJob-java.lang.String-java.lang.String-">rescheduleCronJob</a></span>(java.lang.String&nbsp;name,
-                 java.lang.String&nbsp;cronExpression)</code>&nbsp;</td>
+                 java.lang.String&nbsp;cronExpression)</code>
+<div class="block">Reschedule cron job</div>
+</td>
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html#rescheduleExternalEvent-java.lang.String-java.util.Date-java.lang.String-">rescheduleExternalEvent</a></span>(java.lang.String&nbsp;name,
                        java.util.Date&nbsp;time,
-                       java.lang.String&nbsp;message)</code>&nbsp;</td>
+                       java.lang.String&nbsp;message)</code>
+<div class="block">Reschedule external event</div>
+</td>
 </tr>
 <tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html#rescheduleInternalEvent-java.lang.String-java.util.Date-java.lang.String-">rescheduleInternalEvent</a></span>(java.lang.String&nbsp;name,
                        java.util.Date&nbsp;time,
-                       java.lang.String&nbsp;message)</code>&nbsp;</td>
+                       java.lang.String&nbsp;message)</code>
+<div class="block">Reschedule a timer task, or a delayed event</div>
+</td>
 </tr>
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html#scheduleCronJob-java.lang.String-java.lang.String-">scheduleCronJob</a></span>(java.lang.String&nbsp;name,
-               java.lang.String&nbsp;cronExpression)</code>&nbsp;</td>
+               java.lang.String&nbsp;cronExpression)</code>
+<div class="block">Schedule cron job</div>
+</td>
 </tr>
 <tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html#scheduleExternalEvent-java.lang.String-java.util.Date-java.lang.String-java.lang.String-">scheduleExternalEvent</a></span>(java.lang.String&nbsp;name,
                      java.util.Date&nbsp;time,
                      java.lang.String&nbsp;message,
-                     java.lang.String&nbsp;reference)</code>&nbsp;</td>
+                     java.lang.String&nbsp;reference)</code>
+<div class="block">Schedule external event</div>
+</td>
 </tr>
 <tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -210,7 +234,9 @@ implements <a href="../../../../../com/centurylink/mdw/cache/CacheService.html" 
 </tr>
 <tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html#unscheduleEvent-java.lang.String-">unscheduleEvent</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/event/ScheduledEventQueue.html#unscheduleEvent-java.lang.String-">unscheduleEvent</a></span>(java.lang.String&nbsp;name)</code>
+<div class="block">Unschedule a timer task, or a delayed event</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -241,6 +267,13 @@ implements <a href="../../../../../com/centurylink/mdw/cache/CacheService.html" 
 <li class="blockList">
 <h4>getNextReadyEvent</h4>
 <pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/monitor/ScheduledEvent.html" title="class in com.centurylink.mdw.model.monitor">ScheduledEvent</a>&nbsp;getNextReadyEvent(java.util.Date&nbsp;now)</pre>
+<div class="block">Returns the next event that needs to be processed</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>now</code> - current time</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>SecheduledEvent next event</dd>
+</dl>
 </li>
 </ul>
 <a name="processEvent-com.centurylink.mdw.model.monitor.ScheduledEvent-java.util.Date-">
@@ -251,6 +284,12 @@ implements <a href="../../../../../com/centurylink/mdw/cache/CacheService.html" 
 <h4>processEvent</h4>
 <pre>public&nbsp;void&nbsp;processEvent(<a href="../../../../../com/centurylink/mdw/model/monitor/ScheduledEvent.html" title="class in com.centurylink.mdw.model.monitor">ScheduledEvent</a>&nbsp;event,
                          java.util.Date&nbsp;now)</pre>
+<div class="block">Processes the event with the current time.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>event</code> - the scheduled event.</dd>
+<dd><code>now</code> - the current time</dd>
+</dl>
 </li>
 </ul>
 <a name="processEvent-java.lang.String-com.centurylink.mdw.model.monitor.ScheduledEvent-java.util.Date-com.centurylink.mdw.service.data.process.EngineDataAccessDB-">
@@ -263,6 +302,14 @@ implements <a href="../../../../../com/centurylink/mdw/cache/CacheService.html" 
                             <a href="../../../../../com/centurylink/mdw/model/monitor/ScheduledEvent.html" title="class in com.centurylink.mdw.model.monitor">ScheduledEvent</a>&nbsp;event,
                             java.util.Date&nbsp;now,
                             <a href="../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html" title="class in com.centurylink.mdw.service.data.process">EngineDataAccessDB</a>&nbsp;edao)</pre>
+<div class="block">Processes the event and reschedules with the next data.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>eventName</code> - the scheduled event name.</dd>
+<dd><code>event</code> - the scheduled event.</dd>
+<dd><code>now</code> - the current time</dd>
+<dd><code>edao</code> - engine data access</dd>
+</dl>
 </li>
 </ul>
 <a name="scheduleInternalEvent-java.lang.String-java.util.Date-java.lang.String-java.lang.String-">
@@ -294,7 +341,12 @@ implements <a href="../../../../../com/centurylink/mdw/cache/CacheService.html" 
                                     java.util.Date&nbsp;time,
                                     java.lang.String&nbsp;message)
                              throws java.lang.Exception</pre>
+<div class="block">Reschedule a timer task, or a delayed event</div>
 <dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>name</code> - event name</dd>
+<dd><code>time</code> - this must be database time (such as new Date(DatabaseAccess.getCurrentTime()+difference_in_milliseconds)</dd>
+<dd><code>message</code> - message content for delayed event; null o/w</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd>
 </dl>
@@ -308,7 +360,10 @@ implements <a href="../../../../../com/centurylink/mdw/cache/CacheService.html" 
 <h4>unscheduleEvent</h4>
 <pre>public&nbsp;void&nbsp;unscheduleEvent(java.lang.String&nbsp;name)
                      throws java.lang.Exception</pre>
+<div class="block">Unschedule a timer task, or a delayed event</div>
 <dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>name</code> - event name</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd>
 </dl>
@@ -324,6 +379,14 @@ implements <a href="../../../../../com/centurylink/mdw/cache/CacheService.html" 
                                   java.util.Date&nbsp;time,
                                   java.lang.String&nbsp;message,
                                   java.lang.String&nbsp;reference)</pre>
+<div class="block">Schedule external event</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>name</code> - event name</dd>
+<dd><code>time</code> - time</dd>
+<dd><code>message</code> - event message</dd>
+<dd><code>reference</code> - reference</dd>
+</dl>
 </li>
 </ul>
 <a name="rescheduleExternalEvent-java.lang.String-java.util.Date-java.lang.String-">
@@ -335,6 +398,13 @@ implements <a href="../../../../../com/centurylink/mdw/cache/CacheService.html" 
 <pre>public&nbsp;void&nbsp;rescheduleExternalEvent(java.lang.String&nbsp;name,
                                     java.util.Date&nbsp;time,
                                     java.lang.String&nbsp;message)</pre>
+<div class="block">Reschedule external event</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>name</code> - event name</dd>
+<dd><code>time</code> - time</dd>
+<dd><code>message</code> - event message</dd>
+</dl>
 </li>
 </ul>
 <a name="deleteTableRow-java.lang.String-java.lang.String-java.lang.Object-">
@@ -347,9 +417,16 @@ implements <a href="../../../../../com/centurylink/mdw/cache/CacheService.html" 
                           java.lang.String&nbsp;fieldName,
                           java.lang.Object&nbsp;fieldValue)
                    throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<div class="block">Delete row of the table given</div>
 <dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>tableName</code> - name of the table</dd>
+<dd><code>fieldName</code> - name of the column</dd>
+<dd><code>fieldValue</code> - value of the column</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>int deleted row id.</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
+<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code> - data access exception</dd>
 </dl>
 </li>
 </ul>
@@ -362,7 +439,11 @@ implements <a href="../../../../../com/centurylink/mdw/cache/CacheService.html" 
 <pre>public&nbsp;void&nbsp;scheduleCronJob(java.lang.String&nbsp;name,
                             java.lang.String&nbsp;cronExpression)
                      throws java.lang.Exception</pre>
+<div class="block">Schedule cron job</div>
 <dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>name</code> - cron job name</dd>
+<dd><code>cronExpression</code> - cron expression</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd>
 </dl>
@@ -377,7 +458,11 @@ implements <a href="../../../../../com/centurylink/mdw/cache/CacheService.html" 
 <pre>public&nbsp;void&nbsp;rescheduleCronJob(java.lang.String&nbsp;name,
                               java.lang.String&nbsp;cronExpression)
                        throws java.lang.Exception</pre>
+<div class="block">Reschedule cron job</div>
 <dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>name</code> - cron job name</dd>
+<dd><code>cronExpression</code> - cron expression</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd>
 </dl>
@@ -390,6 +475,7 @@ implements <a href="../../../../../com/centurylink/mdw/cache/CacheService.html" 
 <li class="blockList">
 <h4>refreshCache</h4>
 <pre>public&nbsp;void&nbsp;refreshCache()</pre>
+<div class="block">Refresh schedule event cache</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/cache/CacheService.html#refreshCache--">refreshCache</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/cache/CacheService.html" title="interface in com.centurylink.mdw.cache">CacheService</a></code></dd>
@@ -403,6 +489,7 @@ implements <a href="../../../../../com/centurylink/mdw/cache/CacheService.html" 
 <li class="blockList">
 <h4>clearCache</h4>
 <pre>public&nbsp;void&nbsp;clearCache()</pre>
+<div class="block">Clears schedule event cache</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/cache/CacheService.html#clearCache--">clearCache</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/cache/CacheService.html" title="interface in com.centurylink.mdw.cache">CacheService</a></code></dd>
@@ -416,6 +503,11 @@ implements <a href="../../../../../com/centurylink/mdw/cache/CacheService.html" 
 <li class="blockList">
 <h4>invalidate</h4>
 <pre>public&nbsp;void&nbsp;invalidate(java.lang.String&nbsp;eventName)</pre>
+<div class="block">Removes the schedule event</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>eventName</code> - event name.</dd>
+</dl>
 </li>
 </ul>
 <a name="getSingleton--">
