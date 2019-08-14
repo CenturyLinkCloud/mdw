@@ -2,8 +2,10 @@
 permalink: /docs/designer/user-guide/
 title: Designer User Guide
 ---
-### MDW Designer User Guide
 
+### MDW Designer User Guide
+### Designer is deprecated for MDW 6.x projects.<br>It is no longer being maintained. Please use [MDW Studio](../../guides/mdw-studio).
+   
 #### Getting Started with MDW Designer
 - If you haven't already, [install the MDW Designer plugin for Eclipse](../getting-started/install-designer.md).
 - In addition to this document, there is a great deal of [online help](../../help) available.
