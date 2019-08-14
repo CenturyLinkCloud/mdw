@@ -512,7 +512,7 @@ public abstract class Setup implements Operation {
     }
 
     /**
-     * Override for extended debug info (always calling super.debug()).
+     * Override for extended validation (always calling super.validate()).
      */
     public boolean validate() throws IOException {
         // check config
@@ -544,6 +544,11 @@ public abstract class Setup implements Operation {
         getOut().println("Config Root:\n " + getConfigRoot());
         getOut().println("Asset Root:\n  " + getAssetRoot());
         getOut().println("Git Root:\n  " + getGitRoot());
+        getOut().println("Java:\n" + getJava());
+    }
+
+    public String getJava() {
+        return System.getProperty("java.vm.name") + " " + System.getProperty("java.vm.version");
     }
 
     /**

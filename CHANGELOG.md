@@ -23,6 +23,7 @@
 
 **Compatibility Notes:**
   - MDW Designer is no longer supported from 6.1.23.  Please use [MDW Studio](https://centurylinkcloud.github.io/mdw/docs/guides/mdw-studio/) instead.
+    Reasons for this are outlined [in the documentation](https://centurylinkcloud.github.io/mdw/docs/designer/designer-support/).
 
 ## [6.1.22](https://github.com/CenturyLinkCloud/mdw/tree/6.1.22) (2019-07-19)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.21...6.1.22)
