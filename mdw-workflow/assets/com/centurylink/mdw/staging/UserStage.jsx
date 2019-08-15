@@ -70,7 +70,7 @@ class UserStage extends Component {
       return (
         <div>
           {pkgs.length === 0 &&
-            <div>
+            <div style={{padding:'10px'}}>
               To add an asset to your staging area, find it 
               under <a href={this.context.hubRoot + '#/packages'}>Assets</a>, 
               and then click the Stage button.
@@ -109,12 +109,31 @@ class UserStage extends Component {
                       <ul className={'mdw-list' + (collapsed ? ' collapse': '')}>
                         {
                           this.state.stagedAssets[pkg].map((asset, j) => {
+                            let diffSymbol = '';
+                            let diffClass = '';
+                            if (asset.vcsDiffType) {
+                              if (asset.vcsDiffType === 'DIFFERENT') {
+                                diffSymbol = ' *';
+                                diffClass = ' mdw-warn';
+                              }
+                              else if (asset.vcsDiffType === 'MISSING') {
+                                diffSymbol = ' -';
+                                diffClass = ' mdw-ghost';
+                              }
+                              else if (asset.vcsDiffType === 'EXTRA') {
+                                diffSymbol = ' +';
+                                diffClass = ' mdw-okay';
+                              }
+                            }
                             return (
                               <li key={j} style={{border:'1px solid #E8E8E8'}}>
-                                <Link className="mdw-item-link" 
+                                <Link className={'mdw-item-link' + diffClass}
                                   to={this.context.hubRoot + '/staging/' + cuid + '/assets/' + pkg + '/' + asset.name}>
                                   {asset.name}
                                 </Link>
+                                {diffSymbol &&
+                                  <span className={diffClass}>{diffSymbol}</span>
+                                }
                               </li>
                             );
                           })

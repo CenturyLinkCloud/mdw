@@ -40,8 +40,8 @@ public interface StagingServices {
     SortedMap<String, List<AssetInfo>> getStagedAssets(String cuid) throws ServiceException;
 
     void stageAssets(String cuid, List<String> assets) throws ServiceException;
-
     void unStageAssets(String cuid, List<String> assets) throws ServiceException;
+    void deleteAsset(String cuid, String assetPath) throws ServiceException;
 
     AssetServices getAssetServices(String cuid) throws ServiceException;
 }

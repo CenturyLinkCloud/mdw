@@ -34,6 +34,10 @@ public class AssetRevision {
         this.version = parseVersion(ver);
     }
 
+    public AssetRevision(int version) {
+        this.version = version;
+    }
+
     public String getFormattedVersion() {
         return "v" + getVersionString();
     }

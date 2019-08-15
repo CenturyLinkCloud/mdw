@@ -77,11 +77,55 @@ class StagedAsset extends Component {
   }
 
   handleUnstage() {
-    // console.log("Unstage: " + this.assetName);
+    const url = this.context.serviceRoot + '/com/centurylink/mdw/staging/' + 
+        this.stagingCuid + '/assets/' + this.package + '/' + this.assetName;
+    $mdwUi.clearMessage();
+    $mdwUi.hubLoading(true);
+    let ok = false;
+    fetch(new Request(url, {
+      method: 'DELETE',
+      headers: { Accept: 'application/json'},
+      credentials: 'same-origin'
+    }))
+    .then(response => {
+      $mdwUi.hubLoading(false);
+      ok = response.ok;
+      return response.json();
+    })
+    .then(json => {
+      if (ok) {
+        location = '../';
+      }
+      else {
+        $mdwUi.showMessage(json.status.message);
+      }
+    });    
   }
 
   handleDelete() {
-    // console.log("Delete: " + this.assetName);
+    let pathPlusParam = this.package + '/' + this.assetName + '?stagingUser=' + this.stagingCuid;
+    let url = this.context.serviceRoot + '/Assets/' + pathPlusParam;
+    $mdwUi.clearMessage();
+    $mdwUi.hubLoading(true);
+    let ok = false;
+    fetch(new Request(url, {
+      method: 'DELETE',
+      headers: { Accept: 'application/json'},
+      credentials: 'same-origin'
+    }))
+    .then(response => {
+      $mdwUi.hubLoading(false);
+      ok = response.ok;
+      return response.json();
+    })
+    .then(json => {
+      if (ok) {
+        location = '../';
+      }
+      else {
+        $mdwUi.showMessage(json.status.message);
+      }
+    });    
   }
 
   handleToggleView() {

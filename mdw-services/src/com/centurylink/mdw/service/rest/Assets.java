@@ -296,14 +296,26 @@ public class Assets extends JsonRestService {
     @Path("/{package}/{asset}")
     @ApiOperation(value="Delete an asset or an asset package",
             response=PackageList.class)
-    public JSONObject delete(String path, JSONObject content, Map<String, String> headers)
+    public JSONObject delete(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         String[] segments = getSegments(path);
+        String stagingCuid = getQuery(path, headers).getFilter("stagingUser");
         if (segments.length == 2) {
-            ServiceLocator.getAssetServices().deletePackage(segments[1]);
+            if (stagingCuid == null) {
+                ServiceLocator.getAssetServices().deletePackage(segments[1]);
+            }
+            else {
+                // TODO delete staged package
+            }
         }
         else if (segments.length == 3) {
-            ServiceLocator.getAssetServices().deleteAsset(segments[1] + '/' + segments[2]);
+            String assetPath = segments[1] + '/' + segments[2];
+            if (stagingCuid == null) {
+                ServiceLocator.getAssetServices().deleteAsset(assetPath);
+            }
+            else {
+                ServiceLocator.getStagingServices().deleteAsset(stagingCuid, assetPath);
+            }
         }
         else {
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);

@@ -657,7 +657,7 @@ public class CommonDataAccess {
         args[3] = value;
         ResultSet rs = db.runSelect(query, args);
         if (rs.next()) {
-            query = "delete VALUE where " +
+            query = "delete from VALUE where " +
                     "OWNER_TYPE=? and OWNER_ID=? and NAME=? and VALUE=?";
             db.runUpdate(query, args);
         }

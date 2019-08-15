@@ -20,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.ws.rs.Path;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -142,6 +143,33 @@ public class StagingApi extends JsonRestService {
 
     private void stageAssets(String cuid, List<String> assets) throws ServiceException {
         getStagingServices().stageAssets(cuid, assets);
+    }
+
+    @Override
+    public JSONObject delete(String path, JSONObject content, Map<String,String> headers)
+            throws ServiceException, JSONException {
+        String[] segments = getSegments(path);
+        if (segments.length == 6 || segments.length == 8) {
+            StagingArea userStagingArea = getUserStagingArea(segments[4]);
+            String sub = segments[5];
+            if (sub.equals("assets")) {
+                if (segments.length == 6) {
+                    // TODO remove user staging area
+                    return null;
+                }
+                else {
+                    List<String> assets = new ArrayList<>();
+                    assets.add(segments[6] + '/' + segments[7]);
+                    unStageAssets(userStagingArea.getUserCuid(), assets);
+                    return null;
+                }
+            }
+        }
+        throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
+    }
+
+    private void unStageAssets(String cuid, List<String> assets) throws ServiceException {
+        getStagingServices().unStageAssets(cuid, assets);
     }
 
     private StagingServices stagingServices;
