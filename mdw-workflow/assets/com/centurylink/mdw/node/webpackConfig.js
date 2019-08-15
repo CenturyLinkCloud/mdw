@@ -63,7 +63,12 @@ module.exports = {
         new (require('webpack')).DefinePlugin({
           'process.env.NODE_ENV': JSON.stringify('production')
         })       
-      ]
+      ],
+      node: {
+        fs: 'empty',
+        tls: 'empty',
+        net: 'empty'
+      }      
     };
   },
   bareStats: {

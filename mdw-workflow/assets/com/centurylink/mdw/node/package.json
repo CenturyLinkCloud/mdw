@@ -20,6 +20,7 @@
     "html-to-react": "^1.3.4",
     "limberest": "1.0.12",
     "lowlight": "^1.12.1",
+    "ply-ct": "^1.1.7",
     "react": "^16.8.6",
     "react-bootstrap": "^0.32.4",
     "react-bootstrap-date-picker": "github:mdw-dev/react-bootstrap-date-picker",
