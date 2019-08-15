@@ -613,6 +613,35 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
+    @Override
+    public void updateAssetVersion(String assetPath, int version) throws ServiceException {
+        AssetInfo asset = getAsset(assetPath);
+        if (asset == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + assetPath);
+        try {
+            getVersionControl().setRevision(asset.getFile(), new AssetRevision(version));
+        }
+        catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
+        }
+    }
+
+    @Override
+    public void removeAssetVersion(String assetPath) throws ServiceException {
+        int slash = assetPath.lastIndexOf('/');
+        if (slash == -1 || slash > assetPath.length() - 2)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + assetPath);
+        String pkgName = assetPath.substring(0, slash);
+        String assetName = assetPath.substring(slash + 1);
+        File pkgDir = new File(assetRoot.getPath() + "/" + pkgName.replace('.', '/'));
+        try {
+            getVersionControl().deleteRev(new File(pkgDir.getPath() + "/" + assetName));
+        }
+        catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
+        }
+    }
+
     private void addVersionControlInfo(AssetInfo asset) {
         CodeTimer timer = new CodeTimer("addVersionControlInfo(AssetInfo)", true);
         try {

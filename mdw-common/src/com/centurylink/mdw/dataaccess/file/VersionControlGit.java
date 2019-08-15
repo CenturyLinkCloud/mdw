@@ -397,6 +397,10 @@ public class VersionControlGit implements VersionControl {
         commit.call();
     }
 
+    public void commit(String msg) throws Exception {
+        git.commit().setMessage(msg).call();
+    }
+
     public void push() throws Exception {
         PushCommand push = git.push();
         if (credentialsProvider != null)
@@ -443,6 +447,10 @@ public class VersionControlGit implements VersionControl {
         return sc.call();
     }
 
+    public void add(String path) throws Exception {
+        git.add().addFilepattern(path).call();
+    }
+
     public void add(List<String> paths) throws Exception {
         AddCommand add = git.add();
         for (String path : paths)
@@ -450,8 +458,12 @@ public class VersionControlGit implements VersionControl {
         add.call();
     }
 
+    public void rm(String path) throws Exception {
+        git.rm().addFilepattern(path).call();
+    }
+    
     /**
-     * In lieu of sparse checkout since it's not yet supported in JGit:
+     * In lieu of sparse checkout since it's not supported in JGit:
      * https://bugs.eclipse.org/bugs/show_bug.cgi?id=383772
      */
     public void cloneNoCheckout() throws Exception {

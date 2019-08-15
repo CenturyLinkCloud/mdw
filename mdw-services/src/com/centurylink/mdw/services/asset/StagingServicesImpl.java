@@ -8,6 +8,7 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.dataaccess.file.GitBranch;
+import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.dataaccess.file.GitProgressMonitor;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.asset.AssetInfo;
@@ -17,11 +18,15 @@ import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.StagingServices;
+import com.centurylink.mdw.util.file.Packages;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -221,13 +226,21 @@ public class StagingServicesImpl implements StagingServices {
             String value = dataAccess.getValue(OwnerType.USER, cuid, assetPath);
             if (!STAGED_ASSET.equals(value))
                 return null;
-            return getAssetServices(cuid).getAsset(assetPath, true);
+            AssetInfo assetInfo = getAssetServices(cuid).getAsset(assetPath, true);
+            if (assetInfo != null) {
+                addDiffInfo(AssetServices.packageName(assetPath), assetInfo);
+                return assetInfo;
+            }
+            else {
+                return getGhostAsset(cuid, assetPath);
+            }
         }
         catch (SQLException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
         }
     }
 
+    // TODO ghost assets for deleted
     @Override
     public SortedMap<String,List<AssetInfo>> getStagedAssets(String cuid) throws ServiceException {
         getUser(cuid); // throws if not found
@@ -243,10 +256,14 @@ public class StagingServicesImpl implements StagingServices {
                         String userAsset = userValueKey;
                         String pkg = userAsset.substring(0, userAsset.lastIndexOf('/'));
                         try {
+                            List<AssetInfo> pkgAssets = stagedAssets.computeIfAbsent(pkg, k -> new ArrayList<>());
                             AssetInfo assetInfo = assetServices.getAsset(userAsset, false);
-                            if (assetInfo != null) {
-                                List<AssetInfo> pkgAssets = stagedAssets.computeIfAbsent(pkg, k -> new ArrayList<>());
+                            if (assetInfo != null && assetInfo.getFile().exists()) {
+                                addDiffInfo(pkg, assetInfo);
                                 pkgAssets.add(assetInfo);
+                            }
+                            else {
+                                pkgAssets.add(getGhostAsset(cuid, userAsset));
                             }
                         }
                         catch (ServiceException ex) {
@@ -262,6 +279,32 @@ public class StagingServicesImpl implements StagingServices {
         }
         catch (SQLException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
+        }
+    }
+
+    private AssetInfo getGhostAsset(String cuid, String assetPath) throws ServiceException {
+        AssetInfo assetInfo = new AssetInfo(getStagingDir(new File(cuid) + "/" + getVcAssetPath()), assetPath);
+        assetInfo.setVcsDiffType(DiffType.MISSING);
+        return assetInfo;
+    }
+
+    /**
+     * Staged asset vs main.
+     */
+    private void addDiffInfo(String pkg, AssetInfo assetInfo) throws ServiceException {
+        AssetInfo mainAssetInfo = ServiceLocator.getAssetServices().getAsset(pkg + "/" + assetInfo.getName());
+        if (mainAssetInfo == null) {
+            assetInfo.setVcsDiffType(DiffType.EXTRA);
+        }
+        else {
+            try {
+                if (!FileUtils.contentEqualsIgnoreEOL(assetInfo.getFile(), mainAssetInfo.getFile(), null)) {
+                    assetInfo.setVcsDiffType(DiffType.DIFFERENT);
+                }
+            }
+            catch (IOException ex) {
+                logger.error(ex.getMessage(), ex);
+            }
         }
     }
 
@@ -295,11 +338,52 @@ public class StagingServicesImpl implements StagingServices {
     public void unStageAssets(String cuid, List<String> assets) throws ServiceException {
         CommonDataAccess dataAccess = new CommonDataAccess();
         try {
+            VersionControlGit vcGit = getStagingVersionControl(cuid);
+            List<String> commitPaths = new ArrayList<>();
             for (String asset : assets) {
+                // revert to main version
+                AssetInfo mainAsset = ServiceLocator.getAssetServices().getAsset(asset);
+                AssetServices stagedAssetServices = getAssetServices(cuid);
+                String pkgName = AssetServices.packageName(asset);
+                String pkgPath = getVcAssetPath() + "/" + pkgName.replace('.', '/');
+                if (mainAsset != null) {
+                    AssetInfo stagedAsset = stagedAssetServices.getAsset(asset);
+                    Files.copy(mainAsset.getFile().toPath(), stagedAsset.getFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    stagedAssetServices.updateAssetVersion(asset, mainAsset.getRevision().getVersion());
+                }
+                else {
+                    getAssetServices(cuid).deleteAsset(asset);
+                    stagedAssetServices.removeAssetVersion(asset);
+                }
+                commitPaths.add(pkgPath + "/" + AssetServices.assetName(asset));
+                commitPaths.add(pkgPath + "/" + Packages.META_DIR + "/" + Packages.VERSIONS);
                 dataAccess.deleteValue(OwnerType.USER, cuid, asset, STAGED_ASSET);
             }
+            vcGit.add(commitPaths);
+            vcGit.commit("Assets unstaged on " + vcGit.getBranch() + " by " + cuid);
+            vcGit.push();
         }
-        catch (SQLException ex) {
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
+        }
+    }
+
+    @Override
+    public void deleteAsset(String cuid, String assetPath) throws ServiceException {
+        AssetServices assetServices = getAssetServices(cuid);
+        assetServices.deleteAsset(assetPath);
+        assetServices.removeAssetVersion(assetPath);
+        List<String> commitPaths = new ArrayList<>();
+        String pkg = AssetServices.packageName(assetPath);
+        String pkgPath = getVcAssetPath() + "/" + pkg.replace('.', '/');
+        VersionControlGit vcGit = getStagingVersionControl(cuid);
+        try {
+            vcGit.rm(pkgPath + "/" + AssetServices.assetName(assetPath));
+            vcGit.add(pkgPath + "/" + Packages.META_DIR + "/" + Packages.VERSIONS);
+            vcGit.commit(assetPath + " deleted on " + vcGit.getBranch() + " by " + cuid);
+            vcGit.push();
+        }
+        catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
         }
     }

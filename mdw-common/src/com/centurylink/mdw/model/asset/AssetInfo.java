@@ -147,6 +147,14 @@ public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
         return asset;
     }
 
+    public AssetRevision getRevision() {
+        if (file instanceof AssetFile) {
+            AssetFile assetFile = (AssetFile)file;
+            return assetFile.getRevision();
+        }
+        return null;
+    }
+
     public String getJsonName() {
         return "Asset";
     }

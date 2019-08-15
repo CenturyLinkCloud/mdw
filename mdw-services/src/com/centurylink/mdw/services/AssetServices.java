@@ -25,6 +25,7 @@ import com.centurylink.mdw.model.asset.AssetPackageList;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.services.asset.Renderer;
+import javafx.util.Pair;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -110,7 +111,23 @@ public interface AssetServices {
 
     JSONObject getGitBranches(String[] repoUrls) throws ServiceException;
 
+    void updateAssetVersion(String assetPath, int version) throws ServiceException;
+    void removeAssetVersion(String assetPath) throws ServiceException;
+
     JSONObject discoverGitAssets(String repoUrl, String branch) throws ServiceException;
 
     GitDiscoverer getDiscoverer(String repoUrl) throws IOException;
+
+    static String packageName(String assetPath) throws ServiceException {
+        int slash = assetPath.lastIndexOf('/');
+        if (slash < 0 || slash >= assetPath.length() - 1)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + assetPath);
+       return assetPath.substring(0, slash);
+    }
+    static String assetName(String assetPath) throws ServiceException {
+        int slash = assetPath.lastIndexOf('/');
+        if (slash < 0 || slash >= assetPath.length() - 1)
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + assetPath);
+        return assetPath.substring(slash + 1);
+    }
 }

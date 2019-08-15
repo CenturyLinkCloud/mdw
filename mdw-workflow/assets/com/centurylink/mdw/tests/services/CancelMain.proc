@@ -95,6 +95,6 @@ attributes:
   WORK_DISPLAY_INFO: x=40,y=36,w=112,h=26
 textNotes:
 - id: N1
-  content: Must not complete, or Cancel will fail.
+  content: "Must not complete, \nor Cancel will fail."
   attributes:
-    WORK_DISPLAY_INFO: x=388,y=339,w=254,h=27
+    WORK_DISPLAY_INFO: x=388,y=339,w=133,h=40
