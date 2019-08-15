@@ -35,6 +35,8 @@ try {
     compiler.watch({
       aggregateTimeout: 300
     }, (err, stats) => {
+      if (input && input.source)
+        console.log(input.source + ':');
       if (err) {
         console.log('webpack failed: ' + err);
       }

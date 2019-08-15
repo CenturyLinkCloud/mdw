@@ -48,6 +48,20 @@ class AssetHeader extends Component {
             </div>
           }
         </div>
+        {this.props.asset && !this.props.asset.isBinary && this.props.asset.vcsDiff &&
+          <div className="radio mdw-heading-options" style={{marginTop:'-5px'}}>
+            <label className="radio-inline">
+              <input type="radio" checked={this.props.view === 'asset'}
+                onChange={() => this.props.onViewChange('asset')}/>
+              Asset
+            </label>
+            <label className="radio-inline" checked={this.props.view === 'diff'}>
+              <input type="radio" checked={this.props.view === 'diff'}
+                onChange={() => this.props.onViewChange('diff')} />
+              Diff
+            </label>
+          </div>
+        }
         {this.props.asset &&
           <div className="mdw-heading-actions">
             <a className="btn btn-primary mdw-action-btn" style={{fontSize:'14px',fontWeight:'normal'}}

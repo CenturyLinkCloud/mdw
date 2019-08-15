@@ -3,6 +3,7 @@ import MdwContext from '../react/MdwContext';
 import languages from '../react/languages';
 import CodeBlock from '../react/CodeBlock.jsx';
 import Workflow from '../react/Workflow.jsx';
+import CodeDiff from '../react/CodeDiff.jsx';
 import AssetHeader from './AssetHeader.jsx';
 
 class StagedAsset extends Component {
@@ -12,7 +13,7 @@ class StagedAsset extends Component {
 
     this.handleUnstage = this.handleUnstage.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
-    this.handleToggleView = this.handleToggleView.bind(this);
+    this.handleViewChange = this.handleViewChange.bind(this);
 
     if (this.props.match && this.props.match.params) {
       this.stagingCuid = this.props.match.params.cuid;
@@ -20,7 +21,7 @@ class StagedAsset extends Component {
       this.assetName = this.props.match.params.asset;
     }
     this.state = { 
-      view: 'content',
+      view: 'asset',
       asset: undefined, 
       content: undefined };
   }
@@ -128,9 +129,9 @@ class StagedAsset extends Component {
     });    
   }
 
-  handleToggleView() {
+  handleViewChange(view) {
     this.setState({
-      view: this.state.view === 'content' ? 'gitDiff' : 'content',
+      view: view,
       asset: this.state.asset, 
       content: this.state.content
     });
@@ -153,11 +154,11 @@ class StagedAsset extends Component {
           view={this.state.view}
           onUnstage={this.handleUnstage}
           onDelete={this.handleDelete}
-          onToggleView={this.handleToggleView} />
+          onViewChange={this.handleViewChange} />
         <div className="mdw-section">
           {this.state.asset && (this.state.asset.isImage || !this.state.asset.isBinary) && this.state.content &&
             <div>
-              {this.state.view === 'content' &&
+              {this.state.view === 'asset' &&
                 <div>
                   {extension === 'proc' &&
                     <Workflow 
@@ -181,6 +182,14 @@ class StagedAsset extends Component {
                     </div>
                   }
                 </div>
+              }
+              {this.state.view === 'diff' &&
+                <CodeDiff 
+                  language={language} 
+                  newLabel="Staged"
+                  oldLabel="Original"
+                  newContent={this.state.content}
+                  oldContent={this.state.content} />
               }
             </div>
           }
