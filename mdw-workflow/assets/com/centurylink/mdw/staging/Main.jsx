@@ -40,7 +40,7 @@ class Main extends Component {
       <MdwContext.Provider value={mdwContext}>
         <Router>
           <div style={{display:'flex'}}>
-            <div className="mdw-sidebar">
+            <div className="mdw-sidebar" style={{width:'16.66666667%'}}>
               <Nav />
             </div>              
             <div className="mdw-panel-full-width">

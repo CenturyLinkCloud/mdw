@@ -174,7 +174,8 @@ adminApp.controller('AdminController', ['$rootScope', '$scope', '$window', '$tim
   };
   
   $scope.isFullWidth = function() {
-    return $scope.fullWidth;
+    var isStaging = window.location.hash && window.location.hash.startsWith('#/staging');
+    return $scope.fullWidth || isStaging;
   };
   $scope.setFullWidth = function(fullWidth) {
     $scope.fullWidth = fullWidth;
