@@ -7,9 +7,24 @@ class UserStage extends Component {
     
   constructor(...args) {
     super(...args);
+    this.collapse = this.collapse.bind(this);
+    this.expand = this.expand.bind(this);
+
     this.state = { stagedAssets: undefined };
   }
 
+  collapse(pkg) {
+    if (this.props.onCollapse) {
+      this.props.onCollapse(pkg);
+    }
+
+  }
+  expand(pkg) {
+    if (this.props.onExpand) {
+      this.props.onExpand(pkg);
+    }
+  }
+  
   componentDidMount() {
     const cuid = this.props.stage.userCuid;
     const url = this.context.serviceRoot + '/com/centurylink/mdw/staging/' + cuid + '/assets';
@@ -28,6 +43,18 @@ class UserStage extends Component {
     })
     .then(json => {
       if (ok) {
+        // initialize packageCollapsedState
+        let packageCollapsedState = {};
+        const pkgCollapsedSessionVal = sessionStorage.getItem('stagingPkgCollapsedState');
+        if (pkgCollapsedSessionVal) {
+          packageCollapsedState = JSON.parse(pkgCollapsedSessionVal);
+        }    
+        Object.keys(json).forEach(pkg => {
+          if (typeof packageCollapsedState[pkg] === 'undefined') {
+            packageCollapsedState[pkg] = false;
+          }
+        });
+        sessionStorage.setItem('stagingPkgCollapsedState', JSON.stringify(packageCollapsedState));
         this.setState({stagedAssets: json});
       }
       else {
@@ -50,24 +77,42 @@ class UserStage extends Component {
             </div>
           }
           {pkgs.length > 0 &&
-            <ul className="mdw-list" style={{marginTop:'-10px'}}>
+            <div>
               {
                 pkgs.map((pkg, i) => {
+                  let collapsed = this.props.packageCollapse[pkg];
                   return (
-                    <li key={i}>
-                      <a className="mdw-item-link"
-                        href={this.context.hubRoot + '/#/packages/' + pkg}>
-                        <Glyphicon glyph="folder-open" className="mdw-item-icon" />
-                        {pkg}
-                      </a>
-                      <ul className="mdw-list" style={{marginLeft:'25px'}}>
+                    <div className="mdw-sub" key={i}>
+                      <div className="panel-heading mdw-sub-heading">
+                        <div className="mdw-heading">
+                          {pkg}
+                          {!collapsed &&
+                            <span>
+                              {' '}
+                              <a href={this.context.hubRoot + '/staging'} 
+                                onClick={e => {e.preventDefault(); this.collapse(pkg); }}>
+                                <Glyphicon className="mdw-action-icon button button-primary" glyph="chevron-up" />
+                              </a>
+                            </span>
+                          }
+                          {collapsed &&
+                            <span>
+                              {' '}
+                              <a href={this.context.hubRoot + '/staging'}
+                                onClick={e => {e.preventDefault(); this.expand(pkg); }}>
+                                <Glyphicon className="mdw-action-icon button button-primary" glyph="chevron-down" />
+                              </a>
+                            </span>
+                          }                        
+                        </div>
+                      </div>
+                      <ul className={'mdw-list' + (collapsed ? ' collapse': '')}>
                         {
                           this.state.stagedAssets[pkg].map((asset, j) => {
                             return (
-                              <li key={j} style={{border:'0',padding:'5px 10px 0 10px'}}>
+                              <li key={j} style={{border:'1px solid #E8E8E8'}}>
                                 <Link className="mdw-item-link" 
                                   to={this.context.hubRoot + '/staging/' + cuid + '/assets/' + pkg + '/' + asset.name}>
-                                  <Glyphicon glyph="file" className="mdw-item-icon" />
                                   {asset.name}
                                 </Link>
                               </li>
@@ -75,11 +120,11 @@ class UserStage extends Component {
                           })
                         }
                       </ul>
-                    </li>
+                    </div>
                   );
                 })
               }
-            </ul>
+            </div>
           }
         </div>
       );

@@ -5,6 +5,7 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.dataaccess.file.GitBranch;
 import com.centurylink.mdw.dataaccess.file.GitProgressMonitor;
@@ -241,10 +242,17 @@ public class StagingServicesImpl implements StagingServices {
                     if (STAGED_ASSET.equals(userValues.get(userValueKey))) {
                         String userAsset = userValueKey;
                         String pkg = userAsset.substring(0, userAsset.lastIndexOf('/'));
-                        AssetInfo assetInfo = assetServices.getAsset(userAsset, false);
-                        if (assetInfo != null) {
-                            List<AssetInfo> pkgAssets = stagedAssets.computeIfAbsent(pkg, k -> new ArrayList<>());
-                            pkgAssets.add(assetInfo);
+                        try {
+                            AssetInfo assetInfo = assetServices.getAsset(userAsset, false);
+                            if (assetInfo != null) {
+                                List<AssetInfo> pkgAssets = stagedAssets.computeIfAbsent(pkg, k -> new ArrayList<>());
+                                pkgAssets.add(assetInfo);
+                            }
+                        }
+                        catch (ServiceException ex) {
+                            if (ex.getCause() != null && ex.getCause() instanceof DataAccessException) {
+                                logger.error(ex.getMessage(), ex);
+                            }
                         }
                     }
                 }

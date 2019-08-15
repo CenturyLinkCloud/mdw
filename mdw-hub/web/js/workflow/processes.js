@@ -427,8 +427,10 @@ processMod.controller('ProcessDefsController', ['$scope', 'mdw', 'util', 'Proces
 }]);
 
 processMod.controller('ProcessDefController',
-    ['$scope', '$routeParams', '$route', '$location', '$filter', 'mdw', 'util', 'ProcessDef', 'ProcessSummary',
-    function($scope, $routeParams, $route, $location, $filter, mdw, util, ProcessDef, ProcessSummary) {
+    ['$scope', '$routeParams', '$route', '$location', '$filter', '$http', 'mdw', 'util', 'ProcessDef', 'ProcessSummary',
+    function($scope, $routeParams, $route, $location, $filter, $http, mdw, util, ProcessDef, ProcessSummary) {
+
+  sessionStorage.removeItem('stagingUser');
 
   var activity = sessionStorage.getItem('mdw-activity');
   if (activity) {
@@ -488,6 +490,26 @@ processMod.controller('ProcessDefController',
 
   $scope.isEditAllowed = function() {
     return $scope.authUser.hasRole('Process Design') && !mdw.git.tag;
+  };
+  $scope.isStagingAllowed = function() {
+    return $scope.authUser.hasRole('Process Design');
+  };
+
+  $scope.stageAsset = function() {
+    var stagingCuid = $scope.authUser.cuid;
+    var assets = { assets: [$scope.process.packageName + '/' + $scope.process.name + '.proc'] };
+    $http({
+      url: mdw.roots.services + '/services/com/centurylink/mdw/staging/' + stagingCuid + '/assets?app=mdw-admin',
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      data: JSON.stringify(assets, null, 2),
+      transformRequest: []
+    }).then(function success(response) {
+        $location.path('/staging/' + stagingCuid);
+      }, function error(response) {
+        $scope.mdwMessages = response.data.status.message;
+      }
+    );
   };
 }]);
 

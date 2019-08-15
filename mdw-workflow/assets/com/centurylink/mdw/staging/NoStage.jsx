@@ -17,7 +17,7 @@ class NoStage extends Component {
   render() {
     const hubRoot = this.context.hubRoot;
     return (
-      <div>
+      <div style={{padding:'10px'}}>
         <p>
           Staging area not found for {this.context.authUser.name}.
         </p>

@@ -22,7 +22,7 @@ class Nav extends Component {
           <li><a href={hub + '#/packages'}>Assets</a></li>
           <li className='mdw-active'>
             <a href={hub + 'staging'}>
-              Staging
+              {'Staging '}
               <span className="mdw-note">beta</span>
             </a>
           </li>

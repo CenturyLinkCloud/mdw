@@ -451,6 +451,7 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
                                        function($scope, $cookieStore, $routeParams, $location, $http, mdw, util, uiUtil, Assets, Asset) {
 
   sessionStorage.removeItem('stagingUser');
+
   $scope.packageName = $routeParams.packageName;
   $scope.assetName = $routeParams.assetName;
   if ($scope.assetName.endsWith('.proc')) {
