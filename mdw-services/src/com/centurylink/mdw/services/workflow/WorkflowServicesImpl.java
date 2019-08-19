@@ -1495,12 +1495,14 @@ public class WorkflowServicesImpl implements WorkflowServices {
         if (future && HierarchyCache.hasMilestones(masterProcessInstance.getProcessId())) {
             for (Linked<Milestone> end : masterMilestones.getEnds()) {
                 Linked<Milestone> futureMilestones = HierarchyCache.getMilestones(end.get().getProcess().getId());
-                Linked<Milestone> futureMilestone = futureMilestones.find(m -> {
-                    return m.getActivity().getId().equals(end.get().getActivity().getId()) &&
-                            m.getProcess().getId().equals(end.get().getProcess().getId());
-                });
-                end.setChildren(futureMilestone.getChildren());
-                futureMilestone.setParent(end);
+                if (futureMilestones != null) {
+                    Linked<Milestone> futureMilestone = futureMilestones.find(m -> {
+                        return m.getActivity().getId().equals(end.get().getActivity().getId()) &&
+                                m.getProcess().getId().equals(end.get().getProcess().getId());
+                    });
+                    end.setChildren(futureMilestone.getChildren());
+                    futureMilestone.setParent(end);
+                }
             }
         }
         return masterMilestones;
