@@ -83,6 +83,11 @@ public class DbExport extends DbOperation {
                     monitor.progress(5);
             }
 
+            if (processInstanceIds.isEmpty()) {
+                getOut().println("\nNo instances found for query: " + procInstsSelect);
+                return this;
+            }
+
             // find all subprocess instance ids (5%)
             List<Long> subprocessInstanceIds = addSubprocessIds(conn, processInstanceIds);
             while (!subprocessInstanceIds.isEmpty()) {
