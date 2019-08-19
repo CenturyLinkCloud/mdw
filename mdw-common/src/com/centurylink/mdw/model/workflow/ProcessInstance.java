@@ -461,11 +461,13 @@ public class ProcessInstance implements Jsonable, Linkable {
                 if (t.getId().equals(ti.getTransitionID())) {
                     List<ActivityInstance> instances = getActivities("A" + t.getToId());
                     ActivityInstance instance = instances.get(0); // latest instance
-                    Linked<ActivityInstance> child = new Linked<>(instance);
-                    child.setParent(parent);
-                    parent.getChildren().add(child);
-                    if (!child.checkCircular()) {
-                        linkActivities(process, child);
+                    if (parent.getTop().find(instance) == null) { // don't add same instance twice
+                        Linked<ActivityInstance> child = new Linked<>(instance);
+                        child.setParent(parent);
+                        parent.getChildren().add(child);
+                        if (!child.checkCircular()) {
+                            linkActivities(process, child);
+                        }
                     }
                 }
             }

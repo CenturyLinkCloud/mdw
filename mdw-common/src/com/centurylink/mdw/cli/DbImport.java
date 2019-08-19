@@ -32,7 +32,12 @@ public class DbImport extends DbOperation {
     @Parameter(names="--no-prompt", description="Suppress prompt for confirmation")
     private boolean noPrompt;
     public boolean isNoPrompt() { return noPrompt; }
-    public void setWarn(boolean noPrompt) { this.noPrompt = noPrompt; }
+    public void setNoPrompt(boolean noPrompt) { this.noPrompt = noPrompt; }
+
+    @Parameter(names="--no-truncate", description="Keep existing data")
+    private boolean noTruncate;
+    public boolean isNoTruncate() { return noTruncate; }
+    public void setNoTruncate(boolean noTruncate) { this.noTruncate = noTruncate; }
 
     @Override
     public Operation run(ProgressMonitor... monitors) throws IOException {
@@ -41,7 +46,11 @@ public class DbImport extends DbOperation {
             throw new IOException("Parameter --database-url (" + propDbUrl + ") must match value in mdw.yaml for import");
 
         if (!noPrompt) {
-            getOut().println("Import data into " + getDatabaseUrl() + "? All existing data will be OBLITERATED! Type 'yes'<Enter> to proceed.");
+            String msg = "Import data into " + getDatabaseUrl() + "?";
+            if (!noTruncate)
+                msg += "  All existing data will be OBLITERATED!";
+            msg += "Type 'yes'<Enter> to proceed.";
+            getOut().println(msg);
             String entered = new Scanner(System.in).nextLine();
             if (!"yes".equalsIgnoreCase(entered))
                 return null;
@@ -71,25 +80,26 @@ public class DbImport extends DbOperation {
         try {
             conn = getDbConnection();
 
-            // truncate tables (5% progress)
-            try (Statement st = conn.createStatement()) {
-                if (!isOracle())
-                    st.executeUpdate("set FOREIGN_KEY_CHECKS = 0");
-                for (int i = tables.size() - 1; i >= 0; i--) {
-                    String table = tables.get(i);
-                    String truncate = "truncate table " + table;
-                    if (isOracle())
-                        truncate += " cascade";
-                    st.executeUpdate(truncate);
-                    int prog = 5 + (int) floor((tables.size() - i) * 5d) / tables.size();
-                    for (ProgressMonitor monitor : monitors)
-                        monitor.progress(prog);
-                }
-            }
-            finally {
-                if (!isOracle()) {
-                    try (Statement st = conn.createStatement()) {
-                        st.executeUpdate("set FOREIGN_KEY_CHECKS = 1");
+            if (!noTruncate) {
+                // truncate tables (5% progress)
+                try (Statement st = conn.createStatement()) {
+                    if (!isOracle())
+                        st.executeUpdate("set FOREIGN_KEY_CHECKS = 0");
+                    for (int i = tables.size() - 1; i >= 0; i--) {
+                        String table = tables.get(i);
+                        String truncate = "truncate table " + table;
+                        if (isOracle())
+                            truncate += " cascade";
+                        st.executeUpdate(truncate);
+                        int prog = 5 + (int) floor((tables.size() - i) * 5d) / tables.size();
+                        for (ProgressMonitor monitor : monitors)
+                            monitor.progress(prog);
+                    }
+                } finally {
+                    if (!isOracle()) {
+                        try (Statement st = conn.createStatement()) {
+                            st.executeUpdate("set FOREIGN_KEY_CHECKS = 1");
+                        }
                     }
                 }
             }
