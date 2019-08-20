@@ -6,11 +6,13 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.activity.ImplementorCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.DesignServices;
+import com.centurylink.mdw.services.ServiceLocator;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -33,7 +35,17 @@ public class DesignServicesImpl implements DesignServices {
         if (version < 0)
             version = 0;
         boolean forUpdate = query == null ? false : query.getBooleanFilter("forUpdate");
-        Process process = ProcessCache.getProcess(processName, version);
+        String stagingCuid = query == null ? null : query.getFilter("stagingUser");
+        Process process;
+        if (stagingCuid != null) {
+            if (!assetPath.endsWith(".proc"))
+                assetPath += ".proc";
+            AssetInfo stagedAsset = ServiceLocator.getStagingServices().getStagedAsset(stagingCuid, assetPath);
+            process = new Process();
+            process.setRawFile(stagedAsset.getFile());
+        } else {
+            process = ProcessCache.getProcess(processName, version);
+        }
         if (forUpdate) {
             // load from file
             try {

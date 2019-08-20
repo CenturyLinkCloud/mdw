@@ -77,7 +77,10 @@ workflowMod.controller('MdwWorkflowController',
     if (instanceId)
       workflowUrl += '/' + instanceId;
     if ($scope.editable)
-      workflowUrl += '?forUpdate=true'; // TODO: honor forUpdate
+      workflowUrl += '?forUpdate=true';
+    if ($scope.stagingUser)
+      workflowUrl += ($scope.editable ? '&' : '?') + 'stagingUser=' + $scope.stagingUser;
+
     $http({ method: 'GET', url: workflowUrl })
       .then(function success(response) {
         $scope.process = response.data;
@@ -285,6 +288,7 @@ workflowMod.factory('mdwImplementors', ['mdw', function(mdw) {
 //       - version: for non-latest process version
 //       - renderState: if true, display runtime overlay
 //       - editable: if true, workflow can be modified
+//       - stagingUser: when flow is in user staging area
 //   - on-process-change: handler for process change event
 //   - service-base: endpoint url root
 //   - hub-base: MDWHub url root
@@ -301,6 +305,7 @@ workflowMod.directive('mdwWorkflow', [function() {
       renderState: '@renderState',
       editable: '@editable',
       instanceEdit: '@instanceEdit',
+      stagingUser: '@stagingUser',
       serviceBase: '@serviceBase',
       hubBase: '@hubBase',
       animate: '@animate',

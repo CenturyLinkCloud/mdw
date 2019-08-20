@@ -82,12 +82,9 @@ public class StagingServicesImpl implements StagingServices {
     }
 
     public StagingArea getUserStagingArea(String cuid) throws ServiceException {
-        File stagingDir = getStagingDir(cuid); // clone may be in progress
         GitBranch stagingBranch = getStagingBranch(cuid, getMainVersionControl());
-        if (stagingBranch == null && !stagingDir.isDirectory())
+        if (stagingBranch == null)
             return null;
-        if (!getStagingVersionControl(cuid).localRepoExists() && !stagingDir.isDirectory())
-            return null;  // not cloned locally
         User user = getUser(cuid);
         StagingArea userStagingArea = new StagingArea(user.getCuid(), user.getName());
         userStagingArea.setBranch(stagingBranch);

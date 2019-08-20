@@ -64,7 +64,62 @@ class StagedAsset extends Component {
               })
               .then(text => {
                 if (ok) {
-                  this.setState({asset: asset, content: text});
+                  this.setState({asset: asset, content: text, view: this.state.view}, () => {
+                    if (asset.vcsDiff) {
+                      // retrieve original content
+                      $mdwUi.hubLoading(true);
+                      url = this.context.hubRoot + '/asset/' + this.package + '/' + this.assetName;
+                      fetch(new Request(url, {
+                        method: 'GET',
+                        credentials: 'same-origin'
+                      }))
+                      .then(response => {
+                        $mdwUi.hubLoading(false);
+                        ok = response.ok;
+                        return response.text();
+                      })
+                      .then(text => {
+                        this.setState({
+                          asset: this.state.asset, 
+                          content: this.state.content, 
+                          view: this.state.view,
+                          oldContent: text
+                        }, () => {
+                          if (asset.name.endsWith('.proc') && ! this.state.oldContent.startsWith('{')) {
+                            $mdwUi.hubLoading(true);
+                            url = this.context.hubRoot + '/asset/' + pathPlusParam;
+                            fetch(new Request(url, {
+                              method: 'GET',
+                              credentials: 'same-origin'
+                            }))
+                            .then(response => {
+                              $mdwUi.hubLoading(false);
+                              ok = response.ok;
+                              return response.text();
+                            })
+                            .then(text => {
+                              this.setState({
+                                asset: this.state.asset, 
+                                content: this.state.content, 
+                                view: this.state.view,
+                                oldContent: this.state.oldContent,
+                                newContent: text
+                              });
+                            });
+                          }
+                          else {
+                            this.setState({
+                              asset: this.state.asset, 
+                              content: this.state.content, 
+                              view: this.state.view,
+                              oldContent: this.state.oldContent,
+                              newContent: this.state.content
+                            });
+                          }
+                        });
+                      });
+                    }
+                  });
                 }
               });
             }
@@ -183,13 +238,13 @@ class StagedAsset extends Component {
                   }
                 </div>
               }
-              {this.state.view === 'diff' &&
+              {this.state.view === 'diff' && this.state.oldContent &&
                 <CodeDiff 
                   language={language} 
                   newLabel="Staged"
                   oldLabel="Original"
-                  newContent={this.state.content}
-                  oldContent={this.state.content} />
+                  newContent={this.state.newContent}
+                  oldContent={this.state.oldContent} />
               }
             </div>
           }

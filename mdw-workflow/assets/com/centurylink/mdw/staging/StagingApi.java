@@ -54,8 +54,8 @@ public class StagingApi extends JsonRestService {
     /**
      * Paths in case this API becomes public
      *   / = get all user staging areas
-     *   /&ltcuid> = get staging area for user
-     *   /&ltcuid>/assets = staged assets for user
+     *   /&lt;cuid> = get staging area for user
+     *   /&lt;cuid>/assets = staged assets for user
      */
     @Override
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
