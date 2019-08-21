@@ -1,5 +1,12 @@
 # Change Log
 
+## [6.1.24](https://github.com/CenturyLinkCloud/mdw/tree/6.1.24) (2019-08-21)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.23...6.1.24)
+
+**Closed issues:**
+
+- Milestone StackOverflowErrors due to duplication in activity/instance hierarchy [\#730](https://github.com/CenturyLinkCloud/mdw/issues/730)
+
 ## [6.1.23](https://github.com/CenturyLinkCloud/mdw/tree/6.1.23) (2019-08-10)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.22...6.1.23)
 
