@@ -1,6 +1,6 @@
 {
   "name": "mdw-hub",
-  "version": "6.1.24",
+  "version": "6.1.25",
   "description": "mdw6",
   "devDependencies": {
     "eslint": "^4.19.1",
