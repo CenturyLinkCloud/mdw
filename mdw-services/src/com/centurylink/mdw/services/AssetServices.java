@@ -25,7 +25,6 @@ import com.centurylink.mdw.model.asset.AssetPackageList;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.services.asset.Renderer;
-import javafx.util.Pair;
 import org.json.JSONObject;
 
 import java.io.File;
