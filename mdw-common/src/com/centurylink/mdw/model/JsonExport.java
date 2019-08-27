@@ -113,55 +113,58 @@ public class JsonExport {
         return new String(Base64.encodeBase64(bytes));
     }
 
-    public Workbook exportXlsx(String name) throws JSONException, IOException {
+    @SuppressWarnings("squid:S2095")
+    public Workbook exportXlsx(String name) throws JSONException {
 
-        try (Workbook workbook = new XSSFWorkbook()) {
-            Sheet sheet = workbook.createSheet(name == null ? jsonable.getClass().getSimpleName() : name);
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet(name == null ? jsonable.getClass().getSimpleName() : name);
 
-            if (jsonable instanceof JsonArray) {
-                JSONArray jsonArray = ((JsonArray) jsonable).getArray();
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObj = jsonArray.getJSONObject(i);
-                    addNames(jsonObj);
-                    setRowValues(sheet, i + 1, jsonObj);
-                }
-                setColumnLabels(sheet);
-            } else if (jsonable instanceof InstanceList) {
-                InstanceList<?> instanceList = (InstanceList<?>) jsonable;
-                List<? extends Jsonable> items = instanceList.getItems();
-                for (int i = 0; i < items.size(); i++) {
-                    JSONObject jsonObj = items.get(i).getJson();
-                    addNames(jsonObj);
-                    setRowValues(sheet, i + 1, jsonObj);
-                }
-                setColumnLabels(sheet);
-            } else if (jsonable instanceof JsonListMap) {
-                JsonListMap<?> listMap = (JsonListMap<?>) jsonable;
-                int row = 1;
-                List<String> keys = new ArrayList<>(listMap.getJsonables().keySet());
-                Collections.sort(keys);
-                for (String key : keys) {
-                    List<? extends Jsonable> jsonableList = listMap.getJsonables().get(key);
-                    for (Jsonable jsonable : jsonableList) {
-                        addNames(jsonable.getJson());
-                    }
-                    if (!names.isEmpty() && !"".equals(names.get(0))) {
-                        names.add(0, ""); // key column
-                    }
-                    for (Jsonable jsonable : jsonableList) {
-                        Row valuesRow = setRowValues(sheet, row, jsonable.getJson(), 1);
-                        Cell cell = valuesRow.createCell(0);
-                        cell.setCellValue(key);
-                        row++;
-                    }
-                }
-                setColumnLabels(sheet);
-            } else {
-                throw new UnsupportedOperationException("Unsupported JSON type: " + jsonable);
+        if (jsonable instanceof JsonArray) {
+            JSONArray jsonArray = ((JsonArray)jsonable).getArray();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObj = jsonArray.getJSONObject(i);
+                addNames(jsonObj);
+                setRowValues(sheet, i + 1, jsonObj);
             }
-
-            return workbook;
+            setColumnLabels(sheet);
         }
+        else if (jsonable instanceof InstanceList) {
+            InstanceList<?> instanceList = (InstanceList<?>) jsonable;
+            List<? extends Jsonable> items = instanceList.getItems();
+            for (int i = 0; i < items.size(); i++) {
+                JSONObject jsonObj = items.get(i).getJson();
+                addNames(jsonObj);
+                setRowValues(sheet, i + 1, jsonObj);
+            }
+            setColumnLabels(sheet);
+        }
+        else if (jsonable instanceof JsonListMap) {
+            JsonListMap<?> listMap = (JsonListMap<?>) jsonable;
+            int row = 1;
+            List<String> keys = new ArrayList<>(listMap.getJsonables().keySet());
+            Collections.sort(keys);
+            for (String key : keys) {
+                List<? extends Jsonable> jsonableList = listMap.getJsonables().get(key);
+                for (Jsonable jsonable : jsonableList) {
+                    addNames(jsonable.getJson());
+                }
+                if (!names.isEmpty() && !"".equals(names.get(0))) {
+                    names.add(0, ""); // key column
+                }
+                for (Jsonable jsonable : jsonableList) {
+                    Row valuesRow = setRowValues(sheet, row, jsonable.getJson(), 1);
+                    Cell cell = valuesRow.createCell(0);
+                    cell.setCellValue(key);
+                    row++;
+                }
+            }
+            setColumnLabels(sheet);
+        }
+        else {
+            throw new UnsupportedOperationException("Unsupported JSON type: " + jsonable);
+        }
+
+        return workbook;
     }
 
     private void addNames(JSONObject json) {
