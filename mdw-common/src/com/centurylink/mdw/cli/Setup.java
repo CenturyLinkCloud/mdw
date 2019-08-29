@@ -548,7 +548,8 @@ public abstract class Setup implements Operation {
     }
 
     public String getJava() {
-        return System.getProperty("java.vm.name") + " " + System.getProperty("java.vm.version");
+        return System.getProperty("java.vm.name") + " " + System.getProperty("java.vm.version") +
+                " (" + System.getProperty("java.home") + ")";
     }
 
     /**
