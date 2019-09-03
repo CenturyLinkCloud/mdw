@@ -156,6 +156,9 @@ public class UserServicesImpl implements UserServices {
     }
 
     public void createUser(User user) throws DataAccessException, ServiceException {
+        if (user.getCuid() == null || user.getCuid().isEmpty())
+            throw new ServiceException(ServiceException.BAD_REQUEST, "Missing: cuid");
+        
         User existing = getUsers().get(user.getCuid());
         if (existing != null)
             throw new ServiceException(ServiceException.CONFLICT, "User ID already exists: " + user.getCuid());

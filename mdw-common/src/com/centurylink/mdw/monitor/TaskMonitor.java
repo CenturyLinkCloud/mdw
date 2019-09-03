@@ -31,7 +31,7 @@ public interface TaskMonitor extends RegisteredService, Monitor {
      * @param context the task runtime context
      * @return optional map containing new or updated values
      */
-    default public Map<String,Object> onCreate(TaskRuntimeContext context) {
+    default Map<String,Object> onCreate(TaskRuntimeContext context) {
         return null;
     }
 
@@ -40,7 +40,7 @@ public interface TaskMonitor extends RegisteredService, Monitor {
      * @param context the task runtime context
      * @return optional map containing new or updated values
      */
-    default public Map<String,Object> onAssign(TaskRuntimeContext context) {
+    default Map<String,Object> onAssign(TaskRuntimeContext context) {
         return null;
     }
 
@@ -50,7 +50,7 @@ public interface TaskMonitor extends RegisteredService, Monitor {
      * @param context the task runtime context
      * @return optional map containing new or updated values
      */
-    default public Map<String,Object> onInProgress(TaskRuntimeContext context) {
+    default Map<String,Object> onInProgress(TaskRuntimeContext context) {
         return null;
     }
 
@@ -60,7 +60,7 @@ public interface TaskMonitor extends RegisteredService, Monitor {
      * @param runtimeContext the task runtime context
      * @return optional map containing new or updated values
      */
-    default public Map<String,Object> onAlert(TaskRuntimeContext runtimeContext) {
+    default Map<String,Object> onAlert(TaskRuntimeContext runtimeContext) {
         return null;
     }
 
@@ -70,7 +70,7 @@ public interface TaskMonitor extends RegisteredService, Monitor {
      * @param context the task runtime context
      * @return optional map containing new or updated values
      */
-    default public Map<String,Object> onJeopardy(TaskRuntimeContext context) {
+    default Map<String,Object> onJeopardy(TaskRuntimeContext context) {
         return null;
     }
 
@@ -79,7 +79,7 @@ public interface TaskMonitor extends RegisteredService, Monitor {
      * @param context the task runtime context
      * @return optional map containing new or updated values
      */
-    default public Map<String,Object> onForward(TaskRuntimeContext context) {
+    default Map<String,Object> onForward(TaskRuntimeContext context) {
         return null;
     }
 
@@ -87,13 +87,13 @@ public interface TaskMonitor extends RegisteredService, Monitor {
      * Called when a task instance is completed.
      * @param context the task runtime context
      */
-    default public void onComplete(TaskRuntimeContext context) {
+    default void onComplete(TaskRuntimeContext context) {
     }
 
     /**
      * Called when a task instance is cancelled.
      * @param context the task runtime context
      */
-    default public void onCancel(TaskRuntimeContext context) {
+    default void onCancel(TaskRuntimeContext context) {
     }
 }

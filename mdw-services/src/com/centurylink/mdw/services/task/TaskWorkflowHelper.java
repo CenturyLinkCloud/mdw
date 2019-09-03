@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.services.task;
 
+import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.cache.CachingException;
@@ -43,6 +44,8 @@ import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
+import com.centurylink.mdw.monitor.MonitorRegistry;
+import com.centurylink.mdw.monitor.TaskMonitor;
 import com.centurylink.mdw.observer.ObserverException;
 import com.centurylink.mdw.observer.task.*;
 import com.centurylink.mdw.service.Action;
@@ -52,8 +55,8 @@ import com.centurylink.mdw.service.Parameter;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.service.data.task.TaskDataAccess;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
-import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.service.data.user.UserDataAccess;
+import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.*;
 import com.centurylink.mdw.services.asset.CustomPageLookup;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
@@ -783,7 +786,7 @@ public class TaskWorkflowHelper {
         try {
             // new-style notifiers
             String outcome = TaskStatuses.getTaskStatuses().get(taskInstance.getStatusCode());
-            //if (!action.equals(TaskAction.CLAIM) && !action.equals(TaskAction.RELEASE))  // avoid nuisance notice to claimer and releaser
+            notifyMonitors(action, outcome);
             sendNotification(action, outcome);
 
             // new-style auto-assign
@@ -813,13 +816,64 @@ public class TaskWorkflowHelper {
         timer.stopAndLogTiming("");
     }
 
+    private void notifyMonitors(String action, String outcome) {
+        try {
+            ActivityInstance activityInstance = getActivityInstance(true);
+            if (activityInstance != null) {
+                WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+                ProcessInstance processInstance = workflowServices.getProcess(activityInstance.getProcessInstanceId());
+                Package pkg = PackageCache.getPackage(processInstance.getPackageName());
+                Process process = ProcessCache.getProcess(processInstance.getProcessId());
+                Activity activity = process.getActivity(activityInstance.getActivityId());
+                TaskRuntimeContext taskContext = getContext();
+                taskContext.getTaskInstance().setActivityInstanceId(activityInstance.getId());
+                ActivityRuntimeContext activityContext = new ActivityRuntimeContext(pkg, process, processInstance,
+                        0, false, activity, TaskActivity.class.getName(), activityInstance, false);
+                List<TaskMonitor> monitors = MonitorRegistry.getInstance().getTaskMonitors(activityContext);
+                // TODO: add task-registered monitors
+                for (TaskMonitor monitor : monitors) {
+                    switch (action) {
+                        case TaskAction.CREATE:
+                            monitor.onCreate(taskContext);
+                            break;
+                        case TaskAction.ASSIGN:
+                        case TaskAction.CLAIM:
+                            monitor.onAssign(taskContext);
+                            break;
+                        case TaskAction.FORWARD:
+                            monitor.onForward(taskContext);
+                            break;
+                        case TaskAction.WORK:
+                            monitor.onInProgress(taskContext);
+                            break;
+                        case TaskAction.COMPLETE:
+                            monitor.onComplete(taskContext);
+                            break;
+                        case TaskAction.CANCEL:
+                            monitor.onCancel(taskContext);
+                            break;
+                        default:
+                            if (TaskState.STATE_ALERT.equals(outcome)) {
+                                monitor.onAlert(taskContext);
+                            } else if (TaskState.STATE_JEOPARDY.equals(outcome)) {
+                                monitor.onJeopardy(taskContext);
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+        catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+        }
+    }
     private void sendNotification(String action, String outcome) {
         try {
             TaskInstanceNotifierFactory notifierFactory = TaskInstanceNotifierFactory.getInstance();
-            List<String> notifierSpecs = new ArrayList<String>();
             Long processInstId = OwnerType.PROCESS_INSTANCE.equals(taskInstance.getOwnerType()) ? taskInstance.getOwnerId() : null;
-            notifierSpecs = notifierFactory.getNotifierSpecs(taskInstance.getTaskId(), processInstId, outcome);
-            if (notifierSpecs == null || notifierSpecs.isEmpty()) return;
+            List<String> notifierSpecs = notifierFactory.getNotifierSpecs(taskInstance.getTaskId(), processInstId, outcome);
+            if (notifierSpecs == null || notifierSpecs.isEmpty())
+                return;
             if (taskInstance.isShallow())
                 getTaskInstanceAdditionalInfo();
             TaskRuntimeContext taskRuntime = getContext();
@@ -1320,6 +1374,7 @@ public class TaskWorkflowHelper {
                 if (taskInstance.getDue() != null) {
                     scheduleTaskSlaEvent(Date.from(taskInstance.getDue()), 0, false);
                 }
+                notifyMonitors("UPDATE", TaskState.getTaskStateName(TaskState.STATE_ALERT));
                 sendNotification("UPDATE", TaskState.getTaskStateName(TaskState.STATE_ALERT));
             }
         }
@@ -1328,8 +1383,8 @@ public class TaskWorkflowHelper {
                     || taskInstance.getStateCode().equals(TaskState.STATE_ALERT)) {
                 Map<String, Object> changes = new HashMap<>();
                 changes.put("TASK_INSTANCE_STATE", TaskState.STATE_JEOPARDY);
-                new TaskDataAccess().updateTaskInstance(taskInstance.getTaskInstanceId(), changes,
-                        false);
+                new TaskDataAccess().updateTaskInstance(taskInstance.getTaskInstanceId(), changes,false);
+                notifyMonitors("UPDATE", TaskState.getTaskStateName(TaskState.STATE_JEOPARDY));
                 sendNotification("UPDATE", TaskState.getTaskStateName(TaskState.STATE_JEOPARDY));
             }
         }
