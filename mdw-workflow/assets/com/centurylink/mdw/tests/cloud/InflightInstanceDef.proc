@@ -1,0 +1,87 @@
+{
+  "activities": [
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=74,y=159,w=60,h=40"},
+      "id": "A1",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+      "name": "Start",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=166,ly=178,xs=138&195,ys=178&178"},
+        "event": "FINISH",
+        "id": "T1",
+        "to": "A3"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=692,y=158,w=60,h=40"},
+      "id": "A2",
+      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+      "name": "Stop"
+    },
+    {
+      "attributes": {
+        "Rule": "runtimeContext.logDebug(\"Executing \" + runtimeContext.getActivity().getName())\nbeforeVar = 'initial version'",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=199,y=149,w=100,h=60"
+      },
+      "id": "A3",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "before",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=342,ly=181,xs=303&381,ys=181&181"},
+        "event": "FINISH",
+        "id": "T3",
+        "to": "A5"
+      }]
+    },
+    {
+      "attributes": {
+        "Rule": "runtimeContext.logDebug(\"Executing \" + runtimeContext.getActivity().getName())\nafterVar = 'initial version' // to be changed for instance",
+        "SCRIPT": "Groovy",
+        "WORK_DISPLAY_INFO": "x=534,y=151,w=100,h=60"
+      },
+      "id": "A4",
+      "implementor": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+      "name": "after",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=663,ly=178,xs=639&688,ys=178&178"},
+        "event": "FINISH",
+        "id": "T2",
+        "to": "A2"
+      }]
+    },
+    {
+      "attributes": {"WORK_DISPLAY_INFO": "x=384,y=162,w=60,h=40"},
+      "id": "A5",
+      "implementor": "com.centurylink.mdw.base.PauseActivity",
+      "name": "Pause",
+      "transitions": [{
+        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=489,ly=181,xs=449&530,ys=181&181"},
+        "event": "FINISH",
+        "id": "T4",
+        "to": "A4"
+      }]
+    }
+  ],
+  "attributes": {
+    "ArrowStyle": "ArrowEnd",
+    "NodeStyle": "BoxIcon",
+    "PROCESS_VISIBILITY": "PUBLIC",
+    "WORK_DISPLAY_INFO": "x=43,y=38,w=183,h=26"
+  },
+  "textNotes": [{
+    "attributes": {"WORK_DISPLAY_INFO": "x=46,y=75,w=152,h=32"},
+    "content": "For manual testing",
+    "id": "N1"
+  }],
+  "variables": {
+    "afterVar": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    },
+    "beforeVar": {
+      "category": "LOCAL",
+      "type": "java.lang.String"
+    }
+  }
+}

@@ -7,6 +7,7 @@ ChildProcessDocUpdate.yaml=2
 CustomBaseData.proc=6
 CustomBaseData.test=2
 CustomBaseData.yaml=1
+InflightInstanceDef.proc=1
 JavaActivity.java=1
 JavaInvader.java=3
 JavaInvader.pagelet=1

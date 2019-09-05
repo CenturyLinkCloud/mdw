@@ -20,6 +20,8 @@ import com.centurylink.mdw.cache.impl.AssetRefCache;
 import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.variable.Document;
@@ -117,12 +119,27 @@ public class ProcessCache implements CacheService {
             try {
                 Document instanceDoc = getWorkflowDao().getDocument(processInstDefId);
                 String content = instanceDoc.getContent(null);
-                Process process = Process.fromString(content);
-                process.setName(procdef.getName());
-                process.setPackageName(procdef.getPackageName());
+                Process process = null;
+                if (Jsonable.class.getName().equals(instanceDoc.getDocumentType())) {
+                    // compatibility for previously-saved instances
+                    JsonObject json = new JsonObject(content);
+                    for (String key : json.keySet()) {
+                        if (!"_type".equals(key)) {
+                            process = new Process(json.getJSONObject(key));
+                            break;
+                        }
+                    }
+                }
+                else {
+                    process = Process.fromString(content);
+                }
+                if (process != null) {
+                    process.setName(procdef.getName());
+                    process.setPackageName(procdef.getPackageName());
+                }
                 return process;
             } catch (DataAccessException ex) {
-                logger.severeException("Error retrieving instance document", ex);
+                logger.severeException("Error retrieving instance document: " + processInstDefId, ex);
             }
         }
         return null;
