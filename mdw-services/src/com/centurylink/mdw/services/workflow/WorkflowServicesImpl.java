@@ -1251,7 +1251,6 @@ public class WorkflowServicesImpl implements WorkflowServices {
             return Yaml.class.getName();
         else
             return Object.class.getName();
-
     }
 
     @SuppressWarnings("deprecation")
@@ -1382,7 +1381,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             String content = isYaml ? Yamlable.toString(process,2) : process.getJson().toString(2);
             long docId = procInst.getProcessInstDefId();
             if (docId == 0L) {
-                docId = eventServices.createDocument(isYaml ? Yaml.class.getName() : Jsonable.class.getName(), OwnerType.PROCESS_INSTANCE_DEF,
+                docId = eventServices.createDocument(isYaml ? Yaml.class.getName() : JSONObject.class.getName(), OwnerType.PROCESS_INSTANCE_DEF,
                         instanceId, content, PackageCache.getPackage(process.getPackageName()));
                 String[] fields = new String[]{"COMMENTS"};
                 String comment = procInst.getComment() == null ? "" : procInst.getComment();
@@ -1391,8 +1390,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
                         fields, args);
             }
             else {
-                eventServices.updateDocumentContent(docId, content, isYaml ? Yaml.class.getName() : Jsonable.class.getName(),
+                eventServices.updateDocumentContent(docId, content, isYaml ? Yaml.class.getName() : JSONObject.class.getName(),
                         PackageCache.getPackage(process.getPackageName()));
+                if (!isYaml) // maybe old save was Jsonable doc type
+                    eventServices.updateDocumentInfo(docId, JSONObject.class.getName(), OwnerType.PROCESS_INSTANCE_DEF, instanceId);
             }
             // Update any embedded Sub processes to indicate they have instance definition
             for (ProcessInstance inst : dataAccess.getProcessInstances(procInst.getProcessId(),
