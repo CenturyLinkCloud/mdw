@@ -62,6 +62,8 @@ public class AutoFormManualTaskActivity extends ManualTaskActivity {
                     setValue(instanceIdSpec, instanceId);
             }
             else {
+                if (getTaskInstance(instanceId) == null)
+                    throw new ActivityException("Task instance not found: " + instanceId);
                 // update secondary owner
                 updateOwningTransition(instanceId);
             }

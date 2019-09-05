@@ -1,10 +1,10 @@
 <html>
 <head>
-<title>Manual Task Templates</title>
+<title>Manual Task</title>
 <link rel="stylesheet" type="text/css" href="docstyle.css"/>
 </head>
 <body>
-<h1>Manual Task Templates</h1>
+<h1>Manual Task</h1>
 
 <p>MDW manual task activities use the task template concept to separate the definition of task characteristics from workflow.
 The reason for this is to make it possible for folks who aren't workflow designers to own and change aspects of a task's definition
@@ -15,19 +15,36 @@ The task template is a JSON asset with a .task file extension that defines the b
 </p>
 
 <h3>Configuring a Task Template</h3>
-<p>MDW provides two ways to configure the task templates: 1) in MDW Studio, and 2) in MDWHub.  The Designer mechanism is useful for workflow
+<p>MDW provides two ways to configure the task templates: 1) in MDW Studio, and 2) in MDWHub.  The MDW Studio mechanism is useful for workflow
 developers who want to define the template while they're building up a flow.  The MDWHub page is for end-users such as workgroup managers.</p>
 
-<strong>TODO:</strong> assemble the documentation on Task SLAs, Workgroups, Notices, Indexes, Autoform layout from the scattered HTML sources
-into this page.  Also describe custom pages and link to the Custom Web documentation. 
-
-<P>In your workflow you can also create custom web pages. To create the custom web page, follow <a href="customWeb.html">this link</a>.
+<p>Custom Manual Tasks allow you to use custom web page assets you've created. Consult the <a href="customWeb.html">Custom web docs</a>.</p>
 
 <h3>Task Template Editor in MDW Studio</h3>
 <img src="images/taskTemplateEditor.jpg" alt="Task Template Editor" style="border: solid black 1px"/>
+<br>
 
 <h3>Task Template Editor in MDWHub</h3>
 <img src="images/hubTaskTemplate.jpg" alt="MDWHub Task Template" style="border: solid black 1px"/>
+<br>
+
+<h3>Further documentation on task templates:</h3>
+<ul>
+  <li><a href="taskSLA.html">Task SLAs</a></li>
+  <li><a href="taskRouting.html">Task Routing</a></li>
+  <li><a href="taskNotices.html">Task Notices</a></li>
+  <li><a href="taskIndexes.html">Task Indexes</a></li>
+  <li><a href="taskAction.html">Task Actions</a></li>
+  <li>TODO: Autoform Values</li>
+</ul>
+
+<h3>Instance ID Variable</h3>
+<p>
+  Normally a manual task activity creates a task instance in the database.  If you've pre-created the task instance via the API
+  (useful when your model may extend or contain the MDW task instance), you can select a value or enter an expression in the Instance ID Variable dropdown
+  to tell MDW that the task instance already exists, and the activity should just wait for it to be completed.  If the variable/expression
+  is null, the task instance will be created and its ID assigned to the variable.
+</p>
 
 </body>
 </html>

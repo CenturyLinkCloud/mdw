@@ -59,6 +59,8 @@ public class CustomManualTaskActivity extends ManualTaskActivity implements Susp
                     setValue(instanceIdSpec, instanceId);
             }
             else {
+                if (getTaskInstance(instanceId) == null)
+                    throw new ActivityException("Task instance not found: " + instanceId);
                 // update secondary owner
                 updateOwningTransition(instanceId);
             }

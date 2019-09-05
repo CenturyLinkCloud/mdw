@@ -1,0 +1,17 @@
+process: # 85
+  name: PreCreatedTask
+  instance: 1
+  activity: # 1 "2019-09-05 14:25:22.011"
+    name: Start
+    status: Completed
+  activity: # 4 "2019-09-05 14:25:22.025"
+    name: Create Task
+    status: Completed
+  activity: # 3 "2019-09-05 14:25:22.050"
+    name: |
+      Wait for
+      Task
+    status: Waiting
+  variable: # 144
+    name: taskInstanceId
+    value: ${~\\d+}
