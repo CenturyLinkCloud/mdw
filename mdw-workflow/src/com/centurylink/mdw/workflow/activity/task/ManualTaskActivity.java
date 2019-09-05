@@ -204,6 +204,9 @@ public abstract class ManualTaskActivity extends AbstractWait implements TaskAct
         changes.put("TASK_INST_SECONDARY_OWNER", OwnerType.WORK_TRANSITION_INSTANCE);
         changes.put("TASK_INST_SECONDARY_OWNER_ID", getWorkTransitionInstanceId());
         new TaskDataAccess().updateTaskInstance(taskInstanceId, changes, false);
+    }
 
+    protected TaskInstance getTaskInstance(Long taskInstanceId) throws DataAccessException {
+        return new TaskDataAccess().getTaskInstance(taskInstanceId);
     }
 }
