@@ -29,7 +29,7 @@ class Action extends Component {
     var id = this.props.task.id ? this.props.task.id : window.location.hash.substring(8);
     fetch(new Request(this.context.serviceRoot + '/Tasks/' + id + '/actions', {
       method: 'GET',
-      headers: { Accept: 'application/json'},
+      headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
       credentials: 'same-origin'
     }))
     .then(response => {
@@ -66,7 +66,7 @@ class Action extends Component {
     fetch(new Request(this.context.serviceRoot + '/Tasks/' +
         this.props.task.id + '/' + this.action.action, {
       method: 'POST',
-      headers: { Accept: 'application/json'},
+      headers: { 'Content-Type': 'application/json', 'mdw-app-id': 'mdw-hub' },
       body: JSON.stringify(userAction),
       credentials: 'same-origin'
     }))
@@ -118,7 +118,7 @@ class Action extends Component {
   findAssignee(input) {
     fetch(new Request(this.context.serviceRoot + '/Tasks/assignees?find=' + input, {
       method: 'GET',
-      headers: { Accept: 'application/json'},
+      headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
       credentials: 'same-origin'
     }))
     .then(response => {

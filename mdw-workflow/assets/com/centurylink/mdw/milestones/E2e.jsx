@@ -65,7 +65,7 @@ class E2e extends Component {
       var ok = false;
       fetch(new Request(url, {
         method: 'GET',
-        headers: { Accept: 'application/json', NoPersistence: 'true'},
+        headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
         credentials: 'same-origin'
       }))
       .then(response => {

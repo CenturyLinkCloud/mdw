@@ -17,7 +17,7 @@ class Discussion extends Component {
   componentDidMount() {
     fetch(new Request(this.context.serviceRoot + '/Comments?ownerType=TASK_INSTANCE&ownerId=' + this.props.task.id, {
       method: 'GET',
-      headers: { Accept: 'application/json'},
+      headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
       credentials: 'same-origin'
     }))
     .then(response => {
@@ -105,7 +105,7 @@ class Discussion extends Component {
     var ok = false;
     fetch(new Request(url, {
       method: comment.id ? 'PUT' : 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'mdw-app-id': 'mdw-hub' },
       body: JSON.stringify(comment),
       credentials: 'same-origin'
     }))
@@ -136,7 +136,7 @@ class Discussion extends Component {
     var ok = false;
     fetch(new Request(url, {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
       credentials: 'same-origin'
     }))
     .then(response => {

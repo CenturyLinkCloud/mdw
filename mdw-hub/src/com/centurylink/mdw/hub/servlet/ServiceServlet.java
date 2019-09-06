@@ -128,6 +128,15 @@ public abstract class ServiceServlet extends HttpServlet {
                     metaInfo.put(key, request.getParameter(key));
             }
         }
+        else if (request.getQueryString() != null) {
+            // need to parse for at least app value
+            for (String param: request.getQueryString().split("&")) {
+                if (param.equals("app=mdw-admin")) {
+                    metaInfo.put("app", "mdw-admin");
+                    break;
+                }
+            }
+        }
 
         return metaInfo;
     }

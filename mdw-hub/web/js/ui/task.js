@@ -35,8 +35,8 @@ taskMod.controller('MdwTaskTemplateController',
     
     // we need workgroups populated
     var groups = Workgroups.get();
-    var pagelet = $http.get(mdw.roots.services + '/services/Pagelets/' + pageletPath);
-    var taskCats = $http.get(mdw.roots.services + '/services/Tasks/categories');
+    var pagelet = $http.get(mdw.roots.services + '/services/Pagelets/' + pageletPath + '?app=mdw-admin');
+    var taskCats = $http.get(mdw.roots.services + '/services/Tasks/categories?app=mdw-admin');
   
     $q.all([groups, pagelet, taskCats])
     .then(function(results) {

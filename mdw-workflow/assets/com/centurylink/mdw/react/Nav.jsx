@@ -12,7 +12,7 @@ class Nav extends Component {
   componentDidMount() {
     fetch(new Request(this.context.hubRoot + '/js/nav.json', {
       method: 'GET',
-      headers: { Accept: 'application/json'},
+      headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
       credentials: 'same-origin'
     }))
     .then(response => {

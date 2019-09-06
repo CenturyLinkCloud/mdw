@@ -31,7 +31,7 @@ class AssetHeader extends Component {
                   <Glyphicon glyph="file" className="mdw-item-icon" />
                 </a>
                 <a title="Download" style={{marginLeft:'-5px'}}
-                  href={hubRoot + '/asset/' + this.props.package + '/' + this.props.asset.name + '?download=true'}>
+                  href={hubRoot + '/asset/' + this.props.package + '/' + this.props.asset.name + '?download=true&NoPersistence=true'}>
                   <Glyphicon glyph="download-alt" className="mdw-item-icon" />
                 </a>
               </span>

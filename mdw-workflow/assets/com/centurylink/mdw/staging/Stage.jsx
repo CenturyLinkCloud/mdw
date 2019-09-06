@@ -57,7 +57,7 @@ class Stage extends Component {
       var status = 0;
       fetch(new Request(url, {
         method: 'POST',
-        headers: { Accept: 'application/json'},
+        headers: { 'Content-Type': 'application/json', 'mdw-app-id': 'mdw-hub' },
         body: '{}',
         credentials: 'same-origin'
       }))
@@ -104,7 +104,7 @@ class Stage extends Component {
       var status = 0;
       fetch(new Request(url, {
         method: 'GET',
-        headers: { Accept: 'application/json'},
+        headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
         credentials: 'same-origin'
       }))
       .then(response => {

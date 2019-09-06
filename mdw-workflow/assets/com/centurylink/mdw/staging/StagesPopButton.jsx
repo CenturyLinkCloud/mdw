@@ -20,7 +20,7 @@ class StagesPopButton extends Component {
       var ok = false;
       fetch(new Request(this.context.serviceRoot + '/com/centurylink/mdw/staging', {
         method: 'GET',
-        headers: { Accept: 'application/json'},
+        headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
         credentials: 'same-origin'
       }))
       .then(response => {

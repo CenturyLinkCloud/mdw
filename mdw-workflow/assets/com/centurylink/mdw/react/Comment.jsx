@@ -105,7 +105,7 @@ function Comment(props, context) {
     loadingImg.style.visibility = 'visible';
     fetch(context.serviceRoot + '/Attachments', { 
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'mdw-app-id': 'mdw-hub' },
       body: JSON.stringify(attachment),
       credentials: 'same-origin'
     })
@@ -119,7 +119,7 @@ function Comment(props, context) {
         reader.onload = () => {
           fetch(context.hubRoot + '/attach/' + json.location, { 
             method: 'POST',
-            headers: { 'Content-Type': 'application/octet-stream' }, // needed by PCF
+            headers: { 'Content-Type': 'application/octet-stream', 'mdw-app-id': 'mdw-hub' },
             body: new Int8Array(reader.result),
             credentials: 'same-origin'
           })

@@ -22,7 +22,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
           '_template': mdw.roots.hub + '/js/ui/templates/processDefinition.json'
         },
         Design: {
-          '_template': mdw.roots.services + '/js/ui/templates/process.json'
+          '_template': mdw.roots.hub + '/js/ui/templates/process.json'
         },
         /* named object:
          * Tabular content evaluated against named obj collection (eg: 'variables'),
@@ -30,15 +30,15 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
          * Note: '=' refers to the identity (name) of each obj in collection
          */
         Variables: {
-          '_template': mdw.roots.services + '/js/ui/templates/variables.json'
+          '_template': mdw.roots.hub + '/js/ui/templates/variables.json'
         },
         Request: {
           '_attribute': { name: 'Request' },
-          '_template': mdw.roots.services + '/js/ui/templates/request.json'
+          '_template': mdw.roots.hub + '/js/ui/templates/request.json'
         },
         Documentation: { 
           '_attribute': { name: 'Documentation', markdown: true },
-          '_template': mdw.roots.services + '/js/ui/templates/documentation.json'
+          '_template': mdw.roots.hub + '/js/ui/templates/documentation.json'
         },
         Monitoring: {
           '_template': mdw.roots.services + '/template/configurator/processMonitoring.json'
@@ -51,7 +51,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             '': '${it.thisFlag}'
           }],
           'getHierarchyList': function(diagramObject, workflowObject) {
-            var url = mdw.roots.services + '/services/Workflow?callHierarchyFor=' + workflowObject.definitionId;
+            var url = mdw.roots.services + '/services/Workflow?callHierarchyFor=' + workflowObject.definitionId + '&app=mdw-admin';
             return $http.get(url).then(function(response) {
               if (response.status !== 200)
                 return null;
@@ -111,22 +111,22 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
           '_template': mdw.roots.hub + '/js/ui/templates/activityDefinition.json'
         },
         Design: {
-          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}'
+          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}?app=mdw-admin'
         },
         Events: {
-          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}',
+          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}?app=mdw-admin',
           '_categories': ['com.centurylink.mdw.activity.types.TaskActivity', 'com.centurylink.mdw.activity.types.InvokeProcessActivity', 'com.centurylink.mdw.activity.types.SynchronizationActivity', 'com.centurylink.mdw.activity.types.PauseActivity', 'com.centurylink.mdw.activity.types.DependenciesWaitActivity']
         },
         Recipients: {
-          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}',
+          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}?app=mdw-admin',
           '_categories': ['com.centurylink.mdw.activity.types.NotificationActivity']
         },
         Authentication: {
-          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}',
+          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}?app=mdw-admin',
           '_categories': ['com.centurylink.mdw.activity.types.AdapterActivity']
         },
         Script: {
-          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}',
+          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}?app=mdw-admin',
           '_categories': ['com.centurylink.mdw.activity.types.AdapterActivity']
         },
         Documentation: { 
@@ -134,7 +134,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
           '_template': mdw.roots.hub + '/js/ui/templates/documentation.json'
         },
         Monitoring: {
-          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}'
+          '_template': mdw.roots.services + '/services/Implementors/${it.implementor}?app=mdw-admin'
         },
         /* string:
          * Evaluated string refers to obj collection for list-type display.
@@ -164,7 +164,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
           '_template': mdw.roots.hub + '/js/ui/templates/transitionDefinition.json'
         },
         Design: {
-          '_template': mdw.roots.services + '/js/ui/templates/transition.json'
+          '_template': mdw.roots.hub + '/js/ui/templates/transition.json'
         },
         Attributes: 'attributes'
       },
@@ -227,7 +227,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
               });
               if (!serviceSummary)
                 return null;
-              var url = mdw.roots.services + '/services/com/centurylink/mdw/microservice/summary/' + serviceSummary.value.substring(9) + '-' + runtimeInfo.id;
+              var url = mdw.roots.services + '/services/com/centurylink/mdw/microservice/summary/' + serviceSummary.value.substring(9) + '-' + runtimeInfo.id + '?app=mdw-admin';
               return $http.get(url).then(function(response) {
                 if (response.status !== 200)
                   return null;
@@ -318,7 +318,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             else {
               if (runtimeInfo === null || runtimeInfo.length === 0)
                 return null;
-              var url = mdw.roots.services + '/services/Processes?callHierarchyFor=' + runtimeInfo.id;
+              var url = mdw.roots.services + '/services/Processes?callHierarchyFor=' + runtimeInfo.id + '&app=mdw-admin';
               return $http.get(url).then(function(response) {
                 if (response.status !== 200)
                   return null;
@@ -425,7 +425,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
                   }
                 }
                 subprocs.forEach(function(subproc) {
-                  var url = mdw.roots.services + '/services/Processes?definition=' + encodeURIComponent(subproc) + '&owner=PROCESS_INSTANCE&secondaryOwner=ACTIVITY_INSTANCE&ownerId=';
+                  var url = mdw.roots.services + '/services/Processes?definition=' + encodeURIComponent(subproc) + '&app=mdw-admin&owner=PROCESS_INSTANCE&secondaryOwner=ACTIVITY_INSTANCE&ownerId=';
                   runtimeInfo.forEach(function(instance) {
                     var processInstanceId = instance.embeddedProcessInstanceId ? instance.embeddedProcessInstanceId : instance.processInstanceId;
                     gets.push($http.get(url + processInstanceId + '&secondaryOwnerId=' + instance.id));
@@ -442,7 +442,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
                   return variable.name === serviceSummaryVarName;
                 });
                 if (serviceSummary) {
-                  gets.push($http.get(mdw.roots.services + '/services/com/centurylink/mdw/microservice/summary/' + serviceSummary.value.substring(9) + '-' + runtimeInfo[0].id + '/subflows'));
+                  gets.push($http.get(mdw.roots.services + '/services/com/centurylink/mdw/microservice/summary/' + serviceSummary.value.substring(9) + '-' + runtimeInfo[0].id + '/subflows?app=mdw-admin'));
                 }
               }
               return $q.all(gets);
@@ -470,7 +470,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             else {
               if (runtimeInfo === null || runtimeInfo.length === 0)
                 return null;
-              var url = mdw.roots.services + '/services/Tasks?processInstanceId=' + runtimeInfo[0].processInstanceId + '&activityInstanceIds=%5B';
+              var url = mdw.roots.services + '/services/Tasks?processInstanceId=' + runtimeInfo[0].processInstanceId + '&app=mdw-admin&activityInstanceIds=%5B';
               for (var i = 0; i < runtimeInfo.length; i++) {
                 url += runtimeInfo[i].id;
                 if (i < runtimeInfo.length - 1)
@@ -497,7 +497,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             else {
               if (runtimeInfo === null || runtimeInfo.length === 0)
                 return null;
-              var url = mdw.roots.services + '/services/Requests?type=outboundRequests&ownerIds=%5B';              
+              var url = mdw.roots.services + '/services/Requests?type=outboundRequests&app=mdw-admin&ownerIds=%5B';
               for (var i = 0; i < runtimeInfo.length; i++) {
                 url += runtimeInfo[i].id;
                 if (i < runtimeInfo.length - 1)
@@ -524,7 +524,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             else {
               if (runtimeInfo === null || runtimeInfo.length === 0)
                 return null;
-              var url = mdw.roots.services + '/services/Requests?type=outboundRequests&ownerIds=%5B';              
+              var url = mdw.roots.services + '/services/Requests?type=outboundRequests&app=mdw-admin&ownerIds=%5B';
               for (var i = 0; i < runtimeInfo.length; i++) {
                 url += runtimeInfo[i].id;
                 if (i < runtimeInfo.length - 1)

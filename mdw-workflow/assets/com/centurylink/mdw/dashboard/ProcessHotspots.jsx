@@ -21,9 +21,9 @@ class ProcessHotspots extends Component {
 
   componentDidMount() {
     $mdwUi.hubLoading(true);
-    fetch(new Request(this.context.serviceRoot + '/Workflow?app=mdw-hub', {
+    fetch(new Request(this.context.serviceRoot + '/Workflow', {
       method: 'GET',
-      headers: { Accept: 'application/json'},
+      headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub'},
       credentials: 'same-origin'
     }))
     .then(response => {
@@ -42,9 +42,9 @@ class ProcessHotspots extends Component {
 
   handleProcessSelect(assetPath) {
     $mdwUi.hubLoading(true);
-    fetch(new Request(this.context.serviceRoot + '/Workflow/' + assetPath + '?app=mdw-hub', {
+    fetch(new Request(this.context.serviceRoot + '/Workflow/' + assetPath, {
       method: 'GET',
-      headers: { Accept: 'application/json'},
+      headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
       credentials: 'same-origin'
     }))
     .then(response => {
@@ -95,11 +95,11 @@ class ProcessHotspots extends Component {
   retrieveData() {
     return new Promise(resolve => {
       $mdwUi.hubLoading(true);
-      var dataUrl = this.context.serviceRoot + '/Processes/hotspots?processId=' + this.state.processDef.id + '&app=mdw-hub';
+      var dataUrl = this.context.serviceRoot + '/Processes/hotspots?processId=' + this.state.processDef.id;
       dataUrl += '&span=' + this.state.sample;
       fetch(new Request(dataUrl, {
         method: 'GET',
-        headers: { Accept: 'application/json'},
+        headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
         credentials: 'same-origin'
       }))
       .then(response => {

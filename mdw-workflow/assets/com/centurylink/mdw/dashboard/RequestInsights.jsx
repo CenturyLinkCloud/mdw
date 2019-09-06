@@ -92,7 +92,7 @@ class RequestInsights extends Component {
 
     fetch(new Request(url, {
       method: 'GET',
-      headers: { Accept: 'application/json'},
+      headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
       credentials: 'same-origin'
     }))
     .then(response => {
@@ -153,7 +153,7 @@ class RequestInsights extends Component {
       dataUrl += '&direction=' + (this.state.requestType === 'Outbound' ? 'out' : 'in');
       fetch(new Request(dataUrl, {
         method: 'GET',
-        headers: { Accept: 'application/json'},
+        headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub'},
         credentials: 'same-origin'
       }))
       .then(response => {
