@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":6,"i4":6,"i5":10,"i6":10,"i7":6,"i8":10,"i9":10,"i10":10,"i11":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":6,"i5":6,"i6":10,"i7":10,"i8":6,"i9":10,"i10":10,"i11":10,"i12":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -226,50 +226,54 @@ implements <a href="../../../../../../com/centurylink/mdw/activity/types/TaskAct
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/task/ManualTaskActivity.html#getInstanceIdVariable--">getInstanceIdVariable</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/task/ManualTaskActivity.html#getTaskInstance-java.lang.Long-">getTaskInstance</a></span>(java.lang.Long&nbsp;taskInstanceId)</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>protected abstract java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/task/ManualTaskActivity.html#getWaitEvent--">getWaitEvent</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>protected abstract boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/task/ManualTaskActivity.html#messageIsTaskAction-java.lang.String-">messageIsTaskAction</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/task/ManualTaskActivity.html#needSuspend--">needSuspend</a></span>()</code>
 <div class="block">The method is invoked by the engine right after the activity is executed,
  to determine whether to put the activity instance in waiting status.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/task/ManualTaskActivity.html#processOtherMessage-java.lang.String-">processOtherMessage</a></span>(java.lang.String&nbsp;message)</code>
 <div class="block">This method is invoked to process a received event (other than task completion).</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>protected abstract void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/task/ManualTaskActivity.html#processTaskAction-java.lang.String-">processTaskAction</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/task/ManualTaskActivity.html#resume-com.centurylink.mdw.model.event.InternalEvent-">resume</a></span>(<a href="../../../../../../com/centurylink/mdw/model/event/InternalEvent.html" title="class in com.centurylink.mdw.model.event">InternalEvent</a>&nbsp;event)</code>
 <div class="block">The resume method for ManualTaskAndEventWait is handling internal functions related to
  task completion as well as custom events, so it is not supposed to be overriden.</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/task/ManualTaskActivity.html#resume-java.lang.String-java.lang.String-">resume</a></span>(java.lang.String&nbsp;message,
       java.lang.String&nbsp;completionCode)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/task/ManualTaskActivity.html#resumeWaiting-com.centurylink.mdw.model.event.InternalEvent-">resumeWaiting</a></span>(<a href="../../../../../../com/centurylink/mdw/model/event/InternalEvent.html" title="class in com.centurylink.mdw.model.event">InternalEvent</a>&nbsp;event)</code>
 <div class="block">This method is made final for the class, as it contains internal logic handling resumption
  of waiting.</div>
 </td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/workflow/activity/task/ManualTaskActivity.html#updateOwningTransition-java.lang.Long-">updateOwningTransition</a></span>(java.lang.Long&nbsp;taskInstanceId)</code>&nbsp;</td>
 </tr>
@@ -573,11 +577,25 @@ implements <a href="../../../../../../com/centurylink/mdw/activity/types/TaskAct
 <a name="updateOwningTransition-java.lang.Long-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>updateOwningTransition</h4>
 <pre>protected&nbsp;void&nbsp;updateOwningTransition(java.lang.Long&nbsp;taskInstanceId)
                                throws <a href="../../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getTaskInstance-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getTaskInstance</h4>
+<pre>protected&nbsp;<a href="../../../../../../com/centurylink/mdw/model/task/TaskInstance.html" title="class in com.centurylink.mdw.model.task">TaskInstance</a>&nbsp;getTaskInstance(java.lang.Long&nbsp;taskInstanceId)
+                                throws <a href="../../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
