@@ -24,6 +24,7 @@ import com.centurylink.mdw.cloud.CloudClassLoader;
 import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.event.EventHandler;
@@ -256,7 +257,7 @@ public class ListenerHelper {
             }
 
             if (persistMessage(metaInfo)) {
-                eeid = createRequestDocument(request, 0L, metaInfo.get(Listener.METAINFO_REQUEST_PATH));
+               eeid = createRequestDocument(request, 0L, metaInfo.get(Listener.METAINFO_REQUEST_PATH));
                 requestDoc.setId(eeid);
             }
 
@@ -280,7 +281,7 @@ public class ListenerHelper {
                 String path = metaInfo.get(Listener.METAINFO_REQUEST_PATH);
                 if (path != null)
                     reqMsg.append("on path '").append(path).append("'");
-                if (eeid > 0 && !"AppSummary".equals(path) && !"GetAppSummary".equals(path)) // don't log health/ping
+                if (eeid > 0 && !"AppSummary".equals(path)) // don't log health/ping
                     logger.info("", reqMsg.toString());
                 else
                     logger.mdwDebug(reqMsg.toString());
@@ -532,14 +533,18 @@ public class ListenerHelper {
         return !"true".equalsIgnoreCase(metaInfo.get(Listener.METAINFO_NO_PERSISTENCE))
                 && !"true".equalsIgnoreCase(metaInfo.get(Listener.METAINFO_NO_PERSISTENCE.toLowerCase()))
                 && !Listener.CONTENT_TYPE_DOWNLOAD.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE))
-                && !"mdw-admin".equals(metaInfo.get("app")) && !"mdw-hub".equals(metaInfo.get("app"));
+                && !"AppSummary".equals(metaInfo.get(Listener.METAINFO_REQUEST_PATH))
+                && (PropertyManager.getBooleanProperty("mdw.persist.hub.requests", false) ||
+                   (!"mdw-admin".equals(metaInfo.get("app")) && !"mdw-hub".equals(metaInfo.get(Listener.METAINFO_MDW_APP_ID))));
     }
 
     private boolean persistMeta(Map<String,String> metaInfo) {
         return !"true".equalsIgnoreCase(metaInfo.get(Listener.METAINFO_NO_META_PERSISTENCE))
                 && !"true".equalsIgnoreCase(metaInfo.get(Listener.METAINFO_NO_META_PERSISTENCE.toLowerCase()))
                 && !Listener.CONTENT_TYPE_DOWNLOAD.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE))
-                && !"mdw-admin".equals(metaInfo.get("app")) && !"mdw-hub".equals(metaInfo.get("app"));
+                && !"AppSummary".equals(metaInfo.get(Listener.METAINFO_REQUEST_PATH))
+                && (PropertyManager.getBooleanProperty("mdw.persist.hub.requests", false) ||
+                (!"mdw-admin".equals(metaInfo.get("app")) && !"mdw-hub".equals(metaInfo.get(Listener.METAINFO_MDW_APP_ID))));
     }
 
     private Long createRequestDocument(String request, Long handlerId, String path) throws EventHandlerException {

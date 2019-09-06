@@ -79,7 +79,8 @@ workflowMod.controller('MdwWorkflowController',
     if ($scope.editable)
       workflowUrl += '?forUpdate=true';
     if ($scope.stagingUser)
-      workflowUrl += ($scope.editable ? '&' : '?') + 'stagingUser=' + $scope.stagingUser;
+      workflowUrl += (workflowUrl.indexOf('?') >= 0 ? '&' : '?') + 'stagingUser=' + $scope.stagingUser;
+    workflowUrl += (workflowUrl.indexOf('?') >= 0 ? '&' : '?') + 'app=mdw-admin';
 
     $http({ method: 'GET', url: workflowUrl })
       .then(function success(response) {
@@ -98,7 +99,7 @@ workflowMod.controller('MdwWorkflowController',
           $scope.doRender();
         }
         else {
-          $http({ method: 'GET', url: $scope.serviceBase + '/Implementors' })
+          $http({ method: 'GET', url: $scope.serviceBase + '/Implementors?app=mdw-admin' })
           .then(function success(response) {
             $scope.implementors = response.data;
             mdwImplementors.set($scope.implementors);
@@ -117,7 +118,7 @@ workflowMod.controller('MdwWorkflowController',
       $scope.animate = 'true' == $scope.animate.toLowerCase();
 
     if ($scope.renderState && $scope.process.id) {
-      $http({ method: 'GET', url: $scope.serviceBase + '/Processes/' + $scope.process.id })
+      $http({ method: 'GET', url: $scope.serviceBase + '/Processes/' + $scope.process.id + '?app=mdw-admin' })
         .then(function success(response) {
           $scope.instance = response.data;
           $scope.diagram = new Diagram($scope.canvas[0], uiUtil, $scope.process, $scope.implementors, $scope.hubBase, $scope.editable, $scope.instance, $scope.activity, $scope.instanceEdit);

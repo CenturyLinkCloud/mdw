@@ -413,9 +413,6 @@ public class RequestDataAccess extends CommonDataAccess {
         StringBuilder clause = new StringBuilder();
         clause.append("where d.owner_type = '" + OwnerType.LISTENER_REQUEST + "'\n");
         clause.append("and d2.owner_type = '" + OwnerType.LISTENER_RESPONSE + "'\n");
-        boolean healthCheck = query.getBooleanFilter("healthCheck");
-        if (!healthCheck)
-            clause.append(" and d.path != 'AppSummary' and d.path != 'GetAppSummary'");
 
         String find = query.getFind();
         Long id = query.getLongFilter("id");

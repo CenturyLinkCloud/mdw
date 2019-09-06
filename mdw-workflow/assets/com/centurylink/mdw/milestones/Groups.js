@@ -17,7 +17,7 @@ class Groups {
         const url = this.serviceRoot + '/com/centurylink/mdw/milestones/groups';
         fetch(new Request(url, {
           method: 'GET',
-          headers: { Accept: 'application/json'},
+          headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
           credentials: 'same-origin'
         }))
         .then(response => {

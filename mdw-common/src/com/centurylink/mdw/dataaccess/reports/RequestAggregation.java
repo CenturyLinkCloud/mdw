@@ -234,18 +234,6 @@ public class RequestAggregation extends AggregateDataAccess<RequestAggregate> {
         }
         else {
             ownerType = OwnerType.LISTENER_RESPONSE;
-
-            boolean includeHealthCheck = query.getBooleanFilter("Health Check");
-            if (!includeHealthCheck) {
-                where.append("  and path != ?");
-                params.add("AppSummary");
-                where.append(" and path != ?\n");
-                params.add("GET->AppSummary");
-                where.append("  and path != ?");
-                params.add("GetAppSummary");
-                where.append(" and path != ?\n");
-                params.add("GET->GetAppSummary");
-            }
         }
 
         if ("completionTime".equals(by)) {

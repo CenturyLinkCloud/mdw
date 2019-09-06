@@ -64,7 +64,7 @@ class DefE2e extends Component {
       const url = this.context.serviceRoot + '/Activities/definitions/e2e/' + this.state.assetPath;
       fetch(new Request(url, {
         method: 'GET',
-        headers: { Accept: 'application/json', NoPersistence: 'true'},
+        headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub'},
         credentials: 'same-origin'
       }))
       .then(response => {

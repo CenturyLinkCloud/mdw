@@ -45,7 +45,7 @@ Console.prototype.run = function() {
     // TODO
   }
   else {
-    fetch($mdwServicesRoot + '/services/System/CLI?command=' + command, {
+    fetch($mdwServicesRoot + '/services/System/CLI?command=' + command + '&app=mdw-admin', {
       credentials: 'same-origin'
     })
     .then(function(response) {

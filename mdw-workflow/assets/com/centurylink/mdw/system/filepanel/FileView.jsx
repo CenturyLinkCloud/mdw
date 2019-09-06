@@ -77,7 +77,7 @@ class FileView extends Component {
     else if (action === 'download') {
       location = this.context.serviceRoot + 
           '/com/centurylink/mdw/system/filepanel?path=' + 
-          encodeURIComponent(this.props.item.path) + '&download=true' +
+          encodeURIComponent(this.props.item.path) + '&download=true&NoPersistence=true' +
           (this.props.item.host ? '&host=' + this.props.item.host : '');
     }
     else if (action === 'scrollToEnd') {
@@ -141,7 +141,7 @@ class FileView extends Component {
     }
     fetch(new Request(url, {
       method: 'GET',
-      headers: { Accept: 'application/json'},
+      headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
       credentials: 'same-origin'
     }))
     .then(response => {
@@ -551,7 +551,7 @@ class FileView extends Component {
       url += '&tail=' + this.state.tailOn;
       fetch(new Request(url, {
         method: 'GET',
-        headers: { Accept: 'application/json'},
+        headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
         credentials: 'same-origin'
       }))
       .then(response => {

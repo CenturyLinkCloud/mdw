@@ -36,6 +36,7 @@ userSvc.factory('authUser', ['$http', 'mdw', function($http, mdw) {
         url = mdw.roots.services +  '/Services/Users/' + devUser;
       else
         url = mdw.roots.hub + '/Services/AuthenticatedUser';  // use hub root for auth user
+      url += '?app=mdw-admin';
 
       console.log('retrieving user: ' + url);
       var promise = $http.get(url).then(function(response) {

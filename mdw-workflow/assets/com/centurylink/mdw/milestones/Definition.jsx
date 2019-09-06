@@ -56,7 +56,7 @@ class Definition extends Component {
           this.state.assetPath;
       fetch(new Request(url, {
         method: 'GET',
-        headers: { Accept: 'application/json'},
+        headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
         credentials: 'same-origin'
       }))
       .then(response => {

@@ -31,7 +31,7 @@ class ProcessInsights extends Component {
     $mdwUi.hubLoading(true);
     fetch(new Request(this.context.serviceRoot + '/Workflow', {
       method: 'GET',
-      headers: { Accept: 'application/json'},
+      headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
       credentials: 'same-origin'
     }))
     .then(response => {
@@ -119,7 +119,7 @@ class ProcessInsights extends Component {
       dataUrl += '&span=' + this.state.sample;
       fetch(new Request(dataUrl, {
         method: 'GET',
-        headers: { Accept: 'application/json'},
+        headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
         credentials: 'same-origin'
       }))
       .then(response => {
