@@ -19,6 +19,19 @@ uiUtil.factory('uiUtil', ['mdw', '$uibModal', function(mdw, $uibModal) {
         then(res);
       });
     },
+    getErrorDialog: function(title, message) {
+      return {
+        templateUrl: 'ui/error.html',
+        backdrop: false,
+        controller: ['$scope', function ($scope) {
+          $scope.title = title;
+          $scope.message = message;
+        }]
+      };
+    },
+    error: function(title, message) {
+      $uibModal.open(this.getErrorDialog(title, message));
+    },
     getEnterDialog: function(title, message) {
       return {
         templateUrl: 'ui/enter.html',

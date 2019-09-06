@@ -427,8 +427,8 @@ processMod.controller('ProcessDefsController', ['$scope', 'mdw', 'util', 'Proces
 }]);
 
 processMod.controller('ProcessDefController',
-    ['$scope', '$routeParams', '$route', '$location', '$filter', '$http', 'mdw', 'util', 'ProcessDef', 'ProcessSummary',
-    function($scope, $routeParams, $route, $location, $filter, $http, mdw, util, ProcessDef, ProcessSummary) {
+    ['$scope', '$routeParams', '$route', '$location', '$filter', '$http', 'mdw', 'util', 'uiUtil', 'ProcessDef', 'ProcessSummary',
+    function($scope, $routeParams, $route, $location, $filter, $http, mdw, util, uiUtil, ProcessDef, ProcessSummary) {
 
   sessionStorage.removeItem('stagingUser');
 
@@ -507,7 +507,12 @@ processMod.controller('ProcessDefController',
     }).then(function success(response) {
         $location.path('/staging/' + stagingCuid);
       }, function error(response) {
-        $scope.mdwMessages = response.data.status.message;
+        if (response.status === 404) {
+          $location.path('/staging/' + stagingCuid);
+        }
+        else {
+          uiUtil.error('Cannot Stage Asset', response.data.status.message);
+        }
       }
     );
   };

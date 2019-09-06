@@ -17,7 +17,8 @@ class AssetHeader extends Component {
       <div className="panel-heading mdw-heading" style={{borderColor:'#ddd'}}>
         <div className="mdw-heading-label">
           <div style={{marginTop:'-5px'}}>
-            <a href={hubRoot + '/packages/' + this.props.package} style={{marginRight:'1px'}}>
+            <a href={hubRoot + '/packages/' + this.props.package} style={{marginRight:'1px'}}
+              onClick={e => {e.preventDefault(); location = hubRoot + '/#/packages/' + this.props.package; }}>
               {this.props.package}
             </a>
             {'/' + this.props.assetName}
