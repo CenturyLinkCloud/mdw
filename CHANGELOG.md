@@ -1,5 +1,18 @@
 # Change Log
 
+## [6.1.25](https://github.com/CenturyLinkCloud/mdw/tree/6.1.25) (2019-09-06)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.24...6.1.25)
+
+**Implemented enhancements:**
+
+- Notify registered TaskMonitors of lifecycle changes [\#517](https://github.com/CenturyLinkCloud/mdw/issues/517)
+
+**Closed issues:**
+
+- Inflight instance definitions not parseable [\#740](https://github.com/CenturyLinkCloud/mdw/issues/740)
+- Manual task activities with invalid taskInstanceId expression [\#739](https://github.com/CenturyLinkCloud/mdw/issues/739)
+- Excel export fails for instance lists in MDWHub [\#734](https://github.com/CenturyLinkCloud/mdw/issues/734)
+
 ## [6.1.24](https://github.com/CenturyLinkCloud/mdw/tree/6.1.24) (2019-08-21)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.23...6.1.24)
 
