@@ -83,6 +83,7 @@ public class RestServlet extends ServiceServlet {
                 if (downloadFormat.equals(Listener.DOWNLOAD_FORMAT_JSON)
                         || downloadFormat.equals(Listener.DOWNLOAD_FORMAT_XML)
                         || downloadFormat.equals(Listener.DOWNLOAD_FORMAT_TEXT)) {
+                    response.setContentLength(responseString.getBytes().length);
                     response.getOutputStream().write(responseString.getBytes());
                 }
                 else if (downloadFormat.equals(Listener.DOWNLOAD_FORMAT_FILE)) {
@@ -96,6 +97,7 @@ public class RestServlet extends ServiceServlet {
                     if (file.length() > max)
                         throw new ServiceException(ServiceException.NOT_ALLOWED, file.getAbsolutePath() + " exceeds max download size (" + max + "b )");
                     response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getName() + "\"");
+                    response.setContentLengthLong(file.length());
                     try (InputStream in = new FileInputStream(file)) {
                         int read = 0;
                         byte[] bytes = new byte[8192];
@@ -105,8 +107,9 @@ public class RestServlet extends ServiceServlet {
                 }
                 else {
                     // for binary content string response will have been Base64 encoded
-                    response.getOutputStream()
-                            .write(Base64.decodeBase64(responseString.getBytes()));
+                    byte[] decoded = Base64.decodeBase64(responseString.getBytes());
+                    response.setContentLength(decoded.length);
+                    response.getOutputStream().write(decoded);
                 }
             }
             else {
@@ -114,6 +117,7 @@ public class RestServlet extends ServiceServlet {
                         && "application/json".equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE))) {
                     responseString = WebAppContext.addContextInfo(responseString, request);
                 }
+                response.setContentLength(responseString.getBytes().length);
                 response.getOutputStream().write(responseString.getBytes());
             }
         }
