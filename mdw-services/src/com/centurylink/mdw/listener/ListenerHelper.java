@@ -531,12 +531,15 @@ public class ListenerHelper {
     private boolean persistMessage(Map<String,String> metaInfo) {
         return !"true".equalsIgnoreCase(metaInfo.get(Listener.METAINFO_NO_PERSISTENCE))
                 && !"true".equalsIgnoreCase(metaInfo.get(Listener.METAINFO_NO_PERSISTENCE.toLowerCase()))
-                && !Listener.CONTENT_TYPE_DOWNLOAD.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE));
+                && !Listener.CONTENT_TYPE_DOWNLOAD.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE))
+                && !"mdw-admin".equals(metaInfo.get("app")) && !"mdw-hub".equals(metaInfo.get("app"));
     }
 
     private boolean persistMeta(Map<String,String> metaInfo) {
         return !"true".equalsIgnoreCase(metaInfo.get(Listener.METAINFO_NO_META_PERSISTENCE))
-                && !Listener.CONTENT_TYPE_DOWNLOAD.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE));
+                && !"true".equalsIgnoreCase(metaInfo.get(Listener.METAINFO_NO_META_PERSISTENCE.toLowerCase()))
+                && !Listener.CONTENT_TYPE_DOWNLOAD.equals(metaInfo.get(Listener.METAINFO_CONTENT_TYPE))
+                && !"mdw-admin".equals(metaInfo.get("app")) && !"mdw-hub".equals(metaInfo.get("app"));
     }
 
     private Long createRequestDocument(String request, Long handlerId, String path) throws EventHandlerException {
