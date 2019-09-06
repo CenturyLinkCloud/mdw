@@ -255,6 +255,7 @@ class DashboardChart extends Component {
         }
       }
     });
+    url += '&app=mdw-hub';
     if (url.endsWith('?')) {
       url = url.substring(0, url.length - 1);
     }
