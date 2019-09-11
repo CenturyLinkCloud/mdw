@@ -165,7 +165,7 @@ public abstract class ManualTaskActivity extends AbstractWait implements TaskAct
         try {
             received = getEngine().createEventWaitInstance(getActivityInstanceId(), getWaitEvent(), null, true, false);
             if (received == null)
-                received = registerWaitEvents(true, true);
+                received = registerWaitEvents(true);
         }
         catch (Exception e) {
             throw new ActivityException(-1, e.getMessage(), e);

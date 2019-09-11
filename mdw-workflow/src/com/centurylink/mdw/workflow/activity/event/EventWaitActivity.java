@@ -52,7 +52,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
      * Method that executes the logic based on the work
      */
     public void execute() throws ActivityException {
-        EventWaitInstance received = registerWaitEvents(false, true);
+        EventWaitInstance received = registerWaitEvents(false);
         if (received!=null) {
             setReturnCodeAndExitStatus(received.getCompletionCode());
             processMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
@@ -220,7 +220,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
         }
         setReturnCode(compCode);
         if (WorkStatus.STATUS_WAITING.equals(exitStatus)) {
-            this.registerWaitEvents(true, true);
+            this.registerWaitEvents(true);
             return compCode != null && (compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
                     || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ABORT)
                     || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ERROR));
@@ -231,7 +231,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
      * Typically you will not override this method
      */
     public boolean resumeWaiting(InternalEvent eventMessageDoc) throws ActivityException {
-        EventWaitInstance received = registerWaitEvents(true, true);
+        EventWaitInstance received = registerWaitEvents(true);
         if (received!=null) {
             setReturnCodeAndExitStatus(received.getCompletionCode());
             processMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));

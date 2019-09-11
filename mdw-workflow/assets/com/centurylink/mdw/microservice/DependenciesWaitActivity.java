@@ -63,7 +63,7 @@ public class DependenciesWaitActivity extends EventWaitActivity {
         setReturnCode(compCode);
         if (WorkStatus.STATUS_WAITING.equals(exitStatus)) {
             try {
-                registerWaitEvents(true, true);
+                registerWaitEvents(true);
             }
             catch (Exception e) {
                 logger.info("Error in registerWaitEvents - " + e.getMessage());

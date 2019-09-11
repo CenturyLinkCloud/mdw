@@ -49,7 +49,20 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
         return Attribute.parseTable(attVal, ',', ';', 3);
     }
 
-    protected EventWaitInstance registerWaitEvents(boolean reregister, boolean check_if_arrvied)
+    /**
+     * Register activity wait event names.
+     */
+    protected EventWaitInstance registerWaitEvents(boolean reregister)
+            throws ActivityException {
+        return registerWaitEvents(reregister, true);
+    }
+
+    @Deprecated
+    /**
+     * Deprecated Pre-arrival check is handled separately.
+     * Use {@link #registerWaitEvents(boolean) registerWaitEvents}.
+     */
+    protected EventWaitInstance registerWaitEvents(boolean reregister, boolean suppressNotify)
     throws ActivityException {
         List<String[]> eventSpecs = this.getWaitEventSpecs();
         if (eventSpecs.isEmpty()) return null;
@@ -74,7 +87,7 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
                     this.getActivityInstanceId(),
                     eventNames,
                     eventCompletionCodes,
-                    eventOccurances, !check_if_arrvied, reregister);
+                    eventOccurances, !suppressNotify, reregister);
             return received;
         } catch (Exception ex) {
             super.logexception(ex.getMessage(), ex);
@@ -126,7 +139,7 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
         else compCode = actInstStatusName + "::" + compCode;
         this.setReturnCode(compCode);
         if (actInstStatus.equals(WorkStatus.STATUS_WAITING)) {
-            this.registerWaitEvents(true, true);
+            this.registerWaitEvents(true);
         }
         return actInstStatus;
     }

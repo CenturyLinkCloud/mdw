@@ -82,7 +82,7 @@ public class TimerWaitActivity extends AbstractWait {
     @Override
     public void execute() throws ActivityException {
         int seconds = getWaitPeriodInSeconds();
-        EventWaitInstance received = registerWaitEvents(false, true);
+        EventWaitInstance received = registerWaitEvents(false);
         sendDelayedResumeMessage(seconds);
         if (received!=null) {
             this.setReturnCode(received.getCompletionCode());
@@ -189,7 +189,7 @@ public class TimerWaitActivity extends AbstractWait {
             throw new ActivityException(-1, e.getMessage(), e);
         }
 
-        EventWaitInstance received = registerWaitEvents(true,true);
+        EventWaitInstance received = registerWaitEvents(true);
         if (received!=null) {
              this.setReturnCode(received.getCompletionCode());
              processOtherMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));

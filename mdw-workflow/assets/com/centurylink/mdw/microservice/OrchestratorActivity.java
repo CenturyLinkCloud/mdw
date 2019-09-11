@@ -291,7 +291,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         }
 
         if (!getEngine().isInService()) {
-            EventWaitInstance received = registerWaitEvents(false, true);
+            EventWaitInstance received = registerWaitEvents(false);
             if (received != null) {
                 resumeOnOtherEvent(
                     getExternalEventInstanceDetails(received.getMessageDocumentId()),
