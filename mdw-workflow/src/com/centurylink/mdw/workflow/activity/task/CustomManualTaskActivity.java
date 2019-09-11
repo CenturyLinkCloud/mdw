@@ -67,7 +67,7 @@ public class CustomManualTaskActivity extends ManualTaskActivity implements Susp
 
             if (needSuspend()) {
                 getEngine().createEventWaitInstance(getActivityInstanceId(), "TaskAction-" + getActivityInstanceId(), null, true, true);
-                EventWaitInstance received = registerWaitEvents(false,true);
+                EventWaitInstance received = registerWaitEvents(false);
                 if (received != null)
                   resume(getExternalEventInstanceDetails(received.getMessageDocumentId()), received.getCompletionCode());
             }

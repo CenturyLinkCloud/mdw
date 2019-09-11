@@ -169,7 +169,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
                 if (i==0) emptyPlan = true;
                 this.updateExecutionPlan(process_plan);
                 if (!engine.isInService()) {
-                    EventWaitInstance received = registerWaitEvents(false, true);
+                    EventWaitInstance received = registerWaitEvents(false);
                     if (received!=null)
                         resumeOnOtherEvent(getExternalEventInstanceDetails(received.getMessageDocumentId()), received.getCompletionCode());
                 }

@@ -58,7 +58,7 @@ public class SynchronizationActivity extends AbstractWait implements com.century
     public  void  execute() throws ActivityException{
         isSynchronized = checkIfSynchronized();
         if (!isSynchronized) {
-            EventWaitInstance received = registerWaitEvents(false, true);
+            EventWaitInstance received = registerWaitEvents(false);
             if (received!=null)
                 resume(getExternalEventInstanceDetails(received.getMessageDocumentId()), received.getCompletionCode());
         }
@@ -225,7 +225,7 @@ public class SynchronizationActivity extends AbstractWait implements com.century
             super.lockActivityInstance();
             isSynchronized = this.checkIfSynchronized();
             if (isSynchronized) return true;
-            EventWaitInstance received = registerWaitEvents(true, true);
+            EventWaitInstance received = registerWaitEvents(true);
             if (received!=null) {
                  boolean done = resume(getExternalEventInstanceDetails(received.getMessageDocumentId()),
                          received.getCompletionCode());

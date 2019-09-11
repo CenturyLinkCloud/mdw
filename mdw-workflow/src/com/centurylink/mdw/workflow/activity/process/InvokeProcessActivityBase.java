@@ -53,7 +53,7 @@ public abstract class InvokeProcessActivityBase extends AbstractWait implements 
             if (allSubProcessCompleted()) {
                 return true;
             } else {
-                EventWaitInstance received = registerWaitEvents(true, true);
+                EventWaitInstance received = registerWaitEvents(true);
                 if (received!=null) {
                     this.setReturnCode(received.getCompletionCode());
                     processOtherMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));

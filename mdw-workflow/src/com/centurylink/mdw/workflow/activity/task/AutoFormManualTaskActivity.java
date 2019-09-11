@@ -75,7 +75,7 @@ public class AutoFormManualTaskActivity extends ManualTaskActivity {
                         this.getActivityInstanceId(),
                         taskInstCorrelationId,
                         EventType.EVENTNAME_FINISH, true, true);
-                EventWaitInstance received = registerWaitEvents(false,true);
+                EventWaitInstance received = registerWaitEvents(false);
                 if (received!=null)
                         resume(getExternalEventInstanceDetails(received.getMessageDocumentId()),
                                          received.getCompletionCode());

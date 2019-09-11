@@ -33,7 +33,7 @@ public class EventCheckActivity extends EventWaitActivity {
      * Method that executes the logic based on the work
      */
     public void execute() throws ActivityException {
-        EventWaitInstance received = registerWaitEvents(false, true);
+        EventWaitInstance received = registerWaitEvents(false);
         if (received!=null) {
             setCompCodeAndExitStatus(received.getCompletionCode());
             processMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
@@ -79,7 +79,7 @@ public class EventCheckActivity extends EventWaitActivity {
         }
         setReturnCode(compCode);
         if (WorkStatus.STATUS_WAITING.equals(exitStatus)) {
-            this.registerWaitEvents(true, true);
+            this.registerWaitEvents(true);
             return compCode != null && (compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
                     || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ABORT)
                     || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ERROR));
@@ -94,7 +94,7 @@ public class EventCheckActivity extends EventWaitActivity {
             setReturnCode(null);
             return true;
         }
-        EventWaitInstance received = registerWaitEvents(true, true);
+        EventWaitInstance received = registerWaitEvents(true);
         if (received!=null) {
             setCompCodeAndExitStatus(received.getCompletionCode());
             processMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
