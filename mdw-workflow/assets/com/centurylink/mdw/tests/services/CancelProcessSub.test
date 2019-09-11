@@ -4,7 +4,7 @@ start process('CancelMain') {
     variables = [ testCase: 'sub' ]
 }
 
-sleep 10
+sleep 30
 
 load process // make masterProcessInstance available
 
