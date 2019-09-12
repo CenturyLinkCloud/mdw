@@ -67,6 +67,8 @@ public class MdwMain {
             System.out.println("  deployPath: " + deployPath);
             System.out.println("  contextPath: " + contextPath);
 
+            System.setProperty("javax.xml.bind.JAXBContextFactory", "com.sun.xml.bind.v2.ContextFactory");
+
             logger = LoggerUtil.getStandardLogger();
             ApplicationContext.setDeployPath(deployPath);
 
