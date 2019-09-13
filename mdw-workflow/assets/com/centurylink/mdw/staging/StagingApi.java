@@ -1,5 +1,6 @@
 package com.centurylink.mdw.staging;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.WebSocketProgressMonitor;
@@ -136,8 +137,8 @@ public class StagingApi extends JsonRestService {
         User user = UserGroupCache.getUser(cuid);
         if (user == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "User not found: " + cuid);
-        WebSocketProgressMonitor progressMonitor = new WebSocketProgressMonitor(STAGING + cuid,
-                "Prepare staging area for " + user.getName());
+        WebSocketProgressMonitor progressMonitor = new WebSocketProgressMonitor(STAGING +
+                ApplicationContext.getRuntimeEnvironment() + "_" + cuid, "Prepare staging area for " + user.getName());
         return getStagingServices().prepareStagingArea(cuid, progressMonitor);
     }
 

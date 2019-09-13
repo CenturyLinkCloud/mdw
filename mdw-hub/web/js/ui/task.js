@@ -163,7 +163,7 @@ taskMod.controller('MdwTaskTemplateController',
           $scope.$parent.asset.content = $scope.source.content;
         }
       },
-      basePath: '/mdw/lib/ace-builds/src-min-noconflict',
+      basePath: mdw.roots.hub + '/lib/ace-builds/src-min-noconflict',
     };
   }
 }]);

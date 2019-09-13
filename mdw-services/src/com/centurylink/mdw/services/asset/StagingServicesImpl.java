@@ -54,7 +54,7 @@ public class StagingServicesImpl implements StagingServices {
     }
 
     public File getStagingDir(String cuid) {
-        return new File(getStagingDir() + "/" + STAGING + cuid);
+        return new File(getStagingDir() + "/" + STAGING + ApplicationContext.getRuntimeEnvironment() + "_" + cuid);
     }
 
     /**
@@ -82,6 +82,11 @@ public class StagingServicesImpl implements StagingServices {
     }
 
     public StagingArea getUserStagingArea(String cuid) throws ServiceException {
+        synchronized (inProgressPrepares) {
+            if (inProgressPrepares.containsKey(cuid))
+                return inProgressPrepares.get(cuid);
+        }
+
         GitBranch stagingBranch = getStagingBranch(cuid, getMainVersionControl());
         if (stagingBranch == null)
             return null;
@@ -92,14 +97,15 @@ public class StagingServicesImpl implements StagingServices {
     }
 
     public List<StagingArea> getStagingAreas() {
+        String prefix = STAGING + ApplicationContext.getRuntimeEnvironment() + "_";
         List<StagingArea> stagingAreas = new ArrayList<>();
         File stagingDir = getStagingDir();
         if (stagingDir != null) {
             File[] files = stagingDir.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    if (file.isDirectory() && file.getName().startsWith(STAGING)) {
-                        String cuid = file.getName().substring(STAGING.length());
+                    if (file.isDirectory() && file.getName().startsWith(prefix)) {
+                        String cuid = file.getName().substring(prefix.length());
                         User user = UserGroupCache.getUser(cuid);
                         if (user != null)
                             stagingAreas.add(new StagingArea(user.getCuid(), user.getName()));
@@ -113,7 +119,9 @@ public class StagingServicesImpl implements StagingServices {
     private GitBranch getStagingBranch(String cuid, VersionControlGit vcGit) throws ServiceException {
         try {
             List<GitBranch> branches = vcGit.getRemoteBranches();
-            Optional<GitBranch> opt = branches.stream().filter(b -> b.getName().equals(STAGING + cuid)).findFirst();
+            Optional<GitBranch> opt = branches.stream().filter(b -> {
+                return b.getName().equals(STAGING + ApplicationContext.getRuntimeEnvironment() + "_" + cuid);
+            }).findFirst();
             return opt.orElse(null);
         }
         catch (ServiceException ex) {
@@ -130,7 +138,7 @@ public class StagingServicesImpl implements StagingServices {
     public StagingArea prepareStagingArea(String cuid, GitProgressMonitor progressMonitor) throws ServiceException {
         User user = getUser(cuid);
         StagingArea userStagingArea = new StagingArea(user.getCuid(), user.getName());
-        String stagingBranchName = STAGING + cuid;
+        String stagingBranchName = STAGING + ApplicationContext.getRuntimeEnvironment() + "_" + cuid;
         userStagingArea.setBranch(new GitBranch(null, stagingBranchName));
 
         synchronized (inProgressPrepares) {
