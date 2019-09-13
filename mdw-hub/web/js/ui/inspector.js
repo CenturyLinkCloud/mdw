@@ -450,7 +450,7 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
             $scope.$parent.setDirty($scope.$parent.process);
           }
         },
-        basePath: '/mdw/lib/ace-builds/src-min-noconflict',
+        basePath: mdw.roots.hub + '/lib/ace-builds/src-min-noconflict',
       };
     }
     else {

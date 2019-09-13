@@ -43,7 +43,7 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
           else
             $scope.aceDirty = true;
         },
-        basePath: '/mdw/lib/ace-builds/src-min-noconflict'
+        basePath: mdw.roots.hub + '/lib/ace-builds/src-min-noconflict'
       };
 
       $scope.initVersion();
@@ -264,7 +264,7 @@ editMod.controller('InstanceEditorController', ['$scope', '$routeParams', 'mdw',
           else
             $scope.aceDirty = true;
         },
-        basePath: '/mdw/lib/ace-builds/src-min-noconflict'
+        basePath: mdw.roots.hub + '/lib/ace-builds/src-min-noconflict'
       };
 
       $scope.asset.url = mdw.roots.hub + '/asset/' + $scope.packageName + '/' +  $scope.asset.name + '/' + $scope.instanceId;
