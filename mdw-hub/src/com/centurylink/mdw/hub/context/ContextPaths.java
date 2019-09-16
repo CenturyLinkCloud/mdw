@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.util.ExpressionUtil;
@@ -28,7 +29,7 @@ public class ContextPaths {
     /**
      * Root (/) and /index.html are allowed to be handled by base hub.
      */
-    private static final List<String> DEFAULT_NON_HUB_ROOTS = new ArrayList<>();
+    private static final List<String> DEFAULT_NON_HUB_ROOTS = new CopyOnWriteArrayList<>();
     static {
         DEFAULT_NON_HUB_ROOTS.add("/api");
         DEFAULT_NON_HUB_ROOTS.add("/api-docs");
