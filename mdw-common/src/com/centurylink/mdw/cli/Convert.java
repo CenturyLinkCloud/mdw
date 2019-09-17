@@ -21,10 +21,13 @@ import com.centurylink.mdw.config.OrderedProperties;
 import com.centurylink.mdw.config.YamlBuilder;
 import com.centurylink.mdw.config.YamlProperties;
 import com.centurylink.mdw.dataaccess.AssetRevision;
+import com.centurylink.mdw.export.ProcessExporter;
 import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.asset.Pagelet;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.file.VersionProperties;
+import com.itextpdf.text.log.SysoCounter;
+import com.itextpdf.text.log.SysoLogger;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -34,44 +37,57 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 @Parameters(commandNames="convert", commandDescription="Convert mdw/app property files, or package.json files to yaml", separators="=")
-public class Convert extends Setup {
+public class Convert extends Setup implements ProcessExporter {
 
-    @Parameter(names="--packages", description="Update package.json files to package.yaml (ignores other options)")
+    @Parameter(names = "--packages", description = "Update package.json files to package.yaml (ignores other options)")
     private boolean packages;
-    public boolean isPackages() { return packages; }
-    public void setPackages(boolean packages) { this.packages = packages; }
 
-    @Parameter(names="--processes", description="Update .proc json files to yaml format (ignores other options)")
+    public boolean isPackages() {
+        return packages;
+    }
+
+    public void setPackages(boolean packages) {
+        this.packages = packages;
+    }
+
+    @Parameter(names = "--processes", description = "Update .proc json files to yaml format (ignores other options)")
     private boolean processes;
-    public boolean isProcesses() { return processes; }
-    public void setProcesses(boolean processes) { this.processes = processes; }
 
-    @Parameter(names="--input", description="Input property file or impl file")
+    public boolean isProcesses() {
+        return processes;
+    }
+
+    public void setProcesses(boolean processes) {
+        this.processes = processes;
+    }
+
+    @Parameter(names = "--input", description = "Input property file or impl file")
     private File input;
+
     public File getInput() {
         return input;
     }
 
-    @Parameter(names="--map", description="Optional compatibility mapping file")
+    @Parameter(names = "--map", description = "Optional compatibility mapping file")
     private File map;
+
     public File getMap() {
         return map;
     }
 
-    @Parameter(names="--prefix", description="Optional common prop prefix")
+    @Parameter(names = "--prefix", description = "Optional common prop prefix")
     private String prefix;
+
     public String getPrefix() {
         return prefix;
     }
 
-    @Parameter(names="--language", description="Output language for impls")
+    @Parameter(names = "--language", description = "Output language for impls")
     private String language;
+
     public String getLanguage() {
         return language;
     }
@@ -87,17 +103,21 @@ public class Convert extends Setup {
     @Override
     public Convert run(ProgressMonitor... progressMonitors) throws IOException {
 
+       // ProcessExporter exporter = getProcessExporter();
+        List<Dependency> dependencies = getDependencies();
+        if (dependencies != null) {
+            for (Dependency dependency : dependencies) {
+                dependency.run(progressMonitors);
+            }
+        }
         if (isPackages()) {
             convertPackages();
-        }
-        else if (isProcesses()) {
+        } else if (isProcesses()) {
             convertProcesses();
-        }
-        else {
+        } else {
             if (input != null && input.getName().endsWith(".impl")) {
                 convertImplementor();
-            }
-            else {
+            } else {
                 convertProperties();
             }
         }
@@ -108,7 +128,7 @@ public class Convert extends Setup {
     protected void convertPackages() throws IOException {
 
         getOut().println("Converting packages:");
-        Map<String,File> packageDirs = getAssetPackageDirs();
+        Map<String, File> packageDirs = getAssetPackageDirs();
         for (String packageName : packageDirs.keySet()) {
             getOut().println("  " + packageName);
             File packageDir = packageDirs.get(packageName);
@@ -119,15 +139,13 @@ public class Convert extends Setup {
                 if (jsonFile.exists()) {
                     getOut().println("    Removing redundant file: " + jsonFile);
                     new Delete(jsonFile).run();
-                }
-                else {
+                } else {
                     getOut().println("    Ignoring existing: " + yamlFile);
                 }
-            }
-            else {
+            } else {
                 getOut().println("    Converting: " + jsonFile);
                 JSONObject json = new JSONObject(new String(Files.readAllBytes(Paths.get(jsonFile.getPath()))));
-                Map<String,String> vals = new HashMap<>();
+                Map<String, String> vals = new HashMap<>();
                 vals.put("name", json.getString("name"));
                 int version = AssetRevision.parsePackageVersion(json.getString("version"));
                 vals.put("version", AssetRevision.formatPackageVersion(++version));
@@ -148,7 +166,7 @@ public class Convert extends Setup {
 
     protected void convertProcesses() throws IOException {
         getOut().println("Converting processes:");
-        Map<String,List<File>> pkgProcFiles = findAllAssets("proc");
+        Map<String, List<File>> pkgProcFiles = findAllAssets("proc");
         for (String pkg : pkgProcFiles.keySet()) {
             List<File> procFiles = pkgProcFiles.get(pkg);
             for (File procFile : procFiles) {
@@ -156,7 +174,7 @@ public class Convert extends Setup {
                     Process process = loadProcess(pkg, procFile, true);
                     String yaml = Yamlable.toString(process, 2);
                     getOut().println("  saving " + procFile);
-                    Files.write(procFile.toPath(),yaml.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+                    Files.write(procFile.toPath(), yaml.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
                     File versionsFile = new File(procFile.getParent() + "/" + META_DIR + "/versions");
                     VersionProperties versionProperties = new VersionProperties(versionsFile);
                     versionProperties.setProperty(process.getName() + ".proc", String.valueOf(process.getVersion() + 1));
@@ -170,8 +188,7 @@ public class Convert extends Setup {
         InputStream mapIn;
         if (map == null) {
             mapIn = getClass().getClassLoader().getResourceAsStream("META-INF/mdw/configurations.map");
-        }
-        else {
+        } else {
             getOut().println("Mapping from " + map.getAbsolutePath());
             mapIn = new FileInputStream(map);
         }
@@ -194,8 +211,7 @@ public class Convert extends Setup {
             File out = new File(getConfigRoot() + "/" + baseName + ".yaml");
             getOut().println("Writing output config: " + out.getAbsolutePath());
             Files.write(Paths.get(out.getPath()), yamlBuilder.toString().getBytes());
-        }
-        catch (ReflectiveOperationException ex) {
+        } catch (ReflectiveOperationException ex) {
             throw new IOException(ex.getMessage(), ex);
         }
     }
@@ -225,7 +241,7 @@ public class Convert extends Setup {
             imports += "import " + category + (suffix.equals("kt") ? "" : ";") + "\n";
         }
         String categoryClass = category.substring(category.lastIndexOf('.') + 1);
-        annotations += ", category=" + categoryClass + (suffix.equals("kt") ?  "::class" : ".class");
+        annotations += ", category=" + categoryClass + (suffix.equals("kt") ? "::class" : ".class");
 
         String icon = "shape:activity";
         if (implJson.has("icon"))
@@ -238,8 +254,7 @@ public class Convert extends Setup {
                 JSONObject pagelet = new Pagelet(pageletXml).getJson();
                 getOut().println("pagelet for formatted pasting: " + pagelet.toString(2));
                 annotations += ",\n                pagelet=" + JSONObject.quote(pagelet.toString());
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 throw new IOException(ex);
             }
         }
@@ -249,7 +264,7 @@ public class Convert extends Setup {
         downloadTemplates();
         File templateFile = new File(getTemplateDir() + "/assets/code/activity/general_" + suffix);
         String template = new String(Files.readAllBytes(templateFile.toPath()));
-        Map<String,Object> values = new HashMap<>();
+        Map<String, Object> values = new HashMap<>();
         values.put("packageName", implClass.substring(0, implClass.lastIndexOf(".")));
         values.put("className", implClass.substring(implClass.lastIndexOf(".") + 1));
         values.put("annotationsImports", imports);
@@ -258,4 +273,17 @@ public class Convert extends Setup {
         Files.write(outFile.toPath(), source.getBytes(), StandardOpenOption.CREATE_NEW);
     }
 
+    @Override
+    public byte[] export(Process process) throws IOException {
+        System.out.println("");
+        return null;
+    }
+
+    @Override
+    public List<Dependency> getDependencies() {
+        List<Dependency> dependencies = new ArrayList<>();
+        dependencies.add(new Dependency("http://repo.maven.apache.org/maven2",
+                "org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar", 41203L));
+        return dependencies;
+    }
 }
