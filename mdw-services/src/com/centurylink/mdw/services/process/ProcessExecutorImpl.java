@@ -748,8 +748,7 @@ class ProcessExecutorImpl {
             Activity actVO = processVO.getActivity(activityId);
             Package pkg = PackageCache.getProcessPackage(getMainProcessDefinition(procInst).getId());
             try {
-                GeneralActivity activity = pkg.getActivityImplementor(actVO.getImplementor());
-                ar.activity = (BaseActivity)activity;
+                ar.activity = (BaseActivity)getActivityInstance(pkg, actVO.getImplementor());
             } catch (Throwable e) {
                 String logtag = this.logtag(procInst.getProcessId(), procInst.getId(), activityId, 0L);
                 logger.exception(logtag, "Failed to create activity implementor instance", e);
@@ -1339,8 +1338,7 @@ class ProcessExecutorImpl {
         try {
             // use design-time package
             Package pkg = PackageCache.getProcessPackage(getMainProcessDefinition(procInst).getId());
-
-            BaseActivity cntrActivity = (BaseActivity)pkg.getActivityImplementor(actVO.getImplementor());
+            BaseActivity cntrActivity = (BaseActivity)getActivityInstance(pkg, actVO.getImplementor());
             Tracked t = cntrActivity.getClass().getAnnotation(Tracked.class);
             if (t != null) {
                 String logTag = logtag(procInst.getProcessId(), procInst.getId(), actId, actInst.getId());
@@ -2033,5 +2031,13 @@ class ProcessExecutorImpl {
             return null;
         else
             return PackageCache.getPackage(process.getPackageName());
+    }
+
+    private GeneralActivity getActivityInstance(Package pkg, String implClass) throws Exception {
+        ActivityImplementor activityImplementor = ImplementorCache.get(implClass);
+        if (activityImplementor != null && activityImplementor.getSupplier() != null) {
+            return activityImplementor.getSupplier().get();
+        }
+        return pkg.getActivityImplementor(implClass);
     }
 }

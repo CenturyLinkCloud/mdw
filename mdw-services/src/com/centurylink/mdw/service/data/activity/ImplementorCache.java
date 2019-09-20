@@ -95,6 +95,10 @@ public class ImplementorCache implements PreloadableCache {
         loadCache();
     }
 
+    /**
+     * This purposefully only finds asset-based activities.
+     * Supplier-driven activities are added separately (eg: mdw-spring-boot AnnotationsScanner).
+     */
     private ActivityImplementor getAnnotatedImpl(Package pkg, AssetInfo assetInfo) {
         String implClass = pkg.getName() + "." + assetInfo.getRootName();
         try {
