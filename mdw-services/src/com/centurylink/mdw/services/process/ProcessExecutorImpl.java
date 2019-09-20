@@ -1597,7 +1597,21 @@ class ProcessExecutorImpl {
                 "ProcessInstance has been cancelled.", null);
         edao.setProcessInstanceStatus(pProcessInst.getId(), WorkStatus.STATUS_CANCELLED);
         edao.removeEventWaitForProcessInstance(pProcessInst.getId());
+        this.cancelErrorHandlers(pProcessInst);
         this.cancelTasksOfProcessInstance(pProcessInst);
+    }
+
+    private void cancelErrorHandlers(ProcessInstance procInst) throws Exception {
+        List<ActivityInstance> activityInstanceList = edao.getActivityInstancesForProcessInstanceByStatus(procInst.getId(), 3);
+        if (activityInstanceList != null) {
+            for (ActivityInstance activity : activityInstanceList) {
+                List<ProcessInstance> processInstanceList =
+                        edao.getProcessInstanceBySecondaryOwner("ACTIVITY_INSTANCE", activity.getId());
+                for (ProcessInstance pi : processInstanceList) {
+                    cancelProcessInstance(pi);
+                }
+            }
+        }
     }
 
     /////////////////////// other

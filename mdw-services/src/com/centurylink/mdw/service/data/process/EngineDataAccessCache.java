@@ -807,4 +807,32 @@ public class EngineDataAccessCache implements EngineDataAccess {
     public void stopTransaction(TransactionWrapper transaction) throws DataAccessException {
         if (edadb!=null) edadb.stopTransaction(transaction);
     }
+
+    public List<ProcessInstance> getProcessInstanceBySecondaryOwner(String owner, Long ownerId)
+            throws SQLException {
+         if (cache_process==CACHE_ONLY) {
+            List<ProcessInstance> ret = new ArrayList<>();
+            for (ProcessInstance procInst : procInstCache.values()) {
+                if (!procInst.getSecondaryOwner().equals(owner)) continue;
+                if (!procInst.getSecondaryOwnerId().equals(ownerId)) continue;
+                ret.add(procInst);
+            }
+            return ret;
+        } else
+            return edadb.getProcessInstanceBySecondaryOwner(owner, ownerId);
+    }
+
+    public List<ActivityInstance> getActivityInstancesForProcessInstanceByStatus(Long procInstId, Integer status) throws SQLException {
+       if (cache_process == CACHE_ONLY) {
+            List<ActivityInstance> ret = new ArrayList<>();
+            for (ActivityInstance actInst : activityInstCache.values()) {
+                if (!actInst.getProcessInstanceId().equals(procInstId)) continue;
+                if (!actInst.getStatus().equals(WorkStatus.STATUS_FAILED)) continue;
+                ret.add(actInst);
+            }
+            return ret;
+        } else
+            return edadb.getActivityInstancesForProcessInstanceByStatus(procInstId, status);
+    }
+
 }

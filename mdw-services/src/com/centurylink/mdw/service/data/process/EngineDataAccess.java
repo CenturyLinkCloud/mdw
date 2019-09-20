@@ -202,4 +202,8 @@ public interface EngineDataAccess {
     DocumentDbAccess getDocumentDbAccess();
 
     int getPerformanceLevel();
+
+    List<ActivityInstance> getActivityInstancesForProcessInstanceByStatus(Long procInstId, Integer status) throws SQLException;
+
+    List<ProcessInstance> getProcessInstanceBySecondaryOwner(String owner, Long ownerId) throws SQLException ;
 }
