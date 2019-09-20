@@ -1,6 +1,7 @@
 package com.centurylink.mdw.service.data.activity;
 
 import com.centurylink.mdw.activity.types.GeneralActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.cache.impl.PackageCache;
@@ -32,6 +33,9 @@ public class ImplementorCache implements PreloadableCache {
 
     private static Map<String,ActivityImplementor> implementors = new ConcurrentHashMap<>();
     public static Map<String,ActivityImplementor> getImplementors() { return implementors; }
+    public static void addImplementor(ActivityImplementor implementor) {
+        implementors.put(implementor.getImplementorClass(), implementor);
+    }
 
     public static ActivityImplementor get(String implClass) {
         return implementors.get(implClass);
@@ -97,8 +101,7 @@ public class ImplementorCache implements PreloadableCache {
             String contents = new String(Files.readAllBytes(assetInfo.getFile().toPath()));
             if (contents.contains("@Activity")) {
                 GeneralActivity activity = pkg.getActivityImplementor(implClass);
-                com.centurylink.mdw.annotations.Activity annotation =
-                        activity.getClass().getAnnotation(com.centurylink.mdw.annotations.Activity.class);
+                Activity annotation = activity.getClass().getAnnotation(Activity.class);
                 return new ActivityImplementor(implClass, annotation);
             }
         }
@@ -107,6 +110,5 @@ public class ImplementorCache implements PreloadableCache {
         }
         return null;
     }
-
 
 }
