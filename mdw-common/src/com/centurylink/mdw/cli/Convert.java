@@ -40,7 +40,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.*;
 
 @Parameters(commandNames="convert", commandDescription="Convert mdw/app property files, or package.json files to yaml", separators="=")
-public class Convert extends Setup implements ProcessExporter {
+public class Convert extends Setup  {
 
     @Parameter(names = "--packages", description = "Update package.json files to package.yaml (ignores other options)")
     private boolean packages;
@@ -103,7 +103,7 @@ public class Convert extends Setup implements ProcessExporter {
     @Override
     public Convert run(ProgressMonitor... progressMonitors) throws IOException {
 
-       // ProcessExporter exporter = getProcessExporter();
+       
         List<Dependency> dependencies = getDependencies();
         if (dependencies != null) {
             for (Dependency dependency : dependencies) {
@@ -273,13 +273,7 @@ public class Convert extends Setup implements ProcessExporter {
         Files.write(outFile.toPath(), source.getBytes(), StandardOpenOption.CREATE_NEW);
     }
 
-    @Override
-    public byte[] export(Process process) throws IOException {
-        System.out.println("");
-        return null;
-    }
 
-    @Override
     public List<Dependency> getDependencies() {
         List<Dependency> dependencies = new ArrayList<>();
         dependencies.add(new Dependency("http://repo.maven.apache.org/maven2",
