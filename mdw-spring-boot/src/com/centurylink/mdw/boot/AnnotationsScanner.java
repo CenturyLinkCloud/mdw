@@ -1,5 +1,6 @@
 package com.centurylink.mdw.boot;
 
+import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.service.data.activity.ImplementorCache;
@@ -37,6 +38,10 @@ public class AnnotationsScanner implements BeanFactoryAware {
         }
     }
 
+    /**
+     * TODO: Only handles @Activity annotations at the moment.
+     * @Monitor would also be a good candidate.
+     */
     private ClassPathScanningCandidateComponentProvider createScannerComponentProvider() {
         ClassPathScanningCandidateComponentProvider provider
                 = new ClassPathScanningCandidateComponentProvider(false);
@@ -47,9 +52,18 @@ public class AnnotationsScanner implements BeanFactoryAware {
     private ActivityImplementor addImplementor(BeanDefinition beanDef) {
         try {
             Class<?> cl = Class.forName(beanDef.getBeanClassName());
-            Activity annotation = cl.getAnnotation(Activity.class);
-            ActivityImplementor implementor = new ActivityImplementor(cl.getName(), annotation);
-            ImplementorCache.addImplementor(implementor);
+            // make sure not to add any asset-based activity implementors
+            if (!ImplementorCache.getImplementors().containsKey(cl.getName())) {
+                Activity annotation = cl.getAnnotation(Activity.class);
+                ActivityImplementor implementor = new ActivityImplementor(cl.getName(), annotation);
+                implementor.setSupplier(() -> {
+                    if (beanDef.isSingleton()) {
+                        throw new IllegalArgumentException("Bean declaration for activity '" + cl.getName() + "' must not be singleton");
+                    }
+                    return (GeneralActivity) beanFactory.getBean(cl);
+                });
+                ImplementorCache.addImplementor(implementor);
+            }
         }
         catch (Exception ex) {
             System.err.println("Cannot load annotations for bean: " + beanDef);

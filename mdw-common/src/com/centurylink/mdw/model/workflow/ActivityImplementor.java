@@ -24,6 +24,8 @@ import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.model.Jsonable;
 
+import java.util.function.Supplier;
+
 public class ActivityImplementor implements Comparable<ActivityImplementor>, Jsonable {
 
     public ActivityImplementor(String implClass, Activity annotation) {
@@ -98,6 +100,13 @@ public class ActivityImplementor implements Comparable<ActivityImplementor>, Jso
     private boolean hidden;
     public boolean isHidden() { return hidden; }
     public void setHidden(boolean hidden) { this.hidden = hidden; }
+
+    /**
+     * External means not an asset (ie: src/main/java).
+     */
+    private Supplier<GeneralActivity> supplier;
+    public Supplier<GeneralActivity> getSupplier() { return supplier; }
+    public void setSupplier(Supplier<GeneralActivity> supplier) { this.supplier = supplier; }
 
     public String getSimpleName() {
         return implementorClass.substring(implementorClass.lastIndexOf('.') + 1);
