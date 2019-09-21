@@ -9,8 +9,16 @@ class UserStage extends Component {
     super(...args);
     this.collapse = this.collapse.bind(this);
     this.expand = this.expand.bind(this);
+    this.isAssetSelected = this.isAssetSelected.bind(this);
+    this.toggleAsset = this.toggleAsset.bind(this);
+    this.isPackageSelected = this.isPackageSelected.bind(this);
+    this.togglePackage = this.togglePackage.bind(this);
 
-    this.state = { stagedAssets: undefined };
+    this.state = { 
+      stagedAssets: undefined,
+      selectedPackages: [],
+      selectedAssets: []
+     };
   }
 
   collapse(pkg) {
@@ -23,6 +31,62 @@ class UserStage extends Component {
     if (this.props.onExpand) {
       this.props.onExpand(pkg);
     }
+  }
+  
+  isAssetSelected(asset) {
+    return this.state.selectedAssets.indexOf(asset) >= 0;
+  }
+  toggleAsset(asset) {
+    const selectedAssets = [...this.state.selectedAssets];
+    const idx = selectedAssets.indexOf(asset);
+    const selectedPackages = [...this.state.selectedPackages];
+    if (idx >= 0) {
+      selectedAssets.splice(idx, 1);
+      const pkg = asset.substring(0, asset.indexOf('/'));
+      const pkgIdx = selectedPackages.indexOf(pkg);
+      if (pkgIdx >= 0) {
+        selectedPackages.splice(pkgIdx, 1);
+      }
+    }
+    else {
+      selectedAssets.push(asset);
+    }
+    this.setState({
+      stagedAssets: this.state.stagedAssets,
+      selectedPackages: selectedPackages,
+      selectedAssets: selectedAssets
+    }, () => {
+      if (idx >= 0 && this.props.onDeselect()) {
+        this.props.onDeselect();
+      }
+    });
+  }
+
+  isPackageSelected(pkg) {
+    return this.state.selectedPackages.indexOf(pkg) >= 0;
+  }
+  togglePackage(pkg) {
+    const selectedPackages = [...this.state.selectedPackages];
+    const idx = selectedPackages.indexOf(pkg);
+    let selectedAssets = this.state.selectedAssets.filter(asset => !asset.startsWith(pkg + '/'));
+    if (idx >= 0) {
+      selectedPackages.splice(idx, 1);
+    }
+    else {
+      selectedPackages.push(pkg);
+      this.state.stagedAssets[pkg].forEach(stagedAsset => {
+        selectedAssets.push(pkg + '/' + stagedAsset.name);
+      });
+    }
+    this.setState({
+      stagedAssets: this.state.stagedAssets,
+      selectedPackages: selectedPackages,
+      selectedAssets: selectedAssets
+    }, () => {
+      if (idx >= 0 && this.props.onDeselect()) {
+        this.props.onDeselect();
+      }
+    });
   }
   
   componentDidMount() {
@@ -55,12 +119,36 @@ class UserStage extends Component {
           }
         });
         sessionStorage.setItem('stagingPkgCollapsedState', JSON.stringify(packageCollapsedState));
-        this.setState({stagedAssets: json});
+        this.setState({
+          stagedAssets: json,
+          selectedPackages: [],
+          selectedAssets: []
+        });
       }
       else {
         $mdwUi.showMessage(json.status.message);
       }
     });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.allSelect !== prevProps.allSelect) {
+      const selectedPackages = [];
+      const selectedAssets = [];
+      if (this.props.allSelect) {
+        Object.keys(this.state.stagedAssets).forEach(pkg => {
+          selectedPackages.push(pkg);
+          this.state.stagedAssets[pkg].forEach(stagedAsset => {
+            selectedAssets.push(pkg + '/' + stagedAsset.name);
+          });
+        });
+      }
+      this.setState({
+        stagedAssets: this.state.stagedAssets,
+        selectedPackages: selectedPackages,
+        selectedAssets: selectedAssets
+      });
+    }
   }
 
   render() {
@@ -84,7 +172,10 @@ class UserStage extends Component {
                   return (
                     <div className="mdw-sub" key={i}>
                       <div className="panel-heading mdw-sub-heading">
-                        <div className="mdw-heading">
+                        <div className="mdw-heading-checklist">
+                          <input type="checkbox" style={{top:'0'}} 
+                            checked={this.isPackageSelected(pkg)}
+                            onChange={e => this.togglePackage(pkg)} />
                           {pkg}
                           {!collapsed &&
                             <span>
@@ -106,7 +197,7 @@ class UserStage extends Component {
                           }                        
                         </div>
                       </div>
-                      <ul className={'mdw-list' + (collapsed ? ' collapse': '')}>
+                      <ul className={'mdw-checklist' + (collapsed ? ' collapse': '')}>
                         {
                           this.state.stagedAssets[pkg].map((asset, j) => {
                             let diffSymbol = '';
@@ -127,6 +218,9 @@ class UserStage extends Component {
                             }
                             return (
                               <li key={j} style={{border:'1px solid #E8E8E8'}}>
+                                <input type="checkbox" style={{top:'-1px',left:"-1px",marginRight:'6px'}} 
+                                  checked={this.isAssetSelected(pkg + '/' + asset.name)} 
+                                  onChange={e => this.toggleAsset(pkg + '/' + asset.name)} />
                                 <Link className={'mdw-item-link' + diffClass}
                                   to={this.context.hubRoot + '/staging/' + cuid + '/assets/' + pkg + '/' + asset.name}>
                                   {asset.name}
