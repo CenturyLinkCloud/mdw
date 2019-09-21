@@ -241,7 +241,7 @@ class Stage extends Component {
             {isStagePrepared &&
               <input type="checkbox" style={{marginRight:'6px'}} ref={this.allSelectRef}
                 checked={this.state.allSelect} 
-                onChange={e => this.toggleAllSelect()} />
+                onChange={() => this.toggleAllSelect()} />
             }
             Staged Assets {userName ? ' for ' + userName : ''}
             {isStagePrepared &&
@@ -279,7 +279,7 @@ class Stage extends Component {
                 onExpand={this.handleExpand} 
                 onCollapse={this.handleCollapse}
                 allSelect={this.state.allSelect}
-                onDeselect={e => { 
+                onDeselect={() => { 
                   this.allSelectRef.current.checked = false;
                 }} />
             }

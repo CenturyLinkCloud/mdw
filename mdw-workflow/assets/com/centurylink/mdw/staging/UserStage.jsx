@@ -175,7 +175,7 @@ class UserStage extends Component {
                         <div className="mdw-heading-checklist">
                           <input type="checkbox" style={{top:'0'}} 
                             checked={this.isPackageSelected(pkg)}
-                            onChange={e => this.togglePackage(pkg)} />
+                            onChange={() => this.togglePackage(pkg)} />
                           {pkg}
                           {!collapsed &&
                             <span>
@@ -220,7 +220,7 @@ class UserStage extends Component {
                               <li key={j} style={{border:'1px solid #E8E8E8'}}>
                                 <input type="checkbox" style={{top:'-1px',left:"-1px",marginRight:'6px'}} 
                                   checked={this.isAssetSelected(pkg + '/' + asset.name)} 
-                                  onChange={e => this.toggleAsset(pkg + '/' + asset.name)} />
+                                  onChange={() => this.toggleAsset(pkg + '/' + asset.name)} />
                                 <Link className={'mdw-item-link' + diffClass}
                                   to={this.context.hubRoot + '/staging/' + cuid + '/assets/' + pkg + '/' + asset.name}>
                                   {asset.name}
