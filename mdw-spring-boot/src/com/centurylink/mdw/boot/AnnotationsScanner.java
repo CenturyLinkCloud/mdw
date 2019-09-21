@@ -33,6 +33,7 @@ public class AnnotationsScanner implements BeanFactoryAware {
         ClassPathScanningCandidateComponentProvider provider = createScannerComponentProvider();
         for (String scanPackage : scanPackages) {
             for (BeanDefinition beanDef : provider.findCandidateComponents(scanPackage)) {
+                beanDef.setScope(BeanDefinition.SCOPE_PROTOTYPE);
                 addImplementor(beanDef);
             }
         }
@@ -56,12 +57,7 @@ public class AnnotationsScanner implements BeanFactoryAware {
             if (!ImplementorCache.getImplementors().containsKey(cl.getName())) {
                 Activity annotation = cl.getAnnotation(Activity.class);
                 ActivityImplementor implementor = new ActivityImplementor(cl.getName(), annotation);
-                implementor.setSupplier(() -> {
-                    if (beanDef.isSingleton()) {
-                        throw new IllegalArgumentException("Bean declaration for activity '" + cl.getName() + "' must not be singleton");
-                    }
-                    return (GeneralActivity) beanFactory.getBean(cl);
-                });
+                implementor.setSupplier(() -> (GeneralActivity) beanFactory.getBean(cl));
                 ImplementorCache.addImplementor(implementor);
             }
         }

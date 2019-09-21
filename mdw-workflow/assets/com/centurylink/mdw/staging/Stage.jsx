@@ -22,14 +22,18 @@ class Stage extends Component {
     this.handleExpandAll = this.handleExpandAll.bind(this);
     this.handleCollapse = this.handleCollapse.bind(this);
     this.handleExpand = this.handleExpand.bind(this);
+    this.toggleAllSelect = this.toggleAllSelect.bind(this);
     this.retrieveUserStage = this.retrieveUserStage.bind(this);
     this.createPackage = this.createPackage.bind(this);
 
     this.stageCuid = this.getStageCuid();
 
+    this.allSelectRef = React.createRef();
+
     this.state = { 
       stage: {},
-      packageCollapsedState: this.getPackageCollapsedState()
+      packageCollapsedState: this.getPackageCollapsedState(),
+      allSelect: false
     };
   }
 
@@ -217,6 +221,14 @@ class Stage extends Component {
     this.setPackageCollapsedState(pkgCollapsed);
   }
 
+  toggleAllSelect() {
+    this.setState({
+      stage: this.state.stage,
+      packageCollapsedState: this.state.packageCollapsedState,
+      allSelect: this.allSelectRef.current.checked
+    });
+  }
+
   render() {
     sessionStorage.setItem('stagingUser', this.stageCuid);
     const userName = this.state.stage ? this.state.stage.userName : undefined;
@@ -226,6 +238,11 @@ class Stage extends Component {
       <div>
         <div className="panel-heading mdw-heading" style={{borderColor:'#ddd'}}>
           <div className="mdw-heading-label">
+            {isStagePrepared &&
+              <input type="checkbox" style={{marginRight:'6px'}} ref={this.allSelectRef}
+                checked={this.state.allSelect} 
+                onChange={e => this.toggleAllSelect()} />
+            }
             Staged Assets {userName ? ' for ' + userName : ''}
             {isStagePrepared &&
               <span>
@@ -260,7 +277,11 @@ class Stage extends Component {
               <UserStage stage={this.state.stage} 
                 packageCollapse={this.state.packageCollapsedState}
                 onExpand={this.handleExpand} 
-                onCollapse={this.handleCollapse}/>
+                onCollapse={this.handleCollapse}
+                allSelect={this.state.allSelect}
+                onDeselect={e => { 
+                  this.allSelectRef.current.checked = false;
+                }} />
             }
             {this.stageCuid && !this.state.stage &&
               <div style={{padding:'10px'}}>
