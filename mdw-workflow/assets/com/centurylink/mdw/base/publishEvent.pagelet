@@ -1,0 +1,12 @@
+{"widgets": [
+  {
+    "name": "Event Name",
+    "type": "text"
+  },
+  {
+    "multiline": "true",
+    "name": "Message",
+    "type": "text",
+    "vh": "150"
+  }
+]}

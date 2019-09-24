@@ -1,0 +1,42 @@
+{"widgets": [
+  {
+    "label": "Timeout",
+    "name": "TIMER_WAIT",
+    "type": "datetime",
+    "units": "Seconds,Minutes,Hours,Days"
+  },
+  {
+    "label": "Events",
+    "name": "WAIT_EVENT_NAMES",
+    "type": "table",
+    "widgets": [
+      {
+        "label": "Event Name",
+        "type": "text"
+      },
+      {
+        "label": "Completion Code",
+        "type": "text"
+      }
+    ]
+  },
+  {
+    "default": "Cancelled",
+    "label": "Status after receiving event",
+    "lw": "175",
+    "name": "STATUS_AFTER_EVENT",
+    "options": [
+      "Hold",
+      "Waiting",
+      "Cancelled"
+    ],
+    "type": "dropdown",
+    "vw": "120",
+    "vx": "200"
+  },
+  {
+    "name": "Timer Wait Activity Help",
+    "type": "link",
+    "url": "help/TimerWaitActivity.html"
+  }
+]}

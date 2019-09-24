@@ -1,0 +1,92 @@
+{"widgets": [
+  {
+    "label": "Endpoint/WSDL URL",
+    "name": "WSDL",
+    "type": "text"
+  },
+  {
+    "default": "SOAP 1.2 Protocol",
+    "label": "SOAP Version",
+    "name": "SoapVersion",
+    "options": [
+      "SOAP 1.1 Protocol",
+      "SOAP 1.2 Protocol"
+    ],
+    "type": "dropdown",
+    "vw": "150"
+  },
+  {
+    "label": "Request Variable",
+    "name": "REQUEST_VARIABLE",
+    "source": "DocumentVariables",
+    "type": "dropdown",
+    "vw": "200"
+  },
+  {
+    "label": "Response Variable",
+    "name": "RESPONSE_VARIABLE",
+    "source": "DocumentVariables",
+    "type": "dropdown",
+    "vw": "200"
+  },
+  {
+    "label": "Basic Auth User",
+    "name": "USER",
+    "section": "Authentication",
+    "type": "text",
+    "vw": "120"
+  },
+  {
+    "label": "Basic Auth Password",
+    "name": "PASS",
+    "section": "Authentication",
+    "type": "text",
+    "vw": "120"
+  },
+  {
+    "label": "Connect Timeout (ms)",
+    "name": "ConnectTimeout",
+    "type": "text",
+    "vw": "100"
+  },
+  {
+    "label": "Read Timeout (ms)",
+    "name": "ReadTimeout",
+    "type": "text",
+    "vw": "100"
+  },
+  {
+    "label": "Max Tries",
+    "name": "max_tries",
+    "type": "text",
+    "vw": "60"
+  },
+  {
+    "label": "Retry Interval (sec)",
+    "name": "retry_interval",
+    "type": "text",
+    "vw": "80"
+  },
+  {
+    "label": "Min. Retriable Status Code",
+    "name": "RetryHttpCodes",
+    "type": "text",
+    "vw": "60"
+  },
+  {
+    "label": "SOAP Action",
+    "name": "SOAPAction",
+    "type": "text"
+  },
+  {
+    "default": "true",
+    "label": "Log Request/Response",
+    "name": "DO_LOGGING",
+    "type": "checkbox"
+  },
+  {
+    "name": "Document Web Service Help",
+    "type": "link",
+    "url": "help/DocWebServiceAdapter.html"
+  }
+]}

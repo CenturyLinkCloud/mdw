@@ -1,0 +1,32 @@
+{"widgets": [
+  {
+    "default": "Groovy",
+    "label": "Language",
+    "name": "SCRIPT",
+    "options": [
+      "Groovy",
+      "Kotlin Script",
+      "JavaScript"
+    ],
+    "type": "dropdown"
+  },
+  {
+    "label": "Script",
+    "languages": "Groovy,Kotlin Script,JavaScript",
+    "name": "Rule",
+    "type": "edit"
+  },
+  {
+    "label": "Documents",
+    "name": "Output Documents",
+    "selectedLabel": "Writable",
+    "source": "DocumentVariables",
+    "type": "picklist",
+    "unselectedLabel": "Read-Only"
+  },
+  {
+    "name": "Script Activity Help",
+    "type": "link",
+    "url": "help/scriptActivity.html"
+  }
+]}

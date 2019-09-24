@@ -1,0 +1,22 @@
+{"widgets": [
+  {
+    "label": "Language",
+    "name": "SCRIPT",
+    "options": [
+      "GPath",
+      "XSLT"
+    ],
+    "type": "dropdown"
+  },
+  {
+    "label": "Transform",
+    "languages": "GPath,XSLT",
+    "name": "Rule",
+    "type": "edit"
+  },
+  {
+    "name": "Transform Activity Help",
+    "type": "link",
+    "url": "help/documentTransform.html"
+  }
+]}

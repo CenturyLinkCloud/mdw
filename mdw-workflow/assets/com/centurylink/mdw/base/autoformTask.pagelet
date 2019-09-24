@@ -1,0 +1,78 @@
+{"widgets": [
+  {
+    "editable": "TRUE",
+    "label": "Task Template",
+    "name": "TASK_TEMPLATE",
+    "refresh": "true",
+    "source": "task",
+    "type": "asset",
+    "vw": "375"
+  },
+  {
+    "name": "Task Template Help",
+    "type": "link",
+    "url": "help/taskTemplates.html"
+  },
+  {
+    "default": "com.centurylink.mdw.base/AutoFormManualTask.pagelet",
+    "hidden": "true",
+    "label": "Pagelet",
+    "name": "TASK_PAGELET",
+    "type": "text",
+    "vw": "350"
+  },
+  {
+    "label": "Instance ID Variable",
+    "name": "INSTANCE_ID_VAR",
+    "source": "Variables",
+    "type": "dropdown",
+    "vw": "150"
+  },
+  {
+    "name": "Normally not selected.  See help doc.",
+    "type": "note"
+  },
+  {
+    "default": "true",
+    "name": "Wait for Task",
+    "section": "Events",
+    "type": "checkbox"
+  },
+  {
+    "label": "Events",
+    "name": "WAIT_EVENT_NAMES",
+    "section": "Events",
+    "type": "table",
+    "widgets": [
+      {
+        "label": "Event Name",
+        "type": "text"
+      },
+      {
+        "label": "Completion Code",
+        "type": "text"
+      }
+    ]
+  },
+  {
+    "default": "Cancelled",
+    "label": "Status After Event",
+    "lw": "175",
+    "name": "STATUS_AFTER_EVENT",
+    "options": [
+      "Hold",
+      "Waiting",
+      "Cancelled"
+    ],
+    "section": "Events",
+    "type": "dropdown",
+    "vw": "120",
+    "vx": "200"
+  },
+  {
+    "name": "Task Events Help",
+    "section": "Events",
+    "type": "link",
+    "url": "help/taskWaitingEvents.html"
+  }
+]}

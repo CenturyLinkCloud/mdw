@@ -1,7 +1,0 @@
-{
-  "category": "com.centurylink.mdw.activity.types.AdapterActivity",
-  "icon": "adapter.png",
-  "implementorClass": "com.centurylink.mdw.workflow.adapter.ldap.LdapAdapter",
-  "label": "LDAP Adapter",
-  "pagelet": "<PAGELET>\n  <TEXT NAME='LdapHost' LABEL='LDAP Host' DEFAULT=\"${props['mdw.ldap.host']}\"/>\n  <TEXT NAME='LdapPort' LABEL='LDAP Port' DEFAULT=\"${props['mdw.ldap.port']}\"/>\n  <TEXT NAME='BaseDn' LABEL='Base DN' DEFAULT=\"${props['mdw.ldap.base.dn']}\"/>\n  <TEXT NAME='AppCuid' LABEL='Application User' DEFAULT=\"${props['mdw.ldap.user']}\"/>\n  <TEXT NAME='AppPassword' LABEL='Application Password' />\n  <TEXT NAME='SearchContext' LABEL='Search Context' DEFAULT='ou=People'/>\n  <TEXT NAME='SearchFilter' LABEL='Search Filter'/>\n  <HYPERLINK URL='help/LdapAdapter.html'>LDAP Adapter Activity Help<\/HYPERLINK>\n  <MAPPING NAME='Bindings' LABEL='LDAP Attribute' SECTION='Bindings' VX='160'/>\n<\/PAGELET>"
-}

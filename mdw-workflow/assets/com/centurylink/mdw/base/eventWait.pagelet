@@ -1,0 +1,49 @@
+{"widgets": [
+  {
+    "label": "Events",
+    "name": "WAIT_EVENT_NAMES",
+    "type": "table",
+    "widgets": [
+      {
+        "label": "Event Name",
+        "type": "text"
+      },
+      {
+        "label": "Completion Code",
+        "type": "text"
+      }
+    ]
+  },
+  {
+    "label": "Timeout",
+    "name": "SLA",
+    "type": "datetime",
+    "units": "Minutes,Hours,Days"
+  },
+  {
+    "default": "Cancelled",
+    "label": "Status after timeout",
+    "name": "STATUS_AFTER_TIMEOUT",
+    "options": [
+      "Cancelled",
+      "Hold",
+      "Waiting"
+    ],
+    "type": "dropdown",
+    "vw": "120",
+    "vx": "160"
+  },
+  {
+    "label": "Received Message Variable (Optional)",
+    "name": "rcvdMsgDocVar",
+    "source": "DocumentVariables",
+    "type": "dropdown",
+    "vw": "160",
+    "vx": "180"
+  },
+  {
+    "name": "Event Wait Activity Help",
+    "type": "link",
+    "url": "help/EventWaitActivity.html"
+  }
+]}

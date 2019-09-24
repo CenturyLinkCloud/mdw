@@ -1,0 +1,90 @@
+{"widgets": [
+  {
+    "label": "Execution Plan Variable",
+    "lw": "200",
+    "name": "Execution Plan",
+    "source": "DocumentVariables",
+    "type": "dropdown",
+    "vw": "160",
+    "vx": "220"
+  },
+  {
+    "default": "true",
+    "label": "Synchronous",
+    "name": "synchronous",
+    "type": "checkbox"
+  },
+  {
+    "name": "Force Parallel Execution",
+    "type": "checkbox"
+  },
+  {
+    "label": "Delay Between Instances (sec)",
+    "lw": "200",
+    "name": "DELAY_BETWEEN",
+    "type": "text",
+    "vw": "40",
+    "vx": "220"
+  },
+  {
+    "name": "Delay is applicable for async, sequential subflows.",
+    "type": "note",
+    "vh": "65"
+  },
+  {
+    "label": "Processes",
+    "name": "processmap",
+    "type": "table",
+    "widgets": [
+      {
+        "label": "Logical Name",
+        "type": "text"
+      },
+      {
+        "label": "Subprocess",
+        "source": "proc",
+        "type": "asset"
+      },
+      {
+        "label": "Version",
+        "source": "ProcessVersion",
+        "type": "dropdown"
+      }
+    ]
+  },
+  {
+    "label": "Events",
+    "name": "WAIT_EVENT_NAMES",
+    "section": "Events",
+    "type": "table",
+    "widgets": [
+      {
+        "label": "Event Name",
+        "type": "text"
+      },
+      {
+        "label": "Completion Code",
+        "type": "text"
+      }
+    ]
+  },
+  {
+    "default": "Hold",
+    "label": "Status after receiving event",
+    "lw": "175",
+    "name": "STATUS_AFTER_EVENT",
+    "options": [
+      "Hold",
+      "Waiting"
+    ],
+    "section": "Events",
+    "type": "dropdown",
+    "vw": "120",
+    "vx": "200"
+  },
+  {
+    "name": "Invoke Multiple Subprocesses Help",
+    "type": "link",
+    "url": "help/InvokeMultipleSubprocesses.html"
+  }
+]}

@@ -1,0 +1,35 @@
+{"widgets": [
+  {
+    "label": "Template",
+    "name": "Template Name",
+    "source": "vsl",
+    "type": "asset",
+    "vw": "300"
+  },
+  {
+    "label": "Toolbox File (optional)",
+    "name": "velocityToolboxFile",
+    "type": "text",
+    "vw": "290"
+  },
+  {
+    "label": "Language",
+    "name": "SCRIPT",
+    "options": ["VELOCITY"],
+    "type": "dropdown"
+  },
+  {
+    "label": "Script",
+    "languages": "VELOCITY",
+    "name": "Rule",
+    "type": "edit"
+  },
+  {
+    "label": "Documents",
+    "name": "Output Documents",
+    "selectedLabel": "Writable",
+    "source": "DocumentVariables",
+    "type": "picklist",
+    "unselectedLabel": "Read-Only"
+  }
+]}

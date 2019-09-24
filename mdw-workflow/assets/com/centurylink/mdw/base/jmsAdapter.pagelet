@@ -1,0 +1,67 @@
+{"widgets": [
+  {
+    "label": "Request Variable",
+    "name": "REQUEST_VARIABLE",
+    "source": "DocumentVariables",
+    "type": "dropdown",
+    "vw": "120"
+  },
+  {
+    "label": "Response Variable",
+    "name": "RESPONSE_VARIABLE",
+    "source": "DocumentVariables",
+    "type": "dropdown",
+    "vw": "120"
+  },
+  {
+    "default": "true",
+    "label": "Log Request/Response",
+    "name": "DO_LOGGING",
+    "type": "checkbox"
+  },
+  {
+    "name": "Wait for response?",
+    "type": "checkbox"
+  },
+  {
+    "label": "Connection Factory",
+    "name": "JNDI Server URL",
+    "type": "text"
+  },
+  {
+    "name": "Refers to a ConnectionFactory service with a matching name property.",
+    "type": "note",
+    "vh": "65"
+  },
+  {
+    "name": "Queue Name",
+    "type": "text"
+  },
+  {
+    "name": "For MDW queues, only com.centurylink.mdw.external.event.queue has implemented acknowledgment.",
+    "type": "note",
+    "vh": "65"
+  },
+  {
+    "name": "Reply Queue Name",
+    "type": "text"
+  },
+  {
+    "name": "Correlation ID",
+    "type": "text"
+  },
+  {
+    "name": "Time out (sec)",
+    "type": "text"
+  },
+  {
+    "label": "Message XSD",
+    "name": "REQUEST_XSD",
+    "type": "text"
+  },
+  {
+    "name": "JMS Adapter Activity Help",
+    "type": "link",
+    "url": "help/JmsAdapter.html"
+  }
+]}

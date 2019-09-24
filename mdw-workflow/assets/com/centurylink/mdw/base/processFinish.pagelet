@@ -1,0 +1,26 @@
+{"widgets": [
+  {
+    "name": "Stop Activity Help",
+    "type": "link",
+    "url": "help/ProcessFinishActivity.html"
+  },
+  {
+    "label": "Termination Action",
+    "name": "TerminationAction",
+    "options": [
+      "Complete Process",
+      "Cancel Process"
+    ],
+    "type": "dropdown"
+  },
+  {
+    "label": "Completion Code",
+    "name": "CompletionCode",
+    "type": "text"
+  },
+  {
+    "label": "Suppress Caller Notify",
+    "name": "DoNotNotifyCaller",
+    "type": "checkbox"
+  }
+]}
