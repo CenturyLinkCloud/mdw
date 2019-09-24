@@ -16,6 +16,8 @@
 package com.centurylink.mdw.workflow.activity.transform;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.ScriptActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
@@ -50,6 +52,8 @@ import java.io.StringWriter;
  * Transforms an input xml document into an output document.
  */
 @Tracked(LogLevel.TRACE)
+@Activity(value="XML Transform", category=ScriptActivity.class, icon="com.centurylink.mdw.base/xml.jpg",
+        pagelet="com.centurylink.mdw.base/transform.pagelet")
 public class TransformActivity extends ScriptExecutorActivity {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 

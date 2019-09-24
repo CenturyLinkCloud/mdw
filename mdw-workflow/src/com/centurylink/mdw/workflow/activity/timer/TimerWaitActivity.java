@@ -16,6 +16,8 @@
 package com.centurylink.mdw.workflow.activity.timer;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.GeneralActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
@@ -41,6 +43,8 @@ import java.util.Date;
  * re started from an external event.
  */
 @Tracked(LogLevel.TRACE)
+@Activity(value="Timer Wait", icon="com.centurylink.mdw.base/wait.jpg",
+        pagelet="com.centurylink.mdw.base/timerWait.pagelet")
 public class TimerWaitActivity extends AbstractWait {
 
     protected static final int DEFAULT_WAIT = 60;

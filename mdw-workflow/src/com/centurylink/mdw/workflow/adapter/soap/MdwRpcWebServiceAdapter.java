@@ -29,6 +29,8 @@ import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 
+import com.centurylink.mdw.activity.types.AdapterActivity;
+import com.centurylink.mdw.annotations.Activity;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -49,6 +51,8 @@ import com.centurylink.mdw.xml.DomHelper;
  * an XML payload that corresponds to an externally agreed-on XSD (outside the WSDL).
  */
 @Tracked(LogLevel.TRACE)
+@Activity(value="MDW RPC Web Service", category=AdapterActivity.class, icon="com.centurylink.mdw.base/adapter.png",
+        pagelet="com.centurylink.mdw.base/rpcWebService.pagelet")
 public class MdwRpcWebServiceAdapter extends SoapWebServiceAdapter {
 
     /**

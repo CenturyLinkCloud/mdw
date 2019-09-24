@@ -16,6 +16,8 @@
 package com.centurylink.mdw.workflow.activity.process;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.InvokeProcessActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.constant.VariableConstants;
@@ -49,6 +51,8 @@ import java.util.Map;
  * This activity implementor implements invocation of subprocesses.
  */
 @Tracked(LogLevel.TRACE)
+@Activity(value="Invoke Subprocess", category=InvokeProcessActivity.class, icon="com.centurylink.mdw.base/process.jpg",
+        pagelet="com.centurylink.mdw.base/invokeSubprocess.pagelet")
 public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
 
     private static final String VARIABLES = "variables";

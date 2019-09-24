@@ -16,6 +16,8 @@
 package com.centurylink.mdw.workflow.activity.script;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.GeneralActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.script.ExecutionException;
 import com.centurylink.mdw.script.ScriptNaming;
@@ -30,6 +32,8 @@ import org.apache.commons.lang.StringUtils;
  * Class that evaluates the value of a script expression
  */
 @Tracked(LogLevel.TRACE)
+@Activity(value="Expression Evaluator", icon="shape:decision",
+        pagelet="com.centurylink.mdw.base/scriptEvaluator.pagelet")
 public class ScriptEvaluator extends AbstractEvaluator  {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 

@@ -16,6 +16,7 @@
 package com.centurylink.mdw.workflow.activity.process;
 
 import com.centurylink.mdw.activity.types.FinishActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
@@ -27,8 +28,9 @@ import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
  * This class will be extended by the custom ProcessFinish activity
  */
 @Tracked(LogLevel.TRACE)
-public class ProcessFinishActivity extends DefaultActivityImpl
-    implements FinishActivity {
+@Activity(value="Process Stop", category=FinishActivity.class, icon="shape:stop",
+        pagelet="com.centurylink.mdw.base/processFinish.pagelet")
+public class ProcessFinishActivity extends DefaultActivityImpl implements FinishActivity {
 
     private static final String ATTRIBUTE_COMPLETION_CODE = "CompletionCode";
     private static final String ATTRIBUTE_TERMINATION_ACTION = "TerminationAction";

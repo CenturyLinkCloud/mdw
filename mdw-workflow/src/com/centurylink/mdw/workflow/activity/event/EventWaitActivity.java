@@ -16,6 +16,7 @@
 package com.centurylink.mdw.workflow.activity.event;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.constant.OwnerType;
@@ -41,6 +42,8 @@ import org.apache.commons.lang.StringUtils;
 import java.util.List;
 
 @Tracked(LogLevel.TRACE)
+@Activity(value="Event Wait Activity", category=EventWaitActivity.class, icon="com.centurylink.mdw.base/receive.gif",
+        pagelet="com.centurylink.mdw.base/eventWait.pagelet")
 public class EventWaitActivity extends AbstractWait implements com.centurylink.mdw.activity.types.EventWaitActivity {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();

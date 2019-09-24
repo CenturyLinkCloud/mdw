@@ -17,6 +17,7 @@ package com.centurylink.mdw.workflow.activity.notification;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.NotificationActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.config.PropertyException;
@@ -47,6 +48,8 @@ import java.util.Map;
  * Activity for sending HTML email notifications.
  */
 @Tracked(LogLevel.TRACE)
+@Activity(value="Email Notification", category=NotificationActivity.class, icon="com.centurylink.mdw.base/notice.gif",
+        pagelet="com.centurylink.mdw.base/emailNotification.pagelet")
 public class EmailNotificationActivity extends DefaultActivityImpl implements NotificationActivity {
 
     @Override

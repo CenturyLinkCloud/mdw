@@ -16,6 +16,7 @@
 package com.centurylink.mdw.workflow.activity.event;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
@@ -25,6 +26,8 @@ import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 
 @Tracked(LogLevel.TRACE)
+@Activity(value="Event Check Activity", category=EventWaitActivity.class, icon="com.centurylink.mdw.base/check.png",
+        pagelet="com.centurylink.mdw.base/eventCheck.pagelet")
 public class EventCheckActivity extends EventWaitActivity {
 
     private Integer exitStatus;

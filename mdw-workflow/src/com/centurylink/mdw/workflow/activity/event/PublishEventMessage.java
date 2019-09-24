@@ -16,6 +16,8 @@
 package com.centurylink.mdw.workflow.activity.event;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.GeneralActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.variable.DocumentReference;
@@ -26,6 +28,8 @@ import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 
 @Tracked(LogLevel.TRACE)
+@Activity(value="Event Publish", icon="com.centurylink.mdw.base/send.gif",
+        pagelet="com.centurylink.mdw.base/publishEvent.pagelet")
 public class PublishEventMessage extends DefaultActivityImpl {
 
     public static final String ATTRIBUTE_EVENT_NAME = "Event Name";

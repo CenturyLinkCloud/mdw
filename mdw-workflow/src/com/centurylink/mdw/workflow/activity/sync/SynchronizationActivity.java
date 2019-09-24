@@ -16,12 +16,12 @@
 package com.centurylink.mdw.workflow.activity.sync;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
-import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.Transition;
 import com.centurylink.mdw.model.workflow.WorkStatus;
@@ -44,6 +44,8 @@ import java.util.Map;
  * Synchronization gateway activity.
  */
 @Tracked(LogLevel.TRACE)
+@Activity(value="Synchronization Activity", category=SynchronizationActivity.class, icon="com.centurylink.mdw.base/sync.png",
+        pagelet="com.centurylink.mdw.base/synchronization.pagelet")
 public class SynchronizationActivity extends AbstractWait implements com.centurylink.mdw.activity.types.SynchronizationActivity {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
@@ -133,7 +135,7 @@ public class SynchronizationActivity extends AbstractWait implements com.century
             if (trans.getToId().equals(activityId)) {
                 Transition sync = new Transition();
                 sync.setId(trans.getId());
-                Activity act = procdef.getActivity(trans.getFromId());
+                com.centurylink.mdw.model.workflow.Activity act = procdef.getActivity(trans.getFromId());
                 String logicalId = act.getLogicalId();
                 // id to escaped name map is for backward compatibility
                 idToEscapedName.put(logicalId, escape(act.getName()));

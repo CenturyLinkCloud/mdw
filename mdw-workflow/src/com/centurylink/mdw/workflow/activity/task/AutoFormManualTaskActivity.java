@@ -17,6 +17,7 @@ package com.centurylink.mdw.workflow.activity.task;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.TaskActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.attribute.Attribute;
@@ -36,6 +37,8 @@ import org.json.JSONObject;
 import java.util.List;
 
 @Tracked(LogLevel.TRACE)
+@Activity(value="Autoform Manual Task", category=TaskActivity.class, icon="com.centurylink.mdw.base/task.png",
+        pagelet="com.centurylink.mdw.base/autoformTask.pagelet")
 public class AutoFormManualTaskActivity extends ManualTaskActivity {
 
     /**

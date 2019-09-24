@@ -17,6 +17,7 @@ package com.centurylink.mdw.workflow.activity.script;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.ScriptActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
@@ -28,6 +29,8 @@ import org.apache.commons.lang.StringUtils;
  * Executes a script.
  */
 @Tracked(LogLevel.TRACE)
+@Activity(value="Execute Script", category=ScriptActivity.class, icon="com.centurylink.mdw.base/script.gif",
+        pagelet="com.centurylink.mdw.base/scriptExecutor.pagelet")
 public class ScriptExecutorActivity extends DefaultActivityImpl implements ScriptActivity {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();

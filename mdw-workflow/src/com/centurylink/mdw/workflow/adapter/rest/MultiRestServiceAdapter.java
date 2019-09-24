@@ -16,6 +16,8 @@
 package com.centurylink.mdw.workflow.adapter.rest;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.AdapterActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.Response;
@@ -35,6 +37,8 @@ import java.util.List;
 import java.util.Map;
 
 @Tracked(LogLevel.TRACE)
+@Activity(value="Multi-REST Service Adapter", category=AdapterActivity.class, icon="com.centurylink.mdw.base/adapter.png",
+        pagelet="com.centurylink.mdw.base/multiRest.pagelet")
 public class MultiRestServiceAdapter extends RestServiceAdapter {
 
     @Override

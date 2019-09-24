@@ -15,6 +15,8 @@
  */
 package com.centurylink.mdw.workflow.activity.task;
 
+import com.centurylink.mdw.activity.types.TaskActivity;
+import com.centurylink.mdw.annotations.Activity;
 import org.apache.xmlbeans.XmlException;
 
 import com.centurylink.mdw.activity.ActivityException;
@@ -31,6 +33,8 @@ import com.centurylink.mdw.service.Parameter;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
+@Activity(value="Custom Manual Task", category=TaskActivity.class, icon="com.centurylink.mdw.base/task.png",
+        pagelet="com.centurylink.mdw.base//customTask.pagelet")
 public class CustomManualTaskActivity extends ManualTaskActivity implements SuspendableActivity {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
