@@ -1,0 +1,17 @@
+{"widgets": [
+  {
+    "default": "com.centurylink.mdw.microservice.CombiningConsolidator",
+    "label": "Consolidator",
+    "name": "consolidator",
+    "options": [
+      "com.centurylink.mdw.microservice.CombiningConsolidator",
+      "com.centurylink.mdw.microservice.WorstCaseConsolidator"
+    ],
+    "type": "dropdown"
+  },
+  {
+    "name": "Response Collector Help",
+    "type": "link",
+    "url": "help/ResponseCollector.html"
+  }
+]}

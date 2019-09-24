@@ -21,6 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import com.centurylink.mdw.activity.types.AdapterActivity;
+import com.centurylink.mdw.annotations.Activity;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
@@ -44,6 +46,8 @@ import com.centurylink.mdw.workflow.adapter.TextAdapterActivity;
  * Dynamic Java workflow asset.
  */
 @Tracked(LogLevel.TRACE)
+@Activity(value="Kafka Adapter", category=AdapterActivity.class, icon="com.centurylink.mdw.kafka/kafka.png",
+        pagelet="com.centurylink.mdw.kafka/kafka.pagelet")
 public class KafkaAdapter extends TextAdapterActivity {
 
     public static final String KAFKA_TOPIC_NAME = "topic";

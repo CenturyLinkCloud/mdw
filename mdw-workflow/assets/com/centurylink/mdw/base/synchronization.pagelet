@@ -11,10 +11,12 @@
     "type": "table",
     "widgets": [
       {
+        "name": "Event Name",
         "label": "Event Name",
         "type": "text"
       },
       {
+        "name": "Completion Code",
         "label": "Completion Code",
         "type": "text"
       }

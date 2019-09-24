@@ -1,0 +1,50 @@
+{
+  "widgets": [
+    {
+      "name": "SLA",
+      "label": "Optional Timeout",
+      "type": "datetime",
+      "units": "Minutes,Hours,Days"
+    },
+    {
+      "name": "STATUS_AFTER_TIMEOUT",
+      "label": "Status After Timeout",
+      "type": "dropdown",
+      "default": "Cancelled",
+      "options": ["Cancelled", "Hold", "Waiting"],
+      "vx": "160", "vw": "120"
+    },
+    {
+      "name": "WAIT_EVENT_NAMES",
+      "label": "Events",
+      "type": "table",
+      "section": "Events",
+      "widgets": [
+        {
+          "name": "Event Name",
+          "label": "Event Name",
+          "type": "text"
+        },
+        {
+          "name": "Completion Code",
+          "label": "Completion Code",
+          "type": "text"
+        }
+      ]
+    },
+    {
+      "name": "STATUS_AFTER_EVENT",
+      "label": "Status After Event",
+      "type": "dropdown",
+      "default": "Cancelled",
+      "options": ["Cancelled", "Hold", "Waiting"],
+      "section": "Events",
+      "vx": "160", "vw": "120"
+    },
+    {
+      "name": "Pause Activity Help",
+      "type": "link",
+      "url": "help/PauseActivity.html"
+    }
+  ]
+}

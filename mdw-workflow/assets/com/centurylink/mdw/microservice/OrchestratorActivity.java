@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.centurylink.mdw.activity.types.InvokeProcessActivity;
+import com.centurylink.mdw.annotations.Activity;
 import org.apache.xmlbeans.XmlException;
 
 import com.centurylink.mdw.activity.ActivityException;
@@ -39,6 +41,9 @@ import com.centurylink.mdw.workflow.activity.process.InvokeProcessActivityBase;
  * Instead, instance info is saved to the ServiceSummary.
  */
 @Tracked(LogLevel.TRACE)
+@Activity(value="Microservice Orchestrator", category=InvokeProcessActivity.class,
+        icon="com.centurylink.mdw.microservice/orchestrator.png",
+        pagelet="com.centurylink.mdw.microservice/orchestrator.pagelet")
 public class OrchestratorActivity extends InvokeProcessActivityBase {
 
     private static final String PARALLEL = "parallel";

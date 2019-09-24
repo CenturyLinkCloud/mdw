@@ -1,0 +1,28 @@
+{"widgets": [
+  {
+    "default": "Kotlin Script",
+    "label": "Language",
+    "name": "SCRIPT",
+    "options": ["Kotlin Script"],
+    "type": "dropdown"
+  },
+  {
+    "label": "Script",
+    "languages": "Kotlin Script",
+    "name": "Rule",
+    "type": "edit"
+  },
+  {
+    "label": "Documents",
+    "name": "Output Documents",
+    "selectedLabel": "Writable",
+    "source": "DocumentVariables",
+    "type": "picklist",
+    "unselectedLabel": "Read-Only"
+  },
+  {
+    "name": "Script Activity Help",
+    "type": "link",
+    "url": "help/scriptActivity.html"
+  }
+]}

@@ -1,0 +1,6 @@
+{
+  "widgets": [
+    { "name": "Planet", "type": "dropdown", "options": ["Jupiter","Mars","Neptune","Venus"] },
+    { "name": "Invader", "type": "text"}
+  ]
+}

@@ -3,6 +3,8 @@ package com.centurylink.mdw.microservice;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.centurylink.mdw.activity.types.GeneralActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.model.variable.ServiceValuesAccess;
 import org.json.JSONObject;
 
@@ -20,6 +22,8 @@ import kotlin.Pair;
  * Consolidates microservice responses.
  */
 @Tracked(LogLevel.TRACE)
+@Activity(value="Response Collector", icon="com.centurylink.mdw.microservice/collector.png",
+        pagelet="com.centurylink.mdw.microservice/responseCollector.pagelet")
 public class ResponseCollector extends DefaultActivityImpl {
 
     static final String CONSOLIDATOR = "consolidator";

@@ -1,6 +1,7 @@
 package com.centurylink.mdw.microservice;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Status;
@@ -16,6 +17,9 @@ import org.json.JSONException;
 
 import java.util.List;
 
+@Activity(value="Microservice Dependencies Wait", category=DependenciesWaitActivity.class,
+        icon="com.centurylink.mdw.base/receive.gif",
+        pagelet="com.centurylink.mdw.microservice/dependenciesWait.pagelet")
 public class DependenciesWaitActivity extends EventWaitActivity {
 
     private static String MICROSERVICE_NAMES = "MICROSERVICE_NAMES";

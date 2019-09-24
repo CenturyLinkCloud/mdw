@@ -1,13 +1,29 @@
 {"widgets": [
   {
-    "label": "Timeout",
-    "name": "TIMER_WAIT",
-    "type": "datetime",
-    "units": "Seconds,Minutes,Hours,Days"
+    "default": "true",
+    "label": "Synchronous",
+    "name": "synchronous",
+    "type": "checkbox",
+    "vw": "100"
+  },
+  {
+    "label": "Parallel",
+    "name": "parallel",
+    "type": "checkbox",
+    "vw": "100"
+  },
+  {
+    "label": "Delay (sec)",
+    "lw": "200",
+    "name": "delay",
+    "type": "text",
+    "vw": "40",
+    "vx": "220"
   },
   {
     "label": "Events",
     "name": "WAIT_EVENT_NAMES",
+    "section": "Events",
     "type": "table",
     "widgets": [
       {
@@ -23,22 +39,22 @@
     ]
   },
   {
-    "default": "Cancelled",
+    "default": "Hold",
     "label": "Status after receiving event",
     "lw": "175",
     "name": "STATUS_AFTER_EVENT",
     "options": [
       "Hold",
-      "Waiting",
-      "Cancelled"
+      "Waiting"
     ],
+    "section": "Events",
     "type": "dropdown",
     "vw": "120",
     "vx": "200"
   },
   {
-    "name": "Timer Wait Activity Help",
+    "name": "Microservice Orchestrator Help",
     "type": "link",
-    "url": "help/TimerWaitActivity.html"
+    "url": "help/MicroserviceOrchestrator.html"
   }
 ]}

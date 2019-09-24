@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.List;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.NotificationActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
@@ -36,6 +38,8 @@ import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
  * Requires a SendGrid account with a registered API key.
  */
 @Tracked(LogLevel.TRACE)
+@Activity(value="SendGrid Email", category=NotificationActivity.class, icon="com.centurylink.mdw.sendgrid/sendgrid.png",
+        pagelet="com.centurylink.mdw.sendgrid/sendgridNotify.pagelet")
 public class SendgridActivity extends DefaultActivityImpl {
 
     @Override

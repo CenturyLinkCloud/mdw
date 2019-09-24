@@ -1,6 +1,8 @@
 package com.centurylink.mdw.microservice;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.AdapterActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Response;
@@ -24,6 +26,8 @@ import java.util.Map;
  * REST adapter overridden to support microservices and
  * populate headers, response and serviceSummary (if it exists)
  */
+@Activity(value="Microservice REST Adapter", category=AdapterActivity.class, icon="com.centurylink.mdw.base/adapter.png",
+        pagelet="com.centurylink.mdw.microservice/microserviceRest.pagelet")
 public class MicroserviceRestAdapter extends RestServiceAdapter {
 
     protected Long requestId = null;
