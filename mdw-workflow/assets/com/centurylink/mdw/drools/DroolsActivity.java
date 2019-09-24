@@ -17,6 +17,7 @@ package com.centurylink.mdw.drools;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.RuleActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
@@ -36,6 +37,8 @@ import org.kie.internal.command.CommandFactory;
 import java.util.*;
 
 @Tracked(LogLevel.TRACE)
+@Activity(value="Drools Activity", category=RuleActivity.class, icon="com.centurylink.mdw.drools/drools.jpg",
+        pagelet="com.centurylink.mdw.drools/drools.pagelet")
 public class DroolsActivity extends DefaultActivityImpl implements RuleActivity {
 
     public static final String KNOWLEDGE_BASE = "KnowledgeBase";

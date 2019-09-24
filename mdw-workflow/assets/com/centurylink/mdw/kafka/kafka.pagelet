@@ -1,0 +1,45 @@
+{"widgets": [
+  {
+    "label": "Producer Property Variable",
+    "name": "ProducerVariable",
+    "source": "Variables",
+    "type": "dropdown",
+    "vw": "120"
+  },
+  {
+    "label": "Record Property Variable",
+    "name": "ProducerRecordVariable",
+    "source": "Variables",
+    "type": "dropdown",
+    "vw": "120"
+  },
+  {
+    "label": "Request Variable",
+    "name": "REQUEST_VARIABLE",
+    "source": "Variables",
+    "type": "dropdown",
+    "vw": "120"
+  },
+  {
+    "label": "Response Variable",
+    "name": "RESPONSE_VARIABLE",
+    "source": "Variables",
+    "type": "dropdown",
+    "vw": "120"
+  },
+  {
+    "default": "true",
+    "label": "Log req/resp",
+    "name": "DO_LOGGING",
+    "options": [
+      "false",
+      "true"
+    ],
+    "type": "radio"
+  },
+  {
+    "name": "Kafka Adapter Help",
+    "type": "link",
+    "url": "help/KafkaAdapter.html"
+  }
+]}

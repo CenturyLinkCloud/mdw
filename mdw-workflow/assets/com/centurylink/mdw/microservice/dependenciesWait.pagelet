@@ -1,0 +1,95 @@
+{"widgets": [
+  {
+    "name": "Specify array of dependencies - [[\"true\", \"microserviceName\", \"expression\"]]",
+    "type": "note"
+  },
+  {
+    "default": "${dependencies}",
+    "label": "Dependencies",
+    "name": "DEPENDENCIES",
+    "type": "text",
+    "vw": "200"
+  },
+  {
+    "name": "Or, check below every microService that must be successful ,in order to proceed",
+    "type": "note"
+  },
+  {
+    "label": "Microservice Dependencies",
+    "name": "MICROSERVICE_NAMES",
+    "type": "table",
+    "widgets": [
+      {
+        "name": "Enabled",
+        "default": "true",
+        "label": "Enabled",
+        "type": "checkbox"
+      },
+      {
+        "name": "Microservice",
+        "label": "Microservice",
+        "type": "text"
+      },
+      {
+        "name": "Expression",
+        "label": "Expression",
+        "type": "text"
+      }
+    ]
+  },
+  {
+    "label": "Events",
+    "name": "WAIT_EVENT_NAMES",
+    "section": "Events",
+    "type": "table",
+    "widgets": [
+      {
+        "name": "Event Name",
+        "default": "service-summary-update-${masterRequestId}",
+        "label": "Event Name",
+        "type": "text"
+      },
+      {
+        "name": "Completion Code",
+        "label": "Completion Code",
+        "type": "text"
+      }
+    ]
+  },
+  {
+    "label": "Timeout",
+    "name": "SLA",
+    "section": "Events",
+    "type": "datetime",
+    "units": "Minutes,Hours,Days"
+  },
+  {
+    "default": "Cancelled",
+    "label": "Status after timeout",
+    "name": "STATUS_AFTER_TIMEOUT",
+    "options": [
+      "Cancelled",
+      "Hold",
+      "Waiting"
+    ],
+    "section": "Events",
+    "type": "dropdown",
+    "vw": "120",
+    "vx": "160"
+  },
+  {
+    "label": "Received Message Variable (Optional)",
+    "name": "rcvdMsgDocVar",
+    "section": "Events",
+    "source": "DocumentVariables",
+    "type": "dropdown",
+    "vw": "160",
+    "vx": "180"
+  },
+  {
+    "name": "Event Wait Activity Help",
+    "section": "Events",
+    "type": "link",
+    "url": "help/EventWaitActivity.html"
+  }
+]}

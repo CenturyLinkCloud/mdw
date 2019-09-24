@@ -1,0 +1,27 @@
+{"widgets": [
+  {
+    "label": "Knowledge Base",
+    "name": "KnowledgeBase",
+    "source": "xlsx",
+    "type": "asset"
+  },
+  {
+    "label": "Worksheet (Optional)",
+    "name": "DecisionTableSheet",
+    "type": "text",
+    "vw": "175"
+  },
+  {
+    "label": "Documents",
+    "name": "Output Documents",
+    "selectedLabel": "Writable",
+    "source": "DocumentVariables",
+    "type": "picklist",
+    "unselectedLabel": "Read-Only"
+  },
+  {
+    "name": "Decision Table Activity Help",
+    "type": "link",
+    "url": "help/droolsActivities.html"
+  }
+]}

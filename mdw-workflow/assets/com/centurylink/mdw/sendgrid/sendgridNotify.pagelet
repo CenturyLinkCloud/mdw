@@ -1,0 +1,58 @@
+{"widgets": [
+  {
+    "default": "support@example.com",
+    "label": "From",
+    "name": "from",
+    "type": "text",
+    "vw": "200"
+  },
+  {
+    "label": "Subject",
+    "name": "subject",
+    "type": "text",
+    "vw": "450"
+  },
+  {
+    "label": "Template",
+    "name": "template",
+    "source": "html,json",
+    "type": "asset",
+    "vw": "350"
+  },
+  {
+    "label": "Attachment(s)",
+    "name": "attachments",
+    "type": "text",
+    "vw": "450"
+  },
+  {
+    "label": "Continue Despite Messaging Exception",
+    "name": "ContinueDespiteMessagingException",
+    "type": "checkbox"
+  },
+  {
+    "name": "Notification Activity Help",
+    "type": "link",
+    "url": "help/notification.html"
+  },
+  {
+    "label": "Recipient(s) Expression",
+    "name": "RecipientsExpression",
+    "section": "Recipients",
+    "type": "text"
+  },
+  {
+    "label": "Notice Groups",
+    "name": "NoticeGroups",
+    "section": "Recipients",
+    "source": "UserGroup",
+    "type": "picklist"
+  },
+  {
+    "label": "CC Groups",
+    "name": "CCGroups",
+    "section": "Recipients",
+    "source": "UserGroup",
+    "type": "picklist"
+  }
+]}

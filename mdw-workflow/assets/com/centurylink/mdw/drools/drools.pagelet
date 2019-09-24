@@ -1,0 +1,21 @@
+{"widgets": [
+  {
+    "label": "Knowledge Base",
+    "name": "KnowledgeBase",
+    "source": "drl,brl",
+    "type": "asset"
+  },
+  {
+    "label": "Documents",
+    "name": "Output Documents",
+    "selectedLabel": "Writable",
+    "source": "DocumentVariables",
+    "type": "picklist",
+    "unselectedLabel": "Read-Only"
+  },
+  {
+    "name": "Drools Activity Help",
+    "type": "link",
+    "url": "help/droolsActivities.html"
+  }
+]}

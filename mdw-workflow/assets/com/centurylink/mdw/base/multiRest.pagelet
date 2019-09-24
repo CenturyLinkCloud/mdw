@@ -4,6 +4,7 @@
     "name": "EndpointUri",
     "type": "table",
     "widgets": [{
+      "name": "Endpoint URI",
       "label": "Endpoint URI",
       "type": "text"
     }]

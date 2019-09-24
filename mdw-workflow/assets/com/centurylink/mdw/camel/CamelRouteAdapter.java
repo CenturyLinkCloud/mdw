@@ -16,6 +16,8 @@
 package com.centurylink.mdw.camel;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.AdapterActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
@@ -36,6 +38,8 @@ import org.apache.commons.lang.StringUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+@Activity(value="Camel Route Adapter", category=AdapterActivity.class, icon="com.centurylink.mdw.camel/camel.gif",
+        pagelet="com.centurylink.mdw.camel/camelRoute.pagelet")
 public class CamelRouteAdapter extends ObjectAdapterActivity {
 
     private static final String ROUTE_DEF = "RouteDefinition";
