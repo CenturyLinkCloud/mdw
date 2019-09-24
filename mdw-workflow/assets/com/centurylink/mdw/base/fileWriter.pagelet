@@ -1,0 +1,23 @@
+{"widgets": [
+  {
+    "label": "File Path",
+    "name": "OutputFilepath",
+    "type": "text"
+  },
+  {
+    "default": "true",
+    "label": "Append",
+    "name": "AppendToFile",
+    "type": "checkbox"
+  },
+  {
+    "label": "Content String",
+    "name": "WriteString",
+    "type": "text"
+  },
+  {
+    "name": "File Writer Help",
+    "type": "link",
+    "url": "help/FileWriterActivity.html"
+  }
+]}

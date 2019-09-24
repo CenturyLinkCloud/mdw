@@ -1,0 +1,13 @@
+{"widgets": [
+  {
+    "label": "Bindings",
+    "name": "Parameters",
+    "type": "mapping",
+    "vx": "160"
+  },
+  {
+    "name": "Start Activity Help",
+    "type": "link",
+    "url": "help/ProcessStartActivity.html"
+  }
+]}

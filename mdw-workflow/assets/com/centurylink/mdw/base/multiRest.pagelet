@@ -1,0 +1,90 @@
+{"widgets": [
+  {
+    "label": "Destination Endpoints",
+    "name": "EndpointUri",
+    "type": "table",
+    "widgets": [{
+      "label": "Endpoint URI",
+      "type": "text"
+    }]
+  },
+  {
+    "label": "Basic Auth User",
+    "name": "USER",
+    "type": "text",
+    "vw": "120"
+  },
+  {
+    "label": "Basic Auth Password",
+    "name": "PASS",
+    "type": "text",
+    "vw": "120"
+  },
+  {
+    "default": "POST",
+    "label": "HTTP Method",
+    "name": "HttpMethod",
+    "options": [
+      "GET",
+      "POST",
+      "PUT",
+      "DELETE"
+    ],
+    "type": "dropdown",
+    "vw": "100"
+  },
+  {
+    "label": "Connect Timeout (ms)",
+    "name": "ConnectTimeout",
+    "type": "text",
+    "vw": "100"
+  },
+  {
+    "label": "Read Timeout (ms)",
+    "name": "ReadTimeout",
+    "type": "text",
+    "vw": "100"
+  },
+  {
+    "label": "Request Variable",
+    "name": "REQUEST_VARIABLE",
+    "source": "DocumentVariables",
+    "type": "dropdown",
+    "vw": "200"
+  },
+  {
+    "label": "Response Variable",
+    "name": "RESPONSE_VARIABLE",
+    "source": "DocumentVariables",
+    "type": "dropdown",
+    "vw": "200"
+  },
+  {
+    "label": "Headers Variable",
+    "name": "HeadersVariable",
+    "source": "DocumentVariables",
+    "type": "dropdown",
+    "vw": "200"
+  },
+  {
+    "default": "true",
+    "label": "Log Request/Response",
+    "name": "DO_LOGGING",
+    "type": "checkbox"
+  },
+  {
+    "label": "Request XSD",
+    "name": "REQUEST_XSD",
+    "type": "text"
+  },
+  {
+    "label": "Response XSD",
+    "name": "RESPONSE_XSD",
+    "type": "text"
+  },
+  {
+    "name": "RESTful Adapter Help",
+    "type": "link",
+    "url": "help/RestfulAdapter.html"
+  }
+]}

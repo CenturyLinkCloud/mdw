@@ -1,0 +1,37 @@
+{"widgets": [
+  {
+    "label": "JDBC DataSource",
+    "name": "jdbcDataSource",
+    "type": "text"
+  },
+  {
+    "default": "Select",
+    "label": "Query Type",
+    "name": "queryType",
+    "options": [
+      "Select",
+      "Update"
+    ],
+    "type": "radio",
+    "vw": "100"
+  },
+  {
+    "label": "Parameter(s) Variable",
+    "name": "parameterVariable",
+    "source": "Variables",
+    "type": "dropdown",
+    "vw": "150"
+  },
+  {
+    "label": "SQL Query",
+    "multiline": "true",
+    "name": "sqlQuery",
+    "source": "Variables",
+    "type": "text"
+  },
+  {
+    "name": "SQL Adapter Help",
+    "type": "link",
+    "url": "help/sqlAdapter.html"
+  }
+]}

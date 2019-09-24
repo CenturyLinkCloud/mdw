@@ -1,0 +1,24 @@
+{"widgets": [
+  {
+    "name": "Mapper",
+    "source": "groovy",
+    "type": "asset"
+  },
+  {
+    "name": "Input",
+    "source": "DocumentVariables",
+    "type": "dropdown",
+    "vw": "200"
+  },
+  {
+    "name": "Output",
+    "source": "DocumentVariables",
+    "type": "dropdown",
+    "vw": "200"
+  },
+  {
+    "name": "Crossmap Activity Help",
+    "type": "link",
+    "url": "help/crossmap.html"
+  }
+]}

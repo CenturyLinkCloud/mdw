@@ -1,0 +1,42 @@
+{"widgets": [
+  {
+    "name": "Sync Expression",
+    "type": "text",
+    "vw": "390"
+  },
+  {
+    "label": "Events",
+    "name": "WAIT_EVENT_NAMES",
+    "section": "Events",
+    "type": "table",
+    "widgets": [
+      {
+        "label": "Event Name",
+        "type": "text"
+      },
+      {
+        "label": "Completion Code",
+        "type": "text"
+      }
+    ]
+  },
+  {
+    "default": "Cancelled",
+    "label": "Status after receiving event",
+    "lw": "175",
+    "name": "STATUS_AFTER_EVENT",
+    "options": [
+      "Hold",
+      "Waiting"
+    ],
+    "section": "Events",
+    "type": "dropdown",
+    "vw": "120",
+    "vx": "200"
+  },
+  {
+    "name": "Synchronization Activity Help",
+    "type": "link",
+    "url": "help/synchronization.html"
+  }
+]}

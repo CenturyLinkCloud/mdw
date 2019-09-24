@@ -1,0 +1,38 @@
+{"widgets": [
+  {
+    "editable": "TRUE",
+    "label": "Subprocess",
+    "name": "processname",
+    "refresh": "true",
+    "source": "proc",
+    "type": "asset",
+    "vw": "375"
+  },
+  {
+    "hidden": "true",
+    "label": "Version",
+    "name": "processversion",
+    "refresh": "true",
+    "source": "ProcessVersion",
+    "type": "dropdown",
+    "vw": "150"
+  },
+  {
+    "default": "true",
+    "label": "Synchronous",
+    "name": "synchronous",
+    "type": "checkbox"
+  },
+  {
+    "label": "Bindings",
+    "name": "variables",
+    "source": "Subprocess",
+    "type": "mapping",
+    "vh": "320"
+  },
+  {
+    "name": "Subprocess Activity Help",
+    "type": "link",
+    "url": "help/InvokeSubProcessActivity.html"
+  }
+]}

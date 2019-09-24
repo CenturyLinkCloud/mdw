@@ -1,0 +1,19 @@
+{"widgets": [
+  {
+    "default": "Groovy",
+    "label": "Language",
+    "name": "SCRIPT",
+    "options": [
+      "Groovy",
+      "javax.el",
+      "Kotlin Script",
+      "JavaScript"
+    ],
+    "type": "dropdown"
+  },
+  {
+    "languages": "Groovy,javax.el,Kotlin Script,JavaScript",
+    "name": "Expression",
+    "type": "expression"
+  }
+]}

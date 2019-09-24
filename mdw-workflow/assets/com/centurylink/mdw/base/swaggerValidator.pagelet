@@ -1,0 +1,35 @@
+{"widgets": [
+  {
+    "label": "Disabled",
+    "name": "disabled",
+    "type": "checkbox"
+  },
+  {
+    "name": "Validate",
+    "options": [
+      "Path",
+      "Query",
+      "Body",
+      "Headers"
+    ],
+    "type": "picklist"
+  },
+  {
+    "name": "Strict",
+    "type": "checkbox"
+  },
+  {
+    "label": "Swagger Path",
+    "name": "Path",
+    "type": "text"
+  },
+  {
+    "name": "For Swagger API lookup.  If blank, actual request path is matched",
+    "type": "note"
+  },
+  {
+    "name": "Swagger Validator Help",
+    "type": "link",
+    "url": "help/SwaggerValidator.html"
+  }
+]}

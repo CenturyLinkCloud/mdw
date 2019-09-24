@@ -1,0 +1,54 @@
+{"widgets": [
+  {
+    "default": "${props['mdw.ldap.host']}",
+    "label": "LDAP Host",
+    "name": "LdapHost",
+    "type": "text"
+  },
+  {
+    "default": "${props['mdw.ldap.port']}",
+    "label": "LDAP Port",
+    "name": "LdapPort",
+    "type": "text"
+  },
+  {
+    "default": "${props['mdw.ldap.base.dn']}",
+    "label": "Base DN",
+    "name": "BaseDn",
+    "type": "text"
+  },
+  {
+    "default": "${props['mdw.ldap.user']}",
+    "label": "Application User",
+    "name": "AppCuid",
+    "type": "text"
+  },
+  {
+    "label": "Application Password",
+    "name": "AppPassword",
+    "type": "text"
+  },
+  {
+    "default": "ou=People",
+    "label": "Search Context",
+    "name": "SearchContext",
+    "type": "text"
+  },
+  {
+    "label": "Search Filter",
+    "name": "SearchFilter",
+    "type": "text"
+  },
+  {
+    "name": "LDAP Adapter Activity Help",
+    "type": "link",
+    "url": "help/LdapAdapter.html"
+  },
+  {
+    "label": "LDAP Attribute",
+    "name": "Bindings",
+    "section": "Bindings",
+    "type": "mapping",
+    "vx": "160"
+  }
+]}
