@@ -1,0 +1,32 @@
+{"widgets": [
+  {
+    "label": "Route Definition",
+    "name": "RouteDefinition",
+    "source": "camel",
+    "type": "asset"
+  },
+  {
+    "label": "Asynchronous",
+    "name": "Asynchronous",
+    "type": "checkbox"
+  },
+  {
+    "label": "Request Variable",
+    "name": "REQUEST_VARIABLE",
+    "source": "Variables",
+    "type": "dropdown",
+    "vw": "200"
+  },
+  {
+    "label": "Response Variable",
+    "name": "RESPONSE_VARIABLE",
+    "source": "Variables",
+    "type": "dropdown",
+    "vw": "200"
+  },
+  {
+    "name": "Camel Route Adapter Help",
+    "type": "link",
+    "url": "help/todo.html"
+  }
+]}
