@@ -16,6 +16,8 @@
 package com.centurylink.mdw.workflow.activity.java;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.GeneralActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.java.*;
 import com.centurylink.mdw.model.attribute.Attribute;
@@ -35,6 +37,8 @@ import java.util.List;
 import java.util.Map;
 
 @Tracked(LogLevel.TRACE)
+@Activity(value="Dynamic Java", icon="com.centurylink.mdw.base/java.jpg",
+        pagelet="com.centurylink.mdw.base/dynamicJava.pagelet")
 public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJavaImplementor {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();

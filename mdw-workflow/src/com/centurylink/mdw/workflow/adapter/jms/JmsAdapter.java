@@ -26,6 +26,8 @@ import javax.jms.QueueSession;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
+import com.centurylink.mdw.activity.types.AdapterActivity;
+import com.centurylink.mdw.annotations.Activity;
 import org.apache.xmlbeans.XmlObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,6 +56,8 @@ import com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity;
  * ControlledAdapterActivity interface.
  */
 @Tracked(LogLevel.TRACE)
+@Activity(value="JMS Adapter", category=AdapterActivity.class, icon="com.centurylink.mdw.base/adapter.png",
+        pagelet="com.centurylink.mdw.base/jmsAdapter.pagelet")
 public class JmsAdapter extends ObjectAdapterActivity {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 

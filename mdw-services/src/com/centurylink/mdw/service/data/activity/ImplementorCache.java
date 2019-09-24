@@ -18,14 +18,16 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.reflections.Reflections;
 
 import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Cached activity implementors do not include pagelet.
+ * Cached activity implementors.
  */
 public class ImplementorCache implements PreloadableCache {
 
@@ -51,7 +53,33 @@ public class ImplementorCache implements PreloadableCache {
     @Override
     public void loadCache() throws CachingException {
         try {
-            // declared in .impl files
+
+            // built-in
+            Reflections reflections = new Reflections("com.centurylink.mdw.workflow");
+            Set<Class<?>> annotated = reflections.getTypesAnnotatedWith(Activity.class);
+            for (Class<?> activityClass : annotated) {
+                if (GeneralActivity.class.isAssignableFrom(activityClass)) {
+                    String implClass = activityClass.getName();
+                    Activity annotation = activityClass.getAnnotation(Activity.class);
+                    ActivityImplementor implementor = new ActivityImplementor(implClass, annotation);
+                    implementors.put(implClass, implementor);
+                }
+            }
+
+            // assets
+            CacheRegistration.getInstance().getCache("");
+            AssetServices assetServices = ServiceLocator.getAssetServices();
+            Map<String,List<AssetInfo>> annotatedAssets = assetServices.getAssetsOfTypes(new String[]{"java", "kt"});
+            for (String packageName : annotatedAssets.keySet()) {
+                Package pkg = PackageCache.getPackage(packageName);
+                for (AssetInfo assetInfo : annotatedAssets.get(packageName)) {
+                    ActivityImplementor impl = getAnnotatedImpl(pkg, assetInfo);
+                    if (impl != null)
+                        implementors.put(impl.getImplementorClass(), impl);
+                }
+            }
+
+            // old-style (declared in .impl files)
             DataAccess.getProcessLoader().getActivityImplementors().forEach(impl -> {
                 // qualify the icon location
                 String icon = impl.getIcon();
@@ -65,22 +93,8 @@ public class ImplementorCache implements PreloadableCache {
                         }
                     }
                 }
-                impl.setPagelet(null);
                 implementors.put(impl.getImplementorClass(), impl);
             });
-
-            // annotation-driven
-            CacheRegistration.getInstance().getCache("");
-            AssetServices assetServices = ServiceLocator.getAssetServices();
-            Map<String,List<AssetInfo>> annotatedAssets = assetServices.getAssetsOfTypes(new String[]{"java", "kt"});
-            for (String packageName : annotatedAssets.keySet()) {
-                Package pkg = PackageCache.getPackage(packageName);
-                for (AssetInfo assetInfo : annotatedAssets.get(packageName)) {
-                    ActivityImplementor impl = getAnnotatedImpl(pkg, assetInfo);
-                    if (impl != null)
-                        implementors.put(impl.getImplementorClass(), impl);
-                }
-            }
 
             implementors.put(Data.Implementors.DUMMY_ACTIVITY, new ActivityImplementor(Data.Implementors.DUMMY_ACTIVITY,
                     GeneralActivity.class.getName(), "Dummy Activity", "shape:activity", "{}"));

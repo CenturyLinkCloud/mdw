@@ -19,6 +19,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.AdapterActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
@@ -28,6 +30,8 @@ import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity;
 
 @Tracked(LogLevel.TRACE)
+@Activity(value="File Writer", category=AdapterActivity.class, icon="com.centurylink.mdw.base/writer.jpg",
+        pagelet="com.centurylink.mdw.base/fileWriter.pagelet")
 public class FileWriterAdapter extends ObjectAdapterActivity {
 
     public static final String OUTPUT_FILEPATH = "OutputFilepath";

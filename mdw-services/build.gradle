@@ -3,6 +3,7 @@ dependencies {
     compile group: "javax.xml", name: "jaxrpc-api", version: "1.1"
     compile group: "javax.resource", name: "connector-api", version: "1.5"
     compile group: "junit", name: "junit", version: "4.8.1"
+    compile group: "org.reflections", name: "reflections", version: "0.9.11"
 
     // soap
     compile group: "javax.xml.soap", name: "javax.xml.soap-api", version: "1.4.0"

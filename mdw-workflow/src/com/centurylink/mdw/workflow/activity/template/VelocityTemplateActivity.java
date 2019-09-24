@@ -16,6 +16,8 @@
 package com.centurylink.mdw.workflow.activity.template;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.GeneralActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.model.asset.Asset;
@@ -38,6 +40,8 @@ import java.util.Map;
 import java.util.Properties;
 
 @Tracked(LogLevel.TRACE)
+@Activity(value="Velocity Template", icon="com.centurylink.mdw.base/velocity.jpg",
+        pagelet="com.centurylink.mdw.base/velocity.pagelet")
 public class VelocityTemplateActivity extends DefaultActivityImpl {
 
     // attribute name constants

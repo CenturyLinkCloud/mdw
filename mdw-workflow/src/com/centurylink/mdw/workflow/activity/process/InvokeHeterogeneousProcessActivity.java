@@ -16,6 +16,8 @@
 package com.centurylink.mdw.workflow.activity.process;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.InvokeProcessActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.ParameterDocument.Parameter;
@@ -63,6 +65,8 @@ import java.util.Map;
  *
  */
 @Tracked(LogLevel.TRACE)
+@Activity(value="Invoke Multiple Subprocesses", category=InvokeProcessActivity.class, icon="com.centurylink.mdw.base/multisub.png",
+        pagelet="com.centurylink.mdw.base/invokeMultiple.pagelet")
 public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBase {
 
     public static final String EXECUTION_PLAN_VARIABLE = "Execution Plan";

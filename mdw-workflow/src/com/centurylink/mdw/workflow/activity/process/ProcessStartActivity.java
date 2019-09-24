@@ -17,6 +17,7 @@ package com.centurylink.mdw.workflow.activity.process;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.StartActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
@@ -29,6 +30,8 @@ import java.util.Map;
  * This class will be extended by the custom ProcessStart activity
  */
 @Tracked(LogLevel.TRACE)
+@Activity(value="Process Start", category=StartActivity.class, icon="shape:start",
+        pagelet="com.centurylink.mdw.base/processStart.pagelet")
 public class ProcessStartActivity extends DefaultActivityImpl implements StartActivity {
 
     private static final String PARAMETERS = "Parameters";

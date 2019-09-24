@@ -15,13 +15,8 @@
  */
 package com.centurylink.mdw.workflow.activity.transform;
 
-import javax.xml.transform.TransformerException;
-
-import org.codehaus.groovy.control.CompilerConfiguration;
-import org.json.JSONObject;
-import org.w3c.dom.Document;
-
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.common.translator.impl.DomDocumentTranslator;
 import com.centurylink.mdw.model.JsonObject;
@@ -29,22 +24,22 @@ import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
-import com.centurylink.mdw.script.Builder;
-import com.centurylink.mdw.script.CrossmapScript;
-import com.centurylink.mdw.script.JsonBuilder;
-import com.centurylink.mdw.script.JsonSlurper;
-import com.centurylink.mdw.script.Slurper;
-import com.centurylink.mdw.script.XmlBuilder;
-import com.centurylink.mdw.script.XmlSlurper;
+import com.centurylink.mdw.script.*;
 import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 import com.centurylink.mdw.xml.DomHelper;
-
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.json.JSONObject;
+import org.w3c.dom.Document;
 
+import javax.xml.transform.TransformerException;
+
+@Activity(value="Crossmap Activity", icon="com.centurylink.mdw.base/crossmap.png",
+        pagelet="com.centurylink.mdw.base/crossmap.pagelet")
 public class CrossmapActivity extends DefaultActivityImpl {
 
     protected static final String MAPPER = "Mapper";

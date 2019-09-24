@@ -16,6 +16,8 @@
 package com.centurylink.mdw.workflow.activity.validate;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.GeneralActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.asset.AssetRequest;
@@ -45,6 +47,8 @@ import java.util.List;
 import java.util.Map;
 
 @Tracked(LogLevel.TRACE)
+@Activity(value="Swagger Validator", icon="com.centurylink.mdw.base/swagger.png",
+        pagelet="com.centurylink.mdw.base/swaggerValidator.pagelet")
 public class SwaggerValidatorActivity extends DefaultActivityImpl {
 
     public static final String VALIDATE = "Validate";

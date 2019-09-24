@@ -16,6 +16,8 @@
 package com.centurylink.mdw.workflow.adapter.ldap;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.AdapterActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
@@ -39,6 +41,8 @@ import javax.naming.directory.*;
 import java.util.*;
 
 @Tracked(LogLevel.TRACE)
+@Activity(value="LDAP Adapter", category=AdapterActivity.class, icon="com.centurylink.mdw.base/adapter.png",
+        pagelet="com.centurylink.mdw.base/ldap.pagelet")
 public class LdapAdapter extends ObjectAdapterActivity {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();

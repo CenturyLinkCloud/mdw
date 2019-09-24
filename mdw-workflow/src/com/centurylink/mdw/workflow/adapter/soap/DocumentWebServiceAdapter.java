@@ -26,6 +26,8 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPMessage;
 
+import com.centurylink.mdw.activity.types.AdapterActivity;
+import com.centurylink.mdw.annotations.Activity;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -39,6 +41,8 @@ import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.xml.DomHelper;
 
 @Tracked(LogLevel.TRACE)
+@Activity(value="Document Web Service", category=AdapterActivity.class, icon="com.centurylink.mdw.base/adapter.png",
+        pagelet="com.centurylink.mdw.base/documentWebService.pagelet")
 public class DocumentWebServiceAdapter extends SoapWebServiceAdapter {
 
     /**

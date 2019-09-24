@@ -15,6 +15,8 @@
  */
 package com.centurylink.mdw.workflow.activity.event;
 
+import com.centurylink.mdw.activity.types.AdapterActivity;
+import com.centurylink.mdw.annotations.Activity;
 import org.apache.commons.lang.StringEscapeUtils;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
@@ -22,6 +24,8 @@ import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.adapter.rest.MultiRestServiceAdapter;
 
 @Tracked(LogLevel.TRACE)
+@Activity(value="Multi-Publish REST", category=AdapterActivity.class, icon="com.centurylink.mdw.base/send.gif",
+        pagelet="com.centurylink.mdw.base/publishEventRest.pagelet")
 public class PublishEventMessageRest extends MultiRestServiceAdapter {
 
     public static final String ATTRIBUTE_EVENT_NAME = "Event Name";
