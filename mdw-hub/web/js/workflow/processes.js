@@ -427,8 +427,8 @@ processMod.controller('ProcessDefsController', ['$scope', 'mdw', 'util', 'Proces
 }]);
 
 processMod.controller('ProcessDefController',
-    ['$scope', '$routeParams', '$route', '$location', '$filter', '$http', 'mdw', 'util', 'uiUtil', 'ProcessDef', 'ProcessSummary',
-    function($scope, $routeParams, $route, $location, $filter, $http, mdw, util, uiUtil, ProcessDef, ProcessSummary) {
+    ['$scope', '$routeParams', '$route', '$location', '$filter', '$http', 'mdw', 'util', 'uiUtil', 'ProcessDef', 'ProcessSummary', 'ProcessVersions',
+    function($scope, $routeParams, $route, $location, $filter, $http, mdw, util, uiUtil, ProcessDef, ProcessSummary, ProcessVersions) {
 
   sessionStorage.removeItem('stagingUser');
 
@@ -478,6 +478,9 @@ processMod.controller('ProcessDefController',
     if ($scope.process.archived)
       $scope.process.version = summary.template ? summary.templateVersion : summary.version;
     $scope.definitionId = $scope.process.definitionId;
+    ProcessVersions.retrieve({packageName: $scope.process.packageName, processName: $scope.process.name}, function(data) {
+      $scope.versions = data.versions;
+    });
   }
   else {
     var defSum = ProcessDef.retrieve({packageName: $scope.process.packageName, processName: $scope.process.name, processVersion: $scope.process.version, summary: true}, function() {
@@ -485,6 +488,9 @@ processMod.controller('ProcessDefController',
         $scope.definitionId = $scope.process.definitionId;
         $scope.template = $scope.process.template;
         $scope.process.hasMilestones = defSum.hasMilestones;
+        ProcessVersions.retrieve({packageName: $scope.process.packageName, processName: $scope.process.name}, function(data) {
+          $scope.versions = data.versions;
+        });
     });
   }
 
@@ -532,6 +538,12 @@ processMod.factory('ProcessSummary', ['mdw', function(mdw) {
 
 processMod.factory('ProcessDef', ['$resource', 'mdw', function($resource, mdw) {
   return $resource(mdw.roots.services + '/Services/Workflow/:packageName/:processName/:processVersion', mdw.serviceParams(), {
+    retrieve: { method: 'GET', isArray: false }
+  });
+}]);
+
+processMod.factory('ProcessVersions', ['$resource', 'mdw', function($resource, mdw) {
+  return $resource(mdw.roots.services + '/Services/Versions/:packageName/:processName' + '.proc', mdw.serviceParams(), {
     retrieve: { method: 'GET', isArray: false }
   });
 }]);

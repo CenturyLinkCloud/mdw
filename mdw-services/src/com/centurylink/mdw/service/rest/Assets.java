@@ -62,7 +62,7 @@ import java.util.List;
 import java.util.Map;
 
 @Path("/Assets")
-@Api("Workflow assets")
+@Api("MDW assets")
 public class Assets extends JsonRestService {
 
     protected List<String> getRoles(String path, String method) {
