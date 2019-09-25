@@ -1,9 +1,5 @@
 package com.centurylink.mdw.tests.services
 
-// TODO:
-// Awaiting https://github.com/CenturyLinkCloud/mdw/issues/710 for more thorough
-// test that confirms package-handler error process also canceled.
-
 start process('CancelMain') {
     variables = [ testCase: 'err' ]
 }
@@ -17,6 +13,9 @@ response = delete http("api/Processes/${masterProcessInstance.id}") {
 }
 assert response.code == 202
 
-verify processes('CancelMain')
+sleep 30
+
+// confirm pkg-level handler cancelled as well
+verify processes('CancelMain', 'ServiceSub', 'Error')
 
 assert masterProcessInstance.status == 'Cancelled'
