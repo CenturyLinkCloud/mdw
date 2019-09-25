@@ -13,6 +13,8 @@ response = delete http("api/Processes/${masterProcessInstance.id}") {
 }
 assert response.code == 202
 
+sleep 30
+
 verify processes('CancelMain', 'CancelSub')
 
 // confirm process was canceled
