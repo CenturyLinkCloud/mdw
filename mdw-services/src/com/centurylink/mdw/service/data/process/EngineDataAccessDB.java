@@ -949,28 +949,11 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         return ret;
     }
 
-    public List<ProcessInstance> getProcessInstanceBySecondaryOwner(String owner, Long ownerId)
-            throws SQLException {
-        List<ProcessInstance> ret = new ArrayList<>();
-        ResultSet rs;
 
-        String query = "select " + PROCINST_QUERY_FIELDS +
-                " from PROCESS_INSTANCE where SECONDARY_OWNER = ? and SECONDARY_OWNER_ID=?";
-        rs = db.runSelect(query, new Object[]{owner, ownerId});
-
-        while (rs.next()) {
-            ret.add(this.getProcessInstanceSub(rs));
-        }
-        return ret;
-    }
-
-    public List<ActivityInstance> getActivityInstancesForProcessInstanceByStatus(Long procInstId, Integer status) throws SQLException {
-        StringBuilder query = new StringBuilder("select STATUS_CD,START_DT,END_DT,STATUS_MESSAGE,ACTIVITY_INSTANCE_ID,ACTIVITY_ID" +
-                " from ACTIVITY_INSTANCE where PROCESS_INSTANCE_ID=?");
-        if (status > 0) {
-            query.append(" and STATUS_CD in (").append(status).append(")");
-        }
-        ResultSet rs = db.runSelect(query.toString(), procInstId);
+    public List<ActivityInstance> getActivityInstancesForProcessInstance(Long procInstId) throws SQLException {
+        String query = "select STATUS_CD,START_DT,END_DT,STATUS_MESSAGE,ACTIVITY_INSTANCE_ID,ACTIVITY_ID" +
+                " from ACTIVITY_INSTANCE where PROCESS_INSTANCE_ID=?";
+        ResultSet rs = db.runSelect(query, procInstId);
         List<ActivityInstance> ret = new ArrayList<ActivityInstance>();
         while (rs.next()) {
             ActivityInstance vo = new ActivityInstance();
@@ -985,10 +968,6 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             ret.add(vo);
         }
         return ret;
-    }
-
-    public List<ActivityInstance> getActivityInstancesForProcessInstance(Long procInstId) throws SQLException {
-        return this.getActivityInstancesForProcessInstanceByStatus(procInstId, 0);
     }
 
     public void cancelTransitionInstances(Long procInstId, String comment, Long transId)
