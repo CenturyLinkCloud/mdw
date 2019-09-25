@@ -74,8 +74,9 @@ public class ImplementorCache implements PreloadableCache {
                 Package pkg = PackageCache.getPackage(packageName);
                 for (AssetInfo assetInfo : annotatedAssets.get(packageName)) {
                     ActivityImplementor impl = getAnnotatedImpl(pkg, assetInfo);
-                    if (impl != null)
+                    if (impl != null) {
                         implementors.put(impl.getImplementorClass(), impl);
+                    }
                 }
             }
 

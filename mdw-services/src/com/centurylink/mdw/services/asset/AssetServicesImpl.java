@@ -568,7 +568,8 @@ public class AssetServicesImpl implements AssetServices {
             String assetRoot = className.substring(0, lastDot) + "/" + className.substring(lastDot + 1);
                 AssetInfo implAsset = getAsset(assetRoot + ".java");
                 if (implAsset == null)
-                    return getAsset(assetRoot + ".kt");
+                    implAsset = getAsset(assetRoot + ".kt");
+                return implAsset;
         }
         return null;
     }
