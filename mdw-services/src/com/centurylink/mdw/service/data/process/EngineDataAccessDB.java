@@ -949,7 +949,6 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         return ret;
     }
 
-
     public List<ActivityInstance> getActivityInstancesForProcessInstance(Long procInstId) throws SQLException {
         String query = "select STATUS_CD,START_DT,END_DT,STATUS_MESSAGE,ACTIVITY_INSTANCE_ID,ACTIVITY_ID" +
                 " from ACTIVITY_INSTANCE where PROCESS_INSTANCE_ID=?";
