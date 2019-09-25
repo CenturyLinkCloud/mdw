@@ -4,7 +4,7 @@
     "label": "Workflow",
     "icon": "workflow.png",
     "url": "#/workflow/processes",
-    "routes": ["/workflow", "/workflow/processes", "/workflow/definitions", "/workflow/activities", "/solutions", "/milestones"],
+    "routes": ["/workflow", "/workflow/processes", "/workflow/definitions", "/workflow/versions", "/workflow/activities", "/solutions", "/milestones"],
     "navs": [ 
       {
         "links": [

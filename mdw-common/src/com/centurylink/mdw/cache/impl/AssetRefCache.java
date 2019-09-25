@@ -139,6 +139,23 @@ public class AssetRefCache implements CacheService {
         return refList;
     }
 
+    /**
+     * Returns all versions for an asset.
+     */
+    public static List<AssetRef> getRefs(String assetPath) throws CachingException {
+        Map<Long,AssetRef> allAssetRefs = assetRefs;
+        if (allAssetRefs == null)
+            allAssetRefs = load();
+        List<AssetRef> refs = new ArrayList<>();
+        String start = assetPath + " ";
+        for (AssetRef ref : allAssetRefs.values()) {
+            if (ref.getName().startsWith(start)) {
+                refs.add(ref);
+            }
+        }
+        return refs;
+    }
+
     private static AssetRef loadAssetRef(String name) throws CachingException {
         // try to load from database in case Ref is older than default of 2 years
         AssetRef assetRef = null;

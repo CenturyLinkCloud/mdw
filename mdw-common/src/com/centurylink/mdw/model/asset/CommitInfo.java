@@ -20,10 +20,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.centurylink.mdw.model.Jsonable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CommitInfo { // implements Jsonable (removed for CLI)
+public class CommitInfo implements Jsonable {
 
     private String commit;
     public String getCommit() { return commit; }

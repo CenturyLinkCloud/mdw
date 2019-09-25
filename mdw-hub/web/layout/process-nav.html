@@ -1,4 +1,5 @@
-<ul id="process-nav" class="nav mdw-nav" ng-style="getNavMenuWidthStyle(165)">
+<ul id="process-nav" class="nav mdw-nav" ng-style="getNavMenuWidthStyle(165)"
+  ng-if="process.id || (process.hasMilestones && process.masterRequestId)">
   <li nav-link="workflow/process" full-width="process-nav" ng-if="process.id">
     <a href="#/workflow/processes/{{process.id}}">
       Workflow Process
@@ -19,6 +20,11 @@
   <li nav-link="workflow/definition" full-width="process-nav" ng-if="!process.template">
     <a href="#/workflow/definitions/{{process.packageName}}/{{processVersion ? process.name + '/v' + process.version : process.name}}/{{process.instanceId ? process.instanceId : ''}}">
       Definition
+    </a>
+  </li>
+  <li nav-link="workflow/versions" ng-if="!process.template">
+    <a href="#/workflow/versions/{{process.packageName}}/{{process.name}}">
+      Versions
     </a>
   </li>
   <li nav-link="workflow/definition" full-width="process-nav" ng-if="process.template">
