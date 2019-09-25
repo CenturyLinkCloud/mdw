@@ -19,6 +19,7 @@ import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.*;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.MdwException;
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.*;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -1595,7 +1596,24 @@ class ProcessExecutorImpl {
                 "ProcessInstance has been cancelled.", null);
         edao.setProcessInstanceStatus(pProcessInst.getId(), WorkStatus.STATUS_CANCELLED);
         edao.removeEventWaitForProcessInstance(pProcessInst.getId());
+        this.cancelErrorHandlers(pProcessInst);
         this.cancelTasksOfProcessInstance(pProcessInst);
+    }
+
+    private void cancelErrorHandlers(ProcessInstance procInst) throws Exception {
+        Query query = new Query();
+        procInst = ServiceLocator.getWorkflowServices().getProcess(procInst.getId());
+        for (ActivityInstance activity : procInst.getActivities()) {
+            query.setFilter("owner", "ERROR");
+            query.setFilter("secondaryOwner", "ACTIVITY_INSTANCE");
+            query.setFilter("secondaryOwnerId", activity.getId());
+            query.setSort("process_instance_id");
+            query.setDescending(true);
+            List<ProcessInstance> processInstanceList = ServiceLocator.getWorkflowServices().getProcesses(query).getProcesses();
+            for (ProcessInstance pi : processInstanceList) {
+                cancelProcessInstance(pi);
+            }
+        }
     }
 
     /////////////////////// other
