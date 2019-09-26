@@ -2,13 +2,13 @@
   float: left;
   font-size: 15px;
   font-weight: bold;
-  margin: 15px 10px 5px 20px;
+  margin: 15px 10px 10px 20px;
 }
 .mdw-task-template {
   float: right;
   font-size: 15px;
   font-weight: bold;
-  margin: 15px 35px 5px 10px;
+  margin: 15px 35px 10px 10px;
 }
 .mdw-task-workflow {
   height: calc(100vh - 250px);

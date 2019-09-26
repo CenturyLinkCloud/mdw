@@ -15,9 +15,13 @@
         Assign
         <navigationOutcome>tasks</navigationOutcome>
       </allowableAction>
+      <allowableAction alias="Cancel" requireComment="true">
+        Abort
+        <navigationOutcome>tasks</navigationOutcome>
+      </allowableAction>
       <allowableAction>
         Claim
-        <navigationOutcome>myTasks</navigationOutcome>
+        <navigationOutcome>tasks</navigationOutcome>
       </allowableAction>
       <allowableAction>
         Release
