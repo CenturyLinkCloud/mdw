@@ -1,26 +1,39 @@
 package com.centurylink.mdw.services.workflow;
 
+import com.centurylink.mdw.cache.impl.AssetRefCache;
 import com.centurylink.mdw.cli.Hierarchy;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.activity.ImplementorCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
+import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.DesignServices;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DesignServicesImpl implements DesignServices {
+
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     @Override
     public Process getProcessDefinition(String assetPath, Query query) throws ServiceException {
@@ -187,5 +200,62 @@ public class DesignServicesImpl implements DesignServices {
         catch (DataAccessException | IOException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Hierarchy error for " + processId, ex);
         }
+    }
+
+    @Override
+    public List<AssetVersion> getAssetVersions(String assetPath, Query query) throws ServiceException {
+        AssetInfo currentAsset = ServiceLocator.getAssetServices().getAsset(assetPath);
+        String currentVersion = "";
+        Long currentId = 0L;
+        if (currentAsset != null) {
+            // TODO hokey
+            JSONObject json = currentAsset.getJson();
+            currentVersion = json.optString("version");
+            currentId = json.optLong("id");
+        }
+        List<AssetVersion> versions = new ArrayList<>();
+        boolean includesCurrent = false;
+        for (AssetRef assetRef : AssetRefCache.getRefs(assetPath)) {
+            AssetVersion version = new AssetVersion(assetRef);
+            versions.add(version);
+            if (version.getVersion().equals(currentVersion))
+                includesCurrent = true;
+        }
+        if (!includesCurrent) {
+            AssetVersion current = new AssetVersion(currentId, assetPath, currentVersion);
+            versions.add(current);
+        }
+
+        if (query.getBooleanFilter("withCommitInfo")) {
+            AssetServices assetServices = ServiceLocator.getAssetServices();
+            try {
+                VersionControlGit versionControl = (VersionControlGit) assetServices.getVersionControl();
+                if (versionControl != null && PropertyManager.getProperty(PropertyNames.MDW_GIT_USER) != null) {
+                    for (int i = 0; i < versions.size(); i++) {
+                        AssetVersion assetVersion = versions.get(i);
+                        try {
+                            if (assetVersion.getRef() != null) {
+                                assetVersion.setCommitInfo(versionControl.getCommitInfoForRef(assetVersion.getRef()));
+                            } else if (i == 0) {
+                                AssetInfo assetInfo = assetServices.getAsset(assetPath, true);
+                                if (assetInfo != null) {
+                                    String assetVcPath = versionControl.getRelativePath(assetInfo.getFile().toPath());
+                                    assetVersion.setCommitInfo(versionControl.getCommitInfo(assetVcPath));
+                                }
+                            }
+                        } catch (Exception ex) {
+                            logger.error("Error reading commit for " + assetVersion, ex);
+                        }
+                    }
+                }
+            }
+            catch (IOException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+            }
+        }
+
+        Collections.sort(versions);
+
+        return versions;
     }
 }
