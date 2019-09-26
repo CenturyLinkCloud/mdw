@@ -611,6 +611,8 @@ public class TaskDataAccess extends CommonDataAccess {
                 }
                 if (!db.isMySQL())
                     where = where + " and ui.user_info_id(+) = ti.task_claim_user_id\n";
+                sql.append(where);
+                countSql.append(where);
             }
             else {
                 where = buildTaskInstanceWhere(query);
