@@ -478,8 +478,17 @@ processMod.controller('ProcessDefController',
     if ($scope.process.archived)
       $scope.process.version = summary.template ? summary.templateVersion : summary.version;
     $scope.definitionId = $scope.process.definitionId;
-    ProcessVersions.retrieve({packageName: $scope.process.packageName, processName: $scope.process.name}, function(data) {
+    ProcessVersions.retrieve({
+        packageName: $scope.process.packageName,
+        processName: $scope.process.name,
+        withCommitInfo: true
+      }, function(data) {
       $scope.versions = data.versions;
+      $scope.versions.forEach(function(version) {
+        if (version.commitInfo && version.commitInfo.date) {
+          version.commitInfo.date = new Date(version.commitInfo.date);
+        }
+      });
     });
   }
   else {
@@ -488,8 +497,17 @@ processMod.controller('ProcessDefController',
         $scope.definitionId = $scope.process.definitionId;
         $scope.template = $scope.process.template;
         $scope.process.hasMilestones = defSum.hasMilestones;
-        ProcessVersions.retrieve({packageName: $scope.process.packageName, processName: $scope.process.name}, function(data) {
+        ProcessVersions.retrieve({
+            packageName: $scope.process.packageName,
+            processName: $scope.process.name,
+            withCommitInfo: true
+          }, function(data) {
           $scope.versions = data.versions;
+          $scope.versions.forEach(function(version) {
+            if (version.commitInfo && version.commitInfo.date) {
+              version.commitInfo.date = new Date(version.commitInfo.date);
+            }
+          });
         });
     });
   }

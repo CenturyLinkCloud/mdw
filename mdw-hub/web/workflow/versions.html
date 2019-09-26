@@ -15,13 +15,30 @@
       <div class="mdw-section">
         <ul class="mdw-list">
           <li ng-repeat="version in versions" style="padding-top:3px;">
-            <div>
-              <a href="#/workflow/definitions/{{version.path}}/{{version.version}}" style="font-weight:bold;">
-                v{{version.version}}
-              </a>
-            </div>
-            <div ng-if="version.id" style="font-size:12px">
-              ID: {{version.id}}
+            <div class="mdw-flex-item">
+              <div class="mdw-flex-item-left" style="width:200px;">
+                <div>
+                  <a href="#/workflow/definitions/{{version.path}}/{{version.version}}" style="font-weight:bold;font-size:15px;">
+                    v{{version.version}}
+                  </a>
+                </div>
+                <div ng-if="version.id" style="display:block;font-size:13px;">
+                  {{version.id}}
+                </div>
+              </div>
+              <div style="width:100%;color:#505050;">
+                {{version.commitInfo.message}}
+              </div>
+              <div class="mdw-flex-item-right" style="color:#505050;margin-right:25px;">
+                <div ng-if="version.commitInfo">
+                  <div ng-if="version.commitInfo.date">
+                    {{version.commitInfo.date.toLocaleString()}}
+                  </div>
+                  <div>
+                    {{version.commitInfo.committer}}
+                  </div>
+                </div>
+              </div>
             </div>
           </li>
         </ul>

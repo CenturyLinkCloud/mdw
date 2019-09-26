@@ -611,18 +611,32 @@ public class VersionControlGit implements VersionControl {
     public CommitInfo getCommitInfo(String path) throws Exception {
         Iterator<RevCommit> revCommits = git.log().addPath(path).setMaxCount(1).call().iterator();
         if (revCommits.hasNext()) {
-            RevCommit revCommit = revCommits.next();
-            CommitInfo commitInfo = new CommitInfo(revCommit.getId().name());
-            PersonIdent committerIdent = revCommit.getCommitterIdent();
-            commitInfo.setCommitter(committerIdent.getName());
-            commitInfo.setEmail(committerIdent.getEmailAddress());
-            if ((commitInfo.getCommitter() == null || commitInfo.getCommitter().isEmpty()) && commitInfo.getEmail() != null)
-                commitInfo.setCommitter(commitInfo.getEmail());
-            commitInfo.setDate(committerIdent.getWhen());
-            commitInfo.setMessage(revCommit.getShortMessage());
-            return commitInfo;
+            return getCommitInfo(revCommits.next());
         }
         return null;
+    }
+
+    public CommitInfo getCommitInfoForRef(String ref) throws Exception {
+        ObjectId commitId = ObjectId.fromString(ref);
+        try (RevWalk revWalk = new RevWalk(localRepo)) {
+            RevCommit revCommit = revWalk.parseCommit(commitId);
+            if (revCommit != null) {
+                return getCommitInfo(revCommit);
+            }
+        }
+        return null;
+    }
+
+    private CommitInfo getCommitInfo(RevCommit revCommit) throws Exception {
+        CommitInfo commitInfo = new CommitInfo(revCommit.getId().name());
+        PersonIdent committerIdent = revCommit.getCommitterIdent();
+        commitInfo.setCommitter(committerIdent.getName());
+        commitInfo.setEmail(committerIdent.getEmailAddress());
+        if ((commitInfo.getCommitter() == null || commitInfo.getCommitter().isEmpty()) && commitInfo.getEmail() != null)
+            commitInfo.setCommitter(commitInfo.getEmail());
+        commitInfo.setDate(committerIdent.getWhen());
+        commitInfo.setMessage(revCommit.getShortMessage());
+        return commitInfo;
     }
 
     public ObjectStream getRemoteContentStream(String branch, String path) throws Exception {
