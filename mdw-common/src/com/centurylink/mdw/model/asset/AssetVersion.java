@@ -52,4 +52,8 @@ public class AssetVersion implements Jsonable, Comparable<AssetVersion> {
     public int compareTo(AssetVersion otherVersion) {
         return Asset.parseVersion(otherVersion.version) - Asset.parseVersion(version);
     }
+
+    public String toString() {
+        return path + " v" + version;
+    }
 }

@@ -1,8 +1,7 @@
 package com.centurylink.mdw.service.rest;
 
-import com.centurylink.mdw.cache.impl.AssetRefCache;
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.model.JsonList;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetVersion;
@@ -15,8 +14,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.ws.rs.Path;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -30,32 +27,12 @@ public class Versions extends JsonRestService {
             responseContainer="List")
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
         String[] segments = getSegments(path);
+        Query query = getQuery(path, headers);
         if (segments.length == 3) {
             // version list
             String assetPath = segments[1] + "/" + segments[2];
-            AssetInfo currentAsset = ServiceLocator.getAssetServices().getAsset(assetPath);
-            String currentVersion = "";
-            Long currentId = 0L;
-            if (currentAsset != null) {
-                JSONObject json = currentAsset.getJson();
-                currentVersion = json.optString("version");
-                currentId = json.optLong("id");
-            }
-            List<AssetVersion> versions = new ArrayList<>();
-            boolean includesCurrent = false;
-            for (AssetRef assetRef : AssetRefCache.getRefs(assetPath)) {
-                AssetVersion version = new AssetVersion(assetRef);
-                versions.add(version);
-                if (version.getVersion().equals(currentVersion))
-                    includesCurrent = true;
-            }
-            if (!includesCurrent) {
-                AssetVersion current = new AssetVersion(currentId, assetPath, currentVersion);
-                versions.add(current);
-            }
-
-            Collections.sort(versions);
-            return new JsonList<>(versions, "versions").getJson();
+            List<AssetVersion> assetVersions = ServiceLocator.getDesignServices().getAssetVersions(assetPath, query);
+            return new JsonList<>(assetVersions, "versions").getJson();
         }
         else if (segments.length == 4) {
             String pkg = segments[1];
