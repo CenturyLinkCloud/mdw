@@ -3,9 +3,11 @@
 var tasksMod = angular.module('tasks', ['ngResource', 'mdw']);
 
 // task list controller
-tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location', 'mdw', 'util', 'TaskAction', 'TaskUtil', 'TASK_ADVISORIES',
-                                       function($scope, $window, $http, $location, mdw, util, TaskAction, TaskUtil, TASK_ADVISORIES) {
-  
+tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location', 'mdw', 'util', 'uiUtil', 'TaskAction', 'TaskUtil', 'TASK_ADVISORIES',
+                                       function($scope, $window, $http, $location, mdw, util, uiUtil, TaskAction, TaskUtil, TASK_ADVISORIES) {
+
+  $mdwUi.clearMessage();
+
   $scope.getFilter = function() {
     var taskFilter = sessionStorage.getItem('taskFilter');
     if (taskFilter)
@@ -142,6 +144,8 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   
   
   $scope.$on('page-retrieved', function(event, taskList) {
+    $mdwUi.clearMessage();
+
     // create date and due date
     taskList.tasks.forEach(function(task) {
       TaskUtil.setTask(task);
@@ -175,9 +179,30 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   $scope.performAssign = function(assignee) {
     $scope.performAction('Assign', assignee.cuid);
   };
-  
+
   $scope.performAction = function(action, assignee) {
     $scope.closePopover(); // popover should be closed
+    var requireComment = false;
+    if ($scope.taskActions) {
+      $scope.taskActions.forEach(function(taskAction) {
+        if (action === taskAction.action) {
+          requireComment = taskAction.requireComment;
+        }
+      });
+    }
+    if (requireComment) {
+      uiUtil.enter('Comment Required', 'Enter comment:', function(res) {
+        if (res) {
+          $scope.doAction(action, assignee, res);
+        }
+      });
+    }
+    else {
+      $scope.doAction(action, assignee);
+    }
+  };
+
+  $scope.doAction = function(action, assignee, comment) {
     var selectedTasks = $scope.model.taskList.getSelectedItems();
     if (selectedTasks && selectedTasks.length > 0) {
       console.log('Performing action: ' + action + ' on selected task(s)');
@@ -191,6 +216,9 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
           taskInstanceIds: instanceIds,
           assignee: assignee
       };
+      if (comment) {
+        taskAction.comment = comment;
+      }
       
       TaskAction.action({action: action}, taskAction, function(data) {
         if (data.status.code >= 300) {
@@ -235,9 +263,9 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
         });
       }
     }
-    $scope.digest(); // to show mdw.messages
+    $mdwUi.showMessage(message);
   };
-  
+
   $scope.model.typeaheadUser = null;
   $scope.findTypeaheadAssignees = function(typed) {
       return $http.get(mdw.roots.services + '/services/Tasks/assignees' + '?app=mdw-admin&find=' + typed).then(function(response) {
