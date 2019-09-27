@@ -128,7 +128,7 @@ public class AutoFormManualTaskActivity extends ManualTaskActivity {
             if (compCode==null) compCode = callurl.getParameter(TaskAttributeConstant.URLARG_COMPLETION_CODE);
             String subaction = datadoc.has(TaskAttributeConstant.URLARG_ACTION) ? datadoc.getString(TaskAttributeConstant.URLARG_ACTION) : null;
             if (subaction==null) subaction = callurl.getParameter(TaskAttributeConstant.URLARG_ACTION);
-            if (this.getProcessInstance().isEmbedded()) {
+            if (this.getProcessInstance().isEmbedded() || this.getProcessInstanceOwner().equals("ERROR")) {
                 if (subaction==null)
                     subaction = compCode;
                 if (action.equals("@CANCEL_TASK")) {
