@@ -51,6 +51,10 @@ public class WorkflowDataAccess extends CommonDataAccess {
                 catch (NumberFormatException ex) {
                     // otherwise master request id
                     where = "where pi.master_request_id like '" + query.getFind() + "%'\n";
+                    String[] processIds = query.getArrayFilter("processIds");
+                    if (processIds != null && processIds.length > 0) {
+                        where += getProcessIdsClause(processIds);
+                    }
                 }
             }
             else {
@@ -122,13 +126,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
             // processIds
             String[] processIds = query.getArrayFilter("processIds");
             if (processIds != null && processIds.length > 0) {
-                sb.append(" and pi.process_id in (");
-                for (int i = 0; i < processIds.length; i++) {
-                    sb.append(processIds[i]);
-                    if (i < processIds.length - 1)
-                        sb.append(",");
-                }
-                sb.append(")\n");
+                sb.append(getProcessIdsClause(processIds));
             }
         }
 
@@ -192,6 +190,20 @@ public class WorkflowDataAccess extends CommonDataAccess {
                 sb.append(" where vi.process_inst_id = pi.process_instance_id and vi.variable_name = '").append(varName).append("'");
                 sb.append(" and vi.variable_value = '").append(varValue).append("')");
             }
+        }
+        return sb.toString();
+    }
+
+    private String getProcessIdsClause(String[] processIds) {
+        StringBuilder sb = new StringBuilder();
+        if (processIds != null && processIds.length > 0) {
+            sb.append(" and pi.process_id in (");
+            for (int i = 0; i < processIds.length; i++) {
+                sb.append(processIds[i]);
+                if (i < processIds.length - 1)
+                    sb.append(",");
+            }
+            sb.append(")\n");
         }
         return sb.toString();
     }

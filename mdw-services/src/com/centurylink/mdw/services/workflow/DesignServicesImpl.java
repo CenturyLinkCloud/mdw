@@ -86,10 +86,11 @@ public class DesignServicesImpl implements DesignServices {
             }
             else {
                 List<Process> found = new ArrayList<>();
+                String findLower = find.toLowerCase();
                 for (Process processVO : ProcessCache.getAllProcesses()) {
-                    if (processVO.getName() != null && processVO.getName().startsWith(find))
+                    if (processVO.getName() != null && processVO.getName().toLowerCase().startsWith(findLower))
                         found.add(processVO);
-                    else if (find.indexOf(".") > 0 && processVO.getPackageName() != null && processVO.getPackageName().startsWith(find))
+                    else if (find.indexOf(".") > 0 && processVO.getPackageName() != null && processVO.getPackageName().toLowerCase().startsWith(findLower))
                         found.add(processVO);
                 }
                 return found;
@@ -131,11 +132,12 @@ public class DesignServicesImpl implements DesignServices {
                     }
                 }
             } else {
+                String lowerFind = find.toLowerCase();
                 for (Process process : ProcessCache.getAllProcesses()) {
                     process = ProcessCache.getProcess(process.getId());
                     List<Activity> activities = process.getActivities();
                     for (Activity activityVO : activities) {
-                        if (activityVO.getName() != null && activityVO.getName().startsWith(find)) {
+                        if (activityVO.getName() != null && activityVO.getName().toLowerCase().startsWith(lowerFind)) {
                             ActivityInstance ai = new ActivityInstance();
                             ai.setId(activityVO.getId());
                             ai.setName(activityVO.getName());

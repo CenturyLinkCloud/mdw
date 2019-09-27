@@ -1447,8 +1447,10 @@ public class WorkflowServicesImpl implements WorkflowServices {
         String[] milestonedProcesses = HierarchyCache.getMilestoned().stream()
                 .map(String::valueOf).collect(Collectors.toList()).toArray(new String[0]);
         if (milestonedProcesses.length > 0) {
-            query.setArrayFilter("processIds", milestonedProcesses);
-            query.setFilter("master", true);
+            if (query.getFilter("processId") == null) {
+                query.setArrayFilter("processIds", milestonedProcesses);
+                query.setFilter("master", true);
+            }
             ProcessList masterProcessList = getProcesses(query);
             for (ProcessInstance masterProcessInstance : masterProcessList.getProcesses()) {
                 Process masterProcess = ProcessCache.getProcess(masterProcessInstance.getProcessId());

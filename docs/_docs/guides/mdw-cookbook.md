@@ -45,7 +45,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     <http://centurylinkcloud.github.io/mdw/docs/guides/mdw-studio>
 
 ### 1.2 Create a service process
-  - Create a new project as described in section 1.2 of the [MDW Studio Guide](http://127.0.0.1:4000/docs/guides/mdw-studio/#12-create-and-open-a-project).
+  - Create a new project as described in section 1.2 of the [MDW Studio Guide](../mdw-studio/#12-create-and-open-a-project).
     Name the project "my-mdw".
   - Expand the project tree in MDW Studio's Project tool window.  If the "assets" folder is empty, right-click on it and select Update MDW Assets.
 

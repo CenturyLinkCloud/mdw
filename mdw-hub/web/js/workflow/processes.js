@@ -163,9 +163,9 @@ processMod.controller('ProcessesController',
             if (!existProcInst)
               matches.push({type: 'instanceId', value: procInst.id.toString()});
           }
-          if (procInst.masterRequestId.startsWith(typed)) {
+          if (procInst.masterRequestId.toLowerCase().startsWith(typed.toLowerCase())) {
             var existMrId = matches.find(function(match) {
-              return match.type === 'masterRequestId' && match.value === procInst.masterRequestId;
+              return match.type === 'masterRequestId' && match.value.toLowerCase() === procInst.masterRequestId.toLowerCase();
             });
             if (!existMrId)
               matches.push({type: 'masterRequestId', value: procInst.masterRequestId});

@@ -143,31 +143,31 @@ milestonesMod.controller('MilestonesController',
 
   // instanceId, masterRequestId, processName, packageName
   $scope.findTypeaheadMatches = function(typed) {
-    return $http.get(mdw.roots.services + '/services/Processes' + '?app=mdw-admin&find=' + typed).then(function(response) {
+    return $http.get(mdw.roots.services + '/services/com/centurylink/mdw/milestones' + '?app=mdw-admin&find=' + typed).then(function(response) {
       // service matches on instanceId or masterRequestId
-      var procInsts = response.data.processInstances;
-      if (procInsts.length > 0) {
+      var milestones = response.data.milestones;
+      if (milestones.length > 0) {
         var matches = [];
-        procInsts.forEach(function(procInst) {
-          if (procInst.id.toString().startsWith(typed)) {
+        milestones.forEach(function(milestone) {
+          if (milestone.processInstance && milestone.processInstance.id.toString().startsWith(typed)) {
             var existProcInst = matches.find(function(match) {
-              return match.type === 'instanceId' && match.value === procInst.id.toString();
+              return match.type === 'instanceId' && match.value === milestone.processInstance.id.toString();
             });
             if (!existProcInst)
-              matches.push({type: 'instanceId', value: procInst.id.toString()});
+              matches.push({type: 'instanceId', value: milestone.processInstance.id.toString()});
           }
-          if (procInst.masterRequestId.startsWith(typed)) {
+          if (milestone.masterRequestId.toLowerCase().startsWith(typed.toLowerCase())) {
             var existMrId = matches.find(function(match) {
-              return match.type === 'masterRequestId' && match.value === procInst.masterRequestId;
+              return match.type === 'masterRequestId' && match.value.toLowerCase() === milestone.masterRequestId.toLowerCase();
             });
             if (!existMrId)
-              matches.push({type: 'masterRequestId', value: procInst.masterRequestId});
+              matches.push({type: 'masterRequestId', value: milestone.masterRequestId});
           }
         });
         return matches;
       }
       else {
-        return $http.get(mdw.roots.services + '/services/Processes/definitions' + '?app=mdw-admin&find=' + typed).then(function(response) {
+        return $http.get(mdw.roots.services + '/services/com/centurylink/mdw/milestones/definitions' + '?app=mdw-admin&find=' + typed).then(function(response) {
           // services matches on process or package name
           if (response.data.length > 0) {
             var matches2 = [];

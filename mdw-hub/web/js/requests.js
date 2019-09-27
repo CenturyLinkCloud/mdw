@@ -83,7 +83,7 @@ requestMod.controller('RequestsController',
       reqs.forEach(function(req) {
         if (!isNaN(typed) && $scope.requestFilter.type != 'masterRequests')
           matches.push({type: 'id', value: req.id});
-        else if (req.path && req.path.startsWith(typed)) {
+        else if (req.path && req.path.toLowerCase().startsWith(typed.toLowerCase())) {
           var existPath = matches.find(function(match) {
             return match.type === 'path' && match.value === req.path;
           });
