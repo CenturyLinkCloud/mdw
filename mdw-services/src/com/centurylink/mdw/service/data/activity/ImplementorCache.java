@@ -124,8 +124,8 @@ public class ImplementorCache implements PreloadableCache {
                 return new ActivityImplementor(implClass, annotation);
             }
         }
-        catch (Exception ex) {
-            logger.severeException("Cannot load " + implClass, ex);
+        catch (Throwable t) {
+            logger.severeException("Cannot load " + implClass, t);
         }
         return null;
     }

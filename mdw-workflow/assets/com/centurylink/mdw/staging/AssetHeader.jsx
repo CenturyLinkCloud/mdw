@@ -71,14 +71,19 @@ class AssetHeader extends Component {
               {' Edit'}
             </a>
             <Button className="btn btn-primary mdw-btn mdw-action-btn" style={{padding:'4px 6px'}}
+              onClick={this.props.onDelete}>
+              <Glyphicon glyph="remove" />
+              {' Delete'}
+            </Button>
+            <Button className="btn btn-primary mdw-btn mdw-action-btn" style={{padding:'4px 6px'}}
               onClick={this.props.onUnstage}>
               <Glyphicon glyph="arrow-left" />
               {' Unstage'}
             </Button>
             <Button className="btn btn-primary mdw-btn mdw-action-btn" style={{padding:'4px 6px'}}
-              onClick={this.props.onDelete}>
-              <Glyphicon glyph="remove" />
-              {' Delete'}
+              onClick={this.props.onPromote}>
+              <Glyphicon glyph="arrow-right" />
+              {' Promote'}
             </Button>
           </div>
         }

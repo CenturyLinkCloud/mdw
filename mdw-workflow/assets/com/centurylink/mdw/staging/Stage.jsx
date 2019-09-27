@@ -1,5 +1,4 @@
 import React, {Component} from '../node/node_modules/react';
-import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
 import MdwContext from '../react/MdwContext';
 import Progress from '../react/Progress.jsx';
 import StagesPopButton from './StagesPopButton.jsx';
@@ -16,24 +15,12 @@ class Stage extends Component {
     this.handleProgressStart = this.handleProgressStart.bind(this);
     this.handleProgressFinish = this.handleProgressFinish.bind(this);
     this.handleProgressError = this.handleProgressError.bind(this);
-    this.getPackageCollapsedState = this.getPackageCollapsedState.bind(this);
-    this.setPackageCollapsedState = this.setPackageCollapsedState.bind(this);
-    this.handleCollapseAll = this.handleCollapseAll.bind(this);
-    this.handleExpandAll = this.handleExpandAll.bind(this);
-    this.handleCollapse = this.handleCollapse.bind(this);
-    this.handleExpand = this.handleExpand.bind(this);
-    this.toggleAllSelect = this.toggleAllSelect.bind(this);
     this.retrieveUserStage = this.retrieveUserStage.bind(this);
-    this.createPackage = this.createPackage.bind(this);
 
     this.stageCuid = this.getStageCuid();
 
-    this.allSelectRef = React.createRef();
-
     this.state = { 
-      stage: {},
-      packageCollapsedState: this.getPackageCollapsedState(),
-      allSelect: false
+      stage: {}
     };
   }
 
@@ -171,64 +158,6 @@ class Stage extends Component {
     }
   }
 
-  createPackage() {
-    // console.log("create package");
-  }
-
-  getPackageCollapsedState() {
-    let packageCollapsedState = {};
-    const pkgCollapsedSessionVal = sessionStorage.getItem('stagingPkgCollapsedState');
-    if (pkgCollapsedSessionVal) {
-      packageCollapsedState = JSON.parse(pkgCollapsedSessionVal);
-    }
-    return packageCollapsedState;
-  }
-  setPackageCollapsedState(pkgCollapsed) {
-    if (pkgCollapsed) {
-      sessionStorage.setItem('stagingPkgCollapsedState', JSON.stringify(pkgCollapsed));
-    }
-    else {
-      sessionStorage.removeItem('stagingPkgCollapsedState');
-    }
-    this.setState({
-      stage: this.state.stage,
-      packageCollapsedState: pkgCollapsed
-    });
-  }
-
-  handleCollapse(pkg) {
-    let pkgCollapsed = this.getPackageCollapsedState();
-    pkgCollapsed[pkg] = true;
-    this.setPackageCollapsedState(pkgCollapsed);
-  }
-  handleExpand(pkg) {
-    let pkgCollapsed = this.getPackageCollapsedState();
-    pkgCollapsed[pkg] = false;
-    this.setPackageCollapsedState(pkgCollapsed);
-  }
-  handleCollapseAll() {
-    let pkgCollapsed = this.getPackageCollapsedState();
-    Object.keys(pkgCollapsed).forEach(pkgName => {
-      pkgCollapsed[pkgName] = true;
-    });
-    this.setPackageCollapsedState(pkgCollapsed);
-  }
-  handleExpandAll() {
-    let pkgCollapsed = this.getPackageCollapsedState();
-    Object.keys(pkgCollapsed).forEach(pkgName => {
-      pkgCollapsed[pkgName] = false;
-    });
-    this.setPackageCollapsedState(pkgCollapsed);
-  }
-
-  toggleAllSelect() {
-    this.setState({
-      stage: this.state.stage,
-      packageCollapsedState: this.state.packageCollapsedState,
-      allSelect: this.allSelectRef.current.checked
-    });
-  }
-
   render() {
     sessionStorage.setItem('stagingUser', this.stageCuid);
     const userName = this.state.stage ? this.state.stage.userName : undefined;
@@ -236,71 +165,43 @@ class Stage extends Component {
     const isStagePrepared = this.state.stage && this.state.stage.prepared;
     return (
       <div>
-        <div className="panel-heading mdw-heading" style={{borderColor:'#ddd'}}>
-          <div className="mdw-heading-label">
-            {isStagePrepared &&
-              <input type="checkbox" style={{marginRight:'6px'}} ref={this.allSelectRef}
-                checked={this.state.allSelect} 
-                onChange={() => this.toggleAllSelect()} />
-            }
-            Staged Assets {userName ? ' for ' + userName : ''}
-            {isStagePrepared &&
-              <span>
-                {' '}
-                <a href={this.context.hubRoot + '/staging'} 
-                  onClick={e => {e.preventDefault(); this.handleCollapseAll(); }}>
-                  <Glyphicon className="mdw-action-icon button button-primary" glyph="chevron-up" />
-                </a>
-                {' '}
-                <a href={this.context.hubRoot + '/staging'}
-                  onClick={e => {e.preventDefault(); this.handleExpandAll(); }}>
-                  <Glyphicon className="mdw-action-icon button button-primary" glyph="chevron-down" />
-                </a>
-              </span>
-            }
-          </div>
-          <div style={{float:'right'}}>
-            {isStagePrepared &&
-              <Button className="btn btn-primary mdw-btn mdw-action-btn"
-                title="New Package" onClick={this.createPackage}>
-                <Glyphicon glyph="plus" />
-              </Button>             
-            }
-            {this.context.authUser.workgroups.includes('Site Admin') &&
-              <StagesPopButton />
-            }
-          </div>
-        </div>
-        <div className="mdw-section" style={{padding:'0'}}>
-          <div style={{minHeight:'480px'}}>
-            {isStagePrepared &&
-              <UserStage stage={this.state.stage} 
-                packageCollapse={this.state.packageCollapsedState}
-                onExpand={this.handleExpand} 
-                onCollapse={this.handleCollapse}
-                allSelect={this.state.allSelect}
-                onDeselect={() => { 
-                  this.allSelectRef.current.checked = false;
-                }} />
-            }
-            {this.stageCuid && !this.state.stage &&
-              <div style={{padding:'10px'}}>
-                <NoStage />
+        {isStagePrepared &&
+          <UserStage stage={this.state.stage} />        
+        }
+        {!isStagePrepared &&
+          <div>
+            <div className="panel-heading mdw-heading" style={{borderColor:'#ddd'}}>
+              <div className="mdw-heading-label">
+                Staged Assets {userName ? ' for ' + userName : ''}
               </div>
-            }
-            {this.stageCuid && !isStagePrepared && stagingBranch && $mdwWebSocketUrl &&
-              <div style={{padding:'10px'}}>
-                <Progress
-                  title={'Prepare staging area for ' + this.state.stage.userName}
-                  webSocketUrl={$mdwWebSocketUrl}
-                  topic={stagingBranch.name}
-                  onStart={this.handleProgressStart}
-                  onFinish={this.handleProgressFinish}
-                  onError={this.handleProgressError} />
+              <div style={{float:'right'}}>
+                {this.context.authUser.workgroups.includes('Site Admin') &&
+                  <StagesPopButton />
+                }
               </div>
-            }
+            </div>
+            <div className="mdw-section" style={{padding:'0'}}>
+              <div style={{minHeight:'480px'}}>
+                {this.stageCuid && !this.state.stage &&
+                  <div style={{padding:'10px'}}>
+                    <NoStage />
+                  </div>
+                }
+                {this.stageCuid && !isStagePrepared && stagingBranch && $mdwWebSocketUrl &&
+                  <div style={{padding:'10px'}}>
+                    <Progress
+                      title={'Prepare staging area for ' + this.state.stage.userName}
+                      webSocketUrl={$mdwWebSocketUrl}
+                      topic={stagingBranch.name}
+                      onStart={this.handleProgressStart}
+                      onFinish={this.handleProgressFinish}
+                      onError={this.handleProgressError} />
+                  </div>
+                }
+              </div>
+            </div>
           </div>
-        </div>
+        }
       </div>
     );
   }
