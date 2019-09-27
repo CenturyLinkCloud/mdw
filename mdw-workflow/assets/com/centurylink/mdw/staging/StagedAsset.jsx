@@ -12,6 +12,7 @@ class StagedAsset extends Component {
     super(...args);
 
     this.handleUnstage = this.handleUnstage.bind(this);
+    this.handlePromote = this.handlePromote.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleViewChange = this.handleViewChange.bind(this);
 
@@ -158,6 +159,10 @@ class StagedAsset extends Component {
     });    
   }
 
+  handlePromote() {
+    // console.log("PROMOTE: " + this.package + '/' + this.assetName);
+  }
+
   handleDelete() {
     let pathPlusParam = this.package + '/' + this.assetName + '?stagingUser=' + this.stagingCuid;
     let url = this.context.serviceRoot + '/Assets/' + pathPlusParam;
@@ -208,6 +213,7 @@ class StagedAsset extends Component {
           asset={this.state.asset} 
           view={this.state.view}
           onUnstage={this.handleUnstage}
+          onPromote={this.handlePromote}
           onDelete={this.handleDelete}
           onViewChange={this.handleViewChange} />
         <div className="mdw-section">

@@ -1,10 +1,10 @@
-AssetHeader.jsx=4
+AssetHeader.jsx=5
 Main.jsx=8
 Nav.jsx=7
 NoStage.jsx=3
 OtherPop.jsx=1
-Stage.jsx=18
-StagedAsset.jsx=5
+Stage.jsx=19
+StagedAsset.jsx=6
 StagesPopButton.jsx=3
 StagingApi.java=10
-UserStage.jsx=13
+UserStage.jsx=14
