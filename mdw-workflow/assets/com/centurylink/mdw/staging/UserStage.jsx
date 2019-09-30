@@ -169,7 +169,30 @@ class UserStage extends Component {
   }
 
   handleUnstage() {
-    // console.log("UNSTAGE: " + JSON.stringify(this.state.selectedAssets));
+    let assetPaths = '%5B' + this.state.selectedAssets.join(',') + '%5D';
+    const url = this.context.serviceRoot + '/com/centurylink/mdw/staging/' + 
+        this.props.stage.userCuid + '/assets?assetPaths=' + assetPaths;
+    $mdwUi.clearMessage();
+    $mdwUi.hubLoading(true);
+    let ok = false;
+    fetch(new Request(url, {
+      method: 'DELETE',
+      headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
+      credentials: 'same-origin'
+    }))
+    .then(response => {
+      $mdwUi.hubLoading(false);
+      ok = response.ok;
+      return response.json();
+    })
+    .then(json => {
+      if (ok) {
+        location = this.context.hubRoot + '/staging/' + this.props.stage.userCuid;
+      }
+      else {
+        $mdwUi.showMessage(json.status.message);
+      }
+    });    
   }
 
   handlePromote() {

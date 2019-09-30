@@ -21,10 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.ws.rs.Path;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.centurylink.mdw.services.StagingServices.STAGING;
 
@@ -155,8 +152,15 @@ public class StagingApi extends JsonRestService {
             String sub = segments[5];
             if (sub.equals("assets")) {
                 if (segments.length == 6) {
-                    // TODO remove user staging area
-                    return null;
+                    String[] assetPaths = getQuery(path, headers).getArrayFilter("assetPaths");
+                    if (assetPaths == null) {
+                        // TODO remove user staging area
+                        return null;
+                    }
+                    else {
+                        unStageAssets(userStagingArea.getUserCuid(), Arrays.asList(assetPaths));
+                        return null;
+                    }
                 }
                 else {
                     List<String> assets = new ArrayList<>();
