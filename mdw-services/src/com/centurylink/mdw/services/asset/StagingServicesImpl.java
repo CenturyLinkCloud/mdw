@@ -1,11 +1,16 @@
 package com.centurylink.mdw.services.asset;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cli.Import;
+import com.centurylink.mdw.cli.Props;
+import com.centurylink.mdw.cli.Vercheck;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.dataaccess.file.GitBranch;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
@@ -13,11 +18,13 @@ import com.centurylink.mdw.dataaccess.file.GitProgressMonitor;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.StagingArea;
+import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.StagingServices;
+import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.util.file.Packages;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -117,6 +124,7 @@ public class StagingServicesImpl implements StagingServices {
     }
 
     private GitBranch getStagingBranch(String cuid, VersionControlGit vcGit) throws ServiceException {
+        long before = System.currentTimeMillis();
         try {
             List<GitBranch> branches = vcGit.getRemoteBranches();
             Optional<GitBranch> opt = branches.stream().filter(b -> {
@@ -129,6 +137,11 @@ public class StagingServicesImpl implements StagingServices {
         }
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
+        }
+        finally {
+            if (logger.isDebugEnabled()) {
+                logger.debug("getStagingBranch(" + cuid + ") finished in " + (System.currentTimeMillis() - before) + " ms");
+            }
         }
     }
 
@@ -378,15 +391,72 @@ public class StagingServicesImpl implements StagingServices {
         AssetServices assetServices = getAssetServices(cuid);
         assetServices.deleteAsset(assetPath);
         assetServices.removeAssetVersion(assetPath);
-        List<String> commitPaths = new ArrayList<>();
         String pkg = AssetServices.packageName(assetPath);
         String pkgPath = getVcAssetPath() + "/" + pkg.replace('.', '/');
         VersionControlGit vcGit = getStagingVersionControl(cuid);
         try {
             vcGit.rm(pkgPath + "/" + AssetServices.assetName(assetPath));
             vcGit.add(pkgPath + "/" + Packages.META_DIR + "/" + Packages.VERSIONS);
+            logger.info(assetPath + " deleted on " + vcGit.getBranch() + " by " + cuid);
             vcGit.commit(assetPath + " deleted on " + vcGit.getBranch() + " by " + cuid);
             vcGit.push();
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
+        }
+    }
+
+    @Override
+    public void promoteAssets(String cuid, String comment) throws ServiceException {
+        try {
+            // merge main branch into staging
+            VersionControlGit vcGit = getStagingVersionControl(cuid);
+            GitBranch stagingBranch = getStagingBranch(cuid, vcGit);
+            if (stagingBranch == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Staging branch not found for user: " + cuid);
+            String mainBranch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
+            vcGit.merge(mainBranch, stagingBranch.getName());
+
+            VersionControlGit mainVc = (VersionControlGit) ServiceLocator.getAssetServices().getVersionControl();
+
+            // merge staging back into main
+            vcGit.merge(stagingBranch.getName(), mainBranch);
+            String assetLoc = ServiceLocator.getAssetServices().getAssetRoot().toString();
+            // but first autofix version conflicts
+            Props.init("mdw.yaml");
+            Vercheck vercheck = new Vercheck();
+            vercheck.setConfigLoc(PropertyManager.getConfigLocation());
+            vercheck.setAssetLoc(assetLoc);
+            vercheck.setGitRoot(vcGit.getLocalDir());
+            vercheck.setDebug(true);
+            vercheck.setFix(true);
+            vercheck.run();
+            // now commit and push
+            vcGit.commit(comment);
+            vcGit.push();
+
+            // now refresh main branch with changes
+            try (DbAccess dbAccess = new DbAccess()) {
+                Bulletin bulletin = SystemMessages.bulletinOn("Asset import in progress...");
+                Import importer = new Import(mainVc.getLocalDir(), mainVc, mainBranch, false, dbAccess.getConnection());
+                importer.setAssetLoc(assetLoc);
+                importer.setConfigLoc(PropertyManager.getConfigLocation());
+                importer.setGitRoot(mainVc.getLocalDir());
+                importer.importAssetsFromGit();
+                SystemMessages.bulletinOff(bulletin, "Asset import completed");
+                CacheRegistration.getInstance().refreshCaches(null);
+            }
+            logger.info("Assets promoted on " + vcGit.getBranch() + " by " + cuid);
+
+            // remove staged assets
+            CommonDataAccess dataAccess = new CommonDataAccess();
+            SortedMap<String,List<AssetInfo>> stagedAssets = getStagedAssets(cuid);
+            for (String pkg : stagedAssets.keySet()) {
+                for (AssetInfo assetInfo : stagedAssets.get(pkg)) {
+                    String assetPath = pkg + "/" + assetInfo.getName();
+                    dataAccess.deleteValue(OwnerType.USER, cuid, assetPath, STAGED_ASSET);
+                }
+            }
         }
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
