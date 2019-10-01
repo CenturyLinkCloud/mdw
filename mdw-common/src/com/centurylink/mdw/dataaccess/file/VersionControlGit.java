@@ -720,4 +720,16 @@ public class VersionControlGit implements VersionControl {
             return readFromCommit(ObjectId.toString(localRepo.resolve(Constants.HEAD)), filePath);
         }
     }
+
+    public void merge(String fromBranch, String toBranch) throws Exception {
+        fetch();
+        CheckoutCommand checkout = git.checkout().setName(toBranch).setCreateBranch(false);
+        checkout.call();
+        ObjectId fromId = localRepo.resolve("refs/remotes/origin/" + fromBranch);
+        MergeCommand merge = git.merge().include(fromId);
+        MergeResult mergeResult = merge.call();
+        if (mergeResult.getMergeStatus().equals(MergeResult.MergeStatus.CONFLICTING)){
+            throw new IOException("Merge conflicts: " + mergeResult.getConflicts());
+        }
+    }
 }
