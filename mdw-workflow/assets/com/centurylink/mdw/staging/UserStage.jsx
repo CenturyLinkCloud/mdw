@@ -2,7 +2,7 @@ import React, {Component} from '../node/node_modules/react';
 import {Link} from '../node/node_modules/react-router-dom';
 import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
 import MdwContext from '../react/MdwContext';
-import Confirm from '../react/Confirm.jsx';
+import Enter from '../react/Enter.jsx';
 import StagesPopButton from './StagesPopButton.jsx';
 
 class UserStage extends Component {
@@ -22,7 +22,7 @@ class UserStage extends Component {
     this.handleUnstage = this.handleUnstage.bind(this);
     this.handlePromote = this.handlePromote.bind(this);
     this.doPromote = this.doPromote.bind(this);
-    this.handleConfirm = this.handleConfirm.bind(this);
+    this.handleConfirmPromote = this.handleConfirmPromote.bind(this);
 
     this.confirmDialog = React.createRef();
 
@@ -204,7 +204,7 @@ class UserStage extends Component {
     }
   }
 
-  doPromote() {
+  doPromote(message) {
     const url = this.context.serviceRoot + '/com/centurylink/mdw/staging/' + 
         this.props.stage.userCuid + '/assets';
     $mdwUi.clearMessage();
@@ -214,7 +214,7 @@ class UserStage extends Component {
       method: 'PATCH',
       headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
       credentials: 'same-origin',
-      body: '{ "comment": "' + 'here is my comment' + '" }'
+      body: '{ "comment": "' + message + '" }'
     }))
     .then(response => {
       $mdwUi.hubLoading(false);
@@ -232,7 +232,7 @@ class UserStage extends Component {
   }
 
   handlePromote() {
-    const message = 'All changes from ' + this.props.stage.branch.name + ' branch will be merged into ' + $mdwGitBranch;
+    const message = 'All changes from ' + this.props.stage.branch.name + ' branch will be merged into ' + $mdwGitBranch + '.';
     if (!this.state.allSelected) {
       this.toggleAllSelect()
       .then(() => {
@@ -244,9 +244,9 @@ class UserStage extends Component {
     }
   }
   
-  handleConfirm(result) {
-    if (result) {
-      this.doPromote();
+  handleConfirmPromote(message) {
+    if (message) {
+      this.doPromote(message);
     }
   }
 
@@ -337,7 +337,10 @@ class UserStage extends Component {
               <Glyphicon glyph="arrow-right" />
               {' Promote'}
             </Button>
-            <Confirm title='Confirm Promote' ref={this.confirmDialog} onClose={this.handleConfirm} />
+            <Enter title="Promote Assets" 
+              label="Commit Message: "
+              ref={this.confirmDialog} 
+              onClose={this.handleConfirmPromote} />
           </div>
         </div>
         <div className="mdw-section" style={{padding:'0'}}>
