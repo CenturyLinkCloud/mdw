@@ -12,9 +12,9 @@ public class AssetVersion implements Jsonable, Comparable<AssetVersion> {
 
     public AssetVersion(AssetRef assetRef) {
         String full = assetRef.getName();
-        int sp = full.indexOf(' ');
-        this.path = full.substring(0, sp);
-        this.version = full.substring(sp + 2);
+        int spV = full.lastIndexOf(" v");
+        this.path = full.substring(0, spV);
+        this.version = full.substring(spV + 2);
         this.id = assetRef.getDefinitionId();
         this.ref = assetRef.getRef();
     }
