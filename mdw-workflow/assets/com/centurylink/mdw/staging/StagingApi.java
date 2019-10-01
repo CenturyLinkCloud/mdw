@@ -143,6 +143,29 @@ public class StagingApi extends JsonRestService {
         getStagingServices().stageAssets(cuid, assets);
     }
 
+    /**
+     * Patch requests mean 'Promote' (or merge with main branch).
+     */
+    @Override
+    public JSONObject patch(String path, JSONObject content, Map<String,String> headers)
+            throws ServiceException, JSONException {
+        String[] segments = getSegments(path);
+        if (segments.length == 6 || segments.length == 8) {
+            StagingArea userStagingArea = getUserStagingArea(segments[4]);
+            String sub = segments[5];
+            if (sub.equals("assets")) {
+                String comment = content.optString("comment");
+                if (comment.isEmpty())
+                    throw new ServiceException(ServiceException.BAD_REQUEST, "Missing property: comment");
+                if (segments.length == 6) {
+                    promoteAssets(userStagingArea.getUserCuid(), comment);
+                    return null;
+                }
+            }
+        }
+        throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
+    }
+
     @Override
     public JSONObject delete(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
@@ -175,6 +198,10 @@ public class StagingApi extends JsonRestService {
 
     private void unStageAssets(String cuid, List<String> assets) throws ServiceException {
         getStagingServices().unStageAssets(cuid, assets);
+    }
+
+    private void promoteAssets(String cuid, String comment) throws ServiceException {
+        getStagingServices().promoteAssets(cuid, comment);
     }
 
     private StagingServices stagingServices;

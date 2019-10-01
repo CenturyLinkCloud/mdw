@@ -143,25 +143,27 @@ class UserStage extends Component {
   }
 
   toggleAllSelect() {
-    if (this.state.allSelected) {
-      this.setState({
-        stagedAssets: this.state.stagedAssets,
-        selectedPackages: [],
-        selectedAssets: [],
-        allSelected: false
-      });
-    }
-    else {
-      const pkgs = Object.keys(this.state.stagedAssets);
-      const assets = [];
-      pkgs.forEach(pkg => this.state.stagedAssets[pkg].forEach(asset => assets.push(pkg + '/' + asset.name)));
-      this.setState({
-        stagedAssets: this.state.stagedAssets,
-        selectedPackages: pkgs,
-        selectedAssets: assets,
-        allSelected: true
-      });  
-    }
+    return new Promise(resolve => {
+      if (this.state.allSelected) {
+        this.setState({
+          stagedAssets: this.state.stagedAssets,
+          selectedPackages: [],
+          selectedAssets: [],
+          allSelected: false
+        }, resolve());
+      }
+      else {
+        const pkgs = Object.keys(this.state.stagedAssets);
+        const assets = [];
+        pkgs.forEach(pkg => this.state.stagedAssets[pkg].forEach(asset => assets.push(pkg + '/' + asset.name)));
+        this.setState({
+          stagedAssets: this.state.stagedAssets,
+          selectedPackages: pkgs,
+          selectedAssets: assets,
+          allSelected: true
+        }, resolve());  
+      }
+    });
   }
   
   createPackage() {
@@ -195,8 +197,43 @@ class UserStage extends Component {
     });    
   }
 
+  doPromote() {
+    const url = this.context.serviceRoot + '/com/centurylink/mdw/staging/' + 
+        this.props.stage.userCuid + '/assets';
+    $mdwUi.clearMessage();
+    $mdwUi.hubLoading(true);
+    let ok = false;
+    fetch(new Request(url, {
+      method: 'PATCH',
+      headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
+      credentials: 'same-origin',
+      body: '{ "comment": "' + 'here is my comment' + '" }'
+    }))
+    .then(response => {
+      $mdwUi.hubLoading(false);
+      ok = response.ok;
+      return response.json();
+    })
+    .then(json => {
+      if (ok) {
+        location = this.context.hubRoot + '/staging/' + this.props.stage.userCuid;
+      }
+      else {
+        $mdwUi.showMessage(json.status.message);
+      }
+    });
+  }
+
   handlePromote() {
-    // console.log("PROMOTE: " + JSON.stringify(this.state.selectedAssets));
+    if (this.state.allSelected) {
+      this.toggleAllSelect()
+      .then(() => {
+        this.doPromote();
+      });
+    }
+    else {
+      this.doPromote();
+    }
   }
 
   componentDidMount() {
