@@ -420,9 +420,11 @@ public class StagingServicesImpl implements StagingServices {
                 commitPaths.add(pkgPath + "/" + Packages.META_DIR + "/" + Packages.VERSIONS);
                 dataAccess.deleteValue(OwnerType.USER, cuid, asset, STAGED_ASSET);
             }
-            vcGit.add(commitPaths);
-            vcGit.commit("Assets unstaged on " + vcGit.getBranch() + " by " + cuid);
-            vcGit.push();
+            if (!commitPaths.isEmpty()) {
+                vcGit.add(commitPaths);
+                vcGit.commit("Assets unstaged on " + vcGit.getBranch() + " by " + cuid);
+                vcGit.push();
+            }
         }
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
@@ -459,8 +461,7 @@ public class StagingServicesImpl implements StagingServices {
                 throw new ServiceException(ServiceException.NOT_FOUND, "Staging branch not found for user: " + cuid);
             String mainBranch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
             vcGit.merge(mainBranch, stagingBranch.getName());
-
-            VersionControlGit mainVc = (VersionControlGit) ServiceLocator.getAssetServices().getVersionControl();
+            vcGit.push();
 
             // merge staging back into main
             vcGit.merge(stagingBranch.getName(), mainBranch);
@@ -474,11 +475,16 @@ public class StagingServicesImpl implements StagingServices {
             vercheck.setDebug(true);
             vercheck.setFix(true);
             vercheck.run();
-            // now commit and push
+            // now commit and push on mainBranch
+            vcGit.commit(comment);
+            vcGit.push();
+            // merge any version changes back to staging
+            vcGit.merge(mainBranch, stagingBranch.getName());
             vcGit.commit(comment);
             vcGit.push();
 
             // now refresh main branch with changes
+            VersionControlGit mainVc = (VersionControlGit) ServiceLocator.getAssetServices().getVersionControl();
             Bulletin bulletin = SystemMessages.bulletinOn("Asset import in progress...");
             try (DbAccess dbAccess = new DbAccess()) {
                 Import importer = new Import(mainVc.getLocalDir(), mainVc, mainBranch, false, dbAccess.getConnection());

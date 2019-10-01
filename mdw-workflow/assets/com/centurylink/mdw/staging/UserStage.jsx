@@ -176,30 +176,32 @@ class UserStage extends Component {
   }
 
   handleUnstage() {
-    let assetPaths = '%5B' + this.state.selectedAssets.join(',') + '%5D';
-    const url = this.context.serviceRoot + '/com/centurylink/mdw/staging/' + 
-        this.props.stage.userCuid + '/assets?assetPaths=' + assetPaths;
-    $mdwUi.clearMessage();
-    $mdwUi.hubLoading(true);
-    let ok = false;
-    fetch(new Request(url, {
-      method: 'DELETE',
-      headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
-      credentials: 'same-origin'
-    }))
-    .then(response => {
-      $mdwUi.hubLoading(false);
-      ok = response.ok;
-      return response.json();
-    })
-    .then(json => {
-      if (ok) {
-        location = this.context.hubRoot + '/staging/' + this.props.stage.userCuid;
-      }
-      else {
-        $mdwUi.showMessage(json.status.message);
-      }
-    });    
+    if (this.state.selectedAssets.length > 0) {
+      let assetPaths = '%5B' + this.state.selectedAssets.join(',') + '%5D';
+      const url = this.context.serviceRoot + '/com/centurylink/mdw/staging/' + 
+          this.props.stage.userCuid + '/assets?assetPaths=' + assetPaths;
+      $mdwUi.clearMessage();
+      $mdwUi.hubLoading(true);
+      let ok = false;
+      fetch(new Request(url, {
+        method: 'DELETE',
+        headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
+        credentials: 'same-origin'
+      }))
+      .then(response => {
+        $mdwUi.hubLoading(false);
+        ok = response.ok;
+        return response.json();
+      })
+      .then(json => {
+        if (ok) {
+          location = this.context.hubRoot + '/staging/' + this.props.stage.userCuid;
+        }
+        else {
+          $mdwUi.showMessage(json.status.message);
+        }
+      });    
+    }
   }
 
   doPromote() {
@@ -322,12 +324,16 @@ class UserStage extends Component {
               <Glyphicon glyph="plus" />
             </Button>
             <Button className="btn btn-primary mdw-btn mdw-action-btn"
-              title="Unstage Assets" onClick={this.handleUnstage}>
+              title="Unstage Assets" 
+              disabled={!this.state.stagedAssets || Object.keys(this.state.stagedAssets).length === 0} 
+              onClick={this.handleUnstage}>
               <Glyphicon glyph="arrow-left" />
               {' Unstage'}
             </Button>
             <Button className="btn btn-primary mdw-btn mdw-action-btn"
-              title="Promote Assets" onClick={this.handlePromote}>
+              title="Promote Assets" 
+              disabled={!this.state.stagedAssets || Object.keys(this.state.stagedAssets).length === 0}
+              onClick={this.handlePromote}>
               <Glyphicon glyph="arrow-right" />
               {' Promote'}
             </Button>
