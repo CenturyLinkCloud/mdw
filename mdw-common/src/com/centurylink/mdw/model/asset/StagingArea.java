@@ -8,6 +8,7 @@ public class StagingArea implements Jsonable {
     public StagingArea(String userCuid, String userName) {
         this.userCuid = userCuid;
         this.userName = userName;
+        this.loaded = System.currentTimeMillis();
     }
 
     private String userCuid;
@@ -19,4 +20,7 @@ public class StagingArea implements Jsonable {
     private GitBranch branch;
     public GitBranch getBranch() { return branch; }
     public void setBranch(GitBranch branch) { this.branch = branch; }
+
+    private long loaded;
+    public long getLoaded() { return loaded; }
 }

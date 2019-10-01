@@ -492,13 +492,15 @@ public class VersionControlGit implements VersionControl {
 
     /**
      * Creates a new local branch and pushes to remote.
+     * @return ref id of newly-created branch
      */
-    public void createBranch(String branch, String fromBranch, ProgressMonitor progressMonitor) throws Exception {
-        if (localRepo.findRef(branch) == null) {
+    public String createBranch(String branch, String fromBranch, ProgressMonitor progressMonitor) throws Exception {
+        Ref ref = localRepo.findRef(branch);
+        if (ref == null) {
             CreateBranchCommand createBranch = git.branchCreate().setName(branch);
             if (fromBranch != null)
                 createBranch.setStartPoint(fromBranch);
-            createBranch.call();
+            ref = createBranch.call();
         }
         PushCommand push = git.push();
         push.setRemote("origin");
@@ -508,6 +510,8 @@ public class VersionControlGit implements VersionControl {
         if (progressMonitor != null)
             push.setProgressMonitor(progressMonitor);
         push.call();
+
+        return ObjectId.toString(ref.getObjectId());
     }
 
     public static String byteArrayToHexString(byte[] b) {

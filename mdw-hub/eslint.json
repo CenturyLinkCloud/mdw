@@ -26,6 +26,7 @@
     "$mdwWebSocketUrl": false,
     "$mdwVersion": false,
     "$mdwMessages": true,
+    "$mdwGitBranch": false,
     "require": false,
     "module": false,
     "location": true,
