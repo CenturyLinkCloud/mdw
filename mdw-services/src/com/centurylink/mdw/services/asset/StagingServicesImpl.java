@@ -41,6 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class StagingServicesImpl implements StagingServices {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
+    private static final int CACHE_TIMEOUT = 600000; // 10 minutes
 
     /**
      * Returns the main version control (ie: asset location).
@@ -89,6 +90,9 @@ public class StagingServicesImpl implements StagingServices {
     }
 
     public StagingArea getUserStagingArea(String cuid) throws ServiceException {
+        StagingArea cachedStagingArea = getCachedStagingArea(cuid);
+        if (cachedStagingArea != null)
+            return cachedStagingArea;
         synchronized (inProgressPrepares) {
             if (inProgressPrepares.containsKey(cuid))
                 return inProgressPrepares.get(cuid);
@@ -145,11 +149,31 @@ public class StagingServicesImpl implements StagingServices {
         }
     }
 
-    private static final Map<String, StagingArea> inProgressPrepares = new ConcurrentHashMap<>();
+    private static final Map<String,StagingArea> inProgressPrepares = new ConcurrentHashMap<>();
+    private static final Map<String,StagingArea> cachedStagingAreas = new ConcurrentHashMap<>();
+
+    private StagingArea getCachedStagingArea(String cuid) {
+        synchronized (cachedStagingAreas) {
+            StagingArea cachedStagingArea = null;
+            if (cachedStagingAreas.containsKey(cuid)) {
+                cachedStagingArea = cachedStagingAreas.get(cuid);
+                if (System.currentTimeMillis() - cachedStagingArea.getLoaded() > CACHE_TIMEOUT
+                        || !getStagingDir(cuid).isDirectory()) {
+                    cachedStagingAreas.remove(cuid);
+                    return null;
+                }
+            }
+            return cachedStagingArea;
+        }
+    }
 
     @Override
     public StagingArea prepareStagingArea(String cuid, GitProgressMonitor progressMonitor) throws ServiceException {
         User user = getUser(cuid);
+        StagingArea cachedStagingArea = getCachedStagingArea(user.getCuid());
+        if (cachedStagingArea != null)
+            return cachedStagingArea;
+
         StagingArea userStagingArea = new StagingArea(user.getCuid(), user.getName());
         String stagingBranchName = STAGING + ApplicationContext.getRuntimeEnvironment() + "_" + cuid;
         userStagingArea.setBranch(new GitBranch(null, stagingBranchName));
@@ -177,13 +201,21 @@ public class StagingServicesImpl implements StagingServices {
                     userStagingArea.setBranch(stagingBranch);
                     long elapsed = System.currentTimeMillis() - before;
                     logger.debug("Branch " + stagingBranchName + " pulled in " + elapsed + " ms");
+                    synchronized (cachedStagingAreas) {
+                        cachedStagingAreas.put(user.getCuid(), userStagingArea);
+                    }
                     return userStagingArea;
                 }
                 new Thread(() -> {
                     try {
                         stagingVc.pull(stagingVc.getBranch(), progressMonitor);
-                        if (stagingBranch == null)
-                            stagingVc.createBranch(stagingBranchName, stagingVc.getBranch(), progressMonitor);
+                        if (stagingBranch == null) {
+                            String id = stagingVc.createBranch(stagingBranchName, stagingVc.getBranch(), progressMonitor);
+                            userStagingArea.setBranch(new GitBranch(id, stagingBranchName));
+                        }
+                        else {
+                            userStagingArea.setBranch(stagingBranch);
+                        }
                         if (!stagingVc.getBranch().equals(stagingBranchName))
                             stagingVc.checkout(stagingBranchName);
                         if (progressMonitor != null)
@@ -196,6 +228,9 @@ public class StagingServicesImpl implements StagingServices {
                         synchronized (inProgressPrepares) {
                             inProgressPrepares.remove(user.getCuid());
                         }
+                        synchronized (cachedStagingAreas) {
+                            cachedStagingAreas.put(user.getCuid(), userStagingArea);
+                        }
                     }
                 }).start();
             } else {
@@ -204,8 +239,13 @@ public class StagingServicesImpl implements StagingServices {
                     try {
                         stagingVc.clone(mainBranch, progressMonitor);
                         GitBranch stagingBranch = getStagingBranch(cuid, stagingVc);
-                        if (stagingBranch == null)
-                            stagingVc.createBranch(stagingBranchName, mainBranch, progressMonitor);
+                        if (stagingBranch == null) {
+                            String id = stagingVc.createBranch(stagingBranchName, mainBranch, progressMonitor);
+                            userStagingArea.setBranch(new GitBranch(id, stagingBranchName));
+                        }
+                        else {
+                            userStagingArea.setBranch(stagingBranch);
+                        }
                         if (!stagingVc.getBranch().equals(stagingBranchName))
                             stagingVc.checkout(stagingBranchName);
                         if (progressMonitor != null)
@@ -217,6 +257,9 @@ public class StagingServicesImpl implements StagingServices {
                     } finally {
                         synchronized (inProgressPrepares) {
                             inProgressPrepares.remove(user.getCuid());
+                        }
+                        synchronized (cachedStagingAreas) {
+                            cachedStagingAreas.put(user.getCuid(), userStagingArea);
                         }
                     }
                 }).start();
@@ -436,8 +479,8 @@ public class StagingServicesImpl implements StagingServices {
             vcGit.push();
 
             // now refresh main branch with changes
+            Bulletin bulletin = SystemMessages.bulletinOn("Asset import in progress...");
             try (DbAccess dbAccess = new DbAccess()) {
-                Bulletin bulletin = SystemMessages.bulletinOn("Asset import in progress...");
                 Import importer = new Import(mainVc.getLocalDir(), mainVc, mainBranch, false, dbAccess.getConnection());
                 importer.setAssetLoc(assetLoc);
                 importer.setConfigLoc(PropertyManager.getConfigLocation());
@@ -445,6 +488,9 @@ public class StagingServicesImpl implements StagingServices {
                 importer.importAssetsFromGit();
                 SystemMessages.bulletinOff(bulletin, "Asset import completed");
                 CacheRegistration.getInstance().refreshCaches(null);
+            }
+            finally {
+                SystemMessages.bulletinOff(bulletin, "Asset import completed");
             }
             logger.info("Assets promoted on " + vcGit.getBranch() + " by " + cuid);
 
@@ -460,6 +506,11 @@ public class StagingServicesImpl implements StagingServices {
         }
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
+        }
+        finally {
+            synchronized (cachedStagingAreas) {
+                cachedStagingAreas.remove(cuid);
+            }
         }
     }
 
