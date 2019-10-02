@@ -6,6 +6,7 @@ import MdwContext from '../react/MdwContext';
 import Nav from './Nav.jsx';
 import Stage from './Stage.jsx';
 import StagedAsset from './StagedAsset.jsx';
+import History from './History.jsx';
 
 class Main extends Component {
   constructor(...args) {
@@ -52,7 +53,9 @@ class Main extends Component {
                 <Route exact path={hub + 'staging/:cuid'}
                   render={(props) => <Stage {...props}/>} />
                 <Route exact path={hub + 'staging/:cuid/assets/:package/:asset'}
-                  render={(props) => <StagedAsset {...props}/>} />
+                  render={(props) => <StagedAsset {...props} />} />
+                <Route exact path={hub + 'staging/:cuid/history/:package/:asset'}
+                  render={(props) => <History {...props} />} />
               </div>
             </div>
           </div>

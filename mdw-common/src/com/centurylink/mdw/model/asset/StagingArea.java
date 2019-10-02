@@ -2,6 +2,7 @@ package com.centurylink.mdw.model.asset;
 
 import com.centurylink.mdw.dataaccess.file.GitBranch;
 import com.centurylink.mdw.model.Jsonable;
+import org.json.JSONObject;
 
 public class StagingArea implements Jsonable {
 
@@ -23,4 +24,16 @@ public class StagingArea implements Jsonable {
 
     private long loaded;
     public long getLoaded() { return loaded; }
+
+    @Override
+    public JSONObject getJson() {
+        JSONObject json = create();
+        if (userCuid != null)
+            json.put("userCuid", userCuid);
+        if (userName != null)
+            json.put("userName", userName);
+        if (branch != null)
+            json.put("branch", branch.getJson());
+        return json;
+    }
 }
