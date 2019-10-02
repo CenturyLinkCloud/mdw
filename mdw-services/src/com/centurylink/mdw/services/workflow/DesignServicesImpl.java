@@ -49,17 +49,19 @@ public class DesignServicesImpl implements DesignServices {
             version = 0;
         boolean forUpdate = query == null ? false : query.getBooleanFilter("forUpdate");
         String stagingCuid = query == null ? null : query.getFilter("stagingUser");
-        Process process;
+        Process process = null;
         if (stagingCuid != null) {
             if (!assetPath.endsWith(".proc"))
                 assetPath += ".proc";
             AssetInfo stagedAsset = ServiceLocator.getStagingServices().getStagedAsset(stagingCuid, assetPath);
-            process = new Process();
-            process.setRawFile(stagedAsset.getFile());
+            if (stagedAsset != null) {
+                process = new Process();
+                process.setRawFile(stagedAsset.getFile());
+            }
         } else {
             process = ProcessCache.getProcess(processName, version);
         }
-        if (forUpdate) {
+        if (forUpdate && process != null) {
             // load from file
             try {
                 byte[] bytes = Files.readAllBytes(Paths.get(process.getRawFile().getAbsolutePath()));
@@ -236,14 +238,10 @@ public class DesignServicesImpl implements DesignServices {
                     for (int i = 0; i < versions.size(); i++) {
                         AssetVersion assetVersion = versions.get(i);
                         try {
-                            if (assetVersion.getRef() != null) {
-                                assetVersion.setCommitInfo(versionControl.getCommitInfoForRef(assetVersion.getRef()));
-                            } else if (i == 0) {
-                                AssetInfo assetInfo = assetServices.getAsset(assetPath, true);
-                                if (assetInfo != null) {
-                                    String assetVcPath = versionControl.getRelativePath(assetInfo.getFile().toPath());
-                                    assetVersion.setCommitInfo(versionControl.getCommitInfo(assetVcPath));
-                                }
+                            AssetInfo assetInfo = assetServices.getAsset(assetPath, false);
+                            if (assetInfo != null) {
+                                String assetVcPath = versionControl.getRelativePath(assetInfo.getFile().toPath());
+                                assetVersion.setCommitInfo(versionControl.getCommitInfo(assetVcPath));
                             }
                         } catch (Exception ex) {
                             logger.error("Error reading commit for " + assetVersion, ex);

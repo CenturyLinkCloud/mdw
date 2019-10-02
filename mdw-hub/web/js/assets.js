@@ -447,8 +447,8 @@ assetMod.controller('PackageController', ['$scope', '$routeParams', '$route', '$
   };
 }]);
 
-assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams', '$location', '$http', 'mdw', 'util', 'uiUtil', 'Assets', 'Asset',
-                                       function($scope, $cookieStore, $routeParams, $location, $http, mdw, util, uiUtil, Assets, Asset) {
+assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams', '$location', '$http', 'mdw', 'util', 'uiUtil', 'Assets', 'Asset', 'AssetVersions',
+                                       function($scope, $cookieStore, $routeParams, $location, $http, mdw, util, uiUtil, Assets, Asset, AssetVersions) {
 
   sessionStorage.removeItem('stagingUser');
 
@@ -499,6 +499,20 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
           );
         }
       }
+
+      // history
+      AssetVersions.retrieve({
+          packageName: $scope.packageName,
+          assetName: $scope.assetName,
+          withCommitInfo: true
+        }, function(data) {
+        $scope.versions = data.versions;
+        $scope.versions.forEach(function(version) {
+          if (version.commitInfo && version.commitInfo.date) {
+            version.commitInfo.date = new Date(version.commitInfo.date);
+          }
+        });
+      });
     }
   );
 
@@ -605,6 +619,12 @@ assetMod.factory('Asset', ['$resource', 'mdw', function($resource, mdw) {
     put: {
       method: 'PUT'
     }
+  });
+}]);
+
+assetMod.factory('AssetVersions', ['$resource', 'mdw', function($resource, mdw) {
+  return $resource(mdw.roots.services + '/Services/Versions/:packageName/:assetName', mdw.serviceParams(), {
+    retrieve: { method: 'GET', isArray: false }
   });
 }]);
 
