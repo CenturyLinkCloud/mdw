@@ -21,10 +21,10 @@
           <label class="radio-inline"><input type="radio" ng-model="asset.view" value="gitDiff">Git Diff</label>
         </div>
         <div class="mdw-heading-actions">
-          <a ng-href="{{asset.url}}" class="btn btn-default">
+          <a ng-href="{{asset.url}}{{version ? '/' + version : ''}}" class="btn btn-default">
             <span class="glyphicon glyphicon-file"></span> View
           </a>            
-          <a ng-href="{{asset.url}}?download=true" class="btn btn-default">
+          <a ng-href="{{asset.url}}{{version ? '/' + version : ''}}?download=true" class="btn btn-default">
             <span class="glyphicon glyphicon-download-alt"></span> Download
           </a>            
           <a ng-href="#/edit/{{asset.packageName}}/{{asset.name}}" class="btn btn-default" ng-if="isEditAllowed()">

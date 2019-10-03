@@ -35,6 +35,7 @@ import com.centurylink.mdw.dataaccess.file.PackageDir;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.hub.servlet.asset.StagedAssetServer;
 import com.centurylink.mdw.hub.servlet.asset.StagedAssetUpdater;
+import com.centurylink.mdw.hub.servlet.asset.VersionedAssetServer;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.asset.Asset;
@@ -133,9 +134,27 @@ public class AssetContentServlet extends HttpServlet {
                 new StatusResponder(response).writeResponse(new StatusResponse(Status.NOT_FOUND));
                 return;
             }
+            String[] segments = path.split("/");
+            if (segments.length == 3 && segments[2].indexOf('.') > 0) {
+                // specific asset version
+                path = segments[0] + '/' + segments[1];
+                String version = segments[2];
+                try {
+                    AssetServices assetServices = ServiceLocator.getAssetServices();
+                    AssetInfo currentAsset = assetServices.getAsset(path);
+                    if (currentAsset == null || !version.equals(currentAsset.getJson().optString("version"))) {
+                        new VersionedAssetServer(request, response).serveAsset(path, version);
+                        return;
+                    }
+                }
+                catch (ServiceException ex) {
+                    logger.error(ex.getMessage(), ex);
+                    new StatusResponder(response).writeResponse(new StatusResponse(ex.getCode(), ex.getMessage()));
+                }
+            }
             if (stagingCuid != null) {
                 try {
-                    new StagedAssetServer(request, response).serveAsset(stagingCuid, path);
+                    new StagedAssetServer(request, response).serveAsset(path, stagingCuid);
                 }
                 catch (ServiceException ex) {
                     logger.error(ex.getMessage(), ex);
@@ -347,7 +366,7 @@ public class AssetContentServlet extends HttpServlet {
                         User stagingUser = UserGroupCache.getUser(stagingCuid);
                         if (stagingUser == null)
                             throw new ServiceException(ServiceException.NOT_AUTHORIZED, "User not found: " + stagingCuid);
-                        new StagedAssetUpdater(request).updateAsset(stagingUser, path);
+                        new StagedAssetUpdater(request).updateAsset(path, stagingUser);
                         new StatusResponder(response).writeResponse(new StatusResponse(Status.OK));
                         return;
                     }

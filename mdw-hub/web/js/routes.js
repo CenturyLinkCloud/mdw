@@ -79,6 +79,11 @@ routesSvc.factory('routes', function() {
         controller: 'AssetController'
       },
       {
+        path: '/asset/:packageName/:assetName/:version',
+        templateUrl: 'assets/asset.html',
+        controller: 'AssetController'
+      },
+      {
         path: '/history/:packageName/:assetName',
         templateUrl: 'versions/history.html',
         controller: 'AssetController'

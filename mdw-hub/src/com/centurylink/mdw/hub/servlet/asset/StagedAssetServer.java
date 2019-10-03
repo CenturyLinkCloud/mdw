@@ -26,7 +26,7 @@ public class StagedAssetServer {
         this.servletResponse = servletResponse;
     }
 
-    public void serveAsset(String stagingCuid, String path) throws IOException, ServiceException {
+    public void serveAsset(String path, String stagingCuid) throws IOException, ServiceException {
 
         StagingServices stagingServices = ServiceLocator.getStagingServices();
         File assetRoot = stagingServices.getStagingAssetsDir(stagingCuid);

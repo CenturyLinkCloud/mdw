@@ -33,7 +33,7 @@ public class StagedAssetUpdater {
         this.servletRequest = servletRequest;
     }
 
-    public void updateAsset(User stagingUser, String path) throws Exception {
+    public void updateAsset(String path, User stagingUser) throws Exception {
 
         StagingServices stagingServices = ServiceLocator.getStagingServices();
         VersionControlGit vcGit = stagingServices.getStagingVersionControl(stagingUser.getCuid());

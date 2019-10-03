@@ -1348,7 +1348,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             if (procInst.getProcessInstDefId() > 0L) {
                 Process process = ProcessCache.getProcessInstanceDefiniton(procInst.getProcessId(),
                         procInst.getProcessInstDefId());
-                if (process.getQualifiedName().equals(assetPath)) // Make sure instanceId is for requested assetPath
+                if (process.getQualifiedName().equals(assetPath) || (process.getQualifiedName() + ".proc").equals(assetPath)) // Make sure instanceId is for requested assetPath
                     return process;
             }
             return null;
