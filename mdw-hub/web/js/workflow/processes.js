@@ -241,11 +241,13 @@ processMod.controller('ProcessController',
     if ($routeParams.triggerId) {
       $scope.process = Process.retrieve({triggerId: $routeParams.triggerId}, function() {
         ProcessSummary.set($scope.process);
+        $scope.archived = $scope.process.archived;
       });
     }
     else {
       $scope.process = Process.retrieve({instanceId: $routeParams.instanceId, extra: 'summary'}, function() {
         ProcessSummary.set($scope.process);
+        $scope.archived = $scope.process.archived;
       });
     }
   };

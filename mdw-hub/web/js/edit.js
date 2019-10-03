@@ -229,12 +229,18 @@ editMod.controller('InstanceEditorController', ['$scope', '$routeParams', 'mdw',
   $scope.packageName = $routeParams.packageName;
   $scope.assetName = $routeParams.assetName;
   $scope.instanceId = $routeParams.instanceId;
+  $scope.version = $routeParams.version;
 
   $scope.process = {
     packageName: $scope.packageName,
     name: $scope.assetName.substring(0, $scope.assetName.length - 5),
-    id: $scope.instanceId
+    id: $scope.instanceId,
+    version: $scope.version,
   };
+
+  if ($scope.version) {
+    $scope.process.archived = true;
+  }
 
   $scope.onProcessChange = function(proc) {
     var wasDirty = $scope.procDirty;
@@ -249,7 +255,8 @@ editMod.controller('InstanceEditorController', ['$scope', '$routeParams', 'mdw',
 
   $scope.asset = Assets.get({
       packageName: $routeParams.packageName,
-      assetName: $routeParams.assetName
+      assetName: $routeParams.assetName,
+      version: $routeParams.version
     },
     function(assetData) {
       $scope.asset.language = util.getLanguage($scope.asset.name);

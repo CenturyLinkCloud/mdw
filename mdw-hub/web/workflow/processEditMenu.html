@@ -1,7 +1,17 @@
 <ul class="dropdown-menu mdw-popover-menu">
-  <li ng-if="instanceEditAllowed()" >
+  <li ng-if="instanceEditAllowed() && (process.instanceId || !archived)">
     <a ng-href="#/edit/{{process.packageName}}/{{process.name}}.proc/{{process.id}}">
       Instance
+    </a>
+  </li>
+  <li ng-if="instanceEditAllowed() && (!process.instanceId && archived)" >
+    <a ng-href="#/edit/{{process.packageName}}/{{process.name}}.proc/{{process.id}}/{{process.version}}">
+      Instance (from v{{process.version}})
+    </a>
+  </li>
+  <li ng-if="instanceEditAllowed() && (!process.instanceId && archived)" >
+    <a ng-href="#/edit/{{process.packageName}}/{{process.name}}.proc/{{process.id}}">
+      Instance (from latest)
     </a>
   </li>
   <li ng-if="definitionEditAllowed()" >

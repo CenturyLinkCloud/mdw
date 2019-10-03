@@ -62,7 +62,7 @@ public class DesignServicesImpl implements DesignServices {
         } else {
             process = ProcessCache.getProcess(processName, version);
         }
-        if (forUpdate && process != null) {
+        if (forUpdate && process != null && version == 0) {
             // load from file
             try {
                 byte[] bytes = Files.readAllBytes(Paths.get(process.getRawFile().getAbsolutePath()));
