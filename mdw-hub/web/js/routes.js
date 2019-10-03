@@ -99,6 +99,11 @@ routesSvc.factory('routes', function() {
         controller: 'InstanceEditorController'
       },
       {
+        path: '/edit/:packageName/:assetName/:instanceId/:version',
+        templateUrl: 'edit/editor.html',
+        controller: 'InstanceEditorController'
+      },
+      {
         path: '/tests',
         templateUrl: 'testing/tests.html',
         controller: 'TestsController'
