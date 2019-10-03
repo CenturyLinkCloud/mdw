@@ -6,7 +6,7 @@
         <div class="mdw-heading-label" ng-if="request.masterRequestId">
           Master Request: {{request.masterRequestId}} ({{request.id}})
         </div>
-        <div class="mdw-heading-label" ng-if="!request.masterRequestId">
+        <div class="mdw-heading-label" ng-if="!request.masterRequestId && request.id">
           {{request.outbound ? 'Outbound' : 'Inbound'}} Request: {{request.id}}
         </div>
         <div class="btn-group" style="margin-left:15px;" ng-if="request.format == 'json'">

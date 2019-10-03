@@ -123,7 +123,7 @@ public class RequestDataAccess extends CommonDataAccess {
         String path = query.getFilter("path");
         if (find != null) {
             // ignore other criteria
-            clause.append(" and pi.master_request_id like '").append(find).append("%' or d.path like '").append(find).append("%' \n");
+            clause.append(" and pi.master_request_id like '").append(find).append("%' \n");
         }
         else if (masterRequestId != null) {
             // ignore other criteria
@@ -423,7 +423,7 @@ public class RequestDataAccess extends CommonDataAccess {
                 clause.append(" and d.document_id like '").append(docId).append("%'\n");
             }
             catch (NumberFormatException e) {
-                clause.append(" and d.path like '").append(find).append("%'\n");
+                clause.append(" and lower(d.path) like '").append(find.toLowerCase()).append("%'\n");
             }
         }
         else if (id > 0) {
@@ -435,7 +435,7 @@ public class RequestDataAccess extends CommonDataAccess {
         else if (query.getFilter("ownerId") != null) {
             clause.append(" and d.owner_id = ").append(query.getLongFilter("ownerId")).append("\n");
         }
-        int status = query.getIntFilter("status");
+        int status = getStatus(query);
         if (status > 0) {
             clause.append(" and d2.status_code = ").append(status).append("\n");
         }
@@ -520,7 +520,12 @@ public class RequestDataAccess extends CommonDataAccess {
                 clause.append(" and d.document_id like '").append(docId).append("%'\n");
             }
             catch (NumberFormatException e) {
-                clause.append(" and d.path like '").append(find).append("%'\n");
+                if (find.startsWith("http://") || find.startsWith("https://")) {
+                    clause.append(" and lower(d.path) like '").append(find.toLowerCase()).append("%'\n");
+                }
+                else {
+                    clause.append(" and lower(d.path) like '%").append(find.toLowerCase()).append("%'\n");
+                }
             }
         }
         else if (id > 0) {
@@ -544,7 +549,7 @@ public class RequestDataAccess extends CommonDataAccess {
                 clause.append(")\n");
             }
         }
-        int status = query.getIntFilter("status");
+        int status = getStatus(query);
         if (status > 0) {
             clause.append(" and d2.status_code = ").append(status).append("\n");
         }
@@ -585,5 +590,22 @@ public class RequestDataAccess extends CommonDataAccess {
             sb.append(" desc");
         sb.append("\n");
         return sb.toString();
+    }
+
+    private int getStatus(Query query) {
+        int status = 0;
+        String statusStr = query.getFilter("status");
+        if (statusStr != null) {
+            try {
+                status = Integer.parseInt(statusStr);
+            }
+            catch (NumberFormatException ex) {
+                int space = statusStr.indexOf(' ');
+                if (space > 0) {
+                    status = Integer.parseInt(statusStr.substring(0, space));
+                }
+            }
+        }
+        return status;
     }
 }

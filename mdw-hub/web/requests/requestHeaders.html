@@ -6,7 +6,7 @@
         <div class="mdw-heading-label" ng-if="request.masterRequestId">
           Master Request Headers: {{request.masterRequestId}} ({{request.id}})
         </div>
-        <div class="mdw-heading-label" ng-if="!request.masterRequestId">
+        <div class="mdw-heading-label" ng-if="!request.masterRequestId && request.id">
           {{request.outbound ? 'Outbound' : 'Inbound'}} Request Headers: {{request.id}}
         </div>
       </div>
