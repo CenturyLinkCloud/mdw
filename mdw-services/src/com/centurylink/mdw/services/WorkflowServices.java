@@ -151,6 +151,7 @@ public interface WorkflowServices {
     Value getProcessValue(Long instanceId, String name) throws ServiceException;
 
     ProcessList getProcesses(Query query) throws ServiceException;
+    long getProcessCount(Query query) throws ServiceException;
 
     ActivityList getActivities(Query query) throws ServiceException;
 

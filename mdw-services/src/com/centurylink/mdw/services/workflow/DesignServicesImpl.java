@@ -256,7 +256,6 @@ public class DesignServicesImpl implements DesignServices {
         String currentVersion = "";
         Long currentId = 0L;
         if (currentAsset != null) {
-            // TODO hokey
             JSONObject json = currentAsset.getJson();
             currentVersion = json.optString("version");
             currentId = json.optLong("id");
@@ -294,6 +293,7 @@ public class DesignServicesImpl implements DesignServices {
                                         // actual commit is last one before or same as refCommit
                                         for (CommitInfo commit : commits) {
                                             if (commit.getDate().before(refCommit.getDate()) || commit.getDate().equals(refCommit.getDate())) {
+                                                commit.setUrl(getCommitUrl(commit));
                                                 assetVersion.setCommitInfo(commit);
                                                 break;
                                             }
@@ -316,8 +316,37 @@ public class DesignServicesImpl implements DesignServices {
             }
         }
 
+        if (assetPath.endsWith(".proc") && query.getBooleanFilter("withInstanceCounts")) {
+            for (AssetVersion version : versions) {
+                Long processId = version.getId();
+                if (processId != null) {
+                    Query processQuery = new Query();
+                    processQuery.setFilter("processId", processId);
+                    try {
+                        long count = ServiceLocator.getWorkflowServices().getProcessCount(processQuery);
+                        if (count > 0)
+                            version.setCount(count);
+                    }
+                    catch (ServiceException ex) {
+                        logger.error(ex.getMessage(), ex);
+                    }
+                }
+            }
+        }
+
         Collections.sort(versions);
 
         return versions;
+    }
+
+    private String getCommitUrl(CommitInfo commitInfo) {
+        if (commitInfo.getCommit() != null) {
+            String gitUrl = PropertyManager.getProperty(PropertyNames.MDW_GIT_REMOTE_URL);
+            if (gitUrl != null && gitUrl.endsWith(".git")) {
+                // TODO this doesn't work for BitBucket
+                return gitUrl.substring(0, gitUrl.length() - 4) + "/commit/" + commitInfo.getCommit();
+            }
+        }
+        return null;
     }
 }

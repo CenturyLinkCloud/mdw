@@ -89,6 +89,25 @@ public class WorkflowDataAccess extends CommonDataAccess {
         }
     }
 
+    public long getProcessInstanceCount(Query query) throws DataAccessException {
+        try {
+            db.openConnection();
+            long count = -1;
+            String where = buildWhere(query);
+            String countSql = "select count(process_instance_id) from PROCESS_INSTANCE pi\n" + where;
+            ResultSet rs = db.runSelect(countSql);
+            if (rs.next())
+                count = rs.getLong(1);
+            return count;
+        }
+        catch (SQLException ex) {
+            throw new DataAccessException("Failed to retrieve Processes", ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
     private String buildWhere(Query query) throws DataAccessException {
         long instanceId = query.getLongFilter("instanceId");
         if (instanceId > 0)
