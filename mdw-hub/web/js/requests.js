@@ -83,12 +83,21 @@ requestMod.controller('RequestsController',
       reqs.forEach(function(req) {
         if (!isNaN(typed) && $scope.requestFilter.type != 'masterRequests')
           matches.push({type: 'id', value: req.id});
-        else if (req.path && req.path.toLowerCase().startsWith(typed.toLowerCase())) {
-          var existPath = matches.find(function(match) {
-            return match.type === 'path' && match.value === req.path;
-          });
-          if (!existPath)
-            matches.push({type: 'path', value: req.path});
+        else if (req.path) {
+          var isMatch = false;
+          if (typed.startsWith('http://') || typed.startsWith('https://')) {
+            isMatch = req.path.toLowerCase().startsWith(typed.toLowerCase());
+          }
+          else {
+            isMatch = req.path.toLowerCase().indexOf(typed.toLowerCase() >= 0);
+          }
+          if (isMatch) {
+            var existPath = matches.find(function(match) {
+              return match.type === 'path' && match.value === req.path;
+            });
+            if (!existPath)
+              matches.push({type: 'path', value: req.path});
+          }
         }
         else if (req.masterRequestId)
           matches.push({type: 'masterRequestId', value: req.masterRequestId});
@@ -116,6 +125,7 @@ requestMod.controller('RequestsController',
   $scope.clearTypeahead = function() {
     $scope.typeaheadMatchSelection = null;
     $scope.clearTypeaheadFilters();
+    sessionStorage.setItem($scope.context + '_requestFilter', JSON.stringify($scope.requestFilter));
   };
 
   $scope.goChart = function() {
@@ -125,6 +135,7 @@ requestMod.controller('RequestsController',
   $scope.resetFilter = function() {
     $scope.requestFilter.status = null;
     $scope.requestFilter.receivedDate = null;
+    sessionStorage.setItem($scope.context + '_requestFilter', JSON.stringify($scope.requestFilter));
     $scope.closePopover();
   };
 }]);
