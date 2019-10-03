@@ -15,12 +15,6 @@
  */
 package com.centurylink.mdw.cache.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cli.Checkpoint;
@@ -35,6 +29,12 @@ import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AssetRefCache implements CacheService {
 
@@ -137,6 +137,22 @@ public class AssetRefCache implements CacheService {
             }
         }
         return refList;
+    }
+
+    /**
+     * Returns ref for a specific asset version.
+     */
+    public static AssetRef getRef(String assetPath, String version) throws CachingException {
+        Map<Long,AssetRef> allAssetRefs = assetRefs;
+        if (allAssetRefs == null)
+            allAssetRefs = load();
+        String name = assetPath + " v" + version;
+        for (AssetRef ref : allAssetRefs.values()) {
+            if (ref.getName().equals(name)) {
+                return ref;
+            }
+        }
+        return null;
     }
 
     /**

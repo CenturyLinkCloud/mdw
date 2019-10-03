@@ -620,6 +620,15 @@ public class VersionControlGit implements VersionControl {
         return null;
     }
 
+    public List<CommitInfo> getCommits(String path) throws Exception {
+        List<CommitInfo> commits = new ArrayList<>();
+        Iterator<RevCommit> revCommits = git.log().addPath(path).call().iterator();
+        while (revCommits.hasNext()) {
+            commits.add(getCommitInfo(revCommits.next()));
+        }
+        return commits;
+    }
+
     public CommitInfo getCommitInfoForRef(String ref) throws Exception {
         ObjectId commitId = ObjectId.fromString(ref);
         try (RevWalk revWalk = new RevWalk(localRepo)) {

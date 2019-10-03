@@ -29,7 +29,7 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.discovery.GitDiscoverer;
 import com.centurylink.mdw.model.JsonArray;
-import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.model.system.Bulletin;
@@ -103,7 +103,6 @@ public class Assets extends JsonRestService {
         @ApiImplicitParam(name="groupId", paramType="query", dataType="string"),
         @ApiImplicitParam(name="archiveDirs", paramType="query", dataType="string")})
     public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
-
         try {
             AssetServices assetServices = ServiceLocator.getAssetServices();
             Query query = getQuery(path, headers);
@@ -132,6 +131,7 @@ public class Assets extends JsonRestService {
 
             String pkg = getSegment(path, 1);
             String asset = pkg == null ? null : getSegment(path, 2);
+            String version = getSegment(path, 3);
 
             if (pkg == null) {
                 if (query.hasFilters()) {
@@ -146,7 +146,7 @@ public class Assets extends JsonRestService {
                     return getPackage(pkg).getJson();
                 }
                 else {
-                    return getAssetInfo(pkg + "/" + asset, query.getFilter("stagingUser")).getJson();
+                    return getAssetInfo(pkg + "/" + asset, version, query.getFilter("stagingUser")).getJson();
                 }
             }
         }
@@ -336,10 +336,12 @@ public class Assets extends JsonRestService {
             return pkgAssets;
     }
 
-    public AssetInfo getAssetInfo(String assetPath, String stagingCuid) throws ServiceException {
-        AssetInfo theAsset;
+    public Jsonable getAssetInfo(String assetPath, String version, String stagingCuid) throws ServiceException {
+        Jsonable theAsset;
         if (stagingCuid != null) {
             theAsset = ServiceLocator.getStagingServices().getStagedAsset(stagingCuid, assetPath);
+        } else if (version != null){
+            theAsset = ServiceLocator.getDesignServices().getAsset(assetPath, version, true);
         } else {
             theAsset = ServiceLocator.getAssetServices().getAsset(assetPath, true);
         }

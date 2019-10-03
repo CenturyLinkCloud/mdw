@@ -22,6 +22,7 @@ public class AssetVersion implements Jsonable, Comparable<AssetVersion> {
     public AssetVersion(Long id, String path, String version) {
         this.id = id;
         this.path = path;
+        this.name = path.substring(path.lastIndexOf("/") + 1);
         this.version = version;
     }
 
@@ -32,6 +33,13 @@ public class AssetVersion implements Jsonable, Comparable<AssetVersion> {
     private String path;
     public String getPath() { return path; }
     public void setPath(String path) { this.path = path; }
+
+    /**
+     * Name is set to make JSON look like AssetInfo.
+     */
+    private String name;
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
     private String version;
     public String getVersion() { return version; }

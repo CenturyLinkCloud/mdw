@@ -13,6 +13,7 @@ import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetVersion;
+import com.centurylink.mdw.model.asset.CommitInfo;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.activity.ImplementorCache;
@@ -206,6 +207,49 @@ public class DesignServicesImpl implements DesignServices {
         }
     }
 
+    public AssetVersion getAsset(String assetPath, String version, boolean withCommitInfo) throws ServiceException {
+        String assetName = assetPath.substring(assetPath.indexOf('/') + 1);
+        AssetServices assetServices = ServiceLocator.getAssetServices();
+        AssetInfo currentAsset = assetServices.getAsset(assetPath);
+        try {
+            AssetVersion assetVersion;
+            if (currentAsset != null && version.equals(currentAsset.getJson().optString("version"))) {
+                // if current version just return asset from file system
+                JSONObject json = currentAsset.getJson();
+                assetVersion = new AssetVersion(json.optLong("id"), assetPath, version);
+                if (withCommitInfo) {
+                    VersionControlGit vcGit = (VersionControlGit) assetServices.getVersionControl();
+                    String assetVcPath = vcGit.getRelativePath(currentAsset.getFile().toPath());
+                    assetVersion.setCommitInfo(vcGit.getCommitInfo(assetVcPath));
+                }
+            } else {
+                // if older version check in AssetRefCache
+                AssetRef assetRef = AssetRefCache.getRef(assetPath, version);
+                if (assetRef == null)
+                    throw new ServiceException(ServiceException.NOT_FOUND, "Asset ref not found: " + assetPath + " v" + version);
+                assetVersion = new AssetVersion(assetRef);
+                VersionControlGit vcGit = (VersionControlGit) assetServices.getVersionControl();
+                CommitInfo refCommit = vcGit.getCommitInfoForRef(assetVersion.getRef());
+                if (refCommit != null) {
+                    String assetVcPath = vcGit.getRelativePath(currentAsset.getFile().toPath());
+                    // actual commit is last one before or same as refCommit
+                    for (CommitInfo commit : vcGit.getCommits(assetVcPath)) {
+                        if (commit.getDate().before(refCommit.getDate()) || commit.getDate().equals(refCommit.getDate())) {
+                            assetVersion.setCommitInfo(commit);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            assetVersion.setName(assetName);
+            return assetVersion;
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
+    }
+
     @Override
     public List<AssetVersion> getAssetVersions(String assetPath, Query query) throws ServiceException {
         AssetInfo currentAsset = ServiceLocator.getAssetServices().getAsset(assetPath);
@@ -235,16 +279,34 @@ public class DesignServicesImpl implements DesignServices {
             try {
                 VersionControlGit versionControl = (VersionControlGit) assetServices.getVersionControl();
                 if (versionControl != null && PropertyManager.getProperty(PropertyNames.MDW_GIT_USER) != null) {
-                    for (int i = 0; i < versions.size(); i++) {
-                        AssetVersion assetVersion = versions.get(i);
+                    AssetInfo assetInfo = assetServices.getAsset(assetPath, false);
+                    if (assetInfo != null) {
+                        String assetVcPath = versionControl.getRelativePath(assetInfo.getFile().toPath());
                         try {
-                            AssetInfo assetInfo = assetServices.getAsset(assetPath, false);
-                            if (assetInfo != null) {
-                                String assetVcPath = versionControl.getRelativePath(assetInfo.getFile().toPath());
-                                assetVersion.setCommitInfo(versionControl.getCommitInfo(assetVcPath));
+                            List<CommitInfo> commits = versionControl.getCommits(assetVcPath);
+                            for (int i = 0; i < versions.size(); i++) {
+                                AssetVersion assetVersion = versions.get(i);
+                                try {
+                                    CommitInfo refCommit = versionControl.getCommitInfoForRef(assetVersion.getRef());
+                                    if (refCommit == null && i == 0)
+                                        refCommit = versionControl.getCommitInfoForRef(versionControl.getCommit());
+                                    if (refCommit != null) {
+                                        // actual commit is last one before or same as refCommit
+                                        for (CommitInfo commit : commits) {
+                                            if (commit.getDate().before(refCommit.getDate()) || commit.getDate().equals(refCommit.getDate())) {
+                                                assetVersion.setCommitInfo(commit);
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                catch (Exception ex) {
+                                    logger.error("Error reading commit for " + assetVersion, ex);
+                                }
                             }
-                        } catch (Exception ex) {
-                            logger.error("Error reading commit for " + assetVersion, ex);
+                        }
+                        catch (Exception ex) {
+                            logger.error("Error reading commits for " + assetInfo.getFile().toPath());
                         }
                     }
                 }

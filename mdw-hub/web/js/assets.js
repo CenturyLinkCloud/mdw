@@ -454,6 +454,7 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
 
   $scope.packageName = $routeParams.packageName;
   $scope.assetName = $routeParams.assetName;
+  $scope.version = $routeParams.version;
   if ($scope.assetName.endsWith('.proc')) {
     $scope.process = {packageName: $scope.packageName, name: $scope.assetName.substring(0, $scope.assetName.length - 5)};
   }
@@ -463,7 +464,8 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
  
   $scope.asset = Assets.get({
       packageName: $routeParams.packageName,
-      assetName: $routeParams.assetName
+      assetName: $routeParams.assetName,
+      version: $routeParams.version
     },
     function(assetsData) {
       $scope.asset.language = util.getLanguage($scope.asset.name);
@@ -475,7 +477,8 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
         if ($scope.asset.vcsDiff != 'MISSING') {
           Asset.get({
               packageName: $scope.packageName,
-              assetName: $scope.asset.name
+              assetName: $scope.asset.name,
+              version: $scope.version
             },
             function(assetData) {
               if (assetData.rawResponse) {
@@ -517,11 +520,11 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
   );
 
   $scope.isEditAllowed = function() {
-    return $scope.authUser.hasRole('Process Design') && !$scope.asset.isBinary && !mdw.git.tag;
+    return $scope.authUser.hasRole('Process Design') && !$scope.asset.isBinary && !mdw.git.tag && !$scope.version;
   };
 
   $scope.isStagingAllowed = function() {
-    return $scope.authUser.hasRole('Process Design');
+    return $scope.authUser.hasRole('Process Design') && !$scope.version;
   };
 
   $scope.stageAsset = function() {
@@ -597,7 +600,7 @@ assetMod.controller('ArchiveController', ['$scope', '$route', 'mdw', 'uiUtil', '
 }]);
 
 assetMod.factory('Assets', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.services + '/Services/Assets/:packageName/:assetName', mdw.serviceParams(), {
+  return $resource(mdw.roots.services + '/Services/Assets/:packageName/:assetName/:version', mdw.serviceParams(), {
     get: { method: 'GET', isArray: false },
     put: { method: 'PUT'},
     post: { method: 'POST'},
@@ -606,7 +609,7 @@ assetMod.factory('Assets', ['$resource', 'mdw', function($resource, mdw) {
 }]);
 
 assetMod.factory('Asset', ['$resource', 'mdw', function($resource, mdw) {
-  return $resource(mdw.roots.hub + '/asset/:packageName/:assetName/:instanceId', mdw.hubParams(), {
+  return $resource(mdw.roots.hub + '/asset/:packageName/:assetName/:instanceId/:version', mdw.hubParams(), {
     get: { 
       method: 'GET', 
       transformResponse: function(data, headers) {
