@@ -472,6 +472,15 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
+    public long getProcessCount(Query query) throws ServiceException {
+        try {
+            return getWorkflowDao().getProcessInstanceCount(query);
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(500, "Error retrieving process instance count for query: " + query, ex);
+        }
+    }
+
     @Override
     public ProcessList getProcesses(Query query) throws ServiceException {
         try {

@@ -26,8 +26,15 @@
                   {{version.id}}
                 </div>
               </div>
-              <div style="width:100%;color:#505050;">
-                {{version.commitInfo.message}}
+              <div style="width:100%;">
+                <div style="color:#505050;">
+                  {{version.commitInfo.message}}
+                </div>
+                <a ng-if="version.commitInfo.url"
+                   href="{{version.commitInfo.url}}">{{version.commitInfo.commit}}</a>
+                <span ng-if="!version.commitInfo.url">
+                  {{version.commitInfo.commit}}
+                </span>
               </div>
               <div class="mdw-flex-item-right" style="color:#505050;margin-right:25px;">
                 <div ng-if="version.commitInfo">

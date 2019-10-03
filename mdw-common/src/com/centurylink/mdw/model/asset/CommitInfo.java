@@ -45,6 +45,10 @@ public class CommitInfo implements Jsonable {
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
 
+    private String url;
+    public String getUrl() { return url; }
+    public void setUrl(String url) { this.url = url; }
+
     public CommitInfo(String commit) {
         this.commit = commit;
     }
@@ -60,6 +64,8 @@ public class CommitInfo implements Jsonable {
             this.date = stringToDate(json.getString("date"));
         if (json.has("message"))
             this.message = json.getString("message");
+        if (json.has("url"))
+            this.url = json.getString("url");
     }
 
     public JSONObject getJson() throws JSONException {
@@ -74,6 +80,8 @@ public class CommitInfo implements Jsonable {
             json.put("date", dateToString(date));
         if (message != null)
             json.put("message", message);
+        if (url != null)
+            json.put("url", url);
         return json;
     }
 

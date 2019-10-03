@@ -512,7 +512,7 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
         $scope.versions = data.versions;
         $scope.versions.forEach(function(version) {
           if (version.commitInfo && version.commitInfo.date) {
-            version.commitInfo.date = new Date(version.commitInfo.date);
+              version.commitInfo.date = new Date(version.commitInfo.date);
           }
         });
       });
