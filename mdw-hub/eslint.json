@@ -27,6 +27,7 @@
     "$mdwVersion": false,
     "$mdwMessages": true,
     "$mdwGitBranch": false,
+    "$mdwConfig": false,
     "require": false,
     "module": false,
     "location": true,

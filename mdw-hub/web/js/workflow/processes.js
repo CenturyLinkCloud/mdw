@@ -483,8 +483,8 @@ processMod.controller('ProcessDefController',
     ProcessVersions.retrieve({
         packageName: $scope.process.packageName,
         processName: $scope.process.name,
-        withCommitInfo: true,
-        withInstanceCounts: true
+        withCommitInfo: $mdwConfig.processVersions.withCommitInfo,
+        withInstanceCounts: $mdwConfig.processVersions.withInstanceCounts
       }, function(data) {
       $scope.versions = data.versions;
       $scope.versions.forEach(function(version) {
@@ -503,8 +503,8 @@ processMod.controller('ProcessDefController',
         ProcessVersions.retrieve({
             packageName: $scope.process.packageName,
             processName: $scope.process.name,
-            withCommitInfo: true,
-            withInstanceCounts: true
+            withCommitInfo: $mdwConfig.processVersions.withCommitInfo,
+            withInstanceCounts: $mdwConfig.processVersions.withInstanceCounts
           }, function(data) {
           $scope.versions = data.versions;
           $scope.versions.forEach(function(version) {

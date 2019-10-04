@@ -11,10 +11,13 @@
             {{process.name}}
           </a>
         </div>
+        <div style="float:right;margin-top:5px;">
+          <label>Instances</label>
+        </div>
       </div>
-      <div class="mdw-section">
+      <div>
         <ul class="mdw-list">
-          <li ng-repeat="version in versions" style="padding-top:3px;">
+          <li ng-repeat="version in versions">
             <div class="mdw-flex-item">
               <div class="mdw-flex-item-left" style="width:200px;">
                 <div>
@@ -36,13 +39,18 @@
                   {{version.commitInfo.commit}}
                 </span>
               </div>
-              <div class="mdw-flex-item-right" style="color:#505050;margin-right:25px;">
-                <div ng-if="version.commitInfo">
-                  <div ng-if="version.commitInfo.date">
+              <div class="mdw-flex-item-right" style="color:#505050;display:flex;">
+                <div style="width:300px;">
+                  <div ng-if="version.commitInfo && version.commitInfo.date">
                     {{version.commitInfo.date.toLocaleString()}}
                   </div>
                   <div>
                     {{version.commitInfo.committer}}
+                  </div>
+                </div>
+                <div style="min-width:100px;text-align:right;">
+                  <div ng-if="version.count" style="font-weight:bold;">
+                    {{version.count}}
                   </div>
                 </div>
               </div>

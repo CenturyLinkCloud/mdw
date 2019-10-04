@@ -8,12 +8,11 @@ import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.model.workflow.ProcessAggregate;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
 
@@ -221,5 +220,26 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
         }
 
         return new PreparedWhere(where.toString(), params.toArray());
+    }
+
+    public Map<Long,Long> getInstanceCounts(List<Long> processIds) throws DataAccessException {
+        Map<Long,Long> instanceCounts = new HashMap<>();
+        try {
+            String sql = "select process_id, count(process_id) as count from PROCESS_INSTANCE \n" +
+                    "where process_id in (" + processIds.stream().map(Object::toString).collect(Collectors.joining(",")) + ")\n" +
+                    "group by process_id";
+            db.openConnection();
+            ResultSet rs = db.runSelect(sql);
+            while (rs.next()) {
+                instanceCounts.put(rs.getLong("process_id"), rs.getLong("count"));
+            }
+            return instanceCounts;
+        }
+        catch (SQLException ex) {
+            throw new DataAccessException(ex.getMessage(), ex);
+        }
+        finally {
+            db.closeConnection();
+        }
     }
 }

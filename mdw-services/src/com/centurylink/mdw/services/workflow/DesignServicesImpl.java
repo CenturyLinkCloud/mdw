@@ -11,6 +11,7 @@ import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.dataaccess.reports.ProcessAggregation;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.asset.CommitInfo;
@@ -31,6 +32,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DesignServicesImpl implements DesignServices {
 
@@ -273,6 +276,7 @@ public class DesignServicesImpl implements DesignServices {
             versions.add(current);
         }
 
+        long before = System.currentTimeMillis();
         if (query.getBooleanFilter("withCommitInfo")) {
             AssetServices assetServices = ServiceLocator.getAssetServices();
             try {
@@ -285,23 +289,25 @@ public class DesignServicesImpl implements DesignServices {
                             List<CommitInfo> commits = versionControl.getCommits(assetVcPath);
                             for (int i = 0; i < versions.size(); i++) {
                                 AssetVersion assetVersion = versions.get(i);
-                                try {
-                                    CommitInfo refCommit = versionControl.getCommitInfoForRef(assetVersion.getRef());
-                                    if (refCommit == null && i == 0)
-                                        refCommit = versionControl.getCommitInfoForRef(versionControl.getCommit());
-                                    if (refCommit != null) {
-                                        // actual commit is last one before or same as refCommit
-                                        for (CommitInfo commit : commits) {
-                                            if (commit.getDate().before(refCommit.getDate()) || commit.getDate().equals(refCommit.getDate())) {
-                                                commit.setUrl(getCommitUrl(commit));
-                                                assetVersion.setCommitInfo(commit);
-                                                break;
+                                if (assetVersion.getRef() != null) {
+                                    try {
+                                        CommitInfo refCommit = versionControl.getCommitInfoForRef(assetVersion.getRef());
+                                        if (refCommit == null && i == 0)
+                                            refCommit = versionControl.getCommitInfoForRef(versionControl.getCommit());
+                                        if (refCommit != null) {
+                                            // actual commit is last one before or same as refCommit
+                                            for (CommitInfo commit : commits) {
+                                                if (commit.getDate().before(refCommit.getDate()) || commit.getDate().equals(refCommit.getDate())) {
+                                                    commit.setUrl(getCommitUrl(commit));
+                                                    assetVersion.setCommitInfo(commit);
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                catch (Exception ex) {
-                                    logger.error("Error reading commit for " + assetVersion, ex);
+                                    catch (Exception ex) {
+                                        logger.error("Error reading commit for " + assetVersion, ex);
+                                    }
                                 }
                             }
                         }
@@ -314,22 +320,28 @@ public class DesignServicesImpl implements DesignServices {
             catch (IOException ex) {
                 throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
             }
+            if (logger.isDebugEnabled()) {
+                logger.debug("withCommitInfo takes " + (System.currentTimeMillis() - before) + " ms");
+            }
+            before = System.currentTimeMillis();
         }
 
         if (assetPath.endsWith(".proc") && query.getBooleanFilter("withInstanceCounts")) {
-            for (AssetVersion version : versions) {
-                Long processId = version.getId();
-                if (processId != null) {
-                    Query processQuery = new Query();
-                    processQuery.setFilter("processId", processId);
-                    try {
-                        long count = ServiceLocator.getWorkflowServices().getProcessCount(processQuery);
-                        if (count > 0)
-                            version.setCount(count);
-                    }
-                    catch (ServiceException ex) {
-                        logger.error(ex.getMessage(), ex);
-                    }
+            try {
+                List<Long> processIds = versions.stream().map(v -> v.getId()).collect(Collectors.toList());
+                Map<Long,Long> idToCount = new ProcessAggregation().getInstanceCounts(processIds);
+                for (AssetVersion version : versions) {
+                    Long count = idToCount.get(version.getId());
+                    if (count != null)
+                        version.setCount(count);
+                }
+            }
+            catch (DataAccessException ex) {
+                logger.error(ex.getMessage(), ex);
+            }
+            if (logger.isDebugEnabled()) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("withInstanceCounts takes " + (System.currentTimeMillis() - before) + " ms");
                 }
             }
         }

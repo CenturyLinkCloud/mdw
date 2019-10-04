@@ -59,11 +59,11 @@ class History extends Component {
                 onClick={e => {e.preventDefault(); location = hubRoot + '/#/packages/' + this.props.package; }}>
                 {this.package}
               </a>
-              {'/' + this.assetName}
+              {' / ' + this.assetName}
             </div>
           </div>
         </div>
-        <div className="mdw-section">
+        <div>
           <ul className="mdw-list">
             {
               this.state.versions.map((version, i) => {
@@ -84,8 +84,16 @@ class History extends Component {
                         }
                       </div>
                       {version.commitInfo &&
-                        <div style={{width:'100%',color:'#505050'}}>
-                          {version.commitInfo.message}
+                        <div style={{width:'100%'}}>
+                          <div style={{color:'#505050'}}>
+                            {version.commitInfo.message}
+                          </div>
+                          {version.commitInfo.url &&
+                            <a href="{version.commitInfo.url}">{version.commitInfo.commit}</a>
+                          }
+                          {!version.commitInfo.url &&
+                            <span>{version.commitInfo.commit}</span>
+                          }
                         </div>
                        }
                       <div className="mdw-flex-item-right" style={{color:'#505050',marginRight:'25px'}}>
