@@ -1,5 +1,34 @@
 # Change Log
 
+## [6.1.26](https://github.com/CenturyLinkCloud/mdw/tree/6.1.26) (2019-10-04)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.25...6.1.26)
+
+**Implemented enhancements:**
+
+- Hub search should be case-insensitive [\#752](https://github.com/CenturyLinkCloud/mdw/issues/752)
+- Broken search by task name on MDWHub's Tasks tab [\#751](https://github.com/CenturyLinkCloud/mdw/issues/751)
+- Convert base activities impls to annotation form [\#748](https://github.com/CenturyLinkCloud/mdw/issues/748)
+- Set response Content-Length for REST services [\#742](https://github.com/CenturyLinkCloud/mdw/issues/742)
+- Avoid persisting Hub REST requests/responses [\#738](https://github.com/CenturyLinkCloud/mdw/issues/738)
+- Show process version history in MDWHub [\#677](https://github.com/CenturyLinkCloud/mdw/issues/677)
+- Non-asset Java classes should support the @Activity annotation. [\#31](https://github.com/CenturyLinkCloud/mdw/issues/31)
+- Beta implementation of Asset Staging. [\#720](https://github.com/CenturyLinkCloud/mdw/issues/720)
+
+**Closed issues:**
+
+- Manual task retry in package-level error handlers. [\#750](https://github.com/CenturyLinkCloud/mdw/issues/750)
+- Editing activity monitors in MDWHub is broken [\#749](https://github.com/CenturyLinkCloud/mdw/issues/749)
+- MDW CLI convert command missing slf4j dependency [\#737](https://github.com/CenturyLinkCloud/mdw/issues/737)
+- Spring assets with JAXB on Kubernetes with OpenJDK 11 [\#717](https://github.com/CenturyLinkCloud/mdw/issues/717)
+- Package-level handler processes not canceled with owning process [\#710](https://github.com/CenturyLinkCloud/mdw/issues/710)
+- ConcurrentModificationException checking Hub path [\#700](https://github.com/CenturyLinkCloud/mdw/issues/700)
+- Editing process instance always load latest definition instead of instance's definition [\#676](https://github.com/CenturyLinkCloud/mdw/issues/676)
+- Cannot Cancel/Abort Tasks from Tasks list due to missing Comment [\#637](https://github.com/CenturyLinkCloud/mdw/issues/637)
+
+**Compatibility Notes:**
+  - Due to [\#748](https://github.com/CenturyLinkCloud/mdw/issues/748), MDW Studio 1.3.6+ is required for 6.1.26.
+    Without upgrading to 1.3.6+, base activities will be missing from Studio's Toolbox view. 
+
 ## [6.1.25](https://github.com/CenturyLinkCloud/mdw/tree/6.1.25) (2019-09-06)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.24...6.1.25)
 
