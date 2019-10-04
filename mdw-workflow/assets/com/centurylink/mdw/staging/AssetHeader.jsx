@@ -65,16 +65,20 @@ class AssetHeader extends Component {
         }
         {this.props.asset &&
           <div className="mdw-heading-actions">
-            <a className="btn btn-primary mdw-action-btn" style={{fontSize:'14px',fontWeight:'normal'}}
+            {this.props.stagingCuid === this.context.authUser.cuid &&
+              <a className="btn btn-primary mdw-action-btn" style={{fontSize:'14px',fontWeight:'normal'}}
               href={hubRoot + '/edit/' + this.props.package + '/' + this.props.asset.name}>
-              <Glyphicon glyph="pencil" />
-              {' Edit'}
-            </a>
-            <Button className="btn btn-primary mdw-btn mdw-action-btn" style={{padding:'4px 6px'}}
-              onClick={this.props.onDelete}>
-              <Glyphicon glyph="remove" />
-              {' Delete'}
-            </Button>
+                <Glyphicon glyph="pencil" />
+                {' Edit'}
+              </a>
+            }
+            {this.props.stagingCuid === this.context.authUser.cuid &&
+              <Button className="btn btn-primary mdw-btn mdw-action-btn" style={{padding:'4px 6px'}}
+                onClick={this.props.onDelete}>
+                <Glyphicon glyph="remove" />
+                {' Delete'}
+              </Button>
+            }
             <Button className="btn btn-primary mdw-btn mdw-action-btn" style={{padding:'4px 6px'}}
               onClick={this.props.onUnstage}>
               <Glyphicon glyph="arrow-left" />
