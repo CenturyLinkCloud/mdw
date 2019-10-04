@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -155,14 +155,22 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/StagingArea.html#getBranch--">getBranch</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>org.json.JSONObject</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/StagingArea.html#getJson--">getJson</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>long</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/StagingArea.html#getLoaded--">getLoaded</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/StagingArea.html#getUserCuid--">getUserCuid</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/StagingArea.html#getUserName--">getUserName</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/StagingArea.html#setBranch-com.centurylink.mdw.dataaccess.file.GitBranch-">setBranch</a></span>(<a href="../../../../../com/centurylink/mdw/dataaccess/file/GitBranch.html" title="class in com.centurylink.mdw.dataaccess.file">GitBranch</a>&nbsp;branch)</code>&nbsp;</td>
 </tr>
@@ -179,7 +187,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <!--   -->
 </a>
 <h3>Methods inherited from interface&nbsp;com.centurylink.mdw.model.<a href="../../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a></h3>
-<code><a href="../../../../../com/centurylink/mdw/model/Jsonable.html#create--">create</a>, <a href="../../../../../com/centurylink/mdw/model/Jsonable.html#getJson--">getJson</a>, <a href="../../../../../com/centurylink/mdw/model/Jsonable.html#getJsonName--">getJsonName</a></code></li>
+<code><a href="../../../../../com/centurylink/mdw/model/Jsonable.html#create--">create</a>, <a href="../../../../../com/centurylink/mdw/model/Jsonable.html#getJsonName--">getJsonName</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.io.limberest.json.Jsonable">
@@ -250,10 +258,28 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <a name="setBranch-com.centurylink.mdw.dataaccess.file.GitBranch-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>setBranch</h4>
 <pre>public&nbsp;void&nbsp;setBranch(<a href="../../../../../com/centurylink/mdw/dataaccess/file/GitBranch.html" title="class in com.centurylink.mdw.dataaccess.file">GitBranch</a>&nbsp;branch)</pre>
+</li>
+</ul>
+<a name="getLoaded--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLoaded</h4>
+<pre>public&nbsp;long&nbsp;getLoaded()</pre>
+</li>
+</ul>
+<a name="getJson--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getJson</h4>
+<pre>public&nbsp;org.json.JSONObject&nbsp;getJson()</pre>
 </li>
 </ul>
 </li>
