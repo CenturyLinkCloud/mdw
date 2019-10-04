@@ -6,7 +6,7 @@
           {{item.packageName}}/
           <a ng-class="['mdw-item-link', 'mdw-item-nowrap', {'mdw-template': item.template}]" style="margin-left:-3px"
              href="#/workflow/processes/{{item.id}}">
-            {{item.processName}} {{item.processVersion == '0' ? '' : 'v' + item.processVersion}} &nbsp;{{item.id}}</a>
+            {{item.processName}} {{item.processVersion == '0' ? '' : 'v' + item.processVersion}} &nbsp;{{item.id}}<span ng-if="item.instanceDefinitionId">*</span></a>
         </div>
         <div class="mdw-item-sub">
           <span>Master request: 

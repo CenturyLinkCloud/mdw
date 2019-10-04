@@ -354,6 +354,11 @@ public class AssetContentServlet extends HttpServlet {
                     progressMonitor.done();
                 }
                 else {
+                    String[] segments = path.split("/");
+                    if (segments.length == 3 && segments[2].indexOf('.') > 0) {
+                        // specific asset version
+                        path = segments[0] + '/' + segments[1];
+                    }
                     int slashes = 0;
                     Matcher matcher = Pattern.compile("/").matcher(path);
                     while (matcher.find())

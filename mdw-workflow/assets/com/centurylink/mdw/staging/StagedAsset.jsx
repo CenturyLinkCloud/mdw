@@ -203,6 +203,7 @@ class StagedAsset extends Component {
     return (
       <div>
         <AssetHeader 
+          stagingCuid={this.stagingCuid}
           package={this.package} 
           assetName={this.assetName} 
           asset={this.state.asset} 
