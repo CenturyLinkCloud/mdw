@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -189,6 +189,12 @@ extends <a href="../../../../com/centurylink/mdw/services/rest/JsonRestService.h
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/milestones/MilestonesApi.html#getDefinition-java.lang.String-">getDefinition</a></span>(java.lang.String&nbsp;assetPath)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/JsonArray.html" title="class in com.centurylink.mdw.model">JsonArray</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/milestones/MilestonesApi.html#getDefinitions-com.centurylink.mdw.common.service.Query-">getDefinitions</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>
+<div class="block">Returns a list of master proc defs with milestones defined.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/milestones/MilestonesApi.html#getGroups--">getGroups</a></span>()</code>&nbsp;</td>
 </tr>
@@ -259,6 +265,22 @@ extends <a href="../../../../com/centurylink/mdw/services/rest/JsonRestService.h
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/services/rest/JsonRestService.html#get-java.lang.String-java.util.Map-">get</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/centurylink/mdw/services/rest/JsonRestService.html" title="class in com.centurylink.mdw.services.rest">JsonRestService</a></code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getDefinitions-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDefinitions</h4>
+<pre>public&nbsp;<a href="../../../../com/centurylink/mdw/model/JsonArray.html" title="class in com.centurylink.mdw.model">JsonArray</a>&nbsp;getDefinitions(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                         throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<div class="block">Returns a list of master proc defs with milestones defined.
+ Query filters except 'find' are currently ignored.</div>
+<dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>

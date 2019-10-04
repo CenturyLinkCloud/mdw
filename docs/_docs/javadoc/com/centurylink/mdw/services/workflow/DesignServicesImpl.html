@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -154,27 +154,38 @@ implements <a href="../../../../../com/centurylink/mdw/services/DesignServices.h
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/workflow/DesignServicesImpl.html#getActivityDefinitions-com.centurylink.mdw.common.service.Query-">getActivityDefinitions</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html" title="class in com.centurylink.mdw.model.asset">AssetVersion</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/workflow/DesignServicesImpl.html#getAsset-java.lang.String-java.lang.String-boolean-">getAsset</a></span>(java.lang.String&nbsp;assetPath,
+        java.lang.String&nbsp;version,
+        boolean&nbsp;withCommitInfo)</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html" title="class in com.centurylink.mdw.model.asset">AssetVersion</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/workflow/DesignServicesImpl.html#getAssetVersions-java.lang.String-com.centurylink.mdw.common.service.Query-">getAssetVersions</a></span>(java.lang.String&nbsp;assetPath,
+                <a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html" title="class in com.centurylink.mdw.model.workflow">ActivityImplementor</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/workflow/DesignServicesImpl.html#getImplementor-java.lang.String-">getImplementor</a></span>(java.lang.String&nbsp;className)</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityImplementor.html" title="class in com.centurylink.mdw.model.workflow">ActivityImplementor</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/workflow/DesignServicesImpl.html#getImplementors--">getImplementors</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/workflow/DesignServicesImpl.html#getProcessDefinition-java.lang.Long-">getProcessDefinition</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/workflow/DesignServicesImpl.html#getProcessDefinition-java.lang.String-com.centurylink.mdw.common.service.Query-">getProcessDefinition</a></span>(java.lang.String&nbsp;assetPath,
                     <a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/workflow/DesignServicesImpl.html#getProcessDefinitions-com.centurylink.mdw.common.service.Query-">getProcessDefinitions</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Linked.html" title="class in com.centurylink.mdw.model.workflow">Linked</a>&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/workflow/DesignServicesImpl.html#getProcessHierarchy-java.lang.Long-boolean-">getProcessHierarchy</a></span>(java.lang.Long&nbsp;processId,
                    boolean&nbsp;downward)</code>&nbsp;</td>
@@ -312,7 +323,7 @@ implements <a href="../../../../../com/centurylink/mdw/services/DesignServices.h
 <a name="getProcessHierarchy-java.lang.Long-boolean-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getProcessHierarchy</h4>
 <pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Linked.html" title="class in com.centurylink.mdw.model.workflow">Linked</a>&lt;<a href="../../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&gt;&gt;&nbsp;getProcessHierarchy(java.lang.Long&nbsp;processId,
@@ -324,6 +335,41 @@ implements <a href="../../../../../com/centurylink/mdw/services/DesignServices.h
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>processId</code> - process ID</dd>
 <dd><code>downward</code> - only searches downward (returns list with single element)</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getAsset-java.lang.String-java.lang.String-boolean-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAsset</h4>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html" title="class in com.centurylink.mdw.model.asset">AssetVersion</a>&nbsp;getAsset(java.lang.String&nbsp;assetPath,
+                             java.lang.String&nbsp;version,
+                             boolean&nbsp;withCommitInfo)
+                      throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/services/DesignServices.html#getAsset-java.lang.String-java.lang.String-boolean-">getAsset</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/DesignServices.html" title="interface in com.centurylink.mdw.services">DesignServices</a></code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getAssetVersions-java.lang.String-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getAssetVersions</h4>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html" title="class in com.centurylink.mdw.model.asset">AssetVersion</a>&gt;&nbsp;getAssetVersions(java.lang.String&nbsp;assetPath,
+                                                     <a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                                              throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/services/DesignServices.html#getAssetVersions-java.lang.String-com.centurylink.mdw.common.service.Query-">getAssetVersions</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/DesignServices.html" title="interface in com.centurylink.mdw.services">DesignServices</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>

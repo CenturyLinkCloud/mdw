@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -225,10 +225,15 @@ implements <a href="../../../../../com/centurylink/mdw/services/StagingServices.
 </tr>
 <tr id="i12" class="altColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/asset/StagingServicesImpl.html#promoteAssets-java.lang.String-java.lang.String-">promoteAssets</a></span>(java.lang.String&nbsp;cuid,
+             java.lang.String&nbsp;comment)</code>&nbsp;</td>
+</tr>
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/asset/StagingServicesImpl.html#stageAssets-java.lang.String-java.util.List-">stageAssets</a></span>(java.lang.String&nbsp;cuid,
            java.util.List&lt;java.lang.String&gt;&nbsp;assets)</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/asset/StagingServicesImpl.html#unStageAssets-java.lang.String-java.util.List-">unStageAssets</a></span>(java.lang.String&nbsp;cuid,
              java.util.List&lt;java.lang.String&gt;&nbsp;assets)</code>&nbsp;</td>
@@ -446,6 +451,23 @@ implements <a href="../../../../../com/centurylink/mdw/services/StagingServices.
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/services/StagingServices.html#deleteAsset-java.lang.String-java.lang.String-">deleteAsset</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/StagingServices.html" title="interface in com.centurylink.mdw.services">StagingServices</a></code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="promoteAssets-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>promoteAssets</h4>
+<pre>public&nbsp;void&nbsp;promoteAssets(java.lang.String&nbsp;cuid,
+                          java.lang.String&nbsp;comment)
+                   throws <a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/services/StagingServices.html#promoteAssets-java.lang.String-java.lang.String-">promoteAssets</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/services/StagingServices.html" title="interface in com.centurylink.mdw.services">StagingServices</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
 </dl>
