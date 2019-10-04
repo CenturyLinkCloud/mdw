@@ -29,6 +29,7 @@
     "$mdwMessages": true,
     "MdwMessages": true,
     "$mdwUi": true,
+    "$mdwConfig": true,
     "hljs": false,
     "JsDiff": false,
     "marked": false,
