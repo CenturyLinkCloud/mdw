@@ -447,8 +447,8 @@ assetMod.controller('PackageController', ['$scope', '$routeParams', '$route', '$
   };
 }]);
 
-assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams', '$location', '$http', 'mdw', 'util', 'uiUtil', 'Assets', 'Asset', 'AssetVersions',
-                                       function($scope, $cookieStore, $routeParams, $location, $http, mdw, util, uiUtil, Assets, Asset, AssetVersions) {
+assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams', '$route', '$location', '$http', 'mdw', 'util', 'uiUtil', 'Assets', 'Asset', 'AssetVersions',
+                                       function($scope, $cookieStore, $routeParams, $route, $location, $http, mdw, util, uiUtil, Assets, Asset, AssetVersions) {
 
   sessionStorage.removeItem('stagingUser');
 
@@ -504,18 +504,20 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
       }
 
       // history
-      AssetVersions.retrieve({
-          packageName: $scope.packageName,
-          assetName: $scope.assetName,
-          withCommitInfo: true
-        }, function(data) {
-        $scope.versions = data.versions;
-        $scope.versions.forEach(function(version) {
-          if (version.commitInfo && version.commitInfo.date) {
-              version.commitInfo.date = new Date(version.commitInfo.date);
-          }
+      if ($route.current && $route.current.templateUrl && $route.current.templateUrl.endsWith('/history.html')) {
+        AssetVersions.retrieve({
+            packageName: $scope.packageName,
+            assetName: $scope.assetName,
+            withCommitInfo: true
+          }, function(data) {
+          $scope.versions = data.versions;
+          $scope.versions.forEach(function(version) {
+            if (version.commitInfo && version.commitInfo.date) {
+                version.commitInfo.date = new Date(version.commitInfo.date);
+            }
+          });
         });
-      });
+      }
     }
   );
 

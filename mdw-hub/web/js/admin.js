@@ -312,7 +312,7 @@ adminApp.directive('navLink', ['$document', '$route', '$location',
           if (attrs.fullWidth) {
             scope.setFullWidth(true);
             var navMenu = angular.element($document[0].querySelector('#' + attrs.fullWidth));
-            if (navMenu)
+            if (navMenu && navMenu.length && navMenu.length > 0)
               scope.setNavMenuWidth(navMenu[0].offsetWidth);
           }
           else {
