@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":42,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":9,"i48":10,"i49":10,"i50":10,"i51":10,"i52":10,"i53":10,"i54":10,"i55":10,"i56":10,"i57":10,"i58":10};
+var methods = {"i0":10,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":42,"i32":10,"i33":10,"i34":10,"i35":10,"i36":10,"i37":10,"i38":10,"i39":10,"i40":10,"i41":10,"i42":10,"i43":10,"i44":10,"i45":10,"i46":10,"i47":10,"i48":10,"i49":10,"i50":9,"i51":10,"i52":10,"i53":10,"i54":10,"i55":10,"i56":10,"i57":10,"i58":10,"i59":10,"i60":10,"i61":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -232,7 +232,7 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/VersionControl
        java.io.File&nbsp;localDir)</code>&nbsp;</td>
 </tr>
 <tr id="i13" class="rowColor">
-<td class="colFirst"><code>void</code></td>
+<td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#createBranch-java.lang.String-java.lang.String-org.eclipse.jgit.lib.ProgressMonitor-">createBranch</a></span>(java.lang.String&nbsp;branch,
             java.lang.String&nbsp;fromBranch,
             org.eclipse.jgit.lib.ProgressMonitor&nbsp;progressMonitor)</code>
@@ -276,41 +276,49 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/VersionControl
 </td>
 </tr>
 <tr id="i22" class="altColor">
+<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/asset/CommitInfo.html" title="class in com.centurylink.mdw.model.asset">CommitInfo</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getCommitInfoForRef-java.lang.String-">getCommitInfoForRef</a></span>(java.lang.String&nbsp;ref)</code>&nbsp;</td>
+</tr>
+<tr id="i23" class="rowColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/asset/CommitInfo.html" title="class in com.centurylink.mdw.model.asset">CommitInfo</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getCommits-java.lang.String-">getCommits</a></span>(java.lang.String&nbsp;path)</code>&nbsp;</td>
+</tr>
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getCommitTime-java.lang.String-">getCommitTime</a></span>(java.lang.String&nbsp;commitId)</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/dataaccess/file/GitDiffs.html" title="class in com.centurylink.mdw.dataaccess.file">GitDiffs</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getDiffs-java.lang.String-java.lang.String-">getDiffs</a></span>(java.lang.String&nbsp;branch,
         java.lang.String&nbsp;path)</code>&nbsp;</td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/dataaccess/file/GitDiffs.html" title="class in com.centurylink.mdw.dataaccess.file">GitDiffs</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getDiffsForTag-java.lang.String-java.lang.String-">getDiffsForTag</a></span>(java.lang.String&nbsp;tag,
               java.lang.String&nbsp;path)</code>&nbsp;</td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>java.io.File</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getFile-long-">getFile</a></span>(long&nbsp;id)</code>&nbsp;</td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getGitId-java.io.File-">getGitId</a></span>(java.io.File&nbsp;input)</code>
 <div class="block">This produces the same hash for a given object that Git 'hash-object' creates</div>
 </td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getId-java.io.File-">getId</a></span>(java.io.File&nbsp;file)</code>
 <div class="block">Cannot use git object hash since identical files would return duplicate
  ids.</div>
 </td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>java.io.File</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getLocalDir--">getLocalDir</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getRelativePath-java.io.File-">getRelativePath</a></span>(java.io.File&nbsp;file)</code>
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
@@ -319,135 +327,140 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/VersionControl
 </div>
 </td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getRelativePath-java.nio.file.Path-">getRelativePath</a></span>(java.nio.file.Path&nbsp;path)</code>&nbsp;</td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../com/centurylink/mdw/dataaccess/file/GitBranch.html" title="class in com.centurylink.mdw.dataaccess.file">GitBranch</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getRemoteBranches--">getRemoteBranches</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getRemoteCommit-java.lang.String-">getRemoteCommit</a></span>(java.lang.String&nbsp;branch)</code>
 <div class="block">Get remote HEAD commit.</div>
 </td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>org.eclipse.jgit.lib.ObjectStream</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getRemoteContentStream-java.lang.String-java.lang.String-">getRemoteContentStream</a></span>(java.lang.String&nbsp;branch,
                       java.lang.String&nbsp;path)</code>&nbsp;</td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getRemoteContentString-java.lang.String-java.lang.String-">getRemoteContentString</a></span>(java.lang.String&nbsp;branch,
                       java.lang.String&nbsp;path)</code>&nbsp;</td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/dataaccess/AssetRevision.html" title="class in com.centurylink.mdw.dataaccess">AssetRevision</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getRevision-java.io.File-">getRevision</a></span>(java.io.File&nbsp;file)</code>&nbsp;</td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/dataaccess/AssetRevision.html" title="class in com.centurylink.mdw.dataaccess">AssetRevision</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getRevisionInVersionsFile-java.io.File-">getRevisionInVersionsFile</a></span>(java.io.File&nbsp;file)</code>&nbsp;</td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code>org.eclipse.jgit.api.Status</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getStatus--">getStatus</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code>org.eclipse.jgit.api.Status</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#getStatus-java.lang.String-">getStatus</a></span>(java.lang.String&nbsp;path)</code>&nbsp;</td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#git-java.lang.String...-">git</a></span>(java.lang.String...&nbsp;args)</code>
 <div class="block">Execute an arbitrary git command.</div>
 </td>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#gitHash-java.io.File-">gitHash</a></span>(java.io.File&nbsp;input)</code>
 <div class="block">Use git hashing algorithm.</div>
 </td>
 </tr>
-<tr id="i41" class="rowColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#hardCheckout-java.lang.String-">hardCheckout</a></span>(java.lang.String&nbsp;branch)</code>&nbsp;</td>
 </tr>
-<tr id="i42" class="altColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#hardCheckout-java.lang.String-java.lang.Boolean-">hardCheckout</a></span>(java.lang.String&nbsp;branch,
             java.lang.Boolean&nbsp;hard)</code>
 <div class="block">Performs a HARD reset and FORCED checkout.</div>
 </td>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#hardReset--">hardReset</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#hardTagCheckout-java.lang.String-">hardTagCheckout</a></span>(java.lang.String&nbsp;tag)</code>&nbsp;</td>
 </tr>
-<tr id="i45" class="rowColor">
+<tr id="i47" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#hardTagCheckout-java.lang.String-java.lang.Boolean-">hardTagCheckout</a></span>(java.lang.String&nbsp;tag,
                java.lang.Boolean&nbsp;hard)</code>&nbsp;</td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i48" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#localRepoExists--">localRepoExists</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i49" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#merge-java.lang.String-java.lang.String-">merge</a></span>(java.lang.String&nbsp;fromBranch,
+     java.lang.String&nbsp;toBranch)</code>&nbsp;</td>
+</tr>
+<tr id="i50" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../com/centurylink/mdw/dataaccess/AssetRevision.html" title="class in com.centurylink.mdw.dataaccess">AssetRevision</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#parseAssetRevision-java.lang.String-">parseAssetRevision</a></span>(java.lang.String&nbsp;propertyValue)</code>&nbsp;</td>
 </tr>
-<tr id="i48" class="altColor">
+<tr id="i51" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#pull-java.lang.String-">pull</a></span>(java.lang.String&nbsp;branch)</code>&nbsp;</td>
 </tr>
-<tr id="i49" class="rowColor">
+<tr id="i52" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#pull-java.lang.String-org.eclipse.jgit.lib.ProgressMonitor-">pull</a></span>(java.lang.String&nbsp;branch,
     org.eclipse.jgit.lib.ProgressMonitor&nbsp;progressMonitor)</code>&nbsp;</td>
 </tr>
-<tr id="i50" class="altColor">
+<tr id="i53" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#push--">push</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i51" class="rowColor">
+<tr id="i54" class="altColor">
 <td class="colFirst"><code>byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#readFromCommit-java.lang.String-java.lang.String-">readFromCommit</a></span>(java.lang.String&nbsp;commitId,
               java.lang.String&nbsp;path)</code>&nbsp;</td>
 </tr>
-<tr id="i52" class="altColor">
+<tr id="i55" class="rowColor">
 <td class="colFirst"><code>byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#readFromHead-java.lang.String-">readFromHead</a></span>(java.lang.String&nbsp;filePath)</code>&nbsp;</td>
 </tr>
-<tr id="i53" class="rowColor">
+<tr id="i56" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#reconnect--">reconnect</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i54" class="altColor">
+<tr id="i57" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#rm-java.lang.String-">rm</a></span>(java.lang.String&nbsp;path)</code>&nbsp;</td>
 </tr>
-<tr id="i55" class="rowColor">
+<tr id="i58" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#setCredentialsProvider-org.eclipse.jgit.transport.CredentialsProvider-">setCredentialsProvider</a></span>(org.eclipse.jgit.transport.CredentialsProvider&nbsp;provider)</code>&nbsp;</td>
 </tr>
-<tr id="i56" class="altColor">
+<tr id="i59" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#setRevision-java.io.File-com.centurylink.mdw.dataaccess.AssetRevision-">setRevision</a></span>(java.io.File&nbsp;file,
            <a href="../../../../../com/centurylink/mdw/dataaccess/AssetRevision.html" title="class in com.centurylink.mdw.dataaccess">AssetRevision</a>&nbsp;rev)</code>&nbsp;</td>
 </tr>
-<tr id="i57" class="rowColor">
+<tr id="i60" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#setRevisionInVersionsFile-java.io.File-com.centurylink.mdw.dataaccess.AssetRevision-">setRevisionInVersionsFile</a></span>(java.io.File&nbsp;file,
                          <a href="../../../../../com/centurylink/mdw/dataaccess/AssetRevision.html" title="class in com.centurylink.mdw.dataaccess">AssetRevision</a>&nbsp;rev)</code>&nbsp;</td>
 </tr>
-<tr id="i58" class="altColor">
+<tr id="i61" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -1175,12 +1188,14 @@ implements <a href="../../../../../com/centurylink/mdw/dataaccess/VersionControl
 <ul class="blockList">
 <li class="blockList">
 <h4>createBranch</h4>
-<pre>public&nbsp;void&nbsp;createBranch(java.lang.String&nbsp;branch,
-                         java.lang.String&nbsp;fromBranch,
-                         org.eclipse.jgit.lib.ProgressMonitor&nbsp;progressMonitor)
-                  throws java.lang.Exception</pre>
+<pre>public&nbsp;java.lang.String&nbsp;createBranch(java.lang.String&nbsp;branch,
+                                     java.lang.String&nbsp;fromBranch,
+                                     org.eclipse.jgit.lib.ProgressMonitor&nbsp;progressMonitor)
+                              throws java.lang.Exception</pre>
 <div class="block">Creates a new local branch and pushes to remote.</div>
 <dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>ref id of newly-created branch</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd>
 </dl>
@@ -1255,6 +1270,34 @@ public&nbsp;java.lang.String&nbsp;getRelativePath(java.io.File&nbsp;file)</pre>
 <pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/asset/CommitInfo.html" title="class in com.centurylink.mdw.model.asset">CommitInfo</a>&nbsp;getCommitInfo(java.lang.String&nbsp;path)
                          throws java.lang.Exception</pre>
 <div class="block">Does not fetch.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getCommits-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCommits</h4>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../../../com/centurylink/mdw/model/asset/CommitInfo.html" title="class in com.centurylink.mdw.model.asset">CommitInfo</a>&gt;&nbsp;getCommits(java.lang.String&nbsp;path)
+                                      throws java.lang.Exception</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getCommitInfoForRef-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCommitInfoForRef</h4>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/asset/CommitInfo.html" title="class in com.centurylink.mdw.model.asset">CommitInfo</a>&nbsp;getCommitInfoForRef(java.lang.String&nbsp;ref)
+                               throws java.lang.Exception</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd>
@@ -1337,11 +1380,26 @@ public&nbsp;java.lang.String&nbsp;getRelativePath(java.io.File&nbsp;file)</pre>
 <a name="readFromHead-java.lang.String-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>readFromHead</h4>
 <pre>public&nbsp;byte[]&nbsp;readFromHead(java.lang.String&nbsp;filePath)
                     throws java.lang.Exception</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.Exception</code></dd>
+</dl>
+</li>
+</ul>
+<a name="merge-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>merge</h4>
+<pre>public&nbsp;void&nbsp;merge(java.lang.String&nbsp;fromBranch,
+                  java.lang.String&nbsp;toBranch)
+           throws java.lang.Exception</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.lang.Exception</code></dd>
