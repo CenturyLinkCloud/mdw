@@ -7,6 +7,7 @@ class Enter extends Component {
     super(...args);
     this.state = {show: false, message: '', entry: ''};
     this.handleChange = this.handleChange.bind(this);
+    this.handleKeyDown = this.handleKeyDown.bind(this);
   }
 
   close(result) {
@@ -21,7 +22,21 @@ class Enter extends Component {
   }
 
   handleChange(e) {
-    this.setState({show: this.state.show, message: this.state.message, entry: e.currentTarget.value});
+    let value = e.currentTarget.value;
+    this.setState({show: this.state.show, message: this.state.message, entry: value},
+      () => {
+        if (this.props.onChange) {
+          this.props.onChange(value);
+        }
+    });
+  }
+
+  handleKeyDown(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      e.stopPropagation();
+      this.close(this.state.entry);      
+    }    
   }
 
   render() {
@@ -29,7 +44,12 @@ class Enter extends Component {
       <div>
         <Modal show={this.state.show} onHide={() => this.close()}>
           <Modal.Header closeButton>
-            <Modal.Title>{this.props.title}</Modal.Title>
+            <Modal.Title>
+              {this.props.title}
+            </Modal.Title>
+            {this.props.error &&
+              <span className="mdw-warn">{this.props.error}</span>
+            }
           </Modal.Header>
           <Modal.Body>
             <div>
@@ -42,8 +62,9 @@ class Enter extends Component {
                 </ControlLabel>
               }
               <input type="text" style={{width:'350px',marginTop:'10px'}}
-                value={this.state.entry} 
-                onChange={this.handleChange} />
+                value={this.state.entry} autoFocus
+                onChange={this.handleChange}
+                onKeyDown={this.handleKeyDown} />
             </div>
           </Modal.Body>
           <Modal.Footer>
@@ -62,6 +83,8 @@ class Enter extends Component {
 
 Enter.propTypes = {
   title: PropTypes.string.isRequired,
+  error: PropTypes.string,
+  onChange: PropTypes.func,
   onClose: PropTypes.func
 };
 

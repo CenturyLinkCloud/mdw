@@ -5,6 +5,7 @@ import {AsyncTypeahead, Menu, Highlighter} from '../node/node_modules/react-boot
 import MdwContext from '../react/MdwContext';
 import Enter from '../react/Enter.jsx';
 import StagesPopButton from './StagesPopButton.jsx';
+import NewAssetPackage from './NewAssetPackage.jsx';
 
 class UserStage extends Component {
     
@@ -181,10 +182,6 @@ class UserStage extends Component {
     });
   }
   
-  createPackage() {
-    // console.log("CREATE PACKAGE");
-  }
-
   handleStage(asset) {
     const requestObj = { assets: [asset.packageName + '/' + asset.name] };
     $mdwUi.clearMessage();
@@ -406,10 +403,7 @@ class UserStage extends Component {
             {this.context.authUser.workgroups.includes('Site Admin') &&
               <StagesPopButton />
             }
-            <Button className="btn btn-primary mdw-btn mdw-action-btn"
-              title="New Package" onClick={this.createPackage}>
-              <Glyphicon glyph="plus" />
-            </Button>
+            <NewAssetPackage />
             <Button className="btn btn-primary mdw-btn mdw-action-btn"
               title="Unstage Assets" 
               disabled={!this.state.stagedAssets || Object.keys(this.state.stagedAssets).length === 0} 
