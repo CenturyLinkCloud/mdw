@@ -238,7 +238,6 @@ class RequestInsights extends Component {
           <AsyncTypeahead className="mdw-typeahead"
             autoFocus 
             placeholder="Enter a path or method..."
-            caseSensitive={true}
             clearButton
             onSearch={this.findPaths} 
             options={this.state.paths}

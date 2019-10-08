@@ -1,6 +1,7 @@
 import React, {Component} from '../node/node_modules/react';
 import {Link} from '../node/node_modules/react-router-dom';
 import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
+import {AsyncTypeahead, Menu, Highlighter} from '../node/node_modules/react-bootstrap-typeahead';
 import MdwContext from '../react/MdwContext';
 import Enter from '../react/Enter.jsx';
 import StagesPopButton from './StagesPopButton.jsx';
@@ -19,18 +20,22 @@ class UserStage extends Component {
     this.isPackageSelected = this.isPackageSelected.bind(this);
     this.togglePackage = this.togglePackage.bind(this);
     this.toggleAllSelect = this.toggleAllSelect.bind(this);
+    this.handleStage = this.handleStage.bind(this);
     this.handleUnstage = this.handleUnstage.bind(this);
     this.handlePromote = this.handlePromote.bind(this);
     this.doPromote = this.doPromote.bind(this);
     this.handleConfirmPromote = this.handleConfirmPromote.bind(this);
+    this.findAssets = this.findAssets.bind(this);
+    this.renderAssetMenu = this.renderAssetMenu.bind(this);
 
     this.confirmDialog = React.createRef();
 
-    this.state = { 
+    this.state = {
       stagedAssets: undefined,
       selectedPackages: [],
       selectedAssets: [],
-      allSelected: false
+      allSelected: false,
+      foundAssets: []
     };
   }
 
@@ -86,7 +91,8 @@ class UserStage extends Component {
       stagedAssets: this.state.stagedAssets,
       selectedPackages: this.state.selectedPackages,
       selectedAssets: this.state.selectedAssets,
-      allSelected: this.state.allSelected
+      allSelected: this.state.allSelected,
+      foundAssets: this.state.foundAssets
     });
   }
 
@@ -115,7 +121,8 @@ class UserStage extends Component {
       stagedAssets: this.state.stagedAssets,
       selectedPackages: selectedPackages,
       selectedAssets: selectedAssets,
-      allSelected: allSelected
+      allSelected: allSelected,
+      foundAssets: []
     });
   }
 
@@ -143,7 +150,8 @@ class UserStage extends Component {
       stagedAssets: this.state.stagedAssets,
       selectedPackages: selectedPackages,
       selectedAssets: selectedAssets,
-      allSelected: allSelected
+      allSelected: allSelected,
+      foundAssets: []
     });
   }
 
@@ -154,7 +162,8 @@ class UserStage extends Component {
           stagedAssets: this.state.stagedAssets,
           selectedPackages: [],
           selectedAssets: [],
-          allSelected: false
+          allSelected: false,
+          foundAssets: []
         }, resolve());
       }
       else {
@@ -165,7 +174,8 @@ class UserStage extends Component {
           stagedAssets: this.state.stagedAssets,
           selectedPackages: pkgs,
           selectedAssets: assets,
-          allSelected: true
+          allSelected: true,
+          foundAssets: []
         }, resolve());  
       }
     });
@@ -173,6 +183,31 @@ class UserStage extends Component {
   
   createPackage() {
     // console.log("CREATE PACKAGE");
+  }
+
+  handleStage(asset) {
+    const requestObj = { assets: [asset.packageName + '/' + asset.name] };
+    $mdwUi.clearMessage();
+    $mdwUi.hubLoading(true);
+    let ok = false;
+    const url = this.context.serviceRoot + '/com/centurylink/mdw/staging/' + 
+        this.props.stage.userCuid + '/assets';
+    fetch(new Request(url, { 
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'mdw-app-id': 'mdw-hub' },
+      body: JSON.stringify(requestObj),
+      credentials: 'same-origin'
+    }))
+    .then(response => {
+      ok = response.ok;
+      return response.json();
+    })
+    .then(json => {
+      if (!ok) {
+        $mdwUi.showMessage(json.status.message);
+      }
+      location = this.context.hubRoot + '/staging/' + this.props.stage.userCuid;
+    });
   }
 
   handleUnstage() {
@@ -250,6 +285,27 @@ class UserStage extends Component {
     }
   }
 
+  findAssets(input) {
+    this.assetsLoading = true;
+    var url = this.context.serviceRoot + '/Assets?find=' + input;
+    fetch(new Request(url, {
+      method: 'GET',
+      headers: { Accept: 'application/json', 'mdw-app-id': 'mdw-hub' },
+      credentials: 'same-origin'
+    }))
+    .then(response => {
+      return response.json();
+    })
+    .then(data => {
+      this.setState({
+        stagedAssets: this.state.stagedAssets,
+        selectedPackages: this.state.selectedPackages,
+        selectedAssets: this.state.selectedAssets,
+        foundAssets: data.assets,
+      }, () => this.assetsLoading = false);
+    });
+  }
+
   componentDidMount() {
     const cuid = this.props.stage.userCuid;
     const url = this.context.serviceRoot + '/com/centurylink/mdw/staging/' + cuid + '/assets';
@@ -283,13 +339,35 @@ class UserStage extends Component {
         this.setState({
           stagedAssets: json,
           selectedPackages: [],
-          selectedAssets: []
+          selectedAssets: [],
+          foundAssets: []
         });
       }
       else {
         $mdwUi.showMessage(json.status.message);
       }
     });
+  }
+
+  renderAssetMenu(items, menuProps) {
+    return (
+      <Menu {...menuProps}>
+        {
+          items.map((item, i) => {
+            return (
+              <li key={i} option={item} position={i}>
+                <a className="dropdown-item" style={{cursor:'pointer'}}
+                  onClick={e => { e.preventDefault; this.handleStage(item); }} >
+                  <Highlighter search={menuProps.text}>
+                    {item.match}
+                  </Highlighter>
+                </a>
+            </li>
+            );
+          })
+        }
+      </Menu>
+    );
   }
 
   render() {
@@ -315,6 +393,15 @@ class UserStage extends Component {
               <Glyphicon className="mdw-action-icon button button-primary" glyph="chevron-down" />
             </a>
           </div>
+          <AsyncTypeahead className="mdw-typeahead"
+            placeholder="Find an asset..."
+            clearButton
+            onSearch={this.findAssets} 
+            options={this.state.foundAssets}
+            labelKey="match"
+            isLoading={this.assetsLoading || false}
+            renderMenu={this.renderAssetMenu} 
+            onChange={this.handleStage} />
           <div style={{float:'right'}}>
             {this.context.authUser.workgroups.includes('Site Admin') &&
               <StagesPopButton />
@@ -349,7 +436,7 @@ class UserStage extends Component {
               <div>
                 {pkgs.length === 0 &&
                   <div style={{padding:'10px'}}>
-                    To add an asset to your staging area, find it 
+                    To add an asset to your staging area, search for it above, or browse 
                     under <a href={this.context.hubRoot + '#/packages'}>Assets</a>, 
                     and then click the Stage button.
                   </div>

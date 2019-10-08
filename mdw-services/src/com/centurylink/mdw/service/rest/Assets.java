@@ -16,6 +16,7 @@
 package com.centurylink.mdw.service.rest;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.cli.Delete;
 import com.centurylink.mdw.cli.Discover;
 import com.centurylink.mdw.cli.Import;
@@ -30,6 +31,7 @@ import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.discovery.GitDiscoverer;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.PackageAssets;
 import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.model.system.Bulletin;
@@ -37,6 +39,7 @@ import com.centurylink.mdw.model.system.SystemMessage.Level;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.user.Workgroup;
+import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -47,6 +50,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -134,7 +138,11 @@ public class Assets extends JsonRestService {
             String version = getSegment(path, 3);
 
             if (pkg == null) {
-                if (query.hasFilters()) {
+                String find = query.getFind();
+                if (find != null) {
+                    return findAssets(find.toLowerCase()).getJson();
+                }
+                else if (query.hasFilters()) {
                     return assetServices.getAssetPackageList(query).getJson();
                 }
                 else {
@@ -156,6 +164,37 @@ public class Assets extends JsonRestService {
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
         }
+    }
+
+    private JsonArray findAssets(String find) throws ServiceException {
+        AssetServices assetServices = ServiceLocator.getAssetServices();
+        List<String> pkgMatches = new ArrayList<>();
+        boolean isQualified = find.indexOf('.') > 0;
+        if (isQualified) {
+            for (Package assetPkg : PackageCache.getPackages()) {
+                if (assetPkg.getName().toLowerCase().startsWith(find))
+                    pkgMatches.add(assetPkg.getName());
+            }
+        }
+        Map<String,List<AssetInfo>> assetMatches = assetServices.findAssets(f -> {
+            String assetPkg = assetServices.getPackage(f);
+            return pkgMatches.contains(assetPkg) || f.getName().toLowerCase().startsWith(find);
+        });
+        JSONArray matches = new JSONArray();
+        for (String pkgName : assetMatches.keySet()) {
+            List<AssetInfo> assetInfos = assetMatches.get(pkgName);
+            for (AssetInfo assetInfo : assetInfos) {
+                JSONObject match = assetInfo.getJson();
+                match.put("packageName", pkgName);
+                match.put("match", pkgMatches.contains(pkgName) ? pkgName + '/' + assetInfo.getName() : assetInfo.getName());
+                matches.put(match);
+            }
+        }
+        return new JsonArray(matches) {
+            public String getJsonName() {
+                return "assets";
+            }
+        };
     }
 
     /**
