@@ -142,7 +142,7 @@ public class Assets extends JsonRestService {
                 if (find != null) {
                     return findAssets(find.toLowerCase()).getJson();
                 }
-                else if (query.hasFilters()) {
+                else if (query.hasFilters() && !query.getBooleanFilter("packageList")) {
                     return assetServices.getAssetPackageList(query).getJson();
                 }
                 else {
@@ -363,7 +363,9 @@ public class Assets extends JsonRestService {
     }
 
     public PackageList getPackages(Query query) throws ServiceException {
-        return ServiceLocator.getAssetServices().getPackages(true);
+        String withVcsInfo = query.getFilter("withVcsInfo");
+        boolean withVcs = withVcsInfo == null ? true : Boolean.parseBoolean(withVcsInfo);
+        return ServiceLocator.getAssetServices().getPackages(withVcs);
     }
 
     @Path("/{package}")
