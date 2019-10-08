@@ -92,8 +92,6 @@ class NewSubtask extends Component {
       });
   }
   
-//https://github.com/ericgio/react-bootstrap-typeahead/blob/master/docs/Props.md
-//https://react-bootstrap.github.io/components.html
   render() {
     return (
       <div>

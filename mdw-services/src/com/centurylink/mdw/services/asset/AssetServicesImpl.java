@@ -224,7 +224,6 @@ public class AssetServicesImpl implements AssetServices {
         }
     }
 
-
     public PackageList getPackages(boolean withVcsInfo) throws ServiceException {
         List<File> assetRoots = new ArrayList<>();
         assetRoots.add(assetRoot);
@@ -845,7 +844,7 @@ public class AssetServicesImpl implements AssetServices {
         return packages;
     }
 
-    public GitDiscoverer getDiscoverer(String repoUrl) throws IOException{
+    public GitDiscoverer getDiscoverer(String repoUrl) throws IOException {
         URL url = new URL(repoUrl);
         GitDiscoverer discoverer;
         if ("github.com".equals(url.getHost()))
@@ -853,5 +852,14 @@ public class AssetServicesImpl implements AssetServices {
         else
             discoverer = new GitLabDiscoverer(url, true);
         return discoverer;
+    }
+
+    public String getPackage(File assetFile) {
+        String relPath = getAssetRoot().toPath().relativize(assetFile.toPath()).toString();
+        int lastSlash = relPath.lastIndexOf("/");
+        if (lastSlash > 0 && lastSlash < relPath.length() - 1) {
+            return relPath.substring(0, lastSlash).replace('/', '.');
+        }
+        return null;
     }
 }

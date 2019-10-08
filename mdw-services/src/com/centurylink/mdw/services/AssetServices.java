@@ -117,6 +117,8 @@ public interface AssetServices {
 
     GitDiscoverer getDiscoverer(String repoUrl) throws IOException;
 
+    String getPackage(File assetFile);
+
     static String packageName(String assetPath) throws ServiceException {
         int slash = assetPath.lastIndexOf('/');
         if (slash < 0 || slash >= assetPath.length() - 1)
@@ -129,4 +131,5 @@ public interface AssetServices {
             throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + assetPath);
         return assetPath.substring(slash + 1);
     }
+
 }
