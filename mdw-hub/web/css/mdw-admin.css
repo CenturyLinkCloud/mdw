@@ -1513,6 +1513,9 @@
   height: 25px;
   margin-top: 3px;
 }
+.modal-content {
+  width: 500px;
+}
 /* avoid flicker for uiModal */
 .modal-open {
   overflow-y: auto;
