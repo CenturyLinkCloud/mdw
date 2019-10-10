@@ -4,6 +4,7 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.file.GitProgressMonitor;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.model.asset.StagingArea;
 
 import java.io.File;
@@ -35,6 +36,9 @@ public interface StagingServices {
     File getStagingAssetsDir(String cuid) throws ServiceException;
     VersionControlGit getStagingVersionControl(String cuid) throws ServiceException;
     String getVcAssetPath() throws ServiceException;
+
+    PackageList getPackages(String cuid, boolean withVcsInfo) throws ServiceException;
+    void createPackage(String cuid, String packageName) throws ServiceException;
 
     AssetInfo getStagedAsset(String cuid, String assetPath) throws ServiceException;
     SortedMap<String, List<AssetInfo>> getStagedAssets(String cuid) throws ServiceException;

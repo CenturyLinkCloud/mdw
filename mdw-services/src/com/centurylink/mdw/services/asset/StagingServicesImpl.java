@@ -17,6 +17,7 @@ import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.dataaccess.file.GitProgressMonitor;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.model.asset.StagingArea;
 import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.model.user.User;
@@ -277,6 +278,20 @@ public class StagingServicesImpl implements StagingServices {
         if (user == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "User not found: " + cuid);
         return user;
+    }
+
+    @Override
+    public PackageList getPackages(String cuid, boolean withVcsInfo) throws ServiceException {
+        getUser(cuid); // throws if not found
+        AssetServices assetServices = getAssetServices(cuid);
+        return assetServices.getPackages(withVcsInfo);
+    }
+
+    @Override
+    public void createPackage(String cuid, String packageName) throws ServiceException {
+        getUser(cuid); // throws if not found
+        AssetServices assetServices = getAssetServices(cuid);
+        assetServices.createPackage(packageName);
     }
 
     @Override

@@ -51,7 +51,7 @@ class Enter extends Component {
               <span className="mdw-warn">{this.props.error}</span>
             }
           </Modal.Header>
-          <Modal.Body>
+          <Modal.Body style={{width:'500px'}}>
             <div>
               {this.state.message}
             </div>
@@ -61,17 +61,17 @@ class Enter extends Component {
                   {this.props.label}
                 </ControlLabel>
               }
-              <input type="text" style={{width:'350px',marginTop:'10px'}}
+              <input type="text" style={{width:'419px',marginTop:'10px'}}
                 value={this.state.entry} autoFocus
                 onChange={this.handleChange}
                 onKeyDown={this.handleKeyDown} />
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={() => this.close() }>
+            <Button onClick={() => this.close() }>
               Cancel
             </Button>
-            <Button variant="primary" onClick={() => this.close(this.state.entry)}>
+            <Button bsStyle="primary" onClick={() => this.close(this.state.entry)}>
               OK
             </Button>
           </Modal.Footer>

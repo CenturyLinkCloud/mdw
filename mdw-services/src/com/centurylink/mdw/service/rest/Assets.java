@@ -304,15 +304,22 @@ public class Assets extends JsonRestService {
     public JSONObject post(String path, JSONObject content, Map<String, String> headers)
             throws ServiceException, JSONException {
         String[] segments = getSegments(path);
+        Query query = getQuery(path, headers);
+        String stagingCuid = query.getFilter("stagingUser");
+
         if (segments.length == 2) {
-            ServiceLocator.getAssetServices().createPackage(segments[1]);
-            CacheRegistration.getInstance().refreshCache("PackageCache");
+            if (stagingCuid != null) {
+                ServiceLocator.getStagingServices().createPackage(stagingCuid, segments[1]);
+            }
+            else {
+                ServiceLocator.getAssetServices().createPackage(segments[1]);
+                CacheRegistration.getInstance().refreshCache("PackageCache");
+            }
         }
         else if (segments.length == 3) {
             String asset = segments[1] + '/' + segments[2];
             if (segments[2].endsWith(".proc")) {
                 try {
-                    Query query = getQuery(path, headers);
                     if (query.getFilter("template") == null)
                         query.setFilter("template", "new");
                     ServiceLocator.getWorkflowServices().createProcess(asset, query);
@@ -365,7 +372,13 @@ public class Assets extends JsonRestService {
     public PackageList getPackages(Query query) throws ServiceException {
         String withVcsInfo = query.getFilter("withVcsInfo");
         boolean withVcs = withVcsInfo == null ? true : Boolean.parseBoolean(withVcsInfo);
-        return ServiceLocator.getAssetServices().getPackages(withVcs);
+        String stagingCuid = query.getFilter("stagingUser");
+        if (stagingCuid != null) {
+            return ServiceLocator.getStagingServices().getPackages(stagingCuid, withVcs);
+        }
+        else {
+            return ServiceLocator.getAssetServices().getPackages(withVcs);
+        }
     }
 
     @Path("/{package}")

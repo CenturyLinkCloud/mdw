@@ -1,11 +1,12 @@
 import React, {Component} from '../node/node_modules/react';
+import PropTypes from '../node/node_modules/prop-types';
 import {Link} from '../node/node_modules/react-router-dom';
 import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
 import {AsyncTypeahead, Menu, Highlighter} from '../node/node_modules/react-bootstrap-typeahead';
 import MdwContext from '../react/MdwContext';
 import Enter from '../react/Enter.jsx';
 import StagesPopButton from './StagesPopButton.jsx';
-import NewAssetPackage from './NewAssetPackage.jsx';
+import NewAsset from './NewAsset.jsx';
 
 class UserStage extends Component {
     
@@ -403,7 +404,7 @@ class UserStage extends Component {
             {this.context.authUser.workgroups.includes('Site Admin') &&
               <StagesPopButton />
             }
-            <NewAssetPackage />
+            <NewAsset stagingCuid={cuid} />
             <Button className="btn btn-primary mdw-btn mdw-action-btn"
               title="Unstage Assets" 
               disabled={!this.state.stagedAssets || Object.keys(this.state.stagedAssets).length === 0} 
@@ -523,4 +524,5 @@ class UserStage extends Component {
 }
 
 UserStage.contextType = MdwContext;
+UserStage.propTypes = { stagingCuid: PropTypes.string };
 export default UserStage; 
