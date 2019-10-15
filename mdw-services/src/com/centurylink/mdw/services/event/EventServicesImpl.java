@@ -312,6 +312,7 @@ public class EventServicesImpl implements EventServices {
             InternalEvent outgoingMsg = InternalEvent.
                     createActivityNotifyMessage(ai, eventType,
                             pi.getMasterRequestId(), completionCode);
+            edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_CANCELLED, null);
             this.sendInternalEvent(outgoingMsg, edao);
             edao.setProcessInstanceStatus(pi.getId(), WorkStatus.STATUS_IN_PROGRESS);
         } catch (SQLException | MdwException e) {

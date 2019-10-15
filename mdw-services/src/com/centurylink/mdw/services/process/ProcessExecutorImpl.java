@@ -1151,29 +1151,29 @@ class ProcessExecutorImpl {
             } else {    // event type must be FINISH
                 if (parsedCompCode.getCompletionCode()!=null)
                     outgoingWorkTransVO = findTaskActionWorkTransition(parentInst, actInst, parsedCompCode.getCompletionCode());
-                if (actInst.getStatusCode()!=WorkStatus.STATUS_COMPLETED) {
+                if (actInst.getStatusCode() != WorkStatus.STATUS_COMPLETED && actInst.getStatusCode() != WorkStatus.STATUS_CANCELLED) {
                     completeActivityInstance(actInst, compCode, parentInst, logtag);
                     cntrActivity.notifyMonitors(WorkStatus.LOGMSG_COMPLETE);
+                    InternalEvent jmsmsg;
+                    int delay = 0;
+                    if (outgoingWorkTransVO != null) {
+                        // is custom action (RESUME), transition accordingly
+                        TransitionInstance workTransInst = createTransitionInstance(outgoingWorkTransVO, parentInstId);
+                        jmsmsg = InternalEvent.createActivityStartMessage(
+                                outgoingWorkTransVO.getToId(), parentInstId,
+                                workTransInst.getTransitionInstanceID(), masterRequestId,
+                                outgoingWorkTransVO.getLabel());
+                        delay = getTransitionDelay(outgoingWorkTransVO, parentInst);
+                    } else {
+                        jmsmsg = InternalEvent.createActivityNotifyMessage(actInst,
+                                EventType.FINISH, masterRequestId, null);
+                    }
+                    if (delay > 0) {
+                        String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + parentInstId
+                                + "start" + outgoingWorkTransVO.getToId();
+                        sendDelayedInternalEvent(jmsmsg, delay, msgid, false);
+                    } else sendInternalEvent(jmsmsg);
                 }
-                InternalEvent jmsmsg;
-                int delay = 0;
-                if (outgoingWorkTransVO != null) {
-                    // is custom action (RESUME), transition accordingly
-                    TransitionInstance workTransInst = createTransitionInstance(outgoingWorkTransVO, parentInstId);
-                    jmsmsg = InternalEvent.createActivityStartMessage(
-                            outgoingWorkTransVO.getToId(), parentInstId,
-                            workTransInst.getTransitionInstanceID(), masterRequestId,
-                            outgoingWorkTransVO.getLabel());
-                    delay = getTransitionDelay(outgoingWorkTransVO, parentInst);
-                } else {
-                    jmsmsg = InternalEvent.createActivityNotifyMessage(actInst,
-                            EventType.FINISH, masterRequestId, null);
-                }
-                if (delay > 0) {
-                    String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + parentInstId
-                            + "start" + outgoingWorkTransVO.getToId();
-                    sendDelayedInternalEvent(jmsmsg, delay, msgid, false);
-                } else sendInternalEvent(jmsmsg);
             }
         } else {    // must be InvokeProcessActivity
             if (actInst.getStatusCode()==WorkStatus.STATUS_WAITING || actInst.getStatusCode()==WorkStatus.STATUS_HOLD) {
