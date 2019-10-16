@@ -7,34 +7,20 @@ the com.centurylink.mdw.db asset package.  This provides an embedded MariaDB
 instance that's automatically created the first time you start your server.
 
 ## Setup
-After importing this package, to enable MDW's embedded db, set the following value in mdw.properties
-(this example is for a local development Tomcat instance running on port 8080):
-```
-mdw.db.embedded.server=localhost:8080
+After importing this package, to enable MDW's embedded db, set the following values in mdw.yaml:
+```yaml
+database:
+  driver: org.mariadb.jdbc.Driver
+  url: jdbc:mariadb://localhost:3308/mdw
+  username: mdw
+  password: mdw
+  poolsize: 5
+  poolMaxIdle: 3
+  validationQuery: select 1 from dual
 ```
  
-Then set your db connection info in mdw.properties to use the embedded MariaDB on a port of your 
-choosing:
-```
-mdw.database.driver=org.mariadb.jdbc.Driver
-mdw.database.url=jdbc:mariadb://localhost:3308/mdw
-mdw.database.username=mdw
-mdw.database.password=mdw
-```
-
 In this example, the embedded db *mdw* will be created with the specified access credentials.
 This database will be active on port 3308 whenever the server is running.
-
-In a clustered environment, a single server instance is identified as the db server by the
-`mdw.db.embedded.server` property value.  Other instances in `mdw.server.list` will not start
-their own embedded db, but rather will connect through JDBC.  **Never** stipulate `localhost`
-as the embedded db or in the server list except for local development on your PC. 
-
-## macOS
-To ensure that MariaDB dependencies are installed locally, you can use homebrew to install the package:
-```
-brew install mariadb
-```
 
 ## Seed Users
 To effectively use MDW you'll want to create a user or users and grant them appropriate roles.
