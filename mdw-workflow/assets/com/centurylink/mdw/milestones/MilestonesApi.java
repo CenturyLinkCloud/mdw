@@ -14,6 +14,7 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.process.HierarchyCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -55,9 +56,16 @@ public class MilestonesApi extends JsonRestService {
             } else if (seg4.equals("groups")) {
                 return getGroups();
             } else {
-                // by masterRequestId
+                // by masterRequestId or processInstanceId
+                WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+                long processInstanceId = query.getLongFilter("processInstanceId");
                 boolean future = query.getBooleanFilter("future");
-                return ServiceLocator.getWorkflowServices().getMilestones(seg4, future).getJson();
+                if (processInstanceId == -1) {
+                    return workflowServices.getMilestones(seg4, future).getJson();
+                }
+                else {
+                    return workflowServices.getMilestones(processInstanceId, future).getJson();
+                }
             }
         } else {
             return ServiceLocator.getWorkflowServices().getMilestones(query).getJson();

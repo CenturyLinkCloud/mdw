@@ -108,7 +108,14 @@ public class Activities extends JsonRestService implements JsonExportable {
                         String masterRequestId = getSegment(path, 2);
                         if (masterRequestId == null)
                             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing masterRequestId");
-                        return getE2e(masterRequestId);
+                        long processInstanceId = query.getLongFilter("processInstanceId");
+                        if (processInstanceId == -1) {
+                            return getE2e(masterRequestId);
+                        }
+                        else {
+                            ProcessInstance processInstance = getWorkflowServices().getProcess(processInstanceId);
+                            return getWorkflowServices().getActivityHierarchy(processInstance).getJson(2);
+                        }
                     }
                     else {
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported path segment: " + segOne);
