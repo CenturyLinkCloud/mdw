@@ -1597,6 +1597,7 @@ class ProcessExecutorImpl {
         edao.setProcessInstanceStatus(pProcessInst.getId(), WorkStatus.STATUS_CANCELLED);
         edao.removeEventWaitForProcessInstance(pProcessInst.getId());
         this.cancelErrorHandlers(pProcessInst);
+        this.cancelExceptionHandlers(pProcessInst);
         this.cancelTasksOfProcessInstance(pProcessInst);
     }
 
@@ -1613,6 +1614,19 @@ class ProcessExecutorImpl {
             for (ProcessInstance pi : processInstanceList) {
                 cancelProcessInstance(pi);
             }
+        }
+    }
+
+    private void cancelExceptionHandlers(ProcessInstance procInst) throws Exception {
+        Query query = new Query();
+        query.setFilter("owner", "MAIN_PROCESS_INSTANCE");
+        query.setFilter("ownerId", procInst.getId());
+        query.setFilter("secondaryOwner", "ACTIVITY_INSTANCE");
+        query.setSort("process_instance_id");
+        query.setDescending(true);
+        List<ProcessInstance> processInstanceList = ServiceLocator.getWorkflowServices().getProcesses(query).getProcesses();
+        for (ProcessInstance pi : processInstanceList) {
+            cancelProcessInstance(pi);
         }
     }
 
