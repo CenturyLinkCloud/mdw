@@ -78,14 +78,14 @@ var StepFactory = function(DC, Shape) {
       milestoneGroups = JSON.parse(milestoneGroups);
       var milestone = this.getMilestone();
       if (milestone) {
-        fill = '#d2e5ff';
+        fill = this.shade('#4cafea', 0.50);
         title = milestone.label; // TODO use this
         if (milestone.group) {
           var foundGroup = milestoneGroups.find(function(mg) {
             return mg.name === milestone.group;
           });
           if (foundGroup && foundGroup.props && foundGroup.props.color) {
-            fill = foundGroup.props.color;
+            fill = this.shade(foundGroup.props.color, 0.50);
           }
         }
       }
@@ -170,15 +170,15 @@ var StepFactory = function(DC, Shape) {
               var text = mon[3];
               var bracket = text.indexOf('[');
               if (bracket > 0) {
-                  text = text.substring(0, bracket);
+                text = text.substring(0, bracket);
               }
               milestone.label = text.trim().replace(/\\n/g, '\n');
               if (bracket >= 0) {
-                  var g = mon[3].substring(bracket + 1);
-                  bracket = g.indexOf(']');
-                  if (bracket > 0)
-                      g = g.substring(0, bracket);
-                  milestone.group = g.trim();
+                var g = mon[3].substring(bracket + 1);
+                bracket = g.indexOf(']');
+                if (bracket > 0)
+                  g = g.substring(0, bracket);
+                milestone.group = g.trim();
               }
             }
             return milestone;
@@ -255,6 +255,11 @@ var StepFactory = function(DC, Shape) {
   Step.prototype.resize = function(x, y, deltaX, deltaY, limDisplay) {
     var display = this.resizeDisplay(x, y, deltaX, deltaY, Step.MIN_SIZE, limDisplay);
     this.activity.attributes.WORK_DISPLAY_INFO = this.getAttr(display);
+  };
+
+  Step.prototype.shade = function(color, fraction) {
+    var f = parseInt(color.slice(1), 16), t = fraction < 0 ? 0 : 255, p = fraction < 0 ? fraction * -1 : fraction, R = f >> 16, G = f >> 8 & 0x00FF, B = f & 0x0000FF;
+    return "#" + (0x1000000 + (Math.round((t - R) * p) + R) * 0x10000 + (Math.round((t - G) * p) + G) * 0x100 + (Math.round((t - B) * p) + B)).toString(16).slice(1);
   };
 
   return Step;
