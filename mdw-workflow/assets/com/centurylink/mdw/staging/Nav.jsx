@@ -41,10 +41,7 @@ class Nav extends Component {
         <ul className="nav mdw-nav">
           <li><a href={hub + '#/packages'}>Assets</a></li>
           <li className={isHistory ? '' : 'mdw-active'}>
-            <a href={hub + 'staging'}>
-              {'Staging '}
-              <span className="mdw-note">beta</span>
-            </a>
+            <a href={hub + 'staging'}>Staging</a>
           </li>
           {this.context.authUser.roles.includes('Process Execution') &&
             <li><a href={hub + '/#/tests'}>Testing</a></li>
