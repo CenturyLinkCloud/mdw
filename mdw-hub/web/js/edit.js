@@ -23,7 +23,7 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
     };
   }
 
-  $scope.stagingUser = sessionStorage.getItem('stagingUser');
+  $scope.stagingUser = $scope.authUser;
 
   $scope.asset = Assets.get({
       packageName: $routeParams.packageName,

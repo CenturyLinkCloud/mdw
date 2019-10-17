@@ -228,8 +228,8 @@ processMod.controller('ProcessesController',
 }]);
 
 processMod.controller('ProcessController',
-    ['$scope', '$route', '$routeParams', '$filter', '$http', 'mdw', 'util', 'uiUtil', 'Process', 'ProcessSummary', 'DOCUMENT_TYPES', 'WORKFLOW_STATUSES',
-     function($scope, $route, $routeParams, $filter, $http, mdw, util, uiUtil, Process, ProcessSummary, DOCUMENT_TYPES, WORKFLOW_STATUSES) {
+    ['$scope', '$route', '$routeParams', '$filter', '$http', 'mdw', 'util', 'uiUtil', 'Process', 'ProcessSummary', 'Staging', 'DOCUMENT_TYPES', 'WORKFLOW_STATUSES',
+     function($scope, $route, $routeParams, $filter, $http, mdw, util, uiUtil, Process, ProcessSummary, Staging, DOCUMENT_TYPES, WORKFLOW_STATUSES) {
 
   var activity = sessionStorage.getItem('mdw-activityInstance');
   if (activity) {
@@ -359,6 +359,14 @@ processMod.controller('ProcessController',
   $scope.definitionEditAllowed = function() {
     return $scope.authUser.hasRole('Process Design') && !mdw.git.tag;
   };
+
+  $scope.stageAsset = function() {
+    var assetPath = $scope.process.packageName + '/' + $scope.process.name + '.proc';
+    Staging.stageAsset($scope.authUser.cuid, assetPath, function(statusCode) {
+      if (statusCode < 400 || statusCode == 404)
+      $scope.authUser.setActiveTab("#/staging");
+    });
+  };
 }]);
 
 processMod.factory('Process', ['$resource', 'mdw', function($resource, mdw) {
@@ -429,10 +437,8 @@ processMod.controller('ProcessDefsController', ['$scope', 'mdw', 'util', 'Proces
 }]);
 
 processMod.controller('ProcessDefController',
-    ['$scope', '$routeParams', '$route', '$location', '$filter', '$http', 'mdw', 'util', 'uiUtil', 'ProcessDef', 'ProcessSummary', 'ProcessVersions',
-    function($scope, $routeParams, $route, $location, $filter, $http, mdw, util, uiUtil, ProcessDef, ProcessSummary, ProcessVersions) {
-
-  sessionStorage.removeItem('stagingUser');
+    ['$scope', '$routeParams', '$route', '$location', '$filter', '$http', 'mdw', 'util', 'uiUtil', 'ProcessDef', 'ProcessSummary', 'ProcessVersions', 'Staging',
+    function($scope, $routeParams, $route, $location, $filter, $http, mdw, util, uiUtil, ProcessDef, ProcessSummary, ProcessVersions, Staging) {
 
   var activity = sessionStorage.getItem('mdw-activity');
   if (activity) {
@@ -523,30 +529,13 @@ processMod.controller('ProcessDefController',
   $scope.isEditAllowed = function() {
     return $scope.authUser.hasRole('Process Design') && !mdw.git.tag;
   };
-  $scope.isStagingAllowed = function() {
-    return $scope.authUser.hasRole('Process Design');
-  };
 
   $scope.stageAsset = function() {
-    var stagingCuid = $scope.authUser.cuid;
-    var assets = { assets: [$scope.process.packageName + '/' + $scope.process.name + '.proc'] };
-    $http({
-      url: mdw.roots.services + '/services/com/centurylink/mdw/staging/' + stagingCuid + '/assets?app=mdw-admin',
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      data: JSON.stringify(assets, null, 2),
-      transformRequest: []
-    }).then(function success(response) {
-        $location.path('/staging/' + stagingCuid);
-      }, function error(response) {
-        if (response.status === 404) {
-          $location.path('/staging/' + stagingCuid);
-        }
-        else {
-          uiUtil.error('Cannot Stage Asset', response.data.status.message);
-        }
-      }
-    );
+    var assetPath = $scope.process.packageName + '/' + $scope.process.name + '.proc';
+    Staging.stageAsset($scope.authUser.cuid, assetPath, function(statusCode) {
+      if (statusCode < 400 || statusCode == 404)
+      $scope.authUser.setActiveTab("#/staging");
+    });
   };
 }]);
 

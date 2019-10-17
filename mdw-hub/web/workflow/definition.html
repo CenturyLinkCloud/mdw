@@ -20,15 +20,10 @@
             <span class="glyphicon glyphicon-play mdw-icon-btn"></span>
             Run
           </a>            
-          <a ng-href="#/edit/{{process.packageName}}/{{process.name}}.proc" ng-if="isEditAllowed()"
-            class="btn btn-primary mdw-btn" style="margin-left:5px;margin-right:5px;" title="Edit">
+          <a href="" ng-if="isEditAllowed()" ng-click="stageAsset()"
+            class="btn btn-primary mdw-btn" style="margin-left:5px;" title="Stage for Edit">
             <span class="glyphicon glyphicon-pencil mdw-icon-btn"></span>
             Edit
-          </a>
-          <a href="" ng-if="isStagingAllowed()" ng-click="stageAsset()"
-             class="btn btn-primary mdw-btn">
-            <span class="glyphicon glyphicon-asterisk"></span>
-            Stage
           </a>
           <a ng-href="#/workflow/processes" ng-click="setProcessFilter()"
              class="btn btn-primary mdw-btn" style="margin-left:5px;" title="Instances">

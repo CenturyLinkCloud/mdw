@@ -159,7 +159,6 @@ class Stage extends Component {
   }
 
   render() {
-    sessionStorage.setItem('stagingUser', this.stageCuid);
     const userName = this.state.stage ? this.state.stage.userName : undefined;
     const stagingBranch = this.state.stage ? this.state.stage.branch : undefined;
     const isStagePrepared = this.state.stage && this.state.stage.prepared;
