@@ -394,10 +394,6 @@ assetMod.controller('PackageController', ['$scope', '$routeParams', '$route', '$
     return ASSET_TYPES;    
   };
 
-  $scope.isEditAllowed = function() {
-    return $scope.authUser.hasRole('Process Design') && !mdw.git.tag;
-  };
-
   $scope.newAsset = function(type) {
     var ext = ASSET_TYPES[type];
     $scope.closePopover();
@@ -447,10 +443,8 @@ assetMod.controller('PackageController', ['$scope', '$routeParams', '$route', '$
   };
 }]);
 
-assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams', '$route', '$location', '$http', 'mdw', 'util', 'uiUtil', 'Assets', 'Asset', 'AssetVersions',
-                                       function($scope, $cookieStore, $routeParams, $route, $location, $http, mdw, util, uiUtil, Assets, Asset, AssetVersions) {
-
-  sessionStorage.removeItem('stagingUser');
+assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams', '$route', '$location', '$http', 'mdw', 'util', 'uiUtil', 'Assets', 'Asset', 'AssetVersions', 'Staging',
+                                       function($scope, $cookieStore, $routeParams, $route, $location, $http, mdw, util, uiUtil, Assets, Asset, AssetVersions, Staging) {
 
   $scope.packageName = $routeParams.packageName;
   $scope.assetName = $routeParams.assetName;
@@ -522,33 +516,12 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
   );
 
   $scope.isEditAllowed = function() {
-    return $scope.authUser.hasRole('Process Design') && !$scope.asset.isBinary && !mdw.git.tag && !$scope.version;
-  };
-
-  $scope.isStagingAllowed = function() {
     return $scope.authUser.hasRole('Process Design') && !$scope.version;
   };
 
   $scope.stageAsset = function() {
-    var stagingCuid = $scope.authUser.cuid;
-    var assets = { assets: [$scope.packageName + '/' + $scope.asset.name] };
-    $http({
-      url: mdw.roots.services + '/services/com/centurylink/mdw/staging/' + stagingCuid + '/assets?app=mdw-admin',
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      data: JSON.stringify(assets, null, 2),
-      transformRequest: []
-    }).then(function success(response) {
-        $location.path('/staging/' + stagingCuid);
-      }, function error(response) {
-        if (response.status === 404) {
-          $location.path('/staging/' + stagingCuid);
-        }
-        else {
-          uiUtil.error('Cannot Stage Asset', response.data.status.message);
-        }
-      }
-    );
+    var assetPath = $scope.packageName + '/' + $scope.asset.name;
+    Staging.stageAsset($scope.authUser.cuid, assetPath);
   };
 
   $scope.viewInstances=function(){
@@ -645,3 +618,35 @@ assetMod.factory('WorkflowCache', ['$resource', 'mdw', function($resource, mdw) 
     refresh: { method: 'POST' }
   });
 }]);
+
+assetMod.factory('Staging', ['$http', '$location', '$route', 'mdw', 'uiUtil', function($http, $location, $route, mdw, uiUtil) {
+  return {
+    stageAsset: function(stagingCuid, assetPath, callback) {
+      var assets = { assets: [assetPath] };
+      $http({
+        url: mdw.roots.services + '/services/com/centurylink/mdw/staging/' + stagingCuid + '/assets?app=mdw-admin',
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        data: JSON.stringify(assets, null, 2),
+        transformRequest: []
+      }).then(function success(response) {
+          $location.path('/staging/' + stagingCuid);
+          if (callback) {
+            callback(response.status);
+          }
+        }, function error(response) {
+          if (response.status === 404) {
+            $location.path('/staging/' + stagingCuid);
+          }
+          else {
+            uiUtil.error('Cannot Stage Asset', response.data.status.message);
+          }
+          if (callback) {
+            callback(response.status);
+          }
+        }
+      );
+    }
+  };
+}]);
+

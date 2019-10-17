@@ -27,15 +27,10 @@
           <a ng-href="{{asset.url}}{{version ? '/' + version : ''}}?download=true" class="btn btn-default">
             <span class="glyphicon glyphicon-download-alt"></span> Download
           </a>            
-          <a ng-href="#/edit/{{asset.packageName}}/{{asset.name}}" class="btn btn-default" ng-if="isEditAllowed()">
+          <a href="" class="btn btn-default" ng-if="isEditAllowed()" ng-click="stageAsset()"
+            title="Stage for Editing">
             <span class="glyphicon glyphicon-pencil"></span> Edit
           </a>
-          <a href="" class="btn btn-default" ng-if="isStagingAllowed()" ng-click="stageAsset()">
-            <span class="glyphicon glyphicon-asterisk"></span> Stage
-          </a>
-          <a href="" class="btn btn-default" ng-if="isEditAllowed()" ng-click="deleteAsset()">
-            <span class="glyphicon glyphicon-remove"></span> Delete
-          </a>  
           <a ng-if="task" href="" class="btn btn-default" ng-click="viewInstances()">
             <span class="glyphicon glyphicon-align-justify mdw-icon-btn"></span> Instances
           </a>            
