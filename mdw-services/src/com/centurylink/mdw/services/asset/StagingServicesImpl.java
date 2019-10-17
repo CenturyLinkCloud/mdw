@@ -507,9 +507,8 @@ public class StagingServicesImpl implements StagingServices {
 
     @Override
     public void deleteAsset(String cuid, String assetPath) throws ServiceException {
-        AssetServices assetServices = getAssetServices(cuid);
-        assetServices.deleteAsset(assetPath);
-        assetServices.removeAssetVersion(assetPath);
+        unStageAssets(cuid, Arrays.asList(new String[]{assetPath}));
+        getAssetServices(cuid).removeAssetVersion(assetPath);
         String pkg = AssetServices.packageName(assetPath);
         String pkgPath = getVcAssetPath() + "/" + pkg.replace('.', '/');
         VersionControlGit vcGit = getStagingVersionControl(cuid);

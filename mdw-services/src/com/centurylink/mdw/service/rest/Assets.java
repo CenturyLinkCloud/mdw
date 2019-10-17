@@ -324,9 +324,7 @@ public class Assets extends JsonRestService {
                 try {
                     if (query.getFilter("template") == null)
                         query.setFilter("template", "new");
-                    else {
-                        ServiceLocator.getWorkflowServices().createProcess(asset, query);
-                    }
+                    ServiceLocator.getWorkflowServices().createProcess(asset, query);
                 }
                 catch (IOException ex) {
                     throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
