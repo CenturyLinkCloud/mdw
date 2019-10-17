@@ -97,8 +97,11 @@ public interface AssetServices {
     void deletePackage(String packageName) throws ServiceException;
 
     void createAsset(String assetPath) throws ServiceException;
+    void createAsset(String assetPath, String template) throws ServiceException;
     void createAsset(String assetPath, byte[] content) throws ServiceException;
     void deleteAsset(String assetPath) throws ServiceException;
+
+    String getDefaultTemplate(String assetExt);
 
     List<String> getExtraPackageNames() throws ServiceException;
 

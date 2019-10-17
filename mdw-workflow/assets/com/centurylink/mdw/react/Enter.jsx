@@ -43,12 +43,15 @@ class Enter extends Component {
     return (
       <div>
         <Modal show={this.state.show} onHide={() => this.close()}>
-          <Modal.Header closeButton>
+          <Modal.Header closeButton 
+            style={{paddingBottom:this.props.error || this.props.error === '' ? '25px' : '15px'}}>
             <Modal.Title>
               {this.props.title}
             </Modal.Title>
             {this.props.error &&
-              <span className="mdw-warn">{this.props.error}</span>
+              <span className="mdw-warn" style={{position:'absolute'}}>
+                {this.props.error}
+              </span>
             }
           </Modal.Header>
           <Modal.Body style={{width:'500px'}}>

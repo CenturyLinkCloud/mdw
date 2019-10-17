@@ -308,6 +308,7 @@ public class Assets extends JsonRestService {
         String stagingCuid = query.getFilter("stagingUser");
 
         if (segments.length == 2) {
+            // create package
             if (stagingCuid != null) {
                 ServiceLocator.getStagingServices().createPackage(stagingCuid, segments[1]);
             }
@@ -317,19 +318,28 @@ public class Assets extends JsonRestService {
             }
         }
         else if (segments.length == 3) {
+            // create asset
             String asset = segments[1] + '/' + segments[2];
-            if (segments[2].endsWith(".proc")) {
+            if (segments[2].endsWith(".proc") && stagingCuid == null) {
                 try {
                     if (query.getFilter("template") == null)
                         query.setFilter("template", "new");
-                    ServiceLocator.getWorkflowServices().createProcess(asset, query);
+                    else {
+                        ServiceLocator.getWorkflowServices().createProcess(asset, query);
+                    }
                 }
                 catch (IOException ex) {
                     throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
                 }
             }
             else {
-                ServiceLocator.getAssetServices().createAsset(asset);
+                String template = query.getFilter("template");
+                if (stagingCuid != null) {
+                    ServiceLocator.getStagingServices().createAsset(stagingCuid, asset, template);
+                }
+                else {
+                    ServiceLocator.getAssetServices().createAsset(asset);
+                }
             }
         }
         else {

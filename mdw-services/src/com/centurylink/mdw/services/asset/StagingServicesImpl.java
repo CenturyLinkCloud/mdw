@@ -289,9 +289,68 @@ public class StagingServicesImpl implements StagingServices {
 
     @Override
     public void createPackage(String cuid, String packageName) throws ServiceException {
-        getUser(cuid); // throws if not found
+        User stagingUser = getUser(cuid); // throws if not found
+
+        // must not exist on regular branch
+        if (ServiceLocator.getAssetServices().getPackage(packageName) != null)
+            throw new ServiceException(ServiceException.CONFLICT, "Package already exists: " + packageName);
+
         AssetServices assetServices = getAssetServices(cuid);
         assetServices.createPackage(packageName);
+
+        // commit the meta file
+        try {
+            VersionControlGit vcGit = getStagingVersionControl(cuid);
+            String comment = "Package meta created on " + vcGit.getBranch() + " by " + stagingUser.getName();
+            String pkgPath = getVcAssetPath() + "/" + packageName.replace('.', '/');
+            List<String> commitPaths = new ArrayList<>();
+            commitPaths.add(pkgPath + "/" + Packages.META_DIR + "/" + Packages.PACKAGE_YAML);
+            vcGit.add(commitPaths);
+            vcGit.commit(commitPaths, comment);
+            vcGit.push();
+        }
+        catch (ServiceException ex) {
+            throw ex;
+        }
+        catch (Exception ex) {
+            logger.error("Error committing: " + packageName, ex);
+        }
+    }
+
+    @Override
+    public void createAsset(String cuid, String assetPath, String template) throws ServiceException {
+        User stagingUser = getUser(cuid);
+
+        // must not exist on regular branch
+        if (ServiceLocator.getAssetServices().getAsset(assetPath) != null)
+            throw new ServiceException(ServiceException.CONFLICT, "Asset already exists: " + assetPath);
+
+        AssetServices assetServices = getAssetServices(cuid);
+        assetServices.createAsset(assetPath, template);
+
+        logger.info("Asset created: " + assetPath);
+
+        try {
+            VersionControlGit vcGit = getStagingVersionControl(cuid);
+            String comment = "Created on " + vcGit.getBranch() + " by " + stagingUser.getName();
+            String pkgName = AssetServices.packageName(assetPath);
+            String pkgPath = getVcAssetPath() + "/" + pkgName.replace('.', '/');
+            List<String> commitPaths = new ArrayList<>();
+            commitPaths.add(pkgPath + "/" + AssetServices.assetName(assetPath));
+            commitPaths.add(pkgPath + "/" + Packages.META_DIR + "/" + Packages.VERSIONS);
+            vcGit.add(commitPaths);
+            vcGit.commit(commitPaths, comment);
+            vcGit.push();
+
+            logger.info("Asset pushed: " + assetPath);
+            stageAssets(cuid, Arrays.asList(new String[]{assetPath}));
+        }
+        catch (ServiceException ex) {
+            throw ex;
+        }
+        catch (Exception ex) {
+            logger.error("Error committing: " + assetPath, ex);
+        }
     }
 
     @Override

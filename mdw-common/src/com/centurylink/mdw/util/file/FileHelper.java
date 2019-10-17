@@ -380,11 +380,6 @@ public final class FileHelper {
         return classLoader.getResourceAsStream(path);
     }
 
-    /**
-     * @param springContextFile
-     * @return
-     * @throws IOException
-     */
     public static String readConfig(String filepath) throws IOException {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
         InputStream inStream = null;

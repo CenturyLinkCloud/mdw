@@ -16,6 +16,7 @@
 package com.centurylink.mdw.services.asset;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.app.Templates;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
@@ -305,6 +306,9 @@ public class AssetServicesImpl implements AssetServices {
 
     @Override
     public void createPackage(String packageName) throws ServiceException {
+        if (getPackage(packageName) != null)
+            throw new ServiceException(ServiceException.CONFLICT, "Package already exists: " + packageName);
+
         File dir = new File(assetRoot + "/" + packageName.replace('.', '/'));
         File metaDir = new File(dir + "/.mdw");
         if (metaDir.exists())
@@ -576,13 +580,41 @@ public class AssetServicesImpl implements AssetServices {
     /**
      * Create a new asset (version 1) on the file system.
      */
+    @Override
     public void createAsset(String path) throws ServiceException {
-        createAsset(path, new byte[0]);
+        createAsset(path, (String)null);
+    }
+
+    /**
+     * Create a new asset with the specified template.
+     */
+    @Override
+    public void createAsset(String path, String template) throws ServiceException {
+        if (getAsset(path) != null)
+            throw new ServiceException(ServiceException.CONFLICT, "Asset already exists: " + path);
+
+        byte[] content = new byte[0];
+        if (template == null) {
+            String ext = path.substring(path.lastIndexOf('.') + 1);
+            template = getDefaultTemplate(ext);
+        }
+        if (template != null) {
+            try {
+                content = Templates.getBytes("assets/" + template);
+                if (content == null)
+                    throw new ServiceException(ServiceException.NOT_FOUND, "Template not found: " + template);
+            }
+            catch (IOException ex) {
+                throw new ServiceException(ServiceException.NOT_FOUND, "Error loading template: " + template, ex);
+            }
+        }
+        createAsset(path, content);
     }
 
     /**
      * Create a new asset (version 1) on the file system.
      */
+    @Override
     public void createAsset(String path, byte[] content) throws ServiceException {
         int lastSlash = path.lastIndexOf('/');
         File assetFile = new File(assetRoot + "/" + path.substring(0,  lastSlash).replace('.', '/') + path.substring(lastSlash));
@@ -596,6 +628,16 @@ public class AssetServicesImpl implements AssetServices {
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
         }
+    }
+
+    @Override
+    public String getDefaultTemplate(String assetExt) {
+        if (assetExt.equals("proc"))
+            return "new.proc";
+        else if (assetExt.equals("task"))
+            return "autoform.task";
+        else
+            return null;
     }
 
     public void deleteAsset(String path) throws ServiceException {

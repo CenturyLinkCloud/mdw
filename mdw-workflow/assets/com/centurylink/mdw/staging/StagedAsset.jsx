@@ -83,7 +83,7 @@ class StagedAsset extends Component {
                           asset: this.state.asset, 
                           content: this.state.content, 
                           view: this.state.view,
-                          oldContent: text
+                          oldContent: ok ? text : ' '  // otherwise doesn't show in diff
                         }, () => {
                           if (asset.name.endsWith('.proc') && ! this.state.oldContent.startsWith('{')) {
                             $mdwUi.hubLoading(true);
