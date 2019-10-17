@@ -39,6 +39,7 @@ public interface StagingServices {
 
     PackageList getPackages(String cuid, boolean withVcsInfo) throws ServiceException;
     void createPackage(String cuid, String packageName) throws ServiceException;
+    void createAsset(String cuid, String assetPath, String template) throws ServiceException;
 
     AssetInfo getStagedAsset(String cuid, String assetPath) throws ServiceException;
     SortedMap<String, List<AssetInfo>> getStagedAssets(String cuid) throws ServiceException;

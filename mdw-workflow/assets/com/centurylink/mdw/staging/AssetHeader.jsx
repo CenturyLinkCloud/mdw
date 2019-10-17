@@ -28,11 +28,11 @@ class AssetHeader extends Component {
                   <span>{' v' + this.props.asset.version}</span>
                 }
                 <a title="Raw" style={{marginLeft:'10px'}}
-                  href={hubRoot + '/asset/' + this.props.package + '/' + this.props.asset.name}>
+                  href={hubRoot + '/asset/' + this.props.package + '/' + this.props.asset.name + '?stagingUser=' + this.props.stagingCuid}>
                   <Glyphicon glyph="file" className="mdw-item-icon" />
                 </a>
                 <a title="Download" style={{marginLeft:'-5px'}}
-                  href={hubRoot + '/asset/' + this.props.package + '/' + this.props.asset.name + '?download=true&NoPersistence=true'}>
+                  href={hubRoot + '/asset/' + this.props.package + '/' + this.props.asset.name + '?download=true&NoPersistence=true&stagingUser=' + this.props.stagingCuid}>
                   <Glyphicon glyph="download-alt" className="mdw-item-icon" />
                 </a>
               </span>

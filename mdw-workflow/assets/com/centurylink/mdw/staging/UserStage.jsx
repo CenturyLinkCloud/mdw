@@ -359,6 +359,11 @@ class UserStage extends Component {
                   <Highlighter search={menuProps.text}>
                     {item.match}
                   </Highlighter>
+                  {item.match.indexOf('/') === -1 &&
+                    <span>
+                      {' (' + item.packageName + ')'}
+                    </span>
+                  }
                 </a>
             </li>
             );

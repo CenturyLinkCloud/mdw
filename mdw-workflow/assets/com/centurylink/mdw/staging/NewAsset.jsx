@@ -11,7 +11,7 @@ class NewAsset extends Component {
 
     this.state = {
       packages: [],
-      newPackageName: '',
+      packageName: '',
       error: ''
     };
 
@@ -34,7 +34,7 @@ class NewAsset extends Component {
   handlePackageNameChange(event) {
     this.setState({
       packages: this.state.packages,
-      newPackageName: event.currentTarget.value,
+      packageName: event.currentTarget.value,
       error: ''
     });
   }
@@ -64,20 +64,18 @@ class NewAsset extends Component {
   }
 
   handleAssetNameChange(name) {
-    if (name.indexOf('.') === -1) {
-      this.setState({
-        packages: this.state.packages,
-        newPackageName: '',
-        error: 'Asset name must have an extension'
-      });
-    }    
-  }
-
-  handleNewAsset(pkgName) {
-    let msg = 'Create asset in ' + pkgName + ':';
     this.setState({
       packages: this.state.packages,
-      newPackageName: this.state.newPackageName,
+      packageName: this.state.packageName,
+      error: name.indexOf('.') === -1 ? 'Asset name must have an extension' : ''
+    });
+  }
+
+  handleNewAsset(packageName) {
+    let msg = 'Create asset in ' + packageName + ':';
+    this.setState({
+      packages: this.state.packages,
+      packageName: packageName,
       error: ''
     }, () => {
       this.entryDialog.current.open(msg);
@@ -87,7 +85,26 @@ class NewAsset extends Component {
 
   createAsset(name) {
     if (name) {
-      // console.log("CREATE ASSET: " + name);
+      const url = this.context.serviceRoot + '/Assets/' + this.state.packageName + '/' + name + '?stagingUser=' + this.props.stagingCuid;
+      var ok = false;
+      fetch(new Request(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'mdw-app-id': 'mdw-hub' },
+        body: '{ "name": "' + name + '" }',
+        credentials: 'same-origin'
+      }))
+      .then(response => {
+        ok = response.ok;
+        return response.json();
+      })
+      .then(json => {
+        if (ok) {
+          location = this.context.hubRoot + '/staging/' + this.props.stagingCuid;
+        }
+        else {
+          $mdwUi.showMessage(json.status.message);
+        }
+      });        
     }
   }
 
@@ -124,10 +141,16 @@ class NewAsset extends Component {
           </ControlLabel>
           <input type="text" style={{width:'100%'}} autoFocus
             onChange={this.handlePackageNameChange} />
-          <Button bsStyle="primary" className="mdw-btn" style={{float:'right',marginTop:'5px'}}
-            onClick={() => this.createPackage(this.state.newPackageName)}>
-            Create
-          </Button>
+          <span style={{float:'right',marginTop:'5px'}}>
+            <Button bsStyle="primary" className="mdw-btn" 
+              onClick={() => this.createPackage(this.state.packageName)}>
+              Create
+            </Button>
+            <Button className="mdw-btn" style={{marginLeft:'10px'}}
+              onClick={() => {this.newPackagePop.current.hide(); this.packagesPop.current.hide();}}>
+              Cancel
+            </Button>
+          </span>
         </div>
       </Popover>
     );
@@ -145,7 +168,7 @@ class NewAsset extends Component {
                     placement="left" 
                     overlay={newPackagePopover} 
                     rootClose={false}>
-                    <a className="dropdown-item" style={{cursor:'pointer'}}>
+                    <a className="dropdown-item" style={{cursor:'pointer'}} >
                       {pkg.name}
                     </a>
                   </OverlayTrigger>
