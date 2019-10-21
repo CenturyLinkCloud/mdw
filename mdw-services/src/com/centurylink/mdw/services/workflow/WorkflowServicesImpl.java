@@ -465,7 +465,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     }
                 }
             }
-            return new ProcessRuntimeContext(pkg, process, instance, 0, false, vars);
+            return new ProcessRuntimeContext(null, pkg, process, instance, 0, false, vars);
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
@@ -1534,7 +1534,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 ProcessInstance loadedInstance = getProcess(processInstance.getId());
                 ActivityImplementor implementor = ImplementorCache.get(activity.getImplementor());
                 String category = implementor == null ? GeneralActivity.class.getName() : implementor.getCategory();
-                ActivityRuntimeContext runtimeContext = new ActivityRuntimeContext(pkg, process, loadedInstance, 0, false,
+                ActivityRuntimeContext runtimeContext = new ActivityRuntimeContext(null, pkg, process, loadedInstance, 0, false,
                         activity, category, activityInstance, false);
                 // doc variables are not loaded (too expensive)
                 for (VariableInstance variableInstance : loadedInstance.getVariables())

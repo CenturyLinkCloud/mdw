@@ -677,8 +677,6 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
     public Response directInvoke(String request, int timeout, Map<String,String> meta_data)
             throws AdapterException, ConnectionException {
         init();
-        if (logger == null)
-            logger = LoggerUtil.getStandardLogger();
         Object connection = null;
         try {
             connection = openConnection();

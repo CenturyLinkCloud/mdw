@@ -537,7 +537,7 @@ class ProcessExecutorImpl {
         Map<String,Object> vars = new HashMap<>();
         for (VariableInstance vi : processInstance.getVariables())
             vars.put(vi.getName(), vi.getData());
-        return new ProcessRuntimeContext(pkg, process, processInstance,
+        return new ProcessRuntimeContext(null, pkg, process, processInstance,
                 getDataAccess().getPerformanceLevel(), isInService(), vars).evaluate(expression);
     }
 
@@ -1883,7 +1883,7 @@ class ProcessExecutorImpl {
         Package pkg = PackageCache.getProcessPackage(processVO.getId());
         // runtime context for enablement does not contain hydrated variables map (too expensive)
         List<ProcessMonitor> monitors = MonitorRegistry.getInstance()
-                .getProcessMonitors(new ProcessRuntimeContext(pkg, processVO, processInstance,
+                .getProcessMonitors(new ProcessRuntimeContext(null, pkg, processVO, processInstance,
                         getDataAccess().getPerformanceLevel(), isInService(), new HashMap<>()));
         if (!monitors.isEmpty()) {
             Map<String,Object> vars = new HashMap<>();
@@ -1902,7 +1902,7 @@ class ProcessExecutorImpl {
                     vars.put(var.getName(), value);
                 }
             }
-            ProcessRuntimeContext runtimeContext = new ProcessRuntimeContext(pkg, processVO, processInstance,
+            ProcessRuntimeContext runtimeContext = new ProcessRuntimeContext(null, pkg, processVO, processInstance,
                     getDataAccess().getPerformanceLevel(), isInService(), vars);
 
             for (ProcessMonitor monitor : monitors) {
@@ -1978,7 +1978,7 @@ class ProcessExecutorImpl {
 
             ActivityImplementor activityImplementor = ImplementorCache.get(activity.getImplementor());
             String category = activityImplementor == null ? GeneralActivity.class.getName() : activityImplementor.getCategory();
-            ActivityRuntimeContext runtimeContext = new ActivityRuntimeContext(pkg, process, processInst,
+            ActivityRuntimeContext runtimeContext = new ActivityRuntimeContext(null, pkg, process, processInst,
                     getDataAccess().getPerformanceLevel(), isInService(), activity, category, actInstVO,
                     activityImpl instanceof SuspendableActivity);
             // TODO option to suppress variables
@@ -2031,7 +2031,7 @@ class ProcessExecutorImpl {
             if (pkg != null)
                 processInst.setPackageName(pkg.getName());
 
-            ProcessRuntimeContext runtimeContext = new ProcessRuntimeContext(pkg, process, processInst,
+            ProcessRuntimeContext runtimeContext = new ProcessRuntimeContext(null, pkg, process, processInst,
                     getDataAccess().getPerformanceLevel(), isInService());
 
             try {

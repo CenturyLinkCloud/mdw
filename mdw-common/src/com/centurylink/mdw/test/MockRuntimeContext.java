@@ -161,7 +161,7 @@ public class MockRuntimeContext extends ActivityRuntimeContext {
     }
 
     public MockRuntimeContext(String activityName, BaselineData baselineData) {
-        super(null, null, null, 0, false, null, GeneralActivity.class.getName(), null, false);
+        super(null, null, null, null, 0, false, null, GeneralActivity.class.getName(), null, false);
         this.activityName = activityName;
         this.baselineData = baselineData;
         PropertyManager.initializeMockPropertyManager();

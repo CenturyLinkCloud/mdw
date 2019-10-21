@@ -827,7 +827,7 @@ public class TaskWorkflowHelper {
                 Activity activity = process.getActivity(activityInstance.getActivityId());
                 TaskRuntimeContext taskContext = getContext();
                 taskContext.getTaskInstance().setActivityInstanceId(activityInstance.getId());
-                ActivityRuntimeContext activityContext = new ActivityRuntimeContext(pkg, process, processInstance,
+                ActivityRuntimeContext activityContext = new ActivityRuntimeContext(null, pkg, process, processInstance,
                         0, false, activity, TaskActivity.class.getName(), activityInstance, false);
                 List<TaskMonitor> monitors = MonitorRegistry.getInstance().getTaskMonitors(activityContext);
                 // TODO: add task-registered monitors
@@ -951,10 +951,10 @@ public class TaskWorkflowHelper {
             processContext = workflowServices.getContext(taskInstance.getOwnerId(), true);
 
         if (processContext != null) {
-            return new TaskRuntimeContext(processContext, getTemplate(), taskInstance, assignee);
+            return new TaskRuntimeContext(null, processContext, getTemplate(), taskInstance, assignee);
         }
         else {
-            return new TaskRuntimeContext(null, null, null, new HashMap<>(), getTemplate(), taskInstance, assignee);
+            return new TaskRuntimeContext(null, null, null, null, new HashMap<>(), getTemplate(), taskInstance, assignee);
         }
     }
 

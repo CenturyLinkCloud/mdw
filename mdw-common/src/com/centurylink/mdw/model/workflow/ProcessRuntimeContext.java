@@ -15,33 +15,12 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import java.lang.reflect.Method;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.el.ArrayELResolver;
-import javax.el.BeanELResolver;
-import javax.el.CompositeELResolver;
-import javax.el.ELContext;
-import javax.el.ELResolver;
-import javax.el.ExpressionFactory;
-import javax.el.FunctionMapper;
-import javax.el.ListELResolver;
-import javax.el.MapELResolver;
-import javax.el.ValueExpression;
-import javax.el.VariableMapper;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.attribute.Attribute;
-import com.centurylink.mdw.model.variable.DocumentReference;
-import com.centurylink.mdw.model.variable.ServiceValuesAccess;
-import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.variable.XPathELResolver;
+import com.centurylink.mdw.model.variable.*;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.util.JsonUtil;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -52,9 +31,15 @@ import com.sun.el.ValueExpressionLiteral;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import javax.el.*;
+import java.lang.reflect.Method;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 public class ProcessRuntimeContext extends ELContext implements RuntimeContext, Jsonable {
 
-    protected static StandardLogger logger = LoggerUtil.getStandardLogger();
+    protected StandardLogger logger;
 
     protected Package pkg;
     public Package getPackage() { return pkg; }
@@ -128,7 +113,11 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         return v == null ? defaultValue : v;
     }
 
-    public ProcessRuntimeContext(Package pkg, Process process, ProcessInstance processInstance, int performanceLevel, boolean inService) {
+    public ProcessRuntimeContext(StandardLogger logger, Package pkg, Process process, ProcessInstance processInstance, int performanceLevel, boolean inService) {
+        if (logger == null)
+            this.logger = LoggerUtil.getStandardLogger();
+        else
+            this.logger = logger;
         this.pkg = pkg;
         this.process = process;
         this.processInstance = processInstance;
@@ -137,7 +126,11 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         this.variables = new HashMap<>();
     }
 
-    public ProcessRuntimeContext(Package pkg, Process process, ProcessInstance processInstance, int performanceLevel, boolean inService, Map<String,Object> variables) {
+    public ProcessRuntimeContext(StandardLogger logger, Package pkg, Process process, ProcessInstance processInstance, int performanceLevel, boolean inService, Map<String,Object> variables) {
+        if (logger == null)
+            this.logger = LoggerUtil.getStandardLogger();
+        else
+            this.logger = logger;
         this.pkg = pkg;
         this.process = process;
         this.processInstance = processInstance;
@@ -166,6 +159,10 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         logger.debug(logtag(), message);
     }
 
+    public void logTrace(String message) {
+        logger.trace(logtag(), message);
+    }
+
     public void logWarn(String message) {
         logger.warn(logtag(), message);
     }
@@ -174,8 +171,16 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         logger.severe(logtag(), message);
     }
 
-    public void logException(String msg, Exception e) {
-        logger.exception(logtag(), msg, e);
+    public void logError(String message) {
+        logger.severe(logtag(), message);
+    }
+
+    public void logException(String msg, Throwable t) {
+        logger.exception(logtag(), msg, t);
+    }
+
+    public void logError(String msg, Throwable t) {
+        logger.exception(logtag(), msg, t);
     }
 
     public boolean isLogInfoEnabled() {
@@ -184,6 +189,10 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
 
     public boolean isLogDebugEnabled() {
         return logger.isDebugEnabled();
+    }
+
+    public boolean isLogTraceEnabled() {
+        return logger.isTraceEnabled();
     }
 
     protected String logtag() {

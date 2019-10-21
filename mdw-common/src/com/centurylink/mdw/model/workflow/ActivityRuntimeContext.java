@@ -18,6 +18,7 @@ package com.centurylink.mdw.model.workflow;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.util.JsonUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 import com.sun.el.ValueExpressionLiteral;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,9 +58,9 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
     private boolean suspendable;
     public boolean isSuspendable() { return suspendable; }
 
-    public ActivityRuntimeContext(Package pkg, Process process, ProcessInstance processInstance, int performanceLevel,
+    public ActivityRuntimeContext(StandardLogger logger, Package pkg, Process process, ProcessInstance processInstance, int performanceLevel,
             boolean inService, Activity activity, String category, ActivityInstance activityInstance, boolean suspendable) {
-        super(pkg, process, processInstance, performanceLevel, inService);
+        super(logger, pkg, process, processInstance, performanceLevel, inService);
         this.activity = activity;
         this.category = category;
         this.activityInstance = activityInstance;
@@ -103,7 +104,7 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
     }
 
     public ActivityRuntimeContext(JSONObject json) throws JSONException {
-        super(null, null, null, 0, false, json.has("variables") ? new HashMap<>() : null);
+        super(null,null, null, null, 0, false, json.has("variables") ? new HashMap<>() : null);
         String procPath = json.getString("process");
         int slash = procPath.indexOf("/");
         if (slash > 0) {
