@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.util.log;
 
-import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.YamlProperties;
 import com.centurylink.mdw.util.log.log4j.Log4JStandardLoggerImpl;
@@ -108,14 +107,17 @@ public class LoggerUtil implements Serializable {
             accessed = true;
         }
         // avoid reflection for known impls
-        if (loggerImplClass == null || className == null || SimpleLogger.class.getName().equals(loggerImplClass)) {
+        if (className == null) {
             return getStandardLogger();
+        }
+        else if (loggerImplClass == null || Slf4JStandardLoggerImpl.class.getName().equals(loggerImplClass) || org.slf4j.Logger.class.getName().equals(loggerImplClass)) {
+            return new Slf4JStandardLoggerImpl(className);
+        }
+        else if (SimpleLogger.class.getName().equals(loggerImplClass)) {
+            return SimpleLogger.getSingleton();
         }
         else if (Log4JStandardLoggerImpl.class.getName().equals(loggerImplClass) || org.apache.log4j.Logger.class.getName().equals(loggerImplClass)) {
             return new Log4JStandardLoggerImpl(className);
-        }
-        else if (Slf4JStandardLoggerImpl.class.getName().equals(loggerImplClass) || org.slf4j.Logger.class.getName().equals(loggerImplClass)) {
-            return new Slf4JStandardLoggerImpl(className);
         }
         else {
             try {

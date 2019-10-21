@@ -43,7 +43,7 @@ public interface RuntimeContext {
 
     void logSevere(String message);
 
-    void logException(String msg, Exception e);
+    void logException(String msg, Throwable t);
 
     boolean isLogInfoEnabled();
 

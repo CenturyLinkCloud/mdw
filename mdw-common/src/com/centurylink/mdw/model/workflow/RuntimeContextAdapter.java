@@ -15,10 +15,9 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import java.util.Map;
-
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.model.Jsonable;
+
+import java.util.Map;
 
 public class RuntimeContextAdapter implements RuntimeContext {
 
@@ -80,9 +79,9 @@ public class RuntimeContextAdapter implements RuntimeContext {
     }
 
     @Override
-    public void logException(String msg, Exception e) {
+    public void logException(String msg, Throwable t) {
         System.err.println(msg);
-        e.printStackTrace();
+        t.printStackTrace();
     }
 
     @Override

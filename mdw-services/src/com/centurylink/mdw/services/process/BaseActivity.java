@@ -51,6 +51,7 @@ import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.OfflineMonitorTrigger;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.TransactionWrapper;
+import com.centurylink.mdw.util.log.ActivityLogger;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.TrackingTimer;
@@ -68,9 +69,10 @@ import java.util.Map;
  */
 public abstract class BaseActivity implements GeneralActivity {
 
-    protected static StandardLogger logger = null;
-    // TODO: logger should be private as we expect applications to use canned methods
-    // such as logsevere(). It is left as "protected" to avoid compatibility issues.
+    /**
+     * Replaced during execution by ActivityLogger.
+     */
+    protected StandardLogger logger = LoggerUtil.getStandardLogger();;
 
     public static final String JAVASCRIPT = "JavaScript";
     public static final String GROOVY = "Groovy";
@@ -113,8 +115,6 @@ public abstract class BaseActivity implements GeneralActivity {
         try {
             if (timer != null)
                 timer.start("Prepare Activity");
-            if (logger == null)
-                logger = LoggerUtil.getStandardLogger();
             this.engine = engine;
             this.processInst = pi;
             this.activityDef = actVO;
@@ -128,11 +128,16 @@ public abstract class BaseActivity implements GeneralActivity {
                 pkg = PackageCache.getProcessPackage(getMainProcessDefinition().getId());
                 ActivityImplementor implementor = ImplementorCache.get(activityDef.getImplementor());
                 String category = implementor == null ? GeneralActivity.class.getName() : implementor.getCategory();
-                _runtimeContext = new ActivityRuntimeContext(pkg, getProcessDefinition(), processInst,
+                StandardLogger activityLogger = LoggerUtil.getStandardLogger(getClass().getName());
+                _runtimeContext = new ActivityRuntimeContext(activityLogger, pkg, getProcessDefinition(), processInst,
                         getPerformanceLevel(), getEngine().isInService(), activityDef, category, activityInst,
                         this instanceof SuspendableActivity);
+                if (!(logger instanceof ActivityLogger))
+                    logger = new ActivityLogger(_runtimeContext);
                 for (VariableInstance var : getParameters())
                     _runtimeContext.getVariables().put(var.getName(), getVariableValue(var.getName()));
+                if (!(logger instanceof ActivityLogger))
+                    logger = new ActivityLogger(_runtimeContext);
             }
             catch (NullPointerException | ActivityException ex) {
                 logger.severeException(ex.getMessage(), ex);
@@ -149,8 +154,8 @@ public abstract class BaseActivity implements GeneralActivity {
      * from API (not from runtime engine) -- mainly for unit testing
      */
     public void prepare(ActivityRuntimeContext runtimeContext) {
-        if (logger == null)
-            logger = LoggerUtil.getStandardLogger();
+        if (!(logger instanceof ActivityLogger))
+            logger = new ActivityLogger(_runtimeContext);
 
         EngineDataAccess edao = EngineDataAccessCache.getInstance(true, 9);
         // InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();

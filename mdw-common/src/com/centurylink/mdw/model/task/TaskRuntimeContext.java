@@ -20,6 +20,7 @@ import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
+import com.centurylink.mdw.util.log.StandardLogger;
 import com.sun.el.ValueExpressionLiteral;
 
 import javax.el.ValueExpression;
@@ -50,16 +51,16 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
         throw new UnsupportedOperationException();
     }
 
-    public TaskRuntimeContext(Package pkg, Process process,
+    public TaskRuntimeContext(StandardLogger logger, Package pkg, Process process,
             ProcessInstance processInstance, Map<String,Object> variables, TaskTemplate template, TaskInstance taskInstance, User assignee) {
-        super(pkg, process, processInstance, 0, false, variables);
+        super(logger, pkg, process, processInstance, 0, false, variables);
         this.taskTemplate = template;
         this.taskInstance = taskInstance;
         this.assignee = assignee;
     }
 
-    public TaskRuntimeContext(ProcessRuntimeContext processContext, TaskTemplate template, TaskInstance taskInstance, User assignee) {
-        this(processContext.getPackage(), processContext.getProcess(),
+    public TaskRuntimeContext(StandardLogger logger, ProcessRuntimeContext processContext, TaskTemplate template, TaskInstance taskInstance, User assignee) {
+        this(logger, processContext.getPackage(), processContext.getProcess(),
                 processContext.getProcessInstance(), processContext.getVariables(), template, taskInstance, assignee);
     }
 
