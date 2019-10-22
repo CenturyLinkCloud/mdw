@@ -438,7 +438,7 @@ class UserStage extends Component {
                   <div style={{padding:'10px'}}>
                     To add an asset to your staging area, search for it above, or browse 
                     under <a href={this.context.hubRoot + '#/packages'}>Assets</a>, 
-                    and then click the Stage button.
+                    and then click the Edit button.
                   </div>
                 }
                 {pkgs.length > 0 &&
