@@ -1,6 +1,5 @@
 # Embedded DB
 
-## Purpose
 MDW uses a relational database for persisting runtime state.
 The most convenient way to provision this is to import and enable
 the com.centurylink.mdw.db asset package.  This provides an embedded MariaDB

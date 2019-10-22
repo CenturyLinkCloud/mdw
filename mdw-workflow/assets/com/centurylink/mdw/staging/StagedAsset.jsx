@@ -14,6 +14,7 @@ class StagedAsset extends Component {
     this.handleUnstage = this.handleUnstage.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleViewChange = this.handleViewChange.bind(this);
+    this.getRenderedMarkdown = this.getRenderedMarkdown.bind(this);
 
     if (this.props.match && this.props.match.params) {
       this.stagingCuid = this.props.match.params.cuid;
@@ -52,6 +53,9 @@ class StagedAsset extends Component {
               url = this.context.hubRoot + '/asset/' + pathPlusParam;
               if (asset.name.endsWith('.proc')) {
                 url += '&render=json';
+              }
+              else if (asset.name.endsWith('.md')) {
+                url += '&render=html';
               }
               fetch(new Request(url, {
                 method: 'GET',
@@ -192,6 +196,10 @@ class StagedAsset extends Component {
     });
   }
 
+  getRenderedMarkdown() {
+    return { __html: this.state.content };
+  }
+
   render() {
     let extension = undefined;
     let language = undefined;
@@ -223,7 +231,7 @@ class StagedAsset extends Component {
                       serviceBase={this.context.serviceRoot} />                  
                   }
                   {extension === 'md' &&
-                    <div>TODO</div>
+                    <div className="mdw-item-content" dangerouslySetInnerHTML={this.getRenderedMarkdown()}></div>
                   }
                   {this.state.asset.isImage &&
                     <img src={this.state.context.hubRoot + '/asset/' + this.package + '/' + this.assetName + '?stagingUser=' + this.stagingCuid}
