@@ -4,6 +4,7 @@ import {Link} from '../node/node_modules/react-router-dom';
 import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
 import {AsyncTypeahead, Menu, Highlighter} from '../node/node_modules/react-bootstrap-typeahead';
 import MdwContext from '../react/MdwContext';
+import HelpButton from '../react/HelpButton.jsx';
 import Enter from '../react/Enter.jsx';
 import StagesPopButton from './StagesPopButton.jsx';
 import NewAsset from './NewAsset.jsx';
@@ -406,6 +407,8 @@ class UserStage extends Component {
             renderMenu={this.renderAssetMenu} 
             onChange={this.handleStage} />
           <div style={{float:'right'}}>
+            <HelpButton title="Staging Help"
+              url={this.context.hubRoot + '#/asset/com.centurylink.mdw.staging/readme.md'} />
             {this.context.authUser.workgroups.includes('Site Admin') &&
               <StagesPopButton />
             }
