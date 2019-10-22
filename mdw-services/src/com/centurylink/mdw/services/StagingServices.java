@@ -9,6 +9,7 @@ import com.centurylink.mdw.model.asset.StagingArea;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 
 public interface StagingServices {
@@ -49,6 +50,7 @@ public interface StagingServices {
     void deleteAsset(String cuid, String assetPath) throws ServiceException;
 
     void promoteAssets(String cuid, String comment) throws ServiceException;
+    void rollbackAssets(String cuid, Map<String,String> assetVersions) throws ServiceException;
 
     AssetServices getAssetServices(String cuid) throws ServiceException;
 }

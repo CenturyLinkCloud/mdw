@@ -451,8 +451,12 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
   $scope.version = $routeParams.version;
   if ($scope.assetName.endsWith('.proc')) {
     $scope.process = {packageName: $scope.packageName, name: $scope.assetName.substring(0, $scope.assetName.length - 5)};
+    if ($scope.version && $scope.version !== $scope.process.version) {
+      $scope.process.version = $scope.version;
+      $scope.process.archived = true;
+    }
   }
-  else if($scope.assetName.endsWith('.task')){
+  else if ($scope.assetName.endsWith('.task')) {
     $scope.task = true;
   }
  
@@ -522,6 +526,29 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
   $scope.stageAsset = function() {
     var assetPath = $scope.packageName + '/' + $scope.asset.name;
     Staging.stageAsset($scope.authUser.cuid, assetPath);
+  };
+
+  $scope.rollbackAsset = function(version) {
+    var stagingCuid = $scope.authUser.cuid;
+    var assetVersions = {};
+    assetVersions[$scope.packageName + '/' + $scope.asset.name] = version;
+    $http({
+      url: mdw.roots.services + '/services/com/centurylink/mdw/staging/' + stagingCuid + '/assetVersions?app=mdw-admin',
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      data: JSON.stringify({assetVersions: assetVersions}, null, 2),
+      transformRequest: []
+    }).then(function success(response) {
+        $location.path('/staging/' + stagingCuid);
+      }, function error(response) {
+        if (response.status === 404) {
+          $location.path('/staging/' + stagingCuid);
+        }
+        else {
+          uiUtil.error('Asset Rollback Error', response.data.status.message);
+        }
+      }
+    );
   };
 
   $scope.viewInstances=function(){

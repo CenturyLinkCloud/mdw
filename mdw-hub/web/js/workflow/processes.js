@@ -451,6 +451,9 @@ processMod.controller('ProcessDefController',
     name: $routeParams.processName,
     version: $routeParams.version
   };
+  if ($scope.process.version) {
+    $scope.process.archived = true;
+  }
   $scope.definitionId = null;  // stored at scope level due to vagaries in $scope.process
 
   $scope.setProcessFilter = function() {
@@ -508,6 +511,9 @@ processMod.controller('ProcessDefController',
         $scope.definitionId = $scope.process.definitionId;
         $scope.template = $scope.process.template;
         $scope.process.hasMilestones = defSum.hasMilestones;
+        $scope.process.archived = defSum.archived;
+        if ($scope.process.archived)
+          $scope.process.version = $scope.process.template ? defSum.templateVersion : defSum.version;
         if ($route.current && $route.current.templateUrl && $route.current.templateUrl.endsWith('/versions.html')) {
           ProcessVersions.retrieve({
               packageName: $scope.process.packageName,
