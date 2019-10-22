@@ -39,10 +39,16 @@ are promoted together.  If you want to exclude an asset from promotion, you must
 button.  Once you confirm asset promotion all changes are saved and applied, and the MDW server cache is refreshed to 
 reflect your changes.  Promoted assets are also removed from your staging area.
 
-
 ## Rollback
 
-TODO
+Promoted assets can be restored to a previous version by browsing to them through the Admin tab's Assets nav link.
+Clicking on the History nav link for an asset shows its previous versions.   
+
+<img src="https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/staging/asset_history.png" alt="Asset History" width="95%"/>
+
+By clicking the rewind button next to a previous version, you'll add a change to your staging area to revert to that
+specific version.  You can roll back multiple assets to accumulate the changes in your staging area until you're ready 
+to promote.  Note that the reversion does not take place until the roll backed versions are promoted.  
 
 ## Technical Details
 
