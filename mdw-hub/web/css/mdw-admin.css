@@ -1375,6 +1375,14 @@
   position: relative;
   top: 5px;
 }
+.mdw-dropzone {
+  width: 100%;
+  height: 100px;
+  border-width: 2px;
+  border-color: rgb(102, 102, 102);
+  border-style: dashed;
+  border-radius: 5px;
+}
 .panel-heading a {
   font-weight: bold;
   text-decoration: none;

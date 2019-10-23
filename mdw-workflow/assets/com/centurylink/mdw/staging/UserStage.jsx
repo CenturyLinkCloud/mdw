@@ -204,8 +204,11 @@ class UserStage extends Component {
     .then(json => {
       if (!ok) {
         $mdwUi.showMessage(json.status.message);
+        $mdwUi.hubLoading(false);
       }
-      location = this.context.hubRoot + '/staging/' + this.props.stage.userCuid;
+      else {
+        location = this.context.hubRoot + '/staging/' + this.props.stage.userCuid;
+      }
     });
   }
 
@@ -382,7 +385,7 @@ class UserStage extends Component {
       <div>
         <div className="panel-heading mdw-heading" style={{borderColor:'#ddd'}}>
           <div className="mdw-heading-label">
-            <input type="checkbox" style={{marginRight:'6px'}} ref={this.allSelectRef}
+            <input type="checkbox" style={{marginRight:'6px'}}
               checked={this.state.allSelected} 
               onChange={() => this.toggleAllSelect()} />
             Staged Assets for {this.props.stage.userName}
