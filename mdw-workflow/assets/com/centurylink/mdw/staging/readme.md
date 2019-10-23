@@ -60,6 +60,14 @@ are immediately committed and pushed to the user stage branch.  This enables use
 time by cloning from Git remote.  Saving a staged asset also increments its version in .mdw/versions and commits/pushes
 the versions file as well.
 
+Because the temp/git/staging can be deleted at any time (especially due to redeployment), the following logic pertains 
+when a user clicks on the Admin tab's Staging nav link:
+  - Check Git remote for user staging branch.
+    - If staging branch does not exist, display Create Staging Area button
+    - Otherwise, if staging branch exists in Git remote, check for user staging directory under temp/git/staging
+      - If local staging directory does not exist, clone from Git and display live progress info
+      - If/when local staging area exists, pull from remote to refresh, and display any staged assets
+
 To avoid requiring Git accounts for all staging users, commits are performed as git.user from mdw.yaml.  The commit message
 for a staged asset save includes the user ID who made the change.  Unstaging commits a new change to the staging branch to undo
 any previously staged change(s).
