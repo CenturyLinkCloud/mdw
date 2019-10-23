@@ -1,4 +1,6 @@
 import React, {Component} from '../node/node_modules/react';
+import {Button} from '../node/node_modules/react-bootstrap';
+import Dropzone from '../node/node_modules/react-dropzone';
 import MdwContext from '../react/MdwContext';
 import languages from '../react/languages';
 import CodeBlock from '../react/CodeBlock.jsx';
@@ -14,7 +16,11 @@ class StagedAsset extends Component {
     this.handleUnstage = this.handleUnstage.bind(this);
     this.handleDelete = this.handleDelete.bind(this);
     this.handleViewChange = this.handleViewChange.bind(this);
+    this.handleDrop = this.handleDrop.bind(this);
+    this.handleFileOpen = this.handleFileOpen.bind(this);
     this.getRenderedMarkdown = this.getRenderedMarkdown.bind(this);
+
+    this.dropzone = React.createRef();
 
     if (this.props.match && this.props.match.params) {
       this.stagingCuid = this.props.match.params.cuid;
@@ -87,7 +93,7 @@ class StagedAsset extends Component {
                           asset: this.state.asset, 
                           content: this.state.content, 
                           view: this.state.view,
-                          oldContent: ok ? text : ' '  // otherwise doesn't show in diff
+                          oldContent: ok ? text : null  // otherwise doesn't show in diff
                         }, () => {
                           if (asset.name.endsWith('.proc') && ! this.state.oldContent.startsWith('{')) {
                             $mdwUi.hubLoading(true);
@@ -196,6 +202,43 @@ class StagedAsset extends Component {
     });
   }
 
+  handleDrop(files) {
+    if (files && files.length === 1) {
+      $mdwUi.clearMessage();
+      let ok = false;  
+      const url = this.context.hubRoot + '/asset/' + this.package + '/' + this.assetName + '?stagingUser=' + this.stagingCuid;
+      const reader = new FileReader();
+      reader.onload = () => {
+        $mdwUi.hubLoading(true);
+        fetch(url, { 
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/octet-stream', 'mdw-app-id': 'mdw-hub' },
+          body: new Int8Array(reader.result),
+          credentials: 'same-origin'
+        })
+        .then(response => {
+          $mdwUi.hubLoading(false);
+          ok = response.ok;
+          return response.json();
+        })
+        .then(json => {
+          if (ok) {
+            location = '../';
+          }
+          else {
+            $mdwUi.showMessage(json.status.message);
+          }
+        });
+      };
+      reader.readAsArrayBuffer(files[0]);      
+    }
+  }
+
+  handleFileOpen(event) {
+    this.dropzone.current.open();
+    event.preventDefault();
+  }
+
   getRenderedMarkdown() {
     return { __html: this.state.content };
   }
@@ -220,24 +263,24 @@ class StagedAsset extends Component {
           onDelete={this.handleDelete}
           onViewChange={this.handleViewChange} />
         <div className="mdw-section">
-          {this.state.asset && (this.state.asset.isImage || !this.state.asset.isBinary) && this.state.content &&
+          {this.state.asset && (this.state.asset.isImage || this.state.view === 'upload' || !this.state.asset.isBinary) && 
             <div>
               {this.state.view === 'asset' &&
                 <div>
-                  {extension === 'proc' &&
+                  {extension === 'proc' && this.state.content &&
                     <Workflow 
                       process={JSON.parse(this.state.content)} 
                       hubBase={this.context.hubRoot} 
                       serviceBase={this.context.serviceRoot} />                  
                   }
-                  {extension === 'md' &&
+                  {extension === 'md' && this.state.content &&
                     <div className="mdw-item-content" dangerouslySetInnerHTML={this.getRenderedMarkdown()}></div>
                   }
                   {this.state.asset.isImage &&
-                    <img src={this.state.context.hubRoot + '/asset/' + this.package + '/' + this.assetName + '?stagingUser=' + this.stagingCuid}
+                    <img src={this.context.hubRoot + '/asset/' + this.package + '/' + this.assetName + '?stagingUser=' + this.stagingCuid}
                       alt={this.state.asset.name} />
                   }
-                  {extension !== 'proc' && extension !== 'md' && !this.state.asset.isBinary &&
+                  {extension !== 'proc' && extension !== 'md' && !this.state.asset.isBinary && this.state.content &&
                     <div>
                       <CodeBlock 
                         language={language} 
@@ -247,7 +290,26 @@ class StagedAsset extends Component {
                   }
                 </div>
               }
-              {this.state.view === 'diff' && this.state.oldContent &&
+              {this.state.view === 'upload' &&
+                <div>
+                  <Dropzone className="mdw-dropzone"
+                    onDrop={this.handleDrop} disableClick={true} ref={this.dropzone} >
+                    <div className="mdw-attach-zone">
+                      Drag and drop new asset version, or {' '} 
+                      <a href="" onClick={this.handleFileOpen}>
+                        select files
+                      </a>.
+                    </div>
+                  </Dropzone>
+                  <div style={{textAlign:'right',marginTop:'6px'}}>
+                    <Button className="mdw-btn"
+                      onClick={() => this.handleViewChange('asset') }>
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              }
+              {this.state.view === 'diff' && this.state.content &&
                 <CodeDiff 
                   language={language} 
                   newLabel="Staged"
