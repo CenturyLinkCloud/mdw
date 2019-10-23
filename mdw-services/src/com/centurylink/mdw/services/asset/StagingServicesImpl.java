@@ -436,7 +436,7 @@ public class StagingServicesImpl implements StagingServices {
         if (mainAssetInfo == null) {
             assetInfo.setVcsDiffType(DiffType.EXTRA);
         }
-        else {
+        else if (assetInfo.getVcsDiffType() != DiffType.MISSING) {
             try {
                 if (!FileUtils.contentEqualsIgnoreEOL(assetInfo.getFile(), mainAssetInfo.getFile(), null)) {
                     assetInfo.setVcsDiffType(DiffType.DIFFERENT);
@@ -485,10 +485,19 @@ public class StagingServicesImpl implements StagingServices {
                 AssetInfo mainAsset = ServiceLocator.getAssetServices().getAsset(asset);
                 AssetServices stagedAssetServices = getAssetServices(cuid);
                 String pkgName = AssetServices.packageName(asset);
-                String pkgPath = getVcAssetPath() + "/" + pkgName.replace('.', '/');
+                String slashyPkg = pkgName.replace('.', '/');
+                String pkgPath = getVcAssetPath() + "/" + slashyPkg;
                 if (mainAsset != null) {
                     AssetInfo stagedAsset = stagedAssetServices.getAsset(asset);
-                    Files.copy(mainAsset.getFile().toPath(), stagedAsset.getFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    File stagedAssetFile;
+                    if (stagedAsset == null) {
+                        // staged asset could be deleted
+                        stagedAssetFile = new File(getStagingAssetsDir(cuid) + "/" + slashyPkg + "/" + mainAsset.getName());
+                    }
+                    else {
+                        stagedAssetFile = stagedAsset.getFile();
+                    }
+                    Files.copy(mainAsset.getFile().toPath(), stagedAssetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     stagedAssetServices.updateAssetVersion(asset, mainAsset.getRevision().getVersion());
                 }
                 else {
@@ -512,7 +521,6 @@ public class StagingServicesImpl implements StagingServices {
 
     @Override
     public void deleteAsset(String cuid, String assetPath) throws ServiceException {
-        unStageAssets(cuid, Arrays.asList(new String[]{assetPath}));
         getAssetServices(cuid).removeAssetVersion(assetPath);
         String pkg = AssetServices.packageName(assetPath);
         String pkgPath = getVcAssetPath() + "/" + pkg.replace('.', '/');
