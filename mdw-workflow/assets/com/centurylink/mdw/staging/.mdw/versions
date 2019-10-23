@@ -1,14 +1,14 @@
-AssetHeader.jsx=8
+AssetHeader.jsx=9
 History.jsx=2
 Main.jsx=9
 Nav.jsx=9
 NewAsset.jsx=1
 NoStage.jsx=3
 Stage.jsx=22
-StagedAsset.jsx=11
+StagedAsset.jsx=12
 StagesPopButton.jsx=3
 StagingApi.java=13
-UserStage.jsx=27
+UserStage.jsx=28
 asset_history.png=1
 readme.md=4
 staging_btn.png=1

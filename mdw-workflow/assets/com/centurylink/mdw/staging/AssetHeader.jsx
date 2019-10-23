@@ -65,21 +65,21 @@ class AssetHeader extends Component {
         }
         {this.props.asset &&
           <div className="mdw-heading-actions">
-            {this.props.stagingCuid === this.context.authUser.cuid && !this.props.asset.isBinary &&
+            {this.props.stagingCuid === this.context.authUser.cuid && !this.props.asset.isBinary && 'MISSING' !== this.props.asset.vcsDiffType &&
               <a className="btn btn-primary mdw-action-btn" style={{fontSize:'14px',fontWeight:'normal'}}
                 href={hubRoot + '/edit/' + this.props.package + '/' + this.props.asset.name}>
                 <Glyphicon glyph="pencil" />
                 {' Edit'}
               </a>
             }
-            {this.props.stagingCuid === this.context.authUser.cuid && this.props.view !== 'upload' &&
+            {this.props.stagingCuid === this.context.authUser.cuid && this.props.view !== 'upload' && 'MISSING' !== this.props.asset.vcsDiffType &&
               <Button className="btn btn-primary mdw-btn mdw-action-btn" style={{padding:'4px 6px'}}
                 onClick={() => this.props.onViewChange('upload')} title="Upload a new asset version">
                 <Glyphicon glyph="download-alt" style={{transform:'rotate(180deg)'}}/>
                 {' Upload'}
               </Button>
             }
-            {this.props.stagingCuid === this.context.authUser.cuid &&
+            {this.props.stagingCuid === this.context.authUser.cuid && 'MISSING' !== this.props.asset.vcsDiffType &&
               <Button className="btn btn-primary mdw-btn mdw-action-btn" style={{padding:'4px 6px'}}
                 onClick={this.props.onDelete}>
                 <Glyphicon glyph="remove" />

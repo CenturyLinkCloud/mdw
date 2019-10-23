@@ -232,10 +232,7 @@ class UserStage extends Component {
   handleUnstage() {
     if (this.state.selectedAssets.length > 0) {
       if (this.anySelectedAssetHasChanges()) {
-        const message = 'Selected asset(s) have changes.  Unstage?';
-        if (this.confirmUnstageDialog.current.open(message)) {
-          this.doUnstage();
-        }
+        this.confirmUnstageDialog.current.open('Selected asset(s) have changes.  Unstage?');
       }
       else {
         this.doUnstage();
