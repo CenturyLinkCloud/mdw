@@ -36,6 +36,7 @@ import com.centurylink.mdw.util.DateHelper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -527,7 +528,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             this.recordEventHistory(eventName, EventLog.SUBCAT_ARRIVAL, OwnerType.DOCUMENT, documentId, null);
             createEventInstance(eventName, documentId, EventInstance.STATUS_ARRIVED, null, null, null, 0);
             hasWaiters = false;
-        } catch (SQLException e) {
+        } catch (SQLIntegrityConstraintViolationException e) {
             if (db.isMySQL()) db.commit();
             EventInstance event = lockEventInstance(eventName);
             if (event == null)
@@ -556,7 +557,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                     multipleRecepients?EventInstance.STATUS_WAITING_MULTIPLE:EventInstance.STATUS_WAITING,
                     null, null, null, preserveSeconds);
             documentId = null;
-        } catch (SQLException e) {
+        } catch (SQLIntegrityConstraintViolationException e) {
             if (db.isMySQL()) db.commit();
             EventInstance event = lockEventInstance(eventName);
             if (event.getStatus().equals(EventInstance.STATUS_WAITING)) {
