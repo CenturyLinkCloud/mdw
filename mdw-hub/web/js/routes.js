@@ -58,7 +58,7 @@ routesSvc.factory('routes', function() {
       {
         path: '/assets/discover',
         templateUrl: 'assets/discover.html',
-        controller: 'PackagesController'
+        controller: 'DiscoveryController'
       },
       {
         path: '/staging',
