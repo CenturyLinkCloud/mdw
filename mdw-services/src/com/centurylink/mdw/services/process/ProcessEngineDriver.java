@@ -39,6 +39,7 @@ import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
+import com.centurylink.mdw.model.workflow.WorkStatus.InternalLogMessage;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessCache;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
@@ -128,7 +129,7 @@ public class ProcessEngineDriver {
                             messageDoc.getWorkId(), messageDoc.getWorkInstanceId()), "Inherited Event - type="
                             + eventType + ", compcode=" + messageDoc.getCompletionCode());
             }
-            engine.notifyMonitors(processInstVO, WorkStatus.LOGMSG_PROC_ERROR);
+            engine.notifyMonitors(processInstVO, InternalLogMessage.PROCESS_ERROR);
             String compCode = messageDoc.getCompletionCode();
             ProcessInstance originatingInstance = processInstVO;
             Process embeddedHandlerProc = processVO.findSubprocess(eventType, compCode);
@@ -364,7 +365,7 @@ public class ProcessEngineDriver {
             case ActivityRuntime.STARTCASE_NORMAL:
             default:
                 // Step 2. invoke execute() of the activity
-                String resCode = ar.activity.notifyMonitors(WorkStatus.LOGMSG_EXECUTE);
+                String resCode = ar.activity.notifyMonitors(InternalLogMessage.ACTIVITY_EXECUTE);
                 if (resCode == null || resCode.equals("(EXECUTE_ACTIVITY)")) {
                     if (ar.getActivity() instanceof StartActivity) {
                         engine.setProcessInstanceStartTime(ar.getProcessInstance().getId());
@@ -828,8 +829,8 @@ public class ProcessEngineDriver {
             bindRequestHeadersVariable(procdef, headers, engine, mainProcessInst);
         }
         logger.info(logtag(processId, mainProcessInst.getId(), masterRequestId),
-                WorkStatus.LOGMSG_PROC_START + " - " + procdef.getQualifiedName() + "/" + procdef.getVersionString());
-        engine.notifyMonitors(mainProcessInst, WorkStatus.LOGMSG_PROC_START);
+                InternalLogMessage.PROCESS_START.message + " - " + procdef.getQualifiedName() + "/" + procdef.getVersionString());
+        engine.notifyMonitors(mainProcessInst, InternalLogMessage.PROCESS_START);
         // setProcessInstanceStatus will really set to STATUS_IN_PROGRESS - hint to set START_DT as well
         InternalEvent event = InternalEvent.createActivityStartMessage(startActivityId,
                 mainProcessInst.getId(), 0L, masterRequestId, EventType.EVENTNAME_START);

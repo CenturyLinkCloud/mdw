@@ -1,0 +1,48 @@
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=75,y=107,w=60,h=40
+  transitions:
+  - id: T1
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=186,ly=126,xs=139&233,ys=126&126
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=619,y=109,w=60,h=40
+- id: A3
+  name: |-
+    Custom
+    Activity
+  implementor: com.centurylink.mdw.tests.workflow.LoggingActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=237,y=95,w=104,h=68
+  transitions:
+  - id: T2
+    to: A4
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=378,ly=130,xs=345&412,ys=130&130
+- id: A4
+  name: Dynamic Java
+  implementor: com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity
+  attributes:
+    ClassName: ActivityLogging_A4
+    Java: "package com.centurylink.mdw.tests.workflow;\n\nimport java.util.Map;\n\nimport com.centurylink.mdw.java.JavaExecutionException;\nimport com.centurylink.mdw.java.JavaExecutor;\nimport com.centurylink.mdw.java.MdwJavaException;\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\n\npublic class ActivityLogging_A4 implements JavaExecutor {\n    private ActivityRuntimeContext context;\n\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\n        this.context = context;\n    }\n\n    public Object execute(Map<String,Object> variables) throws JavaExecutionException  {\n        // context\n        context.logInfo(\"context.logInfo()\");\n        context.logDebug(\"context.logDebug()\");\n        context.logError(\"context.logError()\", new Exception(\"context.logError()\"));\n        \n        return null;\n    }\n}\n"
+    WORK_DISPLAY_INFO: x=416,y=97,w=103,h=66
+  transitions:
+  - id: T3
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=568,ly=129,xs=523&614,ys=129&129
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: PUBLIC
+  WORK_DISPLAY_INFO: x=41,y=38,w=149,h=26

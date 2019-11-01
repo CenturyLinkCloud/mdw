@@ -37,6 +37,7 @@ import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
+import com.centurylink.mdw.model.workflow.WorkStatus.InternalLogMessage;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.OfflineMonitor;
 import com.centurylink.mdw.monitor.ProcessMonitor;
@@ -456,7 +457,7 @@ class ProcessExecutorImpl {
                     transInst = createTransitionInstance(transition, processInstanceVO.getId());
                     String tag = logtag(processInstanceVO.getProcessId(),
                             processInstanceVO.getId(), transInst);
-                    logger.info(tag, "Transition initiated from " + transition.getFromId() + " to " + transition.getToId());
+                    logger.info(tag, InternalLogMessage.TRANSITION_INIT.message + " from " + transition.getFromId() + " to " + transition.getToId());
 
                     InternalEvent jmsmsg;
                     jmsmsg = InternalEvent.createActivityStartMessage(
@@ -590,12 +591,12 @@ class ProcessExecutorImpl {
             if (logger.isInfoEnabled()) {
                 logger.info(logtag(processInstanceVO.getProcessId(), processInstanceVO.getId(),
                         processInstanceVO.getMasterRequestId()),
-                        WorkStatus.LOGMSG_PROC_START + " - " + process.getQualifiedName()
+                        InternalLogMessage.PROCESS_START + " - " + process.getQualifiedName()
                                 + (processInstanceVO.isEmbedded() ?
                                 (" (embedded process " + process.getId() + ")") :
                                 ("/" + process.getVersionString())));
             }
-            notifyMonitors(processInstanceVO, WorkStatus.LOGMSG_PROC_START);
+            notifyMonitors(processInstanceVO, InternalLogMessage.PROCESS_START);
             // get start activity ID
             Long startActivityId;
             if (processInstanceVO.isEmbedded()) {
@@ -774,7 +775,7 @@ class ProcessExecutorImpl {
                 } else {
                     ar.startCase = ActivityRuntime.STARTCASE_NORMAL;
                     // notify registered monitors
-                    ar.activity.notifyMonitors(WorkStatus.LOGMSG_START);
+                    ar.activity.notifyMonitors(InternalLogMessage.ACTIVITY_START);
                 }
             } else if (isSyncActivity) {
                 ar.actinst = actInsts.get(0);
@@ -827,7 +828,7 @@ class ProcessExecutorImpl {
 
         if (logger.isInfoEnabled())
             logger.info(logtag(pi.getProcessId(), pi.getId(), ai.getActivityId(), ai.getId()),
-                    WorkStatus.LOGMSG_START + " - " + actVO.getName());
+                    InternalLogMessage.ACTIVITY_START + " - " + actVO.getName());
 
         if (pWorkTransInstId!=null && pWorkTransInstId != 0)
             edao.completeTransitionInstance(pWorkTransInstId, ai.getId());
@@ -880,7 +881,7 @@ class ProcessExecutorImpl {
         edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_FAILED, statusMsg);
         removeActivitySLA(ai, procinst);
         if (logger.isInfoEnabled())
-            logger.info(logtag, WorkStatus.LOGMSG_FAILED + " - " + abbrStatusMsg);
+            logger.info(logtag, InternalLogMessage.ACTIVITY_FAIL + " - " + abbrStatusMsg);
     }
 
     private void completeActivityInstance(ActivityInstance ai, String compcode,
@@ -889,7 +890,7 @@ class ProcessExecutorImpl {
         edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_COMPLETED, compcode);
         removeActivitySLA(ai, procInst);
         if (logger.isInfoEnabled())
-            logger.info(logtag, WorkStatus.LOGMSG_COMPLETE + " - completion code "
+            logger.info(logtag, InternalLogMessage.ACTIVITY_COMPLETE + " - completion code "
                     + (compcode==null?"null":("'"+compcode+"'")));
 
     }
@@ -900,13 +901,13 @@ class ProcessExecutorImpl {
         edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_CANCELLED, statusMsg);
         removeActivitySLA(ai, procInst);
         if (logger.isInfoEnabled())
-            logger.info(logtag, WorkStatus.LOGMSG_CANCELLED + " - " + statusMsg);
+            logger.info(logtag, InternalLogMessage.ACTIVITY_CANCEL + " - " + statusMsg);
     }
 
     private void holdActivityInstance(ActivityInstance ai, String logtag)
             throws DataAccessException, SQLException {
         edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_HOLD, null);
-        if (logger.isInfoEnabled()) logger.info(logtag, WorkStatus.LOGMSG_HOLD);
+        if (logger.isInfoEnabled()) logger.info(logtag, InternalLogMessage.ACTIVITY_HOLD.message);
     }
 
     private void suspendActivityInstance(BaseActivity activity, ActivityInstance ai, String logtag, String additionalMsg)
@@ -914,11 +915,11 @@ class ProcessExecutorImpl {
         edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_WAITING, null);
         if (logger.isInfoEnabled()) {
             if (additionalMsg!=null)
-                logger.info(logtag, WorkStatus.LOGMSG_SUSPEND + " - " + additionalMsg);
+                logger.info(logtag, InternalLogMessage.ACTIVITY_SUSPEND + " - " + additionalMsg);
             else
-                logger.info(logtag, WorkStatus.LOGMSG_SUSPEND);
+                logger.info(logtag, InternalLogMessage.ACTIVITY_SUSPEND.message);
         }
-        activity.notifyMonitors(WorkStatus.LOGMSG_SUSPEND);
+        activity.notifyMonitors(InternalLogMessage.ACTIVITY_SUSPEND);
     }
 
     CompletionCode finishActivityInstance(BaseActivity activity,
@@ -982,7 +983,7 @@ class ProcessExecutorImpl {
                 completeActivityInstance(ai, origCompCode, pi, logtag);
 
                 // notify registered monitors
-                activity.notifyMonitors(WorkStatus.LOGMSG_COMPLETE);
+                activity.notifyMonitors(InternalLogMessage.ACTIVITY_COMPLETE);
 
                 if (activity instanceof FinishActivity) {
                     String compcode = ((FinishActivity)activity).getProcessCompletionCode();
@@ -1125,7 +1126,7 @@ class ProcessExecutorImpl {
                 } else if (actInst.getStatusCode()==WorkStatus.STATUS_FAILED) {
                     completeActivityInstance(actInst, compCode, parentInst, logtag);
                     // notify registered monitors
-                    cntrActivity.notifyMonitors(WorkStatus.LOGMSG_FAILED);
+                    cntrActivity.notifyMonitors(InternalLogMessage.ACTIVITY_FAIL);
 
                     InternalEvent jmsmsg = InternalEvent.createActivityNotifyMessage(actInst,
                             EventType.FINISH, masterRequestId, null);
@@ -1153,7 +1154,7 @@ class ProcessExecutorImpl {
                     outgoingWorkTransVO = findTaskActionWorkTransition(parentInst, actInst, parsedCompCode.getCompletionCode());
                 if (actInst.getStatusCode() != WorkStatus.STATUS_COMPLETED && actInst.getStatusCode() != WorkStatus.STATUS_CANCELLED) {
                     completeActivityInstance(actInst, compCode, parentInst, logtag);
-                    cntrActivity.notifyMonitors(WorkStatus.LOGMSG_COMPLETE);
+                    cntrActivity.notifyMonitors(InternalLogMessage.ACTIVITY_COMPLETE);
                     InternalEvent jmsmsg;
                     int delay = 0;
                     if (outgoingWorkTransVO != null) {
@@ -1188,7 +1189,7 @@ class ProcessExecutorImpl {
                         cancelActivityInstance(actInst, "Subprocess is cancelled", parentInst, logtag);
                     } else {
                         completeActivityInstance(actInst, compCode, parentInst, logtag);
-                        cntrActivity.notifyMonitors(WorkStatus.LOGMSG_COMPLETE);
+                        cntrActivity.notifyMonitors(InternalLogMessage.ACTIVITY_COMPLETE);
                     }
                     InternalEvent jmsmsg = InternalEvent.createActivityNotifyMessage(actInst,
                             EventType.FINISH, masterRequestId, compCode);
@@ -1253,10 +1254,10 @@ class ProcessExecutorImpl {
         if (!noNotify) sendInternalEvent(retMsg);
         if (logger.isInfoEnabled()) {
             logger.info(logtag(processVO.getId(), processInst.getId(), processInst.getMasterRequestId()),
-                    (isCancelled?WorkStatus.LOGMSG_PROC_CANCEL:WorkStatus.LOGMSG_PROC_COMPLETE) + " - " + processVO.getQualifiedName()
+                    (isCancelled?InternalLogMessage.PROCESS_CANCEL.message:InternalLogMessage.PROCESS_COMPLETE.message) + " - " + processVO.getQualifiedName()
                             + (isCancelled?"":completionCode==null?" completion code is null":(" completion code = "+completionCode)));
         }
-        notifyMonitors(processInst, WorkStatus.LOGMSG_PROC_COMPLETE);
+        notifyMonitors(processInst, InternalLogMessage.PROCESS_COMPLETE);
     }
 
     /**
@@ -1422,7 +1423,7 @@ class ProcessExecutorImpl {
             } else {    // status is null or Completed
                 completeActivityInstance(actinst, completionCode.toString(), procinst, logtag);
                 // notify registered monitors
-                activity.notifyMonitors(WorkStatus.LOGMSG_COMPLETE);
+                activity.notifyMonitors(InternalLogMessage.ACTIVITY_COMPLETE);
             }
             InternalEvent event = InternalEvent.createActivityNotifyMessage(actinst,
                     completionCode.getEventType(), procinst.getMasterRequestId(),
@@ -1877,7 +1878,7 @@ class ProcessExecutorImpl {
     /**
      * Notify registered ProcessMonitors.
      */
-    public void notifyMonitors(ProcessInstance processInstance, String event) {
+    public void notifyMonitors(ProcessInstance processInstance, InternalLogMessage logMessage) {
         // notify registered monitors
         Process processVO = getMainProcessDefinition(processInstance);
         Package pkg = PackageCache.getProcessPackage(processVO.getId());
@@ -1910,10 +1911,10 @@ class ProcessExecutorImpl {
                     if (monitor instanceof OfflineMonitor) {
                         @SuppressWarnings("unchecked")
                         OfflineMonitor<ProcessRuntimeContext> processOfflineMonitor = (OfflineMonitor<ProcessRuntimeContext>) monitor;
-                        new OfflineMonitorTrigger<>(processOfflineMonitor, runtimeContext).fire(event);
+                        new OfflineMonitorTrigger<>(processOfflineMonitor, runtimeContext).fire(logMessage);
                     }
                     else {
-                        if (WorkStatus.LOGMSG_PROC_START.equals(event)) {
+                        if (logMessage == InternalLogMessage.PROCESS_START) {
                             Map<String,Object> updated = monitor.onStart(runtimeContext);
                             if (updated != null) {
                                 for (String varName : updated.keySet()) {
@@ -1939,10 +1940,10 @@ class ProcessExecutorImpl {
                                 }
                             }
                         }
-                        else if (WorkStatus.LOGMSG_PROC_ERROR.equals(event)) {
+                        else if (logMessage == InternalLogMessage.PROCESS_ERROR) {
                             monitor.onError(runtimeContext);
                         }
-                        else if (WorkStatus.LOGMSG_PROC_COMPLETE.equals(event)) {
+                        else if (logMessage == InternalLogMessage.PROCESS_COMPLETE) {
                             monitor.onFinish(runtimeContext);
                         }
                     }

@@ -42,15 +42,51 @@ public interface WorkStatus {
     String[] allStatusNames = {STATUSNAME_PENDING_PROCESS, STATUSNAME_IN_PROGRESS,
         STATUSNAME_FAILED, STATUSNAME_COMPLETED, STATUSNAME_CANCELLED, STATUSNAME_HOLD, STATUSNAME_WAITING};
 
-    String LOGMSG_START = "Activity started";
-    String LOGMSG_EXECUTE = "Activity executing";
-    String LOGMSG_COMPLETE = "Activity completed";
-    String LOGMSG_SUSPEND = "Activity suspended";
-    String LOGMSG_CANCELLED = "Activity cancelled";
-    String LOGMSG_FAILED = "Activity failed";
-    String LOGMSG_HOLD = "Activity on hold";
-    String LOGMSG_PROC_START = "Process started";
-    String LOGMSG_PROC_COMPLETE = "Process completed";
-    String LOGMSG_PROC_CANCEL = "Process cancelled";
-    String LOGMSG_PROC_ERROR = "Process errored";
+    enum InternalLogMessage {
+
+        ACTIVITY_START("Activity started", STATUS_IN_PROGRESS, STATUSNAME_IN_PROGRESS),
+        ACTIVITY_EXECUTE("Activity executing", STATUS_IN_PROGRESS, STATUSNAME_IN_PROGRESS),
+        ACTIVITY_COMPLETE("Activity completed", STATUS_COMPLETED, STATUSNAME_COMPLETED),
+        ACTIVITY_SUSPEND("Activity suspended", STATUS_WAITING, STATUSNAME_WAITING),
+        ACTIVITY_CANCEL("Activity cancelled", STATUS_CANCELLED, STATUSNAME_CANCELLED),
+        ACTIVITY_FAIL("Activity failed", STATUS_FAILED, STATUSNAME_FAILED),
+        ACTIVITY_HOLD("Activity on hold", STATUS_HOLD, STATUSNAME_HOLD),
+        PROCESS_START("Process started", STATUS_IN_PROGRESS, STATUSNAME_IN_PROGRESS),
+        PROCESS_COMPLETE("Process completed", STATUS_COMPLETED, STATUSNAME_COMPLETED),
+        PROCESS_CANCEL("Process cancelled", STATUS_CANCELLED, STATUSNAME_CANCELLED),
+        PROCESS_ERROR("Process errored", STATUS_FAILED, STATUSNAME_FAILED),
+        TRANSITION_INIT("Transition initiated", STATUS_IN_PROGRESS, STATUSNAME_IN_PROGRESS);
+
+        public final String message;
+        public final Integer status;
+        public final String statusName;
+
+        InternalLogMessage(String message, Integer status, String statusName) {
+            this.message = message;
+            this.status = status;
+            this.statusName = statusName;
+        }
+
+        public String toString() {
+            return message;
+        }
+
+        public static boolean isInternalMessage(String message) {
+            for (InternalLogMessage internalLogMessage : InternalLogMessage.values()) {
+                if (message.startsWith(internalLogMessage.message)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static InternalLogMessage match(String message) {
+            for (InternalLogMessage internalMessage : InternalLogMessage.values()) {
+                if (message.startsWith(internalMessage.message)) {
+                    return internalMessage;
+                }
+            }
+            return null;
+        }
+    }
 }
