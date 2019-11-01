@@ -7,6 +7,8 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
 
   $scope.setFullWidth(true);
 
+  $scope.stagingUser = $scope.authUser.cuid;
+
   $scope.packageName = $routeParams.packageName;
   $scope.assetName = $routeParams.assetName;
   if ($scope.assetName.endsWith('.proc')) {
@@ -22,8 +24,6 @@ editMod.controller('EditorController', ['$scope', '$cookieStore', '$routeParams'
       $scope.process = proc;
     };
   }
-
-  $scope.stagingUser = sessionStorage.getItem('stagingUser');
 
   $scope.asset = Assets.get({
       packageName: $routeParams.packageName,

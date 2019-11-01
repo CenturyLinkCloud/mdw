@@ -513,6 +513,7 @@ public class ProcessEngineDriver {
                                 throw ex;
                             }
                         }
+                        throw ex;
                     }
                     finally {
                         edbao.stopTransaction(transaction);

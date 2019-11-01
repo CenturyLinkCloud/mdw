@@ -17,6 +17,7 @@ import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.StagingServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.util.JsonUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,7 +30,7 @@ import static com.centurylink.mdw.services.StagingServices.STAGING;
 public class StagingApi extends JsonRestService {
 
     @Override
-    protected User authorize(String path, JSONObject content, Map<String,String> headers) throws AuthorizationException {
+    protected User authorize(String path, JSONObject content, Map<String, String> headers) throws AuthorizationException {
         User user = null;
         String userId = headers.get(Listener.AUTHENTICATED_USER_HEADER);
         if (userId != null)
@@ -41,8 +42,7 @@ public class StagingApi extends JsonRestService {
         if (user.getCuid().equals(stagingUser)) {
             if (!user.hasRole(Role.ASSET_DESIGN))
                 throw new AuthorizationException(HTTP_401_UNAUTHORIZED, "Not authorized: " + user.getCuid());
-        }
-        else {
+        } else {
             if (!user.hasRole(Workgroup.SITE_ADMIN_GROUP))
                 throw new AuthorizationException(HTTP_401_UNAUTHORIZED, "Not authorized");
         }
@@ -51,33 +51,29 @@ public class StagingApi extends JsonRestService {
 
     /**
      * Paths in case this API becomes public
-     *   / = get all user staging areas
-     *   /&lt;cuid> = get staging area for user
-     *   /&lt;cuid>/assets = staged assets for user
+     * / = get all user staging areas
+     * /&lt;cuid> = get staging area for user
+     * /&lt;cuid>/assets = staged assets for user
      */
     @Override
-    public JSONObject get(String path, Map<String,String> headers) throws ServiceException, JSONException {
+    public JSONObject get(String path, Map<String, String> headers) throws ServiceException, JSONException {
         String[] segments = getSegments(path);
         try {
             if (segments.length == 4) {
                 return new JsonArray(getStagingAreas()).getJson();
-            }
-            else if (segments.length == 5) {
+            } else if (segments.length == 5) {
                 return getUserStagingArea(segments[4]).getJson();
-            }
-            else if (segments.length == 6) {
+            } else if (segments.length == 6) {
                 StagingArea userStagingArea = getUserStagingArea(segments[4]);
                 String sub = segments[5];
                 if (sub.equals("assets")) {
-                    LinkedHashMap<String,List<AssetInfo>> stagedAssets = getStagedAssets(userStagingArea.getUserCuid());
+                    LinkedHashMap<String, List<AssetInfo>> stagedAssets = getStagedAssets(userStagingArea.getUserCuid());
                     return new JsonListMap<>(stagedAssets).getJson();
                 }
             }
-        }
-        catch (ServiceException ex) {
+        } catch (ServiceException ex) {
             throw ex;
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
         }
         throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
@@ -94,9 +90,9 @@ public class StagingApi extends JsonRestService {
         return userStagingArea;
     }
 
-    private LinkedHashMap<String,List<AssetInfo>> getStagedAssets(String cuid) throws ServiceException {
-        LinkedHashMap<String,List<AssetInfo>> linkedHashMap = new LinkedHashMap<>();
-        Map<String,List<AssetInfo>> stagedAssets = getStagingServices().getStagedAssets(cuid);
+    private LinkedHashMap<String, List<AssetInfo>> getStagedAssets(String cuid) throws ServiceException {
+        LinkedHashMap<String, List<AssetInfo>> linkedHashMap = new LinkedHashMap<>();
+        Map<String, List<AssetInfo>> stagedAssets = getStagingServices().getStagedAssets(cuid);
         for (String pkg : stagedAssets.keySet()) {
             linkedHashMap.put(pkg, stagedAssets.get(pkg));
         }
@@ -107,7 +103,7 @@ public class StagingApi extends JsonRestService {
      * Prepare staging area, or add assets to staging area.
      */
     @Override
-    public JSONObject post(String path, JSONObject content, Map<String,String> headers)
+    public JSONObject post(String path, JSONObject content, Map<String, String> headers)
             throws ServiceException, JSONException {
         String[] segments = getSegments(path);
         if (segments.length == 5) {
@@ -117,8 +113,7 @@ public class StagingApi extends JsonRestService {
                 headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(Status.ACCEPTED.getCode()));
             }
             return userStagingArea.getJson();
-        }
-        else if (segments.length == 6) {
+        } else if (segments.length == 6) {
             StagingArea userStagingArea = getUserStagingArea(segments[4]);
             String sub = segments[5];
             if (sub.equals("assets")) {
@@ -147,7 +142,7 @@ public class StagingApi extends JsonRestService {
      * Patch requests mean 'Promote' (or merge with main branch).
      */
     @Override
-    public JSONObject patch(String path, JSONObject content, Map<String,String> headers)
+    public JSONObject patch(String path, JSONObject content, Map<String, String> headers)
             throws ServiceException, JSONException {
         String[] segments = getSegments(path);
         if (segments.length == 6 || segments.length == 8) {
@@ -166,6 +161,29 @@ public class StagingApi extends JsonRestService {
         throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
     }
 
+    /**
+     * Put requests mean stage 'Rollback' to previous asset versions.
+     */
+    @Override
+    public JSONObject put(String path, JSONObject content, Map<String, String> headers)
+            throws ServiceException, JSONException {
+        String[] segments = getSegments(path);
+        if (segments.length == 6) {
+            StagingArea userStagingArea = getUserStagingArea(segments[4]);
+            String sub = segments[5];
+            if (sub.equals("assetVersions")) {
+                JSONObject assetVersions = content.getJSONObject("assetVersions");
+                Map<String,String> assetVers = JsonUtil.getMap(assetVersions);
+                rollbackAssets(userStagingArea.getUserCuid(), assetVers);
+                return null;
+            }
+        }
+        throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
+    }
+
+    /**
+     * Delete means unstage.
+     */
     @Override
     public JSONObject delete(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
@@ -202,6 +220,10 @@ public class StagingApi extends JsonRestService {
 
     private void promoteAssets(String cuid, String comment) throws ServiceException {
         getStagingServices().promoteAssets(cuid, comment);
+    }
+
+    private void rollbackAssets(String cuid, Map<String,String> assetVersions) throws ServiceException {
+        getStagingServices().rollbackAssets(cuid, assetVersions);
     }
 
     private StagingServices stagingServices;

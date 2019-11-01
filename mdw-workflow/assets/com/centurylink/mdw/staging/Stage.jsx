@@ -1,5 +1,6 @@
 import React, {Component} from '../node/node_modules/react';
 import MdwContext from '../react/MdwContext';
+import HelpButton from '../react/HelpButton.jsx';
 import Progress from '../react/Progress.jsx';
 import StagesPopButton from './StagesPopButton.jsx';
 import NoStage from './NoStage.jsx';
@@ -159,7 +160,6 @@ class Stage extends Component {
   }
 
   render() {
-    sessionStorage.setItem('stagingUser', this.stageCuid);
     const userName = this.state.stage ? this.state.stage.userName : undefined;
     const stagingBranch = this.state.stage ? this.state.stage.branch : undefined;
     const isStagePrepared = this.state.stage && this.state.stage.prepared;
@@ -175,6 +175,8 @@ class Stage extends Component {
                 Staged Assets {userName ? ' for ' + userName : ''}
               </div>
               <div style={{float:'right'}}>
+                <HelpButton title="Staging Help"
+                  url={this.context.hubRoot + '#/asset/com.centurylink.mdw.staging/readme.md'} />
                 {this.context.authUser.workgroups.includes('Site Admin') &&
                   <StagesPopButton />
                 }

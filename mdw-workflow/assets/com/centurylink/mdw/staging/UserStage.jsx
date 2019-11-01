@@ -4,6 +4,8 @@ import {Link} from '../node/node_modules/react-router-dom';
 import {Button, Glyphicon} from '../node/node_modules/react-bootstrap';
 import {AsyncTypeahead, Menu, Highlighter} from '../node/node_modules/react-bootstrap-typeahead';
 import MdwContext from '../react/MdwContext';
+import HelpButton from '../react/HelpButton.jsx';
+import Confirm from '../react/Confirm.jsx';
 import Enter from '../react/Enter.jsx';
 import StagesPopButton from './StagesPopButton.jsx';
 import NewAsset from './NewAsset.jsx';
@@ -24,13 +26,16 @@ class UserStage extends Component {
     this.toggleAllSelect = this.toggleAllSelect.bind(this);
     this.handleStage = this.handleStage.bind(this);
     this.handleUnstage = this.handleUnstage.bind(this);
+    this.handleConfirmUnstage = this.handleConfirmUnstage.bind(this);
+    this.doUnstage = this.doUnstage.bind(this);
     this.handlePromote = this.handlePromote.bind(this);
-    this.doPromote = this.doPromote.bind(this);
     this.handleConfirmPromote = this.handleConfirmPromote.bind(this);
+    this.doPromote = this.doPromote.bind(this);
     this.findAssets = this.findAssets.bind(this);
     this.renderAssetMenu = this.renderAssetMenu.bind(this);
 
-    this.confirmDialog = React.createRef();
+    this.confirmUnstageDialog = React.createRef();
+    this.confirmPromoteDialog = React.createRef();
 
     this.state = {
       stagedAssets: undefined,
@@ -203,12 +208,45 @@ class UserStage extends Component {
     .then(json => {
       if (!ok) {
         $mdwUi.showMessage(json.status.message);
+        $mdwUi.hubLoading(false);
       }
-      location = this.context.hubRoot + '/staging/' + this.props.stage.userCuid;
+      else {
+        location = this.context.hubRoot + '/staging/' + this.props.stage.userCuid;
+      }
     });
   }
 
+  anySelectedAssetHasChanges() {
+    for (let pkg in this.state.stagedAssets) {
+      for (let i in this.state.stagedAssets[pkg]) {
+        let asset = this.state.stagedAssets[pkg][i];
+        if (this.state.selectedAssets.indexOf(pkg + '/' + asset.name) >= 0) {
+          if (asset.vcsDiffType) {
+            return true;
+          }
+        } 
+      }
+    }
+  }
+
   handleUnstage() {
+    if (this.state.selectedAssets.length > 0) {
+      if (this.anySelectedAssetHasChanges()) {
+        this.confirmUnstageDialog.current.open('Selected asset(s) have changes.  Unstage?');
+      }
+      else {
+        this.doUnstage();
+      }
+    }
+  }
+
+  handleConfirmUnstage(result) {
+    if (result) {
+      this.doUnstage(result);
+    }
+  }
+
+  doUnstage() {
     if (this.state.selectedAssets.length > 0) {
       let assetPaths = '%5B' + this.state.selectedAssets.join(',') + '%5D';
       const url = this.context.serviceRoot + '/com/centurylink/mdw/staging/' + 
@@ -237,6 +275,25 @@ class UserStage extends Component {
     }
   }
 
+  handlePromote() {
+    const message = 'All changes from ' + this.props.stage.branch.name + ' branch will be merged into ' + $mdwGitBranch + '.';
+    if (!this.state.allSelected) {
+      this.toggleAllSelect()
+      .then(() => {
+        this.confirmPromoteDialog.current.open(message);
+      });
+    }
+    else {
+      this.confirmPromoteDialog.current.open(message);
+    }
+  }
+  
+  handleConfirmPromote(entered) {
+    if (entered) {
+      this.doPromote(entered);
+    }
+  }
+
   doPromote(message) {
     const url = this.context.serviceRoot + '/com/centurylink/mdw/staging/' + 
         this.props.stage.userCuid + '/assets';
@@ -262,25 +319,6 @@ class UserStage extends Component {
         $mdwUi.showMessage(json.status.message);
       }
     });
-  }
-
-  handlePromote() {
-    const message = 'All changes from ' + this.props.stage.branch.name + ' branch will be merged into ' + $mdwGitBranch + '.';
-    if (!this.state.allSelected) {
-      this.toggleAllSelect()
-      .then(() => {
-        this.confirmDialog.current.open(message);
-      });
-    }
-    else {
-      this.confirmDialog.current.open(message);
-    }
-  }
-  
-  handleConfirmPromote(message) {
-    if (message) {
-      this.doPromote(message);
-    }
   }
 
   findAssets(input) {
@@ -381,7 +419,7 @@ class UserStage extends Component {
       <div>
         <div className="panel-heading mdw-heading" style={{borderColor:'#ddd'}}>
           <div className="mdw-heading-label">
-            <input type="checkbox" style={{marginRight:'6px'}} ref={this.allSelectRef}
+            <input type="checkbox" style={{marginRight:'6px'}}
               checked={this.state.allSelected} 
               onChange={() => this.toggleAllSelect()} />
             Staged Assets for {this.props.stage.userName}
@@ -406,6 +444,8 @@ class UserStage extends Component {
             renderMenu={this.renderAssetMenu} 
             onChange={this.handleStage} />
           <div style={{float:'right'}}>
+            <HelpButton title="Staging Help"
+              url={this.context.hubRoot + '#/asset/com.centurylink.mdw.staging/readme.md'} />
             {this.context.authUser.workgroups.includes('Site Admin') &&
               <StagesPopButton />
             }
@@ -424,9 +464,12 @@ class UserStage extends Component {
               <Glyphicon glyph="arrow-right" />
               {' Promote'}
             </Button>
+            <Confirm title="Unstage Assets" 
+              ref={this.confirmUnstageDialog} 
+              onClose={this.handleConfirmUnstage} />
             <Enter title="Promote Assets" 
               label="Commit Message: "
-              ref={this.confirmDialog} 
+              ref={this.confirmPromoteDialog} 
               onClose={this.handleConfirmPromote} />
           </div>
         </div>

@@ -1,22 +1,22 @@
 <ul class="dropdown-menu mdw-popover-menu">
   <li ng-if="instanceEditAllowed() && (process.instanceId || !archived)">
     <a ng-href="#/edit/{{process.packageName}}/{{process.name}}.proc/{{process.id}}">
-      Instance
+      Edit Instance
     </a>
   </li>
   <li ng-if="instanceEditAllowed() && (!process.instanceId && archived)" >
     <a ng-href="#/edit/{{process.packageName}}/{{process.name}}.proc/{{process.id}}/{{process.version}}">
-      Instance (from v{{process.version}})
+      Edit Instance (from v{{process.version}})
     </a>
   </li>
   <li ng-if="instanceEditAllowed() && (!process.instanceId && archived)" >
     <a ng-href="#/edit/{{process.packageName}}/{{process.name}}.proc/{{process.id}}">
-      Instance (from latest)
+      Edit Instance (from latest)
     </a>
   </li>
   <li ng-if="definitionEditAllowed()" >
-    <a ng-href="#/edit/{{process.packageName}}/{{process.name}}.proc">
-      Definition
+    <a href="" ng-click="stageAsset()">
+      Stage Definition for Edit
     </a>
   </li>
 </ul>
