@@ -24,6 +24,8 @@ import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessList;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
+import com.centurylink.mdw.util.log.LogLine;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -255,6 +257,49 @@ public class WorkflowDataAccess extends CommonDataAccess {
         }
         catch (Exception ex) {
             throw new DataAccessException(-1, ex.getMessage(), ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    public void addActivityLog(Long activityInstanceId, String level, String message) throws DataAccessException {
+        String sql = "insert into ACTIVITY_LOG" +
+                "\n (activity_instance_id, level, message)" +
+                "\n values (?, ?, ?)";
+        try {
+            db.openConnection();
+            Object[] args = new Object[3];
+            args[0] = activityInstanceId;
+            args[1] = level;
+            args[2] = message;
+            db.runUpdate(sql, args);
+            db.commit();
+        }
+        catch (SQLException ex) {
+            throw new DataAccessException("Failed to add activity log" + activityInstanceId + ": " + message, ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    public List<LogLine> getActivityLog(Long activityInstanceId) throws DataAccessException {
+        String sql = "select * from ACTIVITY_LOG where activity_instance_id = ? order by CREATE_DT";
+        List<LogLine> logLines = new ArrayList<>();
+        try {
+            db.openConnection();
+            ResultSet rs = db.runSelect(sql, activityInstanceId);
+            while (rs.next()) {
+                Date when = rs.getTimestamp("CREATE_DT");
+                String level = rs.getString("LEVEL");
+                String message = rs.getString("MESSAGE");
+                logLines.add(new LogLine(when.toInstant(), StandardLogger.LogLevel.valueOf(level), message));
+            }
+            return logLines;
+        }
+        catch (SQLException ex) {
+            throw new DataAccessException("Failed to retrieve activity: " + activityInstanceId, ex);
         }
         finally {
             db.closeConnection();

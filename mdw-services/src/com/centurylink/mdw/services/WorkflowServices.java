@@ -26,6 +26,7 @@ import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
+import com.centurylink.mdw.util.log.LogLine;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -170,6 +171,7 @@ public interface WorkflowServices {
     TreeMap<Instant,List<ActivityAggregate>> getActivityBreakdown(Query query) throws ServiceException;
 
     ActivityInstance getActivity(Long instanceId) throws ServiceException;
+    List<LogLine> getActivityLog(Long instanceId) throws ServiceException;
 
     Long launchProcess(String name, String masterRequestId, String ownerType,
             Long ownerId, Map<String, Object> params) throws ServiceException;

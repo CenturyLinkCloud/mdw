@@ -18,10 +18,7 @@ package com.centurylink.mdw.service.rest;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
-import com.centurylink.mdw.model.JsonArray;
-import com.centurylink.mdw.model.JsonExportable;
-import com.centurylink.mdw.model.JsonListMap;
-import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.*;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
@@ -33,6 +30,7 @@ import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import com.centurylink.mdw.util.log.LogLine;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.json.JSONArray;
@@ -42,7 +40,10 @@ import org.json.JSONObject;
 import javax.ws.rs.Path;
 import java.text.ParseException;
 import java.time.Instant;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 @Path("/Activities")
 @Api("Runtime activity")
@@ -79,7 +80,15 @@ public class Activities extends JsonRestService implements JsonExportable {
             if (segOne != null) {
                 try {
                     long instanceId = Long.parseLong(segOne);
-                    return getWorkflowServices().getActivity(instanceId).getJson();
+                    if ("log".equals(getSegment(path, 2))) {
+                        List<LogLine> log =  getWorkflowServices().getActivityLog(instanceId);
+                        if (log == null)
+                            throw new ServiceException(ServiceException.NOT_FOUND, "Log not found for activity: " + instanceId);
+                        return new JsonList<>(log, "log").getJson();
+                    }
+                    else{
+                        return getWorkflowServices().getActivity(instanceId).getJson();
+                    }
                 }
                 catch (NumberFormatException ex) {
                     // path must be special
