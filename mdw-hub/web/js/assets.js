@@ -2,8 +2,8 @@
 
 var assetMod = angular.module('assets', ['ngResource', 'mdw']);
 
-assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$http', '$cookieStore', '$uibModal', 'mdw', 'util', 'uiUtil', 'Assets', 'GitVcs', 'WorkflowCache',
-                                           function($scope, $location, $route, $http, $cookieStore, $uibModal, mdw, util, uiUtil, Assets, GitVcs, WorkflowCache) {
+assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$http', '$uibModal', 'mdw', 'util', 'uiUtil', 'Assets', 'GitVcs', 'WorkflowCache',
+                                           function($scope, $location, $route, $http, $uibModal, mdw, util, uiUtil, Assets, GitVcs, WorkflowCache) {
   $scope.pkgList = Assets.get({}, 
     function(data) {
       if (!$scope.pkgList.packages || $scope.pkgList.packages.length === 0) {
@@ -117,228 +117,6 @@ assetMod.controller('PackagesController', ['$scope', '$location', '$route', '$ht
         $scope.getExportPackagesParam();
   };
 
-  $scope.discoveryUrls = $cookieStore.get('discoveryUrls');
-  $scope.discoveryType = 'central';
-  $scope.groupId = $cookieStore.get('groupId');
-  if (!$scope.discoveryUrls)
-    $scope.discoveryUrls = mdw.discoveryUrls;
-  if (!$scope.groupId)
-    $scope.groupId = 'com.centurylink.mdw.assets';
-
-  $scope.discoverGitAssets = function() {
-      $scope.repositoriesList = Assets.get({discoveryUrls: $scope.discoveryUrls, discoveryType: 'git'},
-        function(data) {
-          $scope.discoveryMessage = null;
-          $scope.repositoriesList.repositories.forEach(function(repository) {
-            var url = repository.url;
-            if (url.indexOf('?') != -1)
-              url = url.substr(0, url.indexOf('?'));
-            var lines = url.split('@');
-            if (lines[1] != null)
-               url = lines[0].substr(0, lines[0].indexOf("//")+2) + lines[1];
-            repository.repoUrl = url;
-          });
-          $scope.applyRepoCollapsedState();
-          $scope.applyBranchCollapsedState();
-          $scope.applyTagCollapsedState();
-        },
-        function(error) {
-          if (error.data.status)
-            $scope.discoveryMessage = 'Discovery failed: ' + error.data.status.message;
-        }
-      );
-  };
-
-  $scope.saveRepoCollapsedState = function() {
-    var st = {};
-    $scope.repositoriesList.repositories.forEach(function(repository) {
-    if (repository.collapsed)
-      st[repository.url] = true;
-    });
-    $cookieStore.put('repoCollapsedState', st);
-  };
-
-  $scope.saveBranchCollapsedState = function() {
-    var st = {};
-    $scope.repositoriesList.repositories.forEach(function(repository) {
-      if (repository.branches.collapsed)
-        st[repository.url+'_branch'] = true;
-    });
-    $cookieStore.put('branchCollapsedState', st);
-  };
-
-  $scope.saveTagCollapsedState = function() {
-    var st = {};
-    $scope.repositoriesList.repositories.forEach(function(repository) {
-      if (repository.tags.collapsed)
-        st[repository.url+'_tag'] = true;
-    });
-    $cookieStore.put('tagCollapsedState', st);
-  };
-
-  $scope.applyRepoCollapsedState = function() {
-    var st = $cookieStore.get('repoCollapsedState');
-    if (st) {
-      util.getProperties(st).forEach(function(repoUrl) {
-        var col = st[repoUrl];
-        if (col === true) {
-          if($scope.repositoriesList.repositories) {
-            for (var i = 0; i < $scope.repositoriesList.repositories.length; i++) {
-              if (repoUrl == $scope.repositoriesList.repositories[i].url) {
-                $scope.repositoriesList.repositories[i].collapsed = true;
-                break;
-              }
-            }
-          }
-        }
-      });
-    }
-  };
-
-  $scope.applyBranchCollapsedState = function() {
-    var st = $cookieStore.get('branchCollapsedState');
-    if (st) {
-      util.getProperties(st).forEach(function(branch) {
-        var col = st[branch];
-        if (col === true) {
-          if ($scope.repositoriesList.repositories) {
-            for (var i = 0; i < $scope.repositoriesList.repositories.length; i++) {
-              if (branch === $scope.repositoriesList.repositories[i].url+"_branch") {
-                $scope.repositoriesList.repositories[i].branches.collapsed = true;
-                break;
-              }
-            }
-          }
-        }
-      });
-    }
-  };
-
-  $scope.applyTagCollapsedState = function() {
-      var st = $cookieStore.get('tagCollapsedState');
-      if (st) {
-        util.getProperties(st).forEach(function(tag) {
-          var col = st[tag];
-          if (col === true) {
-            if($scope.repositoriesList.repositories) {
-              for (var i = 0; i < $scope.repositoriesList.repositories.length; i++) {
-                if (tag === $scope.repositoriesList.repositories[i].url+"_tag") {
-                  $scope.repositoriesList.repositories[i].tags.collapsed = true;
-                  break;
-                }
-              }
-            }
-          }
-        });
-      }
-    };
-
-  $scope.collapse = function(repository) {
-    repository.collapsed = true;
-    $scope.saveRepoCollapsedState();
-  };
-
-  $scope.expand = function(repository) {
-    repository.collapsed = false;
-    $scope.saveRepoCollapsedState();
-  };
-
-  $scope.collapseBranch = function(branch) {
-    branch.collapsed = true;
-    $scope.saveBranchCollapsedState();
-  };
-
-  $scope.expandBranch = function(branch) {
-    branch.collapsed = false;
-    $scope.saveBranchCollapsedState();
-  };
-
-  $scope.collapseTag = function(tag) {
-    tag.collapsed = true;
-    $scope.saveTagCollapsedState();
-  };
-
-  $scope.expandTag = function(tag) {
-    tag.collapsed = false;
-    $scope.saveTagCollapsedState();
-  };
-
-  $scope.discover = function() {
-    $cookieStore.put('groupId', $scope.groupId);
-    $scope.discoveredPkgList = null;
-    $scope.pkgList = Assets.get({discoveryUrls: $scope.discoveryUrl, branch:$scope.branch , discoveryType: $scope.discoveryType, groupId: $scope.groupId},
-      function(data) {
-        $scope.discoveryMessage = null;
-        $scope.discoveredPkgList = data;
-        $scope.discoveredPkgList.selectedState = { all: false };
-        $scope.discoveredPkgList.toggleAll = function() {
-          $scope.discoveredPkgList.packages.forEach(function(pkg) {
-            pkg.selected = $scope.discoveredPkgList.selectedState.all;
-          });
-        };
-        $scope.discoveredPkgList.notAllSelected = function() {
-          $scope.discoveredPkgList.selectedState.all = false;
-        };
-        $scope.discoveredPkgList.getSelected = function() {
-          var selected = [];
-          if ($scope.discoveredPkgList.packages) {
-            $scope.discoveredPkgList.packages.forEach(function(pkg) {
-              if (pkg.selected)
-                selected.push(pkg);
-            });
-          }
-          return selected;
-        };
-      },
-      function(error) {
-        if (error.data.status)
-          $scope.discoveryMessage = 'Discovery failed: ' + error.data.status.message;
-      }
-    );    
-  };
-  
-  $scope.clear = function() {
-    $scope.discoveredPkgList = null; 
-  };
-
-  $scope.discoverFromGit = function(repoUrl, branch) {
-    $cookieStore.put('discoveryUrls', $scope.discoveryUrls);
-    $scope.discoveryUrl =  repoUrl;
-    $scope.branch = branch;
-    $scope.closePopover();
-    $scope.discover();
-  };
-
-  $scope.stopPropagation = function($event) {
-    $event.stopPropagation();
-    $event.preventDefault();
-  };
-  
-  $scope.importDiscovered = function() {
-    var pkgsObj = { packages: [] };
-    
-    $scope.discoveredPkgList.getSelected().forEach(function(pkg) {
-      if ($scope.discoveryType === 'central')
-        pkgsObj.packages.push(pkg.artifact + "-" + pkg.version);
-      else
-        pkgsObj.packages.push(pkg.name);
-    });
-    
-    $scope.pkgList = Assets.put({discoveryUrl: $scope.discoveryUrl, branch:$scope.branch, discoveryType: $scope.discoveryType, groupId: $scope.groupId}, pkgsObj,
-      function(data) {
-        $scope.discoveryMessage = null;
-        // leave cache error logging to the server side
-        if ($scope.cacheRefresh)
-          WorkflowCache.refresh({}, { distributed: true });
-        $location.path('/packages');
-      },
-      function(error) {
-        if (error.data.status)
-          $scope.discoveryMessage = 'Import failed: ' + error.data.status.message;
-      }
-    );
-  };
-
   $scope.createPackage = function() {
     uiUtil.enter('Create Package', 'New package name:', function(res) {
       if (res) {
@@ -394,10 +172,6 @@ assetMod.controller('PackageController', ['$scope', '$routeParams', '$route', '$
     return ASSET_TYPES;    
   };
 
-  $scope.isEditAllowed = function() {
-    return $scope.authUser.hasRole('Process Design') && !mdw.git.tag;
-  };
-
   $scope.newAsset = function(type) {
     var ext = ASSET_TYPES[type];
     $scope.closePopover();
@@ -447,18 +221,20 @@ assetMod.controller('PackageController', ['$scope', '$routeParams', '$route', '$
   };
 }]);
 
-assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams', '$route', '$location', '$http', 'mdw', 'util', 'uiUtil', 'Assets', 'Asset', 'AssetVersions',
-                                       function($scope, $cookieStore, $routeParams, $route, $location, $http, mdw, util, uiUtil, Assets, Asset, AssetVersions) {
-
-  sessionStorage.removeItem('stagingUser');
+assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams', '$route', '$location', '$http', 'mdw', 'util', 'uiUtil', 'Assets', 'Asset', 'AssetVersions', 'Staging',
+                                       function($scope, $cookieStore, $routeParams, $route, $location, $http, mdw, util, uiUtil, Assets, Asset, AssetVersions, Staging) {
 
   $scope.packageName = $routeParams.packageName;
   $scope.assetName = $routeParams.assetName;
   $scope.version = $routeParams.version;
   if ($scope.assetName.endsWith('.proc')) {
     $scope.process = {packageName: $scope.packageName, name: $scope.assetName.substring(0, $scope.assetName.length - 5)};
+    if ($scope.version && $scope.version !== $scope.process.version) {
+      $scope.process.version = $scope.version;
+      $scope.process.archived = true;
+    }
   }
-  else if($scope.assetName.endsWith('.task')){
+  else if ($scope.assetName.endsWith('.task')) {
     $scope.task = true;
   }
  
@@ -522,21 +298,23 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
   );
 
   $scope.isEditAllowed = function() {
-    return $scope.authUser.hasRole('Process Design') && !$scope.asset.isBinary && !mdw.git.tag && !$scope.version;
-  };
-
-  $scope.isStagingAllowed = function() {
     return $scope.authUser.hasRole('Process Design') && !$scope.version;
   };
 
   $scope.stageAsset = function() {
+    var assetPath = $scope.packageName + '/' + $scope.asset.name;
+    Staging.stageAsset($scope.authUser.cuid, assetPath);
+  };
+
+  $scope.rollbackAsset = function(version) {
     var stagingCuid = $scope.authUser.cuid;
-    var assets = { assets: [$scope.packageName + '/' + $scope.asset.name] };
+    var assetVersions = {};
+    assetVersions[$scope.packageName + '/' + $scope.asset.name] = version;
     $http({
-      url: mdw.roots.services + '/services/com/centurylink/mdw/staging/' + stagingCuid + '/assets?app=mdw-admin',
-      method: 'POST',
+      url: mdw.roots.services + '/services/com/centurylink/mdw/staging/' + stagingCuid + '/assetVersions?app=mdw-admin',
+      method: 'PUT',
       headers: {'Content-Type': 'application/json'},
-      data: JSON.stringify(assets, null, 2),
+      data: JSON.stringify({assetVersions: assetVersions}, null, 2),
       transformRequest: []
     }).then(function success(response) {
         $location.path('/staging/' + stagingCuid);
@@ -545,7 +323,7 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
           $location.path('/staging/' + stagingCuid);
         }
         else {
-          uiUtil.error('Cannot Stage Asset', response.data.status.message);
+          uiUtil.error('Asset Rollback Error', response.data.status.message);
         }
       }
     );
@@ -576,7 +354,7 @@ assetMod.controller('AssetController', ['$scope', '$cookieStore', '$routeParams'
   
 }]);
 
-assetMod.controller('ArchiveController', ['$scope', '$route', 'mdw', 'uiUtil', 'Assets', 
+assetMod.controller('ArchiveController', ['$scope', '$route', 'mdw', 'uiUtil', 'Assets',
                                   function($scope, $route, mdw, uiUtil, Assets, Asset) {
   $scope.archiveDirs = Assets.get({archiveDirs: true});
   
@@ -598,7 +376,127 @@ assetMod.controller('ArchiveController', ['$scope', '$route', 'mdw', 'uiUtil', '
       }
     });
   };
-  
+}]);
+
+assetMod.controller('DiscoveryController', ['$scope', '$route', '$location', 'mdw', 'uiUtil', 'Assets', 'WorkflowCache',
+                                  function($scope, $route, $location, mdw, uiUtil, Assets, WorkflowCache) {
+
+  $scope.discoveryUrls = mdw.discoveryUrls;
+
+  $scope.repositoriesList = Assets.get({discoveryUrls: $scope.discoveryUrls, discoveryType: 'git'},
+    function(data) {
+      $scope.discoveryMessage = null;
+      $scope.repositoriesList.repositories.forEach(function(repository) {
+        var url = repository.url;
+        if (url.indexOf('?') != -1)
+          url = url.substr(0, url.indexOf('?'));
+        var lines = url.split('@');
+        if (lines[1] != null)
+           url = lines[0].substr(0, lines[0].indexOf("//") + 2) + lines[1];
+        repository.repoUrl = url;
+      });
+    },
+    function(error) {
+      if (error.data.status)
+        $scope.discoveryMessage = 'Discovery failed: ' + error.data.status.message;
+    }
+  );
+
+  $scope.collapse = function(repository) {
+    repository.collapsed = true;
+  };
+
+  $scope.expand = function(repository) {
+    repository.collapsed = false;
+  };
+
+  $scope.collapseBranch = function(branch) {
+    branch.collapsed = true;
+  };
+
+  $scope.expandBranch = function(branch) {
+    branch.collapsed = false;
+  };
+
+  $scope.collapseTag = function(tag) {
+    tag.collapsed = true;
+  };
+
+  $scope.expandTag = function(tag) {
+    tag.collapsed = false;
+  };
+
+  $scope.clear = function() {
+    $scope.discoveredPkgList = null;
+  };
+
+  $scope.discover = function() {
+    $scope.discoveredPkgList = null;
+    $scope.pkgList = Assets.get({discoveryUrls: $scope.discoveryUrl, branch:$scope.branch , discoveryType: 'git'},
+      function(data) {
+        $scope.discoveryMessage = null;
+        $scope.discoveredPkgList = data;
+        $scope.discoveredPkgList.selectedState = { all: false };
+        $scope.discoveredPkgList.toggleAll = function() {
+          $scope.discoveredPkgList.packages.forEach(function(pkg) {
+            pkg.selected = $scope.discoveredPkgList.selectedState.all;
+          });
+        };
+        $scope.discoveredPkgList.notAllSelected = function() {
+          $scope.discoveredPkgList.selectedState.all = false;
+        };
+        $scope.discoveredPkgList.getSelected = function() {
+          var selected = [];
+          if ($scope.discoveredPkgList.packages) {
+            $scope.discoveredPkgList.packages.forEach(function(pkg) {
+              if (pkg.selected)
+                selected.push(pkg);
+            });
+          }
+          return selected;
+        };
+      },
+      function(error) {
+        if (error.data.status)
+          $scope.discoveryMessage = 'Discovery failed: ' + error.data.status.message;
+      }
+    );
+  };
+
+  $scope.discoverFromGit = function(repoUrl, branch) {
+    $scope.discoveryUrl = repoUrl;
+    $scope.branch = branch;
+    $scope.closePopover();
+    $scope.discover();
+  };
+
+  $scope.importDiscovered = function() {
+    var pkgsObj = { packages: [] };
+
+    $scope.discoveredPkgList.getSelected().forEach(function(pkg) {
+        pkgsObj.packages.push(pkg.name);
+    });
+
+    $scope.pkgList = Assets.put({discoveryUrl: $scope.discoveryUrl, branch:$scope.branch, discoveryType: 'git'}, pkgsObj,
+      function(data) {
+        $scope.discoveryMessage = null;
+        // leave cache error logging to the server side
+        if ($scope.cacheRefresh)
+          WorkflowCache.refresh({}, { distributed: true });
+        $location.path('/packages');
+      },
+      function(error) {
+        if (error.data.status)
+          $scope.discoveryMessage = 'Import failed: ' + error.data.status.message;
+      }
+    );
+  };
+
+  $scope.stopPropagation = function($event) {
+    $event.stopPropagation();
+    $event.preventDefault();
+  };
+
 }]);
 
 assetMod.factory('Assets', ['$resource', 'mdw', function($resource, mdw) {
@@ -645,3 +543,35 @@ assetMod.factory('WorkflowCache', ['$resource', 'mdw', function($resource, mdw) 
     refresh: { method: 'POST' }
   });
 }]);
+
+assetMod.factory('Staging', ['$http', '$location', '$route', 'mdw', 'uiUtil', function($http, $location, $route, mdw, uiUtil) {
+  return {
+    stageAsset: function(stagingCuid, assetPath, callback) {
+      var assets = { assets: [assetPath] };
+      $http({
+        url: mdw.roots.services + '/services/com/centurylink/mdw/staging/' + stagingCuid + '/assets?app=mdw-admin',
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        data: JSON.stringify(assets, null, 2),
+        transformRequest: []
+      }).then(function success(response) {
+          $location.path('/staging/' + stagingCuid);
+          if (callback) {
+            callback(response.status);
+          }
+        }, function error(response) {
+          if (response.status === 404) {
+            $location.path('/staging/' + stagingCuid);
+          }
+          else {
+            uiUtil.error('Cannot Stage Asset', response.data.status.message);
+          }
+          if (callback) {
+            callback(response.status);
+          }
+        }
+      );
+    }
+  };
+}]);
+

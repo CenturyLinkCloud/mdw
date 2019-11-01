@@ -27,29 +27,25 @@ class CodeDiff extends Component {
     
     return (
       <div className='side-by-side'>
-        {this.props.newContent &&
-          <div>
-            <div className='code-compare'>
-              <label>{this.props.newLabel}</label>
-              <Compare 
-                code={this.props.newContent} 
-                language={this.props.language}
-                lines={lines}
-                diffs={diffs} diffClass='changes-diff' 
-              />
-            </div>
-          </div>
-        }
-        {this.props.oldContent &&
+        <div>
           <div className='code-compare'>
-            <label>{this.props.oldLabel}</label>
+            <label>{this.props.newLabel}</label>
             <Compare 
-              code={this.props.oldContent} 
+              code={this.props.newContent} 
               language={this.props.language}
-              lines={this.props.oldContent.replace(/\r/g, '').split(/\n/)}
-              diffs={mirroredDiffs} diffClass='changes-diff' />
+              lines={lines}
+              diffs={diffs} diffClass='changes-diff' 
+            />
           </div>
-        }
+        </div>
+        <div className='code-compare'>
+          <label>{this.props.oldLabel}</label>
+          <Compare 
+            code={this.props.oldContent} 
+            language={this.props.language}
+            lines={this.props.oldContent.replace(/\r/g, '').split(/\n/)}
+            diffs={mirroredDiffs} diffClass='changes-diff' />
+        </div>
       </div>
     );
   }

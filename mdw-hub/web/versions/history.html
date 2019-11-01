@@ -16,7 +16,7 @@
         <ul class="mdw-list">
           <li ng-repeat="version in versions">
             <div class="mdw-flex-item">
-              <div class="mdw-flex-item-left" style="width:200px;">
+              <div class="mdw-flex-item-left" style="width:150px;">
                 <div>
                   <a href="#/asset/{{packageName}}/{{assetName}}/{{version.version}}" style="font-weight:bold;font-size:15px;">
                     v{{version.version}}
@@ -25,6 +25,13 @@
                 <div ng-if="version.id" style="display:block;font-size:13px;">
                   {{version.id}}
                 </div>
+              </div>
+              <div style="width:40px;">
+                <a ng-if="isEditAllowed() && $index"
+                  href="" ng-click="rollbackAsset(version.version)" title="Roll back to v{{version.version}}">
+                  <span class="glyphicon glyphicon-backward mdw-action-icon button button-primary"
+                    style="font-size:18px;"></span>
+                </a>
               </div>
               <div style="width:100%;">
                 <div style="color:#505050;">
@@ -36,7 +43,7 @@
                   {{version.commitInfo.commit}}
                 </span>
               </div>
-              <div class="mdw-flex-item-right" style="color:#505050;margin-right:25px;">
+              <div class="mdw-flex-item-right" style="color:#505050;margin-right:50px;">
                 <div ng-if="version.commitInfo">
                   <div ng-if="version.commitInfo.date">
                     {{version.commitInfo.date.toLocaleString()}}

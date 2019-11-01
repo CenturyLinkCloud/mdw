@@ -1,6 +1,7 @@
 package com.centurylink.mdw.services.asset;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cache.impl.AssetRefCache;
 import com.centurylink.mdw.cli.Import;
 import com.centurylink.mdw.cli.Props;
 import com.centurylink.mdw.cli.Vercheck;
@@ -9,6 +10,7 @@ import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
@@ -16,6 +18,7 @@ import com.centurylink.mdw.dataaccess.file.GitBranch;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.dataaccess.file.GitProgressMonitor;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.PackageList;
 import com.centurylink.mdw.model.asset.StagingArea;
@@ -26,7 +29,9 @@ import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.StagingServices;
 import com.centurylink.mdw.services.cache.CacheRegistration;
+import com.centurylink.mdw.util.AssetRefConverter;
 import com.centurylink.mdw.util.file.Packages;
+import com.centurylink.mdw.util.file.VersionProperties;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import org.apache.commons.io.FileUtils;
@@ -431,7 +436,7 @@ public class StagingServicesImpl implements StagingServices {
         if (mainAssetInfo == null) {
             assetInfo.setVcsDiffType(DiffType.EXTRA);
         }
-        else {
+        else if (assetInfo.getVcsDiffType() != DiffType.MISSING) {
             try {
                 if (!FileUtils.contentEqualsIgnoreEOL(assetInfo.getFile(), mainAssetInfo.getFile(), null)) {
                     assetInfo.setVcsDiffType(DiffType.DIFFERENT);
@@ -480,10 +485,19 @@ public class StagingServicesImpl implements StagingServices {
                 AssetInfo mainAsset = ServiceLocator.getAssetServices().getAsset(asset);
                 AssetServices stagedAssetServices = getAssetServices(cuid);
                 String pkgName = AssetServices.packageName(asset);
-                String pkgPath = getVcAssetPath() + "/" + pkgName.replace('.', '/');
+                String slashyPkg = pkgName.replace('.', '/');
+                String pkgPath = getVcAssetPath() + "/" + slashyPkg;
                 if (mainAsset != null) {
                     AssetInfo stagedAsset = stagedAssetServices.getAsset(asset);
-                    Files.copy(mainAsset.getFile().toPath(), stagedAsset.getFile().toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    File stagedAssetFile;
+                    if (stagedAsset == null) {
+                        // staged asset could be deleted
+                        stagedAssetFile = new File(getStagingAssetsDir(cuid) + "/" + slashyPkg + "/" + mainAsset.getName());
+                    }
+                    else {
+                        stagedAssetFile = stagedAsset.getFile();
+                    }
+                    Files.copy(mainAsset.getFile().toPath(), stagedAssetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     stagedAssetServices.updateAssetVersion(asset, mainAsset.getRevision().getVersion());
                 }
                 else {
@@ -507,7 +521,6 @@ public class StagingServicesImpl implements StagingServices {
 
     @Override
     public void deleteAsset(String cuid, String assetPath) throws ServiceException {
-        unStageAssets(cuid, Arrays.asList(new String[]{assetPath}));
         getAssetServices(cuid).removeAssetVersion(assetPath);
         String pkg = AssetServices.packageName(assetPath);
         String pkgPath = getVcAssetPath() + "/" + pkg.replace('.', '/');
@@ -518,6 +531,63 @@ public class StagingServicesImpl implements StagingServices {
             logger.info(assetPath + " deleted on " + vcGit.getBranch() + " by " + cuid);
             vcGit.commit(assetPath + " deleted on " + vcGit.getBranch() + " by " + cuid);
             vcGit.push();
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
+        }
+    }
+
+    @Override
+    public void rollbackAssets(String cuid, Map<String,String> assetVersions) throws ServiceException {
+        User stagingUser = getUser(cuid);
+
+        // stage all assets first
+        List<String> assets = new ArrayList<>();
+        assets.addAll(assetVersions.keySet());
+        stageAssets(cuid, assets);
+
+        // save rolled-back versions
+        List<Asset> rolledBackAssets = new ArrayList<>();
+        try {
+            for (String assetPath : assets) {
+                String version = assetVersions.get(assetPath);
+                AssetRef assetRef = AssetRefCache.getRef(assetPath, version);
+                if (assetRef == null)
+                   throw new ServiceException(ServiceException.NOT_FOUND, "Asset version not found: " + assetPath + " v" + version);
+                rolledBackAssets.add(AssetRefConverter.getAsset(assetRef));
+            }
+        }
+        catch (Exception ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
+        }
+
+        try {
+            AssetServices assetServices = ServiceLocator.getAssetServices();
+            VersionControlGit vcGit = getStagingVersionControl(cuid);
+            for (Asset rolledBackAsset : rolledBackAssets) {
+                // save asset and version file
+                String pkgSlashyPath = rolledBackAsset.getPackageName().replace('.', '/');
+                File stagingAssetsDir = getStagingAssetsDir(cuid);
+                File stagedFile = new File(stagingAssetsDir + "/" + pkgSlashyPath + "/" + rolledBackAsset.getName());
+                Files.write(stagedFile.toPath(), rolledBackAsset.getContent());
+                AssetInfo currentAssetInfo = assetServices.getAsset(rolledBackAsset.getPackageName() + "/" + rolledBackAsset.getName());
+                String currentVer = currentAssetInfo.getJson().getString("version");
+                int incrementedVer = Asset.parseVersion(currentVer) + 1;
+                File versionsFile = new File(stagingAssetsDir + "/" + pkgSlashyPath + "/" + Packages.META_DIR + "/" + Packages.VERSIONS);
+                VersionProperties versionProps = new VersionProperties(versionsFile);
+                versionProps.setProperty(rolledBackAsset.getName(), String.valueOf(incrementedVer));
+                versionProps.save();
+
+                // commit staged changes
+                String comment = "Rolled back to version " + rolledBackAsset.getVersionString() + " by " + stagingUser.getName();
+                List<String> commitPaths = new ArrayList<>();
+                String pkgPath = getVcAssetPath() + "/" + pkgSlashyPath;
+                commitPaths.add(pkgPath + "/" + rolledBackAsset.getName());
+                commitPaths.add(pkgPath + "/" + Packages.META_DIR + "/" + Packages.VERSIONS);
+                vcGit.add(commitPaths);
+                vcGit.commit(commitPaths, comment);
+                vcGit.push();
+            }
         }
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);

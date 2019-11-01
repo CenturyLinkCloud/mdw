@@ -243,8 +243,7 @@
             "path": "/staging/*",
             "href": "#/staging",
             "priority": 2,
-            "condition": "user.hasRole('Asset Design')",
-            "note": "beta"
+            "condition": "user.hasRole('Asset Design')"
           },
           {
             "label": "Testing",

@@ -7,7 +7,7 @@ mdMod.controller('MdwMarkdownController',
 
   $scope.init = function() {
     $scope.edits = 0;
-    $http.get(mdw.roots.services + '/asset/' + $scope.markdownAsset)
+    $http.get(mdw.roots.services + '/asset/' + $scope.markdownAsset + '?stagingUser=' + $scope.$parent.authUser.cuid)
     .then(function success(response) {
       $scope.markdown = response.data;
       var mde = new SimpleMDE({

@@ -358,9 +358,6 @@ public class Assets extends JsonRestService {
             if (stagingCuid == null) {
                 ServiceLocator.getAssetServices().deletePackage(segments[1]);
             }
-            else {
-                // TODO delete staged package
-            }
         }
         else if (segments.length == 3) {
             String assetPath = segments[1] + '/' + segments[2];
