@@ -21,7 +21,7 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.workflow.TransitionStatus;
-import com.centurylink.mdw.model.workflow.WorkStatus;
+import com.centurylink.mdw.model.workflow.WorkStatus.InternalLogMessage;
 import com.centurylink.mdw.soccom.SoccomClient;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -91,12 +91,15 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
         return watcher != null;
     }
 
+    /**
+     * Returns null if not internal log message
+     */
     protected JSONObject buildJSONLogMessage(String message) throws JSONException, ParseException {
         JSONObject obj = null;
         Matcher matcher = pattern.matcher(message);
         String subtype = null;
         String msg = null;
-        if (matcher.matches()) {
+        if (matcher.matches() && InternalLogMessage.isInternalMessage(matcher.group(7))) {
             obj = new JsonObject();
             obj.put("name", "LogWatcher");
             String t = matcher.group(1);
@@ -122,16 +125,9 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
             obj.put("msg", msg);
         }
         if ("a".equals(subtype) && msg != null) {
-            if (msg.startsWith(WorkStatus.LOGMSG_COMPLETE)) {
-                obj.put("status", WorkStatus.STATUS_COMPLETED);
-            } else if (msg.startsWith(WorkStatus.LOGMSG_START)) {
-                obj.put("status", WorkStatus.STATUS_IN_PROGRESS);
-            } else if (msg.startsWith(WorkStatus.LOGMSG_FAILED)) {
-                obj.put("status", WorkStatus.STATUS_FAILED);
-            } else if (msg.startsWith(WorkStatus.LOGMSG_SUSPEND)) {
-                obj.put("status", WorkStatus.STATUS_WAITING);
-            } else if (msg.startsWith(WorkStatus.LOGMSG_HOLD)) {
-                obj.put("status", WorkStatus.STATUS_HOLD);
+            InternalLogMessage internalMessage = InternalLogMessage.match(msg);
+            if (internalMessage != null) {
+                obj.put("status", internalMessage.status);
             }
         }
         else if ("t".equals(subtype)) {

@@ -1259,11 +1259,11 @@ public class ProcessExecutor implements RetryableTransaction {
     /**
      * Notify registered ProcessMonitors.
      */
-    public void notifyMonitors(ProcessInstance processInstance, String event) {
+    public void notifyMonitors(ProcessInstance processInstance, WorkStatus.InternalLogMessage logMessage) {
         TransactionWrapper transaction = null;
         try {
             transaction = startTransaction();
-            engineImpl.notifyMonitors(processInstance, event);
+            engineImpl.notifyMonitors(processInstance, logMessage);
         }
         catch (Exception ex) {
             // do not stop processing due to notification failure

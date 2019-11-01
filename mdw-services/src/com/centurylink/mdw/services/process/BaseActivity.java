@@ -40,6 +40,7 @@ import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
+import com.centurylink.mdw.model.workflow.WorkStatus.InternalLogMessage;
 import com.centurylink.mdw.monitor.ActivityMonitor;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.OfflineMonitor;
@@ -72,7 +73,7 @@ public abstract class BaseActivity implements GeneralActivity {
     /**
      * Replaced during execution by ActivityLogger.
      */
-    protected StandardLogger logger = LoggerUtil.getStandardLogger();;
+    protected StandardLogger logger = LoggerUtil.getStandardLogger();
 
     public static final String JAVASCRIPT = "JavaScript";
     public static final String GROOVY = "Groovy";
@@ -1047,7 +1048,7 @@ public abstract class BaseActivity implements GeneralActivity {
     /**
      * @return completion code if onExecute() returns non-null
      */
-    String notifyMonitors(String event) {
+    String notifyMonitors(InternalLogMessage logMessage) {
         ActivityRuntimeContext runtimeContext = null;
 
         try {
@@ -1059,7 +1060,7 @@ public abstract class BaseActivity implements GeneralActivity {
                 // TODO Implement a way to determine priority/order when having multiple monitors
                 if (runtimeContext == null) {
                     // LOGMSG_START happens right after creating the activityRuntimeContext, so assume variables are up-to-date
-                    if (event.equals(WorkStatus.LOGMSG_START))
+                    if (logMessage == InternalLogMessage.ACTIVITY_START)
                         runtimeContext = _runtimeContext;
                     else
                         runtimeContext = getRuntimeContext();
@@ -1068,25 +1069,26 @@ public abstract class BaseActivity implements GeneralActivity {
                 if (monitor.isOffline()) {
                     @SuppressWarnings("unchecked")
                     OfflineMonitor<ActivityRuntimeContext> activityOfflineMonitor = (OfflineMonitor<ActivityRuntimeContext>) monitor;
-                    new OfflineMonitorTrigger<>(activityOfflineMonitor, runtimeContext).fire(event);
+                    new OfflineMonitorTrigger<>(activityOfflineMonitor, runtimeContext).fire(logMessage);
                 }
                 else {
-                    if (event.equals(WorkStatus.LOGMSG_START))
+                    if (logMessage == InternalLogMessage.ACTIVITY_START) {
                         updates = monitor.onStart(runtimeContext);
-                    else if (event.equals(WorkStatus.LOGMSG_EXECUTE)) {
+                    }
+                    else if (logMessage == InternalLogMessage.ACTIVITY_EXECUTE) {
                         String compCode = monitor.onExecute(runtimeContext);
                         if (compCode != null) {
                             loginfo("Activity short-circuited by monitor: " + monitor.getClass().getName() + " with code: " + compCode);
                             return compCode;
                         }
                     }
-                    else if (event.equals(WorkStatus.LOGMSG_COMPLETE)) {
+                    else if (logMessage == InternalLogMessage.ACTIVITY_COMPLETE) {
                         updates = monitor.onFinish(runtimeContext);
                     }
-                    else if (event.equals(WorkStatus.LOGMSG_FAILED)) {
+                    else if (logMessage == InternalLogMessage.ACTIVITY_FAIL) {
                         monitor.onError(runtimeContext);
                     }
-                    else if (event.equals(WorkStatus.LOGMSG_SUSPEND)) {
+                    else if (logMessage == InternalLogMessage.ACTIVITY_SUSPEND) {
                         monitor.onSuspend(runtimeContext);
                     }
                 }

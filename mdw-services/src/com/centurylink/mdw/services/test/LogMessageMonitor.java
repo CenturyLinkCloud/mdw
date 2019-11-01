@@ -16,7 +16,7 @@
 package com.centurylink.mdw.services.test;
 
 import com.centurylink.mdw.model.workflow.WorkStatus;
-import com.centurylink.mdw.soccom.SoccomException;
+import com.centurylink.mdw.model.workflow.WorkStatus.InternalLogMessage;
 import com.centurylink.mdw.soccom.SoccomServer;
 import com.centurylink.mdw.util.log.LoggerUtil;
 
@@ -64,26 +64,13 @@ public class LogMessageMonitor extends SoccomServer {
     }
 
     private String parseActivityStatus(String msg) {
-        String status;
-        if (msg.startsWith(WorkStatus.LOGMSG_COMPLETE)) {
-            status = WorkStatus.STATUSNAME_COMPLETED;
-        }
-        else if (msg.startsWith(WorkStatus.LOGMSG_START)) {
-            status = WorkStatus.STATUSNAME_IN_PROGRESS;
-        }
-        else if (msg.startsWith(WorkStatus.LOGMSG_FAILED)) {
-            status = WorkStatus.STATUSNAME_FAILED;
-        }
-        else if (msg.startsWith(WorkStatus.LOGMSG_SUSPEND)) {
-            status = WorkStatus.STATUSNAME_WAITING;
-        }
-        else if (msg.startsWith(WorkStatus.LOGMSG_HOLD)) {
-            status = WorkStatus.STATUSNAME_HOLD;
+        InternalLogMessage internalMessage = InternalLogMessage.match(msg);
+        if (internalMessage != null) {
+            return internalMessage.statusName;
         }
         else {
-            status = null;
+            return null;
         }
-        return status;
     }
 
     @SuppressWarnings("squid:S2446")
@@ -112,11 +99,15 @@ public class LogMessageMonitor extends SoccomServer {
     protected void handleProcessMatch(Matcher procMatcher) {
         String processInstId = procMatcher.group(3);
         String msg = procMatcher.group(5);
-        if (msg.startsWith(WorkStatus.LOGMSG_PROC_START)) {
-            procInstMasterRequestMap.put(processInstId, procMatcher.group(4));
-        }
-        else if (msg.startsWith(WorkStatus.LOGMSG_PROC_COMPLETE)) {
-            checkWaitCondition(processInstId, procMatcher.group(2), "0", WorkStatus.STATUSNAME_COMPLETED);
+
+        InternalLogMessage internalMessage = InternalLogMessage.match(msg);
+        if (internalMessage != null) {
+            if (internalMessage == InternalLogMessage.PROCESS_START) {
+                procInstMasterRequestMap.put(processInstId, procMatcher.group(4));
+            }
+            else if (internalMessage == InternalLogMessage.PROCESS_COMPLETE) {
+                checkWaitCondition(processInstId, procMatcher.group(2), "0", WorkStatus.STATUSNAME_COMPLETED);
+            }
         }
     }
 

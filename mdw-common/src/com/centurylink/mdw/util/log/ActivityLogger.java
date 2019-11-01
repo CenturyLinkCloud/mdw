@@ -75,7 +75,6 @@ public class ActivityLogger extends AbstractStandardLoggerBase {
     @Override
     public void severeException(String msg, Throwable t) {
         runtimeContext.logException(msg, t);
-
     }
 
     @Override

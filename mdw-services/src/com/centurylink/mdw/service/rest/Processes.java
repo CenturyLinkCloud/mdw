@@ -320,7 +320,7 @@ public class Processes extends JsonRestService implements JsonExportable {
             if (segments.length > 1 && segments[1].equals("run")) {
                 WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
                 ProcessRun run = new ProcessRun(content);
-                if(headers.get("genmasterrequestid")!=null){
+                if (headers.get("genmasterrequestid") != null) {
                     run.setMasterRequestId(getAuthUser(headers) + "-" + new SimpleDateFormat("yyyyMMdd-HHmmss").format(new Date()));
                 }
                 if (run.getMasterRequestId() == null || run.getMasterRequestId().isEmpty())

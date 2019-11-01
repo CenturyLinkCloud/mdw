@@ -18,10 +18,6 @@ package com.centurylink.mdw.util.log;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * Logs to standard out and to the watcher.
  */

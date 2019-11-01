@@ -19,7 +19,7 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.workflow.RuntimeContext;
-import com.centurylink.mdw.model.workflow.WorkStatus;
+import com.centurylink.mdw.model.workflow.WorkStatus.InternalLogMessage;
 import com.centurylink.mdw.monitor.AdapterMonitor;
 import com.centurylink.mdw.monitor.OfflineMonitor;
 import com.centurylink.mdw.observer.ObserverException;
@@ -40,8 +40,8 @@ public class OfflineMonitorTrigger<T extends RuntimeContext> {
         this.runtimeContext = runtimeContext;
     }
 
-    public void fire(final String event) {
-        if (monitor.handlesEvent(runtimeContext, event)) {
+    public void fire(final InternalLogMessage logMessage) {
+        if (monitor.handlesEvent(runtimeContext, logMessage.message)) {
             int count = 0;
             ThreadPoolProvider threadPool = ApplicationContext.getThreadPoolProvider();
             Runnable command = () -> {
@@ -50,11 +50,11 @@ public class OfflineMonitorTrigger<T extends RuntimeContext> {
                     throw new IllegalArgumentException("Offline monitoring not supported for AdapterMonitors");
                 }
                 else {
-                    if (event.equals(WorkStatus.LOGMSG_START) || event.equals(WorkStatus.LOGMSG_PROC_START))
+                    if (logMessage == InternalLogMessage.ACTIVITY_START || logMessage == InternalLogMessage.PROCESS_START)
                         monitor.onStart(runtimeContext);
-                    else if (event.equals(WorkStatus.LOGMSG_COMPLETE) || event.equals(WorkStatus.LOGMSG_PROC_COMPLETE))
+                    else if (logMessage == InternalLogMessage.ACTIVITY_COMPLETE || logMessage == InternalLogMessage.PROCESS_COMPLETE)
                         monitor.onFinish(runtimeContext);
-                    else if (event.equals(WorkStatus.LOGMSG_FAILED))
+                    else if (logMessage == InternalLogMessage.ACTIVITY_FAIL)
                         monitor.onError(runtimeContext);
                 }
             };
