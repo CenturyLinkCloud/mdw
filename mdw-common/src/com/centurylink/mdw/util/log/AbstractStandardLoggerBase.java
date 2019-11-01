@@ -69,7 +69,7 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
         sb.append("[(");
         sb.append(type);
         sb.append(")");
-        sb.append(new SimpleDateFormat(dateFormat).format(new Date()));
+        sb.append(new SimpleDateFormat(dateFormat).format(getDate()));
         if (tag!=null) {
             sb.append(" ");
             sb.append(tag);
@@ -85,6 +85,10 @@ public abstract class AbstractStandardLoggerBase implements StandardLogger {
                 sb.append(suffix).append(" ");
         }
         return sb.toString();
+    }
+
+    protected Date getDate() {
+        return new Date();
     }
 
     public boolean watching() {

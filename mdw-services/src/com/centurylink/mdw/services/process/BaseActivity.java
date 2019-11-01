@@ -52,7 +52,6 @@ import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.OfflineMonitorTrigger;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.TransactionWrapper;
-import com.centurylink.mdw.util.log.ActivityLogger;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.TrackingTimer;
