@@ -29,8 +29,6 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.ExpressionUtil;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity;
@@ -44,8 +42,6 @@ import java.util.*;
 @Activity(value="LDAP Adapter", category=AdapterActivity.class, icon="com.centurylink.mdw.base/adapter.png",
         pagelet="com.centurylink.mdw.base/ldap.pagelet")
 public class LdapAdapter extends ObjectAdapterActivity {
-
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     public static final String LDAP_HOST = "LdapHost";
     public static final String LDAP_PORT = "LdapPort";
@@ -96,7 +92,7 @@ public class LdapAdapter extends ObjectAdapterActivity {
             dirContext.close();
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            getLogger().severeException(ex.getMessage(), ex);
         }
     }
 
@@ -154,8 +150,8 @@ public class LdapAdapter extends ObjectAdapterActivity {
             while (results.hasMore()) {
                  SearchResult result = results.next();
                  Attributes attributes = result.getAttributes();
-                 if (logger.isMdwDebugEnabled())
-                     logger.mdwDebug("LDAP Attributes retrieved: " + attributes);
+                 if (getLogger().isMdwDebugEnabled())
+                     getLogger().mdwDebug("LDAP Attributes retrieved: " + attributes);
                  NamingEnumeration<String> attrIds = attributes.getIDs();
                  while (attrIds.hasMore()) {
                      String mappedAttr = attrIds.next();
