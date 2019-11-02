@@ -84,6 +84,7 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
         }
         try {
             EventWaitInstance received = getEngine().createEventWaitInstances(
+                    this.getProcessInstanceId(),
                     this.getActivityInstanceId(),
                     eventNames,
                     eventCompletionCodes,
@@ -101,7 +102,8 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
         if (StringUtils.isBlank(completionCode))
             completionCode = EventType.EVENTNAME_FINISH;
         EventWaitInstance received = getEngine().createEventWaitInstance(
-                this.getActivityInstanceId(),
+                getProcessInstanceId(),
+                getActivityInstanceId(),
                 eventName,
                 completionCode, recurring, !check_if_arrvied);
         return received;

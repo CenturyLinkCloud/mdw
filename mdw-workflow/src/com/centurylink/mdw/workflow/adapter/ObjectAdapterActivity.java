@@ -96,17 +96,17 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl
             if (logging && requestData != null)
                 logRequest(request);
             if (stubMode) {
-                loginfo("Adapter is running in StubMode");
+                logInfo("Adapter is running in StubMode");
                 if (stubber.isStubbing()) {
                     AdapterStubRequest stubRequest = getStubRequest(requestString);
                     responseData = stubber.getStubResponse(getMasterRequestId(), stubRequest.getJson().toString(2));
                     if (((AdapterStubResponse)responseData).isPassthrough()) {
-                        loginfo("Stub server instructs to get real response");
+                        logInfo("Stub server instructs to get real response");
                         connection = openConnection();
                         responseData = doInvoke(connection, requestData);
                     }
                     else {
-                        loginfo("Response received from stub server");
+                        logInfo("Response received from stub server");
                         responseData.setObject(responseData.getContent()); // populate object
                     }
                 }

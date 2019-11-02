@@ -232,7 +232,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
             }
         }
         catch (Exception ex) {
-            logexception(ex.getMessage(), ex);
+            logError(ex.getMessage(), ex);
             if (ex instanceof ActivityException)
                 throw (ActivityException)ex;
             else
@@ -341,7 +341,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
         try { // Need to commit the changes to serviceSummary to release DB lock - Only when running parallel
             this.getEngine().getDatabaseAccess().commit();
         } catch (SQLException e) {
-            logexception("Error while committing Service Summary changes", e);
+            logError("Error while committing Service Summary changes", e);
         }
 
         // spawn runner threads
@@ -353,8 +353,8 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
             while (!threadPool.execute(ThreadPoolProvider.WORKER_ENGINE, "ServiceSubProcess", runner)) {
                 try {
                     String msg = ThreadPoolProvider.WORKER_ENGINE  + " has no thread available to launch subflow";
-                    logexception(msg, new Exception(msg));
-                    loginfo(threadPool.currentStatus());
+                    logError(msg, new Exception(msg));
+                    logInfo(threadPool.currentStatus());
                     Thread.sleep(pollInterval * 1000L);
                 }
                 catch (InterruptedException e) {
@@ -412,7 +412,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
             ProcessEngineDriver engineDriver = null;
             String logicalProcName = service.getName();
             try {
-                loginfo("New thread for executing service subprocess in parallel - " + logicalProcName);
+                logInfo("New thread for executing service subprocess in parallel - " + logicalProcName);
                 Process process = getSubflow(service);
                 engineDriver = new ProcessEngineDriver();
                 List<Variable> childVars = process.getVariables();
@@ -425,10 +425,10 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
             catch (Exception e) {
                 if (engineDriver != null)
                     procInstId = engineDriver.getMainProcessInstanceId();
-                logexception("Failed to execute subprocess in thread - " + logicalProcName, e);
+                logError("Failed to execute subprocess in thread - " + logicalProcName, e);
             }
             finally {
-                loginfo("Thread for executing subflow in parallel terminates - " + logicalProcName);
+                logInfo("Thread for executing subflow in parallel terminates - " + logicalProcName);
                 synchronized (runners) {
                     runners.remove(SubprocessRunner.this);
                     runners.notifyAll();

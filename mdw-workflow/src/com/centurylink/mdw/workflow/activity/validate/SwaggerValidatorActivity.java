@@ -16,7 +16,6 @@
 package com.centurylink.mdw.workflow.activity.validate;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.StatusResponse;
@@ -78,7 +77,7 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
         String lookupPath = requestPath.replaceAll("\\{.*}", "");
         while (lookupPath.endsWith(("/")))
             lookupPath = lookupPath.substring(0, lookupPath.length() - 1);
-        logdebug("Swagger validation for lookupPath=" + lookupPath + " and requestPath=" + requestPath);
+        logDebug("Swagger validation for lookupPath=" + lookupPath + " and requestPath=" + requestPath);
 
         Object request = null;
         if (!"GET".equalsIgnoreCase(httpMethod)) {
@@ -150,7 +149,7 @@ public class SwaggerValidatorActivity extends DefaultActivityImpl {
         ServiceValuesAccess serviceValues = getRuntimeContext().getServiceValues();
         StatusResponse statusResponse;
         if (result.isError()) {
-            logsevere("Validation error: " + result.getStatus().toString());
+            logError("Validation error: " + result.getStatus().toString());
             statusResponse = new StatusResponse(result.getWorstCode(), result.getStatus().getMessage());
             String responseHeadersVarName = serviceValues.getResponseHeadersVariableName();
             Map<String,String> responseHeaders = serviceValues.getResponseHeaders();

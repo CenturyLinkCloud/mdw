@@ -111,7 +111,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
         try {
             Process subprocdef = getSubprocess();
             if (isLogDebugEnabled())
-              logdebug("Invoking subprocess: " + subprocdef.getLabel());
+              logDebug("Invoking subprocess: " + subprocdef.getLabel());
             subprocIsService = subprocdef.getProcessType().equals(ProcessVisibilityConstant.SERVICE);
             List<Variable> childVars = subprocdef.getVariables();
             Map<String,String> validParams = createVariableBinding(childVars);

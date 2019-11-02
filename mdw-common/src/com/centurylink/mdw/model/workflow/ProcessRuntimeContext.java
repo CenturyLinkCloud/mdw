@@ -159,13 +159,13 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
     public void logInfo(String message) {
         logger.info(logtag(), message);
         if (logPersister != null)
-            logPersister.persist(getInstanceId(), StandardLogger.LogLevel.INFO, message);
+            logPersister.persist(getProcessInstanceId(), getInstanceId(), StandardLogger.LogLevel.INFO, message);
     }
 
     public void logDebug(String message) {
         logger.debug(logtag(), message);
         if (logPersister != null)
-            logPersister.persist(getInstanceId(), StandardLogger.LogLevel.DEBUG, message);
+            logPersister.persist(getProcessInstanceId(), getInstanceId(), StandardLogger.LogLevel.DEBUG, message);
     }
 
     public void logTrace(String message) {
@@ -175,7 +175,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
     public void logWarn(String message) {
         logger.warn(logtag(), message);
         if (logPersister != null)
-            logPersister.persist(getInstanceId(), StandardLogger.LogLevel.WARN, message);
+            logPersister.persist(getProcessInstanceId(), getInstanceId(), StandardLogger.LogLevel.WARN, message);
     }
 
     public void logSevere(String message) {
@@ -185,7 +185,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
     public void logError(String message) {
         logger.severe(logtag(), message);
         if (logPersister != null)
-            logPersister.persist(getInstanceId(), StandardLogger.LogLevel.ERROR, message);
+            logPersister.persist(getProcessInstanceId(), getInstanceId(), StandardLogger.LogLevel.ERROR, message);
     }
 
     public void logException(String msg, Throwable t) {
@@ -195,7 +195,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
     public void logError(String msg, Throwable t) {
         logger.exception(logtag(), msg, t);
         if (logPersister != null)
-            logPersister.persist(getInstanceId(), StandardLogger.LogLevel.ERROR, msg, t);
+            logPersister.persist(getProcessInstanceId(), getInstanceId(), StandardLogger.LogLevel.ERROR, msg, t);
     }
 
     public boolean isLogInfoEnabled() {

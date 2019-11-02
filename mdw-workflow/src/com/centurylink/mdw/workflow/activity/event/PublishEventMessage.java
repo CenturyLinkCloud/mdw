@@ -64,7 +64,7 @@ public class PublishEventMessage extends DefaultActivityImpl {
                 if (delay<0) delay = 0;
                 else if (delay>300) delay = 300;
             } catch (Exception e) {
-                logwarn("activity resume delay spec is not an integer");
+                logWarn("activity resume delay spec is not an integer");
             }
         }
         return delay;
@@ -73,7 +73,7 @@ public class PublishEventMessage extends DefaultActivityImpl {
     protected final void signal(String eventName, String eventMessage, int delay) throws Exception {
         DocumentReference docref = this.createDocument(String.class.getName(),
                 eventMessage, OwnerType.INTERNAL_EVENT, this.getActivityInstanceId());
-        super.loginfo("Publish message, event=" + eventName +
+        logInfo("Publish message, event=" + eventName +
                 ", id=" + docref.getDocumentId() + ", message=" + eventMessage);
         getEngine().notifyProcess(eventName, docref.getDocumentId(), eventMessage, delay);
     }

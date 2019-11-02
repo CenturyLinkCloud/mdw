@@ -49,7 +49,7 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
                 requestHeaders.put("Content-Type", "application/json");
         }
         catch (ActivityException ex) {
-            logexception(ex.getMessage(), ex);
+            logError(ex.getMessage(), ex);
         }
         return requestHeaders;
     }
@@ -69,7 +69,7 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
             updateServiceSummary(status, responseId);
         }
         catch (ActivityException | SQLException ex) {
-            logexception(ex.getMessage(), ex);
+            logError(ex.getMessage(), ex);
         }
         return responseId;
     }
@@ -86,13 +86,13 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
                 setParameterValue("requestId", requestId);
         }
         catch (ActivityException ex) {
-            logexception(ex.getMessage(), ex);
+            logError(ex.getMessage(), ex);
         }
         try { // Add microservice, or Update microservice if it has id=0 (when executing in parallel from OrchestratorActivity)
             updateServiceSummary(null, null);
         }
         catch (ActivityException | SQLException ex) {
-            logexception(ex.getMessage(), ex);
+            logError(ex.getMessage(), ex);
         }
         return requestId;
     }

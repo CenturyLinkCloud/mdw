@@ -1112,45 +1112,67 @@ public abstract class BaseActivity implements GeneralActivity {
         return null;
     }
 
-    protected String logtag() {
-        StringBuffer sb = new StringBuffer();
-        sb.append("p");
-        sb.append(this.getProcessId());
-        sb.append(".");
-        sb.append(this.getProcessInstanceId());
-        sb.append(" a");
-        sb.append(this.getActivityId());
-        sb.append(".");
-        sb.append(this.getActivityInstanceId());
-        return sb.toString();
+    public void logInfo(String message) {
+        _runtimeContext.logInfo(message);
     }
-
+    /**
+     * @deprecated  use {@link #logInfo(String)}
+     */
+    @Deprecated
     public void loginfo(String message) {
-        logger.info(logtag(), message);
+        logInfo(message);
     }
 
+    public void logDebug(String message) {
+        _runtimeContext.logDebug(message);
+    }
+    /**
+     * @deprecated  use {@link #logDebug(String)}
+     */
+    @Deprecated
     public void logdebug(String message) {
-        logger.debug(logtag(), message);
+        logDebug(message);
     }
 
+    public void logWarn(String message) {
+        _runtimeContext.logWarn(message);
+    }
+    /**
+     * @deprecated  use {@link #logWarn(String)}
+     */
+    @Deprecated
     public void logwarn(String message) {
-        logger.warn(logtag(), message);
+        logWarn(message);
     }
 
+    public void logError(String message) {
+        _runtimeContext.logError(message);
+    }
+    /**
+     * @deprecated  use {@link #logError(String)}
+     */
+    @Deprecated
     public void logsevere(String message) {
-        logger.severe(logtag(), message);
+        logError(message);
     }
 
+    public void logError(String msg, Throwable t) {
+        _runtimeContext.logError(msg, t);
+    }
+    /**
+     * @deprecated  use {@link #logError(String, Throwable)}
+     */
+    @Deprecated
     public void logexception(String msg, Exception e) {
-        logger.exception(logtag(), msg, e);
+        logError(msg, e);
     }
 
     public boolean isLogInfoEnabled() {
-        return logger.isInfoEnabled();
+        return _runtimeContext.isLogInfoEnabled();
     }
 
     public boolean isLogDebugEnabled() {
-        return logger.isDebugEnabled();
+        return _runtimeContext.isLogDebugEnabled();
     }
 
     protected Integer lockActivityInstance() throws ActivityException {

@@ -61,7 +61,7 @@ public class SlackActivity extends DefaultActivityImpl implements NotificationAc
                         "Slack notification failed with response:" + response);
         }
         catch (Exception ex) {
-            logexception(ex.getMessage(), ex);
+            logError(ex.getMessage(), ex);
             if (!getAttribute(CONTINUE_DESPITE_MESSAGING_EXCEPTION, false))
                 throw new ActivityException(ex.getMessage(), ex);
         }

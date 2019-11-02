@@ -189,7 +189,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
         } catch (ActivityException ex) {
             throw ex;
         }catch(Exception ex){
-            super.logexception(ex.getMessage(), ex);
+            logError(ex.getMessage(), ex);
             throw new ActivityException(-1, ex.getMessage(), ex);
         }
     }
@@ -214,7 +214,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             return pi;
         } catch (Exception ex) {
             piplan.setStatusCode(WorkStatus.STATUS_FAILED);
-            super.logexception(ex.getMessage(), ex);
+            logError(ex.getMessage(), ex);
             throw new ActivityException("Error loading subproc: " + piplan.getLogicalProcessName(), ex);
         }
     }
@@ -296,7 +296,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             }
             this.updateExecutionPlan(plan);
         } catch (Exception ex) {
-            super.logexception("InvokeHeterogeneousProcessActivity: cannot get variable instance", ex);
+            logError("InvokeHeterogeneousProcessActivity: cannot get variable instance", ex);
             throw new ActivityException(-1, ex.getMessage(), ex);
         }
         if (done && status.equals(WorkStatus.STATUS_HOLD)) done = false;
@@ -397,7 +397,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             } catch (Exception e) {
                 if (engineDriver != null)
                     procInstId = engineDriver.getMainProcessInstanceId();
-                logexception("Failed to execute subprocess in thread - " + logicalProcName, e);
+                logError("Failed to execute subprocess in thread - " + logicalProcName, e);
             } finally {
                 logger.info("Thread for executing subprocess in parallel terminates - " + logicalProcName);
                 synchronized (runners) {

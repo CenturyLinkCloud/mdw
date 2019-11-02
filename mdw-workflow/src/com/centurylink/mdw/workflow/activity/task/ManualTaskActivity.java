@@ -124,7 +124,7 @@ public abstract class ManualTaskActivity extends AbstractWait implements TaskAct
                 }
             } else if (actInstStatus.equals(WorkStatus.STATUS_WAITING)) {
                 try {
-                    getEngine().createEventWaitInstance(getActivityInstanceId(), getWaitEvent(), null, true, true);
+                    getEngine().createEventWaitInstance(getProcessInstanceId(), getActivityInstanceId(), getWaitEvent(), null, true, true);
                 }
                 catch (Exception ex) {
                     logger.severeException("Failed to re-register task action listening", ex);
@@ -163,7 +163,7 @@ public abstract class ManualTaskActivity extends AbstractWait implements TaskAct
         boolean done;
         EventWaitInstance received;
         try {
-            received = getEngine().createEventWaitInstance(getActivityInstanceId(), getWaitEvent(), null, true, false);
+            received = getEngine().createEventWaitInstance(getProcessInstanceId(), getActivityInstanceId(), getWaitEvent(), null, true, false);
             if (received == null)
                 received = registerWaitEvents(true);
         }

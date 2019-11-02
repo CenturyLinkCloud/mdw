@@ -170,7 +170,7 @@ public class CamelRouteAdapter extends ObjectAdapterActivity {
             throw new AdapterException("Unable to load Camel route: " + name + modifier);
         }
         else {
-            super.logdebug("Using RoutesDefinition: " + rdrs.getRuleSet().getLabel());
+            logDebug("Using RoutesDefinition: " + rdrs.getRuleSet().getLabel());
             return rdrs.getRoutesDefinition();
         }
     }

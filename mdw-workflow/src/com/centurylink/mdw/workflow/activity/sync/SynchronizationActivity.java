@@ -204,7 +204,7 @@ public class SynchronizationActivity extends AbstractWait implements com.century
                         this.getEngine().setActivityInstanceStatus(this.getActivityInstance(),
                                 WorkStatus.STATUS_COMPLETED, null);
                     } catch (Exception e) {
-                        super.logexception("Failed to set activity instance status complete in Synchronization activity", e);
+                        logError("Failed to set activity instance status complete in Synchronization activity", e);
                     }
                     super.deregisterEvents();
                 }

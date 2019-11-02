@@ -98,7 +98,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                 }
                 endpointUri += query;
             }
-            logdebug("REST adapter endpoint: " + endpointUri);
+            logDebug("REST adapter endpoint: " + endpointUri);
             URL url = new URL(endpointUri);
             HttpConnection httpConnection;
             if ("PATCH".equals(getHttpMethod()))
@@ -247,7 +247,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                 logResponse(response);
             }
              // Plugs into automatic retrying
-            logexception(ex.getMessage(), ex);
+            logError(ex.getMessage(), ex);
             throw new ConnectionException(-1, ex.getMessage(), ex);
         }
         catch (Exception ex) {

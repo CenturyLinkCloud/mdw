@@ -932,20 +932,19 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
-    public EventWaitInstance createEventWaitInstance(
-            Long actInstId, String pEventName, String compCode,
-            boolean pRecurring, boolean notifyIfArrived, boolean reregister)
+    public EventWaitInstance createEventWaitInstance(Long procInstId, Long actInstId, String pEventName,
+            String compCode, boolean pRecurring, boolean notifyIfArrived, boolean reregister)
     throws DataAccessException, ProcessException {
         TransactionWrapper transaction=null;
         try {
             transaction = startTransaction();
-            return engineImpl.createEventWaitInstance(actInstId,
+            return engineImpl.createEventWaitInstance(procInstId, actInstId,
                     pEventName, compCode, pRecurring, notifyIfArrived, reregister);
         }
         catch (MdwException e) {
             if (canRetryTransaction(e)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                return ((ProcessExecutor)getTransactionRetrier()).createEventWaitInstance(actInstId, pEventName, compCode, pRecurring, notifyIfArrived, reregister);
+                return ((ProcessExecutor)getTransactionRetrier()).createEventWaitInstance(procInstId, actInstId, pEventName, compCode, pRecurring, notifyIfArrived, reregister);
             }
             else
                 throw e;
@@ -954,20 +953,21 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
-    public EventWaitInstance createEventWaitInstance(
+    public EventWaitInstance createEventWaitInstance(Long procInstId,
             Long actInstId, String pEventName, String compCode,
             boolean pRecurring, boolean notifyIfArrived)
     throws DataAccessException, ProcessException {
-        TransactionWrapper transaction=null;
+        TransactionWrapper transaction = null;
         try {
             transaction = startTransaction();
-            return engineImpl.createEventWaitInstance(actInstId,
-                    pEventName, compCode, pRecurring, notifyIfArrived);
+            return engineImpl.createEventWaitInstance(procInstId, actInstId, pEventName, compCode, pRecurring,
+                    notifyIfArrived);
         }
         catch (MdwException e) {
             if (canRetryTransaction(e)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                return ((ProcessExecutor)getTransactionRetrier()).createEventWaitInstance(actInstId, pEventName, compCode, pRecurring, notifyIfArrived);
+                return ((ProcessExecutor)getTransactionRetrier()).createEventWaitInstance(procInstId, actInstId,
+                        pEventName, compCode, pRecurring, notifyIfArrived);
             }
             else
                 throw e;
@@ -976,20 +976,20 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
-    public EventWaitInstance createEventWaitInstances(Long actInstId,
-            String[] pEventNames, String[] pWakeUpEventTypes,
-            boolean[] pEventOccurances, boolean notifyIfArrived, boolean reregister)
+    public EventWaitInstance createEventWaitInstances(Long procInstId, Long actInstId, String[] pEventNames,
+            String[] pWakeUpEventTypes, boolean[] pEventOccurances, boolean notifyIfArrived, boolean reregister)
     throws DataAccessException, ProcessException {
         TransactionWrapper transaction=null;
         try {
             transaction = startTransaction();
-            return engineImpl.createEventWaitInstances(actInstId,
+            return engineImpl.createEventWaitInstances(procInstId, actInstId,
                     pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived, reregister);
         }
         catch (MdwException e) {
             if (canRetryTransaction(e)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                return ((ProcessExecutor)getTransactionRetrier()).createEventWaitInstances(actInstId, pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived, reregister);
+                return ((ProcessExecutor)getTransactionRetrier()).createEventWaitInstances(procInstId, actInstId,
+                        pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived, reregister);
             }
             else
                 throw e;
@@ -998,20 +998,20 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
-    public EventWaitInstance createEventWaitInstances(Long actInstId,
-            String[] pEventNames, String[] pWakeUpEventTypes,
-            boolean[] pEventOccurances, boolean notifyIfArrived)
+    public EventWaitInstance createEventWaitInstances(Long procInstId, Long actInstId, String[] pEventNames,
+            String[] pWakeUpEventTypes, boolean[] pEventOccurances, boolean notifyIfArrived)
     throws DataAccessException, ProcessException {
         TransactionWrapper transaction=null;
         try {
             transaction = startTransaction();
-            return engineImpl.createEventWaitInstances(actInstId,
-                    pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived);
+            return engineImpl.createEventWaitInstances(procInstId, actInstId, pEventNames, pWakeUpEventTypes,
+                    pEventOccurances, notifyIfArrived);
         }
         catch (MdwException e) {
             if (canRetryTransaction(e)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                return ((ProcessExecutor)getTransactionRetrier()).createEventWaitInstances(actInstId, pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived);
+                return ((ProcessExecutor)getTransactionRetrier()).createEventWaitInstances(procInstId, actInstId,
+                        pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived);
             }
             else
                 throw e;

@@ -238,7 +238,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 // - Event cannot be a legacy "recurring" event (means there can be multiple waiter for same event)
                 // - Event will not trigger notification if pre-arrived. Notification will occur when event is published
                 // after this registration occurs
-                engine.createEventWaitInstance(activityInstanceId, eventName, completionCode, false, false, true);
+                engine.createEventWaitInstance(taskInstance.getTaskInstanceId(), activityInstanceId, eventName,
+                        completionCode, false, false, true);
             }
             else
                 throw new ServiceException("Task Instance was not found for ID " + taskInstanceId);
