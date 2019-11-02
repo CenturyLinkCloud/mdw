@@ -15,36 +15,32 @@ public class ActivityLogger extends AbstractStandardLoggerBase {
 
     public ActivityLogger(ActivityRuntimeContext runtimeContext) {
         this.runtimeContext = runtimeContext;
+        this.runtimeContext.setLogPersister(ActivityLogger::persist);
     }
 
     @Override
     public void info(String msg) {
         runtimeContext.logInfo(msg);
-        persist(LogLevel.INFO, msg);
     }
 
     @Override
     public void warn(String msg) {
         runtimeContext.logWarn(msg);
-        persist(LogLevel.WARN, msg);
     }
 
     @Override
     public void error(String msg) {
         runtimeContext.logError(msg);
-        persist(LogLevel.ERROR, msg);
     }
 
     @Override
     public void severe(String msg) {
         runtimeContext.logSevere(msg);
-        persist(LogLevel.ERROR, msg);
     }
 
     @Override
     public void debug(String msg) {
         runtimeContext.logDebug(msg);
-        persist(LogLevel.DEBUG, msg);
     }
 
     /**
@@ -89,13 +85,11 @@ public class ActivityLogger extends AbstractStandardLoggerBase {
     @Override
     public void error(String msg, Throwable t) {
         runtimeContext.logError(msg, t);
-        persist(LogLevel.ERROR, msg, t);
     }
 
     @Override
     public void severeException(String msg, Throwable t) {
         runtimeContext.logException(msg, t);
-        persist(LogLevel.ERROR, msg, t);
     }
 
     @Override
@@ -143,23 +137,13 @@ public class ActivityLogger extends AbstractStandardLoggerBase {
             warn(message);
         else
             error(message);
-
-        persist(level, message);
-    }
-
-    private void persist(LogLevel level, String message) {
-        persist(level, message, null);
-    }
-
-    private void persist(LogLevel level, String message, Throwable t) {
-        persist(runtimeContext.getActivityInstanceId(), level, message, t);
     }
 
     static void persist(Long activityInstanceId, LogLevel level, String message) {
         persist(activityInstanceId, level, message, null);
     }
 
-    static void persist(Long activityInstanceId, LogLevel level, String message, Throwable t) {
+    public static void persist(Long activityInstanceId, LogLevel level, String message, Throwable t) {
         boolean isLogging = false;  // TODO
         if (isLogging) {
             try {
