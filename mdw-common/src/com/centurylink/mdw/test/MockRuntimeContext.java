@@ -15,13 +15,6 @@
  */
 package com.centurylink.mdw.test;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
@@ -29,12 +22,12 @@ import com.centurylink.mdw.dataaccess.BaselineData;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.model.workflow.Activity;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
-import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.*;
+
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Mock runtime context for programmatic activity execution during unit tests.

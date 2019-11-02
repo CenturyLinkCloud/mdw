@@ -116,4 +116,6 @@ public class RuntimeContextAdapter implements RuntimeContext {
     public String getAttribute(String name) {
         return null;
     }
+
+    public Long getInstanceId() { return 0L; }
 }

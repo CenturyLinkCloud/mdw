@@ -28,6 +28,11 @@ public class LoggingActivity extends DefaultActivityImpl {
         logger.debug("logger.debug()");
         logger.error("logger.error()", new Exception("logger.error()"));
 
+        // runtimeContext
+        getRuntimeContext().logInfo("getRuntimeContext().logInfo()");
+        getRuntimeContext().logDebug("getRuntimeContext().logDebug()");
+        getRuntimeContext().logError("getRuntimeContext().logError()", new Exception("getRuntimeContext().logError()"));
+
         return null;
     }
 }
