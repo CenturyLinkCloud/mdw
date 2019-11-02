@@ -28,8 +28,6 @@ import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.process.ProcessExecutor;
 import com.centurylink.mdw.sync.SyncExpressionEvaluator;
 import com.centurylink.mdw.util.TransactionWrapper;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.AbstractWait;
@@ -48,7 +46,6 @@ import java.util.Map;
         pagelet="com.centurylink.mdw.base/synchronization.pagelet")
 public class SynchronizationActivity extends AbstractWait implements com.centurylink.mdw.activity.types.SynchronizationActivity {
 
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static final char UNDERSCORE = '_';
 
     private boolean isSynchronized;
@@ -99,7 +96,7 @@ public class SynchronizationActivity extends AbstractWait implements com.century
             return yes;
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            getLogger().severeException(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
         }
     }

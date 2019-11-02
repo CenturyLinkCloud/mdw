@@ -16,13 +16,10 @@
 package com.centurylink.mdw.workflow.activity.event;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.variable.DocumentReference;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
@@ -35,15 +32,13 @@ public class PublishEventMessage extends DefaultActivityImpl {
     public static final String ATTRIBUTE_EVENT_NAME = "Event Name";
     public static final String ATTRIBUTE_MESSAGE = "Message";
 
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
-
     @Override
     public void execute() throws ActivityException {
         try {
             signal(getEventName(), getEventMessage(), getEventDelay());
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            getLogger().severeException(ex.getMessage(), ex);
             throw new ActivityException(-1, "Failed to publish event message", ex);
         }
     }

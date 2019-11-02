@@ -22,8 +22,6 @@ import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity;
@@ -55,8 +53,6 @@ import java.io.StringWriter;
 @Activity(value="XML Transform", category=ScriptActivity.class, icon="com.centurylink.mdw.base/xml.jpg",
         pagelet="com.centurylink.mdw.base/transform.pagelet")
 public class TransformActivity extends ScriptExecutorActivity {
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
-
     public static final String TRANSFORM_LANGUAGE = "Transform Language";
     public static final String INPUT_DOCUMENTS = "Input Documents";
     public static final String GPATH = "GPath";
@@ -97,11 +93,11 @@ public class TransformActivity extends ScriptExecutorActivity {
             }
         }
         catch (ActivityException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            getLogger().severeException(ex.getMessage(), ex);
             throw ex;
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            getLogger().severeException(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
         }
     }
@@ -109,7 +105,7 @@ public class TransformActivity extends ScriptExecutorActivity {
     private void executeGPath() throws ActivityException {
         String transform = (String) getAttributeValue(RULE);
         if (StringUtils.isBlank(transform)) {
-            logger.info("No transform defined for activity: " + getActivityName());
+            getLogger().info("No transform defined for activity: " + getActivityName());
             return;
         }
 
@@ -140,7 +136,7 @@ public class TransformActivity extends ScriptExecutorActivity {
     private void executeXSLT() throws ActivityException {
         String transform = (String) getAttributeValue(RULE);
         if (StringUtils.isBlank(transform)) {
-            logger.info("No transform defined for activity: " + getActivityName());
+            getLogger().info("No transform defined for activity: " + getActivityName());
             return;
         }
 
@@ -199,7 +195,7 @@ public class TransformActivity extends ScriptExecutorActivity {
                 }
             }
             catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
+                getLogger().severeException(ex.getMessage(), ex);
                 throw new ActivityException(ex.getMessage(), ex);
             }
         }
@@ -218,7 +214,7 @@ public class TransformActivity extends ScriptExecutorActivity {
                 super.setVariableValue(varName, varType, doc);
             }
             catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
+                getLogger().severeException(ex.getMessage(), ex);
                 throw new ActivityException(ex.getMessage(), ex);
             }
         }

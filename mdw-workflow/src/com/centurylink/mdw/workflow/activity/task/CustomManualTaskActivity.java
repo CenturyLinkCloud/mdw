@@ -15,12 +15,10 @@
  */
 package com.centurylink.mdw.workflow.activity.task;
 
-import com.centurylink.mdw.activity.types.TaskActivity;
-import com.centurylink.mdw.annotations.Activity;
-import org.apache.xmlbeans.XmlException;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.SuspendableActivity;
+import com.centurylink.mdw.activity.types.TaskActivity;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
@@ -30,14 +28,11 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.service.ActionRequestDocument;
 import com.centurylink.mdw.service.Parameter;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.xmlbeans.XmlException;
 
 @Activity(value="Custom Manual Task", category=TaskActivity.class, icon="com.centurylink.mdw.base/task.png",
         pagelet="com.centurylink.mdw.base//customTask.pagelet")
 public class CustomManualTaskActivity extends ManualTaskActivity implements SuspendableActivity {
-
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     /**
      * Creates a task instance unless the INSTANCE_ID_VAR attribute points
@@ -77,7 +72,7 @@ public class CustomManualTaskActivity extends ManualTaskActivity implements Susp
             }
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            getLogger().severeException(ex.getMessage(), ex);
             throw new ActivityException(-1, ex.getMessage(), ex);
         }
     }

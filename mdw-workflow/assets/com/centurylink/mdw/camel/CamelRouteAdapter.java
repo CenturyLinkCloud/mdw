@@ -28,8 +28,6 @@ import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.event.WorkflowHandler;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
@@ -48,8 +46,6 @@ public class CamelRouteAdapter extends ObjectAdapterActivity {
     private static final String ASYNC = "Asynchronous";
     public static final String CUSTOM_ATTRIBUTES = "CustomAttributes";
 
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
-
     @Override
     public boolean isSynchronous() {
         try {
@@ -57,7 +53,7 @@ public class CamelRouteAdapter extends ObjectAdapterActivity {
             return !Boolean.parseBoolean(asyncAttr);
         }
         catch (PropertyException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            getLogger().severeException(ex.getMessage(), ex);
         }
         return true;
     }
@@ -116,7 +112,7 @@ public class CamelRouteAdapter extends ObjectAdapterActivity {
             return handler.invoke(request, headers);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            getLogger().severeException(ex.getMessage(), ex);
             throw new AdapterException(-1, ex.getMessage(), ex);
         }
     }

@@ -74,6 +74,11 @@ public abstract class BaseActivity implements GeneralActivity {
      */
     protected StandardLogger logger = LoggerUtil.getStandardLogger();
 
+    /**
+     * Use this logger for activity output to make it appear in the activity_log.
+     */
+    protected StandardLogger getLogger() { return logger; }
+
     public static final String JAVASCRIPT = "JavaScript";
     public static final String GROOVY = "Groovy";
     public static final String JAVA_EL = "javax.el";

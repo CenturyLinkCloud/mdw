@@ -32,8 +32,6 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.process.CompletionCode;
 import com.centurylink.mdw.services.process.ProcessExecutor;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.AbstractWait;
@@ -45,8 +43,6 @@ import java.util.List;
 @Activity(value="Event Wait Activity", category=EventWaitActivity.class, icon="com.centurylink.mdw.base/receive.gif",
         pagelet="com.centurylink.mdw.base/eventWait.pagelet")
 public class EventWaitActivity extends AbstractWait implements com.centurylink.mdw.activity.types.EventWaitActivity {
-
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private Integer exitStatus;
     public static final String RECEIVED_MESSAGE_DOC_VAR = "rcvdMsgDocVar";
@@ -117,7 +113,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
             this.createDocument(String.class.getName(), responseData,
                     OwnerType.ADAPTER_RESPONSE, getActivityInstanceId());
         } catch (Exception ex) {
-            logger.severeException("Failed to log message", ex);
+            getLogger().severeException("Failed to log message", ex);
         }
     }
 
@@ -139,10 +135,10 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
     }
 
     /**
-     * You cannot override this method. Override {@link processMessage(String)} instead.
+     * You cannot override this method. Override {@link #processMessage(String)} instead.
      *
      * This method is called when the message is received after registration. It extracts the message,
-     * records the message in ADAPTER_INSTANCE table, and invoke {@link processMessage(String)}.
+     * records the message in ADAPTER_INSTANCE table, and invoke {@link #processMessage(String)}.
      */
     public final boolean resume(InternalEvent eventMessageDoc) throws ActivityException {
         boolean toFinish;
@@ -203,7 +199,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
             }
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            getLogger().severeException(ex.getMessage(), ex);
         }
     }
 

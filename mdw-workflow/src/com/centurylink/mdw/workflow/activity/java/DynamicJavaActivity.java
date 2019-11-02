@@ -25,8 +25,6 @@ import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.services.process.ActivityLogger;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
@@ -40,8 +38,6 @@ import java.util.Map;
 @Activity(value="Dynamic Java", icon="com.centurylink.mdw.base/java.jpg",
         pagelet="com.centurylink.mdw.base/dynamicJava.pagelet")
 public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJavaImplementor {
-
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     public static final String JAVA_CODE = "Java";
     public static final String CLASS_NAME = "ClassName";
@@ -153,7 +149,7 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
                 executorInstance = (JavaExecutor) clazz.newInstance();
             }
             catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
+                getLogger().severeException(ex.getMessage(), ex);
                 throw new MdwJavaException(ex.getMessage(), ex);
             }
         }

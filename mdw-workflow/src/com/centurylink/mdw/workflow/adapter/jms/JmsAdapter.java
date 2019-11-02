@@ -15,27 +15,9 @@
  */
 package com.centurylink.mdw.workflow.adapter.jms;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.Queue;
-import javax.jms.QueueConnection;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.QueueSender;
-import javax.jms.QueueSession;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-
+import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.annotations.Activity;
-import org.apache.xmlbeans.XmlObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
-import org.w3c.dom.Document;
-
-import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
@@ -43,11 +25,17 @@ import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.JMSServices;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity;
+import org.apache.xmlbeans.XmlObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
+import org.w3c.dom.Document;
+
+import javax.jms.*;
 
 
 /**
@@ -59,8 +47,6 @@ import com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity;
 @Activity(value="JMS Adapter", category=AdapterActivity.class, icon="com.centurylink.mdw.base/adapter.png",
         pagelet="com.centurylink.mdw.base/jmsAdapter.pagelet")
 public class JmsAdapter extends ObjectAdapterActivity {
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
-
     public static final String SERVER_URL = "JNDI Server URL";
     public static final String REQUEST_QUEUE_NAME = "Queue Name";
     public static final String RESPONSE_QUEUE_NAME = "Reply Queue Name";
@@ -215,7 +201,6 @@ public class JmsAdapter extends ObjectAdapterActivity {
             }
             return result;
         } catch (Exception e) {
-//            logger.severeException("Exception in JmsAdapter.invoke()" , e);
             throw new AdapterException(-1, "Exception in invoking JmsAdapter" , e);
         }
     }
@@ -243,10 +228,10 @@ public class JmsAdapter extends ObjectAdapterActivity {
             timeout = timeout_s==null?30:Integer.parseInt(timeout_s);
             if (timeout<0) timeout = 30;
         } catch (NumberFormatException e) {
-            logger.severeException("Cannot parse timeout value " + timeout_s, e);
+            getLogger().severeException("Cannot parse timeout value " + timeout_s, e);
             timeout = 30;
         } catch (PropertyException e) {
-            logger.severeException("Cannot read timeout attribute " + TIMEOUT, e);
+            getLogger().severeException("Cannot read timeout attribute " + TIMEOUT, e);
             timeout = 30;
         }
         return timeout;
@@ -287,7 +272,7 @@ public class JmsAdapter extends ObjectAdapterActivity {
             qConnection.start();
             queue = jmsServices.getQueue(qSession, queue_name);
         } catch (Exception e) {
-            logger.severeException("Exception in JmsAdapter.openConnection()" , e);
+            getLogger().severeException("Exception in JmsAdapter.openConnection()" , e);
             throw new ConnectionException(ConnectionException.CONNECTION_DOWN, "Exception in invoking JmsAdapter" , e);
 
         }
