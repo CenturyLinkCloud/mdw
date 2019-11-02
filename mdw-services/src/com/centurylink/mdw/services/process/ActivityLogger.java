@@ -139,16 +139,16 @@ public class ActivityLogger extends AbstractStandardLoggerBase {
             error(message);
     }
 
-    static void persist(Long activityInstanceId, LogLevel level, String message) {
-        persist(activityInstanceId, level, message, null);
+    static void persist(Long processInstanceId, Long activityInstanceId, LogLevel level, String message) {
+        persist(processInstanceId, activityInstanceId, level, message, null);
     }
 
-    public static void persist(Long activityInstanceId, LogLevel level, String message, Throwable t) {
-        boolean isLogging = false;  // TODO
+    public static void persist(Long processInstanceId, Long activityInstanceId, LogLevel level, String message, Throwable t) {
+        boolean isLogging = true;  // TODO
         if (isLogging) {
             try {
                 WorkflowDataAccess dataAccess = new WorkflowDataAccess();
-                dataAccess.addActivityLog(activityInstanceId, level.toString(), message);
+                dataAccess.addActivityLog(processInstanceId, activityInstanceId, level.toString(), message);
                 if (t != null) {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     t.printStackTrace(new PrintStream(baos));
@@ -156,7 +156,7 @@ public class ActivityLogger extends AbstractStandardLoggerBase {
                     if (stackTrace.length() > 3997) {
                         stackTrace = stackTrace.substring(0, 3997) + "...";
                     }
-                    dataAccess.addActivityLog(activityInstanceId, level.toString(), stackTrace);
+                    dataAccess.addActivityLog(processInstanceId, activityInstanceId, level.toString(), stackTrace);
                 }
             }
             catch (DataAccessException ex) {

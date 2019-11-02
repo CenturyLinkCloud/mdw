@@ -55,7 +55,7 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
         if (executorClassLoader == null)
             executorClassLoader = getClass().getClassLoader();  // fallback in case not set by activity provider
         if (isLogDebugEnabled())
-            logdebug("Dynamic Java ClassLoader: " + executorClassLoader);
+            logError("Dynamic Java ClassLoader: " + executorClassLoader);
 
         return executorClassLoader;
     }
@@ -79,7 +79,7 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
             getExecutorInstance().initialize(runtimeContext);
         }
         catch (Exception ex) {
-            logexception(ex.getMessage(), ex);
+            logError(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
         }
     }
@@ -114,7 +114,7 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
             }
         }
         catch (MdwJavaException ex) {
-            logexception(ex.getMessage(), ex);
+            logError(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
         }
     }

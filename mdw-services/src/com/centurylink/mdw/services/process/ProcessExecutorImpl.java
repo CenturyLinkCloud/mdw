@@ -649,7 +649,7 @@ class ProcessExecutorImpl {
         String tag = logtag(processInst.getProcessId(), processInst.getId(), activityId, activityInstId);
         String msg = "Failed to execute activity - " + cause.getClass().getName();
         logger.severeException(msg, cause);
-        ActivityLogger.persist(activityInstId, StandardLogger.LogLevel.ERROR, msg, cause);
+        ActivityLogger.persist(processInst.getId(), activityInstId, StandardLogger.LogLevel.ERROR, msg, cause);
 
         String compCode = null;
         String statusMsg = buildStatusMessage(cause);
@@ -671,7 +671,7 @@ class ProcessExecutorImpl {
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
-            ActivityLogger.persist(activityInstId, StandardLogger.LogLevel.ERROR, ex.getMessage(), ex);
+            ActivityLogger.persist(processInst.getId(), activityInstId, StandardLogger.LogLevel.ERROR, ex.getMessage(), ex);
             throw ex;
         }
     }
@@ -708,7 +708,7 @@ class ProcessExecutorImpl {
             this.cancelActivityInstance(actInst, statusMsg, procinst, logtag);
         } catch (Exception e) {
             logger.severeException(e.getMessage(), e);
-            ActivityLogger.persist(actInst.getId(), StandardLogger.LogLevel.ERROR, e.getMessage(), e);
+            ActivityLogger.persist(procinst.getId(), actInst.getId(), StandardLogger.LogLevel.ERROR, e.getMessage(), e);
             throw e;
         }
     }
@@ -719,7 +719,7 @@ class ProcessExecutorImpl {
             this.holdActivityInstance(actInst, logtag);
         } catch (Exception e) {
             logger.severeException("Exception thrown during holdActivityInstance", e);
-            ActivityLogger.persist(actInst.getId(), StandardLogger.LogLevel.ERROR, e.getMessage(), e);
+            ActivityLogger.persist(actInst.getProcessInstanceId(), actInst.getId(), StandardLogger.LogLevel.ERROR, e.getMessage(), e);
             throw e;
         }
     }
@@ -763,7 +763,7 @@ class ProcessExecutorImpl {
                 String msg = "Failed to create activity implementor instance";
                 logger.exception(logtag, msg, e);
                 if (event.getWorkInstanceId() != null) {
-                    ActivityLogger.persist(event.getWorkInstanceId(), StandardLogger.LogLevel.ERROR, msg, e);
+                    ActivityLogger.persist(procInst.getId(), event.getWorkInstanceId(), StandardLogger.LogLevel.ERROR, msg, e);
                 }
                 ar.activity = null;
             }
@@ -784,7 +784,7 @@ class ProcessExecutorImpl {
                     String msg = "Failed to load the implementor class or create instance: " + actVO.getImplementor();
                     logger.severe(msg);
                     if (event.getWorkInstanceId() != null) {
-                        ActivityLogger.persist(event.getWorkInstanceId(), StandardLogger.LogLevel.ERROR, msg);
+                        ActivityLogger.persist(procInst.getId(), event.getWorkInstanceId(), StandardLogger.LogLevel.ERROR, msg);
                     }
                     ar.startCase = ActivityRuntime.STARTCASE_ERROR_IN_PREPARE;
                 } else {
@@ -844,7 +844,7 @@ class ProcessExecutorImpl {
         if (logger.isInfoEnabled()) {
             String msg = InternalLogMessage.ACTIVITY_START + " - " + actVO.getName();
             logger.info(logtag(pi.getProcessId(), pi.getId(), ai.getActivityId(), ai.getId()), msg);
-            ActivityLogger.persist(ai.getId(), StandardLogger.LogLevel.INFO, msg);
+            ActivityLogger.persist(pi.getId(), ai.getId(), StandardLogger.LogLevel.INFO, msg);
         }
         if (pWorkTransInstId!=null && pWorkTransInstId != 0)
             edao.completeTransitionInstance(pWorkTransInstId, ai.getId());
@@ -899,7 +899,7 @@ class ProcessExecutorImpl {
         if (logger.isInfoEnabled()) {
             String msg = InternalLogMessage.ACTIVITY_FAIL + " - " + abbrStatusMsg;
             logger.info(logtag, msg);
-            ActivityLogger.persist(ai.getId(), StandardLogger.LogLevel.INFO, msg);
+            ActivityLogger.persist(procinst.getId(), ai.getId(), StandardLogger.LogLevel.INFO, msg);
         }
     }
 
@@ -912,7 +912,7 @@ class ProcessExecutorImpl {
             String msg = InternalLogMessage.ACTIVITY_COMPLETE + " - completion code "
                     + (compcode == null ? "null" : ("'" + compcode + "'"));
             logger.info(logtag, msg);
-            ActivityLogger.persist(ai.getId(), StandardLogger.LogLevel.INFO, msg);
+            ActivityLogger.persist(procInst.getId(), ai.getId(), StandardLogger.LogLevel.INFO, msg);
         }
     }
 
@@ -924,7 +924,7 @@ class ProcessExecutorImpl {
         if (logger.isInfoEnabled()) {
             String msg = InternalLogMessage.ACTIVITY_CANCEL + " - " + statusMsg;
             logger.info(logtag, msg);
-            ActivityLogger.persist(ai.getId(), StandardLogger.LogLevel.INFO, msg);
+            ActivityLogger.persist(procInst.getId(), ai.getId(), StandardLogger.LogLevel.INFO, msg);
         }
     }
 
@@ -933,7 +933,7 @@ class ProcessExecutorImpl {
         edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_HOLD, null);
         if (logger.isInfoEnabled()) {
             logger.info(logtag, InternalLogMessage.ACTIVITY_HOLD.message);
-            ActivityLogger.persist(ai.getId(), StandardLogger.LogLevel.INFO, InternalLogMessage.ACTIVITY_HOLD.message);
+            ActivityLogger.persist(ai.getProcessInstanceId(), ai.getId(), StandardLogger.LogLevel.INFO, InternalLogMessage.ACTIVITY_HOLD.message);
         }
     }
 
@@ -943,7 +943,7 @@ class ProcessExecutorImpl {
         if (logger.isInfoEnabled()) {
             String msg = InternalLogMessage.ACTIVITY_SUSPEND + (additionalMsg != null ? " - " + additionalMsg : "");
             logger.info(logtag, msg);
-            ActivityLogger.persist(ai.getId(), StandardLogger.LogLevel.INFO, msg);
+            ActivityLogger.persist(ai.getProcessInstanceId(), ai.getId(), StandardLogger.LogLevel.INFO, msg);
         }
         activity.notifyMonitors(InternalLogMessage.ACTIVITY_SUSPEND);
     }
@@ -1132,7 +1132,7 @@ class ProcessExecutorImpl {
                 // can happen when the subprocess is remote
                 String msg = "subprocess definition cannot be found - treat it as a remote process - id " + event.getWorkId();
                 logger.info(logtag, msg);
-                ActivityLogger.persist(actInstId, StandardLogger.LogLevel.INFO, msg);
+                ActivityLogger.persist(actInst.getProcessInstanceId(), actInstId, StandardLogger.LogLevel.INFO, msg);
                 isEmbeddedProcess = false;
             }
         } else isEmbeddedProcess = false;    // including the case the subprocess is remote
@@ -1143,7 +1143,7 @@ class ProcessExecutorImpl {
             if (logger.isInfoEnabled()) {
                 String msg = "Activity resumed from embedded subprocess, which returns completion code " + compCode;
                 logger.info(logtag, msg);
-                ActivityLogger.persist(actInstId, StandardLogger.LogLevel.INFO, msg);
+                ActivityLogger.persist(actInst.getProcessInstanceId(), actInstId, StandardLogger.LogLevel.INFO, msg);
             }
             CompletionCode parsedCompCode = new CompletionCode();
             parsedCompCode.parse(event.getCompletionCode());
@@ -1227,7 +1227,7 @@ class ProcessExecutorImpl {
                     if (logger.isInfoEnabled()) {
                         String msg = "Activity continue suspend - not all child processes have completed";
                         logger.info(logtag, msg);
-                        ActivityLogger.persist(actInstId, StandardLogger.LogLevel.INFO, msg);
+                        ActivityLogger.persist(actInst.getProcessInstanceId(), actInstId, StandardLogger.LogLevel.INFO, msg);
                     }
                 }
             } else {  // status is COMPLETED or others
@@ -1235,7 +1235,7 @@ class ProcessExecutorImpl {
                 if (logger.isInfoEnabled()) {
                     String msg = "Activity not waiting for subprocess - asynchronous subprocess call";
                     logger.info(logtag, msg);
-                    ActivityLogger.persist(actInstId, StandardLogger.LogLevel.INFO, msg);
+                    ActivityLogger.persist(actInst.getProcessInstanceId(), actInstId, StandardLogger.LogLevel.INFO, msg);
                 }
             }
         }
@@ -1363,14 +1363,14 @@ class ProcessExecutorImpl {
             if (logger.isInfoEnabled()) {
                 String msg = "Activity would resume, but process is no longer alive";
                 logger.info(logtag(procInst.getProcessId(), procInstId, actId, actInst.getId()), msg);
-                ActivityLogger.persist(actInst.getId(), StandardLogger.LogLevel.INFO, msg);
+                ActivityLogger.persist(procInst.getId(), actInst.getId(), StandardLogger.LogLevel.INFO, msg);
             }
             return null;
         }
         if (logger.isInfoEnabled()) {
             String msg = "Activity to resume";
             logger.info(logtag(procInst.getProcessId(), procInstId, actId, actInst.getId()), msg);
-            ActivityLogger.persist(actInst.getId(), StandardLogger.LogLevel.INFO, msg);
+            ActivityLogger.persist(procInst.getId(), actInst.getId(), StandardLogger.LogLevel.INFO, msg);
         }
 
         Process processVO = getProcessDefinition(procInst);
@@ -1398,7 +1398,7 @@ class ProcessExecutorImpl {
         } catch (Exception e) {
             String msg = "Unable to instantiate implementer " + actVO.getImplementor();
             logger.severeException(msg, e);
-            ActivityLogger.persist(actInst.getId(), StandardLogger.LogLevel.ERROR, msg, e);
+            ActivityLogger.persist(actInst.getProcessInstanceId(), actInst.getId(), StandardLogger.LogLevel.ERROR, msg, e);
             return null;
         }
         finally {
@@ -1429,14 +1429,14 @@ class ProcessExecutorImpl {
                 String msg = "Cannot resume activity instance as the process is completed/canceled";
                 logger.info(logtag(ar.procinst.getProcessId(), ar.procinst.getId(),
                         ar.actinst.getActivityId(), actInstId), msg);
-                ActivityLogger.persist(actInstId, StandardLogger.LogLevel.INFO, msg);
+                ActivityLogger.persist(ar.procinst.getId(), actInstId, StandardLogger.LogLevel.INFO, msg);
                 return ar;
             }
             if (!resumeOnHold && ar.actinst.getStatusCode()!= WorkStatus.STATUS_WAITING) {
                 String msg = "Cannot resume activity instance as it is not waiting any more";
                 logger.info(logtag(ar.procinst.getProcessId(), ar.procinst.getId(),
                         ar.actinst.getActivityId(), actInstId), msg);
-                ActivityLogger.persist(actInstId, StandardLogger.LogLevel.INFO, msg);
+                ActivityLogger.persist(ar.procinst.getId(), actInstId, StandardLogger.LogLevel.INFO, msg);
                 ar.startCase = ActivityRuntime.RESUMECASE_ACTIVITY_NOT_WAITING;
                 return ar;
             }
@@ -1482,7 +1482,7 @@ class ProcessExecutorImpl {
                 if (logger.isInfoEnabled()) {
                     String msg = "continue suspend";
                     logger.info(logtag, msg);
-                    ActivityLogger.persist(actinst.getId(), StandardLogger.LogLevel.INFO, msg);
+                    ActivityLogger.persist(actinst.getProcessInstanceId(), actinst.getId(), StandardLogger.LogLevel.INFO, msg);
                 }
             }
         }
@@ -1568,7 +1568,7 @@ class ProcessExecutorImpl {
         catch (Exception e) {
             String msg = "**Failed in handleResumeException**";
             logger.severeException(msg, e);
-            ActivityLogger.persist(actInstId, StandardLogger.LogLevel.ERROR, msg, e);
+            ActivityLogger.persist(procInst.getId(), actInstId, StandardLogger.LogLevel.ERROR, msg, e);
         }
     }
 
@@ -1702,17 +1702,13 @@ class ProcessExecutorImpl {
         }
     }
 
-    EventWaitInstance createEventWaitInstance(
-            Long actInstId, String pEventName, String compCode,
-            boolean pRecurring, boolean notifyIfArrived)
-            throws DataAccessException, ProcessException {
-        return createEventWaitInstance(actInstId, pEventName, compCode, pRecurring, notifyIfArrived, false);
+    EventWaitInstance createEventWaitInstance(Long procInstId, Long actInstId, String pEventName, String compCode,
+            boolean pRecurring, boolean notifyIfArrived) throws ProcessException {
+        return createEventWaitInstance(procInstId, actInstId, pEventName, compCode, pRecurring, notifyIfArrived, false);
     }
 
-    EventWaitInstance createEventWaitInstance(
-            Long actInstId, String pEventName, String compCode,
-            boolean pRecurring, boolean notifyIfArrived, boolean reregister)
-            throws DataAccessException, ProcessException {
+    EventWaitInstance createEventWaitInstance(Long procInstId, Long actInstId, String pEventName, String compCode,
+            boolean pRecurring, boolean notifyIfArrived, boolean reregister) throws ProcessException {
         try {
             String FINISH = EventType.getEventTypeName(EventType.FINISH);
             if (compCode==null||compCode.length()==0) compCode = FINISH;
@@ -1728,7 +1724,7 @@ class ProcessExecutorImpl {
                         + pEventName + "' actInst=" + actInstId
                         + (pRecurring?" as recurring":" as broadcast-waiting");
                 logger.info(msg);
-                ActivityLogger.persist(actInstId, StandardLogger.LogLevel.INFO, msg);
+                ActivityLogger.persist(procInstId, actInstId, StandardLogger.LogLevel.INFO, msg);
             }
 
             if (documentId!=null && !reregister) {
@@ -1737,7 +1733,7 @@ class ProcessExecutorImpl {
                             " event before registration: event='"
                             + pEventName + "' actInst=" + actInstId;
                     logger.info(msg);
-                    ActivityLogger.persist(actInstId, StandardLogger.LogLevel.INFO, msg);
+                    ActivityLogger.persist(procInstId, actInstId, StandardLogger.LogLevel.INFO, msg);
                 }
                 if (notifyIfArrived) {
                     if (compCode.equals(FINISH)) compCode = null;
@@ -1761,21 +1757,18 @@ class ProcessExecutorImpl {
     }
 
 
-    EventWaitInstance createEventWaitInstances(Long actInstId,
-            String[] pEventNames, String[] pWakeUpEventTypes,
-            boolean[] pEventOccurances, boolean notifyIfArrived)
-            throws DataAccessException, ProcessException {
-        return createEventWaitInstances(actInstId, pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived, false);
+    EventWaitInstance createEventWaitInstances(Long procInstId, Long actInstId, String[] pEventNames,
+            String[] pWakeUpEventTypes, boolean[] pEventOccurances, boolean notifyIfArrived) throws ProcessException {
+        return createEventWaitInstances(procInstId, actInstId, pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived, false);
     }
 
 
     /**
      * Method that creates the event log based on the passed in params
      */
-    EventWaitInstance createEventWaitInstances(Long actInstId,
-            String[] pEventNames, String[] pWakeUpEventTypes,
-            boolean[] pEventOccurances, boolean notifyIfArrived, boolean reregister)
-            throws DataAccessException, ProcessException {
+    EventWaitInstance createEventWaitInstances(Long procInstId, Long actInstId, String[] pEventNames,
+            String[] pWakeUpEventTypes, boolean[] pEventOccurances, boolean notifyIfArrived, boolean reregister)
+            throws ProcessException {
         try {
             EventWaitInstance ret = null;
             Long documentId = null;
@@ -1793,7 +1786,7 @@ class ProcessExecutorImpl {
                             + pEventNames[i] + "' actInst=" + actInstId
                             + (pEventOccurances[i]?" as recurring":" as broadcast-waiting");
                     logger.info(msg);
-                    ActivityLogger.persist(actInstId, StandardLogger.LogLevel.INFO, msg);
+                    ActivityLogger.persist(procInstId, actInstId, StandardLogger.LogLevel.INFO, msg);
                 }
 
                 if (documentId!=null && !reregister) break;
@@ -1804,7 +1797,7 @@ class ProcessExecutorImpl {
                             " event before registration: event='"
                             + pEventNames[i] + "' actInst=" + actInstId;
                     logger.info(msg);
-                    ActivityLogger.persist(actInstId, StandardLogger.LogLevel.INFO, msg);
+                    ActivityLogger.persist(procInstId, actInstId, StandardLogger.LogLevel.INFO, msg);
                 }
                 if (pCompCode != null && pCompCode.length() == 0)
                     pCompCode = null;
@@ -1839,12 +1832,12 @@ class ProcessExecutorImpl {
                 for (EventWaitInstance inst : waiters) {
                     String pCompCode = inst.getCompletionCode();
                     if (pCompCode!=null && pCompCode.length()==0) pCompCode = null;
+                    ActivityInstance actInst = edao.getActivityInstance(inst.getActivityInstanceId());
                     if (logger.isInfoEnabled()) {
                         String msg = "notify event after registration: event='" + pEventName + "' actInst=" + inst.getActivityInstanceId();
                         logger.info(msg);
-                        ActivityLogger.persist(inst.getActivityInstanceId(), StandardLogger.LogLevel.INFO, msg);
+                        ActivityLogger.persist(actInst.getProcessInstanceId(), actInst.getId(), StandardLogger.LogLevel.INFO, msg);
                     }
-                    ActivityInstance actInst = edao.getActivityInstance(inst.getActivityInstanceId());
                     if (actInst.getStatusCode() == WorkStatus.STATUS_IN_PROGRESS) {
                         // assuming it is a service process waiting for message
                         JSONObject json = new JsonObject();
@@ -2065,7 +2058,7 @@ class ProcessExecutorImpl {
                 }
                 catch (ActivityException | DataAccessException ex) {
                     logger.severeException(logtag(processInst.getProcessId(), processInst.getId(), actInstVO.getActivityId(), actInstVO.getId()) + ex.getMessage(), ex);
-                    ActivityLogger.persist(actInstVO.getId(), StandardLogger.LogLevel.ERROR, ex.getMessage(), ex);
+                    ActivityLogger.persist(processInst.getId(), actInstVO.getId(), StandardLogger.LogLevel.ERROR, ex.getMessage(), ex);
                 }
             }
 

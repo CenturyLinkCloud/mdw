@@ -84,7 +84,7 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
             List<Address> recipAddresses = getRecipientAddresses(context);
             List<Address> ccAddresses = getCcRecipientAddresses(context);
             if (recipAddresses.isEmpty() && ccAddresses.isEmpty()) {
-                logwarn("Warning: no email recipients");
+                logWarn("Warning: no email recipients");
                 return;
             }
 
@@ -107,17 +107,17 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
 
         }
         catch (MessagingException ex) {
-            logexception(ex.getMessage(), ex);
+            logError(ex.getMessage(), ex);
             while (ex.getNextException() != null && ex.getNextException() instanceof MessagingException) {
                 ex = (MessagingException) ex.getNextException();
-                logexception(ex.getMessage(), ex);
+                logError(ex.getMessage(), ex);
             }
             String continueDespite = getAttributeValue(WorkAttributeConstant.CONTINUE_DESPITE_MESSAGING_EXCEPTION);
             if (continueDespite == null || !Boolean.parseBoolean(continueDespite))
                 throw new ActivityException(-1, ex.getMessage(), ex);
         }
         catch (Exception ex) {
-            logexception(ex.getMessage(), ex);
+            logError(ex.getMessage(), ex);
             throw new ActivityException(-1, ex.getMessage(), ex);
         }
     }

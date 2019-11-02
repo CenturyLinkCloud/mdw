@@ -64,7 +64,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
                 // set timeouts
                 int timeout = getTimeoutSeconds();
                 if (timeout > 0) {
-                    loginfo("set activity timeout as " + timeout + " seconds");
+                    logInfo("set activity timeout as " + timeout + " seconds");
                     InternalEvent delayMsg = InternalEvent.createActivityDelayMessage(getActivityInstance(), getMasterRequestId());
                     getEngine().sendDelayedInternalEvent(delayMsg, timeout,
                             ScheduledEvent.INTERNAL_EVENT_PREFIX+getActivityInstanceId()+"timeout", false);
@@ -254,7 +254,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
     protected void updateSLA(int seconds) throws ActivityException {
         try {
             ProcessExecutor engine = this.getEngine();
-            super.loginfo("Update activity timeout as " + seconds + " seconds");
+            logInfo("Update activity timeout as " + seconds + " seconds");
             InternalEvent delayMsg = InternalEvent.createActivityDelayMessage(this.getActivityInstance(),
                     this.getMasterRequestId());
             String eventName = ScheduledEvent.INTERNAL_EVENT_PREFIX+this.getActivityInstanceId() + "timeout";

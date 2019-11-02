@@ -57,7 +57,7 @@ public class SendgridActivity extends DefaultActivityImpl {
             send(template, context);
         }
         catch (MdwException | IOException ex) {
-            logexception(ex.getMessage(), ex);
+            logError(ex.getMessage(), ex);
             if (!"true".equalsIgnoreCase(getAttributeValueSmart(WorkAttributeConstant.CONTINUE_DESPITE_MESSAGING_EXCEPTION))) {
                 throw new ActivityException(ex.getMessage(), ex);
             }
@@ -81,7 +81,7 @@ public class SendgridActivity extends DefaultActivityImpl {
                         WorkAttributeConstant.RECIPIENTS_EXPRESSION);
                 List<String> ccRecipients = contextRecipients.getRecipients(WorkAttributeConstant.CC_GROUPS, null);
                 if (recipients.isEmpty() && ccRecipients.isEmpty()) {
-                    logwarn("Warning: no email recipients");
+                    logWarn("Warning: no email recipients");
                 }
                 else {
                     Email email = new EmailBuilder(template, context)

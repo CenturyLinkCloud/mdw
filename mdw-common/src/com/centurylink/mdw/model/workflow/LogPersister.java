@@ -4,10 +4,9 @@ import com.centurylink.mdw.util.log.StandardLogger;
 
 @FunctionalInterface
 public interface LogPersister {
-    default void persist(Long instanceId, StandardLogger.LogLevel level, String message) {
-        persist(instanceId, level, message, null);
-
+    default void persist(Long processInstanceId, Long instanceId, StandardLogger.LogLevel level, String message) {
+        persist(processInstanceId, instanceId, level, message, null);
     }
 
-    void persist(Long instanceId, StandardLogger.LogLevel level, String message, Throwable t);
+    void persist(Long processInstanceId, Long instanceId, StandardLogger.LogLevel level, String message, Throwable t);
 }

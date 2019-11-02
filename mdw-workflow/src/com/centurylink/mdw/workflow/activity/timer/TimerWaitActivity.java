@@ -69,7 +69,7 @@ public class TimerWaitActivity extends AbstractWait {
             engine.updateActivityInstanceEndTime(getActivityInstanceId(),
                     new Date(currentTime+seconds*1000L));
         } catch (Exception e) {
-             super.logwarn("Failed to set timer expiration time in DB: " + e.getMessage());
+             logWarn("Failed to set timer expiration time in DB: " + e.getMessage());
         }
         InternalEvent message = InternalEvent.createActivityNotifyMessage(getActivityInstance(),
                 EventType.RESUME, getMasterRequestId(), null);

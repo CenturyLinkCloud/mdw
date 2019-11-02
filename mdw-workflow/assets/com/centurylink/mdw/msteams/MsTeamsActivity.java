@@ -42,12 +42,12 @@ public class MsTeamsActivity extends DefaultActivityImpl implements Notification
             String response = httpHelper.post(getMessage().toString(2));
             if (httpHelper.getResponseCode() != 200) {
                 String msg = httpHelper.getResponseCode() + " response from " + webhookUrl;
-                logsevere(msg + ":\n" + response);
+                logError(msg + ":\n" + response);
                 throw new IOException(msg);
             }
         }
         catch (IOException ex) {
-            logexception(ex.getMessage(), ex);
+            logError(ex.getMessage(), ex);
             if (!getAttribute(CONTINUE_DESPITE_MESSAGING_EXCEPTION, false))
                 throw new ActivityException(ex.getMessage(), ex);
         }

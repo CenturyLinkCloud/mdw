@@ -77,10 +77,10 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
             Object value = getVariableValue(variableInstance.getName());
             values.put(variableInstance.getName(), value);
         }
-        logdebug("Drools values: " + values);
+        logDebug("Drools values: " + values);
 
         facts.add(values);
-        logdebug("Drools facts: " + facts);
+        logDebug("Drools facts: " + facts);
 
         setGlobalValues(kSession);
 
@@ -122,7 +122,7 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
             return null;
         }
         else {
-            super.loginfo("Using Knowledge Base: " + kbrs.getAsset().getLabel());
+            logInfo("Using Knowledge Base: " + kbrs.getAsset().getLabel());
 
             String versionLabelVarName = getAttributeValue(RULE_VERSION_VAR);
             if (versionLabelVarName != null)

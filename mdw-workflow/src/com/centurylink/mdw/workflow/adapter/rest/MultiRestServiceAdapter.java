@@ -172,7 +172,7 @@ public class MultiRestServiceAdapter extends RestServiceAdapter {
                 /**
                  * Plugs into automatic retrying
                  */
-                logexception(ex.getMessage(), ex);
+                logError(ex.getMessage(), ex);
                 savedException = ex;
             }
             catch (Exception ex) {

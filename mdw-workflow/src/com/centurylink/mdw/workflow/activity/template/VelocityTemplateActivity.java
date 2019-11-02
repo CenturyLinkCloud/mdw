@@ -105,7 +105,7 @@ public class VelocityTemplateActivity extends DefaultActivityImpl {
             String templateContent = templateVO.getStringContent();
 
             if (isLogDebugEnabled()) {
-                logdebug(templateVO.getDescription() + " Contains:\n" + templateContent);
+                logDebug(templateVO.getDescription() + " Contains:\n" + templateContent);
             }
 
             VelocityContext context = createVelocityContext();
@@ -114,20 +114,20 @@ public class VelocityTemplateActivity extends DefaultActivityImpl {
             try {
                 if (getVelocityEngine().evaluate(context, writer, templateName, templateContent)) {
                     if (isLogDebugEnabled())
-                        logdebug("Evaluation of Template was successful.");
+                        logDebug("Evaluation of Template was successful.");
                 }
                 else {
                     throw new ActivityException("Evaluation of Template was NOT successful.");
                 }
             }
             catch (ParseErrorException pe) {
-                logsevere("Velocity Parsing error in " + templateName + ":  " + pe.getMessage() + "\n" + pe.getInvalidSyntax());
+                logDebug("Velocity Parsing error in " + templateName + ":  " + pe.getMessage() + "\n" + pe.getInvalidSyntax());
                 throw new ActivityException(-1, pe.getMessage(), pe);
             }
 
 
             if (isLogDebugEnabled()) {
-                logdebug("\n***Results of Velocity Template Merge***\n" + writer.toString());
+                logDebug("\n***Results of Velocity Template Merge***\n" + writer.toString());
             }
 
             velocityOutput = writer.toString();

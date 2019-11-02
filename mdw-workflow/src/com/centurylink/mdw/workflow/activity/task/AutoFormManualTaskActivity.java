@@ -72,11 +72,9 @@ public class AutoFormManualTaskActivity extends ManualTaskActivity {
             }
 
             String taskInstCorrelationId = TaskAttributeConstant.TASK_CORRELATION_ID_PREFIX + instanceId;
-            super.loginfo("Task instance created - ID " + instanceId);
+            logInfo("Task instance created - ID " + instanceId);
             if (this.needSuspend()) {
-                getEngine().createEventWaitInstance(
-                        this.getActivityInstanceId(),
-                        taskInstCorrelationId,
+                getEngine().createEventWaitInstance(getProcessInstanceId(), getActivityInstanceId(), taskInstCorrelationId,
                         EventType.EVENTNAME_FINISH, true, true);
                 EventWaitInstance received = registerWaitEvents(false);
                 if (received!=null)

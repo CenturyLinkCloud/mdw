@@ -63,7 +63,7 @@ public class FileWriterAdapter extends ObjectAdapterActivity {
             writer.close();
         }
         catch (IOException ex) {
-            logexception("Failed to close connection in FileWriterAdapter", ex);
+            logError("Failed to close connection in FileWriterAdapter", ex);
         }
     }
 

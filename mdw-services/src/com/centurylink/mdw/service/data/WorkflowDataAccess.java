@@ -263,16 +263,18 @@ public class WorkflowDataAccess extends CommonDataAccess {
         }
     }
 
-    public void addActivityLog(Long activityInstanceId, String level, String message) throws DataAccessException {
+    public void addActivityLog(Long processInstanceId, Long activityInstanceId, String level, String message)
+            throws DataAccessException {
         String sql = "insert into ACTIVITY_LOG" +
-                "\n (activity_instance_id, level, message)" +
-                "\n values (?, ?, ?)";
+                "\n (process_instance_id, activity_instance_id, level, message)" +
+                "\n values (?, ?, ?, ?)";
         try {
             db.openConnection();
-            Object[] args = new Object[3];
-            args[0] = activityInstanceId;
-            args[1] = level;
-            args[2] = message;
+            Object[] args = new Object[4];
+            args[0] = processInstanceId;
+            args[1] = activityInstanceId;
+            args[2] = level;
+            args[3] = message;
             db.runUpdate(sql, args);
             db.commit();
         }

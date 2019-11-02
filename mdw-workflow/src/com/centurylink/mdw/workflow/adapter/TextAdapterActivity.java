@@ -350,17 +350,17 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
             if (requestHeaders == null)
                 requestHeaders = new HashMap<>();
             if (isStubbing) {
-                loginfo("Adapter is running in StubMode");
+                logInfo("Adapter is running in StubMode");
                 if (stubber.isStubbing()) {
                     AdapterStubRequest stubRequest = getStubRequest(requestData);
                     responseData = stubber.getStubResponse(getMasterRequestId(), stubRequest.getJson().toString(2));
                     if (((AdapterStubResponse)responseData).isPassthrough()) {
-                        loginfo("Stub server instructs to get real response");
+                        logInfo("Stub server instructs to get real response");
                         isStubbing = false;
                         connection = openConnection();
                         responseData = doInvoke(connection, request, getTimeoutForResponse(), requestHeaders);
                     } else {
-                        loginfo("Response received from stub server");
+                        logInfo("Response received from stub server");
                     }
                 }
                 else {
@@ -420,7 +420,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         ScheduledEventQueue eventQueue = ScheduledEventQueue.getSingleton();
         int retry_interval = this.getRetryInterval();
         Date scheduledTime = new Date(DatabaseAccess.getCurrentTime()+retry_interval*1000);
-        super.loginfo("The activity failed, set to retry at " + DateHelper.dateToString(scheduledTime));
+        super.logInfo("The activity failed, set to retry at " + DateHelper.dateToString(scheduledTime));
         eventQueue.scheduleInternalEvent(ScheduledEvent.INTERNAL_EVENT_PREFIX+this.getActivityInstanceId(),
                 scheduledTime, message.toString(), "procinst:"+this.getProcessInstanceId().toString());
         this.setReturnCode(COMPCODE_AUTO_RETRY);
@@ -563,7 +563,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
 
             return docref.getDocumentId();
         } catch (Exception ex) {
-            logexception(ex.getMessage(), ex);
+            logError(ex.getMessage(), ex);
             return null;
         }
     }
