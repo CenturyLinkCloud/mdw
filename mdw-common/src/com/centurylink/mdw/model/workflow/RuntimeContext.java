@@ -57,4 +57,6 @@ public interface RuntimeContext {
     String evaluateToString(String expression);
 
     String getAttribute(String name);
+
+    Long getInstanceId();
 }

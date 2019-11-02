@@ -40,6 +40,11 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
     private ActivityInstance activityInstance;
     public ActivityInstance getActivityInstance() { return activityInstance; }
 
+    @Override
+    public Long getInstanceId() {
+        return getActivityInstanceId();
+    }
+
     private Map<String,String> attributes;
     public Map<String,String> getAttributes() {
         if (attributes == null) {

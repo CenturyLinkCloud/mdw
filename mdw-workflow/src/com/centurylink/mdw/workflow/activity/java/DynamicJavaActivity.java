@@ -16,7 +16,6 @@
 package com.centurylink.mdw.workflow.activity.java;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.java.*;
@@ -25,6 +24,7 @@ import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.services.process.ActivityLogger;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
@@ -67,6 +67,8 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
 
     @Override
     protected void initialize(ActivityRuntimeContext runtimeContext) throws ActivityException {
+        runtimeContext.setLogPersister(ActivityLogger::persist);
+
         javaCode = runtimeContext.getAttributes().get(JAVA_CODE);
 
         if (StringUtils.isBlank(javaCode))

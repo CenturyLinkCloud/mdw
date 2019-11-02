@@ -56,6 +56,11 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
     private boolean inService;
     public boolean isInService() { return inService; }
 
+    @Override
+    public Long getInstanceId() {
+        return null;
+    }
+
     /**
      * Purposely separate from processInstance.getVariables().
      */
@@ -153,10 +158,14 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
 
     public void logInfo(String message) {
         logger.info(logtag(), message);
+        if (logPersister != null)
+            logPersister.persist(getInstanceId(), StandardLogger.LogLevel.INFO, message);
     }
 
     public void logDebug(String message) {
         logger.debug(logtag(), message);
+        if (logPersister != null)
+            logPersister.persist(getInstanceId(), StandardLogger.LogLevel.DEBUG, message);
     }
 
     public void logTrace(String message) {
@@ -165,22 +174,28 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
 
     public void logWarn(String message) {
         logger.warn(logtag(), message);
+        if (logPersister != null)
+            logPersister.persist(getInstanceId(), StandardLogger.LogLevel.WARN, message);
     }
 
     public void logSevere(String message) {
-        logger.severe(logtag(), message);
+        logError(message);
     }
 
     public void logError(String message) {
         logger.severe(logtag(), message);
+        if (logPersister != null)
+            logPersister.persist(getInstanceId(), StandardLogger.LogLevel.ERROR, message);
     }
 
     public void logException(String msg, Throwable t) {
-        logger.exception(logtag(), msg, t);
+        logError(msg, t);
     }
 
     public void logError(String msg, Throwable t) {
         logger.exception(logtag(), msg, t);
+        if (logPersister != null)
+            logPersister.persist(getInstanceId(), StandardLogger.LogLevel.ERROR, msg, t);
     }
 
     public boolean isLogInfoEnabled() {
@@ -454,5 +469,11 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         if (runtimeAttributes == null)
             runtimeAttributes = new HashMap<>();
         return runtimeAttributes;
+    }
+
+    private LogPersister logPersister;
+    public LogPersister getLogPersister() { return logPersister; }
+    public void setLogPersister(LogPersister logPersister) {
+        this.logPersister = logPersister;
     }
 }
