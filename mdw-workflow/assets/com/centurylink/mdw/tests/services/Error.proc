@@ -33,11 +33,11 @@ activities:
     attributes:
       TRANSITION_DISPLAY_INFO: type=Elbow,lx=504,ly=256,xs=473&536,ys=256&256
 - id: A4
-  name: Set stackTrace
+  name: Set Values
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
   attributes:
-    Output Documents: stackTrace
-    Rule: "import java.io.ByteArrayOutputStream\r\nimport java.io.PrintWriter\r\n\r\ndef baos = new ByteArrayOutputStream()\r\ndef writer = new PrintWriter(baos)\r\nexception.printStackTrace(writer)\r\nwriter.flush()\r\nstackTrace = baos.toString()"
+    Output Documents: '["person","stackTrace","values"]'
+    Rule: "import java.io.ByteArrayOutputStream\nimport java.io.PrintWriter\nimport com.centurylink.mdw.services.ServiceLocator\nimport com.centurylink.mdw.services.WorkflowServices\nimport com.centurylink.mdw.model.variable.DocumentReference\nimport com.centurylink.mdw.model.Jsonable\n\ndef baos = new ByteArrayOutputStream()\ndef writer = new PrintWriter(baos)\nexception.printStackTrace(writer)\nwriter.flush()\nstackTrace = baos.toString()\n\n// populate values map from source process variables\nvalues = [:]\nvalues['message'] = exception.toString()\nif (exception.runtimeContext) {\n    def procInst = exception.runtimeContext.processInstance\n    values['processName'] = procInst.processName\n    values['packageName'] = procInst.packageName\n    values['processInstanceId'] = String.valueOf(procInst.id)\n    \n    // access variables of source process\n    procInst.variables.each { var ->\n        values[var.name] = var.value\n    }\n    \n    // access Jsonable doc var from source process\n    def personDocRef = new DocumentReference(values['person'])\n    def personDoc = ServiceLocator.getWorkflowServices().getDocument(personDocRef.documentId)\n    person = personDoc.getObject(Jsonable.class.name, null)\n}\n"
     SCRIPT: Groovy
     WORK_DISPLAY_INFO: x=170,y=223,w=100,h=60
   transitions:
@@ -54,46 +54,53 @@ subprocesses:
     name: Start
     implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
     attributes:
-      WORK_DISPLAY_INFO: x=330,y=80,w=60,h=40
+      WORK_DISPLAY_INFO: x=275,y=73,w=60,h=40
     transitions:
     - id: T4
       to: A6
       event: FINISH
       attributes:
-        TRANSITION_DISPLAY_INFO: type=Elbow,lx=425,ly=100,xs=394&456,ys=100&100
+        TRANSITION_DISPLAY_INFO: type=Elbow,lx=370,ly=93,xs=339&401,ys=93&93
   - id: A6
     name: Handle Fallout
     implementor: com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity
     attributes:
       STATUS_AFTER_EVENT: Cancelled
       TASK_PAGELET: com.centurylink.mdw.base/AutoFormManualTask.pagelet
-      WORK_DISPLAY_INFO: x=460,y=70,w=100,h=60
+      WORK_DISPLAY_INFO: x=405,y=63,w=100,h=60
     transitions:
     - id: T5
       to: A7
       event: FINISH
       attributes:
-        TRANSITION_DISPLAY_INFO: type=Elbow,lx=595,ly=100,xs=564&626,ys=100&100
+        TRANSITION_DISPLAY_INFO: type=Elbow,lx=540,ly=93,xs=509&571,ys=93&93
   - id: A7
     name: Stop
     implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
     attributes:
-      WORK_DISPLAY_INFO: x=630,y=80,w=60,h=40
+      WORK_DISPLAY_INFO: x=575,y=73,w=60,h=40
   attributes:
     EMBEDDED_PROCESS_TYPE: Exception Handler
     PROCESS_VISIBILITY: EMBEDDED
-    WORK_DISPLAY_INFO: x=290,y=40,w=440,h=120
+    WORK_DISPLAY_INFO: x=235,y=33,w=440,h=120
 variables:
   exception:
     type: java.lang.Exception
     category: INPUT
+  person:
+    type: com.centurylink.mdw.model.Jsonable
+    category: LOCAL
   stackTrace:
     type: com.centurylink.mdw.model.StringDocument
+    category: LOCAL
+  values:
+    type: java.util.Map<String,String>
     category: LOCAL
 attributes:
   ArrowStyle: ArrowEnd
   NodeStyle: BoxIcon
   PROCESS_VISIBILITY: PUBLIC
+  PerformanceLevel: '0'
   WORK_DISPLAY_INFO: x=46,y=41,w=48,h=27
 textNotes:
 - id: N1
@@ -104,4 +111,4 @@ textNotes:
     infinite looping due to exception
     in error process itself.
   attributes:
-    WORK_DISPLAY_INFO: x=744,y=48,w=218,h=89
+    WORK_DISPLAY_INFO: x=689,y=41,w=218,h=89
