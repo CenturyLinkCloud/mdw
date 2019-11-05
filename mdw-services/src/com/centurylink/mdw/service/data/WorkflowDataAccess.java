@@ -266,7 +266,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
     public void addActivityLog(Long processInstanceId, Long activityInstanceId, String level, String message)
             throws DataAccessException {
         String sql = "insert into ACTIVITY_LOG" +
-                "\n (process_instance_id, activity_instance_id, level, message)" +
+                "\n (process_instance_id, activity_instance_id, log_level, message)" +
                 "\n values (?, ?, ?, ?)";
         try {
             db.openConnection();
@@ -294,7 +294,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
             ResultSet rs = db.runSelect(sql, activityInstanceId);
             while (rs.next()) {
                 Date when = rs.getTimestamp("CREATE_DT");
-                String level = rs.getString("LEVEL");
+                String level = rs.getString("LOG_LEVEL");
                 String message = rs.getString("MESSAGE");
                 logLines.add(new LogLine(when.toInstant(), StandardLogger.LogLevel.valueOf(level), message));
             }
