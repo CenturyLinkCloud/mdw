@@ -533,6 +533,7 @@ processMod.controller('ProcessDefController',
   }
 
   $scope.isEditAllowed = function() {
+    // TODO: no edit for archived or instance defs
     return $scope.authUser.hasRole('Process Design') && !mdw.git.tag;
   };
 
