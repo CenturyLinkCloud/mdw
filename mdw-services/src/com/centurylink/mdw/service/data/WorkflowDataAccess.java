@@ -20,16 +20,14 @@ import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.ProcessList;
-import com.centurylink.mdw.model.workflow.WorkStatus;
-import com.centurylink.mdw.model.workflow.WorkStatuses;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.util.log.LogLine;
 import com.centurylink.mdw.util.log.StandardLogger;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -286,19 +284,32 @@ public class WorkflowDataAccess extends CommonDataAccess {
         }
     }
 
-    public List<LogLine> getActivityLog(Long activityInstanceId) throws DataAccessException {
+    public ActivityLog getActivityLog(Long activityInstanceId) throws DataAccessException {
         String sql = "select * from ACTIVITY_LOG where activity_instance_id = ? order by CREATE_DT";
+        Long processInstanceId = null;
         List<LogLine> logLines = new ArrayList<>();
         try {
             db.openConnection();
             ResultSet rs = db.runSelect(sql, activityInstanceId);
             while (rs.next()) {
+                if (processInstanceId == null)
+                    processInstanceId = rs.getLong("PROCESS_INSTANCE_ID");
                 Date when = rs.getTimestamp("CREATE_DT");
                 String level = rs.getString("LOG_LEVEL");
                 String message = rs.getString("MESSAGE");
                 logLines.add(new LogLine(when.toInstant(), StandardLogger.LogLevel.valueOf(level), message));
             }
-            return logLines;
+
+            if (processInstanceId == null) {
+                return null;
+            }
+            else {
+                ActivityLog activityLog = new ActivityLog(processInstanceId, activityInstanceId);
+                activityLog.setDatabaseTime(Instant.ofEpochMilli(getDatabaseTime()));
+                activityLog.setServerTime(Instant.now());
+                activityLog.setLogLines(logLines);
+                return activityLog;
+            }
         }
         catch (SQLException ex) {
             throw new DataAccessException("Failed to retrieve activity: " + activityInstanceId, ex);

@@ -74,7 +74,6 @@ import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.TranslationException;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
-import com.centurylink.mdw.util.log.LogLine;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
@@ -577,7 +576,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     @Override
-    public List<LogLine> getActivityLog(Long activityInstanceId) throws ServiceException {
+    public ActivityLog getActivityLog(Long activityInstanceId) throws ServiceException {
         try {
             return getWorkflowDao().getActivityLog(activityInstanceId);
         }
