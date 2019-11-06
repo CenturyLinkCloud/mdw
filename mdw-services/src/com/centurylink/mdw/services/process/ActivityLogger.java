@@ -1,5 +1,7 @@
 package com.centurylink.mdw.services.process;
 
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
@@ -144,7 +146,7 @@ public class ActivityLogger extends AbstractStandardLoggerBase {
     }
 
     public static void persist(Long processInstanceId, Long activityInstanceId, LogLevel level, String message, Throwable t) {
-        boolean isLogging = true;  // TODO
+        boolean isLogging = PropertyManager.getBooleanProperty(PropertyNames.MDW_LOGGING_ACTIVITY, true);
         if (isLogging) {
             try {
                 WorkflowDataAccess dataAccess = new WorkflowDataAccess();

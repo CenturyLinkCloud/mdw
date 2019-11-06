@@ -307,7 +307,7 @@ process: # 10655
       	at com.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread.run(CommonThreadPool.java:${~\\d*})
       Caused by: com.centurylink.mdw.java.JavaExecutionException: I've fallen and I can't get up
       	at com.centurylink.mdw.tests.services.ServiceSub_A3.execute(ServiceSub_A3.java:16)
-      	at com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity.execute(DynamicJavaActivity.java:102)
+      	at com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity.execute(DynamicJavaActivity.java:${~\\d*})
       	... 12 more
   variable: # 10215
     name: values

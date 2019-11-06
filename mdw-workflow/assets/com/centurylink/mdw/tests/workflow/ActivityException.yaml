@@ -64,13 +64,13 @@ process: # 14209
           {
             "class": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
             "file": "DynamicJavaActivity.java",
-            "line": 102,
+            "line": ${~\\d+},
             "method": "execute"
           },
           {
             "class": "com.centurylink.mdw.workflow.activity.DefaultActivityImpl",
             "file": "DefaultActivityImpl.java",
-            "line": 40,
+            "line": ${~\\d+},
             "method": "execute"
           },
           {

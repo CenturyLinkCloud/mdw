@@ -43,6 +43,7 @@ public class ServiceLocator {
         return new TaskServicesImpl();
     }
 
+    @Deprecated
     public static ProcessServices getProcessServices() {
         return new ProcessServicesImpl();
     }
