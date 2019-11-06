@@ -11,9 +11,9 @@ After clicking on the Staging navigation link for the first time, you'll be pres
 
 <img src="https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/staging/staging_btn.png" alt="Staging Button" width="95%"/>
 
-Clicking the Creating Staging Area button will begin preparation of your personal staging area, a one-time process which
+Clicking the Create Staging Area button will begin preparation of your personal staging area, a one-time process which
 can take a few minutes and may appear stalled at times.  During preparation you can visit other areas of MDWHub and
-return to check on it's progress.
+return to check on its progress.
 
 <img src="https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/staging/staging_prep.png" alt="Staging Prep" width="95%"/>
 

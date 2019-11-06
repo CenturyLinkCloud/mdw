@@ -67,6 +67,21 @@ public class ServiceSummaryApi extends JsonRestService {
         throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + path);
     }
 
+    @Path("/{masterRequestId}")
+    @ApiOperation(value="Publish a service summary update")
+    @Override
+    public JSONObject post(String path, JSONObject content, Map<String,String> headers)
+            throws ServiceException, JSONException {
+        String[] segments = getSegments(path);
+        if (segments.length == 6) {
+            String masterRequestId = segments[5];
+            WorkflowServices wfs = ServiceLocator.getWorkflowServices();
+            wfs.notify("service-summary-update-" + masterRequestId, null, 2);
+            return null;
+        }
+        throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + path);
+    }
+
     @Path("/{id}")
     public ServiceSummary getServiceSummary(Long docId) throws ServiceException {
         return new MicroserviceAccess().getServiceSummary(docId);
