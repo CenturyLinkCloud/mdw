@@ -27,8 +27,8 @@ process: # 10655
   activity: # 1 "2019-09-25 11:43:24.012"
     name: Start
     status: Completed
-  activity: # 4 "2019-09-25 11:43:24.030"
-    name: Set stackTrace
+  activity: # 4 "2019-11-04 11:51:43.022"
+    name: Set Values
     status: Completed
   activity: # 3 "2019-09-25 11:43:24.047"
     name: Fallout
@@ -41,8 +41,8 @@ process: # 10655
           "message": "I've fallen and I can't get up",
           "stackElements": [
             {
-              "class": "com.centurylink.mdw.tests.services.Error_A3",
-              "file": "Error_A3.java",
+              "class": "com.centurylink.mdw.tests.services.ServiceSub_A3",
+              "file": "ServiceSub_A3.java",
               "line": 16,
               "method": "execute"
             },
@@ -131,8 +131,9 @@ process: # 10655
         "runtimeContext": {
           "activity": {
             "attributes": {
-              "Java": "package com.centurylink.mdw.tests.services;\r\n\r\nimport java.util.Map;\r\n\r\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\r\n\r\npublic class Error_A3 implements JavaExecutor {\r\n\r\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\r\n    }\r\n\r\n    public Object execute(Map<String, Object> variables) throws JavaExecutionException {\r\n        throw new JavaExecutionException(\"I've fallen and I can't get up\");\r\n    }\r\n}\r\n",
-              "WORK_DISPLAY_INFO": "x=238,y=84,w=100,h=60"
+              "ClassName": "ServiceSub_A3",
+              "Java": "package com.centurylink.mdw.tests.services;\n\nimport java.util.Map;\n\nimport com.centurylink.mdw.java.JavaExecutionException;\nimport com.centurylink.mdw.java.JavaExecutor;\nimport com.centurylink.mdw.java.MdwJavaException;\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\n\npublic class ServiceSub_A3 implements JavaExecutor {\n\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\n    }\n\n    public Object execute(Map<String, Object> variables) throws JavaExecutionException {\n        throw new JavaExecutionException(\"I've fallen and I can't get up\");\n    }\n}\n",
+              "WORK_DISPLAY_INFO": "x=405,y=89,w=104,h=67"
             },
             "id": "A3",
             "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
@@ -148,9 +149,9 @@ process: # 10655
           "category": "com.centurylink.mdw.activity.types.GeneralActivity",
           "process": "com.centurylink.mdw.tests.services/ServiceSub",
           "processInstance": {
-            "comments": "com.centurylink.mdw.tests.services/ServiceSub v0.5",
+            "comments": "com.centurylink.mdw.tests.services/ServiceSub v0.6",
             "id": ${~\\d*},
-            "masterRequestId": "${masterRequestId}",
+            "masterRequestId": "${~.*}",
             "owner": "PROCESS_INSTANCE",
             "ownerId": ${~\\d*},
             "packageName": "com.centurylink.mdw.tests.services",
@@ -158,13 +159,43 @@ process: # 10655
             "processName": "ServiceSub",
             "startDate": "${~.*}",
             "statusCode": 2,
-            "variables": [{
-              "id": ${~\\d*},
-              "name": "testCase",
-              "type": "java.lang.String",
-              "value": "err",
-              "variableId": 0
-            }]
+            "variables": [
+              {
+                "id": ${~\\d*},
+                "name": "testCase",
+                "type": "java.lang.String",
+                "value": "err",
+                "variableId": 0
+              },
+              {
+                "id": ${~\\d*},
+                "name": "id",
+                "type": "java.lang.String",
+                "value": "torvalds",
+                "variableId": 0
+              },
+              {
+                "id": ${~\\d*},
+                "name": "person",
+                "type": "com.centurylink.mdw.model.Jsonable",
+                "value": "DOCUMENT:${~\\d*}",
+                "variableId": 0
+              },
+              {
+                "id": ${~\\d*},
+                "name": "x",
+                "type": "java.lang.Integer",
+                "value": "10",
+                "variableId": 0
+              },
+              {
+                "id": ${~\\d*},
+                "name": "y",
+                "type": "java.lang.Integer",
+                "value": "8",
+                "variableId": 0
+              }
+            ]
           }
         },
         "stackElements": [
@@ -249,7 +280,15 @@ process: # 10655
         ],
         "throwable": "com.centurylink.mdw.activity.ActivityException"
       }
-  variable: # 11922
+  variable: # 10213
+    name: person
+    value: |
+      {
+        "firstName": "Linus",
+        "lastName": "Torvalds",
+        "occupation": "Developer"
+      }
+  variable: # 10214
     name: stackTrace
     value: |
       com.centurylink.mdw.activity.ActivityException: I've fallen and I can't get up
@@ -267,19 +306,55 @@ process: # 10655
       	at java.lang.Thread.run(Thread.java:${~\\d*})
       	at com.centurylink.mdw.container.plugin.CommonThreadPool$ManagedThread.run(CommonThreadPool.java:${~\\d*})
       Caused by: com.centurylink.mdw.java.JavaExecutionException: I've fallen and I can't get up
-      	at com.centurylink.mdw.tests.services.Error_A3.execute(Error_A3.java:${~\\d*})
-      	at com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity.execute(DynamicJavaActivity.java:${~\\d*})
-      	... ${~\\d*} more
-process: # 10675
+      	at com.centurylink.mdw.tests.services.ServiceSub_A3.execute(ServiceSub_A3.java:16)
+      	at com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity.execute(DynamicJavaActivity.java:102)
+      	... 12 more
+  variable: # 10215
+    name: values
+    value: |
+      {
+        "id": "torvalds",
+        "message": "com.centurylink.mdw.activity.ActivityException: I've fallen and I can't get up",
+        "packageName": "com.centurylink.mdw.tests.services",
+        "person": "DOCUMENT:${~\\d*}",
+        "processInstanceId": "${~\\d*}",
+        "processName": "ServiceSub",
+        "testCase": "err",
+        "x": "10",
+        "y": "8"
+      }
+process: # 10061
   name: ServiceSub
   instance: 1
   activity: # 1 "2019-09-25 12:06:46.543"
     name: Start
     status: Completed
-  activity: # 3 "2019-09-25 12:06:46.554"
+  activity: # 4 "2019-11-04 11:51:40.579"
+    name: |
+      Populate
+      Values
+    status: Completed
+  activity: # 3 "2019-11-04 11:51:40.593"
     name: Error
     status: Failed
     result: com.centurylink.mdw.activity.ActivityException: I've fallen and I can't get up...
-  variable: # 11948
+  variable: # 10208
+    name: id
+    value: torvalds
+  variable: # 10209
+    name: person
+    value: |
+      {
+        "firstName": "Linus",
+        "lastName": "Torvalds",
+        "occupation": "Developer"
+      }
+  variable: # 10207
     name: testCase
     value: err
+  variable: # 10210
+    name: x
+    value: 10
+  variable: # 10211
+    name: y
+    value: 8

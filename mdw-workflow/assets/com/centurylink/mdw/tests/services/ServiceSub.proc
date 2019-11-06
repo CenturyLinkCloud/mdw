@@ -3,37 +3,95 @@ activities:
   name: Start
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
   attributes:
-    WORK_DISPLAY_INFO: x=61,y=93,w=60,h=40
+    WORK_DISPLAY_INFO: x=49,y=100,w=60,h=40
   transitions:
   - id: T1
-    to: A3
+    to: A4
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: lx=180,ly=113,type=Elbow,xs=125&234,ys=113&113
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=158,ly=120,xs=113&203,ys=120&120
 - id: A2
   name: Stop
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
   attributes:
     DoNotNotifyCaller: 'false'
-    WORK_DISPLAY_INFO: x=437,y=90,w=60,h=40
+    WORK_DISPLAY_INFO: x=612,y=103,w=60,h=40
 - id: A3
   name: Error
   implementor: com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity
   attributes:
-    Java: "package com.centurylink.mdw.tests.services;\r\n\r\nimport java.util.Map;\r\n\r\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\r\n\r\npublic class Error_A3 implements JavaExecutor {\r\n\r\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\r\n    }\r\n\r\n    public Object execute(Map<String, Object> variables) throws JavaExecutionException {\r\n        throw new JavaExecutionException(\"I've fallen and I can't get up\");\r\n    }\r\n}\r\n"
-    WORK_DISPLAY_INFO: x=238,y=84,w=100,h=60
+    ClassName: ServiceSub_A3
+    Java: |
+      package com.centurylink.mdw.tests.services;
+
+      import java.util.Map;
+
+      import com.centurylink.mdw.java.JavaExecutionException;
+      import com.centurylink.mdw.java.JavaExecutor;
+      import com.centurylink.mdw.java.MdwJavaException;
+      import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
+
+      public class ServiceSub_A3 implements JavaExecutor {
+
+          public void initialize(ActivityRuntimeContext context) throws MdwJavaException {
+          }
+
+          public Object execute(Map<String, Object> variables) throws JavaExecutionException {
+              throw new JavaExecutionException("I've fallen and I can't get up");
+          }
+      }
+    WORK_DISPLAY_INFO: x=405,y=89,w=104,h=67
   transitions:
   - id: T2
     to: A2
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: lx=388,ly=110,type=Elbow,xs=342&433,ys=110&110
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=560,ly=124,xs=513&608,ys=124&124
+- id: A4
+  name: |-
+    Populate
+    Values
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    Output Documents: '["person"]'
+    Rule: |+
+      import com.centurylink.mdw.tests.workflow.Person
+
+      // assign some values to be accessed by Error.proc
+      x = 10
+      y = 8
+
+      id = 'torvalds'
+      person = new Person('Linus', 'Torvalds')
+      person.occupation = 'Developer'
+
+    SCRIPT: Groovy
+    WORK_DISPLAY_INFO: x=207,y=88,w=105,h=67
+  transitions:
+  - id: T3
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=358,ly=121,xs=316&401,ys=121&121
 variables:
+  id:
+    type: java.lang.String
+    category: LOCAL
+  person:
+    type: com.centurylink.mdw.model.Jsonable
+    category: LOCAL
   testCase:
     type: java.lang.String
     category: INPUT
+  x:
+    type: java.lang.Integer
+    category: LOCAL
+  y:
+    type: java.lang.Integer
+    category: LOCAL
 attributes:
   ArrowStyle: ArrowEnd
   NodeStyle: BoxIcon
   PROCESS_VISIBILITY: PUBLIC
+  PerformanceLevel: '0'
   WORK_DISPLAY_INFO: x=28,y=35,w=105,h=27
