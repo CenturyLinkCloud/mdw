@@ -70,6 +70,8 @@ public class ProcessEngineDriver {
     private static String useTransactionOnExecute = "not_loaded";
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
+    private static EngineLogger engineLogger = new EngineLogger(logger);
+
     private Exception lastException;    // used by service process to throw exception back to event handler
     private Long mainProcessInstanceId;    // used by service process to remember main process instance ID which caller may query
     private int eventConsumeRetrySleep;
@@ -125,13 +127,12 @@ public class ProcessEngineDriver {
                 if (messageDoc.isProcess())  {
                     // Process SLA (Delay handler)
                     String msg =  "Inherited Event - type=" + eventType + ", compcode=" + messageDoc.getCompletionCode();
-                    logger.info(logtag(processVO.getId(), processInstVO.getId(), processInstVO.getMasterRequestId()), msg);
-                    ActivityLogger.persist(processInstVO.getId(), null, LogLevel.INFO, msg);
+                    engineLogger.info(processVO.getId(), processInstVO.getId(), processInstVO.getMasterRequestId(), msg);
                 }
                 else {
+                    String tag = EngineLogger.logtag(processVO.getId(), processInstVO.getId(), messageDoc.getWorkId(), messageDoc.getWorkInstanceId());
                     String msg = "Inherited Event - type=" + eventType + ", compcode=" + messageDoc.getCompletionCode();
-                    logger.info(logtag(processVO.getId(), processInstVO.getId(), messageDoc.getWorkId(), messageDoc.getWorkInstanceId()), msg);
-                    ActivityLogger.persist(processInstVO.getId(), messageDoc.getWorkInstanceId(), LogLevel.INFO, msg);
+                    engineLogger.info(tag, processInstVO.getId(), null, msg);
                 }
             }
             engine.notifyMonitors(processInstVO, InternalLogMessage.PROCESS_ERROR);
@@ -279,28 +280,28 @@ public class ProcessEngineDriver {
             }
         }
         int initial_delay = 5;
-        if (count<max_retry) {
+        if (count < max_retry) {
             int delayInSeconds = initial_delay;
             count++;
             event.setDeliveryCount(count);
-            for (int i=0; i<count; i++) delayInSeconds = delayInSeconds*2;
+            for (int i = 0; i < count; i++)
+                delayInSeconds = delayInSeconds * 2;
+            String tag = EngineLogger.logtag(pi.getProcessId(), pi.getId(), event.getWorkId(), 0L);
             String msg = "Active instance exists, retry in " + delayInSeconds + " seconds";
-            logger.info(logtag(pi.getProcessId(),pi.getId(),event.getWorkId(),0L),msg);
-            ActivityLogger.persist(pi.getId(), null, LogLevel.INFO, msg);
+            engineLogger.info(tag,pi.getId(), null, msg);
             try {
-                String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + pi.getId()
-                    + "start" + event.getWorkId();
+                String msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + pi.getId() + "start" + event.getWorkId();
                 engine.sendDelayedInternalEvent(event, delayInSeconds, msgid, false);
             } catch (MdwException e) {
+                tag = EngineLogger.logtag(pi.getProcessId(), pi.getId(), event.getWorkId(), 0L);
                 msg = "Failed to send retry jms message";
-                logger.exception(logtag(pi.getProcessId(),pi.getId(),event.getWorkId(),0L), msg, new Exception(msg));
-                ActivityLogger.persist(pi.getId(), null, LogLevel.ERROR, msg);
+                engineLogger.error(tag, pi.getId(), null, msg, new Exception(msg));
             }
         } else {
-            String msg = "Active instance exists - fail after " + max_retry + " retries";
             // only log exception w/o creating a fall out task. Do we need to?
-            logger.exception(logtag(pi.getProcessId(),pi.getId(),event.getWorkId(),0L), msg, new Exception(msg));
-            ActivityLogger.persist(pi.getId(), null, LogLevel.ERROR, msg, new Exception(msg));
+            String tag = EngineLogger.logtag(pi.getProcessId(),pi.getId(),event.getWorkId(),0L);
+            String msg = "Active instance exists - fail after " + max_retry + " retries";
+            engineLogger.error(tag, pi.getId(), null, msg, new Exception(msg));
         }
     }
 
@@ -348,17 +349,13 @@ public class ProcessEngineDriver {
                 break;
             case ActivityRuntime.STARTCASE_SYNCH_COMPLETE:
                 String msg = "The synchronization activity is already completed";
-                logger.info(logtag(ar.getProcessInstance().getProcessId(),
-                        ar.getProcessInstance().getId(), ar.getActivityInstance().getActivityId(),
-                        ar.getActivityInstance().getId()), msg);
-                ActivityLogger.persist(ar.getProcessInstance().getId(), ar.getActivityInstance().getId(), LogLevel.INFO, msg);
+                engineLogger.info(ar.getProcessInstance().getProcessId(), ar.getProcessInstance().getId(),
+                        ar.getActivityInstance().getActivityId(), ar.getActivityInstance().getId(), msg);
                 break;
             case ActivityRuntime.STARTCASE_SYNCH_HOLD:
                 String message = "The synchronization activity is on-hold - ignore incoming transition";
-                logger.info(logtag(ar.getProcessInstance().getProcessId(),
-                        ar.getProcessInstance().getId(), ar.getActivityInstance().getActivityId(),
-                        ar.getActivityInstance().getId()), message);
-                ActivityLogger.persist(ar.getProcessInstance().getId(), ar.getActivityInstance().getId(), LogLevel.INFO, message);
+                engineLogger.info(ar.getProcessInstance().getProcessId(), ar.getProcessInstance().getId(),
+                        ar.getActivityInstance().getActivityId(), ar.getActivityInstance().getId(), message);
                 break;
             case ActivityRuntime.STARTCASE_SYNCH_WAITING:
                 event.setWorkInstanceId(ar.getActivityInstance().getId());
@@ -429,10 +426,8 @@ public class ProcessEngineDriver {
                 // ignore the message when the status is not waiting.
                 return;
             }
-            String tag = logtag(processInstance.getProcessId(), processInstance.getId(), ai.getActivityId(), actInstId);
             String msg = "Activity in waiting status times out";
-            logger.info(tag, msg);
-            ActivityLogger.persist(processInstance.getId(), ai.getId(), LogLevel.INFO, msg);
+            engineLogger.info(processInstance.getProcessId(), processInstance.getId(), ai.getActivityId(), actInstId, msg);
 
             Integer actInstStatus = WorkStatus.STATUS_CANCELLED;
             Process procdef = getProcessDefinition(processInstance);
@@ -837,8 +832,7 @@ public class ProcessEngineDriver {
             bindRequestHeadersVariable(procdef, headers, engine, mainProcessInst);
         }
         String msg = InternalLogMessage.PROCESS_START.message + " - " + procdef.getQualifiedName() + "/" + procdef.getVersionString();
-        logger.info(logtag(processId, mainProcessInst.getId(), masterRequestId), msg);
-        ActivityLogger.persist(mainProcessInst.getId(), null, LogLevel.INFO, msg);
+        engineLogger.info(processId, mainProcessInst.getId(), masterRequestId, msg);
         engine.notifyMonitors(mainProcessInst, InternalLogMessage.PROCESS_START);
         // setProcessInstanceStatus will really set to STATUS_IN_PROGRESS - hint to set START_DT as well
         InternalEvent event = InternalEvent.createActivityStartMessage(startActivityId,
@@ -976,29 +970,6 @@ public class ProcessEngineDriver {
         int delay = PropertyManager.getIntegerProperty(PropertyNames.MDW_PROCESS_LAUNCH_DELAY, 2);
         engine.startProcessInstance(processInst, delay);
         return processInst.getId();
-    }
-
-    private String logtag(Long procId, Long procInstId, String masterRequestId) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("p");
-        sb.append(procId);
-        sb.append(".");
-        sb.append(procInstId);
-        sb.append(" m.");
-        sb.append(masterRequestId);
-        return sb.toString();
-    }
-    private String logtag(Long procId, Long procInstId, Long actId, Long actInstId) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("p");
-        sb.append(procId);
-        sb.append(".");
-        sb.append(procInstId);
-        sb.append(" a");
-        sb.append(actId);
-        sb.append(".");
-        sb.append(actInstId);
-        return sb.toString();
     }
 
     private void loadDefaultPerformanceLevel() {
