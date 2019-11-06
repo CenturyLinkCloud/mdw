@@ -18,7 +18,10 @@ package com.centurylink.mdw.service.rest;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
-import com.centurylink.mdw.model.*;
+import com.centurylink.mdw.model.JsonArray;
+import com.centurylink.mdw.model.JsonExportable;
+import com.centurylink.mdw.model.JsonListMap;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
@@ -30,7 +33,6 @@ import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
-import com.centurylink.mdw.util.log.LogLine;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.json.JSONArray;
@@ -81,10 +83,10 @@ public class Activities extends JsonRestService implements JsonExportable {
                 try {
                     long instanceId = Long.parseLong(segOne);
                     if ("log".equals(getSegment(path, 2))) {
-                        List<LogLine> log =  getWorkflowServices().getActivityLog(instanceId);
+                        ActivityLog log =  getWorkflowServices().getActivityLog(instanceId);
                         if (log == null)
                             throw new ServiceException(ServiceException.NOT_FOUND, "Log not found for activity: " + instanceId);
-                        return new JsonList<>(log, "log").getJson();
+                        return log.getJson();
                     }
                     else{
                         return getWorkflowServices().getActivity(instanceId).getJson();
