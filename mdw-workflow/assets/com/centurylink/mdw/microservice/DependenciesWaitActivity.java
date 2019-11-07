@@ -9,23 +9,19 @@ import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.workflow.WorkStatus;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.workflow.activity.event.EventWaitActivity;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
 
 import java.util.List;
 
-@Activity(value="Microservice Dependencies Wait", category=DependenciesWaitActivity.class,
+@Activity(value="Microservice Dependencies Wait", category= DependenciesWaitActivity.class,
         icon="com.centurylink.mdw.base/receive.gif",
         pagelet="com.centurylink.mdw.microservice/dependenciesWait.pagelet")
 public class DependenciesWaitActivity extends EventWaitActivity {
 
     private static String MICROSERVICE_NAMES = "MICROSERVICE_NAMES";
     private static String DEPENDENCIES = "DEPENDENCIES";
-
-    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     @Override
     public void execute() throws ActivityException {
@@ -41,7 +37,7 @@ public class DependenciesWaitActivity extends EventWaitActivity {
     protected boolean handleCompletionCode() throws ActivityException {
         Integer exitStatus = WorkStatus.STATUS_COMPLETED;
         if (!dependenciesMet()) {
-            logger.info(getActivityName() + "  *** not met, setting to waiting");
+            loginfo(getActivityName() + "  *** not met, setting to waiting");
             exitStatus = WorkStatus.STATUS_WAITING;
             setActivityWaitingOnExit();
         }
@@ -70,7 +66,7 @@ public class DependenciesWaitActivity extends EventWaitActivity {
                 registerWaitEvents(true);
             }
             catch (Exception e) {
-                logger.info("Error in registerWaitEvents - " + e.getMessage());
+                loginfo("Error in registerWaitEvents - " + e.getMessage());
                 e.printStackTrace();
             }
             return compCode != null && (compCode
@@ -100,7 +96,7 @@ public class DependenciesWaitActivity extends EventWaitActivity {
         if (serviceSummary == null) {
             // No service Summary, so throw exception since we shouldn't proceed
             // if we can't determine if dependencies are met
-            logger.severe("Service summary not found");
+            logsevere("Service summary not found");
             throw new ActivityException("Unable to determine if dependencies are met, "
                     + "service summary variable not found");
         }
@@ -112,12 +108,12 @@ public class DependenciesWaitActivity extends EventWaitActivity {
 
         try {
             for (String[] microservice : microservices) {
-                logger.info(getActivityName() + "  *** microservice[2] " + microservice[2]);
+                loginfo(getActivityName() + "  *** microservice[2] " + microservice[2]);
                 Object expResult = getValueSmart(microservice[2], String.valueOf(tag++));
                 String expString = null;
                 if (expResult instanceof String) {
                     expString = (String) expResult;
-                    logger.info(getActivityName() + "  *** 1st " + expString);
+                    loginfo(getActivityName() + "  *** 1st " + expString);
                     if (expString.isEmpty()) {
                         expResult = Boolean.TRUE;
                     }
@@ -131,27 +127,21 @@ public class DependenciesWaitActivity extends EventWaitActivity {
                 }
 
                 Boolean expResultBool = (Boolean) expResult;
-                logger.info(getActivityName() + "  *** expString " + expString + " is "
-                        + expResultBool);
+                loginfo(getActivityName() + "  *** expString " + expString + " is " + expResultBool);
                 if (Boolean.parseBoolean(microservice[0])) {
-                    // check it
-                    // if microservice isn't populated then do the check based
-                    // on
-                    // the expression
+                    // if microservice isn't populated then do the check based on the expression
                     if ((StringUtils.isBlank(microservice[1]) && !expResultBool)
                             || (expResultBool
                                     && !StringUtils.isBlank(microservice[1])
                                     && microServiceSuccess(microservice[1],
                                             serviceSummary) == null)) {
-                        // service has been checked, but no successful response
-                        // was
-                        // received
+                        // service has been checked, but no successful response was received
                         dependenciesMet = false;
                         break;
                     }
                 }
             }
-            logger.info(getActivityName() + "  *** dependenciesMet " + dependenciesMet);
+            loginfo(getActivityName() + "  *** dependenciesMet " + dependenciesMet);
             return dependenciesMet;
         }
         catch (PropertyException ex) {
