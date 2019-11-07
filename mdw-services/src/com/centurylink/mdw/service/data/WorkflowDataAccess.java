@@ -27,7 +27,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -305,9 +305,11 @@ public class WorkflowDataAccess extends CommonDataAccess {
             }
             else {
                 ActivityLog activityLog = new ActivityLog(processInstanceId, activityInstanceId);
-                activityLog.setDatabaseTime(Instant.ofEpochMilli(getDatabaseTime()));
-                activityLog.setServerTime(Instant.now());
                 activityLog.setLogLines(logLines);
+                ZonedDateTime serverTime = ZonedDateTime.now();
+                activityLog.setServerZoneOffset(serverTime.getOffset().getTotalSeconds());
+                long dbDiffSecs = DatabaseAccess.getDbTimeDiff() / 1000;
+                activityLog.setDbZoneOffset(activityLog.getServerZoneOffset() + dbDiffSecs);
                 return activityLog;
             }
         }
