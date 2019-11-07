@@ -26,7 +26,7 @@ import java.util.Map;
  * REST adapter overridden to support microservices and
  * populate headers, response and serviceSummary (if it exists)
  */
-@Activity(value="Microservice REST Adapter", category=AdapterActivity.class, icon="com.centurylink.mdw.base/adapter.png",
+@Activity(value="Microservice REST Adapter", category= AdapterActivity.class, icon="com.centurylink.mdw.base/adapter.png",
         pagelet="com.centurylink.mdw.microservice/microserviceRest.pagelet")
 public class MicroserviceRestAdapter extends RestServiceAdapter {
 
@@ -102,26 +102,8 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
 
         ServiceSummary serviceSummary = getServiceSummary(true);
         if (serviceSummary != null) {
-            ServiceSummary currentSummary = serviceSummary.findParent(getProcessInstanceId());
-            if (currentSummary == null)
-                currentSummary = serviceSummary;
+            doServiceSummaryUpdate(serviceSummary, status, responseId);
 
-            String microservice = getMicroservice(serviceSummary);
-            List<Invocation> invocations = currentSummary.getInvocations(microservice, getProcessInstanceId());
-            if (invocations == null)
-                throw new ActivityException("No invocations for: " + microservice);
-
-            // if last invocation does not have a response, add it there
-            if (invocations.size() > 0 && invocations.get(invocations.size() - 1).getStatus() == null) {
-                invocations.get(invocations.size() - 1).setStatus(status);
-                invocations.get(invocations.size() - 1).setResponseId(responseId);
-            }
-            else {
-                Invocation invocation = new Invocation(getRequestId(), status, Instant.now(), responseId);
-                invocations.add(invocation);
-            }
-
-            setVariableValue(getServiceSummaryVariableName(), serviceSummary);
             getEngine().getDatabaseAccess().commit();
             // For mySQL, we need to change the isolation level so that the next read (once we have response)
             // is not using the DB snapshot that got created when we were in here first for the request.
@@ -139,6 +121,30 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
                 notifyServiceSummaryUpdate(serviceSummary);
             }
         }
+    }
+
+    protected void doServiceSummaryUpdate(ServiceSummary serviceSummary, Status status, Long responseId)
+            throws ActivityException {
+        ServiceSummary currentSummary = serviceSummary.findParent(getProcessInstanceId());
+        if (currentSummary == null)
+            currentSummary = serviceSummary;
+
+        String microservice = getMicroservice(serviceSummary);
+        List<Invocation> invocations = currentSummary.getInvocations(microservice, getProcessInstanceId());
+        if (invocations == null)
+            throw new ActivityException("No invocations for: " + microservice);
+
+        // if last invocation does not have a response, add it there
+        if (invocations.size() > 0 && invocations.get(invocations.size() - 1).getStatus() == null) {
+            invocations.get(invocations.size() - 1).setStatus(status);
+            invocations.get(invocations.size() - 1).setResponseId(responseId);
+        }
+        else {
+            Invocation invocation = new Invocation(getRequestId(), status, Instant.now(), responseId);
+            invocations.add(invocation);
+        }
+
+        setVariableValue(getServiceSummaryVariableName(), serviceSummary);
     }
 
     /**
