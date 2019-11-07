@@ -3,7 +3,6 @@ package com.centurylink.mdw.model.workflow;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.util.log.LogLine;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,13 +16,19 @@ public class ActivityLog implements Jsonable {
     public Long getActivityInstanceId() { return activityInstanceId; }
     public void setActivityInstanceId(Long activityInstanceId) { this.activityInstanceId = activityInstanceId; }
 
-    private Instant databaseTime;
-    public Instant getDatabaseTime() { return databaseTime; }
-    public void setDatabaseTime(Instant databaseTime) { this.databaseTime = databaseTime; }
+    /**
+     * Seconds.
+     */
+    private long dbZoneOffset;
+    public long getDbZoneOffset() { return dbZoneOffset; }
+    public void setDbZoneOffset(long dbZoneOffset) { this.dbZoneOffset = dbZoneOffset; }
 
-    private Instant serverTime;
-    public Instant getServerTime() { return serverTime; }
-    public void setServerTime(Instant serverTime) { this.serverTime = serverTime; }
+    /**
+     * Seconds.
+     */
+    private long serverZoneOffset;
+    public long getServerZoneOffset() { return serverZoneOffset; }
+    public void setServerZoneOffset(long serverZoneOffset) { this.serverZoneOffset = serverZoneOffset; }
 
     private List<LogLine> logLines = new ArrayList<>();
     public List<LogLine> getLogLines() { return logLines; }
