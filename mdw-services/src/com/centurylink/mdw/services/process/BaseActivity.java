@@ -1043,46 +1043,38 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return completion code if onExecute() returns non-null
      */
     String notifyMonitors(String event) {
-        ActivityRuntimeContext runtimeContext = null;
-
         try {
             for (ActivityMonitor monitor : MonitorRegistry.getInstance().getActivityMonitors(_runtimeContext)) {
-                Map<String, Object> updates = null;
+                Map<String,Object> updates = null;
 
+                // Document variables are up-to-date as of activity start.
                 // Since there is no guaranteed order to the multiple monitors at this point, there cannot be an expectation to keep
-                // the runtimeContext process variables map up-to-date from one monitor to the next.  Only update map once
+                // the runtimeContext process variables map up-to-date from one monitor to the next.
                 // TODO Implement a way to determine priority/order when having multiple monitors
-                if (runtimeContext == null) {
-                    // LOGMSG_START happens right after creating the activityRuntimeContext, so assume variables are up-to-date
-                    if (event.equals(WorkStatus.LOGMSG_START))
-                        runtimeContext = _runtimeContext;
-                    else
-                        runtimeContext = getRuntimeContext();
-                }
 
                 if (monitor.isOffline()) {
                     @SuppressWarnings("unchecked")
                     OfflineMonitor<ActivityRuntimeContext> activityOfflineMonitor = (OfflineMonitor<ActivityRuntimeContext>) monitor;
-                    new OfflineMonitorTrigger<>(activityOfflineMonitor, runtimeContext).fire(event);
+                    new OfflineMonitorTrigger<>(activityOfflineMonitor, _runtimeContext).fire(event);
                 }
                 else {
                     if (event.equals(WorkStatus.LOGMSG_START))
-                        updates = monitor.onStart(runtimeContext);
+                        updates = monitor.onStart(_runtimeContext);
                     else if (event.equals(WorkStatus.LOGMSG_EXECUTE)) {
-                        String compCode = monitor.onExecute(runtimeContext);
+                        String compCode = monitor.onExecute(_runtimeContext);
                         if (compCode != null) {
                             loginfo("Activity short-circuited by monitor: " + monitor.getClass().getName() + " with code: " + compCode);
                             return compCode;
                         }
                     }
                     else if (event.equals(WorkStatus.LOGMSG_COMPLETE)) {
-                        updates = monitor.onFinish(runtimeContext);
+                        updates = monitor.onFinish(_runtimeContext);
                     }
                     else if (event.equals(WorkStatus.LOGMSG_FAILED)) {
-                        monitor.onError(runtimeContext);
+                        monitor.onError(_runtimeContext);
                     }
                     else if (event.equals(WorkStatus.LOGMSG_SUSPEND)) {
-                        monitor.onSuspend(runtimeContext);
+                        monitor.onSuspend(_runtimeContext);
                     }
                 }
 
