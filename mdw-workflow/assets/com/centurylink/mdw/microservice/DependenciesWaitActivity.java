@@ -15,7 +15,7 @@ import org.json.JSONException;
 
 import java.util.List;
 
-@Activity(value="Microservice Dependencies Wait", category=DependenciesWaitActivity.class,
+@Activity(value="Microservice Dependencies Wait", category= DependenciesWaitActivity.class,
         icon="com.centurylink.mdw.base/receive.gif",
         pagelet="com.centurylink.mdw.microservice/dependenciesWait.pagelet")
 public class DependenciesWaitActivity extends EventWaitActivity {
@@ -67,7 +67,7 @@ public class DependenciesWaitActivity extends EventWaitActivity {
             }
             catch (Exception e) {
                 getLogger().info("Error in registerWaitEvents - " + e.getMessage());
-                e.printStackTrace();
+                getLogger().error(e.getMessage(), e);
             }
             return compCode != null && (compCode
                     .startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
@@ -96,7 +96,7 @@ public class DependenciesWaitActivity extends EventWaitActivity {
         if (serviceSummary == null) {
             // No service Summary, so throw exception since we shouldn't proceed
             // if we can't determine if dependencies are met
-            getLogger().severe("Service summary not found");
+            getLogger().error("Service summary not found");
             throw new ActivityException("Unable to determine if dependencies are met, "
                     + "service summary variable not found");
         }

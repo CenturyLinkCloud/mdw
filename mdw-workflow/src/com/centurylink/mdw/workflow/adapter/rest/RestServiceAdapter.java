@@ -245,6 +245,12 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                 response.setPath(ServicePaths.getOutboundResponsePath(httpHelper.getConnection().getUrl(),
                         httpHelper.getConnection().getMethod()));
                 logResponse(response);
+                try {
+                    populateResponseVariable(response.getContent());
+                }
+                catch (ActivityException e2) {
+                    logger.error(ex.getMessage(), e2);
+                }
             }
              // Plugs into automatic retrying
             logError(ex.getMessage(), ex);
@@ -261,6 +267,12 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                     response.setPath(ServicePaths.getOutboundResponsePath(httpHelper.getConnection().getUrl(),
                             httpHelper.getConnection().getMethod()));
                     logResponse(response);
+                    try {
+                        populateResponseVariable(response.getContent());
+                    }
+                    catch (ActivityException e2) {
+                        logger.error(ex.getMessage(), e2);
+                    }
                 }
             }
             throw new AdapterException(responseCode, ex.getMessage() , ex);
