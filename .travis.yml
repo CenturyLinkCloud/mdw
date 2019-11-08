@@ -27,7 +27,7 @@ script:
 - ./gradlew --no-daemon publishAll
 after_failure:
 - cat ../testResults/mdw-function-test-results.json
-- cat ../testResults/com.centurylink.mdw.tests.services/CancelProcessErr.log
+- cat ../testResults/com.centurylink.mdw.tests.services/AutoRetry.log
 - cat ../testResults/com.centurylink.mdw.tests.services/CancelProcessErr.yaml
 - cat mdw.log
 - sleep 10s
