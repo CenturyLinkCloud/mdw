@@ -74,6 +74,7 @@ import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.TranslationException;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
+import com.centurylink.mdw.util.log.ActivityLog;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
@@ -336,6 +337,26 @@ public class WorkflowServicesImpl implements WorkflowServices {
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error retrieving process instance: " +
                     instanceId + ": " + ex.getMessage(), ex);
+        }
+    }
+
+    @Override
+    public ActivityLog getProcessLog(Long processInstanceId, boolean withActivities) throws ServiceException {
+        try {
+            return getWorkflowDao().getProcessLog(processInstanceId, withActivities);
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
+        }
+    }
+
+    @Override
+    public ActivityLog getProcessLog(Long processInstanceId, Long[] activityInstanceIds) throws ServiceException {
+        try {
+            return getWorkflowDao().getProcessLog(processInstanceId, activityInstanceIds);
+        }
+        catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
         }
     }
 

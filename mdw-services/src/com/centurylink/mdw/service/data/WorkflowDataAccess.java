@@ -20,8 +20,12 @@ import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.model.workflow.*;
-import com.centurylink.mdw.util.log.LogLine;
+import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.model.workflow.ProcessList;
+import com.centurylink.mdw.model.workflow.WorkStatus;
+import com.centurylink.mdw.model.workflow.WorkStatuses;
+import com.centurylink.mdw.util.log.ActivityLog;
+import com.centurylink.mdw.util.log.ActivityLogLine;
 import com.centurylink.mdw.util.log.StandardLogger;
 
 import java.sql.ResultSet;
@@ -284,40 +288,91 @@ public class WorkflowDataAccess extends CommonDataAccess {
         }
     }
 
-    public ActivityLog getActivityLog(Long activityInstanceId) throws DataAccessException {
-        String sql = "select * from ACTIVITY_LOG where activity_instance_id = ? order by CREATE_DT";
-        Long processInstanceId = null;
-        List<LogLine> logLines = new ArrayList<>();
+    public ActivityLog getProcessLog(Long processInstanceId, Long[] activityInstanceIds) throws DataAccessException {
+        StringBuilder sql = new StringBuilder("select * from ACTIVITY_LOG\nwhere activity_instance_id in (");
+        Object[] args = new Object[activityInstanceIds.length];
+        for (int i = 0; i < activityInstanceIds.length; i++) {
+            sql.append("?");
+            if (i < activityInstanceIds.length - 1)
+                sql.append(", ");
+            args[i] = activityInstanceIds[i];
+        }
+        sql.append(")\n");
+        sql.append("order by activity_instance_id desc, create_dt");
         try {
             db.openConnection();
-            ResultSet rs = db.runSelect(sql, activityInstanceId);
-            while (rs.next()) {
-                if (processInstanceId == null)
-                    processInstanceId = rs.getLong("PROCESS_INSTANCE_ID");
-                Date when = rs.getTimestamp("CREATE_DT");
-                String level = rs.getString("LOG_LEVEL");
-                String message = rs.getString("MESSAGE");
-                logLines.add(new LogLine(when.toInstant(), StandardLogger.LogLevel.valueOf(level), message));
-            }
-
-            if (processInstanceId == null) {
-                return null;
-            }
-            else {
-                ActivityLog activityLog = new ActivityLog(processInstanceId, activityInstanceId);
-                activityLog.setLogLines(logLines);
-                ZonedDateTime serverTime = ZonedDateTime.now();
-                activityLog.setServerZoneOffset(serverTime.getOffset().getTotalSeconds());
-                long dbDiffSecs = DatabaseAccess.getDbTimeDiff() / 1000;
-                activityLog.setDbZoneOffset(activityLog.getServerZoneOffset() + dbDiffSecs);
-                return activityLog;
-            }
+            ResultSet rs = db.runSelect(sql.toString(), args);
+            return buildActivityLog(rs);
         }
         catch (SQLException ex) {
-            throw new DataAccessException("Failed to retrieve activity: " + activityInstanceId, ex);
+            throw new DataAccessException("Failed to retrieve process log: " + processInstanceId, ex);
         }
         finally {
             db.closeConnection();
         }
     }
+
+    public ActivityLog getActivityLog(Long activityInstanceId) throws DataAccessException {
+        String sql = "select * from ACTIVITY_LOG where activity_instance_id = ?";
+        try {
+            db.openConnection();
+            ResultSet rs = db.runSelect(sql, activityInstanceId);
+            return buildActivityLog(rs);
+        }
+        catch (SQLException ex) {
+            throw new DataAccessException("Failed to retrieve activity log: " + activityInstanceId, ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    public ActivityLog getProcessLog(Long processInstanceId, boolean withActivities) throws DataAccessException {
+        String sql = "select * from ACTIVITY_LOG\nwhere process_instance_id = ?\n";
+        if (!withActivities)
+            sql += "and activity_instance_id is null\n";
+        sql += "order by CREATE_DT";
+        try {
+            db.openConnection();
+            ResultSet rs = db.runSelect(sql, processInstanceId);
+            return buildActivityLog(rs);
+        }
+        catch (SQLException ex) {
+            throw new DataAccessException("Failed to retrieve process log: " + processInstanceId, ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    /**
+     * Returns null if now rows.
+     */
+    private ActivityLog buildActivityLog(ResultSet rs) throws SQLException {
+        Long processInstanceId = null;
+        List<ActivityLogLine> logLines = new ArrayList<>();
+        while (rs.next()) {
+            if (processInstanceId == null)
+                processInstanceId = rs.getLong("PROCESS_INSTANCE_ID");
+            Long actInstId = rs.getLong("ACTIVITY_INSTANCE_ID");
+            Date when = rs.getTimestamp("CREATE_DT");
+            String level = rs.getString("LOG_LEVEL");
+            String message = rs.getString("MESSAGE");
+            logLines.add(new ActivityLogLine(actInstId, when.toInstant(), StandardLogger.LogLevel.valueOf(level), message));
+        }
+
+        if (processInstanceId == null) {
+            return null;
+        }
+        else {
+            ActivityLog activityLog = new ActivityLog(processInstanceId);
+            activityLog.setLogLines(logLines);
+            ZonedDateTime serverTime = ZonedDateTime.now();
+            activityLog.setServerZoneOffset(serverTime.getOffset().getTotalSeconds());
+            long dbDiffSecs = DatabaseAccess.getDbTimeDiff() / 1000;
+            activityLog.setDbZoneOffset(activityLog.getServerZoneOffset() + dbDiffSecs);
+            return activityLog;
+        }
+    }
+
 }
