@@ -357,6 +357,8 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
         if (value.value.length > maxColWidth) {
           value.full = value.value;
           value.value = value.full.substring(0, maxColWidth - 5) + ' ...';
+          if ('Log' === props[h])
+             value.full = value.full.replace(/\\n/g, '\n');
           value.extended = true;
         }
         if (value.value.length > colWidths[h])
