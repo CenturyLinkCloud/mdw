@@ -1,5 +1,23 @@
 # Change Log
 
+## [6.1.27](https://github.com/CenturyLinkCloud/mdw/tree/6.1.27) (2019-11-08)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.26...6.1.27)
+
+**Implemented enhancements:**
+
+- Milestones API should allow specifying a master process instance [\#757](https://github.com/CenturyLinkCloud/mdw/issues/757)
+- Asset modifications staging [\#720](https://github.com/CenturyLinkCloud/mdw/issues/720)   
+  https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/staging/readme.md
+
+**Closed issues:**
+
+- Avoid selecting documents for update when notifying ActivityMonitors [\#767](https://github.com/CenturyLinkCloud/mdw/issues/767)
+- REST adapter activity should populate response variable even for non-2xx [\#762](https://github.com/CenturyLinkCloud/mdw/issues/762)
+- Event name existence check SQLException catch is too general [\#760](https://github.com/CenturyLinkCloud/mdw/issues/760)
+- SQLException can be swallowed in ProcessEngineDriver.processEvents\(\) [\#759](https://github.com/CenturyLinkCloud/mdw/issues/759)
+- Cancelling a flow through Hub should cancel tasks/waits in embedded handlers [\#754](https://github.com/CenturyLinkCloud/mdw/issues/754)
+- Cancel/Complete error task should not retrigger already-proceeded flow [\#744](https://github.com/CenturyLinkCloud/mdw/issues/744)
+
 ## [6.1.26](https://github.com/CenturyLinkCloud/mdw/tree/6.1.26) (2019-10-04)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.25...6.1.26)
 
@@ -12,7 +30,6 @@
 - Avoid persisting Hub REST requests/responses [\#738](https://github.com/CenturyLinkCloud/mdw/issues/738)
 - Show process version history in MDWHub [\#677](https://github.com/CenturyLinkCloud/mdw/issues/677)
 - Non-asset Java classes should support the @Activity annotation. [\#31](https://github.com/CenturyLinkCloud/mdw/issues/31)
-- Beta implementation of Asset Staging. [\#720](https://github.com/CenturyLinkCloud/mdw/issues/720)
 
 **Closed issues:**
 

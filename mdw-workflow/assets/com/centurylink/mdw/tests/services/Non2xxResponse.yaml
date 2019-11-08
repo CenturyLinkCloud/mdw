@@ -1,0 +1,27 @@
+process: # 10023
+  name: Non2xxResponse
+  instance: 1
+  activity: # 1 "2019-11-08 10:43:55.137"
+    name: Start
+    status: Completed
+  activity: # 3 "2019-11-08 10:43:55.508"
+    name: |
+      Create
+      Request
+    status: Completed
+  activity: # 4 "2019-11-08 10:43:57.216"
+    name: |
+      POST
+      404
+    status: Failed
+    result: com.centurylink.mdw.activity.ActivityException:(code=404): Server returned HTTP response code: 404...
+  variable: # 10036
+    name: serviceRequest
+    value: {}
+  variable: # 10037
+    name: serviceResponse
+    value: |
+      {"status": {
+        "code": 404,
+        "message": "Unable to handle service request: notfound"
+      }}

@@ -116,7 +116,7 @@ public abstract class BaseActivity implements GeneralActivity {
      *    or of the parent process instance when this is in an embedded process
      */
     void prepare(Activity actVO, ProcessInstance pi, ActivityInstance ai, List<VariableInstance> parameters,
-                 Long transInstId, String entryCode, TrackingTimer timer, ProcessExecutor engine) {
+            Long transInstId, String entryCode, TrackingTimer timer, ProcessExecutor engine) {
         try {
             if (timer != null)
                 timer.start("Prepare Activity");
@@ -435,7 +435,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return variable data as an object
      */
     protected Object getParameterValue(Long processInstId, String name)
-        throws DataAccessException {
+            throws DataAccessException {
         VariableInstance varInst = engine.getVariableInstance(processInstId, name);
         return varInst==null?null:varInst.getData();
 
@@ -496,7 +496,7 @@ public abstract class BaseActivity implements GeneralActivity {
     }
 
     protected void setParameterValues(Map<String,Object> map)
-        throws ActivityException {
+            throws ActivityException {
         for (String name : map.keySet()) {
             setParameterValue(name, map.get(name));
         }
@@ -511,7 +511,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return variable instance ID
      */
     protected Long setParameterValue(String name, Object value)
-    throws ActivityException {
+            throws ActivityException {
         Long varInstId;
         try {
             VariableInstance varInst = this.getVariableInstance(name);
@@ -547,7 +547,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return variable instance ID
      */
     protected Long setParameterValue(Long processInstId, String name, Object value)
-        throws ActivityException {
+            throws ActivityException {
         Long varInstId;
         try {
             VariableInstance varInst = engine.getVariableInstance(processInstId, name);
@@ -555,11 +555,11 @@ public abstract class BaseActivity implements GeneralActivity {
                 varInstId = varInst.getInstanceId();
                 if (value instanceof String) varInst.setStringValue((String)value);
                 else varInst.setData(value);
-                  engine.updateVariableInstance(varInst);
+                engine.updateVariableInstance(varInst);
             } else {
                 ProcessInstance procInst = engine.getProcessInstance(processInstId);
                 varInst = engine.createVariableInstance(procInst, name, value);
-                  varInstId = varInst.getInstanceId();
+                varInstId = varInst.getInstanceId();
             }
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -579,7 +579,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @param value this is the document
      */
     protected DocumentReference setParameterValueAsDocument(String name, String varType, Object value)
-    throws ActivityException {
+            throws ActivityException {
         DocumentReference docref = (DocumentReference)this.getParameterValue(name);
         if (docref == null) {
             docref = createDocument(varType, value, OwnerType.VARIABLE_INSTANCE, 0L);
@@ -598,7 +598,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return EventDetails as String
      */
     protected String getExternalEventInstanceDetails(Long externalEventInstId)
-      throws ActivityException {
+            throws ActivityException {
         DocumentReference docref = new DocumentReference(externalEventInstId);
         Document docvo;
         try {
@@ -715,7 +715,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * Variables for this activity instance are bound.
      */
     protected Object evaluateExpression(String name, String language, String expression)
-    throws ExecutionException {
+            throws ExecutionException {
         _runtimeContext.setLogPersister(ActivityLogger::persist);
         try {
             if (JAVA_EL.equals(language)) {
@@ -849,12 +849,12 @@ public abstract class BaseActivity implements GeneralActivity {
                             else value = "";
                         }
                     } else {
-                         try {
-                             value = (String)evaluateExpression(getActivityId().toString()+":"+expression, GROOVY, expression);
-                         } catch (ExecutionException ex) {
-                             logwarn("Exception in evaluating expression " + expression + ": " + ex.getMessage());
-                             value = "";
-                         }
+                        try {
+                            value = (String)evaluateExpression(getActivityId().toString()+":"+expression, GROOVY, expression);
+                        } catch (ExecutionException ex) {
+                            logwarn("Exception in evaluating expression " + expression + ": " + ex.getMessage());
+                            value = "";
+                        }
                     }
                     sb.append(value);
                 } // else  '{' without '}' - ignore string after '{'
@@ -886,14 +886,14 @@ public abstract class BaseActivity implements GeneralActivity {
     }
 
     protected String getDocumentContent(DocumentReference docref) throws ActivityException {
-         Document docvo;
-         try {
-             docvo = engine.getDocument(docref, false);
-         } catch (Exception ex) {
-             logexception("Error retrieving " + docref, ex);
-             throw new ActivityException("Error retrieving " + docref, ex);
-         }
-         return docvo==null?null:docvo.getContent(getPackage());
+        Document docvo;
+        try {
+            docvo = engine.getDocument(docref, false);
+        } catch (Exception ex) {
+            logexception("Error retrieving " + docref, ex);
+            throw new ActivityException("Error retrieving " + docref, ex);
+        }
+        return docvo==null?null:docvo.getContent(getPackage());
     }
 
     /**
@@ -917,7 +917,7 @@ public abstract class BaseActivity implements GeneralActivity {
     }
 
     protected DocumentReference createDocument(String docType, Object document, String ownerType,
-                                               Long ownerId) throws ActivityException {
+            Long ownerId) throws ActivityException {
         return createDocument(docType, document, ownerType, ownerId, null, null, null);
     }
 
@@ -941,7 +941,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return document reference
      */
     protected DocumentReference createDocument(String docType, Object document, String ownerType,
-                                               Long ownerId, Integer statusCode, String statusMessage) throws ActivityException {
+            Long ownerId, Integer statusCode, String statusMessage) throws ActivityException {
         return createDocument(docType, document, ownerType, ownerId, statusCode, statusMessage, null);
     }
 
@@ -969,7 +969,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @param document document
      */
     protected void updateDocumentContent(DocumentReference docref, Object document, String type)
-        throws ActivityException {
+            throws ActivityException {
         try {
             if (!(document instanceof String)) {
                 // serialize here to support package aware translator providers
@@ -1043,7 +1043,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return value of the property, or null if the property does not exist.
      */
     protected String getProperty(String propertyName) {
-       return PropertyManager.getProperty(propertyName);
+        return PropertyManager.getProperty(propertyName);
     }
 
     protected Asset getAsset(String name, String language, int version) {
@@ -1054,47 +1054,39 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return completion code if onExecute() returns non-null
      */
     String notifyMonitors(InternalLogMessage logMessage) {
-        ActivityRuntimeContext runtimeContext = null;
-
         try {
             for (ActivityMonitor monitor : MonitorRegistry.getInstance().getActivityMonitors(_runtimeContext)) {
-                Map<String, Object> updates = null;
+                Map<String,Object> updates = null;
 
+                // Document variables are up-to-date as of activity start.
                 // Since there is no guaranteed order to the multiple monitors at this point, there cannot be an expectation to keep
-                // the runtimeContext process variables map up-to-date from one monitor to the next.  Only update map once
+                // the runtimeContext process variables map up-to-date from one monitor to the next.
                 // TODO Implement a way to determine priority/order when having multiple monitors
-                if (runtimeContext == null) {
-                    // LOGMSG_START happens right after creating the activityRuntimeContext, so assume variables are up-to-date
-                    if (logMessage == InternalLogMessage.ACTIVITY_START)
-                        runtimeContext = _runtimeContext;
-                    else
-                        runtimeContext = getRuntimeContext();
-                }
 
                 if (monitor.isOffline()) {
                     @SuppressWarnings("unchecked")
                     OfflineMonitor<ActivityRuntimeContext> activityOfflineMonitor = (OfflineMonitor<ActivityRuntimeContext>) monitor;
-                    new OfflineMonitorTrigger<>(activityOfflineMonitor, runtimeContext).fire(logMessage);
+                    new OfflineMonitorTrigger<>(activityOfflineMonitor, _runtimeContext).fire(logMessage);
                 }
                 else {
                     if (logMessage == InternalLogMessage.ACTIVITY_START) {
-                        updates = monitor.onStart(runtimeContext);
+                        updates = monitor.onStart(_runtimeContext);
                     }
                     else if (logMessage == InternalLogMessage.ACTIVITY_EXECUTE) {
-                        String compCode = monitor.onExecute(runtimeContext);
+                        String compCode = monitor.onExecute(_runtimeContext);
                         if (compCode != null) {
                             loginfo("Activity short-circuited by monitor: " + monitor.getClass().getName() + " with code: " + compCode);
                             return compCode;
                         }
                     }
                     else if (logMessage == InternalLogMessage.ACTIVITY_COMPLETE) {
-                        updates = monitor.onFinish(runtimeContext);
+                        updates = monitor.onFinish(_runtimeContext);
                     }
                     else if (logMessage == InternalLogMessage.ACTIVITY_FAIL) {
-                        monitor.onError(runtimeContext);
+                        monitor.onError(_runtimeContext);
                     }
                     else if (logMessage == InternalLogMessage.ACTIVITY_SUSPEND) {
-                        monitor.onSuspend(runtimeContext);
+                        monitor.onSuspend(_runtimeContext);
                     }
                 }
 
@@ -1244,7 +1236,7 @@ public abstract class BaseActivity implements GeneralActivity {
             }
         }
         catch (Exception ex) {
-          throw new ActivityException(-1, ex.getMessage(), ex);
+            throw new ActivityException(-1, ex.getMessage(), ex);
         }
         return retObj;
     }
@@ -1324,7 +1316,7 @@ public abstract class BaseActivity implements GeneralActivity {
                         if (!isOutputDoc) {
                             String msg = "*** WARNING: Attempt to change value of non-output document '" + varName + "'";
                             if (Object.class.getName().equals(varType))
-                              msg += ".  Make sure to implement equals().";
+                                msg += ".  Make sure to implement equals().";
                             logwarn(msg);
                         }
                     }
@@ -1390,7 +1382,7 @@ public abstract class BaseActivity implements GeneralActivity {
     }
 
     public TransactionWrapper startTransaction()
-    throws ActivityException {
+            throws ActivityException {
         try {
             return engine.startTransaction();
         } catch (DataAccessException e) {
@@ -1399,7 +1391,7 @@ public abstract class BaseActivity implements GeneralActivity {
     }
 
     public void stopTransaction(TransactionWrapper transaction)
-    throws ActivityException {
+            throws ActivityException {
         try {
             engine.stopTransaction(transaction);
         } catch (DataAccessException e) {
@@ -1411,7 +1403,7 @@ public abstract class BaseActivity implements GeneralActivity {
         SubstitutionResult substitutionResult = Compatibility.getInstance().performCodeSubstitutions(in);
         if (!substitutionResult.isEmpty()) {
             logwarn("Compatibility substitutions applied for code in activity " + getActivityName()
-                + " (details logged at debug level). Please update the code for this activity as otherwise these substitutions are applied on every execution.");
+                    + " (details logged at debug level). Please update the code for this activity as otherwise these substitutions are applied on every execution.");
             if (isLogDebugEnabled())
                 logdebug("Compatibility substitutions for " + getActivityName() + ":\n" + substitutionResult.getDetails());
             if (logger.isMdwDebugEnabled())

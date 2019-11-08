@@ -18,6 +18,13 @@ process: # 10400
   variable: # 10739
     name: serviceRequest
     value: {"something": "unimportant"}
+  variable: # 10049
+    name: serviceResponse
+    value: |
+      {"status": {
+        "code": 404,
+        "message": "Unable to handle service request: com/centurylink/mdw/notfound"
+      }}
   variable: # 10738
     name: serviceUrl
     value: http://localhost:8080/mdw/api/com/centurylink/mdw/notfound
@@ -88,6 +95,13 @@ process: # 10398
   variable: # 10735
     name: serviceRequest
     value: {"something": "unimportant"}
+  variable: # 10042
+    name: serviceResponse
+    value: |
+      {"status": {
+        "code": 500,
+        "message": "Retry me"
+      }}
   variable: # 10734
     name: serviceUrl
     value: http://localhost:8080/mdw/api/com/centurylink/mdw/tests/services/retryable

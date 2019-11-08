@@ -1,0 +1,6 @@
+package com.centurylink.mdw.tests.services
+
+start process("Non2xxResponse")
+
+wait process
+verify process

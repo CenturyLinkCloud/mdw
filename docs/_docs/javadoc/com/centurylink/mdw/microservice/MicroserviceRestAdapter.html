@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -231,57 +231,63 @@ extends <a href="../../../../com/centurylink/mdw/workflow/adapter/rest/RestServi
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceRestAdapter.html#doServiceSummaryUpdate-com.centurylink.mdw.microservice.ServiceSummary-com.centurylink.mdw.model.Status-java.lang.Long-">doServiceSummaryUpdate</a></span>(<a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html" title="class in com.centurylink.mdw.microservice">ServiceSummary</a>&nbsp;serviceSummary,
+                      <a href="../../../../com/centurylink/mdw/model/Status.html" title="class in com.centurylink.mdw.model">Status</a>&nbsp;status,
+                      java.lang.Long&nbsp;responseId)</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceRestAdapter.html#getMicroservice-com.centurylink.mdw.microservice.ServiceSummary-">getMicroservice</a></span>(<a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html" title="class in com.centurylink.mdw.microservice">ServiceSummary</a>&nbsp;summary)</code>
 <div class="block">Standard behavior is to read from a String variable (defaultName='microservice').</div>
 </td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceRestAdapter.html#getMicroserviceById-com.centurylink.mdw.microservice.ServiceSummary-">getMicroserviceById</a></span>(<a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html" title="class in com.centurylink.mdw.microservice">ServiceSummary</a>&nbsp;summary)</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceRestAdapter.html#getRequestHeaders--">getRequestHeaders</a></span>()</code>
 <div class="block">Overridden to append JSON headers.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceRestAdapter.html#getRequestId--">getRequestId</a></span>()</code>
 <div class="block">Returns the requestId that we will use to populate the serviceSummary</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html" title="class in com.centurylink.mdw.microservice">ServiceSummary</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceRestAdapter.html#getServiceSummary-boolean-">getServiceSummary</a></span>(boolean&nbsp;forUpdate)</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceRestAdapter.html#getServiceSummaryVariableName--">getServiceSummaryVariableName</a></span>()</code>
 <div class="block">You'd need a custom .impl asset to set this through designer</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>protected java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceRestAdapter.html#logRequest-com.centurylink.mdw.model.request.Request-">logRequest</a></span>(<a href="../../../../com/centurylink/mdw/model/request/Request.html" title="class in com.centurylink.mdw.model.request">Request</a>&nbsp;request)</code>
 <div class="block">TODO: Do we really have to save requestId var?  Or can we get it from db?</div>
 </td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>protected java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceRestAdapter.html#logResponse-com.centurylink.mdw.model.Response-">logResponse</a></span>(<a href="../../../../com/centurylink/mdw/model/Response.html" title="class in com.centurylink.mdw.model">Response</a>&nbsp;response)</code>
 <div class="block">Populates serviceSummary</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceRestAdapter.html#notifyServiceSummaryUpdate-com.centurylink.mdw.microservice.ServiceSummary-">notifyServiceSummaryUpdate</a></span>(<a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html" title="class in com.centurylink.mdw.microservice">ServiceSummary</a>&nbsp;serviceSummary)</code>
 <div class="block">Standard behavior is to publish event fitting standard pattern of default event
  used in DependenciesWaitActivity (Microservice Dependencies Wait)</div>
 </td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/microservice/MicroserviceRestAdapter.html#updateServiceSummary-com.centurylink.mdw.model.Status-java.lang.Long-">updateServiceSummary</a></span>(<a href="../../../../com/centurylink/mdw/model/Status.html" title="class in com.centurylink.mdw.model">Status</a>&nbsp;status,
                     java.lang.Long&nbsp;responseId)</code>&nbsp;</td>
@@ -306,7 +312,7 @@ extends <a href="../../../../com/centurylink/mdw/workflow/adapter/rest/RestServi
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.centurylink.mdw.workflow.adapter.<a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html" title="class in com.centurylink.mdw.workflow.adapter">TextAdapterActivity</a></h3>
-<code><a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#directInvoke-java.lang.String-int-java.util.Map-">directInvoke</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#doInvoke-java.lang.Object-com.centurylink.mdw.model.request.Request-int-java.util.Map-">doInvoke</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#doLogging--">doLogging</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#execute--">execute</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#executePostScript--">executePostScript</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#executePreScript-java.lang.Object-">executePreScript</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#filterStubResponse-java.lang.String-java.lang.Object-">filterStubResponse</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getAttribute-java.lang.String-java.lang.String-boolean-">getAttribute</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getErrorCode-java.lang.Throwable-">getErrorCode</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getMaxTries--">getMaxTries</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getRetryInterval--">getRetryInterval</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getStubbedResponse-java.lang.String-">getStubbedResponse</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getStubResponse-java.lang.String-">getStubResponse</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getTimeoutForResponse--">getTimeoutForResponse</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#handleConnectionException-int-java.lang.Throwable-">handleConnectionException</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#handleException-java.lang.Throwable-">handleException</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#handleRetry-int-java.lang.Throwable-">handleRetry</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#hasPostScript--">hasPostScript</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#hasPreScript--">hasPreScript</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#isRetryable-java.lang.Throwable-">isRetryable</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#isStubMode--">isStubMode</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#isSynchronous--">isSynchronous</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#logRequest-java.lang.String-">logRequest</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#logResponse-java.lang.String-">logResponse</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#onFailure-java.lang.Throwable-">onFailure</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#onSuccess-java.lang.String-">onSuccess</a></code></li>
+<code><a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#directInvoke-java.lang.String-int-java.util.Map-">directInvoke</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#doInvoke-java.lang.Object-com.centurylink.mdw.model.request.Request-int-java.util.Map-">doInvoke</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#doLogging--">doLogging</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#execute--">execute</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#executePostScript--">executePostScript</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#executePreScript-java.lang.Object-">executePreScript</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#filterStubResponse-java.lang.String-java.lang.Object-">filterStubResponse</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getAttribute-java.lang.String-java.lang.String-boolean-">getAttribute</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getErrorCode-java.lang.Throwable-">getErrorCode</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getMaxTries--">getMaxTries</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getRetryInterval--">getRetryInterval</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getStubbedResponse-java.lang.String-">getStubbedResponse</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getStubResponse-java.lang.String-">getStubResponse</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#getTimeoutForResponse--">getTimeoutForResponse</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#handleConnectionException-int-java.lang.Throwable-">handleConnectionException</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#handleException-java.lang.Throwable-">handleException</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#handleRetry-int-java.lang.Throwable-">handleRetry</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#hasPostScript--">hasPostScript</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#hasPreScript--">hasPreScript</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#isRetryable-java.lang.Throwable-">isRetryable</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#isStubMode--">isStubMode</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#isSynchronous--">isSynchronous</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#logRequest-java.lang.String-">logRequest</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#logResponse-java.lang.String-">logResponse</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#onFailure-java.lang.Throwable-">onFailure</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#onSuccess-java.lang.String-">onSuccess</a>, <a href="../../../../com/centurylink/mdw/workflow/adapter/TextAdapterActivity.html#populateResponseVariable-java.lang.String-">populateResponseVariable</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.workflow.activity.DefaultActivityImpl">
@@ -453,6 +459,22 @@ extends <a href="../../../../com/centurylink/mdw/workflow/adapter/rest/RestServi
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a></code></dd>
 <dd><code>java.sql.SQLException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="doServiceSummaryUpdate-com.centurylink.mdw.microservice.ServiceSummary-com.centurylink.mdw.model.Status-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>doServiceSummaryUpdate</h4>
+<pre>protected&nbsp;void&nbsp;doServiceSummaryUpdate(<a href="../../../../com/centurylink/mdw/microservice/ServiceSummary.html" title="class in com.centurylink.mdw.microservice">ServiceSummary</a>&nbsp;serviceSummary,
+                                      <a href="../../../../com/centurylink/mdw/model/Status.html" title="class in com.centurylink.mdw.model">Status</a>&nbsp;status,
+                                      java.lang.Long&nbsp;responseId)
+                               throws <a href="../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a></code></dd>
 </dl>
 </li>
 </ul>
