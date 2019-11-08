@@ -363,6 +363,49 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             }
           }
         },
+        Log: {
+          'logLines': [{
+            Activity: 'activityInstanceId',
+            '_url': '${"#/workflow/activities/" + it.activityInstanceId}',
+            Level: '${it.level}',
+            When: '${it.when}',
+            Message: '${it.message}'
+          }],
+          'getLogLines': function(diagramObject, workflowObject, runtimeInfo) {
+            if (typeof runtimeInfo == 'undefined') {
+              // no runtimeInfo means just checking for tab applicability
+              return true;
+            }
+            else {
+              if (runtimeInfo === null || runtimeInfo.length === 0)
+                return null;
+              var url = mdw.roots.services + '/api/Processes/' + runtimeInfo.id + '/log?withActivities=true&app=mdw-admin';
+              return $http.get(url).then(function(response) {
+                 if (response.status !== 200)
+                   return null;
+                 var logLines = response.data.logLines;
+                 var logLineDt;
+                 var padTwo = function(n) {
+                   return '' + (n < 10 ? '0' + n : n);
+                 };
+                 logLines.forEach(function(logLine) {
+                   // format date/time
+                   logLineDt = new Date(logLine.when);
+                   logLine.when = logLineDt.getFullYear() + '-' + padTwo(logLineDt.getMonth() + 1) + '-' + padTwo(logLineDt.getDate()) +
+                       ' ' + padTwo(logLineDt.getHours()) + ':' + padTwo(logLineDt.getMinutes()) + ':' + padTwo(logLineDt.getSeconds()) +
+                       '.' + (logLineDt.getMilliseconds() < 100 ? '0' + padTwo(logLineDt.getMilliseconds()) : '' + logLineDt.getMilliseconds());
+                 });
+                 return {
+                     status: response.status,
+                     maxWidth: 150,
+                     data: {
+                       logLines: logLines
+                     }
+                 };
+               });
+            }
+          }
+        }
       },
       activity: {
         /* unnamed one-item array of object:
