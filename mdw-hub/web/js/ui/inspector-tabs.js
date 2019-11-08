@@ -316,7 +316,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
               return true;
             }
             else {
-              if (runtimeInfo === null || runtimeInfo.length === 0)
+              if (runtimeInfo === null)
                 return null;
               var url = mdw.roots.services + '/services/Processes?callHierarchyFor=' + runtimeInfo.id + '&app=mdw-admin';
               return $http.get(url).then(function(response) {
@@ -369,7 +369,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             '_url': '${"#/workflow/activities/" + it.activityInstanceId}',
             Level: '${it.level}',
             When: '${it.when}',
-            Message: '${it.message}'
+            Log: '${it.message}'
           }],
           'getLogLines': function(diagramObject, workflowObject, runtimeInfo) {
             if (typeof runtimeInfo == 'undefined') {
@@ -377,7 +377,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
               return true;
             }
             else {
-              if (runtimeInfo === null || runtimeInfo.length === 0)
+              if (runtimeInfo === null)
                 return null;
               var url = mdw.roots.services + '/api/Processes/' + runtimeInfo.id + '/log?withActivities=true&app=mdw-admin';
               return $http.get(url).then(function(response) {
@@ -394,6 +394,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
                    logLine.when = logLineDt.getFullYear() + '-' + padTwo(logLineDt.getMonth() + 1) + '-' + padTwo(logLineDt.getDate()) +
                        ' ' + padTwo(logLineDt.getHours()) + ':' + padTwo(logLineDt.getMinutes()) + ':' + padTwo(logLineDt.getSeconds()) +
                        '.' + (logLineDt.getMilliseconds() < 100 ? '0' + padTwo(logLineDt.getMilliseconds()) : '' + logLineDt.getMilliseconds());
+                   logLine.message = logLine.message.replace(/\n/g, '\\n');
                  });
                  return {
                      status: response.status,
@@ -585,6 +586,58 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
         },
         ServiceSummary: {
           '_template': mdw.roots.hub + '/js/ui/templates/stubbing.json'
+        },
+        Log: {
+          'logLines': [{
+            ID: 'activityInstanceId',
+            '_url': '${"#/workflow/activities/" + it.activityInstanceId}',
+            Level: '${it.level}',
+            When: '${it.when}',
+            Log: '${it.message}'
+          }],
+          'getLogLines': function(diagramObject, workflowObject, runtimeInfo) {
+            if (typeof runtimeInfo == 'undefined') {
+              // no runtimeInfo means just checking for tab applicability
+              return true;
+            }
+            else {
+              if (runtimeInfo === null || runtimeInfo.length === 0 || !diagramObject.diagram || !diagramObject.diagram.instance)
+                return null;
+              var procInstId = diagramObject.diagram.instance.id;
+              var actInstIds = '%5B';
+              for (let i = 0; i < runtimeInfo.length; i++) {
+                actInstIds += runtimeInfo[i].id;
+                if (i < runtimeInfo.length - 1)
+                  actInstIds += ',';
+              }
+              actInstIds += '%5D';
+              var url = mdw.roots.services + '/api/Processes/' + procInstId + '/log?activityInstanceIds=' + actInstIds + '&app=mdw-admin';
+              return $http.get(url).then(function(response) {
+                 if (response.status !== 200)
+                   return null;
+                 var logLines = response.data.logLines;
+                 var logLineDt;
+                 var padTwo = function(n) {
+                   return '' + (n < 10 ? '0' + n : n);
+                 };
+                 logLines.forEach(function(logLine) {
+                   // format date/time
+                   logLineDt = new Date(logLine.when);
+                   logLine.when = logLineDt.getFullYear() + '-' + padTwo(logLineDt.getMonth() + 1) + '-' + padTwo(logLineDt.getDate()) +
+                       ' ' + padTwo(logLineDt.getHours()) + ':' + padTwo(logLineDt.getMinutes()) + ':' + padTwo(logLineDt.getSeconds()) +
+                       '.' + (logLineDt.getMilliseconds() < 100 ? '0' + padTwo(logLineDt.getMilliseconds()) : '' + logLineDt.getMilliseconds());
+                   logLine.message = logLine.message.replace(/\n/g, '\\n');
+                 });
+                 return {
+                     status: response.status,
+                     maxWidth: 150,
+                     data: {
+                       logLines: logLines
+                     }
+                 };
+               });
+            }
+          }
         }
       },
       subprocess: {
