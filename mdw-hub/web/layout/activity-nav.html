@@ -1,14 +1,19 @@
 <ul class="nav mdw-nav" ng-style="getNavMenuWidthStyle(165)">
   <li nav-link="workflow/activity" full-width="activity-nav">
     <a href="#/workflow/activities/{{activity.id}}">
-      Workflow Activity
+      Activity
+    </a>
+  </li>
+  <li nav-link="workflow/activityLog" full-width="activity-nav">
+    <a href="#/workflow/activities/{{activity.id}}/log">
+      Log
     </a>
   </li>
 </ul>
 <ul class="nav mdw-nav" ng-style="getNavMenuWidthStyle(165)">
   <li nav-link="workflow/process" full-width="activity-nav">
     <a href="#/workflow/processes/{{activity.processInstanceId}}">
-      Workflow Process
+      Process
     </a>
   </li>
   <li nav-link="workflow/activities" full-width="activity-nav">

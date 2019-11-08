@@ -3,17 +3,17 @@
   <div class="col-md-10">
     <div class="panel panel-default mdw-panel">
       <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">
+          {{activity.name}} &nbsp;{{activity.id}}
+        </div>
         <div class="mdw-heading-actions">
           <button type="button" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Process Execution') && canAction('Retry')" ng-click="confirmAction('Retry')">
             <span class="glyphicon glyphicon-repeat"></span> Retry
-          </button>        
+          </button>
           <button type="button" class="btn btn-primary mdw-btn" ng-if="authUser.hasRole('Process Execution')" ng-click="confirmAction('Proceed')">
             <span class="glyphicon glyphicon-arrow-right"></span> Proceed
-          </button>        
+          </button>
         </div>
-        <div class="mdw-heading-label">
-          {{activity.name}} &nbsp;{{activity.id}}
-        </div>      
       </div>
       <div class="mdw-section">
         <div class="mdw-item"  ng-include="'workflow/activityItem.html'"></div>

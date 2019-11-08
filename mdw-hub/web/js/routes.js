@@ -227,6 +227,11 @@ routesSvc.factory('routes', function() {
         controller: 'ActivityController'
       },
       {
+        path: '/workflow/activities/:instanceId/log',
+        templateUrl: 'workflow/activityLog.html',
+        controller: 'ActivityLogController'
+      },
+      {
         path: '/milestones',
         templateUrl: 'workflow/milestones.html',
         controller: 'MilestonesController'

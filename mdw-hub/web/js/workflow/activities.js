@@ -326,6 +326,54 @@ activityMod.controller('ActivityController', ['$scope', '$http', '$route', 'Proc
    };
 }]);
 
+activityMod.controller('ActivityLogController', ['$scope', '$http', '$routeParams', 'mdw',
+                                            function($scope, $http, $routeParams, mdw) {
+  $scope.activity = {
+    id: $routeParams.instanceId
+  };
+
+  let padTwo = function(n) {
+    return '' + (n < 10 ? '0' + n : n);
+  };
+
+  $scope.logTime = 'DB Time';
+  $scope.setLogTime = function(logTime) {
+    $scope.logTime = logTime;
+    document.getElementById('activity-log-time-popover').click();
+    $scope.calcLogTimes();
+  };
+  $scope.calcLogTimes = function() {
+      var offset = 0;
+      if ($scope.logTime === 'Server Time') {
+        offset = $scope.serverZoneOffset - $scope.dbZoneOffset;
+      }
+      else if ($scope.logTime === 'Local Time') {
+        var now = new Date();
+        offset = -now.getTimezoneOffset() * 60 - $scope.dbZoneOffset;
+      }
+      $scope.logLines.forEach(function(logLine) {
+        // format date/time
+        let logLineDt = new Date(logLine.when);
+        if (offset) {
+          logLineDt = new Date(logLineDt.getTime() + offset * 1000);
+        }
+        logLine.logTime = logLineDt.getFullYear() + '-' + padTwo(logLineDt.getMonth() + 1) + '-' + padTwo(logLineDt.getDate()) +
+            ' ' + padTwo(logLineDt.getHours()) + ':' + padTwo(logLineDt.getMinutes()) + ':' + padTwo(logLineDt.getSeconds()) +
+            '.' + (logLineDt.getMilliseconds() < 100 ? '0' + padTwo(logLineDt.getMilliseconds()) : '' + logLineDt.getMilliseconds());
+     });
+  };
+
+  $http.get(mdw.roots.services + '/services/Activities/' + $scope.activity.id + '/log?app=mdw-admin')
+    .then(function(response) {
+      $scope.logLines = response.data.logLines;
+      $scope.calcLogTimes();
+      $scope.activity.processInstanceId = response.data.processInstanceId;
+      $scope.dbZoneOffset = response.data.dbZoneOffset;
+      $scope.serverZoneOffset = response.data.serverZoneOffset;
+    }
+  );
+}]);
+
 activityMod.factory('Activity', ['$resource', 'mdw', function($resource, mdw) {
   return $resource(mdw.roots.services + '/Services/Activities/:instanceId', mdw.serviceParams(), {
     retrieve: { method: 'GET', isArray: false }
