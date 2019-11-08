@@ -189,6 +189,10 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
      */
     public void onSuccess(String response)
     throws ActivityException, ConnectionException, AdapterException {
+        populateResponseVariable(response);
+    }
+
+    public void populateResponseVariable(String response) throws ActivityException{
         if (response == null || response.isEmpty())
             return;
         String varname = this.getAttributeValue(RESPONSE_VARIABLE);

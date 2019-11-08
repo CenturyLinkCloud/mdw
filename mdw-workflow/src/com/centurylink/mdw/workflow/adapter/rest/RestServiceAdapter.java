@@ -230,6 +230,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                     catch (NumberFormatException ignored) {} // Use default in this case
                 }
                 Response httpResponse = super.getResponse(conn, response);
+                populateResponseVariable(httpResponse.getContent());
                 if (httpResponse.getStatusCode() >= codeThreshold)
                     throw new IOException("Server returned HTTP response code: " + httpResponse.getStatusCode());  // Retryable
                 else if (httpResponse.getStatusCode() >= errorCodeThreshold)
