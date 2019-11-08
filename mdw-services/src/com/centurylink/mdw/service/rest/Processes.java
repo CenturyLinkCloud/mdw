@@ -40,6 +40,7 @@ import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.DateHelper;
 import com.centurylink.mdw.util.JsonUtil;
+import com.centurylink.mdw.util.log.ActivityLog;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -107,8 +108,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                         }
                         else {
                             // all values
-                            Map<String,Value> values = workflowServices.getProcessValues(id,
-                                    query.getBooleanFilter("includeEmpty"));
+                            Map<String,Value> values = workflowServices.getProcessValues(id, query.getBooleanFilter("includeEmpty"));
                             JSONObject valuesJson = new JsonObject();
                             for (String name : values.keySet()) {
                                 valuesJson.put(name, values.get(name).getJson());
@@ -118,6 +118,20 @@ public class Processes extends JsonRestService implements JsonExportable {
                     }
                     else if ("summary".equals(segTwo)) {
                         return getSummary(id);
+                    }
+                    else if ("log".equals(segTwo)) {
+                        ActivityLog log = null;
+                        Long[] activityInstanceIds = query.getLongArrayFilter("activityInstanceIds");
+                        if (activityInstanceIds != null) {
+                            log =  getWorkflowServices().getProcessLog(id, activityInstanceIds);
+                        }
+                        else {
+                            boolean withActivities = query.getBooleanFilter("withActivities");
+                            log =  getWorkflowServices().getProcessLog(id, withActivities);
+                        }
+                        if (log == null)
+                            throw new ServiceException(ServiceException.NOT_FOUND, "Log not found for process: " + id);
+                        return log.getJson();
                     }
                     else {
                         JSONObject json;

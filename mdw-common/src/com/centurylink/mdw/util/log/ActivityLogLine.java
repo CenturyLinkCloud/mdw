@@ -4,7 +4,10 @@ import com.centurylink.mdw.model.Jsonable;
 
 import java.time.Instant;
 
-public class LogLine implements Jsonable {
+public class ActivityLogLine implements Jsonable {
+
+    private Long activityInstanceId;
+    public Long getActivityInstanceId() { return activityInstanceId; }
 
     private Instant when;
     public Instant getWhen() { return when; }
@@ -15,7 +18,8 @@ public class LogLine implements Jsonable {
     public String message;
     public String getMessage() { return message; }
 
-    public LogLine(Instant when, StandardLogger.LogLevel level, String message) {
+    public ActivityLogLine(Long activityInstanceId, Instant when, StandardLogger.LogLevel level, String message) {
+        this.activityInstanceId = activityInstanceId;
         this.when = when;
         this.level = level;
         this.message = message;

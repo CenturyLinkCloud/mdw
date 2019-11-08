@@ -26,6 +26,7 @@ import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
+import com.centurylink.mdw.util.log.ActivityLog;
 import org.json.JSONException;
 
 import java.io.IOException;
@@ -127,8 +128,9 @@ public interface WorkflowServices {
             throws ServiceException;
 
     ProcessInstance getProcess(Long instanceId) throws ServiceException;
-
     ProcessInstance getProcess(Long instanceId, boolean withSubprocs) throws ServiceException;
+    ActivityLog getProcessLog(Long instanceId, boolean withActivities) throws ServiceException;
+    ActivityLog getProcessLog(Long processInstanceId, Long[] activityInstanceIds) throws ServiceException;
 
     ProcessInstance getProcessForTrigger(Long triggerId) throws ServiceException;
 
