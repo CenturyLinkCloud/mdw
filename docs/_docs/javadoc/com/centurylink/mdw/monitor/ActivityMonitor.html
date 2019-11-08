@@ -114,7 +114,11 @@ extends <a href="../../../../com/centurylink/mdw/common/service/RegisteredServic
 
  Activities may be dehydrated and then subsequently resumed asynchronously.
  These methods are invoked on different instances, and instance-level members should not
- be stored for access from lifecycle methods.</div>
+ be stored for access from lifecycle methods.
+
+ Values for document variables in the ActivityRuntimeContext are current as of
+ activity start.  If a monitor requires guaranteed up-to-date document values, it
+ should retrieve the document for update using the MDW Java API.</div>
 </li>
 </ul>
 </div>

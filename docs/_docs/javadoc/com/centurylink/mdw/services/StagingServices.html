@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6,"i9":6,"i10":6,"i11":6,"i12":6,"i13":6,"i14":6,"i15":6,"i16":6,"i17":6,"i18":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -147,72 +147,93 @@ var activeTableTab = "activeTableTab";
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#createAsset-java.lang.String-java.lang.String-java.lang.String-">createAsset</a></span>(java.lang.String&nbsp;cuid,
+           java.lang.String&nbsp;assetPath,
+           java.lang.String&nbsp;template)</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#createPackage-java.lang.String-java.lang.String-">createPackage</a></span>(java.lang.String&nbsp;cuid,
+             java.lang.String&nbsp;packageName)</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#deleteAsset-java.lang.String-java.lang.String-">deleteAsset</a></span>(java.lang.String&nbsp;cuid,
            java.lang.String&nbsp;assetPath)</code>&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/services/AssetServices.html" title="interface in com.centurylink.mdw.services">AssetServices</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#getAssetServices-java.lang.String-">getAssetServices</a></span>(java.lang.String&nbsp;cuid)</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i4" class="altColor">
+<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/asset/PackageList.html" title="class in com.centurylink.mdw.model.asset">PackageList</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#getPackages-java.lang.String-boolean-">getPackages</a></span>(java.lang.String&nbsp;cuid,
+           boolean&nbsp;withVcsInfo)</code>&nbsp;</td>
+</tr>
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/asset/AssetInfo.html" title="class in com.centurylink.mdw.model.asset">AssetInfo</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#getStagedAsset-java.lang.String-java.lang.String-">getStagedAsset</a></span>(java.lang.String&nbsp;cuid,
               java.lang.String&nbsp;assetPath)</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.util.SortedMap&lt;java.lang.String,java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/asset/AssetInfo.html" title="class in com.centurylink.mdw.model.asset">AssetInfo</a>&gt;&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#getStagedAssets-java.lang.String-">getStagedAssets</a></span>(java.lang.String&nbsp;cuid)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/asset/StagingArea.html" title="class in com.centurylink.mdw.model.asset">StagingArea</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#getStagingAreas--">getStagingAreas</a></span>()</code>
 <div class="block">All user stagingAreas that exist on the server.</div>
 </td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>java.io.File</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#getStagingAssetsDir-java.lang.String-">getStagingAssetsDir</a></span>(java.lang.String&nbsp;cuid)</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.io.File</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#getStagingDir--">getStagingDir</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.io.File</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#getStagingDir-java.lang.String-">getStagingDir</a></span>(java.lang.String&nbsp;cuid)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/dataaccess/file/VersionControlGit.html" title="class in com.centurylink.mdw.dataaccess.file">VersionControlGit</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#getStagingVersionControl-java.lang.String-">getStagingVersionControl</a></span>(java.lang.String&nbsp;cuid)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/asset/StagingArea.html" title="class in com.centurylink.mdw.model.asset">StagingArea</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#getUserStagingArea-java.lang.String-">getUserStagingArea</a></span>(java.lang.String&nbsp;cuid)</code>
 <div class="block">Return user staging area if Git branch exists on remote.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#getVcAssetPath--">getVcAssetPath</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/asset/StagingArea.html" title="class in com.centurylink.mdw.model.asset">StagingArea</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#prepareStagingArea-java.lang.String-com.centurylink.mdw.dataaccess.file.GitProgressMonitor-">prepareStagingArea</a></span>(java.lang.String&nbsp;cuid,
                   <a href="../../../../com/centurylink/mdw/dataaccess/file/GitProgressMonitor.html" title="interface in com.centurylink.mdw.dataaccess.file">GitProgressMonitor</a>&nbsp;progressMonitor)</code>
 <div class="block">Prepare user staging branch.</div>
 </td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#promoteAssets-java.lang.String-java.lang.String-">promoteAssets</a></span>(java.lang.String&nbsp;cuid,
              java.lang.String&nbsp;comment)</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i16" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#rollbackAssets-java.lang.String-java.util.Map-">rollbackAssets</a></span>(java.lang.String&nbsp;cuid,
+              java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;assetVersions)</code>&nbsp;</td>
+</tr>
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#stageAssets-java.lang.String-java.util.List-">stageAssets</a></span>(java.lang.String&nbsp;cuid,
            java.util.List&lt;java.lang.String&gt;&nbsp;assets)</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/services/StagingServices.html#unStageAssets-java.lang.String-java.util.List-">unStageAssets</a></span>(java.lang.String&nbsp;cuid,
              java.util.List&lt;java.lang.String&gt;&nbsp;assets)</code>&nbsp;</td>
@@ -372,6 +393,52 @@ var activeTableTab = "activeTableTab";
 </dl>
 </li>
 </ul>
+<a name="getPackages-java.lang.String-boolean-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPackages</h4>
+<pre><a href="../../../../com/centurylink/mdw/model/asset/PackageList.html" title="class in com.centurylink.mdw.model.asset">PackageList</a>&nbsp;getPackages(java.lang.String&nbsp;cuid,
+                        boolean&nbsp;withVcsInfo)
+                 throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="createPackage-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createPackage</h4>
+<pre>void&nbsp;createPackage(java.lang.String&nbsp;cuid,
+                   java.lang.String&nbsp;packageName)
+            throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="createAsset-java.lang.String-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createAsset</h4>
+<pre>void&nbsp;createAsset(java.lang.String&nbsp;cuid,
+                 java.lang.String&nbsp;assetPath,
+                 java.lang.String&nbsp;template)
+          throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="getStagedAsset-java.lang.String-java.lang.String-">
 <!--   -->
 </a>
@@ -455,6 +522,21 @@ var activeTableTab = "activeTableTab";
 <pre>void&nbsp;promoteAssets(java.lang.String&nbsp;cuid,
                    java.lang.String&nbsp;comment)
             throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="rollbackAssets-java.lang.String-java.util.Map-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>rollbackAssets</h4>
+<pre>void&nbsp;rollbackAssets(java.lang.String&nbsp;cuid,
+                    java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;assetVersions)
+             throws <a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/common/service/ServiceException.html" title="class in com.centurylink.mdw.common.service">ServiceException</a></code></dd>
