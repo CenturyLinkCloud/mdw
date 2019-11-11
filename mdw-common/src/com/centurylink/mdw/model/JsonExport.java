@@ -138,6 +138,16 @@ public class JsonExport {
             }
             setColumnLabels(sheet);
         }
+        else if (jsonable instanceof JsonList) {
+            JsonList<?> jsonList = (JsonList<?>) jsonable;
+            List<? extends Jsonable> items = jsonList.getList();
+            for (int i = 0; i < items.size(); i++) {
+                JSONObject jsonObj = items.get(i).getJson();
+                addNames(jsonObj);
+                setRowValues(sheet, i + 1, jsonObj);
+            }
+            setColumnLabels(sheet);
+        }
         else if (jsonable instanceof JsonListMap) {
             JsonListMap<?> listMap = (JsonListMap<?>) jsonable;
             int row = 1;

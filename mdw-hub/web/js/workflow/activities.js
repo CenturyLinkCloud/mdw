@@ -326,8 +326,8 @@ activityMod.controller('ActivityController', ['$scope', '$http', '$route', 'Proc
    };
 }]);
 
-activityMod.controller('ActivityLogController', ['$scope', '$http', '$routeParams', 'mdw', 'util',
-                                            function($scope, $http, $routeParams, mdw, util) {
+activityMod.controller('ActivityLogController', ['$scope', '$http', '$routeParams', 'mdw', 'util', 'EXCEL_DOWNLOAD',
+                                            function($scope, $http, $routeParams, mdw, util, EXCEL_DOWNLOAD) {
   $scope.activity = {
     id: $routeParams.instanceId
   };
@@ -341,13 +341,18 @@ activityMod.controller('ActivityLogController', ['$scope', '$http', '$routeParam
     util.calcLogTimes($scope.logData, logTime);
   };
 
-  $http.get(mdw.roots.services + '/services/Activities/' + $scope.activity.id + '/log?app=mdw-admin')
+  var url = mdw.roots.services + '/services/Activities/' + $scope.activity.id + '/log?app=mdw-admin';
+  $http.get(url)
     .then(function(response) {
       $scope.logData = response.data;
       util.calcLogTimes($scope.logData, $scope.logTime);
       $scope.activity.processInstanceId = response.data.processInstanceId;
     }
   );
+
+  $scope.downloadExcel = function() {
+    window.location = url + '&' + EXCEL_DOWNLOAD;
+  };
 }]);
 
 activityMod.factory('Activity', ['$resource', 'mdw', function($resource, mdw) {

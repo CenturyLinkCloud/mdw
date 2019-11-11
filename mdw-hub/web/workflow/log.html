@@ -5,9 +5,13 @@
     </div>
     <div class="mdw-heading-actions">
       <button id="log-time-popover" type="button" class="btn btn-primary mdw-btn"
-              uib-popover-template="'workflow/logTimeMenu.html'"
-              popover-placement="left">
-        {{logTime}}
+        uib-popover-template="'workflow/logTimeMenu.html'"
+        popover-placement="left">
+        <span class="glyphicon glyphicon-time" style="font-size:15px;position:relative;top:2px;"></span> {{logTime}}
+      </button>
+      <button type="button" class="btn btn-primary mdw-btn"
+          ng-click="downloadExcel()">
+        <span class="glyphicon glyphicon-download-alt"></span> Export
       </button>
     </div>
   </div>
