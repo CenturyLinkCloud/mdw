@@ -61,14 +61,14 @@ permalink: /docs/help/
 <ul>
   <li><a href='../development/built-in-activities'>Built-In Activities</a></li>   
   <li><a href='../development/built-in-variable-types'>Built-In Variable Types</a></li>
-  <li><a href='implementor.html'>Developing Activity Implementors</a></li>
-  <li><a href='AdapterActivityBase.html'>Developing Adapter Activities</a></li>
-  <li><a href='listener.html'>Developing Listeners and External Event Handlers</a></li>
+  <li><a href='implementor.html'>Activity Implementors</a></li>
+  <li><a href='AdapterActivityBase.html'>Adapter Activities</a></li>
+  <li><a href='listener.html'>Listeners and External Event Handlers</a></li>
   <li><a href='dynamicJava.html'>Dynamic Java</a></li>
-  <li><a href='../javadoc/index.html'>Javadoc</a></li>
   <li><a href='MDWCamelIntegration.html'>MDW Camel Integration</a></li>
   <li><a href='MDWCodingGuidesines'>MDW Coding Guidelines</a></li>
   <li><a href='scheduledJobs.html'>Scheduled Jobs</a></li>
+  <li><a href='../javadoc/index.html'>Javadoc</a></li>
 </ul>
 
 <h3>Testing, Debugging and Monitoring</h3>

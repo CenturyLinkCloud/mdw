@@ -1,208 +1,169 @@
 <html>
 <head>
-<title>Developing Activity Implementor</title>
+<title>Activity Implementors</title>
 <link rel="stylesheet" type="text/css" href="docstyle.css"/>
 </head>
 <body>
-<h1>Introduction on Developing Activity Implementor</h1>
-
-The following steps are needed to define an activity implementor:
-<ul>
-  <li>Create an implementor Java or Kotlin class</li>
-  <li>Using MDW Studio, add the implementor to the tool panel</li>
-</ul>
-
-<h2>Create Implementor Class</h2>
+<h1>Activity Implementors</h1>
 <p>
-The main requirement for an activity implementor class that extends
-<a href="../javadoc/com/centurylink/mdw/workflow/activity/DefaultActivityImpl.html">
-<code>com.centurylink.mdw.workflow.activity.DefaultActivityImpl</code></a>,
-or one of its subclasses, built-in or user defined. It is more common to extend
-a built-in implementor class, and for adapter, task, event wait, timer wait,
-synchronization activities, it is almost impossible not to start from the built-in
-activities. The rest of this document covers how to implement activity
-implementor from the base activity and common tasks for new implementors,
-please refer to corresponding documentation when extending from a built-in activity
-implementor.</p>
-
-<p>There is really only one method that must be implemented by an activity
-implementor:</p>
-
-<dl>
- <dt>public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException</dt>
- <dd>The code logic to execute this activity. The default implementation does
-      nothing.</dd>
-</dl>
-Additionally, you can implement the following trace annotation
-<dl>
- <dt>@Tracked(LogLevel.TRACE)</dt>
- <dd>You can apply this annotation to your implementor class to automatically track timings for activity lifecycle stages.
-     With the annotation applied, timings will be logged as follows if logging is turned on at the specified level for your implementation class.
-     <pre> [(t)20100105.13:40:05.232 p12370.63065 a12416.14985] ScriptExecuterActivity Get Activity Impl Instance: 0.02 ms
- [(t)20100105.13:40:05.232 p12370.63065 a12416.14985] ScriptExecuterActivity Prepare Activity: 0.0040 ms
- [(t)20100105.13:40:07.045 p12370.63065 a12416.14985] ScriptExecuterActivity Execute Activity: 1789.761 ms
- [(t)20100105.13:40:07.123 p12370.63065 a12416.14985] ScriptExecuterActivity Finish Activity: 77.64 ms</pre>
-     </dd>
-</dl>
-<p>If the implementor needs a constructor, it must have one taking no argument,
-and it should always invoke the base constructor first.</p>
-<p>In a later section, we summarize all methods that are defined in the base
-   class and can be used in your implementor. You should only use these methods,
-   and IntelliJ/Eclipse make it easy to find out what methods are available.
-<p>Additional notes:</p>
-<ul>
-<li>Do not reference to variables by their names directly, use attributes to get their names instead.
-    In this way, your implementor can easily be reused in a different place, as
-    variable names can be configured at design time.</li>
-<li>Use getAttributeValue, so that attribute value
-    can resolve <a href="bindingExpressions.html">binding expressions</a> with dynamic runtime values in addition to static text.</li>
-<li>If you extend some subclasses, you may need to override some of the specific methods used by base implementation of execute(), instead. For activities implementing SuspendibleActivity, 
-you will need to implement resume(), or override it from an existing implementor implementing the activity interface. </li> 
-<li>Use setReturnCode() to set return code (default null). You can also set it to <code>ABORT:</code>, 
-<code>CORRECT:</code>, <code>DELAY:</code>, <code>ABORT:mycode</code>, etc.
- Do not set it to <code>ERROR:</code> throw exception instead.  </li>
-</ul>
-
-<h2>Pagelet</h2>
-The configurator Design tab for an activity in MDW Studio requires instructions
-on the configurable attributes to display.  This is achieved through a <dfn>pagelet</dfn> definition, which is
-a JSON string stored as an attribute of the implementor.
-As an example, the pagelet for <code>Expression Evaluator</code>
-activity implementor looks like:
+  In <a href="../workflow/terminology/">MDW terminology</a>, an activity represents a single step in a process flow.
+  An activity is MDW's most granular unit of work, and usually executes within the scope of a single transaction.
+  An activity is implemented as a Java (or Kotlin) class.  In MDW parlance we refer to this class as an activity
+  implementor.  The MDW asset packages include many prebuilt, reusable activities that you can include in your flow by
+  dragging from the Toolbox view and configuring.
+</p>
+<p>
+  You can implement your own custom activity which will also be a first-class citizen in the Toolbox view.  MDW Studio
+  can help you create a skeletal activity implementation (right-click on a package and select New > MDW Activity).  Your
+  activity will almost always extend <a href="../javadoc/com/centurylink/mdw/workflow/activity/DefaultActivityImpl.html">
+  <code>com.centurylink.mdw.workflow.activity.DefaultActivityImpl</code></a> or one of its subclasses.  What designates
+  a class as an activity is the <a href="../javadoc/com/centurylink/mdw/annotations/Activity.html">@Activity annotation</a>.
+  A general purpose activity will typically override the <code>execute()</code> method:
+</p>
 <pre>
-    {"widgets": [
-      {
-        "default": "Groovy",
-        "label": "Language",
-        "name": "SCRIPT",
-        "options": [
-          "Groovy",
-          "javax.el",
-          "Kotlin Script",
-          "JavaScript"
-        ],
-        "type": "dropdown"
-      },
-      {
-        "languages": "Groovy,javax.el,Kotlin Script,JavaScript",
-        "name": "Expression",
-        "type": "expression"
-      }
-    ]}
+    /**
+     * Here's where the main processing for the activity is performed.
+     * @return activity result (or null for default)
+     */
+    @Override
+    public Object execute(ActivityRuntimeContext runtimeContext) throws ActivityException {
+        // TODO generated
+        return null;
+    }
 </pre>
-The pagelet description follows a simple syntax:
-<ul>
-   <li>Each first level child object defines a widget ,
-       typically representing an attribute configurable in the activity.</li>
-   <li>Each first level child object has a set of properties
-       for common things like the size and location of the widget</li>
-</ul>
-The following table lists all supported properties of widgets.
-<table border='1'>
-  <tr><th>Property</th><th>Description</th></tr>
-  <tr><td>name</td><td>Name of the activity attribute. This is required
-        if the widget describes an activity attribute.</td></tr>
-  <tr><td>label</td><td>Label shown on the dialog. If this is missing,
-        then NAME is used as the label</td></tr>
-  <tr><td>lx</td><td>X coordinate of the label. If this is not present,
-       the location will be automatically computed.</td></tr>
-  <tr><td>ly</td><td>Y coordinate of the label. If this is not present,
-       the location will be automatically computed.</td></tr>
-  <tr><td>lw</td><td>Width of the label. The default
-       is 160 (pixels) if this is not present</td></tr>
-  <tr><td>vx</td><td>X coordinate of the value area. If this is not present,
-       the location will be automatically computed.</td></tr>
-  <tr><td>vy</td><td>Y coordinate of the value area. If this is not present,
-       the location will be automatically computed.</td></tr>      
-  <tr><td>vw</td><td>Width of the value area. If this is not present,
-       the width of the input area takes a default value specific 
-       to each widget type.</td></tr>    
-  <tr><td>vh</td><td>Height of the value area. If this is not present,
-       the height of the input area takes a default value specific 
-       to each widget type.</td></tr>
-</table>
+
+<h3><a id="requirements">Requirements</a></h3>
 <p>
-Here are the supported widget types.
-<dl>
-  <dt>text</dt>
-  <dd>A general text input field. There is no nested element. An 
-  		additional attribute SIZE is used to specify the maximum
-  		number of characters allowed in the text input field</dd>
+  <ul>
+    <li>Your activity should inherit (directly or indirectly) from DefaultActivityImpl.</li>
+    <li>Your activity must have an implicit or explicit no-arg constructor.</li>
+    <li>Your <code>execute()</code> method should return a result code (or commonly <code>null</code> for default).</li>
+  </ul>
+</p>
 
-  <dt>rule</dt>
-  <dd>A text input area for scripting languages. There is no nested element.</dd>
+<h3><a id="attributes">Attributes</a></h3>
+<p>
+  Attributes provide a mechanism to make your activity reusable by supporting configurable values.  When a workflow
+  designer drags your activity onto the process canvas, they'll want to be able to enter values on the Configurator Design
+  tab.  You can access attributes in your implementor code by calling <code>getAttribute()</code>.  Because sometimes
+  you'll want to allow non-static attribute values, users can enter <a href="bindingExpressions">expressions</a>.  Here's
+  an example of an expression that reads a property value for EndpointURL: <code>${props['mdw.services.url']}/api/Users</code>.
+</p>
 
-  <dt>list</dt>
-  <dd>This widget allows to set attribute is a list of values, separated
-      by "#". The attribute DELIMITER can be used to change
-      the delimiter.</dd>
+<h3><a id="pagelet">Pagelet</a></h3>
+<p>
+  The configurator Design tab for an activity in MDW Studio requires instructions
+  on the how attributes are to be displayed and entered.  This is achieved through a <dfn>pagelet</dfn> definition, which is
+  a JSON-format description of your implementor's attributes. As an example, the pagelet for MDW's <code>Expression Evaluator</code>
+  activity implementor looks like:
+</p>
+<pre>
+  {"widgets": [
+    {
+      "default": "Groovy",
+      "label": "Language",
+      "name": "SCRIPT",
+      "options": [
+        "Groovy",
+        "javax.el",
+        "Kotlin Script",
+        "JavaScript"
+      ],
+      "type": "dropdown"
+    },
+    {
+      "languages": "Groovy,javax.el,Kotlin Script,JavaScript",
+      "name": "Expression",
+      "type": "expression"
+    }
+  ]}
+</pre>
+<p>
+  Pagelet JSON can be embedded directly as an attribute of your <code>@Activity</code> annotation, or externalized as a
+  standalone asset with .pagelet extension.  The Evaluator activity pagelet asset above is referenced in
+  <a href="https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/src/com/centurylink/mdw/workflow/activity/script/ScriptEvaluator.java">ScriptEvaluator.java</a>
+  like this: <code>@Activity(value="Expression Evaluator", icon="shape:decision", pagelet="com.centurylink.mdw.base/scriptEvaluator.pagelet")</code>.
+</p>
+<p>
+  Here are the supported widget types that you can use in your pagelet:
+  <dl>
+    <dt>text</dt>
+    <dd>A general text input field.</dd>
+    <dt>checkbox</dt>
+    <dd>Captures a boolean config attribute.</dd>
+    <dt>dropdown</dt>
+    <dd>This displays a combo box with a dropdown list of possible values (enumerated in an options array).</dd>
+    <dt>picklist</dt>
+    <dd>This widget allows to set attribute is a list of values.</dd>
+    <dt>radio</dt>
+    <dd>A collection of radio buttons, which an options array containing possible values.</dd>
+    <dt>Number</dt>
+    <dd>Displays a spinner widget enabling users to select numeric values.</dd>
+    <dt>datetime</dt>
+    <dd>Displays a calendar to support date/time selection.</dd>
+    <dt>asset</dt>
+    <dd>Enables the user to select an asset.</dd>
+    <dt>rule</dt>
+    <dd>A text input area for scripting languages.</dd>
+    <dt>note</dt>
+    <dd>Static text, typically for instructions.</dd>
+    <dt>link</dt>
+    <dd>A clickable hyperlink.  A link whose url attribute starts with "help/" will be rendered to Configurator's Help tool button.</dd>
+    <dt>mapping</dt>
+    <dd>This is used to specify parameter bindings for process invocation activities.</dd>
+    <dt>table</dt>
+    <dd>A tabular representation of widgets (designated via the embedded widgets array).</dd>
+  </dl>
+</p>
 
-  <dt>dropdown</dt>
-  <dd>This displays a group of radio buttons
-      for the user to select from one value
-      out of a list. The list of candidate values are specified
-      by child elements OPTION, one for each option.</dd>
-
-  <dt>note</dt>
-  <dd>This simply generates some static text, typically for
-      instructions. The actual text to display is included
-      as the contents of the tag.</dd>
-  
-  <dt>link</dt>
-  <dd>This generates a hyper link to a URL. The URL is specified
-      in the attribute "URL" and the content of the tag
-      will be displayed as a hyper link. </dd>
-
-  <dt>mapping</dt>
-  <dd>This is used to specify parameter mappings for process
-      invocation activities. It displays a table of formal parameters
-      needed by the subprocess and allows user to specify actual
-      parameters. No nested elements and no additional attributes
-      are supported by this widget.</dd>
-  
-  <dt>table</dt>
-  <dd>to be completed</dd>
-  
-</dl>
-
-<h2>Configure the Implementor via Annotations</h2>
-Your implementors must contain the @Activity annotation to be used.
-These attributes are supported:
+<h3><a id="annotations">Annotations</a></h3>
+<p>Attributes for the @Activity annotation:</p>
 <ul>
-  <li><s>category</s>One of the following category classes:
-        <ul>
-            <li>GeneralActivity - Basic activity for programmatic logic.</li>
-            <li>EventWaitActivity - Wait for some event to occur.</li>
-            <li>StartActivity.</li>
-            <li>FinishActivity.</li>
-            <li>SynchronizationActivity - Wait for multiple upstream activities to complete.</li>
-            <li>InvokeProcessActivity - Launch a subflow with variable bindings.</li>
-            <li>TaskActivity - Manual task activity.</li>
-            <li>ScriptActivity - Invoke Kotlin, Groovy, or other supported script.</li>
-        </ul>
-    </li>
-  <li><s>value</s>This is the label displayed in the MDW Studio and MDWHub toolbox.</li>
-  <li><s>icon</s>Asset path for the icon to display in the toolbox.</li>
-  <li><s>pagelet</s>Pagelet definition as described above.</li>
+  <li><span style="font-weight:bold">category</span> One of the following category classes:
+    <ul>
+      <li>GeneralActivity - Basic activity for programmatic logic.</li>
+      <li>EventWaitActivity - Wait for some event to occur.</li>
+      <li>StartActivity.</li>
+      <li>FinishActivity.</li>
+      <li>SynchronizationActivity - Wait for multiple upstream activities to complete.</li>
+      <li>InvokeProcessActivity - Launch a subflow with variable bindings.</li>
+      <li>TaskActivity - Manual task activity.</li>
+      <li>ScriptActivity - Invoke Kotlin, Groovy, or other supported script.</li>
+    </ul>
+  </li>
+  <li><span style="font-weight:bold">value</span> This is the label displayed in the MDW Studio and MDWHub toolbox.</li>
+  <li><span style="font-weight:bold">icon</span> Asset path for the icon to display in the toolbox.</li>
+  <li><span style="font-weight:bold">pagelet</span> Pagelet definition as described above.</li>
 </ul>
 
-<h2>API For Implementing Implementor</h2>
-
-The base class <a href="../javadoc/com/centurylink/mdw/workflow/activity/DefaultActivityImpl.html"><code>DefaultActivityImpl</code></a>
-contains methods (API) for
-assisting your implementations. Please refer to its java doc (following
-above hyperlink, or through IntelliJ/Eclipse IDE) for detailed description of the methods.
-
-<h2>Implementing Adapter Activity Implementers</h2>
-Although the framework is packaged with quite a few
-customizable adapter activities, it cannot be possible to cover all
-needs and hence you will likely need to define an adapter activity
-yourself. There are two primary ways to do this.
-The first is to extend a built-in adapter. Refer to the documentation
-of that adapter for how to do that.
-The second is to extend the base adapter activity class,
-<code>AdapterActivityBase</code>, which is an abstract class.
-Follow <a href='AdapterActivityBase.html'>this link</a> for the detailed documentation for the usage of this class. 
-
+<h3><a id="logging">Logging</a></h3>
+<p>
+  MDW supports various logging frameworks including SLF4J, SimpleLogger, Log4J, STDOUT, and others.  Whichever of
+  these loggers you choose, within your activities you can hook into special functionality that will include helpful tags
+  in your logging output enabling you to identify runtime information regarding the source of your log lines.
+  Here's an example log line from an activity implementor:
+</p>
+<pre>
+[p255409661.10034 a3.10139] Activity not waiting for subprocess - asynchronous subprocess call
+</pre>
+<p>
+  In this log line the special tag [p255409661.10034 a3.10139] identifies the processId, processInstanceId, activityId
+  and activityInstanceId where the logging comes from.
+</p>
+<p>
+  <span style="font-weight:bold">Important</span>: To take advantage of this special log tagging, you'll need to write your log output through one of these two ways:
+  <ul>
+    <li>Invoke superclass methods <code>logInfo()</code>, <code>logError()</code>, <code>logDebug()</code>, etc.</li>
+    <li>Get a handle to the runtime logger by calling <code>getLogger()</code>.  Using a logger obtained this way,
+      you can use the <a href="../javadoc/com/centurylink/mdw/util/log/StandardLogger.html">StandardLogger</a>
+      methods like <code>info()</code>, <code>error()</code>, etc.</li>
+  </ul>
+</p>
+<p>
+  Furthermore, if you use one of these recommended logging patterns within your activity implementors, your log lines
+  will show up in MDWHub's logging views as illustrated in the following screenshots.
+</p>
+<img style="width:1024px" src="images/inspectorLog.png" />
+<img style="width:1024px" src="images/activityLog.png" />
 </body>
 </html>
