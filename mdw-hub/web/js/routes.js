@@ -6,7 +6,7 @@ routesSvc.factory('routes', function() {
   return {
     def: [
       {
-        path: '/users', 
+        path: '/users',
         templateUrl: 'users/users.html',
         controller: 'UsersController'
       },
@@ -151,6 +151,11 @@ routesSvc.factory('routes', function() {
         path: '/workflow/processes/:instanceId/values/:name',
         templateUrl: 'workflow/value.html',
         controller: 'ProcessController'
+      },
+      {
+        path: '/workflow/processes/:instanceId/log',
+        templateUrl: 'workflow/processLog.html',
+        controller: 'ProcessLogController'
       },
       {
         path: '/workflow/triggers/:triggerId',

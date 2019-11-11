@@ -546,6 +546,29 @@ processMod.controller('ProcessDefController',
   };
 }]);
 
+processMod.controller('ProcessLogController', ['$scope', '$http', '$routeParams', 'mdw', 'util',
+                                            function($scope, $http, $routeParams, mdw, util) {
+  $scope.process = {
+    id: $routeParams.instanceId
+  };
+
+  $scope.title = 'Process ' + $scope.process.id + ' Log';
+
+  $scope.logTime = 'DB Time';
+  $scope.setLogTime = function(logTime) {
+    $scope.logTime = logTime;
+    document.getElementById('log-time-popover').click();
+    util.calcLogTimes($scope.logData, logTime);
+  };
+
+  $http.get(mdw.roots.services + '/services/Processes/' + $scope.process.id + '/log?withActivities=true&app=mdw-admin')
+    .then(function(response) {
+      $scope.logData = response.data;
+      util.calcLogTimes($scope.logData, $scope.logTime);
+    }
+  );
+}]);
+
 // retains state for nav
 processMod.factory('ProcessSummary', ['mdw', function(mdw) {
   return {

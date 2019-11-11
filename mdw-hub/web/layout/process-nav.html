@@ -10,6 +10,11 @@
       Values
     </a>
   </li>
+  <li nav-link="workflow/processLog" ng-if="process.id">
+    <a href="#/workflow/processes/{{process.id}}/log">
+      Log
+    </a>
+  </li>
   <li nav-link="/milestones/definition" ng-if="process.hasMilestones && process.masterRequestId">
     <a href="#/milestones/{{process.masterRequestId}}">
       Milestones

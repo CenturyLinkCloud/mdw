@@ -263,6 +263,29 @@ utilMod.factory('util', ['$http', '$parse', 'mdw', function($http, $parse, mdw) 
         }
         return values;
       }
+    },
+    padTwo: function(n) {
+      return '' + (n < 10 ? '0' + n : n);
+    },
+    calcLogTimes: function(logData, logTime) {
+      var offset = 0;
+      if (logTime === 'Server Time') {
+        offset = logData.serverZoneOffset - logData.dbZoneOffset;
+      }
+      else if (logTime === 'Local Time') {
+        var now = new Date();
+        offset = -now.getTimezoneOffset() * 60 - logData.dbZoneOffset;
+      }
+      logData.logLines.forEach(function(logLine) {
+        // format date/time
+        let logLineDt = new Date(logLine.when);
+        if (offset) {
+          logLineDt = new Date(logLineDt.getTime() + offset * 1000);
+        }
+        logLine.logTime = logLineDt.getFullYear() + '-' + this.padTwo(logLineDt.getMonth() + 1) + '-' + this.padTwo(logLineDt.getDate()) +
+            ' ' + this.padTwo(logLineDt.getHours()) + ':' + this.padTwo(logLineDt.getMinutes()) + ':' + this.padTwo(logLineDt.getSeconds()) +
+            '.' + (logLineDt.getMilliseconds() < 100 ? '0' + this.padTwo(logLineDt.getMilliseconds()) : '' + logLineDt.getMilliseconds());
+      }, this);
     }
   };
 }]);

@@ -1,0 +1,41 @@
+<div class="panel panel-default mdw-panel">
+  <div class="panel-heading mdw-heading">
+    <div class="mdw-heading-label">
+      {{title}}
+    </div>
+    <div class="mdw-heading-actions">
+      <button id="log-time-popover" type="button" class="btn btn-primary mdw-btn"
+              uib-popover-template="'workflow/logTimeMenu.html'"
+              popover-placement="left">
+        {{logTime}}
+      </button>
+    </div>
+  </div>
+  <div class="mdw-section">
+    <table>
+      <col style="width:150px">
+      <col style="width:100px">
+      <col style="width:100%">
+      <thead>
+      <tr>
+        <th style="padding-left:3px">When</th>
+        <th style="padding-left:3px">Level</th>
+        <th style="padding-left:3px">Log</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr ng-repeat="logLine in logData.logLines">
+        <td style="vertical-align:top">
+          <pre>{{logLine.logTime}}</pre>
+        </td>
+        <td style="vertical-align:top">
+          <pre>{{logLine.level}}</pre>
+        </td>
+        <td style="vertical-align:top">
+          <pre style="white-space:pre-wrap">{{logLine.message}}</pre>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
