@@ -358,6 +358,8 @@ public class WorkflowDataAccess extends CommonDataAccess {
             Date when = rs.getTimestamp("CREATE_DT");
             String level = rs.getString("LOG_LEVEL");
             String message = rs.getString("MESSAGE");
+            if (message != null)
+                message = message.replace("\r", "");
             logLines.add(new ActivityLogLine(actInstId, when.toInstant(), StandardLogger.LogLevel.valueOf(level), message));
         }
 

@@ -41,6 +41,7 @@ import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.DateHelper;
 import com.centurylink.mdw.util.JsonUtil;
 import com.centurylink.mdw.util.log.ActivityLog;
+import com.centurylink.mdw.util.log.ActivityLogLine;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -422,13 +423,22 @@ public class Processes extends JsonRestService implements JsonExportable {
 
     @Override
     public Jsonable toJsonable(Query query, JSONObject json) throws JSONException {
+        String path = query.getPath();
         try {
-            if (json.has(ProcessList.PROCESS_INSTANCES))
+            if (json.has(ProcessList.PROCESS_INSTANCES)) {
                 return new ProcessList(ProcessList.PROCESS_INSTANCES, json);
-            else if ("Processes/breakdown".equals(query.getPath()))
+            }
+            else if ("Processes/breakdown".equals(path)) {
                 return new JsonListMap<>(json, ProcessAggregate.class);
-            else
+            }
+            else if (path != null && path.startsWith("Processes/") && path.endsWith("/log")) {
+                JSONObject listObj = new JSONObject();
+                listObj.put("Process Log", json.getJSONArray("logLines"));
+                return new JsonList<>(listObj, ActivityLogLine.class);
+            }
+            else {
                 throw new JSONException("Unsupported export type for query: " + query);
+            }
         }
         catch (ParseException ex) {
             throw new JSONException(ex);

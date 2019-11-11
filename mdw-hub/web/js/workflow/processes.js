@@ -546,8 +546,8 @@ processMod.controller('ProcessDefController',
   };
 }]);
 
-processMod.controller('ProcessLogController', ['$scope', '$http', '$routeParams', 'mdw', 'util',
-                                            function($scope, $http, $routeParams, mdw, util) {
+processMod.controller('ProcessLogController', ['$scope', '$http', '$routeParams', 'mdw', 'util', 'EXCEL_DOWNLOAD',
+                                            function($scope, $http, $routeParams, mdw, util, EXCEL_DOWNLOAD) {
   $scope.process = {
     id: $routeParams.instanceId
   };
@@ -561,12 +561,18 @@ processMod.controller('ProcessLogController', ['$scope', '$http', '$routeParams'
     util.calcLogTimes($scope.logData, logTime);
   };
 
-  $http.get(mdw.roots.services + '/services/Processes/' + $scope.process.id + '/log?withActivities=true&app=mdw-admin')
+  var url = mdw.roots.services + '/services/Processes/' + $scope.process.id + '/log?withActivities=true&app=mdw-admin';
+
+  $http.get(url)
     .then(function(response) {
       $scope.logData = response.data;
       util.calcLogTimes($scope.logData, $scope.logTime);
     }
   );
+
+  $scope.downloadExcel = function() {
+    window.location = url + '&' + EXCEL_DOWNLOAD;
+  };
 }]);
 
 // retains state for nav
