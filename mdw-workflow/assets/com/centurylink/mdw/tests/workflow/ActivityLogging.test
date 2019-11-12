@@ -1,0 +1,16 @@
+package com.centurylink.mdw.tests.workflow
+
+start process("ActivityLogging")
+wait process {
+    timeout = 90 // lazy kotlin script compilation can take a while
+}
+verify process {
+    resultsById = true
+}
+
+// verify process log
+response = get http("api/Processes/${masterProcessInstance.id}/log?withActivities=true")
+assert response.code == 200
+verify response {
+    expected = asset("processLog.json").text
+}

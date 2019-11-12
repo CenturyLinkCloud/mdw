@@ -1,6 +1,7 @@
 package com.centurylink.mdw.util.log;
 
 import com.centurylink.mdw.model.Jsonable;
+import org.json.JSONException;
 import org.json.JSONObject;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 
@@ -29,6 +30,14 @@ public class ActivityLogLine implements Jsonable {
         this.when = when;
         this.level = level;
         this.message = message;
+    }
+
+    @Override
+    public JSONObject toJson() throws JSONException {
+        JSONObject json = Jsonable.super.getJson();
+        if (activityInstanceId == 0)
+            json.remove("activityInstanceId");
+        return json;
     }
 
     @SuppressWarnings("unused")
