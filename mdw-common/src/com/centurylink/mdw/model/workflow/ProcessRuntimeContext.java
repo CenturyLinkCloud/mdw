@@ -338,6 +338,10 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         };
     }
 
+    private String propOr(String prop, String defaultValue) {
+        return PropertyManager.getProperty(prop, defaultValue);
+    }
+
     private Map<String,String> getEnvironmentAccessorMap() {
         return new HashMap<String,String>() {
             @Override

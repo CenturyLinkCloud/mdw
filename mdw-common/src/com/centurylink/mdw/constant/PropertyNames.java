@@ -19,8 +19,8 @@ public class PropertyNames {
 
     // logging
     public static final String MDW_LOGGING_LEVEL = "mdw.logging.level";
-    public static final String MDW_LOGGING_ACTIVITY = "mdw.logging.activity";
-    public static final String MDW_LOGGING_ACTIVITY_RETAIN = "mdw.logging.activity.retain";
+    public static final String MDW_LOGGING_ACTIVITY_ENABLED = "mdw.logging.activity.enabled";
+    public static final String MDW_LOGGING_ACTIVITY_CLEANUP_RETAIN = "mdw.logging.activity.cleanup.retain";
     // only set in-memory by test runner "<host>:<port>:<timeout>";
     public static final String MDW_LOGGING_WATCHER = "mdw.logging.watcher";
     // container service providers

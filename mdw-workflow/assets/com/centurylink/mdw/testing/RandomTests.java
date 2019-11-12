@@ -22,7 +22,7 @@ import java.util.*;
 /**
  * If enabled, run daily at 1:30 am.
  */
-@ScheduledJob(value="RandomTests", schedule="30 1 * * ? *", enabled="${props['mdw.random.tests.enabled']}")
+@ScheduledJob(value="RandomTests", schedule="30 1 * * ? *", defaultEnabled=false, enabled="${props['mdw.random.tests.enabled']}")
 public class RandomTests implements com.centurylink.mdw.model.monitor.ScheduledJob {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();

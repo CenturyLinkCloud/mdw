@@ -75,7 +75,8 @@ public class LoggerUtil implements Serializable {
         }
         // avoid reflection for known impls
         if (loggerImplClass == null) {
-            return new Slf4JStandardLoggerImpl(Util.getCallingClass().getName());
+            Class<?> callingClass = Util.getCallingClass();
+            return new Slf4JStandardLoggerImpl(callingClass.getName());
         }
         else if (SimpleLogger.class.getName().equals(loggerImplClass)) {
             return SimpleLogger.getSingleton();

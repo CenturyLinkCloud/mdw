@@ -107,9 +107,14 @@ title: MDW Configuration
     discovery.url: http://repo.maven.apache.org/maven2  # default=http://repo.maven.apache.org/maven2
     docs.url: https://centurylinkcloud.github.io/mdw/docs  # default=https://centurylinkcloud.github.io/mdw/docs
 
-    # for SimpleLogger (see also mdw.log4j.properties)
+    # for SLF4J and SimpleLogger
     logging:
       level: DEBUG  # default=INFO
+      activity:
+        enabled: true  # enable activity logging default=true
+        cleanup:
+          enabled: true  # default=true
+          retain: 90  # default=180 (days)
 
     # scripting support (custom executors should implement ScriptExecutor)
     script:
