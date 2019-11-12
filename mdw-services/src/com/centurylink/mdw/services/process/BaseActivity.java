@@ -73,7 +73,6 @@ public abstract class BaseActivity implements GeneralActivity {
      * Replaced during execution by ActivityLogger.
      */
     protected StandardLogger logger = LoggerUtil.getStandardLogger();
-
     /**
      * Use this logger for activity output to make it appear in the activity_log.
      */
