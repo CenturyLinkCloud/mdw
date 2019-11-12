@@ -15,6 +15,8 @@
  */
 package com.centurylink.mdw.util.log;
 
+import com.centurylink.mdw.activity.types.ActivityCategory;
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.YamlProperties;
 import com.centurylink.mdw.util.log.log4j.Log4JStandardLoggerImpl;
@@ -73,28 +75,39 @@ public class LoggerUtil implements Serializable {
             System.out.println("\nUsing Logger Impl: " + loggerImplClass);
             accessed = true;
         }
+        Class<?> callingClass = Util.getCallingClass();
+        StandardLogger logger;
         // avoid reflection for known impls
         if (loggerImplClass == null) {
-            Class<?> callingClass = Util.getCallingClass();
-            return new Slf4JStandardLoggerImpl(callingClass.getName());
+            logger = new Slf4JStandardLoggerImpl(callingClass.getName());
         }
         else if (SimpleLogger.class.getName().equals(loggerImplClass)) {
-            return SimpleLogger.getSingleton();
+            logger = SimpleLogger.getSingleton();
         }
         else if (Log4JStandardLoggerImpl.class.getName().equals(loggerImplClass) || org.apache.log4j.Logger.class.getName().equals(loggerImplClass)) {
-            return new Log4JStandardLoggerImpl();
+            logger = new Log4JStandardLoggerImpl();
         }
         else if (Slf4JStandardLoggerImpl.class.getName().equals(loggerImplClass) || org.slf4j.Logger.class.getName().equals(loggerImplClass)) {
-            return new Slf4JStandardLoggerImpl(Util.getCallingClass().getName());
+            logger = new Slf4JStandardLoggerImpl(callingClass.getName());
         }
         else {
             try {
-                return Class.forName(loggerImplClass).asSubclass(StandardLogger.class).newInstance();
+                logger = Class.forName(loggerImplClass).asSubclass(StandardLogger.class).newInstance();
             }
             catch (Exception ex) {
                 ex.printStackTrace();  // logging isn't working
                 return null;
             }
+        }
+        checkWarnActivityLogging(logger, callingClass);
+        return logger;
+    }
+
+    private static void checkWarnActivityLogging(StandardLogger logger, Class<?> callingClass) {
+        if (ActivityCategory.class.isAssignableFrom(callingClass) &&
+                !callingClass.getName().equals("com.centurylink.mdw.services.process.BaseActivity")) {
+            String docUrl = ApplicationContext.getDocsUrl() + "/help/implementor.html#logging";
+            logger.warn("*** Activity logging bypassed by: " + callingClass.getName() + " (see " + docUrl + ")");
         }
     }
 
@@ -131,6 +144,8 @@ public class LoggerUtil implements Serializable {
             }
         }
     }
+
+
 
     public static File getConfigurationFile(String filepath) {
         String configDir = System.getProperty(PropertyManager.MDW_CONFIG_LOCATION);

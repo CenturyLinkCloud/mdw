@@ -23,7 +23,7 @@ import java.util.Date;
  * schedule, disable this job via <code>mdw.logging.activity.cleanup.enabled</code>, then extend this class with your
  * own ScheduledJob to run on a different schedule.
  */
-@ScheduledJob(value="ActivityLogCleanup", schedule="53 14 * * ? *", isExclusive=true,
+@ScheduledJob(value="ActivityLogCleanup", schedule="0 2 * * ? *", isExclusive=true,
         enabled="${props['mdw.logging.activity.cleanup.enabled']}", defaultEnabled=true)
 public class ActivityLogCleanup implements com.centurylink.mdw.model.monitor.ScheduledJob {
 
