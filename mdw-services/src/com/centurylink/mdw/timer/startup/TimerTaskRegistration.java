@@ -131,7 +131,7 @@ public class TimerTaskRegistration implements StartupService {
                 String enabledProp = scheduledJobAnnotation.enabled();
                 if (enabledProp.startsWith("${props['") && enabledProp.endsWith("']}")) {
                     enabledProp = enabledProp.substring(9, enabledProp.length() - 3);
-                    enabled = PropertyManager.getBooleanProperty(enabledProp, false);
+                    enabled = PropertyManager.getBooleanProperty(enabledProp, enabled);
                 }
                 else if (!enabledProp.isEmpty()) {
                     enabled = "true".equalsIgnoreCase(enabledProp);

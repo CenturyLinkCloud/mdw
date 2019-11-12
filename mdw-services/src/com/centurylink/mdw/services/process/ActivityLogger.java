@@ -15,6 +15,11 @@ public class ActivityLogger extends AbstractStandardLoggerBase {
 
     private ActivityRuntimeContext runtimeContext;
 
+    static {
+        if (!PropertyManager.getBooleanProperty(PropertyNames.MDW_LOGGING_ACTIVITY_ENABLED, true))
+            LoggerUtil.getStandardLogger().info("Activity logging is disabled");
+    }
+
     public ActivityLogger(ActivityRuntimeContext runtimeContext) {
         this.runtimeContext = runtimeContext;
         this.runtimeContext.setLogPersister(ActivityLogger::persist);
@@ -146,7 +151,7 @@ public class ActivityLogger extends AbstractStandardLoggerBase {
     }
 
     public static void persist(Long processInstanceId, Long activityInstanceId, LogLevel level, String message, Throwable t) {
-        boolean isLogging = PropertyManager.getBooleanProperty(PropertyNames.MDW_LOGGING_ACTIVITY, true);
+        boolean isLogging = PropertyManager.getBooleanProperty(PropertyNames.MDW_LOGGING_ACTIVITY_ENABLED, true);
         if (isLogging) {
             try {
                 WorkflowDataAccess dataAccess = new WorkflowDataAccess();
