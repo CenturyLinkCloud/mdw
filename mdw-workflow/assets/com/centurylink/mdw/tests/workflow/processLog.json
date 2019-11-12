@@ -1,0 +1,240 @@
+{
+  "dbZoneOffset": -${~\\d*},
+  "logLines": [
+    {
+      "level": "INFO",
+      "message": "Process started - com.centurylink.mdw.tests.workflow/ActivityLogging/0.${~\\d*}",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "Activity started - Start",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "Activity completed - completion code null",
+      "when": "${~.*}"
+    },
+    {
+      "level": "INFO",
+      "message": "Transition initiated from 1 to 3",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "Activity started - Custom\nActivity",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "super.logger.info()",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "DEBUG",
+      "message": "super.logger.debug()",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "ERROR",
+      "message": "super.logger.error()",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "ERROR",
+      "message": "java.lang.Exception: super.logger.error()\n\\tat com.centurylink.mdw.tests.workflow.LoggingActivity.execute(LoggingActivity.java:${~.*}",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "getRuntimeContext().logInfo()",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "DEBUG",
+      "message": "getRuntimeContext().logDebug()",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "ERROR",
+      "message": "getRuntimeContext().logError()",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "ERROR",
+      "message": "java.lang.Exception: getRuntimeContext().logError()\n\\tat com.centurylink.mdw.tests.workflow.LoggingActivity.execute(LoggingActivity.java:${~.*}",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "Activity completed - completion code null",
+      "when": "${~.*}"
+    },
+    {
+      "level": "INFO",
+      "message": "Transition initiated from 3 to 4",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "Activity started - Dynamic Java",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "ERROR",
+      "message": "Dynamic Java ClassLoader: class com.centurylink.mdw.cloud.CloudClassLoader:com.centurylink.mdw.tests.workflow",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "context.logInfo()",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "DEBUG",
+      "message": "context.logDebug()",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "ERROR",
+      "message": "context.logError()",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "ERROR",
+      "message": "java.lang.Exception: context.logError()\n\\tat com.centurylink.mdw.tests.workflow.ActivityLogging_A4.execute(ActivityLogging_A4.java:${~.*}",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "Activity completed - completion code null",
+      "when": "${~.*}"
+    },
+    {
+      "level": "INFO",
+      "message": "Transition initiated from 4 to 5",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "Activity started - Groovy",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "context.logInfo()",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "DEBUG",
+      "message": "context.logDebug()",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "ERROR",
+      "message": "context.logError()",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "ERROR",
+      "message": "java.lang.Exception: context.logError()\n\\tat sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)\n\\tat sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:${~.*}",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "Activity completed - completion code null",
+      "when": "${~.*}"
+    },
+    {
+      "level": "INFO",
+      "message": "Transition initiated from 5 to 6",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "Activity started - Kotlin",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "context.logInfo()",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "DEBUG",
+      "message": "context.logDebug()",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "ERROR",
+      "message": "context.logError()",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "ERROR",
+      "message": "java.lang.Exception: context.logError()\n\\tat ActivityLoggingv0_2_Kotlin_6.<init>(Unknown Source)\n\\tat sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)\n\\tat sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:${~.*}",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "Activity completed - completion code null",
+      "when": "${~.*}"
+    },
+    {
+      "level": "INFO",
+      "message": "Transition initiated from 6 to 2",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "Activity started - Stop",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "Activity completed - completion code null",
+      "when": "${~.*}"
+    },
+    {
+      "level": "INFO",
+      "message": "Process completed - com.centurylink.mdw.tests.workflow/ActivityLogging completion code is null",
+      "when": "${~.*}"
+    }
+  ],
+  "processInstanceId": ${~\\d*},
+  "serverZoneOffset": -${~\\d*}
+}

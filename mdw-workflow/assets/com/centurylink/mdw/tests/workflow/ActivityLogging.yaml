@@ -1,0 +1,23 @@
+process: # 10050
+  name: ActivityLogging
+  instance: 1
+  activity: # 1 "2019-11-12 16:30:18.509"
+    name: Start
+    status: Completed
+  activity: # 2 "2019-11-12 16:30:18.610"
+    name: Stop
+    status: Completed
+  activity: # 3 "2019-11-12 16:30:18.526"
+    name: |
+      Custom
+      Activity
+    status: Completed
+  activity: # 4 "2019-11-12 16:30:18.545"
+    name: Dynamic Java
+    status: Completed
+  activity: # 5 "2019-11-12 16:30:18.564"
+    name: Groovy
+    status: Completed
+  activity: # 6 "2019-11-12 16:30:18.589"
+    name: Kotlin
+    status: Completed
