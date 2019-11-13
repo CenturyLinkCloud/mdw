@@ -1,7 +1,7 @@
 package com.centurylink.mdw.tests.workflow
 
 start process("MDWTestEventWaitTimeout")
-sleep 10
+sleep 20
 send message("REST") {
     payload = '''<ser:ActionRequest xmlns:ser="http://mdw.centurylink.com/services">
   <Action Name="RegressionTest">
@@ -10,9 +10,9 @@ send message("REST") {
   </Action>
 </ser:ActionRequest>'''
 }
-sleep 130
+sleep 150
 send message("REST") {
     payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"
 }
-sleep 10
+sleep 20
 verify process
