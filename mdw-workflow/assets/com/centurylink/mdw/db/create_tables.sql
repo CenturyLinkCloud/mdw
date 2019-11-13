@@ -273,7 +273,7 @@ CREATE TABLE DOCUMENT
 -- not used when mongodb is present
 CREATE TABLE DOCUMENT_CONTENT
 (
-  DOCUMENT_ID         BIGINT,
+  DOCUMENT_ID         BIGINT          PRIMARY KEY,
   CONTENT             MEDIUMTEXT      NOT NULL  
 );
 

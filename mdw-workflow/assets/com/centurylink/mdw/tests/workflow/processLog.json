@@ -1,5 +1,5 @@
 {
-  "dbZoneOffset": -${~\\d*},
+  "dbZoneOffset": ${~.*},
   "logLines": [
     {
       "level": "INFO",
@@ -235,6 +235,6 @@
       "when": "${~.*}"
     }
   ],
-  "processInstanceId": ${~\\d*},
-  "serverZoneOffset": -${~\\d*}
+  "processInstanceId": ${~.*},
+  "serverZoneOffset": ${~.*}
 }
