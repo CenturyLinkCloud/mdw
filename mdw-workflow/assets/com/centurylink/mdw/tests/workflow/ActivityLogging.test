@@ -2,7 +2,7 @@ package com.centurylink.mdw.tests.workflow
 
 start process("ActivityLogging")
 wait process {
-    timeout = 90 // lazy kotlin script compilation can take a while
+    timeout = 120 // lazy kotlin script compilation can take a while
 }
 verify process {
     resultsById = true
