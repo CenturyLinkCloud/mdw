@@ -15,6 +15,12 @@
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
+      "message": "Stubber executing activity: A1",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
       "message": "Activity completed - completion code null",
       "when": "${~.*}"
     },
@@ -27,6 +33,12 @@
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Activity started - Custom\nActivity",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "Stubber executing activity: A3",
       "when": "${~.*}"
     },
     {
@@ -96,6 +108,12 @@
     },
     {
       "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "Stubber executing activity: A4",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
       "level": "ERROR",
       "message": "Dynamic Java ClassLoader: class com.centurylink.mdw.cloud.CloudClassLoader:com.centurylink.mdw.tests.workflow",
       "when": "${~.*}"
@@ -144,6 +162,12 @@
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
+      "message": "Stubber executing activity: A5",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
       "message": "context.logInfo()",
       "when": "${~.*}"
     },
@@ -185,6 +209,12 @@
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
+      "message": "Stubber executing activity: A6",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
       "message": "context.logInfo()",
       "when": "${~.*}"
     },
@@ -221,6 +251,12 @@
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Activity started - Stop",
+      "when": "${~.*}"
+    },
+    {
+      "activityInstanceId": ${~\\d*},
+      "level": "INFO",
+      "message": "Stubber executing activity: A2",
       "when": "${~.*}"
     },
     {
