@@ -102,21 +102,26 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
 
         ServiceSummary serviceSummary = getServiceSummary(true);
         if (serviceSummary != null) {
-            doServiceSummaryUpdate(serviceSummary, status, responseId);
-
-            getEngine().getDatabaseAccess().commit();
-            // For mySQL, we need to change the isolation level so that the next read (once we have response)
-            // is not using the DB snapshot that got created when we were in here first for the request.
-            // Otherwise, we risk overwriting any service summary updates performed by a different thread.
-            if (status == null && getEngine().getDatabaseAccess().isMySQL()) {
-                getEngine().getDatabaseAccess().runUpdate("SET TRANSACTION ISOLATION LEVEL READ COMMITTED");
-                changedIsolation = true;
+            try {
+                doServiceSummaryUpdate(serviceSummary, status, responseId);
+                getEngine().getDatabaseAccess().commit();
+                // For mySQL, we need to change the isolation level so that the next read (once we have response)
+                // is not using the DB snapshot that got created when we were in here first for the request.
+                // Otherwise, we risk overwriting any service summary updates performed by a different thread.
+                if (status == null && getEngine().getDatabaseAccess().isMySQL()) {
+                    getEngine().getDatabaseAccess().runUpdate("SET TRANSACTION ISOLATION LEVEL READ COMMITTED");
+                    changedIsolation = true;
+                }
+            }
+            finally {
+                if (status != null) {
+                    getEngine().getDatabaseAccess().commit();
+                    // For mySQL, now (after getting response) we need to restore  isolation level back to default
+                    if (changedIsolation && getEngine().getDatabaseAccess().connectionIsOpen())
+                        getEngine().getDatabaseAccess().runUpdate("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
+                }
             }
             if (status != null) {
-                // For mySQL, now (after getting response) we need to restore  isolation level back to default
-                if (changedIsolation && getEngine().getDatabaseAccess().connectionIsOpen())
-                    getEngine().getDatabaseAccess().runUpdate("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
-
                 // Only notify after performing invocation
                 notifyServiceSummaryUpdate(serviceSummary);
             }

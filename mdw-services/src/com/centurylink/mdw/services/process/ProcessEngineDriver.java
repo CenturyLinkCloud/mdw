@@ -330,8 +330,7 @@ public class ProcessEngineDriver {
         }
     }
 
-    private void executeActivity(ProcessExecutor engine, InternalEvent event, ProcessInstance procInst)
-    {
+    private void executeActivity(ProcessExecutor engine, InternalEvent event, ProcessInstance procInst) {
         ActivityRuntime ar = null;
         try {
             // Step 1. check, create and prepare activity instance
@@ -413,8 +412,7 @@ public class ProcessEngineDriver {
     }
 
     private void handleDelay(ProcessExecutor engine, InternalEvent event,
-            ProcessInstance processInstance) throws Exception
-    {
+            ProcessInstance processInstance) throws Exception {
         if (!processInstanceIsActive(processInstance)) return;
 
         ActivityInstance ai = null;

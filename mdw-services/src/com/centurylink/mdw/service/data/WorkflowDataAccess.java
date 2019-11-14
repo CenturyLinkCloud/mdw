@@ -282,7 +282,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
             db.commit();
         }
         catch (SQLException ex) {
-            throw new DataAccessException("Failed to add activity log" + activityInstanceId + ": " + message, ex);
+            throw new DataAccessException("Failed to add activity log for " + activityInstanceId + ": " + message, ex);
         }
         finally {
             db.closeConnection();

@@ -8,7 +8,7 @@ import com.centurylink.mdw.util.CallURL;
  * Performs work asynchronously in a spawned thread, so uses callback mechanism to notify of job completion.
  */
 @ScheduledJob(value="OverlappingJobAsync", schedule="* * * * * *",
-        enabled="${props['mdw.overlapping.job.async.enabled']}", isExclusive=true)
+        enabled="${props['mdw.overlapping.job.async.enabled']}", defaultEnabled=false, isExclusive=true)
 public class OverlappingJobAsync extends OverlappingJob {
 
     @Override

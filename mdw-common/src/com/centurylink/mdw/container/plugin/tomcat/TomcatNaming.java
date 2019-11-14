@@ -15,8 +15,11 @@
  */
 package com.centurylink.mdw.container.plugin.tomcat;
 
-import java.lang.reflect.Method;
-import java.rmi.Remote;
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.container.JmsProvider;
+import com.centurylink.mdw.container.NamingProvider;
+import com.centurylink.mdw.container.plugin.MdwTransactionManager;
+import com.centurylink.mdw.container.plugin.activemq.ActiveMqJms;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -24,12 +27,8 @@ import javax.management.ObjectName;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
-import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.container.JmsProvider;
-import com.centurylink.mdw.container.NamingProvider;
-import com.centurylink.mdw.container.plugin.MdwTransactionManager;
-import com.centurylink.mdw.container.plugin.activemq.ActiveMqJms;
+import java.lang.reflect.Method;
+import java.rmi.Remote;
 
 public class TomcatNaming implements NamingProvider {
 
