@@ -15,14 +15,13 @@
  */
 package com.centurylink.mdw.model.asset;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import com.centurylink.mdw.model.Jsonable;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class CommitInfo implements Jsonable {
 

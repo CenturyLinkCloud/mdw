@@ -187,7 +187,7 @@ public class CommonDataAccess {
     }
 
     protected String nowPrecision() {
-        return db.isPrecisionSupport()?db.isMySQL()?"now(6)":"systimestamp":now();
+        return db.isPrecisionSupport() ? db.isMySQL() ? "now(6)" : "systimestamp" : now();
     }
 
     public Map<String,String> getAttributes(String ownerType, Long ownerId)

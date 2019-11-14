@@ -152,7 +152,7 @@ public class ActivityLogger extends AbstractStandardLoggerBase {
 
     public static void persist(Long processInstanceId, Long activityInstanceId, LogLevel level, String message, Throwable t) {
         boolean isLogging = PropertyManager.getBooleanProperty(PropertyNames.MDW_LOGGING_ACTIVITY_ENABLED, true);
-        if (isLogging) {
+        if (isLogging && message != null) {
             String thread = Thread.currentThread().getName();
             if (thread.length() > 32)
                 thread = thread.substring(0, 28) + "...";

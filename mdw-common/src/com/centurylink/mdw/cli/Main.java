@@ -73,6 +73,7 @@ public class Main {
         addOperation("dbexport", new DbExport());
         addOperation("dbimport", new DbImport());
         addOperation("hierarchy", new Hierarchy());
+        addOperation("find", new Find());
 
         JCommander cmd = builder.build();
 
