@@ -179,17 +179,9 @@ public class CacheRegistration implements StartupService {
     }
 
     /**
-     * Method that gets invoked when the server
-     * shuts down
+     * Method that gets invoked when the server shuts down
      */
     public void onShutdown(){
-        CacheRegistry.getInstance().clearDynamicServices();// clear dynamic cache services
-        synchronized (allCaches) {
-            for (String cacheName : allCaches.keySet()) {
-                CacheService cachingObj= allCaches.get(cacheName);
-                cachingObj.clearCache();
-            }
-        }
     }
 
     public void refreshCaches() throws StartupException {

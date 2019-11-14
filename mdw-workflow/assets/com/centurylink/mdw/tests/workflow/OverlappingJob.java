@@ -10,7 +10,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
  * There is no test to execute this.  Can be manually exercised via prop overlapping.job.enabled.
  */
 @ScheduledJob(value="OverlappingJob", schedule="${props['mdw.overlapping.job.schedule']}",
-        enabled="${props['mdw.overlapping.job.enabled']}", isExclusive=true)
+        enabled="${props['mdw.overlapping.job.enabled']}", defaultEnabled=false, isExclusive=true)
 public class OverlappingJob implements com.centurylink.mdw.model.monitor.ScheduledJob {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
