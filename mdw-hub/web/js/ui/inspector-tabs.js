@@ -369,6 +369,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             '_url': '${"#/workflow/activities/" + it.activityInstanceId}',
             Level: '${it.level}',
             When: '${it.when}',
+            Thread: '${it.thread}',
             Log: '${it.message}'
           }],
           'getLogLines': function(diagramObject, workflowObject, runtimeInfo) {
@@ -593,6 +594,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
             '_url': '${"#/workflow/activities/" + it.activityInstanceId}',
             Level: '${it.level}',
             When: '${it.when}',
+            Thread: '${it.thread}',
             Log: '${it.message}'
           }],
           'getLogLines': function(diagramObject, workflowObject, runtimeInfo) {

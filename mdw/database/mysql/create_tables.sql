@@ -156,6 +156,7 @@ CREATE TABLE ACTIVITY_LOG
   ACTIVITY_INSTANCE_ID  BIGINT,       -- empty for process-level logging
   CREATE_DT             TIMESTAMP(6),
   LOG_LEVEL             VARCHAR(5),
+  THREAD                VARCHAR(32),
   MESSAGE               VARCHAR(4000)
 );
 

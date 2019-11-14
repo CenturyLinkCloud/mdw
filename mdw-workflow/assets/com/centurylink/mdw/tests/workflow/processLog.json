@@ -4,270 +4,316 @@
     {
       "level": "INFO",
       "message": "Process started - com.centurylink.mdw.tests.workflow/ActivityLogging/0.${~\\d*}",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Activity started - Start",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Stubber executing activity: A1",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Activity completed - completion code null",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "level": "INFO",
       "message": "Transition initiated from 1 to 3",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Activity started - Custom\nActivity",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Stubber executing activity: A3",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "super.logger.info()",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "DEBUG",
       "message": "super.logger.debug()",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "ERROR",
       "message": "super.logger.error()",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "ERROR",
       "message": "java.lang.Exception: super.logger.error()\n\\tat com.centurylink.mdw.tests.workflow.LoggingActivity.execute(LoggingActivity.java:${~.*}",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "getRuntimeContext().logInfo()",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "DEBUG",
       "message": "getRuntimeContext().logDebug()",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "ERROR",
       "message": "getRuntimeContext().logError()",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "ERROR",
       "message": "java.lang.Exception: getRuntimeContext().logError()\n\\tat com.centurylink.mdw.tests.workflow.LoggingActivity.execute(LoggingActivity.java:${~.*}",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Activity completed - completion code null",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "level": "INFO",
       "message": "Transition initiated from 3 to 4",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Activity started - Dynamic Java",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Stubber executing activity: A4",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "ERROR",
       "message": "Dynamic Java ClassLoader: class com.centurylink.mdw.cloud.CloudClassLoader:com.centurylink.mdw.tests.workflow",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "context.logInfo()",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "DEBUG",
       "message": "context.logDebug()",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "ERROR",
       "message": "context.logError()",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "ERROR",
       "message": "java.lang.Exception: context.logError()\n\\tat com.centurylink.mdw.tests.workflow.ActivityLogging_A4.execute(ActivityLogging_A4.java:${~.*}",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Activity completed - completion code null",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "level": "INFO",
       "message": "Transition initiated from 4 to 5",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Activity started - Groovy",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Stubber executing activity: A5",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "context.logInfo()",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "DEBUG",
       "message": "context.logDebug()",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "ERROR",
       "message": "context.logError()",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "ERROR",
       "message": "java.lang.Exception: context.logError()\n\\tat sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)\n\\tat sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:${~.*}",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Activity completed - completion code null",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "level": "INFO",
       "message": "Transition initiated from 5 to 6",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Activity started - Kotlin",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Stubber executing activity: A6",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "context.logInfo()",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "DEBUG",
       "message": "context.logDebug()",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "ERROR",
       "message": "context.logError()",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "ERROR",
       "message": "java.lang.Exception: context.logError()\n\\tat ActivityLoggingv0_2_Kotlin_6.<init>(Unknown Source)\n\\tat sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)\n\\tat sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:${~.*}",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Activity completed - completion code null",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "level": "INFO",
       "message": "Transition initiated from 6 to 2",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Activity started - Stop",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Stubber executing activity: A2",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "activityInstanceId": ${~\\d*},
       "level": "INFO",
       "message": "Activity completed - completion code null",
+      "thread": "${~.*}",
       "when": "${~.*}"
     },
     {
       "level": "INFO",
       "message": "Process completed - com.centurylink.mdw.tests.workflow/ActivityLogging completion code is null",
+      "thread": "${~.*}",
       "when": "${~.*}"
     }
   ],

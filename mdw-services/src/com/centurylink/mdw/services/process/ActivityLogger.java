@@ -153,9 +153,12 @@ public class ActivityLogger extends AbstractStandardLoggerBase {
     public static void persist(Long processInstanceId, Long activityInstanceId, LogLevel level, String message, Throwable t) {
         boolean isLogging = PropertyManager.getBooleanProperty(PropertyNames.MDW_LOGGING_ACTIVITY_ENABLED, true);
         if (isLogging) {
+            String thread = Thread.currentThread().getName();
+            if (thread.length() > 32)
+                thread = thread.substring(0, 28) + "...";
             try {
                 WorkflowDataAccess dataAccess = new WorkflowDataAccess();
-                dataAccess.addActivityLog(processInstanceId, activityInstanceId, level.toString(), message);
+                dataAccess.addActivityLog(processInstanceId, activityInstanceId, level.toString(), thread, message);
                 if (t != null) {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     t.printStackTrace(new PrintStream(baos));
@@ -163,7 +166,7 @@ public class ActivityLogger extends AbstractStandardLoggerBase {
                     if (stackTrace.length() > 3997) {
                         stackTrace = stackTrace.substring(0, 3997) + "...";
                     }
-                    dataAccess.addActivityLog(processInstanceId, activityInstanceId, level.toString(), stackTrace);
+                    dataAccess.addActivityLog(processInstanceId, activityInstanceId, level.toString(), thread, stackTrace);
                 }
             }
             catch (DataAccessException ex) {

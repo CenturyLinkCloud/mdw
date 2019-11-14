@@ -17,13 +17,11 @@
   </div>
   <div class="mdw-section">
     <table>
-      <col style="width:150px">
-      <col style="width:100px">
-      <col style="width:100%">
       <thead>
       <tr>
         <th style="padding-left:3px">When</th>
         <th style="padding-left:3px">Level</th>
+        <th style="padding-left:3px">Thread</th>
         <th style="padding-left:3px">Log</th>
       </tr>
       </thead>
@@ -34,6 +32,9 @@
         </td>
         <td style="vertical-align:top">
           <pre>{{logLine.level}}</pre>
+        </td>
+        <td style="vertical-align:top">
+          <pre>{{logLine.thread}}</pre>
         </td>
         <td style="vertical-align:top">
           <pre style="white-space:pre-wrap">{{logLine.message}}</pre>
