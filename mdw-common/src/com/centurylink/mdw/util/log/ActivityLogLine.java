@@ -21,14 +21,19 @@ public class ActivityLogLine implements Jsonable {
     public LogLevel getLevel() { return level; }
     public void setLevel(LogLevel level) { this.level = level; }
 
+    private String thread;
+    public String getThread() { return thread; }
+    public void setThread(String thread) { this.thread = thread; }
+
     public String message;
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
 
-    public ActivityLogLine(Long activityInstanceId, Instant when, StandardLogger.LogLevel level, String message) {
+    public ActivityLogLine(Long activityInstanceId, Instant when, StandardLogger.LogLevel level, String thread, String message) {
         this.activityInstanceId = activityInstanceId;
         this.when = when;
         this.level = level;
+        this.thread = thread;
         this.message = message;
     }
 

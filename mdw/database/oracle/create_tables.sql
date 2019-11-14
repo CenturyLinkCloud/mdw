@@ -159,6 +159,7 @@ CREATE TABLE ACTIVITY_LOG
   ACTIVITY_INSTANCE_ID  NUMBER(20),            -- empty for process-level logging
   CREATE_DT             TIMESTAMP              DEFAULT SYSTIMESTAMP,
   LOG_LEVEL             VARCHAR(5),
+  THREAD                VARCHAR(32),
   MESSAGE               VARCHAR(4000)
 );
 

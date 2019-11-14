@@ -265,23 +265,39 @@ public class WorkflowDataAccess extends CommonDataAccess {
         }
     }
 
-    public void addActivityLog(Long processInstanceId, Long activityInstanceId, String level, String message)
+    public void addActivityLog(Long processInstanceId, Long activityInstanceId, String level, String thread, String message)
             throws DataAccessException {
         String sql = "insert into ACTIVITY_LOG" +
-                "\n (process_instance_id, activity_instance_id, log_level, message)" +
-                "\n values (?, ?, ?, ?)";
+                "\n (process_instance_id, activity_instance_id, log_level, thread, message)" +
+                "\n values (?, ?, ?, ?, ?)";
         try {
             db.openConnection();
-            Object[] args = new Object[4];
+            Object[] args = new Object[5];
             args[0] = processInstanceId;
             args[1] = activityInstanceId;
             args[2] = level;
-            args[3] = message;
+            args[3] = thread;
+            args[4] = message;
             db.runUpdate(sql, args);
             db.commit();
         }
         catch (SQLException ex) {
             throw new DataAccessException("Failed to add activity log" + activityInstanceId + ": " + message, ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    public ActivityLog getActivityLog(Long activityInstanceId) throws DataAccessException {
+        String sql = "select * from ACTIVITY_LOG where activity_instance_id = ? order by CREATE_DT";
+        try {
+            db.openConnection();
+            ResultSet rs = db.runSelect(sql, activityInstanceId);
+            return buildActivityLog(rs);
+        }
+        catch (SQLException ex) {
+            throw new DataAccessException("Failed to retrieve activity log: " + activityInstanceId, ex);
         }
         finally {
             db.closeConnection();
@@ -306,21 +322,6 @@ public class WorkflowDataAccess extends CommonDataAccess {
         }
         catch (SQLException ex) {
             throw new DataAccessException("Failed to retrieve process log: " + processInstanceId, ex);
-        }
-        finally {
-            db.closeConnection();
-        }
-    }
-
-    public ActivityLog getActivityLog(Long activityInstanceId) throws DataAccessException {
-        String sql = "select * from ACTIVITY_LOG where activity_instance_id = ?";
-        try {
-            db.openConnection();
-            ResultSet rs = db.runSelect(sql, activityInstanceId);
-            return buildActivityLog(rs);
-        }
-        catch (SQLException ex) {
-            throw new DataAccessException("Failed to retrieve activity log: " + activityInstanceId, ex);
         }
         finally {
             db.closeConnection();
@@ -357,10 +358,11 @@ public class WorkflowDataAccess extends CommonDataAccess {
             Long actInstId = rs.getLong("ACTIVITY_INSTANCE_ID");
             Date when = rs.getTimestamp("CREATE_DT");
             String level = rs.getString("LOG_LEVEL");
+            String thread = rs.getString("THREAD");
             String message = rs.getString("MESSAGE");
             if (message != null)
                 message = message.replace("\r", "");
-            logLines.add(new ActivityLogLine(actInstId, when.toInstant(), StandardLogger.LogLevel.valueOf(level), message));
+            logLines.add(new ActivityLogLine(actInstId, when.toInstant(), StandardLogger.LogLevel.valueOf(level), thread, message));
         }
 
         if (processInstanceId == null) {
