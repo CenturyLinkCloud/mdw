@@ -15,7 +15,7 @@
    <bean
     id="MDWDataSource"
     class="org.apache.commons.dbcp2.BasicDataSource"
-    destroy-method="close">
+    destroy-method="">
     <property
       name="driverClassName"
       value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.database.driver')}" />

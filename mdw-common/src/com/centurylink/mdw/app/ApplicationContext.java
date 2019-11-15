@@ -182,9 +182,6 @@ public class ApplicationContext {
         }
     }
 
-    public static void onShutdown() {
-    }
-
     /**
      * Verifies a class
      * @param className class name.
