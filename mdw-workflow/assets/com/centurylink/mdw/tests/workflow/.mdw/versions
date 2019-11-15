@@ -132,7 +132,6 @@ SqlAdapter.proc=11
 SqlAdapter.test=4
 SqlAdapter.yaml=2
 StartDelayStop.proc=3
-StartSleepStop.proc=1
 StartStop.test=2
 StartStop.yaml=1
 StartStopProcess.proc=9
