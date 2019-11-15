@@ -15,35 +15,26 @@
  */
 package com.centurylink.mdw.container.plugin;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
-
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXBean {
 
-    private int max_threads;
-    private int work_queue_size;
-    private int termination_timeout;
-    private int core_threads;
-    private long keep_alive_time;
+    private int maxThreads;
+    private int workQueueSize;
+    private int terminationTimeout;
+    private int coreThreads;
+    private long keepAliveTime;
 
-    private MyThreadPoolExecutor thread_pool;
+    private MyThreadPoolExecutor threadPool;
     private Map<String,Worker> workers;
     private Worker defaultWorker;
     private List<ManagedThread> threadList;
@@ -51,39 +42,42 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
     private StandardLogger logger;
 
     public CommonThreadPool() {
-        this.max_threads = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_MAX_THREADS, 10);
-        this.core_threads = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_CORE_THREADS, ((max_threads/2)>50?50:(max_threads/2)));
-        this.work_queue_size = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_QUEUE_SIZE, (max_threads>100?100:20));
-        this.termination_timeout = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_TERMINATION_TIMEOUT, 120);
-        this.keep_alive_time = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_KEEP_ALIVE, 300);
+        this.maxThreads = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_MAX_THREADS, 10);
+        this.coreThreads = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_CORE_THREADS, ((maxThreads / 2) > 50 ? 50 : (maxThreads / 2)));
+        this.workQueueSize = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_QUEUE_SIZE, (maxThreads > 100 ? 100 : 20));
+        this.terminationTimeout = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_TERMINATION_TIMEOUT, 60);
+        this.keepAliveTime = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_KEEP_ALIVE, 300);
     }
 
     public void start() {
         logger = LoggerUtil.getStandardLogger();
-        workers = new HashMap<String,Worker>();
-        threadList = new ArrayList<ManagedThread>();
+        workers = new HashMap<>();
+        threadList = new ArrayList<>();
         loadWorker(WORKER_ENGINE);
         loadWorker(WORKER_LISTENER);
         loadWorker(WORKER_SCHEDULER);
         loadWorker(WORKER_MONITOR);
         adjustThreads();
-        BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<Runnable>(work_queue_size);
-        ThreadFactory thread_factory = new MyThreadFactory();
+        BlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(workQueueSize);
+        ThreadFactory threadFactory = new MyThreadFactory();
         RejectedExecutionHandler rejectHandler = new MyRejectedExecutionHandler();
-        thread_pool = new MyThreadPoolExecutor(core_threads, max_threads,
-                keep_alive_time, TimeUnit.SECONDS, workQueue, thread_factory, rejectHandler);
-        thread_pool.allowCoreThreadTimeOut(true);
+        threadPool = new MyThreadPoolExecutor(coreThreads, maxThreads,
+                keepAliveTime, TimeUnit.SECONDS, workQueue, threadFactory, rejectHandler);
+        threadPool.allowCoreThreadTimeOut(true);
     }
 
-    public synchronized void stop() {
-        if (thread_pool.isTerminating() || thread_pool.isTerminated()) return;
-        thread_pool.shutdown();
+    public void stop() {
+        synchronized (this) {
+            if (threadPool.isTerminating() || threadPool.isTerminated())
+                return;
+            threadPool.shutdown();
+        }
         try {
-            boolean good = thread_pool.awaitTermination(termination_timeout, TimeUnit.SECONDS);
-            if (!good) logger.severe("JmsInternalMessageListener: thread pool fail to terminate after "
-                    + termination_timeout + " seconds");
-        } catch (InterruptedException e1) {
-            logger.severeException("JmsInternalMessageListener: thread pool termination is interrupted", e1);
+            if (!threadPool.awaitTermination(terminationTimeout, TimeUnit.SECONDS)) {
+                logger.error("Thread pool fails to terminate after " + terminationTimeout + " seconds");
+            }
+        } catch (InterruptedException ex) {
+            logger.error("Thread pool interrupted awaiting termination", ex);
         }
     }
 
@@ -103,8 +97,8 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
 
     private void loadWorker(String workerName) {
         Worker one = new Worker(workerName);
-        one.minThreads = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_WORKER+"."+one.name+".min_threads", 0);
-        one.maxThreads = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_WORKER+"."+one.name+".max_threads", (int)Math.floor((max_threads+work_queue_size)*0.9));
+        one.minThreads = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_WORKER + "." + one.name + ".min_threads", 0);
+        one.maxThreads = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_WORKER + "." + one.name + ".max_threads", (int)Math.floor((maxThreads + workQueueSize) * 0.9));
         one.curThreads = 0;
         one.curWorks = 0;
         one.totalSubmits = 0;
@@ -118,17 +112,17 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
             Worker one = workers.get(wmname);
             totalMinThreads += one.minThreads;
         }
-        if (this.core_threads<totalMinThreads) {
-            core_threads = totalMinThreads;
-            logger.info("Adjust core threads to " + core_threads);
+        if (coreThreads < totalMinThreads) {
+            coreThreads = totalMinThreads;
+            logger.info("Adjust core threads to " + coreThreads);
         }
-        if (max_threads<core_threads) {
-            max_threads = core_threads;
-            logger.info("Adjust max threads to " + max_threads);
+        if (maxThreads < coreThreads) {
+            maxThreads = coreThreads;
+            logger.info("Adjust max threads to " + maxThreads);
         }
         defaultWorker = new Worker("DefaultWorker");
         defaultWorker.minThreads = 0;
-        defaultWorker.maxThreads = max_threads-core_threads;
+        defaultWorker.maxThreads = maxThreads - coreThreads;
         defaultWorker.curThreads = 0;
         defaultWorker.curWorks = 0;
     }
@@ -143,8 +137,8 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
     public boolean hasAvailableThread(String workerName) {
         Worker worker = getWorker(workerName);
         return (worker.curWorks < worker.maxThreads &&
-                (thread_pool.getPoolSize() < thread_pool.getMaximumPoolSize() ||
-                 thread_pool.getQueue().remainingCapacity() > 0));
+                (threadPool.getPoolSize() < threadPool.getMaximumPoolSize() ||
+                 threadPool.getQueue().remainingCapacity() > 0));
     }
 
     private synchronized void recordSubmit(Work work) {
@@ -159,7 +153,7 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
         Worker worker = getWorker(work.workerName);
         worker.curWorks--;
         worker.totalRejects++;
-        logger.severe("+++Reject work " + work.workerName + ": " + worker.curWorks);
+        logger.error("+++Reject work " + work.workerName + ": " + worker.curWorks);
     }
 
     private synchronized void recordStart(Work work, ManagedThread thread) {
@@ -183,38 +177,27 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
             logger.trace("+++End work " + work.workerName + ": " + worker.curWorks + ", in processing " + worker.curThreads);
     }
 
-    /* (non-Javadoc)
-     * @see com.centurylink.mdw.container.plugins.TestInterface#execute(java.lang.String, java.lang.String, java.lang.Runnable)
-     */
     public synchronized boolean execute(String workerName, String assignee, Runnable command) {
         if (!hasAvailableThread(workerName))
             return false;
 
         Work work = new Work(workerName, assignee, command);
         recordSubmit(work);
-        thread_pool.execute(work);
+        threadPool.execute(work);
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see com.centurylink.mdw.container.plugins.TestInterface#pause()
-     */
     public void pause() {
-        thread_pool.pause();
+        threadPool.pause();
     }
 
-    /* (non-Javadoc)
-     * @see com.centurylink.mdw.container.plugins.TestInterface#resume()
-     */
     public void resume() {
-        thread_pool.resume();
+        threadPool.resume();
     }
 
-    /* (non-Javadoc)
-     * @see com.centurylink.mdw.container.plugins.TestInterface#isPaused()
-     */
+    @Override
     public boolean isPaused() {
-        return thread_pool.isPaused;
+        return threadPool.isPaused;
     }
 
     public class ManagedThread extends Thread {
@@ -222,7 +205,6 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
         Date assignTime;
         ManagedThread(Runnable runnable) {
             super(runnable);
-//          this.setDaemon(true);
         }
         @Override
         public void run() {
@@ -262,7 +244,6 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
         public void run() {
             command.run();
         }
-
     }
 
     private class MyRejectedExecutionHandler implements RejectedExecutionHandler {
@@ -287,13 +268,11 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
         @Override
         protected void beforeExecute(Thread t, Runnable r) {
 
-            // TransactionUtil.clearCurrentConnection();
-            // MdwTransactionManager.clearTransactionManager();
-
             super.beforeExecute(t, r);
             pauseLock.lock();
             try {
-                while (isPaused) unpaused.await();
+                while (isPaused)
+                    unpaused.await();
             } catch (InterruptedException ie) {
                 t.interrupt();
             } finally {
@@ -304,14 +283,14 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
 
         @Override
         protected void afterExecute(Runnable r, Throwable t) {
+            super.afterExecute(r, t);
             if (t != null) {
                 if (logger == null)
                     t.printStackTrace();
                 else
-                    logger.severeException(t.getMessage(), t);
+                    logger.error(t.getMessage(), t);
             }
             recordEnd((Work)r);
-            super.afterExecute(r, t);
         }
 
         void pause() {
@@ -332,41 +311,31 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
                 pauseLock.unlock();
             }
         }
-
     }
 
     //
-    // all the methods below are for management GUI and status display
+    // methods below are for management and status display
     //
 
-    /* (non-Javadoc)
-     * @see com.centurylink.mdw.container.plugins.TestInterface#getThreadPoolExecutor()
-     */
     public ThreadPoolExecutor getThreadPoolExecutor() {
-        return thread_pool;
+        return threadPool;
     }
 
-    /* (non-Javadoc)
-     * @see com.centurylink.mdw.container.plugins.TestInterface#getThreadList()
-     */
     public List<ManagedThread> getThreadList() {
         return threadList;
     }
 
-    /* (non-Javadoc)
-     * @see com.centurylink.mdw.container.plugins.TestInterface#currentStatus()
-     */
     public String currentStatus() {
         StringBuffer sb = new StringBuffer();
         sb.append("===== CommonThreadPool Status at ").append(new Date()).append(" =====\n");
-        sb.append("Threads: current=").append(thread_pool.getPoolSize());
-        sb.append(", core=").append(thread_pool.getCorePoolSize());
-        sb.append(", max=").append(thread_pool.getMaximumPoolSize());
-        sb.append(", active=").append(thread_pool.getActiveCount()).append("\n");
-        BlockingQueue<Runnable> workQueue = thread_pool.getQueue();
+        sb.append("Threads: current=").append(threadPool.getPoolSize());
+        sb.append(", core=").append(threadPool.getCorePoolSize());
+        sb.append(", max=").append(threadPool.getMaximumPoolSize());
+        sb.append(", active=").append(threadPool.getActiveCount()).append("\n");
+        BlockingQueue<Runnable> workQueue = threadPool.getQueue();
         sb.append("Queue: current=").append(workQueue.size()).append("\n");
-        sb.append("Works: total=").append(thread_pool.getTaskCount());
-        sb.append(", completed=").append(thread_pool.getCompletedTaskCount()).append("\n");
+        sb.append("Works: total=").append(threadPool.getTaskCount());
+        sb.append(", completed=").append(threadPool.getCompletedTaskCount()).append("\n");
         for (String name : workers.keySet()) {
             Worker worker = workers.get(name);
             sb.append(" - Worker ").append(name);
@@ -385,31 +354,31 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
     }
 
     public int getCurrentThreadPoolSize() {
-        return thread_pool.getPoolSize();
+        return threadPool.getPoolSize();
     }
 
     public int getCoreThreadPoolSize() {
-        return thread_pool.getCorePoolSize();
+        return threadPool.getCorePoolSize();
     }
 
     public int getMaxThreadPoolSize() {
-        return thread_pool.getMaximumPoolSize();
+        return threadPool.getMaximumPoolSize();
     }
 
     public int getActiveThreadCount() {
-        return thread_pool.getActiveCount();
+        return threadPool.getActiveCount();
     }
 
     public int getCurrentQueueSize() {
-        return thread_pool.getQueue().size();
+        return threadPool.getQueue().size();
     }
 
     public long getTaskCount() {
-        return thread_pool.getTaskCount();
+        return threadPool.getTaskCount();
     }
 
     public long getCompletedTaskCount() {
-        return thread_pool.getCompletedTaskCount();
+        return threadPool.getCompletedTaskCount();
     }
 
     public String workerInfo() {
@@ -436,5 +405,4 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
         sb.append(", total reject=").append(worker.totalRejects).append("\n");
         return sb.toString();
     }
-
 }

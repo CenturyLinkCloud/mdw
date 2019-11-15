@@ -122,10 +122,10 @@ public abstract class JmsListener  {
                         if (message == null) {
                             message = (TextMessage)consumer.receive(receiveTimeout*1000L);
 
-                            if (message!=null)
+                            if (message != null)
                                 message = filterMessage(message);
                         }
-                        if (message!=null) {
+                        if (message != null) {
                             if (threadPool.execute(name, "JMSListener " + name, getProcesser(message))) {
                                 message.acknowledge();  // commit later after persistence?
                                 message = null;  // Make null so we get next message from queue

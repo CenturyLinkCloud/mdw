@@ -93,7 +93,8 @@ public class MdwMain {
             }
 
             String v = PropertyManager.getProperty(PropertyNames.MDW_DB_VERSION_SUPPORTED);
-            if (v!=null) DataAccess.supportedSchemaVersion = Integer.parseInt(v);
+            if (v != null)
+                DataAccess.supportedSchemaVersion = Integer.parseInt(v);
 
             logger.info("Initialize " + CacheRegistration.class.getName());
             (new CacheRegistration()).onStartup();
@@ -170,7 +171,6 @@ public class MdwMain {
                     startupService.onShutdown();
                 }
             }
-            StartupRegistry.getInstance().clearDynamicServices();
         }
         catch (Throwable e) {
             logger.severeException("Failed to shutdown startup classes", e);
@@ -180,13 +180,9 @@ public class MdwMain {
             (new AssetImportMonitor()).onShutdown();
             (new TimerTaskRegistration()).onShutdown();
 
-            logger.info("Shutdown common thread pool");
-            if (threadPool != null)
-                threadPool.stop();
-
             if (configurationEventListener != null)
                 configurationEventListener.stop();
-            if (externalEventListener != null)
+                if (externalEventListener != null)
                 externalEventListener.stop();
             if (intraMdwEventListener != null)
                 intraMdwEventListener.stop();
@@ -194,19 +190,19 @@ public class MdwMain {
                 internalEventListener.stop();
 
             Thread.sleep(2000); // give the listeners a few seconds
+
+            logger.info("Shutdown common thread pool");
+            if (threadPool != null)
+                threadPool.stop();
+
             SpringAppContext.getInstance().shutDown();
 
             try {
                 ApplicationContext.getNamingProvider().unbind(RMIListener.JNDI_NAME);
             }
-            catch (Exception e) {        // container plug-in is not even initialized
+            catch (Exception ignored) {
+                // container plug-in is not even initialized
             }
-
-            logger.info("Shutdown " + CacheRegistration.class.getName());
-            (new CacheRegistration()).onShutdown();
-            logger.info("Shutdown " + ApplicationContext.class.getName());
-            ApplicationContext.onShutdown();
-            logger.info("Shutdown database connection pool");
 
             // deregisters JDBC driver, which prevents Tomcat 7 from complaining about memory leaks wrto this class
             Enumeration<Driver> drivers = DriverManager.getDrivers();
@@ -220,11 +216,9 @@ public class MdwMain {
                 }
             }
 
-//            PropertyManager.getInstance().clearCache();
-            logger.info("MDW shutdown complete");
+            logger.info("MDW shutdown complete at " + new Date());
         } catch (Throwable ex) {
-            logger.severeException("StartupListener:onShutdown fails", ex);
+            logger.severeException("MdwMain.shutdown() fails", ex);
         }
     }
-
 }

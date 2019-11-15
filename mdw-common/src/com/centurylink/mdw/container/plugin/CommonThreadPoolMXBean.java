@@ -17,36 +17,27 @@ package com.centurylink.mdw.container.plugin;
 
 public interface CommonThreadPoolMXBean {
 
-    public void start();
+    boolean hasAvailableThread(String workerName);
 
-    public void stop();
+    boolean isPaused();
 
-    public boolean hasAvailableThread(String workerName);
+    String currentStatus();
 
-    public void pause();
+    int getCurrentThreadPoolSize();
 
-    public void resume();
+    int getCoreThreadPoolSize();
 
-    public boolean isPaused();
+    int getMaxThreadPoolSize();
 
-    public String currentStatus();
+    int getActiveThreadCount();
 
-    public int getCurrentThreadPoolSize();
+    int getCurrentQueueSize();
 
-    public int getCoreThreadPoolSize();
+    long getTaskCount();
 
-    public int getMaxThreadPoolSize();
+    long getCompletedTaskCount();
 
-    public int getActiveThreadCount();
+    String workerInfo();
 
-    public int getCurrentQueueSize();
-
-    public long getTaskCount();
-
-    public long getCompletedTaskCount();
-
-    public String workerInfo();
-
-    public String defaultWorkerInfo();
-
+    String defaultWorkerInfo();
 }
