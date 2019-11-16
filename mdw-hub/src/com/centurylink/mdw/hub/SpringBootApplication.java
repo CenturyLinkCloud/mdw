@@ -30,6 +30,8 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 import java.io.File;
@@ -42,6 +44,11 @@ import java.net.URISyntaxException;
 @ServletComponentScan
 @ManagedResource(objectName="com.centurylink.mdw.springboot:name=application")
 public class SpringBootApplication {
+
+    @EventListener
+    public void onApplicationEvent(ContextClosedEvent event) {
+        servletContainerFactory.getConnectorCustomizer().shutdownTomcatThreadpool();
+    }
 
     public static void main(String[] args) {
 
@@ -56,6 +63,8 @@ public class SpringBootApplication {
         }
     }
 
+    private MdwServletContainerFactory servletContainerFactory;
+
     @Bean
     public TomcatServletWebServerFactory containerFactory() {
         String portProp = System.getProperty("mdw.server.port");
@@ -68,7 +77,8 @@ public class SpringBootApplication {
             contextProp = System.getProperty("server.contextPath");
         if (contextProp == null)
             contextProp = "/mdw";
-        return new MdwServletContainerFactory(contextProp, Integer.parseInt(portProp), getBootDir());
+        servletContainerFactory = new MdwServletContainerFactory(contextProp, Integer.parseInt(portProp), getBootDir());
+        return servletContainerFactory;
     }
 
     private static File bootDir;
