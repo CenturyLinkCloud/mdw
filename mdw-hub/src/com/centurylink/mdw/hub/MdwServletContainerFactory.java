@@ -1,13 +1,21 @@
 package com.centurylink.mdw.hub;
 
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.util.log.LoggerUtil;
 import org.apache.catalina.Context;
+import org.apache.catalina.connector.Connector;
 import org.apache.tomcat.util.descriptor.web.ErrorPage;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
+import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 
 import java.io.File;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class MdwServletContainerFactory extends TomcatServletWebServerFactory {
 
@@ -17,7 +25,14 @@ public class MdwServletContainerFactory extends TomcatServletWebServerFactory {
     public MdwServletContainerFactory(String contextRoot, int port, File bootDir) {
         super(contextRoot, port);
         addContextCustomizers(new ContextCustomizer());
+        connectorCustomizer = new ConnectorCustomizer();
+        addConnectorCustomizers(connectorCustomizer);
         setDocumentRoot(new File(bootDir + "/web"));
+    }
+
+    private ConnectorCustomizer connectorCustomizer;
+    public ConnectorCustomizer getConnectorCustomizer() {
+        return connectorCustomizer;
     }
 
     class ContextCustomizer implements TomcatContextCustomizer {
@@ -46,6 +61,7 @@ public class MdwServletContainerFactory extends TomcatServletWebServerFactory {
                     return "/error";
                 }
             });
+
             // CORS access is wide open
             FilterDef corsFilter = new FilterDef();
             corsFilter.setFilterName("CorsFilter");
@@ -59,6 +75,34 @@ public class MdwServletContainerFactory extends TomcatServletWebServerFactory {
             filterMap.addURLPattern("/api/*");
             filterMap.addURLPattern("/services/AppSummary");
             context.addFilterMap(filterMap);
+        }
+    }
+
+    class ConnectorCustomizer implements TomcatConnectorCustomizer {
+        private volatile Connector connector;
+
+        @Override
+        public void customize(Connector connector) {
+            System.out.println("CUSTOMIZE CUSTOMIZE");
+            this.connector = connector;
+        }
+
+        public void shutdownTomcatThreadpool() {
+            this.connector.pause();
+            int timeout = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_TERMINATION_TIMEOUT, 60);
+            Executor executor = this.connector.getProtocolHandler().getExecutor();
+            if (executor instanceof ThreadPoolExecutor) {
+                try {
+                    ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) executor;
+                    threadPoolExecutor.shutdown();
+                    if (!threadPoolExecutor.awaitTermination(timeout, TimeUnit.SECONDS)) {
+                        LoggerUtil.getStandardLogger().error("Thread pool fails to terminate after " + timeout + " seconds");
+                    }
+                }
+                catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
+            }
         }
     }
 }
