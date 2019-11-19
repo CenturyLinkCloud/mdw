@@ -52,7 +52,6 @@ import com.centurylink.mdw.util.TransactionUtil;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
@@ -230,7 +229,7 @@ public class ProcessEngineDriver {
             }
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new ProcessException(ex.getMessage());
         }
     }
@@ -323,7 +322,7 @@ public class ProcessEngineDriver {
             } else finished = true;
             engine.resumeActivityFinish(ar, finished, event, resumeOnHold);
         } catch (Exception e) {
-            logger.severeException("Resume failed", e);
+            logger.error("Resume failed", e);
             lastException = e;
             engine.resumeActivityException(procInst, actInstId,
                     ar==null?null:ar.getActivity(), e);
@@ -509,7 +508,7 @@ public class ProcessEngineDriver {
                     catch (SQLException ex) {
                         if (("Failed to load process instance: " + procInstId).equals(ex.getMessage())) {
                             if (ApplicationContext.isDevelopment()) {
-                                logger.severe("Unable to load process instance id=" + procInstId + ".  Was this instance deleted?");
+                                logger.error("Unable to load process instance id=" + procInstId + ".  Was this instance deleted?");
                                 return;
                             } else {
                                 throw ex;
@@ -540,7 +539,7 @@ public class ProcessEngineDriver {
                     if (ApplicationContext.isDevelopment()) {
                         // referential integrity not always enforced for VCS assets
                         if (PropertyManager.getBooleanProperty(PropertyNames.MDW_INTERNAL_EVENT_DEV_CLEANUP, true)) {
-                            logger.severe(msg + " (event will be deleted)");
+                            logger.error(msg + " (event will be deleted)");
                             EngineDataAccess edao = EngineDataAccessCache.getInstance(false, default_performance_level_regular);
                             InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
                             ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
@@ -548,7 +547,7 @@ public class ProcessEngineDriver {
                             return;
                         }
                         else {
-                            logger.severe(msg);
+                            logger.error(msg);
                         }
                     }
                     else {
@@ -597,9 +596,9 @@ public class ProcessEngineDriver {
                 processEvent(engine, event, procInst);
             }
         } catch (XmlException e) {
-            logger.severeException("Unparsable xml message: " + textMessage, e);
+            logger.error("Unparsable xml message: " + textMessage, e);
         } catch (Throwable ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -660,7 +659,7 @@ public class ProcessEngineDriver {
                 }
             }
         } catch (Throwable ex) {
-            logger.severeException("Fatal exception in executeFlow - cannot generate fallout task", ex);
+            logger.error("Fatal exception in executeFlow - cannot generate fallout task", ex);
         }
         finally {
             // Check for any non-stopped transactions (i.e. locked "for update" document rows)
@@ -671,7 +670,7 @@ public class ProcessEngineDriver {
                     engine.stopTransaction(transaction);  // This will stop transaction and close DB connection
                 }
                 catch (Throwable ex) {
-                    logger.severeException("Fatal exception stopping transaction - cannot close DB connection and stop transaction", ex);
+                    logger.error("Fatal exception stopping transaction - cannot close DB connection and stop transaction", ex);
                 }
             }
         }
