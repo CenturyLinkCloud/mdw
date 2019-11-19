@@ -1,57 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- spring config file for MDW wars deployed in tomcat -->
 <beans
-  xmlns="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:ctx="http://www.springframework.org/schema/context"
-  xmlns:amq="http://activemq.apache.org/schema/core"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ctx="http://www.springframework.org/schema/context"
+    xmlns:amq="http://activemq.apache.org/schema/core"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
   <!-- The assumption is that the mdw.properties file is used on Tomcat as well as the system property mdw.config.location -->
   <!-- ctx:property-placeholder location="classpath:mdw.properties" /-->
   <!-- Note this id must match the id in the code -->
-   <bean
-    id="MDWDataSource"
-    class="org.apache.commons.dbcp2.BasicDataSource"
-    destroy-method="">
+  <bean
+      id="MDWDataSource"
+      class="org.apache.commons.dbcp2.BasicDataSource"
+      destroy-method="">
     <property
-      name="driverClassName"
-      value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.database.driver')}" />
+        name="driverClassName"
+        value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.database.driver')}" />
     <property
-      name="url"
-      value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.database.url')}" />
+        name="url"
+        value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.database.url')}" />
     <property
-      name="username"
-      value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.database.username')}" />
+        name="username"
+        value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.database.username')}" />
     <property
-      name="password"
-      value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.database.password')}" />
+        name="password"
+        value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.database.password')}" />
     <property
-      name="maxTotal"
-      value="#{T(com.centurylink.mdw.config.PropertyManager).getIntegerProperty('mdw.database.poolsize',5)}" />
+        name="maxTotal"
+        value="#{T(com.centurylink.mdw.config.PropertyManager).getIntegerProperty('mdw.database.poolsize',5)}" />
     <property
-      name="maxIdle"
-      value="#{T(com.centurylink.mdw.config.PropertyManager).getIntegerProperty('mdw.database.poolMaxIdle',5)}" />
+        name="maxIdle"
+        value="#{T(com.centurylink.mdw.config.PropertyManager).getIntegerProperty('mdw.database.poolMaxIdle',5)}" />
     <property
-      name="validationQuery"
-      value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.database.validationQuery')}" />
+        name="validationQuery"
+        value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.database.validationQuery')}" />
     <property
-      name="testOnBorrow"
-      value="true" />
+        name="testOnBorrow"
+        value="true" />
     <property
-      name="testWhileIdle"
-      value="true" />
+        name="testWhileIdle"
+        value="true" />
     <property
-      name="removeAbandonedOnBorrow"
-      value="true" />
+        name="removeAbandonedOnBorrow"
+        value="true" />
     <property
-      name="logAbandoned"
-      value="true" />
+        name="logAbandoned"
+        value="true" />
     <property
-      name="removeAbandonedTimeout"
-      value="600" />
+        name="removeAbandonedTimeout"
+        value="600" />
+    <property
+        name="defaultTransactionIsolation"
+        value="2" />  <!-- READ_COMMITTED -->
   </bean>
 
   <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
@@ -64,26 +67,26 @@
 
   <!-- Baseline Data -->
   <bean
-    id="mdwBaselineData"
-    class="com.centurylink.mdw.dataaccess.file.MdwBaselineData" />
+      id="mdwBaselineData"
+      class="com.centurylink.mdw.dataaccess.file.MdwBaselineData" />
 
   <!-- jaxb marshaller/unmarshaller pooling -->
   <bean
-    id="jaxbTranslator"
-    class="com.centurylink.mdw.jaxb.JaxbElementTranslator">
+      id="jaxbTranslator"
+      class="com.centurylink.mdw.jaxb.JaxbElementTranslator">
     <property
-      name="marshaller"
-      ref="marshaller" />
+        name="marshaller"
+        ref="marshaller" />
     <property
-      name="unmarshaller"
-      ref="unmarshaller" />
+        name="unmarshaller"
+        ref="unmarshaller" />
   </bean>
 
   <!-- JAXB context needs to be configured with specific classes as follows -->
   <bean
-    id="jaxbContext"
-    class="javax.xml.bind.JAXBContext"
-    factory-method="newInstance">
+      id="jaxbContext"
+      class="javax.xml.bind.JAXBContext"
+      factory-method="newInstance">
     <constructor-arg>
       <list>
         <value type="java.lang.Class">com.centurylink.mdw.common.service.types.ActionRequest</value>
@@ -97,100 +100,100 @@
 
   <!-- pool JAXB marshallers to improve performance -->
   <bean
-    id="marshallerTarget"
-    class="javax.xml.bind.Marshaller"
-    factory-bean="jaxbContext"
-    factory-method="createMarshaller"
-    scope="prototype">
+      id="marshallerTarget"
+      class="javax.xml.bind.Marshaller"
+      factory-bean="jaxbContext"
+      factory-method="createMarshaller"
+      scope="prototype">
   </bean>
   <bean
-    id="unmarshallerTarget"
-    class="javax.xml.bind.Unmarshaller"
-    factory-bean="jaxbContext"
-    factory-method="createUnmarshaller"
-    scope="prototype">
-  </bean>
-
-  <bean
-    id="marshallerPoolTargetSource"
-    class="org.springframework.aop.target.CommonsPool2TargetSource">
-    <property
-      name="targetBeanName"
-      value="marshallerTarget" />
-    <property
-      name="maxSize"
-      value="5" />
-  </bean>
-  <bean
-    id="unmarshallerPoolTargetSource"
-    class="org.springframework.aop.target.CommonsPool2TargetSource">
-    <property
-      name="targetBeanName"
-      value="unmarshallerTarget" />
-    <property
-      name="maxSize"
-      value="5" />
+      id="unmarshallerTarget"
+      class="javax.xml.bind.Unmarshaller"
+      factory-bean="jaxbContext"
+      factory-method="createUnmarshaller"
+      scope="prototype">
   </bean>
 
   <bean
-    id="marshaller"
-    class="org.springframework.aop.framework.ProxyFactoryBean">
+      id="marshallerPoolTargetSource"
+      class="org.springframework.aop.target.CommonsPool2TargetSource">
     <property
-      name="targetSource"
-      ref="marshallerPoolTargetSource" />
+        name="targetBeanName"
+        value="marshallerTarget" />
+    <property
+        name="maxSize"
+        value="5" />
   </bean>
   <bean
-    id="unmarshaller"
-    class="org.springframework.aop.framework.ProxyFactoryBean">
+      id="unmarshallerPoolTargetSource"
+      class="org.springframework.aop.target.CommonsPool2TargetSource">
     <property
-      name="targetSource"
-      ref="unmarshallerPoolTargetSource" />
+        name="targetBeanName"
+        value="unmarshallerTarget" />
+    <property
+        name="maxSize"
+        value="5" />
+  </bean>
+
+  <bean
+      id="marshaller"
+      class="org.springframework.aop.framework.ProxyFactoryBean">
+    <property
+        name="targetSource"
+        ref="marshallerPoolTargetSource" />
+  </bean>
+  <bean
+      id="unmarshaller"
+      class="org.springframework.aop.framework.ProxyFactoryBean">
+    <property
+        name="targetSource"
+        ref="unmarshallerPoolTargetSource" />
   </bean>
 
   <!-- JMS stuff below -->
-  
+
   <!-- Support Spring annotations -->
   <ctx:annotation-config />
-  
+
   <!-- New provider -->
   <bean
-    id="jmsProvider"
-    class="com.centurylink.mdw.container.plugin.activemq.ActiveMqJms">
-  </bean> 
-  
+      id="jmsProvider"
+      class="com.centurylink.mdw.container.plugin.activemq.ActiveMqJms">
+  </bean>
+
   <!-- Inject the new provider into the Application Context -->
   <bean
-    id="appContext"
-    class="com.centurylink.mdw.app.ApplicationContext">
+      id="appContext"
+      class="com.centurylink.mdw.app.ApplicationContext">
     <property
-      name="jmsProvider"
-      ref="jmsProvider" />
-  </bean>  
-  
+        name="jmsProvider"
+        ref="jmsProvider" />
+  </bean>
+
   <!-- Define broker service declaratively -->
-  <amq:broker 
-    id="mdw-activemq"
-    brokerName="mdw-activemq"
-    useJmx="true"
-    schedulerSupport="true"
-    useShutdownHook="false"
-    dataDirectory="./#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.activemq.location', '../activemq-data')}">
+  <amq:broker
+      id="mdw-activemq"
+      brokerName="mdw-activemq"
+      useJmx="true"
+      schedulerSupport="true"
+      useShutdownHook="false"
+      dataDirectory="./#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.activemq.location', '../activemq-data')}">
     <amq:transportConnectors>
       <amq:transportConnector name="tcpConnector" uri="tcp://0.0.0.0:#{T(com.centurylink.mdw.config.PropertyManager).getProperty('mdw.activemq.port', '61618')}?daemon=true" />
     </amq:transportConnectors>
   </amq:broker>
-    
+
   <!-- connection factory for vm transport -->
   <bean
-    id="localConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+      id="localConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
     <property
-      name="brokerURL" value="vm://mdw-activemq" />
-  </bean>  
-  
+        name="brokerURL" value="vm://mdw-activemq" />
+  </bean>
+
   <!-- pooled vm connection factory -->
   <bean id="pooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" destroy-method="stop">
     <property name="maxConnections" value="#{T(com.centurylink.mdw.config.PropertyManager).getIntegerProperty('mdw.activemq.maxConnections', 8)}" />
     <property name="connectionFactory" ref="localConnectionFactory" />
-  </bean>  
-  
+  </bean>
+
 </beans>
