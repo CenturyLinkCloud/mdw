@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="EntryPointsManager">
-    <list size="8">
+    <list size="10">
       <item index="0" class="java.lang.String" itemvalue="com.centurylink.mdw.annotations.Activity" />
       <item index="1" class="java.lang.String" itemvalue="com.centurylink.mdw.annotations.Monitor" />
       <item index="2" class="java.lang.String" itemvalue="com.centurylink.mdw.annotations.RegisteredService" />
@@ -9,7 +9,9 @@
       <item index="4" class="java.lang.String" itemvalue="com.centurylink.mdw.util.timer.Tracked" />
       <item index="5" class="java.lang.String" itemvalue="javax.servlet.annotation.WebFilter" />
       <item index="6" class="java.lang.String" itemvalue="org.springframework.context.annotation.Bean" />
-      <item index="7" class="java.lang.String" itemvalue="org.springframework.stereotype.Controller" />
+      <item index="7" class="java.lang.String" itemvalue="org.springframework.context.event.EventListener" />
+      <item index="8" class="java.lang.String" itemvalue="org.springframework.stereotype.Component" />
+      <item index="9" class="java.lang.String" itemvalue="org.springframework.stereotype.Controller" />
     </list>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
