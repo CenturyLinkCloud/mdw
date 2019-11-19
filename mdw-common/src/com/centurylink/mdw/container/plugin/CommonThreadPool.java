@@ -67,6 +67,7 @@ public class CommonThreadPool implements ThreadPoolProvider, CommonThreadPoolMXB
     }
 
     public void stop() {
+        logger.info("Waiting for Common threads to finish processing...");
         synchronized (this) {
             if (threadPool.isTerminating() || threadPool.isTerminated())
                 return;

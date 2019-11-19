@@ -173,7 +173,7 @@ public class MdwMain {
             }
         }
         catch (Throwable e) {
-            logger.severeException("Failed to shutdown startup classes", e);
+            logger.error("Failed to shutdown startup classes", e);
         }
 
         try {
@@ -191,9 +191,9 @@ public class MdwMain {
 
             Thread.sleep(2000); // give the listeners a few seconds
 
-            logger.info("Shutdown common thread pool");
-            if (threadPool != null)
+            if (threadPool != null) {
                 threadPool.stop();
+            }
 
             SpringAppContext.getInstance().shutDown();
 
@@ -212,13 +212,13 @@ public class MdwMain {
                     DriverManager.deregisterDriver(driver);
                     logger.info("deregistering jdbc driver");
                 } catch (Exception e) {
-                    logger.severeException("Error deregistering jdbc driver", e);
+                    logger.error("Error deregistering jdbc driver", e);
                 }
             }
 
             logger.info("MDW shutdown complete at " + new Date());
         } catch (Throwable ex) {
-            logger.severeException("MdwMain.shutdown() fails", ex);
+            logger.error("MdwMain.shutdown() fails", ex);
         }
     }
 }

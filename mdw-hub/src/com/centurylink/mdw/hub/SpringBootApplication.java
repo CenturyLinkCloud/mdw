@@ -45,11 +45,6 @@ import java.net.URISyntaxException;
 @ManagedResource(objectName="com.centurylink.mdw.springboot:name=application")
 public class SpringBootApplication {
 
-    @EventListener
-    public void onApplicationEvent(ContextClosedEvent event) {
-        servletContainerFactory.getConnectorCustomizer().shutdownTomcatThreadpool();
-    }
-
     public static void main(String[] args) {
 
         try {

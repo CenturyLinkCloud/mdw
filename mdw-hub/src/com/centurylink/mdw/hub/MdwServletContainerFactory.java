@@ -3,6 +3,7 @@ package com.centurylink.mdw.hub;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 import org.apache.catalina.Context;
 import org.apache.catalina.connector.Connector;
 import org.apache.tomcat.util.descriptor.web.ErrorPage;
@@ -11,6 +12,8 @@ import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.springframework.boot.web.embedded.tomcat.TomcatConnectorCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.EventListener;
 
 import java.io.File;
 import java.util.concurrent.Executor;
@@ -18,9 +21,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class MdwServletContainerFactory extends TomcatServletWebServerFactory {
-
-    public MdwServletContainerFactory() {
-    }
 
     public MdwServletContainerFactory(String contextRoot, int port, File bootDir) {
         super(contextRoot, port);
@@ -30,10 +30,12 @@ public class MdwServletContainerFactory extends TomcatServletWebServerFactory {
         setDocumentRoot(new File(bootDir + "/web"));
     }
 
-    private ConnectorCustomizer connectorCustomizer;
-    public ConnectorCustomizer getConnectorCustomizer() {
-        return connectorCustomizer;
+    @EventListener
+    public void onApplicationEvent(ContextClosedEvent event) {
+        shutdownTomcatThreadpool();
     }
+
+    private ConnectorCustomizer connectorCustomizer;
 
     class ContextCustomizer implements TomcatContextCustomizer {
         @Override
@@ -78,18 +80,23 @@ public class MdwServletContainerFactory extends TomcatServletWebServerFactory {
         }
     }
 
-    class ConnectorCustomizer implements TomcatConnectorCustomizer {
+    public void shutdownTomcatThreadpool() {
+        connectorCustomizer.shutdownTomcatThreadpool();
+    }
+
+    public static class ConnectorCustomizer implements TomcatConnectorCustomizer {
         private volatile Connector connector;
 
         @Override
         public void customize(Connector connector) {
-            System.out.println("CUSTOMIZE CUSTOMIZE");
             this.connector = connector;
         }
 
         public void shutdownTomcatThreadpool() {
-            this.connector.pause();
-            int timeout = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_TERMINATION_TIMEOUT, 60);
+            connector.pause();
+            StandardLogger logger = LoggerUtil.getStandardLogger();
+            logger.info("Waiting for Tomcat threads to finish processing...");
+            int timeout = PropertyManager.getIntegerProperty(PropertyNames.MDW_THREADPOOL_TERMINATION_TIMEOUT, 30);
             Executor executor = this.connector.getProtocolHandler().getExecutor();
             if (executor instanceof ThreadPoolExecutor) {
                 try {
