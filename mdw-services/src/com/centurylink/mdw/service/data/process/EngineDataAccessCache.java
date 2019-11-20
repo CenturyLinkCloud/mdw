@@ -674,29 +674,6 @@ public class EngineDataAccessCache implements EngineDataAccess {
         }
     }
 
-    public synchronized boolean recordEventFlag(String eventName, int preserveInterval)
-            throws SQLException {
-        if (cache_event==CACHE_ONLY) {
-            EventInstance eventInst = eventInstCache.get(eventName);
-            if (eventInst==null) {
-                eventInst = new EventInstance();
-                eventInst.setEventName(eventName);
-                eventInst.setCreateDate(new Date());
-                eventInst.setStatus(EventInstance.STATUS_FLAG);
-                eventInstCache.put(eventName, eventInst);
-                return false;
-            } else {
-                if (eventInst.getStatus().equals(EventInstance.STATUS_FLAG)) {
-                    return true;
-                } else {
-                    throw new SQLException("The event is already recorded but not a FLAG");
-                }
-            }
-        } else {
-            return edadb.recordEventFlag(eventName, preserveInterval);
-        }
-    }
-
     public synchronized void setProcessInstanceStartTime(Long processInstanceId) throws SQLException {
         if (cache_process == CACHE_OFF) {
             edadb.setProcessInstanceStartTime(processInstanceId);

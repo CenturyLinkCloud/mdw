@@ -52,9 +52,6 @@
     <property
         name="removeAbandonedTimeout"
         value="600" />
-    <property
-        name="defaultTransactionIsolation"
-        value="2" />  <!-- READ_COMMITTED -->
   </bean>
 
   <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">

@@ -15,10 +15,6 @@
  */
 package com.centurylink.mdw.service.data.process;
 
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
-
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.DocumentDbAccess;
@@ -26,12 +22,13 @@ import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.Transition;
-import com.centurylink.mdw.model.workflow.TransitionInstance;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.util.TransactionWrapper;
+
+import java.sql.SQLException;
+import java.util.Date;
+import java.util.List;
 
 public interface EngineDataAccess {
 
@@ -174,9 +171,6 @@ public interface EngineDataAccess {
 
     Long recordEventLog(String name, String category, String subCategory,
             String source, String ownerType, Long ownerId, String user, String modUser, String comments)
-    throws SQLException;
-
-    boolean recordEventFlag(String eventName, int preserveSeconds)
     throws SQLException;
 
     void persistInternalEvent(String eventId, String message)
