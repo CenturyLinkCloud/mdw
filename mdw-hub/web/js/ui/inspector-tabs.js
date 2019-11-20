@@ -539,7 +539,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
               return diagramObject.workflowType == 'activity' &&
                 diagramObject.implementor &&
                     (diagramObject.implementor.category == 'com.centurylink.mdw.activity.types.AdapterActivity' ||
-                      (diagramObject.implementor.category = 'com.centurylink.mdw.activity.types.TaskActivity' &&
+                      (diagramObject.implementor.category == 'com.centurylink.mdw.activity.types.TaskActivity' &&
                         diagramObject.activity && diagramObject.activity.attributes && diagramObject.activity.attributes.Monitors));
             }
             else {
@@ -568,7 +568,7 @@ inspectorTabSvc.factory('InspectorTabs', ['$http', '$q', 'mdw', 'Compatibility',
               // no runtimeInfo means just checking for tab applicability
                 return diagramObject.implementor &&
                     (diagramObject.implementor.category == 'com.centurylink.mdw.activity.types.AdapterActivity' ||
-                      (diagramObject.implementor.category = 'com.centurylink.mdw.activity.types.TaskActivity' &&
+                      (diagramObject.implementor.category == 'com.centurylink.mdw.activity.types.TaskActivity' &&
                         diagramObject.activity && diagramObject.activity.attributes && diagramObject.activity.attributes.Monitors));
             }
             else {
