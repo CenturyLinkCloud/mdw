@@ -281,6 +281,14 @@ public class DatabaseAccess {
 
     public void closeConnection()
     {
+        if (connection != null && isMySQL()) {
+            try {
+                runUpdate("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
+            }
+            catch (SQLException ex) {
+                logger.error(ex.getMessage(), ex);
+            }
+        }
         closeStatement();
         closeResultSet();
         try {
@@ -349,6 +357,10 @@ public class DatabaseAccess {
     }
 
     private int logExecuteUpdate(String query, Object... arguments) throws SQLException {
+        return logExecuteUpdate(query, true, arguments);
+    }
+
+    private int logExecuteUpdate(String query, boolean logErroredSql, Object... arguments) throws SQLException {
         // Only retry if autoCommit is true
         int retriesRemaining = connection.getAutoCommit() ? retryMax : 0;
 
@@ -374,7 +386,7 @@ public class DatabaseAccess {
                     }
                 }
                 else {
-                    if (e instanceof SQLException) {
+                    if (logErroredSql && e instanceof SQLException) {
                         logger.error("ERRORED SQL: " + DbAccess.substitute(query, arguments));
                     }
                     throw e;  // Can't retry anymore, throw the exception
@@ -479,8 +491,11 @@ public class DatabaseAccess {
         return logExecuteUpdate(query, arg);
     }
 
-    public int runUpdate(String query, Object[] arguments)
-            throws SQLException {
+    public int runUpdate(String query, Object[] arguments) throws SQLException {
+        return runUpdate(query, arguments, true);
+    }
+
+    public int runUpdate(String query, Object[] arguments, boolean logErroredSql) throws SQLException {
         this.closeStatement();
         ps = connection.prepareStatement(query);
         if (arguments != null) {
@@ -488,7 +503,7 @@ public class DatabaseAccess {
                 setStatementArgument(i + 1, arguments[i]);
             }
         }
-        return logExecuteUpdate(query, arguments);
+        return logExecuteUpdate(query, logErroredSql, arguments);
     }
 
     /**

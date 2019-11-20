@@ -348,10 +348,14 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         db.runUpdate(query, args);
     }
 
-    public void createEventInstance(String eventName,
-            Long documentId, Integer status, Date consumeDate,
-            String auxdata, String reference, int preserveSeconds)
-            throws SQLException {
+    public void createEventInstance(String eventName, Long documentId, Integer status, Date consumeDate,
+            String auxdata, String reference, int preserveSeconds) throws SQLException {
+        createEventInstance(eventName, documentId, status, consumeDate,
+                auxdata, reference, preserveSeconds, true);
+    }
+
+    public void createEventInstance(String eventName, Long documentId, Integer status, Date consumeDate,
+            String auxdata, String reference, int preserveSeconds, boolean logSqlError) throws SQLException {
         String query = "insert into EVENT_INSTANCE " +
                 "(EVENT_NAME, DOCUMENT_ID, STATUS_CD, CREATE_DT, CONSUME_DT, AUXDATA, REFERENCE, PRESERVE_INTERVAL) " +
                 "values (?, ?, ?, " + nowPrecision() + ", ?, ?, ?, ?)";
@@ -363,7 +367,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         args[4] = auxdata;
         args[5] = reference;
         args[6] = new Integer(preserveSeconds);
-        db.runUpdate(query, args);
+        db.runUpdate(query, args, logSqlError);
     }
 
     public EventInstance lockEventInstance(String eventName)
@@ -525,8 +529,8 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     public List<EventWaitInstance> recordEventArrive(String eventName, Long documentId) throws SQLException {
         boolean hasWaiters;
         try {
-            this.recordEventHistory(eventName, EventLog.SUBCAT_ARRIVAL, OwnerType.DOCUMENT, documentId, null);
-            createEventInstance(eventName, documentId, EventInstance.STATUS_ARRIVED, null, null, null, 0);
+            recordEventHistory(eventName, EventLog.SUBCAT_ARRIVAL, OwnerType.DOCUMENT, documentId, null);
+            createEventInstance(eventName, documentId, EventInstance.STATUS_ARRIVED, null, null, null, 0, false);
             hasWaiters = false;
         } catch (SQLIntegrityConstraintViolationException e) {
             if (db.isMySQL()) db.commit();
@@ -555,7 +559,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         try {
             createEventInstance(eventName, null,
                     multipleRecepients?EventInstance.STATUS_WAITING_MULTIPLE:EventInstance.STATUS_WAITING,
-                    null, null, null, preserveSeconds);
+                    null, null, null, preserveSeconds, false);
             documentId = null;
         } catch (SQLIntegrityConstraintViolationException e) {
             if (db.isMySQL()) db.commit();
@@ -592,24 +596,6 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         }
         createEventWaitInstance(actInstId, eventName, compCode);
         return documentId;
-    }
-
-    public boolean recordEventFlag(String eventName, int preserveSeconds) throws SQLException {
-        boolean recorded;
-        try {
-            createEventInstance(eventName, null, EventInstance.STATUS_FLAG,
-                    new Date(DatabaseAccess.getCurrentTime()), null, null, preserveSeconds);
-            recorded = false;
-        } catch (SQLException e) {
-            if (db.isMySQL()) db.commit();
-            EventInstance event = lockEventInstance(eventName);
-            if (event.getStatus().equals(EventInstance.STATUS_FLAG)) {
-                recorded = true;
-            } else {
-                throw new SQLException("The event is already recorded but not a FLAG");
-            }
-        }
-        return recorded;
     }
 
     /**
@@ -1173,7 +1159,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     public void offerScheduledEvent(ScheduledEvent event) throws SQLException {
         createEventInstance(event.getName(), null,
                 event.isScheduledJob() ? EventInstance.STATUS_SCHEDULED_JOB : EventInstance.STATUS_INTERNAL_EVENT,
-                event.getScheduledTime(), event.getMessage(), event.getReference(), 3600);
+                event.getScheduledTime(), event.getMessage(), event.getReference(), 3600, false);
     }
 
     public Document getDocument(DocumentReference docref, boolean forUpdate) throws SQLException {
