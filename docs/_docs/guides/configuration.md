@@ -12,7 +12,7 @@ title: MDW Configuration
     ```yaml
     # paths are relative to the location of this file
     mdw:
-      version: 6.1.10
+      version: 6.1.28
 
     asset:
       location: assets
@@ -115,6 +115,13 @@ title: MDW Configuration
         cleanup:
           enabled: true  # default=true
           retain: 90  # default=180 (days)
+    
+    # log roller
+    log.roller:
+      enabled: true
+      retain: 7 # default=30 (days)
+      files:
+        - /var/log/mdw/mdw.log
 
     # scripting support (custom executors should implement ScriptExecutor)
     script:
@@ -187,7 +194,7 @@ title: MDW Configuration
     # https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/system/filepanel/readme.md
     filepanel:
       root.dirs: ./logs,./config
-      exclude.patterns: **/temp/*
+      exclude.patterns: '**/temp/*'
       masked.lines: 'password:'  # default=mdw.database.password=,LDAP-AppPassword=,password:
 
     # Dashboard system metrics history
@@ -380,12 +387,9 @@ title: MDW Configuration
   - Include .spring assets in any package to make resources like datasources available to your application.
   - Here's an example .spring asset that declares a datasource:
     ```xml
-    <?xml version="1.0" encoding="UTF-8"?>
-    xmlns="http://www.springframework.org/schema/beans"
+    <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ctx="http://www.springframework.org/schema/context"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd    ">
       <bean id="myDataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('my.database.driver')}" />
         <property name="url" value="#{T(com.centurylink.mdw.config.PropertyManager).getProperty('my.db.url')}" />
