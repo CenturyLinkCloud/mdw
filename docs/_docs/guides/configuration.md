@@ -115,14 +115,12 @@ title: MDW Configuration
         cleanup:
           enabled: true  # default=true
           retain: 90  # default=180 (days)
+      roller:
+        enabled: true
+        retain: 7 # default=30 (days)
+        files:
+          - /var/log/mdw/mdw.log
     
-    # log roller
-    log.roller:
-      enabled: true
-      retain: 7 # default=30 (days)
-      files:
-        - /var/log/mdw/mdw.log
-
     # scripting support (custom executors should implement ScriptExecutor)
     script:
       executors:

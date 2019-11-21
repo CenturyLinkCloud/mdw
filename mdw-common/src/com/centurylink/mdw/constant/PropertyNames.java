@@ -24,9 +24,9 @@ public class PropertyNames {
     // only set in-memory by test runner "<host>:<port>:<timeout>";
     public static final String MDW_LOGGING_WATCHER = "mdw.logging.watcher";
     // log roller
-    public static final String MDW_LOG_ROLLER_ENABLED = "mdw.log.roller.enabled";
-    public static final String MDW_LOG_ROLLER_RETAIN = "mdw.log.roller.retain"; // days
-    public static final String MDW_LOG_ROLLER_FILES = "mdw.log.roller.files";
+    public static final String MDW_LOG_ROLLER_ENABLED = "mdw.logging.roller.enabled";
+    public static final String MDW_LOG_ROLLER_RETAIN = "mdw.logging.roller.retain"; // days
+    public static final String MDW_LOG_ROLLER_FILES = "mdw.logging.roller.files";
 
     // container service providers
     public static final String MDW_CONTAINER_DATASOURCE_PROVIDER = "mdw.container.datasource.provider";
