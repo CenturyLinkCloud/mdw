@@ -23,6 +23,8 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class LogRoller implements Runnable {
 
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
+
     private static volatile LogRoller instance;
     public static LogRoller getInstance() {
         if (instance == null) {
@@ -49,8 +51,9 @@ public class LogRoller implements Runnable {
         files = PropertyManager.getListProperty(PropertyNames.MDW_LOG_ROLLER_FILES);
 
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        Long midnight = LocalDateTime.now().until(LocalDate.now().plusDays(1).atStartOfDay(), ChronoUnit.MINUTES);
-        Long extra = TimeUnit.SECONDS.toMillis(90); // make sure we don't run before midnight
+        Long midnight = LocalDateTime.now().until(LocalDate.now().plusDays(1).atStartOfDay(), ChronoUnit.MILLIS);
+        Long extra = TimeUnit.SECONDS.toMillis(30); // make sure we don't run before midnight
+        logger.info("Log Roller execution scheduled for: " + new Date(midnight + extra + System.currentTimeMillis()));
         schedule = scheduler.scheduleAtFixedRate(this, midnight + extra, TimeUnit.DAYS.toMinutes(1), TimeUnit.MINUTES);
     }
 
@@ -72,7 +75,7 @@ public class LogRoller implements Runnable {
 
         if (files != null) {
             LocalDate today = LocalDate.now();
-            System.out.println("LogRoller executing at " + new Date());
+            logger.info("LogRoller executing at " + new Date());
             for (String file : files) {
                 try {
                     Files.deleteIfExists(toPath(file, today.minusDays(retain + 1)));
@@ -81,7 +84,7 @@ public class LogRoller implements Runnable {
                     Files.write(path, new byte[0], StandardOpenOption.TRUNCATE_EXISTING);
                 }
                 catch (IOException ex) {
-                    ex.printStackTrace();
+                    logger.error(ex.getMessage(), ex);
                 }
             }
         }
