@@ -52,9 +52,10 @@ public class LogRoller implements Runnable {
 
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         Long midnight = LocalDateTime.now().until(LocalDate.now().plusDays(1).atStartOfDay(), ChronoUnit.MILLIS);
-        Long extra = TimeUnit.SECONDS.toMillis(30); // make sure we don't run before midnight
+        // make sure we don't run before midnight
+        Long extra = TimeUnit.SECONDS.toMillis(PropertyManager.getIntegerProperty("mdw.logging.roller.extra", 30));
         logger.info("Log Roller execution scheduled for: " + new Date(midnight + extra + System.currentTimeMillis()));
-        schedule = scheduler.scheduleAtFixedRate(this, midnight + extra, TimeUnit.DAYS.toMinutes(1), TimeUnit.MINUTES);
+        schedule = scheduler.scheduleAtFixedRate(this, midnight + extra, TimeUnit.DAYS.toMillis(1), TimeUnit.MILLISECONDS);
     }
 
     public void stop() {
