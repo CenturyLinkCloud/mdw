@@ -279,16 +279,7 @@ public class DatabaseAccess {
         }
     }
 
-    public void closeConnection()
-    {
-        if (connection != null && isMySQL()) {
-            try {
-                runUpdate("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
-            }
-            catch (SQLException ex) {
-                logger.error(ex.getMessage(), ex);
-            }
-        }
+    public void closeConnection() {
         closeStatement();
         closeResultSet();
         try {
