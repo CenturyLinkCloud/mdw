@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -154,9 +154,10 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/ActivityLogLine.html#ActivityLogLine-org.json.JSONObject-">ActivityLogLine</a></span>(org.json.JSONObject&nbsp;json)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/ActivityLogLine.html#ActivityLogLine-java.lang.Long-java.time.Instant-com.centurylink.mdw.util.log.StandardLogger.LogLevel-java.lang.String-">ActivityLogLine</a></span>(java.lang.Long&nbsp;activityInstanceId,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/ActivityLogLine.html#ActivityLogLine-java.lang.Long-java.time.Instant-com.centurylink.mdw.util.log.StandardLogger.LogLevel-java.lang.String-java.lang.String-">ActivityLogLine</a></span>(java.lang.Long&nbsp;activityInstanceId,
                java.time.Instant&nbsp;when,
                <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.LogLevel.html" title="enum in com.centurylink.mdw.util.log">StandardLogger.LogLevel</a>&nbsp;level,
+               java.lang.String&nbsp;thread,
                java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
 </table>
@@ -187,26 +188,34 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/ActivityLogLine.html#getMessage--">getMessage</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/ActivityLogLine.html#getThread--">getThread</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.time.Instant</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/ActivityLogLine.html#getWhen--">getWhen</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/ActivityLogLine.html#setActivityInstanceId-java.lang.Long-">setActivityInstanceId</a></span>(java.lang.Long&nbsp;activityInstanceId)</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/ActivityLogLine.html#setLevel-com.centurylink.mdw.util.log.StandardLogger.LogLevel-">setLevel</a></span>(<a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.LogLevel.html" title="enum in com.centurylink.mdw.util.log">StandardLogger.LogLevel</a>&nbsp;level)</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/ActivityLogLine.html#setMessage-java.lang.String-">setMessage</a></span>(java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/ActivityLogLine.html#setThread-java.lang.String-">setThread</a></span>(java.lang.String&nbsp;thread)</code>&nbsp;</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/ActivityLogLine.html#setWhen-java.time.Instant-">setWhen</a></span>(java.time.Instant&nbsp;when)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/util/log/ActivityLogLine.html#toJson--">toJson</a></span>()</code>&nbsp;</td>
 </tr>
@@ -263,7 +272,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ActivityLogLine-java.lang.Long-java.time.Instant-com.centurylink.mdw.util.log.StandardLogger.LogLevel-java.lang.String-">
+<a name="ActivityLogLine-java.lang.Long-java.time.Instant-com.centurylink.mdw.util.log.StandardLogger.LogLevel-java.lang.String-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -272,6 +281,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <pre>public&nbsp;ActivityLogLine(java.lang.Long&nbsp;activityInstanceId,
                        java.time.Instant&nbsp;when,
                        <a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.LogLevel.html" title="enum in com.centurylink.mdw.util.log">StandardLogger.LogLevel</a>&nbsp;level,
+                       java.lang.String&nbsp;thread,
                        java.lang.String&nbsp;message)</pre>
 </li>
 </ul>
@@ -344,6 +354,24 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <li class="blockList">
 <h4>setLevel</h4>
 <pre>public&nbsp;void&nbsp;setLevel(<a href="../../../../../com/centurylink/mdw/util/log/StandardLogger.LogLevel.html" title="enum in com.centurylink.mdw.util.log">StandardLogger.LogLevel</a>&nbsp;level)</pre>
+</li>
+</ul>
+<a name="getThread--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getThread</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getThread()</pre>
+</li>
+</ul>
+<a name="setThread-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setThread</h4>
+<pre>public&nbsp;void&nbsp;setThread(java.lang.String&nbsp;thread)</pre>
 </li>
 </ul>
 <a name="getMessage--">

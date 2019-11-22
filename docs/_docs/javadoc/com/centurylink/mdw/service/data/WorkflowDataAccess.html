@@ -181,9 +181,10 @@ extends <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAcce
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#addActivityLog-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-">addActivityLog</a></span>(java.lang.Long&nbsp;processInstanceId,
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#addActivityLog-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-java.lang.String-">addActivityLog</a></span>(java.lang.Long&nbsp;processInstanceId,
               java.lang.Long&nbsp;activityInstanceId,
               java.lang.String&nbsp;level,
+              java.lang.String&nbsp;thread,
               java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -303,7 +304,7 @@ extends <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAcce
 </dl>
 </li>
 </ul>
-<a name="addActivityLog-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-">
+<a name="addActivityLog-java.lang.Long-java.lang.Long-java.lang.String-java.lang.String-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -312,8 +313,23 @@ extends <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAcce
 <pre>public&nbsp;void&nbsp;addActivityLog(java.lang.Long&nbsp;processInstanceId,
                            java.lang.Long&nbsp;activityInstanceId,
                            java.lang.String&nbsp;level,
+                           java.lang.String&nbsp;thread,
                            java.lang.String&nbsp;message)
                     throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getActivityLog-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getActivityLog</h4>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/util/log/ActivityLog.html" title="class in com.centurylink.mdw.util.log">ActivityLog</a>&nbsp;getActivityLog(java.lang.Long&nbsp;activityInstanceId)
+                           throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
@@ -329,20 +345,6 @@ extends <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAcce
 <pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/util/log/ActivityLog.html" title="class in com.centurylink.mdw.util.log">ActivityLog</a>&nbsp;getProcessLog(java.lang.Long&nbsp;processInstanceId,
                                  java.lang.Long[]&nbsp;activityInstanceIds)
                           throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="getActivityLog-java.lang.Long-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getActivityLog</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/util/log/ActivityLog.html" title="class in com.centurylink.mdw.util.log">ActivityLog</a>&nbsp;getActivityLog(java.lang.Long&nbsp;activityInstanceId)
-                           throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
