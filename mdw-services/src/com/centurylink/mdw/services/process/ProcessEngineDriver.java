@@ -69,7 +69,7 @@ public class ProcessEngineDriver {
     private static String useTransactionOnExecute = "not_loaded";
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-    private static EngineLogger engineLogger = new EngineLogger(logger);
+    private EngineLogger engineLogger;
 
     private Exception lastException;    // used by service process to throw exception back to event handler
     private Long mainProcessInstanceId;    // used by service process to remember main process instance ID which caller may query
@@ -79,6 +79,7 @@ public class ProcessEngineDriver {
         if (default_performance_level_regular == null)
             loadDefaultPerformanceLevel();
         eventConsumeRetrySleep = PropertyManager.getIntegerProperty(PropertyNames.MDW_INTERNAL_EVENT_CONSUME_RETRY_SLEEP, 2);
+        engineLogger = new EngineLogger(logger, DEFAULT_PERFORMANCE_LEVEL);  // perf level to be updated in processEvents()
     }
 
     /**
@@ -483,6 +484,7 @@ public class ProcessEngineDriver {
             if (logger.isDebugEnabled())
                 logger.debug("executeFlow: " + textMessage);
             InternalEvent event = new InternalEvent(textMessage);
+
             // a. find the process instance (looking for memory only first, then regular)
             Long procInstId;
             ProcessInstance procInst;
@@ -523,6 +525,7 @@ public class ProcessEngineDriver {
             } else {
                 procInst = null;
             }
+
             // b. now determine performance level here
             int performance_level;
             if (procInst == null) {        // must be process start message
@@ -558,6 +561,8 @@ public class ProcessEngineDriver {
             }
             if (performance_level <= 0)
                 performance_level = default_performance_level_regular;
+            engineLogger.setPerformanceLevel(performance_level);
+
             // c. create engine
             EngineDataAccess edao = EngineDataAccessCache.getInstance(false, performance_level);
             InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
@@ -736,12 +741,15 @@ public class ProcessEngineDriver {
         Process process = getProcessDefinition(processId);
         Package pkg = getPackage(process);
         long startMilli = System.currentTimeMillis();
-        if (performance_level<=0) performance_level = process.getPerformanceLevel();
-        if (performance_level<=0) performance_level = default_performance_level_service;
+        if (performance_level <= 0)
+            performance_level = process.getPerformanceLevel();
+        if (performance_level <= 0)
+            performance_level = default_performance_level_service;
         EngineDataAccess edao = EngineDataAccessCache.getInstance(true, performance_level);
         InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
         msgBroker.setCacheOption(InternalMessenger.CACHE_ONLY);
         ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, true);
+        engineLogger.setPerformanceLevel(performance_level);
         if (performance_level >= 5) {
             if (OwnerType.DOCUMENT.equals(ownerType))
                 addDocumentToCache(engine, ownerId, XmlObject.class.getName(), masterRequest);
@@ -788,9 +796,12 @@ public class ProcessEngineDriver {
             int performance_level) throws Exception
     {
         long startMilli = System.currentTimeMillis();
-        if (performance_level<=0) performance_level = getProcessDefinition(processId).getPerformanceLevel();
-        if (performance_level<=0) performance_level = default_performance_level_service;
+        if (performance_level <= 0)
+            performance_level = getProcessDefinition(processId).getPerformanceLevel();
+        if (performance_level <=0 )
+            performance_level = default_performance_level_service;
         EngineDataAccess edao = EngineDataAccessCache.getInstance(true, performance_level);
+        engineLogger.setPerformanceLevel(performance_level);
         InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
         msgBroker.setCacheOption(InternalMessenger.CACHE_ONLY);
         ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, true);
@@ -801,8 +812,10 @@ public class ProcessEngineDriver {
         long stopMilli = System.currentTimeMillis();
         logger.info("Synchronous process executed in " +
                 ((stopMilli-startMilli)/1000.0) + " seconds at performance level " + performance_level);
-        if (completed) return resp;
-        if (lastException==null) throw new Exception("Process instance not completed");
+        if (completed)
+            return resp;
+        if (lastException == null)
+            throw new Exception("Process instance not completed");
         throw lastException;
     }
 
@@ -943,8 +956,10 @@ public class ProcessEngineDriver {
             String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers) throws Exception {
         Process procdef = getProcessDefinition(processId);
         int performance_level = procdef.getPerformanceLevel();
-        if (performance_level<=0) performance_level = default_performance_level_regular;
+        if (performance_level <= 0)
+            performance_level = default_performance_level_regular;
         EngineDataAccess edao = EngineDataAccessCache.getInstance(false, performance_level);
+        engineLogger.setPerformanceLevel(performance_level);
         InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
         // do not set internal messenger with cache options, as this engine does not process it directly - Unless PL 9
         if (performance_level >= 9)

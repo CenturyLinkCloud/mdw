@@ -104,10 +104,20 @@ public class LoggerUtil implements Serializable {
     }
 
     private static void checkWarnActivityLogging(StandardLogger logger, Class<?> callingClass) {
+        String warn = null;
         if (ActivityCategory.class.isAssignableFrom(callingClass) &&
                 !callingClass.getName().equals("com.centurylink.mdw.services.process.BaseActivity")) {
             String docUrl = ApplicationContext.getDocsUrl() + "/help/implementor.html#logging";
-            logger.warn("*** Activity logging bypassed by: " + callingClass.getName() + " (see " + docUrl + ")");
+            warn = "Activity logging bypassed by: " + callingClass.getName() + " (see " + docUrl + ")";
+        }
+        else if (callingClass.getName().matches(".*_A\\d*")) {
+            // dynamic java
+            String docUrl = ApplicationContext.getDocsUrl() + "/help/dynamicJavaActivity.html#logging";
+            warn = "Activity logging bypassed by dynamic Java: " + callingClass.getName() + " (see " + docUrl + ")";
+        }
+        if (warn != null) {
+            // this will become a stack trace in a future build
+            logger.warn("*** WARNING *** " + warn);
         }
     }
 

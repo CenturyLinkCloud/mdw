@@ -63,7 +63,8 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
 
     @Override
     protected void initialize(ActivityRuntimeContext runtimeContext) throws ActivityException {
-        runtimeContext.setLogPersister(ActivityLogger::persist);
+        if (getPerformanceLevel() < 9)
+            runtimeContext.setLogPersister(ActivityLogger::persist);
 
         javaCode = runtimeContext.getAttributes().get(JAVA_CODE);
 

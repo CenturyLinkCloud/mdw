@@ -22,7 +22,8 @@ public class ActivityLogger extends AbstractStandardLoggerBase {
 
     public ActivityLogger(ActivityRuntimeContext runtimeContext) {
         this.runtimeContext = runtimeContext;
-        this.runtimeContext.setLogPersister(ActivityLogger::persist);
+        if (runtimeContext.getPerformanceLevel() < 9)
+            this.runtimeContext.setLogPersister(ActivityLogger::persist);
     }
 
     @Override

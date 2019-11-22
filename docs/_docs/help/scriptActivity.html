@@ -61,6 +61,26 @@ It is used for clarity to indicate a decision point in your process flow, where 
 <br/><br/>
 <img src="images/expressionEval.jpg" />
 
+<h3><a id="logging">Logging</a></h3>
+MDW supports various logging frameworks including SLF4J, SimpleLogger, Log4J, STDOUT, and others.  Whichever of
+these loggers you choose, within your script activities you can hook into special functionality that will include
+helpful tags in your logging output enabling you to identify runtime information regarding the source of your log lines.
+Here's an example log line from an activity implementor:
+<pre>
+[p255409661.10034 a3.10139] Here is my important log output
+</pre>
+In this log line the special tag [p255409661.10034 a3.10139] identifies the processId, processInstanceId, activityId
+and activityInstanceId where the logging comes from.
+<span style="font-weight:bold">Important</span>: To take advantage of this special log tagging, you'll need to write your log output by using
+the implicit runtimeContext available in your script:
+<ul>
+  <li><code>runtimeContext.logInfo("Here is my important log output");</code></li>
+</ul>
+Furthermore, if you use this recommended logging pattern within your dynamic Java activity, your log lines
+will show up in MDWHub's logging views as illustrated in the following screenshot.
+<img style="width:1024px" src="images/inspectorLog.png" />
+<br/><br/>
+
 <br/><br/>
 <h3>Script Libraries</h3>
 Script libraries can contain reusable logic and utility classes that are accessible from all your script activities.

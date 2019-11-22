@@ -69,7 +69,7 @@ import static com.centurylink.mdw.model.workflow.ProcessRuntimeContext.isExpress
 class ProcessExecutorImpl {
 
     protected static StandardLogger logger = LoggerUtil.getStandardLogger();
-    private static EngineLogger engineLogger = new EngineLogger(logger);
+    private EngineLogger engineLogger;
 
     private static boolean uniqueMasterRequestId = PropertyManager.getBooleanProperty("mdw.process.uniqueMasterRequestId", false);
 
@@ -81,6 +81,7 @@ class ProcessExecutorImpl {
         this.edao = edao;
         this.internalMessenger = internalMessenger;
         inService = forServiceProcess;
+        engineLogger = new EngineLogger(logger, edao.getPerformanceLevel());
     }
 
     final EngineDataAccess getDataAccess() {
