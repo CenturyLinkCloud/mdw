@@ -16,6 +16,7 @@ import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter;
 import org.apache.commons.lang.StringUtils;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.HashMap;
@@ -31,7 +32,31 @@ import java.util.Map;
 public class MicroserviceRestAdapter extends RestServiceAdapter {
 
     protected Long requestId = null;
-    protected boolean changedIsolation = false;
+    protected boolean changedTxIsolation = false;
+
+    /**
+     * Overridden to restore
+     * @throws ActivityException
+     */
+    @Override
+    public void execute() throws ActivityException {
+        try {
+            super.execute();
+        }
+        finally {
+            try {
+                if (changedTxIsolation && getEngine().getDatabaseAccess().connectionIsOpen()) {
+                    getEngine().getDatabaseAccess().commit();
+                    getEngine().getDatabaseAccess().getConnection().setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+                    changedTxIsolation = false;
+                }
+            }
+            catch (SQLException ex) {
+                throw new ActivityException(ex.getMessage(), ex);
+            }
+        }
+    }
+
     /**
      * Overridden to append JSON headers.
      */
@@ -109,16 +134,20 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
                 // is not using the DB snapshot that got created when we were in here first for the request.
                 // Otherwise, we risk overwriting any service summary updates performed by a different thread.
                 if (status == null && getEngine().getDatabaseAccess().isMySQL()) {
-                    getEngine().getDatabaseAccess().runUpdate("SET TRANSACTION ISOLATION LEVEL READ COMMITTED");
-                    changedIsolation = true;
+                    if (getEngine().getDatabaseAccess().getConnection().getTransactionIsolation() == Connection.TRANSACTION_REPEATABLE_READ) {
+                        getEngine().getDatabaseAccess().getConnection().setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+                        changedTxIsolation = true;
+                    }
                 }
             }
             finally {
                 if (status != null) {
                     getEngine().getDatabaseAccess().commit();
-                    // For mySQL, now (after getting response) we need to restore isolation level back to default
-                    if (changedIsolation && getEngine().getDatabaseAccess().connectionIsOpen())
-                        getEngine().getDatabaseAccess().runUpdate("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ");
+                    // For mySQL, now (after getting response) we need to restore  isolation level back to default
+                    if (changedTxIsolation && getEngine().getDatabaseAccess().connectionIsOpen()) {
+                        getEngine().getDatabaseAccess().getConnection().setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+                        changedTxIsolation = false;
+                    }
                 }
             }
             if (status != null) {
