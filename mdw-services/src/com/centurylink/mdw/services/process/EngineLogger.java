@@ -7,49 +7,61 @@ public class EngineLogger {
 
     private StandardLogger logger;
 
-    EngineLogger(StandardLogger logger) {
+    private int performanceLevel;
+    public int getPerformanceLevel() { return performanceLevel; }
+    public void setPerformanceLevel(int performanceLevel) { this.performanceLevel = performanceLevel; }
+
+    EngineLogger(StandardLogger logger, int performanceLevel) {
         this.logger = logger;
+        this.performanceLevel = performanceLevel;
     }
 
     void info(String tag, Long processInstanceId, Long activityInstanceId, String message) {
         if (logger.isInfoEnabled()) {
             logger.info(tag, message);
-            ActivityLogger.persist(processInstanceId, activityInstanceId, StandardLogger.LogLevel.INFO, message);
+            if (performanceLevel < 9)
+                ActivityLogger.persist(processInstanceId, activityInstanceId, StandardLogger.LogLevel.INFO, message);
         }
     }
 
     void info(String tag, Long processInstanceId, String message) {
         if (logger.isInfoEnabled()) {
             logger.info(tag, message);
-            ActivityLogger.persist(processInstanceId, null, StandardLogger.LogLevel.INFO, message);
+            if (performanceLevel < 9)
+                ActivityLogger.persist(processInstanceId, null, StandardLogger.LogLevel.INFO, message);
         }
     }
 
     void info(Long processId, Long processInstanceId, Long activityId, Long activityInstanceId, String message) {
         String tag = logtag(processId, processInstanceId, activityId, activityInstanceId);
-        info(tag, processInstanceId, activityInstanceId, message);
+        if (performanceLevel < 9)
+            info(tag, processInstanceId, activityInstanceId, message);
     }
 
     void info(Long processId, Long processInstanceId, String masterRequestId, String message) {
         String tag = logtag(processId, processInstanceId, masterRequestId);
-        info(tag, processInstanceId, null, message);
+        if (performanceLevel < 9)
+            info(tag, processInstanceId, null, message);
     }
 
     void info(Long processInstanceId, Long activityInstanceId, String message) {
         if (logger.isInfoEnabled()) {
             logger.info(message);
-            ActivityLogger.persist(processInstanceId, activityInstanceId, StandardLogger.LogLevel.INFO, message);
+            if (performanceLevel < 9)
+                ActivityLogger.persist(processInstanceId, activityInstanceId, StandardLogger.LogLevel.INFO, message);
         }
     }
 
     void error(String tag, Long processInstanceId, Long activityInstanceId, String message) {
         logger.severe(tag, message);
-        ActivityLogger.persist(processInstanceId, activityInstanceId, StandardLogger.LogLevel.ERROR, message);
+        if (performanceLevel < 9)
+            ActivityLogger.persist(processInstanceId, activityInstanceId, StandardLogger.LogLevel.ERROR, message);
     }
 
     void error(String tag, Long processInstanceId, Long activityInstanceId, String message, Throwable t) {
         logger.exception(tag, message, t);
-        ActivityLogger.persist(processInstanceId, activityInstanceId, StandardLogger.LogLevel.ERROR, message, t);
+        if (performanceLevel < 9)
+            ActivityLogger.persist(processInstanceId, activityInstanceId, StandardLogger.LogLevel.ERROR, message, t);
     }
 
     void error(Long processId, Long processInstanceId, Long activityId, Long activityInstanceId, String message, Throwable t) {

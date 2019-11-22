@@ -715,7 +715,8 @@ public abstract class BaseActivity implements GeneralActivity {
      */
     protected Object evaluateExpression(String name, String language, String expression)
             throws ExecutionException {
-        _runtimeContext.setLogPersister(ActivityLogger::persist);
+        if (getPerformanceLevel() < 9)
+            _runtimeContext.setLogPersister(ActivityLogger::persist);
         try {
             if (JAVA_EL.equals(language)) {
                 return _runtimeContext.evaluate(expression);
@@ -1200,7 +1201,8 @@ public abstract class BaseActivity implements GeneralActivity {
     protected Object executeScript(String script, String language, Map<String,Object> addlBindings, String qualifier)
             throws ActivityException {
 
-        _runtimeContext.setLogPersister(ActivityLogger::persist);
+        if (getPerformanceLevel() < 9)
+            _runtimeContext.setLogPersister(ActivityLogger::persist);
 
         String temp = getAttributeValue(OUTPUTDOCS);
         outputDocuments = temp == null ? new String[0] : Attribute.parseList(temp).toArray(new String[0]);
