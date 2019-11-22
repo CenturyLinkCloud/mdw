@@ -1,12 +1,35 @@
 # Change Log
 
+## [6.1.28](https://github.com/CenturyLinkCloud/mdw/tree/6.1.28) (2019-11-22)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.27...6.1.28)
+
+**Implemented enhancements:**
+
+- MDWHub asset discoveryType should always be Git [\#761](https://github.com/CenturyLinkCloud/mdw/issues/761)
+- Include runtime instance info in all activity logger output [\#758](https://github.com/CenturyLinkCloud/mdw/issues/758)
+- Scheduled Job for log rotation [\#182](https://github.com/CenturyLinkCloud/mdw/issues/182)
+
+**Closed issues:**
+
+- Page refresh required to display Inspector Subprocesses tab [\#773](https://github.com/CenturyLinkCloud/mdw/issues/773)
+- MySQL transaction isolation level may fail to be reset [\#771](https://github.com/CenturyLinkCloud/mdw/issues/771)
+- Annotated ScheduledJobs enablement should honor defaultEnabled [\#770](https://github.com/CenturyLinkCloud/mdw/issues/770)
+- Stuck processes due to server shutdown [\#736](https://github.com/CenturyLinkCloud/mdw/issues/736)
+
+**Compatibility Notes:**
+
+  - For #758 Activity logging, in-place db upgrade automatically adds the new ACTIVITY_LOG table.  If your db app user 
+    lacks permission, you'll need to create the table by executing the steps at the bottom of the upgrade SQL scripts:
+     - https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/database/mysql/mdw_upgrade_6.0_To_6.1.sql
+     - https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/database/oracle/mdw_upgrade_6.0_To_6.1.sql
+
 ## [6.1.27](https://github.com/CenturyLinkCloud/mdw/tree/6.1.27) (2019-11-08)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.26...6.1.27)
 
 **Implemented enhancements:**
 
 - Milestones API should allow specifying a master process instance [\#757](https://github.com/CenturyLinkCloud/mdw/issues/757)
-- Asset modifications staging [\#720](https://github.com/CenturyLinkCloud/mdw/issues/720)   
+- Asset modifications staging [\#720](https://github.com/CenturyLinkCloud/mdw/issues/720)
   https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/staging/readme.md
 
 **Closed issues:**
