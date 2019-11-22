@@ -237,54 +237,65 @@ implements <a href="../../../../../../com/centurylink/mdw/service/data/process/E
 </tr>
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#createEventInstance-java.lang.String-java.lang.Long-java.lang.Integer-java.util.Date-java.lang.String-java.lang.String-int-boolean-">createEventInstance</a></span>(java.lang.String&nbsp;eventName,
+                   java.lang.Long&nbsp;documentId,
+                   java.lang.Integer&nbsp;status,
+                   java.util.Date&nbsp;consumeDate,
+                   java.lang.String&nbsp;auxdata,
+                   java.lang.String&nbsp;reference,
+                   int&nbsp;preserveSeconds,
+                   boolean&nbsp;logSqlError)</code>&nbsp;</td>
+</tr>
+<tr id="i10" class="altColor">
+<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#createEventWaitInstance-java.lang.Long-java.lang.String-java.lang.String-">createEventWaitInstance</a></span>(java.lang.Long&nbsp;actInstId,
                        java.lang.String&nbsp;eventName,
                        java.lang.String&nbsp;compCode)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#createProcessInstance-com.centurylink.mdw.model.workflow.ProcessInstance-">createProcessInstance</a></span>(<a href="../../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&nbsp;pi)</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#createTransitionInstance-com.centurylink.mdw.model.workflow.TransitionInstance-">createTransitionInstance</a></span>(<a href="../../../../../../com/centurylink/mdw/model/workflow/TransitionInstance.html" title="class in com.centurylink.mdw.model.workflow">TransitionInstance</a>&nbsp;trans)</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#createVariableInstance-com.centurylink.mdw.model.variable.VariableInstance-java.lang.Long-">createVariableInstance</a></span>(<a href="../../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&nbsp;var,
                       java.lang.Long&nbsp;procInstId)</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#deleteEventInstance-java.lang.String-">deleteEventInstance</a></span>(java.lang.String&nbsp;eventName)</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#deleteTableRow-java.lang.String-java.lang.String-java.lang.Object-">deleteTableRow</a></span>(java.lang.String&nbsp;tableName,
               java.lang.String&nbsp;fieldName,
               java.lang.Object&nbsp;fieldValue)</code>&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#determineCompletedTransitions-java.lang.Long-java.util.List-">determineCompletedTransitions</a></span>(java.lang.Long&nbsp;pProcInstId,
                              java.util.List&lt;<a href="../../../../../../com/centurylink/mdw/model/workflow/Transition.html" title="class in com.centurylink.mdw.model.workflow">Transition</a>&gt;&nbsp;transitions)</code>&nbsp;</td>
 </tr>
-<tr id="i16" class="altColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getActivityInstance-java.lang.Long-">getActivityInstance</a></span>(java.lang.Long&nbsp;actInstId)</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getActivityInstances-java.lang.Long-java.lang.Long-boolean-boolean-">getActivityInstances</a></span>(java.lang.Long&nbsp;actId,
                     java.lang.Long&nbsp;procInstId,
                     boolean&nbsp;activeOnly,
                     boolean&nbsp;isSynchActivity)</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getActivityInstancesForProcessInstance-java.lang.Long-">getActivityInstancesForProcessInstance</a></span>(java.lang.Long&nbsp;procInstId)</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../../com/centurylink/mdw/model/user/UserAction.html" title="class in com.centurylink.mdw.model.user">UserAction</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getAuditLogs-java.lang.String-boolean-java.util.List-java.lang.Object-int-int-boolean-">getAuditLogs</a></span>(java.lang.String&nbsp;orderBy,
             boolean&nbsp;ascending,
@@ -294,86 +305,86 @@ implements <a href="../../../../../../com/centurylink/mdw/service/data/process/E
             int&nbsp;end,
             boolean&nbsp;allRowsMode)</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getChildProcessInstances-java.lang.Long-">getChildProcessInstances</a></span>(java.lang.Long&nbsp;procInstId)</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code><a href="../../../../../../com/centurylink/mdw/dataaccess/DatabaseAccess.html" title="class in com.centurylink.mdw.dataaccess">DatabaseAccess</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getDatabaseAccess--">getDatabaseAccess</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getDistinctEventLogEventNames--">getDistinctEventLogEventNames</a></span>()</code>
 <div class="block">Method that returns distinct event log event names</div>
 </td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getDistinctEventLogEventSources--">getDistinctEventLogEventSources</a></span>()</code>
 <div class="block">Method that returns distinct event log sources</div>
 </td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../com/centurylink/mdw/model/variable/Document.html" title="class in com.centurylink.mdw.model.variable">Document</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getDocument-com.centurylink.mdw.model.variable.DocumentReference-boolean-">getDocument</a></span>(<a href="../../../../../../com/centurylink/mdw/model/variable/DocumentReference.html" title="class in com.centurylink.mdw.model.variable">DocumentReference</a>&nbsp;docref,
            boolean&nbsp;forUpdate)</code>&nbsp;</td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i26" class="altColor">
 <td class="colFirst"><code><a href="../../../../../../com/centurylink/mdw/model/event/EventInstance.html" title="class in com.centurylink.mdw.model.event">EventInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getEventInstance-java.lang.String-">getEventInstance</a></span>(java.lang.String&nbsp;eventName)</code>&nbsp;</td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i27" class="rowColor">
 <td class="colFirst"><code>protected java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getNextId-java.lang.String-">getNextId</a></span>(java.lang.String&nbsp;sequenceName)</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i28" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getPerformanceLevel--">getPerformanceLevel</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i28" class="altColor">
+<tr id="i29" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getProcessInstance-java.lang.Long-">getProcessInstance</a></span>(java.lang.Long&nbsp;procInstId)</code>
 <div class="block">different from V4: include completion code; add flag to say
  if variable instances are needed</div>
 </td>
 </tr>
-<tr id="i29" class="rowColor">
+<tr id="i30" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getProcessInstances-java.lang.Long-java.lang.String-java.lang.Long-">getProcessInstances</a></span>(java.lang.Long&nbsp;procId,
                    java.lang.String&nbsp;ownerType,
                    java.lang.Long&nbsp;ownerId)</code>&nbsp;</td>
 </tr>
-<tr id="i30" class="altColor">
+<tr id="i31" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getProcessInstancesByMasterRequestId-java.lang.String-">getProcessInstancesByMasterRequestId</a></span>(java.lang.String&nbsp;masterRequestId)</code>&nbsp;</td>
 </tr>
-<tr id="i31" class="rowColor">
+<tr id="i32" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getProcessInstancesByMasterRequestId-java.lang.String-java.lang.Long-">getProcessInstancesByMasterRequestId</a></span>(java.lang.String&nbsp;masterRequestId,
                                     java.lang.Long&nbsp;processId)</code>&nbsp;</td>
 </tr>
-<tr id="i32" class="altColor">
+<tr id="i33" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getProcessInstanceVariables-java.lang.Long-">getProcessInstanceVariables</a></span>(java.lang.Long&nbsp;processInstanceId)</code>&nbsp;</td>
 </tr>
-<tr id="i33" class="rowColor">
+<tr id="i34" class="altColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getRequestCompletionTime-java.lang.String-java.lang.Long-">getRequestCompletionTime</a></span>(java.lang.String&nbsp;ownerType,
                         java.lang.Long&nbsp;ownerId)</code>&nbsp;</td>
 </tr>
-<tr id="i34" class="altColor">
+<tr id="i35" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../../com/centurylink/mdw/model/monitor/ScheduledEvent.html" title="class in com.centurylink.mdw.model.monitor">ScheduledEvent</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getScheduledEventList-java.util.Date-">getScheduledEventList</a></span>(java.util.Date&nbsp;cutofftime)</code>
 <div class="block">Load all internal event and scheduled jobs before cutoff time.</div>
 </td>
 </tr>
-<tr id="i35" class="rowColor">
+<tr id="i36" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getTableRowCount-java.lang.String-java.lang.String-">getTableRowCount</a></span>(java.lang.String&nbsp;tableName,
                 java.lang.String&nbsp;whereClause)</code>&nbsp;</td>
 </tr>
-<tr id="i36" class="altColor">
+<tr id="i37" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String[]&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getTableRowList-java.lang.String-java.lang.Class:A-java.lang.String:A-java.lang.String-java.lang.String-boolean-int-int-">getTableRowList</a></span>(java.lang.String&nbsp;tableName,
                java.lang.Class&lt;?&gt;[]&nbsp;types,
@@ -384,60 +395,55 @@ implements <a href="../../../../../../com/centurylink/mdw/service/data/process/E
                int&nbsp;startRow,
                int&nbsp;rowCount)</code>&nbsp;</td>
 </tr>
-<tr id="i37" class="rowColor">
+<tr id="i38" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../../com/centurylink/mdw/model/monitor/UnscheduledEvent.html" title="class in com.centurylink.mdw.model.monitor">UnscheduledEvent</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getUnscheduledEventList-java.util.Date-int-">getUnscheduledEventList</a></span>(java.util.Date&nbsp;cutoffTime,
                        int&nbsp;maxRows)</code>
 <div class="block">Load all internal events start at the specified age and scheduled jobs before cutoff time.</div>
 </td>
 </tr>
-<tr id="i38" class="altColor">
+<tr id="i39" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getVariableInstance-java.lang.Long-">getVariableInstance</a></span>(java.lang.Long&nbsp;varInstId)</code>&nbsp;</td>
 </tr>
-<tr id="i39" class="rowColor">
+<tr id="i40" class="altColor">
 <td class="colFirst"><code><a href="../../../../../../com/centurylink/mdw/model/variable/VariableInstance.html" title="class in com.centurylink.mdw.model.variable">VariableInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getVariableInstance-java.lang.Long-java.lang.String-">getVariableInstance</a></span>(java.lang.Long&nbsp;procInstId,
                    java.lang.String&nbsp;varname)</code>&nbsp;</td>
 </tr>
-<tr id="i40" class="altColor">
+<tr id="i41" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../com/centurylink/mdw/model/workflow/TransitionInstance.html" title="class in com.centurylink.mdw.model.workflow">TransitionInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#getWorkTransitionInstance-java.lang.Long-">getWorkTransitionInstance</a></span>(java.lang.Long&nbsp;transInstId)</code>&nbsp;</td>
 </tr>
-<tr id="i41" class="rowColor">
+<tr id="i42" class="altColor">
 <td class="colFirst"><code>java.lang.Integer</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#lockActivityInstance-java.lang.Long-">lockActivityInstance</a></span>(java.lang.Long&nbsp;actInstId)</code>&nbsp;</td>
 </tr>
-<tr id="i42" class="altColor">
+<tr id="i43" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../com/centurylink/mdw/model/event/EventInstance.html" title="class in com.centurylink.mdw.model.event">EventInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#lockEventInstance-java.lang.String-">lockEventInstance</a></span>(java.lang.String&nbsp;eventName)</code>&nbsp;</td>
 </tr>
-<tr id="i43" class="rowColor">
+<tr id="i44" class="altColor">
 <td class="colFirst"><code>java.lang.Integer</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#lockProcessInstance-java.lang.Long-">lockProcessInstance</a></span>(java.lang.Long&nbsp;procInstId)</code>&nbsp;</td>
 </tr>
-<tr id="i44" class="altColor">
+<tr id="i45" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../com/centurylink/mdw/model/monitor/ScheduledEvent.html" title="class in com.centurylink.mdw.model.monitor">ScheduledEvent</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#lockScheduledEvent-java.lang.String-">lockScheduledEvent</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
 </tr>
-<tr id="i45" class="rowColor">
+<tr id="i46" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#offerScheduledEvent-com.centurylink.mdw.model.monitor.ScheduledEvent-">offerScheduledEvent</a></span>(<a href="../../../../../../com/centurylink/mdw/model/monitor/ScheduledEvent.html" title="class in com.centurylink.mdw.model.monitor">ScheduledEvent</a>&nbsp;event)</code>&nbsp;</td>
 </tr>
-<tr id="i46" class="altColor">
+<tr id="i47" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#persistInternalEvent-java.lang.String-java.lang.String-">persistInternalEvent</a></span>(java.lang.String&nbsp;eventId,
                     java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
-<tr id="i47" class="rowColor">
+<tr id="i48" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../../../com/centurylink/mdw/model/event/EventWaitInstance.html" title="class in com.centurylink.mdw.model.event">EventWaitInstance</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#recordEventArrive-java.lang.String-java.lang.Long-">recordEventArrive</a></span>(java.lang.String&nbsp;eventName,
                  java.lang.Long&nbsp;documentId)</code>&nbsp;</td>
-</tr>
-<tr id="i48" class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccessDB.html#recordEventFlag-java.lang.String-int-">recordEventFlag</a></span>(java.lang.String&nbsp;eventName,
-               int&nbsp;preserveSeconds)</code>&nbsp;</td>
 </tr>
 <tr id="i49" class="rowColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
@@ -955,6 +961,27 @@ implements <a href="../../../../../../com/centurylink/mdw/service/data/process/E
 </dl>
 </li>
 </ul>
+<a name="createEventInstance-java.lang.String-java.lang.Long-java.lang.Integer-java.util.Date-java.lang.String-java.lang.String-int-boolean-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createEventInstance</h4>
+<pre>public&nbsp;void&nbsp;createEventInstance(java.lang.String&nbsp;eventName,
+                                java.lang.Long&nbsp;documentId,
+                                java.lang.Integer&nbsp;status,
+                                java.util.Date&nbsp;consumeDate,
+                                java.lang.String&nbsp;auxdata,
+                                java.lang.String&nbsp;reference,
+                                int&nbsp;preserveSeconds,
+                                boolean&nbsp;logSqlError)
+                         throws java.sql.SQLException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.sql.SQLException</code></dd>
+</dl>
+</li>
+</ul>
 <a name="lockEventInstance-java.lang.String-">
 <!--   -->
 </a>
@@ -1070,23 +1097,6 @@ implements <a href="../../../../../../com/centurylink/mdw/service/data/process/E
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccess.html#recordEventWait-java.lang.String-boolean-int-java.lang.Long-java.lang.String-">recordEventWait</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccess.html" title="interface in com.centurylink.mdw.service.data.process">EngineDataAccess</a></code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.sql.SQLException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="recordEventFlag-java.lang.String-int-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>recordEventFlag</h4>
-<pre>public&nbsp;boolean&nbsp;recordEventFlag(java.lang.String&nbsp;eventName,
-                               int&nbsp;preserveSeconds)
-                        throws java.sql.SQLException</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccess.html#recordEventFlag-java.lang.String-int-">recordEventFlag</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/centurylink/mdw/service/data/process/EngineDataAccess.html" title="interface in com.centurylink.mdw.service.data.process">EngineDataAccess</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.sql.SQLException</code></dd>
 </dl>

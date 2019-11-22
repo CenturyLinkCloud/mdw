@@ -17,6 +17,12 @@
     catch(err) {
     }
 //-->
+var methods = {"i0":10,"i1":10};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var altColor = "altColor";
+var rowColor = "rowColor";
+var tableTab = "tableTab";
+var activeTableTab = "activeTableTab";
 </script>
 <noscript>
 <div>JavaScript is disabled on your browser.</div>
@@ -42,7 +48,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/centurylink/mdw/hub/MdwMain.html" title="class in com.centurylink.mdw.hub"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../com/centurylink/mdw/hub/SpringBootApplication.html" title="class in com.centurylink.mdw.hub"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../com/centurylink/mdw/hub/MdwServletContainerFactory.ConnectorCustomizer.html" title="class in com.centurylink.mdw.hub"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/centurylink/mdw/hub/MdwServletContainerFactory.html" target="_top">Frames</a></li>
@@ -66,16 +72,16 @@
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#fields.inherited.from.class.org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#methods.inherited.from.class.org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory">Method</a></li>
+<li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
-<li>Method</li>
+<li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
 <a name="skip.navbar.top">
@@ -128,6 +134,25 @@ extends org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFacto
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested.class.summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static class&nbsp;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/hub/MdwServletContainerFactory.ConnectorCustomizer.html" title="class in com.centurylink.mdw.hub">MdwServletContainerFactory.ConnectorCustomizer</a></span></code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- =========== FIELD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="field.summary">
@@ -162,9 +187,6 @@ extends org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFacto
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/hub/MdwServletContainerFactory.html#MdwServletContainerFactory--">MdwServletContainerFactory</a></span>()</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/hub/MdwServletContainerFactory.html#MdwServletContainerFactory-java.lang.String-int-java.io.File-">MdwServletContainerFactory</a></span>(java.lang.String&nbsp;contextRoot,
                           int&nbsp;port,
                           java.io.File&nbsp;bootDir)</code>&nbsp;</td>
@@ -178,6 +200,21 @@ extends org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFacto
 <!--   -->
 </a>
 <h3>Method Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr id="i0" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/hub/MdwServletContainerFactory.html#onApplicationEvent-org.springframework.context.event.ContextClosedEvent-">onApplicationEvent</a></span>(org.springframework.context.event.ContextClosedEvent&nbsp;event)</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/hub/MdwServletContainerFactory.html#shutdownTomcatThreadpool--">shutdownTomcatThreadpool</a></span>()</code>&nbsp;</td>
+</tr>
+</table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory">
 <!--   -->
@@ -234,15 +271,6 @@ extends org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFacto
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="MdwServletContainerFactory--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>MdwServletContainerFactory</h4>
-<pre>public&nbsp;MdwServletContainerFactory()</pre>
-</li>
-</ul>
 <a name="MdwServletContainerFactory-java.lang.String-int-java.io.File-">
 <!--   -->
 </a>
@@ -252,6 +280,33 @@ extends org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFacto
 <pre>public&nbsp;MdwServletContainerFactory(java.lang.String&nbsp;contextRoot,
                                   int&nbsp;port,
                                   java.io.File&nbsp;bootDir)</pre>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method.detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="onApplicationEvent-org.springframework.context.event.ContextClosedEvent-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>onApplicationEvent</h4>
+<pre>@EventListener
+public&nbsp;void&nbsp;onApplicationEvent(org.springframework.context.event.ContextClosedEvent&nbsp;event)</pre>
+</li>
+</ul>
+<a name="shutdownTomcatThreadpool--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>shutdownTomcatThreadpool</h4>
+<pre>public&nbsp;void&nbsp;shutdownTomcatThreadpool()</pre>
 </li>
 </ul>
 </li>
@@ -282,7 +337,7 @@ extends org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFacto
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/centurylink/mdw/hub/MdwMain.html" title="class in com.centurylink.mdw.hub"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../com/centurylink/mdw/hub/SpringBootApplication.html" title="class in com.centurylink.mdw.hub"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../com/centurylink/mdw/hub/MdwServletContainerFactory.ConnectorCustomizer.html" title="class in com.centurylink.mdw.hub"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/centurylink/mdw/hub/MdwServletContainerFactory.html" target="_top">Frames</a></li>
@@ -306,16 +361,16 @@ extends org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFacto
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested.class.summary">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#fields.inherited.from.class.org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#methods.inherited.from.class.org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory">Method</a></li>
+<li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
-<li>Method</li>
+<li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
 <a name="skip.navbar.bottom">
