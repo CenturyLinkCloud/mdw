@@ -149,17 +149,19 @@ title: MDW Configuration
       base.dn: dc=mydc,dc=example
 
     # scheduled jobs registration    
-    timer.task:
-      StuckActivities:  # auto-retry of stuck activities
-        TimerClass: com.centurylink.mdw.timer.cleanup.StuckActivities
-        Schedule: 15 * * ? * # run hourly at 15 mins past the hour
-        ActivityAgeInSeconds: 3600 # (seconds) default=1800
-        MaximumActivities: 100 # default=10
-
-    timer.InitialDelay: 120  # (seconds) default=120
+   timer.InitialDelay: 120  # (seconds) default=120
     timer.CheckInterval: 60  # (seconds) default=60
     timer.ThresholdForDelay: 30  # (minutes) default=60
-
+    
+    #scheduled job for clearing up stuck activites in mdw 
+    
+    StuckActivities:
+      job:
+        enabled: true         #This enables the scheduled job, by default it will be disbaled
+        scheduler: 30 12 * * ? * #cron expression defining the schedule . currently set at 12:30 AM
+        ActivityAgeInSeconds: 2000 #age of the activities to be considered default : 1800
+        MaximumActivities: 100 #maximum number of activities to be considered default : 10
+        
     # scheduled job for periodic cleanup of old completed mdw data from the DB
 
      cleanup:

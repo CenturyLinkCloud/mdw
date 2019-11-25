@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.timer.cleanup;
+package com.centurylink.mdw.base;
 
+import com.centurylink.mdw.annotations.ScheduledJob;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.monitor.ScheduledJob;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.Process;
@@ -29,12 +29,18 @@ import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
+import com.centurylink.mdw.services.workflow.RoundRobinScheduledJob;
 import com.centurylink.mdw.util.CallURL;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+
 
 /**
  * This script fixes stuck activities by failing them and then retrying them
@@ -54,8 +60,9 @@ timer.task:
  * The query used to identify stuck activities will perform a full table scan, so
  * consider creating an index on ACTIVITY_INSTANCE table if it is causing performance issues.
  */
-@Deprecated
-public class StuckActivities implements ScheduledJob {
+//scheduledjob annotation is added and this is moved to the base package . values are read from the property file.
+@ScheduledJob(value="StuckActivities", schedule="${props['mdw.StuckActivities.job.scheduler']}", enabled="${props['mdw.StuckActivities.job.enabled']}", defaultEnabled= false, isExclusive=true)
+public class StuckActivities extends RoundRobinScheduledJob implements com.centurylink.mdw.model.monitor.ScheduledJob  {
 
     private static boolean running = false;
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
@@ -67,22 +74,27 @@ public class StuckActivities implements ScheduledJob {
             logger.info("methodEntry-->StuckActivities.run()");
             int activityAge;  //Seconds
             int maxActivities;
-            try {
-                Properties cleanupTaskProperties = PropertyManager.getInstance().getProperties(PropertyNames.MDW_TIMER_TASK);
-                activityAge = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".StuckActivities.ActivityAgeInSeconds", "1800"));  // 30 minutes
-                maxActivities = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".StuckActivities.MaximumActivities", "10"));
 
-                List<Long> activityList = failStuckActivities(activityAge, maxActivities);
-                if (!activityList.isEmpty())
-                    retryActivities(activityList);
-            }
-            catch (PropertyException e) {
-                logger.info("StuckActivities.run() : Properties not found" + e.getMessage());
-            }
-            finally {
-                running = false;
-            }
-            logger.info("methodExit-->StuckActivities.run()");
+                try {
+                    Properties cleanupTaskProperties = PropertyManager.getInstance().getProperties(PropertyNames.MDW_TIMER_TASK);
+                    if (cleanupTaskProperties != null && cleanupTaskProperties.size() != 0) {
+                        activityAge = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".StuckActivities.ActivityAgeInSeconds", "1800"));  // 30 minutes
+                        maxActivities = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".StuckActivities.MaximumActivities", "10"));
+                    } else {
+                        activityAge = PropertyManager.getIntegerProperty("mdw.StuckActivities.job.ActivityAgeInSeconds", 1800);  // 30 minutes
+                        maxActivities = PropertyManager.getIntegerProperty("mdw.StuckActivities.job.MaximumActivities", 10);
+                    }
+                    logger.info("StuckActivities run (): with Properties activityAge : " + activityAge + "maxActivities : " + maxActivities);
+                    List<Long> activityList = failStuckActivities(activityAge, maxActivities);
+                    if (!activityList.isEmpty())
+                        retryActivities(activityList);
+                } catch (PropertyException e) {
+                    logger.info("StuckActivities.run() : Properties not found" + e.getMessage());
+                } finally {
+                    running = false;
+                }
+                logger.info("methodExit-->StuckActivities.run()");
+
         }
     }
 
