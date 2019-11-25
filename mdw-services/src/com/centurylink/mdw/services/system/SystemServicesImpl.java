@@ -475,6 +475,11 @@ public class SystemServicesImpl implements SystemServices {
         try {
             propMgr = PropertyUtil.getInstance().getPropertyManager();
             Properties properties = propMgr.getAllProperties();
+            if (!properties.containsKey(PropertyNames.MDW_LOGGING_LEVEL)) {
+                String logLevel = PropertyManager.getProperty(PropertyNames.MDW_LOGGING_LEVEL);
+                if (logLevel != null)
+                    properties.put(PropertyNames.MDW_LOGGING_LEVEL, logLevel);
+            }
             List<String> propNames = new ArrayList<>();
             for (Object o : properties.keySet()) {
                 propNames.add(String.valueOf(o));

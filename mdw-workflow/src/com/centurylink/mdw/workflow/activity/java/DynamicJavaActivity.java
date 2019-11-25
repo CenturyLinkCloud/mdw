@@ -55,7 +55,7 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
         if (executorClassLoader == null)
             executorClassLoader = getClass().getClassLoader();  // fallback in case not set by activity provider
         if (isLogDebugEnabled())
-            logError("Dynamic Java ClassLoader: " + executorClassLoader);
+            logDebug("Dynamic Java ClassLoader: " + executorClassLoader);
 
         return executorClassLoader;
     }
