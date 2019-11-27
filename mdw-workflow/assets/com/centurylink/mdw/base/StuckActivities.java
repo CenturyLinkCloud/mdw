@@ -76,14 +76,8 @@ public class StuckActivities extends RoundRobinScheduledJob implements com.centu
             int maxActivities;
 
                 try {
-                    Properties cleanupTaskProperties = PropertyManager.getInstance().getProperties(PropertyNames.MDW_TIMER_TASK);
-                    if (cleanupTaskProperties != null && cleanupTaskProperties.size() != 0) {
-                        activityAge = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".StuckActivities.ActivityAgeInSeconds", "1800"));  // 30 minutes
-                        maxActivities = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".StuckActivities.MaximumActivities", "10"));
-                    } else {
-                        activityAge = PropertyManager.getIntegerProperty("mdw.StuckActivities.job.ActivityAgeInSeconds", 1800);  // 30 minutes
-                        maxActivities = PropertyManager.getIntegerProperty("mdw.StuckActivities.job.MaximumActivities", 10);
-                    }
+                    activityAge = PropertyManager.getIntegerProperty("mdw.StuckActivities.job.ActivityAgeInSeconds", 1800);  // 30 minutes
+                    maxActivities = PropertyManager.getIntegerProperty("mdw.StuckActivities.job.MaximumActivities", 10);
                     logger.info("StuckActivities run (): with Properties activityAge : " + activityAge + "maxActivities : " + maxActivities);
                     List<Long> activityList = failStuckActivities(activityAge, maxActivities);
                     if (!activityList.isEmpty())
