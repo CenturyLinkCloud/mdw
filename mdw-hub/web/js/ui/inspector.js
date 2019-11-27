@@ -586,7 +586,11 @@ inspectMod.directive('mdwInspector', ['$window', '$document', 'Inspector',
 
           if (obj.workflowType != 'process') {
             // scroll into view
-            var objBtmY = canvasElem[0].getBoundingClientRect().top + obj.display.y + obj.display.h;
+            var scale = 1;
+            if (obj.diagram && obj.diagram.zoom && obj.diagram.zoom != 100) {
+              scale = obj.diagram.zoom / 100;
+            }
+            var objBtmY = canvasElem[0].getBoundingClientRect().top + scale * (obj.display.y + obj.display.h);
             var inspTopY = elem[0].getBoundingClientRect().top;
             if (objBtmY > inspTopY)
               $window.scrollBy(0, objBtmY - inspTopY + 10);
