@@ -133,7 +133,7 @@
     },
     {
       "activityInstanceId": ${~\\d*},
-      "level": "ERROR",
+      "level": "DEBUG",
       "message": "Dynamic Java ClassLoader: class com.centurylink.mdw.cloud.CloudClassLoader:com.centurylink.mdw.tests.workflow",
       "thread": "${~.*}",
       "when": "${~.*}"
