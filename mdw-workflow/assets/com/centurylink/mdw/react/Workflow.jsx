@@ -9,6 +9,7 @@ import NoteFactory from './workflow/Note';
 import MarqueeFactory from './workflow/Marquee';
 import SelectionFactory from './workflow/Selection';
 import DiagramFactory from './workflow/Diagram';
+import WorkflowZoom from './WorkflowZoom.jsx';
 
 class Workflow extends Component {
     
@@ -53,6 +54,7 @@ class Workflow extends Component {
     return (
       <div className="mdw-workflow">
         <div>
+          <WorkflowZoom />
           <canvas id="mdw-canvas" className="mdw-canvas"></canvas> 
         </div>
       </div>  

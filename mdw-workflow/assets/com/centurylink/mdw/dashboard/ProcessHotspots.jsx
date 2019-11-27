@@ -118,7 +118,7 @@ class ProcessHotspots extends Component {
       sel = this.state.processDef.packageName + '/' + this.state.processDef.name + '.proc';
     }
     return (
-      <div>
+      <div className="mdw-panel-full-width" style={{paddingRight:'0'}}>
         <PanelHeader>
           <HeaderLabel title="Sample:" />
           <HeaderDropdown id="sample-dropdown" width={100}
