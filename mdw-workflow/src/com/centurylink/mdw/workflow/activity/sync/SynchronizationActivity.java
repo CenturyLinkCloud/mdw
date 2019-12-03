@@ -42,7 +42,8 @@ import java.util.Map;
  * Synchronization gateway activity.
  */
 @Tracked(LogLevel.TRACE)
-@Activity(value="Synchronization Activity", category=SynchronizationActivity.class, icon="com.centurylink.mdw.base/sync.png",
+@Activity(value="Synchronization Activity", category=com.centurylink.mdw.activity.types.SynchronizationActivity.class,
+        icon="com.centurylink.mdw.base/sync.png",
         pagelet="com.centurylink.mdw.base/synchronization.pagelet")
 public class SynchronizationActivity extends AbstractWait implements com.centurylink.mdw.activity.types.SynchronizationActivity {
 

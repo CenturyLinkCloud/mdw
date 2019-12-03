@@ -11,7 +11,7 @@
     "vw": "200"
   },
   {
-    "name": "Or, check below every microService that must be successful ,in order to proceed",
+    "name": "Or check below every microService that must be successfully invoked to proceed",
     "type": "note"
   },
   {
@@ -22,7 +22,7 @@
       {
         "name": "Enabled",
         "default": "true",
-        "label": "Enabled",
+        "label": "",
         "type": "checkbox"
       },
       {
@@ -76,15 +76,6 @@
     "type": "dropdown",
     "vw": "120",
     "vx": "160"
-  },
-  {
-    "label": "Received Message Variable (Optional)",
-    "name": "rcvdMsgDocVar",
-    "section": "Events",
-    "source": "DocumentVariables",
-    "type": "dropdown",
-    "vw": "160",
-    "vx": "180"
   },
   {
     "name": "Event Wait Activity Help",

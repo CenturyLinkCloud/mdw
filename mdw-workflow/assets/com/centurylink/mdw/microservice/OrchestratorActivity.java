@@ -41,7 +41,7 @@ import com.centurylink.mdw.workflow.activity.process.InvokeProcessActivityBase;
  * Instead, instance info is saved to the ServiceSummary.
  */
 @Tracked(LogLevel.TRACE)
-@Activity(value="Microservice Orchestrator", category=InvokeProcessActivity.class,
+@Activity(value="Microservice Orchestrator", category=com.centurylink.mdw.activity.types.InvokeProcessActivity.class,
         icon="com.centurylink.mdw.microservice/orchestrator.png",
         pagelet="com.centurylink.mdw.microservice/orchestrator.pagelet")
 public class OrchestratorActivity extends InvokeProcessActivityBase {

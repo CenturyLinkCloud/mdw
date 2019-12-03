@@ -15,7 +15,8 @@ import org.json.JSONException;
 
 import java.util.List;
 
-@Activity(value="Microservice Dependencies Wait", category= DependenciesWaitActivity.class,
+@Activity(value="Microservice Dependencies Wait",
+        category=com.centurylink.mdw.activity.types.DependenciesWaitActivity.class,
         icon="com.centurylink.mdw.base/receive.gif",
         pagelet="com.centurylink.mdw.microservice/dependenciesWait.pagelet")
 public class DependenciesWaitActivity extends EventWaitActivity {
