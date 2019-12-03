@@ -31,6 +31,38 @@
     "vh": "320"
   },
   {
+    "label": "Events",
+    "name": "WAIT_EVENT_NAMES",
+    "section": "Events",
+    "type": "table",
+    "widgets": [
+      {
+        "name": "Event Name",
+        "label": "Event Name",
+        "type": "text"
+      },
+      {
+        "name": "Completion Code",
+        "label": "Completion Code",
+        "type": "text"
+      }
+    ]
+  },
+  {
+    "default": "Hold",
+    "label": "Status after receiving event",
+    "lw": "175",
+    "name": "STATUS_AFTER_EVENT",
+    "options": [
+      "Hold",
+      "Waiting"
+    ],
+    "section": "Events",
+    "type": "dropdown",
+    "vw": "120",
+    "vx": "200"
+  },
+  {
     "name": "Subprocess Activity Help",
     "type": "link",
     "url": "help/InvokeSubProcessActivity.html"

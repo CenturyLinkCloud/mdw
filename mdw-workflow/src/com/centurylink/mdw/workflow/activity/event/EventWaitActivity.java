@@ -40,7 +40,8 @@ import org.apache.commons.lang.StringUtils;
 import java.util.List;
 
 @Tracked(LogLevel.TRACE)
-@Activity(value="Event Wait Activity", category=EventWaitActivity.class, icon="com.centurylink.mdw.base/receive.gif",
+@Activity(value="Event Wait Activity", category=com.centurylink.mdw.activity.types.EventWaitActivity.class,
+        icon="com.centurylink.mdw.base/receive.gif",
         pagelet="com.centurylink.mdw.base/eventWait.pagelet")
 public class EventWaitActivity extends AbstractWait implements com.centurylink.mdw.activity.types.EventWaitActivity {
 
@@ -135,7 +136,8 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
     }
 
     /**
-     * You cannot override this method. Override {@link #processMessage(String)} instead.
+     * You cannot override this method. Override {@link #processMessage(String)} or {@link #handleCompletionCode()}
+     * instead.
      *
      * This method is called when the message is received after registration. It extracts the message,
      * records the message in ADAPTER_INSTANCE table, and invoke {@link #processMessage(String)}.
@@ -183,9 +185,8 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
      *
      * @return see above
      * @param message received message
-     * @throws ActivityException ActivityException
      */
-    protected void processMessage(String message) throws ActivityException {
+    protected void processMessage(String message) {
         try {
             String rcvdMsgDocVar = getAttributeValueSmart(RECEIVED_MESSAGE_DOC_VAR);
             if (rcvdMsgDocVar != null && !rcvdMsgDocVar.isEmpty()) {
@@ -204,22 +205,30 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
     }
 
     protected boolean handleCompletionCode() throws ActivityException {
-        String compCode = this.getReturnCode();
-        if (compCode!=null && (compCode.length()==0||compCode.equals(EventType.EVENTNAME_FINISH)))
+        String compCode = getReturnCode();
+        if (compCode != null && (compCode.length() == 0 || compCode.equals(EventType.EVENTNAME_FINISH)))
             compCode = null;
         String actInstStatusName;
-        if (exitStatus==null) actInstStatusName = null;
-        else if (exitStatus.equals(WorkStatus.STATUS_CANCELLED)) actInstStatusName = WorkStatus.STATUSNAME_CANCELLED;
-        else if (exitStatus.equals(WorkStatus.STATUS_WAITING)) actInstStatusName = WorkStatus.STATUSNAME_WAITING;
-        else if (exitStatus.equals(WorkStatus.STATUS_HOLD)) actInstStatusName = WorkStatus.STATUSNAME_HOLD;
-        else actInstStatusName = null;
-        if (actInstStatusName!=null) {
-            if (compCode==null) compCode = actInstStatusName + "::";
-            else compCode = actInstStatusName + "::" + compCode;
+        if (exitStatus == null)
+            actInstStatusName = null;
+        else if (exitStatus.equals(WorkStatus.STATUS_CANCELLED))
+            actInstStatusName = WorkStatus.STATUSNAME_CANCELLED;
+        else if (exitStatus.equals(WorkStatus.STATUS_WAITING))
+            actInstStatusName = WorkStatus.STATUSNAME_WAITING;
+        else if (exitStatus.equals(WorkStatus.STATUS_HOLD))
+            actInstStatusName = WorkStatus.STATUSNAME_HOLD;
+        else
+            actInstStatusName = null;
+
+        if (actInstStatusName != null) {
+            if (compCode == null)
+                compCode = actInstStatusName + "::";
+            else
+                compCode = actInstStatusName + "::" + compCode;
         }
         setReturnCode(compCode);
         if (WorkStatus.STATUS_WAITING.equals(exitStatus)) {
-            this.registerWaitEvents(true);
+            registerWaitEvents(true);
             return compCode != null && (compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
                     || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ABORT)
                     || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ERROR));
