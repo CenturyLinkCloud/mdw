@@ -65,11 +65,12 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
     protected EventWaitInstance registerWaitEvents(boolean reregister, boolean suppressNotify)
     throws ActivityException {
         List<String[]> eventSpecs = this.getWaitEventSpecs();
-        if (eventSpecs.isEmpty()) return null;
+        if (eventSpecs.isEmpty())
+            return null;
         String[] eventNames = new String[eventSpecs.size()];
         String[] eventCompletionCodes = new String[eventSpecs.size()];
         boolean[] eventOccurances = new boolean[eventSpecs.size()];
-        for (int i=0; i<eventNames.length; i++) {
+        for (int i = 0; i < eventNames.length; i++) {
             eventNames[i] = translatePlaceHolder(eventSpecs.get(i)[0]);
             eventCompletionCodes[i] = eventSpecs.get(i)[1];
             if (eventSpecs.get(i)[1]==null) {
@@ -96,25 +97,11 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
         }
     }
 
-    protected EventWaitInstance registerWaitEvent(String eventName, String completionCode,
-            boolean recurring, boolean check_if_arrvied)
-        throws ServiceLocatorException, DataAccessException, ProcessException {
-        if (StringUtils.isBlank(completionCode))
-            completionCode = EventType.EVENTNAME_FINISH;
-        EventWaitInstance received = getEngine().createEventWaitInstance(
-                getProcessInstanceId(),
-                getActivityInstanceId(),
-                eventName,
-                completionCode, recurring, !check_if_arrvied);
-        return received;
-    }
-
     protected final void deregisterEvents() throws ActivityException {
         List<String[]> eventSpecs = this.getWaitEventSpecs();
         if (eventSpecs.isEmpty()) return;
         try {
-            getEngine().removeEventWaitForActivityInstance(getActivityInstanceId(),
-                    "activity completed w/o event");
+            getEngine().removeEventWaitForActivityInstance(getActivityInstanceId(), "activity completed w/o event");
         } catch (Exception e) {
             throw new ActivityException(-1, e.getMessage(), e);
         }

@@ -1672,52 +1672,46 @@ class ProcessExecutorImpl {
 
     }
 
-
-    EventWaitInstance createEventWaitInstances(Long procInstId, Long actInstId, String[] pEventNames,
-            String[] pWakeUpEventTypes, boolean[] pEventOccurances, boolean notifyIfArrived) throws ProcessException {
-        return createEventWaitInstances(procInstId, actInstId, pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived, false);
-    }
-
-
     /**
      * Method that creates the event log based on the passed in params
      */
-    EventWaitInstance createEventWaitInstances(Long procInstId, Long actInstId, String[] pEventNames,
-            String[] pWakeUpEventTypes, boolean[] pEventOccurances, boolean notifyIfArrived, boolean reregister)
+    EventWaitInstance createEventWaitInstances(Long procInstId, Long actInstId, String[] eventNames,
+            String[] wakeUpEventTypes, boolean[] eventOccurances, boolean notifyIfArrived, boolean reregister)
             throws ProcessException {
         try {
             EventWaitInstance ret = null;
             Long documentId = null;
-            String pCompCode = null;
+            String compCode = null;
             int i;
-            for (i=0; i < pEventNames.length; i++) {
-                pCompCode = pWakeUpEventTypes[i];
-
-                documentId = edao.recordEventWait(pEventNames[i],
-                        !pEventOccurances[i],
-                        3600,       // TODO set this value in designer!
-                        actInstId, pWakeUpEventTypes[i]);
-                String msg = "registered event wait event='" + pEventNames[i] + "' actInst=" + actInstId + (pEventOccurances[i]?" as recurring":" as broadcast-waiting");
+            for (i = 0; i < eventNames.length; i++) {
+                compCode = wakeUpEventTypes[i];
+                documentId = edao.recordEventWait(eventNames[i],
+                        !eventOccurances[i],
+                        3600,       // TODO set this value in Studio
+                        actInstId, wakeUpEventTypes[i]);
+                String msg = "registered event wait event='" + eventNames[i] + "' actInst=" + actInstId +
+                        (eventOccurances[i] ? " as recurring" : " as broadcast-waiting");
                 engineLogger.info(procInstId, actInstId, msg);
 
                 if (documentId != null && !reregister)
                     break;
             }
             if (documentId != null && !reregister) {
-                String msg = (notifyIfArrived ? "notify" : "return") + " event before registration: event='" + pEventNames[i] + "' actInst=" + actInstId;
+                String msg = (notifyIfArrived ? "notify" : "return") + " event before registration: event='" +
+                        eventNames[i] + "' actInst=" + actInstId;
                 engineLogger.info(procInstId, actInstId, msg);
-                if (pCompCode != null && pCompCode.length() == 0)
-                    pCompCode = null;
+                if (compCode != null && compCode.length() == 0)
+                    compCode = null;
                 if (notifyIfArrived) {
                     ActivityInstance actInst = edao.getActivityInstance(actInstId);
-                    resumeActivityInstance(actInst, pCompCode, documentId, null, 0);
+                    resumeActivityInstance(actInst, compCode, documentId, null, 0);
                     edao.removeEventWaitForActivityInstance(actInstId, "activity notified");
                 } else {
                     edao.removeEventWaitForActivityInstance(actInstId, "activity to notify is returned");
                 }
                 ret = new EventWaitInstance();
                 ret.setMessageDocumentId(documentId);
-                ret.setCompletionCode(pCompCode);
+                ret.setCompletionCode(compCode);
                 Document docvo = edao.getDocument(documentId, true);
                 edao.updateDocumentInfo(docvo);
             }
@@ -1727,38 +1721,37 @@ class ProcessExecutorImpl {
         }
     }
 
-    Integer notifyProcess(String pEventName, Long pEventInstId, String message, int delay)
-            throws EventException, SQLException {
+    Integer notifyProcess(String eventName, Long docId, String message, int delay) throws EventException, SQLException {
         List<EventWaitInstance> waiters;
 
-        waiters = edao.recordEventArrive(pEventName, pEventInstId);
+        waiters = edao.recordEventArrive(eventName, docId);
 
-        if (waiters!=null && !waiters.isEmpty()) {
+        if (waiters != null && !waiters.isEmpty()) {
             boolean hasFailures = false;
             try {
                 for (EventWaitInstance inst : waiters) {
-                    String pCompCode = inst.getCompletionCode();
-                    if (pCompCode != null && pCompCode.length() == 0)
-                        pCompCode = null;
+                    String compCode = inst.getCompletionCode();
+                    if (compCode != null && compCode.length() == 0)
+                        compCode = null;
 
                     ActivityInstance actInst = edao.getActivityInstance(inst.getActivityInstanceId());
-                    String msg = "notify event after registration: event='" + pEventName + "' actInst=" + inst.getActivityInstanceId();
+                    String msg = "notify event after registration: event='" + eventName + "' actInst=" + inst.getActivityInstanceId();
                     engineLogger.info(actInst.getProcessInstanceId(), actInst.getId(), msg);
 
                     if (actInst.getStatusCode() == WorkStatus.STATUS_IN_PROGRESS) {
                         // assuming it is a service process waiting for message
                         JSONObject json = new JsonObject();
                         json.put("ACTION", "NOTIFY");
-                        json.put("CORRELATION_ID", pEventName);
+                        json.put("CORRELATION_ID", eventName);
                         json.put("MESSAGE", message);
                         internalMessenger.broadcastMessage(json.toString());
                     } else {
-                        resumeActivityInstance(actInst, pCompCode, pEventInstId, message, delay);
+                        resumeActivityInstance(actInst, compCode, docId, message, delay);
                     }
                     // deregister wait instances
                     edao.removeEventWaitForActivityInstance(inst.getActivityInstanceId(), "activity notified");
-                    if (pEventInstId!=null && pEventInstId > 0) {
-                        Document docvo = edao.getDocument(pEventInstId, true);
+                    if (docId!=null && docId > 0) {
+                        Document docvo = edao.getDocument(docId, true);
                         edao.updateDocumentInfo(docvo);
                     }
                 }

@@ -42,8 +42,7 @@ public class DependenciesWaitActivity extends EventWaitActivity {
             setActivityWaitingOnExit();
         }
         String compCode = this.getReturnCode();
-        if (compCode != null
-                && (compCode.length() == 0 || compCode.equals(EventType.EVENTNAME_FINISH)))
+        if (compCode != null && (compCode.length() == 0 || compCode.equals(EventType.EVENTNAME_FINISH)))
             compCode = null;
         String actInstStatusName;
         if (exitStatus.equals(WorkStatus.STATUS_CANCELLED))
