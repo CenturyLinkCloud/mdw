@@ -52,7 +52,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
      */
     public void execute() throws ActivityException {
         EventWaitInstance received = registerWaitEvents(false);
-        if (received!=null) {
+        if (received != null) {
             setReturnCodeAndExitStatus(received.getCompletionCode());
             processMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
             boolean toFinish = handleCompletionCode();

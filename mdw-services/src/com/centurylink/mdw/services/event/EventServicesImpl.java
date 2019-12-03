@@ -105,13 +105,12 @@ public class EventServicesImpl implements EventServices {
         }
     }
 
-    public Integer notifyProcess(String pEventName, Long pEventInstId,
-            String message, int delay)
+    public Integer notifyProcess(String eventName, Long docId, String message, int delay)
             throws DataAccessException, EventException {
         EngineDataAccess edao = new EngineDataAccessDB();
         InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
         ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
-        return engine.notifyProcess(pEventName, pEventInstId, message, delay);
+        return engine.notifyProcess(eventName, docId, message, delay);
     }
 
     /**
