@@ -44,8 +44,9 @@ import java.util.List;
 public abstract class AbstractWait extends DefaultActivityImpl implements SuspendableActivity {
 
     public List<String[]> getWaitEventSpecs() {
-        String attVal = this.getAttributeValue(WorkAttributeConstant.WAIT_EVENT_NAMES);
-        if (attVal==null) return new ArrayList<String[]>();
+        String attVal = getAttributeValue(WorkAttributeConstant.WAIT_EVENT_NAMES);
+        if (attVal == null)
+            return new ArrayList<>();
         return Attribute.parseTable(attVal, ',', ';', 3);
     }
 
@@ -73,15 +74,15 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
         for (int i = 0; i < eventNames.length; i++) {
             eventNames[i] = translatePlaceHolder(eventSpecs.get(i)[0]);
             eventCompletionCodes[i] = eventSpecs.get(i)[1];
-            if (eventSpecs.get(i)[1]==null) {
+            if (eventSpecs.get(i)[1] == null) {
                 eventCompletionCodes[i] = EventType.EVENTNAME_FINISH;
             } else {
                 eventCompletionCodes[i] = eventSpecs.get(i)[1].trim();
-                if (eventCompletionCodes[i].length()==0)
+                if (eventCompletionCodes[i].length() == 0)
                     eventCompletionCodes[i] = EventType.EVENTNAME_FINISH;
             }
             String eventOccur = eventSpecs.get(i)[2];
-            eventOccurances[i] = (eventOccur!=null && eventOccur.equalsIgnoreCase("true"));
+            eventOccurances[i] = (eventOccur != null && eventOccur.equalsIgnoreCase("true"));
         }
         try {
             EventWaitInstance received = getEngine().createEventWaitInstances(

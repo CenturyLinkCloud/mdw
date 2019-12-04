@@ -57,6 +57,13 @@
     ]
   },
   {
+    "label": "Fallback Check Interval",
+    "name": "FallbackCheckInterval",
+    "section": "Events",
+    "type": "datetime",
+    "units": "Minutes,Hours,Days"
+  },
+  {
     "label": "Timeout",
     "name": "SLA",
     "section": "Events",
