@@ -22,6 +22,7 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventInstance;
@@ -42,6 +43,7 @@ import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -107,13 +109,27 @@ public class DependenciesFallbackPublish implements StartupService {
     private static final String WAITING_ACTIVITIES_SQL
             = "select ai.activity_instance_id, pi.process_instance_id from ACTIVITY_INSTANCE ai\n"
             + "  inner join PROCESS_INSTANCE pi on ai.process_instance_id = pi.process_instance_id\n"
-            + "  where ai.activity_id = ? and pi.process_id = ? and ai.status_cd = ? and pi.status_cd = ?";
+            + "  where ai.activity_id = ? and pi.process_id = ? and ai.status_cd = ? and pi.status_cd = ? and ai.start_dt < ?\n";
 
     private List<ActivityInstance> getActivityInstances(Activity activity) throws SQLException {
         List<ActivityInstance> activityInstances = new ArrayList<>();
+        int maxActivities = PropertyManager.getIntegerProperty("mdw.dependencies.fallback.max", 1000);
+        int activityAgeSecs = PropertyManager.getIntegerProperty("mdw.dependencies.fallback.age", 300);
+
+        String sql = WAITING_ACTIVITIES_SQL;
+        if (new DatabaseAccess(null).isOracle()) {
+            sql += "  fetch first " + maxActivities + " rows only";
+        }
+        else {
+            sql += "  limit " + maxActivities;
+        }
+        // TODO order by?
+
+        long cutoff = DatabaseAccess.getCurrentTime() - activityAgeSecs * 1000;
+
         try (DbAccess dbAccess = new DbAccess()) {
-            ResultSet rs = dbAccess.runSelect(WAITING_ACTIVITIES_SQL, activity.getId(), activity.getProcessId(),
-                    WorkStatus.STATUS_WAITING, WorkStatus.STATUS_IN_PROGRESS);
+            ResultSet rs = dbAccess.runSelect(sql, activity.getId(), activity.getProcessId(),
+                    WorkStatus.STATUS_WAITING, WorkStatus.STATUS_IN_PROGRESS, new Timestamp(cutoff));
             while (rs.next()) {
                 ActivityInstance activityInstance = new ActivityInstance();
                 activityInstance.setActivityId(activity.getId());
@@ -140,7 +156,7 @@ public class DependenciesFallbackPublish implements StartupService {
                         + " with result = " + res;
                 logger.info(msg);
                 LogLevel logLevel = (res == EventInstance.RESUME_STATUS_NO_WAITERS ? LogLevel.DEBUG : LogLevel.INFO);
-                ActivityLogger.persist(activityInstance.getProcessInstanceId(), activityInstance.getActivityId(),
+                ActivityLogger.persist(activityInstance.getProcessInstanceId(), activityInstance.getId(),
                         logLevel, msg, null);
             }
         }
@@ -188,7 +204,7 @@ public class DependenciesFallbackPublish implements StartupService {
                                 + ": " + eventName;
                         logger.info(msg);
                         ActivityLogger.persist(activityInstance.getProcessInstanceId(),
-                                activityInstance.getActivityId(), LogLevel.INFO, msg, null);
+                                activityInstance.getId(), LogLevel.INFO, msg, null);
                     } finally {
                         edao.getDatabaseAccess().closeConnection();
                     }
