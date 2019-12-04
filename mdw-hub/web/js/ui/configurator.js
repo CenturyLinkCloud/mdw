@@ -98,7 +98,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
           if (widget.name === 'Java' && widget.value && this.process && this.workflowObj) {
             // check class name
             var expectedClassName = this.process.name + '_' + this.workflowObj.id;
-            var matches = widget.value.match(/(?<=\n)(?:public\s)?(?:class)\s([^\n\s]*)/);
+            var matches = widget.value.match(/(?:.*\n)(?:public\s)?(?:class)\s([^\n\s]*)/);
             if (matches.length >= 2 && matches[1] !== expectedClassName) {
               window.alert('Java class "' + matches[1] + '" does not match expected: "' + expectedClassName + '".');
             }
