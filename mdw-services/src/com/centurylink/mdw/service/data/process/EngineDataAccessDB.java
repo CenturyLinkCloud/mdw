@@ -563,7 +563,8 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                     null, null, null, preserveSeconds, false);
             documentId = null;
         } catch (SQLIntegrityConstraintViolationException e) {
-            if (db.isMySQL()) db.commit();
+            if (db.isMySQL())
+                db.commit();
             EventInstance event = lockEventInstance(eventName);
             if (event.getStatus().equals(EventInstance.STATUS_WAITING)) {
                 if (multipleRecipients) {

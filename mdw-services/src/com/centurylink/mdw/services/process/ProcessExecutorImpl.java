@@ -1750,7 +1750,7 @@ class ProcessExecutorImpl {
                     }
                     // deregister wait instances
                     edao.removeEventWaitForActivityInstance(inst.getActivityInstanceId(), "activity notified");
-                    if (docId!=null && docId > 0) {
+                    if (docId != null && docId > 0) {
                         Document docvo = edao.getDocument(docId, true);
                         edao.updateDocumentInfo(docvo);
                     }
