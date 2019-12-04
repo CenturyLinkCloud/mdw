@@ -447,8 +447,15 @@ inspectMod.controller('MdwInspectorController', ['$scope', '$http', '$parse', 'm
             $scope.editDirty = false;
           }
           else {
-            if ($scope.configurator.valueChanged(widget))
+            if ($scope.configurator.valueChanged(widget)) {
+              if (lang === 'java' && $scope.diagramObject.activity) {
+                if (!$scope.diagramObject.activity.attributes.ClassName) {
+                  // save with default ClassName attribute
+                  $scope.diagramObject.activity.attributes.ClassName = $scope.process.name + '_' +  $scope.diagramObject.activity.id;
+                }
+              }
               $scope.onChange($scope.process);
+            }
             $scope.$parent.setDirty($scope.$parent.process);
           }
         },

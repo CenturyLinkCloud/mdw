@@ -155,6 +155,9 @@ public class Implementors extends JsonRestService {
                     JSONObject implJson = impl.getJson();
                     JSONObject pageletJson = pagelet.getJson();
                     implJson.put("pagelet", pageletJson);
+                    // template content
+                    if (impl.isJava())
+                        implJson.put("defaultContent", Templates.get("assets/code/dynamic_java"));
                     return implJson;
                 }
                 else {

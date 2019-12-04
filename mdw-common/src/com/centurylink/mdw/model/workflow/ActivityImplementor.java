@@ -17,6 +17,8 @@ package com.centurylink.mdw.model.workflow;
 
 import javax.swing.ImageIcon;
 
+import com.centurylink.mdw.activity.types.ScriptActivity;
+import com.centurylink.mdw.activity.types.StartActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -130,9 +132,16 @@ public class ActivityImplementor implements Comparable<ActivityImplementor>, Jso
     }
 
     public boolean isStart() {
-        return getCategory() != null
-          && getCategory().endsWith("StartActivity");
-      }
+        return StartActivity.class.getName().equals(category);
+    }
+
+    public boolean isJava() {
+        return implementorClass.equals("com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity");
+    }
+
+    public boolean isScript() {
+        return ScriptActivity.class.getName().equals(category);
+    }
 
     /**
      * Parse old-style (non-annotation) .impl assets.
