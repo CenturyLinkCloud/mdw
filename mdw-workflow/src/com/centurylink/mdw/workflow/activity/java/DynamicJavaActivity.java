@@ -160,10 +160,11 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
     protected String getClassName() throws ActivityException {
         String className = getAttributeValue(CLASS_NAME);
         if (className == null) {
-            // old logic based on activity name can lead to collisions
+            // fall back to old logic based on activity name, which can lead to collisions
             className = JavaNaming.getValidClassName(getActivityName() + "_" + getAttributeValue("LOGICAL_ID"));
         }
-        return getPackageName() + className;
+        String packageName = getPackageName();
+        return packageName.isEmpty() ? className : packageName + "." + className;
     }
 
     protected String getPackageName() throws ActivityException {
@@ -172,11 +173,11 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
             if (tempPkg == null || tempPkg.isDefaultPackage())
                 return "";
             else
-                return JavaNaming.getValidPackageName(tempPkg.getName() + ".");
+                return JavaNaming.getValidPackageName(tempPkg.getName());
         }
-        else
-            return JavaNaming.getValidPackageName(pkg.getName() + ".");
+        else {
+            return JavaNaming.getValidPackageName(pkg.getName());
+        }
     }
-
 }
 

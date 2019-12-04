@@ -86,6 +86,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
         }
         else
           widget.value = this.workflowObj.attributes[widget.name];
+
         if (widget.type === 'asset')
           this.initAssetOptions([widget]);
       }
@@ -93,6 +94,30 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
         widget.value = this.workflowObj.attributes[widget.name];
         if (widget.type === 'asset')
           this.initAssetOptions([widget]);
+        if (widget.type === 'edit' && !widget.readonly) {
+          if (widget.name === 'Java' && widget.value && this.process && this.workflowObj) {
+            // check class name
+            var expectedClassName = this.process.name + '_' + this.workflowObj.id;
+            var matches = widget.value.match(/(?<=\n)(?:public\s)?(?:class)\s([^\n\s]*)/);
+            if (matches.length >= 2 && matches[1] !== expectedClassName) {
+              window.alert('Java class "' + matches[1] + '" does not match expected: "' + expectedClassName + '".');
+            }
+          }
+          if (!widget.value && this.template.defaultContent) {
+            widget.value = this.template.defaultContent;
+            if (this.process && this.workflowObj) {
+              // substitute placeholders
+              var pkgIdx = widget.value.indexOf('{{assetPackage}}');
+              if (pkgIdx >= 0) {
+                widget.value = widget.value.substring(0, pkgIdx) + this.process.packageName + widget.value.substring(pkgIdx + 16);
+              }
+              var clsIdx = widget.value.indexOf('{{className}}');
+              if (clsIdx >= 0) {
+                widget.value = widget.value.substring(0, clsIdx) + this.process.name + '_' + this.workflowObj.id + widget.value.substring(clsIdx + 13);
+              }
+            }
+          }
+        }
       }
       if (!widget.value && widget.default) {
         widget.value = widget.default;
