@@ -42,6 +42,18 @@ public class CustomContentServlet extends HttpServlet {
         File file = mdw.getHubOverride(path);
         AssetInfo asset = new AssetInfo(mdw.getAssetRoot(), mdw.getOverridePackage() + path);
         String contentType = asset.exists() ? asset.getContentType() : Files.probeContentType(file.toPath());
+        if (contentType == null) {
+            // avoid firefox xml parsing errors
+            if (file.getName().endsWith(".html"))
+                contentType = "text/html";
+            else if (file.getName().endsWith(".json"))
+                contentType = "application/json";
+            else if (file.getName().endsWith(".js"))
+                contentType = "application/javascript";
+            else if (file.getName().endsWith(".css"))
+                contentType = "text/css";
+
+        }
         if (contentType != null)
             response.setContentType(contentType);
 

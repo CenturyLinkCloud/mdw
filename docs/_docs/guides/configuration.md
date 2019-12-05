@@ -66,6 +66,7 @@ title: MDW Configuration
       poolsize: 10  # default=5
       poolMaxIdle: 3  # default=5
       validationQuery: select 1 from dual  # required
+      transaction.isolation: 4 # default=2 (READ_COMMITTED)
       # save datetime/timestamp using microsecond precision
       microsecond.precision: true  # default=false
       # log all queries and timings

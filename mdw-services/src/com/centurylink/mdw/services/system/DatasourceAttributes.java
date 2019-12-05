@@ -10,6 +10,8 @@ public class DatasourceAttributes {
 
     private static final LinkedHashMap<String,String> ATTRIBUTES = new LinkedHashMap<>();
     static {
+        ATTRIBUTES.put("MDWDataSource/DefaultTransactionIsolation", "Default Tx Isolation");
+
         ATTRIBUTES.put("MDWDataSource/NumActive", "Active");
         ATTRIBUTES.put("MDWDataSource/NumIdle", "Idle");
         ATTRIBUTES.put("MDWDataSource/NumWaiters", "Waiting");
