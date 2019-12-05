@@ -41,9 +41,6 @@
         name="testOnBorrow"
         value="true" />
     <property
-        name="testWhileIdle"
-        value="true" />
-    <property
         name="removeAbandonedOnBorrow"
         value="true" />
     <property
@@ -52,6 +49,10 @@
     <property
         name="removeAbandonedTimeout"
         value="600" />
+    <!-- READ_COMMITTED -->
+    <property
+        name="defaultTransactionIsolation"
+        value="#{T(com.centurylink.mdw.config.PropertyManager).getIntegerProperty('mdw.database.transaction.isolation',2)}" />
   </bean>
 
   <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
