@@ -1,4 +1,4 @@
-${StandardInvoke}.proc=8
+${StandardInvoke}.proc=9
 .mdwignore=4
 CombiningConsolidator.java=2
 Consolidator.java=1
