@@ -22,6 +22,7 @@ import com.centurylink.mdw.adapter.SimulationResponse;
 import com.centurylink.mdw.adapter.TextAdapter;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
+import com.centurylink.mdw.common.translator.impl.JsonableTranslator;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
@@ -49,7 +50,6 @@ import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.DateHelper;
 import com.centurylink.mdw.util.JsonUtil;
-import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
@@ -124,20 +124,25 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
                 request = ret;
             }
         }
+
         if (request == null)
             throw new ActivityException("Request data is null");
 
-        if (request instanceof DocumentReference)
-            request = getDocumentContent((DocumentReference)request);
-        if (request instanceof String)
-            return (String)request;
+        if (request instanceof DocumentReference) {
+            request = getValue(varname);
+        }
+        if (request instanceof String) {
+            return (String) request;
+        }
         else {
             VariableInstance varInst = getVariableInstance(varname);
             com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(getPackage(), varInst.getType());
             if (translator != null) {
                 if (translator instanceof JavaObjectTranslator)
                     return request.toString();
-                if (translator instanceof DocumentReferenceTranslator)
+                else if (translator instanceof JsonableTranslator)
+                    return ((JsonableTranslator)translator).toJson(request).toString(2);
+                else if (translator instanceof DocumentReferenceTranslator)
                     return ((DocumentReferenceTranslator)translator).realToString(request);
                 else
                     return translator.toString(request);
@@ -204,7 +209,9 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
             Object responseObj = response;
             String coerceToType = getAttribute(RESPONSE_TYPE);
             if (coerceToType != null) {
-                String className = coerceToType.substring(0, coerceToType.lastIndexOf(".")).replace('/', '.');
+                String className = coerceToType;
+                if (className.contains("/"))
+                    className = className.replace('/', '.'); // asset path
                 try {
                     Class<?> responseClass = getPackage().getCloudClassLoader().loadClass(className);
                     // TODO: handle other types (eg yaml)

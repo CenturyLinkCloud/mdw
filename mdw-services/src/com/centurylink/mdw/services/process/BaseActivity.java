@@ -418,31 +418,13 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return the variable value
      */
     protected Object getParameterValue(String name) {
-        VariableInstance var = this.getVariableInstance(name);
-        return var==null?null:var.getData();
-    }
-
-    /**
-     * This method is used to get the value of a variable that does not
-     * belong to the current process instance. The feature is mainly
-     * for backward compatibility and should not be used for new code.
-     * Warning: this method should *not* be used for getting variable values
-     * for the current process instance, as it does not read cached variable instance.
-     *
-     * @param processInstId process instance ID where the variable belongs.
-     * @param name variable name
-     * @return variable data as an object
-     */
-    protected Object getParameterValue(Long processInstId, String name)
-            throws DataAccessException {
-        VariableInstance varInst = engine.getVariableInstance(processInstId, name);
-        return varInst==null?null:varInst.getData();
-
+        VariableInstance var = getVariableInstance(name);
+        return var == null ? null : var.getData();
     }
 
     protected String getParameterStringValue(String name) {
-        VariableInstance var = this.getVariableInstance(name);
-        return var==null?null:var.getStringValue();
+        VariableInstance var = getVariableInstance(name);
+        return var == null ? null : var.getStringValue();
     }
 
     /**

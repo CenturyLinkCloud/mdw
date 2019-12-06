@@ -1,0 +1,33 @@
+process: # 10045
+  name: RestPostJsonable
+  instance: 1
+  activity: # 1 "2019-12-06 12:27:46.511"
+    name: Start
+    status: Completed
+  activity: # 4 "2019-12-06 12:27:46.526"
+    name: |
+      Build
+      Request
+    status: Completed
+  activity: # 3 "2019-12-06 12:27:46.544"
+    name: |
+      Invoke
+      Post
+    status: Completed
+  activity: # 2 "2019-12-06 12:27:50.283"
+    name: Stop
+    status: Completed
+  variable: # 10045
+    name: serviceResponse
+    value: |
+      {"status": {
+        "code": 201,
+        "message": "Created"
+      }}
+  variable: # 10044
+    name: workgroup
+    value: |
+      {
+        "name": "Another Workgroup",
+        "users": []
+      }

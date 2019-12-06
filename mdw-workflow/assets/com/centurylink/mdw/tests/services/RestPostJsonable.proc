@@ -1,0 +1,68 @@
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=49,y=122,w=60,h=40
+  transitions:
+  - id: T1
+    to: A4
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=140,ly=141,xs=114&167,ys=141&141
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=552,y=123,w=60,h=40
+- id: A3
+  name: |-
+    Invoke
+    Post
+  implementor: com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter
+  attributes:
+    EndpointUri: ${props['mdw.services.url']}/api/Workgroups
+    HttpMethod: POST
+    REQUEST_VARIABLE: workgroup
+    RESPONSE_VARIABLE: serviceResponse
+    ResponseType: com.centurylink.mdw.model.StatusResponse
+    WORK_DISPLAY_INFO: x=339,y=106,w=111,h=73
+  transitions:
+  - id: T2
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=501,ly=143,xs=454&549,ys=143&143
+- id: A4
+  name: |-
+    Build
+    Request
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    Output Documents: '["workgroup"]'
+    Rule: |-
+      import com.centurylink.mdw.model.user.Workgroup
+
+      workgroup = new Workgroup()
+      workgroup.name = "Another Workgroup"
+    SCRIPT: Groovy
+    WORK_DISPLAY_INFO: x=171,y=104,w=106,h=77
+  transitions:
+  - id: T3
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=308,ly=142,xs=281&336,ys=142&142
+variables:
+  serviceResponse:
+    type: com.centurylink.mdw.model.Jsonable
+    category: LOCAL
+  workgroup:
+    type: com.centurylink.mdw.model.Jsonable
+    category: LOCAL
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: PUBLIC
+  PerformanceLevel: '0'
+  WORK_DISPLAY_INFO: x=29,y=21,w=164,h=26
