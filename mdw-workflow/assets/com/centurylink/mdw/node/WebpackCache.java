@@ -87,7 +87,8 @@ public class WebpackCache implements PreloadableCache {
                 // find JSX assets
                 AssetServices assetServices = ServiceLocator.getAssetServices();
                 List<AssetInfo> jsxAssets = new ArrayList<>();
-                jsxAssets.add(assetServices.getAsset("com.centurylink.mdw.react/Run.jsx"));
+                if (PackageCache.getPackage("com.centurylink.mdw.react") != null)
+                    jsxAssets.add(assetServices.getAsset("com.centurylink.mdw.react/Run.jsx"));
                 if (PackageCache.getPackage("com.centurylink.mdw.task") != null)
                     jsxAssets.add(assetServices.getAsset("com.centurylink.mdw.task/Main.jsx"));
                 if (PackageCache.getPackage("com.centurylink.mdw.milestones") != null)

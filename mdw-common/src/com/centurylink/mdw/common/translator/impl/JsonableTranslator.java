@@ -15,15 +15,13 @@
  */
 package com.centurylink.mdw.common.translator.impl;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.TranslationException;
-
-import com.centurylink.mdw.model.JsonObject;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class JsonableTranslator extends DocumentReferenceTranslator implements JsonTranslator {
 
