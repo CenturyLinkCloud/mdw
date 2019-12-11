@@ -13,7 +13,7 @@ process: # 10258
     status: Completed
     result: com.centurylink.mdw.activity.ActivityException: Script content has not been defined...
   activity: # 11 "2017-01-03 11:29:32"
-    name: New Process Finish
+    name: Stop3
     status: Completed
   variable: # 10586
     name: scriptFlavor
@@ -25,5 +25,5 @@ process: # 10261
     name: Start
     status: Completed
   activity: # 14 "2017-01-03 11:29:31"
-    name: Stop
+    name: Stop2
     status: Completed

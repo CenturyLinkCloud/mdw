@@ -27,6 +27,7 @@ import com.centurylink.mdw.model.asset.AssetRequest;
 import com.centurylink.mdw.model.asset.AssetRequest.HttpMethod;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventType;
+import com.centurylink.mdw.model.project.Data;
 import com.centurylink.mdw.model.variable.Variable;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -413,7 +414,11 @@ public class Process extends Asset implements Jsonable, Yamlable, Linkable {
     }
 
     public Activity getStartActivity() {
-        // assumes first activity in asset is start
+        for (Activity activity : getActivities()) {
+            if (Data.Implementors.START_IMPL.equals(activity.getImplementor()))
+                return activity;
+        }
+        // assume first activity in process is start
         return getActivities().get(0);
     }
 
