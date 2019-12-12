@@ -611,23 +611,23 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
-    public int countActivityInstances(Long procInstId, Long activityId, Integer[] statuses)
+    public int countActivityInstances(Long procInstId, Long activityId)
      throws DataAccessException {
         TransactionWrapper transaction=null;
         try {
             transaction = startTransaction();
-            return engineImpl.getDataAccess().countActivityInstances(procInstId, activityId, statuses);
+            return engineImpl.getDataAccess().countActivityInstances(procInstId, activityId);
         } catch (DataAccessException e) {
             if (canRetryTransaction(e)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                return ((ProcessExecutor)getTransactionRetrier()).countActivityInstances(procInstId, activityId, statuses);
+                return ((ProcessExecutor)getTransactionRetrier()).countActivityInstances(procInstId, activityId);
             }
             else
                 throw e;
         } catch (SQLException e) {
             if (canRetryTransaction(e)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                return ((ProcessExecutor)getTransactionRetrier()).countActivityInstances(procInstId, activityId, statuses);
+                return ((ProcessExecutor)getTransactionRetrier()).countActivityInstances(procInstId, activityId);
             }
             else
                 throw new DataAccessException(0, "Failed to count activity instances", e);
