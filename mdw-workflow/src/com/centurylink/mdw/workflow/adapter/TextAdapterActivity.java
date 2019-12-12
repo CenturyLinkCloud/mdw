@@ -22,6 +22,7 @@ import com.centurylink.mdw.adapter.SimulationResponse;
 import com.centurylink.mdw.adapter.TextAdapter;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
+import com.centurylink.mdw.common.translator.impl.JsonableTranslator;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
@@ -40,7 +41,6 @@ import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
-import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.monitor.AdapterMonitor;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
@@ -49,7 +49,6 @@ import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.DateHelper;
 import com.centurylink.mdw.util.JsonUtil;
-import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
@@ -124,20 +123,25 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
                 request = ret;
             }
         }
+
         if (request == null)
             throw new ActivityException("Request data is null");
 
-        if (request instanceof DocumentReference)
-            request = getDocumentContent((DocumentReference)request);
-        if (request instanceof String)
+        if (request instanceof DocumentReference) {
+            request = getValue(varname);
+        }
+        if (request instanceof String) {
             return (String)request;
+        }
         else {
             VariableInstance varInst = getVariableInstance(varname);
             com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(getPackage(), varInst.getType());
             if (translator != null) {
                 if (translator instanceof JavaObjectTranslator)
                     return request.toString();
-                if (translator instanceof DocumentReferenceTranslator)
+                else if (translator instanceof JsonableTranslator)
+                    return ((JsonableTranslator)translator).toJson(request).toString(2);
+                else if (translator instanceof DocumentReferenceTranslator)
                     return ((DocumentReferenceTranslator)translator).realToString(request);
                 else
                     return translator.toString(request);
