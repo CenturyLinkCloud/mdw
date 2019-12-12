@@ -208,7 +208,9 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
             Object responseObj = response;
             String coerceToType = getAttribute(RESPONSE_TYPE);
             if (coerceToType != null) {
-                String className = coerceToType.substring(0, coerceToType.lastIndexOf(".")).replace('/', '.');
+                String className = coerceToType;
+                if (className.contains("/"))
+                    className = className.replace('/', '.'); // asset path
                 try {
                     Class<?> responseClass = getPackage().getCloudClassLoader().loadClass(className);
                     // TODO: handle other types (eg yaml)
