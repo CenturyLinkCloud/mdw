@@ -1,6 +1,8 @@
 package com.centurylink.mdw.tests.services
 
-today = new Date().format("YYYY-MM-dd")
+import java.text.SimpleDateFormat
+
+today = new SimpleDateFormat("YYYY-MM-dd").format(new Date())
 start process('ServiceMain') {
     variables = [ testCase: 'multiple' ]
 }

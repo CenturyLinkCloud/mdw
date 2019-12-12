@@ -2,6 +2,8 @@ package com.centurylink.mdw.tests.tasks
 
 import org.json.JSONObject
 
+import java.text.SimpleDateFormat
+
 def getJson(Map<String,String> map) {
     if (map == null)
         return null;
@@ -16,7 +18,7 @@ def getJson(Map<String,String> map) {
 
 // task-values-service
 start process("ManualTaskServices") {
-    variables = [ dateVar: Date.parse("MM-dd-yyyy HH:mm:ss", "04-01-2016 14:36:00"),
+    variables = [ dateVar: new SimpleDateFormat("MM-dd-yyyy HH:mm:ss").parse("04-01-2016 14:36:00"),
                   stringVar: "Hello",
                   docVar: "<full>\n  <document content='xml'/>\n</full>",
                   jaxbVar: '''<TaskJaxb
@@ -64,7 +66,7 @@ response.expected = asset("task-values-json-1.json").text
 
 // update some values through the REST API
 def values = [:]
-values["dateVar"] = Date.parse("MM-dd-yyyy HH:mm:ss", "04-01-2016 15:36:00")
+values["dateVar"] = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss").parse("04-01-2016 15:36:00")
 values["#{jaxbVar.elementOne}"] = "newElementOneValue"
 values["#{objectVar.taskmaster}"] = "dxoakes"
 values["docVar"] = "<empty/>"
