@@ -1,6 +1,6 @@
 A\ Task\ For\ Testing\ Variables.task=2
 ActivityException.proc=7
-ActivityException.test=3
+ActivityException.test=4
 ActivityException.yaml=13
 ActivityLogging.proc=2
 ActivityLogging.test=2
@@ -93,7 +93,7 @@ OverlappingJob.java=4
 OverlappingJobAsync.java=3
 Person.java=8
 PopulateVar.java=2
-ProcessAndActivitySLA.test=1
+ProcessAndActivitySLA.test=2
 ProcessAndActivitySLA.yaml=1
 ProcessSLA.proc=2
 ProcessSLASub.proc=2
