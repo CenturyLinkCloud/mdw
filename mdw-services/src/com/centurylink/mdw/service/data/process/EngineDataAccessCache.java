@@ -375,23 +375,27 @@ public class EngineDataAccessCache implements EngineDataAccess {
         }
     }
 
-    public int countActivityInstances(Long procInstId, Long activityId, Integer[] statuses)
+    public int countActivityInstances(Long procInstId, Long activityId)
             throws SQLException {
         if (cache_activity_transition==CACHE_ONLY) {
             int count = 0;
+            List<ActivityInstance> actInstances = new ArrayList<>();
             for (ActivityInstance actInst : activityInstCache.values()) {
                 if (!actInst.getActivityId().equals(activityId)) continue;
                 if (!actInst.getProcessInstanceId().equals(procInstId)) continue;
-                for (Integer s : statuses) {
-                    if (s.intValue()==actInst.getStatusCode()) {
-                        count++;
-                        break;
-                    }
-                }
+                actInstances.add(actInst);
+            }
+            Collections.sort(actInstances, (ActivityInstance o1, ActivityInstance o2) ->
+                    o1.getId().compareTo(o2.getId()));
+            for (ActivityInstance actInst : actInstances) {
+                if (actInst.getStatusCode() == WorkStatus.STATUS_FAILED)
+                    count++;
+                else if (actInst.getStatusCode() == WorkStatus.STATUS_COMPLETED)
+                    count = 0;
             }
             return count;
         } else {
-            return edadb.countActivityInstances(procInstId, activityId, statuses);
+            return edadb.countActivityInstances(procInstId, activityId);
         }
     }
 
