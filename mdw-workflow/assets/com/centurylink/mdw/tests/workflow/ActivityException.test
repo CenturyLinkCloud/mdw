@@ -1,6 +1,8 @@
 package com.centurylink.mdw.tests.workflow
 
-today = new Date().format("YYYY-MM-dd");
+import java.text.SimpleDateFormat
+
+today = new SimpleDateFormat("YYYY-MM-dd").format(new Date())
 println 'today: ' + today
 start process("ActivityException") {
     variables = [processCase: "error handler delegation"]
