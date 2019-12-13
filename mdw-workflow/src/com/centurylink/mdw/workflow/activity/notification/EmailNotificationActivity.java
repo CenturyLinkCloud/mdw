@@ -48,7 +48,7 @@ import java.util.Map;
  * Activity for sending HTML email notifications.
  */
 @Tracked(LogLevel.TRACE)
-@Activity(value="Email Notification", category=NotificationActivity.class, icon="com.centurylink.mdw.base/notice.gif",
+@Activity(value="Email Notification", category=NotificationActivity.class, icon="com.centurylink.mdw.base/email.png",
         pagelet="com.centurylink.mdw.base/emailNotification.pagelet")
 public class EmailNotificationActivity extends DefaultActivityImpl implements NotificationActivity {
 

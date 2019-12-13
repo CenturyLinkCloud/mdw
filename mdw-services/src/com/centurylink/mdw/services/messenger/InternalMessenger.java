@@ -72,7 +72,7 @@ public abstract class InternalMessenger {
      * for InternalMessengerJms short delay only
      */
     protected String addMessageNoCaching(InternalEvent msg, EngineDataAccess edao, String msgid) throws SQLException {
-        if (cacheOption==CACHE_ONLY) {
+        if (cacheOption == CACHE_ONLY) {
             return null;
         } else {    // CACHE_ON/CACHE_OFF
             edao.persistInternalEvent(msgid, msg.toXml());

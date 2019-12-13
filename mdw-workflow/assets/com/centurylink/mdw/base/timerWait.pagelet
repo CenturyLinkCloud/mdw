@@ -8,6 +8,7 @@
   {
     "label": "Events",
     "name": "WAIT_EVENT_NAMES",
+    "section": "Events",
     "type": "table",
     "widgets": [
       {
@@ -23,10 +24,11 @@
     ]
   },
   {
-    "default": "Cancelled",
-    "label": "Status after receiving event",
-    "lw": "175",
     "name": "STATUS_AFTER_EVENT",
+    "label": "Status after receiving event",
+    "section": "Events",
+    "default": "Cancelled",
+    "lw": "175",
     "options": [
       "Hold",
       "Waiting",
@@ -35,6 +37,13 @@
     "type": "dropdown",
     "vw": "120",
     "vx": "200"
+  },
+  {
+    "label": "Fallback Check Interval",
+    "name": "FallbackCheckInterval",
+    "section": "Events",
+    "type": "datetime",
+    "units": "Minutes,Hours,Days"
   },
   {
     "name": "Timer Wait Activity Help",

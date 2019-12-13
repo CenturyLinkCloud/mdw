@@ -755,8 +755,8 @@ public class EngineDataAccessCache implements EngineDataAccess {
             edac = new EngineDataAccessCache(forServiceProcess, performance_level);
         } else {
             if (performance_level>=9) {
-                if (memoryOnlyInstance==null) memoryOnlyInstance =
-                        new EngineDataAccessCache(forServiceProcess, performance_level);
+                if (memoryOnlyInstance == null)
+                    memoryOnlyInstance = new EngineDataAccessCache(forServiceProcess, performance_level);
                 edac = memoryOnlyInstance;
             } else edac = new EngineDataAccessCache(forServiceProcess, performance_level);
         }

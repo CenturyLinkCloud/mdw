@@ -47,4 +47,7 @@
   <Cache Name="HierarchyCache" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.service.data.process.HierarchyCache</Property>
   </Cache>
+  <Cache Name="ActivityCache" Type="ReadOnly">
+    <Property Name="ClassName">com.centurylink.mdw.service.data.activity.ActivityCache</Property>
+  </Cache>
 </ApplicationCache>
