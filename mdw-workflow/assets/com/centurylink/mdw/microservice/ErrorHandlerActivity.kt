@@ -20,7 +20,7 @@ class ErrorHandlerActivity : DefaultActivityImpl() {
             return null
         }
         else {
-            System.out.println("RUNTIME CONTEXT: " + runtimeContext.json.toString(2))
+            runtimeContext.logError("RUNTIME CONTEXT: " + runtimeContext.json.toString(2))
             return null // TODO
         }
     }

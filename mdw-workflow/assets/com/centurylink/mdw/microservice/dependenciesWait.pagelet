@@ -57,13 +57,6 @@
     ]
   },
   {
-    "label": "Fallback Check Interval",
-    "name": "FallbackCheckInterval",
-    "section": "Events",
-    "type": "datetime",
-    "units": "Minutes,Hours,Days"
-  },
-  {
     "label": "Timeout",
     "name": "SLA",
     "section": "Events",
@@ -83,6 +76,13 @@
     "type": "dropdown",
     "vw": "120",
     "vx": "160"
+  },
+  {
+    "label": "Fallback Check Interval",
+    "name": "FallbackCheckInterval",
+    "section": "Events",
+    "type": "datetime",
+    "units": "Minutes,Hours,Days"
   },
   {
     "name": "Event Wait Activity Help",

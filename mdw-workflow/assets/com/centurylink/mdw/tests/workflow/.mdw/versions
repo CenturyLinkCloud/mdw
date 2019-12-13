@@ -170,6 +170,7 @@ TimerWaitEventHold.test=2
 TimerWaitEventHold.yaml=1
 TimerWaitEventWait.test=2
 TimerWaitEventWait.yaml=1
+TimerWaitFallback.proc=1
 TimerWaitMethodExpr.test=2
 TimerWaitMethodExpr.yaml=1
 TnValidator.groovy=3

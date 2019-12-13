@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 @Tracked(LogLevel.TRACE)
-@Activity(value="Dynamic Java", icon="com.centurylink.mdw.base/java.jpg",
+@Activity(value="Dynamic Java", icon="com.centurylink.mdw.base/java.png",
         pagelet="com.centurylink.mdw.base/dynamicJava.pagelet")
 public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJavaImplementor {
 

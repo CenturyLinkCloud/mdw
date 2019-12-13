@@ -1017,7 +1017,7 @@
   font-weight: normal;
 }
 .mdw-canvas {
-  margin-top: -18px; /* account for zoom controls */
+  margin-top: -10px; /* account for zoom controls */
   /* prevent highlighting on double-click */
   user-select: none;
   -moz-user-select: none;
