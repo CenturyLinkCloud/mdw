@@ -85,7 +85,7 @@ public interface EngineDataAccess {
     void updateActivityInstanceEndTime(Long actInstId, Date endtime)
     throws SQLException;
 
-    int countActivityInstances(Long procInstId, Long activityId, Integer[] statuses)
+    int countActivityInstances(Long procInstId, Long activityId)
     throws SQLException;
 
     Integer lockActivityInstance(Long actInstId)

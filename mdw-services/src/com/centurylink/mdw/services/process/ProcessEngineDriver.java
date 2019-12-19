@@ -500,7 +500,7 @@ public class ProcessEngineDriver {
             if (procInstId != null) {
                 EngineDataAccess temp_edao = EngineDataAccessCache.getInstance(false, 9);
                 procInst = temp_edao.getProcessInstance(procInstId);
-                if (procInst==null) {
+                if (procInst == null) {
                     TransactionWrapper transaction = null;
                     EngineDataAccessDB edbao = new EngineDataAccessDB();
                     try {
@@ -531,6 +531,8 @@ public class ProcessEngineDriver {
             if (procInst == null) {        // must be process start message
                 if (event.isProcess() && event.getEventType().equals(EventType.START)) {
                     Process procdef = getProcessDefinition(event.getWorkId());
+                    if (procdef == null)
+                        throw new WorkflowException("Unable to load process id " + event.getWorkId() + " for " + msgid);
                     performance_level = procdef.getPerformanceLevel();
                 } else {
                     performance_level = 0;

@@ -198,7 +198,7 @@ public class PropertyNames {
     public static final String MDW_JSON_ORDERED_KEYS = "mdw.json.ordered.keys";
     public static final String MDW_DISCOVERY_BRANCHTAGS_MAX = "mdw.discovery.maxBranchesTags";
 
-    // System metrics
+    // system metrics
     public static final String MDW_SYSTEM_METRICS_PERIOD = "mdw.system.metrics.period";
     public static final String MDW_SYSTEM_METRICS_RETENTION = "mdw.system.metrics.retention";
     public static final String MDW_SYSTEM_METRICS_ENABLED = "mdw.system.metrics.enabled";
@@ -210,6 +210,13 @@ public class PropertyNames {
     public static final String MDW_MILESTONE_IGNORES = "mdw.milestone.ignores";
     public static final String MDW_MILESTONE_IMPORTANCE = "mdw.milestone.importance";
 
+    // mongo
     public static final String MDW_MONGODB_FORMAT_JSON= "mdw.mongodb.format.json";
+
+    // wait activity fallback
+    public static final String MDW_WAIT_FALLBACK_STAGGER = "mdw.wait.fallback.stagger";
+    public static final String MDW_WAIT_FALLBACK_MAX = "mdw.wait.fallback.max";
+    public static final String MDW_WAIT_FALLBACK_AGE = "mdw.wait.fallback.age";
+
 
 }

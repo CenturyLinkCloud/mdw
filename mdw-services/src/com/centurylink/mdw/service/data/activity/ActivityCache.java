@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.base;
+package com.centurylink.mdw.service.data.activity;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.workflow.Activity;
-import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.service.data.activity.ImplementorCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -32,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Caches activities according to their category.
+ * Caches activities according to their implementor.
  */
 @RegisteredService(value=CacheService.class)
 public class ActivityCache implements CacheService {
@@ -40,30 +38,27 @@ public class ActivityCache implements CacheService {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static Map<String,List<Activity>> activities = new HashMap<>();
 
-    public static List<Activity> getActivities(String category) throws DataAccessException {
+    /**
+     * Find activities in process defs with the specified implementor class.
+     */
+    public static List<Activity> getActivities(String implementor) throws DataAccessException {
         synchronized (ActivityCache.class) {
-            List<Activity> matchingActivities = activities.get(category);
+            List<Activity> matchingActivities = activities.get(implementor);
             if (matchingActivities == null) {
-                matchingActivities = loadActivities(category);
-                activities.put(category, matchingActivities);
+                matchingActivities = loadActivities(implementor);
+                activities.put(implementor, matchingActivities);
             }
             return matchingActivities;
         }
     }
 
-    private static List<Activity> loadActivities(String category) throws DataAccessException {
+    private static List<Activity> loadActivities(String implementor) throws DataAccessException {
         List<Activity> loadedActivities = new ArrayList<>();
         long before = System.currentTimeMillis();
         for (Process process : ProcessCache.getAllProcesses()) {
             process = ProcessCache.getProcess(process.getId());
             for (Activity activity : process.getActivities()) {
-                ActivityImplementor implementor = ImplementorCache.get(activity.getImplementor());
-                if (implementor == null) {
-                    String id = process.getPackageName() + "/" + process.getName() + " v" + process.getVersionString()
-                            + " : " + activity.getLogicalId();
-                    logger.error("ActivityImplementor not found: " + activity.getImplementor() + " (" + id + ")");
-                }
-                if (implementor != null && implementor.getCategory().equals(category)) {
+                if (implementor.equals(activity.getImplementor())) {
                     activity.setPackageName(process.getPackageName());
                     activity.setProcessName(process.getName());
                     activity.setProcessVersion(process.getVersionString());
@@ -73,7 +68,7 @@ public class ActivityCache implements CacheService {
             }
         }
         long elapsed = System.currentTimeMillis() - before;
-        logger.debug(category + " activities loaded in " + elapsed + " ms");
+        logger.debug(implementor + " activities loaded in " + elapsed + " ms");
         return loadedActivities;
     }
 

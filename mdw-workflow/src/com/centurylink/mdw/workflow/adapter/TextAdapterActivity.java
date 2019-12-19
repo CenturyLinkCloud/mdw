@@ -41,7 +41,6 @@ import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
-import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.monitor.AdapterMonitor;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
@@ -132,7 +131,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
             request = getValue(varname);
         }
         if (request instanceof String) {
-            return (String) request;
+            return (String)request;
         }
         else {
             VariableInstance varInst = getVariableInstance(varname);
@@ -284,13 +283,12 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
      * @return
      */
     private int countTries() throws ActivityException {
-        Integer[] statuses = { WorkStatus.STATUS_FAILED };
         // note the current activity is at in-progress status. Failed status must be counted
         // It is debatable if we should include other statuses
         int count;
         try {
             count = this.getEngine().countActivityInstances(getProcessInstanceId(),
-                    this.getActivityId(), statuses);
+                    this.getActivityId());
             count += 1;        // add the current instance - it is not yet in failed status
         } catch (Exception e) {
             setReturnCode(null);    // override "RETRY"
