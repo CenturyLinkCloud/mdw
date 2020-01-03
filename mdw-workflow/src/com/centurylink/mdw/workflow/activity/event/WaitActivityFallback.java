@@ -96,6 +96,11 @@ public abstract class WaitActivityFallback implements StartupService {
 
     private Map<Activity,ScheduledFuture> activitySchedules = new HashMap<>();
 
+    /**
+     *  Per cycle, duplicate events will not be processed.
+     */
+    private Map<String,String> uniqueEvents = new HashMap<>();
+
     @Override
     final public void onStartup() throws StartupException {
         try {
@@ -152,10 +157,14 @@ public abstract class WaitActivityFallback implements StartupService {
     }
 
     /**
-     * Returns activities from all process definitions which need to be periodically processed.
+     * Returns activities from non-archived process definitions which need to be periodically processed.
      */
     protected List<Activity> getActivities() throws DataAccessException {
-        return ActivityCache.getActivities(getImplementor());
+        return ActivityCache.getActivities(getImplementor(), isIncludeArchived());
+    }
+
+    protected boolean isIncludeArchived() {
+        return PropertyManager.getBooleanProperty(PropertyNames.MDW_WAIT_FALLBACK_ARCHIVED, false);
     }
 
     private static final String WAITING_ACTIVITIES_SQL
