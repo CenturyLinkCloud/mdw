@@ -96,11 +96,6 @@ public abstract class WaitActivityFallback implements StartupService {
 
     private Map<Activity,ScheduledFuture> activitySchedules = new HashMap<>();
 
-    /**
-     *  Per cycle, duplicate events will not be processed.
-     */
-    private Map<String,String> uniqueEvents = new HashMap<>();
-
     @Override
     final public void onStartup() throws StartupException {
         try {
