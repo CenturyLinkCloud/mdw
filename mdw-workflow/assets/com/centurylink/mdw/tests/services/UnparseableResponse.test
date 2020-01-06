@@ -1,0 +1,25 @@
+package com.centurylink.mdw.tests.services
+
+// clean up previously added workgroup
+delete http('api/Workgroups/Yet%20another%20group')
+
+start process("UnparseableResponse") {
+    variables = [url: "http://localhost:8080/mdw/Services/REST"]
+    timeout = 120
+}
+
+// first invocation fails with http 500 and returns xml response
+sleep 10
+load process
+
+// now update the URL to something with a JSON response (also see adapter pre-script)
+def response = put http("api/Processes/${masterProcessInstance.id}/values/url") {
+    user = 'mdwapp'
+    password = 'mdwapp'
+    headers = [ Accept: 'application/json' ]
+    payload = '{ "url": "http://localhost:8080/mdw/api/Workgroups" }'
+}
+
+// subsequent retry should succeed
+wait process
+verify process
