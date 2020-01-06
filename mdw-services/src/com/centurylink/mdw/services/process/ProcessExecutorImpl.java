@@ -1757,7 +1757,7 @@ class ProcessExecutorImpl {
                 }
             } catch (Exception ex) {
                 logger.severeException(ex.getMessage(), ex);
-                throw new EventException(ex.getMessage());
+                throw new EventException(ex.getMessage(), ex);
             }
             if (hasFailures)
                 return EventInstance.RESUME_STATUS_PARTIAL_SUCCESS;
