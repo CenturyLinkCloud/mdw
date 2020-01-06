@@ -1,0 +1,40 @@
+process: # 10332
+  name: UnparseableResponse
+  instance: 1
+  activity: # 1 "2020-01-06 15:03:41.011"
+    name: Start
+    status: Completed
+  activity: # 5 "2020-01-06 15:03:41.026"
+    name: |
+      Create
+      Request
+    status: Completed
+  activity: # 3 "2020-01-06 15:03:41.046"
+    name: Invoke
+    status: Failed
+    result: com.centurylink.mdw.activity.ActivityException: Server returned HTTP response code: 500...
+  activity: # 3 "2020-01-06 15:04:25.731"
+    name: Invoke
+    status: Completed
+  activity: # 2 "2020-01-06 15:04:25.776"
+    name: Stop
+    status: Completed
+  variable: # 10722
+    name: serviceRequest
+    value: |
+      <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+      <GetEmployee xmlns:ns2="http://mdw.centurylink.com/serviceTypes">
+      </GetEmployee>
+  variable: # 10723
+    name: serviceRequestHeaders
+    value: {"Content-Type": "text/xml"}
+  variable: # 10727
+    name: serviceResponse
+    value: |
+      {"status": {
+        "code": 201,
+        "message": "Created"
+      }}
+  variable: # 10721
+    name: url
+    value: http://localhost:8080/mdw/api/Workgroups
