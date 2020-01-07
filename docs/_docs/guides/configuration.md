@@ -172,6 +172,15 @@ title: MDW Configuration
         eventExpirationDays: 180
         commitInterval: 1000
         RuntimeCleanupScript: Cleanup-Runtime.sql
+    
+    # Wait Activity Fallback Processing
+    wait:
+      fallback:
+        stagger: 60  # seconds offset between scheduling scan for each activity - default=30
+        max: 20  # maximum number of activity instances to trigger per cycle - default=100
+        age: 1200 # minimum age of waiting activity instances to process - default=600
+    timer.wait.fallback.enabled: true  # enable fallback processing for timer wait activities - default=false
+    dependencies.wait.fallback.enabled: true  # enable fallback processing for dependencies waits - default=false
 
     # Custom JWT Providers   
     jwt:
