@@ -83,7 +83,7 @@ public abstract class WaitActivityFallback implements StartupService {
      * Max batch size per check cycle.  From property "mdw.wait.fallback.max", with default of 1000.
      */
     public int getMaxActivities() {
-        return PropertyManager.getIntegerProperty(PropertyNames.MDW_WAIT_FALLBACK_MAX, 1000);
+        return PropertyManager.getIntegerProperty(PropertyNames.MDW_WAIT_FALLBACK_MAX, 100);
     }
 
     /**
@@ -91,7 +91,7 @@ public abstract class WaitActivityFallback implements StartupService {
      * From property "mdw.wait.fallback.age", with default of 300.
      */
     public int getMinActivityAge() {
-        return PropertyManager.getIntegerProperty(PropertyNames.MDW_WAIT_FALLBACK_AGE, 300);
+        return PropertyManager.getIntegerProperty(PropertyNames.MDW_WAIT_FALLBACK_AGE, 600);
     }
 
     private Map<Activity,ScheduledFuture> activitySchedules = new HashMap<>();
@@ -111,12 +111,18 @@ public abstract class WaitActivityFallback implements StartupService {
                             ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, new FallbackThreadFactory(activity));
                             ScheduledFuture schedule = scheduler.scheduleAtFixedRate(() -> {
                                 try {
-                                    for (ActivityInstance activityInstance : getActivityInstances(activity)) {
+                                    List<ActivityInstance> activityInstances = getActivityInstances(activity);
+                                    String msg = "Found " + activityInstances.size() + " waiting instances of " + getActivityLabel(activity);
+                                    if (activityInstances.isEmpty())
+                                        logger.debug(msg);
+                                    else
+                                        logger.info(msg);
+                                    for (ActivityInstance activityInstance : activityInstances) {
                                         try {
                                             process(activity, activityInstance);
                                         }
                                         catch (Exception ex) {
-                                            String msg = "Processing failed for " + getActivityLabel(activity);
+                                            msg = "Processing failed for " + getActivityLabel(activity);
                                             logger.error(msg, ex);
                                             ActivityLogger.persist(activityInstance.getProcessInstanceId(), activityInstance.getId(), LogLevel.ERROR, msg, ex);
                                         }
