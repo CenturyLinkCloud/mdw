@@ -72,7 +72,7 @@ public abstract class WaitActivityFallback implements StartupService {
     }
 
     /**
-     * Each activity in all process definitins gets a separate thread/schedule for processing.
+     * Each activity in all process definitions gets a separate thread/schedule for processing.
      * This returns the staggering interval between scheduler initiation for each defined activity.
      */
     public int getStagger() {
