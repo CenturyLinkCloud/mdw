@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Represents a ServiceNow incident.  Used to build the API request for creating an incident.
+ */
 public class Incident implements Jsonable {
 
     public Incident() {
