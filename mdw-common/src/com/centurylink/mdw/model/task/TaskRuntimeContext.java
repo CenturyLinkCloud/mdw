@@ -71,7 +71,7 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
         if (valueExpressionMap == null) {
             valueExpressionMap = super.getValueExpressionMap();
             valueExpressionMap.put("context", new ValueExpressionLiteral(this, Object.class));
-            valueExpressionMap.put("task", new ValueExpressionLiteral(this, Object.class));  //for backward compatibility
+            valueExpressionMap.put("task", new ValueExpressionLiteral(this.taskInstance, Object.class));
             valueExpressionMap.put("taskInstanceId", new ValueExpressionLiteral(this.getTaskInstance().getTaskInstanceId(), String.class));
             valueExpressionMap.put("taskName", new ValueExpressionLiteral(this.getTaskTemplate().getTaskName(), String.class));
             valueExpressionMap.put("due", new ValueExpressionLiteral(this.getTaskInstance().getDue(), Instant.class));

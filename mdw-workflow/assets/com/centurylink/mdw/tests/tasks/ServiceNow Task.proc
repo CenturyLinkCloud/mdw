@@ -1,0 +1,42 @@
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=70,y=110,w=60,h=40
+  transitions:
+  - id: T1
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=190,ly=130,xs=134&246,ys=130&130
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=480,y=110,w=60,h=40
+- id: A3
+  name: |-
+    Create
+    Task
+  implementor: com.centurylink.mdw.servicenow.ServiceNowTaskActivity
+  attributes:
+    TASK_TEMPLATE: com.centurylink.mdw.tests.tasks/ServiceNowTask.task
+    TASK_TEMPLATE_assetVersion: '[0.1,1)'
+    WORK_DISPLAY_INFO: x=250,y=90,w=120,h=80
+  transitions:
+  - id: T2
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=425,ly=130,xs=374&476,ys=130&130
+variables:
+  taskName:
+    type: java.lang.String
+    category: INPUT
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: PUBLIC
+  PerformanceLevel: '0'
+  WORK_DISPLAY_INFO: x=28,y=25,w=162,h=26
