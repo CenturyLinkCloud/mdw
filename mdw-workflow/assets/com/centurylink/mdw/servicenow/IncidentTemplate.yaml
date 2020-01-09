@@ -1,0 +1,14 @@
+# Maps from TaskInstance values to ServiceNow Incident API fields.
+# The incident field is the element name, and the value is where it comes from on the task.
+# Only the fields included here are populated on the request.
+# Hardcoded values are like this: "'This is hardcoded'".
+shortDescription: name
+description: description
+assignmentGroup: workgroupsString
+impact: "'2'"
+urgency: priority
+category: category
+caller: "'MDW Application'"
+correlationId: id
+correlationDisplay: "'Task Instance'"
+dueDate: due

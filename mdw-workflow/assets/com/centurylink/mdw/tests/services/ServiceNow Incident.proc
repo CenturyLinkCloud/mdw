@@ -1,0 +1,78 @@
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=90,y=160,w=60,h=40
+  transitions:
+  - id: T1
+    to: A4
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=190,ly=180,xs=154&226,ys=180&180
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=610,y=160,w=60,h=40
+- id: A3
+  name: |-
+    Create
+    Incident
+  implementor: com.centurylink.mdw.servicenow.ServiceNowAdapter
+  attributes:
+    AuthPassword: ${env['MDW_SERVICENOW_PASSWORD']}
+    AuthUser: ${env['MDW_SERVICENOW_USER']}
+    EndpointUri: ${props['servicenow.url']}/table/incident
+    REQUEST_VARIABLE: incident
+    RESPONSE_VARIABLE: incidentResponse
+    WORK_DISPLAY_INFO: x=420,y=140,w=120,h=80
+  transitions:
+  - id: T2
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=575,ly=180,xs=544&606,ys=180&180
+- id: A4
+  name: |-
+    Build
+    Request
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    Output Documents: '["incident"]'
+    Rule: |
+      import com.centurylink.mdw.servicenow.Incident
+
+      import com.centurylink.mdw.servicenow.GlideDateTime
+
+      incident = new Incident()
+      incident.shortDescription = 'Houston we have a problem'
+      incident.urgency = Incident.Level.High
+      incident.impact = Incident.Level.Medium
+      incident.correlationId = runtimeContext.processInstanceId.toString()
+      incident.correlationDisplay = 'Process Instance'
+      incident.caller = 'MDW Application'
+      incident.assignmentGroup = 'MDW Support'
+      incident.category = 'General Inquiry'
+      incident.dueDate = new GlideDateTime(System.currentTimeMillis() + 24 * 60 * 60 * 1000).localDateTime
+    SCRIPT: Groovy
+    WORK_DISPLAY_INFO: x=230,y=140,w=120,h=80
+  transitions:
+  - id: T3
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=385,ly=180,xs=354&416,ys=180&180
+variables:
+  incident:
+    type: com.centurylink.mdw.model.Jsonable
+    category: LOCAL
+  incidentResponse:
+    type: org.json.JSONObject
+    category: LOCAL
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: PUBLIC
+  PerformanceLevel: '0'
+  WORK_DISPLAY_INFO: x=48,y=41,w=188,h=26

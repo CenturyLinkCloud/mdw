@@ -1,6 +1,6 @@
 ActivityLogCleanup.java=2
-AutoFormManualTask.pagelet=11
-CustomManualTask.pagelet=10
+AutoFormManualTask.pagelet=12
+CustomManualTask.pagelet=11
 LogRollerStartup.java=1
 MdwRpcWebService.wsdl=2
 PauseActivity.java=5
@@ -53,7 +53,7 @@ processStart.pagelet=1
 publishEvent.pagelet=1
 publishEventRest.pagelet=2
 receive.gif=1
-restService.pagelet=1
+restService.pagelet=2
 rpcWebService.pagelet=1
 script.gif=1
 scriptEvaluator.pagelet=1
