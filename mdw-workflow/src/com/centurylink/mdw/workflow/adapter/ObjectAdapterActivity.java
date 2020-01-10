@@ -506,14 +506,18 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl
             if (this instanceof HeaderAwareAdapter)
                 headers = ((HeaderAwareAdapter) this).getRequestHeaders();
 
-            runtimeContext = getRuntimeContext();
-            monitors = MonitorRegistry.getInstance().getAdapterMonitors(runtimeContext);
+            // retrieve all monitors first to see whether there are any before reloading runtimeContext
+            monitors = MonitorRegistry.getInstance().getAdapterMonitors();
+            if (!monitors.isEmpty()) {
+                runtimeContext = getRuntimeContext();
+                monitors = MonitorRegistry.getInstance().getAdapterMonitors(runtimeContext);
 
-            Object altRequest = null;
-            for (AdapterMonitor monitor : monitors) {
-                altRequest = monitor.onRequest(runtimeContext, request, headers, connection);
-                if (altRequest != null)
-                    request = altRequest;
+                Object altRequest = null;
+                for (AdapterMonitor monitor : monitors) {
+                    altRequest = monitor.onRequest(runtimeContext, request, headers, connection);
+                    if (altRequest != null)
+                        request = altRequest;
+                }
             }
 
             Object altResponse = null;

@@ -23,14 +23,14 @@
     "name": "REQUEST_VARIABLE",
     "source": "DocumentVariables",
     "type": "dropdown",
-    "vw": "200"
+    "vw": "250"
   },
   {
     "label": "Response Variable",
     "name": "RESPONSE_VARIABLE",
     "source": "DocumentVariables",
     "type": "dropdown",
-    "vw": "200"
+    "vw": "250"
   },
   {
     "label": "Coerce Response to Type",
@@ -44,7 +44,7 @@
     "name": "HeadersVariable",
     "source": "DocumentVariables",
     "type": "dropdown",
-    "vw": "200"
+    "vw": "250"
   },
   {
     "label": "Connect Timeout (ms)",
@@ -94,7 +94,7 @@
     "name": "AuthUser",
     "section": "Authentication",
     "type": "text",
-    "vw": "200"
+    "vw": "400"
   },
   {
     "default": "${env['mdw.app.password']}",
@@ -102,7 +102,7 @@
     "name": "AuthPassword",
     "section": "Authentication",
     "type": "text",
-    "vw": "200"
+    "vw": "400"
   },
   {
     "name": "Do not store app.password in config.",

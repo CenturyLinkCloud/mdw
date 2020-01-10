@@ -505,6 +505,10 @@
 .mdw-warn:hover {
   color: #a94442;
 }
+.mdw-close {
+  position: relative;
+  top: -8px;
+}
 .mdw-ghost {
   color: #90a4ae;
 }
@@ -993,12 +997,27 @@
   text-decoration: underline;
 }
 .mdw-workflow {
-  
+}
+.mdw-workflow-zoom {
+  display: inline-flex;
+  position: sticky;
+  top: 8px;
+  right: 25px;
+  float: right;
+  background-color: rgba(255, 255, 255, 0.75);
+  z-index: 100;
+}
+.mdw-workflow-zoom input[type="range"] {
+  width: 130px;
+  height: 20px;
+  margin-top: -4px;
+  margin-right: 2px;
 }
 .mdw-task-package {
   font-weight: normal;
 }
 .mdw-canvas {
+  margin-top: -10px; /* account for zoom controls */
   /* prevent highlighting on double-click */
   user-select: none;
   -moz-user-select: none;

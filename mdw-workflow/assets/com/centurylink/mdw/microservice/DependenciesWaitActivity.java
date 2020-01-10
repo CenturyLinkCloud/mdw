@@ -11,11 +11,11 @@ import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.workflow.activity.event.EventWaitActivity;
 import org.apache.commons.lang.StringUtils;
-import org.json.JSONException;
 
 import java.util.List;
 
-@Activity(value="Microservice Dependencies Wait", category= DependenciesWaitActivity.class,
+@Activity(value="Microservice Dependencies Wait",
+        category=com.centurylink.mdw.activity.types.DependenciesWaitActivity.class,
         icon="com.centurylink.mdw.base/receive.gif",
         pagelet="com.centurylink.mdw.microservice/dependenciesWait.pagelet")
 public class DependenciesWaitActivity extends EventWaitActivity {
@@ -37,13 +37,11 @@ public class DependenciesWaitActivity extends EventWaitActivity {
     protected boolean handleCompletionCode() throws ActivityException {
         Integer exitStatus = WorkStatus.STATUS_COMPLETED;
         if (!dependenciesMet()) {
-            getLogger().info(getActivityName() + "  *** not met, setting to waiting");
             exitStatus = WorkStatus.STATUS_WAITING;
             setActivityWaitingOnExit();
         }
         String compCode = this.getReturnCode();
-        if (compCode != null
-                && (compCode.length() == 0 || compCode.equals(EventType.EVENTNAME_FINISH)))
+        if (compCode != null && (compCode.length() == 0 || compCode.equals(EventType.EVENTNAME_FINISH)))
             compCode = null;
         String actInstStatusName;
         if (exitStatus.equals(WorkStatus.STATUS_CANCELLED))
@@ -69,15 +67,14 @@ public class DependenciesWaitActivity extends EventWaitActivity {
                 getLogger().info("Error in registerWaitEvents - " + e.getMessage());
                 getLogger().error(e.getMessage(), e);
             }
-            return compCode != null && (compCode
-                    .startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
-                    || compCode.startsWith(
-                    WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ABORT)
-                    || compCode.startsWith(
-                    WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ERROR));
+            return compCode != null &&
+                    (compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_CORRECT)
+                    || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ABORT)
+                    || compCode.startsWith(WorkStatus.STATUSNAME_WAITING + "::" + EventType.EVENTNAME_ERROR));
         }
-        else
+        else {
             return true;
+        }
     }
 
     /**
@@ -108,12 +105,10 @@ public class DependenciesWaitActivity extends EventWaitActivity {
 
         try {
             for (String[] microservice : microservices) {
-                getLogger().info(getActivityName() + "  *** microservice[2] " + microservice[2]);
                 Object expResult = getValueSmart(microservice[2], String.valueOf(tag++));
                 String expString = null;
                 if (expResult instanceof String) {
                     expString = (String) expResult;
-                    getLogger().info(getActivityName() + "  *** 1st " + expString);
                     if (expString.isEmpty()) {
                         expResult = Boolean.TRUE;
                     }
@@ -127,7 +122,6 @@ public class DependenciesWaitActivity extends EventWaitActivity {
                 }
 
                 Boolean expResultBool = (Boolean) expResult;
-                getLogger().info(getActivityName() + "  *** expString " + expString + " is " + expResultBool);
                 if (Boolean.parseBoolean(microservice[0])) {
                     // if microservice isn't populated then do the check based on the expression
                     if ((StringUtils.isBlank(microservice[1]) && !expResultBool)
@@ -141,7 +135,7 @@ public class DependenciesWaitActivity extends EventWaitActivity {
                     }
                 }
             }
-            getLogger().info(getActivityName() + "  *** dependenciesMet " + dependenciesMet);
+            logInfo("dependenciesMet(): " + dependenciesMet);
             return dependenciesMet;
         }
         catch (PropertyException ex) {
@@ -159,14 +153,11 @@ public class DependenciesWaitActivity extends EventWaitActivity {
      * response</li>
      * </p>
      *
-     * @param microservice
-     *            to check for successful completion
-     * @param serviceSummary
-     *            object to check for successful completions
+     * @param microservice to check for successful completion
+     * @param serviceSummary object to check for successful completions
      * @see ServiceSummary
      * @return a Jsonable as a future-proof in case we need to know which
      *         invocation/update was successful
-     * @throws JSONException JSONException
      */
     public Jsonable microServiceSuccess(String microservice, ServiceSummary serviceSummary) {
         MicroserviceList microserviceList = serviceSummary.getMicroservices(microservice);

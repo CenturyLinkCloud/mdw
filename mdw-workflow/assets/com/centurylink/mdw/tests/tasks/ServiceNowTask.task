@@ -1,0 +1,13 @@
+{
+  "attributes": {
+    "FormName": "com.centurylink.mdw.servicenow/ServiceNowTask.pagelet",
+    "Groups": "[\"MDW Support\"]",
+    "Notices": "[[\"Open\",\"com.centurylink.mdw.servicenow/IncidentTemplate.yaml\",\"[0.1,1)\",\"com.centurylink.mdw.servicenow.TaskNotifier\"],[\"Assigned\",\"\",\"\",\"com.centurylink.mdw.servicenow.TaskNotifier\"],[\"Completed\",\"\",\"\",\"com.centurylink.mdw.servicenow.TaskNotifier\"],[\"Cancelled\",\"\",\"\",\"com.centurylink.mdw.servicenow.TaskNotifier\"],[\"In Progress\",\"\",\"\",\"com.centurylink.mdw.servicenow.TaskNotifier\"],[\"Alert\",\"\",\"\",\"com.centurylink.mdw.servicenow.TaskNotifier\"],[\"Jeopardy\",\"\",\"\",\"com.centurylink.mdw.servicenow.TaskNotifier\"],[\"Forward\",\"\",\"\",\"com.centurylink.mdw.servicenow.TaskNotifier\"]]",
+    "Priority": "2",
+    "PriorityStrategy": "Specified"
+  },
+  "category": "GEN",
+  "logicalId": "ServiceNowTask",
+  "name": "Cannot connect to MDWHub",
+  "version": "0"
+}

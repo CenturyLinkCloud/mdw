@@ -36,25 +36,22 @@ We welcome your contributions to MDW whether they be fixes/enhancements, automat
    - Select Open Project and browse to mdw/mdw
    - In the Gradle tool window, execute the buildDev task.
 
-5. Use [Embedded DB](/mdw-workflow/assets/com/centurylink/mdw/db/readme.md) or set up an external MySQL database as described in [this readme](/mdw/database/mysql/readme.txt)
-
-6. Edit configuration files to suit local environment:
-   - mdw/config/mdw.yaml (locally, use absolute paths for mdw.asset.location and mdw.git.local.path)
+5. Edit configuration files to suit local environment:
    - mdw/config/access.yaml (set devUser to yourself)
-   - mdw/config/seed_users.json
+   - mdw/config/seed_users.json (add yourself)
 
-7. Run Spring Boot Jar in IntelliJ IDEA
+6. Run Spring Boot Jar in IntelliJ IDEA
    - From the IntelliJ menu select Run > Edit Configurations.
    - Click **+** > Jar Application.
    - For Path to Jar, browse to mdw/deploy/app/mdw-boot-6.1.XX-SNAPSHOT.jar
    - VM Options: `-Dmdw.runtime.env=dev -Dmdw.config.location=config`
    - Save the configuration and type ctrl-alt-R to run/debug MDW.
 
-8. MDWHub Web Development
+7. MDWHub Web Development
    - To avoid having to reassemble the boot jar to test web content changes, add this to your IntelliJ run configuration:
      `-Dmdw.hub.dev.override.root=../mdw-hub/web`
 
-9. Run the Tests
+8. Run the Tests
    - Access the autotest page in MDWHub:
      http://localhost:8080/mdw/#/tests
    - Use the Settings button to enable Stubbing and increase Threads to 10

@@ -1,0 +1,41 @@
+<PAGELET>
+  <TEXT NAME="name" LABEL="Short Description" VW="300"/>
+  <TEXT NAME="logicalId" LABEL="Logical ID" VW="300"/>
+  <DROPDOWN NAME="category" LABEL="Category" SOURCE="TaskCategory" VW="250"/>
+  <TEXT NAME="description" LABEL="Description" MULTILINE="true"/>
+  <HYPERLINK URL="help/taskTemplates.html">Task Template Help</HYPERLINK>
+  <DATETIME NAME="TaskSLA" LABEL="Task Due In" UNITS="Hours,Days" UNITS_ATTR="TaskSLA_UNITS" />
+  <DATETIME NAME="ALERT_INTERVAL" LABEL="Alert Interval" UNITS="Hours,Days" UNITS_ATTR="ALERT_INTERVAL_UNITS" />
+  <DROPDOWN NAME="PriorityStrategy" LABEL="Prioritization Strategy" VW="250">
+    <OPTION PARAMETER="Priority">Specified</OPTION>
+    <OPTION PARAMETER="Prioritization Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
+  </DROPDOWN>
+  <HYPERLINK URL="help/taskSLA.html">SLA Help</HYPERLINK>
+  <DROPDOWN NAME="SubTaskStrategy" LABEL="SubTask Strategy" VW="250">
+    <OPTION PARAMETER="SubTask Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
+  </DROPDOWN>
+  <BOOLEAN NAME="SubtasksCompleteMaster" LABEL="Auto-Complete Master Task" /> 
+  <LIST NAME="Groups" SOURCE="UserGroup" SECTION="Workgroups"/>
+  <DROPDOWN NAME="RoutingStrategy" LABEL="Routing Strategy" VW="250" SECTION="Workgroups">
+    <OPTION PARAMETER="Routing Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
+  </DROPDOWN>
+  <DROPDOWN NAME="AutoAssign" LABEL="Auto-Assign Strategy" VW="250" SECTION="Workgroups">
+    <OPTION>Round Robin</OPTION>
+    <OPTION>Shortest Queue</OPTION>
+    <OPTION PARAMETER="Auto Assign Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
+    <OPTION PARAMETER="AssigneeVar">Process Variable</OPTION>    
+  </DROPDOWN>
+  <TABLE NAME="Notices" MODIFYONLY="true" SECTION="Notices" DEFAULT='[["Open","com.centurylink.mdw.servicenow/IncidentTemplate.yaml","[0.1,1)","com.centurylink.mdw.servicenow.TaskNotifier"],["Assigned","","","com.centurylink.mdw.servicenow.TaskNotifier"],["Completed","","","com.centurylink.mdw.servicenow.TaskNotifier"],["Cancelled","","","com.centurylink.mdw.servicenow.TaskNotifier"],["In Progress","","","com.centurylink.mdw.servicenow.TaskNotifier"],["Alert","","","com.centurylink.mdw.servicenow.TaskNotifier"],["Jeopardy","","","com.centurylink.mdw.servicenow.TaskNotifier"],["Forward","","","com.centurylink.mdw.servicenow.TaskNotifier"]]'>
+    <TEXT LABEL="Outcome" READONLY="true" VW="150"/>
+    <DROPDOWN LABEL="Template" SOURCE="RuleSets" TYPE="JSON,TEXT,MARKDOWN,HTML" VW="350"/>
+    <DROPDOWN LABEL="Version" SOURCE="AssetVersion" VW="100"/>
+    <TEXT LABEL="Notifier Class(es)"/>
+  </TABLE>
+  <HYPERLINK URL="help/taskNotices.html" SECTION="Notices">Task Notices Help</HYPERLINK>
+  <NOTE SECTION="Recipients" VH="65">Overrides task workgroups for notices.</NOTE>  
+  <LIST NAME="NoticeGroups" LABEL="Notice Groups" SOURCE="UserGroup" SECTION="Recipients"/>
+  <TEXT LABEL="Recipient(s) Expression" NAME="RecipientVar" VW="410" SECTION="Recipients"/>
+  <LIST NAME="CCGroups" LABEL="CC Recipient Groups" SOURCE="UserGroup" SECTION="CC Recipients"/>
+  <HYPERLINK URL="help/taskIndexes.html" SECTION="Variables">Task Indexes Help</HYPERLINK>
+  <TEXT NAME="FormName" READONLY="true" LABEL="Layout" DEFAULT="com.centurylink.mdw.servicenow/ServiceNowTask.pagelet" VW="400"/>
+</PAGELET>

@@ -142,7 +142,7 @@ public class ScheduledEventQueue implements CacheService {
         try {
             logger.info("EventScheduler processes event " + eventName);
             if (event.isInternalEvent()) {
-                // long-delayed internal events, form timer/event wait activities
+                // long-delayed internal events, for timer/event wait activities
                 if (processInternalEventInThisJVM) {
                     if (!MessageServices.getInstance().sendInternalMessageCheck(ThreadPoolProvider.WORKER_SCHEDULER,
                             null, event.getName(), event.getMessage())) {

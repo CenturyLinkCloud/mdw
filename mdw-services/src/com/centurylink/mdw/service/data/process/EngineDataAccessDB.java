@@ -499,7 +499,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             vo.setCompletionCode(rs.getString(2));
             // Only return the most recent registration of the event per unique activity_instance_id
             // This situation would occur when calling the /Tasks REST service multiple times to register the same event for the same task_instance_id
-            if (waiters.size() == 0 || !(waiters.get(waiters.size()-1).getActivityInstanceId().equals(vo.getActivityInstanceId())))
+            if (waiters.size() == 0 || !(waiters.get(waiters.size() - 1).getActivityInstanceId().equals(vo.getActivityInstanceId())))
                 waiters.add(vo);
         }
         return waiters;
@@ -533,7 +533,8 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             createEventInstance(eventName, documentId, EventInstance.STATUS_ARRIVED, null, null, null, 0, false);
             hasWaiters = false;
         } catch (SQLIntegrityConstraintViolationException e) {
-            if (db.isMySQL()) db.commit();
+            if (db.isMySQL())
+                db.commit();
             EventInstance event = lockEventInstance(eventName);
             if (event == null)
                 throw e;  // throw original SQLException
@@ -550,34 +551,35 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                 consumeEventInstance(event, 0);
             }
         }
-        return hasWaiters?this.getEventWaitInstances(eventName):null;
+        return hasWaiters ? getEventWaitInstances(eventName) : null;
     }
 
-    public Long recordEventWait(String eventName, boolean multipleRecepients,
+    public Long recordEventWait(String eventName, boolean multipleRecipients,
             int preserveSeconds, Long actInstId, String compCode) throws SQLException {
         Long documentId;
         try {
             createEventInstance(eventName, null,
-                    multipleRecepients?EventInstance.STATUS_WAITING_MULTIPLE:EventInstance.STATUS_WAITING,
+                    multipleRecipients ? EventInstance.STATUS_WAITING_MULTIPLE : EventInstance.STATUS_WAITING,
                     null, null, null, preserveSeconds, false);
             documentId = null;
         } catch (SQLIntegrityConstraintViolationException e) {
-            if (db.isMySQL()) db.commit();
+            if (db.isMySQL())
+                db.commit();
             EventInstance event = lockEventInstance(eventName);
             if (event.getStatus().equals(EventInstance.STATUS_WAITING)) {
-                if (multipleRecepients) {
+                if (multipleRecipients) {
                     throw new SQLException("The event has been waited by a single recepient");
                 } else {
                     this.removeEventWait(eventName);    // deregister existing waiters
                 }
                 documentId = null;
             } else if (event.getStatus().equals(EventInstance.STATUS_WAITING_MULTIPLE)) {
-                if (!multipleRecepients) {
+                if (!multipleRecipients) {
                     throw new SQLException("The event has been waited by multiple recepients");
                 }
                 documentId = null;
             } else if (event.getStatus().equals(EventInstance.STATUS_ARRIVED)) {
-                if (multipleRecepients) {
+                if (multipleRecipients) {
                     consumeEventInstance(event, preserveSeconds);
                     documentId = event.getDocumentId();
                 } else {
@@ -585,7 +587,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                     documentId = event.getDocumentId();
                 }
             } else if (event.getStatus().equals(EventInstance.STATUS_CONSUMED)) {
-                if (multipleRecepients) {
+                if (multipleRecipients) {
                     documentId = event.getDocumentId();
                 } else {
                     throw new SQLException("The event has been waited by multiple recepients");
@@ -992,24 +994,26 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         else return 0;
     }
 
-    public int countActivityInstances(Long procInstId, Long activityId, Integer[] statuses)
+    public int countActivityInstances(Long procInstId, Long activityId)
             throws SQLException
     {
         StringBuffer sql = new StringBuffer();
-        sql.append("select count(STATUS_CD) from ACTIVITY_INSTANCE ");
-        sql.append("where PROCESS_INSTANCE_ID = ? and ACTIVITY_ID = ? and STATUS_CD in (");
-        for (int i=0; i<statuses.length; i++) {
-            if (i>0) sql.append(",");
-            sql.append(statuses[i]);
-        }
-        sql.append(")");
+        int count = 0;
+        sql.append("select ACTIVITY_INSTANCE_ID,STATUS_CD,CREATE_DT from ACTIVITY_INSTANCE ");
+        sql.append("where PROCESS_INSTANCE_ID = ? and ACTIVITY_ID = ? order by activity_instance_id asc, create_dt");
         Object[] args = new Object[2];
         args[0] = procInstId;
         args[1] = activityId;
         ResultSet rs = db.runSelect(sql.toString(), args);
-        if (rs.next()) return rs.getInt(1);
-        else return 0;
+        while (rs.next()) {
+            if (rs.getInt(2) == WorkStatus.STATUS_FAILED)
+                count++;
+            else if (rs.getInt(2) == WorkStatus.STATUS_COMPLETED)
+                count = 0;
+        }
+        return count;
     }
+
 
     public void determineCompletedTransitions(Long pProcInstId, List<Transition> transitions)
             throws SQLException {

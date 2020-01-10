@@ -1,0 +1,69 @@
+{"widgets": [
+  {
+    "editable": "TRUE",
+    "label": "Task Template",
+    "name": "TASK_TEMPLATE",
+    "refresh": "true",
+    "source": "task",
+    "type": "asset",
+    "vw": "375"
+  },
+  {
+    "name": "Task Template Help",
+    "type": "link",
+    "url": "help/taskTemplates.html"
+  },
+  {
+    "default": "com.centurylink.mdw.servicenow/ServiceNowTask.pagelet",
+    "hidden": "true",
+    "label": "Pagelet",
+    "name": "TASK_PAGELET",
+    "type": "text",
+    "vw": "350"
+  },
+  {
+    "default": "true",
+    "name": "Wait for Task",
+    "section": "Events",
+    "type": "checkbox"
+  },
+  {
+    "label": "Events",
+    "name": "WAIT_EVENT_NAMES",
+    "section": "Events",
+    "type": "table",
+    "widgets": [
+      {
+        "name": "Event Name",
+        "label": "Event Name",
+        "type": "text"
+      },
+      {
+        "name": "Completion Code",
+        "label": "Completion Code",
+        "type": "text"
+      }
+    ]
+  },
+  {
+    "default": "Cancelled",
+    "label": "Status After Event",
+    "lw": "175",
+    "name": "STATUS_AFTER_EVENT",
+    "options": [
+      "Hold",
+      "Waiting",
+      "Cancelled"
+    ],
+    "section": "Events",
+    "type": "dropdown",
+    "vw": "120",
+    "vx": "200"
+  },
+  {
+    "name": "Task Events Help",
+    "section": "Events",
+    "type": "link",
+    "url": "help/taskWaitingEvents.html"
+  }
+]}

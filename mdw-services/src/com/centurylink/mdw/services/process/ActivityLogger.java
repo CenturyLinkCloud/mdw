@@ -147,7 +147,7 @@ public class ActivityLogger extends AbstractStandardLoggerBase {
             error(message);
     }
 
-    static void persist(Long processInstanceId, Long activityInstanceId, LogLevel level, String message) {
+    public static void persist(Long processInstanceId, Long activityInstanceId, LogLevel level, String message) {
         persist(processInstanceId, activityInstanceId, level, message, null);
     }
 

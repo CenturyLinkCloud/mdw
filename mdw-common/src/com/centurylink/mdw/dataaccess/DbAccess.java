@@ -43,6 +43,7 @@ public class DbAccess implements AutoCloseable {
     public Connection getConnection() {
         return databaseAccess.getConnection();
     }
+    public DatabaseAccess getDatabaseAccess() { return databaseAccess; }
 
     @Override
     public void close() {

@@ -66,6 +66,7 @@ title: MDW Configuration
       poolsize: 10  # default=5
       poolMaxIdle: 3  # default=5
       validationQuery: select 1 from dual  # required
+      transaction.isolation: 4 # default=2 (READ_COMMITTED)
       # save datetime/timestamp using microsecond precision
       microsecond.precision: true  # default=false
       # log all queries and timings
@@ -149,30 +150,37 @@ title: MDW Configuration
       base.dn: dc=mydc,dc=example
 
     # scheduled jobs registration    
-   timer.InitialDelay: 120  # (seconds) default=120
+    timer.InitialDelay: 120  # (seconds) default=120
     timer.CheckInterval: 60  # (seconds) default=60
     timer.ThresholdForDelay: 30  # (minutes) default=60
     
-    #scheduled job for clearing up stuck activites in mdw 
-    
+    # scheduled job for retriggering stuck activites 
     StuckActivities:
       job:
-        enabled: true         #This enables the scheduled job, by default it will be disbaled
-        scheduler: 30 12 * * ? * #cron expression defining the schedule . currently set at 12:30 AM
-        ActivityAgeInSeconds: 2000 #age of the activities to be considered default : 1800
-        MaximumActivities: 100 #maximum number of activities to be considered default : 10
+        enabled: true   # default=false
+        scheduler: 30 12 * * ? * # cron expression defining the schedule (example shows daily at 12:30 AM)
+        ActivityAgeInSeconds: 2000 # minimum age of eligible activities default=1800
+        MaximumActivities: 100 # maximum number of activities processed per cycle default=10
         
     # scheduled job for periodic cleanup of old completed mdw data from the DB
-
-     cleanup:
-       job:
-         enabled: true   # this enables the scheduling of the cleanup job
-         cleanupscheduler: 30 00 * * ? * # the schedule to run . this runs at 12:30 AM
-         ProcessExpirationAgeInDays: 180
-         maxProcesses: 0
-         eventExpirationDays: 180
-         commitInterval: 1000
-         RuntimeCleanupScript: Cleanup-Runtime.sql
+    cleanup:
+      job:
+        enabled: true   # this enables the scheduling of the cleanup job
+        cleanupscheduler: 30 00 * * ? * # the schedule to run . this runs at 12:30 AM
+        ProcessExpirationAgeInDays: 180
+        maxProcesses: 0
+        eventExpirationDays: 180
+        commitInterval: 1000
+        RuntimeCleanupScript: Cleanup-Runtime.sql
+    
+    # Wait Activity Fallback Processing
+    wait:
+      fallback:
+        stagger: 60  # seconds offset between scheduling scan for each activity - default=30
+        max: 20  # maximum number of activity instances to trigger per cycle - default=100
+        age: 1200 # minimum age in seconds of waiting activity instances to process - default=600
+    timer.wait.fallback.enabled: true  # enable fallback processing for timer wait activities - default=false
+    dependencies.wait.fallback.enabled: true  # enable fallback processing for dependencies waits - default=false
 
     # Custom JWT Providers   
     jwt:

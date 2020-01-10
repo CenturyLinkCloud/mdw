@@ -611,23 +611,23 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
-    public int countActivityInstances(Long procInstId, Long activityId, Integer[] statuses)
+    public int countActivityInstances(Long procInstId, Long activityId)
      throws DataAccessException {
         TransactionWrapper transaction=null;
         try {
             transaction = startTransaction();
-            return engineImpl.getDataAccess().countActivityInstances(procInstId, activityId, statuses);
+            return engineImpl.getDataAccess().countActivityInstances(procInstId, activityId);
         } catch (DataAccessException e) {
             if (canRetryTransaction(e)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                return ((ProcessExecutor)getTransactionRetrier()).countActivityInstances(procInstId, activityId, statuses);
+                return ((ProcessExecutor)getTransactionRetrier()).countActivityInstances(procInstId, activityId);
             }
             else
                 throw e;
         } catch (SQLException e) {
             if (canRetryTransaction(e)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                return ((ProcessExecutor)getTransactionRetrier()).countActivityInstances(procInstId, activityId, statuses);
+                return ((ProcessExecutor)getTransactionRetrier()).countActivityInstances(procInstId, activityId);
             }
             else
                 throw new DataAccessException(0, "Failed to count activity instances", e);
@@ -998,28 +998,6 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
-    public EventWaitInstance createEventWaitInstances(Long procInstId, Long actInstId, String[] pEventNames,
-            String[] pWakeUpEventTypes, boolean[] pEventOccurances, boolean notifyIfArrived)
-    throws DataAccessException, ProcessException {
-        TransactionWrapper transaction=null;
-        try {
-            transaction = startTransaction();
-            return engineImpl.createEventWaitInstances(procInstId, actInstId, pEventNames, pWakeUpEventTypes,
-                    pEventOccurances, notifyIfArrived);
-        }
-        catch (MdwException e) {
-            if (canRetryTransaction(e)) {
-                transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                return ((ProcessExecutor)getTransactionRetrier()).createEventWaitInstances(procInstId, actInstId,
-                        pEventNames, pWakeUpEventTypes, pEventOccurances, notifyIfArrived);
-            }
-            else
-                throw e;
-        } finally {
-            stopTransaction(transaction);
-        }
-    }
-
     public void removeEventWaitForActivityInstance(Long activityInstanceId, String reason)
     throws DataAccessException {
         TransactionWrapper transaction=null;
@@ -1045,24 +1023,23 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
-    public Integer notifyProcess(String pEventName, Long pEventInstId,
-                String message, int delay)
+    public Integer notifyProcess(String eventName, Long docId, String message, int delay)
     throws DataAccessException, EventException {
-        TransactionWrapper transaction=null;
+        TransactionWrapper transaction = null;
         try {
             transaction = startTransaction();
-            return engineImpl.notifyProcess(pEventName, pEventInstId, message, delay);
+            return engineImpl.notifyProcess(eventName, docId, message, delay);
         } catch (DataAccessException | EventException e){
             if (canRetryTransaction(e)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                return ((ProcessExecutor)getTransactionRetrier()).notifyProcess(pEventName, pEventInstId, message, delay);
+                return ((ProcessExecutor)getTransactionRetrier()).notifyProcess(eventName, docId, message, delay);
             }
             else
                 throw e;
         } catch (SQLException e){
             if (canRetryTransaction(e)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                return ((ProcessExecutor)getTransactionRetrier()).notifyProcess(pEventName, pEventInstId, message, delay);
+                return ((ProcessExecutor)getTransactionRetrier()).notifyProcess(eventName, docId, message, delay);
             }
             else
                 throw new DataAccessException(0, "Failed to notify process of event arrival", e);

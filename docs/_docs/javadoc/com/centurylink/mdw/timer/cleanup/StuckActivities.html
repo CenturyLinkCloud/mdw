@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":42};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -110,26 +110,21 @@ var activeTableTab = "activeTableTab";
 <dd><a href="../../../../../com/centurylink/mdw/common/service/RegisteredService.html" title="interface in com.centurylink.mdw.common.service">RegisteredService</a>, <a href="../../../../../com/centurylink/mdw/model/monitor/ScheduledJob.html" title="interface in com.centurylink.mdw.model.monitor">ScheduledJob</a></dd>
 </dl>
 <hr>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">use asset com.centurylink.mdw.base/StuckActivities.java.</span></div>
+</div>
 <br>
-<pre>public class <span class="typeNameLabel">StuckActivities</span>
+<pre>@Deprecated
+public class <span class="typeNameLabel">StuckActivities</span>
 extends java.lang.Object
 implements <a href="../../../../../com/centurylink/mdw/model/monitor/ScheduledJob.html" title="interface in com.centurylink.mdw.model.monitor">ScheduledJob</a></pre>
-<div class="block">This script fixes stuck activities by failing them and then retrying them
- A stuck activity means it's "In Progress" status and older than {ActivityAgeInMinutes}
- Add following to mdw.yaml
-timer.task:
- StuckActivities:
-    TimerClass: com.centurylink.mdw.timer.cleanup.StuckActivities
-    Schedule: 30 2 * * *    # to run hourly at 30 minutes past the hour use : Schedule: 30 * * * ? *
-    ActivityAgeInMinutes: 1800 # How old activity instance should be to be a candidate for fixing
-    MaximumActivities: 10  # How many stuck activity instances to be retried in each run
-
- if you need to make change in above properties then first delete the db entry by identifying the row using
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="https://centurylinkcloud.github.io/mdw/docs/guides/configuration/">MDW Configuration Guide</a>
+ Please configure using new props syntax, and disable this job by deleting this db entry found by
  this sql:  select * from event_instance where event_name like '%ScheduledJob%'
- Then re-start the server/instance for new clean-up properties to be effective.
-
- The query used to identify stuck activities will perform a full table scan, so
- consider creating an index on ACTIVITY_INSTANCE table if it is causing performance issues.</div>
+ Then re-start the server/instance for new clean-up properties to be effective.</dd>
+</dl>
 </li>
 </ul>
 </div>
@@ -148,7 +143,9 @@ timer.task:
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/timer/cleanup/StuckActivities.html#StuckActivities--">StuckActivities</a></span>()</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/timer/cleanup/StuckActivities.html#StuckActivities--">StuckActivities</a></span>()</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -160,14 +157,16 @@ timer.task:
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/timer/cleanup/StuckActivities.html#run-com.centurylink.mdw.util.CallURL-">run</a></span>(<a href="../../../../../com/centurylink/mdw/util/CallURL.html" title="class in com.centurylink.mdw.util">CallURL</a>&nbsp;args)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/timer/cleanup/StuckActivities.html#run-com.centurylink.mdw.util.CallURL-">run</a></span>(<a href="../../../../../com/centurylink/mdw/util/CallURL.html" title="class in com.centurylink.mdw.util">CallURL</a>&nbsp;args)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
+&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -205,6 +204,7 @@ timer.task:
 <li class="blockList">
 <h4>StuckActivities</h4>
 <pre>public&nbsp;StuckActivities()</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 </li>
 </ul>
 </li>
@@ -222,6 +222,7 @@ timer.task:
 <li class="blockList">
 <h4>run</h4>
 <pre>public&nbsp;void&nbsp;run(<a href="../../../../../com/centurylink/mdw/util/CallURL.html" title="class in com.centurylink.mdw.util">CallURL</a>&nbsp;args)</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/model/monitor/ScheduledJob.html#run-com.centurylink.mdw.util.CallURL-">run</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/model/monitor/ScheduledJob.html" title="interface in com.centurylink.mdw.model.monitor">ScheduledJob</a></code></dd>

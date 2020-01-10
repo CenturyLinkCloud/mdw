@@ -444,6 +444,8 @@ public class SystemServicesImpl implements SystemServices {
             if (mbean != null) {
                 for (String key : DatasourceAttributes.getAttributes().keySet()) {
                     String value = mbean.getValues().get(key);
+                    if (key.equals("MDWDataSource/DefaultTransactionIsolation"))
+                        value = getTxIsolationLevel(Integer.parseInt(value));
                     String label = "Datasource " + DatasourceAttributes.getAttributes().get(key);
                     dbInfos.add(new SysInfo(label, value));
                 }
@@ -455,6 +457,21 @@ public class SystemServicesImpl implements SystemServices {
         }
 
         return new SysInfoCategory("Database Details", dbInfos);
+    }
+
+    private String getTxIsolationLevel(int txIsolation) {
+        if (txIsolation == Connection.TRANSACTION_NONE)
+            return "NONE";
+        else if (txIsolation == Connection.TRANSACTION_READ_UNCOMMITTED)
+            return "READ_UNCOMMITED";
+        else if (txIsolation == Connection.TRANSACTION_READ_COMMITTED)
+            return "READ_COMMITTED";
+        else if (txIsolation == Connection.TRANSACTION_REPEATABLE_READ)
+            return "REPEATABLE_READ";
+        else if (txIsolation == Connection.TRANSACTION_SERIALIZABLE)
+            return "SERIALIZABLE";
+        else
+            return String.valueOf(txIsolation);
     }
 
     public SysInfoCategory getSystemProperties() {
@@ -475,6 +492,11 @@ public class SystemServicesImpl implements SystemServices {
         try {
             propMgr = PropertyUtil.getInstance().getPropertyManager();
             Properties properties = propMgr.getAllProperties();
+            if (!properties.containsKey(PropertyNames.MDW_LOGGING_LEVEL)) {
+                String logLevel = PropertyManager.getProperty(PropertyNames.MDW_LOGGING_LEVEL);
+                if (logLevel != null)
+                    properties.put(PropertyNames.MDW_LOGGING_LEVEL, logLevel);
+            }
             List<String> propNames = new ArrayList<>();
             for (Object o : properties.keySet()) {
                 propNames.add(String.valueOf(o));

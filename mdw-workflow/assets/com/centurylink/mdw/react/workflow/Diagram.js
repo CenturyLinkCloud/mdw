@@ -24,6 +24,77 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
     }
     this.instanceEdit = instanceEdit && instanceEdit.toString() === 'true';
     this.data = data;
+
+    // zoom setup
+    this.zoom = 100;
+    var zoomControls = document.getElementsByClassName('mdw-workflow-zoom');
+    if (zoomControls.length === 1) {
+      var diagram = this;
+      this.zoomControl = zoomControls[0];
+      if (this.editable && Toolbox) {
+        this.zoomControl.style.top = "90px";
+        this.zoomControl.style.right = '270px';
+      }
+      var rangeInput = diagram.zoomControl.getElementsByTagName('input')[0];
+      this.zoomControl.oninput = function(e) {
+        diagram.zoomCanvas(parseInt(e.target.value));
+      };
+      this.zoomControl.onchange = function(e) {
+        diagram.adjustSection();
+      };
+      this.zoomControl.onclick = function(e) {
+        e.preventDefault();
+        if (e.target.className) {
+          if (e.target.className.endsWith('zoom-in') && diagram.zoom < 200) {
+            diagram.zoomCanvas(diagram.zoom + 20);
+            rangeInput.value = diagram.zoom + 20;
+            diagram.adjustSection();
+          }
+          else if (e.target.className.endsWith('zoom-out') && diagram.zoom > 20) {
+            diagram.zoomCanvas(diagram.zoom - 20);
+            rangeInput.value = diagram.zoom - 20;
+            diagram.adjustSection();
+          }
+        }
+      };
+      // zoom hover title
+      rangeInput.onmousemove = function(e) {
+        var rect = rangeInput.getBoundingClientRect();
+        var x = e.clientX - rect.left;
+        var pct = (x / rangeInput.clientWidth) * 100;
+        var z = parseInt(rangeInput.min) + (parseInt(rangeInput.max) - parseInt(rangeInput.min)) * pct / 100;
+        if (z > (diagram.zoom - 10) && z < (diagram.zoom + 10)) {
+          z = diagram.zoom;
+        }
+        rangeInput.title = Math.round(z) + '%';
+      };
+      // show/hide/close
+      var closeBtn = this.zoomControl.getElementsByClassName('mdw-close')[0];
+      this.zoomControl.onmouseover = function(e) {
+        closeBtn.style.visibility = 'visible';
+      };
+      this.zoomControl.onmouseout = function(e) {
+        closeBtn.style.visibility = 'hidden';
+      };
+      closeBtn.onclick = function(e) {
+        diagram.zoomControl.style.visibility = 'hidden';
+        this.style.visibility = 'hidden';
+      };
+      // pinch gesture
+      window.addEventListener('wheel', function(e) {
+        if (e.ctrlKey) {
+          e.preventDefault();
+          var z = diagram.zoom - e.deltaY;
+          if (z < 20)
+            z = 20;
+          else if (z > 200)
+            z = 200;
+          diagram.zoomCanvas(z);
+          rangeInput.value = diagram.zoom;
+          diagram.adjustSection();
+        }
+      }, {passive: false});
+    }
   };
 
   Diagram.prototype = new Shape();
@@ -31,6 +102,40 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
   Diagram.BOUNDARY_DIM = 25;
   Diagram.ANIMATION_SPEED = 8; // segments / s;
   Diagram.ANIMATION_LINK_FACTOR = 3; // relative link slice
+
+  Diagram.prototype.zoomCanvas = function(zoom) {
+    this.zoom = zoom;
+    var scale = zoom / 100;
+    var dw = this.canvas.width * scale - this.canvas.width;
+    var dh = this.canvas.height * scale - this.canvas.height;
+    var dpRatio = window.devicePixelRatio || 1;
+    this.canvas.style.transform = 'translate(' + (dw / (2 * dpRatio)) + 'px,' + (dh / (2 * dpRatio)) + 'px) scale(' + scale + ')';
+  };
+
+  // adjust section to accommodate zoomed canvas
+  Diagram.prototype.adjustSection = function() {
+    var mdwSections = document.getElementsByClassName('mdw-section');
+    if (mdwSections.length) {
+      var section = mdwSections[0];
+      var scale = this.zoom / 100;
+      var cw = this.canvas.style.width.substring(0, this.canvas.style.width.length - 2);
+      var w =  (cw ? parseInt(cw) : this.canvas.width) * scale;  // canvas style width not populated on windows
+      var mdwPanels = document.getElementsByClassName('mdw-panel-full-width');
+      if (mdwPanels.length) {
+        // don't shrink width smaller than original panel width
+        if (!this.origPanelWidth)
+          this.origPanelWidth = mdwPanels[0].offsetWidth;
+        if (w < this.origPanelWidth - 37)
+          w = this.origPanelWidth - 37;
+      }
+      var ch = this.canvas.style.height.substring(0, this.canvas.style.height.length - 2);
+      var h = (ch ? parseInt(ch) : this.canvas.height) * scale;
+      if (h < 540)
+        h = 540;
+      section.style.width = (w + 20) + 'px';
+      section.style.height = (h + 20) + 'px';
+    }
+  };
 
   Diagram.prototype.draw = function(animate) {
 
@@ -1103,8 +1208,8 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
 
   // TODO: horizontal scroll
   Diagram.prototype.scrollIntoView = function(shape, timeSlice) {
-    var centerX = shape.display.x + shape.display.w/2;
-    var centerY = shape.display.y + shape.display.h/2;
+    var centerX = shape.display.x + shape.display.w / 2;
+    var centerY = shape.display.y + shape.display.h / 2;
 
     var container = document.body;
     if (this.containerId) {
@@ -1117,7 +1222,7 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
 
     if (container.scrollHeight > container.clientHeight) {
       var maxVScroll = container.scrollHeight - container.clientHeight;
-      var centeringVScroll = centerY - container.clientHeight/2;
+      var centeringVScroll = centerY - container.clientHeight / 2;
       if (centeringVScroll > 0) {
         var vScroll = centeringVScroll > maxVScroll ? maxVScroll : centeringVScroll;
         var vDelta = vScroll - container.scrollTop;
@@ -1154,6 +1259,7 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
     var rect = this.canvas.getBoundingClientRect();
     var x = e.clientX - rect.left;
     var y = e.clientY - rect.top;
+
     // starting points for drag
     this.dragX = x;
     this.dragY = y;
@@ -1423,6 +1529,12 @@ var DiagramFactory = function(DC, Shape, Label, Step, Link, Subflow, Note, Marqu
   };
 
   Diagram.prototype.getHoverObj = function(x, y) {
+    if (this.zoom != 100) {
+      var scale = this.zoom / 100;
+      x = x / scale;
+      y = y / scale;
+    }
+
     if (this.label.isHover(x, y))
       return this.label;
     // links checked before steps for better anchor selectability

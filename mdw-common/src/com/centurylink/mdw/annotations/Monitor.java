@@ -28,7 +28,7 @@ public @interface Monitor {
     String value();
 
     /**
-     * This represents the type of monitor to (optionally register).
+     * This represents the type of monitor to register.
      */
     Class<? extends com.centurylink.mdw.monitor.Monitor> category();
 

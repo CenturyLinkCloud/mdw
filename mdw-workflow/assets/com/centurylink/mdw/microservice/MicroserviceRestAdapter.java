@@ -188,7 +188,9 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
     protected void notifyServiceSummaryUpdate(ServiceSummary serviceSummary) throws ActivityException {
         WorkflowServices wfs = ServiceLocator.getWorkflowServices();
         try {
-            wfs.notify("service-summary-update-" + getMasterRequestId(), null, 2);
+            String event = "service-summary-update-" + getMasterRequestId();
+            int res = wfs.notify(event, null, 2);
+            getLogger().debug("Notify " + "service-summary-update-" + getMasterRequestId() + " returns " + res);
         } catch (ServiceException e) {
             throw new ActivityException("Cannot publish Service Summary update event", e);
         }

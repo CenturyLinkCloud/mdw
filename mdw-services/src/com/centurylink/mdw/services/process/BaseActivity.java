@@ -104,7 +104,12 @@ public abstract class BaseActivity implements GeneralActivity {
      */
     public ActivityRuntimeContext getRuntimeContext() throws ActivityException {
         for (VariableInstance var : getParameters()) {
-            _runtimeContext.getVariables().put(var.getName(), getVariableValue(var.getName()));
+            try {
+                _runtimeContext.getVariables().put(var.getName(), getVariableValue(var.getName()));
+            }
+            catch (ActivityException ex) {
+                logger.error("Error populating " + var.getName(), ex);
+            }
         }
         return _runtimeContext;
     }
@@ -138,13 +143,17 @@ public abstract class BaseActivity implements GeneralActivity {
                         this instanceof SuspendableActivity);
                 if (!(logger instanceof ActivityLogger))
                     logger = new ActivityLogger(_runtimeContext);
-                for (VariableInstance var : getParameters())
-                    _runtimeContext.getVariables().put(var.getName(), getVariableValue(var.getName()));
-                if (!(logger instanceof ActivityLogger))
-                    logger = new ActivityLogger(_runtimeContext);
+                for (VariableInstance var : getParameters()) {
+                    try {
+                        _runtimeContext.getVariables().put(var.getName(), getVariableValue(var.getName()));
+                    }
+                    catch (ActivityException ex) {
+                        logger.error("Error populating " + var.getName(), ex);
+                    }
+                }
             }
-            catch (NullPointerException | ActivityException ex) {
-                logger.severeException(ex.getMessage(), ex);
+            catch (NullPointerException ex) {
+                logger.error(ex.getMessage(), ex);
             }
         }
         finally {
@@ -418,31 +427,13 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return the variable value
      */
     protected Object getParameterValue(String name) {
-        VariableInstance var = this.getVariableInstance(name);
-        return var==null?null:var.getData();
-    }
-
-    /**
-     * This method is used to get the value of a variable that does not
-     * belong to the current process instance. The feature is mainly
-     * for backward compatibility and should not be used for new code.
-     * Warning: this method should *not* be used for getting variable values
-     * for the current process instance, as it does not read cached variable instance.
-     *
-     * @param processInstId process instance ID where the variable belongs.
-     * @param name variable name
-     * @return variable data as an object
-     */
-    protected Object getParameterValue(Long processInstId, String name)
-            throws DataAccessException {
-        VariableInstance varInst = engine.getVariableInstance(processInstId, name);
-        return varInst==null?null:varInst.getData();
-
+        VariableInstance var = getVariableInstance(name);
+        return var == null ? null : var.getData();
     }
 
     protected String getParameterStringValue(String name) {
-        VariableInstance var = this.getVariableInstance(name);
-        return var==null?null:var.getStringValue();
+        VariableInstance var = getVariableInstance(name);
+        return var == null ? null : var.getStringValue();
     }
 
     /**
@@ -1211,11 +1202,16 @@ public abstract class BaseActivity implements GeneralActivity {
             if (Compatibility.hasCodeSubstitutions())
                 script = doCompatibilityCodeSubstitutions(script);
 
-            Process processVO = getMainProcessDefinition();
-            List<Variable> varVOs = processVO.getVariables();
+            Process process = getMainProcessDefinition();
+            List<Variable> vars = process.getVariables();
             Map<String,Object> bindings = new HashMap<>();
-            for (Variable varVO: varVOs) {
-                bindings.put(varVO.getName(), getVariableValue(varVO.getName()));
+            for (Variable var: vars) {
+                try {
+                    bindings.put(var.getName(), getVariableValue(var.getName()));
+                }
+                catch (ActivityException ex) {
+                    logger.error("Error populating " + var.getName(), ex);
+                }
             }
             bindings.put("runtimeContext", _runtimeContext);
 
@@ -1226,7 +1222,7 @@ public abstract class BaseActivity implements GeneralActivity {
             ScriptExecutor executor = getScriptExecutor(language, qualifier);
             retObj = executor.execute(script, bindings);
 
-            for (Variable variableVO: varVOs) {
+            for (Variable variableVO: vars) {
                 String variableName = variableVO.getName();
                 Object bindValue = bindings.get(variableName);
                 String varType = variableVO.getType();

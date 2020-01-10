@@ -1,5 +1,26 @@
 # Change Log
 
+## [6.1.29](https://github.com/CenturyLinkCloud/mdw/tree/6.1.29) (2019-12-13)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.28...6.1.29)
+
+**Implemented enhancements:**
+
+- Upgrade Groovy dependency to 2.5.8 [\#787](https://github.com/CenturyLinkCloud/mdw/issues/787)
+- Engine should not assume process start activity's logical ID is A1 [\#786](https://github.com/CenturyLinkCloud/mdw/issues/786)
+- Change default transaction isolation level to READ_COMMITTED for MySQL/MariaDB [\#780](https://github.com/CenturyLinkCloud/mdw/issues/780)
+- Scheduled fallback processing for Wait Activities [\#778](https://github.com/CenturyLinkCloud/mdw/issues/778)
+- Zoom workflow canvas in Hub [\#775](https://github.com/CenturyLinkCloud/mdw/issues/775)
+- Upgrade MariaDB driver dependency [\#772](https://github.com/CenturyLinkCloud/mdw/issues/772)
+- Convert StuckActivities Scheduled Job to annotated format [\#769](https://github.com/CenturyLinkCloud/mdw/issues/769)
+- Adapter retry should count failed instances since last success [\#722](https://github.com/CenturyLinkCloud/mdw/issues/722)
+
+**Closed issues:**
+
+- Engine should avoid NullPointerException when process definition is not found [\#789](https://github.com/CenturyLinkCloud/mdw/issues/789)
+- Adapter request Jsonables not unwrapped before invoke  [\#783](https://github.com/CenturyLinkCloud/mdw/issues/783)
+- Configurator Events tab not displayed for some activities [\#777](https://github.com/CenturyLinkCloud/mdw/issues/777)
+- Hub should save ClassName attribute for dynamic Java activities [\#699](https://github.com/CenturyLinkCloud/mdw/issues/699)
+
 ## [6.1.28](https://github.com/CenturyLinkCloud/mdw/tree/6.1.28) (2019-11-22)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.27...6.1.28)
 

@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.timer.cleanup;
 
+import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
@@ -37,22 +38,11 @@ import java.sql.*;
 import java.util.*;
 
 /**
- * This script fixes stuck activities by failing them and then retrying them
- * A stuck activity means it's "In Progress" status and older than {ActivityAgeInMinutes}
- * Add following to mdw.yaml
-timer.task:
- StuckActivities:
-    TimerClass: com.centurylink.mdw.timer.cleanup.StuckActivities
-    Schedule: 30 2 * * *    # to run hourly at 30 minutes past the hour use : Schedule: 30 * * * ? *
-    ActivityAgeInMinutes: 1800 # How old activity instance should be to be a candidate for fixing
-    MaximumActivities: 10  # How many stuck activity instances to be retried in each run
-
- * if you need to make change in above properties then first delete the db entry by identifying the row using
+ * @deprecated use asset com.centurylink.mdw.base/StuckActivities.java.
+ * @see <a href="https://centurylinkcloud.github.io/mdw/docs/guides/configuration/">MDW Configuration Guide</a>
+ * Please configure using new props syntax, and disable this job by deleting this db entry found by
  * this sql:  select * from event_instance where event_name like '%ScheduledJob%'
  * Then re-start the server/instance for new clean-up properties to be effective.
- *
- * The query used to identify stuck activities will perform a full table scan, so
- * consider creating an index on ACTIVITY_INSTANCE table if it is causing performance issues.
  */
 @Deprecated
 public class StuckActivities implements ScheduledJob {
@@ -63,6 +53,8 @@ public class StuckActivities implements ScheduledJob {
     @Override
     public void run(CallURL args) {
         if (!running) {
+            Exception ex = new MdwException("Using deprecated StuckActivities implementation, see javadocs.");
+            logger.error(ex.getMessage(), ex);
             running = true;
             logger.info("methodEntry-->StuckActivities.run()");
             int activityAge;  //Seconds

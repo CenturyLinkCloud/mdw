@@ -16,7 +16,9 @@
 package com.centurylink.mdw.workflow.activity.timer;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.EventWaitActivity;
 import com.centurylink.mdw.activity.types.GeneralActivity;
+import com.centurylink.mdw.activity.types.PauseActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
@@ -34,16 +36,11 @@ import com.centurylink.mdw.workflow.activity.AbstractWait;
 import java.util.Date;
 
 /**
- * Base class for all the Timer Activities
- * This class will be extended by the custom activity
- * that do not want a completion event raised.
- * This will act as a stopper for the workflow
- * In cases where in case of an error or a maual task creation,
- * we can use this activity to pause the flow and the flow can be
- * re started from an external event.
+ * Wait for a specified amount of time.  If the timer value is < mdw.timer.ThresholdForDelay, then
+ * then a delayed JMS message is sent; otherwise a database delay is invoked.
  */
 @Tracked(LogLevel.TRACE)
-@Activity(value="Timer Wait", icon="com.centurylink.mdw.base/wait.jpg",
+@Activity(value="Timer Wait", category=PauseActivity.class, icon="com.centurylink.mdw.base/timer.png",
         pagelet="com.centurylink.mdw.base/timerWait.pagelet")
 public class TimerWaitActivity extends AbstractWait {
 
@@ -66,8 +63,7 @@ public class TimerWaitActivity extends AbstractWait {
         try {
             ProcessExecutor engine = getEngine();
             long currentTime = DatabaseAccess.getCurrentTime();
-            engine.updateActivityInstanceEndTime(getActivityInstanceId(),
-                    new Date(currentTime+seconds*1000L));
+            engine.updateActivityInstanceEndTime(getActivityInstanceId(), new Date(currentTime + seconds * 1000L));
         } catch (Exception e) {
              logWarn("Failed to set timer expiration time in DB: " + e.getMessage());
         }
@@ -76,7 +72,7 @@ public class TimerWaitActivity extends AbstractWait {
          message.setMessageDelay(seconds);
         try {
             ProcessExecutor engine = getEngine();
-            String eventName = ScheduledEvent.INTERNAL_EVENT_PREFIX+this.getActivityInstanceId() + "timer";
+            String eventName = ScheduledEvent.INTERNAL_EVENT_PREFIX + getActivityInstanceId() + "timer";
             engine.sendDelayedInternalEvent(message, seconds, eventName, isUpdate);
         } catch (Exception e) {
             throw new ActivityException(-1, e.getMessage(), e);
@@ -88,8 +84,8 @@ public class TimerWaitActivity extends AbstractWait {
         int seconds = getWaitPeriodInSeconds();
         EventWaitInstance received = registerWaitEvents(false);
         sendDelayedResumeMessage(seconds);
-        if (received!=null) {
-            this.setReturnCode(received.getCompletionCode());
+        if (received != null) {
+            setReturnCode(received.getCompletionCode());
             processOtherMessage(getExternalEventInstanceDetails(received.getMessageDocumentId()));
             handleEventCompletionCode();
         }
@@ -102,30 +98,33 @@ public class TimerWaitActivity extends AbstractWait {
     protected int getWaitPeriodInSeconds() throws ActivityException {
         String unit = super.getAttributeValue(WAIT_UNIT);
         int factor;
-        if (MINUTES.equals(unit)) factor = 60;
-        else if (HOURS.equals(unit)) factor = 3600;
-        else if (DAYS.equals(unit)) factor = 86400;
-        else factor = 1;  // Means specified value is already in seconds
+        if (MINUTES.equals(unit))
+            factor = 60;
+        else if (HOURS.equals(unit))
+            factor = 3600;
+        else if (DAYS.equals(unit))
+            factor = 86400;
+        else
+            factor = 1;  // specified value is already in seconds
 
         int retTime = getAttribute(WorkAttributeConstant.TIMER_WAIT, DEFAULT_WAIT);
         return retTime*factor;
     }
 
-     /**
-      * This method is invoked to process a received event (other than timer expiration).
-      * You will need to override this method to customize processing of the event.
-      *
-      * The default method does nothing.
-      *
-      * The status of the activity after processing the event is configured in the designer, which
-      * can be either Hold or Waiting.
-      *
-      * When you override this method, you can optionally set different completion
-      * code from those configured in the designer by calling setReturnCode().
-      *
-      * @param messageString the entire message content of the external event (from document table)
-      * @throws ActivityException
-      */
+   /**
+    * This method is invoked to process a received event (other than timer expiration).
+    * You will need to override this method to customize processing of the event.
+    *
+    * The default method does nothing.
+    *
+    * The status of the activity after processing the event is configured in the designer, which
+    * can be either Hold or Waiting.
+    *
+    * When you override this method, you can optionally set different completion
+    * code from those configured in the designer by calling setReturnCode().
+    *
+    * @param messageString the entire message content of the external event (from document table)
+    */
     protected void processOtherMessage(String messageString) throws ActivityException {
     }
 
@@ -139,9 +138,6 @@ public class TimerWaitActivity extends AbstractWait {
      * You can override this method to handle custom logic, and you can force the activity
      * to wait further by returning the number of seconds to wait further.
      * Returning 0 or negative numbers will stop waiting.
-     *
-     * @return 0
-     * @throws ActivityException
      */
       protected int processTimerExpiration() throws ActivityException {
         return 0;

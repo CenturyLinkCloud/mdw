@@ -11,7 +11,7 @@
     "vw": "200"
   },
   {
-    "name": "Or, check below every microService that must be successful ,in order to proceed",
+    "name": "Or check below every microService that must be successfully invoked to proceed",
     "type": "note"
   },
   {
@@ -22,7 +22,7 @@
       {
         "name": "Enabled",
         "default": "true",
-        "label": "Enabled",
+        "label": "",
         "type": "checkbox"
       },
       {
@@ -78,13 +78,11 @@
     "vx": "160"
   },
   {
-    "label": "Received Message Variable (Optional)",
-    "name": "rcvdMsgDocVar",
+    "label": "Fallback Check Interval",
+    "name": "FallbackCheckInterval",
     "section": "Events",
-    "source": "DocumentVariables",
-    "type": "dropdown",
-    "vw": "160",
-    "vx": "180"
+    "type": "datetime",
+    "units": "Minutes,Hours,Days"
   },
   {
     "name": "Event Wait Activity Help",

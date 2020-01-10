@@ -15,6 +15,7 @@
   - all package.yaml files
 
 3. Comment/uncomment these CLI tests:
+  - mdw/cli/tests/quickstart.bats (line 27 - temporarily skipped due to corruption issue with maven central asset jars for 6.1.29)
   - mdw/cli/tests/quickstart.bats (line 52 -- skip for formal/1st shapshot build, add back for second/subsequent snapshots)
   - mdw/cli/tests/convert.bats (line 18 -- skip for formal/1st snapshot builds, add back for second/subsequent snapshots)
     TODO: better way of handling -- this is because mdw.version is something that hasn't been published yet (formal and first snapshot)

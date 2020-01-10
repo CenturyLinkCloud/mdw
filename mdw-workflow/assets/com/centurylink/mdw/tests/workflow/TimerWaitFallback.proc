@@ -1,0 +1,50 @@
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=100,y=110,w=60,h=40
+  transitions:
+  - id: T1
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=210,ly=130,xs=164&256,ys=130&130
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=490,y=110,w=60,h=40
+- id: A3
+  name: Wait
+  implementor: com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity
+  attributes:
+    FallbackCheckInterval: '60'
+    FallbackCheckInterval_DISPLAY_UNITS: Minutes
+    STATUS_AFTER_EVENT: Cancelled
+    TIMER_WAIT: ${waitSeconds}
+    TIMER_WAIT_DISPLAY_UNITS: Minutes
+    WORK_DISPLAY_INFO: x=260,y=100,w=100,h=60
+  transitions:
+  - id: T2
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=425,ly=130,xs=364&486,ys=130&130
+variables:
+  waitSeconds:
+    type: java.lang.Integer
+    category: INPUT
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: PUBLIC
+  PerformanceLevel: '0'
+  WORK_DISPLAY_INFO: x=44,y=27,w=175,h=26
+textNotes:
+- id: N1
+  content: |-
+    No test case for this
+    currently
+  attributes:
+    WORK_DISPLAY_INFO: x=50,y=190,w=140,h=40

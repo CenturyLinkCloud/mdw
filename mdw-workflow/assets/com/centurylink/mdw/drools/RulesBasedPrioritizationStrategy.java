@@ -37,20 +37,20 @@ public class RulesBasedPrioritizationStrategy extends RulesBasedStrategy impleme
     @SuppressWarnings("unchecked")
     public Date determineDueDate(TaskTemplate taskTemplate) throws StrategyException {
 
-        TaskInstance taskInstanceVO = new TaskInstance();  // for holding values
+        TaskInstance taskInstance = new TaskInstance();  // for holding values
 
-        // execute rules only once (results are stored in taskInstanceVO)
+        // execute rules only once (results are stored in taskInstance)
         KieBase knowledgeBase = getKnowledgeBase();
         StatelessKieSession knowledgeSession = knowledgeBase.newStatelessKieSession();
 
-        List<Object> facts = new ArrayList<Object>();
+        List<Object> facts = new ArrayList<>();
         facts.add(getParameters());
         knowledgeSession.setGlobal("taskTemplate", taskTemplate);
-        knowledgeSession.setGlobal("taskInstance", taskInstanceVO);
+        knowledgeSession.setGlobal("taskInstance", taskInstance);
 
         knowledgeSession.execute(CommandFactory.newInsertElements(facts));
 
-        return Date.from(taskInstanceVO.getDue());
+        return Date.from(taskInstance.getDue());
     }
 
     public int determinePriority(TaskTemplate taskTemplate, Date dueDate) throws StrategyException {

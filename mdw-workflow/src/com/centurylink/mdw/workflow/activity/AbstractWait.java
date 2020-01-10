@@ -44,8 +44,9 @@ import java.util.List;
 public abstract class AbstractWait extends DefaultActivityImpl implements SuspendableActivity {
 
     public List<String[]> getWaitEventSpecs() {
-        String attVal = this.getAttributeValue(WorkAttributeConstant.WAIT_EVENT_NAMES);
-        if (attVal==null) return new ArrayList<String[]>();
+        String attVal = getAttributeValue(WorkAttributeConstant.WAIT_EVENT_NAMES);
+        if (attVal == null)
+            return new ArrayList<>();
         return Attribute.parseTable(attVal, ',', ';', 3);
     }
 
@@ -65,22 +66,23 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
     protected EventWaitInstance registerWaitEvents(boolean reregister, boolean suppressNotify)
     throws ActivityException {
         List<String[]> eventSpecs = this.getWaitEventSpecs();
-        if (eventSpecs.isEmpty()) return null;
+        if (eventSpecs.isEmpty())
+            return null;
         String[] eventNames = new String[eventSpecs.size()];
         String[] eventCompletionCodes = new String[eventSpecs.size()];
         boolean[] eventOccurances = new boolean[eventSpecs.size()];
-        for (int i=0; i<eventNames.length; i++) {
+        for (int i = 0; i < eventNames.length; i++) {
             eventNames[i] = translatePlaceHolder(eventSpecs.get(i)[0]);
             eventCompletionCodes[i] = eventSpecs.get(i)[1];
-            if (eventSpecs.get(i)[1]==null) {
+            if (eventSpecs.get(i)[1] == null) {
                 eventCompletionCodes[i] = EventType.EVENTNAME_FINISH;
             } else {
                 eventCompletionCodes[i] = eventSpecs.get(i)[1].trim();
-                if (eventCompletionCodes[i].length()==0)
+                if (eventCompletionCodes[i].length() == 0)
                     eventCompletionCodes[i] = EventType.EVENTNAME_FINISH;
             }
             String eventOccur = eventSpecs.get(i)[2];
-            eventOccurances[i] = (eventOccur!=null && eventOccur.equalsIgnoreCase("true"));
+            eventOccurances[i] = (eventOccur != null && eventOccur.equalsIgnoreCase("true"));
         }
         try {
             EventWaitInstance received = getEngine().createEventWaitInstances(
@@ -96,25 +98,11 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
         }
     }
 
-    protected EventWaitInstance registerWaitEvent(String eventName, String completionCode,
-            boolean recurring, boolean check_if_arrvied)
-        throws ServiceLocatorException, DataAccessException, ProcessException {
-        if (StringUtils.isBlank(completionCode))
-            completionCode = EventType.EVENTNAME_FINISH;
-        EventWaitInstance received = getEngine().createEventWaitInstance(
-                getProcessInstanceId(),
-                getActivityInstanceId(),
-                eventName,
-                completionCode, recurring, !check_if_arrvied);
-        return received;
-    }
-
     protected final void deregisterEvents() throws ActivityException {
         List<String[]> eventSpecs = this.getWaitEventSpecs();
         if (eventSpecs.isEmpty()) return;
         try {
-            getEngine().removeEventWaitForActivityInstance(getActivityInstanceId(),
-                    "activity completed w/o event");
+            getEngine().removeEventWaitForActivityInstance(getActivityInstanceId(), "activity completed w/o event");
         } catch (Exception e) {
             throw new ActivityException(-1, e.getMessage(), e);
         }

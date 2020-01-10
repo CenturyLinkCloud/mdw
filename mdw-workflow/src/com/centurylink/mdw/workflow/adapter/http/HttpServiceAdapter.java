@@ -33,9 +33,6 @@ import java.util.Map;
 
 /**
  * Provides a base implementation for SOAP and Rest adapters
- *
- * @author aa70413
- *
  */
 public class HttpServiceAdapter extends TextAdapterActivity {
 

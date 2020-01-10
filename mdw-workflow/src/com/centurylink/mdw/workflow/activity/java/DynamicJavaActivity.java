@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 @Tracked(LogLevel.TRACE)
-@Activity(value="Dynamic Java", icon="com.centurylink.mdw.base/java.jpg",
+@Activity(value="Dynamic Java", icon="com.centurylink.mdw.base/java.png",
         pagelet="com.centurylink.mdw.base/dynamicJava.pagelet")
 public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJavaImplementor {
 
@@ -55,7 +55,7 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
         if (executorClassLoader == null)
             executorClassLoader = getClass().getClassLoader();  // fallback in case not set by activity provider
         if (isLogDebugEnabled())
-            logError("Dynamic Java ClassLoader: " + executorClassLoader);
+            logDebug("Dynamic Java ClassLoader: " + executorClassLoader);
 
         return executorClassLoader;
     }
@@ -160,10 +160,11 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
     protected String getClassName() throws ActivityException {
         String className = getAttributeValue(CLASS_NAME);
         if (className == null) {
-            // old logic based on activity name can lead to collisions
+            // fall back to old logic based on activity name, which can lead to collisions
             className = JavaNaming.getValidClassName(getActivityName() + "_" + getAttributeValue("LOGICAL_ID"));
         }
-        return getPackageName() + className;
+        String packageName = getPackageName();
+        return packageName.isEmpty() ? className : packageName + "." + className;
     }
 
     protected String getPackageName() throws ActivityException {
@@ -172,11 +173,11 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
             if (tempPkg == null || tempPkg.isDefaultPackage())
                 return "";
             else
-                return JavaNaming.getValidPackageName(tempPkg.getName() + ".");
+                return JavaNaming.getValidPackageName(tempPkg.getName());
         }
-        else
-            return JavaNaming.getValidPackageName(pkg.getName() + ".");
+        else {
+            return JavaNaming.getValidPackageName(pkg.getName());
+        }
     }
-
 }
 

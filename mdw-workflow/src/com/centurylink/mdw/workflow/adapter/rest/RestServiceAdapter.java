@@ -51,7 +51,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Tracked(LogLevel.TRACE)
-@Activity(value="RESTful Service Adapter", category=AdapterActivity.class, icon="com.centurylink.mdw.base/adapter.png",
+@Activity(value="REST Service Adapter", category=AdapterActivity.class, icon="com.centurylink.mdw.base/adapter.png",
         pagelet="com.centurylink.mdw.base/restService.pagelet")
 public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwareAdapter {
 
