@@ -24,8 +24,11 @@ that enables you to create workflow processes and other assets.
   4. [Discover and Import Asset Packages](#4-discover-and-import-asset-packages)
      - 4.1 [Import the MDW Slack package](#41-import-the-mdw-slack-package)
      - 4.2 [Expose your own packages for Discovery](#42-expose-your-own-packages-for-discovery)
-  5. [Explore the MDW Cookbook](#5-explore-the-mdw-cookbook)
-     - 5.1 [Walk through MDW's essential features](#51-walk-through-mdws-essential-features)
+  5. [Debug Dynamic Java and Groovy](#5-debug-dynamic-java-and-groovy)
+     - 5.1 [Debug Dynamic Java Activities](#51-debug-dynamic-java-activities)
+     - 5.2 [Debug Groovy Script Activities](#52-debug-groovy-script-activities)   
+  6. [Explore the MDW Cookbook](#6-explore-the-mdw-cookbook)
+     - 6.1 [Walk through MDW's essential features](#61-walk-through-mdws-essential-features)
 
 ## 1. Install and Run MDW Studio
 
@@ -134,6 +137,9 @@ that enables you to create workflow processes and other assets.
 
 ### 3.3 Start the MDW server
   - From the menu: Run > Debug... > select "my-mdw jar".  Server output appears in the console.
+  - **Important:** The MDW server uses a temporary directory specified by `temp.dir` in mdw.yaml.  If this directory
+    is within your project folder, you'll definitely want to exclude this from IntelliJ project resources.  Right-click
+    on the temp dir once it's created, and select Mark Directory as > Excluded.
 
 ### 3.4 Run a process through MDWHub
   - Right-click on My First Process in the project tree and select Run Process.
@@ -153,9 +159,32 @@ that enables you to create workflow processes and other assets.
   - Any MDW project's assets can be discovered through Git this way.  Assets are located by their relative path as specified in
     [project.yaml](../configuration/#project.yaml).
 
-## 5. Explore the MDW Cookbook
+## 5. Debug Dynamic Java and Groovy
 
-### 5.1 Walk through MDW's essential features
+### 5.1 Debug Dynamic Java Activities
+  - There's no special technique to debugging dynamic Java in MDW Studio.  Simply open the dynamic Java source
+    and set a breakpoint.  Then when you run a process while your server launch configuration is running in debug mode
+    you'll automatically be able to hit breakpoints, step through, and evaluate variables.
+
+### 5.2 Debug Groovy Script Activities
+  - A few extra steps are required to debug the Groovy source in your script executor activities: 
+    - Download the Groovy runtime locally (https://groovy.apache.org/download.html). 
+    - In IntelliJ under File > Project Structure, make sure the Groovy global library is configured:
+      ![Groovy Library](../images/studio/groovy-lib.png)
+    - Groovy scripts are saved to the file system and compiled for runtime execution by the scripting engine.
+      The file system version of the script is where you need to set your breakpoint.  The first time a script is executed
+      it's written to the temporary location specified by temp.dir in mdw.yaml.  Run the script once and locate it under
+      temp.dir.
+    - The temp dir is excluded from IntelliJ resources, and we don't want to undo this exclusion which would cause
+      runtime conflicts.  So make a folder in your project called "debug" and copy the script file from its temp
+      location into the debug folder.  There you can set a breakpoint, which will be hit when you run your process.
+    - The screenshot below shows how you can evaluate process variables and your runtimeContext as you step through
+      and debug Groovy scripts.
+      ![Groovy Debug](../images/studio/groovy-debug.png)
+
+## 6. Explore the MDW Cookbook
+
+### 6.1 Walk through MDW's essential features
   - Check out the [MDW Cookbook](../mdw-cookbook) to learn more about MDW:
     - Implement a REST API that uses workflow
     - Incorporate human-performed tasks

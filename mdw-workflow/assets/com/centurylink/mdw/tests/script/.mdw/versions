@@ -1,6 +1,7 @@
 ExpressionEvaluation.proc=3
 ExpressionJson.test=3
 ExpressionJson.yaml=1
+Groovy\ Greet.proc=1
 GroovyReturnVals.proc=8
 GroovyReturnVals.test=3
 GroovyReturnVals.yaml=1
