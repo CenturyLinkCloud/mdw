@@ -1,5 +1,20 @@
 # Change Log
 
+## [6.1.30](https://github.com/CenturyLinkCloud/mdw/tree/6.1.30) (2020-01-10)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.29...6.1.30)
+
+**Implemented enhancements:**
+
+- DependenciesFallbackPublish should handle pre-existing EVENT\_INSTANCE [\#791](https://github.com/CenturyLinkCloud/mdw/issues/791)
+- ServiceNow adapter activity [\#781](https://github.com/CenturyLinkCloud/mdw/issues/781)
+- Add primary key to ACTIVITY\_LOG table for Oracle [\#776](https://github.com/CenturyLinkCloud/mdw/issues/776)
+
+**Closed issues:**
+
+- Corruption in 6.1.29 asset zip files on Maven Central [\#790](https://github.com/CenturyLinkCloud/mdw/issues/790)
+- Unparseable adapter response content can prevent activity retry [\#784](https://github.com/CenturyLinkCloud/mdw/issues/784)
+- Annotated ProcessCleanup should not honor old property values [\#779](https://github.com/CenturyLinkCloud/mdw/issues/779)
+
 ## [6.1.29](https://github.com/CenturyLinkCloud/mdw/tree/6.1.29) (2019-12-13)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.28...6.1.29)
 
