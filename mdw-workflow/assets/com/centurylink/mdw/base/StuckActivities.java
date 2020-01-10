@@ -19,7 +19,6 @@ import com.centurylink.mdw.annotations.ScheduledJob;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
@@ -38,9 +37,6 @@ import java.sql.ResultSet;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
-
-
 
 /**
  * This script fixes stuck activities by failing them and then retrying them
