@@ -15,6 +15,12 @@
 - Unparseable adapter response content can prevent activity retry [\#784](https://github.com/CenturyLinkCloud/mdw/issues/784)
 - Annotated ProcessCleanup should not honor old property values [\#779](https://github.com/CenturyLinkCloud/mdw/issues/779)
 
+**Compatibility Notes:**
+
+- To avoid `Error: zip END header not found​` when updating to 6.1.30 assets, install the latest 
+  [CLI](https://centurylinkcloud.github.io/mdw/docs/getting-started/cli/) 
+  and/or [MDW Studio](https://centurylinkcloud.github.io/mdw/docs/guides/mdw-studio/) version 2.0.2 or later. 
+
 ## [6.1.29](https://github.com/CenturyLinkCloud/mdw/tree/6.1.29) (2019-12-13)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.28...6.1.29)
 

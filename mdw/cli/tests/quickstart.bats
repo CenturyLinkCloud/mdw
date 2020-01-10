@@ -24,7 +24,6 @@ NO_UPDATE="--no-update"
 }
 
 @test "plain init" {
-  skip 'temp'
   rm -rf plain-mdw
   mdw init plain-mdw $TEMPLATE_DIR
   ls spring-boot-mdw/config/mdw.yaml
@@ -50,7 +49,7 @@ NO_UPDATE="--no-update"
 }
 
 @test "install" {
-  skip 'formal'
+  # skip 'formal'
   rm -rf install-mdw
   mdw init install-mdw --snapshots $NO_UPDATE $TEMPLATE_DIR
   mdw install --project-dir=./install-mdw --boot-jar-loc=./install-mdw --binaries-url="file://$PWD/../../deploy/app"
