@@ -80,26 +80,20 @@ public class ProcessCleanup extends RoundRobinScheduledJob implements com.centur
         int commitInterval = 10000;
         String cleanupScript = null;
 
-        if (PropertyManager.isYaml()) {
+        if (PropertyManager.isYaml())
+        {
             try {
                 Properties cleanupTaskProperties = PropertyManager.getInstance().getProperties(PropertyNames.MDW_TIMER_TASK);
-                if (cleanupTaskProperties !=null && cleanupTaskProperties.size() != 0) {
-                    processExpirationDays = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".ProcessCleanup.ProcessExpirationAgeInDays", "180"));
-                    maxProcesses = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".ProcessCleanup.MaximumProcessExpiration", "0"));
-                    eventExpirationDays = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".ProcessCleanup.ExternalEventExpirationAgeInDays", "180"));
-                    commitInterval = Integer.parseInt(cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".ProcessCleanup.CommitInterval", "10000"));
-                    cleanupScript = cleanupTaskProperties.getProperty(PropertyNames.MDW_TIMER_TASK + ".ProcessCleanup.RuntimeCleanupScript", "Cleanup-Runtime.sql");
-                } else {
-                    processExpirationDays = PropertyManager.getIntegerProperty("mdw.cleanup.job.ProcessExpirationAgeInDays", 180);
+                processExpirationDays = PropertyManager.getIntegerProperty("mdw.cleanup.job.ProcessExpirationAgeInDays", 180);
                     maxProcesses = PropertyManager.getIntegerProperty("mdw.cleanup.job.maxProcesses", 0);
                     eventExpirationDays = PropertyManager.getIntegerProperty("mdw.cleanup.job.eventExpirationDays", 180);
                     commitInterval = PropertyManager.getIntegerProperty("mdw.cleanup.job.commitInterval", 10000);
                     cleanupScript = PropertyManager.getProperty("mdw.cleanup.job.RuntimeCleanupScript","Cleanup-Runtime.sql" );
-                }
             } catch (PropertyException e) {
                 logger.info("ProcessCleanup.run() : Properties not found" + e.getMessage());
             }
-        } else {
+        }
+        else {
             processExpirationDays = PropertyManager.getIntegerProperty(
                     PropertyNames.PROCESS_CLEANUP + "/ProcessExpirationAgeInDays", 180);
             maxProcesses = PropertyManager.getIntegerProperty(
