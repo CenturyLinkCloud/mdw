@@ -32,6 +32,9 @@ jobs:
       - name: pwd
         working-directory: mdw
         run: echo PWD - $PWD
+      - name: cli perms
+        working-directory: mdw
+        run: ls -l cli/bats/bin
       - name: publish
         working-directory: mdw
         run: ./gradlew publishGitHub --debug
