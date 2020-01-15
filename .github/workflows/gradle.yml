@@ -26,9 +26,9 @@ jobs:
       - name: gradle version
         working-directory: mdw
         run: ./gradlew -version
-      - name: zip assets
-        working-directory: mdw
-        run: ./gradlew zipAssetPackages
+#      - name: zip assets
+#        working-directory: mdw
+#        run: ./gradlew zipAssetPackages
       - name: publish
         working-directory: mdw
-        run: ./gradlew publishGitHub
+        run: ./gradlew publishGitHub --debug
