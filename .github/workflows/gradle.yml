@@ -25,6 +25,6 @@ jobs:
         run: npm install
       - name: gradle build
         working-directory: mdw
-          - run: ./gradlew -version
-          - run: ./gradlew zipAssetPackages
-          - run: ./gradlew testAll
+      - run: ./gradlew -version
+      - run: ./gradlew zipAssetPackages
+      - run: ./gradlew testAll
