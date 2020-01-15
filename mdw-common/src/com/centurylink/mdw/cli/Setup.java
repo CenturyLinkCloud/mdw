@@ -46,7 +46,7 @@ public abstract class Setup implements Operation {
     protected static final String META_DIR = ".mdw";
     protected static final String VERSIONS = "versions";
     protected static final String MDW_COMMON_PATH = "/com/centurylink/mdw/mdw-templates/";
-    public static final String MAVEN_CENTRAL_URL = "http://repo.maven.apache.org/maven2";
+    public static final String MAVEN_CENTRAL_URL = "https://repo.maven.apache.org/maven2";
     public static final String SONATYPE_URL = "https://oss.sonatype.org/service/local/artifact/maven";
 
     Setup() {

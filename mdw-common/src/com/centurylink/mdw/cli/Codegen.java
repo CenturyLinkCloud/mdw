@@ -139,10 +139,9 @@ public class Codegen extends Setup {
         if (codeType.equals("swagger")) {
             if (inputSpec == null)
                 throw new IOException("Missing required parameter: input-spec");
-            String mavenUrl = "http://repo.maven.apache.org/maven2";
             Map<String,Long> swaggerDependencies = getSwaggerDependencies();
             for (String dep : swaggerDependencies.keySet()) {
-                new Dependency(mavenUrl, dep, swaggerDependencies.get(dep)).run(monitors);
+                new Dependency(MAVEN_CENTRAL_URL, dep, swaggerDependencies.get(dep)).run(monitors);
             }
 
             // trimApiPaths is set from codegen config.json

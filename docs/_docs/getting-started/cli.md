@@ -99,7 +99,7 @@ title: Command Line Interface
         MDW Version
       --releases-url
         MDW releases Maven repo URL
-        Default: http://repo.maven.apache.org/maven2
+        Default: https://repo.maven.apache.org/maven2
       --services-url
         MDW service base URL
         Default: http://localhost:8080/mdw/services

@@ -12,6 +12,7 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.dataaccess.reports.ProcessAggregation;
+import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.asset.CommitInfo;
@@ -78,7 +79,7 @@ public class DesignServicesImpl implements DesignServices {
             }
         }
         if (process == null)
-            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + assetPath);
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + assetPath + " v" + Asset.formatVersion(version));
 
         return process;
     }

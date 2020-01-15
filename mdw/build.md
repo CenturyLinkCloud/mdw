@@ -35,7 +35,7 @@
   Manually close/release from [Nexus Repository Manager](https://oss.sonatype.org/#welcome) (don't want to automate this).
   Verify repository contains artifacts:
   7a. (Formal Build)
-    - Repository: http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (20-30 min)
+    - Repository: https://repo.maven.apache.org/maven2/com/centurylink/mdw/ (20-30 min)
   7b. (Snapshot Build)
     - Snapshot repo: https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/
 

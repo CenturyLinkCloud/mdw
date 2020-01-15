@@ -23,6 +23,8 @@ import com.centurylink.mdw.cli.Dependency;
 import com.centurylink.mdw.export.ProcessExporter;
 import com.centurylink.mdw.model.workflow.Process;
 
+import static com.centurylink.mdw.cli.Setup.MAVEN_CENTRAL_URL;
+
 public class BpmnProcessExporter implements ProcessExporter {
 
     @Override
@@ -36,9 +38,9 @@ public class BpmnProcessExporter implements ProcessExporter {
         dependencies.add(new Dependency(
                 "https://github.com/CenturyLinkCloud/mdw/blob/master/mdw/libs/bpmn-schemas.jar?raw=true",
                 "./bpmn-schemas.jar", 2011745L));
-        dependencies.add(new Dependency("http://repo.maven.apache.org/maven2",
+        dependencies.add(new Dependency(MAVEN_CENTRAL_URL,
                 "org/apache/xmlbeans/xmlbeans/2.4.0/xmlbeans-2.4.0.jar", 2694049L));
-        dependencies.add(new Dependency("http://repo.maven.apache.org/maven2",
+        dependencies.add(new Dependency(MAVEN_CENTRAL_URL,
                 "org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar", 41203L));
         return dependencies;
     }

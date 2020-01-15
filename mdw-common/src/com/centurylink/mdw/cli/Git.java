@@ -26,6 +26,8 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.dataaccess.VersionControl;
 
+import static com.centurylink.mdw.cli.Setup.MAVEN_CENTRAL_URL;
+
 /**
  * Uses reflection to avoid hard dependency on JGit.
  */
@@ -61,7 +63,7 @@ public class Git implements Operation {
 
     // for CLI
     Git() {
-        mavenRepoUrl = "http://repo.maven.apache.org/maven2";
+        mavenRepoUrl = MAVEN_CENTRAL_URL;
         command = "git";
     }
 

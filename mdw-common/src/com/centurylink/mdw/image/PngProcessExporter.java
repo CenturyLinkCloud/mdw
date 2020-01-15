@@ -27,6 +27,8 @@ import com.centurylink.mdw.export.ProcessExporter;
 import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.workflow.Process;
 
+import static com.centurylink.mdw.cli.Setup.MAVEN_CENTRAL_URL;
+
 public class PngProcessExporter implements ProcessExporter {
 
     private Project project;
@@ -44,9 +46,9 @@ public class PngProcessExporter implements ProcessExporter {
     @Override
     public List<Dependency> getDependencies() {
         List<Dependency> dependencies = new ArrayList<>();
-        dependencies.add(new Dependency("http://repo.maven.apache.org/maven2",
+        dependencies.add(new Dependency(MAVEN_CENTRAL_URL,
                 "org/jetbrains/kotlin/kotlin-stdlib/1.2.61/kotlin-stdlib-1.2.61.jar", 12388L));
-        dependencies.add(new Dependency("http://repo.maven.apache.org/maven2",
+        dependencies.add(new Dependency(MAVEN_CENTRAL_URL,
                 "org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar", 41203L));
         return dependencies;
     }

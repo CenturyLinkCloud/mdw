@@ -276,7 +276,7 @@ public class Convert extends Setup  {
 
     public List<Dependency> getDependencies() {
         List<Dependency> dependencies = new ArrayList<>();
-        dependencies.add(new Dependency("http://repo.maven.apache.org/maven2",
+        dependencies.add(new Dependency(MAVEN_CENTRAL_URL,
                 "org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar", 41203L));
         return dependencies;
     }
