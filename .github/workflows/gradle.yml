@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: 12.x
       - name: npm install
-        workingDirectory: mdw-hub
+        working-directory: mdw-hub
         run: npm install
       - name: gradle build
         working-directory: mdw
