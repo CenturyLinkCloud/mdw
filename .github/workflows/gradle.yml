@@ -23,8 +23,11 @@ jobs:
       - name: npm install
         working-directory: mdw-hub
         run: npm install
-      - name: gradle build
+      - name: gradle version
         working-directory: mdw
-      - run: ./gradlew -version
-      - run: ./gradlew zipAssetPackages
-      - run: ./gradlew testAll
+        run: ./gradlew -version
+      - name: zip assets
+        working-directory: mdw
+        run: ./gradlew zipAssetPackages
+      - name: publish
+        run: ./gradlew testAll
