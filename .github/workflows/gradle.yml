@@ -30,4 +30,5 @@ jobs:
         working-directory: mdw
         run: ./gradlew zipAssetPackages
       - name: publish
-        run: ./gradlew testAll
+        working-directory: mdw
+        run: ./gradlew publishGitHub
