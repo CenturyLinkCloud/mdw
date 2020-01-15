@@ -81,6 +81,12 @@ task publishMdwBuild(type: GradleBuild) {
 }
 closeAndReleaseRepository.mustRunAfter uploadMdwBuild
 
+task publishToGitHub(type: GradleBuild) {
+    doLast {
+        println 'Publish to GitHub'
+    }
+}
+
 task updateHubPackageJson {
       description = "Update mdw-hub/package.json with version number"
       

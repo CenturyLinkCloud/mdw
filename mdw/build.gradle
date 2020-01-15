@@ -328,6 +328,13 @@ task publishAll(type: GradleBuild) {
 publish.mustRunAfter(testAll)
 publishAll.mustRunAfter(testAll)
 
+task publishGitHub(type: GradleBuild) {
+    dependsOn testAll
+    buildFile = "publish.gradle"
+    tasks = ["publishToGitHub"]
+}
+publishGitHub.mustRunAfter(testAll)
+
 publishing {
     // find asset zips
     def assetArtifacts = [:]
