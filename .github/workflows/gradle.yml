@@ -29,6 +29,9 @@ jobs:
 #      - name: zip assets
 #        working-directory: mdw
 #        run: ./gradlew zipAssetPackages
+      - name: pwd
+        working-directory: mdw
+        run: echo PWD - $PWD
       - name: publish
         working-directory: mdw
         run: ./gradlew publishGitHub --debug
