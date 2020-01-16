@@ -1,1 +1,0 @@
-echo 'ECHOING FROM HELLO'

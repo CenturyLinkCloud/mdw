@@ -32,16 +32,12 @@ jobs:
       - name: pwd
         working-directory: mdw
         run: echo PWD - $PWD
-      - name: set path
-        run: |
-          echo "::add-path::/home/runner/work/mdw/mdw/mdw/cli/bats/libexec"
+      - name: bats path
+        run: echo "::add-path::$RUNNER_WORKSPACE/mdw/mdw/cli/bats/bin"
         shell: bash
-      - name: echo path
-        working-directory: mdw
-        run: echo $PATH
-      - name: hello temp
-        working-directory: mdw
-        run: ./gradlew -b test.gradle hello
+      - name: cli path
+        run: echo "::add-path::$RUNNER_WORKSPACE/mdw/mdw/cli/bin"
+        shell: bash
       - name: cli temp
         working-directory: mdw
         run: ./gradlew -b test.gradle cliTests
