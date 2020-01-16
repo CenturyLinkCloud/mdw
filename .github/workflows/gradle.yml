@@ -37,7 +37,7 @@ jobs:
         run: ls -l cli/bats/bin
       - name: cli temp
         working-directory: mdw/cli/tests
-        run: ../bats/bin/bats
+        run: ../bats/bin/bats .
 #      - name: publish
 #        working-directory: mdw
 #        run: ./gradlew publishGitHub --debug
