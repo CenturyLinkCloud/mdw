@@ -41,8 +41,17 @@ task cliTests(type: Exec) {
         println '\nRunning CLI Tests...'
     }
     workingDir './cli/tests'
-    environment << [MDW_HOME: '../', PATH: "${environment.PATH}:../bin:../bats/bin:./cli/bin:./cli/bats/bin"]
+    environment << [MDW_HOME: '../', PATH: "${environment.PATH}:/home/runner/work/mdw/mdw/mdw/cli/bats/libexec"]
     commandLine 'bats'
+}
+
+task hello(type: Exec) {
+    doFirst {
+        println '\nRunning Hello...'
+    }
+    workingDir './cli/tests'
+    environment << [MDW_HOME: '../', PATH: "${environment.PATH}:/home/runner/work/mdw/mdw/mdw/cli/bats/libexec"]
+    commandLine 'hello.sh'
 }
 
 task runTests(type: Exec) {

@@ -35,6 +35,9 @@ jobs:
       - name: cli perms
         working-directory: mdw
         run: ls -l /home/runner/work/mdw/mdw/mdw/cli/bats/bin
+      - name: hello temp
+        working-directory: mdw
+        run: ./gradlew -b test.gradle hello
       - name: cli temp
         working-directory: mdw
         run: ./gradlew -b test.gradle cliTests
