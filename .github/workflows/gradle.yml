@@ -16,13 +16,13 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12.x
-      - name: npm install
-        working-directory: mdw-hub
-        run: npm install
+#      - name: setup node
+#        uses: actions/setup-node@v1
+#        with:
+#          node-version: 12.x
+#      - name: npm install
+#        working-directory: mdw-hub
+#        run: npm install
       - name: gradle version
         working-directory: mdw
         run: ./gradlew -version
@@ -38,6 +38,9 @@ jobs:
       - name: cli path
         run: echo "::add-path::$RUNNER_WORKSPACE/mdw/mdw/cli/bin"
         shell: bash
+      - name: pwd temp
+        working-directory: mdw
+        run: ./gradlew -b test.gradle pwd
       - name: cli temp
         working-directory: mdw
         run: ./gradlew -b test.gradle cliTests

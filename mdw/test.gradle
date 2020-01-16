@@ -45,6 +45,15 @@ task cliTests(type: Exec) {
     commandLine 'bats', '.'
 }
 
+task pwd(type: Exec) {
+    doFirst {
+        println '\nFinding PWD...'
+    }
+    workingDir './cli/tests'
+    environment << [MDW_HOME: '../', PATH: "${environment.PATH}:../bin:../bats/bin"]
+    commandLine 'pwd'
+}
+
 task runTests(type: Exec) {
     def cmd = [getMdwCmd(), 'test', '--stubbing', '--threads=10',
         '--include="**/*.test"',
