@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      MDW_HOME: $RUNNER_WORKSPACE/mdw/mdw/cli
+      MDW_HOME: ${{ env['RUNNER_WORKSPACE'] }}/mdw/mdw/cli
 
     steps:
       - uses: actions/checkout@v1
