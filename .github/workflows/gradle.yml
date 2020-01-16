@@ -34,7 +34,7 @@ jobs:
         run: echo PWD - $PWD
       - name: cli perms
         working-directory: mdw
-        run: ls -l cli/bats/bin
+        run: ls -l /home/runner/work/mdw/mdw/mdw/cli/bats/bin
       - name: cli temp
         working-directory: mdw
         run: ./gradlew -b test.gradle cliTests
