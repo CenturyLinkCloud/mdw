@@ -41,9 +41,9 @@ jobs:
       - name: cli path
         run: echo "::add-path::${{ env['MDW_HOME'] }}/bin"
         shell: bash
-      - name: pwd temp
+      - name: path temp
         working-directory: mdw
-        run: ./gradlew -b test.gradle pwd
+        run: echo PATH - $PATH
       - name: cli temp
         working-directory: mdw
         run: ./gradlew -b test.gradle cliTests
