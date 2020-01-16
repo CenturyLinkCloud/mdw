@@ -42,7 +42,7 @@ task cliTests(type: Exec) {
     }
     workingDir './cli/tests'
     environment << [MDW_HOME: '../', PATH: "${environment.PATH}:../bin:../bats/bin:./cli/bin:./cli/bats/bin"]
-    commandLine 'bats', '.'
+    commandLine 'bats'
 }
 
 task runTests(type: Exec) {
