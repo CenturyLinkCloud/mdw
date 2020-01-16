@@ -35,6 +35,9 @@ jobs:
       - name: cli perms
         working-directory: mdw
         run: ls -l cli/bats/bin
-      - name: publish
-        working-directory: mdw
-        run: ./gradlew publishGitHub --debug
+      - name: cli temp
+        working-directory: mdw/cli/tests
+        run: ../bats/bin/bats
+#      - name: publish
+#        working-directory: mdw
+#        run: ./gradlew publishGitHub --debug
