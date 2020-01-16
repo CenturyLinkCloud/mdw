@@ -45,9 +45,9 @@ jobs:
       - name: path temp
         working-directory: mdw
         run: echo PATH - $PATH
-      - name: cli temp
-        working-directory: mdw
-        run: ./gradlew -b test.gradle cliTests
-#      - name: publish
+#      - name: cli temp
 #        working-directory: mdw
-#        run: ./gradlew publishGitHub --debug
+#        run: ./gradlew -b test.gradle cliTests
+      - name: publish
+        working-directory: mdw
+        run: ./gradlew publishGitHub --debug
