@@ -39,7 +39,7 @@ jobs:
         run: echo "::add-path::$RUNNER_WORKSPACE/mdw/mdw/cli/bats/bin"
         shell: bash
       - name: cli path
-        run: echo "::add-path::$MDW_HOME/bin"
+        run: echo "::add-path::${{ env['MDW_HOME'] }}/bin"
         shell: bash
       - name: pwd temp
         working-directory: mdw
