@@ -40,7 +40,8 @@ public class GitLabDiscoverer extends GitDiscoverer {
         if (query != null) {
             for (String pair : query.split("&")) {
                 int eq = pair.indexOf('=');
-                if (eq > 0 && eq < pair.length() - 1 && pair.substring(0,eq).equals("Private-Token")) {
+                if (eq > 0 && eq < pair.length() - 1 &&
+                        (pair.substring(0, eq).equals("Private-Token") || pair.substring(0, eq).equals("private_token"))) {
                     setToken(pair.substring(eq + 1));
                 }
             }
@@ -98,9 +99,9 @@ public class GitLabDiscoverer extends GitDiscoverer {
     }
 
     public JSONArray getTreeInfo(String path, String ref, boolean recursive) throws IOException {
-        // projects/MDW_DEV%2Fmdw-demo-ctl/repository/tree?path=/&ref=master
+        // projects/MDW_DEV%2Fmdw-demo-ctl/repository/tree?path=/&ref=master&page_size=100
         String url = apiBase + "/projects/" + URLEncoder.encode(repoPath, "utf-8") + "/repository/tree?path=" +
-                URLEncoder.encode(path, "utf-8") + "&ref=" + ref;
+                URLEncoder.encode(path, "utf-8") + "&ref=" + ref + "&per_page=100";
         if (recursive)
             url += "&recursive=true";
         HttpHelper http = getHttpHelper(url);
