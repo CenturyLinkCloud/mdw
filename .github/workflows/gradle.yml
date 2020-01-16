@@ -12,6 +12,7 @@ jobs:
 
     env:
       MDW_HOME: $RUNNER_WORKSPACE/mdw/mdw/cli
+      MDW_APP_TOKEN: ${{ secrets.MDW_APP_TOKEN }}
 
     steps:
       - uses: actions/checkout@v1
