@@ -10,6 +10,9 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      MDW_HOME: $RUNNER_WORKSPACE/mdw/mdw/cli
+
     steps:
       - uses: actions/checkout@v1
       - name: setup java
@@ -29,14 +32,14 @@ jobs:
 #      - name: zip assets
 #        working-directory: mdw
 #        run: ./gradlew zipAssetPackages
-      - name: pwd
+      - name: mdw home temp
         working-directory: mdw
-        run: echo PWD - $PWD
+        run: echo MDW_HOME - $MDW_HOME
       - name: bats path
         run: echo "::add-path::$RUNNER_WORKSPACE/mdw/mdw/cli/bats/bin"
         shell: bash
       - name: cli path
-        run: echo "::add-path::$RUNNER_WORKSPACE/mdw/mdw/cli/bin"
+        run: echo "::add-path::$MDW_HOME/bin"
         shell: bash
       - name: pwd temp
         working-directory: mdw
