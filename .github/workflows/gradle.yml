@@ -10,8 +10,9 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    # can't seem to reference $RUNNER_HOME in MDW_HOME env var
     env:
-      MDW_HOME: ${{ env['RUNNER_WORKSPACE'] }}/mdw/mdw/cli
+      MDW_HOME: /home/runner/work/mdw/mdw/mdw/cli
 
     steps:
       - uses: actions/checkout@v1
