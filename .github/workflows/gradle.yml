@@ -10,9 +10,8 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    # can't seem to reference $RUNNER_HOME in MDW_HOME env var
     env:
-      MDW_HOME: /home/runner/work/mdw/mdw/mdw/cli
+      MDW_HOME: $RUNNER_WORKSPACE/mdw/mdw/cli
 
     steps:
       - uses: actions/checkout@v1
@@ -20,13 +19,13 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-#      - name: setup node
-#        uses: actions/setup-node@v1
-#        with:
-#          node-version: 12.x
-#      - name: npm install
-#        working-directory: mdw-hub
-#        run: npm install
+      - name: setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+      - name: npm install
+        working-directory: mdw-hub
+        run: npm install
       - name: gradle version
         working-directory: mdw
         run: ./gradlew -version
@@ -50,4 +49,4 @@ jobs:
 #        run: ./gradlew -b test.gradle cliTests
       - name: publish
         working-directory: mdw
-        run: ./gradlew publishGitHub --debug
+        run: ./gradlew publishGitHub
