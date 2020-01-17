@@ -54,4 +54,4 @@ jobs:
         run: echo signing.password=$SIGNING_PASSWORD >> ~/.gradle/gradle.properties
       - name: publish
         working-directory: mdw
-        run: ./gradlew --no-daemon --stacktrace testAll # publishAll but need OSSRH_*
+        run: ./gradlew --no-daemon --stacktrace testAll # publishAll but need valid OSSRH_* env vars
