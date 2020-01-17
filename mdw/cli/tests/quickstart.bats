@@ -14,7 +14,8 @@ NO_UPDATE="--no-update"
 
 @test "spring boot init" {
   rm -rf spring-boot-mdw
-  ls spring-boot-mdw
+  pwd
+  ls /home/runner/work/mdw/mdw/mdw/cli/tests/spring-boot-mdw
   mdw init spring-boot-mdw --spring-boot $NO_UPDATE $TEMPLATE_DIR
   ls spring-boot-mdw/src/main/java/com/example/MyApplication.java
   ls spring-boot-mdw/config/application.yml
@@ -27,7 +28,7 @@ NO_UPDATE="--no-update"
 @test "plain init" {
   rm -rf plain-mdw
   mdw init plain-mdw $TEMPLATE_DIR
-  ls spring-boot-mdw/config/mdw.yaml
+  ls plain-mdw/config/mdw.yaml
   ls plain-mdw/assets/com/centurylink/mdw/base/.mdw/versions
   # pom.xml should not be present with no --maven
   run ls plain-mdw/pom.xml
