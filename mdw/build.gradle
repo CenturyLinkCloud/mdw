@@ -10,17 +10,17 @@ buildscript {
 
 plugins {
     id 'maven-publish'
-//    id 'signing'
+    id 'signing'
     id 'org.sonarqube' version '2.7.1'
 //    id 'io.codearte.nexus-staging' version '0.20.0'
 //    id 'de.marcphilipp.nexus-publish' version '0.1.1'
 }
 
-//configurations {
-//    assets {
-//        extendsFrom archives
-//    }
-//}
+configurations {
+    assets {
+        extendsFrom archives
+    }
+}
 
 if ('true'.equals(findProperty('devBuild'))) {
     subprojects {
@@ -38,7 +38,7 @@ subprojects {
     apply plugin: 'java'
     // apply plugin: 'org.sonarqube'
     apply plugin: 'maven-publish'
-    // apply plugin: 'signing'
+    apply plugin: 'signing'
     // apply plugin: 'de.marcphilipp.nexus-publish'
 
     sourceCompatibility = 1.8
@@ -243,9 +243,9 @@ task zipTemplates(type: Zip) {
     }
 }
 
-//artifacts {
-//    archives zipTemplates
-//}
+artifacts {
+    archives zipTemplates
+}
 
 task buildAll(type: GradleBuild) {
     if (mdwVersion.endsWith("-SNAPSHOT"))
