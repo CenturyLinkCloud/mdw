@@ -3,7 +3,7 @@ name: Build Test Publish
 on:
   push:
     branches:
-      - master
+      - none # master
 
 jobs:
   build:
