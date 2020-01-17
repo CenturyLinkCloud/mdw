@@ -1,4 +1,4 @@
-name: Java CI
+name: Build Test Publish
 
 on:
   push:
@@ -12,7 +12,8 @@ jobs:
 
     env:
       MDW_HOME: $RUNNER_WORKSPACE/mdw/mdw/cli
-      MDW_APP_TOKEN: ${{ secrets.MDW_APP_TOKEN }}
+      MDW_APP_TOKEN: ${{secrets.MDW_APP_TOKEN}}
+      GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
     steps:
       - uses: actions/checkout@v1
@@ -27,18 +28,15 @@ jobs:
       - name: npm install
         working-directory: mdw-hub
         run: npm install
-      - name: gradle version
+      - name: zip assets
         working-directory: mdw
-        run: ./gradlew -version
-#      - name: zip assets
-#        working-directory: mdw
-#        run: ./gradlew zipAssetPackages
+        run: ./gradlew zipAssetPackages
       - name: bats path
         run: echo "::add-path::$RUNNER_WORKSPACE/mdw/mdw/cli/bats/bin"
         shell: bash
       - name: cli path
-        run: echo "::add-path::${{ env['MDW_HOME'] }}/bin"
+        run: echo "::add-path::${{env['MDW_HOME']}}/bin"
         shell: bash
       - name: publish
         working-directory: mdw
-        run: ./gradlew publishGitHub --stacktrace
+        run: ./gradlew publishAll --stacktrace
