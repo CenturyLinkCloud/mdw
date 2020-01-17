@@ -13,9 +13,9 @@ TEMPLATE_DIR="--template-dir=../../templates"
 NO_UPDATE="--no-update"
 
 @test "spring boot init" {
+  # skip 'temp github actions'
   rm -rf spring-boot-mdw
-  # why does GitHub action fail without --overwrite (Destination already exists: /home/runner/work/mdw/mdw/mdw/cli/tests/spring-boot-mdw/build.gradle)?
-  mdw init spring-boot-mdw --spring-boot --overwrite $NO_UPDATE $TEMPLATE_DIR
+  mdw init spring-boot-mdw --spring-boot $NO_UPDATE $TEMPLATE_DIR
   ls spring-boot-mdw/src/main/java/com/example/MyApplication.java
   ls spring-boot-mdw/config/application.yml
   ls spring-boot-mdw/config/mdw.yaml
