@@ -14,6 +14,10 @@ jobs:
       MDW_HOME: $RUNNER_WORKSPACE/mdw/mdw/cli
       MDW_APP_TOKEN: ${{secrets.MDW_APP_TOKEN}}
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      SIGNING_KEY_ID: ${{secrets.SIGNING_KEY_ID}}
+      SIGNING_PASSWORD: ${{secrets.SIGNING_PASSWORD}}
+      OSSRH_JIRA_USERNAME: ${{secrets.OSSRH_JIRA_USERNAME}}
+      OSSRH_JIRA_PASSWORD: ${{secrets.OSSRH_JIRA_PASSWORD}}
 
     steps:
       - name: checkout
@@ -37,13 +41,17 @@ jobs:
         run: npm install
       - name: zip assets
         working-directory: mdw
-        run: ./gradlew zipAssetPackages
+        run: ./gradlew --no-daemon zipAssetPackages
       - name: bats path
         run: echo "::add-path::$RUNNER_WORKSPACE/mdw/mdw/cli/bats/bin"
         shell: bash
       - name: cli path
         run: echo "::add-path::${{env['MDW_HOME']}}/bin"
         shell: bash
+      - name: signing key
+        run: echo signing.keyId=$SIGNING_KEY_ID > ~/.gradle/gradle.properties
+      - name: signing password
+        run: echo signing.password=$SIGNING_PASSWORD >> ~/.gradle/gradle.properties
       - name: publish
         working-directory: mdw
-        run: ./gradlew publishAll --stacktrace
+        run: ./gradlew --no-daemon --stacktrace testAll # publishAll

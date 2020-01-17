@@ -12,8 +12,8 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id 'org.sonarqube' version '2.7.1'
-//    id 'io.codearte.nexus-staging' version '0.20.0'
-//    id 'de.marcphilipp.nexus-publish' version '0.1.1'
+    id 'io.codearte.nexus-staging' version '0.20.0'
+    id 'de.marcphilipp.nexus-publish' version '0.1.1'
 }
 
 configurations {
@@ -36,10 +36,10 @@ task env {
 
 subprojects {
     apply plugin: 'java'
-    // apply plugin: 'org.sonarqube'
+    apply plugin: 'org.sonarqube'
     apply plugin: 'maven-publish'
     apply plugin: 'signing'
-    // apply plugin: 'de.marcphilipp.nexus-publish'
+    apply plugin: 'de.marcphilipp.nexus-publish'
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -83,18 +83,6 @@ subprojects {
     }
 
     publishing {
-
-        repositories {
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/CenturyLinkCloud/mdw")
-                credentials {
-                    username = "OWNER"
-                    password = System.getenv("GITHUB_TOKEN")
-                }
-            }
-        }
-
         publications {
             maven(MavenPublication) {
                 from components.java
@@ -169,12 +157,12 @@ task packageSources(type: GradleBuild) {
 }
 
 allprojects {
-//    signing {
-//        required {
-//            !mdwVersion.endsWith('-SNAPSHOT')
-//        }
-//        sign publishing.publications
-//    }
+    signing {
+        required {
+            !mdwVersion.endsWith('-SNAPSHOT')
+        }
+        sign publishing.publications
+    }
 
     tasks.withType(Javadoc) {
         options.addStringOption('Xdoclint:none', '-quiet')
@@ -341,18 +329,6 @@ publish.mustRunAfter(testAll)
 publishAll.mustRunAfter(testAll)
 
 publishing {
-
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/CenturyLinkCloud/mdw")
-            credentials {
-                username = "OWNER"
-                password = System.getenv("GITHUB_TOKEN")
-            }
-        }
-    }
-
     // find asset zips
     def assetArtifacts = [:]
     fileTree(dir: "../${mdwAssetOutputDir}", include: '**/*.zip').each { assetZip ->
@@ -429,13 +405,13 @@ publishing {
         }
     }
 
-//    nexusStaging {
-//        delayBetweenRetriesInMillis = 5000
-//        packageGroup = "com.centurylink"
-//        stagingProfileId = "20378d64ebd7b6"
-//        serverUrl = "https://oss.sonatype.org/service/local"
-//        username = System.getenv("OSSRH_JIRA_USERNAME")
-//        password = System.getenv("OSSRH_JIRA_PASSWORD")
-//    }
+    nexusStaging {
+        delayBetweenRetriesInMillis = 5000
+        packageGroup = "com.centurylink"
+        stagingProfileId = "20378d64ebd7b6"
+        serverUrl = "https://oss.sonatype.org/service/local"
+        username = System.getenv("OSSRH_JIRA_USERNAME")
+        password = System.getenv("OSSRH_JIRA_PASSWORD")
+    }
 
 }
