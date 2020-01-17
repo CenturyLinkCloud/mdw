@@ -33,18 +33,12 @@ jobs:
 #      - name: zip assets
 #        working-directory: mdw
 #        run: ./gradlew zipAssetPackages
-      - name: mdw home temp
-        working-directory: mdw
-        run: echo MDW_HOME - $MDW_HOME
       - name: bats path
         run: echo "::add-path::$RUNNER_WORKSPACE/mdw/mdw/cli/bats/bin"
         shell: bash
       - name: cli path
         run: echo "::add-path::${{ env['MDW_HOME'] }}/bin"
         shell: bash
-      - name: path temp
-        working-directory: mdw
-        run: echo PATH - $PATH
       - name: publish
         working-directory: mdw
         run: ./gradlew publishGitHub --stacktrace
