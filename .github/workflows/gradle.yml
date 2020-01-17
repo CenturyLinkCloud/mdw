@@ -47,4 +47,4 @@ jobs:
         run: echo PATH - $PATH
       - name: publish
         working-directory: mdw
-        run: ./gradlew publishGitHub
+        run: ./gradlew publishGitHub --stacktrace
