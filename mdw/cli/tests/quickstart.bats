@@ -15,7 +15,6 @@ NO_UPDATE="--no-update"
 @test "spring boot init" {
   rm -rf spring-boot-mdw
   pwd
-  ls /home/runner/work/mdw/mdw/mdw/cli/tests/spring-boot-mdw
   mdw init spring-boot-mdw --spring-boot $NO_UPDATE $TEMPLATE_DIR
   ls spring-boot-mdw/src/main/java/com/example/MyApplication.java
   ls spring-boot-mdw/config/application.yml
