@@ -1,5 +1,6 @@
 name: Build Test Publish
 
+# currently disabled because test execution hangs
 on:
   push:
     branches:
