@@ -42,6 +42,33 @@
 - Configurator Events tab not displayed for some activities [\#777](https://github.com/CenturyLinkCloud/mdw/issues/777)
 - Hub should save ClassName attribute for dynamic Java activities [\#699](https://github.com/CenturyLinkCloud/mdw/issues/699)
 
+**Compatibility Notes:**
+
+- The Groovy upgrade (issue [\#787](https://github.com/CenturyLinkCloud/mdw/issues/787)) exposes an issue with
+  Maven transitive dependency resolution due to POM repackaging of groovy-all-2.5.x.  Gradle builds are not affected, but if
+  you're using Maven you'll need to institute a workaround to avoid "Failure to find org.codehaus.groovy:groovy-all:jar:2.5.8".
+  This involves excluding groovy-all as a transitive dependency via MDW, and instead declaring groovy-all as a direct dependency
+  in your pom.xml:
+  ```xml
+      <dependency>
+          <groupId>com.centurylink.mdw</groupId>
+          <artifactId>mdw-spring-boot</artifactId>
+          <version>6.1.30</version>
+          <exclusions>
+              <exclusion>
+                  <groupId>org.codehaus.groovy</groupId>
+                  <artifactId>groovy-all</artifactId>
+              </exclusion>
+          </exclusions>
+      </dependency>
+      <dependency>
+          <groupId>org.codehaus.groovy</groupId>
+          <artifactId>groovy-all</artifactId>
+          <version>2.5.8</version>
+          <type>pom</type>
+      </dependency>  
+  ``` 
+
 ## [6.1.28](https://github.com/CenturyLinkCloud/mdw/tree/6.1.28) (2019-11-22)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.27...6.1.28)
 
