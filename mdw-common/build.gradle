@@ -78,6 +78,8 @@ dependencies {
     // jsr-356
     compile group: "javax.websocket", name: "javax.websocket-api", version: "1.1"
 
+    compile group: "org.yaml", name: "snakeyaml", version: "1.18"
+
     // codegen
     compileOnly group: "io.swagger", name: "swagger-codegen-cli", version: "2.3.1"
     codegen group: "io.swagger", name: "swagger-codegen-cli", version: "2.3.1"
