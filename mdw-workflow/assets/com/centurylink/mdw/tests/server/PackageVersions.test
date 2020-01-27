@@ -45,15 +45,3 @@ assert !mdwVersion.isSnapshot()
 mdwVersion = new MdwVersion(0)
 assert mdwVersion.toString() == "0"
 assert mdwVersion.intVersion == 0
-
-// negative version (see
-def processVersion = 1002
-mdwVersion = new MdwVersion(-1 * processVersion)
-assert mdwVersion.toString() == "-1.0.02"
-assert mdwVersion.intVersion == -1 * processVersion
-processVersion = 5
-mdwVersion = new MdwVersion(-1 * processVersion)
-assert mdwVersion.toString() == "-0.0.05"
-assert mdwVersion.intVersion == -1 * processVersion
-
-
