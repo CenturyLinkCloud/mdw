@@ -26,6 +26,7 @@ import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.ExternalEvent;
+import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.spring.SpringAppContext;
@@ -55,9 +56,9 @@ public class Package implements Serializable, Jsonable {
     private List<Process> processes;
     private List<Asset> assets;
     private List<TaskTemplate> taskTemplates;
-    private int schemaVersion;
-    private int version;
-    private boolean exported;
+    private String schemaVersion;
+    private MdwVersion version;
+
     // runtime information
     private ClassLoader classloader;
     private String group;
@@ -211,38 +212,22 @@ public class Package implements Serializable, Jsonable {
         this.taskTemplates = taskTemplates;
     }
 
-    /**
-     * Method that returns the version
-     */
-    public int getVersion(){
-        return this.version;
+    public MdwVersion getVersion() {
+        return this.version == null ? new MdwVersion(0) : this.version;
+    }
+    public void setVersion(MdwVersion version){
+        this.version = version;
     }
 
-    /**
-     * method that sets the version
-     */
-    public void setVersion(int pVersion){
-        this.version = pVersion;
-    }
-
-    public int getSchemaVersion() {
+    public String getSchemaVersion() {
         return schemaVersion;
     }
-
-    public void setSchemaVersion(int schemaVersion) {
+    public void setSchemaVersion(String schemaVersion) {
         this.schemaVersion = schemaVersion;
-    }
-
-    public boolean isExported() {
-        return exported;
     }
 
     public boolean isDefaultPackage() {
       return getName() == null;
-    }
-
-    public void setExported(boolean exported) {
-        this.exported = exported;
     }
 
     public List<Asset> getAssets() {
@@ -285,19 +270,8 @@ public class Package implements Serializable, Jsonable {
         }
     }
 
-    public String getVersionString() {
-        return formatVersion(version);
-    }
-
-    public int getNewVersion(boolean major) {
-        if (major)
-            return (version/1000 + 1) * 1000;
-        else
-            return version + 1;
-    }
-
     public String getLabel() {
-        return getName() + " v" + getVersionString();
+        return getName() + getVersion().getLabel();
     }
 
     public static Package getDefaultPackage() {
@@ -372,40 +346,6 @@ public class Package implements Serializable, Jsonable {
         return getClassLoader().loadClass(handlerClass).asSubclass(EventHandler.class).newInstance();
     }
 
-    public static String formatVersion(int version) {
-        if (version < 0) // Negative version means fake pkg (for when retrieving assets from Git history)
-            return "-" + formatVersion((version * -1));
-
-        int major = version/1000;
-        int minor = version%1000;
-        int point = minor%100;
-        return major + "." + minor/100 + "." + (point >= 10 ? point : "0" + point);
-    }
-
-    public static String formatVersionOld(int version) {
-        return version/1000 + "." + version%1000;
-    }
-
-    public static int parseVersion(String versionString) throws NumberFormatException {
-        if (versionString == null)
-            return 0;
-        int firstDot = versionString.indexOf('.');
-        int major, minor;
-        if (firstDot > 0) {
-            major = Integer.parseInt(versionString.substring(0, firstDot));
-            int secondDot = versionString.indexOf('.', firstDot + 1);
-            if (secondDot > 0)
-                minor = Integer.parseInt(versionString.substring(firstDot + 1, secondDot)) * 100 + Integer.parseInt(versionString.substring(secondDot + 1));
-            else
-                minor = Integer.parseInt(versionString.substring(firstDot + 1));
-        }
-        else {
-            major = 0;
-            minor = Integer.parseInt(versionString);
-        }
-        return major*1000 + minor;
-    }
-
     @Override
     public String toString() {
         return getLabel();
@@ -416,13 +356,13 @@ public class Package implements Serializable, Jsonable {
         if (map.get("name") != null)
             this.setName((String)map.get("name"));
         if (map.get("version") != null)
-            this.setVersion(parseVersion((String)map.get("version")));
+            this.setVersion(new MdwVersion((String)map.get("version")));
         if (map.get("schemaVersion") != null)
-            this.setVersion(Asset.parseVersion((String)map.get("schemaVersion")));
+            this.setSchemaVersion((String)map.get("schemaVersion"));
         if (map.get("workgroup") != null)
             this.setGroup((String)map.get("workgroup"));
         if (map.get("attributes") != null) {
-            List<Attribute> attributes = new ArrayList<Attribute>();
+            List<Attribute> attributes = new ArrayList<>();
             Map<String, Object> attrs =  (Map<String, Object>) map.get("attributes");
             for (Map.Entry<String, Object> entry : attrs.entrySet()) {
                 Attribute attr = new Attribute(entry.getKey(), entry.getValue().toString());
@@ -436,9 +376,9 @@ public class Package implements Serializable, Jsonable {
         if (json.has("name"))
             this.setName(json.getString("name"));
         if (json.has("version"))
-            this.setVersion(parseVersion(json.getString("version")));
+            this.setVersion(new MdwVersion(json.getString("version")));
         if (json.has("schemaVersion"))
-            this.setSchemaVersion(Asset.parseVersion(json.getString("schemaVersion")));
+            this.setSchemaVersion(json.getString("schemaVersion"));
         if (json.has("workgroup"))
             this.setGroup(json.getString("workgroup"));
         if (json.has("attributes")) {
@@ -448,8 +388,8 @@ public class Package implements Serializable, Jsonable {
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
-        json.put("version", getVersionString());
-        json.put("schemaVersion", Asset.formatVersion(getSchemaVersion()));
+        json.put("version", getVersion().toString());
+        json.put("schemaVersion", schemaVersion);
         if (group != null)
             json.put("workgroup", group);
         if (attributes != null && !attributes.isEmpty()) {

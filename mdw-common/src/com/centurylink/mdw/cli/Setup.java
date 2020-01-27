@@ -75,16 +75,6 @@ public abstract class Setup implements Operation {
     public boolean isDebug() { return debug; }
     public void setDebug(boolean debug) { this.debug = debug; }
 
-    @Parameter(names="--discovery-url", description="Asset Discovery URL")
-    private String discoveryUrl = MAVEN_CENTRAL_URL;
-    public String getDiscoveryUrl() { return discoveryUrl; }
-
-    public void setDiscoveryUrl(String url) {
-        this.discoveryUrl = url;
-        if (Props.DISCOVERY_URL != null)
-            Props.DISCOVERY_URL.specified = true;
-    }
-
     @Parameter(names="--releases-url", description="MDW releases Maven repo URL")
     private String releasesUrl = MAVEN_CENTRAL_URL;
     public String getReleasesUrl() {
@@ -614,18 +604,29 @@ public abstract class Setup implements Operation {
         return new File(propVal);
     }
 
-    private Packages assetPackageDirs;
-    protected Packages getAssetPackageDirs() throws IOException {
-        if (assetPackageDirs == null) {
-            assetPackageDirs = new Packages(getAssetRoot());
+    private Packages packageDirs;
+    protected Packages getPackageDirs() throws IOException {
+        if (packageDirs == null) {
+            packageDirs = new Packages(getAssetRoot());
         }
-        return assetPackageDirs;
+        return packageDirs;
+    }
+
+    public File getPackageDir(String packageName) throws IOException {
+        return new File(getAssetRoot() + "/" + packageName.replace('.','/'));
+    }
+
+    public File getPackageMeta(File packageDir) {
+        return new File(packageDir + "/" + Packages.META_DIR + "/" + Packages.PACKAGE_YAML);
+    }
+    public File getPackageMeta(String packageName) throws IOException {
+        return getPackageMeta(getPackageDir(packageName));
     }
 
     public Map<String,List<File>> findAllAssets(String ext) throws IOException {
         Map<String,List<File>> matchingAssets = new HashMap<>();
-        for (String pkg : getAssetPackageDirs().getPackageNames()) {
-            for (File assetFile : getAssetPackageDirs().getAssetFiles(pkg)) {
+        for (String pkg : getPackageDirs().getPackageNames()) {
+            for (File assetFile : getPackageDirs().getAssetFiles(pkg)) {
                 if (assetFile.getName().endsWith("." + ext)) {
                     List<File> pkgAssets = matchingAssets.get(pkg);
                     if (pkgAssets == null) {
@@ -640,7 +641,7 @@ public abstract class Setup implements Operation {
     }
 
     protected List<File> getAssetFiles(String packageName) throws IOException {
-        return getAssetPackageDirs().getAssetFiles(packageName);
+        return getPackageDirs().getAssetFiles(packageName);
     }
 
     protected String getBaseUrl() throws MalformedURLException {
@@ -762,7 +763,7 @@ public abstract class Setup implements Operation {
     private Map<String,Properties> packageVersions;
     private Map<String,Properties> getPackageVersions() throws IOException {
         if (packageVersions == null)
-            packageVersions = getVersionProps(getAssetPackageDirs());
+            packageVersions = getVersionProps(getPackageDirs());
         return packageVersions;
     }
 

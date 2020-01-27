@@ -1,3 +1,6 @@
 schemaVersion: '6.1'
 name: com.centurylink.mdw.msteams
-version: 6.1.31
+version: 6.1.31-SNAPSHOT
+
+dependencies:
+  - com.centurylink.mdw.base v6.1.31-SNAPSHOT

@@ -94,11 +94,7 @@ public class Packages extends TreeMap<String,File> {
     @SuppressWarnings("unused")
     public List<File> getPackageDirs() {
         List<File> dirs = new ArrayList<>(values());
-        dirs.sort(new Comparator<File>() {
-            public int compare(File f1, File f2) {
-                return f1.getPath().toLowerCase().compareTo(f2.getPath().toLowerCase());
-            }
-        });
+        dirs.sort(Comparator.comparing(f -> f.getPath().toLowerCase()));
         return dirs;
     }
 

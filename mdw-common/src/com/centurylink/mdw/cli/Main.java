@@ -74,6 +74,7 @@ public class Main {
         addOperation("dbimport", new DbImport());
         addOperation("hierarchy", new Hierarchy());
         addOperation("find", new Find());
+        addOperation("dependencies", new Dependencies());
 
         JCommander cmd = builder.build();
 

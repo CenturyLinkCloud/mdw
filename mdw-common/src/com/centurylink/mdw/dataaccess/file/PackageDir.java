@@ -112,10 +112,10 @@ public class PackageDir extends File {
                     fis = new FileInputStream(pkgFile);
                     byte[] bytes = new byte[(int) pkgFile.length()];
                     fis.read(bytes);
-                    Package pkgVo = new Package(new JsonObject(new String(bytes)));
-                    pkgName = pkgVo.getName();
-                    pkgVersion = pkgVo.getVersionString();
-                    schemaVersion = Asset.formatVersion(pkgVo.getSchemaVersion());
+                    Package pkg = new Package(new JsonObject(new String(bytes)));
+                    pkgName = pkg.getName();
+                    pkgVersion = pkg.getVersion().toString();
+                    schemaVersion = pkg.getSchemaVersion();
                 }
                 finally {
                     if (fis != null)
@@ -148,13 +148,13 @@ public class PackageDir extends File {
     /**
      * For newly-created packages.
      */
-    public PackageDir(File storageDir, Package packageVo, VersionControl versionControl) throws IOException {
-        this(storageDir, new File(storageDir + "/" + packageVo.getName().replace('.', '/')), versionControl);
-        this.logicalDir = new File("/" + packageVo.getName() + " v" + packageVo.getVersionString());
-        this.pkgId = packageVo.getId() == null ? versionControl.getId(logicalDir) : packageVo.getId();
-        this.pkgName = packageVo.getName();
-        this.pkgVersion = Package.formatVersion(packageVo.getVersion());
-        this.schemaVersion = Asset.formatVersion(packageVo.getSchemaVersion());
+    public PackageDir(File storageDir, Package pkg, VersionControl versionControl) throws IOException {
+        this(storageDir, new File(storageDir + "/" + pkg.getName().replace('.', '/')), versionControl);
+        this.logicalDir = new File("/" + pkg.getName() + " v" + pkg.getVersion().toString());
+        this.pkgId = pkg.getId() == null ? versionControl.getId(logicalDir) : pkg.getId();
+        this.pkgName = pkg.getName();
+        this.pkgVersion = pkg.getVersion().toString();
+        this.schemaVersion = pkg.getSchemaVersion();
     }
 
     /**

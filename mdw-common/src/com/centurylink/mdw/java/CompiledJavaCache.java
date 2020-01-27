@@ -191,7 +191,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
     public static Class<?> getClass(ClassLoader parentLoader, Package currentPackage, String className, String javaCode, boolean cache)
     throws ClassNotFoundException, IOException, MdwJavaException {
         Class<?> clazz = cache ? compiledCache.get(className) : null;
-        if (clazz == null) {
+       if (clazz == null) {
             try {
                 if (Compatibility.hasCodeSubstitutions())
                     javaCode = doCompatibilityCodeSubstitutions(className, javaCode);
@@ -569,7 +569,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
 
     public static class DynamicJavaClassLoader extends ClassLoader {
 
-        private Package packageVO;
+        private Package pkg;
         private boolean cache;
 
         private static Map<String, Object> parallelLockMap = new ConcurrentHashMap<>();
@@ -579,14 +579,14 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
             ClassLoader.registerAsParallelCapable();
         }
 
-        DynamicJavaClassLoader(ClassLoader parentLoader, Package packageVO, boolean cache) {
-            super(DynamicJavaClassLoader.class.getClassLoader()); //packageVO == null ? DynamicJavaClassLoader.class.getClassLoader() : packageVO.getCloudClassLoader());
-            this.packageVO = packageVO;
+        DynamicJavaClassLoader(ClassLoader parentLoader, Package pkg, boolean cache) {
+            super(DynamicJavaClassLoader.class.getClassLoader());
+            this.pkg = pkg;
             this.cache = cache;
         }
 
-        public static DynamicJavaClassLoader getInstance(ClassLoader parentLoader, Package packageVO, boolean cache) {
-            String key = packageVO.getName() + ""; // To handle the default package which has null name
+        public static DynamicJavaClassLoader getInstance(ClassLoader parentLoader, Package pkg, boolean cache) {
+            String key = pkg.getName() + ""; // To handle the default package which has null name
             if (instances.containsKey(key))
                 return instances.get(key);
             else {
@@ -595,7 +595,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                     if (temp.containsKey(key))
                         return temp.get(key);
                     else {
-                        DynamicJavaClassLoader loader = new DynamicJavaClassLoader(parentLoader, packageVO, cache);
+                        DynamicJavaClassLoader loader = new DynamicJavaClassLoader(parentLoader, pkg, cache);
                         instances.put(key, loader);
                         return loader;
                     }
@@ -623,7 +623,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                                 String javaCode = javaAsset.getStringContent();
                                 if (Compatibility.hasCodeSubstitutions())
                                     javaCode = doCompatibilityCodeSubstitutions(name, javaCode);
-                                compileJavaCode(getParent(), packageVO, name, javaCode, cache);
+                                compileJavaCode(getParent(), pkg, name, javaCode, cache);
                                 jfo = MdwJavaFileManager.getJavaFileObject(name);
                             } catch (Exception ex) {
                                 logger.severeException(ex.getMessage(), ex);
@@ -631,10 +631,11 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                         }
                     }
                     if (jfo != null) {
-                        if (packageVO != null && packageVO.getName() != null) {
-                            java.lang.Package pkg = getPackage(packageVO.getName());
+                        if (pkg != null && pkg.getName() != null) {
+                            java.lang.Package pkg = getPackage(this.pkg.getName());
                             if (pkg == null)
-                                definePackage(packageVO.getName(), null, null, null, "MDW", packageVO.getVersionString(), "CenturyLink", null);
+                                definePackage(this.pkg.getName(), null, null, null, "MDW",
+                                        this.pkg.getVersion().toString(), "CenturyLink", null);
                         }
                         byte[] bytes = ((ByteArrayJavaFileObject) jfo).getByteArray();
                         cl = defineClass(name, bytes, 0, bytes.length);
@@ -643,8 +644,8 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
                     return cl;
 
                 // try the cloud classloader to find class in assets
-                if (cl == null && packageVO != null && packageVO.getCloudClassLoader().hasClass(name) /* prevent infinite loop */)
-                    cl = packageVO.getCloudClassLoader().directFindClass(name);
+                if (cl == null && pkg != null && pkg.getCloudClassLoader().hasClass(name) /* prevent infinite loop */)
+                    cl = pkg.getCloudClassLoader().directFindClass(name);
             }
             if (cl == null) {
                 if (!classicLoading) classesNotFound.putIfAbsent(name, true);
@@ -660,15 +661,15 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
 
         private String cnfeMsg(String className) {
             String msg = className + " with Parent ClassLoader: " + getParent();
-            if (packageVO != null)
-                msg += "\nand Workflow Package: " + packageVO.getLabel() + " (ClassLoader: " + packageVO.getClassLoader() + ")";
+            if (pkg != null)
+                msg += "\nand Workflow Package: " + pkg.getLabel() + " (ClassLoader: " + pkg.getClassLoader() + ")";
             return msg;
         }
 
         public String toString() {
             String str = getClass().getName() + " with parent " + getParent();
-            if (packageVO != null)
-                str += "\nand Workflow Package: " + packageVO.getLabel() + " (ClassLoader: " + packageVO.getClassLoader() + ")";
+            if (pkg != null)
+                str += "\nand Workflow Package: " + pkg.getLabel() + " (ClassLoader: " + pkg.getClassLoader() + ")";
             return str;
         }
 

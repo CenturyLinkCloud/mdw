@@ -1,3 +1,10 @@
 schemaVersion: '6.1'
 name: com.centurylink.mdw.tests.notifications
-version: 6.1.31
+version: 6.1.31-SNAPSHOT
+
+dependencies:
+  - com.centurylink.mdw.base v6.1.31-SNAPSHOT
+  - com.centurylink.mdw.msteams v6.1.31-SNAPSHOT
+  - com.centurylink.mdw.sendgrid v6.1.31-SNAPSHOT
+  - com.centurylink.mdw.slack v6.1.31-SNAPSHOT
+  - com.centurylink.mdw.testing v6.1.31-SNAPSHOT

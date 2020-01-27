@@ -277,7 +277,7 @@ public class Vercheck extends Setup {
     }
 
     private Map<String,AssetFile> findAssetFiles(ProgressMonitor... monitors) throws IOException {
-        Map<String,File> packageDirs = getAssetPackageDirs();
+        Map<String,File> packageDirs = getPackageDirs();
         Map<String,Properties> versionProps = getVersionProps(packageDirs);
         assetFiles = new HashMap<>();
 

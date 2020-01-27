@@ -21,13 +21,10 @@ import com.centurylink.mdw.config.OrderedProperties;
 import com.centurylink.mdw.config.YamlBuilder;
 import com.centurylink.mdw.config.YamlProperties;
 import com.centurylink.mdw.dataaccess.AssetRevision;
-import com.centurylink.mdw.export.ProcessExporter;
 import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.asset.Pagelet;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.file.VersionProperties;
-import com.itextpdf.text.log.SysoCounter;
-import com.itextpdf.text.log.SysoLogger;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -128,7 +125,7 @@ public class Convert extends Setup  {
     protected void convertPackages() throws IOException {
 
         getOut().println("Converting packages:");
-        Map<String, File> packageDirs = getAssetPackageDirs();
+        Map<String,File> packageDirs = getPackageDirs();
         for (String packageName : packageDirs.keySet()) {
             getOut().println("  " + packageName);
             File packageDir = packageDirs.get(packageName);

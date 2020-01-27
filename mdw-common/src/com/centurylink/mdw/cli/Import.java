@@ -83,10 +83,6 @@ public class Import extends Setup {
         return version;
     }
 
-    @Parameter(names="--package-names", description="Packages to import from an MDW instance (comma-delimited).")
-    private String packageNames;
-    public String getPackageNames() { return packageNames; }
-
     @Parameter(names="--force", description="Force overwrite, even on localhost or when branch disagrees")
     private boolean force = false;
     public boolean isForce() { return force; }
@@ -180,9 +176,6 @@ public class Import extends Setup {
             if (groupId != null) {
                 importMaven(monitors);
             }
-            else if (packageNames != null) {
-                importMdw(monitors);
-            }
             else {
                 importGit(monitors);
             }
@@ -204,11 +197,6 @@ public class Import extends Setup {
                 importPackageFromMaven(groupId, pkg.substring(0, index), pkg.substring(index + 1), monitors);
             }
         }
-    }
-
-    public void importMdw(ProgressMonitor... monitors) throws IOException {
-        List<String> pkgs = Arrays.asList(packageNames.trim().split("\\s*,\\s*"));
-        importPackagesFromMdw(new Props(this).get(Props.DISCOVERY_URL), pkgs);
     }
 
     /**
@@ -316,28 +304,6 @@ public class Import extends Setup {
         finally {
             inProgress = false;
         }
-    }
-
-    protected void importPackagesFromMdw(String url, List<String> packages, ProgressMonitor... monitors) throws IOException {
-         // download packages temp zip
-        File tempZip = Files.createTempFile("mdw-discovery", ".zip").toFile();
-
-        String pkgsParam = "[";
-        for (int i = 0; i < packages.size(); i++) {
-            pkgsParam += packages.get(i);
-            if (i < packages.size() - 1)
-                pkgsParam += ",";
-        }
-        pkgsParam += "]";
-
-        new Download(new URL(url + "/asset/packages?recursive=false&packages=" + pkgsParam), tempZip, "Downloading packages").run(monitors);
-
-        // import packages
-        File assetDir = getAssetRoot();
-        getOut().println("Unzipping into: " + assetDir);
-        new Unzip(tempZip, assetDir, true).run();
-        if (!tempZip.delete())
-            throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
     }
 
     protected void importPackageFromMaven(String groupId, String artifactId, String version,

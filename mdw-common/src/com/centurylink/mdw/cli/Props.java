@@ -29,7 +29,6 @@ import com.centurylink.mdw.config.YamlProperties;
 public class Props {
 
     public static Prop ASSET_LOC;
-    public static Prop DISCOVERY_URL;
     public static Prop SERVICES_URL;
     public static Prop HUB_URL;
     public static Prop CENTRAL_URL;
@@ -72,7 +71,6 @@ public class Props {
 
         // mdw
         ASSET_LOC = new Prop("asset-loc", MDW, "mdw.asset.location");
-        DISCOVERY_URL = new Prop("discovery-url", MDW, "mdw.discovery.url");
         SERVICES_URL = new Prop("services-url", MDW, "mdw.services.url");
         HUB_URL = new Prop("hub-url", MDW, "mdw.hub.url");
         CENTRAL_URL = new Prop("central-url", MDW, "mdw.central.url");
@@ -80,7 +78,6 @@ public class Props {
         TEMP_DIR = new Prop("temp-dir", MDW, "mdw.temp.dir");
 
         ALL_PROPS.add(ASSET_LOC);
-        ALL_PROPS.add(DISCOVERY_URL);
         ALL_PROPS.add(SERVICES_URL);
         ALL_PROPS.add(HUB_URL);
         ALL_PROPS.add(CENTRAL_URL);
