@@ -18,6 +18,7 @@ package com.centurylink.mdw.cache.impl;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
+import com.centurylink.mdw.cli.Dependencies;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -31,6 +32,8 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -88,8 +91,10 @@ public class PackageCache implements PreloadableCache {
             });
             timer.stopAndLogTiming("Load package list");
 
-            if (packageListTemp != null && !packageListTemp.isEmpty())
+            if (packageListTemp != null && !packageListTemp.isEmpty()) {
                 validateMdwPackageVersions(packageListTemp);
+                validatePackageDependencies();
+            }
 
             return packageListTemp;
         }
@@ -99,11 +104,33 @@ public class PackageCache implements PreloadableCache {
     }
 
     /**
+     * Validates package dependencies using the CLI command.
+     */
+    private static void validatePackageDependencies() {
+        Dependencies dependencies = new Dependencies();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        dependencies.setOut(ps);
+        dependencies.setErr(ps);
+        try {
+            dependencies.run();
+        }
+        catch (Exception ex) {
+            logger.error("Package dependency check error(s)", ex);
+        }
+        finally {
+            String output = baos.toString();
+            if (!output.isEmpty())
+                logger.error(output);
+        }
+    }
+
+    /**
      * Checks if the framework asset packages and current MDW build versions are the same.
      * Otherwise logs a warning message.
      */
     private static void validateMdwPackageVersions(List<Package> packages) {
-        final String exceptions = ".*\\b(oracle|tibco|demo|hub|central)\\b.*";
+        final String exceptions = ".*\\b(demo|hub|central)\\b.*";
         String mdwVersion = ApplicationContext.getMdwVersion();
 
         List<Package> filteredPackages = packages.stream()
@@ -114,9 +141,9 @@ public class PackageCache implements PreloadableCache {
                 .collect(Collectors.toList());
 
         if (!mismatches.isEmpty()) {
-            StringBuilder message=new StringBuilder();
+            StringBuilder message = new StringBuilder();
             message.append("\n****************************************\n"
-                    + "** WARNING: These asset packages do not match current build version " + mdwVersion + "\n");
+                    + "** WARNING: These asset packages do not match MDW runtime version " + mdwVersion + "\n");
             for (Package mismatch : mismatches) {
                 message.append("**   " + mismatch.getLabel() + "\n");
             }
