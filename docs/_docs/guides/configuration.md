@@ -115,7 +115,7 @@ title: MDW Configuration
         enabled: true  # enable activity logging default=true
         cleanup:
           enabled: true  # default=true
-          retain: 90  # default=180 (days)
+          retain: 30  # default=90 (days)
       roller:
         enabled: true
         retain: 7 # default=30 (days)

@@ -1,4 +1,4 @@
-ActivityLogCleanup.java=2
+ActivityLogCleanup.java=3
 AutoFormManualTask.pagelet=12
 CustomManualTask.pagelet=11
 LogRollerStartup.java=1
@@ -52,6 +52,7 @@ processPause.pagelet=1
 processStart.pagelet=1
 publishEvent.pagelet=1
 publishEventRest.pagelet=2
+readme.md=1
 receive.gif=1
 restService.pagelet=2
 rpcWebService.pagelet=1

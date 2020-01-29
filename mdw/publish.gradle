@@ -111,12 +111,11 @@ task updateHubPackageJson {
 task updateMdwVerInAssetPackages {
     description = "Update Asset Package Version: " + mdwVersion
     def assetRootPath = file("../${mdwAssetRoot}").toString()
-    def mdwPkgVer = mdwVersion;
     println "Update MDW version in asset packages in asset root: " + assetRootPath + ":"
     fileTree(dir: "../${mdwAssetRoot}", include:'**/.mdw/package.yaml', exclude:'Archive/**/*').each { pkgFile ->
         doLast {
             def pkgName = pkgFile.parentFile.parent.substring(assetRootPath.length() + 1).replace('/','.').replace('\\','.')
-            println "        setting package.yaml version: ${mdwPkgVer} for ${pkgName}"
+            println "        setting package.yaml version: ${mdwVersion} for ${pkgName}"
             pkgFile.setWritable(true)
             Yaml yaml = new Yaml()
             def top = (Map) yaml.load(pkgFile.text)

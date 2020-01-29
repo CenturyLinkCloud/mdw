@@ -414,7 +414,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     public class PersistBugActivity extends DefaultActivityImpl {    
     ```   
     Here we've labeled the activity Persist Bug, and specified an icon according to MDW's asset path notation: \<package_name>/\<asset_file>.
-    (Unlike a qualified Java class name, an asset path contains a slash separating the package from the asset).
+    (Unlike a qualified Java class, an asset path contains a slash separating the package name from the asset).
 
   - Download [bug.png from GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/com/centurylink/mdw/demo/bugs/bug.png)
     into assets/com/centurylink/mdw/demo/bugs in your project.  Then click the Reload toolbar button on the Toolbox view to reflect this new addition. 

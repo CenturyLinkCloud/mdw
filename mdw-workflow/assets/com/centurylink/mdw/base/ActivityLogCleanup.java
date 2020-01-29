@@ -16,7 +16,7 @@ import java.util.Date;
  * Cleans up old ACTIVITY_LOG rows. Properties:
  * <p><ul>
  * <li>mdw.logging.activity.cleanup.enabled - enable/disable (default=true)
- * <li>mdw.logging.activity.cleanup.retain - number of days to retain (default=180)
+ * <li>mdw.logging.activity.cleanup.retain - number of days to retain (default=90)
  * </ul><p>
  *
  * Scheduled to run daily at 2:00 am.  Schedule is not configurable here.  To run with a different
@@ -33,7 +33,7 @@ public class ActivityLogCleanup implements com.centurylink.mdw.model.monitor.Sch
     public void run(CallURL args) {
         logger.info("Executing at " + new Date() + " server time");
 
-        int retainDays = PropertyManager.getIntegerProperty(PropertyNames.MDW_LOGGING_ACTIVITY_CLEANUP_RETAIN, 180);
+        int retainDays = PropertyManager.getIntegerProperty(PropertyNames.MDW_LOGGING_ACTIVITY_CLEANUP_RETAIN, 90);
         Date cutoffDate = new Date(DatabaseAccess.getDbDate().getTime() - (retainDays * 24 * 3600 * 1000L));
 
         try (DbAccess dbAccess = new DbAccess()) {

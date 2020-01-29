@@ -76,3 +76,9 @@ Promoting staged assets performs the following actions:
   - User staging branch is merged into the active branch (git.branch in mdw.yaml)
   - Asset import is performed on the server followed by cache refresh
   - Staged assets are unstaged (removed from user staging area)
+
+## Configuration
+In order to programmatically create and merge branches, MDW needs to be authenticated.  Therefore in 
+[mdw.yaml](https://centurylinkcloud.github.io/mdw/docs/guides/configuration/#mdwyaml) you'll need to specify
+git.user and git.password with an app account that has write permissions on the repository.
+

@@ -89,7 +89,7 @@ public class PackageCache implements PreloadableCache {
             timer.stopAndLogTiming("Load package list");
 
             if (packageListTemp != null && !packageListTemp.isEmpty())
-                validatePackageVersion(packageListTemp);
+                validateMdwPackageVersions(packageListTemp);
 
             return packageListTemp;
         }
@@ -102,26 +102,23 @@ public class PackageCache implements PreloadableCache {
      * Checks if the framework asset packages and current MDW build versions are the same.
      * Otherwise logs a warning message.
      */
-    private static void validatePackageVersion(List<Package> packages) {
-        final String exceptions = ".*\\b(oracle|tibco|demo|hub)\\b.*";
-        String version = ApplicationContext.getMdwVersion();
-        String mdwVersion = version.split("\\-")[0];
+    private static void validateMdwPackageVersions(List<Package> packages) {
+        final String exceptions = ".*\\b(oracle|tibco|demo|hub|central)\\b.*";
+        String mdwVersion = ApplicationContext.getMdwVersion();
 
         List<Package> filteredPackages = packages.stream()
-                .filter(e -> !mdwVersion.equals(e.getVersion().toString())
-                        && e.getName().startsWith("com.centurylink.mdw")
-                        && !e.getName().startsWith("com.centurylink.mdw.central"))
+                .filter(e -> !mdwVersion.equals(e.getVersion().toString()) && e.getName().startsWith("com.centurylink.mdw"))
                 .collect(Collectors.toList());
-        List<Package> obsoletePackages = filteredPackages.stream()
+        List<Package> mismatches = filteredPackages.stream()
                 .filter(p2 -> !(p2.getName().matches(exceptions)))
                 .collect(Collectors.toList());
 
-        if (!obsoletePackages.isEmpty()){
+        if (!mismatches.isEmpty()) {
             StringBuilder message=new StringBuilder();
-            message.append( "\n****************************************\n"
+            message.append("\n****************************************\n"
                     + "** WARNING: These asset packages do not match current build version " + mdwVersion + "\n");
-            for (Package p1 : obsoletePackages) {
-                message.append("**   "+p1.getLabel()+"\n");
+            for (Package mismatch : mismatches) {
+                message.append("**   " + mismatch.getLabel() + "\n");
             }
             message.append("******************************************\n");
             logger.warn(message.toString());
