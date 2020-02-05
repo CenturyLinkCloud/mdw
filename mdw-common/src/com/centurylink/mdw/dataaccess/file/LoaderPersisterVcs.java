@@ -797,7 +797,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             throw ex;
         }
         catch (Exception ex) {
-            throw new DataAccessException(ex.getMessage(), ex);
+            throw new DataAccessException("Error loading process id: " + processId, ex);
         }
     }
 

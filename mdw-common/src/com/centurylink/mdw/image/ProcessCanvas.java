@@ -70,8 +70,7 @@ public class ProcessCanvas extends JPanel {
         }
         try {
             Implementors implementors = new Implementors(project.getAssetRoot());
-            final Diagram d = new Diagram(g2d, getInitDisplay(), project, process, implementors, new DrawProps(true, false));
-            d.setShowGrid(false);
+            final Diagram d = new Diagram(g2d, getInitDisplay(), project, process, implementors, new DrawProps(true, false, null));
             diagram = d;
             d.draw();
         }
