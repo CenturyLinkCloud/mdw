@@ -61,6 +61,12 @@ class FilterPop extends Component {
                       checked={filters[key]}
                       onChange={event => this.handleChange(key, event.target.checked)} />
                   }
+                  {!isDate && !isDropdown && !isCb &&
+                    <input type="text" id={id}
+                      value={filters[key]}
+                      onChange={event => this.handleChange(key, event.target.value)}
+                      onKeyDown={event => {if (event.key === 'Enter') {document.body.click();}} } />
+                  }
                 </div>
               );
             })
