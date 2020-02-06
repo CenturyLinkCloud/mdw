@@ -16,6 +16,7 @@
 package com.centurylink.mdw.image;
 
 import com.centurylink.mdw.model.project.Data;
+import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import org.json.JSONObject;
 
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,15 +34,28 @@ public class Implementors extends LinkedHashMap<String,ActivityImplementor> {
 
     private File assetLoc;
 
-    public Implementors(File assetLoc) {
-        this.assetLoc = assetLoc;
-        loadImplemetors(assetLoc);
+    public Implementors(Project project) throws IOException {
+        assetLoc = project.getAssetRoot();
+        List<ActivityImplementor> projectImplementors = project.getActivityImplementors();
+        if (projectImplementors != null) {
+            // implementors provided via Project interface (e.g. Studio)
+            for (ActivityImplementor implementor : projectImplementors) {
+                add(implementor);
+            }
+        }
+        else {
+            // load from assets (e.g. CLI) -- does not include compiled source annotations
+            loadAssetImplemetors(assetLoc);
+        }
     }
 
-    private void loadImplemetors(File assetLoc) {
+    /**
+     * Loads implementors from assets (impl or annotated source code).
+     */
+    private void loadAssetImplemetors(File assetLoc) {
         for (File file : assetLoc.listFiles()) {
             if (file.isDirectory()) {
-                loadImplemetors(file);
+                loadAssetImplemetors(file);
             }
             else if (file.exists()) {
                 try {

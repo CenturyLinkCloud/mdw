@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 CenturyLink, Inc.
+ * Copyright (C) 2020 CenturyLink, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,27 +56,18 @@ public class HtmlProcessExporter implements ProcessExporter {
         dependencies.add(new Dependency(MAVEN_CENTRAL_URL,
                 "com/vladsch/flexmark/flexmark-util/0.32.22/flexmark-util-0.32.22.jar", 292213L));
         dependencies.add(new Dependency(MAVEN_CENTRAL_URL,
-                "com/vladsch/flexmark/flexmark-ext-anchorlink/0.32.22/flexmark-ext-anchorlink-0.32.22.jar",
-                16735L));
+                "com/vladsch/flexmark/flexmark-ext-anchorlink/0.32.22/flexmark-ext-anchorlink-0.32.22.jar", 16735L));
         dependencies.add(new Dependency(MAVEN_CENTRAL_URL,
-                "com/vladsch/flexmark/flexmark-ext-autolink/0.32.22/flexmark-ext-autolink-0.32.22.jar",
-                6972L));
+                "com/vladsch/flexmark/flexmark-ext-autolink/0.32.22/flexmark-ext-autolink-0.32.22.jar", 6972L));
         dependencies.add(new Dependency(MAVEN_CENTRAL_URL,
-                "com/vladsch/flexmark/flexmark-ext-superscript/0.32.22/flexmark-ext-superscript-0.32.22.jar",
-                13343L));
+                "com/vladsch/flexmark/flexmark-ext-superscript/0.32.22/flexmark-ext-superscript-0.32.22.jar", 13343L));
         dependencies.add(new Dependency(MAVEN_CENTRAL_URL,
-                "com/vladsch/flexmark/flexmark-ext-tables/0.32.22/flexmark-ext-tables-0.32.22.jar",
-                61489L));
+                "com/vladsch/flexmark/flexmark-ext-tables/0.32.22/flexmark-ext-tables-0.32.22.jar", 61489L));
         dependencies.add(new Dependency(MAVEN_CENTRAL_URL,
-                "com/vladsch/flexmark/flexmark-ext-typographic/0.32.22/flexmark-ext-typographic-0.32.22.jar",
-                21975L));
+                "com/vladsch/flexmark/flexmark-ext-typographic/0.32.22/flexmark-ext-typographic-0.32.22.jar", 21975L));
         dependencies.add(new Dependency(MAVEN_CENTRAL_URL,
-                "com/vladsch/flexmark/flexmark-formatter/0.32.22/flexmark-formatter-0.32.22.jar",
-                21975L));
-        dependencies.add(new Dependency(MAVEN_CENTRAL_URL,
-                "org/nibor/autolink/autolink/0.9.0/autolink-0.9.0.jar",
-                19890L));
-
+                "com/vladsch/flexmark/flexmark-formatter/0.32.22/flexmark-formatter-0.32.22.jar", 21975L));
+        dependencies.add(new Dependency(MAVEN_CENTRAL_URL, "org/nibor/autolink/autolink/0.9.0/autolink-0.9.0.jar", 19890L));
         return dependencies;
     }
 
