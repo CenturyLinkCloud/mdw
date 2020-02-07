@@ -7,7 +7,7 @@ import com.centurylink.mdw.model.asset.CommitInfo;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Map;
+import java.util.List;
 
 @Parameters(commandNames="find", commandDescription="Find an asset ref for a path or definition id", separators="=")
 public class Find extends Setup {
@@ -23,19 +23,18 @@ public class Find extends Setup {
     public void setId(Long id) { this.id = id; }
 
     @Override
+    public List<Dependency> getDependencies() throws IOException {
+        return new DbInfo(new Props(this)).getDependencies();
+    }
+
+    @Override
     public Operation run(ProgressMonitor... progressMonitors) throws IOException {
 
         Props props = new Props(this);
         VcInfo vcInfo = new VcInfo(getGitRoot(), props);
-
         DbInfo dbInfo = new DbInfo(props);
 
-        Map<String,Long> dbDependencies = DbInfo.getDependencies(dbInfo.getUrl());
-        for (String dep : dbDependencies.keySet()) {
-            new Dependency(getReleasesUrl(), dep, dbDependencies.get(dep)).run(progressMonitors);
-        }
-
-        Checkpoint checkpoint = new Checkpoint(getReleasesUrl(), vcInfo, getAssetRoot(), dbInfo);
+        Checkpoint checkpoint = new Checkpoint(vcInfo, getAssetRoot(), dbInfo);
 
         try {
             AssetRef assetRef;
@@ -54,7 +53,7 @@ public class Find extends Setup {
             }
             else {
                 getOut().println("Asset ref: " + assetRef);
-                Git git = new Git(getReleasesUrl(), vcInfo, "getCommitInfoForRef", assetRef.getRef());
+                Git git = new Git(vcInfo, "getCommitInfoForRef", assetRef.getRef());
                 git.run(progressMonitors); // connect
                 CommitInfo commitInfo = (CommitInfo) git.getResult();
                 if (commitInfo == null) {

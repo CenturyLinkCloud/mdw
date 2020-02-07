@@ -24,7 +24,5 @@ import com.centurylink.mdw.model.workflow.Process;
 public interface ProcessExporter {
     byte[] export(Process process) throws IOException;
 
-    default List<Dependency> getDependencies() {
-        return null;
-    }
+    default List<Dependency> getDependencies() { return null; }
 }

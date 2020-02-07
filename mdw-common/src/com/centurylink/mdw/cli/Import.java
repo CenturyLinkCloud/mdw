@@ -266,7 +266,7 @@ public class Import extends Setup {
             getOut().println("Importing from Git into: " + getProjectDir() + "...");
 
             // CLI dependencies
-            Git git = new Git(getReleasesUrl(), vcInfo, "toString");
+            Git git = new Git(vcInfo, "toString");
             git.run(monitors);
 
             // Check Asset inconsistencies
@@ -282,12 +282,12 @@ public class Import extends Setup {
             }
 
             // perform import (Git pull)
-            git = new Git(getReleasesUrl(), vcInfo, "hardCheckout", vcInfo.getBranch(), isHardReset());
+            git = new Git(vcInfo, "hardCheckout", vcInfo.getBranch(), isHardReset());
             git.run(monitors);
 
             // capture new Refs in ASSET_REF after import (Git pull)
             DbInfo dbInfo = new DbInfo(props);
-            Checkpoint checkpoint = new Checkpoint(getReleasesUrl(), vcInfo, getAssetRoot(), dbInfo);
+            Checkpoint checkpoint = new Checkpoint(vcInfo, getAssetRoot(), dbInfo);
             try {
                 checkpoint.run(monitors).updateRefs();
             }

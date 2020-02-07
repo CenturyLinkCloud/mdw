@@ -151,7 +151,7 @@ public class Vercheck extends Setup {
         String commit;
         long before = System.currentTimeMillis();
         if (tag != null) {
-            git = new Git(mavenUrl, vcInfo, "getCommitForTag", tag);
+            git = new Git(vcInfo, "getCommitForTag", tag);
             commit = (String) git.run().getResult();
             if (commit == null)
                 throw new IOException("No commit found for tag '" + tag + "'");
@@ -163,7 +163,7 @@ public class Vercheck extends Setup {
                 branch = props.get(Props.Git.BRANCH);
             if (branch == null)
                 branch = "master";
-            git = new Git(mavenUrl, vcInfo, "getRemoteCommit", branch);
+            git = new Git(vcInfo, "getRemoteCommit", branch);
             commit = (String) git.run().getResult();
             if (commit == null)
                 throw new IOException("No commit found for branch '" + branch + "'");
@@ -261,10 +261,10 @@ public class Vercheck extends Setup {
         if (gitDiffs == null) {
             Git git;
             if (tag == null) {
-                git = new Git(mavenUrl, vcInfo, "getDiffs", branch, getGitPath(getAssetRoot()));
+                git = new Git(vcInfo, "getDiffs", branch, getGitPath(getAssetRoot()));
             }
             else {
-                git = new Git(mavenUrl, vcInfo, "getDiffsForTag", tag, getGitPath(getAssetRoot()));
+                git = new Git(vcInfo, "getDiffsForTag", tag, getGitPath(getAssetRoot()));
             }
             gitDiffs = (GitDiffs) git.run().getResult();
         }

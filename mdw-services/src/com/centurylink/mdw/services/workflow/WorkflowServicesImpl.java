@@ -74,6 +74,7 @@ import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.TranslationException;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
+import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.ActivityLog;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -196,6 +197,24 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
         catch (SQLException ex) {
             throw new ServiceException(ex.getMessage(), ex);
+        }
+    }
+
+    public VariableInstance getVariableInstance(long processInstanceId, String variableName) throws ServiceException {
+        TransactionWrapper transaction = null;
+        EngineDataAccessDB edao = new EngineDataAccessDB();
+        try {
+            transaction = edao.startTransaction();
+            return edao.getVariableInstance(processInstanceId, variableName);
+        } catch (SQLException | DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Failed to retrieve variable instance: "
+                    + processInstanceId + ", " + variableName, ex);
+        } finally {
+            try {
+                edao.stopTransaction(transaction);
+            } catch (DataAccessException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+            }
         }
     }
 

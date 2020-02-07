@@ -70,7 +70,6 @@ public class Convert extends Setup  {
 
     @Parameter(names = "--map", description = "Optional compatibility mapping file")
     private File map;
-
     public File getMap() {
         return map;
     }
@@ -84,7 +83,6 @@ public class Convert extends Setup  {
 
     @Parameter(names = "--language", description = "Output language for impls")
     private String language;
-
     public String getLanguage() {
         return language;
     }
@@ -98,15 +96,15 @@ public class Convert extends Setup  {
     }
 
     @Override
-    public Convert run(ProgressMonitor... progressMonitors) throws IOException {
+    public List<Dependency> getDependencies() {
+        List<Dependency> dependencies = new ArrayList<>();
+        dependencies.add(new Dependency("org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar", 41203L));
+        return dependencies;
+    }
 
+    @Override
+    public Convert run(ProgressMonitor... progressMonitors) throws IOException {
        
-        List<Dependency> dependencies = getDependencies();
-        if (dependencies != null) {
-            for (Dependency dependency : dependencies) {
-                dependency.run(progressMonitors);
-            }
-        }
         if (isPackages()) {
             convertPackages();
         } else if (isProcesses()) {
@@ -218,7 +216,7 @@ public class Convert extends Setup  {
         String implClass = implJson.getString("implementorClass");
         String outPath = getAssetRoot() + "/" + implClass.replace(".", "/");
         String suffix = "kotlin".equals(language) || "kt".equals(language) ? "kt" : "java";
-        File outFile = new File(outPath += "." + suffix);
+        File outFile = new File(outPath + "." + suffix);
         if (outFile.isFile()) {
             throw new IOException("Asset file already exists: " + outFile);
         }
@@ -268,13 +266,5 @@ public class Convert extends Setup  {
         values.put("annotations", annotations);
         String source = substitute(template, values);
         Files.write(outFile.toPath(), source.getBytes(), StandardOpenOption.CREATE_NEW);
-    }
-
-
-    public List<Dependency> getDependencies() {
-        List<Dependency> dependencies = new ArrayList<>();
-        dependencies.add(new Dependency(MAVEN_CENTRAL_URL,
-                "org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar", 41203L));
-        return dependencies;
     }
 }

@@ -15,29 +15,22 @@
  */
 package com.centurylink.mdw.cli;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.dataaccess.VersionControl;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Capture current asset version info to DB.
  */
 public class Checkpoint extends Setup {
 
-    private String mavenRepoUrl;
     private VcInfo vcInfo;
     private File assetRoot;
     private DbInfo dbInfo;
@@ -45,8 +38,7 @@ public class Checkpoint extends Setup {
     private String commit;
     private Connection pooledConn;
 
-    public Checkpoint(String mavenRepoUrl, VcInfo vcInfo, File assetRoot, DbInfo dbInfo) {
-        this.mavenRepoUrl = mavenRepoUrl;
+    public Checkpoint(VcInfo vcInfo, File assetRoot, DbInfo dbInfo) {
         this.vcInfo = vcInfo;
         this.assetRoot = assetRoot;
         this.dbInfo = dbInfo;
@@ -60,14 +52,13 @@ public class Checkpoint extends Setup {
     }
 
     @Override
+    public List<Dependency> getDependencies() throws IOException {
+        return new DbInfo(new Props(this)).getDependencies();
+    }
+
+    @Override
     public Checkpoint run(ProgressMonitor... progressMonitors) throws IOException {
-
-        Map<String,Long> dbDependencies = DbInfo.getDependencies(dbInfo.getUrl());
-        for (String dep : dbDependencies.keySet()) {
-            new Dependency(mavenRepoUrl, dep, dbDependencies.get(dep)).run(progressMonitors);
-        }
-
-        Git git = new Git(mavenRepoUrl, vcInfo, "getCommit");
+        Git git = new Git(vcInfo, "getCommit");
         git.run(progressMonitors); // connect
         commit = (String) git.getResult();
         versionControl = git.getVersionControl();

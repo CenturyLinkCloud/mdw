@@ -12,12 +12,16 @@ import java.net.URL;
  */
 public class Dependency implements Operation {
 
-    private String mavenRepoUrl;
+    private String repoUrl;
     private String path;
     private long size;
 
-    public Dependency(String mavenRepoUrl, String path, long size) {
-        this.mavenRepoUrl = mavenRepoUrl;
+    public Dependency(String path, long size) {
+        this(MAVEN_CENTRAL_URL, path, size);
+    }
+
+    public Dependency(String repoUrl, String path, long size) {
+        this.repoUrl = repoUrl;
         this.path = path;
         this.size = size;
     }
@@ -31,7 +35,7 @@ public class Dependency implements Operation {
         File depJar = new File(libDir + "/" + path.substring(path.lastIndexOf('/')));
         if (!depJar.exists()) {
             getOut().println("Downloading " + depJar + "...");
-            new Download(new URL(mavenRepoUrl + "/" + path), depJar, size).run(progressMonitors);
+            new Download(new URL(repoUrl + "/" + path), depJar, size).run(progressMonitors);
         }
         return this;
     }

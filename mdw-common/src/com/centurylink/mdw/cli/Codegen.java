@@ -15,32 +15,26 @@
  */
 package com.centurylink.mdw.cli;
 
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+import com.centurylink.mdw.cli.Run.SpaceParameterSplitter;
+import io.airlift.airline.Cli;
+import io.airlift.airline.Help;
+import io.swagger.codegen.cmd.Version;
+import io.swagger.codegen.cmd.*;
+import io.swagger.models.HttpMethod;
+import io.swagger.models.Swagger;
+import io.swagger.parser.SwaggerParser;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.json.JSONObject;
-
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
-import com.centurylink.mdw.cli.Run.SpaceParameterSplitter;
-
-import io.airlift.airline.Cli;
-import io.airlift.airline.Help;
-import io.swagger.codegen.cmd.ConfigHelp;
-import io.swagger.codegen.cmd.Langs;
-import io.swagger.codegen.cmd.Meta;
-import io.swagger.codegen.cmd.Validate;
-import io.swagger.codegen.cmd.Version;
-import io.swagger.models.HttpMethod;
-import io.swagger.models.Swagger;
-import io.swagger.parser.SwaggerParser;
 
 @Parameters(commandNames="codegen", commandDescription="Create MDW source code assets", separators="=")
 public class Codegen extends Setup {
@@ -126,6 +120,15 @@ public class Codegen extends Setup {
     }
 
     @Override
+    public List<Dependency> getDependencies() {
+        List<Dependency> dependencies = new ArrayList<>();
+        if ("swagger".equals(codeType)) {
+
+        }
+        return dependencies;
+    }
+
+    @Override
     public Codegen run(ProgressMonitor... monitors) throws IOException {
 
         downloadTemplates();
@@ -139,10 +142,6 @@ public class Codegen extends Setup {
         if (codeType.equals("swagger")) {
             if (inputSpec == null)
                 throw new IOException("Missing required parameter: input-spec");
-            Map<String,Long> swaggerDependencies = getSwaggerDependencies();
-            for (String dep : swaggerDependencies.keySet()) {
-                new Dependency(MAVEN_CENTRAL_URL, dep, swaggerDependencies.get(dep)).run(monitors);
-            }
 
             // trimApiPaths is set from codegen config.json
             String codegenTemplateDir = new File(getTemplateDir() + "/codegen").getAbsolutePath();
@@ -241,25 +240,25 @@ public class Codegen extends Setup {
         builder.build().parse(args).run();
     }
 
-    public static Map<String,Long> getSwaggerDependencies() {
-        Map<String,Long> dependencies = new HashMap<>();
-        dependencies.put("io/swagger/swagger-core/1.5.17/swagger-core-1.5.17.jar", 111025L);
-        dependencies.put("io/swagger/swagger-models/1.5.17/swagger-models-1.5.17.jar", 142981L);
-        dependencies.put("io/swagger/swagger-parser/1.0.33/swagger-parser-1.0.33.jar", 71263L);
-        dependencies.put("org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar", 41203L);
-        dependencies.put("org/slf4j/slf4j-simple/1.7.25/slf4j-simple-1.7.25.jar", 15257L);
-        dependencies.put("io/airlift/airline/0.8/airline-0.8.jar", 85912L);
-        dependencies.put("com/google/guava/guava/23.0/guava-23.0.jar", 2614708L);
-        dependencies.put("javax/inject/javax.inject/1/javax.inject-1.jar", 2497L);
-        dependencies.put("com/googlecode/lambdaj/lambdaj/2.3.3/lambdaj-2.3.3.jar", 137328L);
-        dependencies.put("cglib/cglib/2.2.2/cglib-2.2.2.jar", 287192L);
-        dependencies.put("org/apache/commons/commons-lang3/3.4/commons-lang3-3.4.jar", 434678L);
-        dependencies.put("com/fasterxml/jackson/core/jackson-core/2.8.9/jackson-core-2.8.9.jar", 282633L);
-        dependencies.put("com/fasterxml/jackson/core/jackson-databind/2.8.9/jackson-databind-2.8.9.jar", 1242477L);
-        dependencies.put("com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.9.4/jackson-dataformat-yaml-2.9.4.jar", 41123L);
-        dependencies.put("com/fasterxml/jackson/core/jackson-annotations/2.8.9/jackson-annotations-2.8.9.jar", 55784L);
-        dependencies.put("joda-time/joda-time/2.9.9/joda-time-2.9.9.jar", 634048L);
-        dependencies.put("commons-io/commons-io/2.4/commons-io-2.4.jar", 185140L);
+    public static List<Dependency> getSwaggerDependencies() {
+        List<Dependency> dependencies = new ArrayList<>();
+        dependencies.add(new Dependency("io/swagger/swagger-core/1.5.17/swagger-core-1.5.17.jar", 111025L));
+        dependencies.add(new Dependency("io/swagger/swagger-models/1.5.17/swagger-models-1.5.17.jar", 142981L));
+        dependencies.add(new Dependency("io/swagger/swagger-parser/1.0.33/swagger-parser-1.0.33.jar", 71263L));
+        dependencies.add(new Dependency("org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar", 41203L));
+        dependencies.add(new Dependency("org/slf4j/slf4j-simple/1.7.25/slf4j-simple-1.7.25.jar", 15257L));
+        dependencies.add(new Dependency("io/airlift/airline/0.8/airline-0.8.jar", 85912L));
+        dependencies.add(new Dependency("com/google/guava/guava/23.0/guava-23.0.jar", 2614708L));
+        dependencies.add(new Dependency("javax/inject/javax.inject/1/javax.inject-1.jar", 2497L));
+        dependencies.add(new Dependency("com/googlecode/lambdaj/lambdaj/2.3.3/lambdaj-2.3.3.jar", 137328L));
+        dependencies.add(new Dependency("cglib/cglib/2.2.2/cglib-2.2.2.jar", 287192L));
+        dependencies.add(new Dependency("org/pache/commons/commons-lang3/3.4/commons-lang3-3.4.jar", 434678L));
+        dependencies.add(new Dependency("com/fasterxml/jackson/core/jackson-core/2.8.9/jackson-core-2.8.9.jar", 282633L));
+        dependencies.add(new Dependency("com/fasterxml/jackson/core/jackson-databind/2.8.9/jackson-databind-2.8.9.jar", 1242477L));
+        dependencies.add(new Dependency("com/fasterxml/jackson/dataformat/jackson-dataformat-yaml/2.9.4/jackson-dataformat-yaml-2.9.4.jar", 41123L));
+        dependencies.add(new Dependency("com/fasterxml/jackson/core/jackson-annotations/2.8.9/jackson-annotations-2.8.9.jar", 55784L));
+        dependencies.add(new Dependency("joda-time/joda-time/2.9.9/joda-time-2.9.9.jar", 634048L));
+        dependencies.add(new Dependency("commons-io/commons-io/2.4/commons-io-2.4.jar", 185140L));
         return dependencies;
     }
 }

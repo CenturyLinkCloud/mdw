@@ -60,8 +60,11 @@ public class Export extends Setup {
         return output;
     }
 
-    Export() {
+    Export() { }
 
+    @Override
+    public List<Dependency> getDependencies() throws IOException {
+        return getProcessExporter().getDependencies();
     }
 
     public Export run(ProgressMonitor... monitors) throws IOException {
@@ -90,20 +93,13 @@ public class Export extends Setup {
                 throw new IOException("Unable to create directory: " + fileDir);
         }
 
-        ProcessExporter exporter = getProcessExporter();
-        List<Dependency> dependencies = exporter.getDependencies();
-        if (dependencies != null) {
-            for (Dependency dependency : dependencies) {
-                dependency.run(monitors);
-            }
-        }
-
         Process proc = Process.fromString(content);
         proc.setName(procName.substring(0, procName.length() - 5));
 
+        ProcessExporter exporter = getProcessExporter();
         if (exporter instanceof PdfProcessExporter) {
             ((PdfProcessExporter) exporter).setOutputDir(output);
-        }else if (exporter instanceof HtmlProcessExporter) {
+        } else if (exporter instanceof HtmlProcessExporter) {
             ((HtmlProcessExporter) exporter).setOutputDir(output.getParentFile());
         }
 

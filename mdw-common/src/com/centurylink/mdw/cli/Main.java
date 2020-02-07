@@ -15,13 +15,15 @@
  */
 package com.centurylink.mdw.cli;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.Parameters;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Main {
 
@@ -36,14 +38,16 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         // this trimming is necessary on linux
-        String[] cmdArgs = new String[args.length];
+        List<String> cmdArgs = new ArrayList<>();
         for (int i = 0; i < args.length; i++)
-            cmdArgs[i] = args[i].trim();
+            cmdArgs.add(args[i].trim());
 
-        if (cmdArgs.length > 1) {
-            if (cmdArgs[0].equals("git")) {
-                // git pass-through command
-                Git.main(cmdArgs);
+        if (cmdArgs.size() > 1) {
+            if ("git".equals(cmdArgs.get(0))) {
+                if ("--dependencies".equals(cmdArgs.get(cmdArgs.size() - 1)))
+                    downloadDependencies(Git.getDependencies());
+                else
+                    Git.main(cmdArgs.toArray(new String[]{})); // git pass-through command
                 return;
             }
         }
@@ -76,40 +80,55 @@ public class Main {
         addOperation("find", new Find());
         addOperation("dependencies", new Dependencies());
 
+        Operation op = null;
+        if (cmdArgs.size() >= 1) {
+            op = operations.get(cmdArgs.get(0));
+            if (!(op instanceof Setup)) {
+                if ("--dependencies".equals(cmdArgs.get(cmdArgs.size() - 1)))
+                    return;  // second command-line exec will be run
+                cmdArgs.remove("--debug"); // not applicable
+            }
+        }
+        else {
+            operations.get("version").run();
+        }
+
         JCommander cmd = builder.build();
 
         cmd.setProgramName("mdw");
 
         try {
-            cmd.parse(cmdArgs);
+            cmd.parse(cmdArgs.toArray(new String[]{}));
             String command = cmd.getParsedCommand();
 
+            if (op == null) {
+                cmd.usage();
+            }
             if (command == null || command.equals("help")) {
                 cmd.usage();
             }
             else {
-                Operation op = operations.get(command);
-
-                if (op == null) {
-                    cmd.usage();
+                if (op instanceof Setup) {
+                    Setup setup = (Setup) op;
+                    String mdwConfig = setup.getMdwConfig();
+                    Props.init(mdwConfig == null ? "mdw.yaml" : mdwConfig);
+                    if (setup.isDebug())
+                        setup.debug();
+                    if (!setup.validate())
+                        return;
+                    if (setup.isDependencies()) {
+                        List<Dependency> dependencies = setup.getDependencies();
+                        if (dependencies != null)
+                            downloadDependencies(dependencies);
+                        return;
+                    }
                 }
-                else {
-                    if (op instanceof Setup) {
-                        Setup setup = (Setup) op;
-                        String mdwConfig = setup.getMdwConfig();
-                        Props.init(mdwConfig == null ? "mdw.yaml" : mdwConfig);
-                        if (setup.isDebug())
-                            setup.debug();
-                        if (!setup.validate())
-                            return;
-                    }
-                    op.run(getMonitor());
-                    if (op instanceof Test && !((Test)op).isSuccess()) {
-                        System.exit(-1);  // success visible to build script
-                    }
-                    if (op instanceof Vercheck) {
-                        System.exit(((Vercheck)op).getErrorCount());
-                    }
+                op.run(getMonitor());
+                if (op instanceof Test && !((Test)op).isSuccess()) {
+                    System.exit(-1);  // success visible to build script
+                }
+                if (op instanceof Vercheck) {
+                    System.exit(((Vercheck)op).getErrorCount());
                 }
             }
         }
@@ -117,7 +136,7 @@ public class Main {
             System.err.println(ex.getMessage());
             System.err.println("'mdw help' for usage information");
             for (String arg : args) {
-                if (arg.equals("--debug")) {
+                if (arg.trim().equals("--debug")) {
                     ex.printStackTrace();
                 }
             }
@@ -125,10 +144,15 @@ public class Main {
         }
     }
 
-
-
     @Parameters(commandNames="help", commandDescription="Syntax Help")
     static class Help { }
+
+    static void downloadDependencies(List<Dependency> dependencies) throws IOException {
+        ProgressMonitor progressMonitor = getMonitor();
+        for (Dependency dependency : dependencies) {
+            dependency.run(progressMonitor);
+        }
+    }
 
     /**
      * Every call with >= 100% progress will print a new line.

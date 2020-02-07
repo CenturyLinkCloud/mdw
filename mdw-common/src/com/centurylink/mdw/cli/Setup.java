@@ -46,8 +46,6 @@ public abstract class Setup implements Operation {
     protected static final String META_DIR = ".mdw";
     protected static final String VERSIONS = "versions";
     protected static final String MDW_COMMON_PATH = "/com/centurylink/mdw/mdw-templates/";
-    public static final String MAVEN_CENTRAL_URL = "https://repo.maven.apache.org/maven2";
-    public static final String SONATYPE_URL = "https://oss.sonatype.org/service/local/artifact/maven";
 
     Setup() {
     }
@@ -56,6 +54,11 @@ public abstract class Setup implements Operation {
         this.projectDir = projectDir;
     }
 
+    /**
+     * Dependencies that need to be downloaded for this operation to run.
+     */
+    public List<Dependency> getDependencies() throws IOException { return null; }
+
     private PrintStream out = System.out;
     public PrintStream getOut() { return out; }
     public void setOut(PrintStream out) { this.out = out; }
@@ -63,6 +66,11 @@ public abstract class Setup implements Operation {
     private PrintStream err = System.err;
     public PrintStream getErr() { return err; }
     public void setErr(PrintStream err) { this.err = err; }
+
+    @Parameter(names="--dependencies", description="Download dependencies and exit")
+    private boolean dependencies;
+    public boolean isDependencies() { return dependencies; }
+    public void setDependencies(boolean dependencies) { this.dependencies = dependencies; }
 
     @Parameter(names="--project-dir", description="Project directory (default = ./)")
     protected File projectDir;

@@ -23,6 +23,7 @@ import com.centurylink.mdw.model.report.Hotspot;
 import com.centurylink.mdw.model.report.Insight;
 import com.centurylink.mdw.model.report.Timepoint;
 import com.centurylink.mdw.model.variable.Document;
+import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
@@ -66,6 +67,8 @@ public interface WorkflowServices {
 
     Map<String, String> getValues(String ownerType, String ownerId) throws ServiceException;
 
+    VariableInstance getVariableInstance(long processInstanceId, String variableName) throws ServiceException;
+    
     /**
      * Replace <b>all</b> values for this ownerId
      *
