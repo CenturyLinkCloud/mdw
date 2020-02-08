@@ -83,6 +83,11 @@ public abstract class Setup implements Operation {
     public boolean isDebug() { return debug; }
     public void setDebug(boolean debug) { this.debug = debug; }
 
+    @Parameter(names="--no-progress", description="No progress monitor")
+    private boolean noProgress;
+    public boolean isNoProgress() { return noProgress; }
+    public void setNoProgress(boolean noProgress) { this.noProgress = noProgress; }
+
     @Parameter(names="--releases-url", description="MDW releases Maven repo URL")
     private String releasesUrl = MAVEN_CENTRAL_URL;
     public String getReleasesUrl() {

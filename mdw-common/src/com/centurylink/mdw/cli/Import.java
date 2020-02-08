@@ -133,6 +133,11 @@ public class Import extends Setup {
         pooledConn = conn;
     }
 
+    @Override
+    public List<Dependency> getDependencies() throws IOException {
+        return Git.getDependencies();
+    }
+
     public Import run(ProgressMonitor... monitors) throws IOException {
         if (file != null) {
             // process import

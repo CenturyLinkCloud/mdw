@@ -93,7 +93,8 @@ public class SystemServicesImpl implements SystemServices {
                 throw new ServiceException("Missing parameter: command");
             List<SysInfo> cmdInfo = new ArrayList<>();
             try {
-                String output = runCliCommand(cmd);
+                String output = runCliCommand(cmd + " --dependencies");
+                output += runCliCommand(cmd);
                 cmdInfo.add(new SysInfo(cmd, output));  // TODO actual output
                 sysInfoCats.add(new SysInfoCategory("CLI Command Output", cmdInfo));
             }

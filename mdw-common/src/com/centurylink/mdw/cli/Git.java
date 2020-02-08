@@ -38,11 +38,14 @@ public class Git implements Operation {
         String[] gitArgs = new String[args.length + 1];
         gitArgs[0] = "git";
         gitArgs[1] = "args";
+        boolean showProgress = true;
         for (int i = 1; i < args.length; i++) {
-            gitArgs[i+1] = args[i];
+            gitArgs[i + 1] = args[i];
+            if ("--no-progress".equals(args[i]))
+                showProgress = false;
         }
         cmd.parse(gitArgs);
-        git.run(Main.getMonitor());
+        git.run(Main.getMonitor(showProgress));
     }
 
     private VcInfo vcInfo;

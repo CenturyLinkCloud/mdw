@@ -42,14 +42,12 @@ public class Main {
         for (int i = 0; i < args.length; i++)
             cmdArgs.add(args[i].trim());
 
-        if (cmdArgs.size() > 1) {
-            if ("git".equals(cmdArgs.get(0))) {
-                if ("--dependencies".equals(cmdArgs.get(cmdArgs.size() - 1)))
-                    downloadDependencies(Git.getDependencies());
-                else
-                    Git.main(cmdArgs.toArray(new String[]{})); // git pass-through command
-                return;
-            }
+        if ("git".equals(cmdArgs.get(0))) {
+            if ("--dependencies".equals(cmdArgs.get(cmdArgs.size() - 1)))
+                downloadDependencies(Git.getDependencies(), getMonitor(true));
+            else
+                Git.main(cmdArgs.toArray(new String[]{})); // git pass-through command
+            return;
         }
 
         Main main = new Main();
@@ -80,17 +78,18 @@ public class Main {
         addOperation("find", new Find());
         addOperation("dependencies", new Dependencies());
 
-        Operation op = null;
-        if (cmdArgs.size() >= 1) {
-            op = operations.get(cmdArgs.get(0));
-            if (!(op instanceof Setup)) {
-                if ("--dependencies".equals(cmdArgs.get(cmdArgs.size() - 1)))
-                    return;  // second command-line exec will be run
-                cmdArgs.remove("--debug"); // not applicable
-            }
+        Operation op = operations.get(cmdArgs.get(0));
+        if (!(op instanceof Setup)) {
+            if ("--dependencies".equals(cmdArgs.get(cmdArgs.size() - 1)))
+                return;  // second command-line exec will be run
+            // remove inapplicable
+            cmdArgs.remove("--debug");
+            cmdArgs.remove("--no-progress");
         }
-        else {
+
+        if (cmdArgs.isEmpty()) {
             operations.get("version").run();
+            return;
         }
 
         JCommander cmd = builder.build();
@@ -119,11 +118,11 @@ public class Main {
                     if (setup.isDependencies()) {
                         List<Dependency> dependencies = setup.getDependencies();
                         if (dependencies != null)
-                            downloadDependencies(dependencies);
+                            downloadDependencies(dependencies, getMonitor(!cmdArgs.contains("--no-progress")));
                         return;
                     }
                 }
-                op.run(getMonitor());
+                op.run(getMonitor(!cmdArgs.contains("--no-progress")));
                 if (op instanceof Test && !((Test)op).isSuccess()) {
                     System.exit(-1);  // success visible to build script
                 }
@@ -147,17 +146,16 @@ public class Main {
     @Parameters(commandNames="help", commandDescription="Syntax Help")
     static class Help { }
 
-    static void downloadDependencies(List<Dependency> dependencies) throws IOException {
-        ProgressMonitor progressMonitor = getMonitor();
+    static void downloadDependencies(List<Dependency> dependencies, ProgressMonitor monitor) throws IOException {
         for (Dependency dependency : dependencies) {
-            dependency.run(progressMonitor);
+            dependency.run(monitor);
         }
     }
 
     /**
      * Every call with >= 100% progress will print a new line.
      */
-    static ProgressMonitor getMonitor() {
+    static ProgressMonitor getMonitor(boolean showProgress) {
         return new ProgressMonitor() {
 
             @Override
@@ -167,18 +165,19 @@ public class Main {
 
             @Override
             public void progress(int prog) {
-                if ("\\".equals(System.getProperty("file.separator"))) {
-                    System.out.print("\b\b\b\b\b\b\b\b\b");
+                if (showProgress) {
+                    if ("\\".equals(System.getProperty("file.separator"))) {
+                        System.out.print("\b\b\b\b\b\b\b\b\b");
+                    } else {
+                        System.out.print("\r         \r");
+                    }
+                    if (prog >= 100)
+                        System.out.println(" --> Done");
+                    else if (prog <= 0) // don't report zero progress since it may indicate unknown
+                        System.out.print(" ... ");
+                    else
+                        System.out.printf(" --> %3d%%", prog);
                 }
-                else {
-                    System.out.print("\r         \r");
-                }
-                if (prog >= 100)
-                    System.out.println(" --> Done");
-                else if (prog <= 0) // don't report zero progress since it may indicate unknown
-                    System.out.print(" ... ");
-                else
-                    System.out.printf(" --> %3d%%", prog);
             }
 
         };

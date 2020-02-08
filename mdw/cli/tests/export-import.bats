@@ -12,7 +12,7 @@ PROJECT_DIR="--project-dir=../.."
 ASSETS="../../../mdw-workflow/assets"
 ASSET_LOC="--asset-loc=$ASSETS"
 CONFIG_LOC="--config-loc=../../config"
-STD_ARGS="$PROJECT_DIR $ASSET_LOC $CONFIG_LOC"
+STD_ARGS="$PROJECT_DIR $ASSET_LOC $CONFIG_LOC --no-progress"
 
 @test "export bpmn2" {
   mdw export --process=com.centurylink.mdw.tests.cloud/ActivityImplementors.proc --output=output/ActivityImplementors.bpmn $STD_ARGS

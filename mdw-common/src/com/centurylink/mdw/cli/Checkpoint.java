@@ -53,7 +53,9 @@ public class Checkpoint extends Setup {
 
     @Override
     public List<Dependency> getDependencies() throws IOException {
-        return new DbInfo(new Props(this)).getDependencies();
+        List dependencies = new DbInfo(new Props(this)).getDependencies();
+        dependencies.addAll(Git.getDependencies());
+        return dependencies;
     }
 
     @Override

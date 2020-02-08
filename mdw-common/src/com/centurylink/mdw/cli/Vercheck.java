@@ -28,10 +28,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 @Parameters(commandNames = "vercheck", commandDescription = "Compare asset versions to avoid errors during import", separators="=")
 public class Vercheck extends Setup {
@@ -91,6 +88,11 @@ public class Vercheck extends Setup {
     private VcInfo vcInfo;
     private String mavenUrl;
     private Props props;
+
+    @Override
+    public List<Dependency> getDependencies() throws IOException {
+        return Git.getDependencies();
+    }
 
     @Override
     public Vercheck run(ProgressMonitor... progressMonitors) throws IOException {
