@@ -110,7 +110,7 @@ public class Paths extends Setup {
                                 uniquePaths.add(normalized.getPath());
                         }
                         else {
-                            getOut().println("  - " + path);
+                            getOut().println("  - " + servicePath);
                         }
                     }
                 }

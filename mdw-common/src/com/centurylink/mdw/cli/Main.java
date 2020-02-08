@@ -42,7 +42,7 @@ public class Main {
         for (int i = 0; i < args.length; i++)
             cmdArgs.add(args[i].trim());
 
-        if ("git".equals(cmdArgs.get(0))) {
+        if (!cmdArgs.isEmpty() && "git".equals(cmdArgs.get(0))) {
             if ("--dependencies".equals(cmdArgs.get(cmdArgs.size() - 1)))
                 downloadDependencies(Git.getDependencies(), getMonitor(true));
             else

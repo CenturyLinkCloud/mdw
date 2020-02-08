@@ -48,7 +48,6 @@ import java.util.List;
 public class Import extends Setup {
 
     private static boolean inProgress = false;
-    private static final String MAVEN_REPO_BASE = "https://repo1.maven.org/maven2";
 
     @Parameter(names="--file", description="File to import into process")
     private File file;
@@ -318,7 +317,7 @@ public class Import extends Setup {
             throw new IOException("Cannot create asset dir: " + assetDir);
         String pkg = groupId.replace("assets", "") + artifactId.replace('-', '.');
         File tempZip = Files.createTempFile("central-discovery", ".zip").toFile();
-        String url = MAVEN_REPO_BASE + "/" + groupId.replace('.', '/') + "/" + artifactId + "/"
+        String url = MAVEN_CENTRAL_URL + "/" + groupId.replace('.', '/') + "/" + artifactId + "/"
                 + version + "/" + artifactId + "-" + version + ".zip";
         try {
             String msg = "Importing " + pkg + " v" + version;

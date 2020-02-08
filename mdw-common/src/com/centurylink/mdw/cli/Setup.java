@@ -409,8 +409,8 @@ public abstract class Setup implements Operation {
      * Result always uses forward slashes and has no trailing slash.
      */
     public String getRelativePath(File from, File to) {
-        Path fromPath = Paths.get(from.getPath()).normalize().toAbsolutePath();
-        Path toPath = Paths.get(to.getPath()).normalize().toAbsolutePath();
+        Path fromPath = Paths.get(from.getPath()).normalize().toAbsolutePath().normalize();
+        Path toPath = Paths.get(to.getPath()).normalize().toAbsolutePath().normalize();
         return fromPath.relativize(toPath).toString().replace('\\', '/');
     }
 

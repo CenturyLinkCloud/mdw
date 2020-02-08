@@ -86,7 +86,6 @@ public class Vercheck extends Setup {
     public Exception getException() { return exception; }
 
     private VcInfo vcInfo;
-    private String mavenUrl;
     private Props props;
 
     @Override
@@ -107,7 +106,6 @@ public class Vercheck extends Setup {
         try {
             props = new Props(this);
             vcInfo = new VcInfo(getGitRoot(), props);
-            mavenUrl = props.get(Props.Gradle.MAVEN_REPO_URL);
             compareVersions(progressMonitors);
         }
         catch (ReflectiveOperationException | IOException ex) {
