@@ -4,13 +4,14 @@ var mdwMod = angular.module('mdw', []);
 
 mdwMod.factory('mdw', function() {
   return {
-    // $mdwVersion and $mdwHubRoot are set in logical root.js -- See RootServlet.java
+    // values are set in logical root.js -- See RootServlet.java
     version: $mdwVersion,
     build: $mdwBuild,
     webSocketUrl: $mdwWebSocketUrl,
     discoveryUrls: $mdwDiscoveryUrls,
     authMethod: $mdwAuthMethod,
     appId: $mdwAppId,
+    appVersion: $mdwAppVersion,
     hubUser: $mdwHubUser,   // Used to determine if isDevelopment() - value is only set when in Dev mode
     sourceRepoUrl: 'https://github.com/CenturyLinkCloud/mdw',
     roots: {

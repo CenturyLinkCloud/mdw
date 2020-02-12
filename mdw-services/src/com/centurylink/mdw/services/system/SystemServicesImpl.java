@@ -358,7 +358,10 @@ public class SystemServicesImpl implements SystemServices {
 
     public SysInfoCategory getSystemInfo() {
         List<SysInfo> systemInfos = new ArrayList<>();
-        systemInfos.add(new SysInfo("MDW build", ApplicationContext.getMdwVersion() + " (" + ApplicationContext.getMdwBuildTimestamp() + ")"));
+        systemInfos.add(new SysInfo("MDW version", ApplicationContext.getMdwVersion() + " (" + ApplicationContext.getMdwBuildTimestamp() + ")"));
+        systemInfos.add(new SysInfo("App ID", ApplicationContext.getAppId()));
+        if (!"mdw6".equals(ApplicationContext.getAppId()))
+            systemInfos.add(new SysInfo("App version", ApplicationContext.getAppVersion()));
         systemInfos.add(new SysInfo("Server host", ApplicationContext.getServerHost()));
         try {
             systemInfos.add(new SysInfo("Server hostname", InetAddress.getLocalHost().getHostName()));

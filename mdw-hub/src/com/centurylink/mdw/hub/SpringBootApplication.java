@@ -102,8 +102,10 @@ public class SpringBootApplication {
                     ApplicationContext.setBootJar(bootJar);
                     ZipHelper.unzip(bootJar, bootDir);
                 }
-                else  // PCF deployment explodes the JAR already
+                else  {
+                    // deployment explodes the JAR already
                     bootDir = new File(mainLoc.substring(0, mainLoc.indexOf("BOOT-INF")));
+                }
             }
             catch (IOException ex) {
                 throw new StartupException(ex.getMessage(), ex);

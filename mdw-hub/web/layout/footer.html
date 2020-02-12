@@ -1,5 +1,12 @@
 <div class="mdw_footer">
+  <span ng-if="mdw.appId && mdw.appId !== 'Unknown' && mdw.appId !== 'mdw6'">
+    {{mdw.appId}}
+    <span ng-if="mdw.appVersion && mdw.appVersion !== 'Unknown'">
+      {{mdw.appVersion}}
+    </span>
+    <br/>
+  </span>
   MDW {{mdw.version}}
   <br/>
-  Copyright &#169; 2019 CenturyLink, Inc.
+  Copyright &#169; 2020 CenturyLink, Inc.
 </div>
