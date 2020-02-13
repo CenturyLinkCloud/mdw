@@ -33,13 +33,13 @@ STD_ARGS="$PROJECT_DIR $ASSET_LOC $CONFIG_LOC --no-progress"
 @test "export html" {
   mdw export --process=com.centurylink.mdw.tests.cloud/ActivityImplementors.proc --output=output/ActivityImplementors.html $STD_ARGS
   ls output/ActivityImplementors.html
-  ls output/ActivityImplementors_0_ch0.jpg
+  ls output/ActivityImplementors_0_ch0.png
   diff ActivityImplementors.html output/ActivityImplementors.html
 }
 
 @test "export html markdown" {
   mdw export --process=com.centurylink.mdw.tests.workflow/AppConfig.proc --output=output/AppConfig.html $STD_ARGS
   ls output/AppConfig.html
-  ls output/AppConfig_0_ch0.jpg
+  ls output/AppConfig_0_ch0.png
   diff AppConfig.html output/AppConfig.html
 }
