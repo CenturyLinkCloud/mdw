@@ -17,9 +17,11 @@ package com.centurylink.mdw.cli;
 
 import com.beust.jcommander.Parameter;
 import com.centurylink.mdw.config.YamlProperties;
+import com.centurylink.mdw.image.Implementors;
 import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.project.Data;
 import com.centurylink.mdw.model.system.MdwVersion;
+import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.file.Packages;
 import org.json.JSONObject;
@@ -820,6 +822,11 @@ public abstract class Setup implements Operation {
             TreeMap<String,String> sortedMap = new TreeMap<>();
             sortedMap.putAll(map);
             return sortedMap;
+        }
+
+        @Override
+        public Map<String,ActivityImplementor> getActivityImplementors() throws IOException {
+            return new Implementors(getAssetRoot());
         }
     }
 }

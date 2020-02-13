@@ -37,7 +37,7 @@ activities:
       TRANSITION_DISPLAY_INFO: lx=414,ly=280,type=Elbow,xs=352&476,ys=280&280
 attributes:
   ArrowStyle: ArrowEnd
-  Documentation: "Scenario:\r\n\r\n1. In mdw.yaml, the following appears under `application`:\r\n```yaml\r\napplication:\r\n  name: my-mdw\r\n  configs:\r\n    - one.properties\r\n    - two.properties\r\n    - three.yaml\r\n``` \r\n\r\n2. The following files exist in the location pointed to by -Dmdw.config.location.  \r\n**one.properties**\r\n```\r\none.prop=oneValue\r\n```\r\n**two.properties**\r\n```\r\ntwo.prop=twoValue\r\n```\r\n**three.yaml**\r\n```yaml\r\nflat.config: threeFlatValue\r\nstructured:\r\n  config: threeStructuredValue\r\n```\r\n\r\n3. The `Log Props` activity produces this output:\r\n```\r\none: oneValue\r\ntwo: twoValue\r\nthree.flat: threeFlatValue\r\nthree.structured: threeStructuredValue\r\n``` "
+  Documentation: "Scenario:\n\n1. In mdw.yaml, the following appears under `application`:\n    ```yaml\n    application:\n      name: my-mdw\n      configs:\n        - one.properties\n        - two.properties\n        - three.yaml\n    ``` \n\n2. The following files exist in the location pointed to by -Dmdw.config.location.  \n    **one.properties**\n    ```\n    one.prop=oneValue\n    ```\n    **two.properties**\n    ```\n    two.prop=twoValue\n    ```\n    **three.yaml**\n    ```yaml\n    flat.config: threeFlatValue\n    structured:\n      config: threeStructuredValue\n    ```\n\n3. The `Log Props` activity produces this output:\n    ```\n    one: oneValue\n    two: twoValue\n    three.flat: threeFlatValue\n    three.structured: threeStructuredValue\n    ``` "
   NodeStyle: BoxIcon
   PROCESS_VISIBILITY: PUBLIC
   WORK_DISPLAY_INFO: x=46,y=56,w=96,h=27

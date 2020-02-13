@@ -15,35 +15,29 @@
  */
 package com.centurylink.mdw.export;
 
-import java.awt.Dimension;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.html.FlexmarkInstances;
+import com.centurylink.mdw.model.asset.Pagelet;
+import com.centurylink.mdw.model.asset.Pagelet.Widget;
+import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.workflow.Activity;
-import com.centurylink.mdw.model.workflow.Process;
-import com.vladsch.flexmark.ast.Node;
-import com.vladsch.flexmark.html.HtmlRenderer;
-import com.vladsch.flexmark.parser.Parser;
+import com.centurylink.mdw.model.workflow.ActivityImplementor;
 
-public class ExportHelper {
-    protected Set<String> excludedAttributes;
-    protected Map<String, List<String>> tabularAttributes; // name, headers
-    protected Map<String, String> textboxAttributes;
-    protected Map<String, String> excludedAttributesForSpecificValues;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.*;
+
+public abstract class ExportHelper {
+
+    protected Set<String> excludedAttributes = new HashSet<>();
+    protected Map<String,String> excludedAttributesForSpecificValues = new HashMap<>();
     protected Project project;
 
 
     public ExportHelper(Project project) {
         this.project = project;
 
-        excludedAttributes = new HashSet<>();
         excludedAttributes.add(WorkAttributeConstant.LOGICAL_ID);
         excludedAttributes.add(WorkAttributeConstant.REFERENCE_ID);
         excludedAttributes.add(WorkAttributeConstant.WORK_DISPLAY_INFO);
@@ -54,79 +48,139 @@ public class ExportHelper {
         excludedAttributes.add(WorkAttributeConstant.DESCRIPTION);
         excludedAttributes.add("BAM@START_MSGDEF");
         excludedAttributes.add("BAM@FINISH_MSGDEF");
-        excludedAttributesForSpecificValues = new HashMap<>();
+
         excludedAttributesForSpecificValues.put("DoNotNotifyCaller", "false");
         excludedAttributesForSpecificValues.put("DO_LOGGING", "True");
-        tabularAttributes = new HashMap<>();
-        tabularAttributes.put("Notices",
-                Arrays.asList("Outcome", "Template", "Notifier Class(es)"));
-        tabularAttributes.put("Variables",
-                Arrays.asList("Variable", "ReferredAs", "Display", "Seq.", "Index"));
-        tabularAttributes.put("WAIT_EVENT_NAMES",
-                Arrays.asList("Event Name", "Completion Code", "Recurring"));
-        tabularAttributes.put("variables",
-                Arrays.asList("=", "SubProcess Variable", "Binding Expression"));
-        tabularAttributes.put("processmap",
-                Arrays.asList("=", "Logical Name", "Process Name", "Process Version"));
-        tabularAttributes.put("Bindings", Arrays.asList("=", "Variable", "LDAP Attribute"));
-        tabularAttributes.put("Parameters",
-                Arrays.asList("=", "Input Variable", "Binding Expression"));
-        textboxAttributes = new HashMap<>();
-        textboxAttributes.put("Rule", "Code");
-        textboxAttributes.put("Java", "Java");
-        textboxAttributes.put("PreScript", "Pre-Script");
-        textboxAttributes.put("PostScript", "Post-Script");
     }
 
-    public Dimension getGraphSize(Process process) {
-        int w = 0;
-        int h = 0;
-        List<Activity> activities = process.getActivities();
-        for (Activity act : activities) {
-            String[] attrs = act.getAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO).split(",");
-            w = getWidth(attrs, w);
-            h = getHeight(attrs, h);
-        }
-        List<Process> subProcesses = process.getSubprocesses();
-        for (Process subProc : subProcesses) {
-            String[] attrs = subProc.getAttribute(WorkAttributeConstant.WORK_DISPLAY_INFO)
-                    .split(",");
-            w = getWidth(attrs, w);
-            h = getHeight(attrs, h);
-        }
-        return new Dimension(w, h);
-    }
-
-    private int getWidth(String[] attrs, int w) {
-        int localW = Integer.parseInt(attrs[0].substring(2))
-                + Integer.parseInt(attrs[2].substring(2));
-        if (localW > w)
-            w = localW;
-        return w;
-    }
-
-    private int getHeight(String[] attrs, int h) {
-        int localH = Integer.parseInt(attrs[1].substring(2))
-                + Integer.parseInt(attrs[3].substring(2));
-        if (localH > h)
-            h = localH;
-        return h;
-    }
-
-    public String escapeXml(String str) {
-        return str.replaceAll("&", "&amp;").replaceAll("<", "&lt;");
-    }
-
-    public boolean excludeAttribute(String name, String value) {
+    public boolean isExcludeAttribute(String name, String value) {
         return (value == null || value.isEmpty() || excludedAttributes.contains(name)
                 || value.equals(excludedAttributesForSpecificValues.get(name)));
     }
 
-    public String getHtmlContent (String content) {
-        Parser parser = FlexmarkInstances.getParser(null);
-        HtmlRenderer renderer = FlexmarkInstances.getRenderer(null);
+    /**
+     * Empty except excluded attributes.
+     */
+    public boolean isEmpty(List<Attribute> attributes) {
+        for (Attribute attribute : attributes) {
+            if (!isExcludeAttribute(attribute.getName(), attribute.getValue()))
+                return false;
+        }
+        return true;
+    }
 
-        Node document = parser.parse(content);
-        return renderer.render(document);
+    // pagelets are cached to avoid reparsing
+    private Map<String,Pagelet> activityPagelets = new HashMap<>();
+
+    protected Widget getWidget(Activity activity, String attributeName) throws IOException {
+        Pagelet pagelet = null;
+        if (activityPagelets.containsKey(activity.getLogicalId())) {
+            pagelet = activityPagelets.get(activity.getLogicalId());
+        }
+        else {
+            ActivityImplementor implementor = getImplementor(activity);
+            if (implementor != null) {
+                String pageletContent = implementor.getPagelet();
+                if (pageletContent != null) {
+                    try {
+                        if (!pageletContent.startsWith("{") && !pageletContent.contains("<")) {
+                            // must be an asset spec
+                            int slash = pageletContent.indexOf('/');
+                            if (slash > 0) {
+                                String path = pageletContent.substring(0, slash).replace('.', '/') + pageletContent.substring(slash);
+                                File pageletFile = new File(project.getAssetRoot() + "/" + path);
+                                pageletContent = new String(Files.readAllBytes(pageletFile.toPath()));
+                            }
+                        }
+                        pagelet = new Pagelet(pageletContent);
+                    } catch (Exception ex) {
+                        if (ex instanceof IOException)
+                            throw (IOException)ex;
+                        else
+                            throw new IOException(ex);
+                    }
+                }
+            }
+            activityPagelets.put(activity.getLogicalId(), pagelet);
+        }
+        if (pagelet != null) {
+            for (Widget widget : pagelet.getWidgets()) {
+                if (widget.getName().equals(attributeName)) {
+                    return widget;
+                }
+            }
+            return null;
+        }
+        return null;
+    }
+
+    protected ActivityImplementor getImplementor(Activity activity) throws IOException {
+        return project.getActivityImplementors().get(activity.getImplementor());
+    }
+
+    protected String getAttributeLabel(Activity activity, Attribute attribute) throws IOException {
+        String label = attribute.getName();
+        Widget widget = getWidget(activity, attribute.getName());
+        if (widget != null && "edit".equals(widget.getType())) {
+            label = widget.getName().equals("Java") ? "Java" : activity.getAttribute("Language");
+            if (label == null)
+                label = activity.getAttribute("SCRIPT");
+            if (label == null)
+                label = activity.getAttribute("PreScriptLang");
+            if (label == null)
+                label = activity.getAttribute("PostScriptLang");
+            if (label == null)
+                label = "Value";
+        }
+        return label;
+    }
+
+    protected Table getTable(Activity activity, Attribute attribute) throws IOException {
+        Widget widget = getWidget(activity, attribute.getName());
+        List<String> cols;
+        List<String[]> rows;
+        if ("mapping".equals(widget.getType())) {
+            cols = Arrays.asList(new String[]{"Variable", "Binding Expression"});
+            rows = new ArrayList<>();
+            Map<String,String> map = Attribute.parseMap(attribute.getValue());
+            for (String key : map.keySet()) {
+                rows.add(new String[]{key, map.get(key)});
+            }
+        }
+        else {
+            if (WorkAttributeConstant.MONITORS.equals(attribute.getName())) {
+                cols = Arrays.asList(new String[]{"Enabled", "Name", "Implementation", "Options"});
+            }
+            else {
+                cols = new ArrayList<>();
+            }
+            for (Widget tableWidget : widget.getWidgets())
+                cols.add(tableWidget.getName());
+            rows = Attribute.parseTable(attribute.getValue(), ',', ';', cols.size());
+        }
+        String[][] values = new String[cols.size()][rows.size()];
+        for (int i = 0; i < cols.size(); i++) {
+            for (int j = 0; j < rows.size(); j++) {
+                values[i][j] = rows.get(j)[i];
+            }
+        }
+        return new Table(cols.toArray(new String[0]), values);
+    }
+
+    protected boolean isTabular(Activity activity, Attribute attribute) throws IOException {
+        Widget widget = getWidget(activity, attribute.getName());
+        if (widget != null) {
+            return "table".equals(widget.getType()) || "mapping".equals(widget.getType())
+                    || WorkAttributeConstant.MONITORS.equals(attribute.getName());
+        }
+        return false;
+    }
+
+    protected boolean isCode(Activity activity, Attribute attribute) throws IOException {
+        Widget widget = getWidget(activity, attribute.getName());
+        if (widget != null) {
+            return "edit".equals(widget.getType());
+        }
+        return false;
     }
 }

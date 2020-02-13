@@ -21,6 +21,7 @@ import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 
 @SuppressWarnings("unused")
@@ -46,7 +47,7 @@ public interface Project {
         return null;
     }
 
-    default List<ActivityImplementor> getActivityImplementors() {
+    default Map<String,ActivityImplementor> getActivityImplementors() throws IOException {
         return null;
     }
 }

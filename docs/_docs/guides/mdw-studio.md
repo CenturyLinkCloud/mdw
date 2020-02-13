@@ -77,7 +77,7 @@ that enables you to create workflow processes and other assets.
       considered an MDW package.
 
 ### 1.3 Open an existing project
-  - Launch IntelliJ and from the welcome screen select Open Project.
+  - Launch IntelliJ and from the welcome screen select Open Project (or File > Open from the menu).
   - Browse for the directory that contains the MDW project.yaml file.  Select that directory.
   - You may see a notification that the Gradle or Maven project needs to be imported.  For your dependencies to be resolved and project structure to be correct,
     you must perform the import action suggested in the notification.

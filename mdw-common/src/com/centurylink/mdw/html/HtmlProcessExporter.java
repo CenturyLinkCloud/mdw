@@ -39,7 +39,7 @@ public class HtmlProcessExporter implements ProcessExporter {
 
     @Override
     public byte[] export(Process process) throws IOException {
-        return new HtmlExportHelper(project).exportProcess(process, outputDir).getBytes();
+        return new HtmlExportHelper(project).exportProcess(process, outputDir);
     }
 
     @Override

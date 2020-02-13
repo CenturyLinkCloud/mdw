@@ -16,7 +16,6 @@
 package com.centurylink.mdw.image;
 
 import com.centurylink.mdw.model.project.Data;
-import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import org.json.JSONObject;
 
@@ -26,7 +25,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,19 +32,10 @@ public class Implementors extends LinkedHashMap<String,ActivityImplementor> {
 
     private File assetLoc;
 
-    public Implementors(Project project) throws IOException {
-        assetLoc = project.getAssetRoot();
-        List<ActivityImplementor> projectImplementors = project.getActivityImplementors();
-        if (projectImplementors != null) {
-            // implementors provided via Project interface (e.g. Studio)
-            for (ActivityImplementor implementor : projectImplementors) {
-                add(implementor);
-            }
-        }
-        else {
-            // load from assets (e.g. CLI) -- does not include compiled source annotations
-            loadAssetImplemetors(assetLoc);
-        }
+    public Implementors(File assetLoc) {
+        this.assetLoc = assetLoc;
+        // load from assets (e.g. CLI) -- does not include compiled source annotations
+        loadAssetImplemetors(assetLoc);
     }
 
     /**
@@ -78,7 +67,9 @@ public class Implementors extends LinkedHashMap<String,ActivityImplementor> {
     // ignore closing paren within strings (https://stackoverflow.com/a/6464500)
     private static final String ACTIVITY_REGEX = "@Activity\\s*\\((.*?\\)(?=([^\"\\\\]*(\\\\.|\"([^\"\\\\]*\\\\.)*[^\"\\\\]*\"))*[^\"]*$))";
     private static final Pattern ACTIVITY_ANNOTATION = Pattern.compile(ACTIVITY_REGEX, Pattern.DOTALL);
+    private static final Pattern CATEGORY_VALUE = Pattern.compile("category\\s*=\\s*\"(.*?)\"");
     private static final Pattern ICON_VALUE = Pattern.compile("icon\\s*=\\s*\"(.*?)\"");
+    private static final Pattern PAGELET_VALUE = Pattern.compile("pagelet\\s*=\\s*\"(.*?)\"");
 
     /**
      * For annotation-based implementors.  Custom impl classes cannot be compiled, so this crude
@@ -93,15 +84,23 @@ public class Implementors extends LinkedHashMap<String,ActivityImplementor> {
             String asset = file.getAbsolutePath().substring(assetLoc.getAbsolutePath().length() + 1).replace('/', '.');
             String implClass = asset.substring(0, asset.lastIndexOf('.'));
             String label = implClass.substring(implClass.lastIndexOf('.') + 1);
-            String category = "com.centurylink.mdw.activity.types.GeneralActivity";
-            String icon = "shape:activity";
-            // set icon if specified
             String params = matcher.group(1);
+            String category = "com.centurylink.mdw.activity.types.GeneralActivity";
+            Matcher categoryMatcher = CATEGORY_VALUE.matcher(params);
+            if (categoryMatcher.find()) {
+                category = categoryMatcher.group(1);
+            }
+            String icon = "shape:activity";
             Matcher iconMatcher = ICON_VALUE.matcher(params);
             if (iconMatcher.find()) {
                 icon = iconMatcher.group(1);
             }
-            return new ActivityImplementor(implClass, category, label, icon, "{}");
+            Matcher pageletMatcher = PAGELET_VALUE.matcher(params);
+            String pagelet = "{}";
+            if (pageletMatcher.find()) {
+                pagelet = pageletMatcher.group(1);
+            }
+            return new ActivityImplementor(implClass, category, label, icon, pagelet);
         }
         return null;
     }
