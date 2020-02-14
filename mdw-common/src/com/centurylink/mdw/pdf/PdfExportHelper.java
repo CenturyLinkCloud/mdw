@@ -207,7 +207,7 @@ public class PdfExportHelper extends HtmlExportHelper {
             return;
 
         Pagelet.Widget widget = getWidget(activity, attribute.getName());
-        if (widget != null) {
+        if (widget != null || WorkAttributeConstant.MONITORS.equals(attribute.getName())) {
             if (isTabular(activity, attribute)) {
                 Table table = getTable(activity, attribute);
                 printHtml(paragraph, getTableHtml(table), 30);
@@ -225,16 +225,19 @@ public class PdfExportHelper extends HtmlExportHelper {
     }
 
     private void printCodeBox(Paragraph paragraph, String code) {
+        // TODO border doesn't work
         paragraphBorder.setActive(true);
         Paragraph subParagraph = new Paragraph(code, fixedWidthFont);
-        paragraph.setIndentationLeft(30f);
+        paragraph.setIndentationLeft(30);
         paragraph.add(subParagraph);
         paragraphBorder.setActive(false);
     }
 
     private void printVariables(Chapter chapter, Process process, int parentLevel) throws Exception {
         Paragraph title = new Paragraph("Process Variables", sectionFont);
+        title.setSpacingBefore(5);
         Section section = chapter.addSection(title, parentLevel == 0 ? 0 : (parentLevel + 1));
+        section.add(new Paragraph("\n", normalFont));
         printHtml(section, getVariablesHtml(process));
     }
 

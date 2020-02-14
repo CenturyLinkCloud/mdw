@@ -137,11 +137,10 @@ public abstract class ExportHelper {
 
     protected Table getTable(Activity activity, Attribute attribute) throws IOException {
         Widget widget = getWidget(activity, attribute.getName());
-        List<String> cols;
-        List<String[]> rows;
-        if ("mapping".equals(widget.getType())) {
+        List<String> cols = new ArrayList<>();
+        List<String[]> rows = new ArrayList<>();
+        if (widget != null && "mapping".equals(widget.getType())) {
             cols = Arrays.asList(new String[]{"Variable", "Binding Expression"});
-            rows = new ArrayList<>();
             Map<String,String> map = Attribute.parseMap(attribute.getValue());
             for (String key : map.keySet()) {
                 rows.add(new String[]{key, map.get(key)});
@@ -151,11 +150,11 @@ public abstract class ExportHelper {
             if (WorkAttributeConstant.MONITORS.equals(attribute.getName())) {
                 cols = Arrays.asList(new String[]{"Enabled", "Name", "Implementation", "Options"});
             }
-            else {
+            else if (widget != null) {
                 cols = new ArrayList<>();
+                for (Widget tableWidget : widget.getWidgets())
+                    cols.add(tableWidget.getName());
             }
-            for (Widget tableWidget : widget.getWidgets())
-                cols.add(tableWidget.getName());
             rows = Attribute.parseTable(attribute.getValue(), ',', ';', cols.size());
         }
         String[][] values = new String[cols.size()][rows.size()];
@@ -168,10 +167,11 @@ public abstract class ExportHelper {
     }
 
     protected boolean isTabular(Activity activity, Attribute attribute) throws IOException {
+        if (WorkAttributeConstant.MONITORS.equals(attribute.getName()))
+            return true;
         Widget widget = getWidget(activity, attribute.getName());
         if (widget != null) {
-            return "table".equals(widget.getType()) || "mapping".equals(widget.getType())
-                    || WorkAttributeConstant.MONITORS.equals(attribute.getName());
+            return "table".equals(widget.getType()) || "mapping".equals(widget.getType());
         }
         return false;
     }

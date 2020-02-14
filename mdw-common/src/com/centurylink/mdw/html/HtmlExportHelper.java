@@ -73,6 +73,9 @@ public class HtmlExportHelper extends ExportHelper {
             String title = "Subprocess " + subproc.getAttribute(WorkAttributeConstant.LOGICAL_ID) + " - " + subproc.getName().replace('\n', ' ');
             sb.append("<h2>").append(title).append("</h2>\n");
         }
+        else {
+            sb.append("<h2>Documentation</h2>");
+        }
         String summary = subproc.getDescription();
         if (summary != null && summary.length() > 0)
             sb.append("<span style='font-weight:bold'>").append(summary).append("</span>");
@@ -123,10 +126,10 @@ public class HtmlExportHelper extends ExportHelper {
         StringBuilder sb = new StringBuilder();
         String name = attribute.getName();
         Widget widget = getWidget(activity, name);
-        if (widget != null) {
+        if (widget != null || WorkAttributeConstant.MONITORS.equals(attribute.getName())) {
             if (isTabular(activity, attribute)) {
                 Table table = getTable(activity, attribute);
-                sb.append(getTableHtml(table));
+                sb.append("<div style='margin-top:5px'>").append(getTableHtml(table)).append("</div>");
             }
             else if (isCode(activity, attribute)) {
                 sb.append(getCodeBoxHtml(attribute.getValue()));
@@ -178,20 +181,28 @@ public class HtmlExportHelper extends ExportHelper {
         if (chapter > 0)
             sb.append(chapter).append(". ");
         sb.append("Workflow: \"").append(process.getName()).append("\"</h1>\n");
-        // print image
+
+        // diagram
         printDiagramHtml(sb, process, outputDir, chapter);
-        // print documentation text
+
+        // documentation
         sb.append(BR);
         sb.append(getProcessBodyHtml(process));
+
+        // activities
         for (Activity act : process.getActivitiesOrderBySeq()) {
             printActivityHtml(sb, act);
         }
+
+        // subprocesses
         for (Process subproc : process.getSubprocesses()) {
             sb.append(getProcessBodyHtml(subproc));
             for (Activity act : subproc.getActivitiesOrderBySeq()) {
                 printActivityHtml(sb, act);
             }
         }
+
+        // variables
         List<Variable> variables = process.getVariables();
         if (variables != null && !variables.isEmpty()) {
             sb.append("<h2>Process Variables</h2>\n");
