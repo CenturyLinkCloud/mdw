@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -98,17 +98,26 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
+<li><a href="../../../../com/centurylink/mdw/export/ExportHelper.html" title="class in com.centurylink.mdw.export">com.centurylink.mdw.export.ExportHelper</a></li>
+<li>
+<ul class="inheritance">
 <li>com.centurylink.mdw.html.HtmlExportHelper</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 <div class="description">
 <ul class="blockList">
 <li class="blockList">
+<dl>
+<dt>Direct Known Subclasses:</dt>
+<dd><a href="../../../../com/centurylink/mdw/pdf/PdfExportHelper.html" title="class in com.centurylink.mdw.pdf">PdfExportHelper</a></dd>
+</dl>
 <hr>
 <br>
 <pre>public class <span class="typeNameLabel">HtmlExportHelper</span>
-extends java.lang.Object</pre>
+extends <a href="../../../../com/centurylink/mdw/export/ExportHelper.html" title="class in com.centurylink.mdw.export">ExportHelper</a></pre>
 </li>
 </ul>
 </div>
@@ -135,11 +144,14 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#BR">BR</a></span></code>&nbsp;</td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#HTMLTAG">HTMLTAG</a></span></code>&nbsp;</td>
-</tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="fields.inherited.from.class.com.centurylink.mdw.export.ExportHelper">
+<!--   -->
+</a>
+<h3>Fields inherited from class&nbsp;com.centurylink.mdw.export.<a href="../../../../com/centurylink/mdw/export/ExportHelper.html" title="class in com.centurylink.mdw.export">ExportHelper</a></h3>
+<code><a href="../../../../com/centurylink/mdw/export/ExportHelper.html#excludedAttributes">excludedAttributes</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#excludedAttributesForSpecificValues">excludedAttributesForSpecificValues</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#project">project</a></code></li>
+</ul>
 </li>
 </ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
@@ -173,15 +185,57 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#escapeTags-java.lang.String-">escapeTags</a></span>(java.lang.String&nbsp;str)</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#exportProcess-com.centurylink.mdw.model.workflow.Process-java.io.File-">exportProcess</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process,
              java.io.File&nbsp;outputDir)</code>&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#getAttributesHtml-com.centurylink.mdw.model.workflow.Activity-">getAttributesHtml</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity)</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#getAttributeValueHtml-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">getAttributeValueHtml</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
+                     <a href="../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&nbsp;attribute)</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#getCodeBoxHtml-java.lang.String-">getCodeBoxHtml</a></span>(java.lang.String&nbsp;code)</code>&nbsp;</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#getHtml-java.lang.String-">getHtml</a></span>(java.lang.String&nbsp;markdown)</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#getProcessBodyHtml-com.centurylink.mdw.model.workflow.Process-">getProcessBodyHtml</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;subproc)</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#getTableHtml-com.centurylink.mdw.export.Table-">getTableHtml</a></span>(<a href="../../../../com/centurylink/mdw/export/Table.html" title="class in com.centurylink.mdw.export">Table</a>&nbsp;table)</code>&nbsp;</td>
+</tr>
+<tr id="i8" class="altColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#getVariablesHtml-com.centurylink.mdw.model.workflow.Process-">getVariablesHtml</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process)</code>&nbsp;</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#printImage-java.lang.String-com.centurylink.mdw.model.workflow.Process-">printImage</a></span>(java.lang.String&nbsp;fileName,
-          <a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;processVO)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/html/HtmlExportHelper.html#printProcessHtml-java.lang.StringBuilder-int-com.centurylink.mdw.model.workflow.Process-java.io.File-">printProcessHtml</a></span>(java.lang.StringBuilder&nbsp;sb,
+                int&nbsp;chapter,
+                <a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process,
+                java.io.File&nbsp;outputDir)</code>&nbsp;</td>
 </tr>
 </table>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.export.ExportHelper">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;com.centurylink.mdw.export.<a href="../../../../com/centurylink/mdw/export/ExportHelper.html" title="class in com.centurylink.mdw.export">ExportHelper</a></h3>
+<code><a href="../../../../com/centurylink/mdw/export/ExportHelper.html#getAttributeLabel-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">getAttributeLabel</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#getImplementor-com.centurylink.mdw.model.workflow.Activity-">getImplementor</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#getTable-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">getTable</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#getWidget-com.centurylink.mdw.model.workflow.Activity-java.lang.String-">getWidget</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#isCode-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">isCode</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#isEmpty-java.util.List-">isEmpty</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#isExcludeAttribute-java.lang.String-java.lang.String-">isExcludeAttribute</a>, <a href="../../../../com/centurylink/mdw/export/ExportHelper.html#isTabular-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">isTabular</a></code></li>
+</ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
@@ -213,19 +267,6 @@ extends java.lang.Object</pre>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../../constant-values.html#com.centurylink.mdw.html.HtmlExportHelper.BR">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a name="HTMLTAG">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>HTMLTAG</h4>
-<pre>public static final&nbsp;java.lang.String HTMLTAG</pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../constant-values.html#com.centurylink.mdw.html.HtmlExportHelper.HTMLTAG">Constant Field Values</a></dd>
 </dl>
 </li>
 </ul>
@@ -273,28 +314,118 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>exportProcess</h4>
-<pre>public&nbsp;java.lang.String&nbsp;exportProcess(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process,
-                                      java.io.File&nbsp;outputDir)
-                               throws java.io.IOException</pre>
+<pre>public&nbsp;byte[]&nbsp;exportProcess(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process,
+                            java.io.File&nbsp;outputDir)
+                     throws java.io.IOException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>
 </dl>
 </li>
 </ul>
-<a name="printImage-java.lang.String-com.centurylink.mdw.model.workflow.Process-">
+<a name="getProcessBodyHtml-com.centurylink.mdw.model.workflow.Process-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
-<h4>printImage</h4>
-<pre>public&nbsp;void&nbsp;printImage(java.lang.String&nbsp;fileName,
-                       <a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;processVO)
-                throws java.io.IOException</pre>
+<h4>getProcessBodyHtml</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;getProcessBodyHtml(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;subproc)</pre>
+</li>
+</ul>
+<a name="getVariablesHtml-com.centurylink.mdw.model.workflow.Process-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getVariablesHtml</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;getVariablesHtml(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process)
+                                     throws java.io.IOException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>
 </dl>
+</li>
+</ul>
+<a name="getAttributesHtml-com.centurylink.mdw.model.workflow.Activity-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAttributesHtml</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;getAttributesHtml(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity)
+                                      throws java.io.IOException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getAttributeValueHtml-com.centurylink.mdw.model.workflow.Activity-com.centurylink.mdw.model.attribute.Attribute-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAttributeValueHtml</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;getAttributeValueHtml(<a href="../../../../com/centurylink/mdw/model/workflow/Activity.html" title="class in com.centurylink.mdw.model.workflow">Activity</a>&nbsp;activity,
+                                                 <a href="../../../../com/centurylink/mdw/model/attribute/Attribute.html" title="class in com.centurylink.mdw.model.attribute">Attribute</a>&nbsp;attribute)
+                                          throws java.io.IOException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getCodeBoxHtml-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCodeBoxHtml</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;getCodeBoxHtml(java.lang.String&nbsp;code)</pre>
+</li>
+</ul>
+<a name="getTableHtml-com.centurylink.mdw.export.Table-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTableHtml</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;getTableHtml(<a href="../../../../com/centurylink/mdw/export/Table.html" title="class in com.centurylink.mdw.export">Table</a>&nbsp;table)</pre>
+</li>
+</ul>
+<a name="printProcessHtml-java.lang.StringBuilder-int-com.centurylink.mdw.model.workflow.Process-java.io.File-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>printProcessHtml</h4>
+<pre>public&nbsp;void&nbsp;printProcessHtml(java.lang.StringBuilder&nbsp;sb,
+                             int&nbsp;chapter,
+                             <a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process,
+                             java.io.File&nbsp;outputDir)
+                      throws java.io.IOException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getHtml-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getHtml</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getHtml(java.lang.String&nbsp;markdown)</pre>
+</li>
+</ul>
+<a name="escapeTags-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>escapeTags</h4>
+<pre>public&nbsp;java.lang.String&nbsp;escapeTags(java.lang.String&nbsp;str)</pre>
 </li>
 </ul>
 </li>

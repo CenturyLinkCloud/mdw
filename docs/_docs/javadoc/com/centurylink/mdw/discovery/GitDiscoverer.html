@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":10,"i2":10,"i3":6,"i4":10,"i5":10,"i6":10,"i7":6,"i8":6,"i9":10,"i10":6,"i11":10,"i12":10,"i13":10,"i14":10};
+var methods = {"i0":10,"i1":6,"i2":10,"i3":10,"i4":6,"i5":10,"i6":10,"i7":10,"i8":6,"i9":6,"i10":10,"i11":6,"i12":10,"i13":10,"i14":10,"i15":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -154,65 +154,70 @@ implements <a href="../../../../com/centurylink/mdw/discovery/Discoverer.html" t
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/PackageMeta.html" title="class in com.centurylink.mdw.model">PackageMeta</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/GitDiscoverer.html#findPackage-java.lang.String-java.lang.String-">findPackage</a></span>(java.lang.String&nbsp;name,
+           java.lang.String&nbsp;version)</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>abstract java.net.URL</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/GitDiscoverer.html#getApiBase--">getApiBase</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>protected java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/GitDiscoverer.html#getArrayValues-java.lang.String-java.lang.String-">getArrayValues</a></span>(java.lang.String&nbsp;url,
               java.lang.String&nbsp;property)</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/GitDiscoverer.html#getAssetPath--">getAssetPath</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>abstract java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/GitDiscoverer.html#getBranches-int-">getBranches</a></span>(int&nbsp;max)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,<a href="../../../../com/centurylink/mdw/model/PackageMeta.html" title="class in com.centurylink.mdw.model">PackageMeta</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/GitDiscoverer.html#getPackageInfo--">getPackageInfo</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/GitDiscoverer.html#getPackages--">getPackages</a></span>()</code>
 <div class="block">Excludes MDW packages unless GitHub public repo.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/GitDiscoverer.html#getRef--">getRef</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>abstract java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/GitDiscoverer.html#getRepoName--">getRepoName</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>abstract java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/GitDiscoverer.html#getRepoPath--">getRepoPath</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.net.URL</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/GitDiscoverer.html#getRepoUrl--">getRepoUrl</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>abstract java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/GitDiscoverer.html#getTags-int-">getTags</a></span>(int&nbsp;max)</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/GitDiscoverer.html#getToken--">getToken</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/GitDiscoverer.html#setRef-java.lang.String-">setRef</a></span>(java.lang.String&nbsp;ref)</code>&nbsp;</td>
 </tr>
-<tr id="i13" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/GitDiscoverer.html#setToken-java.lang.String-">setToken</a></span>(java.lang.String&nbsp;token)</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/GitDiscoverer.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -405,6 +410,23 @@ implements <a href="../../../../com/centurylink/mdw/discovery/Discoverer.html" t
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/discovery/Discoverer.html#getPackageInfo--">getPackageInfo</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/centurylink/mdw/discovery/Discoverer.html" title="interface in com.centurylink.mdw.discovery">Discoverer</a></code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="findPackage-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findPackage</h4>
+<pre>public&nbsp;<a href="../../../../com/centurylink/mdw/model/PackageMeta.html" title="class in com.centurylink.mdw.model">PackageMeta</a>&nbsp;findPackage(java.lang.String&nbsp;name,
+                               java.lang.String&nbsp;version)
+                        throws java.io.IOException</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/discovery/Discoverer.html#findPackage-java.lang.String-java.lang.String-">findPackage</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/centurylink/mdw/discovery/Discoverer.html" title="interface in com.centurylink.mdw.discovery">Discoverer</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>
 </dl>

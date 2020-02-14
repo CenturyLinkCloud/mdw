@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":9,"i10":10,"i11":10,"i12":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":9,"i11":10,"i12":10,"i13":10,"i14":10};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -114,6 +114,7 @@ var activeTableTab = "activeTableTab";
 <pre>public class <span class="typeNameLabel">MdwVersion</span>
 extends java.lang.Object
 implements java.lang.Comparable&lt;<a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html" title="class in com.centurylink.mdw.model.system">MdwVersion</a>&gt;</pre>
+<div class="block">An MDW release version, or an MDW asset package version.</div>
 </li>
 </ul>
 </div>
@@ -132,7 +133,10 @@ implements java.lang.Comparable&lt;<a href="../../../../../com/centurylink/mdw/m
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#MdwVersion-java.lang.String-">MdwVersion</a></span>(java.lang.String&nbsp;mdwVersion)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#MdwVersion-int-">MdwVersion</a></span>(int&nbsp;intVersion)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#MdwVersion-java.lang.String-">MdwVersion</a></span>(java.lang.String&nbsp;version)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -165,44 +169,56 @@ implements java.lang.Comparable&lt;<a href="../../../../../com/centurylink/mdw/m
                     int&nbsp;build)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#checkRequiredVersion-java.lang.String-">checkRequiredVersion</a></span>(java.lang.String&nbsp;requiredVersion)</code>&nbsp;</td>
-</tr>
-<tr id="i4" class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#compareTo-com.centurylink.mdw.model.system.MdwVersion-">compareTo</a></span>(<a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html" title="class in com.centurylink.mdw.model.system">MdwVersion</a>&nbsp;other)</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#equals-java.lang.Object-">equals</a></span>(java.lang.Object&nbsp;obj)</code>&nbsp;</td>
 </tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#getBuild--">getBuild</a></span>()</code>&nbsp;</td>
+</tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#getBuildId--">getBuildId</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#getIntVersion--">getIntVersion</a></span>()</code>
+<div class="block">Returns old-style int version.</div>
+</td>
 </tr>
 <tr id="i7" class="rowColor">
-<td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#getMajorVersion--">getMajorVersion</a></span>()</code>&nbsp;</td>
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#getLabel--">getLabel</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#getMinorVersion--">getMinorVersion</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#getMajor--">getMajor</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i9" class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#getMinor--">getMinor</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#getRuntimeVersion--">getRuntimeVersion</a></span>()</code>
 <div class="block">Includes build timestamp.</div>
 </td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i11" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#isSnapshot--">isSnapshot</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i12" class="altColor">
+<tr id="i13" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#meets-java.lang.String-">meets</a></span>(java.lang.String&nbsp;spec)</code>
+<div class="block">Checks whether this version meets the spec according to semantic versioning.</div>
+</td>
+</tr>
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/system/MdwVersion.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -231,10 +247,24 @@ implements java.lang.Comparable&lt;<a href="../../../../../com/centurylink/mdw/m
 <a name="MdwVersion-java.lang.String-">
 <!--   -->
 </a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MdwVersion</h4>
+<pre>public&nbsp;MdwVersion(java.lang.String&nbsp;version)
+           throws <a href="../../../../../com/centurylink/mdw/model/system/BadVersionException.html" title="class in com.centurylink.mdw.model.system">BadVersionException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/model/system/BadVersionException.html" title="class in com.centurylink.mdw.model.system">BadVersionException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="MdwVersion-int-">
+<!--   -->
+</a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>MdwVersion</h4>
-<pre>public&nbsp;MdwVersion(java.lang.String&nbsp;mdwVersion)</pre>
+<pre>public&nbsp;MdwVersion(int&nbsp;intVersion)</pre>
 </li>
 </ul>
 </li>
@@ -245,18 +275,40 @@ implements java.lang.Comparable&lt;<a href="../../../../../com/centurylink/mdw/m
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="checkRequiredVersion-java.lang.String-">
+<a name="getMajor--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>checkRequiredVersion</h4>
-<pre>public&nbsp;boolean&nbsp;checkRequiredVersion(java.lang.String&nbsp;requiredVersion)
-                             throws java.lang.NumberFormatException</pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.lang.NumberFormatException</code></dd>
-</dl>
+<h4>getMajor</h4>
+<pre>public&nbsp;int&nbsp;getMajor()</pre>
+</li>
+</ul>
+<a name="getMinor--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMinor</h4>
+<pre>public&nbsp;int&nbsp;getMinor()</pre>
+</li>
+</ul>
+<a name="getBuild--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getBuild</h4>
+<pre>public&nbsp;int&nbsp;getBuild()</pre>
+</li>
+</ul>
+<a name="isSnapshot--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isSnapshot</h4>
+<pre>public&nbsp;boolean&nbsp;isSnapshot()</pre>
 </li>
 </ul>
 <a name="checkRequiredVersion-int-">
@@ -289,40 +341,24 @@ implements java.lang.Comparable&lt;<a href="../../../../../com/centurylink/mdw/m
                                     int&nbsp;build)</pre>
 </li>
 </ul>
-<a name="getMajorVersion--">
+<a name="meets-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getMajorVersion</h4>
-<pre>public&nbsp;int&nbsp;getMajorVersion()</pre>
+<h4>meets</h4>
+<pre>public&nbsp;boolean&nbsp;meets(java.lang.String&nbsp;spec)</pre>
+<div class="block">Checks whether this version meets the spec according to semantic versioning.
+ Currently spec must be an actual version (no wildcards, etc).</div>
 </li>
 </ul>
-<a name="getMinorVersion--">
+<a name="getLabel--">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getMinorVersion</h4>
-<pre>public&nbsp;int&nbsp;getMinorVersion()</pre>
-</li>
-</ul>
-<a name="isSnapshot--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isSnapshot</h4>
-<pre>public&nbsp;boolean&nbsp;isSnapshot()</pre>
-</li>
-</ul>
-<a name="getBuildId--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getBuildId</h4>
-<pre>public&nbsp;int&nbsp;getBuildId()</pre>
+<h4>getLabel</h4>
+<pre>public&nbsp;java.lang.String&nbsp;getLabel()</pre>
 </li>
 </ul>
 <a name="toString--">
@@ -335,6 +371,21 @@ implements java.lang.Comparable&lt;<a href="../../../../../com/centurylink/mdw/m
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+</dl>
+</li>
+</ul>
+<a name="getIntVersion--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getIntVersion</h4>
+<pre>public&nbsp;int&nbsp;getIntVersion()
+                  throws <a href="../../../../../com/centurylink/mdw/model/system/BadVersionException.html" title="class in com.centurylink.mdw.model.system">BadVersionException</a></pre>
+<div class="block">Returns old-style int version.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/model/system/BadVersionException.html" title="class in com.centurylink.mdw.model.system">BadVersionException</a></code></dd>
 </dl>
 </li>
 </ul>
