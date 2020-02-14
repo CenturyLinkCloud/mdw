@@ -13,6 +13,9 @@ import java.io.PrintStream;
 
 public class ActivityLogger extends AbstractStandardLoggerBase {
 
+    public static final int MAX_MESSAGE_LENGTH = 3997;
+    public static final int MAX_THREAD_LENGTH = 29;
+
     private ActivityRuntimeContext runtimeContext;
 
     static {
@@ -154,9 +157,12 @@ public class ActivityLogger extends AbstractStandardLoggerBase {
     public static void persist(Long processInstanceId, Long activityInstanceId, LogLevel level, String message, Throwable t) {
         boolean isLogging = PropertyManager.getBooleanProperty(PropertyNames.MDW_LOGGING_ACTIVITY_ENABLED, true);
         if (isLogging && message != null) {
+            if (message.length() > MAX_MESSAGE_LENGTH)
+                message = message.substring(0, MAX_MESSAGE_LENGTH) + "...";
             String thread = Thread.currentThread().getName();
-            if (thread.length() > 32)
-                thread = thread.substring(0, 28) + "...";
+            if (thread.length() > MAX_THREAD_LENGTH)
+                thread = thread.substring(0, MAX_THREAD_LENGTH) + "...";
+
             try {
                 WorkflowDataAccess dataAccess = new WorkflowDataAccess();
                 dataAccess.addActivityLog(processInstanceId, activityInstanceId, level.toString(), thread, message);
@@ -164,8 +170,8 @@ public class ActivityLogger extends AbstractStandardLoggerBase {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     t.printStackTrace(new PrintStream(baos));
                     String stackTrace = new String(baos.toByteArray());
-                    if (stackTrace.length() > 3997) {
-                        stackTrace = stackTrace.substring(0, 3997) + "...";
+                    if (stackTrace.length() > MAX_MESSAGE_LENGTH) {
+                        stackTrace = stackTrace.substring(0, MAX_MESSAGE_LENGTH) + "...";
                     }
                     dataAccess.addActivityLog(processInstanceId, activityInstanceId, level.toString(), thread, stackTrace);
                 }

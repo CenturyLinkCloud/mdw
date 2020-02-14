@@ -845,6 +845,7 @@ public class ProcessEngineDriver {
         }
         String msg = InternalLogMessage.PROCESS_START.message + " - " + procdef.getQualifiedName() + "/" + procdef.getVersionString();
         engineLogger.info(processId, mainProcessInst.getId(), masterRequestId, msg);
+        engineLogger.info(processId, mainProcessInst.getId(), masterRequestId, "Performance level = " + engineLogger.getPerformanceLevel());
         engine.notifyMonitors(mainProcessInst, InternalLogMessage.PROCESS_START);
         // setProcessInstanceStatus will really set to STATUS_IN_PROGRESS - hint to set START_DT as well
         InternalEvent event = InternalEvent.createActivityStartMessage(startActivityId,
