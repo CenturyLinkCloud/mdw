@@ -13,7 +13,7 @@ TEMPLATE_DIR="--template-dir=../../templates"
 NO_UPDATE="--no-update"
 
 @test "spring boot init" {
-  skip 'temp github actions'
+  # skip 'temp github actions'
   rm -rf spring-boot-mdw
   mdw init spring-boot-mdw --spring-boot $NO_UPDATE $TEMPLATE_DIR
   ls spring-boot-mdw/src/main/java/com/example/MyApplication.java
@@ -50,7 +50,7 @@ NO_UPDATE="--no-update"
 }
 
 @test "install" {
-  skip 'formal'
+  # skip 'formal'
   rm -rf install-mdw
   mdw init install-mdw --snapshots $NO_UPDATE $TEMPLATE_DIR
   mdw install --project-dir=./install-mdw --boot-jar-loc=./install-mdw --binaries-url="file://$PWD/../../deploy/app"
