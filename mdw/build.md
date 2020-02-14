@@ -46,6 +46,7 @@
   - Close this build's milestone in GitHub.
 
 9. Release Notes
+  - git pull
   - If you are doing it first time then install ruby (https://github.com/CenturyLinkCloud/mdw#documentation) and do following in root of your workspace dir
     `gem install github_changelog_generator`
   - Set the CHANGELOG_GITHUB_TOKEN environment variable to your 40 digit token from GitHub
@@ -53,7 +54,6 @@
     ```
     github_changelog_generator --no-pull-request  --filter-by-milestone --future-release '6.1.xx' --exclude-labels designer,internal,wontfix,duplicate,documentation
     ```
-  - git pull
   - Review/Update/Merge CHANGELOG.md (retaining old Compatibility Notes sections).
   - Commit (with `[skip ci]`) and push merged CHANGELOG.md
   - Update the new release on GitHub (https://github.com/CenturyLinkCloud/mdw/releases), copying the notes from updated CHANGELOG.md

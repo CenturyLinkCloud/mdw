@@ -1,5 +1,23 @@
 # Change Log
 
+## [6.1.31](https://github.com/CenturyLinkCloud/mdw/tree/6.1.31) (2020-02-14)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.30...6.1.31)
+
+**Implemented enhancements:**
+
+- Package dependencies [\#395](https://github.com/CenturyLinkCloud/mdw/issues/395)
+- App Version should be read from Spring Boot jar manifest [\#803](https://github.com/CenturyLinkCloud/mdw/issues/803)
+- Support package.yaml files with -SNAPSHOT versions [\#531](https://github.com/CenturyLinkCloud/mdw/issues/531)
+
+**Closed issues:**
+
+- Overlong activity log messages cause runtime SQLException [\#802](https://github.com/CenturyLinkCloud/mdw/issues/802)
+- Export to PDF does not include activity markdown documentation [\#801](https://github.com/CenturyLinkCloud/mdw/issues/801)
+- GitLab asset discovery limited by default per_page parameter value [\#794](https://github.com/CenturyLinkCloud/mdw/issues/794)
+- Broken CI due to Maven Central HTTPS requirement [\#793](https://github.com/CenturyLinkCloud/mdw/issues/793)
+- Dashboard Process Insights by Month is broken [\#765](https://github.com/CenturyLinkCloud/mdw/issues/765)
+- CLI dependencies failure with OpenJDK 11 [\#728](https://github.com/CenturyLinkCloud/mdw/issues/728)
+
 ## [6.1.30](https://github.com/CenturyLinkCloud/mdw/tree/6.1.30) (2020-01-10)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.29...6.1.30)
 
