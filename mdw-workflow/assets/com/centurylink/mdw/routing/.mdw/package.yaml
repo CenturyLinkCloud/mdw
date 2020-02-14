@@ -1,6 +1,6 @@
 schemaVersion: '6.1'
 name: com.centurylink.mdw.routing
-version: 6.1.31-SNAPSHOT
+version: 6.1.31
 
 dependencies:
-  - com.centurylink.mdw.base v6.1.31-SNAPSHOT
+  - com.centurylink.mdw.base v6.1.31

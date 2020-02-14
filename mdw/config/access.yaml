@@ -16,7 +16,7 @@ authMethod: mdw
 
 # Allows access to all UI functions and Service APIs permitted for this
 # user without authenticating.  Requires "-Dmdw.runtime.env=dev" system property.
-devUser: dxoakes
+devUser: mdwapp
 
 # Auth exclusions are patterns that can be accessed directly
 # without authentication even when running with protection 
