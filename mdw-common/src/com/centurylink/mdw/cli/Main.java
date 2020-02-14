@@ -42,8 +42,13 @@ public class Main {
         for (int i = 0; i < args.length; i++)
             cmdArgs.add(args[i].trim());
 
-        if (cmdArgs.isEmpty()) {
+        if (cmdArgs.size() == 1 && cmdArgs.get(0).equals("--dependencies")) {
+            return;
+        }
+        else if (cmdArgs.isEmpty() || (cmdArgs.size() == 1 && cmdArgs.get(0).isEmpty())) {
             new Version().run();
+            System.out.println("Enter 'mdw help' for usage information");
+            return;
         }
         else if ("git".equals(cmdArgs.get(0))) {
             if ("--dependencies".equals(cmdArgs.get(cmdArgs.size() - 1)))
