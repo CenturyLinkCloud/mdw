@@ -14,7 +14,7 @@ public class Data {
 
     public static final String GIT_BASE_URL = "https://github.com/CenturyLinkCloud";
     public static final String GIT_REPO_URL = GIT_BASE_URL + "/mdw.git";
-    public static final String DOCS_URL = "http://centurylinkcloud.github.io/mdw/docs";
+    public static final String DOCS_URL = "https://centurylinkcloud.github.io/mdw/docs";
     public static final String BASE_PKG = "com.centurylink.mdw.base";
 
     private Project project;

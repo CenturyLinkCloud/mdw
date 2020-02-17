@@ -60,7 +60,7 @@
   },
   {
     "name": "ServiceNow Adapter",
-    "type": "link",
-    "url": "help/ServiceNow.html"
+    "type": "help",
+    "url": "https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/servicenow/readme.md"
   }
 ]}
