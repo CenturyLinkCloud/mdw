@@ -28,6 +28,8 @@
     "$mdwMessages": true,
     "$mdwGitBranch": false,
     "$mdwConfig": false,
+    "$mdwAppId": false,
+    "$mdwAppVersion": false,
     "require": false,
     "module": false,
     "location": true,
