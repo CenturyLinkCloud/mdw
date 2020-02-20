@@ -174,7 +174,7 @@ public class DesignServicesImpl implements DesignServices {
     @Override
     public ActivityImplementor getImplementor(String className) throws ServiceException {
         ActivityImplementor implementor =  ImplementorCache.get(className);
-        if (implementor.getPagelet() == null) {
+        if (implementor != null && implementor.getPagelet() == null) {
             try {
                 for (ActivityImplementor impl : DataAccess.getProcessLoader().getActivityImplementors()) {
                     if (impl.getImplementorClass().equals(implementor.getImplementorClass()))

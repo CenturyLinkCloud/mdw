@@ -1,0 +1,95 @@
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=50,y=130,w=60,h=40
+  transitions:
+  - id: T1
+    to: A5
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=140,ly=150,xs=114&166,ys=150&150
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=670,y=130,w=60,h=40
+- id: A3
+  name: Respond
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    Output Documents: '["response"]'
+    Rule: response = new com.centurylink.mdw.model.StatusResponse(200, "OK").getJson()
+    SCRIPT: Groovy
+    WORK_DISPLAY_INFO: x=510,y=120,w=100,h=60
+  transitions:
+  - id: T2
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=640,ly=150,xs=614&666,ys=150&150
+- id: A4
+  name: Invoke
+  implementor: com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter
+  attributes:
+    EndpointUri: '#{props[''mdw.services.url'']}/api/Workgroups'
+    HttpMethod: POST
+    REQUEST_VARIABLE: serviceRequest
+    RESPONSE_VARIABLE: serviceResponse
+    WORK_DISPLAY_INFO: x=340,y=120,w=100,h=60
+  transitions:
+  - id: T3
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=475,ly=150,xs=444&506,ys=150&150
+- id: A5
+  name: |-
+    Create
+    Request
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    Output Documents: '["serviceRequest"]'
+    Rule: |
+      import org.json.JSONObject
+
+      serviceRequest = new JSONObject("""{
+        "name": "${request.get('groupName')}",
+        "description": "another group for testing"
+      }""")
+    SCRIPT: Groovy
+    WORK_DISPLAY_INFO: x=170,y=120,w=100,h=60
+  transitions:
+  - id: T4
+    to: A4
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=305,ly=150,xs=274&336,ys=150&150
+variables:
+  request:
+    type: org.json.JSONObject
+    category: INPUT
+  requestHeaders:
+    type: java.util.Map<String,String>
+    category: INPUT
+  response:
+    type: org.json.JSONObject
+    category: OUTPUT
+  responseHeaders:
+    type: java.util.Map<String,String>
+    category: OUTPUT
+  serviceRequest:
+    type: org.json.JSONObject
+    category: LOCAL
+  serviceResponse:
+    type: org.json.JSONObject
+    category: LOCAL
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: SERVICE
+  PerformanceLevel: '5'
+  WORK_DISPLAY_INFO: x=35,y=36,w=266,h=26
+  requestMethod: POST
+  requestPath: perf5req-resp

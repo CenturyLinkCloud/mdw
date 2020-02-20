@@ -112,7 +112,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
         }
     }
 
-    private String buildWhere(Query query) throws DataAccessException {
+    protected String buildWhere(Query query) throws DataAccessException {
         long instanceId = query.getLongFilter("instanceId");
         if (instanceId > 0)
             return "where pi.process_instance_id = " + instanceId + "\n"; // ignore other criteria
@@ -217,7 +217,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
         return sb.toString();
     }
 
-    private String getProcessIdsClause(String[] processIds) {
+    protected String getProcessIdsClause(String[] processIds) {
         StringBuilder sb = new StringBuilder();
         if (processIds != null && processIds.length > 0) {
             sb.append(" and pi.process_id in (");
@@ -231,7 +231,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
         return sb.toString();
     }
 
-    private String buildOrderBy(Query query) {
+    protected String buildOrderBy(Query query) {
         StringBuilder sb = new StringBuilder();
         sb.append(" order by process_instance_id");
         if (query.isDescending())
