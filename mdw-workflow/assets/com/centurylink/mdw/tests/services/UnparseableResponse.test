@@ -5,7 +5,7 @@ delete http('api/Workgroups/Yet%20another%20group')
 
 start process("UnparseableResponse") {
     variables = [url: "http://localhost:8080/mdw/Services/REST"]
-    timeout = 120
+    timeout = 150
 }
 
 // first invocation fails with http 500 and returns xml response
