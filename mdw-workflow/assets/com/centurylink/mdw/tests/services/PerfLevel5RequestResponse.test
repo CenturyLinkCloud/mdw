@@ -1,6 +1,6 @@
 package com.centurylink.mdw.tests.services
 
-def groupName = 'Yet Another Group'
+def groupName = 'Just Another Group'
 
 // clean up from previous test
 def encoded = java.net.URLEncoder.encode(groupName, 'UTF-8').replace("+", "%20")
