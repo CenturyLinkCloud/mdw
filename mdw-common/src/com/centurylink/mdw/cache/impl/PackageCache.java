@@ -121,7 +121,7 @@ public class PackageCache implements PreloadableCache {
         finally {
             String output = baos.toString();
             if (!output.isEmpty())
-                logger.error(output);
+                logger.info(output);
         }
     }
 

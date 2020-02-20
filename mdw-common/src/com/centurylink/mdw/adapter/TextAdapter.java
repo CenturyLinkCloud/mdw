@@ -71,7 +71,7 @@ public interface TextAdapter {
      *
      * @param connection the object returned by openConnection()
      *         and is typically the adapter activity instance itself.
-     * @param request
+     * @param request request content
      * @param timeout time out in seconds. Ignored if no response is expected.
      * @param headers protocol request data, e.g. correlation ID
      * @return response if the underlying protocol is synchronous
@@ -85,17 +85,15 @@ public interface TextAdapter {
 
     /**
      * Handle success response.
-     * @param response
+     * @param response response content
      */
     void onSuccess(String response)
     throws ActivityException, ConnectionException, AdapterException;
 
     /**
      * Handle failure response.
-     * @param errorCause
+     * @param errorCause throwable that triggered failure
      * @return completion code
-     * @throws AdapterException
-     * @throws ConnectionException
      */
     String onFailure(Throwable errorCause)
     throws AdapterException,ConnectionException;
