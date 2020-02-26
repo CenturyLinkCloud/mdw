@@ -1705,14 +1705,19 @@ public class WorkflowServicesImpl implements WorkflowServices {
      * TODO use WorkflowServices method when available in 6.1.32
      * Retrieve milestones for a process instance hierarchy
      */
-    public List<Milestone> getMilestones(Linked<ProcessInstance> instanceHierarchy)
-            throws ServiceException {
+    public List<Milestone> getMilestones(Linked<ProcessInstance> instanceHierarchy) throws ServiceException {
         List<Milestone> milestones = new ArrayList<>();
         Process process = ProcessCache.getProcess(instanceHierarchy.get().getProcessId());
         if (process != null) {
             Linked<Milestone> milestoneDefs = HierarchyCache.getMilestones(process.getId());
+            List<Milestone> uniqueDefs = new ArrayList();
             for (Linked<Milestone> milestoneDef : milestoneDefs) {
-                Milestone milestone = milestoneDef.get();
+                Milestone def = milestoneDef.get();
+                if (!uniqueDefs.contains(def))
+                    uniqueDefs.add(def);
+            }
+            for (Milestone uniqueDef : uniqueDefs) {
+                Milestone milestone = uniqueDef;
                 Long processId = milestone.getProcess().getId();
                 Linked<ProcessInstance> subHierarchy = instanceHierarchy.find(pi -> pi.getProcessId().equals(processId));
                 if (subHierarchy != null) {
