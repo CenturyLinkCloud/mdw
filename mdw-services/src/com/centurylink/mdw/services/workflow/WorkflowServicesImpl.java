@@ -1700,4 +1700,35 @@ public class WorkflowServicesImpl implements WorkflowServices {
         return ignores != null &&
                 ignores.contains(processInstance.getPackageName() + "/" + processInstance.getProcessName() + ".proc");
     }
+
+    /**
+     * TODO use WorkflowServices method when available in 6.1.32
+     * Retrieve milestones for a process instance hierarchy
+     */
+    public List<Milestone> getMilestones(Linked<ProcessInstance> instanceHierarchy)
+            throws ServiceException {
+        List<Milestone> milestones = new ArrayList<>();
+        Process process = ProcessCache.getProcess(instanceHierarchy.get().getProcessId());
+        if (process != null) {
+            Linked<Milestone> milestoneDefs = HierarchyCache.getMilestones(process.getId());
+            for (Linked<Milestone> milestoneDef : milestoneDefs) {
+                Milestone milestone = milestoneDef.get();
+                Long processId = milestone.getProcess().getId();
+                Linked<ProcessInstance> subHierarchy = instanceHierarchy.find(pi -> pi.getProcessId().equals(processId));
+                if (subHierarchy != null) {
+                    try {
+                        Milestone m = getWorkflowDao().getMilestone(process, subHierarchy.get(), milestone.getActivity());
+                        if (m != null)
+                            milestone = m;
+                    }
+                    catch (DataAccessException ex) {
+                        throw new ServiceException("Failed to load milestone", ex);
+                    }
+                }
+                milestones.add(milestone);
+            }
+        }
+        return milestones;
+    }
+
 }

@@ -266,4 +266,7 @@ public interface WorkflowServices {
     Linked<Milestone> getMilestones(Long masterProcessInstanceId, boolean future) throws ServiceException;
 
     Linked<ActivityInstance> getActivityHierarchy(ProcessInstance processInstance) throws ServiceException;
+
+    List<Milestone> getMilestones(Linked<ProcessInstance> instanceHierarchy) throws ServiceException;
+
 }

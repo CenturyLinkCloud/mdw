@@ -19,11 +19,10 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.ProcessList;
-import com.centurylink.mdw.model.workflow.WorkStatus;
-import com.centurylink.mdw.model.workflow.WorkStatuses;
+import com.centurylink.mdw.model.workflow.*;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.log.ActivityLog;
 import com.centurylink.mdw.util.log.ActivityLogLine;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -377,6 +376,40 @@ public class WorkflowDataAccess extends CommonDataAccess {
             activityLog.setDbZoneOffset(activityLog.getServerZoneOffset() + dbDiffSecs);
             return activityLog;
         }
+    }
+
+    /**
+     * Get activity milestone (with activity instance if started).  Does not include implicit milestones (start/stop)
+     */
+    public Milestone getMilestone(Process process, ProcessInstance processInstance, Activity activity) throws DataAccessException {
+
+        String sql = "select ACTIVITY_INSTANCE_ID, STATUS_CD, START_DT, END_DT, STATUS_MESSAGE, ACTIVITY_ID, PROCESS_INSTANCE_ID"
+                + " from ACTIVITY_INSTANCE where PROCESS_INSTANCE_ID = ? and ACTIVITY_ID = ? order by ACTIVITY_INSTANCE_ID desc";
+
+        Milestone milestone = new MilestoneFactory(process).getMilestone(activity);
+        if (milestone != null) {
+            milestone.setProcessInstance(processInstance);
+
+            try (DbAccess dbAccess = new DbAccess()) {
+                ResultSet rs = dbAccess.runSelect(sql, processInstance.getId(), activity.getId());
+                if (rs.next()) {
+                    ActivityInstance activityInstance = new ActivityInstance();
+                    activityInstance.setId(rs.getLong("ACTIVITY_INSTANCE_ID"));
+                    activityInstance.setStatusCode(rs.getInt("STATUS_CD"));
+                    activityInstance.setStartDate(rs.getTimestamp("START_DT"));
+                    activityInstance.setEndDate(rs.getTimestamp("END_DT"));
+                    activityInstance.setMessage(rs.getString("STATUS_MESSAGE"));
+                    activityInstance.setActivityId(rs.getLong("ACTIVITY_ID"));
+                    activityInstance.setProcessInstanceId(rs.getLong("PROCESS_INSTANCE_ID"));
+                    milestone.setActivityInstance(activityInstance);
+                    milestone.setMasterRequestId(processInstance.getMasterRequestId());
+                }
+            }
+            catch (SQLException ex) {
+                throw new DataAccessException("Error retrieving milestone for pi=" + processInstance.getId() + ", a=" + activity.getId(), ex);
+            }
+        }
+        return milestone;
     }
 
 }
