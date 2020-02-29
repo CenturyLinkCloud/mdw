@@ -166,11 +166,27 @@ public class ProcessCache implements CacheService {
         return process;
     }
 
-    private static List<Process> processList;
+    /**
+     * @deprecated use {@link #getProcesses(boolean)}
+     */
+    @Deprecated
     public static synchronized List<Process> getAllProcesses() throws DataAccessException {
-        if (processList == null)
-            processList = DataAccess.getProcessLoader().getProcessList(true);
-        return processList;
+        return getProcesses(true);
+    }
+
+    private static List<Process> processList;
+    private static List<Process> latestProcesses;
+    public static synchronized List<Process> getProcesses(boolean withArchived) throws DataAccessException {
+        if (withArchived) {
+            if (processList == null)
+                processList = DataAccess.getProcessLoader().getProcessList(true);
+            return processList;
+        }
+        else {
+            if (latestProcesses == null)
+                latestProcesses = DataAccess.getProcessLoader().getProcessList(false);
+            return latestProcesses;
+        }
     }
 
     /**
@@ -184,7 +200,7 @@ public class ProcessCache implements CacheService {
         String specQualifiedName = spec.getQualifiedName();
         if (specQualifiedName.endsWith(".proc"))
             specQualifiedName = specQualifiedName.substring(0, specQualifiedName.length() - 5);
-        for (Process process : getAllProcesses()) {
+        for (Process process : getProcesses(true)) {
             if (specQualifiedName.equals(process.getQualifiedName())) {
                 if (process.meetsVersionSpec(spec.getVersion()) && (match == null || process.getVersion() > match.getVersion()))
                     match = process;
@@ -205,7 +221,7 @@ public class ProcessCache implements CacheService {
         if (spec.getPackageName() == null)
             throw new DataAccessException("Spec must be package-qualified: " + spec);
         List<Process> matches = new ArrayList<>();
-        for (Process process : getAllProcesses()) {
+        for (Process process : getProcesses(true)) {
             if (spec.getQualifiedName().equals(process.getQualifiedName())) {
                 if (process.meetsVersionSpec(spec.getVersion()))
                     matches.add(process);

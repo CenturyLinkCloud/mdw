@@ -60,11 +60,7 @@ public class ActivityCache implements CacheService {
     private static List<Activity> loadActivities(String implementor, boolean withArchived) throws DataAccessException {
         List<Activity> loadedActivities = new ArrayList<>();
         long before = System.currentTimeMillis();
-        List<Process> processes;
-        if (withArchived)
-            processes = ProcessCache.getAllProcesses();
-        else
-            processes = DataAccess.getProcessLoader().getProcessList(false);
+        List<Process> processes = ProcessCache.getProcesses(withArchived);
         for (Process process : processes) {
             process = ProcessCache.getProcess(process.getId());
             for (Activity activity : process.getActivities()) {
