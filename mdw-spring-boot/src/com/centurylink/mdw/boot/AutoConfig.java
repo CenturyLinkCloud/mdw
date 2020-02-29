@@ -93,10 +93,12 @@ public class AutoConfig {
                 // initialize app version from MANIFEST.MF
                 File manifestFile = new File(bootDir + "/META-INF/MANIFEST.MF");
                 if (manifestFile.isFile()) {
-                    Manifest manifest = new Manifest(new FileInputStream(manifestFile));
-                    String appVersion = manifest.getMainAttributes().getValue("App-Version");
-                    if (appVersion != null)
-                        ApplicationContext.setAppVersion(appVersion);
+                    try (InputStream is = new FileInputStream(manifestFile)) {
+                        Manifest manifest = new Manifest(is);
+                        String appVersion = manifest.getMainAttributes().getValue("App-Version");
+                        if (appVersion != null)
+                            ApplicationContext.setAppVersion(appVersion);
+                    }
                 }
 
                 // explode mdw-spring-boot on top
