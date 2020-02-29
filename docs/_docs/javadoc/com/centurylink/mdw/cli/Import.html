@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -157,7 +157,14 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <!--   -->
 </a>
 <h3>Fields inherited from class&nbsp;com.centurylink.mdw.cli.<a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in com.centurylink.mdw.cli">Setup</a></h3>
-<code><a href="../../../../com/centurylink/mdw/cli/Setup.html#assetLoc">assetLoc</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#configLoc">configLoc</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#MAVEN_CENTRAL_URL">MAVEN_CENTRAL_URL</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#MDW_COMMON_PATH">MDW_COMMON_PATH</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#META_DIR">META_DIR</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#projectDir">projectDir</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#SONATYPE_URL">SONATYPE_URL</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#sourceGroup">sourceGroup</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#templateDir">templateDir</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#VERSIONS">VERSIONS</a></code></li>
+<code><a href="../../../../com/centurylink/mdw/cli/Setup.html#assetLoc">assetLoc</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#configLoc">configLoc</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#MDW_COMMON_PATH">MDW_COMMON_PATH</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#META_DIR">META_DIR</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#projectDir">projectDir</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#sourceGroup">sourceGroup</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#templateDir">templateDir</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#VERSIONS">VERSIONS</a></code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="fields.inherited.from.class.com.centurylink.mdw.cli.Operation">
+<!--   -->
+</a>
+<h3>Fields inherited from interface&nbsp;com.centurylink.mdw.cli.<a href="../../../../com/centurylink/mdw/cli/Operation.html" title="interface in com.centurylink.mdw.cli">Operation</a></h3>
+<code><a href="../../../../com/centurylink/mdw/cli/Operation.html#MAVEN_CENTRAL_URL">MAVEN_CENTRAL_URL</a>, <a href="../../../../com/centurylink/mdw/cli/Operation.html#SONATYPE_URL">SONATYPE_URL</a></code></li>
 </ul>
 </li>
 </ul>
@@ -212,20 +219,22 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#getArtifacts--">getArtifacts</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/cli/Dependency.html" title="class in com.centurylink.mdw.cli">Dependency</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#getDependencies--">getDependencies</a></span>()</code>
+<div class="block">Dependencies that need to be downloaded for this operation to run.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.io.File</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#getFile--">getFile</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#getFormat--">getFormat</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#getGroupId--">getGroupId</a></span>()</code>&nbsp;</td>
-</tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#getPackageNames--">getPackageNames</a></span>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#getGroupId--">getGroupId</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
@@ -256,74 +265,64 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#importMaven-com.centurylink.mdw.cli.ProgressMonitor...-">importMaven</a></span>(<a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)</code>&nbsp;</td>
 </tr>
 <tr id="i12" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#importMdw-com.centurylink.mdw.cli.ProgressMonitor...-">importMdw</a></span>(<a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)</code>&nbsp;</td>
-</tr>
-<tr id="i13" class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#importPackageFromMaven-java.lang.String-java.lang.String-java.lang.String-com.centurylink.mdw.cli.ProgressMonitor...-">importPackageFromMaven</a></span>(java.lang.String&nbsp;groupId,
                       java.lang.String&nbsp;artifactId,
                       java.lang.String&nbsp;version,
                       <a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)</code>&nbsp;</td>
 </tr>
-<tr id="i14" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#importPackagesFromMaven-java.lang.String-java.util.List-com.centurylink.mdw.cli.ProgressMonitor...-">importPackagesFromMaven</a></span>(java.lang.String&nbsp;groupId,
                        java.util.List&lt;java.lang.String&gt;&nbsp;packages,
                        <a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)</code>&nbsp;</td>
 </tr>
-<tr id="i15" class="rowColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#importPackagesFromMdw-java.lang.String-java.util.List-com.centurylink.mdw.cli.ProgressMonitor...-">importPackagesFromMdw</a></span>(java.lang.String&nbsp;url,
-                     java.util.List&lt;java.lang.String&gt;&nbsp;packages,
-                     <a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)</code>&nbsp;</td>
-</tr>
-<tr id="i16" class="altColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#importSnapshotPackage-java.lang.String-com.centurylink.mdw.cli.ProgressMonitor...-">importSnapshotPackage</a></span>(java.lang.String&nbsp;pkg,
                      <a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)</code>&nbsp;</td>
 </tr>
-<tr id="i17" class="rowColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#isForce--">isForce</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i18" class="altColor">
+<tr id="i16" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#isHardReset--">isHardReset</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i19" class="rowColor">
+<tr id="i17" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#isYaml--">isYaml</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i20" class="altColor">
+<tr id="i18" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/cli/Import.html" title="class in com.centurylink.mdw.cli">Import</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#run-com.centurylink.mdw.cli.ProgressMonitor...-">run</a></span>(<a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)</code>&nbsp;</td>
 </tr>
-<tr id="i21" class="rowColor">
+<tr id="i19" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#setArtifacts-java.util.List-">setArtifacts</a></span>(java.util.List&lt;java.lang.String&gt;&nbsp;artifacts)</code>&nbsp;</td>
 </tr>
-<tr id="i22" class="altColor">
+<tr id="i20" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#setFile-java.io.File-">setFile</a></span>(java.io.File&nbsp;file)</code>&nbsp;</td>
 </tr>
-<tr id="i23" class="rowColor">
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#setForce-boolean-">setForce</a></span>(boolean&nbsp;force)</code>&nbsp;</td>
 </tr>
-<tr id="i24" class="altColor">
+<tr id="i22" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#setFormat-java.lang.String-">setFormat</a></span>(java.lang.String&nbsp;format)</code>&nbsp;</td>
 </tr>
-<tr id="i25" class="rowColor">
+<tr id="i23" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#setHardReset-boolean-">setHardReset</a></span>(boolean&nbsp;hardReset)</code>&nbsp;</td>
 </tr>
-<tr id="i26" class="altColor">
+<tr id="i24" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#setProcess-java.lang.String-">setProcess</a></span>(java.lang.String&nbsp;process)</code>&nbsp;</td>
 </tr>
-<tr id="i27" class="rowColor">
+<tr id="i25" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/cli/Import.html#setYaml-boolean-">setYaml</a></span>(boolean&nbsp;yaml)</code>&nbsp;</td>
 </tr>
@@ -333,7 +332,7 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.centurylink.mdw.cli.<a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in com.centurylink.mdw.cli">Setup</a></h3>
-<code><a href="../../../../com/centurylink/mdw/cli/Setup.html#createAsset-java.lang.String-byte:A-">createAsset</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#debug--">debug</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#downloadTemplates-com.centurylink.mdw.cli.ProgressMonitor...-">downloadTemplates</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#findAllAssets-java.lang.String-">findAllAssets</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#findMdwVersion-boolean-">findMdwVersion</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getAssetFile-java.lang.String-">getAssetFile</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getAssetFiles-java.lang.String-">getAssetFiles</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getAssetLoc--">getAssetLoc</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getAssetName-java.lang.String-">getAssetName</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getAssetPackageDirs--">getAssetPackageDirs</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getAssetPath-java.io.File-">getAssetPath</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getAssetRoot--">getAssetRoot</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getBaseAssetPackages--">getBaseAssetPackages</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getBaseUrl--">getBaseUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getConfigLoc--">getConfigLoc</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getConfigRoot--">getConfigRoot</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getDatabaseDriver--">getDatabaseDriver</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getDatabasePassword--">getDatabasePassword</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getDatabaseUrl--">getDatabaseUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getDatabaseUser--">getDatabaseUser</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getDiscoveryUrl--">getDiscoveryUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getErr--">getErr</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getGitBranch--">getGitBranch</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getGitPath-java.io.File-">getGitPath</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getGitRemoteUrl--">getGitRemoteUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getGitRoot--">getGitRoot</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getGitUser--">getGitUser</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getJava--">getJava</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getMdwConfig--">getMdwConfig</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getMdwHome--">getMdwHome</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getMdwVersion--">getMdwVersion</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getOut--">getOut</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getPackageName-java.lang.String-">getPackageName</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getProject--">getProject</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getProjectDir--">getProjectDir</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getProjectYaml--">getProjectYaml</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getRelativePath-java.io.File-java.io.File-">getRelativePath</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getReleasesUrl--">getReleasesUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getServicesUrl--">getServicesUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getSnapshotsUrl--">getSnapshotsUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getSourceGroup--">getSourceGroup</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getTempDir--">getTempDir</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getTemplateDir--">getTemplateDir</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getTemplatesUrl--">getTemplatesUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getValue-java.lang.String-">getValue</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getVersionProps-java.util.Map-">getVersionProps</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#gitExists--">gitExists</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#initBaseAssetPackages--">initBaseAssetPackages</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#isCommandLine--">isCommandLine</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#isDebug--">isDebug</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#isSnapshots--">isSnapshots</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#mkPackage-java.lang.String-">mkPackage</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#needsConfig--">needsConfig</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setAssetLoc-java.lang.String-">setAssetLoc</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setBaseAssetPackages-java.util.List-">setBaseAssetPackages</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setConfigLoc-java.lang.String-">setConfigLoc</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setDatabaseDriver-java.lang.String-">setDatabaseDriver</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setDatabasePassword-java.lang.String-">setDatabasePassword</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setDatabaseUrl-java.lang.String-">setDatabaseUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setDatabaseUser-java.lang.String-">setDatabaseUser</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setDebug-boolean-">setDebug</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setDiscoveryUrl-java.lang.String-">setDiscoveryUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setErr-java.io.PrintStream-">setErr</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setGitBranch-java.lang.String-">setGitBranch</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setGitPassword-java.lang.String-">setGitPassword</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setGitRemoteUrl-java.lang.String-">setGitRemoteUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setGitRoot-java.io.File-">setGitRoot</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setGitUser-java.lang.String-">setGitUser</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setMdwVersion-java.lang.String-">setMdwVersion</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setOut-java.io.PrintStream-">setOut</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setReleasesUrl-java.lang.String-">setReleasesUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setServicesUrl-java.lang.String-">setServicesUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setSnapshotsUrl-java.lang.String-">setSnapshotsUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setSourceGroup-java.lang.String-">setSourceGroup</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setTemplateDir-java.lang.String-">setTemplateDir</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#status--">status</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#subst-java.io.File-">subst</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#substitute-java.lang.String-java.util.Map-">substitute</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#toCamel-java.lang.String-">toCamel</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#updateBuildFile--">updateBuildFile</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#validate--">validate</a></code></li>
+<code><a href="../../../../com/centurylink/mdw/cli/Setup.html#createAsset-java.lang.String-byte:A-">createAsset</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#debug--">debug</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#downloadTemplates-com.centurylink.mdw.cli.ProgressMonitor...-">downloadTemplates</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#findAllAssets-java.lang.String-">findAllAssets</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#findMdwVersion-boolean-">findMdwVersion</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getAssetFile-java.lang.String-">getAssetFile</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getAssetFiles-java.lang.String-">getAssetFiles</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getAssetLoc--">getAssetLoc</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getAssetName-java.lang.String-">getAssetName</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getAssetPath-java.io.File-">getAssetPath</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getAssetRoot--">getAssetRoot</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getBaseAssetPackages--">getBaseAssetPackages</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getBaseUrl--">getBaseUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getConfigLoc--">getConfigLoc</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getConfigRoot--">getConfigRoot</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getDatabaseDriver--">getDatabaseDriver</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getDatabasePassword--">getDatabasePassword</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getDatabaseUrl--">getDatabaseUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getDatabaseUser--">getDatabaseUser</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getErr--">getErr</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getGitBranch--">getGitBranch</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getGitPath-java.io.File-">getGitPath</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getGitRemoteUrl--">getGitRemoteUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getGitRoot--">getGitRoot</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getGitUser--">getGitUser</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getJava--">getJava</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getMdwConfig--">getMdwConfig</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getMdwHome--">getMdwHome</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getMdwVersion--">getMdwVersion</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getOut--">getOut</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getPackageDir-java.lang.String-">getPackageDir</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getPackageDirs--">getPackageDirs</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getPackageMeta-java.io.File-">getPackageMeta</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getPackageMeta-java.lang.String-">getPackageMeta</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getPackageName-java.lang.String-">getPackageName</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getProject--">getProject</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getProjectDir--">getProjectDir</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getProjectYaml--">getProjectYaml</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getRelativePath-java.io.File-java.io.File-">getRelativePath</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getReleasesUrl--">getReleasesUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getServicesUrl--">getServicesUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getSnapshotsUrl--">getSnapshotsUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getSourceGroup--">getSourceGroup</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getTempDir--">getTempDir</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getTemplateDir--">getTemplateDir</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getTemplatesUrl--">getTemplatesUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getValue-java.lang.String-">getValue</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#getVersionProps-java.util.Map-">getVersionProps</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#gitExists--">gitExists</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#initBaseAssetPackages--">initBaseAssetPackages</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#isCommandLine--">isCommandLine</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#isDebug--">isDebug</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#isDependencies--">isDependencies</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#isNoProgress--">isNoProgress</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#isSnapshots--">isSnapshots</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#mkPackage-java.lang.String-">mkPackage</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#needsConfig--">needsConfig</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setAssetLoc-java.lang.String-">setAssetLoc</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setBaseAssetPackages-java.util.List-">setBaseAssetPackages</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setConfigLoc-java.lang.String-">setConfigLoc</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setDatabaseDriver-java.lang.String-">setDatabaseDriver</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setDatabasePassword-java.lang.String-">setDatabasePassword</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setDatabaseUrl-java.lang.String-">setDatabaseUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setDatabaseUser-java.lang.String-">setDatabaseUser</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setDebug-boolean-">setDebug</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setDependencies-boolean-">setDependencies</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setErr-java.io.PrintStream-">setErr</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setGitBranch-java.lang.String-">setGitBranch</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setGitPassword-java.lang.String-">setGitPassword</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setGitRemoteUrl-java.lang.String-">setGitRemoteUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setGitRoot-java.io.File-">setGitRoot</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setGitUser-java.lang.String-">setGitUser</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setMdwVersion-java.lang.String-">setMdwVersion</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setNoProgress-boolean-">setNoProgress</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setOut-java.io.PrintStream-">setOut</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setReleasesUrl-java.lang.String-">setReleasesUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setServicesUrl-java.lang.String-">setServicesUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setSnapshotsUrl-java.lang.String-">setSnapshotsUrl</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setSourceGroup-java.lang.String-">setSourceGroup</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#setTemplateDir-java.lang.String-">setTemplateDir</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#status--">status</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#subst-java.io.File-">subst</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#substitute-java.lang.String-java.util.Map-">substitute</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#toCamel-java.lang.String-">toCamel</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#updateBuildFile--">updateBuildFile</a>, <a href="../../../../com/centurylink/mdw/cli/Setup.html#validate--">validate</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -479,15 +478,6 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <pre>public&nbsp;java.lang.String&nbsp;getVersion()</pre>
 </li>
 </ul>
-<a name="getPackageNames--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getPackageNames</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getPackageNames()</pre>
-</li>
-</ul>
 <a name="isForce--">
 <!--   -->
 </a>
@@ -560,6 +550,24 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <pre>public&nbsp;void&nbsp;setYaml(boolean&nbsp;yaml)</pre>
 </li>
 </ul>
+<a name="getDependencies--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDependencies</h4>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../../com/centurylink/mdw/cli/Dependency.html" title="class in com.centurylink.mdw.cli">Dependency</a>&gt;&nbsp;getDependencies()
+                                           throws java.io.IOException</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from class:&nbsp;<code><a href="../../../../com/centurylink/mdw/cli/Setup.html#getDependencies--">Setup</a></code></span></div>
+<div class="block">Dependencies that need to be downloaded for this operation to run.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code><a href="../../../../com/centurylink/mdw/cli/Setup.html#getDependencies--">getDependencies</a></code>&nbsp;in class&nbsp;<code><a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in com.centurylink.mdw.cli">Setup</a></code></dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
 <a name="run-com.centurylink.mdw.cli.ProgressMonitor...-">
 <!--   -->
 </a>
@@ -607,20 +615,6 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 </dl>
 </li>
 </ul>
-<a name="importMdw-com.centurylink.mdw.cli.ProgressMonitor...-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>importMdw</h4>
-<pre>public&nbsp;void&nbsp;importMdw(<a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)
-               throws java.io.IOException</pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd>
-</dl>
-</li>
-</ul>
 <a name="importAssetsFromGit-com.centurylink.mdw.cli.ProgressMonitor...-">
 <!--   -->
 </a>
@@ -645,22 +639,6 @@ extends <a href="../../../../com/centurylink/mdw/cli/Setup.html" title="class in
 <pre>public&nbsp;void&nbsp;importGit(<a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)
                throws java.io.IOException</pre>
 <div class="block">This is for importing newly-discovered assets.</div>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="importPackagesFromMdw-java.lang.String-java.util.List-com.centurylink.mdw.cli.ProgressMonitor...-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>importPackagesFromMdw</h4>
-<pre>protected&nbsp;void&nbsp;importPackagesFromMdw(java.lang.String&nbsp;url,
-                                     java.util.List&lt;java.lang.String&gt;&nbsp;packages,
-                                     <a href="../../../../com/centurylink/mdw/cli/ProgressMonitor.html" title="interface in com.centurylink.mdw.cli">ProgressMonitor</a>...&nbsp;monitors)
-                              throws java.io.IOException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>

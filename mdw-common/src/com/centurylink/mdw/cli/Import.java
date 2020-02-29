@@ -82,10 +82,6 @@ public class Import extends Setup {
         return version;
     }
 
-    @Parameter(names="--package-names", description="Packages to import from an MDW instance (comma-delimited).")
-    private String packageNames;
-    public String getPackageNames() { return packageNames; }
-
     @Parameter(names="--force", description="Force overwrite, even on localhost or when branch disagrees")
     private boolean force = false;
     public boolean isForce() { return force; }
@@ -136,6 +132,11 @@ public class Import extends Setup {
         pooledConn = conn;
     }
 
+    @Override
+    public List<Dependency> getDependencies() throws IOException {
+        return Git.getDependencies();
+    }
+
     public Import run(ProgressMonitor... monitors) throws IOException {
         if (file != null) {
             // process import
@@ -179,9 +180,6 @@ public class Import extends Setup {
             if (groupId != null) {
                 importMaven(monitors);
             }
-            else if (packageNames != null) {
-                importMdw(monitors);
-            }
             else {
                 importGit(monitors);
             }
@@ -203,11 +201,6 @@ public class Import extends Setup {
                 importPackageFromMaven(groupId, pkg.substring(0, index), pkg.substring(index + 1), monitors);
             }
         }
-    }
-
-    public void importMdw(ProgressMonitor... monitors) throws IOException {
-        List<String> pkgs = Arrays.asList(packageNames.trim().split("\\s*,\\s*"));
-        importPackagesFromMdw(new Props(this).get(Props.DISCOVERY_URL), pkgs);
     }
 
     /**
@@ -277,7 +270,7 @@ public class Import extends Setup {
             getOut().println("Importing from Git into: " + getProjectDir() + "...");
 
             // CLI dependencies
-            Git git = new Git(getReleasesUrl(), vcInfo, "toString");
+            Git git = new Git(vcInfo, "toString");
             git.run(monitors);
 
             // Check Asset inconsistencies
@@ -293,12 +286,12 @@ public class Import extends Setup {
             }
 
             // perform import (Git pull)
-            git = new Git(getReleasesUrl(), vcInfo, "hardCheckout", vcInfo.getBranch(), isHardReset());
+            git = new Git(vcInfo, "hardCheckout", vcInfo.getBranch(), isHardReset());
             git.run(monitors);
 
             // capture new Refs in ASSET_REF after import (Git pull)
             DbInfo dbInfo = new DbInfo(props);
-            Checkpoint checkpoint = new Checkpoint(getReleasesUrl(), vcInfo, getAssetRoot(), dbInfo);
+            Checkpoint checkpoint = new Checkpoint(vcInfo, getAssetRoot(), dbInfo);
             try {
                 checkpoint.run(monitors).updateRefs();
             }
@@ -317,37 +310,15 @@ public class Import extends Setup {
         }
     }
 
-    protected void importPackagesFromMdw(String url, List<String> packages, ProgressMonitor... monitors) throws IOException {
-         // download packages temp zip
-        File tempZip = Files.createTempFile("mdw-discovery", ".zip").toFile();
-
-        String pkgsParam = "[";
-        for (int i = 0; i < packages.size(); i++) {
-            pkgsParam += packages.get(i);
-            if (i < packages.size() - 1)
-                pkgsParam += ",";
-        }
-        pkgsParam += "]";
-
-        new Download(new URL(url + "/asset/packages?recursive=false&packages=" + pkgsParam), tempZip, "Downloading packages").run(monitors);
-
-        // import packages
-        File assetDir = getAssetRoot();
-        getOut().println("Unzipping into: " + assetDir);
-        new Unzip(tempZip, assetDir, true).run();
-        if (!tempZip.delete())
-            throw new IOException("Failed to delete: " + tempZip.getAbsolutePath());
-    }
-
     protected void importPackageFromMaven(String groupId, String artifactId, String version,
             ProgressMonitor... monitors) throws IOException {
         File assetDir = new File(getAssetLoc());
         if (!assetDir.exists() && !assetDir.mkdirs())
             throw new IOException("Cannot create asset dir: " + assetDir);
-        String url = "http://search.maven.org/remotecontent?filepath=";
         String pkg = groupId.replace("assets", "") + artifactId.replace('-', '.');
         File tempZip = Files.createTempFile("central-discovery", ".zip").toFile();
-        url += groupId.replace('.', '/') + "/" + artifactId + "/" + version + "/" + artifactId + "-" + version + ".zip";
+        String url = MAVEN_CENTRAL_URL + "/" + groupId.replace('.', '/') + "/" + artifactId + "/"
+                + version + "/" + artifactId + "-" + version + ".zip";
         try {
             String msg = "Importing " + pkg + " v" + version;
             new Download(new URL(url), tempZip, msg).run(monitors);

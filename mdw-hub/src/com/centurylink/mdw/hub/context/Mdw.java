@@ -30,6 +30,10 @@ public class Mdw {
     private String build;
     public String getBuild() { return build; }
 
+    private String appVersion;
+    public String getAppVersion() { return appVersion; }
+    public void setAppVersion(String appVersion) { this.appVersion = appVersion; }
+
     private String hubRoot;
     public String getHubRoot() { return hubRoot; }
 

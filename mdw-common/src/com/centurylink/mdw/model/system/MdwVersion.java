@@ -15,33 +15,76 @@
  */
 package com.centurylink.mdw.model.system;
 
+import com.centurylink.mdw.util.ClasspathUtil;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import com.centurylink.mdw.util.ClasspathUtil;
-
+/**
+ * An MDW release version, or an MDW asset package version.
+ */
 public class MdwVersion implements Comparable<MdwVersion> {
     private String version;
 
-    public MdwVersion(String mdwVersion) {
-        this.version = mdwVersion;
+    private int major;
+    public int getMajor() { return major; }
+
+    private int minor;
+    public int getMinor() { return minor; }
+
+    private int build;
+    public int getBuild() { return build; }
+
+    private boolean snapshot;
+    public boolean isSnapshot() { return snapshot; }
+
+    public MdwVersion(String version) throws BadVersionException {
+        if (version == null)
+            throw new NullPointerException(); // cannot be null
+        if (version.startsWith("v"))
+            version = version.substring(1);
+
+        this.version = version;
+        if (!version.equals("0")) {
+            int firstDot = version.indexOf('.');
+            if (firstDot < 0)
+                throw new BadVersionException("Missing dot: " + version);
+            try {
+                major = Integer.parseInt(version.substring(0, firstDot));
+                int secondDot = version.indexOf('.', firstDot + 1);
+                if (secondDot < 0)
+                    throw new BadVersionException("Missing second dot: " + version);
+                minor = Integer.parseInt(version.substring(firstDot + 1, secondDot));
+                if (version.endsWith("-SNAPSHOT")) {
+                    snapshot = true;
+                    build += Integer.parseInt(version.substring(secondDot + 1, version.length() - 9));
+                }
+                else {
+                    build += Integer.parseInt(version.substring(secondDot + 1));
+                }
+            }
+            catch (NumberFormatException ex) {
+                throw new BadVersionException(version, ex);
+            }
+        }
     }
 
-    public boolean checkRequiredVersion(String requiredVersion) throws NumberFormatException {
-        String[] parts = requiredVersion.split("\\.");
-        if (parts.length == 1)
-            return checkRequiredVersion(Integer.parseInt(parts[0]));
-        else if (parts.length == 2)
-            return checkRequiredVersion(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
-        else if (parts.length == 3)
-            return checkRequiredVersion(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]),
-                    Integer.parseInt(parts[2]));
-        else
-            return false;
+    public MdwVersion(int intVersion) {
+        if (intVersion == 0) {
+            this.version = "0";
+        }
+        else {
+            major = Math.abs(intVersion / 1000);
+            int remainder = Math.abs(intVersion % 1000);
+            minor = remainder / 100;
+            build = remainder % 100;
+            this.version = major + "." + minor + "." + (build >= 10 ? build : "0" + build);
+        }
     }
 
+    @SuppressWarnings("unused")
     public boolean checkRequiredVersion(int major) {
         return checkRequiredVersion(major, 0);
     }
@@ -54,63 +97,61 @@ public class MdwVersion implements Comparable<MdwVersion> {
         if (version == null || version.length() == 0)
             return false;
 
-        int mdwMajor = getMajorVersion();
-        if (mdwMajor > major)
+        if (this.major > major)
             return true;
-        if (mdwMajor < major)
+        if (this.major < major)
             return false;
 
         // major versions are equal
-        int mdwMinor = getMinorVersion();
-        if (mdwMinor > minor)
+        if (this.minor > minor)
             return true;
-        if (mdwMinor < minor)
+        if (this.minor < minor)
             return false;
 
         // major and minor are equal
-        return getBuildId() >= build;
+        return this.build >= build;
     }
 
-    public int getMajorVersion() {
-        int idxFirstDot = version.indexOf('.');
-        return Integer.parseInt(version.substring(0, idxFirstDot));
+    /**
+     * Checks whether this version meets the spec according to semantic versioning.
+     * Currently spec must be an actual version (no wildcards, etc).
+     */
+    public boolean meets(String spec) {
+        MdwVersion reqVer = new MdwVersion(spec);
+        if (major != reqVer.major)
+            return false;
+        return (minor >= reqVer.minor);
     }
 
-    public int getMinorVersion() {
-        int idxFirstDot = version.indexOf('.');
-        int idxSecondDot = version.indexOf('.', idxFirstDot + 1);
-        return idxSecondDot == -1 ? Integer.parseInt(version.substring(idxFirstDot + 1))
-                : Integer.parseInt(version.substring(idxFirstDot + 1, idxSecondDot));
-    }
-
-    public boolean isSnapshot() {
-        return version.endsWith("-SNAPSHOT");
-    }
-
-    public int getBuildId() {
-        int idxFirstDot = version.indexOf('.');
-        int idxSecondDot = version.indexOf('.', idxFirstDot + 1);
-        int lastDash = version.lastIndexOf('-');
-        if (idxSecondDot == -1)
-            return 0;
-        else if (lastDash == -1)
-            return Integer.parseInt(version.substring(idxSecondDot + 1));
-        else // trim -SNAPSHOT
-            return Integer.parseInt(version.substring(idxSecondDot + 1, lastDash));
+    public String getLabel() {
+        return " v" + version;
     }
 
     public String toString() {
         return version;
     }
 
+    /**
+     * Returns old-style int version.
+     */
+    public int getIntVersion() throws BadVersionException {
+        if (version == null || version.equals("0"))
+            return 0;
+        int ver = major * 1000 + minor * 100 + build;
+        if (version.startsWith("-"))
+            return -1 * ver;
+        else
+            return ver;
+    }
+
     @Override
     public int compareTo(MdwVersion other) {
-        if (this.getMajorVersion() != other.getMajorVersion())
-            return this.getMajorVersion() - other.getMajorVersion();
-        if (this.getMinorVersion() != other.getMinorVersion())
-            return this.getMinorVersion() - other.getMinorVersion();
-        if (this.getBuildId() != other.getBuildId())
-            return this.getBuildId() - other.getBuildId();
+        if (this.major != other.major)
+            return this.major - other.major;
+        if (this.minor != other.minor)
+            return this.minor - other.minor;
+        if (this.build != other.build)
+            return this.build - other.build;
         if (this.isSnapshot() != other.isSnapshot())
             return this.isSnapshot() ? -1 : 1;
         return 0;
@@ -131,6 +172,7 @@ public class MdwVersion implements Comparable<MdwVersion> {
      * Finds info from META-INF/manifest.mf via classloader.  Does not work from
      * within certain containers.  For comprehensive lookup, use ApplicationContext.getMdwVersion().
      */
+    @SuppressWarnings("unused")
     public static String getRuntimeVersion() throws IOException {
         String classLoc = ClasspathUtil.locate(MdwVersion.class.getName());
         int dotJarBang = classLoc.lastIndexOf(".jar!");

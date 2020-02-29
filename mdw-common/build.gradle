@@ -78,6 +78,8 @@ dependencies {
     // jsr-356
     compile group: "javax.websocket", name: "javax.websocket-api", version: "1.1"
 
+    compile group: "org.yaml", name: "snakeyaml", version: "1.18"
+
     // codegen
     compileOnly group: "io.swagger", name: "swagger-codegen-cli", version: "2.3.1"
     codegen group: "io.swagger", name: "swagger-codegen-cli", version: "2.3.1"
@@ -143,16 +145,19 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/config/Yaml*.class"
         include "com/centurylink/mdw/config/DefaultYamlTranslator.class"
         include "com/centurylink/mdw/config/OrderedProperties.class"
+        include "com/centurylink/mdw/config/PropertyGroup.class"
         include "com/centurylink/mdw/yaml/YamlLoader.class"
         include "com/centurylink/mdw/util/file/MdwIgnore.class"
         include "com/centurylink/mdw/util/file/Packages.class"
         include "com/centurylink/mdw/util/file/VersionProperties.class"
+        include "com/centurylink/mdw/monitor/MonitorAttributes.class"
         include "com/centurylink/mdw/model/project/Project.class"
         include "com/centurylink/mdw/model/project/Data.class"
         include "com/centurylink/mdw/model/project/Data\$*.class"
         include "com/centurylink/mdw/model/system/Server.class"
         include "com/centurylink/mdw/model/system/ServerList.class"
         include "com/centurylink/mdw/model/system/MdwVersion.class"
+        include "com/centurylink/mdw/model/system/BadVersionException.class"
         include "com/centurylink/mdw/model/workflow/*.class"
         include "com/centurylink/mdw/constant/WorkAttributeConstant.class"
         include "com/centurylink/mdw/constant/WorkTransitionAttributeConstant.class"
@@ -167,6 +172,8 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/model/JsonObject.class"
         include "com/centurylink/mdw/model/JsonObject\$*.class"
         include "com/centurylink/mdw/model/Yamlable.class"
+        include "com/centurylink/mdw/model/PackageMeta.class"
+        include "com/centurylink/mdw/model/PackageDependency.class"
         include "com/centurylink/mdw/bpmn/*.class"
         include "com/centurylink/mdw/export/*.class"
         include "com/centurylink/mdw/procimport/*.class"
@@ -181,7 +188,7 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/util/StringHelper\$*.class"
         include "com/centurylink/mdw/model/asset/Pagelet.class"
         include "com/centurylink/mdw/model/asset/Pagelet\$*.class"
-        include "com/centurylink/mdw/model/request/ServicePath.class";
+        include "com/centurylink/mdw/model/request/ServicePath.class"
     }
 
     from configurations.cli.asFileTree.files.collect {

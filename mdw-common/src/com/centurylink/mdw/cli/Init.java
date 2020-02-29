@@ -15,13 +15,13 @@
  */
 package com.centurylink.mdw.cli;
 
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
-
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.Parameters;
 
 @Parameters(commandNames="init", commandDescription="Initialize an MDW project", separators="=")
 public class Init extends Setup {
@@ -29,12 +29,10 @@ public class Init extends Setup {
     /**
      * Existing project directory is okay (mdw-studio wizard).
      */
-    private boolean allowExisting = false;
-
     public Init(File projectDir) {
         super(projectDir);
         project = projectDir.getName();
-        allowExisting = true;
+        overwrite = true;
     }
 
     Init() {
@@ -49,6 +47,11 @@ public class Init extends Setup {
     @Override
     public String getMdwVersion() throws IOException { return mdwVersion; }
     public void setMdwVersion(String version) { this.mdwVersion = version; }
+
+    @Parameter(names="--overwrite", description="Overwrite existing")
+    private boolean overwrite;
+    public boolean isOverwrite() { return overwrite; }
+    public void setOverwrite(boolean overwrite) { this.overwrite = overwrite; }
 
     @Parameter(names="--snapshots", description="Whether to include snapshot builds")
     private boolean snapshots;
@@ -96,7 +99,7 @@ public class Init extends Setup {
         if (slashIndex > 0)
             project = project.substring(slashIndex + 1);
 
-        if (getProjectDir().exists() && !allowExisting) {
+        if (getProjectDir().exists() && !overwrite) {
             if (!getProjectDir().isDirectory() || getProjectDir().list().length > 0) {
                 getErr().println(getProjectDir() + " already exists and is not an empty directory");
                 return this;
@@ -127,7 +130,7 @@ public class Init extends Setup {
             getOut().println("Using templates from: " + templateDir);
             new Zip(new File(templateDir), tempZip).run(progressMonitors);
         }
-        new Unzip(tempZip, getProjectDir(), false, opt -> {
+        new Unzip(tempZip, getProjectDir(), overwrite, opt -> {
             Object value = getValue(opt);
             return value == null ? false : Boolean.valueOf(value.toString());
         }).run();

@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -157,6 +157,14 @@ implements <a href="../../../../com/centurylink/mdw/export/ProcessExporter.html"
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/cli/Dependency.html" title="class in com.centurylink.mdw.cli">Dependency</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/image/PngProcessExporter.html#getDependencies--">getDependencies</a></span>()</code>&nbsp;</td>
 </tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>java.awt.Dimension</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/image/PngProcessExporter.html#getDiagramSize-com.centurylink.mdw.model.workflow.Process-">getDiagramSize</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process)</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>protected java.awt.image.BufferedImage</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/image/PngProcessExporter.html#printImage-com.centurylink.mdw.model.workflow.Process-">printImage</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process)</code>&nbsp;</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -210,6 +218,24 @@ implements <a href="../../../../com/centurylink/mdw/export/ProcessExporter.html"
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>
 </dl>
+</li>
+</ul>
+<a name="printImage-com.centurylink.mdw.model.workflow.Process-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>printImage</h4>
+<pre>protected&nbsp;java.awt.image.BufferedImage&nbsp;printImage(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process)</pre>
+</li>
+</ul>
+<a name="getDiagramSize-com.centurylink.mdw.model.workflow.Process-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDiagramSize</h4>
+<pre>public&nbsp;java.awt.Dimension&nbsp;getDiagramSize(<a href="../../../../com/centurylink/mdw/model/workflow/Process.html" title="class in com.centurylink.mdw.model.workflow">Process</a>&nbsp;process)</pre>
 </li>
 </ul>
 <a name="getDependencies--">

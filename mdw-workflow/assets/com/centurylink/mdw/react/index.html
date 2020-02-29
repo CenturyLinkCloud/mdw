@@ -14,14 +14,16 @@
   <script src="${mdw.hubRoot}/js/ui/noIe.js"></script>
 </head>
 <body>
-  <script>
+<script>
     var $mdwHubRoot = '${mdw.hubRoot}';
     var $mdwServicesRoot = '${mdw.servicesRoot}';
     var $mdwVersion = '${mdw.version}';
     var $mdwWebSocketUrl = '${mdw.webSocketUrl}'
+    var $mdwAppId = '${mdw.appId}'
+    var $mdwAppVersion = '${mdw.appVersion}'
   </script>
-  <div mdw-jsx="${assetPath}">
-  </div>
-  <script type="text/javascript" src="${mdw.hubRoot}/${relPath}"></script>
+<div mdw-jsx="${assetPath}">
+</div>
+<script type="text/javascript" src="${mdw.hubRoot}/${relPath}"></script>
 </body>
 </html>

@@ -15,7 +15,14 @@
  */
 package com.centurylink.mdw.model.task;
 
-import static com.centurylink.mdw.constant.TaskAttributeConstant.TASK_INSTANCE_JSONNAME;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.model.Instance;
+import com.centurylink.mdw.model.Jsonable;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -23,16 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.model.Instance;
-import com.centurylink.mdw.model.Jsonable;
-
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import static com.centurylink.mdw.constant.TaskAttributeConstant.TASK_INSTANCE_JSONNAME;
 
 /**
  * Value object corresponding to a TaskInstance persistable.  Includes

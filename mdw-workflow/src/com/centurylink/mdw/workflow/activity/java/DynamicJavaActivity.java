@@ -20,6 +20,7 @@ import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.java.*;
 import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.Package;
@@ -129,8 +130,6 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
                 if (tempPkg.isDefaultPackage()) {  // In case in-flight pulled out of Git history or edited process instance
                     tempPkg = new Package();
                     tempPkg.setName(getProcessDefinition().getPackageName());
-                    // Use fake version (negative number) based on process version to uniquely identify the dynamic java version in CompiledJavaCache key (NOT USED it seems)
-                    tempPkg.setVersion((-1 * getProcessDefinition().getVersion()));
                     // Since in-flight or edited instance, compile with different name than current code from current process version
                     String oldClassName = className;
                     Long processId = getMainProcessDefinition().getId();  // This gets processId for in-flight definition

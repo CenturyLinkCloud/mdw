@@ -41,13 +41,13 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
      * Return the top matches according to the query conditions.
      * This is used in the dashboard UI to select desired entities for getBreakdown().
      */
-    abstract List<T> getTops(Query query) throws DataAccessException, ServiceException;
+    public abstract List<T> getTops(Query query) throws DataAccessException, ServiceException;
 
     /**
      * Return the data according to the user-selected values from getTops()
      * @return TreeMap where the Date keys are sorted according to natural ordering.
      */
-    abstract TreeMap<Instant,List<T>> getBreakdown(Query query) throws DataAccessException, ServiceException;
+    public abstract TreeMap<Instant,List<T>> getBreakdown(Query query) throws DataAccessException, ServiceException;
 
     protected Instant getStart(Query query) throws DataAccessException {
         Instant start = query.getInstantFilter("Starting");

@@ -399,7 +399,7 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
     var helpWidgetIndex = -1;
     for (let i = 0; i < this.template.pagelet.widgets.length; i++) {
       var widget = this.template.pagelet.widgets[i];
-      if (widget.type == 'link' && widget.url && (widget.url.startsWith('/MDWWeb/doc') || widget.url.startsWith('help/')) &&
+      if ((widget.type == 'link' && widget.url && (widget.url.startsWith('/MDWWeb/doc') || widget.url.startsWith('help/')) || widget.type == 'help') &&
           ((!widget.section && (this.tab == 'Design' || this.tab == 'General')) || this.tab === widget.section)) {
         helpWidgetIndex = i;
         break;
@@ -409,10 +409,11 @@ configMod.factory('Configurator', ['$injector', '$http', 'mdw', 'util', 'Assets'
     if (helpWidgetIndex > -1) {
       var widg = this.template.pagelet.widgets[helpWidgetIndex];
       this.template.pagelet.widgets.splice(helpWidgetIndex, 1);
-      return {
-        name: widg.name,
-        url: mdw.roots.docs + '/help' + (widg.url.startsWith('/MDWWeb/doc') ? widg.url.substring(11) : widg.url.substring(4))
-      };
+      var helpLink = { name: widg.name, url: widg.url };
+      if (widg.type == 'link') {
+        helpLink.url = mdw.roots.docs + '/help' + (widg.url.startsWith('/MDWWeb/doc') ? widg.url.substring(11) : widg.url.substring(4));
+      }
+      return helpLink;
     }
     else {
       return null;

@@ -92,6 +92,7 @@ com.centurylink.mdw.service.data.task
 com.centurylink.mdw.service.data.user
 com.centurylink.mdw.service.handler
 com.centurylink.mdw.service.rest
+com.centurylink.mdw.servicenow
 com.centurylink.mdw.services
 com.centurylink.mdw.services.asset
 com.centurylink.mdw.services.bundle

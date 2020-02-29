@@ -15,7 +15,7 @@
   - all package.yaml files
 
 3. Comment/uncomment these CLI tests:
-  - mdw/cli/tests/quickstart.bats (line 52 -- skip for formal/1st shapshot build, add back for second/subsequent snapshots)
+  - mdw/cli/tests/quickstart.bats (line 53 -- skip for formal/1st shapshot build, add back for second/subsequent snapshots)
   - mdw/cli/tests/convert.bats (line 18 -- skip for formal/1st snapshot builds, add back for second/subsequent snapshots)
     TODO: better way of handling -- this is because mdw.version is something that hasn't been published yet (formal and first snapshot)
 
@@ -27,7 +27,7 @@
   - Delete SNAPSHOT release and tag
   - git pull
 
-6. Commit and push all the above changes to Git (normally gradle.properties, project.yaml and maybe CLI tests for formal build).
+6. Commit and push all the above changes to Git (normally gradle.properties, project.yaml, package.yamls and maybe CLI tests for formal build).
   - Travis CI will run the build, tests and publish to maven-central or sonatype.
   - Compilation or testing errors will prevent the build from being published.
 
@@ -35,7 +35,7 @@
   Manually close/release from [Nexus Repository Manager](https://oss.sonatype.org/#welcome) (don't want to automate this).
   Verify repository contains artifacts:
   7a. (Formal Build)
-    - Repository: http://repo.maven.apache.org/maven2/com/centurylink/mdw/ (20-30 min)
+    - Repository: https://repo.maven.apache.org/maven2/com/centurylink/mdw/ (20-30 min)
   7b. (Snapshot Build)
     - Snapshot repo: https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/
 
@@ -46,6 +46,7 @@
   - Close this build's milestone in GitHub.
 
 9. Release Notes
+  - git pull
   - If you are doing it first time then install ruby (https://github.com/CenturyLinkCloud/mdw#documentation) and do following in root of your workspace dir
     `gem install github_changelog_generator`
   - Set the CHANGELOG_GITHUB_TOKEN environment variable to your 40 digit token from GitHub
@@ -53,7 +54,6 @@
     ```
     github_changelog_generator --no-pull-request  --filter-by-milestone --future-release '6.1.xx' --exclude-labels designer,internal,wontfix,duplicate,documentation
     ```
-  - git pull
   - Review/Update/Merge CHANGELOG.md (retaining old Compatibility Notes sections).
   - Commit (with `[skip ci]`) and push merged CHANGELOG.md
   - Update the new release on GitHub (https://github.com/CenturyLinkCloud/mdw/releases), copying the notes from updated CHANGELOG.md

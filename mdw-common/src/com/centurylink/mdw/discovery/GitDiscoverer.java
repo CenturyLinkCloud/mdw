@@ -116,7 +116,7 @@ public abstract class GitDiscoverer implements Discoverer {
     }
 
     @Override
-    public Map<String, PackageMeta> getPackageInfo() throws IOException {
+    public Map<String,PackageMeta> getPackageInfo() throws IOException {
         if (packageInfo == null) {
             packageInfo = new HashMap<>();
             String mdwVersion = null;
@@ -141,6 +141,22 @@ public abstract class GitDiscoverer implements Discoverer {
             }
         }
         return packageInfo;
+    }
+
+    @Override
+    public PackageMeta findPackage(String name, String version) throws IOException {
+        if (getRef() == null)
+            throw new IOException("Missing ref");
+
+        String yamlPath = getAssetPath() + "/" + name.replace('.', '/') + "/.mdw/package.yaml";
+        JSONObject packageYaml = getFileInfo(yamlPath, getRef());
+        if (packageYaml != null) {
+            String base64 = packageYaml.getString("content");
+            PackageMeta pkgInfo = new PackageMeta(Base64.getMimeDecoder().decode(base64));
+            if (version.equals(pkgInfo.getVersion()))
+                return pkgInfo;
+        }
+        return null;
     }
 
     protected List<String> getArrayValues(String url, String property) throws IOException {

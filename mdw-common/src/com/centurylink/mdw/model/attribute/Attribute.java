@@ -243,7 +243,7 @@ public class Attribute implements Comparable<Attribute> {
         return list;
     }
 
-    public static Map<String, String> parseMap(String map) {
+    public static Map<String,String> parseMap(String map) {
         HashMap<String, String> hash = new LinkedHashMap<>();
         if (map != null) {
             if (map.startsWith("{")) {

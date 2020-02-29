@@ -16,12 +16,15 @@
 package com.centurylink.mdw.model.project;
 
 import com.centurylink.mdw.model.system.MdwVersion;
+import com.centurylink.mdw.model.workflow.ActivityImplementor;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 
+@SuppressWarnings("unused")
 public interface Project {
 
     File getAssetRoot() throws IOException;
@@ -44,4 +47,7 @@ public interface Project {
         return null;
     }
 
+    default Map<String,ActivityImplementor> getActivityImplementors() throws IOException {
+        return null;
+    }
 }

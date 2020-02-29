@@ -461,15 +461,21 @@ public class VersionControlGit implements VersionControl {
     public void rm(String path) throws Exception {
         git.rm().addFilepattern(path).call();
     }
-    
+
+    public void cloneNoCheckout() throws Exception {
+        cloneNoCheckout(false);
+    }
+
     /**
      * In lieu of sparse checkout since it's not supported in JGit:
      * https://bugs.eclipse.org/bugs/show_bug.cgi?id=383772
      */
-    public void cloneNoCheckout() throws Exception {
+    public void cloneNoCheckout(boolean withProgress) throws Exception {
         CloneCommand clone = Git.cloneRepository().setURI(repositoryUrl).setDirectory(localRepo.getDirectory().getParentFile()).setNoCheckout(true);
         if (credentialsProvider != null)
             clone.setCredentialsProvider(credentialsProvider);
+        if (withProgress)
+            clone.setProgressMonitor(new TextProgressMonitor(new PrintWriter(System.out)));
         clone.call();
     }
 

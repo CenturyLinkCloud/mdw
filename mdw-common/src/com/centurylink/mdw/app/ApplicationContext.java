@@ -53,12 +53,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 
-/**
- * Class that needs to be used when getting the application context
- */
 public class ApplicationContext {
-
-    public static final String BUILD_VERSION_FILE = "buildversion.properties";
 
     private static NamingProvider namingProvider;
     private static DataSourceProvider dataSourceProvider;
@@ -66,12 +61,12 @@ public class ApplicationContext {
     private static ThreadPoolProvider threadPoolProvider;
 
     private static String appId;
-    private static String appVersion;
+    private static String appVersion = "Unknown";
     private static String mdwVersion;
     private static String mdwBuildTimestamp;
     private static String serverHost;
     private static StandardLogger logger;
-    private static String containerName="";
+    private static String containerName = "";
 
     public static NamingProvider getNamingProvider() {
         return namingProvider;
@@ -260,35 +255,14 @@ public class ApplicationContext {
     }
 
     /**
-     * Returns the application version read from the build version file
+     * Returns the application version read from Spring Boot jar manifest
      */
     public static String getAppVersion() {
-        if (appVersion != null)
-            return appVersion;
-
-        String appName = getAppId();
-        if ("mdw".equalsIgnoreCase(appName)) {
-            appVersion = getMdwVersion();
-        }
-        else {
-            appVersion = "Unknown";
-            try {
-                InputStream stream = ApplicationContext.class.getClassLoader().getResourceAsStream(BUILD_VERSION_FILE);
-                if (stream != null) {
-                    appVersion = "";
-                    int i;
-                    while ((i = stream.read()) != -1) {
-                        appVersion += (char) i;
-                    }
-                    stream.close();
-                }
-            }
-            catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
-            }
-        }
-
         return appVersion;
+    }
+
+    public static void setAppVersion(String version) {
+        appVersion = version;
     }
 
     /**

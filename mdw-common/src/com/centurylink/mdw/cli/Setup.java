@@ -17,9 +17,11 @@ package com.centurylink.mdw.cli;
 
 import com.beust.jcommander.Parameter;
 import com.centurylink.mdw.config.YamlProperties;
+import com.centurylink.mdw.image.Implementors;
 import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.project.Data;
 import com.centurylink.mdw.model.system.MdwVersion;
+import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.file.Packages;
 import org.json.JSONObject;
@@ -46,8 +48,6 @@ public abstract class Setup implements Operation {
     protected static final String META_DIR = ".mdw";
     protected static final String VERSIONS = "versions";
     protected static final String MDW_COMMON_PATH = "/com/centurylink/mdw/mdw-templates/";
-    public static final String MAVEN_CENTRAL_URL = "http://repo.maven.apache.org/maven2";
-    public static final String SONATYPE_URL = "https://oss.sonatype.org/service/local/artifact/maven";
 
     Setup() {
     }
@@ -56,6 +56,11 @@ public abstract class Setup implements Operation {
         this.projectDir = projectDir;
     }
 
+    /**
+     * Dependencies that need to be downloaded for this operation to run.
+     */
+    public List<Dependency> getDependencies() throws IOException { return null; }
+
     private PrintStream out = System.out;
     public PrintStream getOut() { return out; }
     public void setOut(PrintStream out) { this.out = out; }
@@ -63,6 +68,11 @@ public abstract class Setup implements Operation {
     private PrintStream err = System.err;
     public PrintStream getErr() { return err; }
     public void setErr(PrintStream err) { this.err = err; }
+
+    @Parameter(names="--dependencies", description="Download dependencies and exit")
+    private boolean dependencies;
+    public boolean isDependencies() { return dependencies; }
+    public void setDependencies(boolean dependencies) { this.dependencies = dependencies; }
 
     @Parameter(names="--project-dir", description="Project directory (default = ./)")
     protected File projectDir;
@@ -75,15 +85,10 @@ public abstract class Setup implements Operation {
     public boolean isDebug() { return debug; }
     public void setDebug(boolean debug) { this.debug = debug; }
 
-    @Parameter(names="--discovery-url", description="Asset Discovery URL")
-    private String discoveryUrl = MAVEN_CENTRAL_URL;
-    public String getDiscoveryUrl() { return discoveryUrl; }
-
-    public void setDiscoveryUrl(String url) {
-        this.discoveryUrl = url;
-        if (Props.DISCOVERY_URL != null)
-            Props.DISCOVERY_URL.specified = true;
-    }
+    @Parameter(names="--no-progress", description="No progress monitor")
+    private boolean noProgress;
+    public boolean isNoProgress() { return noProgress; }
+    public void setNoProgress(boolean noProgress) { this.noProgress = noProgress; }
 
     @Parameter(names="--releases-url", description="MDW releases Maven repo URL")
     private String releasesUrl = MAVEN_CENTRAL_URL;
@@ -406,8 +411,8 @@ public abstract class Setup implements Operation {
      * Result always uses forward slashes and has no trailing slash.
      */
     public String getRelativePath(File from, File to) {
-        Path fromPath = Paths.get(from.getPath()).normalize().toAbsolutePath();
-        Path toPath = Paths.get(to.getPath()).normalize().toAbsolutePath();
+        Path fromPath = Paths.get(from.getPath()).normalize().toAbsolutePath().normalize();
+        Path toPath = Paths.get(to.getPath()).normalize().toAbsolutePath().normalize();
         return fromPath.relativize(toPath).toString().replace('\\', '/');
     }
 
@@ -614,18 +619,29 @@ public abstract class Setup implements Operation {
         return new File(propVal);
     }
 
-    private Packages assetPackageDirs;
-    protected Packages getAssetPackageDirs() throws IOException {
-        if (assetPackageDirs == null) {
-            assetPackageDirs = new Packages(getAssetRoot());
+    private Packages packageDirs;
+    protected Packages getPackageDirs() throws IOException {
+        if (packageDirs == null) {
+            packageDirs = new Packages(getAssetRoot());
         }
-        return assetPackageDirs;
+        return packageDirs;
+    }
+
+    public File getPackageDir(String packageName) throws IOException {
+        return new File(getAssetRoot() + "/" + packageName.replace('.','/'));
+    }
+
+    public File getPackageMeta(File packageDir) {
+        return new File(packageDir + "/" + Packages.META_DIR + "/" + Packages.PACKAGE_YAML);
+    }
+    public File getPackageMeta(String packageName) throws IOException {
+        return getPackageMeta(getPackageDir(packageName));
     }
 
     public Map<String,List<File>> findAllAssets(String ext) throws IOException {
         Map<String,List<File>> matchingAssets = new HashMap<>();
-        for (String pkg : getAssetPackageDirs().getPackageNames()) {
-            for (File assetFile : getAssetPackageDirs().getAssetFiles(pkg)) {
+        for (String pkg : getPackageDirs().getPackageNames()) {
+            for (File assetFile : getPackageDirs().getAssetFiles(pkg)) {
                 if (assetFile.getName().endsWith("." + ext)) {
                     List<File> pkgAssets = matchingAssets.get(pkg);
                     if (pkgAssets == null) {
@@ -640,7 +656,7 @@ public abstract class Setup implements Operation {
     }
 
     protected List<File> getAssetFiles(String packageName) throws IOException {
-        return getAssetPackageDirs().getAssetFiles(packageName);
+        return getPackageDirs().getAssetFiles(packageName);
     }
 
     protected String getBaseUrl() throws MalformedURLException {
@@ -762,7 +778,7 @@ public abstract class Setup implements Operation {
     private Map<String,Properties> packageVersions;
     private Map<String,Properties> getPackageVersions() throws IOException {
         if (packageVersions == null)
-            packageVersions = getVersionProps(getAssetPackageDirs());
+            packageVersions = getVersionProps(getPackageDirs());
         return packageVersions;
     }
 
@@ -806,6 +822,11 @@ public abstract class Setup implements Operation {
             TreeMap<String,String> sortedMap = new TreeMap<>();
             sortedMap.putAll(map);
             return sortedMap;
+        }
+
+        @Override
+        public Map<String,ActivityImplementor> getActivityImplementors() throws IOException {
+            return new Implementors(getAssetRoot());
         }
     }
 }

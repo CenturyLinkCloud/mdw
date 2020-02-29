@@ -1,3 +1,7 @@
 schemaVersion: '6.1'
 name: com.centurylink.mdw.microservice
-version: 6.1.30
+version: 6.1.32-SNAPSHOT
+
+dependencies:
+  - com.centurylink.mdw.base v6.1.32-SNAPSHOT
+  - com.centurylink.mdw.kotlin v6.1.32-SNAPSHOT

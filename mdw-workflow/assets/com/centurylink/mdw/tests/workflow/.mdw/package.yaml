@@ -1,3 +1,7 @@
-name: com.centurylink.mdw.tests.workflow
 schemaVersion: '6.1'
-version: 6.1.30
+name: com.centurylink.mdw.tests.workflow
+version: 6.1.32-SNAPSHOT
+
+dependencies:
+  - com.centurylink.mdw.base v6.1.32-SNAPSHOT
+  - com.centurylink.mdw.testing v6.1.32-SNAPSHOT

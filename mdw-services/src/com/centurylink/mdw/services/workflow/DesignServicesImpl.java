@@ -12,6 +12,7 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.dataaccess.reports.ProcessAggregation;
+import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.asset.CommitInfo;
@@ -78,7 +79,7 @@ public class DesignServicesImpl implements DesignServices {
             }
         }
         if (process == null)
-            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + assetPath);
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + assetPath + " v" + Asset.formatVersion(version));
 
         return process;
     }
@@ -88,16 +89,16 @@ public class DesignServicesImpl implements DesignServices {
         try {
             String find = query.getFind();
             if (find == null) {
-                return ProcessCache.getAllProcesses();
+                return ProcessCache.getProcesses(true);
             }
             else {
                 List<Process> found = new ArrayList<>();
                 String findLower = find.toLowerCase();
-                for (Process processVO : ProcessCache.getAllProcesses()) {
-                    if (processVO.getName() != null && processVO.getName().toLowerCase().startsWith(findLower))
-                        found.add(processVO);
-                    else if (find.indexOf(".") > 0 && processVO.getPackageName() != null && processVO.getPackageName().toLowerCase().startsWith(findLower))
-                        found.add(processVO);
+                for (Process process : ProcessCache.getProcesses(true)) {
+                    if (process.getName() != null && process.getName().toLowerCase().startsWith(findLower))
+                        found.add(process);
+                    else if (find.indexOf(".") > 0 && process.getPackageName() != null && process.getPackageName().toLowerCase().startsWith(findLower))
+                        found.add(process);
                 }
                 return found;
             }
@@ -120,7 +121,7 @@ public class DesignServicesImpl implements DesignServices {
             ActivityList found = new ActivityList(ActivityList.ACTIVITY_INSTANCES, activityInstanceList);
 
             if (find == null) {
-                List<Process> processes = ProcessCache.getAllProcesses();
+                List<Process> processes = ProcessCache.getProcesses(true);
                 for (Process process : processes) {
                     process = ProcessCache.getProcess(process.getId());
                     List<Activity> activities = process.getActivities();
@@ -139,7 +140,7 @@ public class DesignServicesImpl implements DesignServices {
                 }
             } else {
                 String lowerFind = find.toLowerCase();
-                for (Process process : ProcessCache.getAllProcesses()) {
+                for (Process process : ProcessCache.getProcesses(true)) {
                     process = ProcessCache.getProcess(process.getId());
                     List<Activity> activities = process.getActivities();
                     for (Activity activityVO : activities) {
@@ -173,7 +174,7 @@ public class DesignServicesImpl implements DesignServices {
     @Override
     public ActivityImplementor getImplementor(String className) throws ServiceException {
         ActivityImplementor implementor =  ImplementorCache.get(className);
-        if (implementor.getPagelet() == null) {
+        if (implementor != null && implementor.getPagelet() == null) {
             try {
                 for (ActivityImplementor impl : DataAccess.getProcessLoader().getActivityImplementors()) {
                     if (impl.getImplementorClass().equals(implementor.getImplementorClass()))
@@ -195,7 +196,7 @@ public class DesignServicesImpl implements DesignServices {
         try {
             // all must be loaded
             List<Process> processes = new ArrayList<>();
-            for (Process proc : ProcessCache.getAllProcesses()) {
+            for (Process proc : ProcessCache.getProcesses(false)) {
                 Process loaded = ProcessCache.getProcess(proc.getId());
                 if (loaded != null)
                     processes.add(loaded);

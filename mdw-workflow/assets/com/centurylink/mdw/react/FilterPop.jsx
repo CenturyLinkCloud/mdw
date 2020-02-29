@@ -30,7 +30,7 @@ class FilterPop extends Component {
     const {filters, filterOptions, onFilterChange, onFilterReset, ...popProps} = this.props; // eslint-disable-line no-unused-vars
     return (
       <Popover {...popProps} id="filter-pop">
-        <div style={{width:'150px'}}>
+        <div style={{width:'175px'}}>
           {
             Object.keys(filters).map(key => {
               const id = key.replace(/\s+/g, '-').toLowerCase();
@@ -41,7 +41,9 @@ class FilterPop extends Component {
               return (
                 <div key={key} className={isDate ? '' : 'mdw-vsm-indent'}
                   style={{display:isCb ? 'flex' : 'block', marginTop:isCb ? '5px' : '3px'}}>
-                  <label className="mdw-label">{key + ':'}</label>
+                  {!isCb &&
+                    <label className="mdw-label">{key + ':'}</label>
+                  }  
                   {isDate &&
                     <div className="mdw-flex-item">
                       <DatePicker id={id}
@@ -56,10 +58,19 @@ class FilterPop extends Component {
                       onSelect={sel => this.handleChange(key, sel)} />
                   }
                   {isCb &&
-                    <input type="checkbox" id={id}
-                      style={{marginTop:'3px',marginLeft:'6px',fontSize:'24px'}}
-                      checked={filters[key]}
-                      onChange={event => this.handleChange(key, event.target.checked)} />
+                    <span>
+                      <input type="checkbox" id={id}
+                        style={{marginTop:'3px',fontSize:'24px'}}
+                        checked={filters[key]}
+                        onChange={event => this.handleChange(key, event.target.checked)} />
+                      <label className="mdw-label" style={{display:'inline',marginLeft:'5px'}}>{key}</label>
+                    </span>
+                  }
+                  {!isDate && !isDropdown && !isCb &&
+                    <input type="text" id={id} style={{width:'100%'}}
+                      value={filters[key]}
+                      onChange={event => this.handleChange(key, event.target.value)}
+                      onKeyDown={event => {if (event.key === 'Enter') {document.body.click();}} } />
                   }
                 </div>
               );

@@ -1,4 +1,12 @@
-// publishes build output to a maven repository
+import org.yaml.snakeyaml.Yaml
+
+buildscript {
+    dependencies {
+        classpath("org.yaml:snakeyaml:1.18")
+    }
+}
+
+// publish build output to a maven repository
 plugins {
     id "io.codearte.nexus-staging" version "0.20.0"
     id "de.marcphilipp.nexus-publish" version "0.1.1"
@@ -103,18 +111,24 @@ task updateHubPackageJson {
 task updateMdwVerInAssetPackages {
     description = "Update Asset Package Version: " + mdwVersion
     def assetRootPath = file("../${mdwAssetRoot}").toString()
-    def mdwPkgVer = mdwVersion;
-    if (mdwVersion.endsWith("-SNAPSHOT"))
-        mdwPkgVer = mdwPkgVer.substring(0, mdwPkgVer.length() - 9)
     println "Update MDW version in asset packages in asset root: " + assetRootPath + ":"
     fileTree(dir: "../${mdwAssetRoot}", include:'**/.mdw/package.yaml', exclude:'Archive/**/*').each { pkgFile ->
         doLast {
             def pkgName = pkgFile.parentFile.parent.substring(assetRootPath.length() + 1).replace('/','.').replace('\\','.')
-            println "        setting package.yaml version: ${mdwPkgVer} for ${pkgName}"
+            println "        setting package.yaml version: ${mdwVersion} for ${pkgName}"
             pkgFile.setWritable(true)
-            def pkgJson = pkgFile.text
+            Yaml yaml = new Yaml()
+            def top = (Map) yaml.load(pkgFile.text)
+            def deps = (List) top.get('dependencies')
             pkgFile.withWriter { w ->
-                w << pkgJson.replaceAll("version: [0-9]\\.[0-9]\\.[0-9][0-9]", "version: ${mdwPkgVer}");
+                w << "schemaVersion: '${mdwPkgSchemaVersion}'\nname: ${pkgName}\nversion: ${mdwVersion}\n"
+                if (deps != null && !deps.isEmpty()) {
+                    w << "\ndependencies:\n"
+                    deps.forEach { dep ->
+                        def segs = dep.split("\\s+")
+                        w << "  - ${segs[0]} v${mdwVersion}\n"
+                    }
+                }
             }
         }
     }

@@ -217,6 +217,7 @@ public class PropertyNames {
     public static final String MDW_WAIT_FALLBACK_STAGGER = "mdw.wait.fallback.stagger";
     public static final String MDW_WAIT_FALLBACK_MAX = "mdw.wait.fallback.max";
     public static final String MDW_WAIT_FALLBACK_AGE = "mdw.wait.fallback.age";
+    public static final String MDW_WAIT_FALLBACK_ARCHIVED = "mdw.wait.fallback.archived";
 
 
 }

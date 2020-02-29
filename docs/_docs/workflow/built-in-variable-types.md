@@ -20,8 +20,6 @@ Standard variable types in MDW.
  - java.util.Map\<String,String>
  
 ### Document Types
- - java.lang.Object
- - java.lang.Exception
  - org.json.JSONObject
  - com.centurylink.mdw.model.Jsonable
  - com.centurylink.mdw.model.StringDocument
@@ -33,6 +31,12 @@ Standard variable types in MDW.
  - org.apache.xmlbeans.XmlObject
  - org.w3c.dom.Document
  - org.yaml.snakeyaml.Yaml
+ - java.lang.Exception
+ - java.lang.Object -- **Discouraged** due to:
+   - The db serialized values in DOCUMENT_CONTENT are binary and cannot be read by querying.
+   - Changes to Java code for stored types, or to Java language version can result in incompatibilities with inflight values.
+   - MDWHub uses a simple toString() to display the value, which is probably not useful.
+   - Unlike other variable types, MDWHub cannot be used to input or change a runtime value.
  
  
  

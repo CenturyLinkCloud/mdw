@@ -100,6 +100,8 @@ public class TestCompare {
                 if (end >= 0) {
                     String before = regexLine.substring(0, start);
                     String after = regexLine.substring(end + 1);
+                    if (actualLine.length() < start)
+                        return i + 1;
                     if (!before.equals(actualLine.substring(0, start)))
                         return i + 1;
                     if (!after.equals(actualLine.substring(actualLine.length() - after.length())))

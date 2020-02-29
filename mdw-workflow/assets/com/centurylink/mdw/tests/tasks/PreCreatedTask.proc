@@ -1,65 +1,100 @@
-{
-  "activities": [
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=90,y=121,w=60,h=40"},
-      "id": "A1",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
-      "name": "Start",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=192,ly=141,xs=155&230,ys=141&141"},
-        "event": "FINISH",
-        "id": "T1",
-        "to": "A4"
-      }]
-    },
-    {
-      "attributes": {"WORK_DISPLAY_INFO": "x=637,y=122,w=60,h=40"},
-      "id": "A2",
-      "implementor": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
-      "name": "Stop"
-    },
-    {
-      "attributes": {
-        "INSTANCE_ID_VAR": "taskInstanceId",
-        "TASK_TEMPLATE": "com.centurylink.mdw.tests.tasks/New Autoform Manual Task.task",
-        "WORK_DISPLAY_INFO": "x=430,y=109,w=107,h=70"
-      },
-      "id": "A3",
-      "implementor": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
-      "name": "Wait for\nTask",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=587,ly=142,xs=541&633,ys=142&142"},
-        "event": "FINISH",
-        "id": "T2",
-        "to": "A2"
-      }]
-    },
-    {
-      "attributes": {
-        "ClassName": "PreCreatedTask_A4",
-        "Java": "package com.centurylink.mdw.tests.tasks;\n\nimport com.centurylink.mdw.java.JavaExecutionException;\nimport com.centurylink.mdw.java.JavaExecutor;\nimport com.centurylink.mdw.java.MdwJavaException;\nimport com.centurylink.mdw.model.asset.AssetVersionSpec;\nimport com.centurylink.mdw.model.task.TaskInstance;\nimport com.centurylink.mdw.model.task.TaskTemplate;\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\nimport com.centurylink.mdw.service.data.task.TaskTemplateCache;\nimport com.centurylink.mdw.services.ServiceLocator;\nimport com.centurylink.mdw.services.TaskServices;\n\nimport java.util.Map;\n\npublic class PreCreatedTask_A4 implements JavaExecutor {\n    private ActivityRuntimeContext context;\n\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\n        this.context = context;\n    }\n\n    public Object execute(Map<String,Object> variables) throws JavaExecutionException  {\n        String taskTemplate = \"com.centurylink.mdw.tests.tasks/PreCreated.task\";\n        try {\n            AssetVersionSpec templateAsset = new AssetVersionSpec(taskTemplate, \"0\");\n            TaskTemplate template = TaskTemplateCache.getTaskTemplate(templateAsset);\n            if (template == null)\n                throw new JavaExecutionException(\"Task template not found: \" + template);\n\n            TaskServices taskServices = ServiceLocator.getTaskServices();\n            TaskInstance instance = taskServices.createTask(template.getTaskId(), context.getMasterRequestId(),\n                    context.getProcessInstanceId(), null, null, \"PreCreated Task\", \"Will wait for completion downstream\");\n\n            context.logInfo(\"Created task instance \" + instance.getId() + \" (\" + taskTemplate + \")\");\n\n            variables.put(\"taskInstanceId\", instance.getId());\n\n            return null;\n        }\n        catch (Exception ex) {\n            throw new JavaExecutionException(\"Error creating task \" + taskTemplate, ex);\n        }\n    }\n}\n",
-        "WORK_DISPLAY_INFO": "x=234,y=107,w=106,h=71"
-      },
-      "id": "A4",
-      "implementor": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
-      "name": "Create Task",
-      "transitions": [{
-        "attributes": {"TRANSITION_DISPLAY_INFO": "type=Elbow,lx=385,ly=143,xs=344&426,ys=143&143"},
-        "event": "FINISH",
-        "id": "T3",
-        "to": "A3"
-      }]
-    }
-  ],
-  "attributes": {
-    "ArrowStyle": "ArrowEnd",
-    "NodeStyle": "BoxIcon",
-    "PROCESS_VISIBILITY": "PUBLIC",
-    "PerformanceLevel": "0",
-    "WORK_DISPLAY_INFO": "x=43,y=35,w=148,h=26"
-  },
-  "variables": {"taskInstanceId": {
-    "category": "LOCAL",
-    "type": "java.lang.Long"
-  }}
-}
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=90,y=121,w=60,h=40
+  transitions:
+  - id: T1
+    to: A4
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=192,ly=141,xs=155&230,ys=141&141
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=637,y=122,w=60,h=40
+- id: A3
+  name: |-
+    Wait for
+    Task
+  implementor: com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity
+  attributes:
+    INSTANCE_ID_VAR: taskInstanceId
+    TASK_TEMPLATE: com.centurylink.mdw.tests.tasks/New Autoform Manual Task.task
+    WORK_DISPLAY_INFO: x=430,y=109,w=107,h=70
+  transitions:
+  - id: T2
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=587,ly=142,xs=541&633,ys=142&142
+- id: A4
+  name: Create Task
+  implementor: com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity
+  attributes:
+    ClassName: PreCreatedTask_A4
+    Java: |
+      package com.centurylink.mdw.tests.tasks;
+
+      import com.centurylink.mdw.java.JavaExecutionException;
+      import com.centurylink.mdw.java.JavaExecutor;
+      import com.centurylink.mdw.java.MdwJavaException;
+      import com.centurylink.mdw.model.asset.AssetVersionSpec;
+      import com.centurylink.mdw.model.task.TaskInstance;
+      import com.centurylink.mdw.model.task.TaskTemplate;
+      import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
+      import com.centurylink.mdw.service.data.task.TaskTemplateCache;
+      import com.centurylink.mdw.services.ServiceLocator;
+      import com.centurylink.mdw.services.TaskServices;
+
+      import java.util.Map;
+
+      public class PreCreatedTask_A4 implements JavaExecutor {
+          private ActivityRuntimeContext context;
+
+          public void initialize(ActivityRuntimeContext context) throws MdwJavaException {
+              this.context = context;
+          }
+
+          public Object execute(Map<String,Object> variables) throws JavaExecutionException  {
+              String taskTemplate = "com.centurylink.mdw.tests.tasks/PreCreated.task";
+              try {
+                  AssetVersionSpec templateAsset = new AssetVersionSpec(taskTemplate, "0");
+                  TaskTemplate template = TaskTemplateCache.getTaskTemplate(templateAsset);
+                  if (template == null)
+                      throw new JavaExecutionException("Task template not found: " + template);
+
+                  TaskServices taskServices = ServiceLocator.getTaskServices();
+                  TaskInstance instance = taskServices.createTask(template.getTaskId(), context.getMasterRequestId(),
+                          context.getProcessInstanceId(), null, null, "PreCreated Task", "Will wait for completion downstream");
+
+                  context.logInfo("Created task instance " + instance.getId() + " (" + taskTemplate + ")");
+
+                  variables.put("taskInstanceId", instance.getId());
+
+                  return null;
+              }
+              catch (Exception ex) {
+                  throw new JavaExecutionException("Error creating task " + taskTemplate, ex);
+              }
+          }
+      }
+    WORK_DISPLAY_INFO: x=234,y=107,w=106,h=71
+  transitions:
+  - id: T3
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=385,ly=143,xs=344&426,ys=143&143
+variables:
+  taskInstanceId:
+    type: java.lang.Long
+    category: LOCAL
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: PUBLIC
+  PerformanceLevel: '0'
+  WORK_DISPLAY_INFO: x=43,y=35,w=148,h=26

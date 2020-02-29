@@ -116,6 +116,11 @@ public class Milestone implements Linkable, Jsonable {
     }
 
     @Override
+    public JSONObject toJson() {
+        return getJson();
+    }
+
+    @Override
     public JSONObject getJson() {
         JSONObject json = create();
         json.put("process", process.getSummaryJson());

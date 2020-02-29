@@ -157,6 +157,9 @@
     <li>Get a handle to the runtime logger by calling <code>getLogger()</code>.  Using a logger obtained this way,
       you can use the <a href="../javadoc/com/centurylink/mdw/util/log/StandardLogger.html">StandardLogger</a>
       methods like <code>info()</code>, <code>error()</code>, etc.</li>
+    <li>In a dynamic Java or script activity use the logging methods on <a href="../javadoc/com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html">ActivityRuntimeContext</a>.
+      For example in a Groovy script you can log a message by calling <code>runtimeContext.logInfo()</code>.
+    </li>
   </ul>
 </p>
 <p>

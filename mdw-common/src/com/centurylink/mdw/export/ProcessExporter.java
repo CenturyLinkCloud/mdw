@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 CenturyLink, Inc.
+ * Copyright (C) 2020 CenturyLink, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,5 @@ import com.centurylink.mdw.model.workflow.Process;
 public interface ProcessExporter {
     byte[] export(Process process) throws IOException;
 
-    default List<Dependency> getDependencies() {
-        return null;
-    }
+    default List<Dependency> getDependencies() { return null; }
 }

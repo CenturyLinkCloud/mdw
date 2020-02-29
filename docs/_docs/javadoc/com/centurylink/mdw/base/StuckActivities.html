@@ -131,16 +131,19 @@ extends <a href="../../../../com/centurylink/mdw/services/workflow/RoundRobinSch
 implements <a href="../../../../com/centurylink/mdw/model/monitor/ScheduledJob.html" title="interface in com.centurylink.mdw.model.monitor">ScheduledJob</a></pre>
 <div class="block">This script fixes stuck activities by failing them and then retrying them
  A stuck activity means it's "In Progress" status and older than {ActivityAgeInMinutes}
- Add following to mdw.yaml:
- <pre>
-   StuckActivities:
-     job:
-       enabled: true   # default=false
-       scheduler: 30 12 * * ? * # cron expression defining the schedule (example shows daily at 12:30 AM)
-       ActivityAgeInSeconds: 2000 # minimum age of eligible activities default=1800
-       MaximumActivities: 100 # maximum number of activities processed per cycle default=10
- </pre>
- The query used to identify stuck activities performs a full table scan, so
+ Add following to mdw.yaml
+timer.task:
+ StuckActivities:
+    TimerClass: com.centurylink.mdw.timer.cleanup.StuckActivities
+    Schedule: 30 2 * * *    # to run hourly at 30 minutes past the hour use : Schedule: 30 * * * ? *
+    ActivityAgeInMinutes: 1800 # How old activity instance should be to be a candidate for fixing
+    MaximumActivities: 10  # How many stuck activity instances to be retried in each run
+
+ if you need to make change in above properties then first delete the db entry by identifying the row using
+ this sql:  select * from event_instance where event_name like '%ScheduledJob%'
+ Then re-start the server/instance for new clean-up properties to be effective.
+
+ The query used to identify stuck activities will perform a full table scan, so
  consider creating an index on ACTIVITY_INSTANCE table if it is causing performance issues.</div>
 </li>
 </ul>

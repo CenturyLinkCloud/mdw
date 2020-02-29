@@ -105,7 +105,7 @@ title: MDW Configuration
     hub.url: http://localhost:8080/mdw  # required
     services.url: http://localhost:8080/mdw  # required
     websocket.url: none # 'none' to use polling; otherwise don't set
-    discovery.url: http://repo.maven.apache.org/maven2  # default=http://repo.maven.apache.org/maven2
+    discovery.url: https://repo.maven.apache.org/maven2  # default=https://repo.maven.apache.org/maven2
     docs.url: https://centurylinkcloud.github.io/mdw/docs  # default=https://centurylinkcloud.github.io/mdw/docs
 
     # for SLF4J and SimpleLogger
@@ -115,7 +115,7 @@ title: MDW Configuration
         enabled: true  # enable activity logging default=true
         cleanup:
           enabled: true  # default=true
-          retain: 90  # default=180 (days)
+          retain: 30  # default=90 (days)
       roller:
         enabled: true
         retain: 7 # default=30 (days)
@@ -172,6 +172,15 @@ title: MDW Configuration
         eventExpirationDays: 180
         commitInterval: 1000
         RuntimeCleanupScript: Cleanup-Runtime.sql
+    
+    # Wait Activity Fallback Processing
+    wait:
+      fallback:
+        stagger: 60  # seconds offset between scheduling scan for each activity - default=30
+        max: 20  # maximum number of activity instances to trigger per cycle - default=100
+        age: 1200 # minimum age in seconds of waiting activity instances to process - default=600
+    timer.wait.fallback.enabled: true  # enable fallback processing for timer wait activities - default=false
+    dependencies.wait.fallback.enabled: true  # enable fallback processing for dependencies waits - default=false
 
     # Custom JWT Providers   
     jwt:

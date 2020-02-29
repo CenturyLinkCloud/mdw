@@ -1,0 +1,47 @@
+package com.centurylink.mdw.tests.server
+
+import com.centurylink.mdw.model.system.MdwVersion
+
+// unit tests for package version parse/format
+
+println 'testing package version processing...'
+
+// formal version
+def formalVersion = "6.1.30"
+def mdwVersion = new MdwVersion(formalVersion)
+assert mdwVersion.toString() == formalVersion
+assert mdwVersion.intVersion == 6130
+assert !mdwVersion.isSnapshot()
+mdwVersion = new MdwVersion(mdwVersion.intVersion)
+assert mdwVersion.toString() == formalVersion
+assert mdwVersion.intVersion == 6130
+
+// snapshot version
+def snapshotVersion = "6.1.31-SNAPSHOT"
+mdwVersion = new MdwVersion(snapshotVersion)
+assert mdwVersion.toString() == snapshotVersion
+assert mdwVersion.intVersion == 6131
+assert mdwVersion.isSnapshot()
+mdwVersion = new MdwVersion(mdwVersion.intVersion)
+assert mdwVersion.toString() == "6.1.31"
+assert mdwVersion.intVersion == 6131
+
+// padding
+def singleDigitBuildVersion = "6.1.09"
+mdwVersion = new MdwVersion(singleDigitBuildVersion)
+assert mdwVersion.toString() == singleDigitBuildVersion
+assert mdwVersion.intVersion == 6109
+assert !mdwVersion.isSnapshot()
+mdwVersion = new MdwVersion(mdwVersion.intVersion)
+assert mdwVersion.toString() == singleDigitBuildVersion
+assert mdwVersion.intVersion == 6109
+
+// zero
+def zeroVersion = "0"
+mdwVersion = new MdwVersion(zeroVersion)
+assert mdwVersion.toString() == zeroVersion
+assert mdwVersion.intVersion == 0
+assert !mdwVersion.isSnapshot()
+mdwVersion = new MdwVersion(0)
+assert mdwVersion.toString() == "0"
+assert mdwVersion.intVersion == 0

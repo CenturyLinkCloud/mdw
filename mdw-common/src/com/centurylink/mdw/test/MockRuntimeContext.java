@@ -21,6 +21,7 @@ import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.BaselineData;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
@@ -58,7 +59,7 @@ public class MockRuntimeContext extends ActivityRuntimeContext {
         if (pkg == null) {
             pkg = new Package();
             pkg.setName("com.centurylink.mdw.test");
-            pkg.setVersion(0);
+            pkg.setVersion(new MdwVersion(0));
             pkg.setId(0L);
         }
         return pkg;

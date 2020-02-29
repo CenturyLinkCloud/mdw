@@ -33,6 +33,7 @@ import com.centurylink.mdw.discovery.GitHubDiscoverer;
 import com.centurylink.mdw.discovery.GitLabDiscoverer;
 import com.centurylink.mdw.model.PackageMeta;
 import com.centurylink.mdw.model.asset.*;
+import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.util.file.FileHelper;
@@ -317,8 +318,8 @@ public class AssetServicesImpl implements AssetServices {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Cannot create meta dir: " + metaDir.getAbsolutePath());
 
         Package pkg = new Package();
-        pkg.setSchemaVersion(DataAccess.currentSchemaVersion);
-        pkg.setVersion(1);
+        pkg.setSchemaVersion(Asset.formatVersion(DataAccess.currentSchemaVersion));
+        pkg.setVersion(new MdwVersion(1));
         try {
             JSONObject json = pkg.getJson();
             json.put("name", packageName);
@@ -724,7 +725,7 @@ public class AssetServicesImpl implements AssetServices {
                 String metaContent = ((VersionControlGit)getVersionControl()).getRemoteContentString(getGitBranch(), pkgMetaFilePath);
                 if (metaContent != null) {
                     Package pkg = new Package((Map<String,Object>)new Yaml().load(metaContent));
-                    pkgDir.setPackageVersion(pkg.getVersionString());
+                    pkgDir.setPackageVersion(pkg.getVersion().toString());
                 }
             }
             else {
@@ -870,8 +871,8 @@ public class AssetServicesImpl implements AssetServices {
         try {
             GitDiscoverer discoverer = getDiscoverer(repoUrl);
             discoverer.setRef(branch);
-            Map<String, PackageMeta> pacakgeInfo = discoverer.getPackageInfo();
-            for (PackageMeta pkgMeta : pacakgeInfo.values()) {
+            Map<String,PackageMeta> packageInfo = discoverer.getPackageInfo();
+            for (PackageMeta pkgMeta : packageInfo.values()) {
                 JSONArray array = packages.getJSONArray("packages");
                 JSONObject jsonObj = new JSONObject();
                 jsonObj.put("format", "json");

@@ -942,7 +942,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         String query = "select STATUS_CD,START_DT,END_DT,STATUS_MESSAGE,ACTIVITY_INSTANCE_ID,ACTIVITY_ID" +
                 " from ACTIVITY_INSTANCE where PROCESS_INSTANCE_ID=?";
         ResultSet rs = db.runSelect(query, procInstId);
-        List<ActivityInstance> ret = new ArrayList<ActivityInstance>();
+        List<ActivityInstance> ret = new ArrayList<>();
         while (rs.next()) {
             ActivityInstance vo = new ActivityInstance();
             vo.setId(rs.getLong(5));

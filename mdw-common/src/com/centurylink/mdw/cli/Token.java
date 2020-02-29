@@ -52,10 +52,9 @@ public class Token extends Setup {
     public Token run(ProgressMonitor... progressMonitors) throws IOException {
 
         if (verify) {
-            String mavenUrl = "http://repo.maven.apache.org/maven2";
             Map<String,Long> dependencies = getVerificationDependencies();
             for (String dep : dependencies.keySet()) {
-                new Dependency(mavenUrl, dep, dependencies.get(dep)).run(progressMonitors);
+                new Dependency(MAVEN_CENTRAL_URL, dep, dependencies.get(dep)).run(progressMonitors);
             }
             verify();
         }

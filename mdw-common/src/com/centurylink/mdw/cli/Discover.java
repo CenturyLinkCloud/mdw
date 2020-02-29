@@ -60,7 +60,7 @@ public class Discover extends Setup {
             discoverMaven(groupId, monitors);
         }
         else {
-            discoverMdw(new Props(this).get(Props.DISCOVERY_URL), monitors);
+            throw new IOException("Only maven discovery supported (groupId required)");
         }
         return this;
     }
@@ -98,12 +98,6 @@ public class Discover extends Setup {
                 }
             }
         }
-    }
-
-    public void discoverMdw(String url, ProgressMonitor... monitors) throws IOException {
-        getOut().println("Discovering assets from: " + url);
-        String assetsJson = new Fetch(new URL(url + "/services/Assets")).run().getData();
-        this.packages = new JSONObject(assetsJson);
     }
 
     protected String searchArtifacts(String groupId) throws IOException {

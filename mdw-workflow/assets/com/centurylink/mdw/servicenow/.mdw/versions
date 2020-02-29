@@ -1,0 +1,12 @@
+GlideDateTime.java=1
+Incident.java=4
+IncidentTemplate.yaml=1
+ServiceNowAdapter.java=1
+ServiceNowTask.pagelet=2
+ServiceNowTaskActivity.java=1
+TaskNotifier.java=2
+adapter.pagelet=2
+readme.md=2
+servicenow.png=1
+servicenow_task.png=1
+task.pagelet=1

@@ -14,5 +14,6 @@ public interface Discoverer {
      * Excludes MDW packages unless GitHub public repo.
      */
     List<String> getPackages() throws IOException;
-    Map<String, PackageMeta> getPackageInfo() throws IOException;
+    Map<String,PackageMeta> getPackageInfo() throws IOException;
+    PackageMeta findPackage(String name, String version) throws IOException;
 }

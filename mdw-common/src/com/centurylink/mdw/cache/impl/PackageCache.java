@@ -15,16 +15,10 @@
  */
 package com.centurylink.mdw.cache.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
+import com.centurylink.mdw.cli.Dependencies;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -37,6 +31,14 @@ import com.centurylink.mdw.util.file.Packages;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PackageCache implements PreloadableCache {
 
@@ -80,19 +82,19 @@ public class PackageCache implements PreloadableCache {
             for (Package pkg : packageListTemp) {
                 pkg.setAttributes(loadPackage(pkg).getAttributes());
             }
-            Collections.sort(packageListTemp, new Comparator<Package>() {
-                public int compare(Package p1, Package p2) {
-                    // latest first
-                    if (p1.getName().equals(p2.getName()))
-                        return p2.getVersion() - p1.getVersion();
-                    else
-                        return p1.getName().compareToIgnoreCase(p2.getName());
-                }
+            Collections.sort(packageListTemp, (p1, p2) -> {
+                // latest first
+                if (p1.getName().equals(p2.getName()))
+                    return p1.getVersion().compareTo(p2.getVersion());
+                else
+                    return p1.getName().compareToIgnoreCase(p2.getName());
             });
             timer.stopAndLogTiming("Load package list");
 
-            if(packageListTemp!=null && !packageListTemp.isEmpty())
-                validatePackageVersion(packageListTemp);
+            if (packageListTemp != null && !packageListTemp.isEmpty()) {
+                validateMdwPackageVersions(packageListTemp);
+                validatePackageDependencies();
+            }
 
             return packageListTemp;
         }
@@ -102,30 +104,48 @@ public class PackageCache implements PreloadableCache {
     }
 
     /**
-     * Method that gets invoked from load(). It checks if the
-     * framework asset packages and current MDW build versions are the same.
+     * Validates package dependencies using the CLI command.
+     */
+    private static void validatePackageDependencies() {
+        Dependencies dependencies = new Dependencies();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        dependencies.setOut(ps);
+        dependencies.setErr(ps);
+        try {
+            dependencies.run();
+        }
+        catch (Exception ex) {
+            logger.error("Package dependency check error(s)", ex);
+        }
+        finally {
+            String output = baos.toString();
+            if (!output.isEmpty())
+                logger.info(output);
+        }
+    }
+
+    /**
+     * Checks if the framework asset packages and current MDW build versions are the same.
      * Otherwise logs a warning message.
      */
-    private static void validatePackageVersion(List<Package> packages) {
-        final String exceptions = ".*\\b(oracle|tibco|demo|hub)\\b.*";
-        String version = ApplicationContext.getMdwVersion();
-        String mdwVersion = version.split("\\-")[0];
+    private static void validateMdwPackageVersions(List<Package> packages) {
+        final String exceptions = ".*\\b(demo|hub|central)\\b.*";
+        String mdwVersion = ApplicationContext.getMdwVersion();
 
         List<Package> filteredPackages = packages.stream()
-                .filter(e -> !mdwVersion.equals(e.getVersionString())
-                        && e.getName().startsWith("com.centurylink.mdw")
-                        && !e.getName().startsWith("com.centurylink.mdw.central"))
+                .filter(e -> !mdwVersion.equals(e.getVersion().toString()) && e.getName().startsWith("com.centurylink.mdw"))
                 .collect(Collectors.toList());
-        List<Package> obsoletePackages = filteredPackages.stream()
+        List<Package> mismatches = filteredPackages.stream()
                 .filter(p2 -> !(p2.getName().matches(exceptions)))
                 .collect(Collectors.toList());
 
-        if (!obsoletePackages.isEmpty()){
-            StringBuilder message=new StringBuilder();
-            message.append( "\n****************************************\n"
-                    + "** WARNING: These asset packages do not match current build version " + mdwVersion + "\n");
-            for (Package p1 : obsoletePackages) {
-                message.append("**   "+p1.getLabel()+"\n");
+        if (!mismatches.isEmpty()) {
+            StringBuilder message = new StringBuilder();
+            message.append("\n****************************************\n"
+                    + "** WARNING: These asset packages do not match MDW runtime version " + mdwVersion + "\n");
+            for (Package mismatch : mismatches) {
+                message.append("**   " + mismatch.getLabel() + "\n");
             }
             message.append("******************************************\n");
             logger.warn(message.toString());
@@ -207,10 +227,7 @@ public class PackageCache implements PreloadableCache {
     }
 
     /**
-     *  To get all the versions of packageVOs(including archive) based on package name
-     * @param packageName
-     * @return
-     * @throws CachingException
+     *  To get all the versions of packages (including archive) based on package name
      */
     public static List<Package> getAllPackages(String packageName) throws CachingException {
         List<Package> allPackages = new ArrayList<>();
@@ -224,7 +241,7 @@ public class PackageCache implements PreloadableCache {
 
     public static Package getPackage(Long packageId) {
         try {
-            if (packageId == null || packageId.longValue() == 0)
+            if (packageId == null || packageId == 0)
                 return Package.getDefaultPackage();
 
             for (Package packageVO : getPackageList()) {

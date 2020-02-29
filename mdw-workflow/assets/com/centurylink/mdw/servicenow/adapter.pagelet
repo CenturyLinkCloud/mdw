@@ -1,0 +1,66 @@
+{"widgets": [
+  {
+    "label": "ServiceNow URL",
+    "name": "EndpointUri",
+    "type": "text"
+  },
+  {
+    "label": "Request Variable",
+    "name": "REQUEST_VARIABLE",
+    "source": "DocumentVariables",
+    "type": "dropdown",
+    "vw": "250"
+  },
+  {
+    "label": "Response Variable",
+    "name": "RESPONSE_VARIABLE",
+    "source": "DocumentVariables",
+    "type": "dropdown",
+    "vw": "250"
+  },
+  {
+    "label": "Connect Timeout (ms)",
+    "name": "ConnectTimeout",
+    "type": "text",
+    "vw": "100"
+  },
+  {
+    "label": "Read Timeout (ms)",
+    "name": "ReadTimeout",
+    "type": "text",
+    "vw": "100"
+  },
+  {
+    "label": "Max tries",
+    "name": "max_tries",
+    "type": "text",
+    "vw": "60"
+  },
+  {
+    "label": "Retry Interval (sec)",
+    "name": "retry_interval",
+    "type": "text",
+    "vw": "80"
+  },
+  {
+    "default": "${env['MDW_SERVICENOW_USER']}",
+    "label": "User",
+    "name": "AuthUser",
+    "section": "Authentication",
+    "type": "text",
+    "vw": "400"
+  },
+  {
+    "default": "${env['MDW_SERVICENOW_PASSWORD']}",
+    "label": "Password",
+    "name": "AuthPassword",
+    "section": "Authentication",
+    "type": "text",
+    "vw": "400"
+  },
+  {
+    "name": "ServiceNow Adapter",
+    "type": "help",
+    "url": "https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/servicenow/readme.md"
+  }
+]}

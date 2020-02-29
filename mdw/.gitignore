@@ -1,5 +1,6 @@
 build/
 deploy/
+debug/
 .gradle/
 .settings/
 bin/

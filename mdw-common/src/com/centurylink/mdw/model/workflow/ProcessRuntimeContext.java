@@ -310,11 +310,11 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         if (valueExpressionMap == null) {
             valueExpressionMap = new HashMap<>();
             valueExpressionMap.put("context", new ValueExpressionLiteral(this, Object.class));
+            valueExpressionMap.put("process", new ValueExpressionLiteral(this.processInstance, Object.class));
             valueExpressionMap.put("masterRequestId", new ValueExpressionLiteral(getMasterRequestId(), String.class));
             valueExpressionMap.put("mdwHubUrl", new ValueExpressionLiteral(ApplicationContext.getMdwHubUrl(), String.class));
             valueExpressionMap.put("processInstanceId", new ValueExpressionLiteral(this.getProcessInstanceId(), String.class));
             valueExpressionMap.put("processName", new ValueExpressionLiteral(this.process.getName(), String.class));
-            valueExpressionMap.put("process", new ValueExpressionLiteral(this.processInstance, Object.class));
             valueExpressionMap.put("variables", new ValueExpressionLiteral(this.getVariables() , Object.class));
             valueExpressionMap.put("props", new ValueExpressionLiteral(this.getPropertyAccessorMap(), Map.class));
             valueExpressionMap.put("env", new ValueExpressionLiteral(this.getEnvironmentAccessorMap(), Map.class));

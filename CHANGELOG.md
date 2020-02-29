@@ -1,5 +1,44 @@
 # Change Log
 
+## [6.1.31](https://github.com/CenturyLinkCloud/mdw/tree/6.1.31) (2020-02-14)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.30...6.1.31)
+
+**Implemented enhancements:**
+
+- Package dependencies [\#395](https://github.com/CenturyLinkCloud/mdw/issues/395)
+- App Version should be read from Spring Boot jar manifest [\#803](https://github.com/CenturyLinkCloud/mdw/issues/803)
+- Support package.yaml files with -SNAPSHOT versions [\#531](https://github.com/CenturyLinkCloud/mdw/issues/531)
+
+**Closed issues:**
+
+- Overlong activity log messages cause runtime SQLException [\#802](https://github.com/CenturyLinkCloud/mdw/issues/802)
+- Export to PDF does not include activity markdown documentation [\#801](https://github.com/CenturyLinkCloud/mdw/issues/801)
+- GitLab asset discovery limited by default per_page parameter value [\#794](https://github.com/CenturyLinkCloud/mdw/issues/794)
+- Broken CI due to Maven Central HTTPS requirement [\#793](https://github.com/CenturyLinkCloud/mdw/issues/793)
+- Dashboard Process Insights by Month is broken [\#765](https://github.com/CenturyLinkCloud/mdw/issues/765)
+- CLI dependencies failure with OpenJDK 11 [\#728](https://github.com/CenturyLinkCloud/mdw/issues/728)
+
+## [6.1.30](https://github.com/CenturyLinkCloud/mdw/tree/6.1.30) (2020-01-10)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.29...6.1.30)
+
+**Implemented enhancements:**
+
+- DependenciesFallbackPublish should handle pre-existing EVENT\_INSTANCE [\#791](https://github.com/CenturyLinkCloud/mdw/issues/791)
+- ServiceNow adapter activity [\#781](https://github.com/CenturyLinkCloud/mdw/issues/781)
+- Add primary key to ACTIVITY\_LOG table for Oracle [\#776](https://github.com/CenturyLinkCloud/mdw/issues/776)
+
+**Closed issues:**
+
+- Corruption in 6.1.29 asset zip files on Maven Central [\#790](https://github.com/CenturyLinkCloud/mdw/issues/790)
+- Unparseable adapter response content can prevent activity retry [\#784](https://github.com/CenturyLinkCloud/mdw/issues/784)
+- Annotated ProcessCleanup should not honor old property values [\#779](https://github.com/CenturyLinkCloud/mdw/issues/779)
+
+**Compatibility Notes:**
+
+- To avoid `Error: zip END header not found​` when updating to 6.1.30 assets, install the latest 
+  [CLI](https://centurylinkcloud.github.io/mdw/docs/getting-started/cli/) 
+  and/or [MDW Studio](https://centurylinkcloud.github.io/mdw/docs/guides/mdw-studio/) version 2.0.2 or later. 
+
 ## [6.1.29](https://github.com/CenturyLinkCloud/mdw/tree/6.1.29) (2019-12-13)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.28...6.1.29)
 
@@ -20,6 +59,33 @@
 - Adapter request Jsonables not unwrapped before invoke  [\#783](https://github.com/CenturyLinkCloud/mdw/issues/783)
 - Configurator Events tab not displayed for some activities [\#777](https://github.com/CenturyLinkCloud/mdw/issues/777)
 - Hub should save ClassName attribute for dynamic Java activities [\#699](https://github.com/CenturyLinkCloud/mdw/issues/699)
+
+**Compatibility Notes:**
+
+- The Groovy upgrade (issue [\#787](https://github.com/CenturyLinkCloud/mdw/issues/787)) exposes an issue with
+  Maven transitive dependency resolution due to POM repackaging of groovy-all-2.5.x.  Gradle builds are not affected, but if
+  you're using Maven you'll need to institute a workaround to avoid "Failure to find org.codehaus.groovy:groovy-all:jar:2.5.8".
+  This involves excluding groovy-all as a transitive dependency via MDW, and instead declaring groovy-all as a direct dependency
+  in your pom.xml:
+  ```xml
+      <dependency>
+          <groupId>com.centurylink.mdw</groupId>
+          <artifactId>mdw-spring-boot</artifactId>
+          <version>6.1.30</version>
+          <exclusions>
+              <exclusion>
+                  <groupId>org.codehaus.groovy</groupId>
+                  <artifactId>groovy-all</artifactId>
+              </exclusion>
+          </exclusions>
+      </dependency>
+      <dependency>
+          <groupId>org.codehaus.groovy</groupId>
+          <artifactId>groovy-all</artifactId>
+          <version>2.5.8</version>
+          <type>pom</type>
+      </dependency>  
+  ``` 
 
 ## [6.1.28](https://github.com/CenturyLinkCloud/mdw/tree/6.1.28) (2019-11-22)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.27...6.1.28)

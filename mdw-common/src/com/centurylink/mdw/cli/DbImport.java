@@ -49,7 +49,7 @@ public class DbImport extends DbOperation {
             String msg = "Import data into " + getDatabaseUrl() + "?";
             if (!noTruncate)
                 msg += "  All existing data will be OBLITERATED!";
-            msg += "Type 'yes'<Enter> to proceed.";
+            msg += "  Type 'yes'<Enter> to proceed.";
             getOut().println(msg);
             String entered = new Scanner(System.in).nextLine();
             if (!"yes".equalsIgnoreCase(entered))

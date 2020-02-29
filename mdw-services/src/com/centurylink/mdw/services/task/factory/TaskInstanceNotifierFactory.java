@@ -84,6 +84,7 @@ public class TaskInstanceNotifierFactory {
                 Process process = eventManager.findProcessByProcessInstanceId(processInstanceId);
                 if (process != null && process.getActivities() != null) {
                     TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(taskId);
+                    // for compatibility with notifiers registered on activities
                     for (Activity activity : process.getActivities()) {
                         if (taskVO.getLogicalId().equals(activity.getAttribute(TaskAttributeConstant.TASK_LOGICAL_ID))) {
                             noticesAttr = activity.getAttribute(TaskAttributeConstant.NOTICES);
@@ -95,7 +96,7 @@ public class TaskInstanceNotifierFactory {
             if (!StringUtils.isBlank(noticesAttr)) {
                 return parseNoticiesAttr(noticesAttr, outcome);
               }
-            return getNotifierSpecs(taskId, outcome); // For compatibility
+            return getNotifierSpecs(taskId, outcome);
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
             return null;

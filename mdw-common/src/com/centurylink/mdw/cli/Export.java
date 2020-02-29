@@ -60,17 +60,45 @@ public class Export extends Setup {
         return output;
     }
 
-    Export() {
+    Export() { }
 
+    @Override
+    public List<Dependency> getDependencies() throws IOException {
+        init();
+        return getProcessExporter().getDependencies();
     }
+
+    private String pkgFile;
+    private String procName;
 
     public Export run(ProgressMonitor... monitors) throws IOException {
 
+        init();
+
+        String content = new String(Files.readAllBytes(Paths.get(pkgFile + procName)));
+        Process proc = Process.fromString(content);
+        proc.setName(procName.substring(0, procName.length() - 5));
+
+        ProcessExporter exporter = getProcessExporter();
+        if (exporter instanceof PdfProcessExporter) {
+            ((PdfProcessExporter) exporter).setOutputDir(output);
+        } else if (exporter instanceof HtmlProcessExporter) {
+            ((HtmlProcessExporter) exporter).setOutputDir(output.getParentFile());
+        }
+
+        byte[] exported = exporter.export(proc);
+
+        if (exported != null)
+            Files.write(Paths.get(output.getPath()), exported);
+
+        return this;
+    }
+
+    private void init() throws IOException {
         int index = process.lastIndexOf('/');
         String pkg = process.substring(0, index);
-        String pkgFile = getAssetRoot() + "/" + pkg.replace('.', '/') + "/";
-        String procName = process.substring(index + 1);
-        String content = new String(Files.readAllBytes(Paths.get(pkgFile + procName)));
+        pkgFile = getAssetRoot() + "/" + pkg.replace('.', '/') + "/";
+        procName = process.substring(index + 1);
 
         if (output == null) {
             output = new File(pkgFile + procName.substring(0, procName.length() - 5) + "." + format);
@@ -89,30 +117,6 @@ public class Export extends Setup {
             if (!fileDir.exists() && !fileDir.mkdirs())
                 throw new IOException("Unable to create directory: " + fileDir);
         }
-
-        ProcessExporter exporter = getProcessExporter();
-        List<Dependency> dependencies = exporter.getDependencies();
-        if (dependencies != null) {
-            for (Dependency dependency : dependencies) {
-                dependency.run(monitors);
-            }
-        }
-
-        Process proc = Process.fromString(content);
-        proc.setName(procName.substring(0, procName.length() - 5));
-
-        if (exporter instanceof PdfProcessExporter) {
-            ((PdfProcessExporter) exporter).setOutputDir(output);
-        }else if (exporter instanceof HtmlProcessExporter) {
-            ((HtmlProcessExporter) exporter).setOutputDir(output.getParentFile());
-        }
-
-        byte[] exported = exporter.export(proc);
-
-        if (exported != null)
-            Files.write(Paths.get(output.getPath()), exported);
-
-        return this;
     }
 
     protected ProcessExporter getProcessExporter() throws IOException {

@@ -19,8 +19,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DbInfo {
 
@@ -47,17 +47,6 @@ public class DbInfo {
         return "url=" + url + ", user=" + user;
     }
 
-    public static Map<String,Long> getDependencies(String dbUrl) {
-        Map<String,Long> map = new HashMap<>();
-        if (dbUrl.startsWith("jdbc:mariadb"))
-            map.put("org/mariadb/jdbc/mariadb-java-client/2.5.1/mariadb-java-client-2.5.1.jar", 566457L);
-        else if (dbUrl.startsWith("jdbc:mysql"))
-            map.put("mysql/mysql-connector-java/5.1.29/mysql-connector-java-5.1.29.jar", 876730L);
-        else if (dbUrl.startsWith("jdbc:oracle"))
-            map.put("com/oracle/ojdbc6/12.1.0.2.0/ojdbc6-12.1.0.2.0.jar", 3692096L);
-        return map;
-    }
-
     public static String getDatabaseDriver(String dbUrl) {
         if (dbUrl.startsWith("jdbc:mariadb"))
             return "org.mariadb.jdbc.Driver";
@@ -68,6 +57,19 @@ public class DbInfo {
         else
             return null;
     }
+
+    public List<Dependency> getDependencies() {
+        List<Dependency> dependencies = new ArrayList<>();
+        if (url.startsWith("jdbc:mariadb"))
+            dependencies.add(new Dependency("org/mariadb/jdbc/mariadb-java-client/2.5.1/mariadb-java-client-2.5.1.jar", 566457L));
+        else if (url.startsWith("jdbc:mysql"))
+            dependencies.add(new Dependency("mysql/mysql-connector-java/5.1.29/mysql-connector-java-5.1.29.jar", 876730L));
+        else if (url.startsWith("jdbc:oracle"))
+            dependencies.add(new Dependency("com/oracle/ojdbc6/12.1.0.2.0/ojdbc6-12.1.0.2.0.jar", 3692096L));
+        dependencies.add(new Dependency("com/google/guava/guava/23.0/guava-23.0.jar", 2614708L));
+        return dependencies;
+    }
+
 
     public void loadDbDriver() throws IOException {
         try {

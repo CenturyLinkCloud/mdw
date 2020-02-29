@@ -57,14 +57,14 @@ public class Paths extends Setup {
     private List<ServicePath> swaggerPaths;
 
     @Override
+    public List<Dependency> getDependencies() throws IOException {
+        return new DbInfo(new Props(this)).getDependencies();
+    }
+
+    @Override
     public Paths run(ProgressMonitor... monitors) throws IOException {
 
         DbInfo db = new DbInfo(new Props(this));
-
-        Map<String,Long> dbDependencies = DbInfo.getDependencies(db.getUrl());
-        for (String dep : dbDependencies.keySet()) {
-            new Dependency(Setup.MAVEN_CENTRAL_URL, dep, dbDependencies.get(dep)).run(monitors);
-        }
 
         if (normalize) {
             swaggerPaths = getSwaggerPaths();
@@ -110,7 +110,7 @@ public class Paths extends Setup {
                                 uniquePaths.add(normalized.getPath());
                         }
                         else {
-                            getOut().println("  - " + path);
+                            getOut().println("  - " + servicePath);
                         }
                     }
                 }

@@ -211,7 +211,7 @@ public class HierarchyCache implements CacheService {
     private static List<Linked<Process>> getInvoked(ScopedActivity scopedActivity)
             throws DataAccessException {
         List<Linked<Process>> invoked = new ArrayList<>();
-        for (Linked<Process> subprocess : scopedActivity.findInvoked(ProcessCache.getAllProcesses())) {
+        for (Linked<Process> subprocess : scopedActivity.findInvoked(ProcessCache.getProcesses(false))) {
             if (!isIgnored(subprocess.get()))
                 invoked.add(subprocess);
         }
@@ -236,7 +236,7 @@ public class HierarchyCache implements CacheService {
         List<Long> milestoned = new ArrayList<>();
         try {
             if (PackageCache.getPackage(MILESTONES_PACKAGE) != null) {
-                for (Process process : ProcessCache.getAllProcesses()) {
+                for (Process process : ProcessCache.getProcesses(false)) {
                     List<Linked<Process>> hierarchyList = getHierarchy(process.getId());
                     if (!hierarchyList.isEmpty()) {
                         if (hasMilestones(hierarchyList.get(0))) {

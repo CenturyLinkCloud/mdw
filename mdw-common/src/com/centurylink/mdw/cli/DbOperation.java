@@ -6,7 +6,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 public class DbOperation extends Setup {
 
@@ -14,14 +13,12 @@ public class DbOperation extends Setup {
     private static String ORACLE_DRIVER_ASSET = "com.centurylink.mdw.oracle/" + ORACLE_DRIVER_JAR;
 
     @Override
+    public List<Dependency> getDependencies() throws IOException {
+        return new DbInfo(new Props(this)).getDependencies();
+    }
+
+    @Override
     public Operation run(ProgressMonitor... monitors) throws IOException {
-        // db dependencies
-        Props props = new Props(this);
-        DbInfo dbInfo = new DbInfo(props);
-        Map<String,Long> dbDependencies = DbInfo.getDependencies(dbInfo.getUrl());
-        for (String dep : dbDependencies.keySet()) {
-            new Dependency(getReleasesUrl(), dep, dbDependencies.get(dep)).run(monitors);
-        }
         File oracleDriverAsset = getAssetFile(ORACLE_DRIVER_ASSET);
         if (oracleDriverAsset != null && oracleDriverAsset.isFile()) {
             File libDir = Dependency.getLibDir();
@@ -30,7 +27,6 @@ public class DbOperation extends Setup {
                 new Copy(oracleDriverAsset, oraJar).run();
             }
         }
-        new Dependency(getReleasesUrl(), "com/google/guava/guava/23.0/guava-23.0.jar", 2614708L).run(monitors);
         return this;
     }
 

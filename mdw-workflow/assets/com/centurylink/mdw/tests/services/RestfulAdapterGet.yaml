@@ -26,7 +26,7 @@ process: # 10229
         "appId": "${~mdw.*}",
         "appVersion": "${~.*}",
         "authMethod": "${~.*}",
-        "mdwBuild": "${~201.*}",
+        "mdwBuild": "${~20.*}",
         "mdwHubUrl": "${~http.*}",
         "mdwVersion": "${~6.*}",
         "repository": {

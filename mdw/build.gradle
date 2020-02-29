@@ -4,6 +4,7 @@ buildscript {
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
     }
     dependencies {
+        classpath("org.yaml:snakeyaml:1.18")
         classpath("org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.7")
     }
 }
@@ -297,7 +298,7 @@ task checkAssetVersions(type: Exec) {
     else {
         mdwCmd = 'cli/bin/mdw'
     }
-    def cmds = [mdwCmd, 'vercheck', '--tag=' + mdwPrevTag, '--warn', '--debug']
+    def cmds = [mdwCmd, 'vercheck', '--tag=' + mdwPrevTag, '--warn', '--no-progress']
     commandLine cmds
 }
 

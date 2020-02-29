@@ -16,10 +16,9 @@ and "Unit" for the wait amount (Seconds, Minutes, or Hours, and
 default to Minutes).
 <p>
 This attribute can also take a <a href="bindingExpressions.html">binding expression</a> instead of a fixed
-number. For example, you can specify "<code>$myvar</code>", which is a variable
+number. For example, you can specify "<code>${myvar}</code>", which is a variable
 that is supposed to contain an integer value indicating the number
-of minutes to wait. You can use either Java code or script language
-to calculate the value dynamically.
+of seconds to wait. You can use an expression to calculate the value dynamically.
 <p>
 Alternatively, you can subclass this implementor 
 and override the method <code>int getWaitPeriodInSeconds()</code>

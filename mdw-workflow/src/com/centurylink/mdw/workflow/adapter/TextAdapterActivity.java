@@ -110,7 +110,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
      * or the value is not bound to a DocumentReference or String.
      */
     protected String getRequestData() throws ActivityException {
-        String varname = getAttributeValue(REQUEST_VARIABLE);
+        String varname = getAttributeValueSmart(REQUEST_VARIABLE);
         Object request = varname == null ? null : getParameterValue(varname);
 
         if (hasPreScript()) {
@@ -789,15 +789,19 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         ActivityRuntimeContext runtimeContext = null;
         List<AdapterMonitor> monitors = null;
         try {
-            runtimeContext = getRuntimeContext();
-            monitors = MonitorRegistry.getInstance().getAdapterMonitors(runtimeContext);
-            for (AdapterMonitor monitor : monitors) {
-                String altRequest = (String)monitor.onRequest(runtimeContext, request, headers, connection);
-                if (altRequest != null) {
-                    request.setContent(altRequest);
-                    if (request.getId() != null && request.getId() > 0) {
-                        DocumentReference requestRef = new DocumentReference(request.getId());
-                        updateDocumentContent(requestRef, request.getContent(), String.class.getName());
+            // retrieve all monitors first to see whether there are any before reloading runtimeContext
+            monitors = MonitorRegistry.getInstance().getAdapterMonitors();
+            if (!monitors.isEmpty()) {
+                runtimeContext = getRuntimeContext();
+                monitors = MonitorRegistry.getInstance().getAdapterMonitors(runtimeContext);
+                for (AdapterMonitor monitor : monitors) {
+                    String altRequest = (String)monitor.onRequest(runtimeContext, request, headers, connection);
+                    if (altRequest != null) {
+                        request.setContent(altRequest);
+                        if (request.getId() != null && request.getId() > 0) {
+                            DocumentReference requestRef = new DocumentReference(request.getId());
+                            updateDocumentContent(requestRef, request.getContent(), String.class.getName());
+                        }
                     }
                 }
             }

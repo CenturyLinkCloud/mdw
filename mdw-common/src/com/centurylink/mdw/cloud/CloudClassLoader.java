@@ -178,7 +178,8 @@ public class CloudClassLoader extends ClassLoader {
 
         java.lang.Package pkg = getPackage(pkgName);
         if (pkg == null)
-            definePackage(pkgName, null, null, null, "MDW", mdwPackage.getVersionString(), "CenturyLink", null);
+            definePackage(pkgName, null, null, null, "MDW",
+                    mdwPackage.getVersion().toString(), "CenturyLink", null);
         found = defineClass(name, b, 0, b.length);
         Class<?> temp = sharedClassCache.putIfAbsent(name, found);
         classesFound.put(name, new byte[1]);  // byte[1] means found and loaded

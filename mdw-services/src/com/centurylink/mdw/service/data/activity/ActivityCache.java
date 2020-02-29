@@ -17,6 +17,7 @@ package com.centurylink.mdw.service.data.activity;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.cache.CacheService;
+import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.Process;
@@ -38,24 +39,29 @@ public class ActivityCache implements CacheService {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static Map<String,List<Activity>> activities = new HashMap<>();
 
+    public static List<Activity> getActivities(String implementor) throws DataAccessException {
+        return getActivities(implementor, false);
+    }
+
     /**
      * Find activities in process defs with the specified implementor class.
      */
-    public static List<Activity> getActivities(String implementor) throws DataAccessException {
+    public static List<Activity> getActivities(String implementor, boolean withArchived) throws DataAccessException {
         synchronized (ActivityCache.class) {
             List<Activity> matchingActivities = activities.get(implementor);
             if (matchingActivities == null) {
-                matchingActivities = loadActivities(implementor);
+                matchingActivities = loadActivities(implementor, withArchived);
                 activities.put(implementor, matchingActivities);
             }
             return matchingActivities;
         }
     }
 
-    private static List<Activity> loadActivities(String implementor) throws DataAccessException {
+    private static List<Activity> loadActivities(String implementor, boolean withArchived) throws DataAccessException {
         List<Activity> loadedActivities = new ArrayList<>();
         long before = System.currentTimeMillis();
-        for (Process process : ProcessCache.getAllProcesses()) {
+        List<Process> processes = ProcessCache.getProcesses(withArchived);
+        for (Process process : processes) {
             process = ProcessCache.getProcess(process.getId());
             for (Activity activity : process.getActivities()) {
                 if (implementor.equals(activity.getImplementor())) {

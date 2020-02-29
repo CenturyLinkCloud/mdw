@@ -60,6 +60,7 @@ public class WebAppContext {
 
             initMdwBuildVersion();
             mdw = new Mdw(mdwVersion, mdwBuild, hubRoot, servicesRoot, assetRoot, overridePackage);
+            mdw.setAppVersion(ApplicationContext.getAppVersion());
 
             boolean isDev = "dev".equals(System.getProperty("mdw.runtime.env"));
             if (isDev) {
@@ -120,11 +121,13 @@ public class WebAppContext {
 
     private static String mdwVersion;
     private static String mdwBuild;
+    private static String appVersion;
 
     private static void initMdwBuildVersion() throws IOException {
         if (mdwVersion == null) {
             mdwVersion = ApplicationContext.getMdwVersion();
             mdwBuild = ApplicationContext.getMdwBuildTimestamp();
+            appVersion = ApplicationContext.getAppVersion();
         }
     }
 

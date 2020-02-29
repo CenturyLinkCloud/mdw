@@ -16,169 +16,129 @@
 package com.centurylink.mdw.pdf;
 
 import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.export.ExportHelper;
+import com.centurylink.mdw.export.Table;
+import com.centurylink.mdw.html.HtmlExportHelper;
+import com.centurylink.mdw.image.PngProcessExporter;
 import com.centurylink.mdw.image.ProcessCanvas;
-import com.centurylink.mdw.model.project.Project;
+import com.centurylink.mdw.model.asset.Pagelet;
 import com.centurylink.mdw.model.attribute.Attribute;
-import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.ActivityNodeSequencer;
 import com.centurylink.mdw.model.workflow.Process;
-import com.itextpdf.text.*;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.*;
+import com.itextpdf.text.api.Spaceable;
 import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.tool.xml.ElementList;
 import com.itextpdf.tool.xml.XMLWorkerHelper;
 
 import java.awt.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class PdfExportHelper extends ExportHelper {
+public class PdfExportHelper extends HtmlExportHelper {
 
-    private Font chapterFont;
-    private Font sectionFont;
-    private Font subSectionFont;
-    private Font normalFont;
-    private Font fixedWidthFont;
-    private Font boldFont;
+    private Font chapterFont = FontFactory.getFont(FontFactory.HELVETICA, 18, Font.BOLD);
+    private Font sectionFont = FontFactory.getFont(FontFactory.HELVETICA, 14, Font.BOLD);
+    private Font subSectionFont = FontFactory.getFont(FontFactory.HELVETICA, 12, Font.BOLD);
+    private Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL);
+    private Font fixedWidthFont = FontFactory.getFont(FontFactory.COURIER, 8, Font.NORMAL);
+    private Font boldFont = FontFactory.getFont(FontFactory.HELVETICA, 12, Font.BOLD);
+    private Font spacerFont =  FontFactory.getFont(FontFactory.HELVETICA, 4, Font.NORMAL);
+    private ParagraphBorder paragraphBorder = new ParagraphBorder();
 
     public static final String ACTIVITY = "Activity ";
 
     public PdfExportHelper(Project project) {
         super(project);
-        chapterFont = FontFactory.getFont(FontFactory.TIMES, 20, Font.BOLD);
-        sectionFont = FontFactory.getFont(FontFactory.TIMES, 16, Font.BOLD);
-        subSectionFont = FontFactory.getFont(FontFactory.TIMES, 14, Font.BOLD);
-        normalFont = FontFactory.getFont(FontFactory.TIMES, 12, Font.NORMAL);
-        boldFont = FontFactory.getFont(FontFactory.TIMES, 12, Font.BOLD);
-        fixedWidthFont = FontFactory.getFont(FontFactory.COURIER, 11, Font.NORMAL);
     }
 
-    public byte[] exportProcess(Process process, File outputFile) throws Exception {
+    public byte[] exportProcess(Process process, File outputFile) throws IOException {
         new ActivityNodeSequencer(process).assignNodeSequenceIds();
         Document document = new Document();
-        DocWriter writer = PdfWriter.getInstance(document, new FileOutputStream(outputFile));
-        document.open();
-        document.setPageSize(PageSize.LETTER);
-        Rectangle pageSize = document.getPageSize();
-        Chapter chapter = printProcessPdf(writer, 1, process, pageSize);
-        document.add(chapter);
-        document.close();
+        try {
+            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(outputFile));
+            writer.setPageEvent(paragraphBorder);
+            document.open();
+            document.setPageSize(PageSize.LETTER);
+            Rectangle pageSize = document.getPageSize();
+            Chapter chapter = printProcess(writer, 1, process, pageSize);
+            document.add(chapter);
+            document.close();
 
-        return Files.readAllBytes(Paths.get(outputFile.getPath()));
+            return Files.readAllBytes(Paths.get(outputFile.getPath()));
+        } catch (Exception ex) {
+            if (ex instanceof IOException)
+                throw (IOException) ex;
+            else
+                throw new IOException(ex);
+        }
     }
 
-    private Chapter printProcessPdf(DocWriter writer, int chapterNumber, Process process,
-            Rectangle pageSize) throws Exception {
-        Paragraph cTitle = new Paragraph("Workflow Process: \"" + process.getName() + "\"",
-                chapterFont);
-        Chapter chapter = new Chapter(cTitle, chapterNumber);
-        // print image
-        ProcessCanvas canvas = new ProcessCanvas(project, process);
-        canvas.prepare();
-        printGraph(writer, canvas, process, pageSize, chapter);
-        canvas.dispose();
-        // print documentation text
-        printGraphDocumentation(process, chapter);
-        for (Activity node : process.getActivitiesOrderBySeq()) {
-            printActivity(node, chapter);
+    private Chapter printProcess(DocWriter writer, int chapterNumber, Process process, Rectangle pageSize) throws Exception {
+        Paragraph title = new Paragraph("Workflow: \"" + process.getName() + "\"",  chapterFont);
+        Chapter chapter = new Chapter(title, chapterNumber);
+
+        // diagram
+        printDiagram(writer, chapter, process, pageSize);
+
+        // documentation
+        printDocumentation(process, chapter);
+
+        // activities
+        for (Activity activity : process.getActivitiesOrderBySeq()) {
+            printActivity(activity, chapter);
         }
+
+        // subprocesses
         for (Process subproc : process.getSubprocesses()) {
-            printGraphDocumentation(subproc, chapter);
+            printDocumentation(subproc, chapter);
             for (Activity node : subproc.getActivitiesOrderBySeq()) {
                 printActivity(node, chapter);
             }
         }
-        printVariables(chapter, process.getVariables(), 1);
+
+        // variables
+        printVariables(chapter, process, 1);
+
         return chapter;
     }
 
-    private void printAttributes(Section section, List<Attribute> attrs, int parentLevel) {
-        Paragraph sTitle = new Paragraph("Activity Attributes", subSectionFont);
-        Section subsection = section.addSection(sTitle, parentLevel == 0 ? 0 : (parentLevel + 1));
-        com.itextpdf.text.List list = new com.itextpdf.text.List(false, false, 20.0f);
-        for (Attribute attr : attrs) {
-            if (excludeAttribute(attr.getName(), attr.getValue()))
-                continue;
-            Phrase phrase = new com.itextpdf.text.Phrase();
-            phrase.add(new Chunk(attr.getName(), fixedWidthFont));
-            String v = attr.getValue();
-            if (v == null)
-                v = "";
-            phrase.add(new Chunk(": " + v, normalFont));
-            list.add(new ListItem(phrase));
-        }
-        subsection.add(list);
-    }
+    private void printDiagram(DocWriter writer, Chapter chapter, Process process,
+            Rectangle pageSize) throws Exception {
+        ProcessCanvas canvas = new ProcessCanvas(project, process);
+        canvas.prepare();
 
-    private void printVariables(Chapter chapter, List<Variable> variables, int parentLevel) {
-        Paragraph sTitle = new Paragraph("Process Variables", sectionFont);
-        Section section = chapter.addSection(sTitle, parentLevel == 0 ? 0 : (parentLevel + 1));
-        com.itextpdf.text.List list = new com.itextpdf.text.List(false, false, 10.0f);
-        for (Variable var : variables) {
-            Phrase phrase = new Phrase();
-            phrase.add(new Chunk(var.getName(), fixedWidthFont));
-            String v = var.getType();
-            if (var.getDescription() != null)
-                v += " (" + var.getDescription() + ")";
-            phrase.add(new Chunk(": " + v + "\n", normalFont));
-            list.add(new ListItem(phrase));
-        }
-        section.add(list);
-    }
-
-    private void printActivity(Activity act, Chapter chapter) throws Exception {
-        Section section;
-        String tmp = ACTIVITY + act.getLogicalId() + ": \"" + act.getName().replace('\n', ' ')
-                + "\n";
-        Paragraph sTitle = new Paragraph(tmp, sectionFont);
-        section = chapter.addSection(sTitle, 2);
-        String summary = act.getAttribute(WorkAttributeConstant.DESCRIPTION);
-        if (summary != null && summary.length() > 0) {
-            printBoldParagraphs(section, summary);
-        }
-
-        String detail = act.getAttribute(WorkAttributeConstant.DOCUMENTATION);
-        if (detail != null && detail.length() > 0) {
-            printHtmlParagraphs(section, detail, 2);
-            section.add(
-                    new Paragraph("\n", FontFactory.getFont(FontFactory.TIMES, 4, Font.NORMAL)));
-        }
-        if (!act.getAttributes().isEmpty()) {
-            printAttributes(section, act.getAttributes(), 2);
-        }
-        section.add(new Paragraph("\n", normalFont));
-    }
-
-    private void printGraph(DocWriter writer, ProcessCanvas canvas, Process process,
-            Rectangle pageSize, Chapter chapter)
-            throws Exception {
-        Dimension graphsize = getGraphSize(process);
-        // we create a template and a Graphics2D object that corresponds with it
+        Dimension size = new PngProcessExporter(project).getDiagramSize(process);
+        // create a template and a Graphics2D object that corresponds with it
         int w;
         int h;
         float scale;
-        if ((float) graphsize.width < pageSize.getWidth() * 0.8
-                && (float) graphsize.height < pageSize.getHeight() * 0.8) {
-            w = graphsize.width + 36;
-            h = graphsize.height + 36;
+        if ((float) size.width < pageSize.getWidth() * 0.8
+                && (float) size.height < pageSize.getHeight() * 0.8) {
+            w = size.width + 36;
+            h = size.height + 36;
             scale = -1f;
         }
         else {
-            scale = pageSize.getWidth() * 0.8f / (float) graphsize.width;
-            if (scale > pageSize.getHeight() * 0.8f / (float) graphsize.height)
-                scale = pageSize.getHeight() * 0.8f / (float) graphsize.height;
-            w = (int) (graphsize.width * scale) + 36;
-            h = (int) (graphsize.height * scale) + 36;
+            scale = pageSize.getWidth() * 0.8f / (float) size.width;
+            if (scale > pageSize.getHeight() * 0.8f / (float) size.height)
+                scale = pageSize.getHeight() * 0.8f / (float) size.height;
+            w = (int) (size.width * scale) + 36;
+            h = (int) (size.height * scale) + 36;
         }
-        Image img;
         canvas.setBackground(Color.white);
         PdfContentByte cb = ((PdfWriter) writer).getDirectContent();
         PdfTemplate tp = cb.createTemplate(w, h);
@@ -189,35 +149,117 @@ public class PdfExportHelper extends ExportHelper {
         tp.setHeight(h);
         canvas.paintComponent(g2);
         g2.dispose();
-        img = new ImgTemplate(tp);
+        Image img = new ImgTemplate(tp);
         chapter.add(img);
+        canvas.dispose();
     }
 
-    private void printGraphDocumentation(Process process, Chapter chapter) throws Exception {
-        Section section;
-        String tmp;
+    private void printDocumentation(Process process, Chapter chapter) throws Exception {
+        String title;
         if (process.isEmbeddedProcess()) {
             String id = process.getAttribute(WorkAttributeConstant.LOGICAL_ID);
             if (id == null || id.length() == 0)
                 id = process.getId().toString();
-            tmp = "Subprocess " + id + ": \"" + process.getName().replace('\n', ' ') + "\"";
+            title = "Subprocess " + id + ": \"" + process.getName().replace('\n', ' ') + "\"";
         }
         else {
-            tmp = "Process Description";
+            title = "Documentation";
         }
-        Paragraph sTitle = new Paragraph(tmp, sectionFont);
-        sTitle.setSpacingBefore(10);
-        section = chapter.addSection(sTitle, 2);
+        Paragraph paragraph = new Paragraph(title, sectionFont);
+        paragraph.setSpacingBefore(10);
+        paragraph.setSpacingAfter(5);
+        Section section = chapter.addSection(paragraph, 2);
+
         String summary = process.getDescription();
         if (summary != null && summary.length() > 0)
+            printBoldParagraphs(chapter, summary);
+        String markdown = process.getAttribute(WorkAttributeConstant.DOCUMENTATION);
+        if (markdown != null && markdown.length() > 0) {
+            printHtml(section, getHtml(markdown));
+        }
+    }
+
+    private void printAttributes(Section section, Activity activity, int parentLevel) throws Exception {
+        Paragraph title = new Paragraph("Attributes", subSectionFont);
+        Section subsection = section.addSection(title, parentLevel == 0 ? 0 : (parentLevel + 1));
+        subsection.add(new Paragraph("\n", spacerFont));
+
+        com.itextpdf.text.List list = new com.itextpdf.text.List(false, false, 10);
+        list.setIndentationLeft(20);
+        List<Attribute> attributes = activity.getAttributes();
+        List<Attribute> sortedAttributes = new ArrayList<>(attributes);
+        Collections.sort(sortedAttributes);
+
+        for (Attribute attribute : sortedAttributes) {
+            if (!isExcludeAttribute(attribute.getName(), attribute.getValue())) {
+                Paragraph paragraph = new Paragraph();
+                paragraph.add(new Chunk(getAttributeLabel(activity, attribute) + ": ", normalFont));
+                printAttributeValue(paragraph, activity, attribute);
+                list.add(new ListItem(paragraph));
+            }
+        }
+        subsection.add(list);
+    }
+
+    private void printAttributeValue(Paragraph paragraph, Activity activity,
+            Attribute attribute) throws Exception {
+        if (attribute.getValue() == null)
+            return;
+
+        Pagelet.Widget widget = getWidget(activity, attribute.getName());
+        if (widget != null || WorkAttributeConstant.MONITORS.equals(attribute.getName())) {
+            if (isTabular(activity, attribute)) {
+                Table table = getTable(activity, attribute);
+                printHtml(paragraph, getTableHtml(table), 30);
+            }
+            else if (isCode(activity, attribute)) {
+                printCodeBox(paragraph, attribute.getValue());
+            }
+            else {
+                paragraph.add(new Chunk(attribute.getValue(), normalFont));
+            }
+        }
+        else {
+            paragraph.add(new Chunk(attribute.getValue(), normalFont));
+        }
+    }
+
+    private void printCodeBox(Paragraph paragraph, String code) {
+        // TODO border doesn't work
+        paragraphBorder.setActive(true);
+        Paragraph subParagraph = new Paragraph(code, fixedWidthFont);
+        paragraph.setIndentationLeft(30);
+        paragraph.add(subParagraph);
+        paragraphBorder.setActive(false);
+    }
+
+    private void printVariables(Chapter chapter, Process process, int parentLevel) throws Exception {
+        Paragraph title = new Paragraph("Process Variables", sectionFont);
+        title.setSpacingBefore(5);
+        Section section = chapter.addSection(title, parentLevel == 0 ? 0 : (parentLevel + 1));
+        section.add(new Paragraph("\n", normalFont));
+        printHtml(section, getVariablesHtml(process));
+    }
+
+    private void printActivity(Activity activity, Chapter chapter) throws Exception {
+        String title = ACTIVITY + activity.getLogicalId() + ": \"" + activity.getName().replaceAll("\\R", " ") + "\"\n";
+        Paragraph paragraph = new Paragraph(title, sectionFont);
+        paragraph.setSpacingBefore(10);
+        paragraph.setSpacingAfter(5);
+        Section section = chapter.addSection(paragraph, 2);
+
+        String summary = activity.getAttribute(WorkAttributeConstant.DESCRIPTION);
+        if (summary != null && summary.length() > 0) {
             printBoldParagraphs(section, summary);
-        String detail = process.getAttribute(WorkAttributeConstant.DOCUMENTATION);
-        if (detail != null && detail.length() > 0) {
-            printHtmlParagraphs(section, getHtmlContent(detail), 0);
         }
 
-        if (!process.getAttributes().isEmpty() && process.isEmbeddedProcess()) {
-            printAttributes(section, process.getAttributes(), 2);
+        String markdown = activity.getAttribute(WorkAttributeConstant.DOCUMENTATION);
+        if (markdown != null && markdown.length() > 0) {
+            printHtml(section, getHtml(markdown));
+        }
+
+        if (!isEmpty(activity.getAttributes())) {
+            printAttributes(section, activity, 2);
         }
     }
 
@@ -244,16 +286,51 @@ public class PdfExportHelper extends ExportHelper {
         }
     }
 
-    private void printHtmlParagraphs(Section section, String content, int parentLevel)
-            throws Exception {
-        if (content == null || content.length() == 0)
+    private void printHtml(Section section, String html) throws Exception {
+        Paragraph paragraph = new Paragraph();
+        printHtml(paragraph, html, 0f);
+        section.add(paragraph);
+    }
+
+    private void printHtml(Paragraph paragraph, String html, float indent) throws Exception {
+        if (html == null || html.length() == 0)
             return;
-        Paragraph comb = new Paragraph();
-        ElementList list = XMLWorkerHelper.parseToElementList(content, null);
+
+        html = html.replaceAll("</p>", "</p><br/>");
+
+        ElementList list = XMLWorkerHelper.parseToElementList(html, null);
         for (Element element : list) {
-            comb.add(element);
+            if (element instanceof Spaceable)
+                ((Spaceable)element).setSpacingBefore(0);
+            paragraph.add(element);
         }
-        section.add(comb);
-        section.add(new Paragraph("\n", normalFont));
+        if (indent > 0)
+            paragraph.setIndentationLeft(indent);
+        paragraph.setSpacingBefore(0f);
+    }
+
+    class ParagraphBorder extends PdfPageEventHelper {
+        public boolean active = false;
+        public void setActive(boolean active) {
+            this.active = active;
+        }
+
+        public float offset = 5;
+        public float startPosition;
+
+        @Override
+        public void onParagraph(PdfWriter writer, Document document, float paragraphPosition) {
+            this.startPosition = paragraphPosition;
+        }
+
+        @Override
+        public void onParagraphEnd(PdfWriter writer, Document document, float paragraphPosition) {
+            if (active) {
+                PdfContentByte cb = writer.getDirectContentUnder();
+                cb.rectangle(document.left(), paragraphPosition - offset, document.right() - document.left(),
+                        startPosition - paragraphPosition);
+                cb.stroke();
+            }
+        }
     }
 }

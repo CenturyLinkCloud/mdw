@@ -1,0 +1,13 @@
+package com.centurylink.mdw.tests.services
+
+def groupName = 'Just Another Group'
+
+// clean up from previous test
+def encoded = java.net.URLEncoder.encode(groupName, 'UTF-8').replace("+", "%20")
+delete http("api/Workgroups/${encoded}")
+
+def response = post http("api/com/centurylink/mdw/tests/services/perf5req-resp") {
+    headers = [ "Content-Type": "application/json", "request-id": masterRequestId]
+    payload = "{ \"groupName\": \"${groupName}\" }"
+}
+assert response.code == 200

@@ -525,25 +525,6 @@
 <ul class="blockList">
 <li class="blockList">
 <table class="constantsSummary" border="0" cellpadding="3" cellspacing="0" summary="Constant Field Values table, listing constant fields, and values">
-<caption><span>com.centurylink.mdw.app.<a href="com/centurylink/mdw/app/ApplicationContext.html" title="class in com.centurylink.mdw.app">ApplicationContext</a></span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th scope="col">Constant Field</th>
-<th class="colLast" scope="col">Value</th>
-</tr>
-<tbody>
-<tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.app.ApplicationContext.BUILD_VERSION_FILE">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/app/ApplicationContext.html#BUILD_VERSION_FILE">BUILD_VERSION_FILE</a></code></td>
-<td class="colLast"><code>"buildversion.properties"</code></td>
-</tr>
-</tbody>
-</table>
-</li>
-<li class="blockList">
-<table class="constantsSummary" border="0" cellpadding="3" cellspacing="0" summary="Constant Field Values table, listing constant fields, and values">
 <caption><span>com.centurylink.mdw.app.<a href="com/centurylink/mdw/app/Compatibility.html" title="class in com.centurylink.mdw.app">Compatibility</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
@@ -734,6 +715,32 @@
 </li>
 <li class="blockList">
 <table class="constantsSummary" border="0" cellpadding="3" cellspacing="0" summary="Constant Field Values table, listing constant fields, and values">
+<caption><span>com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Operation.html" title="interface in com.centurylink.mdw.cli">Operation</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th scope="col">Constant Field</th>
+<th class="colLast" scope="col">Value</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><a name="com.centurylink.mdw.cli.Operation.MAVEN_CENTRAL_URL">
+<!--   -->
+</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
+<td><code><a href="com/centurylink/mdw/cli/Operation.html#MAVEN_CENTRAL_URL">MAVEN_CENTRAL_URL</a></code></td>
+<td class="colLast"><code>"https://repo.maven.apache.org/maven2"</code></td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a name="com.centurylink.mdw.cli.Operation.SONATYPE_URL">
+<!--   -->
+</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
+<td><code><a href="com/centurylink/mdw/cli/Operation.html#SONATYPE_URL">SONATYPE_URL</a></code></td>
+<td class="colLast"><code>"https://oss.sonatype.org/service/local/artifact/maven"</code></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li class="blockList">
+<table class="constantsSummary" border="0" cellpadding="3" cellspacing="0" summary="Constant Field Values table, listing constant fields, and values">
 <caption><span>com.centurylink.mdw.cli.<a href="com/centurylink/mdw/cli/Props.ProjectYaml.html" title="class in com.centurylink.mdw.cli">Props.ProjectYaml</a></span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
@@ -775,32 +782,18 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.cli.Setup.MAVEN_CENTRAL_URL">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/cli/Setup.html#MAVEN_CENTRAL_URL">MAVEN_CENTRAL_URL</a></code></td>
-<td class="colLast"><code>"http://repo.maven.apache.org/maven2"</code></td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.cli.Setup.MDW_COMMON_PATH">
 <!--   -->
 </a><code>protected&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/cli/Setup.html#MDW_COMMON_PATH">MDW_COMMON_PATH</a></code></td>
 <td class="colLast"><code>"/com/centurylink/mdw/mdw-templates/"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.cli.Setup.META_DIR">
 <!--   -->
 </a><code>protected&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/cli/Setup.html#META_DIR">META_DIR</a></code></td>
 <td class="colLast"><code>".mdw"</code></td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><a name="com.centurylink.mdw.cli.Setup.SONATYPE_URL">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/cli/Setup.html#SONATYPE_URL">SONATYPE_URL</a></code></td>
-<td class="colLast"><code>"https://oss.sonatype.org/service/local/artifact/maven"</code></td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.cli.Setup.VERSIONS">
@@ -2498,90 +2491,97 @@
 <td class="colLast"><code>"mdw.wait.fallback.age"</code></td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_WAIT_FALLBACK_ARCHIVED">
+<!--   -->
+</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
+<td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_WAIT_FALLBACK_ARCHIVED">MDW_WAIT_FALLBACK_ARCHIVED</a></code></td>
+<td class="colLast"><code>"mdw.wait.fallback.archived"</code></td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_WAIT_FALLBACK_MAX">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_WAIT_FALLBACK_MAX">MDW_WAIT_FALLBACK_MAX</a></code></td>
 <td class="colLast"><code>"mdw.wait.fallback.max"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_WAIT_FALLBACK_STAGGER">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_WAIT_FALLBACK_STAGGER">MDW_WAIT_FALLBACK_STAGGER</a></code></td>
 <td class="colLast"><code>"mdw.wait.fallback.stagger"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_WAR_NAME">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_WAR_NAME">MDW_WAR_NAME</a></code></td>
 <td class="colLast"><code>"mdw.war.name"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.MDW_WEBSOCKET_URL">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#MDW_WEBSOCKET_URL">MDW_WEBSOCKET_URL</a></code></td>
 <td class="colLast"><code>"mdw.websocket.url"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.PROCESS_CLEANUP">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#PROCESS_CLEANUP">PROCESS_CLEANUP</a></code></td>
 <td class="colLast"><code>"MDWFramework.ProcessCleanup"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.SCHEDULED_EVENTS_BATCH_SIZE">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#SCHEDULED_EVENTS_BATCH_SIZE">SCHEDULED_EVENTS_BATCH_SIZE</a></code></td>
 <td class="colLast"><code>"mdw.scheduled.events.max.batch.size"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.SCHEDULED_EVENTS_MEMORY_RANGE">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#SCHEDULED_EVENTS_MEMORY_RANGE">SCHEDULED_EVENTS_MEMORY_RANGE</a></code></td>
 <td class="colLast"><code>"mdw.scheduled.events.memory.range"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.TASK_NOTICE_EMAIL_FROM">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#TASK_NOTICE_EMAIL_FROM">TASK_NOTICE_EMAIL_FROM</a></code></td>
 <td class="colLast"><code>"mdw.task.notice.email.from"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.TASK_RESUME_NOTIFY_ENDPOINT">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#TASK_RESUME_NOTIFY_ENDPOINT">TASK_RESUME_NOTIFY_ENDPOINT</a></code></td>
 <td class="colLast"><code>"mdw.task.resume.notify.endpoint"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.UNSCHEDULED_EVENTS_BATCH_SIZE">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#UNSCHEDULED_EVENTS_BATCH_SIZE">UNSCHEDULED_EVENTS_BATCH_SIZE</a></code></td>
 <td class="colLast"><code>"mdw.unscheduled.events.max.batch.size"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.UNSCHEDULED_EVENTS_CHECK_DELAY">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#UNSCHEDULED_EVENTS_CHECK_DELAY">UNSCHEDULED_EVENTS_CHECK_DELAY</a></code></td>
 <td class="colLast"><code>"mdw.unscheduled.events.check.delay"</code></td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.UNSCHEDULED_EVENTS_CHECK_INTERVAL">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/constant/PropertyNames.html#UNSCHEDULED_EVENTS_CHECK_INTERVAL">UNSCHEDULED_EVENTS_CHECK_INTERVAL</a></code></td>
 <td class="colLast"><code>"mdw.unscheduled.events.check.interval"</code></td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a name="com.centurylink.mdw.constant.PropertyNames.UNSCHEDULED_EVENTS_MIN_AGE">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
@@ -3885,13 +3885,6 @@
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
 <td><code><a href="com/centurylink/mdw/html/HtmlExportHelper.html#BR">BR</a></code></td>
 <td class="colLast"><code>"&lt;br/&gt;"</code></td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><a name="com.centurylink.mdw.html.HtmlExportHelper.HTMLTAG">
-<!--   -->
-</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/html/HtmlExportHelper.html#HTMLTAG">HTMLTAG</a></code></td>
-<td class="colLast"><code>"&lt;html&gt;"</code></td>
 </tr>
 </tbody>
 </table>
@@ -5306,10 +5299,17 @@
 <td class="colLast"><code>"http://centurylinkcloud.github.io/mdw/docs"</code></td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><a name="com.centurylink.mdw.model.project.Data.GIT_URL">
+<td class="colFirst"><a name="com.centurylink.mdw.model.project.Data.GIT_BASE_URL">
 <!--   -->
 </a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
-<td><code><a href="com/centurylink/mdw/model/project/Data.html#GIT_URL">GIT_URL</a></code></td>
+<td><code><a href="com/centurylink/mdw/model/project/Data.html#GIT_BASE_URL">GIT_BASE_URL</a></code></td>
+<td class="colLast"><code>"https://github.com/CenturyLinkCloud"</code></td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><a name="com.centurylink.mdw.model.project.Data.GIT_REPO_URL">
+<!--   -->
+</a><code>public&nbsp;static&nbsp;final&nbsp;java.lang.String</code></td>
+<td><code><a href="com/centurylink/mdw/model/project/Data.html#GIT_REPO_URL">GIT_REPO_URL</a></code></td>
 <td class="colLast"><code>"https://github.com/CenturyLinkCloud/mdw.git"</code></td>
 </tr>
 </tbody>
@@ -6500,6 +6500,32 @@
 </li>
 </ul>
 <ul class="blockList">
+<li class="blockList">
+<table class="constantsSummary" border="0" cellpadding="3" cellspacing="0" summary="Constant Field Values table, listing constant fields, and values">
+<caption><span>com.centurylink.mdw.services.process.<a href="com/centurylink/mdw/services/process/ActivityLogger.html" title="class in com.centurylink.mdw.services.process">ActivityLogger</a></span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th scope="col">Constant Field</th>
+<th class="colLast" scope="col">Value</th>
+</tr>
+<tbody>
+<tr class="altColor">
+<td class="colFirst"><a name="com.centurylink.mdw.services.process.ActivityLogger.MAX_MESSAGE_LENGTH">
+<!--   -->
+</a><code>public&nbsp;static&nbsp;final&nbsp;int</code></td>
+<td><code><a href="com/centurylink/mdw/services/process/ActivityLogger.html#MAX_MESSAGE_LENGTH">MAX_MESSAGE_LENGTH</a></code></td>
+<td class="colLast"><code>3997</code></td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a name="com.centurylink.mdw.services.process.ActivityLogger.MAX_THREAD_LENGTH">
+<!--   -->
+</a><code>public&nbsp;static&nbsp;final&nbsp;int</code></td>
+<td><code><a href="com/centurylink/mdw/services/process/ActivityLogger.html#MAX_THREAD_LENGTH">MAX_THREAD_LENGTH</a></code></td>
+<td class="colLast"><code>29</code></td>
+</tr>
+</tbody>
+</table>
+</li>
 <li class="blockList">
 <table class="constantsSummary" border="0" cellpadding="3" cellspacing="0" summary="Constant Field Values table, listing constant fields, and values">
 <caption><span>com.centurylink.mdw.services.process.<a href="com/centurylink/mdw/services/process/ActivityRuntime.html" title="class in com.centurylink.mdw.services.process">ActivityRuntime</a></span><span class="tabEnd">&nbsp;</span></caption>

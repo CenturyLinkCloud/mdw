@@ -584,6 +584,7 @@ class ProcessExecutorImpl {
                 String msg = InternalLogMessage.PROCESS_START + " - " + process.getQualifiedName()
                         + (processInstanceVO.isEmbedded() ? (" (embedded process " + process.getId() + ")") : ("/" + process.getVersionString()));
                 engineLogger.info(processInstanceVO.getProcessId(), processInstanceVO.getId(), processInstanceVO.getMasterRequestId(), msg);
+                engineLogger.info(processInstanceVO.getProcessId(), processInstanceVO.getId(), processInstanceVO.getMasterRequestId(), "Performance level = " + engineLogger.getPerformanceLevel());
             }
             notifyMonitors(processInstanceVO, InternalLogMessage.PROCESS_START);
             // get start activity ID
@@ -1757,7 +1758,7 @@ class ProcessExecutorImpl {
                 }
             } catch (Exception ex) {
                 logger.severeException(ex.getMessage(), ex);
-                throw new EventException(ex.getMessage());
+                throw new EventException(ex.getMessage(), ex);
             }
             if (hasFailures)
                 return EventInstance.RESUME_STATUS_PARTIAL_SUCCESS;

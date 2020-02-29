@@ -12,12 +12,16 @@ import java.net.URL;
  */
 public class Dependency implements Operation {
 
-    private String mavenRepoUrl;
+    private String repoUrl;
     private String path;
     private long size;
 
-    public Dependency(String mavenRepoUrl, String path, long size) {
-        this.mavenRepoUrl = mavenRepoUrl;
+    public Dependency(String path, long size) {
+        this(MAVEN_CENTRAL_URL, path, size);
+    }
+
+    public Dependency(String repoUrl, String path, long size) {
+        this.repoUrl = repoUrl;
         this.path = path;
         this.size = size;
     }
@@ -31,7 +35,7 @@ public class Dependency implements Operation {
         File depJar = new File(libDir + "/" + path.substring(path.lastIndexOf('/')));
         if (!depJar.exists()) {
             getOut().println("Downloading " + depJar + "...");
-            new Download(new URL(mavenRepoUrl + "/" + path), depJar, size).run(progressMonitors);
+            new Download(new URL(repoUrl + "/" + path), depJar, size).run(progressMonitors);
         }
         return this;
     }
@@ -40,15 +44,23 @@ public class Dependency implements Operation {
      * Creates libDir and throws IOException if unable.
      */
     static File getLibDir() throws IOException {
-        String mdwHome = System.getenv("MDW_HOME");
-        if (mdwHome == null)
-            mdwHome = System.getProperty("mdw.home");
-        if (mdwHome == null)
-            throw new IOException("Missing environment variable: MDW_HOME");
-        File mdwDir = new File(mdwHome);
-        if (!mdwDir.isDirectory() && !mdwDir.mkdirs())
-            throw new IOException("MDW_HOME is not a directory: " + mdwDir.getAbsolutePath());
-        File libDir = new File (mdwDir + "/lib");
+        File libDir;
+        String libDirSysProp = System.getProperty("mdw.cli.lib.dir");
+        if (libDirSysProp != null) {
+            libDir = new File(libDirSysProp);
+        }
+        else {
+            String mdwHome = System.getenv("MDW_HOME");
+            if (mdwHome == null)
+                mdwHome = System.getProperty("mdw.home");
+            if (mdwHome == null)
+                throw new IOException("Missing environment variable: MDW_HOME");
+            File mdwDir = new File(mdwHome);
+            if (!mdwDir.isDirectory() && !mdwDir.mkdirs())
+                throw new IOException("MDW_HOME is not a directory: " + mdwDir.getAbsolutePath());
+            libDir = new File (mdwDir + "/lib");
+        }
+
         if (!libDir.isDirectory() && !libDir.mkdirs())
             throw new IOException("Cannot create lib dir: " + libDir.getAbsolutePath());
         return libDir;

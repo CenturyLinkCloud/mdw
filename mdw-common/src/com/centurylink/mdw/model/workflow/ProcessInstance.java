@@ -425,6 +425,10 @@ public class ProcessInstance implements Jsonable, Linkable {
         return "ProcessInstance";
     }
 
+    public String getQualifiedName() {
+        return getPackageName() + "/" + getProcessName();
+    }
+
     @Override
     public String getQualifiedLabel() {
         String label = getPackageName() == null ? getProcessName() : getPackageName() + "/" + getProcessName();

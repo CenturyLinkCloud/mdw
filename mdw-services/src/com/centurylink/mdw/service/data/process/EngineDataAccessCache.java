@@ -773,7 +773,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public Long getRequestCompletionTime(String ownerType, Long ownerId) throws SQLException {
-        return edadb == null ? null : edadb.getRequestCompletionTime(ownerType, ownerId);
+        return edadb == null || cache_document == CACHE_ONLY ? null : edadb.getRequestCompletionTime(ownerType, ownerId);
     }
 
     public void setElapsedTime(String ownerType, Long instanceId, Long elapsedTime) throws SQLException {

@@ -25,6 +25,7 @@ import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.event.ExternalEvent;
+import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.task.TaskCategory;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.variable.VariableType;
@@ -156,10 +157,10 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         };
     }
 
-    protected PackageDir createPackage(Package packageVo) throws DataAccessException, IOException {
-        if (packageVo.getSchemaVersion() == 0)
-            packageVo.setSchemaVersion(DataAccess.currentSchemaVersion);
-        PackageDir pkgDir = new PackageDir(storageDir, packageVo, versionControl);
+    protected PackageDir createPackage(Package pkg) throws DataAccessException, IOException {
+        if (Asset.parseVersion(pkg.getSchemaVersion()) == 0)
+            pkg.setSchemaVersion(Asset.formatVersion(DataAccess.currentSchemaVersion));
+        PackageDir pkgDir = new PackageDir(storageDir, pkg, versionControl);
         getPackageDirs().add(0, pkgDir);
         return pkgDir;
     }
@@ -338,39 +339,39 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
 
     @SuppressWarnings("unchecked")
     public Package loadPackage(PackageDir pkgDir, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
-        Package packageVO = new Package();
+        Package pkg = new Package();
 
-        packageVO.setName(pkgDir.getPackageName());
-        packageVO.setVersion(Package.parseVersion(pkgDir.getPackageVersion()));
-        packageVO.setSchemaVersion(Package.parseVersion(pkgDir.getSchemaVersion()));
-        packageVO.setId(versionControl.getId(pkgDir.getLogicalDir()));
-        packageVO.setSchemaVersion(DataAccess.currentSchemaVersion);
+        pkg.setName(pkgDir.getPackageName());
+        pkg.setVersion(new MdwVersion(pkgDir.getPackageVersion()));
+        pkg.setSchemaVersion(pkgDir.getSchemaVersion());
+        pkg.setId(versionControl.getId(pkgDir.getLogicalDir()));
+        pkg.setSchemaVersion(Asset.formatVersion(DataAccess.currentSchemaVersion));
 
         String pkgJson = new String(read(pkgDir.getMetaFile()));
         if (pkgDir.isYaml()) {
             Yaml yaml= new Yaml();
             Map<String,Object> map= (Map<String, Object>) yaml.load(pkgJson);
             Package jsonPkg = new Package(map);
-            packageVO.setGroup(jsonPkg.getGroup());
-            packageVO.setAttributes(jsonPkg.getAttributes());
-            packageVO.setMetaContent(pkgJson);
+            pkg.setGroup(jsonPkg.getGroup());
+            pkg.setAttributes(jsonPkg.getAttributes());
+            pkg.setMetaContent(pkgJson);
         }
         else {
             Package jsonPkg = new Package(new JsonObject(pkgJson));
-            packageVO.setGroup(jsonPkg.getGroup());
-            packageVO.setAttributes(jsonPkg.getAttributes());
-            packageVO.setMetaContent(pkgJson);
+            pkg.setGroup(jsonPkg.getGroup());
+            pkg.setAttributes(jsonPkg.getAttributes());
+            pkg.setMetaContent(pkgJson);
         }
 
-        packageVO.setProcesses(loadProcesses(pkgDir, deep));
-        packageVO.setAssets(loadAssets(pkgDir, deep));
-        packageVO.setImplementors(loadActivityImplementors(pkgDir));
-        packageVO.setExternalEvents(loadExternalEventHandlers(pkgDir));
-        packageVO.setTaskTemplates(loadTaskTemplates(pkgDir));
+        pkg.setProcesses(loadProcesses(pkgDir, deep));
+        pkg.setAssets(loadAssets(pkgDir, deep));
+        pkg.setImplementors(loadActivityImplementors(pkgDir));
+        pkg.setExternalEvents(loadExternalEventHandlers(pkgDir));
+        pkg.setTaskTemplates(loadTaskTemplates(pkgDir));
 
-        packageVO.setArchived(pkgDir.isArchive());
+        pkg.setArchived(pkgDir.isArchive());
 
-        return packageVO;
+        return pkg;
     }
 
     public long save(Package packageVO, PackageDir pkgDir, boolean deep) throws IOException, XmlException, JSONException, DataAccessException {
@@ -796,7 +797,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
             throw ex;
         }
         catch (Exception ex) {
-            throw new DataAccessException(ex.getMessage(), ex);
+            throw new DataAccessException("Error loading process id: " + processId, ex);
         }
     }
 
@@ -1001,33 +1002,33 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     /**
      * Only for top-level packages.
      */
-    public Long persistPackage(Package packageVO, PersistType persistType) throws DataAccessException {
+    public Long persistPackage(Package pkg, PersistType persistType) throws DataAccessException {
         try {
             PackageDir pkgDir;
             if (persistType == PersistType.NEW_VERSION || persistType == PersistType.CREATE_JSON) {
-                packageVO.setVersion(packageVO.getVersion() + 1);
-                if (packageVO.getVersion() == 1) {
-                    pkgDir = createPackage(packageVO);
+                pkg.setVersion(new MdwVersion(pkg.getVersion().getIntVersion() + 1));
+                if (pkg.getVersion().getIntVersion() == 1) {
+                    pkgDir = createPackage(pkg);
                 }
                 else {
-                    pkgDir = getTopLevelPackageDir(packageVO.getName());
+                    pkgDir = getTopLevelPackageDir(pkg.getName());
                     // for process version increment, existing package will have been archived when process was saved
                 }
             }
             else if (persistType == PersistType.IMPORT || persistType == PersistType.IMPORT_JSON) {
-                PackageDir existingTopLevel = getTopLevelPackageDir(packageVO.getName());
+                PackageDir existingTopLevel = getTopLevelPackageDir(pkg.getName());
                 if (existingTopLevel != null) {
                     pkgDirs.remove(existingTopLevel);
                     deletePkg(existingTopLevel);
                     getVersionControl().clearId(existingTopLevel.getLogicalDir());
                 }
-                pkgDir = createPackage(packageVO);
+                pkgDir = createPackage(pkg);
             }
             else {
-                pkgDir = getTopLevelPackageDir(packageVO.getName());
+                pkgDir = getTopLevelPackageDir(pkg.getName());
             }
             pkgDir.setYaml(true);
-            Long id = save(packageVO, pkgDir, persistType == PersistType.IMPORT || persistType == PersistType.IMPORT_JSON);
+            Long id = save(pkg, pkgDir, persistType == PersistType.IMPORT || persistType == PersistType.IMPORT_JSON);
             pkgDir.parse();  // sync
             return id;
         }
@@ -1050,7 +1051,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         try {
             Package pkg = loadPackage(packageId, false);
             pkg.setName(newName);
-            pkg.setVersion(newVersion);
+            pkg.setVersion(new MdwVersion(newVersion));
             save(pkg, oldPkgDir, false); // at this point package.xml name doesn't match oldPkgDir
             newPkg = renamePkgDir(oldPkgDir, newPkg);
             getVersionControl().clearId(oldPkgDir.getLogicalDir());

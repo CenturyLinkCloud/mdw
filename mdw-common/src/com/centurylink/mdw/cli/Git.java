@@ -15,16 +15,15 @@
  */
 package com.centurylink.mdw.cli;
 
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.dataaccess.VersionControl;
+
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Uses reflection to avoid hard dependency on JGit.
@@ -39,14 +38,16 @@ public class Git implements Operation {
         String[] gitArgs = new String[args.length + 1];
         gitArgs[0] = "git";
         gitArgs[1] = "args";
+        boolean showProgress = true;
         for (int i = 1; i < args.length; i++) {
-            gitArgs[i+1] = args[i];
+            gitArgs[i + 1] = args[i];
+            if ("--no-progress".equals(args[i]))
+                showProgress = false;
         }
         cmd.parse(gitArgs);
-        git.run(Main.getMonitor());
+        git.run(Main.getMonitor(showProgress));
     }
 
-    private String mavenRepoUrl;
     private VcInfo vcInfo;
     private String command;
     private Object[] params;
@@ -61,24 +62,21 @@ public class Git implements Operation {
 
     // for CLI
     Git() {
-        mavenRepoUrl = "http://repo.maven.apache.org/maven2";
         command = "git";
     }
 
-    public Git(String mavenRepoUrl, VcInfo vcInfo, String command, Object...params) {
-        this.mavenRepoUrl = mavenRepoUrl;
+    public Git(VcInfo vcInfo, String command, Object...params) {
         this.vcInfo = vcInfo;
         this.command = command;
         this.params = params;
     }
 
+    public static List<Dependency> getDependencies() {
+        return VcInfo.getDependencies("git");
+    }
+
     @Override
     public Git run(ProgressMonitor... progressMonitors) throws IOException {
-
-        Map<String,Long> gitDependencies = VcInfo.getDependencies("git");
-        for (String dep : gitDependencies.keySet()) {
-            new Dependency(mavenRepoUrl, dep, gitDependencies.get(dep)).run(progressMonitors);
-        }
 
         if (command != null) {
             try {

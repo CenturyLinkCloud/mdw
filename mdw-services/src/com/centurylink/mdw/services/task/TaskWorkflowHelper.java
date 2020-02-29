@@ -173,7 +173,7 @@ public class TaskWorkflowHelper {
         }
 
         // create instance indices for template based general tasks (MDW 5.1) and all template based tasks (MDW 5.2)
-        if (indexes!=null && !indexes.isEmpty()) {
+        if (indexes != null && !indexes.isEmpty()) {
             new TaskDataAccess().setTaskInstanceIndices(helper.getTaskInstance().getTaskInstanceId(), indexes);
         }
         // create instance groups for template based tasks

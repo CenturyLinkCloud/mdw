@@ -15,27 +15,6 @@
  */
 package com.centurylink.mdw.hub.servlet;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
-import javax.servlet.http.HttpSession;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.auth.AuthExcludePattern;
 import com.centurylink.mdw.auth.MdwSecurityException;
@@ -51,6 +30,16 @@ import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.yaml.YamlLoader;
+
+import javax.servlet.*;
+import javax.servlet.annotation.WebFilter;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.util.*;
 
 @WebFilter(urlPatterns={"/*"})
 public class AccessFilter implements Filter {
@@ -99,7 +88,7 @@ public class AccessFilter implements Filter {
             // upstreamHosts
             List<?> upstreamHostsList = yamlLoader.getList("upstreamHosts", topMap);
             if (upstreamHostsList != null) {
-                upstreamHosts = new ArrayList<InetAddress>();
+                upstreamHosts = new ArrayList<>();
                 for (Object ip : upstreamHostsList)
                     upstreamHosts.add(InetAddress.getByName(ip.toString()));
             }
@@ -141,7 +130,7 @@ public class AccessFilter implements Filter {
             // responseHeaders
             Map<?,?> responseHeadersMap = yamlLoader.getMap("responseHeaders", topMap);
             if (responseHeadersMap != null) {
-                responseHeaders = new HashMap<String,String>();
+                responseHeaders = new HashMap<>();
                 for (Object key : responseHeadersMap.keySet())
                     responseHeaders.put(key.toString(), (String)responseHeadersMap.get(key));
             }
@@ -174,7 +163,7 @@ public class AccessFilter implements Filter {
             }
 
             //Get MDW server list for IntraMessaging (service propagation)
-            internalHosts =  new ArrayList<InetAddress>();
+            internalHosts =  new ArrayList<>();
             for (Server server : ApplicationContext.getServerList().getServers()) {
                 internalHosts.add(InetAddress.getByName(server.getHost()));
             }
@@ -262,7 +251,7 @@ public class AccessFilter implements Filter {
                 if (authHdr == null && ApplicationContext.isMdwAuth() && "GET".equals(request.getMethod())) //JWT coming in on URL query string
                     authHdr = request.getParameter(Listener.AUTHORIZATION_HEADER_NAME);
                 if (authHdr != null) {
-                    Map<String,String> headers = new HashMap<String,String>();
+                    Map<String,String> headers = new HashMap<>();
                     headers.put(Listener.AUTHORIZATION_HEADER_NAME, authHdr);
                     if (AuthUtils.authenticate(AuthUtils.AUTHORIZATION_HEADER_AUTHENTICATION, headers)) {
                         authUser = headers.get(Listener.AUTHENTICATED_USER_HEADER);
@@ -301,21 +290,23 @@ public class AccessFilter implements Filter {
                     // user not authenticated
                     if (remoteHost == null)
                         remoteHost = InetAddress.getByName(request.getRemoteHost());
-                    boolean internalRequest = IsIntraRequest(remoteHost);
+                    boolean internalRequest = isIntraRequest(remoteHost);
                     if (!isAuthExclude(path) && !internalRequest) {
                         if ("ct".equals(authMethod)) {
                             // redirect to login page is performed upstream (CT web agent)
                             throw new MdwSecurityException("Authentication required");
                         }
                         else {
-                            if (path.startsWith("/services/SOAP/") || path.startsWith("/SOAP/"))
+                            if (path.startsWith("/services/SOAP/") || path.startsWith("/SOAP/")) {
                                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                            }
                             else if (path.startsWith("/services/") || path.startsWith("/REST/") || path.startsWith("/asset/") || path.startsWith("/api/")) {
                                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                                 response.getWriter().println(new Status(HttpServletResponse.SC_UNAUTHORIZED, "Authentication Required").getJson().toString(2));
                             }
-                            else
+                            else {
                                 response.sendRedirect(ApplicationContext.getMdwHubUrl() + "/login");
+                            }
 
                             return;
                         }
@@ -397,11 +388,8 @@ public class AccessFilter implements Filter {
         return false;
     }
 
-    private boolean IsIntraRequest(InetAddress remoteHost) {
-        if (internalHosts.contains(remoteHost))
-            return true;
-        else
-            return false;
+    private boolean isIntraRequest(InetAddress remoteHost) {
+        return internalHosts.contains(remoteHost);
     }
 
     public void destroy() {

@@ -29,7 +29,9 @@ public interface AdapterActivity extends GeneralActivity {
     String DO_LOGGING = "DO_LOGGING";
     String REQUEST_VARIABLE = "REQUEST_VARIABLE";
     String RESPONSE_VARIABLE = "RESPONSE_VARIABLE";
+    @Deprecated
     String REQUEST_XSD = "REQUEST_XSD";
+    @Deprecated
     String RESPONSE_XSD = "RESPONSE_XSD";
 
     String COMPCODE_AUTO_RETRY = "Automatic Retry";

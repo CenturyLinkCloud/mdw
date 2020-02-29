@@ -17,6 +17,7 @@
     "$mdwServicesRoot": false,
     "$mdwDocsRoot": false,
     "$mdwAppId": false,
+    "$mdwAppVersion": false,
     "$mdwHubUser": false,
     "$mdwVersion": false,
     "$mdwBuild": false,

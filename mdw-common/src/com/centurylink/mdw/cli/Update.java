@@ -15,17 +15,16 @@
  */
 package com.centurylink.mdw.cli;
 
+import com.beust.jcommander.Parameters;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import com.beust.jcommander.Parameters;
 
 @Parameters(commandNames="update", commandDescription="Update MDW assets locally via Discovery", separators="=")
 public class Update extends Setup {
@@ -65,11 +64,6 @@ public class Update extends Setup {
         }
         else {
             Props props = new Props(this);
-            String discoveryUrl;
-            if (Props.DISCOVERY_URL != null)
-                discoveryUrl = props.get(Props.DISCOVERY_URL);
-            else
-                discoveryUrl = getDiscoveryUrl();
 
             Map<String, String> discovered = new HashMap<>();
             Discover discover = new Discover();
@@ -77,19 +71,13 @@ public class Update extends Setup {
                 discover.setMdwVersion(getMdwVersion());
             else
                 discover.setLatest(true);
-            boolean isMdw = discoveryUrl.endsWith("/services")
-                    || discoveryUrl.endsWith("/Services");
-            if (isMdw)
-                discover.discoverMdw(discoveryUrl, monitors);
-            else
-                discover.discoverMaven("com.centurylink.mdw.assets", monitors);
+            discover.discoverMaven("com.centurylink.mdw.assets", monitors);
             JSONObject json = discover.getPackages();
             if (json.has("packages")) {
                 JSONArray pkgs = json.getJSONArray("packages");
                 for (int i = 0; i < pkgs.length(); i++) {
                     JSONObject pkgJson = pkgs.getJSONObject(i);
-                    discovered.put(pkgJson.getString("name"), isMdw ? null
-                            : pkgJson.getString("artifact") + "-" + pkgJson.getString("version"));
+                    discovered.put(pkgJson.getString("name"), pkgJson.getString("artifact") + "-" + pkgJson.getString("version"));
                 }
             }
 
@@ -98,7 +86,7 @@ public class Update extends Setup {
             for (String pkg : getBaseAssetPackages()) {
                 if (discovered.containsKey(pkg)) {
                     getOut().println("  - " + pkg);
-                    toDownload.add(isMdw ? pkg : discovered.get(pkg));
+                    toDownload.add(discovered.get(pkg));
                 }
                 else {
                     getErr().println("  - " + pkg + " not found for import");
@@ -109,12 +97,7 @@ public class Update extends Setup {
                 getOut().println(" - no packages selected");
             }
             else {
-                if (isMdw) {
-                    mport.importPackagesFromMdw(discoveryUrl, toDownload, monitors);
-                }
-                else {
-                    mport.importPackagesFromMaven("com.centurylink.mdw.assets", toDownload, monitors);
-                }
+                mport.importPackagesFromMaven("com.centurylink.mdw.assets", toDownload, monitors);
             }
         }
         return this;

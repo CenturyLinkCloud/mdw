@@ -1,13 +1,14 @@
 package com.centurylink.mdw.model;
 
 import com.centurylink.mdw.yaml.YamlLoader;
+import org.yaml.snakeyaml.error.YAMLException;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Info from package.yaml.
- * TODO: dependencies
  */
 public class PackageMeta {
 
@@ -18,15 +19,20 @@ public class PackageMeta {
         this.name = name;
     }
 
-    public PackageMeta(byte[] yaml) throws IOException {
+    public PackageMeta(byte[] yaml) throws YAMLException {
         YamlLoader loader = new YamlLoader(new String(yaml));
         Map<?,?> top = (Map<?,?>)loader.getTop();
-        name = loader.get("name", top);
-        version = loader.get("version", top);
-        schemaVersion = loader.get("schemaVersion", top);
+        name = loader.getRequired("name", top, "");
+        version = loader.getRequired("version", top, "");
+        schemaVersion = loader.getRequired("schemaVersion", top, "");
         icon = loader.get("icon", top);
         provider = loader.get("provider", top);
-
+        List<?> deps = loader.getList("dependencies", top);
+        if (deps != null) {
+            dependencies = new ArrayList<>();
+            for (Object dep : deps)
+                dependencies.add(dep.toString());
+        }
     }
 
     private String version;
@@ -44,9 +50,11 @@ public class PackageMeta {
     private String provider;
     public String getProvider() { return provider; }
 
+    private List<String> dependencies;
+    public List<String> getDependencies() { return dependencies; }
+
     @Override
     public String toString() {
         return name + (version == null ? "" : " v" + version);
     }
-
 }

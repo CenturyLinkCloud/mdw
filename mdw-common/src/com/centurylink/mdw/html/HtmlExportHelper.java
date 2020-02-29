@@ -16,7 +16,10 @@
 package com.centurylink.mdw.html;
 
 import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.image.ImageExportHelper;
+import com.centurylink.mdw.export.ExportHelper;
+import com.centurylink.mdw.export.Table;
+import com.centurylink.mdw.image.PngProcessExporter;
+import com.centurylink.mdw.model.asset.Pagelet.Widget;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.variable.Variable;
@@ -27,68 +30,29 @@ import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 
-import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-public class HtmlExportHelper {
+public class HtmlExportHelper extends ExportHelper {
 
     public static final String BR = "<br/>";
-    public static final String HTMLTAG = "<html>";
     public static final String ACTIVITY = "Activity ";
 
-    private Set<String> excludedAttributes;
-    private Map<String, List<String>> tabularAttributes; // name, headers
-    private Map<String, String> textboxAttributes;
-    private Map<String, String> excludedAttributesForSpecificValues;
-
-    private Project project;
-
     public HtmlExportHelper(Project project) {
-        this.project = project;
-
-        excludedAttributes = new HashSet<>();
-        excludedAttributes.add(WorkAttributeConstant.LOGICAL_ID);
-        excludedAttributes.add(WorkAttributeConstant.REFERENCE_ID);
-        excludedAttributes.add(WorkAttributeConstant.WORK_DISPLAY_INFO);
-        excludedAttributes.add(WorkAttributeConstant.REFERENCES);
-        excludedAttributes.add(WorkAttributeConstant.DOCUMENTATION);
-        excludedAttributes.add(WorkAttributeConstant.SIMULATION_STUB_MODE);
-        excludedAttributes.add(WorkAttributeConstant.SIMULATION_RESPONSE);
-        excludedAttributes.add(WorkAttributeConstant.DESCRIPTION);
-        excludedAttributes.add("BAM@START_MSGDEF");
-        excludedAttributes.add("BAM@FINISH_MSGDEF");
-        excludedAttributesForSpecificValues = new HashMap<>();
-        excludedAttributesForSpecificValues.put("DoNotNotifyCaller", "false");
-        excludedAttributesForSpecificValues.put("DO_LOGGING", "True");
-        tabularAttributes = new HashMap<>();
-        tabularAttributes.put("Notices",
-                Arrays.asList("Outcome", "Template", "Notifier Class(es)"));
-        tabularAttributes.put("Variables",
-                Arrays.asList("Variable", "ReferredAs", "Display", "Seq.", "Index"));
-        tabularAttributes.put("WAIT_EVENT_NAMES",
-                Arrays.asList("Event Name", "Completion Code", "Recurring"));
-        tabularAttributes.put("variables",
-                Arrays.asList("=", "SubProcess Variable", "Binding Expression"));
-        tabularAttributes.put("processmap",
-                Arrays.asList("=", "Logical Name", "Process Name", "Process Version"));
-        tabularAttributes.put("Bindings", Arrays.asList("=", "Variable", "LDAP Attribute"));
-        tabularAttributes.put("Parameters",
-                Arrays.asList("=", "Input Variable", "Binding Expression"));
-        textboxAttributes = new HashMap<>();
-        textboxAttributes.put("Rule", "Code");
-        textboxAttributes.put("Java", "Java");
-        textboxAttributes.put("PreScript", "Pre-Script");
-        textboxAttributes.put("PostScript", "Post-Script");
+        super(project);
     }
 
-    public String exportProcess(Process process, File outputDir) throws IOException {
+    public byte[] exportProcess(Process process, File outputDir) throws IOException {
         new ActivityNodeSequencer(process).assignNodeSequenceIds();
         StringBuilder sb = printPrologHtml("Process " + process.getName());
         printProcessHtml(sb, 0, process, outputDir);
         printEpilogHtml(sb);
-        return sb.toString();
+        return sb.toString().getBytes();
     }
 
     private StringBuilder printPrologHtml(String title) {
@@ -103,185 +67,190 @@ public class HtmlExportHelper {
         return sb;
     }
 
-    private void printProcessBodyHtml(StringBuilder sb, Process subproc) {
-        String tmp = null;
+    protected String getProcessBodyHtml(Process subproc) {
+        StringBuilder sb = new StringBuilder();
         if (subproc.isEmbeddedProcess()) {
-            tmp = "Subprocess " + subproc.getAttribute(WorkAttributeConstant.LOGICAL_ID) + " - " + subproc.getName().replace('\n', ' ');
-            sb.append("<h2>").append(tmp).append("</h2>\n");
+            String title = "Subprocess " + subproc.getAttribute(WorkAttributeConstant.LOGICAL_ID) + " - " + subproc.getName().replace('\n', ' ');
+            sb.append("<h2>").append(title).append("</h2>\n");
+        }
+        else {
+            sb.append("<h2>Documentation</h2>");
         }
         String summary = subproc.getDescription();
         if (summary != null && summary.length() > 0)
             sb.append("<span style='font-weight:bold'>").append(summary).append("</span>");
-        String detail = subproc.getAttribute(WorkAttributeConstant.DOCUMENTATION);
-        if (detail != null && detail.length() > 0) {
-            printParagraphsHtml(sb, detail);
+        String markdown = subproc.getAttribute(WorkAttributeConstant.DOCUMENTATION);
+        if (markdown != null && markdown.length() > 0) {
+            sb.append(getHtml(markdown));
         }
-        if (subproc.isEmbeddedProcess())
-            printAttributesHtml(sb, subproc.getAttributes());
         sb.append(BR);
+        return sb.toString();
     }
 
-    private void printParagraphsHtml(StringBuilder sb, String content) {
-        if (content == null || content.length() == 0)
-            return;
-        Parser parser = FlexmarkInstances.getParser(null);
-        HtmlRenderer renderer = FlexmarkInstances.getRenderer(null);
-
-        Node document = parser.parse(content);
-        sb.append(renderer.render(document));
-    }
-
-    private String escapeXml(String str) {
-        return str.replaceAll("&", "&amp;").replaceAll("<", "&lt;");
-    }
-
-    private void printAttributesHtml(StringBuilder sb, List<Attribute> attributes) {
-        if (attributes != null) {
-            List<Attribute> sortedAttrs = new ArrayList<>(attributes);
-            Collections.sort(sortedAttrs);
-            sb.append("<h3>Activity Attributes</h3>\n");
-            sb.append("<ul>\n");
-            for (Attribute attr : sortedAttrs) {
-                String name = attr.getName();
-                String val = attr.getValue();
-                if (!excludeAttribute(name, val)) {
-                    sb.append("<li>");
-                    if (tabularAttributes.containsKey(name)) {
-                        sb.append(name + ":");
-                        List<String> cols = new ArrayList<>(tabularAttributes.get(name));
-                        char colDelim = ',';
-                        if ("=".equals(cols.get(0))) {
-                            colDelim = '=';
-                            cols.remove(0);
-                        }
-                        String[] headers = cols.toArray(new String[0]);
-                        List<String[]> rows = Attribute.parseTable(escapeXml(val), colDelim, ';',
-                                headers.length);
-                        String[][] values = new String[headers.length][rows.size()];
-                        for (int i = 0; i < headers.length; i++) {
-                            for (int j = 0; j < rows.size(); j++) {
-                                values[i][j] = rows.get(j)[i];
-                            }
-                        }
-                        printTableHtml(sb, headers, values);
-                    }
-                    else if (textboxAttributes.containsKey(name)) {
-                        sb.append(textboxAttributes.get(name) + ":");
-                        printCodeBoxHtml(sb, escapeXml(val));
-                    }
-                    else {
-                        sb.append(name + " = " + val);
-                    }
-                    sb.append("</li>");
-                }
-            }
-            sb.append("</ul>");
+    protected String getVariablesHtml(Process process) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        List<Variable> variables = process.getVariables();
+        String[] headers = new String[] { "Name", "Type", "Mode" };
+        String[][] values = new String[3][variables.size()];
+        for (int i = 0; i < variables.size(); i++) {
+            Variable var = variables.get(i);
+            values[0][i] = var.getName();
+            values[1][i] = escapeTags(var.getType());
+            values[2][i] = var.getCategory();
         }
+        sb.append(getTableHtml(new Table(headers, values)));
+        return sb.toString();
     }
 
-    private boolean excludeAttribute(String name, String value) {
-        return (value == null || value.isEmpty() || excludedAttributes.contains(name)
-                || value.equals(excludedAttributesForSpecificValues.get(name)));
+    protected String getAttributesHtml(Activity activity) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        List<Attribute> attributes = activity.getAttributes();
+        List<Attribute> sortedAttributes = new ArrayList<>(attributes);
+        Collections.sort(sortedAttributes);
+        sb.append("<ul>\n");
+        for (Attribute attribute : sortedAttributes) {
+            String name = attribute.getName();
+            String val = attribute.getValue();
+            if (!isExcludeAttribute(name, val)) {
+                sb.append("<li>");
+                sb.append(getAttributeLabel(activity, attribute)).append(": ");
+                sb.append(getAttributeValueHtml(activity, attribute));
+                sb.append("</li>");
+            }
+        }
+        sb.append("</ul>");
+        return sb.toString();
     }
 
-    private void printCodeBoxHtml(StringBuilder sb, String content) {
-        sb.append("<pre style='border:1px solid black;font-size:12px;'>").append(content)
-                .append("</pre>");
+    protected String getAttributeValueHtml(Activity activity, Attribute attribute) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        String name = attribute.getName();
+        Widget widget = getWidget(activity, name);
+        if (widget != null || WorkAttributeConstant.MONITORS.equals(attribute.getName())) {
+            if (isTabular(activity, attribute)) {
+                Table table = getTable(activity, attribute);
+                sb.append("<div style='margin-top:5px'>").append(getTableHtml(table)).append("</div>");
+            }
+            else if (isCode(activity, attribute)) {
+                sb.append(getCodeBoxHtml(attribute.getValue()));
+            }
+            else {
+                sb.append(attribute.getValue());
+            }
+        }
+        else {
+            sb.append(attribute.getValue());
+        }
+        return sb.toString();
     }
 
-    private void printTableHtml(StringBuilder sb, String[] headers, String[][] values) {
+    protected String getCodeBoxHtml(String code) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<pre style='border:1px solid black;font-size:12px;'>").append(code).append("</pre>");
+        return sb.toString();
+    }
+
+    protected String getTableHtml(Table table) {
+        String[] headers = table.getColumns();
+        String[][] values = table.getRows();
+        StringBuilder sb = new StringBuilder();
         String border = "border:1px solid black;";
         String padding = "padding:3px;";
-        sb.append(
-                "<table style='width:90%;text-align:left;border:1px solid black;border-spacing:0;border-collapse:collapse;font-size:12px;'>\n");
+        sb.append("<table style='width:90%;text-align:left;border:1px solid black;border-spacing:0;border-collapse:collapse;font-size:12px;'>\n");
         sb.append("<thead style='font-weight:bold'>\n<tr>\n");
         for (int i = 0; i < headers.length; i++) {
-            sb.append("<th style='" + border + padding + "'>").append(headers[i]).append("</th>\n");
+            sb.append("<th style='").append(border).append(padding).append("'>").append(headers[i]).append("</th>\n");
         }
         sb.append("</tr></thead>\n");
         sb.append("<tbody>\n");
         for (int i = 0; i < values[0].length; i++) {
             sb.append("<tr>");
             for (int j = 0; j < headers.length; j++) {
-                sb.append("<td style='" + border + padding + "'>").append(values[j][i])
-                        .append("</td>");
+                sb.append("<td style='").append(border).append(padding).append("'>").append(values[j][i]).append("</td>");
             }
             sb.append("</tr>\n");
         }
         sb.append("</tbody>\n");
         sb.append("</table>\n");
+        return sb.toString();
     }
 
-    private void printProcessHtml(StringBuilder sb, int chapter, Process process, File outputDir)
+    public void printProcessHtml(StringBuilder sb, int chapter, Process process, File outputDir)
             throws IOException {
         sb.append("<h1>");
         if (chapter > 0)
-            sb.append(Integer.toString(chapter)).append(". ");
+            sb.append(chapter).append(". ");
         sb.append("Workflow: \"").append(process.getName()).append("\"</h1>\n");
-        // print image
-        printGraphHtml(sb, process, outputDir, chapter);
-        // print documentation text
+
+        // diagram
+        printDiagramHtml(sb, process, outputDir, chapter);
+
+        // documentation
         sb.append(BR);
-        printProcessBodyHtml(sb, process);
+        sb.append(getProcessBodyHtml(process));
+
+        // activities
         for (Activity act : process.getActivitiesOrderBySeq()) {
             printActivityHtml(sb, act);
         }
+
+        // subprocesses
         for (Process subproc : process.getSubprocesses()) {
-            printProcessBodyHtml(sb, subproc);
+            sb.append(getProcessBodyHtml(subproc));
             for (Activity act : subproc.getActivitiesOrderBySeq()) {
                 printActivityHtml(sb, act);
             }
         }
+
+        // variables
         List<Variable> variables = process.getVariables();
         if (variables != null && !variables.isEmpty()) {
             sb.append("<h2>Process Variables</h2>\n");
-            String[] headers = new String[] { "Name", "Type", "Mode" };
-            String[][] values = new String[3][variables.size()];
-            for (int i = 0; i < variables.size(); i++) {
-                Variable var = variables.get(i);
-                values[0][i] = var.getName();
-                values[1][i] = var.getType();
-                values[2][i] = var.getCategory();
-            }
-            printTableHtml(sb, headers, values);
+            sb.append(getVariablesHtml(process));
         }
     }
 
-    private void printGraphHtml(StringBuilder sb, Process process, File outputDir,
+    private void printDiagramHtml(StringBuilder sb, Process process, File outputDir,
             int chapterNumber) throws IOException {
-        String imgfilename = process.getName() + "_" + process.getVersionString()
-                + "_ch" + chapterNumber + ".jpg";
-        String imgfilepath = outputDir + "/" + imgfilename;
-        printImage(imgfilepath, process);
-        sb.append("<img src='").append(escapeXml(imgfilename)).append("'/>\n");
+        byte[] exported = new PngProcessExporter(project).export(process);
+        String pngFile = process.getName() + "_" + process.getVersionString() + "_ch" + chapterNumber + ".png";
+        Files.write(new File(outputDir + "/" + pngFile).toPath(), exported, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+
+        sb.append("<img src='").append(pngFile).append("'/>\n");
     }
 
-    private void printActivityHtml(StringBuilder sb, Activity act) {
-        String tmp = ACTIVITY + act.getLogicalId() + ": \"" + act.getName().replace('\n', ' ') + "\"";
+    private void printActivityHtml(StringBuilder sb, Activity activity) throws IOException {
+        String tmp = ACTIVITY + activity.getLogicalId() + ": \"" + activity.getName().replace('\n', ' ') + "\"";
         sb.append("<h2>").append(tmp).append("</h2>\n");
-        String summary = act.getAttribute(WorkAttributeConstant.DESCRIPTION);
+        String summary = activity.getAttribute(WorkAttributeConstant.DESCRIPTION);
         if (summary != null && summary.length() > 0)
             sb.append("<span style='font-weight:bold'>").append(summary).append("</span>");
 
-        String detail = act.getAttribute(WorkAttributeConstant.DOCUMENTATION);
-        if (detail != null && detail.length() > 0) {
-            printParagraphsHtml(sb, detail);
+        String markdown = activity.getAttribute(WorkAttributeConstant.DOCUMENTATION);
+        if (markdown != null && markdown.length() > 0) {
+            sb.append(getHtml(markdown));
         }
 
-        printAttributesHtml(sb, act.getAttributes());
+        if (activity.getAttributes() != null && !isEmpty(activity.getAttributes())) {
+            sb.append("<h3 style='margin-left:10px'>Attributes</h3>\n");
+            sb.append(getAttributesHtml(activity));
+        }
 
         sb.append(BR);
-    }
-
-    public void printImage(String fileName, Process processVO) throws IOException {
-        ImageExportHelper imageHelper = new ImageExportHelper(project);
-        ImageIO.write(imageHelper.printImage(processVO), "jpeg", new File(fileName));
-        Runtime r = Runtime.getRuntime();
-        r.gc();
     }
 
     private void printEpilogHtml(StringBuilder sb) {
             sb.append("</body></html>\n");
     }
 
+    public String getHtml(String markdown) {
+        Parser parser = FlexmarkInstances.getParser(null);
+        HtmlRenderer renderer = FlexmarkInstances.getRenderer(null);
+        Node document = parser.parse(markdown);
+        return renderer.render(document);
+    }
+
+    public String escapeTags(String str) {
+        return str.replaceAll("&", "&amp;").replaceAll("<", "&lt;");
+    }
 }

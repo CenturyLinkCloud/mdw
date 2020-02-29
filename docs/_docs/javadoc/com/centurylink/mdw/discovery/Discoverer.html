@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -123,14 +123,19 @@ var activeTableTab = "activeTableTab";
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/PackageMeta.html" title="class in com.centurylink.mdw.model">PackageMeta</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/Discoverer.html#findPackage-java.lang.String-java.lang.String-">findPackage</a></span>(java.lang.String&nbsp;name,
+           java.lang.String&nbsp;version)</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/Discoverer.html#getAssetPath--">getAssetPath</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,<a href="../../../../com/centurylink/mdw/model/PackageMeta.html" title="class in com.centurylink.mdw.model">PackageMeta</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/Discoverer.html#getPackageInfo--">getPackageInfo</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/discovery/Discoverer.html#getPackages--">getPackages</a></span>()</code>
 <div class="block">Excludes MDW packages unless GitHub public repo.</div>
@@ -183,11 +188,26 @@ var activeTableTab = "activeTableTab";
 <a name="getPackageInfo--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getPackageInfo</h4>
 <pre>java.util.Map&lt;java.lang.String,<a href="../../../../com/centurylink/mdw/model/PackageMeta.html" title="class in com.centurylink.mdw.model">PackageMeta</a>&gt;&nbsp;getPackageInfo()
                                                     throws java.io.IOException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="findPackage-java.lang.String-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>findPackage</h4>
+<pre><a href="../../../../com/centurylink/mdw/model/PackageMeta.html" title="class in com.centurylink.mdw.model">PackageMeta</a>&nbsp;findPackage(java.lang.String&nbsp;name,
+                        java.lang.String&nbsp;version)
+                 throws java.io.IOException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd>

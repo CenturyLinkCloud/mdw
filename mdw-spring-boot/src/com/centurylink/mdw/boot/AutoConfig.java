@@ -33,6 +33,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -40,6 +41,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
+import java.util.jar.Manifest;
 
 @Configuration
 @ComponentScan
@@ -87,13 +90,22 @@ public class AutoConfig {
                     bootDir = new File(classLoc.substring(0, classLoc.indexOf("BOOT-INF")));
                 }
 
+                // initialize app version from MANIFEST.MF
+                File manifestFile = new File(bootDir + "/META-INF/MANIFEST.MF");
+                if (manifestFile.isFile()) {
+                    Manifest manifest = new Manifest(new FileInputStream(manifestFile));
+                    String appVersion = manifest.getMainAttributes().getValue("App-Version");
+                    if (appVersion != null)
+                        ApplicationContext.setAppVersion(appVersion);
+                }
+
                 // explode mdw-spring-boot on top
                 String filename = "mdw-spring-boot-" + ApplicationContext.getMdwVersion() + ".jar";
                 try (InputStream is = classLoader.getResourceAsStream("BOOT-INF/lib/" + filename)) {
                     File bootJar = new File(bootDir + "/" + filename);
                     Files.copy(is, Paths.get(bootJar.getPath()), StandardCopyOption.REPLACE_EXISTING);
                     System.out.println("MDW Spring Boot Jar => " + bootJar.getAbsolutePath());
-                    ZipHelper.unzip(bootJar, bootDir, null, null, Exist.Overwrite);
+                    ZipHelper.unzip(bootJar, bootDir, null, Arrays.asList(new String[]{"META-INF/MANIFEST.MF"}), Exist.Overwrite);
                 }
             }
             catch (IOException ex) {

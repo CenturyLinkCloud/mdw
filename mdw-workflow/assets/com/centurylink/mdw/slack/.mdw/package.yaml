@@ -1,3 +1,6 @@
 schemaVersion: '6.1'
 name: com.centurylink.mdw.slack
-version: 6.1.30
+version: 6.1.32-SNAPSHOT
+
+dependencies:
+  - com.centurylink.mdw.base v6.1.32-SNAPSHOT

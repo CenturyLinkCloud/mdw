@@ -15,15 +15,12 @@
  */
 package com.centurylink.mdw.image;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-
 import com.centurylink.mdw.export.ExportHelper;
 import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.workflow.Process;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class ImageExportHelper extends ExportHelper {
 
@@ -31,26 +28,4 @@ public class ImageExportHelper extends ExportHelper {
         super(project);
     }
 
-    public BufferedImage printImage(Process process) {
-        int hMargin = 72;
-        int vMargin = 72;
-        Dimension graphsize = getGraphSize(process);
-        BufferedImage image = new BufferedImage(graphsize.width + hMargin,
-                graphsize.height + vMargin, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = image.createGraphics();
-        g2d.setBackground(Color.WHITE);
-        g2d.clearRect(0, 0, image.getWidth(), image.getHeight());
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-        ProcessCanvas canvas = new ProcessCanvas(project, process);
-        canvas.prepare();
-        Color bgsave = canvas.getBackground();
-        canvas.paintComponent(g2d);
-        canvas.setBackground(bgsave);
-        canvas.dispose();
-        g2d.dispose();
-        Runtime r = Runtime.getRuntime();
-        r.gc();
-        return image;
-    }
 }
