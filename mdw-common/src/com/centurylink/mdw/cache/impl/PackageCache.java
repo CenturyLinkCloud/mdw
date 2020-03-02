@@ -110,6 +110,7 @@ public class PackageCache implements PreloadableCache {
         Dependencies dependencies = new Dependencies();
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(baos);
+        dependencies.setAssetLoc(ApplicationContext.getAssetRoot().toString());
         dependencies.setOut(ps);
         dependencies.setErr(ps);
         try {
