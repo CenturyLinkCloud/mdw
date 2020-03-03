@@ -17,7 +17,6 @@ package com.centurylink.mdw.model.attribute;
 
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.util.JsonUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,24 +67,28 @@ public class Attribute implements Comparable<Attribute> {
     /**
      * Set the value of a process attribute.
      * If the value is null, the attribute is removed.
-     * If the attribute does not exist and the value is not null, the attribute
-     * is created.
+     * If the attribute does not exist and the value is not null, the attribute is created.
      * @param name attribute name
-     * @param value value to be set. When it is null, the attribute is removed
+     * @param value value to be set
+     * TODO: attributes should be a map
      */
     public static void setAttribute(List<Attribute> attrs, String name, String value) {
+        Attribute found = null;
         for (Attribute attr : attrs) {
             if (name.equals(attr.getName())) {
-                if (value != null)
-                    attr.setValue(value);
-                else
-                    attrs.remove(attr);  // TODO this will throw a concurrent modification exception
-                return;
+                found = attr;
+                break;
             }
         }
-        if (value != null) {
-            // TODO: need to retire attribute type concept
-            attrs.add(new Attribute(name, value));
+        if (value == null) {
+            if (found != null)
+                attrs.remove(found);
+        }
+        else {
+            if (found != null)
+                found.setValue(value);
+            else
+                attrs.add(new Attribute(name, value));
         }
     }
 

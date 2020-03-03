@@ -33,7 +33,7 @@ public class AssetRefConverter {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    public static Process getProcess(AssetRef assetRef) throws Exception {
+    public static Process getProcess(AssetRef assetRef) {
         Process proc = null;
         byte[] contentBytes = readAsset(assetRef);
         if (contentBytes != null && contentBytes.length > 0) {
@@ -43,13 +43,13 @@ public class AssetRefConverter {
             int endIdx = assetRef.getName().lastIndexOf(".proc v");
             proc.setName(assetRef.getName().substring(startIdx, endIdx));
             proc.setLanguage(Asset.PROCESS);
-            proc.setVersion(Asset.parseVersion(assetRef.getName().substring(endIdx+6)));
-            proc.setPackageName(assetRef.getName().substring(0, startIdx-1));
+            proc.setVersion(Asset.parseVersion(assetRef.getName().substring(endIdx + 6)));
+            proc.setPackageName(assetRef.getName().substring(0, startIdx - 1));
         }
         return proc;
     }
 
-    public static Asset getAsset(AssetRef assetRef) throws Exception {
+    public static Asset getAsset(AssetRef assetRef) {
         Asset asset = null;
         byte[] contentBytes = readAsset(assetRef);
 
@@ -60,8 +60,8 @@ public class AssetRefConverter {
             int endIdx = assetRef.getName().lastIndexOf(" v");
             asset.setName(assetRef.getName().substring(startIdx, endIdx));
             asset.setLanguage(Asset.getFormat(asset.getName()));
-            asset.setVersion(Asset.parseVersion(assetRef.getName().substring(endIdx+1)));
-            asset.setPackageName(assetRef.getName().substring(0, startIdx-1));
+            asset.setVersion(Asset.parseVersion(assetRef.getName().substring(endIdx + 1)));
+            asset.setPackageName(assetRef.getName().substring(0, startIdx - 1));
             asset.setLoadDate(new Date());
             // do not load jar assets into memory
             if (!Asset.excludedFromMemoryCache(asset.getName()))
@@ -70,20 +70,20 @@ public class AssetRefConverter {
         return asset;
     }
 
-    public static TaskTemplate getTaskTemplate(AssetRef assetRef) throws Exception {
-        TaskTemplate taskVO = null;
+    public static TaskTemplate getTaskTemplate(AssetRef assetRef) {
+        TaskTemplate task = null;
         byte[] contentBytes = readAsset(assetRef);
 
         if (contentBytes != null && contentBytes.length > 0) {
-            taskVO = new TaskTemplate(new JsonObject(new String(contentBytes)));
-            taskVO.setTaskId(assetRef.getDefinitionId());
+            task = new TaskTemplate(new JsonObject(new String(contentBytes)));
+            task.setTaskId(assetRef.getDefinitionId());
             int startIdx = assetRef.getName().lastIndexOf('/') + 1;
             int endIdx = assetRef.getName().lastIndexOf(" v");
-            taskVO.setName(assetRef.getName().substring(startIdx, endIdx));
-            taskVO.setVersion(Asset.parseVersion(assetRef.getName().substring(endIdx+1)));
-            taskVO.setPackageName(assetRef.getName().substring(0, startIdx-1));
+            task.setName(assetRef.getName().substring(startIdx, endIdx));
+            task.setVersion(Asset.parseVersion(assetRef.getName().substring(endIdx + 1)));
+            task.setPackageName(assetRef.getName().substring(0, startIdx - 1));
         }
-        return taskVO;
+        return task;
     }
 
     private static byte[] readAsset(AssetRef assetRef) {

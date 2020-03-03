@@ -236,7 +236,7 @@ public class HierarchyCache implements CacheService {
         List<Long> milestoned = new ArrayList<>();
         try {
             if (PackageCache.getPackage(MILESTONES_PACKAGE) != null) {
-                for (Process process : ProcessCache.getProcesses(false)) {
+                for (Process process : ProcessCache.getProcesses(true)) {
                     List<Linked<Process>> hierarchyList = getHierarchy(process.getId());
                     if (!hierarchyList.isEmpty()) {
                         if (hasMilestones(hierarchyList.get(0))) {
@@ -318,8 +318,7 @@ public class HierarchyCache implements CacheService {
         }
         String path = linkedActivity.get().getPackageName() + "/" + linkedActivity.get().getProcessName() + ".proc";
         if (importance.containsKey(path)) {
-            int value = importance.remove(path);
-            return value;
+            return importance.remove(path);
         }
         return 0;
     }

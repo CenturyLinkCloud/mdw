@@ -129,7 +129,7 @@ public class AssetRefCache implements CacheService {
         if (myAssetRefs == null)
             myAssetRefs = load();
 
-        List<AssetRef> refList = new ArrayList<AssetRef>();
+        List<AssetRef> refList = new ArrayList<>();
         String name = ".proc v";
         for (AssetRef curRef : myAssetRefs.values()) {
             if (curRef.getName().contains(name)) {

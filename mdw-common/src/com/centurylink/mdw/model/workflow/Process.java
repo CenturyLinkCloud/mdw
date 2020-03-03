@@ -169,9 +169,6 @@ public class Process extends Asset implements Jsonable, Yamlable, Linkable {
         this.textNotes = v;
     }
 
-    /**
-     * @return the attributes
-     */
     public List<Attribute> getAttributes() {
         return attributes;
     }
@@ -363,12 +360,6 @@ public class Process extends Asset implements Jsonable, Yamlable, Linkable {
         return Attribute.findAttribute(attributes, attrname);
     }
 
-    /**
-     * Set the value of a process attribute.
-     * If the value is null, the attribute is removed.
-     * If the attribute does not exist and the value is not null, the attribute
-     * is created.
-     */
     public void setAttribute(String attrname, String value) {
         if (attributes == null)
             attributes = new ArrayList<>();

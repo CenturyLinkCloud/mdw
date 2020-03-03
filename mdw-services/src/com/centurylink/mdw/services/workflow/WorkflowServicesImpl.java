@@ -1541,7 +1541,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     private Linked<Milestone> getMilestones(ProcessInstance masterProcessInstance, boolean future)
             throws ServiceException {
-        Process masterProcess = ProcessCache.getProcess(masterProcessInstance.getQualifiedName());
+        Process masterProcess = ProcessCache.getProcess(masterProcessInstance.getProcessId());
         // retrieve full
         ProcessInstance processInstance = getProcess(masterProcessInstance.getId());
 
@@ -1558,9 +1558,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         addMilestones(masterMilestones, endToEndActivities, parentInstance);
         if (future && HierarchyCache.hasMilestones(masterProcess.getId())) {
             for (Linked<Milestone> end : masterMilestones.getEnds()) {
-                Process endProcess = ProcessCache.getProcess(end.get().getProcess().getQualifiedName());
-                Linked<Milestone> futureMilestones = HierarchyCache.getMilestones(endProcess.getId());
-                if (futureMilestones != null) {
+                Linked<Milestone> futureMilestones = HierarchyCache.getMilestones(end.get().getProcess().getId());                if (futureMilestones != null) {
                     Linked<Milestone> futureMilestone = futureMilestones.find(m -> {
                         return m.getActivity().getId().equals(end.get().getActivity().getId()) &&
                                 m.getProcess().getId().equals(end.get().getProcess().getId());
@@ -1578,19 +1576,17 @@ public class WorkflowServicesImpl implements WorkflowServices {
         ActivityInstance activityInstance = start.get();
         ProcessInstance processInstance = instanceHierarchy.
                 find(new ProcessInstance(activityInstance.getProcessInstanceId())).get();
-        Process milestonesProcess = ProcessCache.getProcess(processInstance.getQualifiedName());
-        Process instanceProcess = ProcessCache.getProcess(processInstance.getProcessId());
-        Activity milestoneActivity = milestonesProcess.getActivity(activityInstance.getActivityId());
-        Activity instanceActivity = instanceProcess.getActivity(activityInstance.getActivityId());
-        Milestone milestone = milestoneActivity == null ? null : new MilestoneFactory(milestonesProcess).getMilestone(milestoneActivity);
+        Process process = ProcessCache.getProcess(processInstance.getProcessId());
+        Activity activity = process.getActivity(activityInstance.getActivityId());
+        Milestone milestone = new MilestoneFactory(process).getMilestone(activity);
         if (milestone != null) {
             if (ProcessRuntimeContext.isExpression(milestone.getLabel())) {
-                Package pkg = PackageCache.getPackage(instanceProcess.getPackageName());
+                Package pkg = PackageCache.getPackage(process.getPackageName());
                 ProcessInstance loadedInstance = getProcess(processInstance.getId());
-                ActivityImplementor implementor = ImplementorCache.get(instanceActivity.getImplementor());
+                ActivityImplementor implementor = ImplementorCache.get(activity.getImplementor());
                 String category = implementor == null ? GeneralActivity.class.getName() : implementor.getCategory();
-                ActivityRuntimeContext runtimeContext = new ActivityRuntimeContext(null, pkg, instanceProcess, loadedInstance, 0, false,
-                        instanceActivity, category, activityInstance, false);
+                ActivityRuntimeContext runtimeContext = new ActivityRuntimeContext(null, pkg, process, loadedInstance, 0, false,
+                        activity, category, activityInstance, false);
                 // doc variables are not loaded (too expensive)
                 for (VariableInstance variableInstance : loadedInstance.getVariables())
                     runtimeContext.getVariables().put(variableInstance.getName(), variableInstance.getStringValue());

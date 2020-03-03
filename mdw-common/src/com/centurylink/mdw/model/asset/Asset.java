@@ -382,11 +382,6 @@ public class Asset implements Comparable<Asset> {
         return ((Asset)obj).getId().equals(getId());
     }
 
-    @Override
-    public int hashCode() {
-        return getId().hashCode();
-    }
-
     public String getDescription() {
       return getLanguage() + ": " + getName() + " v" + getVersion();
     }
@@ -396,6 +391,12 @@ public class Asset implements Comparable<Asset> {
         return getLabel();
     }
 
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
+
+    @Override
     public int compareTo(Asset other) {
         if (other == null)
             return 1;

@@ -135,8 +135,9 @@ public class Workflow extends JsonRestService {
                 json.put("name", process.getName());
                 json.put("package", process.getPackageName());
                 json.put("version", process.getVersionString());
-                if (process.getId() != null && HierarchyCache.hasMilestones(process.getId()))
+                if (process.getId() != null && HierarchyCache.hasMilestones(process.getId())) {
                     json.put("hasMilestones", true);
+                }
                 return json;
             }
             else {
@@ -176,8 +177,9 @@ public class Workflow extends JsonRestService {
                     AssetVersionSpec startPageSpec = AssetVersionSpec.parse(assetSpec);
                     json.put("startPageUrl", new CustomPageLookup(startPageSpec, null).getUrl());
                 }
-                if (process.getId() != null && HierarchyCache.hasMilestones(process.getId()))
+                if (process.getId() != null && HierarchyCache.hasMilestones(process.getId())) {
                     json.put("hasMilestones", true);
+                }
 
                 return json;
             }

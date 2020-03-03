@@ -25,6 +25,7 @@ import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.variable.Document;
+import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
 import com.centurylink.mdw.services.cache.CacheRegistration;
@@ -32,6 +33,7 @@ import com.centurylink.mdw.util.AssetRefConverter;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
+import static com.centurylink.mdw.constant.WorkAttributeConstant.MONITORS;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +60,7 @@ public class ProcessCache implements CacheService {
     }
 
     synchronized private static ProcessCache getSingleton() {
-        if (singleton==null) {
+        if (singleton == null) {
             singleton = new ProcessCache();
             (new CacheRegistration()).registerCache(name, singleton);
         }
@@ -157,7 +159,7 @@ public class ProcessCache implements CacheService {
                     process = processMapTemp.get(processId);
                 else {
                     process = loadProcess(processId);
-                    if (process!=null) {
+                    if (process != null) {
                         putInCache(process);
                     }
                 }
@@ -285,8 +287,10 @@ public class ProcessCache implements CacheService {
             // If proc == null, check ASSET_REF DB table and retrieve from git history
             if (proc == null) {
                 AssetRef assetRef = AssetRefCache.getAssetRef(id);
-                if (assetRef != null)
+                if (assetRef != null) {
                     proc = AssetRefConverter.getProcess(assetRef);
+                    applyMonitors(proc);
+                }
             }
             return proc;
         }
@@ -309,8 +313,10 @@ public class ProcessCache implements CacheService {
                     refName += ".proc";
                 refName += " v" + Asset.formatVersion(version);
                 AssetRef assetRef = AssetRefCache.getAssetRef(refName);
-                if (assetRef != null)
+                if (assetRef != null) {
                     proc = AssetRefConverter.getProcess(assetRef);
+                    applyMonitors(proc);
+                }
             }
             if (proc == null && exceptionWhenNotFound)
                 throw new Exception("Process not found " + name + (version == 0 ? "" : " v" + Asset.formatVersion(version)));
@@ -328,5 +334,21 @@ public class ProcessCache implements CacheService {
 
     private WorkflowDataAccess getWorkflowDao() {
         return new WorkflowDataAccess();
+    }
+
+    /**
+     * Monitors for archived processes are taken from latest process definition.
+     * If process has been deleted, monitors are removed from archived.
+     */
+    private void applyMonitors(Process process) {
+        Process latestProcess = getProcess(process.getQualifiedName());
+        if (latestProcess == null || latestProcess.getVersion() != process.getVersion()) {
+            // apply monitors from latest process/activities
+            process.setAttribute(MONITORS, latestProcess == null ? null : latestProcess.getAttribute(MONITORS));
+            for (Activity activity : process.getActivities()) {
+                Activity latestActivity = latestProcess == null ? null : latestProcess.getActivity(activity.getId());
+                activity.setAttribute(MONITORS, latestActivity == null ? null : latestActivity.getAttribute(MONITORS));
+            }
+        }
     }
 }
