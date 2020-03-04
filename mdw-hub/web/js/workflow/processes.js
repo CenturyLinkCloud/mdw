@@ -228,8 +228,8 @@ processMod.controller('ProcessesController',
 }]);
 
 processMod.controller('ProcessController',
-    ['$scope', '$route', '$routeParams', '$filter', '$http', 'mdw', 'util', 'uiUtil', 'Process', 'ProcessSummary', 'Staging', 'DOCUMENT_TYPES', 'WORKFLOW_STATUSES',
-     function($scope, $route, $routeParams, $filter, $http, mdw, util, uiUtil, Process, ProcessSummary, Staging, DOCUMENT_TYPES, WORKFLOW_STATUSES) {
+    ['$scope', '$route', '$routeParams', '$filter', '$http', 'mdw', 'util', 'uiUtil', 'Process', 'ProcessSummary', 'MilestoneGroups', 'MilestoneGroupsPersist', 'Staging', 'DOCUMENT_TYPES', 'WORKFLOW_STATUSES',
+     function($scope, $route, $routeParams, $filter, $http, mdw, util, uiUtil, Process, ProcessSummary, MilestoneGroups, MilestoneGroupsPersist, Staging, DOCUMENT_TYPES, WORKFLOW_STATUSES) {
 
   var activity = sessionStorage.getItem('mdw-activityInstance');
   if (activity) {
@@ -242,12 +242,18 @@ processMod.controller('ProcessController',
       $scope.process = Process.retrieve({triggerId: $routeParams.triggerId}, function() {
         ProcessSummary.set($scope.process);
         $scope.archived = $scope.process.archived;
+        if ($scope.process.hasMilestones && !sessionStorage.getItem("mdw-milestoneGroups")) {
+          MilestoneGroups.retrieve({}, function(data) { MilestoneGroupsPersist.save(data); });
+        }
       });
     }
     else {
       $scope.process = Process.retrieve({instanceId: $routeParams.instanceId, extra: 'summary'}, function() {
         ProcessSummary.set($scope.process);
         $scope.archived = $scope.process.archived;
+        if ($scope.process.hasMilestones && !sessionStorage.getItem("mdw-milestoneGroups")) {
+          MilestoneGroups.retrieve({}, function(data) { MilestoneGroupsPersist.save(data); });
+        }
       });
     }
   };
@@ -437,8 +443,8 @@ processMod.controller('ProcessDefsController', ['$scope', 'mdw', 'util', 'Proces
 }]);
 
 processMod.controller('ProcessDefController',
-    ['$scope', '$routeParams', '$route', '$location', '$filter', '$http', 'mdw', 'util', 'uiUtil', 'ProcessDef', 'ProcessSummary', 'ProcessVersions', 'Staging',
-    function($scope, $routeParams, $route, $location, $filter, $http, mdw, util, uiUtil, ProcessDef, ProcessSummary, ProcessVersions, Staging) {
+    ['$scope', '$routeParams', '$route', '$location', '$filter', '$http', 'mdw', 'util', 'uiUtil', 'ProcessDef', 'ProcessSummary', 'ProcessVersions', 'MilestoneGroups', 'MilestoneGroupsPersist', 'Staging',
+    function($scope, $routeParams, $route, $location, $filter, $http, mdw, util, uiUtil, ProcessDef, ProcessSummary, ProcessVersions, MilestoneGroups, MilestoneGroupsPersist, Staging) {
 
   var activity = sessionStorage.getItem('mdw-activity');
   if (activity) {
@@ -504,6 +510,9 @@ processMod.controller('ProcessDefController',
         });
       });
     }
+    if ($scope.process.hasMilestones && !sessionStorage.getItem("mdw-milestoneGroups")) {
+      MilestoneGroups.retrieve({}, function(data) { MilestoneGroupsPersist.save(data); });
+    }
   }
   else {
     var defSum = ProcessDef.retrieve({packageName: $scope.process.packageName, processName: $scope.process.name, processVersion: $scope.process.version, summary: true}, function() {
@@ -529,6 +538,9 @@ processMod.controller('ProcessDefController',
             });
           });
         }
+      if ($scope.process.hasMilestones && !sessionStorage.getItem("mdw-milestoneGroups")) {
+        MilestoneGroups.retrieve({}, function(data) { MilestoneGroupsPersist.save(data); });
+      }
     });
   }
 
@@ -597,4 +609,23 @@ processMod.factory('ProcessVersions', ['$resource', 'mdw', function($resource, m
   return $resource(mdw.roots.services + '/Services/Versions/:packageName/:processName' + '.proc', mdw.serviceParams(), {
     retrieve: { method: 'GET', isArray: false }
   });
+}]);
+
+processMod.factory('MilestoneGroups', ['$resource', 'mdw', function($resource, mdw) {
+  return $resource(mdw.roots.services + '/Services/com/centurylink/mdw/milestones/groups', mdw.serviceParams(), {
+    retrieve: { method: 'GET', isArray: false }
+  });
+}]);
+
+processMod.factory('MilestoneGroupsPersist', ['mdw', function(mdw) {
+  return {
+    save: function(data) {
+      var groups = [];
+      if (data.groups) {
+        groups = data.groups;
+        groups.sort((g1, g2) => g1.name.localeCompare(g2.name));
+      }
+      sessionStorage.setItem("mdw-milestoneGroups", JSON.stringify(groups));
+    },
+  };
 }]);

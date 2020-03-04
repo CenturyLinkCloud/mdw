@@ -33,6 +33,7 @@ import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
+import com.centurylink.mdw.service.data.process.HierarchyCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.DesignServices;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -276,12 +277,16 @@ public class Processes extends JsonRestService implements JsonExportable {
             // If null it means it is archived but was renamed or removed from current assets
             if (latestTemplate == null || !latestTemplate.getId().equals(process.getProcessId()))
                 summary.put("archived", true);
+            if (HierarchyCache.hasMilestones(latestTemplate.getId()))
+                summary.put("hasMilestones", true);
         }
         else {
             Process latest = ProcessCache.getProcess(process.getPackageName() + "/" + process.getProcessName());
             // If null it means it is archived but was renamed or removed from current assets
             if (latest == null || !latest.getId().equals(process.getProcessId()))
                 summary.put("archived", true);
+            if (HierarchyCache.hasMilestones(latest.getId()))
+                summary.put("hasMilestones", true);
         }
         return summary;
     }

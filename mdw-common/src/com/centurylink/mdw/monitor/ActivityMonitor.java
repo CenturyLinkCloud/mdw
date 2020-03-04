@@ -31,6 +31,7 @@ import java.util.Map;
  * Values for document variables in the ActivityRuntimeContext are current as of
  * activity start.  If a monitor requires guaranteed up-to-date document values, it
  * should retrieve the document for update using the MDW Java API.
+ * TODO: onDelay() for wait/task activities.
  */
 public interface ActivityMonitor extends RegisteredService, Monitor {
 

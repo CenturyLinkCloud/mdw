@@ -33,12 +33,13 @@ The time out attribute specifies how long we should time out the waiting.
 When the value is 0 or negative, the activity waits indefinitely.
 <p>
 The activity should have an Event Type for <em>DELAY</em> outgoing 
-transition from the <em>Event Wait Activity</em> to <em><a href="TimerWaitActivity.html">Timer Wait</a></em> activity to indicate what should
+transition from the <em>Event Wait Activity</em> to indicate what should
 be done when a timeout happens. If a DELAY transition is not defined,
 the DELAY embedded process will be looked at next. If that does not exist
 either, the DELAY embedded process of the parent process instance will be
-invoked, and so on. If no process instances in the chain has embedded
-DELAY process, no transition is made (and no exception will be reported).
+invoked, and so on up to any package-level DELAY handler process.
+If no DELAY handler is found in the process instances chain,
+no transition is made (and no exception will be reported).
 <p>
 The attribute "Status after Timeout" specifies what status the activity
 should be set when a timeout situation occurs. There are 3 statuses possible:

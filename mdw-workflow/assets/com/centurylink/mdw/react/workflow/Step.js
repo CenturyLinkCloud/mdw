@@ -71,22 +71,21 @@ var StepFactory = function(DC, Shape) {
     if (this.implementor.icon && this.implementor.icon.startsWith('shape:'))
       shape = this.implementor.icon.substring(6);
 
-    // TODO Milestones may not have been populated in sessionStorage (unless Milestones link visited).
     var title, fill;
     var milestoneGroups = sessionStorage.getItem('mdw-milestoneGroups');
     if (milestoneGroups) {
       milestoneGroups = JSON.parse(milestoneGroups);
-      var milestone = this.getMilestone();
-      if (milestone) {
-        fill = this.shade('#4cafea', 0.50);
-        title = milestone.label; // TODO use this
-        if (milestone.group) {
-          var foundGroup = milestoneGroups.find(function(mg) {
-            return mg.name === milestone.group;
-          });
-          if (foundGroup && foundGroup.props && foundGroup.props.color) {
-            fill = this.shade(foundGroup.props.color, 0.50);
-          }
+    }
+    var milestone = this.getMilestone();
+    if (milestone) {
+      fill = this.shade('#4cafea', 0.50);
+      title = milestone.label; // TODO use this
+      if (milestone.group) {
+        var foundGroup = !milestoneGroups ? null : milestoneGroups.find(function(mg) {
+          return mg.name === milestone.group;
+        });
+        if (foundGroup && foundGroup.props && foundGroup.props.color) {
+          fill = this.shade(foundGroup.props.color, 0.50);
         }
       }
     }
