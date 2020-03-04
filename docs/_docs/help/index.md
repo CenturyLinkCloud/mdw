@@ -76,7 +76,7 @@ permalink: /docs/help/
   <li><a href='automatedTesting.html'>Automated Testing</a></li>
   <li><a href='groovyTestScriptSyntax.html'>Groovy Test Script Syntax</a></li>
   <li><a href='testResultsFormat.html'>Test Results Format</a></li>
-  <li><a href='monitoring.html'>Monitoring</a></li>
+  <li><a href='monitoring.html'>Monitors</a></li>
   <li><a href='todo.html'>MDW Dashboard</a></li>
 </ul>
 </div>

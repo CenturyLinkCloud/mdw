@@ -60,8 +60,8 @@ public class Milestone implements Linkable, Jsonable {
             int bracket = t.indexOf('[');
             if (bracket > 0) {
                 t = t.substring(0, bracket);
+                return t.trim().replaceAll("\\\\n", "\n");
             }
-            return t.trim().replaceAll("\\\\n", "\n");
         }
         return null;
     }

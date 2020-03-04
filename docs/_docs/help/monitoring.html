@@ -32,9 +32,13 @@ public class ActivityTimingMonitor implements ActivityMonitor {
 
 <h3><a id="configuration">Monitor Configuration</a></h3>
 <p>
-  Unlike those registered with the old-style <code>@RegisteredServices</code>, implementations using <code>@Monitor</code> are not enabled by
-  default unless the "defaultEnabled" annotation attribute is specified as true.  Non-global monitors can be configured in MDW Studio or MDWHub
-  for specific activities as depicted in the screenshot below.
+  Annotated monitors are not enabled by default unless the "defaultEnabled" annotation attribute is specified as true.
+  Monitors can be turned on and off in the Configurator Monitoring tab in MDW Studio or MDWHub.  See the example
+  depicted in the screenshot below.
+</p>
+<p>
+  <strong>NOTE:</strong>Because monitors are meant to be dynamic, in-flight (non-latest versioned) instances
+  of processes and activities will use the monitor attributes from the latest definition (if present).
 </p>
 <img src="images/monitoring.png" alt="monitoring" style="width:1200px" />
 <p>

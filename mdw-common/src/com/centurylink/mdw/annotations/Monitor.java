@@ -17,6 +17,11 @@ package com.centurylink.mdw.annotations;
 
 import java.lang.annotation.*;
 
+/**
+ * Use monitor annotations to expose your activity, process, adapter, service or task monitors
+ * on the Configurator Monitoring tab in MDW Studio.  Enabled monitors will be notified at specified
+ * lifecycle stages.
+ */
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
