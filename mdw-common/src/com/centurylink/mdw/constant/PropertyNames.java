@@ -208,7 +208,7 @@ public class PropertyNames {
     // milestones
     public static final String MDW_MILESTONE_GROUPS = "mdw.milestone.groups";
     public static final String MDW_MILESTONE_IGNORES = "mdw.milestone.ignores";
-    public static final String MDW_MILESTONE_IMPORTANCE = "mdw.milestone.importance";
+    public static final String MDW_MILESTONE_MAX_DEPTH = "mdw.milestone.maxDepth";
 
     // mongo
     public static final String MDW_MONGODB_FORMAT_JSON= "mdw.mongodb.format.json";

@@ -259,7 +259,7 @@ public class RestServlet extends ServiceServlet {
             metaInfo.remove(Listener.METAINFO_REQUEST_PAYLOAD);
         }
 
-        Set<String> reqHeaderKeys = new HashSet<String>(metaInfo.keySet());
+        Set<String> reqHeaderKeys = new HashSet<>(metaInfo.keySet());
         String responseString = new ListenerHelper().processEvent(requestString, metaInfo);
         populateResponseHeaders(reqHeaderKeys, metaInfo, response);
         if (metaInfo.get(Listener.METAINFO_CONTENT_TYPE) == null)

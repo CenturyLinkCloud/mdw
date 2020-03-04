@@ -4,7 +4,6 @@ import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.config.PropertyGroup;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -12,7 +11,10 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.services.ServiceLocator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class HierarchyCache implements CacheService {
 
@@ -96,10 +98,13 @@ public class HierarchyCache implements CacheService {
         Milestone milestone = new MilestoneFactory(process).getMilestone(activity);
         if (milestone != null) {
             Linked<Milestone> linkedMilestone = new Linked<>(milestone);
-            linkedMilestone.setParent(head);
-            head.getChildren().add(linkedMilestone);
-            for (Linked<Activity> child : start.getChildren()) {
-                addMilestones(linkedMilestone, child);
+            if (!head.getChildren().contains(linkedMilestone)) {
+                // otherwise already reached here from another path
+                linkedMilestone.setParent(head);
+                head.getChildren().add(linkedMilestone);
+                for (Linked<Activity> child : start.getChildren()) {
+                    addMilestones(linkedMilestone, child);
+                }
             }
         }
         else {
@@ -111,7 +116,7 @@ public class HierarchyCache implements CacheService {
 
     public static Linked<Activity> getActivityHierarchy(Long processId) {
         Linked<Activity> hierarchy;
-        Map<Long,Linked<Activity>> endToEndMap = activityHierarchies;
+    Map<Long,Linked<Activity>> endToEndMap = activityHierarchies;
         if (endToEndMap.containsKey(processId)) {
             hierarchy = endToEndMap.get(processId);
         } else {
@@ -128,9 +133,12 @@ public class HierarchyCache implements CacheService {
         return hierarchy;
     }
 
+    private static int MAX_DEPTH;
+
     private static Linked<Activity> loadActivityHierarchy(Long processId) {
         if (PackageCache.getPackage(MILESTONES_PACKAGE) == null)
             return null; // don't bother and save some time
+        MAX_DEPTH = PropertyManager.getIntegerProperty(PropertyNames.MDW_MILESTONE_MAX_DEPTH, 7500);
         Process process = ProcessCache.getProcess(processId);
         if (process != null) {
             Linked<Process> hierarchy = getHierarchy(processId).get(0);
@@ -147,16 +155,11 @@ public class HierarchyCache implements CacheService {
         return null;
     }
 
-    private static int MAX_DEPTH = 5000;
-
     /**
      * Activities are scoped to avoid process invocation circularity.
      */
     private static void addSubprocessActivities(ScopedActivity start, List<ScopedActivity> downstreams)
             throws DataAccessException {
-
-        // we particularly care about these processes
-        MAX_DEPTH += getImportance(start);
 
         if (start.depth() > MAX_DEPTH)
             return;
@@ -296,37 +299,12 @@ public class HierarchyCache implements CacheService {
         clearCache();
     }
 
-    /**
-     * Only returns value the first time so depth boost is applied just once.
-     */
-    private static Map<String,Integer> importance;
-    private static int getImportance(Linked<Activity> linkedActivity) {
-        if (importance == null) {
-            importance = new HashMap<>();
-            Properties props = PropertyManager.getInstance().getProperties(PropertyNames.MDW_MILESTONE_IMPORTANCE);
-            PropertyGroup importanceGroup = new PropertyGroup("milestone.groups", PropertyNames.MDW_MILESTONE_IMPORTANCE, props);
-            for (String value : importanceGroup.getProperties().stringPropertyNames()) {
-                String path = value;
-                int slash = value.indexOf('/');
-                if (slash > 0) {
-                    path = path.substring(0,slash).replace('_', '.') + path.substring(slash);
-                }
-                if (path.endsWith("_proc"))
-                    path = path.substring(0, path.length() - 5) + ".proc";
-                importance.put(path, Integer.parseInt(importanceGroup.getProperties().getProperty(value)));
-            }
-        }
-        String path = linkedActivity.get().getPackageName() + "/" + linkedActivity.get().getProcessName() + ".proc";
-        if (importance.containsKey(path)) {
-            return importance.remove(path);
-        }
-        return 0;
-    }
-
+    private static List<String> IGNORES;
     private static boolean isIgnored(Process process) {
-        List<String> ignores = PropertyManager.getListProperty(PropertyNames.MDW_MILESTONE_IGNORES);
-        return ignores != null && ignores.contains(process.getPackageName() + "/" + process.getName() + ".proc");
+        if (IGNORES == null) {
+            List<String> ignores = PropertyManager.getListProperty(PropertyNames.MDW_MILESTONE_IGNORES);
+            IGNORES = ignores == null ? new ArrayList<>() : ignores;
+        }
+        return IGNORES.contains(process.getPackageName() + "/" + process.getName() + ".proc");
     }
-
-
 }
