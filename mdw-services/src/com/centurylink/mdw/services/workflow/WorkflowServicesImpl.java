@@ -1612,6 +1612,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
     @Override
     public Linked<ActivityInstance> getActivityHierarchy(ProcessInstance processInstance) throws ServiceException {
         Process process = ProcessCache.getProcess(processInstance.getProcessId());
+        if (process == null)
+            throw new ServiceException("Process not found: " + processInstance.getComment() );
+
         Linked<ActivityInstance> endToEndActivities = processInstance.getLinkedActivities(process);
         Linked<ProcessInstance> instanceHierarchy = getCallHierearchy(processInstance.getId());
         try {

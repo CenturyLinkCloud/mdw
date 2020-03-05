@@ -527,6 +527,12 @@ inspectMod.directive('mdwInspector', ['$window', '$document', 'Inspector',
         elem[0].style.height = '80%';
         elem[0].style.top = '100px';
         panelElem[0].style.height = '90%';
+        var zoomControls = document.getElementsByClassName('mdw-workflow-zoom');
+        if (zoomControls.length === 1) {
+          var zoomControl = zoomControls[0];
+          var closeBtn = zoomControl.getElementsByClassName('mdw-close')[0];
+          closeBtn.click();
+        }
       };
       // removes extra styling added by max or close
       scope.initInspector = function() {
