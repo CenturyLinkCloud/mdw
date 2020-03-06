@@ -1,5 +1,23 @@
 # Change Log
 
+## [6.1.32](https://github.com/CenturyLinkCloud/mdw/tree/6.1.32) (2020-03-06)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.31...6.1.32)
+
+**Implemented enhancements:**
+
+- Monitors for inflight instances should use latest process definition [\#814](https://github.com/CenturyLinkCloud/mdw/issues/814)
+- General purpose Configurator help links in MDWHub [\#804](https://github.com/CenturyLinkCloud/mdw/issues/804)
+- Package dependencies [\#395](https://github.com/CenturyLinkCloud/mdw/issues/395)
+
+**Closed issues:**
+
+- Package dependency check fails when Git dir is not cwd [\#815](https://github.com/CenturyLinkCloud/mdw/issues/815)
+- Boot jar startup failure on Windows [\#813](https://github.com/CenturyLinkCloud/mdw/issues/813)
+- Hub milestones not populated unless Milestones link visited [\#812](https://github.com/CenturyLinkCloud/mdw/issues/812)
+- Adapter completion time update error at performance level 5 [\#809](https://github.com/CenturyLinkCloud/mdw/issues/809)
+- CLI without command throws IndexOutOfBoundsException on Windows [\#807](https://github.com/CenturyLinkCloud/mdw/issues/807)
+- Hub zoom controls can overlay Inspector tab [\#795](https://github.com/CenturyLinkCloud/mdw/issues/795)
+
 ## [6.1.31](https://github.com/CenturyLinkCloud/mdw/tree/6.1.31) (2020-02-14)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.30...6.1.31)
 
