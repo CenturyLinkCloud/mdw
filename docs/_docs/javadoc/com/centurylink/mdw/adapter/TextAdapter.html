@@ -267,7 +267,7 @@ var activeTableTab = "activeTableTab";
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>connection</code> - the object returned by openConnection()
          and is typically the adapter activity instance itself.</dd>
-<dd><code>request</code> - </dd>
+<dd><code>request</code> - request content</dd>
 <dd><code>timeout</code> - time out in seconds. Ignored if no response is expected.</dd>
 <dd><code>headers</code> - protocol request data, e.g. correlation ID</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -311,7 +311,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">Handle success response.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>response</code> - </dd>
+<dd><code>response</code> - response content</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/activity/ActivityException.html" title="class in com.centurylink.mdw.activity">ActivityException</a></code></dd>
 <dd><code><a href="../../../../com/centurylink/mdw/connector/adapter/ConnectionException.html" title="class in com.centurylink.mdw.connector.adapter">ConnectionException</a></code></dd>
@@ -331,7 +331,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">Handle failure response.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>errorCause</code> - </dd>
+<dd><code>errorCause</code> - throwable that triggered failure</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>completion code</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>

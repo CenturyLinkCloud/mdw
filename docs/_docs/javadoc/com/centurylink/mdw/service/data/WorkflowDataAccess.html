@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -188,29 +188,48 @@ extends <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAcce
               java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#buildOrderBy-com.centurylink.mdw.common.service.Query-">buildOrderBy</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#buildWhere-com.centurylink.mdw.common.service.Query-">buildWhere</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#getActivityInstance-java.lang.Long-java.lang.Long-">getActivityInstance</a></span>(java.lang.Long&nbsp;processInstanceId,
+                   java.lang.Long&nbsp;activityId)</code>
+<div class="block">Get latest activity instance for process instance and id.</div>
+</td>
+</tr>
+<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/util/log/ActivityLog.html" title="class in com.centurylink.mdw.util.log">ActivityLog</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#getActivityLog-java.lang.Long-">getActivityLog</a></span>(java.lang.Long&nbsp;activityInstanceId)</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#getLatestProcessInstanceComments-java.lang.Long-">getLatestProcessInstanceComments</a></span>(java.lang.Long&nbsp;processId)</code>
 <div class="block">Useful for inferring process name and version without definition.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#getProcessIdsClause-java.lang.String:A-">getProcessIdsClause</a></span>(java.lang.String[]&nbsp;processIds)</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#getProcessInstanceCount-com.centurylink.mdw.common.service.Query-">getProcessInstanceCount</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/ProcessList.html" title="class in com.centurylink.mdw.model.workflow">ProcessList</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#getProcessInstances-com.centurylink.mdw.common.service.Query-">getProcessInstances</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/util/log/ActivityLog.html" title="class in com.centurylink.mdw.util.log">ActivityLog</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#getProcessLog-java.lang.Long-boolean-">getProcessLog</a></span>(java.lang.Long&nbsp;processInstanceId,
              boolean&nbsp;withActivities)</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/util/log/ActivityLog.html" title="class in com.centurylink.mdw.util.log">ActivityLog</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#getProcessLog-java.lang.Long-java.lang.Long:A-">getProcessLog</a></span>(java.lang.Long&nbsp;processInstanceId,
              java.lang.Long[]&nbsp;activityInstanceIds)</code>&nbsp;</td>
@@ -289,6 +308,38 @@ extends <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAcce
 </dl>
 </li>
 </ul>
+<a name="buildWhere-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>buildWhere</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;buildWhere(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                               throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getProcessIdsClause-java.lang.String:A-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getProcessIdsClause</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;getProcessIdsClause(java.lang.String[]&nbsp;processIds)</pre>
+</li>
+</ul>
+<a name="buildOrderBy-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>buildOrderBy</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;buildOrderBy(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</pre>
+</li>
+</ul>
 <a name="getLatestProcessInstanceComments-java.lang.Long-">
 <!--   -->
 </a>
@@ -354,12 +405,28 @@ extends <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAcce
 <a name="getProcessLog-java.lang.Long-boolean-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getProcessLog</h4>
 <pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/util/log/ActivityLog.html" title="class in com.centurylink.mdw.util.log">ActivityLog</a>&nbsp;getProcessLog(java.lang.Long&nbsp;processInstanceId,
                                  boolean&nbsp;withActivities)
                           throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getActivityInstance-java.lang.Long-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getActivityInstance</h4>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&nbsp;getActivityInstance(java.lang.Long&nbsp;processInstanceId,
+                                            java.lang.Long&nbsp;activityId)
+                                     throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<div class="block">Get latest activity instance for process instance and id.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
