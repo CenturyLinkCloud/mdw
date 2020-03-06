@@ -22,7 +22,6 @@ import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.workflow.*;
-import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.log.ActivityLog;
 import com.centurylink.mdw.util.log.ActivityLogLine;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -375,6 +374,35 @@ public class WorkflowDataAccess extends CommonDataAccess {
             long dbDiffSecs = DatabaseAccess.getDbTimeDiff() / 1000;
             activityLog.setDbZoneOffset(activityLog.getServerZoneOffset() + dbDiffSecs);
             return activityLog;
+        }
+    }
+
+    /**
+     * Get latest activity instance for process instance and id.
+     */
+    public ActivityInstance getActivityInstance(Long processInstanceId, Long activityId) throws DataAccessException {
+
+        String sql = "select ACTIVITY_INSTANCE_ID, STATUS_CD, START_DT, END_DT, STATUS_MESSAGE, ACTIVITY_ID, PROCESS_INSTANCE_ID"
+                + " from ACTIVITY_INSTANCE where PROCESS_INSTANCE_ID = ? and ACTIVITY_ID = ? order by ACTIVITY_INSTANCE_ID desc";
+
+        try (DbAccess dbAccess = new DbAccess()) {
+            ResultSet rs = dbAccess.runSelect(sql, processInstanceId, activityId);
+            if (rs.next()) {
+                ActivityInstance activityInstance = new ActivityInstance();
+                activityInstance.setId(rs.getLong("ACTIVITY_INSTANCE_ID"));
+                activityInstance.setStatusCode(rs.getInt("STATUS_CD"));
+                activityInstance.setStartDate(rs.getTimestamp("START_DT"));
+                activityInstance.setEndDate(rs.getTimestamp("END_DT"));
+                activityInstance.setMessage(rs.getString("STATUS_MESSAGE"));
+                activityInstance.setActivityId(rs.getLong("ACTIVITY_ID"));
+                activityInstance.setProcessInstanceId(rs.getLong("PROCESS_INSTANCE_ID"));
+                return activityInstance;
+            } else {
+                return null;
+            }
+        }
+        catch (SQLException ex) {
+            throw new DataAccessException("Error retrieving milestone for pi=" + processInstanceId + ", a=" + activityId, ex);
         }
     }
 }
