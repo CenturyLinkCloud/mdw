@@ -100,8 +100,12 @@ dependencies {
     compileOnly fileTree(dir: "../mdw/libs", include: "mdw-draw.jar")
     draw fileTree(dir: "../mdw/libs", include: "mdw-draw.jar")
 
-    compileOnly group: 'com.itextpdf', name: 'itextpdf', version: '5.5.13'
-    compileOnly group: 'com.itextpdf.tool', name: 'xmlworker', version: '5.5.13'
+    compile fileTree(dir: "../mdw/libs", include: "mdw-draw.jar")
+    compile fileTree(dir: "../mdw/libs", include: "kotlin-stdlib-1.2.61.jar")
+    compile fileTree(dir: "../mdw/libs", include: "autolink.jar")
+
+    compile group: 'com.itextpdf', name: 'itextpdf', version: '5.5.13'
+    compile group: 'com.itextpdf.tool', name: 'xmlworker', version: '5.5.13'
 }
 
 clean {
