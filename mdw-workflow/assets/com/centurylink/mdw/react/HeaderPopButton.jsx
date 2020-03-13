@@ -23,12 +23,21 @@ class HeaderPopButton extends Component {
         rootClose={rootClose}
         ref="overlayTriggerRef">
         <Button bsStyle="primary" className="mdw-btn" style={{marginLeft:'4px'}}
-          title={this.props.title}>
+          title={this.props.title} disabled={this.props.disabled}>
           {this.props.glyph &&
             <Glyphicon glyph={this.props.glyph} />
           }
           {this.props.label &&
-            <span style={{marginLeft:left}}>{this.props.label}</span>
+            <span style={{marginLeft:left}}>
+              {this.props.label}
+              {this.props.dirty &&
+                  <span style={{position:'relative',paddingRight:'5px'}}>
+                    <span style={{fontWeight:'bold',fontSize:'16px',position:'absolute',left:'2px',top:'-4px'}}>
+                      {' *'}
+                    </span>
+                  </span>
+              }
+            </span>
           }
         </Button>
       </OverlayTrigger>
@@ -39,7 +48,9 @@ class HeaderPopButton extends Component {
 HeaderPopButton.propTypes = {
   label: PropTypes.string,
   glyph: PropTypes.string,
-  rootClose: PropTypes.bool
+  rootClose: PropTypes.bool,
+  dirty: PropTypes.bool,
+  disabled: PropTypes.bool
 };
 
 export default HeaderPopButton;

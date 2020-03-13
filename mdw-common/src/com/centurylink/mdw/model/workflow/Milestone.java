@@ -63,7 +63,7 @@ public class Milestone implements Linkable, Jsonable {
                 return t.trim().replaceAll("\\\\n", "\n");
             }
             else {
-                return t.trim();
+                return t.trim().replaceAll("\\\\n", "\n");
             }
         }
         return null;

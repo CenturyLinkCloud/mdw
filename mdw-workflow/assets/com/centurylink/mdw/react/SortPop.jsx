@@ -19,8 +19,8 @@ class SortPop extends Component {
     const {sorts, sort, onSortChange, ...popProps} = this.props; // eslint-disable-line no-unused-vars
     return (
       <Popover {...popProps} id="sort-pop">
-        <div style={{width:'120px'}}>
-          <Dropdown id="sort-drop"
+        <div style={{width:'150px'}}>
+          <Dropdown id="sort-drop" left="-60px"
             items={this.props.sorts}
             selected={this.props.sort}
             onSelect={sel => this.handleChange(sel)} />

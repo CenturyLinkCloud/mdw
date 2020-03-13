@@ -87,6 +87,7 @@ title: MDW Configuration
     # asset location info
     asset:
       location: assets  # required
+      ref.autopop: true # default=(false in dev; true elsewhere)
 
     # git repository
     git:

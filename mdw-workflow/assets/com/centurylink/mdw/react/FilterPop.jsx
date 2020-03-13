@@ -43,7 +43,7 @@ class FilterPop extends Component {
                   style={{display:isCb ? 'flex' : 'block', marginTop:isCb ? '5px' : '3px'}}>
                   {!isCb &&
                     <label className="mdw-label">{key + ':'}</label>
-                  }  
+                  }
                   {isDate &&
                     <div className="mdw-flex-item">
                       <DatePicker id={id}

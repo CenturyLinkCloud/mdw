@@ -15,10 +15,15 @@ class Dropdown extends Component {
     }
   }
 
+  hideMenu() {
+    this.refs.overlayTriggerRef.hide();
+  }
+
   render() {
     const menu = (
       <Popover id={this.props.id}>
-        <BsDropdown.Menu style={{display:'block',top:'-13px',left:'-60px'}}>
+        <BsDropdown.Menu
+          style={{display:'block',top:'-13px',left:this.props.left || '-72px'}}>
           {
             this.props.items.map((item, i) => {
               return (
@@ -35,7 +40,7 @@ class Dropdown extends Component {
     );
 
     return (
-      <OverlayTrigger id={this.props.id + '-trigger'}
+      <OverlayTrigger id={this.props.id + '-trigger'} ref="overlayTriggerRef"
         trigger="click" placement="bottom" overlay={menu} rootClose>
         <div className="mdw-inner-addon mdw-right-addon">
           <i className="glyphicon glyphicon-chevron-down"></i>
