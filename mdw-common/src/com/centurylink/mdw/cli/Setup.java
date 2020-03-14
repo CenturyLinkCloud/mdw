@@ -830,7 +830,7 @@ public abstract class Setup implements Operation {
 
         @Override
         public Map<String,ActivityImplementor> getActivityImplementors() throws IOException {
-            Map<String,ActivityImplementor> implementors = new Implementors(getAssetRoot());
+            Implementors implementors = new Implementors(getAssetRoot());
             // add built-in implementors
             File implsDir = getImplsDir();
             List<Path> implFiles = new ArrayList<>();
@@ -848,7 +848,7 @@ public abstract class Setup implements Operation {
             for (Path implFile : implFiles) {
                 JSONObject json = new JSONObject(new String(Files.readAllBytes(implFile)));
                 ActivityImplementor activityImplementor = new ActivityImplementor(json);
-                implementors.put(activityImplementor.getImplementorClass(), activityImplementor);
+                implementors.add(activityImplementor);
             }
             return implementors;
         }

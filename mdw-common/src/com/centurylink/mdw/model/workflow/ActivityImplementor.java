@@ -148,6 +148,9 @@ public class ActivityImplementor implements Comparable<ActivityImplementor>, Jso
      */
     public ActivityImplementor(JSONObject json) throws JSONException {
         this.implementorClass = json.getString("implementorClass");
+        int lastDot = implementorClass.lastIndexOf(".");
+        if (lastDot > 0)
+            packageName = implementorClass.substring(0, lastDot);
         if (json.has("category"))
             this.category = json.getString("category");
         if (json.has("label"))

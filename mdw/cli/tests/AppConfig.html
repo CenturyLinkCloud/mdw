@@ -48,12 +48,12 @@ three.structured: threeStructuredValue
 <br/><h2>Activity A3: "Log Props"</h2>
 <h3 style='margin-left:10px'>Attributes</h3>
 <ul>
-<li>Rule: import com.centurylink.mdw.config.PropertyManager
+<li>Groovy: <pre style='border:1px solid black;font-size:12px;'>import com.centurylink.mdw.config.PropertyManager
 
 println 'one: ' + PropertyManager.getProperty("one.prop")
 println 'two: ' + runtimeContext.getProperty("two.prop")
 
 println 'three.flat: ' + PropertyManager.getProperty("three.flat.config")
 println 'three.structured: ' + runtimeContext.getProperty("three.structured.config")
-</li><li>SCRIPT: Groovy</li></ul><br/><h2>Activity A2: "Stop"</h2>
+</pre></li><li>SCRIPT: Groovy</li></ul><br/><h2>Activity A2: "Stop"</h2>
 <br/></body></html>
