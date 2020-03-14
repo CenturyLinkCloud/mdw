@@ -220,8 +220,8 @@ allprojects {
  * Ant zip is the workaround to ensure .gitignore is included.
  */
 task zipTemplates(type: Zip) {
-    destinationDir = file("../${mdwOutputDir}")
-    archiveName = "mdw-templates-${mdwVersion}.zip"
+    destinationDirectory = file("../${mdwOutputDir}")
+    archiveFileName = "mdw-templates-${mdwVersion}.zip"
     from "templates"
     include "**/*"
     exclude ".DS_Store"
@@ -290,16 +290,21 @@ task codeFormat {
     dependsOn(javaNoTabs, jsNoTabs, jsxNoTabs, htmlNoTabs, cssNoTabs)
 }
 
-task checkAssetVersions(type: Exec) {
-    def mdwCmd
+def getMdwCmd() {
     if (System.properties['os.name'].startsWith('Windows')) {
-        mdwCmd = 'cli\\bin\\mdw.bat'
+        return 'cli\\bin\\mdw.bat'
     }
     else {
-        mdwCmd = 'cli/bin/mdw'
+        return 'cli/bin/mdw'
     }
-    def cmds = [mdwCmd, 'vercheck', '--tag=' + mdwPrevTag, '--warn', '--no-progress']
-    commandLine cmds
+}
+
+task checkAssetVersions(type: Exec) {
+    commandLine getMdwCmd(), 'vercheck', '--tag=' + mdwPrevTag, '--warn', '--no-progress'
+}
+
+task exportSourceImpls(type: Exec) {
+    commandLine getMdwCmd(), 'export', '--impls-src=../mdw-workflow/src', '--output=cli/impls'
 }
 
 task testAll(type: GradleBuild) {

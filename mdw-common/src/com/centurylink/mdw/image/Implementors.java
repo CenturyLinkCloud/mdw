@@ -25,26 +25,24 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Implementors extends LinkedHashMap<String,ActivityImplementor> {
 
-    private File assetLoc;
+    private File assetRoot;
 
-    public Implementors(File assetLoc) {
-        this.assetLoc = assetLoc;
+    public Implementors(File assetRoot) {
+        this.assetRoot = assetRoot;
         // load from assets (e.g. CLI) -- does not include compiled source annotations
-        loadAssetImplemetors(assetLoc);
+        loadAssetImplementors(assetRoot);
     }
 
     /**
      * Loads implementors from assets (impl or annotated source code).
      */
-    private void loadAssetImplemetors(File assetLoc) {
-        for (File file : assetLoc.listFiles()) {
+    private void loadAssetImplementors(File assetDir) {
+        for (File file : assetDir.listFiles()) {
             if (file.isDirectory()) {
-                loadAssetImplemetors(file);
+                loadAssetImplementors(file);
             }
             else if (file.exists()) {
                 try {
@@ -52,7 +50,8 @@ public class Implementors extends LinkedHashMap<String,ActivityImplementor> {
                         add(new ActivityImplementor(new JSONObject(new String(Files.readAllBytes(file.toPath())))));
                     }
                     else if (file.getName().endsWith(".java") || file.getName().endsWith(".kt")) {
-                        ActivityImplementor impl = getImpl(file);
+                        ActivityAnnotationParser parser = new ActivityAnnotationParser(assetRoot);
+                        ActivityImplementor impl = parser.parse(file);
                         if (impl != null)
                             add(impl);
                     }
@@ -62,47 +61,6 @@ public class Implementors extends LinkedHashMap<String,ActivityImplementor> {
                 }
             }
         }
-    }
-
-    // ignore closing paren within strings (https://stackoverflow.com/a/6464500)
-    private static final String ACTIVITY_REGEX = "@Activity\\s*\\((.*?\\)(?=([^\"\\\\]*(\\\\.|\"([^\"\\\\]*\\\\.)*[^\"\\\\]*\"))*[^\"]*$))";
-    private static final Pattern ACTIVITY_ANNOTATION = Pattern.compile(ACTIVITY_REGEX, Pattern.DOTALL);
-    private static final Pattern CATEGORY_VALUE = Pattern.compile("category\\s*=\\s*\"(.*?)\"");
-    private static final Pattern ICON_VALUE = Pattern.compile("icon\\s*=\\s*\"(.*?)\"");
-    private static final Pattern PAGELET_VALUE = Pattern.compile("pagelet\\s*=\\s*\"(.*?)\"");
-
-    /**
-     * For annotation-based implementors.  Custom impl classes cannot be compiled, so this crude
-     * parsing mechanism is used to determine image icon.  Kotlin limitation: file name must be the same as impl class name.
-     */
-    private ActivityImplementor getImpl(File file) throws IOException {
-        String contents = new String(Files.readAllBytes(file.toPath()));
-
-        Matcher matcher = ACTIVITY_ANNOTATION.matcher(contents);
-        if (matcher.find()) {
-            // only implClass and image are needed (other values are hardcoded)
-            String asset = file.getAbsolutePath().substring(assetLoc.getAbsolutePath().length() + 1).replace('/', '.');
-            String implClass = asset.substring(0, asset.lastIndexOf('.'));
-            String label = implClass.substring(implClass.lastIndexOf('.') + 1);
-            String params = matcher.group(1);
-            String category = "com.centurylink.mdw.activity.types.GeneralActivity";
-            Matcher categoryMatcher = CATEGORY_VALUE.matcher(params);
-            if (categoryMatcher.find()) {
-                category = categoryMatcher.group(1);
-            }
-            String icon = "shape:activity";
-            Matcher iconMatcher = ICON_VALUE.matcher(params);
-            if (iconMatcher.find()) {
-                icon = iconMatcher.group(1);
-            }
-            Matcher pageletMatcher = PAGELET_VALUE.matcher(params);
-            String pagelet = "{}";
-            if (pageletMatcher.find()) {
-                pagelet = pageletMatcher.group(1);
-            }
-            return new ActivityImplementor(implClass, category, label, icon, pagelet);
-        }
-        return null;
     }
 
     public void add(ActivityImplementor impl) {
@@ -117,10 +75,10 @@ public class Implementors extends LinkedHashMap<String,ActivityImplementor> {
             else {
                 String implClass = impl.getImplementorClass();
                 String pkg = implClass.substring(0, implClass.lastIndexOf('.'));
-                if (new File(assetLoc + "/" + pkg.replace('.', '/') + "/" + iconAsset).isFile())
+                if (new File(assetRoot + "/" + pkg.replace('.', '/') + "/" + iconAsset).isFile())
                     iconPkg = pkg;
             }
-            String iconPath = assetLoc + "/" + iconPkg.replace('.', '/') + "/" + iconAsset;
+            String iconPath = assetRoot + "/" + iconPkg.replace('.', '/') + "/" + iconAsset;
             try {
                 impl.setImageIcon(getIcon(iconPath));
             }

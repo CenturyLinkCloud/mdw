@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "com.centurylink.mdw.base/crossmap.png",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.transform.CrossmapActivity",
+  "label": "CrossmapActivity",
+  "pagelet": "com.centurylink.mdw.base/crossmap.pagelet"
+}

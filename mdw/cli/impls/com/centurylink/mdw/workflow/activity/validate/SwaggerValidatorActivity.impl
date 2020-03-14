@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "com.centurylink.mdw.base/swagger.png",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.validate.SwaggerValidatorActivity",
+  "label": "SwaggerValidatorActivity",
+  "pagelet": "com.centurylink.mdw.base/swaggerValidator.pagelet"
+}

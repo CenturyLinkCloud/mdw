@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "com.centurylink.mdw.base/writer.jpg",
+  "implementorClass": "com.centurylink.mdw.workflow.adapter.file.FileWriterAdapter",
+  "label": "FileWriterAdapter",
+  "pagelet": "com.centurylink.mdw.base/fileWriter.pagelet"
+}

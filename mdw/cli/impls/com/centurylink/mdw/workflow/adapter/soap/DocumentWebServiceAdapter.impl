@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "com.centurylink.mdw.base/adapter.png",
+  "implementorClass": "com.centurylink.mdw.workflow.adapter.soap.DocumentWebServiceAdapter",
+  "label": "DocumentWebServiceAdapter",
+  "pagelet": "com.centurylink.mdw.base/documentWebService.pagelet"
+}

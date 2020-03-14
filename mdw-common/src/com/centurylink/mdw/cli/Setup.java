@@ -33,9 +33,9 @@ import java.io.PrintStream;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -591,6 +591,10 @@ public abstract class Setup implements Operation {
         }
     }
 
+    protected File getImplsDir() throws IOException {
+        return new File(getMdwHome() + "/impls");
+    }
+
     /**
      * Downloads asset templates for codegen, etc.
      */
@@ -826,7 +830,27 @@ public abstract class Setup implements Operation {
 
         @Override
         public Map<String,ActivityImplementor> getActivityImplementors() throws IOException {
-            return new Implementors(getAssetRoot());
+            Map<String,ActivityImplementor> implementors = new Implementors(getAssetRoot());
+            // add built-in implementors
+            File implsDir = getImplsDir();
+            List<Path> implFiles = new ArrayList<>();
+            if (implsDir.isDirectory()) {
+                Files.walkFileTree(Paths.get(implsDir.getPath()), EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE, new SimpleFileVisitor<Path>() {
+                            @Override
+                            public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
+                                if (path.toFile().getName().endsWith(".impl")) {
+                                    implFiles.add(path);
+                                }
+                                return FileVisitResult.CONTINUE;
+                            }
+                        });
+            }
+            for (Path implFile : implFiles) {
+                JSONObject json = new JSONObject(new String(Files.readAllBytes(implFile)));
+                ActivityImplementor activityImplementor = new ActivityImplementor(json);
+                implementors.put(activityImplementor.getImplementorClass(), activityImplementor);
+            }
+            return implementors;
         }
     }
 }

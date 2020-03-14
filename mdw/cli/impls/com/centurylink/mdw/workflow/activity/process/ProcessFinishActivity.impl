@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "shape:stop",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity",
+  "label": "ProcessFinishActivity",
+  "pagelet": "com.centurylink.mdw.base/processFinish.pagelet"
+}

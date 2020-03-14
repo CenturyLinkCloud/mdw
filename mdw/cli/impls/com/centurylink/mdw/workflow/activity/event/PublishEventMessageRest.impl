@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "com.centurylink.mdw.base/send.gif",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.event.PublishEventMessageRest",
+  "label": "PublishEventMessageRest",
+  "pagelet": "com.centurylink.mdw.base/publishEventRest.pagelet"
+}

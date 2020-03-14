@@ -13,39 +13,41 @@
   - mdw-hub/package.json
   - RestApiDefinition.java
   - all package.yaml files
+  
+3. Run Gradle task exportSourceImpls to update CLI impl files with latest.
 
-3. Comment/uncomment these CLI tests:
+4. Comment/uncomment these CLI tests:
   - mdw/cli/tests/quickstart.bats (line 53 -- skip for formal/1st shapshot build, add back for second/subsequent snapshots)
   - mdw/cli/tests/convert.bats (line 18 -- skip for formal/1st snapshot builds, add back for second/subsequent snapshots)
     TODO: better way of handling -- this is because mdw.version is something that hasn't been published yet (formal and first snapshot)
 
-4. (Brand new point-release -- eg: moving from 6.1 to 6.2):
+5. (Brand new point-release -- eg: moving from 6.1 to 6.2):
   - Clean out schemaUpgradeQueries in mdw-common/src/META-INF/mdw/db/mysql.json and oracle.json.
 
-5. (Formal builds only) Clean Tag
+6. (Formal builds only) Clean Tag
   - Open browser to https://github.com/CenturyLinkCloud/mdw/tags
   - Delete SNAPSHOT release and tag
   - git pull
 
-6. Commit and push all the above changes to Git (normally gradle.properties, project.yaml, package.yamls and maybe CLI tests for formal build).
+7. Commit and push all the above changes to Git (normally gradle.properties, project.yaml, package.yamls and maybe CLI tests for formal build).
   - Travis CI will run the build, tests and publish to maven-central or sonatype.
   - Compilation or testing errors will prevent the build from being published.
 
-7. After success:
+8. After success:
   Manually close/release from [Nexus Repository Manager](https://oss.sonatype.org/#welcome) (don't want to automate this).
   Verify repository contains artifacts:
-  7a. (Formal Build)
+  8a. (Formal Build)
     - Repository: https://repo.maven.apache.org/maven2/com/centurylink/mdw/ (20-30 min)
-  7b. (Snapshot Build)
+  8b. (Snapshot Build)
     - Snapshot repo: https://oss.sonatype.org/content/repositories/snapshots/com/centurylink/mdw/
 
-8. (Formal builds only) On GitHub:
+9. (Formal builds only) On GitHub:
   - Make sure all closed issues have the current milestone assigned; otherwise they will not be included in release notes.
   - Create a milestone marker for the next build. (https://github.com/CenturyLinkCloud/mdw/milestones/new)
   - Assign any un-delivered issues and pull requests for the current build's milestone to the next build's milestone.
   - Close this build's milestone in GitHub.
 
-9. Release Notes
+10. Release Notes
   - git pull
   - If you are doing it first time then install ruby (https://github.com/CenturyLinkCloud/mdw#documentation) and do following in root of your workspace dir
     `gem install github_changelog_generator`
@@ -58,7 +60,7 @@
   - Commit (with `[skip ci]`) and push merged CHANGELOG.md
   - Update the new release on GitHub (https://github.com/CenturyLinkCloud/mdw/releases), copying the notes from updated CHANGELOG.md
 
-10. Create and publish Docker image
+11. Create and publish Docker image
     - Log into 143 and `su - mdwapp`, then go to directory with cloned Git repo (/app/prod/jack/mdw/mdw).
     - git pull
     - Create docker image with following command:
@@ -68,10 +70,10 @@
     - Publish image to Docker repository with command
         docker push mdwcore/mdw:6.1.0X   (update with actual MDW version)
 
-11. Run task 1, 2, 3 & 6 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
+12. Run task 1, 2, 4 & 7 and commit the files right away for the post-release snapshot (to prevent another commit from auto-publishing).
     - Mark snapshot release as "This is a pre-release" on GitHub
 
-12. See mdw-ctl-internal build.md.
+13. See mdw-ctl-internal build.md.
 
 13. - Upgrade mdw-demo
    - Wait until new build is searchable on Maven Central:    

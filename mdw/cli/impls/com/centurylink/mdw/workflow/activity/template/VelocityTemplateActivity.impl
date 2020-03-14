@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "com.centurylink.mdw.base/velocity.jpg",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.template.VelocityTemplateActivity",
+  "label": "VelocityTemplateActivity",
+  "pagelet": "com.centurylink.mdw.base/velocity.pagelet"
+}

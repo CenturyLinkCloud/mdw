@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "com.centurylink.mdw.base/email.png",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.notification.EmailNotificationActivity",
+  "label": "EmailNotificationActivity",
+  "pagelet": "com.centurylink.mdw.base/emailNotification.pagelet"
+}

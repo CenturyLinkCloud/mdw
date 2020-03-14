@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "shape:start",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity",
+  "label": "ProcessStartActivity",
+  "pagelet": "com.centurylink.mdw.base/processStart.pagelet"
+}

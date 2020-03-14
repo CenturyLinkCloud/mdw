@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "com.centurylink.mdw.base/multisub.png",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity",
+  "label": "InvokeHeterogeneousProcessActivity",
+  "pagelet": "com.centurylink.mdw.base/invokeMultiple.pagelet"
+}

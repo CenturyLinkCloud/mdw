@@ -30,6 +30,6 @@ sourceSets {
 }
 
 jar {
-    destinationDir = file('.')
+    destinationDirectory = file('.')
     baseName 'script-engine'
 }

@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "com.centurylink.mdw.base/script.gif",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity",
+  "label": "ScriptExecutorActivity",
+  "pagelet": "com.centurylink.mdw.base/scriptExecutor.pagelet"
+}

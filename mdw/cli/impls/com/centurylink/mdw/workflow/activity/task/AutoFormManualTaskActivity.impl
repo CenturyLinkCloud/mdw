@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "com.centurylink.mdw.base/task.png",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity",
+  "label": "AutoFormManualTaskActivity",
+  "pagelet": "com.centurylink.mdw.base/autoformTask.pagelet"
+}

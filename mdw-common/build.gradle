@@ -100,12 +100,8 @@ dependencies {
     compileOnly fileTree(dir: "../mdw/libs", include: "mdw-draw.jar")
     draw fileTree(dir: "../mdw/libs", include: "mdw-draw.jar")
 
-    compile fileTree(dir: "../mdw/libs", include: "mdw-draw.jar")
-    compile fileTree(dir: "../mdw/libs", include: "kotlin-stdlib-1.2.61.jar")
-    compile fileTree(dir: "../mdw/libs", include: "autolink.jar")
-
-    compile group: 'com.itextpdf', name: 'itextpdf', version: '5.5.13'
-    compile group: 'com.itextpdf.tool', name: 'xmlworker', version: '5.5.13'
+    compileOnly group: 'com.itextpdf', name: 'itextpdf', version: '5.5.13'
+    compileOnly group: 'com.itextpdf.tool', name: 'xmlworker', version: '5.5.13'
 }
 
 clean {
@@ -114,26 +110,26 @@ clean {
 
 task cliJar(type: Jar) {
     dependsOn compileJava
-    destinationDir = file("../mdw/cli")
-    archiveName = "mdw-cli.jar"
+    destinationDirectory = file("../mdw/cli")
+    archiveFileName = "mdw-cli.jar"
     manifest {
         attributes("MDW-Version": "${version}",
-            "MDW-Build": new Date().format(mdwBuildTimeFormat),
-            "Main-Class": "com.centurylink.mdw.cli.Main",
-            "Class-Path": "./lib/org.eclipse.jgit-4.8.0.201706111038-r.jar ./lib/org.eclipse.jgit.pgm-4.8.0.201706111038-r.jar"
-              + " ./lib/org.eclipse.jgit.http.apache-4.8.0.201706111038-r.jar ./lib/org.eclipse.jgit.lfs-4.8.0.201706111038-r.jar"
-              + " ./lib/slf4j-api-1.7.25.jar ./lib/slf4j-simple-1.7.25.jar ./lib/jsch-0.1.54.jar ./lib/args4j-2.0.15.jar"
-              + " ./lib/httpclient-4.5.3.jar ./lib/httpcore-4.4.7.jar ./lib/commons-logging-1.2.jar ./lib/mariadb-java-client-2.5.1.jar"
-              + " ./lib/org.eclipse.jgit.ui-4.8.0.201706111038-r.jar ./lib/airline-0.8.jar ./lib/guava-23.0.jar ./lib/javax.inject-1.jar"
-              + " ./lib/swagger-core-1.5.17.jar ./lib/swagger-models-1.5.17.jar ./lib/swagger-parser-1.0.33.jar"
-              + " ./lib/jackson-core-2.8.9.jar ./lib/jackson-databind-2.8.9.jar ./lib/jackson-dataformat-yaml-2.9.4.jar"
-              + " ./lib/jackson-annotations-2.8.9.jar ./lib/commons-lang3-3.4.jar ./lib/lambdaj-2.3.3.jar ./lib/cglib-2.2.2.jar"
-              + " ./lib/joda-time-2.9.9.jar ./lib/commons-io-2.4.jar ./lib/bpmn-schemas.jar ./lib/xmlbeans-2.4.0.jar ./lib/kotlin-stdlib-1.2.61.jar"
-              + " ./lib/flexmark-0.32.22.jar ./lib/flexmark-util-0.32.22.jar ./lib/flexmark-ext-anchorlink-0.32.22.jar ./lib/flexmark-ext-autolink-0.32.22.jar"
-              + " ./lib/flexmark-ext-superscript-0.32.22.jar ./lib/flexmark-ext-tables-0.32.22.jar ./lib/flexmark-ext-typographic-0.32.22.jar"
-              + " ./lib/flexmark-formatter-0.32.22.jar ./lib/autolink-0.9.0.jar ./lib/itextpdf-5.5.13.jar ./lib/xmlworker-5.5.13.jar"
-              + " ./lib/java-jwt-3.3.0.jar ./lib/jackson-core-2.9.5.jar ./lib/jackson-databind-2.9.5.jar ./lib/jackson-annotations-2.9.5.jar"
-              + " ./lib/commons-codec-1.11.jar ./lib/ojdbc6-12.1.0.2.0.jar");
+                "MDW-Build": new Date().format(mdwBuildTimeFormat),
+                "Main-Class": "com.centurylink.mdw.cli.Main",
+                "Class-Path": "./lib/org.eclipse.jgit-4.8.0.201706111038-r.jar ./lib/org.eclipse.jgit.pgm-4.8.0.201706111038-r.jar"
+                        + " ./lib/org.eclipse.jgit.http.apache-4.8.0.201706111038-r.jar ./lib/org.eclipse.jgit.lfs-4.8.0.201706111038-r.jar"
+                        + " ./lib/slf4j-api-1.7.25.jar ./lib/slf4j-simple-1.7.25.jar ./lib/jsch-0.1.54.jar ./lib/args4j-2.0.15.jar"
+                        + " ./lib/httpclient-4.5.3.jar ./lib/httpcore-4.4.7.jar ./lib/commons-logging-1.2.jar ./lib/mariadb-java-client-2.5.1.jar"
+                        + " ./lib/org.eclipse.jgit.ui-4.8.0.201706111038-r.jar ./lib/airline-0.8.jar ./lib/guava-23.0.jar ./lib/javax.inject-1.jar"
+                        + " ./lib/swagger-core-1.5.17.jar ./lib/swagger-models-1.5.17.jar ./lib/swagger-parser-1.0.33.jar"
+                        + " ./lib/jackson-core-2.8.9.jar ./lib/jackson-databind-2.8.9.jar ./lib/jackson-dataformat-yaml-2.9.4.jar"
+                        + " ./lib/jackson-annotations-2.8.9.jar ./lib/commons-lang3-3.4.jar ./lib/lambdaj-2.3.3.jar ./lib/cglib-2.2.2.jar"
+                        + " ./lib/joda-time-2.9.9.jar ./lib/commons-io-2.4.jar ./lib/bpmn-schemas.jar ./lib/xmlbeans-2.4.0.jar ./lib/kotlin-stdlib-1.2.61.jar"
+                        + " ./lib/flexmark-0.32.22.jar ./lib/flexmark-util-0.32.22.jar ./lib/flexmark-ext-anchorlink-0.32.22.jar ./lib/flexmark-ext-autolink-0.32.22.jar"
+                        + " ./lib/flexmark-ext-superscript-0.32.22.jar ./lib/flexmark-ext-tables-0.32.22.jar ./lib/flexmark-ext-typographic-0.32.22.jar"
+                        + " ./lib/flexmark-formatter-0.32.22.jar ./lib/autolink-0.9.0.jar ./lib/itextpdf-5.5.13.jar ./lib/xmlworker-5.5.13.jar"
+                        + " ./lib/java-jwt-3.3.0.jar ./lib/jackson-core-2.9.5.jar ./lib/jackson-databind-2.9.5.jar ./lib/jackson-annotations-2.9.5.jar"
+                        + " ./lib/commons-codec-1.11.jar ./lib/ojdbc6-12.1.0.2.0.jar");
     }
 
     from("build/classes/java/main") {
@@ -239,8 +235,8 @@ task cliJar(type: Jar) {
 
 task cliZip(type: Zip) {
     dependsOn cliJar
-    destinationDir = file("../${mdwOutputDir}")
-    archiveName = "mdw-cli-${version}.zip"
+    destinationDirectory = file("../${mdwOutputDir}")
+    archiveFileName = "mdw-cli-${version}.zip"
     from ("../mdw/cli") {
         exclude ".gitignore"
         exclude "lib/"
@@ -270,7 +266,7 @@ jar {
     }
 
     into("META-INF/mdw/templates") {
-      from "../mdw/templates"
+        from "../mdw/templates"
     }
 
     manifest {

@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "shape:decision",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.script.ScriptEvaluator",
+  "label": "ScriptEvaluator",
+  "pagelet": "com.centurylink.mdw.base/scriptEvaluator.pagelet"
+}

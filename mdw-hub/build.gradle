@@ -168,8 +168,8 @@ task springBootJar(type: Jar) {
 war {
     dependsOn(lint, springBootJar)
 
-    destinationDir = file("../$mdwOutputDir")
-    archiveName = "mdw-${version}.war"
+    destinationDirectory = file("../$mdwOutputDir")
+    archiveFileName = "mdw-${version}.war"
 
     classpath = war.classpath.plus(configurations.runtimeExtra)
 

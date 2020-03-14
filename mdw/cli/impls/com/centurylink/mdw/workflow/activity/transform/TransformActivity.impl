@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "com.centurylink.mdw.base/xml.jpg",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.transform.TransformActivity",
+  "label": "TransformActivity",
+  "pagelet": "com.centurylink.mdw.base/transform.pagelet"
+}

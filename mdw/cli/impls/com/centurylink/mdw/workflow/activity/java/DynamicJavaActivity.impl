@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "com.centurylink.mdw.base/java.png",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity",
+  "label": "DynamicJavaActivity",
+  "pagelet": "com.centurylink.mdw.base/dynamicJava.pagelet"
+}

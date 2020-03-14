@@ -1,0 +1,7 @@
+{
+  "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+  "icon": "com.centurylink.mdw.base/timer.png",
+  "implementorClass": "com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity",
+  "label": "TimerWaitActivity",
+  "pagelet": "com.centurylink.mdw.base/timerWait.pagelet"
+}
