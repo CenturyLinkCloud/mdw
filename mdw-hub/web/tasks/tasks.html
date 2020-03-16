@@ -11,14 +11,14 @@
         </div>
         <div class="mdw-heading-input" ng-if="!create">
           <div class="mdw-inner-addon mdw-right-addon">
-            <input type="text" class="form-control mdw-inline" style="min-width:200px;" autofocus placeholder="search" spellcheck="false"
+            <input type="text" class="form-control mdw-search" autofocus placeholder="search" spellcheck="false"
               ng-model="model.typeaheadMatchSelection" uib-typeahead="match as match.value for match in findTypeaheadMatches($viewValue)" 
               typeahead-editable="false" typeahead-on-select="typeaheadSelect()" ng-change="typeaheadChange()">
           </div>
           <span class="glyphicon glyphicon-remove mdw-clear-input" ng-click="clearTypeahead()"></span>
           <div class="mdw-inner-addon mdw-right-addon" style="margin-left:-10px;" uib-dropdown>
             <i class="glyphicon glyphicon-chevron-down"></i>
-            <input type="text" class="form-control mdw-inline mdw-dropfilter mdw-med-indent mdw-med-width3"  
+            <input type="text" class="form-control mdw-dropfilter mdw-med-indent mdw-med-width3"
               value="{{model.taskFilter.workgroups}}" uib-dropdown-toggle readonly>
             <ul class="dropdown-menu mdw-dropdown-menu mdw-med-indent" uib-dropdown-menu aria-labelledby="simple-dropdown">
               <li>
@@ -69,7 +69,8 @@
           </button>
            -->        
           <button type="button" class="btn btn-primary mdw-btn" mdw-action-pop-button uib-popover-template="'tasks/taskFilters.html'"> 
-            <span class="glyphicon glyphicon-filter"></span> Filter
+            <span class="glyphicon glyphicon-filter"></span> Filters
+            <span ng-if="!isDefaultFilter()" ng-include="'ui/dirty.html'"></span>
           </button>        
           <button type="button" class="btn btn-primary mdw-btn" mdw-action-pop-button uib-popover-template="'tasks/taskSort.html'"> 
             <span class="glyphicon glyphicon-sort"></span> Sort

@@ -12,13 +12,17 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
   if ($scope.model.activityFilter)
     $scope.model.activityFilter = JSON.parse($scope.model.activityFilter);
 
-  $scope.resetFilter = function() {
-    $scope.model.activityFilter = {
-      status: 'Failed',
-      sort: 'startDate',
-      descending: true
-    };
+  $scope.defaultFilter = {
+    status: 'Failed',
+    sort: 'startDate',
+    descending: true
   };
+
+  $scope.resetFilter = function() {
+    $scope.model.activityFilter = Object.assign({}, $scope.defaultFilter);
+    $scope.closePopover();
+  };
+
   if (!$scope.model.activityFilter) {
     $scope.resetFilter();
   }
@@ -26,6 +30,18 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
     if ($scope.model.activityFilter.startDate)
       $scope.model.activityFilter.startDate = util.serviceDate(new Date($scope.model.activityFilter.startDate));
   }
+
+  $scope.isDefaultFilter = function() {
+    for (let key of Object.keys($scope.model.activityFilter)) {
+      if (!$scope.model.activityFilter[key] && !$scope.defaultFilter[key])
+        continue;
+      if (key !== 'sort' && key !== 'descending' && key !== 'instanceId' && key !== 'activityName' && key !== 'masterRequestId' &&
+            $scope.model.activityFilter[key] !== $scope.defaultFilter[key]) {
+        return false;
+      }
+    }
+    return true;
+  };
 
   $scope.model.activityList = {};
 

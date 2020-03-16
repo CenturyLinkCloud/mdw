@@ -11,7 +11,7 @@
         
         <div class="mdw-heading-input">
           <div class="mdw-inner-addon mdw-right-addon">
-            <input type="text" class="form-control mdw-inline" autofocus placeholder="search" spellcheck="false"
+            <input type="text" class="form-control mdw-search" autofocus placeholder="search" spellcheck="false"
               ng-model="model.typeaheadMatchSelection" uib-typeahead="match as match.value for match in findTypeaheadMatches($viewValue)" 
               typeahead-editable="false" typeahead-on-select="typeaheadSelect()" ng-change="typeaheadChange()">
           </div>
@@ -27,7 +27,8 @@
           </button>
           <button type="button" class="btn btn-primary mdw-btn" mdw-action-pop-button 
             uib-popover-template="'workflow/activityFilters.html'"> 
-            <span class="glyphicon glyphicon-filter"></span> Filter
+            <span class="glyphicon glyphicon-filter"></span> Filters
+            <span ng-if="!isDefaultFilter()" ng-include="'ui/dirty.html'"></span>
           </button>        
           <button type="button" class="btn btn-primary mdw-btn" mdw-action-pop-button 
             uib-popover-template="'workflow/activitySort.html'"> 

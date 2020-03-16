@@ -21,14 +21,29 @@ processMod.controller('ProcessesController',
     }
   };
 
-  $scope.resetFilter = function() {
-    $scope.processFilter = {
-        master: true,
-        status: '[Active]',
-        sort: 'startDate',
-        descending: true,
-        values: null
-    };
+  $scope.defaultFilter = {
+    master: true,
+    status: '[Active]',
+    sort: 'startDate',
+    descending: true,
+    values: null
+  };
+
+  $scope.resetFilter = function(defaults) {
+    $scope.processFilter = Object.assign({}, $scope.defaultFilter, defaults);
+    $scope.closePopover();
+  };
+
+  $scope.isDefaultFilter = function() {
+    for (let key of Object.keys($scope.processFilter)) {
+      if (!$scope.processFilter[key] && !$scope.defaultFilter[key])
+        continue;
+      if (key !== 'master' && key !== 'sort' && key !== 'descending' && key !== 'processId' && key !== 'masterRequestId' && key !== 'instanceId' &&
+            $scope.processFilter[key] !== $scope.defaultFilter[key]) {
+        return false;
+      }
+    }
+    return true;
   };
 
   // definitionId and processSpec passed in query params
@@ -201,6 +216,7 @@ processMod.controller('ProcessesController',
       $scope.processFilter.masterRequestId = null;
     if ($scope.processFilter.processId)
       $scope.processFilter.processId = null;
+    $scope.resetFilter({master: $scope.processFilter.master});
   };
 
   $scope.typeaheadChange = function() {
@@ -210,6 +226,8 @@ processMod.controller('ProcessesController',
 
   $scope.typeaheadSelect = function() {
     $scope.clearTypeaheadFilters();
+    $scope.processFilter.status = null;
+    $scope.processFilter.values = null;
     if ($scope.typeaheadMatchSelection.id)
       $scope.processFilter[$scope.typeaheadMatchSelection.type] = $scope.typeaheadMatchSelection.id;
     else

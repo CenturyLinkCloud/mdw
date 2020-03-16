@@ -21,13 +21,28 @@ milestonesMod.controller('MilestonesController',
     }
   };
 
+  $scope.defaultFilter = {
+      status: '[Active]',
+      sort: 'startDate',
+      descending: true,
+      values: null
+  };
+
   $scope.resetFilter = function() {
-    $scope.milestonesFilter = {
-        status: '[Active]',
-        sort: 'startDate',
-        descending: true,
-        values: null
-    };
+    $scope.milestonesFilter = Object.assign({}, $scope.defaultFilter);
+    $scope.closePopover();
+  };
+
+  $scope.isDefaultFilter = function() {
+    for (let key of Object.keys($scope.milestonesFilter)) {
+      if (!$scope.milestonesFilter[key] && !$scope.defaultFilter[key])
+        continue;
+      if (key !== 'master' && key !== 'sort' && key !== 'descending' && key !== 'processId' && key !== 'masterRequestId' && key !== 'instanceId' &&
+            $scope.milestonesFilter[key] !== $scope.defaultFilter[key]) {
+        return false;
+      }
+    }
+    return true;
   };
 
   // definitionId and processSpec passed in query params
@@ -203,6 +218,9 @@ milestonesMod.controller('MilestonesController',
 
   $scope.typeaheadSelect = function() {
     $scope.clearTypeaheadFilters();
+    $scope.milestonesFilter.status = null;
+    $scope.milestonesFilter.startDate = null;
+    $scope.milestonesFilter.values = null;
     if ($scope.typeaheadMatchSelection.id)
       $scope.milestonesFilter[$scope.typeaheadMatchSelection.type] = $scope.typeaheadMatchSelection.id;
     else
@@ -212,6 +230,7 @@ milestonesMod.controller('MilestonesController',
   $scope.clearTypeahead = function() {
     $scope.typeaheadMatchSelection = null;
     $scope.clearTypeaheadFilters();
+    $scope.resetFilter();
     sessionStorage.removeItem('milestonesProcessSpec');
   };
 

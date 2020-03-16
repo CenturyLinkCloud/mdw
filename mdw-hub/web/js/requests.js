@@ -9,18 +9,38 @@ requestMod.controller('RequestsController',
   // is this in the context of the Workflow or Services tab?
   $scope.context = $location.path().startsWith('/service') ? 'service' : 'workflow';
   $scope.defaultType = $scope.context == 'service' ? 'inboundRequests' : 'masterRequests';
-  
+
+  $scope.defaultFilter = {
+    status: null,
+    receivedDate: util.serviceDate(new Date()),
+    type: $scope.defaultType
+  };
+
+  $scope.resetFilter = function(defaults) {
+    $scope.requestFilter = Object.assign({}, $scope.defaultFilter, defaults);
+    sessionStorage.setItem($scope.context + '_requestFilter', JSON.stringify($scope.requestFilter));
+    $scope.closePopover();
+  };
+
+  $scope.isDefaultFilter = function() {
+    for (let key of Object.keys($scope.requestFilter)) {
+      if (!$scope.requestFilter[key] && !$scope.defaultFilter[key])
+        continue;
+      if (key !== 'type' && key !== 'sort' && key !== 'descending' && key !== 'path' && key !== 'id' && key !== 'masterRequestId' &&
+            $scope.requestFilter[key] !== $scope.defaultFilter[key]) {
+        return false;
+      }
+    }
+    return true;
+  };
+
   // two-way bound to/from directive
   $scope.requestList = {};
   $scope.requestFilter = sessionStorage.getItem($scope.context + '_requestFilter');
   if ($scope.requestFilter)
         $scope.requestFilter = JSON.parse($scope.requestFilter);
   if (!$scope.requestFilter) {
-    $scope.requestFilter = {
-        sort: 'receivedDate',
-        type: $scope.defaultType,
-        descending: true
-    };
+    $scope.requestFilter = Object.assign({}, $scope.defaultFilter);
   }
   else {
     // fix date format stored in cookieStore
@@ -110,6 +130,7 @@ requestMod.controller('RequestsController',
     $scope.requestFilter.masterRequestId = null;
     $scope.requestFilter.id = null;
     $scope.requestFilter.path = null;
+    $scope.resetFilter({type: $scope.requestFilter.type});
   };
   
   $scope.typeaheadChange = function() {
@@ -120,6 +141,8 @@ requestMod.controller('RequestsController',
   $scope.typeaheadSelect = function() {
     $scope.clearTypeaheadFilters();
     $scope.requestFilter[$scope.typeaheadMatchSelection.type] = $scope.typeaheadMatchSelection.value;
+    $scope.requestFilter.receivedDate = null;
+    $scope.requestFilter.status = null;
   };
 
   $scope.clearTypeahead = function() {
@@ -130,13 +153,6 @@ requestMod.controller('RequestsController',
 
   $scope.goChart = function() {
     window.location = $scope.requestFilter.type === 'outboundRequests' ? 'dashboard/outboundRequests' : 'dashboard/inboundRequests';
-  };
-
-  $scope.resetFilter = function() {
-    $scope.requestFilter.status = null;
-    $scope.requestFilter.receivedDate = null;
-    sessionStorage.setItem($scope.context + '_requestFilter', JSON.stringify($scope.requestFilter));
-    $scope.closePopover();
   };
 }]);
 

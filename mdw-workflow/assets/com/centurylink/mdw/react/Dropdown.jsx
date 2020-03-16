@@ -44,7 +44,7 @@ class Dropdown extends Component {
         trigger="click" placement="bottom" overlay={menu} rootClose>
         <div className="mdw-inner-addon mdw-right-addon">
           <i className="glyphicon glyphicon-chevron-down"></i>
-          <input id={this.props.id} type="text" className="form-control mdw-inline mdw-dropfilter"
+          <input id={this.props.id} type="text" className="form-control mdw-dropfilter"
             value={this.props.selected} readOnly />
         </div>
       </OverlayTrigger>

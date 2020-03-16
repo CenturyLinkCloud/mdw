@@ -7,7 +7,7 @@
         <div class="mdw-heading-label" ng-if="!create">Users <span class="mdw-heading-sub">({{total}})</span></div>
         <!-- ng-if breaks typeahead https://github.com/angular-ui/bootstrap/issues/2293 -->
         <div class="mdw-heading-input" ng-show="!create">
-          <input type="text" class="form-control mdw-inline" autofocus placeholder=" find user" 
+          <input type="text" class="form-control mdw-search" autofocus placeholder=" find user"
             ng-model="selected" uib-typeahead="user as user.name for user in find($viewValue)" 
             typeahead-editable="false" typeahead-on-select="select()" ng-change="change()">
         </div>

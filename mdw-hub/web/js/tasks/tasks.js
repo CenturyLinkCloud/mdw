@@ -2,6 +2,10 @@
 
 var tasksMod = angular.module('tasks', ['ngResource', 'mdw']);
 
+// If taskList is a top-level object in $scope, this means child scopes (such as ng-if) can
+// break two-way binding, so taskList is a field in the top-level model object
+// https://github.com/angular/angular.js/issues/4046 -->
+
 // task list controller
 tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location', 'mdw', 'util', 'uiUtil', 'TaskAction', 'TaskUtil', 'TASK_ADVISORIES',
                                        function($scope, $window, $http, $location, mdw, util, uiUtil, TaskAction, TaskUtil, TASK_ADVISORIES) {
@@ -23,21 +27,32 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
     }
   };
   
-//If taskList is a top-level object in $scope, this means child scopes (such as ng-if) can 
-  // break two-way binding, so taskList is a field in the top-level model object
-  // https://github.com/angular/angular.js/issues/4046 -->
-  
-  $scope.resetFilter = function() {
-    $scope.model.taskFilter = {
-        workgroups: '[My Workgroups]',
-        status: '[Active]',
-        advisory: '[Not Invalid]',
-        sort: 'startDate',
-        descending: true,
-        indexes: null
-     };
+  $scope.defaultFilter = {
+    workgroups: '[My Workgroups]',
+    status: '[Active]',
+    advisory: '[Not Invalid]',
+    sort: 'startDate',
+    descending: true,
+    indexes: null
   };
-  
+
+  $scope.resetFilter = function(defaults) {
+    $scope.model.taskFilter = Object.assign({}, $scope.defaultFilter, defaults);
+    $scope.closePopover();
+  };
+
+  $scope.isDefaultFilter = function() {
+    for (let key of Object.keys($scope.model.taskFilter)) {
+      if (!$scope.model.taskFilter[key] && !$scope.defaultFilter[key])
+        continue;
+      if (key !== 'workgroups' && key !== 'assignee' && key !== 'sort' && key !== 'descending' && key !== 'taskId' && key !== 'masterRequestId' && key !== 'instanceId' &&
+            $scope.model.taskFilter[key] !== $scope.defaultFilter[key]) {
+        return false;
+      }
+    }
+    return true;
+  };
+
   // templateId and taskSpec passed in query params
   var templateIdParam = util.urlParams().templateId;
   var taskSpecParam = util.urlParams().taskSpec;
@@ -319,6 +334,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
       $scope.model.taskFilter.masterRequestId = null;
     if ($scope.model.taskFilter.taskId)
       $scope.model.taskFilter.taskId = null;
+    $scope.resetFilter();
   };
   $scope.typeaheadChange = function() {
       if ($scope.model.typeaheadMatchSelection === null)
@@ -332,6 +348,10 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   
   $scope.typeaheadSelect = function() {
     $scope.clearTypeaheadFilters();
+    $scope.model.taskFilter.status = null;
+    $scope.model.taskFilter.advisory = null;
+    $scope.model.taskFilter.category = null;
+    $scope.model.taskFilter.indexes = null;
     if ($scope.model.typeaheadMatchSelection.id)
       $scope.model.taskFilter[$scope.model.typeaheadMatchSelection.type] = $scope.model.typeaheadMatchSelection.id;
     else

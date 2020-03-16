@@ -31,11 +31,11 @@ class HeaderPopButton extends Component {
             <span style={{marginLeft:left}}>
               {this.props.label}
               {this.props.dirty &&
-                  <span style={{position:'relative',paddingRight:'5px'}}>
-                    <span style={{fontWeight:'bold',fontSize:'16px',position:'absolute',left:'2px',top:'-4px'}}>
-                      {' *'}
-                    </span>
+                <span style={{position:'relative',paddingRight:'6px'}}>
+                  <span style={{fontWeight:'bold',fontSize:'16px',position:'absolute',left:'3px',top:'-4px'}}>
+                    {' *'}
                   </span>
+                </span>
               }
             </span>
           }

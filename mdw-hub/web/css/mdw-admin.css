@@ -146,13 +146,13 @@
 }
 .mdw-heading-checklist {
   float: left;
-  margin-top: 2px;
+  margin-top: 5px;
 }
 .mdw-heading-checklist > input[type="checkbox"] {
   margin-left: -5px;
   margin-right: 5px;
   position: relative;
-  top: 2px;
+  top: 1-px;
 }
 .mdw-heading-icon {
   margin-right: 5px;
@@ -253,6 +253,9 @@
   top: 8px;
   left:-18px;
   right: -18px;
+}
+.mdw-search {
+  min-width: 250px;
 }
 .mdw-check-menu a {
   margin-left: 15px;
