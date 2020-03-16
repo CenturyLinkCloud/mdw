@@ -108,7 +108,7 @@ class ChartHeader extends Component {
               } />
           }
           {this.props.breakdownConfig.filters &&
-            <HeaderPopButton label="Filters" glyph="filter"
+            <HeaderPopButton label="Filters" glyph="filter" dirty={!this.props.isDefaultFilters}
               popover={
                 <FilterPop filters={this.props.filters}
                   filterOptions={this.props.filterOptions}

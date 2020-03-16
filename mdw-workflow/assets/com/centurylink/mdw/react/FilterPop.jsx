@@ -62,7 +62,7 @@ class FilterPop extends Component {
                       <input type="checkbox" id={id}
                         style={{marginTop:'3px',fontSize:'24px'}}
                         checked={filters[key]}
-                        onChange={event => this.handleChange(key, event.target.checked)} />
+                        onChange={event => {this.handleChange(key, event.target.checked);document.body.click();}} />
                       <label className="mdw-label" style={{display:'inline',marginLeft:'5px'}}>{key}</label>
                     </span>
                   }
