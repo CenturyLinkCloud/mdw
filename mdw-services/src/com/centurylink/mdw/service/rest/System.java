@@ -92,7 +92,7 @@ public class System extends JsonRestService implements JsonExportable {
     }
 
     @Override
-    public Jsonable toJsonable(Query query, JSONObject json) throws JSONException {
+    public Jsonable toExportJson(Query query, JSONObject json) throws JSONException {
         if (query.getPath().startsWith("System/metrics/")) {
             JSONArray rows = new JSONArray();
             for (String key : json.keySet()) {

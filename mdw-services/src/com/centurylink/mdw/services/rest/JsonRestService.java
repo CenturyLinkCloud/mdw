@@ -23,6 +23,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 
+import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import org.json.JSONException;
@@ -174,9 +175,12 @@ public abstract class JsonRestService extends RestService implements JsonService
                 // TODO headers.put("max", String.valueOf(Query.MAX_ALL));
                 String path = headers.get(Listener.METAINFO_REQUEST_PATH);
                 JSONObject response = service(path, null, headers);
-                Jsonable jsonable = ((JsonExportable)this).toJsonable(getQuery(path, headers), response);
-                String name = ((JsonExportable)this).getExportName();
-                return new JsonExport(jsonable, name);
+                JsonExportable exportable = (JsonExportable)this;
+                Query query = getQuery(path, headers);
+                Jsonable jsonable = exportable.toExportJson(query, response);
+                String name = exportable.getExportName();
+                JSONObject filters = exportable.getExportFilters(query);
+                return new JsonExport(jsonable, name, filters);
             }
             else {
                 throw new ServiceException(HTTP_404_NOT_FOUND, "Service not exportable");

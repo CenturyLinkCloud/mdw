@@ -184,7 +184,7 @@ public class Activities extends JsonRestService implements JsonExportable {
     }
 
     @Override
-    public Jsonable toJsonable(Query query, JSONObject json) throws JSONException {
+    public Jsonable toExportJson(Query query, JSONObject json) throws JSONException {
         try {
             String path = query.getPath();
             if (json.has(ActivityList.ACTIVITY_INSTANCES)) {

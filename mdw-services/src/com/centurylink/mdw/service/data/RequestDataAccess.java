@@ -372,12 +372,16 @@ public class RequestDataAccess extends CommonDataAccess {
             total = countRs.getInt(1);
 
             List<Request> requests = new ArrayList<>();
-            String q = db.pagingQueryPrefix() + "select d.document_id, d.create_dt, d.path, " +
+            String q = "";
+            if (query.getMax() != Query.MAX_ALL)
+                q += db.pagingQueryPrefix();
+            q += "select d.document_id, d.create_dt, d.path, " +
                     "d2.document_id response_id, d2.create_dt responded, d2.status_code, d2.status_message\n" +
                     "from DOCUMENT d\n" +
                     "left join DOCUMENT d2 on d2.owner_id = d.document_id\n" +
-                    where + buildOrderBy(query) +
-                    db.pagingQuerySuffix(query.getStart(), query.getMax());
+                    where + buildOrderBy(query);
+            if (query.getMax() != Query.MAX_ALL)
+                q += db.pagingQuerySuffix(query.getStart(), query.getMax());
             ResultSet rs = db.runSelect(q);
             while (rs.next()) {
                 Request request = new Request(rs.getLong("document_id"));
@@ -469,12 +473,16 @@ public class RequestDataAccess extends CommonDataAccess {
             total = countRs.getInt(1);
 
             List<Request> requests = new ArrayList<>();
-            String q = db.pagingQueryPrefix() + "select d.document_id, d.create_dt, d.path, " +
+            String q = "";
+            if (query.getMax() != Query.MAX_ALL)
+                q += db.pagingQueryPrefix();
+            q +="select d.document_id, d.create_dt, d.path, " +
                     "d2.document_id response_id, d2.create_dt responded, d2.status_code, d2.status_message\n" +
                     "from DOCUMENT d\n" +
                     "left join DOCUMENT d2 on d2.owner_id = d.owner_id\n" +
-                    where + buildOrderBy(query) +
-                    db.pagingQuerySuffix(query.getStart(), query.getMax());
+                    where + buildOrderBy(query);
+            if (query.getMax() != Query.MAX_ALL)
+                q += db.pagingQuerySuffix(query.getStart(), query.getMax());
             ResultSet rs = db.runSelect(q);
             while (rs.next()) {
                 Request request = new Request(rs.getLong("document_id"));

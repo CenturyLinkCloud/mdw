@@ -15,19 +15,26 @@
  */
 package com.centurylink.mdw.model;
 
+import com.centurylink.mdw.common.service.Query;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.common.service.Query;
-
 /**
- * Marker interface for exportable Json services.
+ * Exportable JSON services.
  */
 public interface JsonExportable {
 
-    Jsonable toJsonable(Query query, JSONObject json) throws JSONException;
-    default String getExportName() {
+    default Jsonable toExportJson(Query query, JSONObject json) {
+        return toJsonable(query, json);
+    }
+    default String getExportName() { return null; }
+    default JSONObject getExportFilters(Query query) { return null; }
+
+    /**
+     * @deprecated implement {@link #toExportJson(Query, JSONObject)}
+     */
+    @Deprecated
+    default Jsonable toJsonable(Query query, JSONObject json) throws JSONException {
         return null;
     }
-
 }

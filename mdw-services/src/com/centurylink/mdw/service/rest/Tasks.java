@@ -368,7 +368,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
     }
 
     @Override
-    public Jsonable toJsonable(Query query, JSONObject json) throws JSONException {
+    public Jsonable toExportJson(Query query, JSONObject json) throws JSONException {
         try {
             if (json.has(TaskList.TASKS))
                 return new TaskList(TaskList.TASKS, json);

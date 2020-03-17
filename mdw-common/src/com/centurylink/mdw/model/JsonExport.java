@@ -43,16 +43,12 @@ public class JsonExport {
 
     private Jsonable jsonable;
     private String name;
-    public JsonExport(Jsonable json, String name) {
+    private JSONObject filters;
+
+    public JsonExport(Jsonable json, String name, JSONObject filters) {
         this.jsonable = json;
         this.name = name;
-    }
-
-    // TODO: more flexible approach to support ordering, types, etc (com.centurylink.mdw.model.Value?)
-    private Map<String,String> labels;
-    public JsonExport(Jsonable json, Map<String,String> labels) {
-        this.jsonable = json;
-        this.labels = labels;
+        this.filters = filters;
     }
 
     private List<String> names = new ArrayList<>();
@@ -119,38 +115,46 @@ public class JsonExport {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet(name == null ? jsonable.getClass().getSimpleName() : name);
 
+        int begin = 0;
+        if (filters != null) {
+            List<String> labels = Arrays.asList(JSONObject.getNames(filters));
+            setRowValues(sheet, begin, filters);
+            setColumnLabels(sheet, labels, begin);
+            begin = 2;
+        }
+
         if (jsonable instanceof JsonArray) {
             JSONArray jsonArray = ((JsonArray)jsonable).getArray();
-            for (int i = 0; i < jsonArray.length(); i++) {
+            for (int i = begin; i < jsonArray.length() + begin; i++) {
                 JSONObject jsonObj = jsonArray.getJSONObject(i);
                 addNames(jsonObj);
                 setRowValues(sheet, i + 1, jsonObj);
             }
-            setColumnLabels(sheet);
+            setColumnLabels(sheet, names, begin);
         }
         else if (jsonable instanceof InstanceList) {
             InstanceList<?> instanceList = (InstanceList<?>) jsonable;
             List<? extends Jsonable> items = instanceList.getItems();
-            for (int i = 0; i < items.size(); i++) {
+            for (int i = begin; i < items.size() + begin; i++) {
                 JSONObject jsonObj = items.get(i).getJson();
                 addNames(jsonObj);
                 setRowValues(sheet, i + 1, jsonObj);
             }
-            setColumnLabels(sheet);
+            setColumnLabels(sheet, names, begin);
         }
         else if (jsonable instanceof JsonList) {
             JsonList<?> jsonList = (JsonList<?>) jsonable;
             List<? extends Jsonable> items = jsonList.getList();
-            for (int i = 0; i < items.size(); i++) {
+            for (int i = begin; i < items.size() + begin; i++) {
                 JSONObject jsonObj = items.get(i).getJson();
                 addNames(jsonObj);
                 setRowValues(sheet, i + 1, jsonObj);
             }
-            setColumnLabels(sheet);
+            setColumnLabels(sheet, names, begin);
         }
         else if (jsonable instanceof JsonListMap) {
             JsonListMap<?> listMap = (JsonListMap<?>) jsonable;
-            int row = 1;
+            int row = begin;
             List<String> keys = new ArrayList<>(listMap.getJsonables().keySet());
             Collections.sort(keys);
             for (String key : keys) {
@@ -168,7 +172,7 @@ public class JsonExport {
                     row++;
                 }
             }
-            setColumnLabels(sheet);
+            setColumnLabels(sheet, names, begin);
         }
         else {
             throw new UnsupportedOperationException("Unsupported JSON type: " + jsonable);
@@ -188,13 +192,11 @@ public class JsonExport {
         }
     }
 
-    private void setColumnLabels(Sheet sheet) {
+    private void setColumnLabels(Sheet sheet, List<String> labels, int row) {
         Row headerRow = sheet.createRow(0);
         for (int i = 0; i < names.size(); i++) {
             Cell cell = headerRow.createCell(i);
             String label = names.get(i);
-            if (labels != null && labels.containsKey(label))
-                label = labels.get(label);
             cell.setCellValue(label);
             if (!"message".equals(label))
                 sheet.autoSizeColumn(i);

@@ -472,7 +472,7 @@ public class Processes extends JsonRestService implements JsonExportable {
         return criteria.isEmpty() ? null : criteria;
     }
 
-    private static final List<String> processParams = Arrays.asList(new String[] {
+    private static final List<String> processParams = Arrays.asList(
             "processId",
             "processIdList",
             "processName",
@@ -489,14 +489,16 @@ public class Processes extends JsonRestService implements JsonExportable {
             "endDateFrom",
             "endDatefrom",
             "endDateTo",
-            "endDateto" });
+            "endDateto"
+    );
 
-    private static final List<String> standardParams = Arrays.asList(new String[] {
+    private static final List<String> standardParams = Arrays.asList(
             "pageIndex",
             "pageSize",
             "orderBy",
             "mdw-app",
-            "format"});
+            "format"
+    );
 
     private Map<String,Value> getInputValues(Process process) {
         Map<String,Value> inputVals = new HashMap<>();

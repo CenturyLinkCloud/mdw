@@ -159,7 +159,7 @@ public class Requests extends JsonRestService implements JsonExportable {
     }
 
     @Override
-    public Jsonable toJsonable(Query query, JSONObject json) throws JSONException {
+    public Jsonable toExportJson(Query query, JSONObject json) throws JSONException {
         try {
             if (json.has("requests") && RequestList.MASTER_REQUESTS.equals(query.getFilters().get("type")))
                 return new RequestList(RequestList.MASTER_REQUESTS, json);

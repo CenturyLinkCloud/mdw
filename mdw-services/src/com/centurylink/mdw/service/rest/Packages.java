@@ -127,7 +127,7 @@ public class Packages extends JsonRestService implements JsonExportable {
         throw new ServiceException(ServiceException.NOT_ALLOWED, "PUT not supported");
     }
 
-    public Jsonable toJsonable(Query query, JSONObject json) throws JSONException {
+    public Jsonable toExportJson(Query query, JSONObject json) throws JSONException {
         return new RawJson(json);
     }
 }
