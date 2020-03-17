@@ -206,38 +206,41 @@ public class AssetContentServlet extends HttpServlet {
                         }
                     }
                 }
-                if ("true".equalsIgnoreCase(request.getParameter("download"))) {
+
+                boolean download = "true".equalsIgnoreCase(request.getParameter("download"));
+                if (download) {
                     response.setHeader("Content-Disposition", "attachment;filename=\"" + asset.getFile().getName() + "\"");
                     response.setContentType("application/octet-stream");
                 }
-                else {
-                    if (render == null) {
-                        response.setContentType(asset.getContentType());
-                    }
-                    else {
-                        try {
-                            Renderer renderer = ServiceLocator.getAssetServices().getRenderer(path, render.toUpperCase());
-                            if (renderer == null)
-                                throw new RenderingException(ServiceException.NOT_FOUND, "Renderer not found: " + render);
+                else if (render == null) {
+                    response.setContentType(asset.getContentType());
+                }
+
+                if (render != null) {
+                    try {
+                        Renderer renderer = ServiceLocator.getAssetServices().getRenderer(path, render.toUpperCase());
+                        if (renderer == null)
+                            throw new RenderingException(ServiceException.NOT_FOUND, "Renderer not found: " + render);
+                        if (!download) {
                             String contentType = Asset.getContentType(render.toUpperCase());
                             if (contentType != null)
                                 response.setContentType(contentType);
-                            Map<String,String> options = new HashMap<>();
-                            Enumeration<String> paramNames = request.getParameterNames();
-                            while (paramNames.hasMoreElements()) {
-                                String paramName = paramNames.nextElement();
-                                options.put(paramName, request.getParameter(paramName));
-                            }
-                            response.getOutputStream().write(renderer.render(options));
                         }
-                        catch (ServiceException ex) {
-                            logger.severeException(ex.getMessage(), ex);
-                            StatusResponse sr = new StatusResponse(ex.getCode(), ex.getMessage());
-                            response.setStatus(sr.getStatus().getCode());
-                            response.getWriter().println(sr.getJson().toString(2));
+                        Map<String,String> options = new HashMap<>();
+                        Enumeration<String> paramNames = request.getParameterNames();
+                        while (paramNames.hasMoreElements()) {
+                            String paramName = paramNames.nextElement();
+                            options.put(paramName, request.getParameter(paramName));
                         }
-                        return;
+                        response.getOutputStream().write(renderer.render(options));
                     }
+                    catch (ServiceException ex) {
+                        logger.severeException(ex.getMessage(), ex);
+                        StatusResponse sr = new StatusResponse(ex.getCode(), ex.getMessage());
+                        response.setStatus(sr.getStatus().getCode());
+                        response.getWriter().println(sr.getJson().toString(2));
+                    }
+                    return;
                 }
             }
 
