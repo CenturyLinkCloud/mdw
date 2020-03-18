@@ -18,8 +18,10 @@ The images below depict the end-to-end flow for a
 Even for this relatively simple process hierarchy, you can see how the overall flow on the left can be boiled down by identifying 
 milestone activities (on the right).
 
-<img style="float:left;width:40%" src="https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/tests/milestones/e2e.png" alt="e2e"></img>
-<img style="width:13%" src="https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/tests/milestones/milestones.png" alt="milestones"></img>
+<p style="float:left">
+<img style="width:40%" src="https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/tests/milestones/e2e.png" alt="e2e">
+<img style="width:13%" src="https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/tests/milestones/milestones.png" alt="milestones">
+</p>
 <div style="clear:both"></div>
 
 ## Configuring Milestones
@@ -27,14 +29,15 @@ To include the milestones feature in your MDW app, first [discover and import](h
 package `com.centurylink.mdw.milestones` into your project.  
 
 In [MDW Studio](https://centurylinkcloud.github.io/mdw/docs/guides/mdw-studio/) activities are marked as milestones on 
-the Configurator Monitors tab.  A [Monitor](https://centurylinkcloud.github.io/mdw/docs/help/monitoring.html) 
+the Configurator Monitoring tab.  A [Monitor](https://centurylinkcloud.github.io/mdw/docs/help/monitoring.html) 
 is MDW's way of tracking lifecycle stages for activities, processes, or other workflow elements.
 
 To understand how Milestones are specified, consider this illustration from a subflow in the same milestones
 autotest illustrated above.
-![monitor](https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/milestones/monitor.png)
 
-On Spellbinding's Monitors tab we've enabled the Milestone monitor, and we've also entered a value for options.
+<img style="width:80%" src="https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/milestones/monitor.png" alt="monitor">
+
+On Spellbinding's Monitoring tab we've enabled the Milestone monitor, and we've also entered a value for options.
 Because the activity name ("Spellbinding") may not be business-descriptive, under Options we've entered something else
 ("Custom Label") which will be displayed in the Milestones view in MDWHub.  If nothing is entered under Options, the
 activity name will be displayed for the milestone label.
