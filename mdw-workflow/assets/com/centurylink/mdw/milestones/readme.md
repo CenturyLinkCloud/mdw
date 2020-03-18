@@ -18,9 +18,9 @@ The images below depict the end-to-end flow for a
 Even for this relatively simple process hierarchy, you can see how the overall flow on the left can be boiled down by identifying 
 milestone activities (on the right).
 
-<p style="float:left">
-<img style="width:40%" src="https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/tests/milestones/e2e.png" alt="e2e">
-<img style="width:13%" src="https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/tests/milestones/milestones.png" alt="milestones">
+<p float="left">
+<img width="40%" src="https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/tests/milestones/e2e.png" alt="e2e">
+<img width="13%" src="https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/tests/milestones/milestones.png" alt="milestones">
 </p>
 <div style="clear:both"></div>
 
@@ -35,7 +35,7 @@ is MDW's way of tracking lifecycle stages for activities, processes, or other wo
 To understand how Milestones are specified, consider this illustration from a subflow in the same milestones
 autotest illustrated above.
 
-<img style="width:80%" src="https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/milestones/monitor.png" alt="monitor">
+<img width="80%" src="https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/milestones/monitor.png" alt="monitor">
 
 On Spellbinding's Monitoring tab we've enabled the Milestone monitor, and we've also entered a value for options.
 Because the activity name ("Spellbinding") may not be business-descriptive, under Options we've entered something else
