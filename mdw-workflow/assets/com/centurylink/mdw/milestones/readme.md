@@ -20,7 +20,7 @@ milestone activities (on the right).
 
 <p float="left">
 <img width="40%" src="https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/tests/milestones/e2e.png" alt="e2e">
-<img width="13%" src="https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/tests/milestones/milestones.png" alt="milestones">
+<img width="13%" style="vertical-align:top" src="https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/tests/milestones/milestones.png" alt="milestones">
 </p>
 <div style="clear:both"></div>
 
