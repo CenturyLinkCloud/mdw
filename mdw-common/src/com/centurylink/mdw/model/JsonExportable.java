@@ -24,11 +24,31 @@ import org.json.JSONObject;
  */
 public interface JsonExportable {
 
+    /**
+     * The exported row-wise JSON content.
+     */
     default Jsonable toExportJson(Query query, JSONObject json) {
         return toJsonable(query, json);
     }
+
     default String getExportName() { return null; }
-    default JSONObject getExportFilters(Query query) { return null; }
+
+    /**
+     * Return null if no filter output desired.
+     */
+    default JSONObject getExportFilters(Query query) {
+        JSONObject json = null;;
+        if (!query.getFilters().isEmpty()) {
+            for (String key : query.getFilters().keySet()) {
+                if (!key.equals("NoPersistence")) {
+                    if (json == null)
+                        json = new JsonObject();
+                    json.put(key, query.getFilter(key));
+                }
+            }
+        }
+        return json;
+    }
 
     /**
      * @deprecated implement {@link #toExportJson(Query, JSONObject)}

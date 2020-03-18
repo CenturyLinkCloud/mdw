@@ -35,7 +35,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 /**
- * TODO: other formats (eg: CSV)
+ * Export JSON to Excel.
  */
 public class JsonExport {
 
@@ -117,40 +117,37 @@ public class JsonExport {
 
         int begin = 0;
         if (filters != null) {
-            List<String> labels = Arrays.asList(JSONObject.getNames(filters));
-            setRowValues(sheet, begin, filters);
-            setColumnLabels(sheet, labels, begin);
-            begin = 2;
+            begin += printFilters(sheet, filters, begin);
         }
 
         if (jsonable instanceof JsonArray) {
             JSONArray jsonArray = ((JsonArray)jsonable).getArray();
-            for (int i = begin; i < jsonArray.length() + begin; i++) {
+            for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObj = jsonArray.getJSONObject(i);
                 addNames(jsonObj);
-                setRowValues(sheet, i + 1, jsonObj);
+                printRowValues(sheet, i + begin + 1, jsonObj, names);
             }
-            setColumnLabels(sheet, names, begin);
+            printColumnLabels(sheet, names, begin);
         }
         else if (jsonable instanceof InstanceList) {
             InstanceList<?> instanceList = (InstanceList<?>) jsonable;
             List<? extends Jsonable> items = instanceList.getItems();
-            for (int i = begin; i < items.size() + begin; i++) {
+            for (int i = 0; i < items.size(); i++) {
                 JSONObject jsonObj = items.get(i).getJson();
                 addNames(jsonObj);
-                setRowValues(sheet, i + 1, jsonObj);
+                printRowValues(sheet, i + begin + 1, jsonObj, names);
             }
-            setColumnLabels(sheet, names, begin);
+            printColumnLabels(sheet, names, begin);
         }
         else if (jsonable instanceof JsonList) {
             JsonList<?> jsonList = (JsonList<?>) jsonable;
             List<? extends Jsonable> items = jsonList.getList();
-            for (int i = begin; i < items.size() + begin; i++) {
+            for (int i = 0; i < items.size(); i++) {
                 JSONObject jsonObj = items.get(i).getJson();
                 addNames(jsonObj);
-                setRowValues(sheet, i + 1, jsonObj);
+                printRowValues(sheet, i + begin + 1, jsonObj, names);
             }
-            setColumnLabels(sheet, names, begin);
+            printColumnLabels(sheet, names, begin);
         }
         else if (jsonable instanceof JsonListMap) {
             JsonListMap<?> listMap = (JsonListMap<?>) jsonable;
@@ -166,13 +163,13 @@ public class JsonExport {
                     names.add(0, ""); // key column
                 }
                 for (Jsonable jsonable : jsonableList) {
-                    Row valuesRow = setRowValues(sheet, row, jsonable.getJson(), 1);
+                    Row valuesRow = printRowValues(sheet, row, jsonable.getJson(), names, 1);
                     Cell cell = valuesRow.createCell(0);
                     cell.setCellValue(key);
                     row++;
                 }
             }
-            setColumnLabels(sheet, names, begin);
+            printColumnLabels(sheet, names, begin);
         }
         else {
             throw new UnsupportedOperationException("Unsupported JSON type: " + jsonable);
@@ -192,12 +189,60 @@ public class JsonExport {
         }
     }
 
-    private void setColumnLabels(Sheet sheet, List<String> labels, int row) {
-        Row headerRow = sheet.createRow(0);
-        for (int i = 0; i < names.size(); i++) {
+    private int printFilters(Sheet sheet, JSONObject filters, int begin) {
+        int rownum = begin;
+        Font bold = sheet.getWorkbook().createFont();
+        bold.setBold(true);
+        CellStyle labelRowStyle = sheet.getWorkbook().createCellStyle();
+        labelRowStyle.setFont(bold);
+        labelRowStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+        labelRowStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+        Row labelRow = sheet.createRow(rownum);
+        Cell cell = labelRow.createCell(0);
+        cell.setCellValue("Filters:");
+        cell.setCellStyle(labelRowStyle);
+        labelRow.setRowStyle(labelRowStyle);
+
+        CellStyle nameStyle = sheet.getWorkbook().createCellStyle();
+        nameStyle.setFont(bold);
+
+        rownum++;
+        for (String name : JSONObject.getNames((filters))){
+            Row row = sheet.createRow(rownum);
+            Cell nameCell = row.createCell(0);
+            nameCell.setCellValue(name);
+            nameCell.setCellStyle(nameStyle);
+            Object jsonValue = filters.get(name);
+            if (jsonValue != null) {
+                Cell valueCell = row.createCell(1);
+                setCellValue(valueCell, jsonValue);
+            }
+            rownum++;
+        }
+        rownum++;
+
+        labelRow = sheet.createRow(rownum);
+        cell = labelRow.createCell(0);
+        cell.setCellValue("Data:");
+        cell.setCellStyle(labelRowStyle);
+        labelRow.setRowStyle(labelRowStyle);
+        rownum++;
+        return rownum;
+    }
+
+    private void printColumnLabels(Sheet sheet, List<String> labels, int row) {
+        Font bold = sheet.getWorkbook().createFont();
+        bold.setBold(true);
+        CellStyle boldStyle = sheet.getWorkbook().createCellStyle();
+        boldStyle.setFont(bold);
+
+        Row headerRow = sheet.createRow(row);
+        for (int i = 0; i < labels.size(); i++) {
             Cell cell = headerRow.createCell(i);
-            String label = names.get(i);
+            String label = labels.get(i);
             cell.setCellValue(label);
+            cell.setCellStyle(boldStyle);
             if (!"message".equals(label))
                 sheet.autoSizeColumn(i);
         }
@@ -213,54 +258,58 @@ public class JsonExport {
         return dateCellStyle;
     }
 
-    private Row setRowValues(Sheet sheet, int row, JSONObject json) throws JSONException {
-        return setRowValues(sheet, row, json, 0);
+    private Row printRowValues(Sheet sheet, int row, JSONObject json, List<String> names) throws JSONException {
+        return printRowValues(sheet, row, json, names, 0);
     }
 
-    private Row setRowValues(Sheet sheet, int row, JSONObject json, int startCol) throws JSONException {
+    private Row printRowValues(Sheet sheet, int row, JSONObject json, List<String> names, int startCol) throws JSONException {
         Row valueRow = sheet.createRow(row);
         for (int i = startCol; i < names.size(); i++) {
             Cell cell = valueRow.createCell(i);
             String name = names.get(i);
             if (json.has(name)) {
                 Object jsonValue = json.get(name);
-                if (jsonValue instanceof Long || jsonValue instanceof Integer) {
-                    cell.setCellValue(new Double(jsonValue.toString()));
-                }
-                else if (jsonValue instanceof Boolean) {
-                    cell.setCellValue((Boolean)jsonValue);
-                }
-                else if (jsonValue instanceof Date) {
-                    cell.setCellValue((Date)jsonValue);
-                    cell.setCellStyle(getDateCellStyle(sheet));
-                }
-                else {
-                    String stringVal = jsonValue.toString();
-                    if (stringVal != null && (name.endsWith("Date") || "date".equals(name))) {
-                        // try to parse as Query date
-                        try {
-                            cell.setCellValue(Query.getDate(stringVal));
-                            cell.setCellStyle(getDateCellStyle(sheet));
-                        }
-                        catch (ParseException ex) {
-                            // try StringHelper date
-                            Date d = DateHelper.stringToDate(stringVal);
-                            if (d == null) {
-                                cell.setCellValue(stringVal);
-                            }
-                            else {
-                                cell.setCellValue(d);
-                                cell.setCellStyle(getDateCellStyle(sheet));
-                            }
-                        }
-                    }
-                    else {
-                        cell.setCellValue(stringVal);
-                    }
-                }
+                setCellValue(cell, jsonValue);
             }
         }
         return valueRow;
+    }
+
+    private void setCellValue(Cell cell, Object jsonValue) {
+        if (jsonValue instanceof Long || jsonValue instanceof Integer) {
+            cell.setCellValue(new Double(jsonValue.toString()));
+        }
+        else if (jsonValue instanceof Boolean) {
+            cell.setCellValue((Boolean)jsonValue);
+        }
+        else if (jsonValue instanceof Date) {
+            cell.setCellValue((Date)jsonValue);
+            cell.setCellStyle(getDateCellStyle(cell.getSheet()));
+        }
+        else {
+            String stringVal = jsonValue.toString();
+            if (stringVal != null && (name.endsWith("Date") || "date".equals(name))) {
+                // try to parse as Query date
+                try {
+                    cell.setCellValue(Query.getDate(stringVal));
+                    cell.setCellStyle(getDateCellStyle(cell.getSheet()));
+                }
+                catch (ParseException ex) {
+                    // try StringHelper date
+                    Date d = DateHelper.stringToDate(stringVal);
+                    if (d == null) {
+                        cell.setCellValue(stringVal);
+                    }
+                    else {
+                        cell.setCellValue(d);
+                        cell.setCellStyle(getDateCellStyle(cell.getSheet()));
+                    }
+                }
+            }
+            else {
+                cell.setCellValue(stringVal);
+            }
+        }
     }
 
     private byte[] writeExcel(Workbook workBook) throws IOException {
@@ -268,6 +317,4 @@ public class JsonExport {
         workBook.write(bytes);
         return bytes.toByteArray();
     }
-
-
 }
