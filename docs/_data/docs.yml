@@ -6,13 +6,10 @@
   
 - title: Getting Started
   docs:
+  - guides/mdw-studio
+  - guides/mdw-cookbook
   - getting-started/quick-start
   - getting-started/cli
-  - guides/mdw-cookbook
-  
-- title: MDW Studio
-  docs:
-  - guides/mdw-studio
 
 - title: Guides
   docs:
@@ -20,7 +17,6 @@
   - guides/tomcat
   - guides/docker
   - guides/kubernetes
-  - guides/cloud-foundry
   - guides/configuration
   - guides/mdw-mobile
   - guides/dashboard
@@ -29,6 +25,7 @@
 - title: Workflow
   docs:
   - workflow/terminology
+  - workflow/mdw-asset-packages
   - workflow/built-in-activities
   - workflow/built-in-variable-types
   - help

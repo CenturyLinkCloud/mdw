@@ -51,7 +51,7 @@ import com.centurylink.mdw.xml.DomHelper;
  * an XML payload that corresponds to an externally agreed-on XSD (outside the WSDL).
  */
 @Tracked(LogLevel.TRACE)
-@Activity(value="MDW RPC Web Service", category=AdapterActivity.class, icon="com.centurylink.mdw.base/adapter.png",
+@Activity(value="RPC SOAP Adapter", category=AdapterActivity.class, icon="com.centurylink.mdw.base/adapter.png",
         pagelet="com.centurylink.mdw.base/rpcWebService.pagelet")
 public class MdwRpcWebServiceAdapter extends SoapWebServiceAdapter {
 

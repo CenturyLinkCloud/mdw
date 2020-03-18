@@ -17,6 +17,7 @@ These are the activities that ship with MDW out-of-the-box.
   [Dynamic Java](http://centurylinkcloud.github.io/mdw/docs/help/dynamicJavaActivity.html) | Quick and simple Java execution (compare to full-blown custom activity).
   [Email Notification](http://centurylinkcloud.github.io/mdw/docs/help/notification.html) | Send an email through SMTP.
   [Event Check](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Continue if the designated event has been received. 
+  [Event Publish](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Send an event.
   [Event Wait](http://centurylinkcloud.github.io/mdw/docs/help/EventWaitActivity.html) | Wait for the designated event.
   [Execute Script](http://centurylinkcloud.github.io/mdw/docs/help/scriptActivity.html) | Groovy, Kotlin or JavaScript.
   [Expression Evaluator](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Direct outbound flow according to an expression.
@@ -26,18 +27,24 @@ These are the activities that ship with MDW out-of-the-box.
   [JDBC SQL Adapter](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Quick and dirty db access.
   [JMS Adapter](http://centurylinkcloud.github.io/mdw/docs/help/JmsAdapter.html) | Send messages to a JMS queue.
   [Kafka Adapter](http://centurylinkcloud.github.io/mdw/docs/help/KafkaAdapter.html) | Publish a message to Apache Kafka.
+  [Kotlin Script](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/kotlin/readme.md) | Publish a message to Apache Kafka.
   [LDAP Adapter](http://centurylinkcloud.github.io/mdw/docs/help/LdapAdapter.html) | Query LDAP entities and attributes.
-  [Microservice Dependencies Wait](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Await microservice response condition(s).
-  [Microservice REST Adapter](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Specialized for microservice consumption.
+  [MS Teams Notify](http://centurylinkcloud.github.io/mdw/docs/help/MsTeamsActivity) | Notify a Microsoft Teams channel.
+  [Microservice Dependencies Wait](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/microservice/readme.md) | Await microservice response condition(s).
+  [Microservice Error Handler](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/microservice/readme.md) | Handle microservice orchestration errors.
+  [Microservice Orchestrator](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/microservice/readme.md) | Declaritive execution of multiple, dependent microservices.
+  [Microservice REST Adapter](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/microservice/readme.md) | Specialized for microservice consumption.
   [Multi-Publish REST Adapter](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Invoke multiple REST endpoints.
-  [Process Finish](http://centurylinkcloud.github.io/mdw/docs/help/ProcessFinishActivity.html) | Stop this process.
+  [Process Pause](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Pause a process flow.
   [Process Start](http://centurylinkcloud.github.io/mdw/docs/help/ProcessStartActivity.html) | Always the first activity in any flow.
-  [Publish Event](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Send an event.
+  [Process Stop](http://centurylinkcloud.github.io/mdw/docs/help/ProcessFinishActivity.html) | Stop this process.
   [REST Adapter](http://centurylinkcloud.github.io/mdw/docs/help/RestfulAdapter.html) | General purpose REST service invocation.
-  [RPC Adapter](http://centurylinkcloud.github.io/mdw/docs/help/RestfulAdapter.html) | Consume a SOAP RPC-based service.
-  [SendGrid Email](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Send an email through SendGrid.
-  [Service Summary Event](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Publish microservice event update.
-  [Slack Activity](http://centurylinkcloud.github.io/mdw/docs/help/SlackActivity.html) | Send a Slack notification.
+  [RPC SOAP Adapter](http://centurylinkcloud.github.io/mdw/docs/help/RestfulAdapter.html) | Consume a SOAP RPC-based service.
+  [SendGrid Email](https://centurylinkcloud.github.io/mdw/docs/help/notification.html) | Send an email through SendGrid.
+  [ServiceNow Adapter](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/servicenow/readme.md) | Create a ServiceNow incident.
+  [ServiceNow Task](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/servicenow/readme.md#servicenow-task) | Create a manual task with corresponding ServiceNow incident.
+  [Slack Notify](http://centurylinkcloud.github.io/mdw/docs/help/SlackActivity.html) | Send a Slack notification.
+  [Swagger Validator](http://centurylinkcloud.github.io/mdw/docs/help/SwaggerValidator.html) | Validate request against Swagger specification.
   [Synchronization Activity](http://centurylinkcloud.github.io/mdw/docs/help/synchronization.html) | Coordinate parallel execution paths.
   [Timer Wait](http://centurylinkcloud.github.io/mdw/docs/help/TimerWaitActivity.html) | Wait for a specified interval.
   [Velocity Template](http://centurylinkcloud.github.io/mdw/docs/help/todo.html) | Apply a Velocity template.

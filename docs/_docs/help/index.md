@@ -21,8 +21,8 @@ permalink: /docs/help/
   <li><a href='assets.html'>Assets</a></li>
   <li><a href='assetPersistence.html'>Asset Persistence</a></li>
   <li><a href='notification.html'>Notifications</a></li>
+  <li><a href='bindingExpressions.html'>Binding Expressions</a></li>
   <li><a href='crossmap.html'>Crossmap Activity</a></li>
-  <li><a href='customAttributes.html'>Custom Attributes</a></li>
   <li><a href='documentTransform.html'>Document Transform Activity</a></li>
   <li><a href='DocWebServiceAdapter.html'>Document Web Service Adapter Activity</a></li>  
   <li><a href='droolsActivities.html'>Drools Activity</a></li>
@@ -76,8 +76,9 @@ permalink: /docs/help/
   <li><a href='automatedTesting.html'>Automated Testing</a></li>
   <li><a href='groovyTestScriptSyntax.html'>Groovy Test Script Syntax</a></li>
   <li><a href='testResultsFormat.html'>Test Results Format</a></li>
+  <li><a href='https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/milestones/readme.md'>Milestones</a></li>
   <li><a href='monitoring.html'>Monitors</a></li>
-  <li><a href='todo.html'>MDW Dashboard</a></li>
+  <li><a href=''>Dashboard</a></li>
 </ul>
 </div>
 </section>
