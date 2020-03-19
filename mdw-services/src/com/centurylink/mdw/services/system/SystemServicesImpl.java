@@ -64,8 +64,9 @@ public class SystemServicesImpl implements SystemServices {
             sysInfoCats.add(getMdwProperties());
         }
         else if (type == SysInfoType.Thread) {
-            sysInfoCats.add(getThreadDump());
             sysInfoCats.add(getThreadPoolStatus());
+            sysInfoCats.add(getThreadMxBeanInfo());
+            sysInfoCats.add(getThreadDump());
         }
         else if (type == SysInfoType.Memory) {
             sysInfoCats.add(getMemoryInfo());
@@ -123,53 +124,75 @@ public class SystemServicesImpl implements SystemServices {
 
     public SysInfoCategory getThreadDump() {
         List<SysInfo> threadDumps = new ArrayList<>();
-        Map<Thread, StackTraceElement[]> threads = Thread.getAllStackTraces();
-        threadDumps.add(new SysInfo("Total Threads", "(" + new Date() + ") " + threads.size()));
+        Map<Thread,StackTraceElement[]> threads = Thread.getAllStackTraces();
+        StringBuilder output = new StringBuilder();
+        try {
+            ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
+            if (threadBean.isSynchronizerUsageSupported()) {
+                long[] deadlocked = threadBean.findDeadlockedThreads();
+                if (deadlocked.length > 0) {
+                    output.append("DEADLOCKED Threads: ").append(Arrays.toString(deadlocked)).append("\n");
+                }
+                long[] monitorDeadlocked = threadBean.findMonitorDeadlockedThreads();
+                if (monitorDeadlocked.length > 0) {
+                    output.append("MONITOR DEADLOCKED Threads").append(Arrays.toString(monitorDeadlocked)).append("\n");
+                }
+            }
+        }
+        catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+        }
+        output.append(" Total (").append(new Date()).append(") = ").append(threads.size()).append("\n\n");
         for (Thread thread : threads.keySet()) {
-            StringBuilder output = new StringBuilder();
-            output.append(" (");
-            output.append("priority=").append(thread.getPriority()).append(" ");
-            output.append("group=").append(thread.getThreadGroup()).append(" ");
-            output.append("state=").append(thread.getState()).append(" ");
-            output.append("id=").append(thread.getId());
-            output.append("):\n");
+            output.append("\"").append(thread.getName()).append("\"");
+            output.append(" #").append(thread.getId());
+            if (thread.isDaemon())
+                output.append(" ").append("daemon");
+            output.append(" priority=").append(thread.getPriority());
+            if (thread.getThreadGroup() != null)
+                output.append(" group=").append(thread.getThreadGroup().getName()).append(" ");
+            output.append("\n  java.lang.Thread.State: ").append(thread.getState().toString().toUpperCase());
+            output.append("\n");
             StackTraceElement[] elements = threads.get(thread);
             if (elements != null) {
                 for (StackTraceElement element : elements) {
-                    output.append("\tat ").append(element).append("\n");
+                    output.append("      at ").append(element).append("\n");
                 }
             }
             output.append("\n");
             try {
                 ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
-                if (threadBean.isThreadCpuTimeSupported() && threadBean.isThreadCpuTimeEnabled()) {
-                    output.append("Thread CPU Time (ms): ").append(threadBean.getThreadCpuTime(thread.getId())).append("\n");
-                    output.append("Thread User Time (ms): ").append(threadBean.getThreadUserTime(thread.getId())).append("\n");
-                }
                 ThreadInfo threadInfo = threadBean.getThreadInfo(thread.getId());
                 if (threadInfo != null) {
                     if (threadBean.isThreadContentionMonitoringSupported()
                             && threadBean.isThreadContentionMonitoringEnabled()) {
-                        output.append("Blocked Count: ").append(threadInfo.getBlockedCount()).append("\n");
-                        output.append("Blocked Time (ms): ").append(threadInfo.getBlockedTime()).append("\n");
+                        output.append("    Blocked Count: ").append(threadInfo.getBlockedCount()).append("\n");
+                        output.append("    Blocked Time (ms): ").append(threadInfo.getBlockedTime()).append("\n");
                     }
                     if (threadInfo.getLockName() != null) {
-                        output.append("Lock Name: ").append(threadInfo.getLockName()).append("\n");
-                        output.append("Lock Owner: ").append(threadInfo.getLockOwnerName()).append("\n");
-                        output.append("Lock Owner Thread ID: ").append(threadInfo.getLockOwnerId()).append("\n");
+                        output.append("    Lock Name: ").append(threadInfo.getLockName()).append("\n");
+                        output.append("    Lock Owner: ").append(threadInfo.getLockOwnerName()).append("\n");
+                        output.append("    Lock Owner Thread ID: ").append(threadInfo.getLockOwnerId()).append("\n");
                     }
-                    output.append("Waited Count: ").append(threadInfo.getWaitedCount()).append("\n");
-                    output.append("Waited Time (ms): ").append(threadInfo.getWaitedTime()).append("\n");
-                    output.append("Is In Native: ").append(threadInfo.isInNative()).append("\n");
-                    output.append("Is Suspended: ").append(threadInfo.isSuspended());
-                    System.out.println(output.toString());
+                    output.append("    Waited Count: ").append(threadInfo.getWaitedCount()).append("\n");
+                    output.append("    Waited Time (ms): ").append(threadInfo.getWaitedTime()).append("\n");
+                    output.append("    Is In Native: ").append(threadInfo.isInNative()).append("\n");
+                    output.append("    Is Suspended: ").append(threadInfo.isSuspended());
                 }
             }
             catch (Exception ex) {
                 // don't let an exception here interfere with display of stack info
             }
-            threadDumps.add(new SysInfo(thread.getName(),  output.toString()));
+            output.append("\n\n");
         }
+
+        System.out.println(output.toString()); // print to stdout
+        threadDumps.add(new SysInfo("Threads",  output.toString()));
+        return new SysInfoCategory("Thread Dump", threadDumps);
+    }
+
+    private SysInfoCategory getThreadMxBeanInfo() {
+        List<SysInfo> threadMxBeanInfo = new ArrayList<>();
         try {
             StringBuilder mxBeanOutput = new StringBuilder();
             ThreadMXBean threadBean = ManagementFactory.getThreadMXBean();
@@ -183,13 +206,23 @@ public class SystemServicesImpl implements SystemServices {
             }
             mxBeanOutput.append("\nThread Count: ").append(threadBean.getThreadCount()).append("\n");
             mxBeanOutput.append("Peak Thread Count: ").append(threadBean.getPeakThreadCount());
-            threadDumps.add(new SysInfo("Thread MXBean",  mxBeanOutput.toString()));
-            System.out.println(mxBeanOutput.toString());
+            threadMxBeanInfo.add(new SysInfo("Thread MXBean",  mxBeanOutput.toString()));
         }
         catch (Exception ex) {
-            // don't let an exception here interfere with display of stack info
+            logger.error(ex.getMessage(), ex);
         }
-        return new SysInfoCategory("Thread Dump", threadDumps);
+        return new SysInfoCategory("Thread MX Bean", threadMxBeanInfo);
+    }
+
+    private SysInfoCategory getThreadPoolStatus() {
+        ThreadPoolProvider threadPool = ApplicationContext.getThreadPoolProvider();
+        List<SysInfo> poolStatus = new ArrayList<>();
+        if (!(threadPool instanceof CommonThreadPool)) {
+            poolStatus.add(new SysInfo ("Error getting thread pool status" , "ThreadPoolProvider is not MDW CommonThreadPool"));
+        }
+        else
+            poolStatus.add(new SysInfo ("Current Status" ," Thread Pool\n" + threadPool.currentStatus()));
+        return new SysInfoCategory("Pool Status", poolStatus);
     }
 
     public SysInfoCategory getMemoryInfo() {
@@ -528,17 +561,6 @@ public class SystemServicesImpl implements SystemServices {
         if (propMgr instanceof YamlPropertyManager)
             category.setDescription("Never-accessed properties are not displayed.  Null means the property has been read and not found.");
         return category;
-    }
-
-    private SysInfoCategory getThreadPoolStatus() {
-        ThreadPoolProvider threadPool = ApplicationContext.getThreadPoolProvider();
-        List<SysInfo> poolStatus = new ArrayList<>();
-        if (!(threadPool instanceof CommonThreadPool)) {
-            poolStatus.add(new SysInfo ("Error getting thread pool status" , "ThreadPoolProvider is not MDW CommonThreadPool"));
-        }
-        else
-            poolStatus.add(new SysInfo ("Current Status" , threadPool.currentStatus()));
-        return new SysInfoCategory("Pool Status", poolStatus);
     }
 
     public SysInfoCategory findClass(String className, ClassLoader classLoader) {

@@ -7,6 +7,11 @@
       </div>
       <ul class="mdw-list">
         <li ng-repeat="sysInfoCategory in sysInfoCategories">
+          <div style="text-align:right;margin-right:10px;">
+            <a class="mdw-item-link" href="" ng-click="copyToClipboard(sysInfoCategory)">
+              <span class="glyphicon glyphicon-copy" style="font-size:18px;"></span>
+            </a>
+          </div>
           <div class="mdw-sys-info">
             <div ng-repeat="sysInfo in sysInfoCategory.sysInfos">
              <pre class="mdw-resource-content"><code class="mdw-code" ng-bind-html="sysInfo.name + ':' + sysInfo.value | highlight | unsafe"></code>

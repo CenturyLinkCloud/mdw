@@ -21,9 +21,14 @@ sysMod.controller('SystemController', ['$scope', '$routeParams', '$location', 'W
       $scope.classLoader = $scope.defaultClassLoader;
     }
   });
-  
+
+  $scope.copyToClipboard = function(sysInfoCat) {
+    var copyText = sysInfoCat.sysInfos[0].name + ': ' + sysInfoCat.sysInfos[0].value;
+    navigator.clipboard.writeText(copyText);
+  };
+
   $scope.packageList = Assets.get({});
-  
+
   $scope.cacheRefresh = function(refreshType) {
     $scope.refreshMessage = '';
       // leave cache error logging to the server side

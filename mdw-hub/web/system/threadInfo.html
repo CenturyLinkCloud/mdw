@@ -9,7 +9,13 @@
         <li ng-repeat="sysInfoCategory in sysInfoCategories">
         <div>
             <a class="mdw-item-link" href="" ng-click="sysInfoCategory.expanded = !sysInfoCategory.expanded">
-              <span class="glyphicon glyphicon-plus mdw-expand-icon" ng-if="!sysInfoCategory.expanded"></span><span class="glyphicon glyphicon-minus mdw-expand-icon" ng-if="sysInfoCategory.expanded"></span>{{sysInfoCategory.name}}
+              <span class="glyphicon glyphicon-plus mdw-expand-icon" ng-if="!sysInfoCategory.expanded"></span>
+              <span class="glyphicon glyphicon-minus mdw-expand-icon" ng-if="sysInfoCategory.expanded"></span>
+                {{sysInfoCategory.name}}
+            </a>
+            <a class="mdw-item-link" style="float:right;margin-right:10px;"
+               href="" ng-click="copyToClipboard(sysInfoCategory)" ng-if="sysInfoCategory.expanded">
+              <span class="glyphicon glyphicon-copy" style="font-size:18px;"></span>
             </a>
           </div>
           <div class="mdw-sys-info" ng-if="sysInfoCategory.expanded">
