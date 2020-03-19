@@ -41,7 +41,9 @@ class Definition extends Component {
             if (node.activity) {
               sessionStorage.setItem('mdw-activity', node.activity.id);
             }
-            location = this.context.hubRoot + '/#/workflow/definitions/' + path; 
+            location = this.context.hubRoot + '/#/workflow/definitions/' + path;
+            // without reload the process version is cached since only url fragment changes
+            location.reload();
           }
         }
       });
