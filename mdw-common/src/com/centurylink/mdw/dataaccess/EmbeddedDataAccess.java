@@ -15,12 +15,6 @@
  */
 package com.centurylink.mdw.dataaccess;
 
-import java.sql.SQLException;
-import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.cache.impl.PackageCache;
@@ -30,9 +24,18 @@ import com.centurylink.mdw.container.EmbeddedDbExtension;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.util.JsonUtil;
+import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.sql.SQLException;
+import java.util.List;
 
 /**
  * Embedded db data access.
@@ -101,7 +104,7 @@ public class EmbeddedDataAccess {
 
             // seed users
             try {
-                String usersJson = JsonUtil.read("seed_users.json");
+                String usersJson = read("seed_users.json", EmbeddedDataAccess.class.getClassLoader());
                 if (usersJson != null) {
                     logger.info("Loading seed users into " + MDW_EMBEDDED_DB_CLASS + ":");
                     JSONObject usersObj = new JsonObject(usersJson);
@@ -150,6 +153,34 @@ public class EmbeddedDataAccess {
                 ext.initialize();
             }
             extensionsNeedInitialization = false;
+        }
+    }
+
+    /**
+     * Strips out comment lines (where first non-whitespace is //).
+     * Does not support multi-line comments.
+     */
+    public static final String read(String name, ClassLoader classLoader) throws IOException {
+        InputStream stream = FileHelper.readFile(name, classLoader);
+        if (stream == null)
+            stream = FileHelper.readFile(name, classLoader);
+        if (stream == null) {
+            return null;
+        }
+        else {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+            try {
+                StringBuffer config = new StringBuffer();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    if (!line.matches("^\\s*//.*$"))
+                        config.append(line).append("\n");
+                }
+                return config.toString();
+            }
+            finally {
+                reader.close();
+            }
         }
     }
 }

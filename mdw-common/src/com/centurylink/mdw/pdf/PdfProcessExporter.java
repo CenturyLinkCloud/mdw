@@ -39,8 +39,7 @@ public class PdfProcessExporter implements ProcessExporter {
     @Override
     public List<Dependency> getDependencies() {
         List<Dependency> dependencies = new ArrayList<>();
-        dependencies.add(new Dependency("com/itextpdf/itextpdf/5.5.13/itextpdf-5.5.13.jar", 2320581L));
-        dependencies.add(new Dependency("com/itextpdf/tool/xmlworker/5.5.13/xmlworker-5.5.13.jar", 2320581L));
+        dependencies.add(new Dependency("com/github/librepdf/openpdf/1.3.13/openpdf-1.3.13.jar", 4249976L));
         dependencies.add(new Dependency("org/jetbrains/kotlin/kotlin-stdlib/1.2.61/kotlin-stdlib-1.2.61.jar", 12388L));
         dependencies.add(new Dependency("org/slf4j/slf4j-api/1.7.25/slf4j-api-1.7.25.jar", 41203L));
         dependencies.add(new Dependency("com/vladsch/flexmark/flexmark/0.32.22/flexmark-0.32.22.jar", 386805L));

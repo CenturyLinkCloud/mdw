@@ -609,20 +609,6 @@ public class SystemServicesImpl implements SystemServices {
         if (mdwCmd.get(0).equals("mdw"))
             mdwCmd.remove(0);
         if (!mdwCmd.isEmpty()) {
-            if (ApplicationContext.isCloudFoundry() && System.getProperty("mdw.config.location") == null) {
-                String configLoc = ApplicationContext.getTempDirectory() + File.separator + "config";
-                System.setProperty("mdw.config.location", configLoc);
-                Files.createDirectories(Paths.get(configLoc));
-                // write pseudo-config if needed
-                if (System.getProperty("mdw.property.manager").equalsIgnoreCase("com.centurylink.mdw.config.PaasPropertyManager")) {
-                    Properties props = PropertyManager.getInstance().getAllProperties();
-                    props.store(new FileOutputStream(configLoc + "/mdw.properties"), null);
-                }
-                else {
-                    String yaml = System.getenv("mdw_settings");
-                    Files.write(Paths.get(configLoc + "/mdw.yaml"), yaml.getBytes());
-                }
-            }
             String first = mdwCmd.get(0);
             if (first.equals("archive") || first.equals("import") || first.equals("install")
                     || first.equals("status") || first.equals("test") || first.equals("update")) {

@@ -15,4 +15,8 @@ public class Table {
 
     private String[][] rows;
     public String[][] getRows() { return rows; }
+
+    private int[] widths;
+    public int[] getWidths() { return widths; };
+    public void setWidths(int[] widths) { this.widths = widths; }
 }
