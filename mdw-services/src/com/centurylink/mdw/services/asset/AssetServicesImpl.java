@@ -839,6 +839,12 @@ public class AssetServicesImpl implements AssetServices {
         else if (renderTo.equals(Asset.JSON)) {
             return new JsonRenderer(asset);
         }
+        else if (renderTo.equals("PNG")) {
+            return new PngRenderer(asset);
+        }
+        else if (renderTo.equals("PDF")) {
+            return new PdfRenderer(asset);
+        }
         return null;
     }
 

@@ -10,6 +10,11 @@
           {{process.name}} {{process.version ? ' v' + process.version : ''}}
         </div>
         <div class="mdw-heading-actions">
+          <a href="" ng-if="isEditAllowed()" uib-popover-template="'workflow/exportMenu.html'"
+             popover-placement="left" pop-click class="btn btn-primary mdw-btn" style="margin-left:5px;" title="Export Process">
+            <span class="glyphicon glyphicon-download-alt mdw-icon-btn"></span>
+            Export
+          </a>
           <a ng-if="!process.startPageUrl" ng-href="#/workflow/run/{{process.packageName}}/{{process.name}}"
             class="btn btn-primary mdw-btn" title="Run">
             <span class="glyphicon glyphicon-play mdw-icon-btn"></span>

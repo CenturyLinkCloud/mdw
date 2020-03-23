@@ -15,19 +15,25 @@
  */
 package com.centurylink.mdw.services.asset;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cli.Props;
+import com.centurylink.mdw.cli.Setup;
+import com.centurylink.mdw.html.HtmlExportHelper;
+import com.centurylink.mdw.model.project.Data;
+import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.html.FlexmarkInstances;
+import com.centurylink.mdw.html.HtmlProcessExporter;
 import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.system.MdwVersion;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.parser.Parser;
@@ -42,6 +48,7 @@ public class HtmlRenderer implements Renderer {
 
     @SuppressWarnings("squid:S1845")
     private static String styles = null;
+
     static String getStyles() throws IOException {
         if (styles == null) {
             InputStream is = FileHelper.readFile("css/styles.css", HtmlRenderer.class.getClassLoader());
@@ -60,13 +67,12 @@ public class HtmlRenderer implements Renderer {
         this.asset = asset;
     }
 
-    public byte[] render(Map<String,String> options) throws RenderingException {
+    public byte[] render(Map<String, String> options) throws RenderingException {
         Path filePath = Paths.get(asset.getFile().getPath());
         try {
             if (asset.getExtension().equals("html")) {
                 return Files.readAllBytes(filePath);
-            }
-            else if (asset.getExtension().equals("md")) {
+            } else if (asset.getExtension().equals("md")) {
 
                 Parser parser = FlexmarkInstances.getParser(null);
                 com.vladsch.flexmark.html.HtmlRenderer renderer = FlexmarkInstances.getRenderer(null);
@@ -84,12 +90,35 @@ public class HtmlRenderer implements Renderer {
                     html.append("\n<body>\n</html>");
                 }
                 return html.toString().getBytes();
-            }
-            else {
+            } else if (asset.getExtension().equals("proc")) {
+                HtmlProcessExporter exporter =  new HtmlProcessExporter(new Project() {
+                    public File getAssetRoot() throws IOException {
+                        return ApplicationContext.getAssetRoot();
+                    }
+                    public String getHubRootUrl() throws IOException {
+                        return ApplicationContext.getMdwHubUrl();
+                    }
+                    public MdwVersion getMdwVersion() throws IOException {
+                        return new MdwVersion(ApplicationContext.getMdwVersion());
+                    }
+                    private Data data;
+                    public Data getData() {
+                        if (data == null)
+                            data = new Data(this);
+                        return data;
+                    }
+
+                });
+                String procContent = new String(Files.readAllBytes(Paths.get(asset.getFile().getPath())));
+                Process process = Process.fromString(procContent);
+                process.setName(asset.getRootName());
+                String home = System.getProperty("user.home");
+                exporter.setOutputDir(new File(home+"/Downloads"));
+                return exporter.export(process);
+            } else {
                 throw new RenderingException(ServiceException.NOT_IMPLEMENTED, "Cannot convert " + asset.getExtension() + " to HTML");
             }
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             throw new RenderingException(ServiceException.INTERNAL_ERROR, "Error reading: " + filePath, ex);
         }
     }
