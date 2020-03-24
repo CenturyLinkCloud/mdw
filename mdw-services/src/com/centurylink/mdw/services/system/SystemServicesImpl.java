@@ -44,7 +44,6 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.util.*;
@@ -610,9 +609,9 @@ public class SystemServicesImpl implements SystemServices {
             mdwCmd.remove(0);
         if (!mdwCmd.isEmpty()) {
             String first = mdwCmd.get(0);
-            if (first.equals("archive") || first.equals("import") || first.equals("install")
+            if (first.equals("import") || first.equals("export") || first.equals("install")
                     || first.equals("status") || first.equals("test") || first.equals("update")) {
-                mdwCmd.add("--config-loc=" + System.getProperty("mdw.config.location"));
+                mdwCmd.add("--config-loc=" + new File(System.getProperty("mdw.config.location")).getAbsolutePath());
             }
         }
 
@@ -621,7 +620,7 @@ public class SystemServicesImpl implements SystemServices {
 
         ProcessBuilder builder = new ProcessBuilder(cmd);
         builder.environment().put("MDW_HOME", new File(mdwHome).getAbsolutePath());
-        builder.directory(new File(PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH)));
+        builder.directory(new File(System.getProperty("user.dir")));
         builder.redirectErrorStream(true);
         Process process = builder.start();
         ByteArrayOutputStream output = new ByteArrayOutputStream();

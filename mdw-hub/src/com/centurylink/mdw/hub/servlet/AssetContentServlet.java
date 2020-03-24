@@ -208,29 +208,32 @@ public class AssetContentServlet extends HttpServlet {
                 }
 
                 boolean download = "true".equalsIgnoreCase(request.getParameter("download"));
-                if (download) {
-                    response.setHeader("Content-Disposition", "attachment;filename=\"" + asset.getFile().getName() + "\"");
-                    response.setContentType("application/octet-stream");
-                }
-                else if (render == null) {
+                if (render == null) {
                     response.setContentType(asset.getContentType());
+                    if (download) {
+                        response.setHeader("Content-Disposition", "attachment;filename=\"" + asset.getFile().getName() + "\"");
+                        response.setContentType("application/octet-stream");
+                    }
                 }
-
-                if (render != null) {
+                else {
                     try {
                         Renderer renderer = ServiceLocator.getAssetServices().getRenderer(path, render.toUpperCase());
                         if (renderer == null)
                             throw new RenderingException(ServiceException.NOT_FOUND, "Renderer not found: " + render);
-                        if (!download) {
-                            String contentType = Asset.getContentType(render.toUpperCase());
-                            if (contentType != null)
-                                response.setContentType(contentType);
-                        }
                         Map<String,String> options = new HashMap<>();
                         Enumeration<String> paramNames = request.getParameterNames();
                         while (paramNames.hasMoreElements()) {
                             String paramName = paramNames.nextElement();
                             options.put(paramName, request.getParameter(paramName));
+                        }
+                        if (download) {
+                            response.setHeader("Content-Disposition", "attachment;filename=\"" + renderer.getFileName() + "\"");
+                            response.setContentType("application/octet-stream");
+                        }
+                        else {
+                            String contentType = Asset.getContentType(render.toUpperCase());
+                            if (contentType != null)
+                                response.setContentType(contentType);
                         }
                         response.getOutputStream().write(renderer.render(options));
                     }

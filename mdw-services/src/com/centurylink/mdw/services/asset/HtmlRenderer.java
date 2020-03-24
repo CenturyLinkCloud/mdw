@@ -122,4 +122,9 @@ public class HtmlRenderer implements Renderer {
             throw new RenderingException(ServiceException.INTERNAL_ERROR, "Error reading: " + filePath, ex);
         }
     }
+
+    @Override
+    public String getFileName() {
+        return asset.getRootName() + ".html";
+    }
 }

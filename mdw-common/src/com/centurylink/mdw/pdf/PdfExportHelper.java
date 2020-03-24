@@ -37,12 +37,9 @@ import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.StringReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -64,19 +61,17 @@ public class PdfExportHelper extends HtmlExportHelper {
         super(project);
     }
 
-    public byte[] exportProcess(Process process, File outputFile) throws IOException {
+    public void exportProcess(Process process, OutputStream out) throws IOException {
         new ActivityNodeSequencer(process).assignNodeSequenceIds();
         Document document = new Document();
         try {
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(outputFile));
+            PdfWriter writer = PdfWriter.getInstance(document, out);
             writer.setPageEvent(paragraphBorder);
             document.open();
             Rectangle pageSize = document.getPageSize();
             Chapter chapter = printProcess(writer, 1, process, pageSize);
             document.add(chapter);
             document.close();
-
-            return Files.readAllBytes(Paths.get(outputFile.getPath()));
         } catch (Exception ex) {
             if (ex instanceof IOException)
                 throw (IOException) ex;

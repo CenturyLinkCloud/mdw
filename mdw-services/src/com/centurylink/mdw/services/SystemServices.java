@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.services;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.centurylink.mdw.common.service.Query;
@@ -42,4 +43,5 @@ public interface SystemServices {
     SysInfoCategory getMdwProperties();
     SysInfoCategory findClass(String className, ClassLoader classLoader);
     SysInfoCategory findClass(String className);
+    String runCliCommand(String command) throws IOException, InterruptedException;
 }

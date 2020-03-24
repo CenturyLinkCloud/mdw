@@ -37,4 +37,9 @@ public class JsonRenderer implements Renderer {
 
         throw new RenderingException(ServiceException.NOT_IMPLEMENTED, "Cannot convert " + asset.getExtension() + " to JSON");
     }
+
+    @Override
+    public String getFileName() {
+        return asset.getName();
+    }
 }

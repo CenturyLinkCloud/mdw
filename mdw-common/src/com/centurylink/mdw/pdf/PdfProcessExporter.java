@@ -20,7 +20,7 @@ import com.centurylink.mdw.export.ProcessExporter;
 import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.workflow.Process;
 
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,11 +29,6 @@ public class PdfProcessExporter implements ProcessExporter {
 
     public PdfProcessExporter(Project project) {
         this.project = project;
-    }
-
-    private File outputDir;
-    public void setOutputDir(File outputDir) {
-        this.outputDir = outputDir;
     }
 
     @Override
@@ -57,7 +52,9 @@ public class PdfProcessExporter implements ProcessExporter {
     @Override
     public byte[] export(Process process) {
         try {
-            return new PdfExportHelper(project).exportProcess(process, outputDir);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            new PdfExportHelper(project).exportProcess(process, out);
+            return out.toByteArray();
         }
         catch (Exception e) {
             e.printStackTrace();

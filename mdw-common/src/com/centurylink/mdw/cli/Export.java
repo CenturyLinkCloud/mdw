@@ -139,18 +139,19 @@ public class Export extends Setup {
             Process proc = Process.fromString(content);
             proc.setName(procName.substring(0, procName.length() - 5));
 
-            getOut().println("Exporting to format: " + format);
+            getOut().println("Exporting " + format + " to " + output);
             ProcessExporter exporter = getProcessExporter();
-            if (exporter instanceof PdfProcessExporter) {
-                ((PdfProcessExporter) exporter).setOutputDir(output);
-            } else if (exporter instanceof HtmlProcessExporter) {
+            if (exporter instanceof HtmlProcessExporter) {
                 ((HtmlProcessExporter) exporter).setOutputDir(output.getParentFile());
             }
 
             byte[] exported = exporter.export(proc);
 
-            if (exported != null)
+            if (exported != null) {
                 Files.write(output.toPath(), exported);
+            }
+
+
         }
 
         return this;
@@ -171,8 +172,6 @@ public class Export extends Setup {
         }
         else {
             if (format == null) {
-                if (output == null)
-                    throw new IOException("Either --format or --output must be specified");
                 int lastDot = output.getName().lastIndexOf('.');
                 if (lastDot > 0 && lastDot < output.getName().length() - 1) {
                     format = output.getName().substring(lastDot + 1);

@@ -59,4 +59,9 @@ public class PngRenderer implements Renderer {
         }
         throw new RenderingException(ServiceException.NOT_IMPLEMENTED, "Cannot convert " + asset.getExtension() + " to Png Image");
     }
+
+    @Override
+    public String getFileName() {
+        return asset.getRootName() + ".png";
+    }
 }

@@ -200,6 +200,10 @@ public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
         return file.hashCode();
     }
 
+    public String toString() {
+        return getName() + " v" + getRevision();
+    }
+
     /**
      * For asset services.
      */
@@ -234,5 +238,4 @@ public class AssetInfo implements Jsonable, Comparable<AssetInfo> {
             ct = isBinary(ext) ? "application/octet-stream" : "text/plain";
         return ct;
     }
-
 }
