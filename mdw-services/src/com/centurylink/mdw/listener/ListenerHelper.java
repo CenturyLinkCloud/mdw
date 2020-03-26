@@ -113,8 +113,10 @@ public class ListenerHelper {
             bucket = EventHandlerCache.getPathExternalEvents(metaInfo.get(Listener.METAINFO_REQUEST_PATH));
             isTopic = false;  // In case it was set to true above
         }
-        else if (isTopic)
-            bucket = EventHandlerCache.getPathExternalEvents(metaInfo.get(metaInfo.get(Listener.METAINFO_TOPIC)));
+        else if (isTopic) {
+            // bucket = EventHandlerCache.getPathExternalEvents(metaInfo.get(metaInfo.get(Listener.METAINFO_TOPIC)));
+            bucket = EventHandlerCache.getPathExternalEvents(metaInfo.get(Listener.METAINFO_TOPIC));
+        }
 
         if (bucket != null) {
             for (ExternalEvent e : bucket) {

@@ -1558,7 +1558,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
         addMilestones(masterMilestones, endToEndActivities, parentInstance);
         if (future && HierarchyCache.hasMilestones(masterProcess.getId())) {
             for (Linked<Milestone> end : masterMilestones.getEnds()) {
-                Linked<Milestone> milestonesDef = HierarchyCache.getMilestones(masterProcess.getId());
+                Process endProcess = ProcessCache.getProcess(end.get().getProcess().getQualifiedName());
+                Linked<Milestone> milestonesDef = HierarchyCache.getMilestones(endProcess.getId());
                 Linked<Milestone> futureMilestone = milestonesDef.find(m -> {
                     return m.getActivity().getId().equals(end.get().getActivity().getId()) &&
                             m.getProcess().getQualifiedName().equals(end.get().getProcess().getQualifiedName());
