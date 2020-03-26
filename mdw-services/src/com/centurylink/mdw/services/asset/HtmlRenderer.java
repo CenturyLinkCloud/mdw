@@ -34,7 +34,11 @@ import com.centurylink.mdw.html.HtmlProcessExporter;
 import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.SystemServices;
 import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.parser.Parser;
 
@@ -42,6 +46,7 @@ import com.vladsch.flexmark.parser.Parser;
  * TODO: cached output based on file timestamp
  */
 public class HtmlRenderer implements Renderer {
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     public static final String STYLES = "styles";
     public static final String HTML_BODY = "html-body";
@@ -91,30 +96,27 @@ public class HtmlRenderer implements Renderer {
                 }
                 return html.toString().getBytes();
             } else if (asset.getExtension().equals("proc")) {
-                HtmlProcessExporter exporter =  new HtmlProcessExporter(new Project() {
-                    public File getAssetRoot() throws IOException {
-                        return ApplicationContext.getAssetRoot();
-                    }
-                    public String getHubRootUrl() throws IOException {
-                        return ApplicationContext.getMdwHubUrl();
-                    }
-                    public MdwVersion getMdwVersion() throws IOException {
-                        return new MdwVersion(ApplicationContext.getMdwVersion());
-                    }
-                    private Data data;
-                    public Data getData() {
-                        if (data == null)
-                            data = new Data(this);
-                        return data;
-                    }
-
-                });
-                String procContent = new String(Files.readAllBytes(Paths.get(asset.getFile().getPath())));
-                Process process = Process.fromString(procContent);
-                process.setName(asset.getRootName());
-                String home = System.getProperty("user.home");
-                exporter.setOutputDir(new File(home+"/Downloads"));
-                return exporter.export(process);
+                String pkgPath = ApplicationContext.getAssetRoot().toPath().relativize(asset.getFile().getParentFile().toPath()).normalize().toString();
+                String pkg = pkgPath.replace('/', '.');
+                String assetPath = pkg + "/" + asset.getName();
+                logger.debug("Exporting process: " + assetPath + " to PDF");
+                File procFile = asset.getFile();
+                try {
+                    SystemServices systemServices = ServiceLocator.getSystemServices();
+                    File exportDir = new File(ApplicationContext.getTempDirectory() + "/export/" + pkgPath);
+                    if (!exportDir.isDirectory() && !exportDir.mkdirs())
+                        throw new IOException("Unable to create export directory: " + exportDir);
+                    File exportFile = new File(exportDir + "/" + asset.getRootName() + ".html");
+                    String cliCommand = "export --process=" + assetPath + " --format=html --output=" + exportFile;
+                    logger.debug("CLI command: '" + cliCommand + "'");
+                    String output = systemServices.runCliCommand(cliCommand);
+                    if (!exportFile.exists())
+                        throw new FileNotFoundException(exportFile.toString() + " -- CLI output:\n" + output);
+                    return Files.readAllBytes(exportFile.toPath());
+                }
+                catch (Exception ex) {
+                    throw new RenderingException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+                }
             } else {
                 throw new RenderingException(ServiceException.NOT_IMPLEMENTED, "Cannot convert " + asset.getExtension() + " to HTML");
             }
