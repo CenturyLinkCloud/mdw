@@ -204,7 +204,12 @@ public class PdfExportHelper extends HtmlExportHelper {
             if (isTabular(activity, attribute)) {
                 paragraph.setIndentationLeft(30);
                 Table table = getTable(activity, attribute);
-                table.setWidths(new int[]{40, 60});
+                if (table.getColumns().length == 2)
+                    table.setWidths(new int[]{40, 60});
+                else if (table.getColumns().length == 3)
+                    table.setWidths(new int[]{30, 40, 30});
+                else if (table.getColumns().length == 4)
+                    table.setWidths((new int[]{20, 40, 30, 10}));
                 printTable(paragraph, table);
             }
             else if (isCode(activity, attribute)) {
@@ -233,7 +238,7 @@ public class PdfExportHelper extends HtmlExportHelper {
         paragraphBorder.setActive(false);
     }
 
-    private void printTable(TextElementArray paragraph, Table table) throws Exception {
+    private void printTable(TextElementArray paragraph, Table table) {
         com.lowagie.text.Table pdfTable = new com.lowagie.text.Table(table.getColumns().length);
         pdfTable.setPadding(5);
         pdfTable.setWidth(95f);
