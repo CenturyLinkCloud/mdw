@@ -114,7 +114,6 @@ public class ListenerHelper {
             isTopic = false;  // In case it was set to true above
         }
         else if (isTopic) {
-            // bucket = EventHandlerCache.getPathExternalEvents(metaInfo.get(metaInfo.get(Listener.METAINFO_TOPIC)));
             bucket = EventHandlerCache.getPathExternalEvents(metaInfo.get(Listener.METAINFO_TOPIC));
         }
 

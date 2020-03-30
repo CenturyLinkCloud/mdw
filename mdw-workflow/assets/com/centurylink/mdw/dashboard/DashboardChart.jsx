@@ -20,7 +20,7 @@ class DashboardChart extends Component {
     this.day_ms = 24 * this.hour_ms;
 
     this.state = {
-      timespan: this.defaultTimespan,
+      timespan: sessionStorage.getItem("mdwDashboardTimespan") || this.defaultTimespan,
       breakdown: this.props.breakdownConfig.breakdowns[0].name,
       tops: [],
       selected: [],
@@ -49,6 +49,8 @@ class DashboardChart extends Component {
     this.updateChart = this.updateChart.bind(this);
     this.retrieveTops = this.retrieveTops.bind(this);
     this.retrieveData = this.retrieveData.bind(this);
+    this.getChartOptions = this.getChartOptions.bind(this);
+    this.getSummaryChartOptions = this.getSummaryChartOptions.bind(this);
     this.getChartColors = this.getChartColors.bind(this);
     this.handleOverviewDataClick = this.handleOverviewDataClick.bind(this);
     this.handleMainDataClick = this.handleMainDataClick.bind(this);
@@ -129,6 +131,7 @@ class DashboardChart extends Component {
     const filters = Object.assign({}, this.state.filters, {
       Ending: this.getDefaultEnd(timespan),
     });
+    sessionStorage.setItem("mdwDashboardTimespan", timespan);
     this.setState({
       timespan: timespan,
       breakdown: this.state.breakdown,
@@ -440,6 +443,16 @@ class DashboardChart extends Component {
     return this.chartOptions;
   }
 
+  getSummaryChartOptions() {
+    const breakdown = this.getBreakdown();
+    if (breakdown.summaryChartOptions) {
+      return Object.assign({}, this.chartOptions, breakdown.summaryChartOptions);
+    }
+    else {
+      return this.chartOptions;
+    }
+  }
+
   getChartColors() {
     const breakdown = this.getBreakdown();
     if (Array.isArray(breakdown.colors)) {
@@ -594,14 +607,14 @@ class DashboardChart extends Component {
               {(!breakdown.summaryChart || breakdown.summaryChart === 'donut') &&
                 <Doughnut
                   data={overviewData}
-                  options={this.chartOptions}
+                  options={this.getSummaryChartOptions()}
                   width={250} height={250}
                   getElementAtEvent={this.handleOverviewDataClick} />
               }
               {breakdown.summaryChart === 'bar' &&
                 <Bar
                   data={overviewData}
-                  options={this.chartOptions}
+                  options={this.getSummaryChartOptions()}
                   width={250} height={250}
                   getElementAtEvent={this.handleOverviewDataClick} />
               }

@@ -337,14 +337,15 @@ public class ApplicationContext {
             }
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            // logger not initialized yet
+            ex.printStackTrace();
         }
         finally{
             try {
                 if (jarFile != null)
                     jarFile.close();
             } catch (IOException e) {
-                logger.severeException(e.getMessage(), e);
+                e.printStackTrace();
             }
         }
 
@@ -495,6 +496,10 @@ public class ApplicationContext {
             return null;
         else
             return serviceUser;
+    }
+
+    public static boolean isCloudFoundry() {
+         return System.getenv("VCAP_APPLICATION") != null;
     }
 
     private static Boolean springBoot = null;
