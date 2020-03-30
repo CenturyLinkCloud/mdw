@@ -139,17 +139,19 @@ public class Export extends Setup {
             Process proc = Process.fromString(content);
             proc.setName(procName.substring(0, procName.length() - 5));
 
+            getOut().println("Exporting " + format + " to " + output);
             ProcessExporter exporter = getProcessExporter();
-            if (exporter instanceof PdfProcessExporter) {
-                ((PdfProcessExporter) exporter).setOutputDir(output);
-            } else if (exporter instanceof HtmlProcessExporter) {
+            if (exporter instanceof HtmlProcessExporter) {
                 ((HtmlProcessExporter) exporter).setOutputDir(output.getParentFile());
             }
 
             byte[] exported = exporter.export(proc);
 
-            if (exported != null)
+            if (exported != null) {
                 Files.write(output.toPath(), exported);
+            }
+
+
         }
 
         return this;
@@ -157,11 +159,15 @@ public class Export extends Setup {
 
     private void init() throws IOException {
         int index = process.lastIndexOf('/');
+        if (index < 1)
+            throw new IOException("Invalid process path: " + process);
         String pkg = process.substring(0, index);
         pkgFile = getAssetRoot() + "/" + pkg.replace('.', '/') + "/";
         procName = process.substring(index + 1);
 
         if (output == null) {
+            if (format == null)
+                throw new IOException("Either --format or --output must be specified");
             output = new File(pkgFile + procName.substring(0, procName.length() - 5) + "." + format);
         }
         else {
@@ -171,7 +177,7 @@ public class Export extends Setup {
                     format = output.getName().substring(lastDot + 1);
                 }
                 else {
-                    format = "bpmn";
+                    throw new IOException("Invalid output: " + output);
                 }
             }
             File fileDir = output.getParentFile();

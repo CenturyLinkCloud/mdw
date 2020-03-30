@@ -273,7 +273,7 @@ class DashboardChart extends Component {
           url += '&' + key + '=' + val.toISOString();
         }
         else {
-          url += '&' + key + '=' + val;
+          url += '&' + key + '=' + encodeURIComponent(val);
         }
       }
     });

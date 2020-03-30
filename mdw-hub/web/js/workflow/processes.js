@@ -574,6 +574,12 @@ processMod.controller('ProcessDefController',
       $scope.authUser.setActiveTab("#/staging");
     });
   };
+
+
+  $scope.exportProcess = function(format) {
+    window.location = mdw.roots.hub + '/asset/' + $scope.process.packageName + '/' + $scope.process.name +
+    '.proc?download=true&render=' + format;
+  };
 }]);
 
 processMod.controller('ProcessLogController', ['$scope', '$http', '$routeParams', 'mdw', 'util', 'EXCEL_DOWNLOAD',

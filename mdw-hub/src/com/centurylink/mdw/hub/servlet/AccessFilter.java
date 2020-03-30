@@ -53,8 +53,8 @@ public class AccessFilter implements Filter {
     private static String forwardingHeader;  // x-forwarded-for
     private static String forwardedProtoHeader; // x-forwarded-proto
     private static String authTokenLoc;
-    private static List<AuthExcludePattern> authExclusions = new ArrayList<AuthExcludePattern>();
-    private static List<AuthExcludePattern> requireHttps = new ArrayList<AuthExcludePattern>();
+    private static List<AuthExcludePattern> authExclusions = new ArrayList<>();
+    private static List<AuthExcludePattern> requireHttps = new ArrayList<>();
     private static Map<String,String> responseHeaders;
     private static boolean devMode;
     private static boolean allowAnyAuthenticatedUser;
@@ -71,11 +71,7 @@ public class AccessFilter implements Filter {
         devMode = ApplicationContext.isDevelopment();
 
         try {
-            String accessYaml;
-            if (ApplicationContext.isCloudFoundry())
-                accessYaml = System.getenv("mdw_access");
-            else
-                accessYaml = new String(FileHelper.readConfig(ACCESS_CONFIG_FILE).getBytes());
+            String accessYaml = new String(FileHelper.readConfig(ACCESS_CONFIG_FILE).getBytes());
 
             YamlLoader yamlLoader = new YamlLoader(accessYaml);
             Map<?,?> topMap = yamlLoader.getRequiredMap("", yamlLoader.getTop(), "");

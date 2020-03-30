@@ -15,28 +15,17 @@
  */
 package com.centurylink.mdw.util;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
-
+import com.centurylink.mdw.model.JsonArray;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.Jsonable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.model.JsonArray;
-import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.util.file.FileHelper;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Helper methods and access to JSON configuration values.
@@ -44,44 +33,7 @@ import com.centurylink.mdw.util.file.FileHelper;
  */
 public class JsonUtil {
 
-    public static final String read(String name) throws IOException {
-        return read(name, JsonUtil.class.getClassLoader());
-    }
-
-    /**
-     * Strips out comment lines (where first non-whitespace is //).
-     * Does not support multi-line comments.
-     */
-    public static final String read(String name, ClassLoader classLoader) throws IOException {
-        if (ApplicationContext.isCloudFoundry()) {
-            return System.getenv("mdw_" + name.substring(0, name.lastIndexOf('.')));
-        }
-        else {
-            InputStream stream = FileHelper.readFile(name, classLoader);
-            if (stream == null)
-                stream = FileHelper.readFile(name, classLoader);
-            if (stream == null) {
-                return null;
-            }
-            else {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-                try {
-                    StringBuffer config = new StringBuffer();
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        if (!line.matches("^\\s*//.*$"))
-                            config.append(line).append("\n");
-                    }
-                    return config.toString();
-                }
-                finally {
-                    reader.close();
-                }
-            }
-        }
-    }
-
-    public static final JSONObject getJson(Map<String,String> map) throws JSONException {
+    public static JSONObject getJson(Map<String,String> map) throws JSONException {
         if (map == null)
             return null;
         JSONObject jsonObj = new JsonObject();
@@ -93,8 +45,8 @@ public class JsonUtil {
         return jsonObj;
     }
 
-    public static final Map<String,String> getMap(JSONObject jsonObj) throws JSONException {
-        Map<String,String> map = new HashMap<String,String>();
+    public static Map<String,String> getMap(JSONObject jsonObj) throws JSONException {
+        Map<String,String> map = new HashMap<>();
         String[] names =  JSONObject.getNames(jsonObj);
         if (names != null) {
             for (String name : names)
@@ -103,21 +55,8 @@ public class JsonUtil {
         return map;
     }
 
-    private static final String utcDateTimeFormat = "MM-dd-yyyy HH:mm:ss";
-
-    public static final String formatUtcDateTime(Date date) {
-        DateFormat utcDateTime = new SimpleDateFormat(utcDateTimeFormat);
-        utcDateTime.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return utcDateTime.format(date);
-    }
-    public static final Date parseUtcDateTime(String dt) throws java.text.ParseException {
-        DateFormat utcDateTime = new SimpleDateFormat(utcDateTimeFormat);
-        utcDateTime.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return utcDateTime.parse(dt);
-    }
-
     public static Map<String,JSONObject> getJsonObjects(JSONObject json) throws JSONException {
-        Map<String,JSONObject> objects = new HashMap<String,JSONObject>();
+        Map<String,JSONObject> objects = new HashMap<>();
         Iterator<?> keys = json.keys();
         while (keys.hasNext()) {
             String key = keys.next().toString();

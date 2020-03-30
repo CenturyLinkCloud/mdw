@@ -26,24 +26,20 @@ import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.ActivityNodeSequencer;
 import com.centurylink.mdw.model.workflow.Process;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.*;
-import com.itextpdf.text.api.Spaceable;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfPageEventHelper;
-import com.itextpdf.text.pdf.PdfTemplate;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.tool.xml.ElementList;
-import com.itextpdf.tool.xml.XMLWorkerHelper;
+import com.lowagie.text.Font;
+import com.lowagie.text.Image;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.*;
+import com.lowagie.text.html.simpleparser.HTMLWorker;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfPageEventHelper;
+import com.lowagie.text.pdf.PdfTemplate;
+import com.lowagie.text.pdf.PdfWriter;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.OutputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +50,7 @@ public class PdfExportHelper extends HtmlExportHelper {
     private Font sectionFont = FontFactory.getFont(FontFactory.HELVETICA, 14, Font.BOLD);
     private Font subSectionFont = FontFactory.getFont(FontFactory.HELVETICA, 12, Font.BOLD);
     private Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 12, Font.NORMAL);
-    private Font fixedWidthFont = FontFactory.getFont(FontFactory.COURIER, 8, Font.NORMAL);
+    private Font fixedWidthFont = FontFactory.getFont(FontFactory.COURIER, 10, Font.NORMAL);
     private Font boldFont = FontFactory.getFont(FontFactory.HELVETICA, 12, Font.BOLD);
     private Font spacerFont =  FontFactory.getFont(FontFactory.HELVETICA, 4, Font.NORMAL);
     private ParagraphBorder paragraphBorder = new ParagraphBorder();
@@ -65,20 +61,17 @@ public class PdfExportHelper extends HtmlExportHelper {
         super(project);
     }
 
-    public byte[] exportProcess(Process process, File outputFile) throws IOException {
+    public void exportProcess(Process process, OutputStream out) throws IOException {
         new ActivityNodeSequencer(process).assignNodeSequenceIds();
         Document document = new Document();
         try {
-            PdfWriter writer = PdfWriter.getInstance(document, new FileOutputStream(outputFile));
+            PdfWriter writer = PdfWriter.getInstance(document, out);
             writer.setPageEvent(paragraphBorder);
             document.open();
-            document.setPageSize(PageSize.LETTER);
             Rectangle pageSize = document.getPageSize();
             Chapter chapter = printProcess(writer, 1, process, pageSize);
             document.add(chapter);
             document.close();
-
-            return Files.readAllBytes(Paths.get(outputFile.getPath()));
         } catch (Exception ex) {
             if (ex instanceof IOException)
                 throw (IOException) ex;
@@ -139,7 +132,7 @@ public class PdfExportHelper extends HtmlExportHelper {
             w = (int) (size.width * scale) + 36;
             h = (int) (size.height * scale) + 36;
         }
-        canvas.setBackground(Color.white);
+
         PdfContentByte cb = ((PdfWriter) writer).getDirectContent();
         PdfTemplate tp = cb.createTemplate(w, h);
         Graphics2D g2 = tp.createGraphics(w, h);
@@ -175,7 +168,7 @@ public class PdfExportHelper extends HtmlExportHelper {
             printBoldParagraphs(chapter, summary);
         String markdown = process.getAttribute(WorkAttributeConstant.DOCUMENTATION);
         if (markdown != null && markdown.length() > 0) {
-            printHtml(section, getHtml(markdown));
+            printHtml(section, getHtml(markdown), 0);
         }
     }
 
@@ -184,7 +177,7 @@ public class PdfExportHelper extends HtmlExportHelper {
         Section subsection = section.addSection(title, parentLevel == 0 ? 0 : (parentLevel + 1));
         subsection.add(new Paragraph("\n", spacerFont));
 
-        com.itextpdf.text.List list = new com.itextpdf.text.List(false, false, 10);
+        com.lowagie.text.List list = new com.lowagie.text.List(false, false, 10);
         list.setIndentationLeft(20);
         List<Attribute> attributes = activity.getAttributes();
         List<Attribute> sortedAttributes = new ArrayList<>(attributes);
@@ -209,8 +202,10 @@ public class PdfExportHelper extends HtmlExportHelper {
         Pagelet.Widget widget = getWidget(activity, attribute.getName());
         if (widget != null || WorkAttributeConstant.MONITORS.equals(attribute.getName())) {
             if (isTabular(activity, attribute)) {
+                paragraph.setIndentationLeft(30);
                 Table table = getTable(activity, attribute);
-                printHtml(paragraph, getTableHtml(table), 30);
+                table.setWidths(new int[]{40, 60});
+                printTable(paragraph, table);
             }
             else if (isCode(activity, attribute)) {
                 printCodeBox(paragraph, attribute.getValue());
@@ -227,18 +222,49 @@ public class PdfExportHelper extends HtmlExportHelper {
     private void printCodeBox(Paragraph paragraph, String code) {
         // TODO border doesn't work
         paragraphBorder.setActive(true);
+        Paragraph spacer = new Paragraph("", spacerFont);
+        spacer.setSpacingBefore(0);
+        paragraph.add(spacer);
         Paragraph subParagraph = new Paragraph(code, fixedWidthFont);
-        paragraph.setIndentationLeft(30);
+        subParagraph.setSpacingBefore(0);
+        subParagraph.setSpacingAfter(10);
         paragraph.add(subParagraph);
+        paragraph.add(new Paragraph("", spacerFont));
         paragraphBorder.setActive(false);
+    }
+
+    private void printTable(TextElementArray paragraph, Table table) throws Exception {
+        com.lowagie.text.Table pdfTable = new com.lowagie.text.Table(table.getColumns().length);
+        pdfTable.setPadding(5);
+        pdfTable.setWidth(95f);
+        if (table.getWidths() != null) {
+            pdfTable.setWidths(table.getWidths());
+        }
+        if (table.getColumns() != null) {
+            for (String column : table.getColumns()) {
+                Cell cell = new Cell(column);
+                cell.setHeader(true);
+                cell.setGrayFill(0.75f);
+                pdfTable.addCell(cell);
+            }
+            pdfTable.endHeaders();
+        }
+        if (table.getRows() != null && table.getRows().length > 0) {
+            for (int i = 0; i < table.getRows()[0].length; i++) {
+                for (int j = 0; j < table.getColumns().length; j++) {
+                    pdfTable.addCell(new Cell(table.getRows()[j][i]));
+                }
+            }
+        }
+
+        paragraph.add(pdfTable);
     }
 
     private void printVariables(Chapter chapter, Process process, int parentLevel) throws Exception {
         Paragraph title = new Paragraph("Process Variables", sectionFont);
         title.setSpacingBefore(5);
         Section section = chapter.addSection(title, parentLevel == 0 ? 0 : (parentLevel + 1));
-        section.add(new Paragraph("\n", normalFont));
-        printHtml(section, getVariablesHtml(process));
+        printTable(section, getVariablesTable(process));
     }
 
     private void printActivity(Activity activity, Chapter chapter) throws Exception {
@@ -255,7 +281,7 @@ public class PdfExportHelper extends HtmlExportHelper {
 
         String markdown = activity.getAttribute(WorkAttributeConstant.DOCUMENTATION);
         if (markdown != null && markdown.length() > 0) {
-            printHtml(section, getHtml(markdown));
+            printHtml(section, getHtml(markdown), 10);
         }
 
         if (!isEmpty(activity.getAttributes())) {
@@ -286,27 +312,23 @@ public class PdfExportHelper extends HtmlExportHelper {
         }
     }
 
-    private void printHtml(Section section, String html) throws Exception {
-        Paragraph paragraph = new Paragraph();
-        printHtml(paragraph, html, 0f);
-        section.add(paragraph);
-    }
-
-    private void printHtml(Paragraph paragraph, String html, float indent) throws Exception {
+    private void printHtml(Section section, String html, int indent) throws Exception {
         if (html == null || html.length() == 0)
             return;
 
+        Paragraph paragraph = new Paragraph();
         html = html.replaceAll("</p>", "</p><br/>");
 
-        ElementList list = XMLWorkerHelper.parseToElementList(html, null);
+        List<Element> list = HTMLWorker.parseToList(new StringReader(html), null);
+
         for (Element element : list) {
-            if (element instanceof Spaceable)
-                ((Spaceable)element).setSpacingBefore(0);
+            element.isContent();
             paragraph.add(element);
         }
+        paragraph.setSpacingBefore(0f);
         if (indent > 0)
             paragraph.setIndentationLeft(indent);
-        paragraph.setSpacingBefore(0f);
+        section.add(paragraph);
     }
 
     class ParagraphBorder extends PdfPageEventHelper {

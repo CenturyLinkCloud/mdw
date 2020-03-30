@@ -44,7 +44,6 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.util.*;
@@ -609,24 +608,10 @@ public class SystemServicesImpl implements SystemServices {
         if (mdwCmd.get(0).equals("mdw"))
             mdwCmd.remove(0);
         if (!mdwCmd.isEmpty()) {
-            if (ApplicationContext.isCloudFoundry() && System.getProperty("mdw.config.location") == null) {
-                String configLoc = ApplicationContext.getTempDirectory() + File.separator + "config";
-                System.setProperty("mdw.config.location", configLoc);
-                Files.createDirectories(Paths.get(configLoc));
-                // write pseudo-config if needed
-                if (System.getProperty("mdw.property.manager").equalsIgnoreCase("com.centurylink.mdw.config.PaasPropertyManager")) {
-                    Properties props = PropertyManager.getInstance().getAllProperties();
-                    props.store(new FileOutputStream(configLoc + "/mdw.properties"), null);
-                }
-                else {
-                    String yaml = System.getenv("mdw_settings");
-                    Files.write(Paths.get(configLoc + "/mdw.yaml"), yaml.getBytes());
-                }
-            }
             String first = mdwCmd.get(0);
-            if (first.equals("archive") || first.equals("import") || first.equals("install")
+            if (first.equals("import") || first.equals("export") || first.equals("install")
                     || first.equals("status") || first.equals("test") || first.equals("update")) {
-                mdwCmd.add("--config-loc=" + System.getProperty("mdw.config.location"));
+                mdwCmd.add("--config-loc=" + new File(System.getProperty("mdw.config.location")).getAbsolutePath());
             }
         }
 
@@ -635,7 +620,7 @@ public class SystemServicesImpl implements SystemServices {
 
         ProcessBuilder builder = new ProcessBuilder(cmd);
         builder.environment().put("MDW_HOME", new File(mdwHome).getAbsolutePath());
-        builder.directory(new File(PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH)));
+        builder.directory(new File(System.getProperty("user.dir")));
         builder.redirectErrorStream(true);
         Process process = builder.start();
         ByteArrayOutputStream output = new ByteArrayOutputStream();

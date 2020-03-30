@@ -177,13 +177,7 @@ public abstract class PropertyManager {
             System.out.println("Using Property Manager: " + pm);
             try {
                 Class<?> cls = PropertyManager.class.getClassLoader().loadClass(pm);
-                if (ApplicationContext.isCloudFoundry() && cls.getName().equals(YamlPropertyManager.class.getName())) {
-                    String yamlSettings = System.getenv("mdw_settings");
-                    instance = new YamlPropertyManager(yamlSettings);
-                }
-                else {
-                    instance = (PropertyManager) cls.newInstance();
-                }
+                instance = (PropertyManager) cls.newInstance();
             }
             catch (Exception e) {
                 String msg = "Cannot create property manager " + pm;

@@ -497,10 +497,6 @@ public class ApplicationContext {
             return serviceUser;
     }
 
-    public static boolean isCloudFoundry() {
-         return System.getenv("VCAP_APPLICATION") != null;
-    }
-
     private static Boolean springBoot = null;
     public static boolean isSpringBoot() {
         if (springBoot == null) {

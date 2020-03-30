@@ -87,8 +87,7 @@ public class HtmlExportHelper extends ExportHelper {
         return sb.toString();
     }
 
-    protected String getVariablesHtml(Process process) throws IOException {
-        StringBuilder sb = new StringBuilder();
+    protected Table getVariablesTable(Process process) {
         List<Variable> variables = process.getVariables();
         String[] headers = new String[] { "Name", "Type", "Mode" };
         String[][] values = new String[3][variables.size()];
@@ -98,7 +97,14 @@ public class HtmlExportHelper extends ExportHelper {
             values[1][i] = escapeTags(var.getType());
             values[2][i] = var.getCategory();
         }
-        sb.append(getTableHtml(new Table(headers, values)));
+        Table table = new Table(headers, values);
+        table.setWidths(new int[]{30, 50, 10});
+        return table;
+    }
+
+    protected String getVariablesHtml(Process process) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getTableHtml(getVariablesTable(process)));
         return sb.toString();
     }
 
