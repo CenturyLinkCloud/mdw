@@ -256,7 +256,8 @@ public class Assets extends JsonRestService {
                     if (branch == null)
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: groupId");
                     File gitLocalPath = new File(PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH));
-                    VersionControlGit vcGit = new VersionControlGit();
+                    boolean fetch = PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_FETCH, !ApplicationContext.isDevelopment());
+                    VersionControlGit vcGit = new VersionControlGit(fetch);
                     AssetServices assetServices = ServiceLocator.getAssetServices();
                     GitDiscoverer discoverer = assetServices.getDiscoverer(discoveryUrl);
                     discoverer.setRef(branch);

@@ -94,11 +94,12 @@ title: MDW Configuration
       local.path: .  # required
       remote.url: https://github.com/CenturyLinkCloud/mdw-demo.git  # required
       branch: master  # required (unless using tag below - tag is ignored if branch is specified)
-      tag: dec_2018_release  # optional (used instead of branch above)
+      tag: march_2020_release  # optional (used instead of branch above)
       auto.pull: false  # default=false
       user: anonymous
       password: onlyifrequired
       trusted.host: mytrustedhost.com  # blindly trust https certificate
+      fetch: true  # fetch when checking for diffs - default=true except in dev   
 
     temp.dir: mdw/.temp  # default=mdw/.temp
     attachments.dir: mdw/attach  # default=mdw/attachments

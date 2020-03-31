@@ -113,7 +113,8 @@ public class DataAccess {
     private static VersionControl assetVersionControl;
     public synchronized static VersionControl getAssetVersionControl(File rootDir) throws DataAccessException {
         if (assetVersionControl == null) {
-            assetVersionControl = new VersionControlGit();
+            boolean fetch = PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_FETCH, !ApplicationContext.isDevelopment());
+            assetVersionControl = new VersionControlGit(fetch);
             String gitLocalPath = PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH);
             if (gitLocalPath == null) // use the asset dir as placeholder
                 gitLocalPath = rootDir.getAbsolutePath();
@@ -181,7 +182,7 @@ public class DataAccess {
                                     // log actual diffs at debug level
                                     GitDiffs diffs = vcGit.getDiffs(branch, assetPath);
                                     if (!diffs.isEmpty()) {
-                                        logger.warn("**** WARNING: Local Git repository is out-of-sync with respect to remote branch: " + branch
+                                        logger.warn("**** WARNING: Local Git repository is out-of-sync with respect to branch: " + branch
                                                 + "\n(" + gitLocal.getAbsolutePath() + ")");
                                         logger.info("Differences:\n============\n" + diffs);
                                     }

@@ -72,7 +72,17 @@ public class VersionControlGit implements VersionControl {
     private CredentialsProvider credentialsProvider;
     public void setCredentialsProvider(CredentialsProvider provider) { this.credentialsProvider = provider; }
 
+    private boolean allowFetch;
+
+    /**
+     * For CLI.
+     */
     public VersionControlGit() {
+        this(false);
+    }
+
+    public VersionControlGit(boolean allowFetch) {
+        this.allowFetch = allowFetch;
     }
 
     public void connect(String repositoryUrl, String user, String password, File localDir) throws IOException {
@@ -409,16 +419,18 @@ public class VersionControlGit implements VersionControl {
     }
 
     public void fetch() throws Exception {
-        FetchCommand fetchCommand = git.fetch().setRemoveDeletedRefs(true);
-        if (credentialsProvider != null)
-            fetchCommand.setCredentialsProvider(credentialsProvider);
-        try {
-            fetchCommand.call();
-        }
-        catch (JGitInternalException | TransportException ex) {
-            // LocalRepo object might be out of sync with actual local repo, so recreate objects for next time
-            reconnect();
-            throw ex;
+        if (allowFetch) {
+            FetchCommand fetchCommand = git.fetch().setRemoveDeletedRefs(true);
+            if (credentialsProvider != null)
+                fetchCommand.setCredentialsProvider(credentialsProvider);
+            try {
+                fetchCommand.call();
+            }
+            catch (JGitInternalException | TransportException ex) {
+                // LocalRepo object might be out of sync with actual local repo, so recreate objects for next time
+                reconnect();
+                throw ex;
+            }
         }
     }
 

@@ -72,7 +72,7 @@ public class AppSummary extends JsonRestService {
                 // get the current head commit
                 String localPath = PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH);
                 if (localPath != null) {
-                    VersionControlGit vcGit = new VersionControlGit();
+                    VersionControlGit vcGit = new VersionControlGit(false);
                     vcGit.connect(gitRemoteUrl, null, null, new File(localPath));
                     repo.setCommit(vcGit.getCommit());
                 }

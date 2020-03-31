@@ -75,7 +75,7 @@ public class StagingServicesImpl implements StagingServices {
      * Cloned specifically for user staging.
      */
     public VersionControlGit getStagingVersionControl(String cuid) throws ServiceException {
-        VersionControlGit stagingVersionControl = new VersionControlGit();
+        VersionControlGit stagingVersionControl = new VersionControlGit(true);
         String gitUrl = PropertyManager.getProperty(PropertyNames.MDW_GIT_REMOTE_URL);
         if (gitUrl == null)
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Missing configuration: " + PropertyNames.MDW_GIT_REMOTE_URL);
