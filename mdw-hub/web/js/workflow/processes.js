@@ -577,8 +577,8 @@ processMod.controller('ProcessDefController',
 
 
   $scope.exportProcess = function(format) {
-    window.location = mdw.roots.hub + '/asset/' + $scope.process.packageName + '/' + $scope.process.name +
-    '.proc?download=true&render=' + format;
+    var baseUrl = mdw.roots.hub + '/asset/' + $scope.process.packageName + '/' + $scope.process.name + '.proc?download=true';
+    window.location = baseUrl + '&render=' + format;
   };
 }]);
 
