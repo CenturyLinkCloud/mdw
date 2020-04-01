@@ -23,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Attribute implements Comparable<Attribute> {
 
@@ -170,11 +171,16 @@ public class Attribute implements Comparable<Attribute> {
         return attributes;
     }
 
+    private static final Pattern TRAILING_WHITESPACE = Pattern.compile("[ \\t]+$", Pattern.MULTILINE);
+
     public static Map<String,Object> getAttributesYaml(List<Attribute> attributes) {
         Map<String,Object> yaml = new TreeMap<>(); // sorted
         for (Attribute attr : attributes) {
             if (!WorkAttributeConstant.LOGICAL_ID.equals(attr.getName()) && attr.getValue() != null)
-                yaml.put(attr.getName(), attr.getValue());
+                if (attr.getName().equals(WorkAttributeConstant.DOCUMENTATION))
+                    yaml.put(attr.getName(), attr.getValue());  // markdown
+                else
+                    yaml.put(attr.getName(), TRAILING_WHITESPACE.matcher(attr.getValue()).replaceAll(""));
         }
         return yaml;
     }

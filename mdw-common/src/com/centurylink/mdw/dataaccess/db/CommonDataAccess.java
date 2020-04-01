@@ -128,7 +128,7 @@ public class CommonDataAccess {
         if (logger.isTraceEnabled()) {
             logger.trace("stopTransaction");
         }
-        if (transaction==null) {
+        if (transaction == null) {
             if (logger.isTraceEnabled())
                 logger.trace("   ... transaction is null");
             return;
@@ -161,7 +161,8 @@ public class CommonDataAccess {
             } catch (Exception e) {
                 throw new DataAccessException(0, "Fail to stop the transaction", e);
             }
-            if (exception!=null) throw exception;
+            if (exception != null)
+                throw exception;
         } else {
             if (logger.isTraceEnabled())
                 logger.trace("   ... transaction started by others");
@@ -169,7 +170,7 @@ public class CommonDataAccess {
     }
 
     public void rollbackTransaction(TransactionWrapper transaction) {
-        if (transaction!=null) {
+        if (transaction != null) {
             transaction.setRollbackOnly(true);
             if (transaction.getTransaction()!=null) {
                 try {
@@ -197,7 +198,7 @@ public class CommonDataAccess {
             List<Attribute> attrs = getAttributes1(ownerType, ownerId);
             if (attrs == null)
                 return null;
-            Map<String,String> attributes = new HashMap<String,String>();
+            Map<String,String> attributes = new HashMap<>();
             for (Attribute attr : attrs)
                 attributes.put(attr.getName(), attr.getValue());
             return attributes;
@@ -260,7 +261,7 @@ public class CommonDataAccess {
     throws SQLException {
         List<Attribute> attrs = null;
         if (attributes != null && !attributes.isEmpty()) {
-            attrs = new ArrayList<Attribute>();
+            attrs = new ArrayList<>();
             for (String name : attributes.keySet()) {
                 String value = attributes.get(name);
                 if (value != null && !value.isEmpty())
@@ -516,7 +517,7 @@ public class CommonDataAccess {
         buff.append(db.pagingQuerySuffix(startIndex, endIndex-startIndex));
         String query = buff.toString();
         ResultSet rs = db.runSelect(query);
-        List<String[]> result = new ArrayList<String[]>();
+        List<String[]> result = new ArrayList<>();
         while (rs.next()) {
             String[] one = new String[n];
             for (int i=0; i<n; i++) {
@@ -717,7 +718,7 @@ public class CommonDataAccess {
                 }
             }
             ResultSet rs = db.runSelect(q, args);
-            List<String> ids = new ArrayList<String>();
+            List<String> ids = new ArrayList<>();
             while (rs.next())
                 ids.add(rs.getString("owner_id"));
             return ids;
@@ -747,7 +748,7 @@ public class CommonDataAccess {
                 }
             }
             ResultSet rs = db.runSelect(q, args);
-            List<String> ids = new ArrayList<String>();
+            List<String> ids = new ArrayList<>();
             while (rs.next())
                 ids.add(rs.getString("owner_id"));
             return ids;
