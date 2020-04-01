@@ -57,12 +57,14 @@ class ChartHeader extends Component {
   }
 
   handleFilterChange(filters) {
+    this.refs.filterPopRef.hide();
     if (this.props.onFilterChange) {
       this.props.onFilterChange(filters);
     }
   }
 
   handleFilterReset() {
+    this.refs.filterPopRef.hide();
     if (this.props.onFilterReset) {
       this.props.onFilterReset();
     }
@@ -108,7 +110,8 @@ class ChartHeader extends Component {
               } />
           }
           {this.props.breakdownConfig.filters &&
-            <HeaderPopButton label="Filters" glyph="filter" dirty={!this.props.isDefaultFilters}
+            <HeaderPopButton label="Filters" glyph="filter" rootClose={false} ref="filterPopRef"
+              dirty={!this.props.isDefaultFilters}
               popover={
                 <FilterPop filters={this.props.filters}
                   filterOptions={this.props.filterOptions}
