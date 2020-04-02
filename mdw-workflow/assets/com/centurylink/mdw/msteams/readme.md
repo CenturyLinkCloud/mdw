@@ -1,6 +1,6 @@
 # Microsoft Teams Package
 
-MDW support for [Drools](https://www.drools.org/) business rules.
+MDW support for [MS Teams](https://teams.microsoft.com/) notifications.
 
 ## Bundled Activities
   - [MS Teams Notify](https://centurylinkcloud.github.io/mdw/docs/help/MsTeamsActivity.html)

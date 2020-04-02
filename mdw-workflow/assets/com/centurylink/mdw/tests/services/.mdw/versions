@@ -109,6 +109,7 @@ localhost.env=11
 process-apis.postman=2
 process-values.json=8
 processJaxb.xsd=1
+readme.md=1
 serviceContext.spring=4
 workgroup-create.js=2
 workgroup-retrieve.js=2
