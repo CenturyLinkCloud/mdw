@@ -1,10 +1,10 @@
-# ServiceNow Incidents
+# ServiceNow Package
 In your MDW workflow you can trigger ServiceNow incident creation in two ways: using the ServiceNow Adapter or
 through the ServiceNow Task activity.  The adapter requires that you build the 
 [Incident model](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/servicenow/Incident.java)
 programmatically yourself.  The task activity creates an MDW manual task and automatically maps its fields when
 invoking the ServiceNow API.  
- 
+
 ## ServiceNow Adapter
 The adapter is a good choice if you want to create a ServiceNow incident and continue flow.  There is no 2-way feedback.
 It extends the REST Adapter and works with an Incident object.  To use the adapter, in your process definition create a 
@@ -29,3 +29,7 @@ The task is preconfigured with the ServiceNow TaskNotifier, and uses the default
 for mapping values from the TaskInstance to the ServiceNow Incident.  If you require different mappings, you can create your
 own YAML template and update the task Notices tab to use that instead.  Now when the MDW task instance is created, a 
 corresponding ServiceNow incident will be created as well via the API.
+
+## Dependencies
+  - [com.centurylink.mdw.base](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/base/readme.md)
+ 

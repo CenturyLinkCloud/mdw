@@ -1,3 +1,14 @@
+# FilePanel Package
+
+## TODO
+  This doc needs an overhaul to reflect server-agnosticism in MDW 6.1.
+  
+## Dependencies
+  - [com.centurylink.mdw.base](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/base/readme.md)
+  - [com.centurylink.mdw.node](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/node/readme.md)
+  - [com.centurylink.mdw.react](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/react/readme.md)
+
+## (Deprecated)
 Configuration for filepanel:
 
 1. Global configuration (all servers share cross-mounted view):

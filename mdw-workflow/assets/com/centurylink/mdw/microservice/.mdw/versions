@@ -30,6 +30,6 @@ microserviceRest.pagelet=2
 orchestrator.pagelet=1
 orchestrator.png=1
 plan.png=1
-readme.md=1
+readme.md=2
 responseCollector.pagelet=1
 service-plan.jar=7

@@ -195,6 +195,7 @@ doc-unchangedXmlBeanWrapper.txt=2
 jsonToJson.groovy=1
 jsonToXml.groovy=2
 processLog.json=6
+readme.md=1
 service-heteroproc-parallel-action.xml=3
 service-heteroproc-parallel-response.xml=1
 tester-ping.json=1

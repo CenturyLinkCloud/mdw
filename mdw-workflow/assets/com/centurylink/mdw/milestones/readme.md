@@ -1,4 +1,4 @@
-# Milestones
+# Milestones Package
 A common practice in MDW workflows is to modularize by designing processes to invoke subprocesses (see
 the [Invoke Subprocess](https://centurylinkcloud.github.io/mdw/docs/help/InvokeSubProcessActivity.html) and
 [Invoke Multiple Subprocesses](https://centurylinkcloud.github.io/mdw/docs/help/InvokeMultipleSubprocesses.html) activities.
@@ -23,6 +23,11 @@ milestone activities (on the right).
 <img width="13%" style="vertical-align:top" src="https://raw.githubusercontent.com/CenturyLinkCloud/mdw/master/mdw-workflow/assets/com/centurylink/mdw/tests/milestones/milestones.png" alt="milestones">
 </p>
 <div style="clear:both"></div>
+
+## Dependencies
+  - [com.centurylink.mdw.base](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/base/readme.md)
+  - [com.centurylink.mdw.node](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/node/readme.md)
+  - [com.centurylink.mdw.react](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/react/readme.md)
 
 ## Configuring Milestones
 To include the milestones feature in your MDW app, first [discover and import](https://centurylinkcloud.github.io/mdw/docs/guides/mdw-studio/#4-discover-and-import-asset-packages)

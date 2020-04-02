@@ -48,3 +48,7 @@ for examples and details.
   - Without Spring Sleuth, MDW adds the Brave SLF4J MDC to make traceId, spanId and parentId available:
     https://github.com/openzipkin/brave/tree/master/context/slf4j
   - The prebuilt MDW boot jar uses SLF4J Simple Logger and adds
+  
+## Dependencies
+  - [com.centurylink.mdw.base](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/base/readme.md)
+  

@@ -1,9 +1,12 @@
-# Embedded DB
+# Embedded DB Package
 
 MDW uses a relational database for persisting runtime state.
 The most convenient way to provision this is to import and enable
 the com.centurylink.mdw.db asset package.  This provides an embedded MariaDB
 instance that's automatically created the first time you start your server.
+
+## Dependencies
+  - [com.centurylink.mdw.base](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/base/readme.md)
 
 ## Setup
 After importing this package, to enable MDW's embedded db, set the following values in mdw.yaml:

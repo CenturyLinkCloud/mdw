@@ -5,4 +5,4 @@ SendgridTask.task=1
 Slack.proc=2
 SlackTask.task=1
 SmtpTask.task=1
-readme.md=1
+readme.md=2

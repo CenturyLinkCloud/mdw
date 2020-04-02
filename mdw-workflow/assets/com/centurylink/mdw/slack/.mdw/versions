@@ -9,6 +9,7 @@ SlackService.java=3
 TaskHandler.java=9
 TaskNotifier.java=10
 message.json=1
+readme.md=1
 slack-hash.png=1
 slack.pagelet=2
 slack.png=2

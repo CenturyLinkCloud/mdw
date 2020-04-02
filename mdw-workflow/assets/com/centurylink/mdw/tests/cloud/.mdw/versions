@@ -36,4 +36,5 @@ escalate.xml=2
 invader.png=1
 jaxb-action-request.xml=2
 jaxb-asset.xml=2
+readme.md=1
 testContext.spring=8

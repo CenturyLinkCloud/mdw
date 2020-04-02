@@ -1,8 +1,14 @@
-# Kafka Adapter and Listener
+# Kafka Package
+
+MDW support for [Apache Kafka](https://kafka.apache.org/).
+Includes an adapter activity for sending messages and a listener for receiving.
 
 ## Kafka Adapter Activity
 
 The MDW Kafka Adapter Activity provides the ability to send messages on Kafka topic from a workflow process, binding the service Request and Response to process variables. It sends the message synchronously. Kafaka producer is created when first message is sent for the a specific bootstrap servers list. Every other instance of the Kafka adapter will use the same producer going forward. Producer is shared to speed up sending the messages. All the properties for Producer and Record can be set using process variable of java.lang.Object type. You can assign those properties to a java.util.Properties Object and then assign it defined process variables. In the example included in the com.centurylink.mdw.tests.services package you can look at the pre-script on the adapter of process named KafkaProducer to see how it can be done. The bootstrap server can be configured in a property file and then that value can be read from property file in the pre-script or a Dynamic Java activity so you do not have to update process definitions for each environment.
+
+## Dependencies
+  - [com.centurylink.mdw.base](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/base/readme.md)
 
 ## Setup
 

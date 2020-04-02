@@ -55,6 +55,7 @@ TaskValuesService.yaml=3
 autoform\ task\ for\ local\ resume.task=1
 custom\ task\ for\ local\ resume.task=1
 masterTaskForSubtasks.task=4
+readme.md=1
 subtaskA.task=2
 subtaskB.task=2
 task-index-custom-jaxb.xml=1

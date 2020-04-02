@@ -1,4 +1,13 @@
-## node js for MDW
+## Node.js Package
+The [Node.js](https://nodejs.org/en/) package is is not intended for for direct client app use.  Rather, it's
+a dependency for the MDW [React package](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/react/readme.md).
+
+Includes [react-bootstrap](https://react-bootstrap.github.io/components/alerts) components.
+
+## Dependencies
+  - [com.centurylink.mdw.base](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/base/readme.md)
+
+## Maintaining
 Forked modules (see package.json):
   - react-bootstrap-date-picker
   - react-custom-scrollbars

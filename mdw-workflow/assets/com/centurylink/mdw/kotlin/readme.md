@@ -1,5 +1,8 @@
-# Kotlin Language
+# Kotlin Package
 Import this package for MDW Kotlin language support. 
+
+## Dependencies
+  - [com.centurylink.mdw.base](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/base/readme.md)
 
 ## Dynamic Kotlin Assets
 Kotlin assets (with .kt extension) can be included in any package and will be compiled on startup (or 

@@ -1,9 +1,14 @@
-# Asset Staging
+# Asset Staging Package
 
 Users with Asset Design role can edit assets online through MDWHub.  The purpose of asset staging is to control the 
 introduction of changes made this way.  The staging mechanism enables users to save incremental changes without applying
 them until they're ready.  One or many staged assets can be promoted (applied live) and rolled back (withdrawn) through
 the MDWHub interface.
+
+## Dependencies
+  - [com.centurylink.mdw.base](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/base/readme.md)
+  - [com.centurylink.mdw.node](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/node/readme.md)
+  - [com.centurylink.mdw.react](https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/react/readme.md)
 
 ## Staging Area  
 If you intend to modify assets online, you'll start by initializing your dedicated staging area through MDWHub's Admin tab.
