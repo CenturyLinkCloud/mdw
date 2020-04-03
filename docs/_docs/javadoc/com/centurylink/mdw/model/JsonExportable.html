@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":18,"i1":6};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
+var methods = {"i0":18,"i1":18,"i2":18,"i3":50};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],16:["t5","Default Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -104,7 +104,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public interface <span class="typeNameLabel">JsonExportable</span></pre>
-<div class="block">Marker interface for exportable Json services.</div>
+<div class="block">Exportable JSON services.</div>
 </li>
 </ul>
 </div>
@@ -118,19 +118,36 @@ var activeTableTab = "activeTableTab";
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t5" class="tableTab"><span><a href="javascript:show(16);">Default Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t5" class="tableTab"><span><a href="javascript:show(16);">Default Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>default org.json.JSONObject</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/model/JsonExportable.html#getExportFilters-com.centurylink.mdw.common.service.Query-">getExportFilters</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>
+<div class="block">Return null if no filter output desired.</div>
+</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>default java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/model/JsonExportable.html#getExportName--">getExportName</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i1" class="rowColor">
-<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a></code></td>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>default <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/model/JsonExportable.html#toExportJson-com.centurylink.mdw.common.service.Query-org.json.JSONObject-">toExportJson</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query,
+            org.json.JSONObject&nbsp;json)</code>
+<div class="block">The exported row-wise JSON content.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>default <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/model/JsonExportable.html#toJsonable-com.centurylink.mdw.common.service.Query-org.json.JSONObject-">toJsonable</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query,
-          org.json.JSONObject&nbsp;json)</code>&nbsp;</td>
+          org.json.JSONObject&nbsp;json)</code>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;
+<div class="block"><span class="deprecationComment">implement <a href="../../../../com/centurylink/mdw/model/JsonExportable.html#toExportJson-com.centurylink.mdw.common.service.Query-org.json.JSONObject-"><code>toExportJson(Query, JSONObject)</code></a></span></div>
+</div>
+</td>
 </tr>
 </table>
 </li>
@@ -147,28 +164,51 @@ var activeTableTab = "activeTableTab";
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="toJsonable-com.centurylink.mdw.common.service.Query-org.json.JSONObject-">
+<a name="toExportJson-com.centurylink.mdw.common.service.Query-org.json.JSONObject-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>toJsonable</h4>
-<pre><a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a>&nbsp;toJsonable(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query,
-                    org.json.JSONObject&nbsp;json)
-             throws org.json.JSONException</pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>org.json.JSONException</code></dd>
-</dl>
+<h4>toExportJson</h4>
+<pre>default&nbsp;<a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a>&nbsp;toExportJson(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query,
+                              org.json.JSONObject&nbsp;json)</pre>
+<div class="block">The exported row-wise JSON content.</div>
 </li>
 </ul>
 <a name="getExportName--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getExportName</h4>
 <pre>default&nbsp;java.lang.String&nbsp;getExportName()</pre>
+</li>
+</ul>
+<a name="getExportFilters-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getExportFilters</h4>
+<pre>default&nbsp;org.json.JSONObject&nbsp;getExportFilters(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</pre>
+<div class="block">Return null if no filter output desired.</div>
+</li>
+</ul>
+<a name="toJsonable-com.centurylink.mdw.common.service.Query-org.json.JSONObject-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>toJsonable</h4>
+<pre>@Deprecated
+default&nbsp;<a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a>&nbsp;toJsonable(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query,
+                                        org.json.JSONObject&nbsp;json)
+                                 throws org.json.JSONException</pre>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>&nbsp;<span class="deprecationComment">implement <a href="../../../../com/centurylink/mdw/model/JsonExportable.html#toExportJson-com.centurylink.mdw.common.service.Query-org.json.JSONObject-"><code>toExportJson(Query, JSONObject)</code></a></span></div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>org.json.JSONException</code></dd>
+</dl>
 </li>
 </ul>
 </li>

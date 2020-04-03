@@ -243,8 +243,10 @@ implements <a href="../../../../../com/centurylink/mdw/model/JsonExportable.html
 </tr>
 <tr id="i12" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/Tasks.html#toJsonable-com.centurylink.mdw.common.service.Query-org.json.JSONObject-">toJsonable</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query,
-          org.json.JSONObject&nbsp;json)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/rest/Tasks.html#toExportJson-com.centurylink.mdw.common.service.Query-org.json.JSONObject-">toExportJson</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query,
+            org.json.JSONObject&nbsp;json)</code>
+<div class="block">The exported row-wise JSON content.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -267,6 +269,13 @@ implements <a href="../../../../../com/centurylink/mdw/model/JsonExportable.html
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
 <code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.model.JsonExportable">
+<!--   -->
+</a>
+<h3>Methods inherited from interface&nbsp;com.centurylink.mdw.model.<a href="../../../../../com/centurylink/mdw/model/JsonExportable.html" title="interface in com.centurylink.mdw.model">JsonExportable</a></h3>
+<code><a href="../../../../../com/centurylink/mdw/model/JsonExportable.html#getExportFilters-com.centurylink.mdw.common.service.Query-">getExportFilters</a>, <a href="../../../../../com/centurylink/mdw/model/JsonExportable.html#toJsonable-com.centurylink.mdw.common.service.Query-org.json.JSONObject-">toJsonable</a></code></li>
 </ul>
 </li>
 </ul>
@@ -365,18 +374,20 @@ implements <a href="../../../../../com/centurylink/mdw/model/JsonExportable.html
 </dl>
 </li>
 </ul>
-<a name="toJsonable-com.centurylink.mdw.common.service.Query-org.json.JSONObject-">
+<a name="toExportJson-com.centurylink.mdw.common.service.Query-org.json.JSONObject-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>toJsonable</h4>
-<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a>&nbsp;toJsonable(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query,
-                           org.json.JSONObject&nbsp;json)
-                    throws org.json.JSONException</pre>
+<h4>toExportJson</h4>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a>&nbsp;toExportJson(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query,
+                             org.json.JSONObject&nbsp;json)
+                      throws org.json.JSONException</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/centurylink/mdw/model/JsonExportable.html#toExportJson-com.centurylink.mdw.common.service.Query-org.json.JSONObject-">JsonExportable</a></code></span></div>
+<div class="block">The exported row-wise JSON content.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/centurylink/mdw/model/JsonExportable.html#toJsonable-com.centurylink.mdw.common.service.Query-org.json.JSONObject-">toJsonable</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/model/JsonExportable.html" title="interface in com.centurylink.mdw.model">JsonExportable</a></code></dd>
+<dd><code><a href="../../../../../com/centurylink/mdw/model/JsonExportable.html#toExportJson-com.centurylink.mdw.common.service.Query-org.json.JSONObject-">toExportJson</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/centurylink/mdw/model/JsonExportable.html" title="interface in com.centurylink.mdw.model">JsonExportable</a></code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.json.JSONException</code></dd>
 </dl>

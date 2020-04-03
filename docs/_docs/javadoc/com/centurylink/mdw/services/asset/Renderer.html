@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6};
+var methods = {"i0":6,"i1":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -47,7 +47,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../com/centurylink/mdw/services/asset/JsonRenderer.html" title="class in com.centurylink.mdw.services.asset"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/services/asset/PngRenderer.html" title="class in com.centurylink.mdw.services.asset"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../../com/centurylink/mdw/services/asset/RenderingException.html" title="class in com.centurylink.mdw.services.asset"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -99,16 +99,11 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Known Implementing Classes:</dt>
-<dd><a href="../../../../../com/centurylink/mdw/services/asset/HtmlRenderer.html" title="class in com.centurylink.mdw.services.asset">HtmlRenderer</a>, <a href="../../../../../com/centurylink/mdw/services/asset/JsonRenderer.html" title="class in com.centurylink.mdw.services.asset">JsonRenderer</a>, <a href="../../../../../com/centurylink/mdw/services/asset/TextRenderer.html" title="class in com.centurylink.mdw.services.asset">TextRenderer</a></dd>
-</dl>
-<dl>
-<dt>Functional Interface:</dt>
-<dd>This is a functional interface and can therefore be used as the assignment target for a lambda expression or method reference.</dd>
+<dd><a href="../../../../../com/centurylink/mdw/services/asset/HtmlRenderer.html" title="class in com.centurylink.mdw.services.asset">HtmlRenderer</a>, <a href="../../../../../com/centurylink/mdw/services/asset/JsonRenderer.html" title="class in com.centurylink.mdw.services.asset">JsonRenderer</a>, <a href="../../../../../com/centurylink/mdw/services/asset/PdfRenderer.html" title="class in com.centurylink.mdw.services.asset">PdfRenderer</a>, <a href="../../../../../com/centurylink/mdw/services/asset/PngRenderer.html" title="class in com.centurylink.mdw.services.asset">PngRenderer</a>, <a href="../../../../../com/centurylink/mdw/services/asset/TextRenderer.html" title="class in com.centurylink.mdw.services.asset">TextRenderer</a></dd>
 </dl>
 <hr>
 <br>
-<pre>@FunctionalInterface
-public interface <span class="typeNameLabel">Renderer</span></pre>
+<pre>public interface <span class="typeNameLabel">Renderer</span></pre>
 </li>
 </ul>
 </div>
@@ -128,6 +123,10 @@ public interface <span class="typeNameLabel">Renderer</span></pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/asset/Renderer.html#getFileName--">getFileName</a></span>()</code>&nbsp;</td>
+</tr>
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>byte[]</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/services/asset/Renderer.html#render-java.util.Map-">render</a></span>(java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;options)</code>&nbsp;</td>
 </tr>
@@ -149,7 +148,7 @@ public interface <span class="typeNameLabel">Renderer</span></pre>
 <a name="render-java.util.Map-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>render</h4>
 <pre>byte[]&nbsp;render(java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;options)
@@ -158,6 +157,15 @@ public interface <span class="typeNameLabel">Renderer</span></pre>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/services/asset/RenderingException.html" title="class in com.centurylink.mdw.services.asset">RenderingException</a></code></dd>
 </dl>
+</li>
+</ul>
+<a name="getFileName--">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getFileName</h4>
+<pre>java.lang.String&nbsp;getFileName()</pre>
 </li>
 </ul>
 </li>
@@ -187,7 +195,7 @@ public interface <span class="typeNameLabel">Renderer</span></pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../com/centurylink/mdw/services/asset/JsonRenderer.html" title="class in com.centurylink.mdw.services.asset"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/centurylink/mdw/services/asset/PngRenderer.html" title="class in com.centurylink.mdw.services.asset"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../../com/centurylink/mdw/services/asset/RenderingException.html" title="class in com.centurylink.mdw.services.asset"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">

@@ -109,7 +109,7 @@ var activeTableTab = "activeTableTab";
 <br>
 <pre>public class <span class="typeNameLabel">JsonExport</span>
 extends java.lang.Object</pre>
-<div class="block">TODO: other formats (eg: CSV)</div>
+<div class="block">Export JSON to Excel.</div>
 </li>
 </ul>
 </div>
@@ -128,12 +128,9 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/model/JsonExport.html#JsonExport-com.centurylink.mdw.model.Jsonable-java.util.Map-">JsonExport</a></span>(<a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a>&nbsp;json,
-          java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;labels)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/model/JsonExport.html#JsonExport-com.centurylink.mdw.model.Jsonable-java.lang.String-">JsonExport</a></span>(<a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a>&nbsp;json,
-          java.lang.String&nbsp;name)</code>&nbsp;</td>
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/model/JsonExport.html#JsonExport-com.centurylink.mdw.model.Jsonable-java.lang.String-org.json.JSONObject-">JsonExport</a></span>(<a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a>&nbsp;json,
+          java.lang.String&nbsp;name,
+          org.json.JSONObject&nbsp;filters)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -190,24 +187,15 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="JsonExport-com.centurylink.mdw.model.Jsonable-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>JsonExport</h4>
-<pre>public&nbsp;JsonExport(<a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a>&nbsp;json,
-                  java.lang.String&nbsp;name)</pre>
-</li>
-</ul>
-<a name="JsonExport-com.centurylink.mdw.model.Jsonable-java.util.Map-">
+<a name="JsonExport-com.centurylink.mdw.model.Jsonable-java.lang.String-org.json.JSONObject-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>JsonExport</h4>
 <pre>public&nbsp;JsonExport(<a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a>&nbsp;json,
-                  java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;labels)</pre>
+                  java.lang.String&nbsp;name,
+                  org.json.JSONObject&nbsp;filters)</pre>
 </li>
 </ul>
 </li>

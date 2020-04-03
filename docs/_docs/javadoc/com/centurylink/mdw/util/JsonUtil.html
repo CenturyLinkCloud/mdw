@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9,"i5":9,"i6":9,"i7":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -147,39 +147,20 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/JsonUtil.html#formatUtcDateTime-java.util.Date-">formatUtcDateTime</a></span>(java.util.Date&nbsp;date)</code>&nbsp;</td>
-</tr>
-<tr id="i1" class="rowColor">
 <td class="colFirst"><code>static org.json.JSONObject</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/JsonUtil.html#getJson-java.util.Map-">getJson</a></span>(java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;map)</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../com/centurylink/mdw/model/JsonArray.html" title="class in com.centurylink.mdw.model">JsonArray</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/JsonUtil.html#getJsonArray-java.util.List-">getJsonArray</a></span>(java.util.List&lt;? extends <a href="../../../../com/centurylink/mdw/model/Jsonable.html" title="interface in com.centurylink.mdw.model">Jsonable</a>&gt;&nbsp;jsonables)</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>static java.util.Map&lt;java.lang.String,org.json.JSONObject&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/JsonUtil.html#getJsonObjects-org.json.JSONObject-">getJsonObjects</a></span>(org.json.JSONObject&nbsp;json)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>static java.util.Map&lt;java.lang.String,java.lang.String&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/JsonUtil.html#getMap-org.json.JSONObject-">getMap</a></span>(org.json.JSONObject&nbsp;jsonObj)</code>&nbsp;</td>
-</tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>static java.util.Date</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/JsonUtil.html#parseUtcDateTime-java.lang.String-">parseUtcDateTime</a></span>(java.lang.String&nbsp;dt)</code>&nbsp;</td>
-</tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/JsonUtil.html#read-java.lang.String-">read</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
-</tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code>static java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/util/JsonUtil.html#read-java.lang.String-java.lang.ClassLoader-">read</a></span>(java.lang.String&nbsp;name,
-    java.lang.ClassLoader&nbsp;classLoader)</code>
-<div class="block">Strips out comment lines (where first non-whitespace is //).</div>
-</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -220,45 +201,14 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="read-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>read</h4>
-<pre>public static final&nbsp;java.lang.String&nbsp;read(java.lang.String&nbsp;name)
-                                   throws java.io.IOException</pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="read-java.lang.String-java.lang.ClassLoader-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>read</h4>
-<pre>public static final&nbsp;java.lang.String&nbsp;read(java.lang.String&nbsp;name,
-                                          java.lang.ClassLoader&nbsp;classLoader)
-                                   throws java.io.IOException</pre>
-<div class="block">Strips out comment lines (where first non-whitespace is //).
- Does not support multi-line comments.</div>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.io.IOException</code></dd>
-</dl>
-</li>
-</ul>
 <a name="getJson-java.util.Map-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getJson</h4>
-<pre>public static final&nbsp;org.json.JSONObject&nbsp;getJson(java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;map)
-                                         throws org.json.JSONException</pre>
+<pre>public static&nbsp;org.json.JSONObject&nbsp;getJson(java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;map)
+                                   throws org.json.JSONException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.json.JSONException</code></dd>
@@ -271,34 +221,11 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getMap</h4>
-<pre>public static final&nbsp;java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;getMap(org.json.JSONObject&nbsp;jsonObj)
-                                                                     throws org.json.JSONException</pre>
+<pre>public static&nbsp;java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;getMap(org.json.JSONObject&nbsp;jsonObj)
+                                                               throws org.json.JSONException</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>org.json.JSONException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="formatUtcDateTime-java.util.Date-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>formatUtcDateTime</h4>
-<pre>public static final&nbsp;java.lang.String&nbsp;formatUtcDateTime(java.util.Date&nbsp;date)</pre>
-</li>
-</ul>
-<a name="parseUtcDateTime-java.lang.String-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>parseUtcDateTime</h4>
-<pre>public static final&nbsp;java.util.Date&nbsp;parseUtcDateTime(java.lang.String&nbsp;dt)
-                                             throws java.text.ParseException</pre>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>java.text.ParseException</code></dd>
 </dl>
 </li>
 </ul>

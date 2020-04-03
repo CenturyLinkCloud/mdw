@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":10,"i1":10,"i2":9,"i3":10};
+var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -159,7 +159,7 @@ extends java.lang.Object</pre>
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
@@ -181,6 +181,13 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/EmbeddedDataAccess.html#read-java.lang.String-java.lang.ClassLoader-">read</a></span>(java.lang.String&nbsp;name,
+    java.lang.ClassLoader&nbsp;classLoader)</code>
+<div class="block">Strips out comment lines (where first non-whitespace is //).</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/EmbeddedDataAccess.html#run--">run</a></span>()</code>
 <div class="block">Starts the db if not running and connects to confirm process_instance table exists,
@@ -285,7 +292,7 @@ extends java.lang.Object</pre>
 <a name="initializeExtensions--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>initializeExtensions</h4>
 <pre>public&nbsp;void&nbsp;initializeExtensions()
@@ -295,6 +302,23 @@ extends java.lang.Object</pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>java.sql.SQLException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="read-java.lang.String-java.lang.ClassLoader-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>read</h4>
+<pre>public static final&nbsp;java.lang.String&nbsp;read(java.lang.String&nbsp;name,
+                                          java.lang.ClassLoader&nbsp;classLoader)
+                                   throws java.io.IOException</pre>
+<div class="block">Strips out comment lines (where first non-whitespace is //).
+ Does not support multi-line comments.</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd>
 </dl>
 </li>
 </ul>
