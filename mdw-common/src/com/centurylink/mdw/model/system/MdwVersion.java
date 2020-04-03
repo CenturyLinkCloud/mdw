@@ -178,8 +178,9 @@ public class MdwVersion implements Comparable<MdwVersion> {
         int dotJarBang = classLoc.lastIndexOf(".jar!");
         if (dotJarBang > 0) {
             String jarFilePath = classLoc.substring(0, dotJarBang + 4);
-            if (jarFilePath.startsWith("file:/"))
-                jarFilePath = jarFilePath.substring(6);
+            if (jarFilePath.startsWith("file:/")) {
+                jarFilePath = jarFilePath.substring(6).replaceAll("%20", " ");
+            }
             if (!jarFilePath.startsWith("/"))
                 jarFilePath = "/" + jarFilePath;
             try (JarFile jarFile = new JarFile(new File(jarFilePath))) {
