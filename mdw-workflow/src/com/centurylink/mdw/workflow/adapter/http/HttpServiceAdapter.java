@@ -124,11 +124,11 @@ public class HttpServiceAdapter extends TextAdapterActivity {
      * @throws ActivityException
      */
     protected int getConnectTimeout() throws ActivityException {
-        String connectTimeout = null;
+        Integer connectTimeout = null;
         try {
-            connectTimeout = getAttributeValueSmart(CONNECT_TIMEOUT);
+            connectTimeout = getAttribute(CONNECT_TIMEOUT, 30000 );
             if (connectTimeout != null)
-                return Integer.parseInt(connectTimeout);
+                return connectTimeout;
             return -1;
         }
         catch (NumberFormatException ex) {
@@ -145,11 +145,11 @@ public class HttpServiceAdapter extends TextAdapterActivity {
      * @throws ActivityException
      */
     protected int getReadTimeout() throws ActivityException {
-        String readTimeout = null;
+        Integer readTimeout = null;
         try {
-            readTimeout = getAttributeValueSmart(READ_TIMEOUT);
+            readTimeout = getAttribute(READ_TIMEOUT, 10000);
             if (readTimeout != null)
-                return Integer.parseInt(readTimeout);
+                return readTimeout;
             return -1;
         }
         catch (NumberFormatException ex) {
