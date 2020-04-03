@@ -1,7 +1,7 @@
 schemaVersion: '6.1'
 name: com.centurylink.mdw.react
-version: 6.1.33
+version: 6.1.34-SNAPSHOT
 
 dependencies:
-  - com.centurylink.mdw.base v6.1.33
-  - com.centurylink.mdw.node v6.1.33
+  - com.centurylink.mdw.base v6.1.34-SNAPSHOT
+  - com.centurylink.mdw.node v6.1.34-SNAPSHOT
