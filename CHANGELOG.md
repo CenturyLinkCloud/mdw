@@ -1,5 +1,27 @@
 # Change Log
 
+## [6.1.33](https://github.com/CenturyLinkCloud/mdw/tree/6.1.33) (2020-04-03)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.32...6.1.33)
+
+**Implemented enhancements:**
+
+- Ability to disable Git fetch through configuration [\#826](https://github.com/CenturyLinkCloud/mdw/issues/826)
+- Improved system thread dump information [\#820](https://github.com/CenturyLinkCloud/mdw/issues/820)
+- Include selected filter information when exporting to Excel from Hub [\#819](https://github.com/CenturyLinkCloud/mdw/issues/819)
+- Indicate when Hub filters are active \(set to non-defaults\) [\#817](https://github.com/CenturyLinkCloud/mdw/issues/817)
+- Export Process definition from Hub [\#810](https://github.com/CenturyLinkCloud/mdw/issues/810)
+- Ability to override global Activity Logging enablement [\#799](https://github.com/CenturyLinkCloud/mdw/issues/799)
+- Dashboard chart filter end date selection for non-current month [\#684](https://github.com/CenturyLinkCloud/mdw/issues/684)
+- Remember dashboard filter/breakdown user selections [\#584](https://github.com/CenturyLinkCloud/mdw/issues/584)
+
+**Closed issues:**
+
+- Multiline Script and dynamic Java attributes are not folded in YAML .proc files [\#827](https://github.com/CenturyLinkCloud/mdw/issues/827)
+- Content-based event handler registrations with 'Topic' metaInfo are broken [\#823](https://github.com/CenturyLinkCloud/mdw/issues/823)
+- In MDWHub milestones definition subflow drill-in can cause HTTP 404 [\#821](https://github.com/CenturyLinkCloud/mdw/issues/821)
+- Milestone labels without group fails to unescape newline characters [\#818](https://github.com/CenturyLinkCloud/mdw/issues/818)
+- CLI process export to HTML/PDF fails to display icons for built-in activities [\#800](https://github.com/CenturyLinkCloud/mdw/issues/800)
+
 ## [6.1.32](https://github.com/CenturyLinkCloud/mdw/tree/6.1.32) (2020-03-06)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.31...6.1.32)
 
