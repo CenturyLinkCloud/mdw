@@ -134,9 +134,7 @@ public class HttpServiceAdapter extends TextAdapterActivity {
             return connectTimeout;
 
         }
-        catch (NumberFormatException ex) {
-            throw new ActivityException("Invalid value for Connect Timeout attribute: " + connectTimeout);
-        }
+       
         catch (PropertyException ex) {
             throw new ActivityException(-1, ex.getMessage(), ex);
         }
@@ -152,9 +150,6 @@ public class HttpServiceAdapter extends TextAdapterActivity {
                 try {
             readTimeout = getAttribute(READ_TIMEOUT, PropertyManager.getIntegerProperty(MDW_ADAPTER_READ_TIMEOUT, 10000));
             return readTimeout;
-        }
-        catch (NumberFormatException ex) {
-            throw new ActivityException("Invalid value for Request Timeout attribute: " + readTimeout);
         }
         catch (PropertyException ex) {
             throw new ActivityException(-1, ex.getMessage(), ex);
