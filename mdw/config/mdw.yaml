@@ -42,3 +42,9 @@ cleanup:
   job:
     enabled: true
     cleanupscheduler: 30 00 * * ? *
+
+adapter:
+  read:
+    timeout: 10000
+  connect:
+    timeout: 20000
