@@ -1,8 +1,8 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import {Link} from '../node/node_modules/react-router-dom';
+import {Network} from '../node/node_modules/vis';
 import '../node/node_modules/style-loader!../node/node_modules/vis/dist/vis.css';
-import {Network} from '../node/node_modules/vis/dist/vis';
 import HeaderPopButton from '../react/HeaderPopButton.jsx';
 import DataE2e from './DataE2e.js';
 import InfoPop from './InfoPop.jsx';
@@ -10,24 +10,24 @@ import Groups from './Groups.js';
 import options from './options.js';
 
 class E2e extends Component {
-    
+
   constructor(...args) {
     super(...args);
     this.state = {
-      activityInstance: {}, 
+      activityInstance: {},
       data: {}
     };
-  }  
+  }
 
   drawGraph() {
     const container = document.getElementById('milestone-all-graph');
     if (container) {
       $mdwUi.hubLoading(true);
-      const graphOptions = Object.assign({}, { 
+      const graphOptions = Object.assign({}, {
         height: (this.state.data.maxDepth * 100) + 'px'
       }, options.graph);
       const graphData = {
-        nodes: this.state.data.items, 
+        nodes: this.state.data.items,
         edges: this.state.data.edges
       };
       const network = new Network(container, graphData, graphOptions);
@@ -37,7 +37,7 @@ class E2e extends Component {
         var top = '0px';
         if (this.state.data.maxDepth) {
           top = '-' + Math.round(this.state.data.maxDepth * 4.3) + 'px';
-        }    
+        }
         canvas.style.top = top;
       }
       network.on('doubleClick', params => {
@@ -83,7 +83,7 @@ class E2e extends Component {
         else {
           $mdwUi.showMessage(activities.status.message);
         }
-      });  
+      });
     });
   }
 
@@ -114,7 +114,7 @@ class E2e extends Component {
           </div>
         </div>
       </div>
-    );  
+    );
   }
 }
 
@@ -122,4 +122,4 @@ E2e.contextTypes = {
   hubRoot: PropTypes.string,
   serviceRoot: PropTypes.string
 };
-export default E2e; 
+export default E2e;

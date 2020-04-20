@@ -6,6 +6,7 @@ import Footer from '../react/Footer.jsx';
 import Nav from '../react/Nav.jsx';
 // To add custom charts, override Routes.jsx and Index.jsx in custom UI package.
 import Routes from './Routes.jsx';
+import mobile from '../react/mobile';
 
 class Index extends Component {
 
@@ -33,16 +34,23 @@ class Index extends Component {
   }
 
   render() {
+
+    const isMobile = mobile.isMobile();
+    const contentClass = isMobile ? 'mdw-mobile-content' : 'mdw-content';
+
     return (
       <div>
-        <Header activeTab="dashboardTab" />
-        { /* TODO: mdw-mobile-content instead of mdw-content if mobile */ }
-        <div id="mdw-main" className="content container mdw-content">
+        {!isMobile &&
+          <Header activeTab="dashboardTab" />
+        }
+        <div id="mdw-main" className={'content container ' + contentClass}>
           <Router>
             <div className="row">
-              <div className="col-md-2 mdw-sidebar">
-                <Nav tab="dashboardTab" />
-              </div>
+              {!isMobile &&
+                <div className="col-md-2 mdw-sidebar">
+                  <Nav tab="dashboardTab" />
+                </div>
+              }
               <div className="col-md-10">
                 <Routes />
               </div>

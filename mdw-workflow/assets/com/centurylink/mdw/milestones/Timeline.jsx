@@ -1,14 +1,14 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import {Link} from '../node/node_modules/react-router-dom';
-import {Timeline as VisTimeline, DataSet} from '../node/node_modules/vis/dist/vis';
+import {Timeline as VisTimeline, DataSet} from '../node/node_modules/vis';
 import '../node/node_modules/style-loader!./milestones.css';
 
 class Timeline extends Component {
-    
+
   constructor(...args) {
     super(...args);
-  }  
+  }
 
   drawTimeline() {
     const container = document.getElementById('milestone-timeline');
@@ -30,7 +30,7 @@ class Timeline extends Component {
         }
       });
     }
-  }  
+  }
 
   componentDidMount() {
     this.drawTimeline();
@@ -63,4 +63,4 @@ Timeline.contextTypes = {
   hubRoot: PropTypes.string,
   serviceRoot: PropTypes.string
 };
-export default Timeline; 
+export default Timeline;

@@ -237,7 +237,7 @@ public class AuthUtils {
             return false;
         }
         if (logger.isDebugEnabled()) {
-            logger.debug("authentication successful for user '"+headers.get(Listener.AUTHENTICATED_USER_HEADER)+"'");
+            logger.debug("Bearer authentication successful for user '"+headers.get(Listener.AUTHENTICATED_USER_HEADER)+"'");
         }
         if (PropertyManager.getBooleanProperty(PropertyNames.MDW_JWT_PRESERVE, false))
             headers.put(Listener.AUTHENTICATED_JWT, authHeader);
@@ -301,7 +301,7 @@ public class AuthUtils {
 
             headers.put(Listener.AUTHENTICATED_USER_HEADER, user);
             if (logger.isDebugEnabled()) {
-                logger.debug("authentication successful for user '"+user+"'");
+                logger.debug("Basic authentication successful for user '"+user+"'");
             }
         }
         catch (Exception ex) {

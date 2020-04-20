@@ -1,31 +1,31 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
-import '../node/node_modules/style-loader!../node/node_modules/vis/dist/vis.css';
-import {Network} from '../node/node_modules/vis/dist/vis';
 import {Link} from '../node/node_modules/react-router-dom';
+import {Network} from '../node/node_modules/vis';
+import '../node/node_modules/style-loader!../node/node_modules/vis/dist/vis.css';
 import Data from './Data.js';
 import Groups from './Groups.js';
 import options from './options.js';
 
 class Definition extends Component {
-    
+
   constructor(...args) {
     super(...args);
     this.state = {
-      milestone: {}, 
+      milestone: {},
       data: {},
       assetPath: location.hash.substring(25)
     };
-  }  
+  }
 
   drawGraph() {
     const container = document.getElementById('milestone-def-graph');
     if (container) {
-      const graphOptions = Object.assign({}, { 
-        height: (this.state.data.maxDepth * 100) + 'px' 
+      const graphOptions = Object.assign({}, {
+        height: (this.state.data.maxDepth * 100) + 'px'
       }, options.graph);
       const graphData = {
-        nodes: this.state.data.items, 
+        nodes: this.state.data.items,
         edges: this.state.data.edges,
         assetPath: this.state.assetPath
       };
@@ -54,7 +54,7 @@ class Definition extends Component {
     new Groups(this.context.serviceRoot).getGroups()
     .then(groups => {
       // retrieve milestones definition
-      const url = this.context.serviceRoot + '/com/centurylink/mdw/milestones/definitions/' + 
+      const url = this.context.serviceRoot + '/com/centurylink/mdw/milestones/definitions/' +
           this.state.assetPath;
       fetch(new Request(url, {
         method: 'GET',
@@ -69,7 +69,7 @@ class Definition extends Component {
           milestone: milestone.milestone,
           data: new Data(groups, milestone)
         }, this.drawGraph());
-      });  
+      });
     });
   }
 
@@ -97,7 +97,7 @@ class Definition extends Component {
           </div>
         </div>
       </div>
-    );  
+    );
   }
 }
 
@@ -105,4 +105,4 @@ Definition.contextTypes = {
   hubRoot: PropTypes.string,
   serviceRoot: PropTypes.string
 };
-export default Definition; 
+export default Definition;

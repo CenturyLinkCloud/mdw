@@ -51,18 +51,28 @@ handles them using the following methodology:
 	</li>
 </ul>
 Although built-in listeners are often sufficient for most applications,
-it is often necessary for an application to provide their own external event handlers 
+it is often necessary for an application to provide their own external event handlers
 for performing customization not achievable through the built-in listeners.
 The external event handlers (including the built-in ones)
 must be configured through the Designer so that
 the listeners know which one to use for an incoming message.
 
 <h2><a id="externalEventHandlers">Configuring External Event Handlers</h2>
-External event handlers are configured through the Designer and
-they are saved as assets with <em>.evth as an extension.
+External event handlers are configured as assets with <em>.evth as their extension.
 Each entry contains an event pattern and an event handler specification.</em>
 <p>
-The event pattern is described using a variant of the XPath language that is name-space
+The event pattern that defines which incoming messages are handled can be path-driven
+or content-driven.  Here's the general pattern for an evth file:
+<pre>
+{
+  "handlerClass": [class name or START_PROCESS, etc],
+  "path": [request path or xpath expression (for content-based),
+  "routing": "path|content"
+}
+</pre>
+</p>
+<p>
+Content-based paths are described using a variant of the XPath language that is name-space
 agnostic. See <a href="xpath.html">this link</a> for MDW XPath language
 examples and syntax.
 <p>
@@ -96,7 +106,7 @@ See <a href="MDWCamelIntegration.html">Camel Routes</a> documentation for detail
 <h2>Built-In Listeners</h2>
 MDW includes a number of prebuilt, extensible options for hosting Web services.
 See the <a href="http://centurylinkcloud.github.io/mdw/docs/help/">Web Services</a> documentation for details.
- 
+
 <h3>Document (SOAP) Web Service Listener</h3>
 To expose document-literal style services using a custom WSDL definition, MDW provides a mechanism whereby the WSDL document is created as an <a href="assets.html">asset</a>.
 An HTTP GET request against a custom WSDL asset called Employee looks like:<br/>http://localhost:8080/mdw/services/SOAP/Employee.wsdl<br/><br/>
@@ -105,10 +115,10 @@ In this case the request is unwrapped from the SOAP envelope, and based on the t
 Likewise, the response content is presumed to be XML and is inserted into a SOAP envelope.
 <br/><br/>
 The endpoint location in the WSDL asset can be parameterized as follows based on environment-specific property settings:<br/>
- &lt;soap:address location="${mdw.services.url}/SOAP/Employee.wsdl" /&gt; 
- 
+ &lt;soap:address location="${mdw.services.url}/SOAP/Employee.wsdl" /&gt;
+
 <p>
-The listener class is <a href="../javadoc/com/centurylink/mdw/hub/servlet/SoapServlet.html">   
+The listener class is <a href="../javadoc/com/centurylink/mdw/hub/servlet/SoapServlet.html">
 <code>com.centurylink.mdw.hub.servlet.SoapServlet</code></a>.
 <p>
 The following meta information values are populated:
@@ -126,8 +136,8 @@ The REST-based Web Service Listener is a simple HTTP servlet that receives and r
 The URL for accessing the servlet is http://host:port#/mdw/Services/packageName/path. Here is an example: http://localhost:8080/mdw/Services/MyServices/Order.
 
 <p>
-The listener class is <a href="../javadoc/com/centurylink/mdw/hub/servlet/RestServlet.html">   
-<code>com.centurylink.mdw.hub.servlet.RestServlet</code></a>.. 
+The listener class is <a href="../javadoc/com/centurylink/mdw/hub/servlet/RestServlet.html">
+<code>com.centurylink.mdw.hub.servlet.RestServlet</code></a>..
 <p>
 MDW also provides a helper class, <code>com.centurylink.mdw.util.HttpHelper</code>,
 that can be used to simplify the client coding. The following sample code
@@ -146,8 +156,8 @@ The following meta information is populated:
   <li>HttpMethod. This is either "GET" or "POST", and can be in lower or mixed cases.</li>
   <li>Operation. This is the first segment of additional path info, or null if
       there is no additional path info.</li>
-  <li>&lt;Parameters&gt;. The name/value pairs corresponding to all the HTTP request parameters</li>      
-  <li>&lt;Headers&gt;. The name/value pairs corresponding to all the HTTP request headers</li>      
+  <li>&lt;Parameters&gt;. The name/value pairs corresponding to all the HTTP request parameters</li>
+  <li>&lt;Headers&gt;. The name/value pairs corresponding to all the HTTP request headers</li>
 </ul>
 <h3>JMS Listener</h3>
 The listener class is <code>com.centurylink.mdw.listener.jms.JmsListener</code>
@@ -181,7 +191,7 @@ it performs the following things:
 		in the external event handler specification (see below)</li>
 	<li>If the parameter <code>MasterRequestID</code> is specified,
 		use it as the master request ID (after replacing place holders with
-		actual values). Otherwise use external event instance ID 
+		actual values). Otherwise use external event instance ID
 		as the master request ID.</li>
 	<li>It populates and sends a process start message
 		to the process controller queue. The master request ID
@@ -214,7 +224,7 @@ dynamic contents.
 Syntactically, a place holder is an expression enclosed by by braces ("{" and "}").
 Currently we allow either a meta parameter name preceded by a "$" (e.g <code>{$CorrelationID}</code>),
 or an <a href="xpath.html">MDW XPath expression</a> (e.g. <code>{//OrderNumber}</code>).
-In the former case, the place holder will be replaced by the 
+In the former case, the place holder will be replaced by the
 meta parameter value passed down from the listeners.
 In the latter case, the place holder will be replaced by
 the value of applying the XPath expression to the external message.
@@ -233,7 +243,7 @@ Configuration of the start activity is described with
 
 <h3>Built-In Event Handler for Notifying Waiting Process Instances</h3>
 The built-in event handler
-<a href="../javadoc/com/centurylink/mdw/listener/NotifyWaitingActivityEventHandler.html"> 
+<a href="../javadoc/com/centurylink/mdw/listener/NotifyWaitingActivityEventHandler.html">
 <code>com.centurylink.mdw.listener.NotifyWaitingActivityEventHandler</code></a> can be used
 to process messages that need to be delivered to existing process instances.
 <p>
@@ -247,7 +257,7 @@ The built-in handler can be configured through the designer as to how to
 map XML messages to event names, with the help of XPath expressions.
 Its configuration in the designer has a syntax abbreviation of <code>NOTIFY_PROCESS</code>,
 and requires one argument, <code>EventName</code>.
-Besides static text, the values of event names may contain 
+Besides static text, the values of event names may contain
 place holders that will be replaced by dynamic contents.
 The syntax and semantics of place holders are the same as for
 MasterRequestID described above.
@@ -280,8 +290,8 @@ sufficient that configure or subclass the built-in handler
 
 One common need for customization of starting process handler is to pass parameters (variable
 bindings) to the process. This can be achieved by subclassing <code>ProcessStartEventHandler</code>
-and override the method <code>buildParameters</code>.  
-If the external message contains large data such as service orders, it is recommended 
+and override the method <code>buildParameters</code>.
+If the external message contains large data such as service orders, it is recommended
 that you create documents in this method and pass only the document references
 to the processes. The method <code>createDocument</code> defined in the base class
 can be used to create documents. See Java doc for <a href="../javadoc/com/centurylink/mdw/listener/ExternalEventHandlerBase.html">
@@ -289,7 +299,7 @@ can be used to create documents. See Java doc for <a href="../javadoc/com/centur
 for <code>ProcessStartEventHandler</code>, for more details.
 <p>
 In case you need to define your own event handlers for starting or informing
-processes, the best approach is probably to extend the class 
+processes, the best approach is probably to extend the class
 <a href="../javadoc/com/centurylink/mdw/listener/ExternalEventHandlerBase.html">
 <code>com.centurylink.mdw.listener.ExternalEventHandlerBase</code></a>
 instead of implementing <code>com.centurylink.mdw.event.ExternalEventHandler</code>
@@ -317,10 +327,10 @@ the default listeners are not sufficient, including:
   <li>You need to implement a different Web Service server from
     the default MDW Web Service, probably
   	demanded by a vendor application such as ASMS.</li>
-  <li>You would like to create a separate thread pool for load 
+  <li>You would like to create a separate thread pool for load
   	consideration.</li>
 </ul>
-The framework provides a class, 
+The framework provides a class,
 <a href="../javadoc/com/centurylink/mdw/listener/ListenerHelper.html">
 <code>com.centurylink.mdw.listener.ListenerHelper</code></a>,
 that extracts common code needed for implementing listeners.
@@ -343,7 +353,7 @@ and the following subsections describe specific topic for each
 protocol.
 <p>
 Typically a listener class does very little by itself
-and delegates the processing of external messages to 
+and delegates the processing of external messages to
 <a href="../javadoc/com/centurylink/mdw/listener/ListenerHelper.html">
 <code>com.centurylink.mdw.listener.ListenerHelper</code></a>,
 which processes

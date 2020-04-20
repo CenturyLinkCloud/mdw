@@ -36,7 +36,7 @@ class Nav extends Component {
             {
               navSection.links.map((navLink, index) => {
                 return (
-                  <NavLink key={index} to={this.context.hubRoot + navLink.href}>
+                  <NavLink key={index} to={this.context.hubRoot + '/' + navLink.href}>
                     {navLink.label}
                   </NavLink>
                 );

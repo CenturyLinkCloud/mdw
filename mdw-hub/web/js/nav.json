@@ -5,7 +5,7 @@
     "icon": "workflow.png",
     "url": "#/workflow/processes",
     "routes": ["/workflow", "/workflow/processes", "/workflow/definitions", "/workflow/versions", "/workflow/activities", "/solutions", "/milestones"],
-    "navs": [ 
+    "navs": [
       {
         "links": [
           {
@@ -33,7 +33,7 @@
             "label": "Definitions",
             "path": "workflow/definitions",
             "href": "#/workflow/definitions",
-            "priority": 1
+            "priority": 2
           }
         ]
       },
@@ -65,19 +65,19 @@
           {
             "label": "Processes",
             "path": "dashboard/processes",
-            "href": "/dashboard/processes",
+            "href": "dashboard/processes",
             "priority": 1
           },
           {
             "label": "Process Hotspots",
             "path": "dashboard/processHotspots",
-            "href": "/dashboard/processHotspots",
+            "href": "dashboard/processHotspots",
             "priority": 1
           },
           {
             "label": "Process Insights",
             "path": "dashboard/processInsights",
-            "href": "/dashboard/processInsights",
+            "href": "dashboard/processInsights",
             "priority": 1
           }
         ]
@@ -87,13 +87,13 @@
           {
             "label": "Tasks",
             "path": "dashboard/tasks",
-            "href": "/dashboard/tasks",
+            "href": "dashboard/tasks",
             "priority": 1
           },
           {
             "label": "Stuck Activities",
             "path": "dashboard/activities",
-            "href": "/dashboard/activities"
+            "href": "dashboard/activities"
           }
         ]
       },
@@ -102,19 +102,19 @@
           {
             "label": "Inbound Requests",
             "path": "dashboard/inboundRequests",
-            "href": "/dashboard/inboundRequests",
+            "href": "dashboard/inboundRequests",
             "priority": 1
           },
           {
             "label": "Outbound Requests",
             "path": "dashboard/outboundRequests",
-            "href": "/dashboard/outboundRequests",
+            "href": "dashboard/outboundRequests",
             "priority": 1
           },
           {
             "label": "Request Insights",
             "path": "dashboard/requestInsights",
-            "href": "/dashboard/requestInsights",
+            "href": "dashboard/requestInsights",
             "priority": 1
           }
         ]
@@ -124,7 +124,7 @@
           {
             "label": "System",
             "path": "dashboard/system",
-            "href": "/dashboard/system",
+            "href": "dashboard/system",
             "priority": 1,
             "condition": "user.hasRole('Site Admin')"
           }
@@ -138,7 +138,7 @@
     "icon": "services.png",
     "url": "#/serviceApi",
     "routes": ["/serviceApi", "/serviceRequests"],
-    "navs": [ 
+    "navs": [
       {
         "links": [
           {

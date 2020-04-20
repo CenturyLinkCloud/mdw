@@ -2,8 +2,8 @@ import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import {Glyphicon} from '../node/node_modules/react-bootstrap';
 import {Link} from '../node/node_modules/react-router-dom';
+import {Network} from '../node/node_modules/vis';
 import '../node/node_modules/style-loader!../node/node_modules/vis/dist/vis.css';
-import {Network} from '../node/node_modules/vis/dist/vis';
 import ButtonLink from '../react/ButtonLink.jsx';
 import HeaderPopButton from '../react/HeaderPopButton.jsx';
 import Definition from './Definition.jsx';
@@ -12,10 +12,10 @@ import InfoPop from './InfoPop.jsx';
 import options from './options.js';
 
 class Milestone extends Component {
-    
+
   constructor(...args) {
     super(...args);
-  }  
+  }
 
   isDef() {
     return location.hash.startsWith('#/milestones/definitions');
@@ -27,11 +27,11 @@ class Milestone extends Component {
   drawGraph() {
     const container = document.getElementById('milestone-graph');
     if (container) {
-      const graphOptions = Object.assign({}, { 
-        height: (this.props.data.maxDepth * 100) + 'px' 
+      const graphOptions = Object.assign({}, {
+        height: (this.props.data.maxDepth * 100) + 'px'
       }, options.graph);
       const graphData = {
-        nodes: this.props.data.items, 
+        nodes: this.props.data.items,
         edges: this.props.data.edges
       };
       const network = new Network(container, graphData, graphOptions);
@@ -85,7 +85,7 @@ class Milestone extends Component {
             </div>
             {process &&
               <div style={{float:'right'}}>
-                <ButtonLink style={{padding:'4px 8px',fontWeight:'normal',textDecoration:'none'}} 
+                <ButtonLink style={{padding:'4px 8px',fontWeight:'normal',textDecoration:'none'}}
                   to={hubRoot + '/#/milestones/definitions/' + process.packageName + '/' + process.name}>
                   <Glyphicon glyph="pencil" />
                   {' Edit'}
@@ -102,7 +102,7 @@ class Milestone extends Component {
             </div>
           </div>
         </div>
-      );  
+      );
     }
   }
 }
@@ -111,4 +111,4 @@ Milestone.contextTypes = {
   hubRoot: PropTypes.string,
   serviceRoot: PropTypes.string
 };
-export default Milestone; 
+export default Milestone;

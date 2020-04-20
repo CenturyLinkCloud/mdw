@@ -157,7 +157,7 @@
 .mdw-heading-icon {
   margin-right: 5px;
   opacity: 0.9;
-  cursor: pointer;  
+  cursor: pointer;
 }
 .mdw-heading-sub {
   font-size: 13px;
@@ -231,7 +231,7 @@
   pointer-events: none;
   color: #9e9e9e;
 }
-.mdw-left-addon .glyphicon { 
+.mdw-left-addon .glyphicon {
   left: 0px;
 }
 .mdw-right-addon .glyphicon {
@@ -243,13 +243,13 @@
 }
 .mdw-right-addon input {
   color: black;
-  padding-right: 25px; 
+  padding-right: 25px;
 }
 .mdw-clear-input {
   color: #9e9e9e;
   font-size: 12px;
   cursor: pointer;
-  position: relative; 
+  position: relative;
   top: 8px;
   left:-18px;
   right: -18px;
@@ -298,7 +298,7 @@
 }
 .mdw-heading-options {
   float: left;
-  margin: 0 20px 0 20px;  
+  margin: 0 20px 0 20px;
 }
 .mdw-heading-options > label {
   min-height: 18px;
@@ -315,7 +315,7 @@
   font-weight: normal;
 }
 .mdw-commit-date {
-  margin-left: 2px; 
+  margin-left: 2px;
   font-size: 12px;
 }
 .mdw-panel {
@@ -332,7 +332,7 @@
 }
 .mdw-comment-panel .mdw-btn {
   padding: 3px 6px;
-  font-size: 14px;  
+  font-size: 14px;
 }
 .mdw-comment-panel .mdw-section {
   min-height: 66px;
@@ -348,7 +348,7 @@
   border-top: 0;
   border-left: 0;
   border-bottom: 1px dashed #e0e0e0;
-  border-right: 0;  
+  border-right: 0;
 }
 .mdw-attach-zone {
   font-size: 13px;
@@ -398,12 +398,12 @@
 .mdw-resource-heading {
   border: 1px solid #ddd;
   border-bottom: none;
-  border-top-left-radius: 4px; 
-  border-top-right-radius: 4px; 
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
   font-weight: bold;
   font-size: 13px;
   padding: 5px;
-  padding-top: 8px; 
+  padding-top: 8px;
   min-height: 32px;
   background-color: #eeeeee;
 }
@@ -540,7 +540,7 @@
 }
 .mdw-sys-info {
   font-family: monospace;
-  font-size: 13px;  
+  font-size: 13px;
   margin-left: 20px;
   margin-top: 5px;
   white-space: nowrap;
@@ -665,8 +665,8 @@
   background-color: #f3f3f3;
   padding: 5px;
   word-wrap: normal;
-  border-top-left-radius: 0;   
-  border-bottom-left-radius: 0;   
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
 }
 .mdw-markdown-content {
   padding-left: 5px;
@@ -684,7 +684,7 @@
 .mdw-glyph-equals {
   transform: rotate(90deg);
   font-size: 12px;
-  margin-left: -3px;  
+  margin-left: -3px;
 }
 .mdw-glyph-asterisk {
   color: #337ab7;
@@ -698,7 +698,7 @@
 .mdw-todo-code {
   word-wrap: break-word;
   white-space: pre-wrap;
-  word-break: normal;  
+  word-break: normal;
 }
 .mdw-line-nums {
   background-color: #eeeeee;
@@ -706,18 +706,24 @@
   text-align: right;
   padding: 5px;
   border-right: none;
-  border-top-right-radius: 0;   
-  border-bottom-right-radius: 0; 
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
 }
 .mdw-buttons {
   float: right;
+}
+.mdw-buttons-mobile {
+  display: inline;
+  white-space: nowrap;
+  position: relative;
+  top: 3px;
 }
 .mdw-checkbox input[type="checkbox"] {
   margin-top: 3px;
 }
 .mdw-date-input {
   float: left;
-  margin-right: 10px; 
+  margin-right: 10px;
 }
 .mdw-boolean-input {
   transform: scale(1.25);
@@ -778,7 +784,7 @@
   float: left;
   color: #a94442;
   padding-top: 7px;
-  font-weight: bold;  
+  font-weight: bold;
 }
 .mdw-messages {
   float: left;
@@ -812,8 +818,8 @@
 }
 @keyframes fade {
    0% {opacity: 1;}
-   100% {opacity: 0;} 
-} 
+   100% {opacity: 0;}
+}
 .mdw-fade-out {
   animation-name: fade;
   animation-duration: 4s;
@@ -844,7 +850,7 @@
   border-radius: 3px;
 }
 .mdw-dropfilter {
-  background-color:#fff!important;  
+  background-color:#fff!important;
   cursor: pointer;
 }
 .mdw-med-indent {
@@ -890,7 +896,7 @@
   display: block;
   position: relative;
   box-shadow: none;
-  border: none;  
+  border: none;
   padding: 1px 3px 1px 3px;
   margin: 0;
   max-height: 410px;
@@ -961,7 +967,7 @@
 }
 .mdw-item-heading {
   font-weight: bold;
-  padding: 10px 10px 0 10px;  
+  padding: 10px 10px 0 10px;
 }
 .mdw-test-status {
   top: 3px;
@@ -1034,7 +1040,7 @@
   list-style-type: none;
   position: relative;
   left: -50px;
-  font-weight: bold;  
+  font-weight: bold;
 }
 .mdw-legend > li {
   display: flex;
@@ -1062,7 +1068,7 @@
   user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
-  -ms-user-select: none;  
+  -ms-user-select: none;
 }
 .mdw-toolbox > ul {
   width: 247px;
@@ -1087,7 +1093,7 @@
   user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
-  -ms-user-select: none;    
+  -ms-user-select: none;
 }
 .mdw-toolbox-icon img {
   margin: auto;
@@ -1099,7 +1105,7 @@
   user-select: none;
   -moz-user-select: none;
   -webkit-user-select: none;
-  -ms-user-select: none;    
+  -ms-user-select: none;
 }
 .mdw-inspector {
   /* display: none is set in style */
@@ -1118,13 +1124,13 @@
 }
 .mdw-inspector-panel {
   margin-top: 1px;
-  border-top: 1px solid #757575;  
+  border-top: 1px solid #757575;
   clear: both;
   border-bottom: none;
   margin-bottom: 0;
 }
 .mdw-inspector-panel .panel-heading {
-  padding: 5px 10px;  
+  padding: 5px 10px;
 }
 .mdw-inspector-content {
   display: flex;
@@ -1245,7 +1251,7 @@
   left: 125px;
   bottom: 0;
   right: 0;
-  font-size: 13px !important; 
+  font-size: 13px !important;
 }
 .mdw-widget-container {
   margin-top: 2px;
@@ -1265,7 +1271,7 @@
 }
 .mdw-widget-picklist-lbl {
   font-family: monospace;
-  margin-bottom: 2px;  
+  margin-bottom: 2px;
 }
 .mdw-widget-tbl {
   display: table;
@@ -1289,11 +1295,11 @@
 }
 .mdw-widget-tbl-head {
   font-family: monospace;
-  margin-bottom: 2px; 
+  margin-bottom: 2px;
   font-weight: 600;
 }
 .mdw-edit-panel {
-  padding-right: 0; 
+  padding-right: 0;
 }
 .mdw-edit-heading {
   padding-top: 6px;
@@ -1315,7 +1321,7 @@
   left: 16px;
   bottom: 0;
   right: 0;
-  font-size: 13px !important;  
+  font-size: 13px !important;
 }
 .mdw-edit-btn {
   font-size: 13px;
@@ -1362,7 +1368,7 @@
   color: #880000;
 }
 .mdw-task-configurator {
-  font-family: monospace;  
+  font-family: monospace;
   padding: 15px;
 }
 .mdw-task-configurator .mdw-widget {
@@ -1388,7 +1394,7 @@
 }
 .mdw-markdown-segment {
   display: inline;
-  white-space: pre-line;  
+  white-space: pre-line;
 }
 .mdw-markdown-segment > p:first-child {
   display: inline;
@@ -1505,7 +1511,7 @@
   list-style-type: none;
   margin: 15px 0 0 -50px;
   text-align: center;
-  padding-left: 0;  
+  padding-left: 0;
 }
 .mdw-chart-legend li {
   display: flex;
