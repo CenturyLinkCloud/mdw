@@ -138,9 +138,10 @@ processMod.controller('ProcessesController',
     // start date and end date, adjusted for db offset
     var dbDate = new Date(processList.retrieveDate);
     processList.processInstances.forEach(function(processInstance) {
-      processInstance.startDate = util.formatDateTime(util.correctDbDate(new Date(processInstance.startDate), dbDate));
+      var startDate = new Date(processInstance.startDate);
+      processInstance.startDate = util.formatDateTime(util.correctDbDate(util.toDate(processInstance.startDate), dbDate));
       if (processInstance.endDate)
-        processInstance.endDate = util.formatDateTime(util.correctDbDate(new Date(processInstance.endDate), dbDate));
+        processInstance.endDate = util.formatDateTime(util.correctDbDate(util.toDate(processInstance.endDate), dbDate));
     });
     if ($scope.processFilter.processId) {
       if (processList.processInstances.length > 0) {

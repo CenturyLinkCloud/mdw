@@ -1,6 +1,7 @@
 import React, {Component} from '../node/node_modules/react';
 import PropTypes from '../node/node_modules/prop-types';
 import {Button, OverlayTrigger, Glyphicon} from '../node/node_modules/react-bootstrap';
+import mobile from './mobile';
 
 class HeaderPopButton extends Component {
 
@@ -16,9 +17,10 @@ class HeaderPopButton extends Component {
   render() {
     const left = this.props.glyph ? '4px' : null;
     const rootClose = this.props.rootClose !== false ? true : null;
+    const placement = mobile.isMobile() ? 'right' : 'left';
     return (
       <OverlayTrigger trigger="click"
-        placement={this.props.placement || 'left'}
+        placement={this.props.placement || placement}
         overlay={this.props.popover}
         rootClose={rootClose}
         ref="overlayTriggerRef">

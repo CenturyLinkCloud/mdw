@@ -4,12 +4,23 @@ var utilMod = angular.module('util', []);
 utilMod.factory('util', ['$http', '$parse', 'mdw', function($http, $parse, mdw) {
   return {
     months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-    dayMs: 24 * 3600 * 1000, 
+    dayMs: 24 * 3600 * 1000,
     monthAndDay: function(date) {
       return this.months[date.getMonth()] + ' ' + date.getDate();
     },
     serviceDate: function(date) {
       return date.getFullYear() + '-' + this.months[date.getMonth()] + '-' + this.padLeading(date.getDate(), 2, '0');
+    },
+    toDate: function(str) {
+      var date = new Date(str);
+      if ('Invalid Date' === date.toString()) {
+        // safari
+        var offset = Math.round(new Date().getTimezoneOffset() / 60);
+        var offsetStr = (offset > 0 ? '-' : '+') + (offset < 10 ? ('0' + offset) : offset) + ':00';
+        var sp = str.indexOf(' ');
+        date = new Date(str.substring(0, sp) + 'T' + str.substring(sp + 1) + offsetStr);
+      }
+      return date;
     },
     formatDateTime: function(date) {
       var ampm = 'am';
@@ -117,7 +128,7 @@ utilMod.factory('util', ['$http', '$parse', 'mdw', function($http, $parse, mdw) 
       var promise = $http.get(mdw.roots.services + '/services/Values/SYSTEM/mdwProperties?app=mdw-admin').then(function (response) {
         thisUtil.mdwProperties = response.data;
       });
-      return promise;      
+      return promise;
     },
     getLanguage: function(assetName) {
       var lastDot = assetName.lastIndexOf('.');
@@ -166,7 +177,7 @@ utilMod.factory('util', ['$http', '$parse', 'mdw', function($http, $parse, mdw) 
       }
       return null;
     },
-    // substitutes all occurrences based in the it object 
+    // substitutes all occurrences based in the it object
     substExpr: function(input, it) {
       var output = input;
       var expr;
@@ -258,8 +269,8 @@ utilMod.factory('util', ['$http', '$parse', 'mdw', function($http, $parse, mdw) 
                     val = val.trim();
                 }
                 values[key] = val;
-            }            
-          });     
+            }
+          });
         }
         return values;
       }
