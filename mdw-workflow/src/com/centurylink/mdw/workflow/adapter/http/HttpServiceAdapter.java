@@ -17,6 +17,7 @@ package com.centurylink.mdw.workflow.adapter.http;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.connector.adapter.AdapterException;
 import com.centurylink.mdw.connector.adapter.ConnectionException;
 import com.centurylink.mdw.model.Response;
@@ -30,6 +31,9 @@ import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.util.Map;
+
+import static com.centurylink.mdw.constant.PropertyNames.MDW_ADAPTER_CONNECTION_TIMEOUT;
+import static com.centurylink.mdw.constant.PropertyNames.MDW_ADAPTER_READ_TIMEOUT;
 
 /**
  * Provides a base implementation for SOAP and Rest adapters
@@ -104,7 +108,7 @@ public class HttpServiceAdapter extends TextAdapterActivity {
      */
     @Override
     public String invoke(Object connection, String request, int timeout, Map<String, String> headers)
-    throws AdapterException, ConnectionException {
+            throws AdapterException, ConnectionException {
         return null;
     }
 
@@ -124,16 +128,13 @@ public class HttpServiceAdapter extends TextAdapterActivity {
      * @throws ActivityException
      */
     protected int getConnectTimeout() throws ActivityException {
-        String connectTimeout = null;
+        Integer connectTimeout = null;
         try {
-            connectTimeout = getAttributeValueSmart(CONNECT_TIMEOUT);
-            if (connectTimeout != null)
-                return Integer.parseInt(connectTimeout);
-            return -1;
+           connectTimeout = getAttribute(CONNECT_TIMEOUT, PropertyManager.getIntegerProperty(MDW_ADAPTER_CONNECTION_TIMEOUT, 20000));
+            return connectTimeout;
+
         }
-        catch (NumberFormatException ex) {
-            throw new ActivityException("Invalid value for Connect Timeout attribute: " + connectTimeout);
-        }
+       
         catch (PropertyException ex) {
             throw new ActivityException(-1, ex.getMessage(), ex);
         }
@@ -145,15 +146,10 @@ public class HttpServiceAdapter extends TextAdapterActivity {
      * @throws ActivityException
      */
     protected int getReadTimeout() throws ActivityException {
-        String readTimeout = null;
-        try {
-            readTimeout = getAttributeValueSmart(READ_TIMEOUT);
-            if (readTimeout != null)
-                return Integer.parseInt(readTimeout);
-            return -1;
-        }
-        catch (NumberFormatException ex) {
-            throw new ActivityException("Invalid value for Request Timeout attribute: " + readTimeout);
+        Integer readTimeout = null;
+                try {
+            readTimeout = getAttribute(READ_TIMEOUT, PropertyManager.getIntegerProperty(MDW_ADAPTER_READ_TIMEOUT, 10000));
+            return readTimeout;
         }
         catch (PropertyException ex) {
             throw new ActivityException(-1, ex.getMessage(), ex);

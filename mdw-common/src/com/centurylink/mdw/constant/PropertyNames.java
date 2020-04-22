@@ -220,5 +220,9 @@ public class PropertyNames {
     public static final String MDW_WAIT_FALLBACK_AGE = "mdw.wait.fallback.age";
     public static final String MDW_WAIT_FALLBACK_ARCHIVED = "mdw.wait.fallback.archived";
 
+    //issue 828
+    public static final String MDW_ADAPTER_READ_TIMEOUT= "mdw.adapter.read.timeout";
+    public static final String MDW_ADAPTER_CONNECTION_TIMEOUT = "mdw.adapter.connect.timeout";
+
 
 }
