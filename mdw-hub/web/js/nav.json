@@ -91,7 +91,7 @@
             "priority": 1
           },
           {
-            "label": "Stuck Activities",
+            "label": "Activities",
             "path": "dashboard/activities",
             "href": "dashboard/activities"
           }

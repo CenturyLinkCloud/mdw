@@ -61,6 +61,7 @@ public class ProcessExecutor implements RetryableTransaction {
     public ProcessExecutor(EngineDataAccess edao,
             InternalMessenger internalMessenger, boolean forServiceProcess) {
         engineImpl = new ProcessExecutorImpl(edao, internalMessenger, forServiceProcess);
+        engineImpl.activityTimings = PropertyManager.getBooleanProperty(PropertyNames.MDW_TIMINGS_ACTIVITIES, false);
     }
 
     ProcessExecutor(ProcessExecutorImpl engineImpl) {

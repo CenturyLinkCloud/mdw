@@ -1,7 +1,9 @@
 package com.centurylink.mdw.milestones;
 
 import com.centurylink.mdw.annotations.Monitor;
+import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
@@ -19,7 +21,8 @@ public class ActivityMilestone implements ActivityMonitor {
 
     @Override
     public Map<String,Object> onFinish(ActivityRuntimeContext context) {
-        if (context.getPerformanceLevel() <= 5) {
+        boolean globalTimings = PropertyManager.getBooleanProperty(PropertyNames.MDW_TIMINGS_ACTIVITIES, false);
+        if (!globalTimings && context.getPerformanceLevel() <= 5) {
             try {
                 ActivityInstance activityInstance = context.getActivityInstance();
                 Date start = activityInstance.getStartDate();

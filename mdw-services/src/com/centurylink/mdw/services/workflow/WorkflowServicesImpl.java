@@ -68,6 +68,7 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
+import com.centurylink.mdw.services.process.ActivityLogger;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
 import com.centurylink.mdw.services.process.ProcessExecutor;
 import com.centurylink.mdw.translator.JsonTranslator;
@@ -276,18 +277,20 @@ public class WorkflowServicesImpl implements WorkflowServices {
         try {
             UserAction userAction = auditLog(action, UserAction.Entity.ActivityInstance, activityInstanceId, user,
                     completionCode);
+            ActivityInstance activityInstance = ServiceLocator.getEventServices().getActivityInstance(activityInstanceId);
+            ActivityLogger.persist(activityInstance.getProcessInstanceId(), activityInstanceId, StandardLogger.LogLevel.INFO,
+                    "Activity actioned by user '" + user + "': " + action);
             if (Action.Proceed.toString().equalsIgnoreCase(action)) {
                 ServiceLocator.getEventServices().skipActivity(null, activityInstanceId, completionCode);
             }
             else if (Action.Retry.toString().equalsIgnoreCase(action) ||
                     Action.Fail.toString().equalsIgnoreCase(action)) {
-                ActivityInstance activityVo = ServiceLocator.getEventServices().getActivityInstance(activityInstanceId);
                 if (Action.Retry.toString().equalsIgnoreCase(action))
-                    ServiceLocator.getEventServices().retryActivity(activityVo.getActivityId(), activityInstanceId);
-                else if (activityVo.getEndDate() == null) {// Only fail it if not yet completed
+                    ServiceLocator.getEventServices().retryActivity(activityInstance.getActivityId(), activityInstanceId);
+                else if (activityInstance.getEndDate() == null) {// Only fail it if not yet completed
                     dataAccess = new EngineDataAccessDB();
                     dataAccess.getDatabaseAccess().openConnection();
-                    dataAccess.setActivityInstanceStatus(activityVo, WorkStatus.STATUS_FAILED,
+                    dataAccess.setActivityInstanceStatus(activityInstance, WorkStatus.STATUS_FAILED,
                             "Manually Failed by user " + user);
                 }
             }

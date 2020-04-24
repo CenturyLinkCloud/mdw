@@ -76,6 +76,7 @@ class ProcessExecutorImpl {
     protected EngineDataAccess edao;
     private InternalMessenger internalMessenger;
     private final boolean inService;
+    boolean activityTimings;
 
     ProcessExecutorImpl(EngineDataAccess edao, InternalMessenger internalMessenger, boolean forServiceProcess) {
         this.edao = edao;
@@ -883,6 +884,9 @@ class ProcessExecutorImpl {
             ProcessInstance procInst, String logtag)
             throws DataAccessException, SQLException {
         edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_COMPLETED, compcode);
+        if (activityTimings)
+            edao.setActivityCompletionTime(ai);
+
         removeActivitySLA(ai, procInst);
         String msg = InternalLogMessage.ACTIVITY_COMPLETE + " - completion code " + (compcode == null ? "null" : ("'" + compcode + "'"));
         engineLogger.info(logtag, procInst.getId(), ai.getId(), msg);
@@ -892,6 +896,8 @@ class ProcessExecutorImpl {
             ProcessInstance procInst, String logtag)
             throws DataAccessException, SQLException {
         edao.setActivityInstanceStatus(ai, WorkStatus.STATUS_CANCELLED, statusMsg);
+        if (activityTimings)
+            edao.setActivityCompletionTime(ai);
         removeActivitySLA(ai, procInst);
         engineLogger.info(logtag, procInst.getId(), ai.getId(), InternalLogMessage.ACTIVITY_CANCEL + " - " + statusMsg);
     }

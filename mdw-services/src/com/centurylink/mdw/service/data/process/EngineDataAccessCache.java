@@ -309,7 +309,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
     public synchronized void setActivityInstanceStatus(ActivityInstance actInst,
             Integer status, String statusMessage)
             throws SQLException {
-        if (cache_activity_transition==CACHE_ONLY) {
+        if (cache_activity_transition == CACHE_ONLY) {
             actInst.setStatusCode(status);
             actInst.setMessage(statusMessage);
         } else {

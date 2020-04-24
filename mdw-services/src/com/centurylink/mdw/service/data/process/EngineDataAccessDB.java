@@ -245,7 +245,11 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
 
     public void setActivityCompletionTime(ActivityInstance ai) throws SQLException {
         Long elapsedTime = getActivityElapsedTime0(ai.getId());
-        setElapsedTime0(OwnerType.ACTIVITY_INSTANCE, ai.getId(), elapsedTime);
+        try {
+            setElapsedTime0(OwnerType.ACTIVITY_INSTANCE, ai.getId(), elapsedTime);
+        } catch (SQLIntegrityConstraintViolationException ex) {
+            // activity timing captured previously
+        }
     }
 
     public void setProcessInstanceStatus(Long procInstId, Integer status)

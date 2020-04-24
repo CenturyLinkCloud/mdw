@@ -8,9 +8,9 @@ class Activities extends Component {
 
   constructor(...args) {
     super(...args);
-    this.handleOverviewDataClick = this.handleOverviewDataClick.bind(this); 
+    this.handleOverviewDataClick = this.handleOverviewDataClick.bind(this);
   }
-  
+
   // TODO populate activity name filter
   handleOverviewDataClick(breakdown, selection, filters) {
     var activityFilter = sessionStorage.getItem('activityFilter');
@@ -32,7 +32,7 @@ class Activities extends Component {
     const breakdownConfig = {
       breakdowns: [
         {
-          name: 'Throughput',
+          name: 'Stuck Count',
           selectField: 'id',
           selectLabel: 'Activities',
           tops: '/Activities/tops?by=throughput',
@@ -40,7 +40,7 @@ class Activities extends Component {
           instancesParam: 'activityIds'
         },
         {
-          name: 'Status',
+          name: 'Stuck Status',
           selectField: 'name',
           selectLabel: 'Statuses',
           tops: '/Activities/tops?by=status',
@@ -49,8 +49,14 @@ class Activities extends Component {
           colors: selected => selected.map(sel => statuses.activity[sel.name].color)
         },
         {
-          name: 'Total Throughput',
-          data: '/Activities/breakdown?by=total'
+          name: 'Completion Time',
+          selectField: 'id',
+          selectLabel: 'Activities',
+          tops: '/Activities/tops?by=completionTime',
+          data: '/Activities/breakdown?by=completionTime',
+          instancesParam: 'activityIds',
+          summaryChart: 'bar',
+          units: 'ms'
         }
       ],
       filters: {

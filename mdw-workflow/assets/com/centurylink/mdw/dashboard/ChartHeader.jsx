@@ -19,6 +19,7 @@ class ChartHeader extends Component {
     this.handleSelectCancel = this.handleSelectCancel.bind(this);
     this.handleSelectApply = this.handleSelectApply.bind(this);
     this.handleFilterChange = this.handleFilterChange.bind(this);
+    this.handleFilterClose = this.handleFilterClose.bind(this);
     this.handleFilterReset = this.handleFilterReset.bind(this);
   }
 
@@ -70,6 +71,10 @@ class ChartHeader extends Component {
     }
   }
 
+  handleFilterClose() {
+    this.refs.filterPopRef.hide();
+  }
+
   render() {
     const breakdown = this.getBreakdown();
     return (
@@ -116,7 +121,8 @@ class ChartHeader extends Component {
                 <FilterPop filters={this.props.filters}
                   filterOptions={this.props.filterOptions}
                   onFilterChange={this.handleFilterChange}
-                  onFilterReset={this.handleFilterReset} />
+                  onFilterReset={this.handleFilterReset}
+                  onClose={this.handleFilterClose} />
               } />
           }
           {this.props.onDownload &&

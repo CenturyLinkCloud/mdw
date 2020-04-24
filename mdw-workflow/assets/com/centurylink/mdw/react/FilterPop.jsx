@@ -11,11 +11,11 @@ class FilterPop extends Component {
     this.handleReset = this.handleReset.bind(this);
   }
 
-  handleChange(key, value) {
+  handleChange(key, value, isText) {
     if (this.props.onFilterChange) {
       var filters = Object.assign({}, this.props.filters);
       filters[key] = value;
-      this.props.onFilterChange(filters);
+      this.props.onFilterChange(filters, isText);
     }
   }
 
@@ -69,7 +69,7 @@ class FilterPop extends Component {
                   {!isDate && !isDropdown && !isCb &&
                     <input type="text" id={id} style={{width:'100%'}}
                       value={filters[key]}
-                      onChange={event => this.handleChange(key, event.target.value)}
+                      onChange={event => this.handleChange(key, event.target.value, true)}
                       onKeyDown={event => {if (event.key === 'Enter') {document.body.click();}} } />
                   }
                 </div>
@@ -81,6 +81,12 @@ class FilterPop extends Component {
               onClick={this.handleReset}>
               Reset
             </Button>
+            {this.props.onClose &&
+              <button type="button" className="btn mdw-btn mdw-cancel-btn mdw-float-right"
+                onClick={this.props.onClose}>
+                Close
+              </button>
+            }
           </div>
         </div>
       </Popover>
