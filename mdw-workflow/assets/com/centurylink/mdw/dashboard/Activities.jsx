@@ -40,7 +40,7 @@ class Activities extends Component {
           instancesParam: 'activityIds'
         },
         {
-          name: 'Stuck Status',
+          name: 'Status',
           selectField: 'name',
           selectLabel: 'Statuses',
           tops: '/Activities/tops?by=status',

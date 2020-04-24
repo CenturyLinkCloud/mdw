@@ -18,6 +18,17 @@ import java.util.TreeMap;
 
 public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> {
 
+    public static Integer[] STUCK = new Integer[] {
+            WorkStatus.STATUS_IN_PROGRESS,
+            WorkStatus.STATUS_FAILED,
+            WorkStatus.STATUS_WAITING
+    };
+
+    public static Integer[] FINISHED = new Integer[] {
+            WorkStatus.STATUS_COMPLETED,
+            WorkStatus.STATUS_CANCELLED,
+    };
+
     public List<ActivityAggregate> getTops(Query query) throws DataAccessException, ServiceException {
         String by = query.getFilter("by");
         if (by == null)
@@ -28,6 +39,8 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
                 return getTopsByStuck(query);
             else if (by.equals("status"))
                 return getTopsByStatus(query);
+            else if (by.equals("completionTime"))
+                return getTopsByCompletionTime(query);
             else
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported filter: by=" + by);
         }
@@ -61,13 +74,6 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
         });
     }
 
-    private String getUniqueIdFrom() {
-        if (db.isMySQL())
-            return "from (select CONCAT(pi.PROCESS_ID, ':A', ai.ACTIVITY_ID) as ACT_UNIQUE_ID from ACTIVITY_INSTANCE ai, PROCESS_INSTANCE pi ";
-        else
-            return "from (select pi.PROCESS_ID || ':A' || ai.ACTIVITY_ID as ACT_UNIQUE_ID from ACTIVITY_INSTANCE ai, PROCESS_INSTANCE pi ";
-    }
-
     private List<ActivityAggregate> getTopsByStatus(Query query)
             throws DataAccessException, SQLException, ServiceException {
         PreparedWhere preparedWhere = getActivityWhere(query);
@@ -86,6 +92,40 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
         });
     }
 
+    private List<ActivityAggregate> getTopsByCompletionTime(Query query)
+            throws DataAccessException, SQLException, ServiceException {
+        PreparedWhere preparedWhere = getActivityWhere(query);
+        String sql = db.pagingQueryPrefix() +
+                "select avg(elapsed_ms) as elapsed, count(act_unique_id) as ct, act_unique_id\n" +
+                getUniqueIdFrom() +
+                preparedWhere.getWhere() +
+                ") a1, INSTANCE_TIMING\n" +
+                "where owner_type = 'ACTIVITY_INSTANCE' and instance_id = activity_instance_id\n" +
+                "group by act_unique_id\n" +
+                "order by elapsed desc\n" +
+                db.pagingQuerySuffix(query.getStart(), query.getMax());
+        PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
+                "ActivityAggregation.getTopsByCompletionTime()");
+        return getTopAggregates(preparedSelect, query, resultSet -> {
+            ActivityAggregate activityAggregate = new ActivityAggregate(resultSet.getLong("ct"));
+            Long elapsed = Math.round(resultSet.getDouble("elapsed"));
+            activityAggregate.setValue(elapsed);
+            String actId = resultSet.getString("act_unique_id");
+            activityAggregate.setActivityId(actId);
+            int colon = actId.lastIndexOf(":");
+            activityAggregate.setProcessId(new Long(actId.substring(0, colon)));
+            activityAggregate.setDefinitionId(actId.substring(colon + 1));
+            return activityAggregate;
+        });
+    }
+
+    private String getUniqueIdFrom() {
+        if (db.isMySQL())
+            return "from (select CONCAT(pi.PROCESS_ID, ':A', ai.ACTIVITY_ID) as ACT_UNIQUE_ID, ai.activity_instance_id from ACTIVITY_INSTANCE ai, PROCESS_INSTANCE pi ";
+        else
+            return "from (select pi.PROCESS_ID || ':A' || ai.ACTIVITY_ID as ACT_UNIQUE_ID, ai.activity_instance_id from ACTIVITY_INSTANCE ai, PROCESS_INSTANCE pi ";
+    }
+
     public TreeMap<Instant,List<ActivityAggregate>> getBreakdown(Query query) throws DataAccessException, ServiceException {
         String by = query.getFilter("by");
         if (by == null)
@@ -98,6 +138,8 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
                 sql.append("select count(a.status_cd) as val, a.st, a.status_cd\n");
             else if (by.equals("throughput"))
                 sql.append("select count(a.act_unique_id) as val, a.st, a.act_unique_id\n");
+            else if (by.equals("completionTime"))
+                sql.append("select avg(elapsed_ms) as val, a.st, a.act_unique_id\n");
             else if (by.equals("total"))
                 sql.append("select count(a.st) as val, a.st\n");
 
@@ -105,14 +147,18 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
 
             if (by.equals("status"))
                 sql.append(", ai.status_cd ");
-            else if (by.equals("throughput")) {
+            else if (by.equals("throughput") || by.equals("completionTime")) {
                 if (db.isMySQL())
                     sql.append(", CONCAT(pi.PROCESS_ID, ':A', ai.ACTIVITY_ID) as act_unique_id");
                 else
                     sql.append(", pi.PROCESS_ID || ':A' || ai.ACTIVITY_ID as act_unique_id");
+
+                if (by.equals("completionTime"))
+                    sql.append(", ai.activity_instance_id");
             }
+
             sql.append("  from ACTIVITY_INSTANCE ai ");
-            if (by.equals("throughput"))
+            if (by.equals("throughput") || by.equals("completionTime"))
                 sql.append(", PROCESS_INSTANCE pi");
             sql.append("\n");
             sql.append(preparedWhere.getWhere());
@@ -129,22 +175,27 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
                 sql.append("   and ai.status_cd ").append(inCondition.getWhere()).append(") a\n");
                 params.addAll(Arrays.asList(inCondition.getParams()));
             }
-            else if (by.equals("throughput")) {
+            else if (by.equals("throughput") || by.equals("completionTime")) {
+                sql.append("\n ) a");
+                if (by.equals("completionTime"))
+                    sql.append(", INSTANCE_TIMING");
                 // activity ids (processid:logicalId)
                 String[] actIdsArr = query.getArrayFilter("activityIds");
                 List<String> actIds = actIdsArr == null ? null : Arrays.asList(actIdsArr);
                 PreparedWhere inCondition = getInCondition(actIds);
-                sql.append("\n ) a  where act_unique_id ").append(inCondition.getWhere());
+                sql.append("\nwhere act_unique_id ").append(inCondition.getWhere());
                 params.addAll(Arrays.asList(inCondition.getParams()));
+                if (by.equals("completionTime"))
+                    sql.append("\nand owner_type = 'ACTIVITY_INSTANCE' and instance_id = activity_instance_id  ");
             }
             else if (by.equals("total")) {
                 sql.append("\n ) a");
             }
 
-            sql.append(" group by st");
+            sql.append("\ngroup by st");
             if (by.equals("status"))
                 sql.append(", status_cd");
-            else if (by.equals("throughput"))
+            else if (by.equals("throughput") || by.equals("completionTime"))
                 sql.append(", act_unique_id");
 
             sql.append("\norder by st\n");
@@ -158,7 +209,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
                     activityAggregate.setName(WorkStatuses.getName(statusCode));
                     activityAggregate.setId(statusCode);
                 }
-                else if (by.equals("throughput")) {
+                else if (by.equals("throughput") || by.equals("completionTime")) {
                     String actId = rs.getString("act_unique_id");
                     activityAggregate.setActivityId(actId);
                     int colon = actId.lastIndexOf(":");
@@ -184,7 +235,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
 
         StringBuilder where = new StringBuilder();
         List<Object> params = new ArrayList<>();
-        if (by.equals("throughput"))
+        if (by.equals("throughput") || by.equals("completionTime"))
             where.append(" where ai.process_instance_id = pi.process_instance_id ");
         where.append(where.length() > 0 ? "  and " : "where ");
         where.append("ai.start_dt >= ? ");
@@ -201,12 +252,22 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
             params.add(WorkStatuses.getCode(status));
         }
 
-        where.append(" and ai.status_cd in (?,?,?)");
-        params.add(WorkStatus.STATUS_IN_PROGRESS);
-        params.add(WorkStatus.STATUS_FAILED);
-        params.add(WorkStatus.STATUS_WAITING);
+        Integer[] statuses = new Integer[0];
+        if (by.equals("throughput"))
+            statuses = STUCK;
+        else if (by.equals("completionTime"))
+            statuses = FINISHED;
+        if (statuses.length > 0) {
+            where.append(" and ai.status_cd in (");
+            for (int i = 0; i < statuses.length; i++) {
+                if (i > 0)
+                    where.append(",");
+                where.append("?");
+                params.add(statuses[i]);
+            }
+            where.append(")");
+        }
 
         return new PreparedWhere(where.toString(), params.toArray());
     }
-
 }

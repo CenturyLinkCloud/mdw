@@ -252,6 +252,10 @@ title: MDW Configuration
       level.service: 5  # default=3
       level.regular: 5  # default=3
 
+    # capture activity timings
+    timings:
+      activities: true # default=false
+
     # formatting options for json output
     json:
       pretty.indent: 2 # pretty-print output with this indent level

@@ -254,6 +254,9 @@ public class DbExport extends DbOperation {
             return "where STATUS_CD != 5";
             // TODO: restrict waits/timers to exported process instances
         }
+        else if (table.equals("ACTIVITY_LOG")) {
+            return "where " + getInstanceIdsIn("PROCESS_INSTANCE_ID", processInstanceIds);
+        }
 
         return "";
     }

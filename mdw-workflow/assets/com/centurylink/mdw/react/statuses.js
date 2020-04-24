@@ -23,11 +23,23 @@ module.exports = {
     }
   },
   activity: {
+    Pending: {
+      color: '#0099C6'
+    },
     'In Progress': {
       color: '#109618'
     },
     Failed: {
       color: '#DC3912'
+    },
+    Completed: {
+      color: '#5574A6'
+    },
+    Canceled: {
+      color: '#990099'
+    },
+    Cancelled: {
+      color: '#990099'
     },
     Waiting: {
       color: '#FF9900'
@@ -107,7 +119,7 @@ module.exports = {
       color: '#C0C0C0'
     }
   },
-  shade: function(color, percent) {   
+  shade: function(color, percent) {
     var f = parseInt(color.slice(1), 16), t = percent < 0 ? 0 : 255, p = percent < 0 ? percent * -1 : percent, R = f >> 16, G = f >> 8 & 0x00FF, B = f & 0x0000FF;
     return "#" + (0x1000000 + (Math.round((t - R) * p) + R) * 0x10000 + (Math.round((t - G) * p) + G) * 0x100 + (Math.round((t - B) * p) + B)).toString(16).slice(1);
   }
