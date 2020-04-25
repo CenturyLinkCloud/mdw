@@ -6,6 +6,7 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.PreparedSelect;
 import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.model.workflow.ActivityAggregate;
+import com.centurylink.mdw.model.workflow.CompletionTimeUnit;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 
@@ -106,7 +107,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
                 db.pagingQuerySuffix(query.getStart(), query.getMax());
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "ActivityAggregation.getTopsByCompletionTime()");
-        return getTopAggregates(preparedSelect, query, resultSet -> {
+        List<ActivityAggregate> aggregates = getTopAggregates(preparedSelect, query, resultSet -> {
             ActivityAggregate activityAggregate = new ActivityAggregate(resultSet.getLong("ct"));
             Long elapsed = Math.round(resultSet.getDouble("elapsed"));
             activityAggregate.setValue(elapsed);
@@ -117,6 +118,13 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
             activityAggregate.setDefinitionId(actId.substring(colon + 1));
             return activityAggregate;
         });
+        CompletionTimeUnit units = getTimeUnit(query);
+        if (units != CompletionTimeUnit.Milliseconds) {
+            aggregates.forEach(aggregate -> {
+                aggregate.setValue(units.convert(aggregate.getValue(), CompletionTimeUnit.Milliseconds));
+            });
+        }
+        return aggregates;
     }
 
     private String getUniqueIdFrom() {
@@ -200,8 +208,9 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
 
             sql.append("\norder by st\n");
 
-            PreparedSelect select = new PreparedSelect(sql.toString(), params.toArray(), "Breakdown by " + by);
+            CompletionTimeUnit timeUnit = getTimeUnit(query);
 
+            PreparedSelect select = new PreparedSelect(sql.toString(), params.toArray(), "Breakdown by " + by);
             return handleBreakdownResult(select, query, rs -> {
                 ActivityAggregate activityAggregate = new ActivityAggregate(rs.getLong("val"));
                 if (by.equals("status")) {
@@ -215,8 +224,9 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
                     int colon = actId.lastIndexOf(":");
                     activityAggregate.setProcessId(new Long(actId.substring(0, colon)));
                     activityAggregate.setDefinitionId(actId.substring(colon + 1));
-                }
-                else if (!by.equals("total")) {
+                    if (by.equals("completionTime") && timeUnit != CompletionTimeUnit.Milliseconds) {
+                        activityAggregate.setValue(timeUnit.convert(activityAggregate.getValue(), CompletionTimeUnit.Milliseconds));
+                    }
                 }
                 return activityAggregate;
             });
@@ -270,4 +280,5 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
 
         return new PreparedWhere(where.toString(), params.toArray());
     }
+
 }

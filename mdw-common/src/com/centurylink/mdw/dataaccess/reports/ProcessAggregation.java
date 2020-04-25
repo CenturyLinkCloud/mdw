@@ -5,6 +5,7 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.PreparedSelect;
 import com.centurylink.mdw.dataaccess.PreparedWhere;
+import com.centurylink.mdw.model.workflow.CompletionTimeUnit;
 import com.centurylink.mdw.model.workflow.ProcessAggregate;
 import com.centurylink.mdw.model.workflow.WorkStatuses;
 
@@ -93,13 +94,20 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
                 db.pagingQuerySuffix(query.getStart(), query.getMax());
         PreparedSelect preparedSelect = new PreparedSelect(sql, preparedWhere.getParams(),
                 "ProcessAggregation.getTopsByCompletionTime()");
-        return getTopAggregates(preparedSelect, query, resultSet -> {
+        List<ProcessAggregate> aggregates = getTopAggregates(preparedSelect, query, resultSet -> {
             Long elapsed = Math.round(resultSet.getDouble("elapsed"));
             ProcessAggregate processAggregate = new ProcessAggregate(elapsed);
             processAggregate.setCount(resultSet.getLong("ct"));
             processAggregate.setId(resultSet.getLong("process_id"));
             return processAggregate;
         });
+        CompletionTimeUnit units = getTimeUnit(query);
+        if (units != CompletionTimeUnit.Milliseconds) {
+            aggregates.forEach(aggregate -> {
+                aggregate.setValue(units.convert(aggregate.getValue(), CompletionTimeUnit.Milliseconds));
+            });
+        }
+        return aggregates;
     }
 
     public TreeMap<Instant,List<ProcessAggregate>> getBreakdown(Query query) throws DataAccessException, ServiceException {
@@ -161,6 +169,8 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
 
             sql.append("\norder by st\n");
 
+            CompletionTimeUnit timeUnit = getTimeUnit(query);
+
             PreparedSelect select = new PreparedSelect(sql.toString(), params.toArray(), "Breakdown by " + by);
             return handleBreakdownResult(select, query, rs -> {
                 ProcessAggregate processAggregate = new ProcessAggregate(rs.getLong("val"));
@@ -172,6 +182,10 @@ public class ProcessAggregation extends AggregateDataAccess<ProcessAggregate> {
                 else if (!by.equals("total")) {
                     processAggregate.setId(rs.getLong("process_id"));
                 }
+                if (by.equals("completionTime") && timeUnit != CompletionTimeUnit.Milliseconds) {
+                    processAggregate.setValue(timeUnit.convert(processAggregate.getValue(), CompletionTimeUnit.Milliseconds));
+                }
+
                 return processAggregate;
             });
         }

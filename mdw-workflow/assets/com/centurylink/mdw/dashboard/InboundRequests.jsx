@@ -56,6 +56,7 @@ class InboundRequests extends Component {
           data: '/Requests/breakdown?direction=in&by=completionTime',
           instancesParam: 'requestPaths',
           summaryChart: 'bar',
+          summaryTitle: 'Inbound Requests',
           units: 'ms'
         },
         {

@@ -23,6 +23,7 @@ import com.centurylink.mdw.dataaccess.PreparedSelect;
 import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.report.Aggregate;
+import com.centurylink.mdw.model.workflow.CompletionTimeUnit;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,6 +35,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDataAccess {
 
@@ -210,5 +212,16 @@ public abstract class AggregateDataAccess<T extends Aggregate> extends CommonDat
                 return "time_format(date_sub(" + col + ", interval " + hoursDiff + " hour), '%Y-%m-%d') as st";
             }
         }
+    }
+
+    protected CompletionTimeUnit getTimeUnit(Query query) {
+        return getTimeUnit(query, null);
+    }
+
+    protected CompletionTimeUnit getTimeUnit(Query query, CompletionTimeUnit defaultUnit) {
+        String completionTimesIn = query.getFilter("Completion Times In");
+        if (completionTimesIn == null)
+            return defaultUnit == null ? CompletionTimeUnit.Seconds : defaultUnit;
+        return CompletionTimeUnit.valueOf(completionTimesIn);
     }
 }

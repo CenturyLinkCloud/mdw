@@ -56,20 +56,23 @@ class Activities extends Component {
           data: '/Activities/breakdown?by=completionTime',
           instancesParam: 'activityIds',
           summaryChart: 'bar',
-          units: 'ms'
+          summaryTitle: 'Activities',
+          units: filters => filters['Completion Times In']
         }
       ],
       filters: {
         Ending: new Date(),
-        Status: ''
+        Status: '',
+        'Completion Times In': 'Seconds'
       },
       filterOptions: {
-        Status: Object.keys(statuses.activity)
+        Status: Object.keys(statuses.activity),
+        'Completion Times In': ['Milliseconds', 'Seconds', 'Minutes', 'Hours', 'Days']
       }
     };
 
     return (
-      <DashboardChart title="Stuck Activities"
+      <DashboardChart title="Activities"
         breakdownConfig={breakdownConfig}
         onOverviewDataClick={this.handleOverviewDataClick}
         list="#/workflow/activities" />

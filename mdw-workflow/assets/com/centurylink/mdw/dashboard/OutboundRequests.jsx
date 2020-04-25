@@ -56,6 +56,7 @@ class OutboundRequests extends Component {
           data: '/Requests/breakdown?direction=out&by=completionTime',
           instancesParam: 'requestPaths',
           summaryChart: 'bar',
+          summaryTitle: 'Outbound Requests',
           units: 'ms'
         },
         {

@@ -9,7 +9,7 @@ class Processes extends Component {
   constructor(...args) {
     super(...args);
     this.handleOverviewDataClick = this.handleOverviewDataClick.bind(this);
-    this.handleMainDataClick = this.handleMainDataClick.bind(this); 
+    this.handleMainDataClick = this.handleMainDataClick.bind(this);
   }
 
   handleOverviewDataClick(breakdown, selection, filters) {
@@ -66,7 +66,8 @@ class Processes extends Component {
           data: '/Processes/breakdown?by=completionTime',
           instancesParam: 'processIds',
           summaryChart: 'bar',
-          units: 'ms'
+          summaryTitle: 'Completed Processes',
+          units: filters => filters['Completion Times In']
         },
         {
           name: 'Total Throughput',
@@ -76,10 +77,12 @@ class Processes extends Component {
       filters: {
         Ending: new Date(),
         Status: '',
-        Master: false
+        Master: false,
+        'Completion Times In': 'Seconds'
       },
       filterOptions: {
-        Status: Object.keys(statuses.process)
+        Status: Object.keys(statuses.process),
+        'Completion Times In': ['Milliseconds', 'Seconds', 'Minutes', 'Hours', 'Days']
       }
     };
 
