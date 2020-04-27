@@ -17,12 +17,10 @@ package com.centurylink.mdw.model.workflow;
 
 import javax.swing.ImageIcon;
 
-import com.centurylink.mdw.activity.types.ScriptActivity;
-import com.centurylink.mdw.activity.types.StartActivity;
+import com.centurylink.mdw.activity.types.*;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.model.Jsonable;
 
@@ -141,6 +139,27 @@ public class ActivityImplementor implements Comparable<ActivityImplementor>, Jso
 
     public boolean isScript() {
         return ScriptActivity.class.getName().equals(category);
+    }
+
+    public boolean isWait() {
+        return EventWaitActivity.class.getName().equals(category)
+                || DependenciesWaitActivity.class.getName().equals(category)
+                || PauseActivity.class.getName().equals(category)
+                || SynchronizationActivity.class.getName().equals(category)
+                || implementorClass.endsWith("WaitActivity");
+    }
+
+    public boolean isSubprocess() {
+        return InvokeProcessActivity.class.getName().equals(category)
+                || OrchestratorActivity.class.getName().equals(category);
+    }
+
+    public boolean isTask() {
+        return TaskActivity.class.getName().equals(category);
+    }
+
+    public boolean isLongRunning() {
+        return isWait() || isSubprocess() || isTask();
     }
 
     /**

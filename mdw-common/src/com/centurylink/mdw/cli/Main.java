@@ -82,6 +82,7 @@ public class Main {
         addOperation("paths", new Paths());
         addOperation("dbexport", new DbExport());
         addOperation("dbimport", new DbImport());
+        addOperation("dbtimings", new DbTimings());
         addOperation("hierarchy", new Hierarchy());
         addOperation("find", new Find());
         addOperation("dependencies", new Dependencies());

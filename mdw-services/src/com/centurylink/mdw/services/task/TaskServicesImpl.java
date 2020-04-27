@@ -22,7 +22,7 @@ import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.reports.AggregateDataAccess;
-import com.centurylink.mdw.dataaccess.reports.TaskAggregation;
+import com.centurylink.mdw.service.data.task.TaskAggregation;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetHeader;

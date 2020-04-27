@@ -1,4 +1,4 @@
-package com.centurylink.mdw.dataaccess.reports;
+package com.centurylink.mdw.service.data.process;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;

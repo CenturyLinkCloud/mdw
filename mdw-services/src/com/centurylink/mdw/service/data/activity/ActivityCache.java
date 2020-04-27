@@ -17,7 +17,6 @@ package com.centurylink.mdw.service.data.activity;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.cache.CacheService;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.Process;

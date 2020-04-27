@@ -1,21 +1,16 @@
-package com.centurylink.mdw.dataaccess.reports;
+package com.centurylink.mdw.service.data.activity;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.PreparedSelect;
 import com.centurylink.mdw.dataaccess.PreparedWhere;
-import com.centurylink.mdw.model.workflow.ActivityAggregate;
-import com.centurylink.mdw.model.workflow.CompletionTimeUnit;
-import com.centurylink.mdw.model.workflow.WorkStatus;
-import com.centurylink.mdw.model.workflow.WorkStatuses;
+import com.centurylink.mdw.dataaccess.reports.AggregateDataAccess;
+import com.centurylink.mdw.model.workflow.*;
 
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.TreeMap;
+import java.util.*;
 
 public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> {
 
@@ -96,12 +91,15 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
     private List<ActivityAggregate> getTopsByCompletionTime(Query query)
             throws DataAccessException, SQLException, ServiceException {
         PreparedWhere preparedWhere = getActivityWhere(query);
+        String excluded = getExcludedClause(query);
+
         String sql = db.pagingQueryPrefix() +
                 "select avg(elapsed_ms) as elapsed, count(act_unique_id) as ct, act_unique_id\n" +
                 getUniqueIdFrom() +
                 preparedWhere.getWhere() +
                 ") a1, INSTANCE_TIMING\n" +
                 "where owner_type = 'ACTIVITY_INSTANCE' and instance_id = activity_instance_id\n" +
+                (excluded == null ? "" : (" and " + excluded + "\n")) +
                 "group by act_unique_id\n" +
                 "order by elapsed desc\n" +
                 db.pagingQuerySuffix(query.getStart(), query.getMax());
@@ -281,4 +279,25 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
         return new PreparedWhere(where.toString(), params.toArray());
     }
 
+    private String getExcludedClause(Query query) throws DataAccessException {
+        boolean excludeLongRunning = query.getBooleanFilter("Exclude Long-Running");
+        if (excludeLongRunning) {
+            List<String> excluded = new ArrayList<>();
+            Map<String,ActivityImplementor> implementors = ImplementorCache.getImplementors();
+            for (String implementorClass : implementors.keySet()) {
+                ActivityImplementor implementor = implementors.get(implementorClass);
+                if (implementor.isLongRunning()) {
+                    for (Activity activity : ActivityCache.getActivities(implementorClass, true)) {
+                        String uniqueId = activity.getProcessId() + ":A" + activity.getId();
+                        if (!excluded.contains(uniqueId))
+                            excluded.add(uniqueId);
+                    }
+                }
+            }
+            if (!excluded.isEmpty()) {
+                return "act_unique_id not in ('" + String.join("','", excluded) + "')";
+            }
+        }
+        return null;
+    }
 }

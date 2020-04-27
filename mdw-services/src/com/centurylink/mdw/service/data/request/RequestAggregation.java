@@ -1,4 +1,4 @@
-package com.centurylink.mdw.dataaccess.reports;
+package com.centurylink.mdw.service.data.request;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -6,6 +6,7 @@ import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.PreparedSelect;
 import com.centurylink.mdw.dataaccess.PreparedWhere;
+import com.centurylink.mdw.dataaccess.reports.AggregateDataAccess;
 import com.centurylink.mdw.model.request.RequestAggregate;
 import com.centurylink.mdw.model.request.ServicePath;
 
