@@ -4,7 +4,7 @@ var constantsMod = angular.module('constants', []);
 
 constantsMod.constant('PROCESS_STATUSES', ['Pending', 'In Progress', 'Failed', 'Completed', 'Canceled', 'Waiting']);
 constantsMod.constant('TASK_STATUSES', ['Open', 'Assigned', 'In Progress', 'Completed', 'Canceled']);
-constantsMod.constant('ACTIVITY_STATUSES', ['In Progress', 'Failed', 'Waiting']);
+constantsMod.constant('ACTIVITY_STATUSES', ['In Progress', 'Failed', 'Completed', 'Canceled', 'Waiting']);
 constantsMod.constant('STUCK_ACTIVITY_STATUSES', ['In Progress', 'Failed', 'Canceled', 'Waiting']);
 // these are simplified
 constantsMod.constant('TASK_ADVISORIES', ['Jeopardy', 'Alert', 'Invalid']);
@@ -21,7 +21,7 @@ constantsMod.constant('QUEUE_NAMES', [
 constantsMod.constant('EXCEL_DOWNLOAD', 'DownloadFormat=xlsx');
 constantsMod.constant('ZIP_DOWNLOAD', 'DownloadFormat=zip');
 
-// TODO: should be dynamic through a service 
+// TODO: should be dynamic through a service
 constantsMod.constant('DOCUMENT_TYPES', {
   'org.w3c.dom.Document': 'xml',
   'org.apache.xmlbeans.XmlObject': 'xml',
@@ -68,7 +68,7 @@ constantsMod.constant('ASSET_TYPES', {
   JPG: 'jpg',
   JSON: 'json',
   Kotlin: 'kt',
-  Markdown: 'md',  
+  Markdown: 'md',
   PNG: 'png',
   Process: 'proc',
   Task: 'task',

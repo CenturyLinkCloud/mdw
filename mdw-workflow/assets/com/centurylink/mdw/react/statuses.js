@@ -23,9 +23,6 @@ module.exports = {
     }
   },
   activity: {
-    Pending: {
-      color: '#0099C6'
-    },
     'In Progress': {
       color: '#109618'
     },

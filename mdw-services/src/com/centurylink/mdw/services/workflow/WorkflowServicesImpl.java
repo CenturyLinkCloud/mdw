@@ -32,7 +32,7 @@ import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
-import com.centurylink.mdw.dataaccess.reports.*;
+import com.centurylink.mdw.dataaccess.reports.AggregateDataAccess;
 import com.centurylink.mdw.model.*;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetHeader;
@@ -87,7 +87,6 @@ import org.yaml.snakeyaml.Yaml;
 
 import javax.xml.bind.JAXBElement;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.time.Instant;
@@ -313,11 +312,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
     public ActivityList getActivities(Query query) throws ServiceException {
         try {
             CodeTimer timer = new CodeTimer(true);
-            ActivityList list = getRuntimeDataAccess().getActivityInstanceList(query);
-            timer.logTimingAndContinue("getRuntimeDataAccess().getActivityInstanceList()");
-            list = populateActivities(list, query);
-            timer.stopAndLogTiming("WorkflowServicesImpl.populateActivities()");
-            return list;
+            ActivityList activityList = getWorkflowDao().getActivityInstances(query);
+            timer.logTimingAndContinue("getWorkflowDao().getActivityInstances()");
+            activityList = populateActivities(activityList, query);
+            timer.stopAndLogTiming("populateActivities()");
+            return activityList;
         }
         catch (DataAccessException ex) {
             throw new ServiceException(500, "Error retrieving activity instance for query: " + query, ex);
@@ -598,21 +597,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
     @Override
     public ActivityInstance getActivity(Long instanceId) throws ServiceException {
         try {
-            Query query = new Query();
-            query.setFilter("instanceId", instanceId);
-            query.setFind(null);
-            ActivityList list = getRuntimeDataAccess().getActivityInstanceList(query);
-            if (list.getCount() > 0) {
-                list = populateActivities(list, query);
-                return list.getActivities().get(0);
-            }
-            else {
-                return null;
-            }
+            ActivityInstance activityInstance = getWorkflowDao().getActivityInstance(instanceId);
+            if (activityInstance == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Activity instance not found: " + instanceId);
+            return activityInstance;
         }
-        catch (Exception ex) {
-            throw new ServiceException(500, "Error retrieving activity instance: " + instanceId + ": " +
-                    ex.getMessage(), ex);
+        catch (DataAccessException ex) {
+            throw new ServiceException(500, "Error retrieving activity instance: " + instanceId, ex);
         }
     }
 
@@ -752,16 +743,6 @@ public class WorkflowServicesImpl implements WorkflowServices {
         List<ActivityInstance> aList = activityList.getActivities();
         ArrayList<ActivityInstance> matchActivities = new ArrayList<>();
         String activityName = query.getFilter("activityName");
-        String decodedActName = "";
-        if (activityName != null) {
-            try {
-                decodedActName = java.net.URLDecoder.decode(activityName, "UTF-8");
-            }
-            catch (UnsupportedEncodingException e) {
-                logger.severe("Unable to decode: " + activityName);
-            }
-        }
-
         for (ActivityInstance activityInstance : aList) {
             Process process = ProcessCache.getProcess(activityInstance.getProcessId());
             if (process == null) {
@@ -789,8 +770,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 String logicalId = activityInstance.getDefinitionId();
                 Activity actdef = process.getActivity(logicalId);
                 if (actdef != null) {
-                    if (!decodedActName.isEmpty() && actdef.getName().startsWith(decodedActName))
+                    if (activityName != null && activityName.equals(actdef.getProcessName() + 'v' + process.getVersionString() + ':' + logicalId)) {
                         matchActivities.add(activityInstance);
+                    }
                     activityInstance.setName(actdef.getName().replaceAll("\\r", "").replace('\n', ' '));
                 }
                 else {
@@ -801,7 +783,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 activityInstance.setPackageName(process.getPackageName());
             }
         }
-        if (!decodedActName.isEmpty())
+        if (activityName != null)
             activityList.setActivities(matchActivities);
         activityList.setCount(activityList.getActivities().size());
         if (activityList.getTotal() <= 0L)

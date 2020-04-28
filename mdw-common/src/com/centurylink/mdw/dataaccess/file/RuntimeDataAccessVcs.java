@@ -44,7 +44,7 @@ import java.util.*;
  */
 public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDataAccess {
 
-    private List<VariableType> variableTypes;
+    private final List<VariableType> variableTypes;
 
     public RuntimeDataAccessVcs(DatabaseAccess db, BaselineData baselineData) {
         super(db);
@@ -490,56 +490,6 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         return instanceList;
     }
 
-    public ActivityList getActivityInstanceList(Query query) throws DataAccessException {
-        try {
-            Date start = query.getDateFilter("startDate");
-            StringBuilder sql = new StringBuilder();
-            db.openConnection();
-            sql.append(buildActivityCountQuery(query, start));
-            ResultSet rs = db.runSelect(sql.toString());
-            Long count;
-            if (rs.next())
-                count = new Long(rs.getLong(1));
-            else
-                count = new Long(-1);
-            List<ActivityInstance> mdwActivityInstanceList = new ArrayList<>();
-            ActivityList actList = new ActivityList(ActivityList.ACTIVITY_INSTANCES, mdwActivityInstanceList);
-            if (count <= 0) {
-                return actList;
-            }
-
-            sql = buildActivityQuery(query, start);
-
-            rs = db.runSelect(sql.toString());
-            while (rs.next()) {
-                ActivityInstance ai = new ActivityInstance();
-                ai.setId(rs.getLong("aii"));
-                ai.setDefinitionId("A" + rs.getLong("activity_id"));
-                ai.setMasterRequestId(rs.getString("master_request_id"));
-                ai.setStartDate(rs.getTimestamp("st"));
-                ai.setProcessId(rs.getLong("process_id"));
-                ai.setProcessName(rs.getString("process_name"));
-                ai.setEndDate(rs.getTimestamp("ed"));
-                ai.setResult(rs.getString("cc"));
-                ai.setMessage(rs.getString("error"));
-                ai.setStatus(WorkStatuses.getName(rs.getInt("status_cd")));
-                ai.setProcessInstanceId(rs.getLong("pii"));
-
-                mdwActivityInstanceList.add(ai);
-            }
-            actList.setRetrieveDate(new Date()); // TODO use db date
-            actList.setCount(mdwActivityInstanceList.size());
-            actList.setTotal(count);
-            return actList;
-        }
-        catch (Exception e) {
-            throw new DataAccessException(-1, "Error loading activity instance list", e);
-        }
-        finally {
-            db.closeConnection();
-        }
-    }
-
     public Linked<ProcessInstance> getProcessInstanceCallHierarchy(Long processInstanceId) throws DataAccessException {
         try {
             db.openConnection();
@@ -575,23 +525,6 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
                 addCalledHierarchy(child);
             }
         }
-    }
-
-    protected StringBuilder buildActivityQuery(Query query, Date start) {
-        StringBuilder sqlBuff = new StringBuilder();
-        if (query.getMax() != Query.MAX_ALL)
-            sqlBuff.append(db.pagingQueryPrefix());
-        sqlBuff.append("select pi.process_instance_id as pii, pi.master_request_id, ")
-        .append("pi.process_id, pi.comments as process_name, ai.activity_instance_id as aii, ai.activity_id, ")
-        .append("ai.status_cd, ai.start_dt as st, ai.end_dt as ed, ai.compcode as cc, ai.status_message as error");
-
-        buildProcessQueryCommon(sqlBuff, query, start);
-        String orderBy = buildOrderBy(query);
-        if (orderBy != null)
-            sqlBuff.append("\n").append(orderBy);
-        if (query.getMax() != Query.MAX_ALL)
-            sqlBuff.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
-        return sqlBuff;
     }
 
     protected void buildProcessQueryCommon(StringBuilder sqlBuff, Query query, Date start) {
@@ -644,22 +577,6 @@ public class RuntimeDataAccessVcs extends CommonDataAccess implements RuntimeDat
         sqlBuff.append("WHERE pi.PROCESS_ID is not null "); // just to allow next condition to have "and"
         buildQueryCommon(sqlBuff, pMap, null);
         return sqlBuff.toString();
-    }
-
-    protected String buildActivityCountQuery(Query query, Date start) {
-        StringBuilder sqlBuff = new StringBuilder();
-        sqlBuff.append("SELECT count(ai.activity_instance_id) ");
-        buildProcessQueryCommon(sqlBuff, query, start);
-        return sqlBuff.toString();
-    }
-
-    private String buildOrderBy(Query query) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(" order by pi.process_instance_id");
-        if (query.isDescending())
-            sb.append(" desc");
-        sb.append("\n");
-        return sb.toString();
     }
 
     public String buildVariablesSelect(List<String> variables) {

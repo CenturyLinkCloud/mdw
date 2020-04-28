@@ -20,11 +20,6 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
             WorkStatus.STATUS_WAITING
     };
 
-    public static Integer[] FINISHED = new Integer[] {
-            WorkStatus.STATUS_COMPLETED,
-            WorkStatus.STATUS_CANCELLED,
-    };
-
     public List<ActivityAggregate> getTops(Query query) throws DataAccessException, ServiceException {
         String by = query.getFilter("by");
         if (by == null)
@@ -264,7 +259,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
         if (by.equals("throughput"))
             statuses = STUCK;
         else if (by.equals("completionTime"))
-            statuses = FINISHED;
+            statuses = new Integer[]{WorkStatus.STATUS_COMPLETED};
         if (statuses.length > 0) {
             where.append(" and ai.status_cd in (");
             for (int i = 0; i < statuses.length; i++) {

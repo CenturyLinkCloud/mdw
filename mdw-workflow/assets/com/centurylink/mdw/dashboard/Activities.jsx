@@ -56,7 +56,8 @@ class Activities extends Component {
           data: '/Activities/breakdown?by=completionTime',
           instancesParam: 'activityIds',
           summaryChart: 'bar',
-          summaryTitle: 'Activities',
+          summaryTitle: 'Completed Activities',
+          summaryChartOptions: {scales: {yAxes: [{ticks: {beginAtZero: true}}]}},
           units: filters => filters['Completion Times In']
         }
       ],

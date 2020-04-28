@@ -182,6 +182,8 @@ public class ActivityInstance implements Jsonable, Linkable {
             json.put("packageName", packageName);
         if (processInstanceId != null)
             json.put("processInstanceId", processInstanceId);
+        if (processId != null)
+            json.put("processId", processId);
         return json;
     }
 

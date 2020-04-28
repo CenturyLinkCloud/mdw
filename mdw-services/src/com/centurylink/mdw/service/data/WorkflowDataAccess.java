@@ -15,13 +15,17 @@
  */
 package com.centurylink.mdw.service.data;
 
+import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
+import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.util.log.ActivityLog;
 import com.centurylink.mdw.util.log.ActivityLogLine;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -36,6 +40,10 @@ import java.util.List;
 import java.util.Map;
 
 public class WorkflowDataAccess extends CommonDataAccess {
+
+    private static final String ACTIVITY_INSTANCE_COLS = "ai.activity_instance_id, ai.activity_id,"
+            + " ai.start_dt, ai.end_dt, ai.compcode, ai.status_message, ai.status_cd,"
+            + " pi.process_instance_id, pi.process_id, pi.master_request_id";
 
     public ProcessList getProcessInstances(Query query) throws DataAccessException {
         try {
@@ -60,14 +68,14 @@ public class WorkflowDataAccess extends CommonDataAccess {
                 }
             }
             else {
-                where = buildWhere(query);
+                where = buildProcessWhere(query);
             }
             String countSql = "select count(process_instance_id) from PROCESS_INSTANCE pi\n" + where;
             ResultSet rs = db.runSelect(countSql);
             if (rs.next())
                 count = rs.getLong(1);
 
-            String orderBy = buildOrderBy(query);
+            String orderBy = buildProcessOrderBy(query);
             StringBuilder sql = new StringBuilder();
             if (query.getMax() != Query.MAX_ALL)
               sql.append(db.pagingQueryPrefix());
@@ -95,7 +103,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
         try {
             db.openConnection();
             long count = -1;
-            String where = buildWhere(query);
+            String where = buildProcessWhere(query);
             String countSql = "select count(process_instance_id) from PROCESS_INSTANCE pi\n" + where;
             ResultSet rs = db.runSelect(countSql);
             if (rs.next())
@@ -110,7 +118,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
         }
     }
 
-    protected String buildWhere(Query query) throws DataAccessException {
+    protected String buildProcessWhere(Query query) throws DataAccessException {
         long instanceId = query.getLongFilter("instanceId");
         if (instanceId > 0)
             return "where pi.process_instance_id = " + instanceId + "\n"; // ignore other criteria
@@ -229,9 +237,18 @@ public class WorkflowDataAccess extends CommonDataAccess {
         return sb.toString();
     }
 
-    protected String buildOrderBy(Query query) {
+    protected String buildProcessOrderBy(Query query) {
         StringBuilder sb = new StringBuilder();
         sb.append(" order by process_instance_id");
+        if (query.isDescending())
+            sb.append(" desc");
+        sb.append("\n");
+        return sb.toString();
+    }
+
+    protected String buildActivityOrderBy(Query query) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(" order by activity_instance_id");
         if (query.isDescending())
             sb.append(" desc");
         sb.append("\n");
@@ -377,6 +394,22 @@ public class WorkflowDataAccess extends CommonDataAccess {
         }
     }
 
+    public ActivityInstance getActivityInstance(Long instanceId) throws DataAccessException {
+        Query query = new Query();
+        query.setFilter("instanceId", instanceId);
+        String sql = "select " + ACTIVITY_INSTANCE_COLS + " from ACTIVITY_INSTANCE ai, PROCESS_INSTANCE pi\n"
+                + "where ai.process_instance_id = pi.process_instance_id and ai.activity_instance_id = ?";
+        try (DbAccess dbAccess = new DbAccess()) {
+            ResultSet rs = dbAccess.runSelect(sql, instanceId);
+            if (rs.next())
+                return buildActivityInstance(rs);
+            else
+                return null;
+        } catch (SQLException ex) {
+            throw new DataAccessException("Error retrieving activity instance: " + instanceId, ex);
+        }
+    }
+
     /**
      * Get latest activity instance for process instance and id.
      */
@@ -404,5 +437,122 @@ public class WorkflowDataAccess extends CommonDataAccess {
         catch (SQLException ex) {
             throw new DataAccessException("Error retrieving milestone for pi=" + processInstanceId + ", a=" + activityId, ex);
         }
+    }
+
+    public ActivityList getActivityInstances(Query query) throws DataAccessException {
+        try {
+            List<ActivityInstance> actInsts = new ArrayList<>();
+            db.openConnection();
+            long count = -1;
+            String where = buildActivityWhere(query);
+            String countSql = "select count(activity_instance_id) from ACTIVITY_INSTANCE ai, PROCESS_INSTANCE pi\n" + where;
+            ResultSet rs = db.runSelect(countSql);
+            if (rs.next())
+                count = rs.getLong(1);
+
+            String orderBy = buildActivityOrderBy(query);
+            StringBuilder sql = new StringBuilder();
+            if (query.getMax() != Query.MAX_ALL)
+                sql.append(db.pagingQueryPrefix());
+            sql.append("select " + ACTIVITY_INSTANCE_COLS + " from ACTIVITY_INSTANCE ai, PROCESS_INSTANCE pi\n");
+            sql.append(where).append(orderBy);
+            if (query.getMax() != Query.MAX_ALL)
+                sql.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
+            rs = db.runSelect(sql.toString());
+            while (rs.next())
+                actInsts.add(buildActivityInstance(rs));
+
+            ActivityList list = new ActivityList(ActivityList.ACTIVITY_INSTANCES, actInsts);
+            list.setTotal(count);
+            list.setRetrieveDate(DatabaseAccess.getDbDate());
+            return list;
+        }
+        catch (SQLException ex) {
+            throw new DataAccessException("Failed to retrieve Processes", ex);
+        }
+        finally {
+            db.closeConnection();
+        }
+    }
+
+    protected String buildActivityWhere(Query query) throws DataAccessException {
+        long instanceId = query.getLongFilter("instanceId");
+        if (instanceId > 0)
+            return "where ai.activity_instance_id = " + instanceId + "\n"; // ignore other criteria
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("where ai.process_instance_id = pi.process_instance_id");
+
+        // masterRequestId
+        String masterRequestId = query.getFilter("masterRequestId");
+        if (masterRequestId != null)
+            sb.append(" and pi.master_request_id = '" + masterRequestId + "'\n");
+
+        // status
+        String status = query.getFilter("status");
+        if (status != null && !status.equals("[Any]")) {
+            if (status.equals(WorkStatus.STATUSNAME_ACTIVE)) {
+                sb.append(" and ai.status_cd not in (")
+                        .append(WorkStatus.STATUS_COMPLETED)
+                        .append(",").append(WorkStatus.STATUS_FAILED)
+                        .append(",").append(WorkStatus.STATUS_CANCELLED)
+                        .append(")\n");
+            }
+            else {
+                sb.append(" and ai.status_cd = ").append(WorkStatuses.getCode(status)).append("\n");
+            }
+        }
+        // startDate
+        try {
+            Date startDate = query.getDateFilter("startDate");
+            if (startDate != null) {
+                String start = getOracleDateFormat().format(startDate);
+                if (db.isMySQL())
+                    sb.append(" and ai.start_dt >= STR_TO_DATE('").append(start).append("','%d-%M-%Y')\n");
+                else
+                    sb.append(" and ai.start_dt >= '").append(start).append("'\n");
+            }
+        }
+        catch (ParseException ex) {
+            throw new DataAccessException(ex.getMessage(), ex);
+        }
+
+        // activity => <procId>:A<actId>
+        String activity = query.getFilter("activity");
+        if (activity != null) {
+            if (db.isOracle()) {
+                sb.append(" and (pi.PROCESS_ID || ':A' || ai.ACTIVITY_ID) = '" + activity + "'");
+            }
+            else {
+                sb.append(" and CONCAT(pi.PROCESS_ID, ':A', ai.ACTIVITY_ID) = '" + activity + "'");
+            }
+        }
+
+        return sb.toString();
+    }
+
+    public ActivityInstance buildActivityInstance(ResultSet rs) throws SQLException {
+        ActivityInstance ai = new ActivityInstance();
+        ai.setId(rs.getLong("ai.activity_instance_id"));
+        ai.setActivityId(rs.getLong("ai.activity_id"));
+        ai.setDefinitionId("A" + ai.getActivityId());
+        ai.setStartDate(rs.getTimestamp("ai.start_dt"));
+        ai.setEndDate(rs.getTimestamp("ai.end_dt"));
+        ai.setResult(rs.getString("ai.compcode"));
+        ai.setMessage(rs.getString("ai.status_message"));
+        ai.setStatusCode(rs.getInt("ai.status_cd"));
+        ai.setStatus(WorkStatuses.getName(ai.getStatusCode()));
+        ai.setProcessInstanceId(rs.getLong("pi.process_instance_id"));
+        ai.setProcessId(rs.getLong("pi.process_id"));
+        ai.setMasterRequestId(rs.getString("pi.master_request_id"));
+        Process process = ProcessCache.getProcess(ai.getProcessId());
+        if (process != null) {
+            ai.setProcessName(process.getName());
+            ai.setProcessVersion(process.getVersionString());
+            Package pkg = PackageCache.getProcessPackage(ai.getProcessId());
+            if (pkg != null)
+                ai.setPackageName(pkg.getName());
+        }
+        return ai;
     }
 }

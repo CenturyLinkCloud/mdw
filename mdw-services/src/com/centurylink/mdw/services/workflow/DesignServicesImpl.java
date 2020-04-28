@@ -139,20 +139,31 @@ public class DesignServicesImpl implements DesignServices {
                     }
                 }
             } else {
+                int max = query.getMax();
+                int i = 0;
                 String lowerFind = find.toLowerCase();
                 for (Process process : ProcessCache.getProcesses(true)) {
                     process = ProcessCache.getProcess(process.getId());
                     List<Activity> activities = process.getActivities();
-                    for (Activity activityVO : activities) {
-                        if (activityVO.getName() != null && activityVO.getName().toLowerCase().startsWith(lowerFind)) {
+                    String procNameVer = process.getName() + " v" + process.getVersionString();
+                    for (Activity activity : activities) {
+                        if (activity.getName() != null
+                                && (activity.getName().toLowerCase().startsWith(lowerFind)
+                                || (procNameVer + " " + activity.getName() + " (A" + activity.getId() + ")").toLowerCase().startsWith(lowerFind))) {
                             ActivityInstance ai = new ActivityInstance();
-                            ai.setId(activityVO.getId());
-                            ai.setName(activityVO.getName());
-                            ai.setDefinitionId(activityVO.getLogicalId());
+                            ai.setId(activity.getId());
+                            ai.setName(activity.getName());
+                            ai.setDefinitionId(activity.getLogicalId());
                             ai.setProcessId(process.getId());
                             ai.setProcessName(process.getName());
                             ai.setProcessVersion(process.getVersionString());
                             activityInstanceList.add(ai);
+                            if (++i >= max) {
+                                found.setRetrieveDate(DatabaseAccess.getDbDate());
+                                found.setCount(activityInstanceList.size());
+                                found.setTotal(activityInstanceList.size());
+                                return found;
+                            }
                         }
                     }
                 }

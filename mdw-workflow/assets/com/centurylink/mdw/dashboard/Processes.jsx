@@ -67,6 +67,7 @@ class Processes extends Component {
           instancesParam: 'processIds',
           summaryChart: 'bar',
           summaryTitle: 'Completed Processes',
+          summaryChartOptions: {scales: {yAxes: [{ticks: {beginAtZero: true}}]}},
           units: filters => filters['Completion Times In']
         },
         {

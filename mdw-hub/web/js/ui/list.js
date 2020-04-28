@@ -5,7 +5,7 @@ var listMod = angular.module('mdwList', ['mdw']);
 listMod.controller('MdwListController', ['$scope', '$http', '$location', 'mdw', 'util', 'EXCEL_DOWNLOAD',
                                              function($scope, $http, $location, mdw, util, EXCEL_DOWNLOAD) {
   $scope.init = function() {
-    
+
     $scope.$watch('listFilter', function(aft, bef) {
       $scope.items = [];
       $scope.listModel[$scope.listItems] = $scope.items;
@@ -14,21 +14,21 @@ listMod.controller('MdwListController', ['$scope', '$http', '$location', 'mdw', 
       $scope.listModel.selected = null;
       $scope.getNextPage();
     }, true);
-    
+
   };
 
   // TODO hardcoded
   $scope.max = 50;
   $scope.scrollBuffer = 5; // getting this close forces retrieval
   $scope.maxDownloadItems = 10000;
-  
+
   $scope.items = [];
   $scope.busy = false;
-  
+
   $scope.getNextPage = function(callback) {
     if (!$scope.busy) {
       $scope.busy = true;
-      
+
       // retrieve the item list
       $scope.url = mdw.roots.services + $scope.serviceUrl + '?app=mdw-admin' + '&start=' + $scope.items.length + '&max=' + $scope.max;
       var urlParams = util.urlParams();
@@ -40,7 +40,7 @@ listMod.controller('MdwListController', ['$scope', '$http', '$location', 'mdw', 
           $scope.url += '&' + key + '=' + urlParams[key];
         });
       }
-      
+
       $http.get($scope.url).error(function(data, status) {
         console.log('HTTP ' + status + ': ' + $scope.url);
       }).success(function(data, status, headers, config) {
@@ -49,12 +49,12 @@ listMod.controller('MdwListController', ['$scope', '$http', '$location', 'mdw', 
         var newItems = data[$scope.listItems];
         $scope.items = $scope.items.concat(newItems);
         $scope.listModel[$scope.listItems] = $scope.items;
-        
+
         $scope.listModel.reload = function(callback) {
           $scope.items = [];
           $scope.getNextPage(callback);
         };
-        
+
         if ($scope.styleClass == 'mdw-checklist') {
           $scope.listModel.selectedState = { all: false };
           $scope.listModel.toggleAll = function() {
@@ -76,7 +76,7 @@ listMod.controller('MdwListController', ['$scope', '$http', '$location', 'mdw', 
             return selected;
           };
         }
-        
+
         $scope.listModel.downloadExcel = function() {
           if ($scope.listModel.total > $scope.maxDownloadItems) {
             window.alert('Cannot download more than ' + $scope.maxDownloadItems + ' items.  Please narrow results by filtering.');
@@ -86,7 +86,7 @@ listMod.controller('MdwListController', ['$scope', '$http', '$location', 'mdw', 
             downloadUrl += $scope.getFilterQuery() + '&' + EXCEL_DOWNLOAD;
             window.location = downloadUrl;
           }
-        };    
+        };
         $scope.busy = false;
 
         if (callback) {
@@ -95,7 +95,7 @@ listMod.controller('MdwListController', ['$scope', '$http', '$location', 'mdw', 
       });
     }
   };
-  
+
   $scope.getFilterQuery = function() {
     var query = '';
     for (var key in $scope.listFilter) {
@@ -115,11 +115,11 @@ listMod.controller('MdwListController', ['$scope', '$http', '$location', 'mdw', 
     }
     return query;
   };
-  
+
   $scope.hasMore = function() {
     return $scope.items.length === 0 || $scope.items.length < $scope.listModel.total;
   };
-  
+
 }]);
 
 listMod.directive('mdwList', function() {
@@ -132,7 +132,8 @@ listMod.directive('mdwList', function() {
       listModel: '=mdwListModel',
       listFilter: '=mdwListFilter',
       listItems: '@mdwListItems',
-      itemTemplate: '@mdwListItem'
+      itemTemplate: '@mdwListItem',
+      itemClick: '=mdwListClick'
     },
     controller: 'MdwListController',
     controllerAs: 'mdwList',

@@ -133,6 +133,8 @@ public class DbTimings extends DbOperation {
     protected String getInstanceTable() throws IOException {
         if ("ACTIVITY_INSTANCE".equals(owner))
             return "ACTIVITY_INSTANCE";
+        else if ("PROCESS_INSTANCE".equals(owner))
+            return "PROCESS_INSTANCE";
         else
             throw new IOException("Unsupported timings owner " + owner);
     }
@@ -140,6 +142,8 @@ public class DbTimings extends DbOperation {
     protected String getInstanceIdColumn() throws IOException {
         if ("ACTIVITY_INSTANCE".equals(owner))
             return "ACTIVITY_INSTANCE_ID";
+        else if ("PROCESS_INSTANCE".equals(owner))
+            return "PROCESS_INSTANCE_ID";
         else
             throw new IOException("Unsupported timings owner " + owner);
     }

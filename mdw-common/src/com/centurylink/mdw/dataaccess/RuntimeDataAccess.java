@@ -15,9 +15,7 @@
  */
 package com.centurylink.mdw.dataaccess;
 
-import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.model.event.EventLog;
-import com.centurylink.mdw.model.workflow.ActivityList;
 import com.centurylink.mdw.model.workflow.Linked;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
 import com.centurylink.mdw.model.workflow.ProcessList;
@@ -53,9 +51,6 @@ public interface RuntimeDataAccess {
     ProcessList getProcessInstanceList(Map<String,String> criteria, List<String> variableNames, Map<String,String> variables, int pageIndex, int pageSize, String orderBy)
     throws DataAccessException;
 
-    ActivityList getActivityInstanceList(Query query)
-    throws DataAccessException;
-
     /**
      * Returns the top-level linked process in the call chain for the specified instance.
      * Downstream calls include all routes, whereas upstream calls include only the specific instance stack.
@@ -65,5 +60,4 @@ public interface RuntimeDataAccess {
 
     List<EventLog> getEventLogs(String pEventName, String pEventSource, String pEventOwner, Long pEventOwnerId)
             throws DataAccessException;
-
 }

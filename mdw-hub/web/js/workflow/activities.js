@@ -35,7 +35,7 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
     for (let key of Object.keys($scope.model.activityFilter)) {
       if (!$scope.model.activityFilter[key] && !$scope.defaultFilter[key])
         continue;
-      if (key !== 'sort' && key !== 'descending' && key !== 'instanceId' && key !== 'activityName' && key !== 'masterRequestId' &&
+      if (key !== 'sort' && key !== 'descending' && key !== 'instanceId' && key !== 'activity' && key !== 'masterRequestId' &&
             $scope.model.activityFilter[key] !== $scope.defaultFilter[key]) {
         return false;
       }
@@ -45,7 +45,7 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
 
   $scope.model.activityList = {};
 
-  $scope.allStatuses = ACTIVITY_STATUSES;
+  $scope.allStatuses = ['[Any]'].concat(ACTIVITY_STATUSES);
   $scope.selectedActivities = [];
 
   $scope.getSelectedActivities = function() {
@@ -171,8 +171,8 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
   if ($scope.model.activityFilter.masterRequestId) {
     $scope.model.typeaheadMatchSelection = $scope.model.activityFilter.masterRequestId;
   }
-  else if ($scope.model.activityFilter.activityName) {
-    $scope.model.typeaheadMatchSelection = $scope.model.activityFilter.activityName;
+  else if ($scope.model.activityFilter.activity) {
+    $scope.model.typeaheadMatchSelection = $scope.model.activityFilter.activity;
   }
   else if ($scope.model.activityFilter.instanceId) {
     $scope.model.typeaheadMatchSelection = $scope.model.activityFilter.instanceId;
@@ -180,33 +180,18 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
 
   // activity instanceId, masterRequestId, activity name
   $scope.findTypeaheadMatches = function(typed) {
-    return $http.get(mdw.roots.services + '/services/Activities' + '?app=mdw-admin&find=' + typed).then(function(response) {
-      // service matches on instanceId or masterRequestId
-      var actInsts = response.data.activityInstances;
-      console.log('role' + $scope.authUser.hasRole('Process Execution'));
-      if (actInsts.length > 0) {
-        var matches = [];
-        actInsts.forEach(function(actInst) {
-          if (actInst.id.toString().startsWith(typed))
-            matches.push({type: 'instanceId', value: actInst.id.toString()});
-          else
-            matches.push({type: 'masterRequestId', value: actInst.masterRequestId});
+    return $http.get(mdw.roots.services + '/services/Activities/definitions' + '?app=mdw-admin&find=' + typed).then(function(response) {
+      // match on activity name
+      if (response.data.activityInstances.length > 0) {
+        var defMatches = [];
+        response.data.activityInstances.forEach(function(actDef) {
+          defMatches.push({
+            type: 'activity',
+            value: actDef.processName + ' v' + actDef.processVersion + ' ' + actDef.name + ' (' + actDef.definitionId + ')',
+            id: actDef.processId + '%3A' + actDef.definitionId
+          });
         });
-        return matches;
-      }
-      else {
-        return $http.get(mdw.roots.services + '/services/Activities/definitions' + '?app=mdw-admin&find=' + typed).then(function(response) {
-          // services matches on activity name
-          if (response.data.activityInstances.length > 0) {
-            var matches2 = [];
-            var encodedactivityName;
-            response.data.activityInstances.forEach(function(actDef) {
-              encodedactivityName = encodeURIComponent(actDef.name);
-              matches2.push({type: 'activityName', value: actDef.name + ' (' + actDef.definitionId + ') /' + actDef.processName + ' v' + actDef.processVersion, id: encodedactivityName});
-            });
-            return matches2;
-          }
-        });
+        return defMatches;
       }
     });
   };
@@ -217,8 +202,8 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
       $scope.model.activityFilter.instanceId = null;
     if ($scope.model.activityFilter.masterRequestId)
       $scope.model.activityFilter.masterRequestId = null;
-    if ($scope.model.activityFilter.activityName)
-      $scope.model.activityFilter.activityName = null;
+    if ($scope.model.activityFilter.activity)
+      $scope.model.activityFilter.activity = null;
   };
 
   $scope.$on('page-retrieved', function(event) {
@@ -267,6 +252,11 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
 
   $scope.goChart = function() {
     window.location = 'dashboard/activities';
+  };
+
+  $scope.goInstance = function(item) {
+    sessionStorage.setItem('mdw-activityInstance', item.id);
+    window.location = '#/workflow/processes/' + item.processInstanceId;
   };
 }]);
 
