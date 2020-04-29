@@ -25,6 +25,9 @@ class Activities extends Component {
         if (breakdown === 'Stuck Count') {
           activityFilter.status = '[Stuck]';
         }
+        else if (breakdown === 'Completion Time'){
+          activityFilter.status = 'Completed';
+        }
         else {
           activityFilter.status = '[Any]';
         }

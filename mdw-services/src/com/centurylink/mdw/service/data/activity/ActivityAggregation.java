@@ -104,6 +104,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
             ActivityAggregate activityAggregate = new ActivityAggregate(resultSet.getLong("ct"));
             Long elapsed = Math.round(resultSet.getDouble("elapsed"));
             activityAggregate.setValue(elapsed);
+            activityAggregate.setCount(resultSet.getLong("ct"));
             String actId = resultSet.getString("act_unique_id");
             activityAggregate.setActivityId(actId);
             int colon = actId.lastIndexOf(":");

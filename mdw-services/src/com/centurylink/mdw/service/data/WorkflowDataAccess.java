@@ -468,7 +468,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
             return list;
         }
         catch (SQLException ex) {
-            throw new DataAccessException("Failed to retrieve Processes", ex);
+            throw new DataAccessException("Failed to retrieve activities", ex);
         }
         finally {
             db.closeConnection();
@@ -533,18 +533,18 @@ public class WorkflowDataAccess extends CommonDataAccess {
 
     public ActivityInstance buildActivityInstance(ResultSet rs) throws SQLException {
         ActivityInstance ai = new ActivityInstance();
-        ai.setId(rs.getLong("ai.activity_instance_id"));
-        ai.setActivityId(rs.getLong("ai.activity_id"));
+        ai.setId(rs.getLong("activity_instance_id"));
+        ai.setActivityId(rs.getLong("activity_id"));
         ai.setDefinitionId("A" + ai.getActivityId());
-        ai.setStartDate(rs.getTimestamp("ai.start_dt"));
-        ai.setEndDate(rs.getTimestamp("ai.end_dt"));
-        ai.setResult(rs.getString("ai.compcode"));
-        ai.setMessage(rs.getString("ai.status_message"));
-        ai.setStatusCode(rs.getInt("ai.status_cd"));
+        ai.setStartDate(rs.getTimestamp("start_dt"));
+        ai.setEndDate(rs.getTimestamp("end_dt"));
+        ai.setResult(rs.getString("compcode"));
+        ai.setMessage(rs.getString("status_message"));
+        ai.setStatusCode(rs.getInt("status_cd"));
         ai.setStatus(WorkStatuses.getName(ai.getStatusCode()));
-        ai.setProcessInstanceId(rs.getLong("pi.process_instance_id"));
-        ai.setProcessId(rs.getLong("pi.process_id"));
-        ai.setMasterRequestId(rs.getString("pi.master_request_id"));
+        ai.setProcessInstanceId(rs.getLong("process_instance_id"));
+        ai.setProcessId(rs.getLong("process_id"));
+        ai.setMasterRequestId(rs.getString("master_request_id"));
         Process process = ProcessCache.getProcess(ai.getProcessId());
         if (process != null) {
             ai.setProcessName(process.getName());
