@@ -13,13 +13,25 @@ class Activities extends Component {
 
   // TODO populate activity name filter
   handleOverviewDataClick(breakdown, selection, filters) {
-    var activityFilter = sessionStorage.getItem('activityFilter');
-    activityFilter = activityFilter ? JSON.parse(activityFilter) : {};
+    const activityFilter = { descending: true };
     if (breakdown === 'Status') {
       activityFilter.status = selection.name;
+      delete activityFilter.activity;
+      sessionStorage.removeItem('activitySpec');
     }
-    else if (filters.Status) {
+    else {
       activityFilter.status = filters.Status;
+      if (!activityFilter.status) {
+        if (breakdown === 'Stuck Count') {
+          activityFilter.status = '[Stuck]';
+        }
+        else {
+          activityFilter.status = '[Any]';
+        }
+      }
+      activityFilter.activity = encodeURIComponent(selection.id);
+      sessionStorage.setItem('activitySpec', selection.processName + ' v' +
+          selection.version + ' ' + selection.activityName + ' (' + selection.definitionId + ')');
     }
     const start = filters.Starting;
     activityFilter.startDate = start.getFullYear().toString() + '-' + constants.months[start.getMonth()] + '-' + start.getDate();
@@ -64,6 +76,7 @@ class Activities extends Component {
       filters: {
         Ending: new Date(),
         Status: '',
+        'Exclude Long-Running': false,
         'Completion Times In': 'Seconds'
       },
       filterOptions: {

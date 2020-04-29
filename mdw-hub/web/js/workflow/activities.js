@@ -13,13 +13,14 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
     $scope.model.activityFilter = JSON.parse($scope.model.activityFilter);
 
   $scope.defaultFilter = {
-    status: 'Failed',
+    status: '[Stuck]',
     sort: 'startDate',
     descending: true
   };
 
   $scope.resetFilter = function() {
     $scope.model.activityFilter = Object.assign({}, $scope.defaultFilter);
+    sessionStorage.removeItem('activityFilter');
     $scope.closePopover();
   };
 
@@ -45,7 +46,7 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
 
   $scope.model.activityList = {};
 
-  $scope.allStatuses = ['[Any]'].concat(ACTIVITY_STATUSES);
+  $scope.allStatuses = ['[Any]','[Stuck]'].concat(ACTIVITY_STATUSES);
   $scope.selectedActivities = [];
 
   $scope.getSelectedActivities = function() {
@@ -168,14 +169,21 @@ activityMod.controller('ActivitiesController', ['$scope', '$http', '$uibModal', 
     $scope.$parent.digest(); // to show mdw.messages
   };
 
-  if ($scope.model.activityFilter.masterRequestId) {
-    $scope.model.typeaheadMatchSelection = $scope.model.activityFilter.masterRequestId;
+  // preselected activity
+  if ($scope.model.activityFilter.activity) {
+    var activitySpec = sessionStorage.getItem('activitySpec');
+    if (activitySpec) {
+      $scope.model.typeaheadMatchSelection = activitySpec;
+    }
+    else {
+      $scope.model.typeaheadMatchSelection = $scope.model.activityFilter.activity;
+    }
   }
-  else if ($scope.model.activityFilter.activity) {
-    $scope.model.typeaheadMatchSelection = $scope.model.activityFilter.activity;
-  }
-  else if ($scope.model.activityFilter.instanceId) {
-    $scope.model.typeaheadMatchSelection = $scope.model.activityFilter.instanceId;
+  else {
+    sessionStorage.removeItem('activitySpec');
+    if ($scope.model.activityFilter.instanceId) {
+      $scope.model.typeaheadMatchSelection = $scope.model.activityFilter.instanceId;
+    }
   }
 
   // activity instanceId, masterRequestId, activity name

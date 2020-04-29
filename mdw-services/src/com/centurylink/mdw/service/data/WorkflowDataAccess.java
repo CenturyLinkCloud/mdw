@@ -491,11 +491,11 @@ public class WorkflowDataAccess extends CommonDataAccess {
         // status
         String status = query.getFilter("status");
         if (status != null && !status.equals("[Any]")) {
-            if (status.equals(WorkStatus.STATUSNAME_ACTIVE)) {
-                sb.append(" and ai.status_cd not in (")
-                        .append(WorkStatus.STATUS_COMPLETED)
+            if (status.equals("[Stuck]")) {
+                sb.append(" and ai.status_cd in (")
+                        .append(WorkStatus.STATUS_IN_PROGRESS)
                         .append(",").append(WorkStatus.STATUS_FAILED)
-                        .append(",").append(WorkStatus.STATUS_CANCELLED)
+                        .append(",").append(WorkStatus.STATUS_WAITING)
                         .append(")\n");
             }
             else {
