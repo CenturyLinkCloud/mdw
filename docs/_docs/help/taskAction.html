@@ -10,7 +10,7 @@
 Manual task activities are used to create a manual task instance
 in a workflow.
 <ul>
-  <li><a href="taskNotices.html">Task notices</a>: Task notices provide the capability to automatically 
+  <li><a href="taskNotices.html">Task notices</a>: Task notices provide the capability to automatically
   	send templated e-mail notifications when a stage in the task instance lifecycle is reached.</li>
   <li><a href="taskSLA.html">Task SLA</a>: describes SLA (a.k.a due dates) of tasks.</li>
 </ul>
@@ -34,7 +34,7 @@ in a workflow.
 
 <a name="taskActions"><h3>Standard Actions</h3></a>
 The rules governing allowable standard actions are defined in asset com.centurylink.mdw.tasks/mdw-task-actions.xml.
-Standard actions have specific pre-determined outcomes which may be overridden in your process definition.  
+Standard actions have specific pre-determined outcomes which may be overridden in your process definition.
 The following table summarizes the available standard actions and their default outcomes.
 <br/><br/>
 <table>
@@ -80,7 +80,15 @@ The following table summarizes the available standard actions and their default 
     <td>Unchanged</td>
     <td>Assigned</td>
     <td>Open</td>
-  </tr>    
+  </tr>
+  <tr>
+    <td>Close</td>
+    <td>No workflow outcome</td>
+    <td>No workflow outcome</td>
+    <td>Cancelled</td>
+    <td>Cancelled</td>
+    <td>Closed</td>
+  </tr>
   <tr>
     <td>Complete</td>
     <td>Process null transition from task activity</td>
@@ -104,7 +112,7 @@ The following table summarizes the available standard actions and their default 
     <td>Unchanged</td>
     <td>Open</td>
     <td>Open</td>
-  </tr>    
+  </tr>
   <tr>
     <td>Retry</td>
     <td>No default behavior</td>
@@ -120,7 +128,7 @@ The following table summarizes the available standard actions and their default 
     <td>Unchanged</td>
     <td>In Progress</td>
     <td>Open</td>
-  </tr>    
+  </tr>
   <tr>
     <td><i>Custom Action</i></td>
     <td>Process custom transition from task activity</td>
@@ -162,7 +170,7 @@ Standard task actions are configured in the TaskActions.xml file, which is excer
           &lt;destination alias="Billing"&gt;Billing Task&lt;/destination&gt;
           &lt;destination alias="Production Support"&gt;Production Support Task&lt;/destination&gt;
         &lt;/forTask&gt;
-      &lt;/allowableAction&gt;      
+      &lt;/allowableAction&gt;
     &lt;/taskStatus&gt;
 </pre>
 <br/>
@@ -175,7 +183,7 @@ Also, the default outcome can be overridden by designating the "outcome" attribu
 <br/><br/>
 Notice that a particular action can be limited to a subset of possible task types via the &lt;forTask&gt; element (although it may be more advisable in this case to utilize custom task actions as described in the next section below).
 
-The standard actions configuration can also control the page in Task Manager where the user will be navigated after performing the action by using the &lt;navigationOutcome&gt; element. 
+The standard actions configuration can also control the page in Task Manager where the user will be navigated after performing the action by using the &lt;navigationOutcome&gt; element.
 <br/><br/>
 See the embedded comments in TaskActions.xml for a more detailed description of how to configure standard task actions.
 
@@ -207,6 +215,6 @@ Here if an error is encountered in the "Error Creation" activity, a task instanc
 Also in the Exception case the behavior for the Retry standard action is overridden.  Instead of retrying the "Error Creation" activity, process flow is directed back to the "Set Task Type" script activity.
 
 Actually in the scenario where a retryable ActivityException is thrown from "Error Creation", automated retry will be attempted the configured number of times before the manual task is even created.  When the task is retried manually, only then would the RESUME:Retry transition be traversed.
-    
+
 </body>
 </html>
