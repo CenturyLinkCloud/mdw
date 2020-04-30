@@ -171,7 +171,7 @@ public class AllowableTaskActions implements PreloadableCache {
 
     public static List<TaskAction> getTaskDetailActions(String userCuid, TaskRuntimeContext runtimeContext)
     throws IOException, XmlException, ServiceException, DataAccessException {
-        List<TaskAction> taskActions = new ArrayList<TaskAction>();
+        List<TaskAction> taskActions = new ArrayList<>();
         String status = runtimeContext.getStatus();
         for (TaskAction taskAction : getTaskStatusAllowableActions().get(status)) {
             if (!taskActions.contains(taskAction)) {
@@ -189,7 +189,7 @@ public class AllowableTaskActions implements PreloadableCache {
         }
 
         // return filtered task actions (logic copied from TaskDetail but could stand refactoring)
-        List<TaskAction> filteredActions = new ArrayList<TaskAction>();
+        List<TaskAction> filteredActions = new ArrayList<>();
         if (runtimeContext.getAssignee() == null || !userCuid.equalsIgnoreCase(runtimeContext.getAssignee().getCuid())) {
             // if the task is not assigned to the current user, the only possible actions are Assign, Claim and Release
             for (TaskAction action : taskActions) {

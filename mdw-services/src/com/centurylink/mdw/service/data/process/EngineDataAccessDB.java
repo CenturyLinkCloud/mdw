@@ -158,32 +158,9 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         return vo;
     }
 
-    public void setActivityInstanceStatus(ActivityInstance actInst,
-            Integer status, String status_message)
+    public void setActivityInstanceStatus(ActivityInstance actInst, Integer status, String message)
             throws SQLException {
-        String query;
-        if (status.equals(WorkStatus.STATUS_CANCELLED)
-                || status.equals(WorkStatus.STATUS_COMPLETED)
-                || status.equals(WorkStatus.STATUS_FAILED)) {
-            query = "update ACTIVITY_INSTANCE set STATUS_CD=?, STATUS_MESSAGE=?, END_DT="+nowPrecision() +
-                    " where ACTIVITY_INSTANCE_ID=?";
-        } else {
-            query = "update ACTIVITY_INSTANCE set STATUS_CD=?, STATUS_MESSAGE=?" +
-                    " where ACTIVITY_INSTANCE_ID=?";
-        }
-        Object[] args = new Object[3];
-        if (actInst.getMessage()!=null) {
-            if (status_message==null) status_message = actInst.getMessage();
-            else status_message = actInst.getMessage() + "\n" + status_message;
-            if (status_message.length()>3960) {
-                status_message = status_message.substring(0,3960)
-                        + "\n\nTruncated to 3960 characters\n";
-            }
-        }
-        args[0] = status;
-        args[1] = status_message;
-        args[2] = actInst.getId();
-        db.runUpdate(query, args);
+        setActivityInstanceStatus0(actInst, status, message);
     }
 
     public Long createTransitionInstance(TransitionInstance trans) throws SQLException {
@@ -620,7 +597,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
      * remove existing waiters when a new waiter is registered for the same event
      * @param eventName unique event name
      */
-    private void removeEventWait(String eventName) throws SQLException {
+    public void removeEventWait(String eventName) throws SQLException {
         String query = "delete from EVENT_WAIT_INSTANCE where EVENT_NAME=?";
         db.runUpdate(query, eventName);
         this.recordEventHistory(eventName, EventLog.SUBCAT_DEREGISTER,

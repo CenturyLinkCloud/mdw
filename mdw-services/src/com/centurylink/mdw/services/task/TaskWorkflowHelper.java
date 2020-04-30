@@ -60,6 +60,7 @@ import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.*;
 import com.centurylink.mdw.services.asset.CustomPageLookup;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
+import com.centurylink.mdw.services.process.ActivityLogger;
 import com.centurylink.mdw.services.task.factory.TaskInstanceNotifierFactory;
 import com.centurylink.mdw.services.task.factory.TaskInstanceStrategyFactory;
 import com.centurylink.mdw.task.SubTask;
@@ -273,7 +274,7 @@ public class TaskWorkflowHelper {
     }
 
     static PrioritizationStrategy getPrioritizationStrategy(TaskTemplate taskTemplate, Long processInstanceId, Map<String,String> indexes)
-    throws DataAccessException, StrategyException, ServiceException {
+    throws StrategyException, ServiceException {
         String priorityStrategyAttr = taskTemplate.getAttribute(TaskAttributeConstant.PRIORITY_STRATEGY);
         if (StringUtils.isBlank(priorityStrategyAttr)) {
             return null;
@@ -431,6 +432,9 @@ public class TaskWorkflowHelper {
             forward(destination, comment);
             auditLog(action, userId, destination, comment);
             return;  // forward notifications are handled in forwardTaskInstance()
+        }
+        else if (action.equalsIgnoreCase(TaskAction.CLOSE)) {
+            close(userId, comment);
         }
         else {
             isComplete = true;
@@ -1083,11 +1087,31 @@ public class TaskWorkflowHelper {
         }
     }
 
-    void work() throws ServiceException, DataAccessException {
+    void work() throws DataAccessException {
         taskInstance.setStatusCode(TaskStatus.STATUS_IN_PROGRESS);
-        Map<String,Object> changes = new HashMap<String,Object>();
+        Map<String,Object> changes = new HashMap<>();
         changes.put("TASK_INSTANCE_STATUS", TaskStatus.STATUS_IN_PROGRESS);
         new TaskDataAccess().updateTaskInstance(taskInstance.getTaskInstanceId(), changes, false);
+    }
+
+    void close(Long userId, String comment) throws ServiceException, DataAccessException {
+        close(TaskAction.CLOSE, comment);
+        EventServices eventServices = ServiceLocator.getEventServices();
+        if (getTemplate().isAutoformTask())
+            eventServices.deleteEventWaitInstance("TaskInstance:" + taskInstance.getId());
+        ActivityInstance taskActivityInstance = getActivityInstance(false);
+        try {
+            new TaskDataAccess().setActivityInstanceStatus(taskActivityInstance, WorkStatus.STATUS_CANCELLED,
+                    "Task " + taskInstance.getId() + " closed");
+            if (!getTemplate().isAutoformTask())
+                eventServices.deleteEventWaitInstance("TaskAction-" + taskActivityInstance.getId());
+            User user = UserGroupCache.getUser(userId);
+            ActivityLogger.persist(taskActivityInstance.getProcessInstanceId(), taskActivityInstance.getId(),
+                    StandardLogger.LogLevel.INFO, "Task closed by " + user.getCuid() + ": " + comment);
+        }
+        catch (SQLException ex) {
+            logger.severeException("Error updating activity instance " + taskActivityInstance.getId(), ex);
+        }
     }
 
     private void forward(String destination, String comment)
@@ -1145,11 +1169,14 @@ public class TaskWorkflowHelper {
 
     void close(String action, String comment) throws ServiceException, DataAccessException {
         Integer newStatus = TaskStatus.STATUS_COMPLETED;
-        if (action.equals(TaskAction.CANCEL) || action.equals(TaskAction.ABORT) || action.startsWith(TaskAction.CANCEL + "::"))
+        if (action.equals(TaskAction.CANCEL) || action.startsWith(TaskAction.CANCEL + "::")
+                || action.equals(TaskAction.ABORT) || action.equals(TaskAction.CLOSE))
             newStatus = TaskStatus.STATUS_CANCELLED;
         Map<String,Object> changes = new HashMap<>();
         changes.put("TASK_INSTANCE_STATUS", newStatus);
         changes.put("TASK_INSTANCE_STATE", TaskState.STATE_CLOSED);
+        if (comment != null)
+            changes.put("COMMENTS", comment);
         TaskDataAccess dataAccess = new TaskDataAccess();
         dataAccess.updateTaskInstance(taskInstance.getTaskInstanceId(), changes, true);
         try {
@@ -1162,8 +1189,7 @@ public class TaskWorkflowHelper {
         taskInstance.setStatusCode(newStatus);
     }
 
-    void cancel()
-    throws ServiceException, DataAccessException {
+    void cancel() throws ServiceException, DataAccessException {
         if (taskInstance.isInFinalStatus()) {
             logger.info("Cannot change the state of the TaskInstance to Cancel.");
             return;
@@ -1172,7 +1198,7 @@ public class TaskWorkflowHelper {
         Integer prevState = taskInstance.getStateCode();
         taskInstance.setStateCode(TaskState.STATE_CLOSED);
         taskInstance.setStatusCode(TaskStatus.STATUS_CANCELLED);
-        Map<String,Object> changes = new HashMap<String,Object>();
+        Map<String,Object> changes = new HashMap<>();
         changes.put("TASK_INSTANCE_STATUS", TaskStatus.STATUS_CANCELLED);
         changes.put("TASK_INSTANCE_STATE", TaskState.STATE_CLOSED);
         TaskDataAccess dataAccess = new TaskDataAccess();

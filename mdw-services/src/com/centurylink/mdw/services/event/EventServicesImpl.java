@@ -744,6 +744,19 @@ public class EventServicesImpl implements EventServices {
         }
     }
 
+    public void deleteEventWaitInstance(String eventName) throws DataAccessException {
+        TransactionWrapper transaction = null;
+        EngineDataAccessDB edao = new EngineDataAccessDB();
+        try {
+            transaction = edao.startTransaction();
+            edao.removeEventWait(eventName);
+        } catch (SQLException e) {
+            throw new DataAccessException("Failed to delete event wait instance: " + eventName, e);
+        } finally {
+            edao.stopTransaction(transaction);
+        }
+    }
+
     public void setAttribute(String ownerType, Long ownerId, String attrname, String attrvalue)
             throws DataAccessException {
         TransactionWrapper transaction = null;

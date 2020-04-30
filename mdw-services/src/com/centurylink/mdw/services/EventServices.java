@@ -175,6 +175,7 @@ public interface EventServices {
             throws DataAccessException;
 
     void deleteEventInstance(String eventName) throws DataAccessException;
+    void deleteEventWaitInstance(String eventName) throws DataAccessException;
 
     EventInstance getEventInstance(String eventName) throws DataAccessException;
 
