@@ -250,17 +250,18 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
             params.add(getDbDt(end));
         }
 
+        Integer[] statuses = new Integer[0];
+        if (by.equals("throughput")) {
+            statuses = STUCK;
+        }
         String status = query.getFilter("Status");
         if (status != null) {
             where.append("  and ai.status_cd = ?\n");
             params.add(WorkStatuses.getCode(status));
         }
-
-        Integer[] statuses = new Integer[0];
-        if (by.equals("throughput"))
-            statuses = STUCK;
-        else if (by.equals("completionTime"))
+        else if (by.equals("completionTime")) {
             statuses = new Integer[]{WorkStatus.STATUS_COMPLETED};
+        }
         if (statuses.length > 0) {
             where.append(" and ai.status_cd in (");
             for (int i = 0; i < statuses.length; i++) {

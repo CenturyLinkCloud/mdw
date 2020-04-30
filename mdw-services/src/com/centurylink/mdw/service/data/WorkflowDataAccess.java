@@ -454,7 +454,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
             StringBuilder sql = new StringBuilder();
             if (query.getMax() != Query.MAX_ALL)
                 sql.append(db.pagingQueryPrefix());
-            sql.append("select " + ACTIVITY_INSTANCE_COLS + " from ACTIVITY_INSTANCE ai, PROCESS_INSTANCE pi\n");
+            sql.append("select " + ACTIVITY_INSTANCE_COLS + "\nfrom ACTIVITY_INSTANCE ai, PROCESS_INSTANCE pi\n");
             sql.append(where).append(orderBy);
             if (query.getMax() != Query.MAX_ALL)
                 sql.append(db.pagingQuerySuffix(query.getStart(), query.getMax()));
