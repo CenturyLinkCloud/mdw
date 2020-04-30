@@ -1,2 +1,12 @@
-SmartProcessChild.proc=1002
-readme.md=1
+GET_run.yaml=1
+GET_summary.yaml=1
+GET_{process-instance-id}_values.yaml=1
+InflightAfter.proc=2
+InflightBefore.proc=2
+InflightHandling.test=1
+InflightHandling.yaml=1
+POST_events_{event-id}.yaml=1
+POST_run.yaml=1
+localhost.env=1
+process-apis.postman=1
+readme.md=2

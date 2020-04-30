@@ -1,4 +1,4 @@
-package com.centurylink.mdw.tests.services
+package com.centurylink.mdw.tests.multiver
 
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
@@ -7,10 +7,10 @@ import java.nio.file.Paths
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
 
 svcPkg = 'com.centurylink.mdw.tests.services'
-wfPkg = 'com.centurylink.mdw.tests.workflow'
+mvPkg = 'com.centurylink.mdw.tests.multiver'
 
 def vals = [
-    'asset-path': wfPkg + '/Inflight.proc'
+    'asset-path': mvPkg + '/Inflight.proc'
 ]
 
 def opts = [
@@ -36,7 +36,7 @@ response = submit POST
 assert response.status.code == 200
 
 // get v0.1 def
-vals['asset-path'] = wfPkg + '/InflightBefore.proc'
+vals['asset-path'] = mvPkg + '/InflightBefore.proc'
 def GET = request(svcPkg + '/asset-apis.postman/GET:asset') {
     values = vals
     options = opts
@@ -45,7 +45,7 @@ response = submit GET
 assert response.status.code == 200
 
 // update with v0.1 def
-vals['asset-path'] = wfPkg + '/Inflight.proc'
+vals['asset-path'] = mvPkg + '/Inflight.proc'
 vals['asset-version'] = '0.1'
 vals['proc-def-json'] = response.body
 def PUT = request(svcPkg + '/asset-apis.postman/PUT:asset') {
@@ -62,7 +62,7 @@ logLine('Inflight v0.1: ' + oldProcRun.masterRequestId + ' (' + oldProcRun.insta
 sleep 5
 
 // get v0.2 def
-vals['asset-path'] = wfPkg + '/InflightAfter.proc'
+vals['asset-path'] = mvPkg + '/InflightAfter.proc'
 GET = request(svcPkg + '/asset-apis.postman/GET:asset') {
     values = vals
     options = opts
@@ -71,7 +71,7 @@ response = submit GET
 assert response.status.code == 200
 
 // update with v0.2 def
-vals['asset-path'] = wfPkg + '/Inflight.proc'
+vals['asset-path'] = mvPkg + '/Inflight.proc'
 vals['asset-version'] = '0.2'
 vals['proc-def-json'] = response.body
 PUT = request(svcPkg + '/asset-apis.postman/PUT:asset') {
@@ -105,8 +105,8 @@ verify(valuesResponse) {
 }
 
 Object startProcess(String oldVar) {
-    def vals = ['process-path': wfPkg + '/Inflight.proc']
-    def GET = request(svcPkg + '/process-apis.postman/GET:summary') {
+    def vals = ['process-path': mvPkg + '/Inflight.proc']
+    def GET = request(mvPkg + '/process-apis.postman/GET:summary') {
         values = vals
         options = [captureResult: false]
     }
@@ -114,7 +114,7 @@ Object startProcess(String oldVar) {
     assert resp.status.code == 200
     def sum = new JsonSlurper().parseText(resp.body)
     vals['process-id'] = sum.id
-    GET = request(svcPkg + '/process-apis.postman/GET:run') {
+    GET = request(mvPkg + '/process-apis.postman/GET:run') {
         values = vals
         options = [captureResult: false]
     }
@@ -124,7 +124,7 @@ Object startProcess(String oldVar) {
     procRun.values.oldVar.value = oldVar
     def procRunJson = JsonOutput.toJson(procRun)
     vals['proc-run-json'] = procRunJson
-    def POST = request(svcPkg + '/process-apis.postman/POST:run') {
+    def POST = request(mvPkg + '/process-apis.postman/POST:run') {
         values = vals
         options = [captureResult: false]
     }
@@ -134,7 +134,7 @@ Object startProcess(String oldVar) {
 }
 
 Object notifyProcess(masterRequestId) {
-    def POST = request(svcPkg + '/process-apis.postman/POST:events/{event-id}') {
+    def POST = request(mvPkg + '/process-apis.postman/POST:events/{event-id}') {
         values = ['event-id': masterRequestId]
         options = [captureResult: false]
     }
@@ -147,7 +147,7 @@ Object notifyProcess(masterRequestId) {
  * returns response object to be passed to verify()
  */
 Object getValues(processInstanceId) {
-    def GET = request(svcPkg + '/process-apis.postman/GET:{process-instance-id}/values') {
+    def GET = request(mvPkg + '/process-apis.postman/GET:{process-instance-id}/values') {
         values = ['process-instance-id': processInstanceId]
         options = [captureResult: true]
     }
@@ -172,8 +172,8 @@ Object refreshCache() {
  * so that it has the correct asset archive history.
  */
 void cleanup() {
-    def beforePath = Paths.get(asset(wfPkg + '/InflightBefore.proc').rawFile.path)
-    def inflightPath = Paths.get(asset(wfPkg + '/Inflight.proc').rawFile.path)
+    def beforePath = Paths.get(asset(mvPkg + '/InflightBefore.proc').rawFile.path)
+    def inflightPath = Paths.get(asset(mvPkg + '/Inflight.proc').rawFile.path)
     logLine 'copying from: ' + beforePath + ' to: ' + inflightPath
     Files.copy(beforePath, inflightPath, REPLACE_EXISTING)
 
