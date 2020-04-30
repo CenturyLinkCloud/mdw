@@ -50,7 +50,7 @@ public class TaskAction implements Serializable, Jsonable, Comparable<TaskAction
     public static final String SAVE = "Save";
     public static final String CLOSE = "Close";
 
-    public static final String[] STANDARD_ACTIONS = { CREATE, ASSIGN, CLAIM, RELEASE, CANCEL, COMPLETE, RETRY, FORWARD, ABORT, WORK, SAVE };
+    public static final String[] STANDARD_ACTIONS = { CREATE, ASSIGN, CLAIM, RELEASE, CANCEL, CLOSE, COMPLETE, RETRY, FORWARD, ABORT, WORK, SAVE };
 
     private boolean custom;
     private String taskActionName;
