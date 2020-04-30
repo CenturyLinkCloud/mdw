@@ -64,17 +64,29 @@ public class ActivityCache implements CacheService {
             process = ProcessCache.getProcess(process.getId());
             for (Activity activity : process.getActivities()) {
                 if (implementor.equals(activity.getImplementor())) {
-                    activity.setPackageName(process.getPackageName());
-                    activity.setProcessName(process.getName());
-                    activity.setProcessVersion(process.getVersionString());
-                    activity.setProcessId(process.getId());
+                    setProcessInfo(activity, process);
                     loadedActivities.add(activity);
+                }
+            }
+            for (Process embedded : process.getSubprocesses()) {
+                for (Activity activity : embedded.getActivities()) {
+                    if (implementor.equals(activity.getImplementor())) {
+                        setProcessInfo(activity, process);
+                        loadedActivities.add(activity);
+                    }
                 }
             }
         }
         long elapsed = System.currentTimeMillis() - before;
         logger.debug(implementor + " activities loaded in " + elapsed + " ms");
         return loadedActivities;
+    }
+
+    private static void setProcessInfo(Activity activity, Process process) {
+        activity.setPackageName(process.getPackageName());
+        activity.setProcessName(process.getName());
+        activity.setProcessVersion(process.getVersionString());
+        activity.setProcessId(process.getId());
     }
 
     @Override
