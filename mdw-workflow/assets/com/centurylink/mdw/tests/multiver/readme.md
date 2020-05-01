@@ -1,7 +1,7 @@
 # MDW Multiver Tests
 Automated tests related to multiple simultaneous asset versions.
 
-Note: InflightHandling.test should only be run in isolation since it updates assets and refreshes 
+Note: DynamicUpdate.test should only be run in isolation since it updates assets and refreshes 
 the server cache.  It's excluded from CI testing but can be executed by itself in MDWHub.
 
 ## Dependencies

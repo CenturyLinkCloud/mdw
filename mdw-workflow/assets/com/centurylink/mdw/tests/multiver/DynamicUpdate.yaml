@@ -1,4 +1,4 @@
-test: InflightHandling
+test: DynamicUpdate
 request:
   url: 'http://localhost:8080/mdw/api/Processes/${oldInstId}/values'
   method: GET
@@ -18,7 +18,7 @@ response:
         "value": "from InflightBefore"
       }
     }
-test: InflightHandling
+test: DynamicUpdate
 request:
   url: 'http://localhost:8080/mdw/api/Processes/${newInstId}/values'
   method: GET
