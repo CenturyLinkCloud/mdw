@@ -1,5 +1,21 @@
 # Change Log
 
+## [6.1.34](https://github.com/CenturyLinkCloud/mdw/tree/6.1.34) (2020-05-01)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.34-SNAPSHOT...6.1.34)
+
+**Implemented enhancements:**
+
+- Close action for manual tasks [\#840](https://github.com/CenturyLinkCloud/mdw/issues/840)
+- Activity logging when an instance is skipped or retried [\#839](https://github.com/CenturyLinkCloud/mdw/issues/839)
+- Ability to enable activity timings globally [\#838](https://github.com/CenturyLinkCloud/mdw/issues/838)
+- Default values for READ\_TIMEOUT and CONNECT\_TIMEOUT in HTTP adapters [\#828](https://github.com/CenturyLinkCloud/mdw/issues/828)
+
+**Closed issues:**
+
+- Activity logging persists some debug messages regardless of configured level [\#837](https://github.com/CenturyLinkCloud/mdw/issues/837)
+- Workflow dates are not displayed correctly in Safari [\#836](https://github.com/CenturyLinkCloud/mdw/issues/836)
+- Dashboard and milestones compatibility with mdw-mobile [\#835](https://github.com/CenturyLinkCloud/mdw/issues/835)
+
 ## [6.1.33](https://github.com/CenturyLinkCloud/mdw/tree/6.1.33) (2020-04-03)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.32...6.1.33)
 
