@@ -49,7 +49,7 @@ activities:
           }
 
           public Object execute(Map<String,Object> variables) throws JavaExecutionException {
-              variables.put("oldVar", "from InflightAfter");
+              variables.put("oldVar", "from InflightBefore");
               return null;
           }
 
