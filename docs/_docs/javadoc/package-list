@@ -88,6 +88,7 @@ com.centurylink.mdw.service.data
 com.centurylink.mdw.service.data.activity
 com.centurylink.mdw.service.data.event
 com.centurylink.mdw.service.data.process
+com.centurylink.mdw.service.data.request
 com.centurylink.mdw.service.data.task
 com.centurylink.mdw.service.data.user
 com.centurylink.mdw.service.handler

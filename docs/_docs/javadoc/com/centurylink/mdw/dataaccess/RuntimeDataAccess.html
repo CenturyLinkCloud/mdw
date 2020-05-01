@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6,"i8":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":6,"i7":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -123,44 +123,40 @@ var activeTableTab = "activeTableTab";
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ActivityList.html" title="class in com.centurylink.mdw.model.workflow">ActivityList</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/RuntimeDataAccess.html#getActivityInstanceList-com.centurylink.mdw.common.service.Query-">getActivityInstanceList</a></span>(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
-</tr>
-<tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../../../../com/centurylink/mdw/model/event/EventLog.html" title="class in com.centurylink.mdw.model.event">EventLog</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/RuntimeDataAccess.html#getEventLogs-java.lang.String-java.lang.String-java.lang.String-java.lang.Long-">getEventLogs</a></span>(java.lang.String&nbsp;pEventName,
             java.lang.String&nbsp;pEventSource,
             java.lang.String&nbsp;pEventOwner,
             java.lang.Long&nbsp;pEventOwnerId)</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/RuntimeDataAccess.html#getProcessInstance-java.lang.Long-">getProcessInstance</a></span>(java.lang.Long&nbsp;instanceId)</code>
 <div class="block">Same as getProcessInstanceAll(), except returns null if not found.</div>
 </td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/RuntimeDataAccess.html#getProcessInstanceAll-java.lang.Long-">getProcessInstanceAll</a></span>(java.lang.Long&nbsp;procInstId)</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/RuntimeDataAccess.html#getProcessInstanceBase-java.lang.Long-">getProcessInstanceBase</a></span>(java.lang.Long&nbsp;procInstId)</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/Linked.html" title="class in com.centurylink.mdw.model.workflow">Linked</a>&lt;<a href="../../../../com/centurylink/mdw/model/workflow/ProcessInstance.html" title="class in com.centurylink.mdw.model.workflow">ProcessInstance</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/RuntimeDataAccess.html#getProcessInstanceCallHierarchy-java.lang.Long-">getProcessInstanceCallHierarchy</a></span>(java.lang.Long&nbsp;processInstanceId)</code>
 <div class="block">Returns the top-level linked process in the call chain for the specified instance.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessList.html" title="class in com.centurylink.mdw.model.workflow">ProcessList</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/RuntimeDataAccess.html#getProcessInstanceList-java.util.Map-int-int-java.lang.String-">getProcessInstanceList</a></span>(java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;criteria,
                       int&nbsp;pageIndex,
                       int&nbsp;pageSize,
                       java.lang.String&nbsp;orderBy)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessList.html" title="class in com.centurylink.mdw.model.workflow">ProcessList</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/RuntimeDataAccess.html#getProcessInstanceList-java.util.Map-java.util.List-java.util.Map-int-int-java.lang.String-">getProcessInstanceList</a></span>(java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;criteria,
                       java.util.List&lt;java.lang.String&gt;&nbsp;variableNames,
@@ -171,7 +167,7 @@ var activeTableTab = "activeTableTab";
 <div class="block">Include variables in returned list, and use variable values criteria in selecting.</div>
 </td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/centurylink/mdw/model/workflow/ProcessList.html" title="class in com.centurylink.mdw.model.workflow">ProcessList</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/dataaccess/RuntimeDataAccess.html#getProcessInstanceList-java.util.Map-java.util.Map-int-int-java.lang.String-">getProcessInstanceList</a></span>(java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;criteria,
                       java.util.Map&lt;java.lang.String,java.lang.String&gt;&nbsp;variables,
@@ -289,20 +285,6 @@ var activeTableTab = "activeTableTab";
                                    java.lang.String&nbsp;orderBy)
                             throws <a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <div class="block">Include variables in returned list, and use variable values criteria in selecting.</div>
-<dl>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
-</dl>
-</li>
-</ul>
-<a name="getActivityInstanceList-com.centurylink.mdw.common.service.Query-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getActivityInstanceList</h4>
-<pre><a href="../../../../com/centurylink/mdw/model/workflow/ActivityList.html" title="class in com.centurylink.mdw.model.workflow">ActivityList</a>&nbsp;getActivityInstanceList(<a href="../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
-                              throws <a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>

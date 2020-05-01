@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10};
+var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -188,48 +188,68 @@ extends <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAcce
               java.lang.String&nbsp;message)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>protected java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#buildOrderBy-com.centurylink.mdw.common.service.Query-">buildOrderBy</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#buildActivityInstance-java.sql.ResultSet-">buildActivityInstance</a></span>(java.sql.ResultSet&nbsp;rs)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#buildWhere-com.centurylink.mdw.common.service.Query-">buildWhere</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#buildActivityOrderBy-com.centurylink.mdw.common.service.Query-">buildActivityOrderBy</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
 <tr id="i3" class="rowColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#buildActivityWhere-com.centurylink.mdw.common.service.Query-">buildActivityWhere</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i4" class="altColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#buildProcessOrderBy-com.centurylink.mdw.common.service.Query-">buildProcessOrderBy</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i5" class="rowColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#buildProcessWhere-com.centurylink.mdw.common.service.Query-">buildProcessWhere</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#getActivityInstance-java.lang.Long-">getActivityInstance</a></span>(java.lang.Long&nbsp;instanceId)</code>&nbsp;</td>
+</tr>
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#getActivityInstance-java.lang.Long-java.lang.Long-">getActivityInstance</a></span>(java.lang.Long&nbsp;processInstanceId,
                    java.lang.Long&nbsp;activityId)</code>
 <div class="block">Get latest activity instance for process instance and id.</div>
 </td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i8" class="altColor">
+<td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/ActivityList.html" title="class in com.centurylink.mdw.model.workflow">ActivityList</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#getActivityInstances-com.centurylink.mdw.common.service.Query-">getActivityInstances</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
+</tr>
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/util/log/ActivityLog.html" title="class in com.centurylink.mdw.util.log">ActivityLog</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#getActivityLog-java.lang.Long-">getActivityLog</a></span>(java.lang.Long&nbsp;activityInstanceId)</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i10" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#getLatestProcessInstanceComments-java.lang.Long-">getLatestProcessInstanceComments</a></span>(java.lang.Long&nbsp;processId)</code>
 <div class="block">Useful for inferring process name and version without definition.</div>
 </td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i11" class="rowColor">
 <td class="colFirst"><code>protected java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#getProcessIdsClause-java.lang.String:A-">getProcessIdsClause</a></span>(java.lang.String[]&nbsp;processIds)</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i12" class="altColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#getProcessInstanceCount-com.centurylink.mdw.common.service.Query-">getProcessInstanceCount</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
+<tr id="i13" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/workflow/ProcessList.html" title="class in com.centurylink.mdw.model.workflow">ProcessList</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#getProcessInstances-com.centurylink.mdw.common.service.Query-">getProcessInstances</a></span>(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</code>&nbsp;</td>
 </tr>
-<tr id="i9" class="rowColor">
+<tr id="i14" class="altColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/util/log/ActivityLog.html" title="class in com.centurylink.mdw.util.log">ActivityLog</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#getProcessLog-java.lang.Long-boolean-">getProcessLog</a></span>(java.lang.Long&nbsp;processInstanceId,
              boolean&nbsp;withActivities)</code>&nbsp;</td>
 </tr>
-<tr id="i10" class="altColor">
+<tr id="i15" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/util/log/ActivityLog.html" title="class in com.centurylink.mdw.util.log">ActivityLog</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/service/data/WorkflowDataAccess.html#getProcessLog-java.lang.Long-java.lang.Long:A-">getProcessLog</a></span>(java.lang.Long&nbsp;processInstanceId,
              java.lang.Long[]&nbsp;activityInstanceIds)</code>&nbsp;</td>
@@ -240,7 +260,7 @@ extends <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAcce
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.centurylink.mdw.dataaccess.db.<a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html" title="class in com.centurylink.mdw.dataaccess.db">CommonDataAccess</a></h3>
-<code><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#addAttributes0-java.lang.String-java.lang.Long-java.util.List-">addAttributes0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#addValue0-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">addValue0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#addValues0-java.lang.String-java.lang.String-java.util.Map-">addValues0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#buildProcessInstance-java.sql.ResultSet-">buildProcessInstance</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#createVariable-java.lang.Long-com.centurylink.mdw.model.variable.VariableInstance-">createVariable</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#createVariable0-java.lang.Long-com.centurylink.mdw.model.variable.VariableInstance-">createVariable0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#deleteAttributes0-java.lang.String-java.lang.Long-">deleteAttributes0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#deleteOverflowAttributes-java.lang.String-">deleteOverflowAttributes</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#deleteValue-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">deleteValue</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#deleteValue0-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">deleteValue0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#deleteValues0-java.lang.String-java.lang.String-">deleteValues0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#deleteVariable-com.centurylink.mdw.model.variable.VariableInstance-">deleteVariable</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#deleteVariable0-com.centurylink.mdw.model.variable.VariableInstance-">deleteVariable0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getActivityElapsedTime0-java.lang.Long-">getActivityElapsedTime0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getAttributes-java.lang.String-java.lang.Long-">getAttributes</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getAttributes0-java.lang.String-java.lang.Long-">getAttributes0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getAttributes1-java.lang.String-java.lang.Long-">getAttributes1</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDatabaseTime--">getDatabaseTime</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDateFormat--">getDateFormat</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDbDt-java.time.Instant-">getDbDt</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDocument-java.lang.Long-">getDocument</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDocument-java.lang.Long-boolean-">getDocument</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDocumentDbAccess--">getDocumentDbAccess</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDocumentId-java.lang.String-java.lang.Long-">getDocumentId</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDt-java.util.Date-">getDt</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getMySqlDateFormat--">getMySqlDateFormat</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getMySqlDt-java.util.Date-">getMySqlDt</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getNextId-java.lang.String-">getNextId</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getOracleDateFormat--">getOracleDateFormat</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getOracleDt-java.util.Date-">getOracleDt</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getProcessElapsedTime0-java.lang.Long-">getProcessElapsedTime0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getRequestCompletionTime-java.lang.String-java.lang.Long-">getRequestCompletionTime</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getRequestCompletionTime0-java.lang.String-java.lang.Long-">getRequestCompletionTime0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getRoundDate-java.util.Date-com.centurylink.mdw.dataaccess.db.CommonDataAccess.TimeIncrement-">getRoundDate</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getSelectDate-java.lang.String-">getSelectDate</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValue-java.lang.String-java.lang.String-java.lang.String-">getValue</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValue0-java.lang.String-java.lang.String-java.lang.String-">getValue0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValueNames-java.lang.String-">getValueNames</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValueOwnerIds-java.lang.String-java.lang.String-">getValueOwnerIds</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValueOwnerIds-java.lang.String-java.lang.String-java.lang.String-">getValueOwnerIds</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValues-java.lang.String-java.lang.String-">getValues</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValues0-java.lang.String-java.lang.String-">getValues0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#isDocument-java.lang.Long-">isDocument</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#loadDocument-java.lang.Long-boolean-">loadDocument</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#now--">now</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#nowPrecision--">nowPrecision</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#queryRows-java.lang.String-java.lang.String:A-java.lang.String-java.lang.String-int-int-">queryRows</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#rollbackTransaction-com.centurylink.mdw.util.TransactionWrapper-">rollbackTransaction</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setAttribute-java.lang.String-java.lang.Long-java.lang.String-java.lang.String-">setAttribute</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setAttribute0-java.lang.String-java.lang.Long-java.lang.String-java.lang.String-">setAttribute0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setAttributes-java.lang.String-java.lang.Long-java.util.Map-">setAttributes</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setAttributes0-java.lang.String-java.lang.Long-java.util.Map-">setAttributes0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setElapsedTime-java.lang.String-java.lang.Long-java.lang.Long-">setElapsedTime</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setElapsedTime0-java.lang.String-java.lang.Long-java.lang.Long-">setElapsedTime0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setValue-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">setValue</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setValue0-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">setValue0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setValues-java.lang.String-java.lang.String-java.util.Map-">setValues</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setValues0-java.lang.String-java.lang.String-java.util.Map-">setValues0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#startTransaction--">startTransaction</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#stopTransaction-com.centurylink.mdw.util.TransactionWrapper-">stopTransaction</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#updateMembersById-java.lang.Long-java.lang.Long:A-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">updateMembersById</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#updateVariable-com.centurylink.mdw.model.variable.VariableInstance-">updateVariable</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#updateVariable0-com.centurylink.mdw.model.variable.VariableInstance-">updateVariable0</a></code></li>
+<code><a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#addAttributes0-java.lang.String-java.lang.Long-java.util.List-">addAttributes0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#addValue0-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">addValue0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#addValues0-java.lang.String-java.lang.String-java.util.Map-">addValues0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#buildProcessInstance-java.sql.ResultSet-">buildProcessInstance</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#createVariable-java.lang.Long-com.centurylink.mdw.model.variable.VariableInstance-">createVariable</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#createVariable0-java.lang.Long-com.centurylink.mdw.model.variable.VariableInstance-">createVariable0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#deleteAttributes0-java.lang.String-java.lang.Long-">deleteAttributes0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#deleteOverflowAttributes-java.lang.String-">deleteOverflowAttributes</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#deleteValue-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">deleteValue</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#deleteValue0-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">deleteValue0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#deleteValues0-java.lang.String-java.lang.String-">deleteValues0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#deleteVariable-com.centurylink.mdw.model.variable.VariableInstance-">deleteVariable</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#deleteVariable0-com.centurylink.mdw.model.variable.VariableInstance-">deleteVariable0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getActivityElapsedTime0-java.lang.Long-">getActivityElapsedTime0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getAttributes-java.lang.String-java.lang.Long-">getAttributes</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getAttributes0-java.lang.String-java.lang.Long-">getAttributes0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getAttributes1-java.lang.String-java.lang.Long-">getAttributes1</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDatabaseTime--">getDatabaseTime</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDateFormat--">getDateFormat</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDbDt-java.time.Instant-">getDbDt</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDocument-java.lang.Long-">getDocument</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDocument-java.lang.Long-boolean-">getDocument</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDocumentDbAccess--">getDocumentDbAccess</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDocumentId-java.lang.String-java.lang.Long-">getDocumentId</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getDt-java.util.Date-">getDt</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getMySqlDateFormat--">getMySqlDateFormat</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getMySqlDt-java.util.Date-">getMySqlDt</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getNextId-java.lang.String-">getNextId</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getOracleDateFormat--">getOracleDateFormat</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getOracleDt-java.util.Date-">getOracleDt</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getProcessElapsedTime0-java.lang.Long-">getProcessElapsedTime0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getRequestCompletionTime-java.lang.String-java.lang.Long-">getRequestCompletionTime</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getRequestCompletionTime0-java.lang.String-java.lang.Long-">getRequestCompletionTime0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getRoundDate-java.util.Date-com.centurylink.mdw.dataaccess.db.CommonDataAccess.TimeIncrement-">getRoundDate</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getSelectDate-java.lang.String-">getSelectDate</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValue-java.lang.String-java.lang.String-java.lang.String-">getValue</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValue0-java.lang.String-java.lang.String-java.lang.String-">getValue0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValueNames-java.lang.String-">getValueNames</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValueOwnerIds-java.lang.String-java.lang.String-">getValueOwnerIds</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValueOwnerIds-java.lang.String-java.lang.String-java.lang.String-">getValueOwnerIds</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValues-java.lang.String-java.lang.String-">getValues</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#getValues0-java.lang.String-java.lang.String-">getValues0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#isDocument-java.lang.Long-">isDocument</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#loadDocument-java.lang.Long-boolean-">loadDocument</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#now--">now</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#nowPrecision--">nowPrecision</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#queryRows-java.lang.String-java.lang.String:A-java.lang.String-java.lang.String-int-int-">queryRows</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#rollbackTransaction-com.centurylink.mdw.util.TransactionWrapper-">rollbackTransaction</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setActivityInstanceStatus-com.centurylink.mdw.model.workflow.ActivityInstance-java.lang.Integer-java.lang.String-">setActivityInstanceStatus</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setActivityInstanceStatus0-com.centurylink.mdw.model.workflow.ActivityInstance-java.lang.Integer-java.lang.String-">setActivityInstanceStatus0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setAttribute-java.lang.String-java.lang.Long-java.lang.String-java.lang.String-">setAttribute</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setAttribute0-java.lang.String-java.lang.Long-java.lang.String-java.lang.String-">setAttribute0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setAttributes-java.lang.String-java.lang.Long-java.util.Map-">setAttributes</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setAttributes0-java.lang.String-java.lang.Long-java.util.Map-">setAttributes0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setElapsedTime-java.lang.String-java.lang.Long-java.lang.Long-">setElapsedTime</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setElapsedTime0-java.lang.String-java.lang.Long-java.lang.Long-">setElapsedTime0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setValue-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">setValue</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setValue0-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">setValue0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setValues-java.lang.String-java.lang.String-java.util.Map-">setValues</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#setValues0-java.lang.String-java.lang.String-java.util.Map-">setValues0</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#startTransaction--">startTransaction</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#stopTransaction-com.centurylink.mdw.util.TransactionWrapper-">stopTransaction</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#updateMembersById-java.lang.Long-java.lang.Long:A-java.lang.String-java.lang.String-java.lang.String-java.lang.String-">updateMembersById</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#updateVariable-com.centurylink.mdw.model.variable.VariableInstance-">updateVariable</a>, <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAccess.html#updateVariable0-com.centurylink.mdw.model.variable.VariableInstance-">updateVariable0</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -308,14 +328,14 @@ extends <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAcce
 </dl>
 </li>
 </ul>
-<a name="buildWhere-com.centurylink.mdw.common.service.Query-">
+<a name="buildProcessWhere-com.centurylink.mdw.common.service.Query-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>buildWhere</h4>
-<pre>protected&nbsp;java.lang.String&nbsp;buildWhere(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
-                               throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<h4>buildProcessWhere</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;buildProcessWhere(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                                      throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
@@ -331,13 +351,22 @@ extends <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAcce
 <pre>protected&nbsp;java.lang.String&nbsp;getProcessIdsClause(java.lang.String[]&nbsp;processIds)</pre>
 </li>
 </ul>
-<a name="buildOrderBy-com.centurylink.mdw.common.service.Query-">
+<a name="buildProcessOrderBy-com.centurylink.mdw.common.service.Query-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>buildOrderBy</h4>
-<pre>protected&nbsp;java.lang.String&nbsp;buildOrderBy(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</pre>
+<h4>buildProcessOrderBy</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;buildProcessOrderBy(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</pre>
+</li>
+</ul>
+<a name="buildActivityOrderBy-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>buildActivityOrderBy</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;buildActivityOrderBy(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)</pre>
 </li>
 </ul>
 <a name="getLatestProcessInstanceComments-java.lang.Long-">
@@ -417,10 +446,24 @@ extends <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAcce
 </dl>
 </li>
 </ul>
+<a name="getActivityInstance-java.lang.Long-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getActivityInstance</h4>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&nbsp;getActivityInstance(java.lang.Long&nbsp;instanceId)
+                                     throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
+</dl>
+</li>
+</ul>
 <a name="getActivityInstance-java.lang.Long-java.lang.Long-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getActivityInstance</h4>
 <pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&nbsp;getActivityInstance(java.lang.Long&nbsp;processInstanceId,
@@ -430,6 +473,48 @@ extends <a href="../../../../../com/centurylink/mdw/dataaccess/db/CommonDataAcce
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getActivityInstances-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getActivityInstances</h4>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityList.html" title="class in com.centurylink.mdw.model.workflow">ActivityList</a>&nbsp;getActivityInstances(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                                  throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="buildActivityWhere-com.centurylink.mdw.common.service.Query-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>buildActivityWhere</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;buildActivityWhere(<a href="../../../../../com/centurylink/mdw/common/service/Query.html" title="class in com.centurylink.mdw.common.service">Query</a>&nbsp;query)
+                                       throws <a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/centurylink/mdw/dataaccess/DataAccessException.html" title="class in com.centurylink.mdw.dataaccess">DataAccessException</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="buildActivityInstance-java.sql.ResultSet-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>buildActivityInstance</h4>
+<pre>public&nbsp;<a href="../../../../../com/centurylink/mdw/model/workflow/ActivityInstance.html" title="class in com.centurylink.mdw.model.workflow">ActivityInstance</a>&nbsp;buildActivityInstance(java.sql.ResultSet&nbsp;rs)
+                                       throws java.sql.SQLException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.sql.SQLException</code></dd>
 </dl>
 </li>
 </ul>
