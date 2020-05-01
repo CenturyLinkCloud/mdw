@@ -48,7 +48,7 @@ task cliTests(type: Exec) {
 task runTests(type: Exec) {
     def cmd = [getMdwCmd(), 'test', '--stubbing', '--threads=10',
         '--include="**/*.test"',
-        '--exclude="com/centurylink/mdw/zipkin/tests/*.test,com/centurylink/mdw/kafka/KafkaProducer.test,com/centurylink/mdw/tests/workflow/LdapAdapter.test,com/centurylink/mdw/tests/multiver/InflightHandling.test"'
+        '--exclude="com/centurylink/mdw/zipkin/tests/*.test,com/centurylink/mdw/kafka/KafkaProducer.test,com/centurylink/mdw/tests/workflow/LdapAdapter.test,com/centurylink/mdw/tests/multiver/DynamicUpdate.test"'
     ]
     commandLine = cmd
     ignoreExitValue true

@@ -1107,7 +1107,7 @@ public class TaskWorkflowHelper {
                 eventServices.deleteEventWaitInstance("TaskAction-" + taskActivityInstance.getId());
             User user = UserGroupCache.getUser(userId);
             ActivityLogger.persist(taskActivityInstance.getProcessInstanceId(), taskActivityInstance.getId(),
-                    StandardLogger.LogLevel.INFO, "Task closed by " + user.getCuid() + ": " + comment);
+                    StandardLogger.LogLevel.INFO, "Task closed by " + user.getCuid() + (comment == null ? "" : (": " + comment)));
         }
         catch (SQLException ex) {
             logger.severeException("Error updating activity instance " + taskActivityInstance.getId(), ex);

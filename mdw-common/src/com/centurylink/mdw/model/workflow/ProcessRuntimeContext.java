@@ -158,13 +158,13 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
 
     public void logInfo(String message) {
         logger.info(logtag(), message);
-        if (logPersister != null)
+        if (logPersister != null && logger.isInfoEnabled())
             logPersister.persist(getProcessInstanceId(), getInstanceId(), StandardLogger.LogLevel.INFO, message);
     }
 
     public void logDebug(String message) {
         logger.debug(logtag(), message);
-        if (logPersister != null)
+        if (logPersister != null && logger.isDebugEnabled())
             logPersister.persist(getProcessInstanceId(), getInstanceId(), StandardLogger.LogLevel.DEBUG, message);
     }
 
