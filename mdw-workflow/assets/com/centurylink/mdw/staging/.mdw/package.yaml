@@ -1,8 +1,8 @@
 schemaVersion: '6.1'
 name: com.centurylink.mdw.staging
-version: 6.1.34
+version: 6.1.35-SNAPSHOT
 
 dependencies:
-  - com.centurylink.mdw.base v6.1.34
-  - com.centurylink.mdw.node v6.1.34
-  - com.centurylink.mdw.react v6.1.34
+  - com.centurylink.mdw.base v6.1.35-SNAPSHOT
+  - com.centurylink.mdw.node v6.1.35-SNAPSHOT
+  - com.centurylink.mdw.react v6.1.35-SNAPSHOT
