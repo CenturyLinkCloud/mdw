@@ -34,7 +34,7 @@ activities:
   attributes:
     ClassName: Inflight_A5
     Java: |
-      package com.centurylink.mdw.tests.workflow;
+      package com.centurylink.mdw.tests.multiver;
 
       import java.util.Map;
 

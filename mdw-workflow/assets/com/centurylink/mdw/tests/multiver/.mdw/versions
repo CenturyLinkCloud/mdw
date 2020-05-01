@@ -1,7 +1,7 @@
 GET_run.yaml=1
 GET_summary.yaml=1
 GET_{process-instance-id}_values.yaml=1
-Inflight.proc=2
+Inflight.proc=1
 InflightAfter.proc=3
 InflightBefore.proc=3
 InflightHandling.test=2
