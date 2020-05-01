@@ -121,7 +121,7 @@ Object startProcess(String oldVar) {
     resp = submit GET
     assert resp.status.code == 200
     def procRun = new JsonSlurper().parseText(resp.body)
-    procRun.values.oldVar.value = oldVar
+    procRun.values.oldVar = oldVar
     def procRunJson = JsonOutput.toJson(procRun)
     vals['proc-run-json'] = procRunJson
     def POST = request(mvPkg + '/process-apis.postman/POST:run') {

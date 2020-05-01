@@ -45,7 +45,28 @@ activities:
   name: Set oldVar
   implementor: com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity
   attributes:
-    Java: "package com.centurylink.mdw.tests.workflow;\r\n\r\nimport java.util.Map;\r\n\r\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\r\n\r\npublic class SetoldVar_A5 implements JavaExecutor {\r\n\r\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\r\n    }\r\n\r\n    public Object execute(Map<String,Object> variables) throws JavaExecutionException {\r\n        variables.put(\"oldVar\", \"from InflightAfter\");\r\n        return null;\r\n    }\r\n\r\n}\r\n"
+    ClassName: InflightAfter_A5
+    Java: |
+      package com.centurylink.mdw.tests.workflow;
+
+      import java.util.Map;
+
+      import com.centurylink.mdw.java.JavaExecutionException;
+      import com.centurylink.mdw.java.JavaExecutor;
+      import com.centurylink.mdw.java.MdwJavaException;
+      import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
+
+      public class InflightAfter_A5 implements JavaExecutor {
+
+          public void initialize(ActivityRuntimeContext context) throws MdwJavaException {
+          }
+
+          public Object execute(Map<String,Object> variables) throws JavaExecutionException {
+              variables.put("oldVar", "from InflightAfter");
+              return null;
+          }
+
+      }
     WORK_DISPLAY_INFO: x=607,y=149,w=100,h=60
   transitions:
   - id: T2

@@ -1,10 +1,10 @@
 GET_run.yaml=1
 GET_summary.yaml=1
 GET_{process-instance-id}_values.yaml=1
-Inflight.proc=1
-InflightAfter.proc=2
-InflightBefore.proc=2
-InflightHandling.test=1
+Inflight.proc=2
+InflightAfter.proc=3
+InflightBefore.proc=3
+InflightHandling.test=2
 InflightHandling.yaml=1
 POST_events_{event-id}.yaml=1
 POST_run.yaml=1
