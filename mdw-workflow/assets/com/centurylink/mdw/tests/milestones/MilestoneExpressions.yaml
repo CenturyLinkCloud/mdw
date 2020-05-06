@@ -95,7 +95,7 @@ process: # 424
               <bpm:StatusCode>4</bpm:StatusCode>
               <bpm:Parameter Name="inputVar">child11</bpm:Parameter>
               <bpm:Parameter Name="procName">SmartProcessChild</bpm:Parameter>
-              <bpm:Parameter Name="procVer">2.10</bpm:Parameter>
+              <bpm:Parameter Name="procVer">2.11</bpm:Parameter>
           </bpm:SubprocessInstance>
           <bpm:SubprocessInstance>
               <bpm:LogicalProcessName>SmartProcessChild</bpm:LogicalProcessName>

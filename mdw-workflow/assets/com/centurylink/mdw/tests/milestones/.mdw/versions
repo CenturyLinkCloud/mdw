@@ -1,5 +1,5 @@
 MilestoneExpressions.test=1
-MilestoneExpressions.yaml=1
+MilestoneExpressions.yaml=2
 Milestones.test=4
 Milestones.yaml=2
 MilestonesMain.proc=8
@@ -9,7 +9,7 @@ SubTwo.proc=6
 SubTwoSub.proc=4
 e2e.png=1
 e2e_def.png=1
-milestone-expressions.json=1
+milestone-expressions.json=2
 milestones.json=3
 milestones.png=1
 milestones_def.png=1
