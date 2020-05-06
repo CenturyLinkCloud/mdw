@@ -16,12 +16,12 @@ activities:
   attributes:
     WORK_DISPLAY_INFO: x=640,y=140,w=60,h=40
 - id: A3
-  name: Invoke v1.1
+  name: Invoke v2.1
   implementor: com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity
   attributes:
     WORK_DISPLAY_INFO: x=240,y=130,w=100,h=60
     processname: com.centurylink.mdw.tests.multiver/SubprocessMultiver.proc
-    processversion: '[1.1,2)'
+    processversion: '[2.1,3)'
     synchronous: 'true'
   transitions:
   - id: T2

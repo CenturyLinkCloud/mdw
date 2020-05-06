@@ -34,7 +34,7 @@ activities:
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
   attributes:
     Rule: |
-      todaysMood = 'expectant'
+      todaysMood = 'eager'
       before = runtimeContext.process.label
     SCRIPT: Groovy
     WORK_DISPLAY_INFO: x=170,y=110,w=100,h=60
@@ -66,7 +66,6 @@ activities:
 
           public Object execute(Map<String,Object> variables) {
               variables.put("after", context.getProcess().getLabel());
-              variables.put("todaysMood", "jaded");
               return null;
           }
       }

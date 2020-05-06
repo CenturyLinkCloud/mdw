@@ -18,10 +18,10 @@ process: # 10009
     status: Completed
   variable: # 10026
     name: after
-    value: MyEverChangingMoods v0.2
+    value: MyEverChangingMoods v0.4
   variable: # 10024
     name: before
-    value: MyEverChangingMoods v0.2
+    value: MyEverChangingMoods v0.4
   variable: # 10025
     name: todaysMood
     value: jaded
@@ -45,10 +45,10 @@ process: # 10010
     status: Completed
   variable: # 10029
     name: after
-    value: MyEverChangingMoods v0.1
+    value: MyEverChangingMoods v0.3
   variable: # 10027
     name: before
-    value: MyEverChangingMoods v0.1
+    value: MyEverChangingMoods v0.3
   variable: # 10028
     name: todaysMood
     value: eager
