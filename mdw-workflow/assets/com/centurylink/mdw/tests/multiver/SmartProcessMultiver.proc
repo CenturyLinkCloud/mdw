@@ -30,12 +30,12 @@ activities:
     attributes:
       TRANSITION_DISPLAY_INFO: type=Elbow,lx=395,ly=160,xs=344&446,ys=160&160
 - id: A4
-  name: Invoke v2.0
+  name: Invoke v3.0
   implementor: com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity
   attributes:
     WORK_DISPLAY_INFO: x=450,y=130,w=100,h=60
     processname: com.centurylink.mdw.tests.multiver/SubprocessMultiver.proc
-    processversion: '[2.0,3)'
+    processversion: '[3.0,4)'
     synchronous: 'true'
   transitions:
   - id: T3

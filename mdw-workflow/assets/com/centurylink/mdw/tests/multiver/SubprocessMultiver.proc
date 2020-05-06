@@ -16,7 +16,7 @@ activities:
   attributes:
     WORK_DISPLAY_INFO: x=310,y=270,w=60,h=40
 - id: A3
-  name: Set Values 2.1
+  name: Set Values 3.0
   implementor: com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity
   attributes:
     ClassName: SubprocessMultiver_A3
@@ -40,7 +40,7 @@ activities:
           @Override
           public Object execute(Map<String,Object> variables)  {
               variables.put("version", runtimeContext.getProcess().getLabel());
-              variables.put("message", "Hello from version 2.1");
+              variables.put("message", "Hello from version 3.0");
               return null;
           }
       }

@@ -5,5 +5,5 @@ wait process
 verify processes(
         'SmartProcessMultiver',
         'SubprocessMultiver',
-        'com.centurylink.mdw.tests.multiver/SubprocessMultiver v1.1'
+        'com.centurylink.mdw.tests.multiver/SubprocessMultiver v2.1'
 )
