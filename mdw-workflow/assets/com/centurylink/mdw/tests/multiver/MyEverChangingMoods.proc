@@ -1,0 +1,95 @@
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=50,y=120,w=60,h=40
+  transitions:
+  - id: T1
+    to: A4
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=140,ly=140,xs=114&166,ys=140&140
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=700,y=120,w=60,h=40
+- id: A3
+  name: Wait
+  implementor: com.centurylink.mdw.workflow.activity.event.EventWaitActivity
+  attributes:
+    SLA_DISPLAY_UNITS: Hours
+    STATUS_AFTER_TIMEOUT: Cancelled
+    WAIT_EVENT_NAMES: '[["${masterRequestId}",""]]'
+    WORK_DISPLAY_INFO: x=350,y=110,w=100,h=60
+  transitions:
+  - id: T2
+    to: A5
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=490,ly=140,xs=454&526,ys=140&140
+- id: A4
+  name: Init
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    Rule: |
+      todaysMood = 'expectant'
+      before = runtimeContext.process.label
+    SCRIPT: Groovy
+    WORK_DISPLAY_INFO: x=170,y=110,w=100,h=60
+  transitions:
+  - id: T3
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=310,ly=140,xs=274&346,ys=140&140
+- id: A5
+  name: Update
+  implementor: com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity
+  attributes:
+    ClassName: MyEverChangingMoods_A5
+    Java: |
+      package com.centurylink.mdw.tests.multiver;
+
+      import com.centurylink.mdw.java.JavaExecutor;
+      import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
+
+      import java.util.Map;
+
+      public class MyEverChangingMoods_A5 implements JavaExecutor {
+          private ActivityRuntimeContext context;
+
+          public void initialize(ActivityRuntimeContext context) {
+              this.context = context;
+          }
+
+          public Object execute(Map<String,Object> variables) {
+              variables.put("after", context.getProcess().getLabel());
+              variables.put("todaysMood", "jaded");
+              return null;
+          }
+      }
+    WORK_DISPLAY_INFO: x=530,y=110,w=100,h=60
+  transitions:
+  - id: T4
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=665,ly=140,xs=634&696,ys=140&140
+variables:
+  after:
+    type: java.lang.String
+    category: LOCAL
+  before:
+    type: java.lang.String
+    category: LOCAL
+  todaysMood:
+    type: java.lang.String
+    category: LOCAL
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: PUBLIC
+  PerformanceLevel: '0'
+  WORK_DISPLAY_INFO: x=33,y=21,w=221,h=26

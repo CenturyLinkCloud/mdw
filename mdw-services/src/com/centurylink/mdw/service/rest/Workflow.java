@@ -22,6 +22,7 @@ import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetPackageList;
+import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
@@ -122,7 +123,7 @@ public class Workflow extends JsonRestService {
                 JSONObject json = new JsonObject();
                 Process process;
                 if (segments.length == 4) {
-                    process = ProcessCache.getProcess(segments[1] + "/" + segments[2], Asset.parseVersion(segments[3]));
+                    process = ProcessCache.getProcess(segments[1] + "/" + segments[2], AssetVersion.parseVersion(segments[3]));
                     Process latest = ProcessCache.getProcess(process.getPackageName() + "/" + process.getName());
                     // If null it means it is archived but was renamed or removed from current assets
                     if (latest == null || !latest.getId().equals(process.getId()))
@@ -135,8 +136,11 @@ public class Workflow extends JsonRestService {
                 json.put("name", process.getName());
                 json.put("package", process.getPackageName());
                 json.put("version", process.getVersionString());
-                if (process.getId() != null && HierarchyCache.hasMilestones(process.getId())) {
-                    json.put("hasMilestones", true);
+                Process latest = ProcessCache.getProcess(process.getQualifiedName());
+                if (latest != null) {  // not deleted
+                    if (HierarchyCache.hasMilestones(latest.getId())) {
+                        json.put("hasMilestones", true);
+                    }
                 }
                 return json;
             }
@@ -146,7 +150,7 @@ public class Workflow extends JsonRestService {
                 Long instanceId = null;
                 if (segments.length >= 4) {
                     if (segments[3].startsWith("v")) {
-                        query.setFilter("version", Asset.parseVersion(segments[3]));
+                        query.setFilter("version", AssetVersion.parseVersion(segments[3]));
                     }
                     if (segments.length == 5 || !segments[3].startsWith("v")) {
                         instanceId = Long.parseLong(segments.length == 5 ? segments[4] : segments[3]);
@@ -177,8 +181,11 @@ public class Workflow extends JsonRestService {
                     AssetVersionSpec startPageSpec = AssetVersionSpec.parse(assetSpec);
                     json.put("startPageUrl", new CustomPageLookup(startPageSpec, null).getUrl());
                 }
-                if (process.getId() != null && HierarchyCache.hasMilestones(process.getId())) {
-                    json.put("hasMilestones", true);
+                Process latest = ProcessCache.getProcess(process.getQualifiedName());
+                if (latest != null) {  // not deleted
+                    if (HierarchyCache.hasMilestones(latest.getId())) {
+                        json.put("hasMilestones", true);
+                    }
                 }
 
                 return json;

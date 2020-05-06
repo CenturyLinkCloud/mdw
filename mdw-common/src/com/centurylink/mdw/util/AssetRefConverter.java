@@ -21,6 +21,7 @@ import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -43,7 +44,7 @@ public class AssetRefConverter {
             int endIdx = assetRef.getName().lastIndexOf(".proc v");
             proc.setName(assetRef.getName().substring(startIdx, endIdx));
             proc.setLanguage(Asset.PROCESS);
-            proc.setVersion(Asset.parseVersion(assetRef.getName().substring(endIdx + 6)));
+            proc.setVersion(AssetVersion.parseVersion(assetRef.getName().substring(endIdx + 6)));
             proc.setPackageName(assetRef.getName().substring(0, startIdx - 1));
         }
         return proc;
@@ -60,7 +61,7 @@ public class AssetRefConverter {
             int endIdx = assetRef.getName().lastIndexOf(" v");
             asset.setName(assetRef.getName().substring(startIdx, endIdx));
             asset.setLanguage(Asset.getFormat(asset.getName()));
-            asset.setVersion(Asset.parseVersion(assetRef.getName().substring(endIdx + 1)));
+            asset.setVersion(AssetVersion.parseVersion(assetRef.getName().substring(endIdx + 1)));
             asset.setPackageName(assetRef.getName().substring(0, startIdx - 1));
             asset.setLoadDate(new Date());
             // do not load jar assets into memory
@@ -80,7 +81,7 @@ public class AssetRefConverter {
             int startIdx = assetRef.getName().lastIndexOf('/') + 1;
             int endIdx = assetRef.getName().lastIndexOf(" v");
             task.setName(assetRef.getName().substring(startIdx, endIdx));
-            task.setVersion(Asset.parseVersion(assetRef.getName().substring(endIdx + 1)));
+            task.setVersion(AssetVersion.parseVersion(assetRef.getName().substring(endIdx + 1)));
             task.setPackageName(assetRef.getName().substring(0, startIdx - 1));
         }
         return task;

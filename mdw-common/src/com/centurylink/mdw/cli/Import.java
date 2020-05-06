@@ -206,7 +206,7 @@ public class Import extends Setup {
     /**
      * This is for importing project assets from Git into an environment.
      */
-    public void importAssetsFromGit(ProgressMonitor... monitors) throws IOException {
+    public void importAssetsFromGit(boolean assetRefUpdate) throws IOException {
         if (inProgress)
             throw new IOException("Asset import already in progress...");
 
@@ -235,13 +235,15 @@ public class Import extends Setup {
             // Clear cached previous asset revisions
             versionControl.clear();
 
-            // Capture new Refs in ASSET_REF after import (Git pull) and insert/update VALUE table
-            Checkpoint checkpoint = new Checkpoint(getEngineAssetRoot(), versionControl, versionControl.getCommit(), pooledConn);
-            try {
-                checkpoint.updateRefs(true);
-            }
-            catch (SQLException ex) {
-                throw new IOException(ex.getMessage(), ex);
+            if (assetRefUpdate) {
+                // Capture new Refs in ASSET_REF after import (Git pull) and insert/update VALUE table
+                Checkpoint checkpoint = new Checkpoint(getEngineAssetRoot(), versionControl, versionControl.getCommit(), pooledConn);
+                try {
+                    checkpoint.updateRefs(true);
+                }
+                catch (SQLException ex) {
+                    throw new IOException(ex.getMessage(), ex);
+                }
             }
         }
         catch (Throwable ex) {
@@ -288,16 +290,6 @@ public class Import extends Setup {
             // perform import (Git pull)
             git = new Git(vcInfo, "hardCheckout", vcInfo.getBranch(), isHardReset());
             git.run(monitors);
-
-            // capture new Refs in ASSET_REF after import (Git pull)
-            DbInfo dbInfo = new DbInfo(props);
-            Checkpoint checkpoint = new Checkpoint(vcInfo, getAssetRoot(), dbInfo);
-            try {
-                checkpoint.run(monitors).updateRefs();
-            }
-            catch (SQLException ex) {
-                throw new IOException(ex.getMessage(), ex);
-            }
         }
         catch (Throwable ex) {
             if (ex instanceof IOException)

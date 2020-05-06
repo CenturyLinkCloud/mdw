@@ -720,7 +720,7 @@ public class VersionControlGit implements VersionControl {
     public byte[] readFromCommit(String commitId, String path) throws Exception {
         try (RevWalk revWalk = new RevWalk(localRepo)) {
             RevCommit commit = revWalk.parseCommit(ObjectId.fromString(commitId));
-            // use commit's tree find the path
+            // use commit's tree to find the path
             RevTree tree = commit.getTree();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             try (TreeWalk treeWalk = new TreeWalk(localRepo)) {

@@ -15,6 +15,8 @@
  */
 package com.centurylink.mdw.dataaccess;
 
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,5 +68,9 @@ public class AssetRef {
         else {
             return null;
         }
+    }
+
+    public String getVersion() {
+        return AssetVersionSpec.parse(name).getVersion();
     }
 }

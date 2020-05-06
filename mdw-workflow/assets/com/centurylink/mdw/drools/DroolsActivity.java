@@ -111,12 +111,11 @@ public class DroolsActivity extends DefaultActivityImpl implements RuleActivity 
      * Override to apply additional or non-standard conditions.
      */
     protected KieBase getKnowledgeBase(String name, String assetVersion, String modifier) throws ActivityException {
-        Map<String,String> customAttrs = null;
         KnowledgeBaseAsset kbrs;
         if (assetVersion == null)
-            kbrs = DroolsKnowledgeBaseCache.getKnowledgeBaseAsset(name, modifier, customAttrs, getClassLoader());
+            kbrs = DroolsKnowledgeBaseCache.getKnowledgeBaseAsset(name, modifier, getClassLoader());
         else
-            kbrs = DroolsKnowledgeBaseCache.getKnowledgeBaseAsset(new AssetVersionSpec(name, assetVersion), modifier, customAttrs, getClassLoader());
+            kbrs = DroolsKnowledgeBaseCache.getKnowledgeBaseAsset(new AssetVersionSpec(name, assetVersion), modifier, getClassLoader());
 
         if (kbrs == null) {
             return null;

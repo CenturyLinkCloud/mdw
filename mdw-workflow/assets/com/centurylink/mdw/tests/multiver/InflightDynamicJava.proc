@@ -3,29 +3,29 @@ activities:
   name: Start
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
   attributes:
-    WORK_DISPLAY_INFO: x=70,y=100,w=60,h=40
+    WORK_DISPLAY_INFO: x=80,y=160,w=60,h=40
   transitions:
   - id: T1
     to: A3
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: type=Elbow,lx=160,ly=120,xs=134&186,ys=120&120
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=170,ly=180,xs=144&196,ys=180&180
 - id: A2
   name: Stop
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
   attributes:
-    WORK_DISPLAY_INFO: x=480,y=100,w=60,h=40
+    WORK_DISPLAY_INFO: x=490,y=160,w=60,h=40
 - id: A3
   name: Pause
   implementor: com.centurylink.mdw.base.PauseActivity
   attributes:
-    WORK_DISPLAY_INFO: x=190,y=100,w=60,h=40
+    WORK_DISPLAY_INFO: x=200,y=160,w=60,h=40
   transitions:
   - id: T2
     to: A4
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: type=Elbow,lx=280,ly=120,xs=254&306,ys=120&120
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=290,ly=180,xs=264&316,ys=180&180
 - id: A4
   name: JavaStuff
   implementor: com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity
@@ -34,33 +34,25 @@ activities:
     Java: |
       package com.centurylink.mdw.tests.cloud;
 
-      import java.util.Map;
-
       import com.centurylink.mdw.java.JavaExecutionException;
       import com.centurylink.mdw.java.JavaExecutor;
-      import com.centurylink.mdw.java.MdwJavaException;
-      import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
+
+      import java.util.Map;
 
       public class InflightDynamicJava_A4 implements JavaExecutor {
-          private ActivityRuntimeContext context;
-
-          public void initialize(ActivityRuntimeContext context) throws MdwJavaException {
-              this.context = context;
-          }
 
           public Object execute(Map<String,Object> variables) throws JavaExecutionException  {
-              context.logDebug("Executing " + context.getActivity().getName());
               variables.put("version", "original");
               return null;
           }
       }
-    WORK_DISPLAY_INFO: x=310,y=90,w=100,h=60
+    WORK_DISPLAY_INFO: x=320,y=150,w=100,h=60
   transitions:
   - id: T3
     to: A2
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: type=Elbow,lx=445,ly=120,xs=414&476,ys=120&120
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=455,ly=180,xs=424&486,ys=180&180
 variables:
   version:
     type: java.lang.String
@@ -70,3 +62,8 @@ attributes:
   NodeStyle: BoxIcon
   PROCESS_VISIBILITY: PUBLIC
   WORK_DISPLAY_INFO: x=24,y=27,w=196,h=26
+textNotes:
+- id: N1
+  content: For manual testing
+  attributes:
+    WORK_DISPLAY_INFO: x=70,y=80,w=150,h=30

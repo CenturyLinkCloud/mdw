@@ -17,6 +17,7 @@ package com.centurylink.mdw.services.asset;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Templates;
+import com.centurylink.mdw.cache.impl.AssetHistory;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
@@ -318,7 +319,7 @@ public class AssetServicesImpl implements AssetServices {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Cannot create meta dir: " + metaDir.getAbsolutePath());
 
         Package pkg = new Package();
-        pkg.setSchemaVersion(Asset.formatVersion(DataAccess.currentSchemaVersion));
+        pkg.setSchemaVersion(AssetVersion.formatVersion(DataAccess.currentSchemaVersion));
         pkg.setVersion(new MdwVersion(1));
         try {
             JSONObject json = pkg.getJson();
@@ -553,6 +554,13 @@ public class AssetServicesImpl implements AssetServices {
             }
             else {
                 AssetInfo asset = getGhostAsset(pkgDir, assetName);
+                if (asset == null) {
+                    // try history in case asset was deleted
+                    AssetVersion oldVersion = AssetHistory.getAssetVersion(new AssetVersionSpec(pkgDir.getPackageName() + "/" + assetName));
+                    if (oldVersion != null) {
+                        asset = new AssetInfo(getAssetRoot(), oldVersion.getPath());
+                    }
+                }
                 if (asset == null)
                     throw new DataAccessException("Missing asset file for path: " + pkgName + "/" + assetName);
                 return asset;

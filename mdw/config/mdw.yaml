@@ -15,6 +15,7 @@ database:
 
 asset:
   location: ../mdw-workflow/assets
+  history.days: 365 # need history for multiver autotests to work
 
 git:
   local.path: ../

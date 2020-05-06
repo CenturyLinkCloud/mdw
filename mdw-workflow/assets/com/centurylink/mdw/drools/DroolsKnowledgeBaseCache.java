@@ -15,27 +15,6 @@
  */
 package com.centurylink.mdw.drools;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.TreeMap;
-
-import org.kie.api.KieBase;
-import org.kie.api.KieBaseConfiguration;
-import org.kie.api.KieServices;
-import org.kie.api.builder.KieBuilder;
-import org.kie.api.builder.KieFileSystem;
-import org.kie.api.builder.Message;
-import org.kie.api.builder.Results;
-import org.kie.api.runtime.KieContainer;
-
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
@@ -50,6 +29,20 @@ import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.kie.api.KieBase;
+import org.kie.api.KieBaseConfiguration;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.Message;
+import org.kie.api.builder.Results;
+import org.kie.api.runtime.KieContainer;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.*;
 
 @RegisteredService(CacheService.class)
 public class DroolsKnowledgeBaseCache implements PreloadableCache  {
@@ -65,15 +58,11 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
 
     }
 
-    public DroolsKnowledgeBaseCache(Map<String,String> params) {
-
-    }
-
     public void initialize(Map<String,String> params) {
         if (params != null) {
             String preLoadString = params.get("PreLoaded");
             if (preLoadString != null && preLoadString.trim().length() > 0) {
-                List<String> preLoadList = new ArrayList<String>();
+                List<String> preLoadList = new ArrayList<>();
                 preLoaded = preLoadString.split("\\\n");
                 for (int i = 0; i < preLoaded.length; i++) {
                     String preLoad = preLoaded[i].trim();
@@ -93,13 +82,9 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
         return getKnowledgeBaseAsset(name, modifier, null);
     }
 
-    public static KnowledgeBaseAsset getKnowledgeBaseAsset(String name, String modifier, Map<String,String> attributes) {
-        return getKnowledgeBaseAsset(name, modifier, null, getDefaultClassLoader());
-    }
+    public static synchronized KnowledgeBaseAsset getKnowledgeBaseAsset(String name, String modifier, ClassLoader loader) {
 
-    public static synchronized KnowledgeBaseAsset getKnowledgeBaseAsset(String name, String modifier, Map<String,String> attributes, ClassLoader loader) {
-
-        Key key = new Key(name, modifier, attributes, loader);
+        Key key = new Key(name, modifier, loader);
 
         KnowledgeBaseAsset knowledgeBaseAsset = kbaseMap.get(key.toString());
 
@@ -117,8 +102,8 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
     }
 
     // load asset based on specified version/range
-    public static synchronized KnowledgeBaseAsset getKnowledgeBaseAsset(AssetVersionSpec drlAssetVerSpec, String modifier, Map<String,String> attributes, ClassLoader loader) {
-        Key key = new Key(drlAssetVerSpec, modifier, attributes, loader);
+    public static synchronized KnowledgeBaseAsset getKnowledgeBaseAsset(AssetVersionSpec drlAssetVerSpec, String modifier, ClassLoader loader) {
+        Key key = new Key(drlAssetVerSpec, modifier, loader);
         KnowledgeBaseAsset knowledgeBaseAsset = kbaseMap.get(key.toString());
         if (knowledgeBaseAsset == null) {
             try {
@@ -134,15 +119,11 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
     }
 
     public static KieBase getKnowledgeBase(String name) {
-        return getKnowledgeBase(name, null, null);
+        return getKnowledgeBase(name, null);
     }
 
     public static KieBase getKnowledgeBase(String name, String modifier) {
-        return getKnowledgeBase(name, modifier, null);
-    }
-
-    public static KieBase getKnowledgeBase(String name, String modifier, Map<String,String> attributes) {
-        KnowledgeBaseAsset kbrs = getKnowledgeBaseAsset(name, modifier, attributes);
+        KnowledgeBaseAsset kbrs = getKnowledgeBaseAsset(name, modifier);
         if (kbrs == null)
             return null;
         else
@@ -276,47 +257,36 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
         Asset asset = null;
 
         if (key.drlVersionSpec != null) {
-            asset = key.attributes == null ? AssetCache.getAsset(key.drlVersionSpec) : AssetCache.getAsset(key.drlVersionSpec, key.attributes);
+            asset = AssetCache.getAsset(key.drlVersionSpec);
         }
         if (asset != null)
             return asset;
 
         String assetName = key.name == null ? key.drlVersionSpec.getQualifiedName() : key.name;
 
-        if (key.attributes == null) {
-            asset = AssetCache.getAsset(assetName, LANGUAGES);
-        }
-        else {
-            for (int i = 0; i < LANGUAGES.length && asset == null; i++) {
-                asset = AssetCache.getLatestAssets(assetName, LANGUAGES[i], key.attributes);
-            }
-        }
-        return asset;
+        return AssetCache.getAsset(assetName, LANGUAGES);
     }
 
 
     /**
-     * eg: MyRuleName~myModifier{attr1=attr1val,attr2=attr2val}#classLoader
-     * eg with versionspec: MyPackgeName/MyRuleName v[0.1,1)~myModifier{attr1=attr1val,attr2=attr2val}#classLoader
+     * eg: MyRuleName~myModifier#classLoader
+     * eg with versionspec: MyPackgeName/MyRuleName v[0.1,1)~myModifier#classLoader
      */
     static class Key {
         String name;
         String modifier;
-        Map<String,String> attributes;
         AssetVersionSpec drlVersionSpec;
         ClassLoader loader;
 
-        public Key(String name, String mod, Map<String,String> attrs, ClassLoader loader) {
+        public Key(String name, String mod, ClassLoader loader) {
             this.name = name;
             this.modifier = mod;
-            this.attributes = attrs;
             this.loader = loader;
         }
 
-        public Key(AssetVersionSpec drlVersionSepc, String modifier, Map<String, String> attributes, ClassLoader loader) {
+        public Key(AssetVersionSpec drlVersionSepc, String modifier, ClassLoader loader) {
             super();
             this.modifier = modifier;
-            this.attributes = attributes;
             this.drlVersionSpec = drlVersionSepc;
             this.loader = loader;
         }
@@ -327,11 +297,6 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
             if (hash > 0) {
                 //TODO : how to convert a string to class loader
                 toParse = toParse.substring(0, hash);
-            }
-            int brace = toParse.indexOf('{');
-            if (brace >= 0) {
-                attributes = stringToMap(toParse.substring(brace, toParse.lastIndexOf('}') + 1));
-                toParse = toParse.substring(0, brace);
             }
             int squig = toParse.indexOf('~');
             if (squig >= 0) {
@@ -350,40 +315,9 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
             String key = drlVersionSpec != null ? drlVersionSpec.toString() : name;
             if (modifier != null)
                 key += "~" + modifier;
-            if (attributes != null && !attributes.isEmpty())
-                key += mapToString(attributes);
             if (loader != null)
                 key += "#" + loader;
             return key;
-        }
-
-        String mapToString(Map<String,String> map) {
-            if (map == null)
-                return "";
-
-            String string = "{";
-            int i = 0;
-            for (String key : map.keySet()) {
-                string += key + "=" + map.get(key);
-                if (i < map.keySet().size() - 1)
-                    string += ",";
-                i++;
-            }
-            string += "}";
-            return string;
-        }
-
-        Map<String,String> stringToMap(String string) {
-            Map<String,String> map = null;
-            if (string != null) {
-                map = new HashMap<String,String>();
-                String toParse = string.substring(string.indexOf('{') + 1, string.lastIndexOf('}'));
-                for (String attr : toParse.split(",")) {
-                    int eq = attr.indexOf('=');
-                    map.put(attr.substring(0, eq), attr.substring(eq + 1));
-                }
-            }
-            return map;
         }
     }
 
@@ -398,9 +332,5 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
             return substitutionResult.getOutput();
         }
         return in;
-    }
-
-    public static ClassLoader getDefaultClassLoader() {
-        return DroolsKnowledgeBaseCache.class.getClassLoader();
     }
 }

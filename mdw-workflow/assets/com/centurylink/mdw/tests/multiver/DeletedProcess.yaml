@@ -1,0 +1,17 @@
+process: # 10002
+  name: Deleted
+  instance: 1
+  activity: # 1 "2020-05-04 09:46:10.509"
+    name: Start
+    status: Completed
+  activity: # 3 "2020-05-04 09:46:10.533"
+    name: |
+      Set
+      Version
+    status: Completed
+  activity: # 2 "2020-05-04 09:46:10.552"
+    name: Stop
+    status: Completed
+  variable: # 10004
+    name: version
+    value: Deleted v0.1

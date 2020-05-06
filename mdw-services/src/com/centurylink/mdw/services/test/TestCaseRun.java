@@ -27,6 +27,7 @@ import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.event.AdapterStubRequest;
 import com.centurylink.mdw.model.event.AdapterStubResponse;
 import com.centurylink.mdw.model.listener.Listener;
@@ -1076,7 +1077,7 @@ public class TestCaseRun implements Runnable {
         int spaceV = target.lastIndexOf(" v");
         if (spaceV > 0) {
             try {
-                version = Asset.parseVersionSpec(procPath.substring(spaceV + 2));
+                version = AssetVersion.parseVersionSpec(procPath.substring(spaceV + 2));
                 procPath = target.substring(0, spaceV);
             }
             catch (NumberFormatException ex) {

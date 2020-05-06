@@ -15,21 +15,6 @@
  */
 package com.centurylink.mdw.camel;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.naming.NamingException;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.model.RoutesDefinition;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
@@ -39,6 +24,14 @@ import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.model.RoutesDefinition;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.naming.NamingException;
+import java.io.ByteArrayInputStream;
+import java.util.*;
 
 @RegisteredService(CacheService.class)
 public class CamelRouteCache implements PreloadableCache, CamelContextAware {
@@ -81,16 +74,12 @@ public class CamelRouteCache implements PreloadableCache, CamelContextAware {
 
 
     public static RoutesDefinitionRuleSet RoutesDefinitionRuleSet(String name) {
-        return getRoutesDefinitionRuleSet(name, null, null);
+        return getRoutesDefinitionRuleSet(name, null);
     }
 
     public static RoutesDefinitionRuleSet getRoutesDefinitionRuleSet(String name, String modifier) {
-        return getRoutesDefinitionRuleSet(name, modifier, null);
-    }
 
-    public static RoutesDefinitionRuleSet getRoutesDefinitionRuleSet(String name, String modifier, Map<String,String> attributes) {
-
-        Key key = new Key(name, modifier, attributes);
+        Key key = new Key(name, modifier);
 
         RoutesDefinitionRuleSet routesRuleSet = routesMap.get(key.toString());
 
@@ -113,15 +102,14 @@ public class CamelRouteCache implements PreloadableCache, CamelContextAware {
     }
 
     /**
-     * Routes definition based on the route definition name , version and attributes
+     * Routes definition based on the route definition name and version
      *
      * @param routeVersionSpec
      * @param modifier
-     * @param attributes
      * @return RoutesDefinitionRuleSet
      */
-    public static RoutesDefinitionRuleSet getRoutesDefinitionRuleSet(AssetVersionSpec routeVersionSpec, String modifier, Map<String,String> attributes) {
-        Key key = new Key(routeVersionSpec, modifier, attributes);
+    public static RoutesDefinitionRuleSet getRoutesDefinitionRuleSet(AssetVersionSpec routeVersionSpec, String modifier) {
+        Key key = new Key(routeVersionSpec, modifier);
         RoutesDefinitionRuleSet routesRuleSet = routesMap.get(key.toString());
         if (routesRuleSet == null) {
             try {
@@ -142,15 +130,11 @@ public class CamelRouteCache implements PreloadableCache, CamelContextAware {
     }
 
     public static RoutesDefinition getRoutesDefinition(String name) {
-        return getRoutesDefinition(name, null, null);
+        return getRoutesDefinition(name, null);
     }
 
     public static RoutesDefinition getRoutesDefinition(String name, String modifier) {
-        return getRoutesDefinition(name, modifier, null);
-    }
-
-    public static RoutesDefinition getRoutesDefinition(String name, String modifier, Map<String,String> attributes) {
-        RoutesDefinitionRuleSet rdrs = getRoutesDefinitionRuleSet(name, modifier, attributes);
+        RoutesDefinitionRuleSet rdrs = getRoutesDefinitionRuleSet(name, modifier);
         if (rdrs == null)
             return null;
         else
@@ -262,21 +246,13 @@ public class CamelRouteCache implements PreloadableCache, CamelContextAware {
     public static Asset getRuleSet(Key key) {
         Asset ruleSet = null;
         if (key.routeVersionSpec != null) {
-            ruleSet = key.attributes == null ? AssetCache.getAsset(key.routeVersionSpec) : AssetCache.getAsset(key.routeVersionSpec, key.attributes);
+            ruleSet = AssetCache.getAsset(key.routeVersionSpec);
         }
         if (ruleSet != null)
             return ruleSet;
 
         String ruleSetName = key.name == null ? key.routeVersionSpec.getQualifiedName() : key.name;
-        if (key.attributes == null) {
-            ruleSet = AssetCache.getAsset(ruleSetName, LANGUAGES);
-        }
-        else {
-            for (int i = 0; i < LANGUAGES.length && ruleSet == null; i++) {
-                ruleSet = AssetCache.getLatestAssets(ruleSetName, LANGUAGES[i], key.attributes);
-            }
-        }
-        return ruleSet;
+        return AssetCache.getAsset(ruleSetName, LANGUAGES);
     }
 
     /**
@@ -286,29 +262,21 @@ public class CamelRouteCache implements PreloadableCache, CamelContextAware {
     static class Key {
         String name;
         String modifier;
-        Map<String,String> attributes;
         AssetVersionSpec routeVersionSpec;
 
-        public Key(String name, String mod, Map<String,String> attrs) {
+        public Key(String name, String mod) {
             this.name = name;
             this.modifier = mod;
-            this.attributes = attrs;
         }
 
-        public Key(AssetVersionSpec routeVersionSpec, String modifier, Map<String, String> attributes) {
+        public Key(AssetVersionSpec routeVersionSpec, String modifier) {
             super();
             this.modifier = modifier;
             this.routeVersionSpec = routeVersionSpec;
-            this.attributes = attributes;
         }
 
         public Key(String stringVal) {
             String toParse = stringVal;
-            int brace = toParse.indexOf('{');
-            if (brace >= 0) {
-                attributes = stringToMap(toParse.substring(brace, toParse.lastIndexOf('}') + 1));
-                toParse = toParse.substring(0, brace);
-            }
             int squig = toParse.indexOf('~');
             if (squig >= 0) {
                 modifier = toParse.substring(squig + 1);
@@ -326,38 +294,8 @@ public class CamelRouteCache implements PreloadableCache, CamelContextAware {
             String key = routeVersionSpec == null ? name : routeVersionSpec.toString();
             if (modifier != null)
                 key += "~" + modifier;
-            if (attributes != null && !attributes.isEmpty())
-                key += mapToString(attributes);
             return key;
         }
-
-        String mapToString(Map<String,String> map) {
-            if (map == null)
-                return "";
-
-            String string = "{";
-            int i = 0;
-            for (String key : map.keySet()) {
-                string += key + "=" + map.get(key);
-                if (i < map.keySet().size() - 1)
-                    string += ",";
-                i++;
-            }
-            string += "}";
-            return string;
-        }
-
-        Map<String,String> stringToMap(String string) {
-            Map<String,String> map = null;
-            if (string != null) {
-                map = new HashMap<String,String>();
-                String toParse = string.substring(string.indexOf('{') + 1, string.lastIndexOf('}'));
-                for (String attr : toParse.split(",")) {
-                    int eq = attr.indexOf('=');
-                    map.put(attr.substring(0, eq), attr.substring(eq + 1));
-                }
-            }
-            return map;
-        }
     }
+
 }

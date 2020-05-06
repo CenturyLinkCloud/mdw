@@ -1,6 +1,6 @@
 CamelHandler.java=2
-CamelRouteAdapter.java=6
-CamelRouteCache.java=3
+CamelRouteAdapter.java=7
+CamelRouteCache.java=4
 CamelServiceHandler.java=3
 CamelWorkflowHandler.java=2
 CxfNotifyHandler.java=1

@@ -1,0 +1,9 @@
+package com.centurylink.mdw.tests.multiver
+
+start process('SmartProcessMultiver')
+wait process
+verify processes(
+        'SmartProcessMultiver',
+        'SubprocessMultiver',
+        'com.centurylink.mdw.tests.multiver/SubprocessMultiver v1.1'
+)

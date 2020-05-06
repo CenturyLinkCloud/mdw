@@ -21,7 +21,10 @@ import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 
 public interface JavaExecutor {
 
-    public void initialize(ActivityRuntimeContext runtimeContext) throws MdwJavaException;
-    
-    public Object execute(Map<String,Object> variables) throws JavaExecutionException;
+    default void initialize(ActivityRuntimeContext runtimeContext) throws MdwJavaException {
+        // do nothing
+    }
+
+
+    Object execute(Map<String,Object> variables) throws JavaExecutionException;
 }

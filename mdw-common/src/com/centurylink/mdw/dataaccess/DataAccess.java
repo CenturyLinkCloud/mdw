@@ -15,25 +15,19 @@
  */
 package com.centurylink.mdw.dataaccess;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cli.Checkpoint;
-import com.centurylink.mdw.cli.Import;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.file.GitDiffs;
-import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
-import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
-import com.centurylink.mdw.dataaccess.file.RuntimeDataAccessVcs;
-import com.centurylink.mdw.dataaccess.file.VersionControlGit;
-import com.centurylink.mdw.dataaccess.file.WrappedBaselineData;
+import com.centurylink.mdw.dataaccess.file.*;
 import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.util.DesignatedHostSslVerifier;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
 
 public class DataAccess {
 
@@ -225,35 +219,37 @@ public class DataAccess {
     }
 
     public static void updateAssetRefs() throws DataAccessException {
-        StandardLogger logger = LoggerUtil.getStandardLogger();
-        // asset ref autopopulation disabled by default for dev envs
-        boolean autopop = PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_REF_AUTOPOP, !ApplicationContext.isDevelopment());
-        if (autopop && assetVersionControl != null && !PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_AUTO_PULL, false)) {
-            // Automatically update ASSET_REF DB table in case application doesn't do an Import - safety measure
-            File assetLoc = ApplicationContext.getAssetRoot();
-            VersionControlGit vcGit = (VersionControlGit) assetVersionControl;
-            try (DbAccess dbAccess = new DbAccess()) {
-                String ref = vcGit.getCommit();
-                if (ref != null) {  // avoid attempting update for local-only resources
-                    logger.info("Auto-populating ASSET_REF table...");
-                    Checkpoint cp = new Checkpoint(assetLoc, vcGit, vcGit.getCommit(), dbAccess.getConnection());
-                    cp.updateRefs();
+        if (PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_REF_ENABLED, false)) {
+            StandardLogger logger = LoggerUtil.getStandardLogger();
+            // asset ref autopopulation disabled by default for dev envs
+            boolean autopop = PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_REF_AUTOPOP, !ApplicationContext.isDevelopment());
+            if (autopop && assetVersionControl != null && !PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_AUTO_PULL, false)) {
+                // Automatically update ASSET_REF DB table in case application doesn't do an Import - safety measure
+                File assetLoc = ApplicationContext.getAssetRoot();
+                VersionControlGit vcGit = (VersionControlGit) assetVersionControl;
+                try (DbAccess dbAccess = new DbAccess()) {
+                    String ref = vcGit.getCommit();
+                    if (ref != null) {  // avoid attempting update for local-only resources
+                        logger.info("Auto-populating ASSET_REF table...");
+                        Checkpoint cp = new Checkpoint(assetLoc, vcGit, vcGit.getCommit(), dbAccess.getConnection());
+                        cp.updateRefs();
+                    }
+                    else
+                        logger.info("ASSET_REF table not auto-populated during startup due to: null Git commit");
                 }
-                else
-                    logger.info("ASSET_REF table not auto-populated during startup due to: null Git commit");
+                catch (SQLException e) {
+                    throw new DataAccessException(e.getErrorCode(), e.getMessage(), e);
+                }
+                catch (IOException e) {
+                    throw new DataAccessException(e.getMessage(), e);
+                }
             }
-            catch (SQLException e) {
-                throw new DataAccessException(e.getErrorCode(), e.getMessage(), e);
+            else {
+                String message = "";
+                if (assetVersionControl == null) message = " (AssetVersionControl is null)";
+                if ("true".equals(PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL))) message = message.length() == 0 ? " (mdw.git.auto.pull=true)" : ", (mdw.git.auto.pull=true";
+                logger.info("ASSET_REF table not auto-populated during startup. " + message);
             }
-            catch (IOException e) {
-                throw new DataAccessException(e.getMessage(), e);
-            }
-        }
-        else {
-            String message = "";
-            if (assetVersionControl == null) message = " (AssetVersionControl is null)";
-            if ("true".equals(PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL))) message = message.length() == 0 ? " (mdw.git.auto.pull=true)" : ", (mdw.git.auto.pull=true";
-            logger.info("ASSET_REF table not auto-populated during startup. " + message);
         }
     }
 

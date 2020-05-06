@@ -1,0 +1,54 @@
+process: # 10009
+  name: MyEverChangingMoods
+  instance: 1
+  activity: # 1 "2020-05-01 16:47:13.009"
+    name: Start
+    status: Completed
+  activity: # 4 "2020-05-01 16:47:13.025"
+    name: Init
+    status: Completed
+  activity: # 3 "2020-05-01 16:47:13.041"
+    name: Wait
+    status: Completed
+  activity: # 5 "2020-05-01 16:47:13.060"
+    name: Update
+    status: Completed
+  activity: # 2 "2020-05-01 16:47:13.079"
+    name: Stop
+    status: Completed
+  variable: # 10026
+    name: after
+    value: MyEverChangingMoods v0.2
+  variable: # 10024
+    name: before
+    value: MyEverChangingMoods v0.2
+  variable: # 10025
+    name: todaysMood
+    value: jaded
+process: # 10010
+  name: MyEverChangingMoods
+  instance: 2
+  activity: # 1 "2020-05-01 16:47:18.010"
+    name: Start
+    status: Completed
+  activity: # 4 "2020-05-01 16:47:18.028"
+    name: Init
+    status: Completed
+  activity: # 3 "2020-05-01 16:47:18.044"
+    name: Wait
+    status: Completed
+  activity: # 5 "2020-05-01 16:47:18.065"
+    name: Update
+    status: Completed
+  activity: # 2 "2020-05-01 16:47:18.088"
+    name: Stop
+    status: Completed
+  variable: # 10029
+    name: after
+    value: MyEverChangingMoods v0.1
+  variable: # 10027
+    name: before
+    value: MyEverChangingMoods v0.1
+  variable: # 10028
+    name: todaysMood
+    value: eager

@@ -21,7 +21,7 @@ activities:
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
   attributes:
     Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java","sub ${inputVar}"],["false","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["false","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
-    Rule: "procName = runtimeContext.getProcess().getName();\r\nprocVer = runtimeContext.getProcess().getVersionString(); "
+    Rule: "procName = runtimeContext.getProcess().getName();\r\nprocVer = runtimeContext.getProcess().getVersionString();"
     SCRIPT: Groovy
     WORK_DISPLAY_INFO: x=224,y=85,w=100,h=60
   transitions:

@@ -285,7 +285,7 @@ public class Processes extends JsonRestService implements JsonExportable {
             // If null it means it is archived but was renamed or removed from current assets
             if (latest == null || !latest.getId().equals(process.getProcessId()))
                 summary.put("archived", true);
-            if (HierarchyCache.hasMilestones(latest.getId()))
+            if (latest != null && HierarchyCache.hasMilestones(latest.getId()))
                 summary.put("hasMilestones", true);
         }
         return summary;

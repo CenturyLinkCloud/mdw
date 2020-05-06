@@ -1,6 +1,6 @@
 spool create_tables.lst;
 
--- general rules for ID length: 
+-- general rules for ID length:
 --    definition 8
 --    proc instance 16
 --    act/trans/var/doc instance 20
@@ -184,7 +184,7 @@ CREATE TABLE PROCESS_INSTANCE
   COMMENTS             VARCHAR2(1000 BYTE),
   MASTER_REQUEST_ID    VARCHAR2(80 BYTE),
   COMPCODE             VARCHAR2(80 BYTE),
-  TEMPLATE             VARCHAR2(256 BYTE)  
+  TEMPLATE             VARCHAR2(256 BYTE)
 );
 CREATE TABLE ATTRIBUTE
 (
@@ -277,7 +277,7 @@ CREATE TABLE DOCUMENT
 CREATE TABLE DOCUMENT_CONTENT
 (
   DOCUMENT_ID         NUMBER(20),
-  CONTENT             CLOB      NOT NULL  
+  CONTENT             CLOB      NOT NULL
 );
 
 CREATE TABLE TASK_INST_GRP_MAPP (
@@ -294,20 +294,13 @@ CREATE TABLE INSTANCE_INDEX (
   CREATE_DT     DATE DEFAULT SYSDATE NOT NULL
 );
 
-CREATE TABLE ASSET_REF (
-  DEFINITION_ID    	  NUMBER(38)			NOT NULL,
-  NAME	 		      VARCHAR(512)  		NOT NULL,
-  REF           	  VARCHAR(64)   		NOT NULL,
-  ARCHIVE_DT          DATE DEFAULT SYSDATE	NOT NULL
-);
-
 CREATE TABLE SOLUTION
 (
   SOLUTION_ID    NUMBER(20)        NOT NULL,
   ID             VARCHAR2(128)     NOT NULL, -- TODO: unique constraint
   NAME           VARCHAR2(1024)    NOT NULL,
   OWNER_TYPE     VARCHAR2(128)     NOT NULL,
-  OWNER_ID       VARCHAR2(128)     NOT NULL,  
+  OWNER_ID       VARCHAR2(128)     NOT NULL,
   CREATE_DT      DATE              DEFAULT SYSDATE,
   CREATE_USR     VARCHAR2(30)      DEFAULT USER,
   MOD_DT         DATE,

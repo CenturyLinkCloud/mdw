@@ -52,7 +52,7 @@ public abstract class RulesBasedStrategy extends ParameterizedStrategy {
      * @throws StrategyException
      */
     protected KieBase getKnowledgeBase(String name, String modifier) throws StrategyException {
-        KnowledgeBaseAsset kbrs = DroolsKnowledgeBaseCache.getKnowledgeBaseAsset(name, modifier, null, getClassLoader());
+        KnowledgeBaseAsset kbrs = DroolsKnowledgeBaseCache.getKnowledgeBaseAsset(name, modifier, getClassLoader());
 
         if (kbrs == null) {
             return null;

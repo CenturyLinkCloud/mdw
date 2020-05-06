@@ -1,7 +1,7 @@
 package com.centurylink.mdw.services.asset;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.cache.impl.AssetRefCache;
+import com.centurylink.mdw.cache.impl.AssetHistory;
 import com.centurylink.mdw.cli.Import;
 import com.centurylink.mdw.cli.Props;
 import com.centurylink.mdw.cli.Vercheck;
@@ -10,7 +10,6 @@ import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
@@ -18,10 +17,7 @@ import com.centurylink.mdw.dataaccess.file.GitBranch;
 import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
 import com.centurylink.mdw.dataaccess.file.GitProgressMonitor;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
-import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.asset.AssetInfo;
-import com.centurylink.mdw.model.asset.PackageList;
-import com.centurylink.mdw.model.asset.StagingArea;
+import com.centurylink.mdw.model.asset.*;
 import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.service.data.user.UserGroupCache;
@@ -29,7 +25,6 @@ import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.StagingServices;
 import com.centurylink.mdw.services.cache.CacheRegistration;
-import com.centurylink.mdw.util.AssetRefConverter;
 import com.centurylink.mdw.util.file.Packages;
 import com.centurylink.mdw.util.file.VersionProperties;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -551,10 +546,11 @@ public class StagingServicesImpl implements StagingServices {
         try {
             for (String assetPath : assets) {
                 String version = assetVersions.get(assetPath);
-                AssetRef assetRef = AssetRefCache.getRef(assetPath, version);
-                if (assetRef == null)
-                   throw new ServiceException(ServiceException.NOT_FOUND, "Asset version not found: " + assetPath + " v" + version);
-                rolledBackAssets.add(AssetRefConverter.getAsset(assetRef));
+                AssetVersionSpec spec = new AssetVersionSpec(assetPath, version);
+                Asset asset = AssetHistory.getAsset(spec);
+                if (asset == null)
+                   throw new ServiceException(ServiceException.NOT_FOUND, "Asset version not found: " + spec);
+                rolledBackAssets.add(asset);
             }
         }
         catch (Exception ex) {
@@ -572,7 +568,7 @@ public class StagingServicesImpl implements StagingServices {
                 Files.write(stagedFile.toPath(), rolledBackAsset.getContent());
                 AssetInfo currentAssetInfo = assetServices.getAsset(rolledBackAsset.getPackageName() + "/" + rolledBackAsset.getName());
                 String currentVer = currentAssetInfo.getJson().getString("version");
-                int incrementedVer = Asset.parseVersion(currentVer) + 1;
+                int incrementedVer = AssetVersion.parseVersion(currentVer) + 1;
                 File versionsFile = new File(stagingAssetsDir + "/" + pkgSlashyPath + "/" + Packages.META_DIR + "/" + Packages.VERSIONS);
                 VersionProperties versionProps = new VersionProperties(versionsFile);
                 versionProps.setProperty(rolledBackAsset.getName(), String.valueOf(incrementedVer));
@@ -634,7 +630,7 @@ public class StagingServicesImpl implements StagingServices {
                 importer.setAssetLoc(assetLoc);
                 importer.setConfigLoc(PropertyManager.getConfigLocation());
                 importer.setGitRoot(mainVc.getLocalDir());
-                importer.importAssetsFromGit();
+                importer.importAssetsFromGit(PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_REF_ENABLED, false));
                 SystemMessages.bulletinOff(bulletin, "Asset import completed");
                 CacheRegistration.getInstance().refreshCaches(null);
             }

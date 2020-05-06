@@ -16,7 +16,6 @@
 package com.centurylink.mdw.hub.servlet;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.cli.Checkpoint;
 import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -24,10 +23,8 @@ import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.ProcessPersister.PersistType;
 import com.centurylink.mdw.dataaccess.file.ImporterExporterJson;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
@@ -40,6 +37,7 @@ import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.model.system.SystemMessage.Level;
 import com.centurylink.mdw.model.user.*;
@@ -452,27 +450,10 @@ public class AssetContentServlet extends HttpServlet {
                             asset.setRawContent(content);
                         }
 
-                        int newVer = Asset.parseVersion(version);
+                        int newVer = AssetVersion.parseVersion(version);
                         if (newVer < ver)
                             throw new ServiceException(ServiceException.BAD_REQUEST,
                                     "Invalid asset version: v" + version);
-
-                        // update ASSET_REF with current info before saving
-                        verChange = newVer != ver;
-                        if (verChange) {
-                            VersionControlGit vc = (VersionControlGit) assetServices.getVersionControl();
-                            if (vc != null && vc.getCommit() != null) {
-                                String curPath = pkgName + "/" + assetName + " v"
-                                        + Asset.formatVersion(ver);
-                                AssetRef curRef = new AssetRef(curPath, vc.getId(new File(curPath)),
-                                        vc.getCommit());
-                                try (DbAccess dbAccess = new DbAccess()) {
-                                    Checkpoint cp = new Checkpoint(assetServices.getAssetRoot(), vc,
-                                            curRef.getRef(), dbAccess.getConnection());
-                                    cp.updateRef(curRef);
-                                }
-                            }
-                        }
 
                         asset.setVersion(newVer);
                         if (asset instanceof Process) {

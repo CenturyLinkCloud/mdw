@@ -16,29 +16,32 @@
 package com.centurylink.mdw.service.data.process;
 
 import com.centurylink.mdw.cache.CacheService;
-import com.centurylink.mdw.cache.impl.AssetRefCache;
-import com.centurylink.mdw.dataaccess.AssetRef;
+import com.centurylink.mdw.cache.impl.AssetHistory;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.WorkflowDataAccess;
 import com.centurylink.mdw.services.cache.CacheRegistration;
-import com.centurylink.mdw.util.AssetRefConverter;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
-import static com.centurylink.mdw.constant.WorkAttributeConstant.MONITORS;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static com.centurylink.mdw.constant.WorkAttributeConstant.MONITORS;
 
 /**
  * Lazily loads the Processes for use by the RuntimeEngine.
@@ -181,19 +184,34 @@ public class ProcessCache implements CacheService {
     public static synchronized List<Process> getProcesses(boolean withArchived) throws DataAccessException {
         if (withArchived) {
             if (processList == null)
-                processList = DataAccess.getProcessLoader().getProcessList(true);
+                processList = loadProcesses(true);
             return processList;
         }
         else {
             if (latestProcesses == null)
-                latestProcesses = DataAccess.getProcessLoader().getProcessList(false);
+                latestProcesses = loadProcesses(false);
             return latestProcesses;
         }
     }
 
+    private static List<Process> loadProcesses(boolean withArchived) throws DataAccessException {
+        List<Process> processes = DataAccess.getProcessLoader().getProcessList();
+        if (withArchived) {
+            if (PropertyManager.getProperty(PropertyNames.MDW_GIT_USER) != null) {
+                for (Process process : AssetHistory.getProcesses()) {
+                    if (!processes.contains(process))
+                        processes.add(process);
+                }
+            }
+        }
+        Collections.sort(processes);
+        return processes;
+    }
+
+
     /**
      * Either a specific version number can be specified, or a Smart Version can be specified which designates an allowable range.
-     * @see com.centurylink.mdw.model.asset.Asset#meetsVersionSpec(String)
+     * @see com.centurylink.mdw.model.asset.AssetVersion#meetsSpec(AssetVersionSpec)
      */
     public static Process getProcessSmart(AssetVersionSpec spec) throws DataAccessException {
         if (spec.getPackageName() == null)
@@ -284,13 +302,11 @@ public class ProcessCache implements CacheService {
         CodeTimer timer = new CodeTimer("ProcessCache.loadProcess()", true);
         try {
             Process proc = DataAccess.getProcessLoader().loadProcess(id, true);
-            // If proc == null, check ASSET_REF DB table and retrieve from git history
+            // If proc == null, check history
             if (proc == null) {
-                AssetRef assetRef = AssetRefCache.getAssetRef(id);
-                if (assetRef != null) {
-                    proc = AssetRefConverter.getProcess(assetRef);
+                proc = AssetHistory.getProcess(id);
+                if (proc != null)
                     applyMonitors(proc);
-                }
             }
             return proc;
         }
@@ -307,19 +323,18 @@ public class ProcessCache implements CacheService {
         CodeTimer timer = new CodeTimer("ProcessCache.loadProcess()", true);
         try {
             Process proc = DataAccess.getProcessLoader().getProcessBase(name, version);
-            if (proc == null && version != 0) {  // Do not search when looking for "latest"
-                String refName = name;
-                if (!refName.endsWith(".proc"))
-                    refName += ".proc";
-                refName += " v" + Asset.formatVersion(version);
-                AssetRef assetRef = AssetRefCache.getAssetRef(refName);
-                if (assetRef != null) {
-                    proc = AssetRefConverter.getProcess(assetRef);
+            if (proc == null && version != 0) {
+                // search history when not looking for "latest"
+                String spec = name;
+                if (!spec.endsWith(".proc"))
+                    spec += ".proc";
+                spec += " v" + AssetVersion.formatVersion(version);
+                proc = AssetHistory.getProcess(AssetVersionSpec.parse(spec));
+                if (proc != null)
                     applyMonitors(proc);
-                }
             }
             if (proc == null && exceptionWhenNotFound)
-                throw new Exception("Process not found " + name + (version == 0 ? "" : " v" + Asset.formatVersion(version)));
+                throw new Exception("Process not found: " + name + (version == 0 ? "" : " v" + AssetVersion.formatVersion(version)));
             return proc;
         }
         catch (Exception ex) {

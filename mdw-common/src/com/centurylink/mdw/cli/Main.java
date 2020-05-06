@@ -84,7 +84,6 @@ public class Main {
         addOperation("dbimport", new DbImport());
         addOperation("dbtimings", new DbTimings());
         addOperation("hierarchy", new Hierarchy());
-        addOperation("find", new Find());
         addOperation("dependencies", new Dependencies());
 
         Operation op = operations.get(cmdArgs.get(0));

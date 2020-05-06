@@ -1,24 +1,20 @@
 package com.centurylink.mdw.services.workflow;
 
-import com.centurylink.mdw.cache.impl.AssetRefCache;
+import com.centurylink.mdw.cache.impl.AssetHistory;
 import com.centurylink.mdw.cli.Hierarchy;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
-import com.centurylink.mdw.service.data.process.ProcessAggregation;
-import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.asset.AssetInfo;
-import com.centurylink.mdw.model.asset.AssetVersion;
-import com.centurylink.mdw.model.asset.CommitInfo;
+import com.centurylink.mdw.model.asset.*;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.activity.ImplementorCache;
+import com.centurylink.mdw.service.data.process.ProcessAggregation;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.DesignServices;
@@ -79,7 +75,7 @@ public class DesignServicesImpl implements DesignServices {
             }
         }
         if (process == null)
-            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + assetPath + " v" + Asset.formatVersion(version));
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + assetPath + " v" + AssetVersion.formatVersion(version));
 
         return process;
     }
@@ -207,7 +203,7 @@ public class DesignServicesImpl implements DesignServices {
         try {
             // all must be loaded
             List<Process> processes = new ArrayList<>();
-            for (Process proc : ProcessCache.getProcesses(false)) {
+            for (Process proc : ProcessCache.getProcesses(true)) {
                 Process loaded = ProcessCache.getProcess(proc.getId());
                 if (loaded != null)
                     processes.add(loaded);
@@ -238,11 +234,11 @@ public class DesignServicesImpl implements DesignServices {
                     assetVersion.setCommitInfo(vcGit.getCommitInfo(assetVcPath));
                 }
             } else {
-                // if older version check in AssetRefCache
-                AssetRef assetRef = AssetRefCache.getRef(assetPath, version);
-                if (assetRef == null)
-                    throw new ServiceException(ServiceException.NOT_FOUND, "Asset ref not found: " + assetPath + " v" + version);
-                assetVersion = new AssetVersion(assetRef);
+                // if older version check history
+                AssetVersionSpec spec = new AssetVersionSpec(assetPath, version);
+                assetVersion = AssetHistory.getAssetVersion(spec);
+                if (assetVersion == null)
+                    throw new ServiceException(ServiceException.NOT_FOUND, "Asset ref not found: " + spec);
                 VersionControlGit vcGit = (VersionControlGit) assetServices.getVersionControl();
                 CommitInfo refCommit = vcGit.getCommitInfoForRef(assetVersion.getRef());
                 if (refCommit != null) {
@@ -275,17 +271,11 @@ public class DesignServicesImpl implements DesignServices {
             currentVersion = json.optString("version");
             currentId = json.optLong("id");
         }
-        List<AssetVersion> versions = new ArrayList<>();
-        boolean includesCurrent = false;
-        for (AssetRef assetRef : AssetRefCache.getRefs(assetPath)) {
-            AssetVersion version = new AssetVersion(assetRef);
-            versions.add(version);
-            if (version.getVersion().equals(currentVersion))
-                includesCurrent = true;
-        }
-        if (!includesCurrent) {
+        List<AssetVersion> versions = AssetHistory.getAssetVersions(assetPath);
+        if (!currentVersion.isEmpty()) { // can be empty if no current version (deleted asset)
             AssetVersion current = new AssetVersion(currentId, assetPath, currentVersion);
-            versions.add(current);
+            if (!versions.contains(current))
+                versions.add(current);
         }
 
         long before = System.currentTimeMillis();

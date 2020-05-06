@@ -205,7 +205,7 @@ public class AssetImportMonitor implements StartupService {
         importer.setAssetLoc(assetDir.getPath());
         importer.setConfigLoc(PropertyManager.getConfigLocation());
         importer.setGitRoot(gitRoot);
-        importer.importAssetsFromGit();
+        importer.importAssetsFromGit(PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_REF_ENABLED, false));
         SystemMessages.bulletinOff(bulletin, "Asset import completed");
         gitHardResetOverride = false;   // Import successful, so reset back to use gitHardReset property
         bulletin = null;

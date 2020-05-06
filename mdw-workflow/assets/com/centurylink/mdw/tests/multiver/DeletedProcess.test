@@ -1,0 +1,5 @@
+package com.centurylink.mdw.tests.multiver
+
+start "com.centurylink.mdw.tests.multiver/Deleted v0.1"
+wait process
+verify process

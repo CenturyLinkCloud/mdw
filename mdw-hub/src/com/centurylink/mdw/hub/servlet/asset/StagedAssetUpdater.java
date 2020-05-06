@@ -5,6 +5,7 @@ import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -62,7 +63,7 @@ public class StagedAssetUpdater {
         // version is always incremented since every saved change for a staging area is pushed
         int newVersion = currentVersion + 1;
         versionProps.setProperty(assetName, String.valueOf(newVersion));
-        String newVer = Asset.formatVersion(newVersion);
+        String newVer = AssetVersion.formatVersion(newVersion);
 
         logger.info("Saving asset: " + pkgName + "/" + assetName + " v" + newVer);
 

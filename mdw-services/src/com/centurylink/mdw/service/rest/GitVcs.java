@@ -193,10 +193,12 @@ public class GitVcs extends JsonRestService {
                         vcGit.commit(commitPaths, comment);
                         vcGit.push();
 
-                        // Update ASSET_REF with new commit (will trigger automatic import in other instances)
-                        try (DbAccess dbAccess = new DbAccess()) {
-                            Checkpoint cp = new Checkpoint(ApplicationContext.getAssetRoot(), vcGit, vcGit.getCommit(), dbAccess.getConnection());
-                            cp.updateRefs();
+                        if (PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_REF_ENABLED, false)) {
+                            // Update ASSET_REF with new commit (will trigger automatic import in other instances)
+                            try (DbAccess dbAccess = new DbAccess()) {
+                                Checkpoint cp = new Checkpoint(ApplicationContext.getAssetRoot(), vcGit, vcGit.getCommit(), dbAccess.getConnection());
+                                cp.updateRefs();
+                            }
                         }
                     }
                     else {
@@ -237,7 +239,7 @@ public class GitVcs extends JsonRestService {
             PrintStream ps = new PrintStream(baos);
             gitImporter.setOut(ps);
             gitImporter.setErr(ps);
-            gitImporter.importAssetsFromGit();
+            gitImporter.importAssetsFromGit(PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_REF_ENABLED, false));
 
             // log importer and vercheck output
             logger.error(new String(baos.toByteArray()));

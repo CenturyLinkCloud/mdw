@@ -19,6 +19,7 @@ import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Variable;
 import org.apache.commons.lang.StringUtils;
@@ -328,7 +329,7 @@ public class TaskTemplate extends Asset implements Jsonable {
     public TaskTemplate(JSONObject json) throws JSONException {
         this.logicalId = json.getString("logicalId");
         this.taskName = json.getString("name");
-        this.setVersion(Asset.parseVersion(json.getString("version")));
+        this.setVersion(AssetVersion.parseVersion(json.getString("version")));
         this.setLanguage(Asset.TASK);
         this.setTaskTypeId(TaskType.TASK_TYPE_TEMPLATE);
         if (json.has("category"))
@@ -350,7 +351,7 @@ public class TaskTemplate extends Asset implements Jsonable {
 
         json.put("logicalId", getLogicalId());
         json.put("name",  getTaskName());
-        json.put("version", formatVersion(getVersion()));
+        json.put("version", AssetVersion.formatVersion(getVersion()));
         if (taskCategory != null)
             json.put("category", taskCategory);
         if (getComment() != null)

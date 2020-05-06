@@ -15,26 +15,20 @@
  */
 package com.centurylink.mdw.cache.impl;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.util.AssetRefConverter;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class AssetCache implements PreloadableCache {
 
@@ -60,10 +54,6 @@ public class AssetCache implements PreloadableCache {
                 }
             }
         }
-    }
-
-    public int getCacheSize() {
-        return getAssetMap().size();
     }
 
     public void clearCache() {
@@ -136,14 +126,14 @@ public class AssetCache implements PreloadableCache {
      * Either a specific version number can be specified, or a Smart Version can be specified which designates an allowable range.
      */
     public static Asset getAsset(AssetVersionSpec spec) {
-        Asset match = null, assetVO = null;
+        Asset match = null, found = null;
         try {
             // Get asset from package based on asset version spec
             if (spec.getPackageName() != null) {
                 // get all the versions of packages based on package name
-                List<Package> allPackgeVOs = PackageCache.getAllPackages(spec.getPackageName());
-                for (Package pkgVO : allPackgeVOs) {
-                    for (Asset asset : pkgVO.getAssets()) {
+                List<Package> allPackages = PackageCache.getAllPackages(spec.getPackageName());
+                for (Package pkg : allPackages) {
+                    for (Asset asset : pkg.getAssets()) {
                         if (spec.getName().equals(asset.getName())) {
                             if (asset.meetsVersionSpec(spec.getVersion()) && (match == null || asset.getVersion() > match.getVersion()))
                                 match = asset;
@@ -152,16 +142,14 @@ public class AssetCache implements PreloadableCache {
                 }
                 if (match != null) {
                     if (!match.isLoaded())
-                        assetVO = DataAccess.getProcessLoader().getAsset(match.getId());
+                        found = DataAccess.getProcessLoader().getAsset(match.getId());
                     else
-                        assetVO = match;
+                        found = match;
                 }
-                else if (!spec.getVersion().equals("0")) { // check ASSET_REF DB table to retrieve from git history
-                    AssetRef ref = AssetRefCache.getAssetRef(spec);
-                    if (ref != null)
-                        assetVO = AssetRefConverter.getAsset(ref);
+                else if (!spec.getVersion().equals("0")) { // retrieve from history
+                    AssetHistory.getAsset(spec);
                 }
-                return assetVO;
+                return found;
             }
 
             for (Asset asset : getAllAssets()) {
@@ -171,55 +159,17 @@ public class AssetCache implements PreloadableCache {
                 }
             }
             if (match != null && !match.isLoaded()) {
-                assetVO = DataAccess.getProcessLoader().getAsset(match.getId());
+                found = DataAccess.getProcessLoader().getAsset(match.getId());
             }
-         //  If match == null, check ASSET_REF DB table to retrieve from git history
+            //  If match == null, check history
             if (match == null && !spec.getVersion().equals("0")) {
-                AssetRef ref = AssetRefCache.getAssetRef(spec);
-                if (ref != null)
-                    assetVO = AssetRefConverter.getAsset(ref);
+                found = AssetHistory.getAsset(spec);
             }
         } catch (Exception ex) {
             logger.severeException("Failed to load asset: "+spec.toString()+ " : "+ex.getMessage(), ex);
         }
-        return assetVO;
+        return found;
     }
-
-    /**
-     * Get the asset based on version spec whose name and custom attributes match the parameters.
-     */
-    public static Asset getAsset(AssetVersionSpec spec, Map<String,String> attributeValues) {
-        Asset match = null;
-        try {
-            for (Asset asset : getAllAssets()) {
-                if (spec.getName().equals(asset.getName())) {
-                    if (asset.meetsVersionSpec(spec.getVersion()) && (match == null || asset.getVersion() > match.getVersion())) {
-                        boolean attrsMatch = true;
-                        for (String attrName : attributeValues.keySet()) {
-                            String attrValue = attributeValues.get(attrName);
-                            String rsValue = asset.getAttribute(attrName);
-                            if (rsValue == null || !rsValue.equals(attrValue)) {
-                                attrsMatch = false;
-                                break;
-                            }
-                        }
-                        if (attrsMatch && (match == null || match.getVersion() < asset.getVersion())) {
-                            if (!asset.isLoaded()) {
-                                Asset loaded = getAsset(asset.getId());
-                                asset.setStringContent(loaded.getStringContent());
-                            }
-                            match = asset;
-                        }
-                    }
-                }
-            }
-  // TODO If match == null, check ASSET_REF DB table to retrieve from git history - For when Asset attributes are implemented
-        } catch (DataAccessException ex) {
-            logger.severeException("Failed to load asset: "+spec.toString()+ " : "+ex.getMessage(), ex);
-        }
-        return match;
-    }
-
 
     /**
      * Asset names like 'myPackage/myAsset.ext' designate package-specific versions.
@@ -347,59 +297,6 @@ public class AssetCache implements PreloadableCache {
         return latestAssets;
     }
 
-    /**
-     * Get the latest asset whose name and custom attributes match the parameters.
-     * Asset names like 'my.pkg/myAsset.ext' designate package-specific versions;
-     * however, package is ignored when selecting by custom attributes.
-     */
-    public static Asset getLatestAssets(String name, String language, Map<String,String> attributeValues) {
-        String assetName = name;
-        if (name.indexOf('/') > 0)
-          assetName = name.substring(name.indexOf('/') + 1);
-        Asset asset = null;
-        try {
-            for (Asset potentialMatch : getAllAssets()) {
-                if (potentialMatch.getName().equals(assetName) && potentialMatch.getLanguage().equals(language)) {
-                    boolean attrsMatch = true;
-                    for (String attrName : attributeValues.keySet()) {
-                        String attrValue = attributeValues.get(attrName);
-                        String rsValue = potentialMatch.getAttribute(attrName);
-                        if (rsValue == null || !rsValue.equals(attrValue)) {
-                            attrsMatch = false;
-                            break;
-                        }
-                    }
-                    if (attrsMatch && (asset == null || asset.getVersion() < potentialMatch.getVersion())) {
-                        if (!potentialMatch.isLoaded()) {
-                            Asset loaded = getAsset(potentialMatch.getId());
-                            potentialMatch.setStringContent(loaded.getStringContent());
-                        }
-                        asset = potentialMatch;
-                    }
-                }
-            }
-        }
-        catch (DataAccessException ex) {
-            logger.severeException(ex.getMessage(), ex);
-        }
-        return asset;
-    }
-
-    public static Set<String> getRuleNames(String ruleNameRegex) {
-        Set<String> matchedRuleNames = new HashSet<>();
-        try {
-            for(Asset asset : getAllAssets()){
-                if(asset.getName().matches(ruleNameRegex)){
-                    matchedRuleNames.add(asset.getName());
-                }
-            }
-        }
-        catch (DataAccessException ex) {
-            logger.severeException(ex.getMessage(), ex);
-        }
-        return matchedRuleNames;
-    }
-
     private static Asset loadAsset(AssetKey key) {
         try {
             for (Asset asset : getAllAssets()) {
@@ -407,21 +304,23 @@ public class AssetCache implements PreloadableCache {
                     return DataAccess.getProcessLoader().getAsset(asset.getId());
                 }
             }
-         // If didn't find it, check ASSET_REF DB table to retrieve from git history
+            // didn't find it, check history
             AssetRef ref = null;
-            if (key.getId() != null && key.getId() > 0L)  // We have a specific ID we are looking for
-                ref = AssetRefCache.getAssetRef(key.getId());
-            else if (key.getVersion() > 0) {  // We have a full name (pkg + asset) and specific version we are looking for
+            if (key.getId() != null && key.getId() > 0L) {
+                // we have a specific ID we are looking for
+                return AssetHistory.getAsset(key.getId());
+            }
+            else if (key.getVersion() > 0) {
+                // we have a qualified asset path/version we are looking for
                 int delimIdx = getDelimIndex(key);
                 if (delimIdx > 0) {
                     String pkgName = key.getName().substring(0, delimIdx);
                     String assetName = key.getName().substring(delimIdx + 1);
-                    String version = Asset.formatVersion(key.getVersion());
-                    ref = AssetRefCache.getAssetRef(pkgName + "/" + assetName + " v" + version);
+                    String version = AssetVersion.formatVersion(key.getVersion());
+                    AssetVersionSpec spec = new AssetVersionSpec(pkgName, assetName, version);
+                    return AssetHistory.getAsset(spec);
                 }
             }
-            if (ref != null)
-                return AssetRefConverter.getAsset(ref);
 
             return null;
         }
@@ -551,4 +450,3 @@ class AssetKey implements Comparable<AssetKey> {
         return "id: '" + id + "'  name: '" + name + "'  language: '" + language + "'  version: " + version;
     }
 }
-

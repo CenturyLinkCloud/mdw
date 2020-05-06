@@ -15,15 +15,7 @@
  */
 package com.centurylink.mdw.util.file;
 
-import java.io.BufferedWriter;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Properties;
@@ -46,7 +38,6 @@ public class VersionProperties extends Properties {
     public VersionProperties(ByteArrayInputStream byteArrayInputStream) throws IOException {
         super(null);
         load(byteArrayInputStream);
-    //    this.propFile = propFile;
     }
 
     @Override
@@ -94,5 +85,10 @@ public class VersionProperties extends Properties {
                     out.close();
             }
         }
+    }
+
+    public int getVersion(String assetName) throws NumberFormatException {
+        String prop = getProperty(assetName);
+        return prop == null ? 0 : Integer.parseInt(prop.split(" ")[0]);
     }
 }

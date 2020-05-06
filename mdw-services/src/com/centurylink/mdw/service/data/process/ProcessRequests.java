@@ -17,7 +17,6 @@ package com.centurylink.mdw.service.data.process;
 
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.asset.AssetRequest;
 import com.centurylink.mdw.model.asset.RequestKey;
@@ -66,7 +65,7 @@ public class ProcessRequests implements PreloadableCache {
             requests.clear();
             try {
                 Map<RequestKey,List<AssetRequest>> conflicting = new TreeMap<>();
-                for (Process process : DataAccess.getProcessLoader().getProcessList(false)) {
+                for (Process process : ProcessCache.getProcesses(false)) {
                     String packageName = process.getPackageName();
                     String processName = process.getName();
                     try {

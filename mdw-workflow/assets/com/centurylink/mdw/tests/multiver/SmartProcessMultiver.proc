@@ -1,0 +1,50 @@
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=60,y=140,w=60,h=40
+  transitions:
+  - id: T1
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=180,ly=160,xs=124&236,ys=160&160
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=640,y=140,w=60,h=40
+- id: A3
+  name: Invoke v1.1
+  implementor: com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=240,y=130,w=100,h=60
+    processname: com.centurylink.mdw.tests.multiver/SubprocessMultiver.proc
+    processversion: '[1.1,2)'
+    synchronous: 'true'
+  transitions:
+  - id: T2
+    to: A4
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=395,ly=160,xs=344&446,ys=160&160
+- id: A4
+  name: Invoke v2.0
+  implementor: com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=450,y=130,w=100,h=60
+    processname: com.centurylink.mdw.tests.multiver/SubprocessMultiver.proc
+    processversion: '[2.0,3)'
+    synchronous: 'true'
+  transitions:
+  - id: T3
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=595,ly=160,xs=554&636,ys=160&160
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: PUBLIC
+  WORK_DISPLAY_INFO: x=33,y=29,w=206,h=26

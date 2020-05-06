@@ -55,19 +55,19 @@ public class AssetVersionSpec implements Jsonable {
     /**
      * For compatibility: handles with/without leading package path, and handles old-style version format.
      */
-    public AssetVersionSpec(String packageProcess, String version) {
-        int slash = packageProcess.indexOf('/');
+    public AssetVersionSpec(String assetPath, String version) {
+        int slash = assetPath.indexOf('/');
         if (slash > 0) {
-            this.packageName = packageProcess.substring(0, slash);
-            this.name = packageProcess.substring(slash + 1);
+            this.packageName = assetPath.substring(0, slash);
+            this.name = assetPath.substring(slash + 1);
         }
         else {
-            this.name = packageProcess;
+            this.name = assetPath;
         }
         try {
             int versionInt = Integer.parseInt(version);
             // old style
-            this.version = Asset.formatVersion(versionInt);
+            this.version = AssetVersion.formatVersion(versionInt);
         }
         catch (NumberFormatException ex) {
             this.version = version;
@@ -79,6 +79,10 @@ public class AssetVersionSpec implements Jsonable {
             return name;
         else
             return packageName + "/" + name;
+    }
+
+    public String getPath() {
+        return packageName + "/" + name;
     }
 
     public boolean isRange() {

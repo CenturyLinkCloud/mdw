@@ -30,21 +30,6 @@ activities:
     event: FINISH
     attributes:
       TRANSITION_DISPLAY_INFO: type=Elbow,lx=342,ly=181,xs=303&381,ys=181&181
-- id: A4
-  name: after
-  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
-  attributes:
-    Rule: |-
-      runtimeContext.logDebug("Executing " + runtimeContext.getActivity().getName())
-      afterVar = 'initial version' // to be changed for instance
-    SCRIPT: Groovy
-    WORK_DISPLAY_INFO: x=534,y=151,w=100,h=60
-  transitions:
-  - id: T2
-    to: A2
-    event: FINISH
-    attributes:
-      TRANSITION_DISPLAY_INFO: type=Elbow,lx=663,ly=178,xs=639&688,ys=178&178
 - id: A5
   name: Pause
   implementor: com.centurylink.mdw.base.PauseActivity
@@ -52,10 +37,41 @@ activities:
     WORK_DISPLAY_INFO: x=384,y=162,w=60,h=40
   transitions:
   - id: T4
-    to: A4
+    to: A6
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: type=Elbow,lx=489,ly=181,xs=449&530,ys=181&181
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=482,ly=182,xs=448&516,ys=182&182
+- id: A6
+  name: after
+  implementor: com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity
+  attributes:
+    ClassName: InflightInstanceDef_A6
+    Java: |
+      package com.centurylink.mdw.tests.multiver;
+
+      import java.util.Map;
+
+      import com.centurylink.mdw.java.JavaExecutionException;
+      import com.centurylink.mdw.java.JavaExecutor;
+      import com.centurylink.mdw.java.MdwJavaException;
+      import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
+
+      public class InflightInstanceDef_A6 implements JavaExecutor {
+          public void initialize(ActivityRuntimeContext context) throws MdwJavaException {
+          }
+
+          public Object execute(Map<String,Object> variables) throws JavaExecutionException  {
+              variables.put("afterVar", "after version"); // to be updated for instance
+              return null;
+          }
+      }
+    WORK_DISPLAY_INFO: x=520,y=150,w=100,h=60
+  transitions:
+  - id: T5
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=656,ly=178,xs=624&688,ys=178&178
 variables:
   afterVar:
     type: java.lang.String

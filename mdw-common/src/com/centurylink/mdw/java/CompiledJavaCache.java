@@ -286,7 +286,7 @@ public class CompiledJavaCache implements PreloadableCache, ExcludableCache {
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 
         JavaFileManager standardFileManager = compiler.getStandardFileManager(diagnostics, null, null);
-        MdwJavaFileManager<JavaFileManager> mdwFileManager = new MdwJavaFileManager<JavaFileManager>(standardFileManager);
+        MdwJavaFileManager<JavaFileManager> mdwFileManager = new MdwJavaFileManager<>(standardFileManager);
 
         // compiler options
         List<String> options = new ArrayList<>();

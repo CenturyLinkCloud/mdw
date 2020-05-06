@@ -15,15 +15,13 @@
  */
 package com.centurylink.mdw.dataaccess.file;
 
-import com.centurylink.mdw.cache.impl.AssetRefCache;
-import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.config.YamlBuilder;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.*;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.event.ExternalEvent;
 import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.task.TaskCategory;
@@ -32,7 +30,6 @@ import com.centurylink.mdw.model.variable.VariableType;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.util.AssetRefConverter;
 import com.centurylink.mdw.util.file.MdwIgnore;
 import com.centurylink.mdw.util.file.Packages;
 import com.centurylink.mdw.util.timer.ProgressMonitor;
@@ -158,8 +155,8 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
     }
 
     protected PackageDir createPackage(Package pkg) throws DataAccessException, IOException {
-        if (Asset.parseVersion(pkg.getSchemaVersion()) == 0)
-            pkg.setSchemaVersion(Asset.formatVersion(DataAccess.currentSchemaVersion));
+        if (AssetVersion.parseVersion(pkg.getSchemaVersion()) == 0)
+            pkg.setSchemaVersion(AssetVersion.formatVersion(DataAccess.currentSchemaVersion));
         PackageDir pkgDir = new PackageDir(storageDir, pkg, versionControl);
         getPackageDirs().add(0, pkgDir);
         return pkgDir;
@@ -345,7 +342,7 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         pkg.setVersion(new MdwVersion(pkgDir.getPackageVersion()));
         pkg.setSchemaVersion(pkgDir.getSchemaVersion());
         pkg.setId(versionControl.getId(pkgDir.getLogicalDir()));
-        pkg.setSchemaVersion(Asset.formatVersion(DataAccess.currentSchemaVersion));
+        pkg.setSchemaVersion(AssetVersion.formatVersion(DataAccess.currentSchemaVersion));
 
         String pkgJson = new String(read(pkgDir.getMetaFile()));
         if (pkgDir.isYaml()) {
@@ -760,20 +757,11 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         return packages;
     }
 
-    public List<Process> getProcessList(boolean withArchived) throws DataAccessException {
+    public List<Process> getProcessList() throws DataAccessException {
         List<Process> processes = new ArrayList<>();
         try {
             for (PackageDir pkgDir : getPackageDirs())
                 processes.addAll(loadProcesses(pkgDir, false));
-            if (withArchived) {
-                if (PropertyManager.getProperty(PropertyNames.MDW_GIT_USER) != null) {
-                    for (AssetRef ref : AssetRefCache.getAllProcessRefs()) {
-                        Process proc = AssetRefConverter.getProcess(ref);
-                        if (proc != null && !processes.contains(proc))
-                            processes.add(proc);
-                    }
-                }
-            }
             Collections.sort(processes);
             return processes;
         }
@@ -790,6 +778,8 @@ public class LoaderPersisterVcs implements ProcessLoader, ProcessPersister {
         if (logicalFile == null)
             return null; // process not found
         PackageDir pkgDir = getPackageDir(logicalFile);
+        if (pkgDir == null)
+            return null; // package may have been deleted
         try {
             return loadProcess(pkgDir, pkgDir.findAssetFile(logicalFile), true);
         }

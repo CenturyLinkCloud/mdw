@@ -22,6 +22,7 @@ import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.reports.AggregateDataAccess;
+import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.service.data.task.TaskAggregation;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.asset.Asset;
@@ -548,7 +549,7 @@ public class TaskServicesImpl implements TaskServices {
             }
             else {
                 tc.setName(taskTemplate.getName());
-                tc.setVersion(Asset.formatVersion(taskTemplate.getVersion()));
+                tc.setVersion(AssetVersion.formatVersion(taskTemplate.getVersion()));
                 tc.setPackageName(taskTemplate.getPackageName());
             }
         }

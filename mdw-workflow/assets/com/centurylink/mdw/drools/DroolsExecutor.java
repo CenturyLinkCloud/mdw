@@ -50,7 +50,7 @@ public class DroolsExecutor implements RulesExecutor {
             cloudClassLoader = PackageCache.getPackage(rulesAsset.getPackageName()).getCloudClassLoader();
 
         KnowledgeBaseAsset kbAsset = DroolsKnowledgeBaseCache
-                .getKnowledgeBaseAsset(rulesAsset.getName(), null, null, cloudClassLoader);
+                .getKnowledgeBaseAsset(rulesAsset.getName(), null, cloudClassLoader);
         if (kbAsset == null) {
             throw new ExecutionException("Cannot load KnowledgeBase asset: "
                     + rulesAsset.getPackageName() + "/" + rulesAsset.getLabel());

@@ -1,0 +1,13 @@
+package com.centurylink.mdw.tests.multiver
+
+// launch latest
+start "com.centurylink.mdw.tests.multiver/MyEverChangingMoods"
+notify event(masterRequestId)
+sleep 5
+// launch v0.1
+start "com.centurylink.mdw.tests.multiver/MyEverChangingMoods v0.1"
+wait process
+verify processes(
+        "com.centurylink.mdw.tests.multiver/MyEverChangingMoods",
+        "com.centurylink.mdw.tests.multiver/MyEverChangingMoods v0.1"
+)

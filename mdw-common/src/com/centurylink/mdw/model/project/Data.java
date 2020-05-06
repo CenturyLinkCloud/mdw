@@ -197,8 +197,7 @@ public class Data {
                 "INSTANCE_NOTE",
                 "ATTACHMENT",
                 "SOLUTION",
-                "SOLUTION_MAP",
-                "ASSET_REF"
+                "SOLUTION_MAP"
         );
     }
 

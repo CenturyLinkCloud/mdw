@@ -34,9 +34,9 @@ import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.reports.AggregateDataAccess;
 import com.centurylink.mdw.model.*;
-import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetHeader;
 import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.event.EventInstance;
@@ -707,7 +707,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             }
             else {
                 pc.setName(process.getName());
-                pc.setVersion(Asset.formatVersion(process.getVersion()));
+                pc.setVersion(AssetVersion.formatVersion(process.getVersion()));
                 pc.setPackageName(process.getPackageName());
             }
         }
@@ -779,7 +779,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     activityInstance.setName("Unknown (" + activityInstance.getDefinitionId() + ")");
                 }
                 activityInstance.setProcessName(process.getName());
-                activityInstance.setProcessVersion(Asset.formatVersion(process.getVersion()));
+                activityInstance.setProcessVersion(AssetVersion.formatVersion(process.getVersion()));
                 activityInstance.setPackageName(process.getPackageName());
             }
         }
@@ -823,7 +823,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             }
             else {
                 ac.setProcessName(process.getName());
-                ac.setVersion(Asset.formatVersion(process.getVersion()));
+                ac.setVersion(AssetVersion.formatVersion(process.getVersion()));
                 ac.setPackageName(process.getPackageName());
                 String logicalId = ac.getDefinitionId();
                 Activity actdef = process.getActivity(logicalId);

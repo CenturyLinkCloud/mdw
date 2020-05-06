@@ -10,6 +10,8 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,9 +20,11 @@ import java.util.Map;
 
 public class HierarchyCache implements CacheService {
 
+    private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static final String MILESTONES_PACKAGE = "com.centurylink.mdw.milestones";
 
     private static volatile Map<Long,List<Linked<Process>>> hierarchies = new HashMap<>();
+    // latest processIds to milestone hierarchies (TODO: map by assetPath for clarity)
     private static volatile Map<Long,Linked<Milestone>> milestones = new HashMap<>();
     private static volatile Map<Long,Linked<Activity>> activityHierarchies = new HashMap<>();
     private static volatile List<Long> milestoned = null;
@@ -239,12 +243,17 @@ public class HierarchyCache implements CacheService {
         List<Long> milestoned = new ArrayList<>();
         try {
             if (PackageCache.getPackage(MILESTONES_PACKAGE) != null) {
-                for (Process process : ProcessCache.getProcesses(true)) {
-                    List<Linked<Process>> hierarchyList = getHierarchy(process.getId());
-                    if (!hierarchyList.isEmpty()) {
-                        if (hasMilestones(hierarchyList.get(0))) {
-                            milestoned.add(process.getId());
+                for (Process process : ProcessCache.getProcesses(false)) {
+                    try {
+                        List<Linked<Process>> hierarchyList = getHierarchy(process.getId());
+                        if (!hierarchyList.isEmpty()) {
+                            if (hasMilestones(hierarchyList.get(0))) {
+                                milestoned.add(process.getId());
+                            }
                         }
+                    }
+                    catch (CachingException ex) {
+                        logger.error("Cannot check milestones for process " + process.getLabel(), ex);
                     }
                 }
             }

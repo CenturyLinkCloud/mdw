@@ -19,6 +19,7 @@ import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cli.Checkpoint;
 import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.AssetRef;
 import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
@@ -26,14 +27,12 @@ import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
 import com.centurylink.mdw.dataaccess.file.VersionControlGit;
 import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AssetRefCache implements CacheService {
@@ -102,7 +101,9 @@ public class AssetRefCache implements CacheService {
         for (AssetRef curRef : myAssetRefs.values()) {
             if (curRef.getName().contains(name)) {
                 Asset asset = new Asset();
-                asset.setVersion(Asset.parseVersion(curRef.getName().substring((curRef.getName().lastIndexOf(" v")+1))));
+                asset.setVersion(AssetVersion.parseVersion(curRef.getName().substring((curRef.getName().lastIndexOf(" v")+1))));
+                asset.setPackageName(spec.getPackageName());
+                asset.setName(spec.getName());
                 if (asset.meetsVersionSpec(spec.getVersion()))
                     return curRef;
             }
@@ -217,38 +218,41 @@ public class AssetRefCache implements CacheService {
     }
 
     private static synchronized Map<Long,AssetRef> load() {
-     // load all Refs from database that were archived in last X days (default is 2 years)
+        // load all Refs from database that were archived in last X days (default is 2 years)
         Map<Long,AssetRef> myAssetRefs = assetRefs;
         if (myAssetRefs == null) {
             myAssetRefs = new ConcurrentHashMap<Long,AssetRef>();
-            try {
-                if (DataAccess.getProcessLoader() instanceof LoaderPersisterVcs &&
-                        ((LoaderPersisterVcs)DataAccess.getProcessLoader()).getVersionControl() instanceof VersionControlGit) {
-                    isEnabled = true;
-                    List<AssetRef> list = null;
-                    LoaderPersisterVcs loader = (LoaderPersisterVcs)DataAccess.getProcessLoader();
-                    VersionControlGit vc = (VersionControlGit)loader.getVersionControl();
-                    Date date = null;
-                    if (offset == null)
-                        offset = PropertyManager.getIntegerProperty("mdw.assetref.offset", 730) * 24 * 3600 * 1000L;
-                    if (offset != 0L)  // If offset == 0, then load entire table
-                        date = new Date(DatabaseAccess.getCurrentTime() - offset);
-                    try (DbAccess dbAccess = new DbAccess()){
-                        Checkpoint cp = new Checkpoint(loader.getStorageDir(), loader.getVersionControl(), vc.getCommit(), dbAccess.getConnection());
-                        list = cp.retrieveAllRefs(date);
-                    }
-                    if (list != null && list.size() > 0) {
-                        for (AssetRef ref : list) {
-                            myAssetRefs.put(ref.getDefinitionId(), ref);
+            if (PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_REF_ENABLED, false)) {
+                long before = System.currentTimeMillis();
+                try {
+                    if (DataAccess.getProcessLoader() instanceof LoaderPersisterVcs &&
+                            ((LoaderPersisterVcs) DataAccess.getProcessLoader()).getVersionControl() instanceof VersionControlGit) {
+                        isEnabled = true;
+                        List<AssetRef> list = null;
+                        LoaderPersisterVcs loader = (LoaderPersisterVcs) DataAccess.getProcessLoader();
+                        VersionControlGit vc = (VersionControlGit) loader.getVersionControl();
+                        Date date = null;
+                        if (offset == null)
+                            offset = PropertyManager.getIntegerProperty("mdw.assetref.offset", 730) * 24 * 3600 * 1000L;
+                        if (offset != 0L)  // If offset == 0, then load entire table
+                            date = new Date(DatabaseAccess.getCurrentTime() - offset);
+                        try (DbAccess dbAccess = new DbAccess()) {
+                            Checkpoint cp = new Checkpoint(loader.getStorageDir(), loader.getVersionControl(), vc.getCommit(), dbAccess.getConnection());
+                            list = cp.retrieveAllRefs(date);
                         }
+                        if (list != null && list.size() > 0) {
+                            for (AssetRef ref : list) {
+                                myAssetRefs.put(ref.getDefinitionId(), ref);
+                            }
+                        } else
+                            logger.warn("No entries were found in ASSET_REF table!");
+                        assetRefs = myAssetRefs;
                     }
-                    else
-                        logger.warn("No entries were found in ASSET_REF table!");
-                    assetRefs = myAssetRefs;
+                    long ms = System.currentTimeMillis() - before;
+                    logger.info("Loaded asset refs in " + ms + " ms");
+                } catch (Exception ex) {
+                    logger.severeException(ex.getMessage(), ex);
                 }
-            }
-            catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
             }
         }
         return myAssetRefs;

@@ -85,7 +85,6 @@ public class MdwMain {
                 long dbtime = db.getDatabaseTime();
                 System.out.println("Database time: " + DateHelper.dateToString(new Date(dbtime)));
 
-                // automatically update the ASSET_REF table as a safety check
                 DataAccess.updateAssetRefs();
             }
             catch (Exception e) {

@@ -32,7 +32,7 @@ activities:
   name: Set oldVar
   implementor: com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity
   attributes:
-    ClassName: Inflight_A5
+    ClassName: DynamicInflight_A5
     Java: |
       package com.centurylink.mdw.tests.multiver;
 
@@ -43,7 +43,7 @@ activities:
       import com.centurylink.mdw.java.MdwJavaException;
       import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 
-      public class Inflight_A5 implements JavaExecutor {
+      public class DynamicInflight_A5 implements JavaExecutor {
 
           public void initialize(ActivityRuntimeContext context) throws MdwJavaException {
           }
