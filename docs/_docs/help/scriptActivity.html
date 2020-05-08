@@ -15,6 +15,7 @@ MDW has built-in support for these scripting languages:
 <ul>
   <li><a href="http://groovy.codehaus.org/Documentation">Groovy</a></li>
   <li><a href="https://kotlinlang.org/docs/reference/">Kotlin</a></li>
+  <li><a href="https://www.python.org/doc/">Python</a></li>
   <li><a href="http://developer.mozilla.org/en/JavaScript">JavaScript</a></li>
   <li><a href="bindingExpressions.html">javax.el</a></li>
 </ul>
@@ -24,19 +25,22 @@ In addition, you can implement support for any arbitrary scripting language as d
 When you drag the general scripting activity onto your process canvas, the first configuration attribute you'll specify is the the language to use.
 In MDW Studio, this appears as a dropdown on the Script tab in the properties view for an "Execute Script" activity, or on the Expression tab for a "Script Expression Evaluator".
 <br/><br/>
-Kotlin is the recommended general-purpose scripting language for MDW.
-Kotlin, Groovy and JavaScript are all supported out-of-the-box via the Java 8 generic ScriptEngine mechanism.
-Check the <a href="https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-workflow/assets/com/centurylink/mdw/tests/script">scripting automated tests</a> for detailed working examples of all three scripting languages.
+Groovy is the recommended general-purpose scripting language for MDW.
+Groovy, Kotlin, Python and JavaScript are all supported out-of-the-box through Java's generic ScriptEngine mechanism.
+Check the <a href="https://github.com/CenturyLinkCloud/mdw/tree/master/mdw-workflow/assets/com/centurylink/mdw/tests/script">scripting-related automated tests</a> for detailed working examples of all three scripting languages.
+<br/><br/>
 Kotlin specifics are described here: <a href="https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/kotlin/readme.md">https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/kotlin/readme.md</a>.
+<br/>
+Python specifics are described here: <a href="https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/python/readme.md">https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/python/readme.md</a>.
 <br/><br/>
 Whichever scripting language you choose, the activities behave similarly, with the main difference being the syntax of the script itself.
 The script content is stored as an attribute of your activity, so it is maintained and versioned along with your process definition.
 To edit your script, you can right click on the activity and select "Edit Script" from the context menu, or click on the "Open" link in the configurator "Script" tab.
 <br/><br/>
 In your script you have implicit access to all of your process variables, as well as "runtimeContext" (which represents the containing activity's workflow
-state).  The runtimeContext binding is an instance of 
+state).  The runtimeContext binding is an instance of
 <a href="../javadoc/com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html">ActivityRuntimeContext</a>.
-The syntax for accessing your process variables is simply <i>varName</i> in Groovy or JavaScript.  In Kotlin, variables are referenced through the <i>variables</i> map. 
+The syntax for accessing your process variables is simply <i>varName</i> in Groovy or JavaScript.  In Kotlin, variables are referenced through the <i>variables</i> map.
 
 <br/><br/>
 <h3>Execute Script Activity</h3>
@@ -84,9 +88,9 @@ will show up in MDWHub's logging views as illustrated in the following screensho
 <br/><br/>
 <h3>Script Libraries</h3>
 Script libraries can contain reusable logic and utility classes that are accessible from all your script activities.
-A script library artifact is really nothing more than a segment of code that resides in an MDW package. 
+A script library artifact is really nothing more than a segment of code that resides in an MDW package.
 Currently the only supported language for script libraries is Groovy.
-Namespace resolution considerations dictate that the Groovy package name for your library components be the same as your MDW package name, and for this reason only MDW packages that comply with Groovy naming rules may contain script libraries. 
+Namespace resolution considerations dictate that the Groovy package name for your library components be the same as your MDW package name, and for this reason only MDW packages that comply with Groovy naming rules may contain script libraries.
 To create a new script library artifact, right click on the MDW package in Process Explorer view, and select New > Script.
 The newly-created script will automatically contain the appropriate package declaration.  Here's an example:
 <pre>
@@ -99,7 +103,7 @@ class TnValidator
     println 'tn: ' + tn;
     return true;
   }
-  
+
   Closure getRegisterTnClosure()
   {
     return println('registering tn: ' + it); }
@@ -113,7 +117,7 @@ To access this functionality from a script activity, you might include the follo
   ...
   tnVal = new TnValidator();
   valid = tnVal.validate(travelerTN);
-  
+
   tns = ["303-555-1212", "303-634-7861", 303-624-1952];
   tns.each(tnVal.getRegisterTnClosure());
 </pre>
@@ -144,8 +148,8 @@ To accomplish this, you need to create assets that implement either or both of t
 <br/><br/>
 The Java 1.8 <a href="http://java.sun.com/developer/technicalArticles/J2SE/Desktop/scripting/">javax.script.ScriptEngine</a> interfaces makes it easy to plug-in a script provider who complies with the JSR 223 specification.
 MDW's <a href="https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/kotlin/KotlinExecutor.java">KotlinExecutor</a> is implemented as an asset, and you can refer to this as an illustration of how to implement your own executor.
-The main point to observe is the @RegisteredService annotation, which is how the runtime engine identifies you implementation as an available language.
+The main point to observe is the @RegisteredService annotation, which is how the runtime engine identifies your implementation as an available language.
 To add a custom scripting activity to the Toolbox, create a .impl asset similar to the Kotlin <a href="https://github.com/CenturyLinkCloud/mdw/blob/master/mdw-workflow/assets/com/centurylink/mdw/kotlin/ScriptActivity.impl">ScriptActivity</a>.
-The details of configuring activity implementors are described <a href="implementor.html">here</a>.     
+The details of configuring activity implementors are described <a href="implementor.html">here</a>.
 </body>
 </html>
