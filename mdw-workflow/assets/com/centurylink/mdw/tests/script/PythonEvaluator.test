@@ -1,0 +1,13 @@
+package com.centurylink.mdw.tests.script
+
+start process("PythonTest") {
+    variables = [ testCase: 'decide' ]
+}
+
+wait process('PythonTest') {
+    timeout = 90 // lazy interpreter initialization can take a while
+}
+
+verify process {
+    resultsById = true
+}

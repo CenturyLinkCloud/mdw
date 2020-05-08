@@ -1,0 +1,49 @@
+process: # 10716
+  name: PythonTest
+  instance: 1
+  activity: # 1 "2020-05-07 13:55:13.510"
+    name: Start
+    status: Completed
+  activity: # 2 "2020-05-07 13:55:13.632"
+    name: Stop
+    status: Completed
+  activity: # 3 "2020-05-07 13:55:13.556"
+    name: Exec
+    status: Completed
+    result: onward
+  activity: # 4 "2020-05-07 13:55:13.538"
+    name: Which?
+    status: Completed
+    result: exec
+  activity: # 5 "2020-05-07 13:55:13.592"
+    name: Use Module
+    status: Completed
+  variable: # 11995
+    name: boolInput
+    value: true
+  variable: # 11993
+    name: intInput
+    value: 25
+  variable: # 11996
+    name: intLocal
+    value: 7
+  variable: # 11997
+    name: message
+    value: Hello, Ernest Hemmingway
+  variable: # 11998
+    name: mrid
+    value: ${masterRequestId}
+  variable: # 11999
+    name: name
+    value: Ernest Hemmingway
+  variable: # 11992
+    name: person
+    value: |
+      {
+        "firstName": "Scott",
+        "lastName": "Fitzgerald",
+        "name": "Scott Fitzgerald"
+      }
+  variable: # 11994
+    name: testCase
+    value: exec

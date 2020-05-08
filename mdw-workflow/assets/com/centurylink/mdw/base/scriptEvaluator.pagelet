@@ -7,7 +7,8 @@
       "Groovy",
       "javax.el",
       "Kotlin Script",
-      "JavaScript"
+      "JavaScript",
+      "Python"
     ],
     "type": "dropdown"
   },

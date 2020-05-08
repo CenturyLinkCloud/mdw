@@ -5,9 +5,10 @@
     "JavaScript": "js",
     "Kotlin Script": "kts",
     "GPath": "groovy",
-    "XSLT": "xsl"
+    "XSLT": "xsl",
+    "Python": "py"
   },
   "languageAttributes": [
-      "SCRIPT", "PreScriptLang", "PostScriptLang", "Transform Language" 
+      "SCRIPT", "PreScriptLang", "PostScriptLang", "Transform Language"
   ]
 }

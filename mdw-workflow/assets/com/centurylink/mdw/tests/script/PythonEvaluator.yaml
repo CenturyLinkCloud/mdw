@@ -1,0 +1,20 @@
+process: # 10719
+  name: PythonTest
+  instance: 1
+  activity: # 1 "2020-05-07 13:59:12.011"
+    name: Start
+    status: Completed
+  activity: # 4 "2020-05-07 13:59:12.033"
+    name: Which?
+    status: Completed
+    result: decide
+  activity: # 6 "2020-05-07 13:59:12.055"
+    name: Boolean
+    status: Completed
+    result: true
+  activity: # 8 "2020-05-07 13:59:12.078"
+    name: Stop
+    status: Completed
+  variable: # 12016
+    name: testCase
+    value: decide

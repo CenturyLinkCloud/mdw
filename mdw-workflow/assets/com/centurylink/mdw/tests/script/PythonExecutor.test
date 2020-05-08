@@ -1,0 +1,21 @@
+package com.centurylink.mdw.tests.script
+
+start process('PythonTest') {
+    variables = [
+            testCase: 'exec',
+            intInput: 1,
+            person: '''{
+  "_type": "com.centurylink.mdw.tests.script.Person",
+  "person": {
+    "firstName": "Ernest",
+    "lastName": "Hemmingway"
+  }
+}''']
+}
+wait process('PythonTest') {
+    timeout = 90 // lazy interpretter initialization
+}
+
+verify process {
+    resultsById = true
+}

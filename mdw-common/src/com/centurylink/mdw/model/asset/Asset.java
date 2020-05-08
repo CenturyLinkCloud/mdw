@@ -25,8 +25,10 @@ import java.util.*;
 public class Asset implements Comparable<Asset> {
 
     public static final String GROOVY = "GROOVY";
+    public static final String JAVASCRIPT = "JAVASCRIPT";
     public static final String KOTLIN = "KOTLIN";
     public static final String KOTLIN_SCRIPT = "KOTLIN SCRIPT";
+    public static final String PYTHON = "PYTHON";
     public static final String PAGELET = "PAGELET";
     public static final String VELOCITY = "VELOCITY";
     public static final String IMAGE_JPEG = "IMAGE_JPEG";
@@ -34,7 +36,6 @@ public class Asset implements Comparable<Asset> {
     public static final String IMAGE_PNG = "IMAGE_PNG";
     public static final String IMAGE_SVG = "IMAGE_SVG";
     public static final String CSS = "CSS";
-    public static final String JAVASCRIPT = "JAVASCRIPT";
     public static final String JSX = "JSX";
     public static final String WEBSCRIPT = "WEBSCRIPT";
     public static final String CONFIG = "CONFIG";
@@ -68,8 +69,10 @@ public class Asset implements Comparable<Asset> {
 
     public static final String[] FORMATS = {
         GROOVY,
+        JAVASCRIPT,
         KOTLIN,
         KOTLIN_SCRIPT,
+        PYTHON,
         PAGELET,
         VELOCITY,
         IMAGE_JPEG,
@@ -77,7 +80,6 @@ public class Asset implements Comparable<Asset> {
         IMAGE_PNG,
         IMAGE_SVG,
         CSS,
-        JAVASCRIPT,
         JSX,
         WEBSCRIPT,
         CONFIG, // used internally for package config
@@ -305,7 +307,7 @@ public class Asset implements Comparable<Asset> {
 
     public static String getContentType(String language) {
         if (contentTypes == null) {
-            contentTypes = new HashMap<String,String>();
+            contentTypes = new HashMap<>();
             contentTypes.put(SPRING, "text/xml");
             contentTypes.put(CAMEL_ROUTE, "text/xml");
             contentTypes.put(CSS, "text/css");
@@ -470,6 +472,8 @@ public class Asset implements Comparable<Asset> {
             languageToExtension.put("KOTLIN_SCRIPT", ".kts");
             languageToExtension.put("JavaScript", ".js");
             languageToExtension.put("JAVASCRIPT", ".js");
+            languageToExtension.put("Python", ".py");
+            languageToExtension.put("PYTHON", ".py");
             languageToExtension.put("JSX", ".jsx");
             languageToExtension.put("WEBSCRIPT", ".js");
             languageToExtension.put("GPath", ".groovy");
@@ -535,6 +539,7 @@ public class Asset implements Comparable<Asset> {
             extensionToLanguage.put(".kt", KOTLIN);
             extensionToLanguage.put(".kts", KOTLIN_SCRIPT);
             extensionToLanguage.put(".js", JAVASCRIPT);
+            extensionToLanguage.put(".py", PYTHON);
             extensionToLanguage.put(".jsx", JSX);
             extensionToLanguage.put(".drl", DROOLS);
             extensionToLanguage.put(".brl", GUIDED);
