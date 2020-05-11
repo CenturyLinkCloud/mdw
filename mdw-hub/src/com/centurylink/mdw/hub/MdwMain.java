@@ -16,6 +16,7 @@
 package com.centurylink.mdw.hub;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.cache.impl.AssetHistory;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.JMSDestinationNames;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -139,6 +140,11 @@ public class MdwMain {
                     logger.info("Running startup service " + startupService.getClass());
                     startupService.onStartup();
                 }
+            }
+
+            if (PropertyManager.getBooleanProperty("mdw.asset.history.preload", true)) {
+                // pre-load asset history
+                AssetHistory.load();
             }
 
             logger.info("Initialize " + AssetImportMonitor.class.getName());
