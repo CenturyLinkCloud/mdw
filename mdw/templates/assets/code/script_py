@@ -1,1 +1,1 @@
-runtimeContext.logDebug("Executing " + runtimeContext.activity.name)
+runtimeContext.logDebug('Executing ' + runtimeContext.activity.name)
