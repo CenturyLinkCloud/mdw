@@ -30,7 +30,7 @@ after_failure:
 #  - cat ../testResults/com.centurylink.mdw.tests.services/UnparseableResponse.log
 #  - cat ../testResults/com.centurylink.mdw.tests.services/UnparseableResponse.yaml
   - cat mdw.log
-  - sleep 10s
+  - sleep 9s
 notifications:
   slack:
     rooms:
