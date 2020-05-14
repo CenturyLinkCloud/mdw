@@ -1,6 +1,6 @@
 schemaVersion: '6.1'
 name: com.centurylink.mdw.db
-version: 6.1.35-SNAPSHOT
+version: 6.1.35
 
 dependencies:
-  - com.centurylink.mdw.base v6.1.35-SNAPSHOT
+  - com.centurylink.mdw.base v6.1.35
