@@ -10,7 +10,7 @@
 - Use Git history directly instead of ASSET\_REF for inflights [\#816](https://github.com/CenturyLinkCloud/mdw/issues/816)
 
 ## [6.1.34](https://github.com/CenturyLinkCloud/mdw/tree/6.1.34) (2020-05-01)
-[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.34-SNAPSHOT...6.1.34)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.33...6.1.34)
 
 **Implemented enhancements:**
 
