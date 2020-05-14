@@ -1,5 +1,14 @@
 # Change Log
 
+## [6.1.35](https://github.com/CenturyLinkCloud/mdw/tree/6.1.35) (2020-05-14)
+[Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.34...6.1.35)
+
+**Implemented enhancements:**
+
+- Replace groovy-all dependency with individual libs [\#841](https://github.com/CenturyLinkCloud/mdw/issues/841)
+- Python script activity [\#834](https://github.com/CenturyLinkCloud/mdw/issues/834)
+- Use Git history directly instead of ASSET\_REF for inflights [\#816](https://github.com/CenturyLinkCloud/mdw/issues/816)
+
 ## [6.1.34](https://github.com/CenturyLinkCloud/mdw/tree/6.1.34) (2020-05-01)
 [Full Changelog](https://github.com/CenturyLinkCloud/mdw/compare/6.1.34-SNAPSHOT...6.1.34)
 
