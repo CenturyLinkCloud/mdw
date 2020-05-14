@@ -1,8 +1,8 @@
 schemaVersion: '6.1'
 name: com.centurylink.mdw.tests.routing
-version: 6.1.35
+version: 6.1.36-SNAPSHOT
 
 dependencies:
-  - com.centurylink.mdw.base v6.1.35
-  - com.centurylink.mdw.routing v6.1.35
-  - com.centurylink.mdw.testing v6.1.35
+  - com.centurylink.mdw.base v6.1.36-SNAPSHOT
+  - com.centurylink.mdw.routing v6.1.36-SNAPSHOT
+  - com.centurylink.mdw.testing v6.1.36-SNAPSHOT
