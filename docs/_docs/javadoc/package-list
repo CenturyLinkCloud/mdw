@@ -78,6 +78,7 @@ com.centurylink.mdw.observer.task
 com.centurylink.mdw.pdf
 com.centurylink.mdw.procimport
 com.centurylink.mdw.provider
+com.centurylink.mdw.python
 com.centurylink.mdw.react
 com.centurylink.mdw.routing
 com.centurylink.mdw.rules

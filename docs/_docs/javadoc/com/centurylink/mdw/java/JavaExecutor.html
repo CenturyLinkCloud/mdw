@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
+var methods = {"i0":6,"i1":18};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -113,7 +113,7 @@ var activeTableTab = "activeTableTab";
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t5" class="tableTab"><span><a href="javascript:show(16);">Default Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
@@ -123,7 +123,7 @@ var activeTableTab = "activeTableTab";
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/java/JavaExecutor.html#execute-java.util.Map-">execute</a></span>(java.util.Map&lt;java.lang.String,java.lang.Object&gt;&nbsp;variables)</code>&nbsp;</td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>void</code></td>
+<td class="colFirst"><code>default void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/centurylink/mdw/java/JavaExecutor.html#initialize-com.centurylink.mdw.model.workflow.ActivityRuntimeContext-">initialize</a></span>(<a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;runtimeContext)</code>&nbsp;</td>
 </tr>
 </table>
@@ -147,8 +147,8 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <h4>initialize</h4>
-<pre>void&nbsp;initialize(<a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;runtimeContext)
-         throws <a href="../../../../com/centurylink/mdw/java/MdwJavaException.html" title="class in com.centurylink.mdw.java">MdwJavaException</a></pre>
+<pre>default&nbsp;void&nbsp;initialize(<a href="../../../../com/centurylink/mdw/model/workflow/ActivityRuntimeContext.html" title="class in com.centurylink.mdw.model.workflow">ActivityRuntimeContext</a>&nbsp;runtimeContext)
+                 throws <a href="../../../../com/centurylink/mdw/java/MdwJavaException.html" title="class in com.centurylink.mdw.java">MdwJavaException</a></pre>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../com/centurylink/mdw/java/MdwJavaException.html" title="class in com.centurylink.mdw.java">MdwJavaException</a></code></dd>

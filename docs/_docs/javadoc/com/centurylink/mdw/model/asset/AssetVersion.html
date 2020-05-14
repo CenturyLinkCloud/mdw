@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var methods = {"i0":10,"i1":10,"i2":9,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":9,"i13":9,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10};
+var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -132,12 +132,9 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#AssetVersion-com.centurylink.mdw.dataaccess.AssetRef-">AssetVersion</a></span>(<a href="../../../../../com/centurylink/mdw/dataaccess/AssetRef.html" title="class in com.centurylink.mdw.dataaccess">AssetRef</a>&nbsp;assetRef)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#AssetVersion-org.json.JSONObject-">AssetVersion</a></span>(org.json.JSONObject&nbsp;json)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#AssetVersion-java.lang.Long-java.lang.String-java.lang.String-">AssetVersion</a></span>(java.lang.Long&nbsp;id,
             java.lang.String&nbsp;path,
             java.lang.String&nbsp;version)</code>&nbsp;</td>
@@ -152,7 +149,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
@@ -164,62 +161,90 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 </td>
 </tr>
 <tr id="i1" class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#equals-java.lang.Object-">equals</a></span>(java.lang.Object&nbsp;other)</code>&nbsp;</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#formatVersion-int-">formatVersion</a></span>(int&nbsp;version)</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code><a href="../../../../../com/centurylink/mdw/model/asset/CommitInfo.html" title="class in com.centurylink.mdw.model.asset">CommitInfo</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#getCommitInfo--">getCommitInfo</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i2" class="altColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#getCount--">getCount</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.lang.Long</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#getId--">getId</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i4" class="altColor">
+<tr id="i6" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#getName--">getName</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i5" class="rowColor">
+<tr id="i7" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#getPath--">getPath</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i6" class="altColor">
+<tr id="i8" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#getRef--">getRef</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i7" class="rowColor">
+<tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#getVersion--">getVersion</a></span>()</code>&nbsp;</td>
 </tr>
-<tr id="i8" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#setCommitInfo-com.centurylink.mdw.model.asset.CommitInfo-">setCommitInfo</a></span>(<a href="../../../../../com/centurylink/mdw/model/asset/CommitInfo.html" title="class in com.centurylink.mdw.model.asset">CommitInfo</a>&nbsp;commitInfo)</code>&nbsp;</td>
-</tr>
-<tr id="i9" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#setCount-long-">setCount</a></span>(long&nbsp;count)</code>&nbsp;</td>
-</tr>
 <tr id="i10" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#setId-java.lang.Long-">setId</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
 <tr id="i11" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#setName-java.lang.String-">setName</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#meetsSpec-com.centurylink.mdw.model.asset.AssetVersionSpec-">meetsSpec</a></span>(<a href="../../../../../com/centurylink/mdw/model/asset/AssetVersionSpec.html" title="class in com.centurylink.mdw.model.asset">AssetVersionSpec</a>&nbsp;spec)</code>
+<div class="block">Either a specific version number can be specified, or a Smart Version can be specified which designates an allowable range.</div>
+</td>
 </tr>
 <tr id="i12" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#setPath-java.lang.String-">setPath</a></span>(java.lang.String&nbsp;path)</code>&nbsp;</td>
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#parseVersion-java.lang.String-">parseVersion</a></span>(java.lang.String&nbsp;versionString)</code>&nbsp;</td>
 </tr>
 <tr id="i13" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#setRef-java.lang.String-">setRef</a></span>(java.lang.String&nbsp;ref)</code>&nbsp;</td>
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#parseVersionSpec-java.lang.String-">parseVersionSpec</a></span>(java.lang.String&nbsp;versionString)</code>
+<div class="block">single digit without decimal means a major version not minor</div>
+</td>
 </tr>
 <tr id="i14" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#setVersion-java.lang.String-">setVersion</a></span>(java.lang.String&nbsp;version)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#setCommitInfo-com.centurylink.mdw.model.asset.CommitInfo-">setCommitInfo</a></span>(<a href="../../../../../com/centurylink/mdw/model/asset/CommitInfo.html" title="class in com.centurylink.mdw.model.asset">CommitInfo</a>&nbsp;commitInfo)</code>&nbsp;</td>
 </tr>
 <tr id="i15" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#setCount-long-">setCount</a></span>(long&nbsp;count)</code>&nbsp;</td>
+</tr>
+<tr id="i16" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#setId-java.lang.Long-">setId</a></span>(java.lang.Long&nbsp;id)</code>&nbsp;</td>
+</tr>
+<tr id="i17" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#setName-java.lang.String-">setName</a></span>(java.lang.String&nbsp;name)</code>&nbsp;</td>
+</tr>
+<tr id="i18" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#setPath-java.lang.String-">setPath</a></span>(java.lang.String&nbsp;path)</code>&nbsp;</td>
+</tr>
+<tr id="i19" class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#setRef-java.lang.String-">setRef</a></span>(java.lang.String&nbsp;ref)</code>&nbsp;</td>
+</tr>
+<tr id="i20" class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#setVersion-java.lang.String-">setVersion</a></span>(java.lang.String&nbsp;version)</code>&nbsp;</td>
+</tr>
+<tr id="i21" class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/centurylink/mdw/model/asset/AssetVersion.html#toString--">toString</a></span>()</code>&nbsp;</td>
 </tr>
@@ -229,7 +254,7 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
+<code>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.com.centurylink.mdw.model.Jsonable">
@@ -266,15 +291,6 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <li class="blockList">
 <h4>AssetVersion</h4>
 <pre>public&nbsp;AssetVersion(org.json.JSONObject&nbsp;json)</pre>
-</li>
-</ul>
-<a name="AssetVersion-com.centurylink.mdw.dataaccess.AssetRef-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>AssetVersion</h4>
-<pre>public&nbsp;AssetVersion(<a href="../../../../../com/centurylink/mdw/dataaccess/AssetRef.html" title="class in com.centurylink.mdw.dataaccess">AssetRef</a>&nbsp;assetRef)</pre>
 </li>
 </ul>
 <a name="AssetVersion-java.lang.Long-java.lang.String-java.lang.String-">
@@ -439,13 +455,95 @@ implements <a href="../../../../../com/centurylink/mdw/model/Jsonable.html" titl
 <a name="toString--">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>toString</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+</dl>
+</li>
+</ul>
+<a name="equals-java.lang.Object-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>equals</h4>
+<pre>public&nbsp;boolean&nbsp;equals(java.lang.Object&nbsp;other)</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>equals</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+</dl>
+</li>
+</ul>
+<a name="hashCode--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>hashCode</h4>
+<pre>public&nbsp;int&nbsp;hashCode()</pre>
+<dl>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>hashCode</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+</dl>
+</li>
+</ul>
+<a name="meetsSpec-com.centurylink.mdw.model.asset.AssetVersionSpec-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>meetsSpec</h4>
+<pre>public&nbsp;boolean&nbsp;meetsSpec(<a href="../../../../../com/centurylink/mdw/model/asset/AssetVersionSpec.html" title="class in com.centurylink.mdw.model.asset">AssetVersionSpec</a>&nbsp;spec)</pre>
+<div class="block">Either a specific version number can be specified, or a Smart Version can be specified which designates an allowable range.
+
+ Smart Version Ranges
+ This is similar to the OSGi version spec.  There are four supported syntaxes:
+    - A specific version -- such as 1.2 -- can be specified.
+    - Zero can be specified to always use the latest asset version.
+    - A 'half-open' range -- such as [1.2,2) -- designates an inclusive lower limit and an exclusive upper limit,
+      denoting version 1.2 and any version after this, up to, but not including, version 2.0.
+    - An 'unbounded' version range -- such as [1.2 -- which denotes version 1.2 and all later versions.</div>
+</li>
+</ul>
+<a name="parseVersion-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>parseVersion</h4>
+<pre>public static&nbsp;int&nbsp;parseVersion(java.lang.String&nbsp;versionString)
+                        throws java.lang.NumberFormatException</pre>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.NumberFormatException</code></dd>
+</dl>
+</li>
+</ul>
+<a name="formatVersion-int-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>formatVersion</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;formatVersion(int&nbsp;version)</pre>
+</li>
+</ul>
+<a name="parseVersionSpec-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>parseVersionSpec</h4>
+<pre>public static&nbsp;int&nbsp;parseVersionSpec(java.lang.String&nbsp;versionString)
+                            throws java.lang.NumberFormatException</pre>
+<div class="block">single digit without decimal means a major version not minor</div>
+<dl>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code>java.lang.NumberFormatException</code></dd>
 </dl>
 </li>
 </ul>
