@@ -15,7 +15,7 @@ CONFIG_LOC="--config-loc=../../config"
 STD_ARGS="$PROJECT_DIR $ASSET_LOC $CONFIG_LOC --no-progress"
 
 @test "export bpmn2" {
-  mdw export --process=com.centurylink.mdw.tests.cloud/ActivityImplementors.proc --output=output/ActivityImplementors.bpmn $STD_ARGS
+  mdw export --process=com.centurylink.mdw.tests.code/ActivityImplementors.proc --output=output/ActivityImplementors.bpmn $STD_ARGS
   ls output/ActivityImplementors.bpmn
 }
 
@@ -27,11 +27,11 @@ STD_ARGS="$PROJECT_DIR $ASSET_LOC $CONFIG_LOC --no-progress"
 
 @test "bpmn2 round trip" {
   skip 'TODO: round trip json does not exactly match'
-  diff $ASSETS/com/centurylink/mdw/ignore/ActivityImplementors.proc $ASSETS/com/centurylink/mdw/tests/cloud/ActivityImplementors.proc
+  diff $ASSETS/com/centurylink/mdw/ignore/ActivityImplementors.proc $ASSETS/com/centurylink/mdw/tests/code/ActivityImplementors.proc
 }
 
 @test "export html" {
-  mdw export --process=com.centurylink.mdw.tests.cloud/ActivityImplementors.proc --output=output/ActivityImplementors.html $STD_ARGS
+  mdw export --process=com.centurylink.mdw.tests.code/ActivityImplementors.proc --output=output/ActivityImplementors.html $STD_ARGS
   ls output/ActivityImplementors.html
   ls output/ActivityImplementors_0_ch0.png
   diff ActivityImplementors.html output/ActivityImplementors.html

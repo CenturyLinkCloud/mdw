@@ -2,10 +2,10 @@
   <process id="MainProcess" name="ActivityImplementors" isExecutable="true">
     <extensionElements>
       <mdw:ProcessExtensions xmlns:mdw="http://mdw.centurylink.com/bpm">
-        <mdw:Attribute name="ArrowStyle">ArrowEnd</mdw:Attribute>
         <mdw:Attribute name="NodeStyle">BoxIcon</mdw:Attribute>
-        <mdw:Attribute name="PROCESS_VISIBILITY">PUBLIC</mdw:Attribute>
+        <mdw:Attribute name="ArrowStyle">ArrowEnd</mdw:Attribute>
         <mdw:Attribute name="WORK_DISPLAY_INFO">x=39,y=79,w=202,h=26</mdw:Attribute>
+        <mdw:Attribute name="PROCESS_VISIBILITY">PUBLIC</mdw:Attribute>
         <mdw:Variable category="LOCAL" dispaySequence="0" name="invader">
           <mdw:type name="java.lang.String"/>
         </mdw:Variable>
@@ -27,7 +27,7 @@
     <serviceTask id="A3" name="Which?">
       <extensionElements>
         <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
-          <mdw:Attribute name="Implementor">com.centurylink.mdw.tests.cloud.WhichActivity</mdw:Attribute>
+          <mdw:Attribute name="Implementor">com.centurylink.mdw.tests.code.WhichActivity</mdw:Attribute>
         </mdw:Attributes>
       </extensionElements>
     </serviceTask>
@@ -35,7 +35,7 @@
 Activity">
       <extensionElements>
         <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
-          <mdw:Attribute name="Implementor">com.centurylink.mdw.tests.cloud.JavaActivity</mdw:Attribute>
+          <mdw:Attribute name="Implementor">com.centurylink.mdw.tests.code.JavaActivity</mdw:Attribute>
         </mdw:Attributes>
       </extensionElements>
     </serviceTask>
@@ -43,14 +43,14 @@ Activity">
 Activity">
       <extensionElements>
         <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
-          <mdw:Attribute name="Implementor">com.centurylink.mdw.tests.cloud.KotlinActivity</mdw:Attribute>
+          <mdw:Attribute name="Implementor">com.centurylink.mdw.tests.code.KotlinActivity</mdw:Attribute>
         </mdw:Attributes>
       </extensionElements>
     </serviceTask>
     <serviceTask id="A6" name="Java Invader">
       <extensionElements>
         <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
-          <mdw:Attribute name="Implementor">com.centurylink.mdw.tests.cloud.JavaInvader</mdw:Attribute>
+          <mdw:Attribute name="Implementor">com.centurylink.mdw.tests.code.JavaInvader</mdw:Attribute>
           <mdw:Attribute name="Invader">Dr. Soran</mdw:Attribute>
           <mdw:Attribute name="Planet">Neptune</mdw:Attribute>
         </mdw:Attributes>
@@ -59,7 +59,7 @@ Activity">
     <serviceTask id="A7" name="Kotlin Invader">
       <extensionElements>
         <mdw:Attributes xmlns:mdw="http://mdw.centurylink.com/bpm">
-          <mdw:Attribute name="Implementor">com.centurylink.mdw.tests.cloud.KotlinInvader</mdw:Attribute>
+          <mdw:Attribute name="Implementor">com.centurylink.mdw.tests.code.KotlinInvader</mdw:Attribute>
           <mdw:Attribute name="Invader">Gul Dukat</mdw:Attribute>
           <mdw:Attribute name="Planet">Jupiter</mdw:Attribute>
         </mdw:Attributes>
