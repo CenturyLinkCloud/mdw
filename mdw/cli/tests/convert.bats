@@ -22,7 +22,7 @@ STD_ARGS="$PROJECT_DIR $ASSET_LOC $CONFIG_LOC --no-progress"
 }
 
 @test "convert evth" {
-  # skip 'formal'
+  skip 'formal'
   mdw convert --input=./GetEmployee.evth $STD_ARGS
   diff GetEmployee.java GetEmployee.java.txt
   rm -f GetEmployee.java

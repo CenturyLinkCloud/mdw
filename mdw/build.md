@@ -18,7 +18,7 @@
 
 4. Comment/uncomment these CLI tests:
   - mdw/cli/tests/quickstart.bats (line 53 -- skip for formal/1st shapshot build, add back for second/subsequent snapshots)
-  - mdw/cli/tests/convert.bats (line 18 -- skip for formal/1st snapshot builds, add back for second/subsequent snapshots)
+  - mdw/cli/tests/convert.bats (line 25 -- skip for formal/1st snapshot builds, add back for second/subsequent snapshots)
     TODO: better way of handling -- this is because mdw.version is something that hasn't been published yet (formal and first snapshot)
 
 5. (Brand new point-release -- eg: moving from 6.1 to 6.2):
