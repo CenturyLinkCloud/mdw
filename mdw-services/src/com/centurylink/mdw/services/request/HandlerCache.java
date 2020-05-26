@@ -210,7 +210,7 @@ public class HandlerCache implements PreloadableCache {
             logger.warn("*** Found evth asset: " + asset.getPath());
             logger.warn("*** Support for evth assets will be removed soon.");
             logger.warn("*** Consult the docs on how to convert to RequestHandlers: "
-                    + ApplicationContext.getDocsUrl() + "/help/listener.html");
+                    + ApplicationContext.getDocsUrl() + "/help/handlers.html");
         }
         return evths;
     }

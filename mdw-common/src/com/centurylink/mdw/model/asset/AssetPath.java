@@ -20,6 +20,13 @@ public class AssetPath {
         return asset.substring(lastDot + 1);
     }
 
+    public String rootName() {
+        int lastDot = asset.lastIndexOf(".");
+        if (lastDot < 1 || lastDot > asset.length() - 2)
+            return asset;
+        return asset.substring(0, lastDot);
+    }
+
     public String pkgPath() {
         return pkg.replace('.', '/');
     }

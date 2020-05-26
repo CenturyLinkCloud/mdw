@@ -8,12 +8,12 @@ import com.centurylink.mdw.services.request.ProcessNotifyHandler;
 
 import java.util.Map;
 
-@Handler(match=RequestHandler.Routing.Path, path="/my/endpoint/path")
+@Handler(match=RequestHandler.Routing.{{routing}}, path="{{path}}")
 public class {{className}} extends ProcessNotifyHandler {
 
     @Override
     protected String getEventName(Request request, Object message, Map<String,String> headers)
             throws RequestHandlerException {
-        return "my-unique-event-name";
+        return "{{event}}";
     }
 }

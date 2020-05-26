@@ -20,11 +20,12 @@ import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.config.OrderedProperties;
 import com.centurylink.mdw.config.YamlBuilder;
 import com.centurylink.mdw.config.YamlProperties;
+import com.centurylink.mdw.file.VersionProperties;
 import com.centurylink.mdw.model.Yamlable;
+import com.centurylink.mdw.model.asset.AssetPath;
 import com.centurylink.mdw.model.asset.Pagelet;
 import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.file.VersionProperties;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -112,7 +113,11 @@ public class Convert extends Setup  {
         } else {
             if (input != null && input.getName().endsWith(".impl")) {
                 convertImplementor();
-            } else {
+            }
+            if (input != null && input.getName().endsWith(".evth")) {
+                convertEventHandler();
+            }
+            else {
                 convertProperties();
             }
         }
@@ -212,7 +217,7 @@ public class Convert extends Setup  {
         }
     }
 
-    protected void convertImplementor() throws IOException {
+    private void convertImplementor() throws IOException {
         JSONObject implJson = new JSONObject(new String(Files.readAllBytes(input.toPath())));
         String implClass = implJson.getString("implementorClass");
         String outPath = getAssetRoot() + "/" + implClass.replace(".", "/");
@@ -260,11 +265,55 @@ public class Convert extends Setup  {
         downloadTemplates();
         File templateFile = new File(getTemplateDir() + "/assets/code/activity/general_" + suffix);
         String template = new String(Files.readAllBytes(templateFile.toPath()));
-        Map<String, Object> values = new HashMap<>();
+        Map<String,Object> values = new HashMap<>();
         values.put("packageName", implClass.substring(0, implClass.lastIndexOf(".")));
         values.put("className", implClass.substring(implClass.lastIndexOf(".") + 1));
         values.put("annotationsImports", imports);
         values.put("annotations", annotations);
+        String source = substitute(template, values);
+        Files.write(outFile.toPath(), source.getBytes(), StandardOpenOption.CREATE_NEW);
+    }
+
+    private void convertEventHandler() throws IOException {
+        JSONObject evthJson = new JSONObject(new String(Files.readAllBytes(input.toPath())));
+        Map<String,Object> values = new HashMap<>();
+        values.put("path", evthJson.getString("path"));
+        values.put("routing", "Content");
+        String templateName;
+        String outPath = getAssetRoot().toString();
+        AssetPath assetPath = getAssetPath(input);
+        values.put("className", assetPath.rootName());
+        if (!assetPath.toString().startsWith("..")) {
+            values.put("packageName", assetPath.pkg);
+            outPath += "/" + assetPath.pkgPath() + "/" + assetPath.rootName();
+        }
+        else {
+            outPath = "./" + assetPath.rootName();
+        }
+        String handlerClass = evthJson.getString("handlerClass");
+        if (handlerClass.startsWith("START_PROCESS")) {
+            templateName = "process_run";
+            values.put("process", handlerClass.substring(26));
+        }
+        else if (handlerClass.startsWith("NOTIFY_PROCESS")) {
+            templateName = "process_notify";
+            values.put("event", handlerClass.substring(25));
+        }
+        else {
+            templateName = "general_java";
+        }
+
+        downloadTemplates();
+        String suffix = "kotlin".equals(language) || "kt".equals(language) ? "kt" : "java";
+        File templateFile = new File(getTemplateDir() + "/assets/code/handler/" + templateName + "_" + suffix);
+        File outFile = new File(outPath + "." + suffix);
+        if (outFile.isFile()) {
+            throw new IOException("Asset file already exists: " + outFile);
+        }
+        if (!outFile.getParentFile().isDirectory() && !outFile.getParentFile().mkdirs()) {
+            throw new IOException("Asset path cannot be created: " + outFile);
+        }
+        String template = new String(Files.readAllBytes(templateFile.toPath()));
         String source = substitute(template, values);
         Files.write(outFile.toPath(), source.getBytes(), StandardOpenOption.CREATE_NEW);
     }

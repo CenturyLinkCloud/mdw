@@ -19,6 +19,7 @@ import com.beust.jcommander.Parameter;
 import com.centurylink.mdw.config.YamlProperties;
 import com.centurylink.mdw.cli.impls.Implementors;
 import com.centurylink.mdw.model.Yamlable;
+import com.centurylink.mdw.model.asset.AssetPath;
 import com.centurylink.mdw.model.project.Data;
 import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
@@ -313,7 +314,7 @@ public abstract class Setup implements Operation {
             throw new IOException("Expected directory: " + dir.getAbsolutePath());
 
         if (new File(dir + "/.mdw/package.json").isFile() || new File(dir + "/.mdw/package.yaml").isFile()) {
-            String pkg = getAssetPath(dir).replace('/', '.');
+            String pkg = getAssetRelativePath(dir).replace('/', '.');
             if (Packages.isMdwPackage(pkg))
                 baseAssetPackages.add(pkg);
         }
@@ -417,8 +418,14 @@ public abstract class Setup implements Operation {
         return fromPath.relativize(toPath).toString().replace('\\', '/');
     }
 
-    public String getAssetPath(File file) throws IOException {
+    public String getAssetRelativePath(File file) throws IOException {
         return getRelativePath(getAssetRoot(), file);
+    }
+
+    public AssetPath getAssetPath(File file) throws IOException {
+        String relPath = getAssetRelativePath(file);
+        int lastSlash = relPath.lastIndexOf('/');
+        return new AssetPath(relPath.substring(0, lastSlash).replace('/', '.') + relPath.substring(lastSlash));
     }
 
     public String getPackageName(String assetPath) {

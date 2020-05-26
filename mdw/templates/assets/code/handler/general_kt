@@ -7,7 +7,7 @@ import com.centurylink.mdw.request.RequestHandler
 import com.centurylink.mdw.request.RequestHandlerException
 import com.centurylink.mdw.services.request.BaseHandler
 
-@Handler(match=RequestHandler.Routing.Path, path="/my/endpoint/path")
+@Handler(match=RequestHandler.Routing.{{routing}}, path="{{path}}")
 class {{className}} : BaseHandler() {
 
     override fun handleRequest(request: Request, message: Any, headers: Map<String,String>): Response {

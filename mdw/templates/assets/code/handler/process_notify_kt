@@ -5,10 +5,10 @@ import com.centurylink.mdw.model.request.Request
 import com.centurylink.mdw.request.RequestHandler
 import com.centurylink.mdw.services.request.ProcessNotifyHandler
 
-@Handler(match=RequestHandler.Routing.Path, path="/my/endpoint/path")
+@Handler(match=RequestHandler.Routing.{{routing}}, path="{{path}}")
 class {{className}} : ProcessNotifyHandler() {
 
     override fun getEventName(request: Request, message: Any, headers: Map<String,String>): String {
-        return "my-unique-event-name"
+        return "{{event}}"
     }
 }

@@ -298,7 +298,7 @@ public class Test extends Setup {
                     }
                     @Override
                     public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
-                        Path p = Paths.get(getAssetPath(path.toFile()));
+                        Path p = Paths.get(getAssetRelativePath(path.toFile()));
                         if (matches(inMatchers, p) && !matches(exMatchers, p)) {
                             caseFiles.add(p.toFile());
                         }

@@ -1,4 +1,4 @@
-package {{packageName}};
+package ;
 
 import com.centurylink.mdw.annotations.Handler;
 import com.centurylink.mdw.model.request.Request;
@@ -7,11 +7,11 @@ import com.centurylink.mdw.services.request.ProcessRunHandler;
 
 import java.util.Map;
 
-@Handler(match=RequestHandler.Routing.{{routing}}, path="{{path}}")
-public class {{className}} extends ProcessRunHandler {
+@Handler(match=RequestHandler.Routing.Content, path="GetEmployee")
+public class GetEmployee extends ProcessRunHandler {
 
     @Override
     public String getProcess(Request request, Object message, Map<String,String> headers) {
-        return "{{process}}";
+        return "com.centurylink.mdw.tests.services/FindEmployee";
     }
 }
