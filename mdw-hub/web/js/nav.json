@@ -137,7 +137,7 @@
     "label": "Services",
     "icon": "services.png",
     "url": "#/serviceApi",
-    "routes": ["/serviceApi", "/serviceRequests"],
+    "routes": ["/serviceApi", "/serviceRequests", "/requestHandlers"],
     "navs": [
       {
         "links": [
@@ -160,6 +160,16 @@
             "label": "Requests",
             "path": "requests/*",
             "href": "#/serviceRequests",
+            "priority": 1
+          }
+        ]
+      },
+      {
+        "links": [
+          {
+            "label": "Handlers",
+            "path": "service/handlers.html?",
+            "href": "#/requestHandlers",
             "priority": 1
           }
         ]

@@ -16,6 +16,7 @@
 package com.centurylink.mdw.model.workflow;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.model.Attributes;
 
 import java.util.Map;
 
@@ -37,8 +38,8 @@ public class RuntimeContextAdapter implements RuntimeContext {
     }
 
     @Override
-    public Map<String,String> getAttributes() {
-        return null;
+    public Attributes getAttributes() {
+        return new Attributes();
     }
 
     @Override

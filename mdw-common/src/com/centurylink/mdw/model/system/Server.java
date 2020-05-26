@@ -30,17 +30,9 @@ public class Server {
         return port;
     }
 
-    private Map<?,?> config;
-    public Map<?,?> getConfig() { return config; }
-
     public Server(String host, int port) {
-        this(host, port, null);
-    }
-
-    public Server(String host, int port, Map<?,?> config) {
         this.host = host;
         this.port = port;
-        this.config = config;
     }
 
     public Server(String hostPort) {

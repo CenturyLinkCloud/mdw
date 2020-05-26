@@ -67,8 +67,6 @@ public class ActivityAggregate extends ProcessAggregate {
             setVersion(json.getString("version"));
         if (json.has("packageName"))
             setPackageName(json.getString("packageName"));
-        if (json.has("definitionMissing"))
-            setDefinitionMissing(json.getBoolean("definitionMissing"));
         if (json.has("count"))
            setCount(json.getLong("count"));
     }
@@ -98,8 +96,6 @@ public class ActivityAggregate extends ProcessAggregate {
             json.put("version", getVersion());
         if (getPackageName() != null)
             json.put("packageName", getPackageName());
-        if (isDefinitionMissing())
-            json.put("definitionMissing", true);
         if (getCount() > -1)
             json.put("count", getCount());
         return json;

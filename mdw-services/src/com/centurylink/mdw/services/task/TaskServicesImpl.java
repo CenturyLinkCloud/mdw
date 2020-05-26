@@ -18,15 +18,10 @@ package com.centurylink.mdw.services.task;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.reports.AggregateDataAccess;
-import com.centurylink.mdw.model.asset.AssetVersion;
-import com.centurylink.mdw.service.data.task.TaskAggregation;
 import com.centurylink.mdw.model.Value;
-import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.asset.AssetHeader;
+import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.task.*;
 import com.centurylink.mdw.model.user.User;
@@ -37,6 +32,7 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.observer.task.TaskValuesProvider;
 import com.centurylink.mdw.service.data.process.ProcessCache;
+import com.centurylink.mdw.service.data.task.TaskAggregation;
 import com.centurylink.mdw.service.data.task.TaskDataAccess;
 import com.centurylink.mdw.service.data.task.TaskTemplateCache;
 import com.centurylink.mdw.service.data.user.UserGroupCache;
@@ -49,6 +45,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.*;
@@ -69,21 +66,25 @@ public class TaskServicesImpl implements TaskServices {
     }
 
     public TaskInstance createTask(Long taskId, String masterRequestId, Long procInstId,
-            String secOwner, Long secOwnerId, String title, String comments) throws ServiceException, DataAccessException {
-        return TaskWorkflowHelper.createTaskInstance(taskId, masterRequestId, procInstId, secOwner, secOwnerId, title, comments);
+            String secOwner, Long secOwnerId, String title, String comments) throws ServiceException {
+        try {
+            return TaskWorkflowHelper.createTaskInstance(taskId, masterRequestId, procInstId, secOwner, secOwnerId, title, comments);
+        } catch (DataAccessException | IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error creating task " + taskId + " for process instance " + procInstId, ex);
+        }
     }
 
-    public TaskInstance createTask(String logicalId, String userCuid, String title, String comments, Instant due) throws ServiceException {
-        TaskTemplate template = TaskTemplateCache.getTaskTemplate(logicalId);
+    public TaskInstance createTask(String path, String userCuid, String title, String comments, Instant due) throws ServiceException {
+        TaskTemplate template = TaskTemplateCache.getTaskTemplate(path);
         if (template == null)
-            throw new ServiceException(ServiceException.NOT_FOUND, "Task Template '" + logicalId + "' not found");
+            throw new ServiceException(ServiceException.NOT_FOUND, "Task Template not found: " + path);
         User user = UserGroupCache.getUser(userCuid);
         if (user == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "User '" + userCuid + "' not found");
         try {
             return TaskWorkflowHelper.createTaskInstance(template.getId(), null, title, comments, due, user.getId(), 0L);
         }
-        catch (DataAccessException ex) {
+        catch (DataAccessException | IOException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
@@ -154,12 +155,13 @@ public class TaskServicesImpl implements TaskServices {
     /**
      * Ugly logic for determining task instances for activity instances.
      */
-    private TaskList filterForActivityInstance(TaskList taskList, ProcessInstance processInstance, Long[] activityInstanceIds) {
+    private TaskList filterForActivityInstance(TaskList taskList, ProcessInstance processInstance, Long[] activityInstanceIds)
+    throws IOException {
         TaskList filteredList = new TaskList();
         List<TaskInstance> taskInstances = new ArrayList<>();
         Process process = null;
-        if (processInstance.getProcessInstDefId() > 0L)
-            process = ProcessCache.getProcessInstanceDefiniton(processInstance.getProcessId(), processInstance.getProcessInstDefId());
+        if (processInstance.getInstanceDefinitionId() > 0L)
+            process = ProcessCache.getInstanceDefinition(processInstance.getProcessId(), processInstance.getInstanceDefinitionId());
         if (process == null)
             process = ProcessCache.getProcess(processInstance.getProcessId());
         for (TaskInstance taskInstance : taskList.getItems()) {
@@ -212,24 +214,28 @@ public class TaskServicesImpl implements TaskServices {
         }
     }
 
-    public void createSubTask(String subtaskLogicalId, Long masterTaskInstanceId)
-            throws ServiceException, DataAccessException {
-        TaskTemplate subTaskVo = TaskTemplateCache.getTaskTemplate(subtaskLogicalId);
-        if (subTaskVo == null)
-            throw new ServiceException("Task Template '" + subtaskLogicalId + "' does not exist");
+    public void createSubTask(String subTaskPath, Long masterTaskInstanceId)
+            throws ServiceException {
+        TaskTemplate subTaskTemplate = TaskTemplateCache.getTaskTemplate(subTaskPath);
+        if (subTaskTemplate == null)
+            throw new ServiceException(ServiceException.NOT_FOUND, "Task Template " + subTaskPath + " not found");
 
         TaskInstance masterTaskInstance = getInstance(masterTaskInstanceId);
         TaskRuntimeContext masterTaskContext = getContext(masterTaskInstance);
-        TaskInstance subTaskInstance = TaskWorkflowHelper.createTaskInstance(subTaskVo.getTaskId(), masterTaskContext.getMasterRequestId(),
-                masterTaskContext.getProcessInstanceId(), OwnerType.TASK_INSTANCE, masterTaskContext.getTaskInstanceId(), null, null);
-        logger.info("SubTask instance created - ID: " + subTaskInstance.getTaskInstanceId());
+        try {
+            TaskInstance subTaskInstance = TaskWorkflowHelper.createTaskInstance(subTaskTemplate.getTaskId(), masterTaskContext.getMasterRequestId(),
+                    masterTaskContext.getProcessInstanceId(), OwnerType.TASK_INSTANCE, masterTaskContext.getTaskInstanceId(), null, null);
+            logger.info("SubTask instance created - ID: " + subTaskInstance.getTaskInstanceId());
+        } catch (DataAccessException | IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error creating subtask " + subTaskPath, ex);
+        }
     }
 
     public TaskInstance getInstance(Long id) throws ServiceException {
         try {
             return TaskWorkflowHelper.getTaskInstance(id);
         }
-        catch (DataAccessException ex) {
+        catch (DataAccessException | IOException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Cannot retrieve task instance: " + id, ex);
         }
     }
@@ -242,7 +248,11 @@ public class TaskServicesImpl implements TaskServices {
     }
 
     public TaskRuntimeContext getContext(TaskInstance taskInstance) throws ServiceException {
-        return new TaskWorkflowHelper(taskInstance).getContext();
+        try {
+            return new TaskWorkflowHelper(taskInstance).getContext();
+        } catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Cannot load context for task " + taskInstance.getId(), ex);
+        }
     }
 
     public Map<String,Value> getValues(Long instanceId) throws ServiceException {
@@ -255,7 +265,7 @@ public class TaskServicesImpl implements TaskServices {
             return new AutoFormTaskValuesProvider().collect(runtimeContext);
         }
         else {
-            // TODO: implement CustomTaskValuesProvider, and also make provider configurable in Designer (like TaskIndexProvider)
+            // TODO: implement CustomTaskValuesProvider, and also make provider configurable at design time (like TaskIndexProvider)
             return new HashMap<>();
         }
     }
@@ -264,7 +274,7 @@ public class TaskServicesImpl implements TaskServices {
      * Update task values.
      */
     public void applyValues(Long instanceId, Map<String,String> values) throws ServiceException {
-        // TODO: implement CustomTaskValuesProvider, and also make provider configurable in Designer (like TaskIndexProvider)
+        // TODO: implement CustomTaskValuesProvider, and also make provider configurable at design time (like TaskIndexProvider)
         TaskRuntimeContext runtimeContext = getContext(instanceId);
         TaskValuesProvider valuesProvider;
         if (runtimeContext.getTaskTemplate().isAutoformTask())
@@ -312,7 +322,7 @@ public class TaskServicesImpl implements TaskServices {
             helper.performAction(action, user.getId(), assigneeId, comment, destination, notifyEngine, true);
             return helper.getTaskInstance();
         }
-        catch (DataAccessException ex) {
+        catch (IOException | DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error doing " + action + " on task " + taskInstanceId, ex);
         }
     }
@@ -388,7 +398,7 @@ public class TaskServicesImpl implements TaskServices {
             }
             return new TaskList("subtasks", subtasks);
         }
-        catch (DataAccessException ex) {
+        catch (IOException | DataAccessException ex) {
             throw new ServiceException("Problem getting subtasks for: " + masterTaskInstanceId, ex);
         }
     }
@@ -514,43 +524,27 @@ public class TaskServicesImpl implements TaskServices {
             userAction.setSource("Task Services");
             ServiceLocator.getEventServices().createAuditLog(userAction);
         }
-        catch (DataAccessException ex) {
+        catch (IOException | DataAccessException ex) {
             throw new ServiceException(ex.getMessage(), ex);
         }
     }
 
 
     /**
-     * Fills in task header info, consulting latest instance comment if necessary.
+     * Fills in task header info from task template definition.
      */
-    protected List<TaskAggregate> populateTasks(List<TaskAggregate> taskAggregates) throws DataAccessException {
-        AggregateDataAccess dataAccess = null;
+    protected List<TaskAggregate> populateTasks(List<TaskAggregate> taskAggregates) {
         for (TaskAggregate tc : taskAggregates) {
-            TaskTemplate taskTemplate = TaskTemplateCache.getTaskTemplate(tc.getId());
-            if (taskTemplate == null) {
-                logger.severe("Missing definition for task id: " + tc.getId());
-                tc.setDefinitionMissing(true);
-                // may have been deleted -- infer from comments
-                if (dataAccess == null)
-                    dataAccess = getAggregateDataAccess();
-                CodeTimer timer = new CodeTimer(true);
-                String comments = getTaskDAO().getLatestTaskInstanceComments(tc.getId());
-                timer.stopAndLogTiming("getLatestTaskInstanceComments()");
-                if (comments != null) {
-                    AssetHeader assetHeader = new AssetHeader(comments);
-                    tc.setName(assetHeader.getName());
-                    tc.setVersion(assetHeader.getVersion());
-                    tc.setPackageName(assetHeader.getPackageName());
-                }
-                else {
-                    logger.severe("Unable to infer task name for: " + tc.getId());
-                    tc.setName("Unknown (" + tc.getId() + ")");
-                }
-            }
-            else {
+            try {
+                TaskTemplate taskTemplate = TaskTemplateCache.getTaskTemplate(tc.getId());
+                if (taskTemplate == null)
+                    throw new IOException("Missing definition for task id: " + tc.getId());
                 tc.setName(taskTemplate.getName());
                 tc.setVersion(AssetVersion.formatVersion(taskTemplate.getVersion()));
                 tc.setPackageName(taskTemplate.getPackageName());
+            } catch (IOException ex) {
+                logger.error("Error loading task template for id: " + tc.getId(), ex);
+                tc.setName("Unknown");
             }
         }
         return taskAggregates;
@@ -558,13 +552,8 @@ public class TaskServicesImpl implements TaskServices {
 
     @Override
     public List<EventLog> getHistory(Long taskInstanceId) throws ServiceException {
-        try {
-            EventServices eventManager = ServiceLocator.getEventServices();
-            return eventManager.getEventLogs(null, null, "TaskInstance", taskInstanceId);
-        }
-        catch (DataAccessException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
-        }
+        EventServices eventManager = ServiceLocator.getEventServices();
+        return eventManager.getEventLogs(null, null, "TaskInstance", taskInstanceId);
     }
 
     @Override
@@ -591,12 +580,6 @@ public class TaskServicesImpl implements TaskServices {
         TaskDataAccess dataAccess = new TaskDataAccess();
         for (TaskInstance instance : instances) {
             instance.setComments("Task has been cancelled by ProcessInstance.");
-            String instantStatus = instance.getStatus();
-            if (instantStatus == null) {
-                TaskStatus taskStatus = DataAccess.getBaselineData().getTaskStatuses().get(instance.getStatusCode());
-                if (taskStatus != null)
-                    instantStatus = taskStatus.getDescription();
-            }
             if (!instance.isInFinalStatus()) {
                 Integer prevStatus = instance.getStatusCode();
                 Integer prevState = instance.getStateCode();
@@ -610,12 +593,12 @@ public class TaskServicesImpl implements TaskServices {
                 try {
                     Long elapsedMs = dataAccess.getDatabaseTime() - Date.from(instance.getStart()).getTime();
                     dataAccess.setElapsedTime(OwnerType.TASK_INSTANCE, instance.getTaskInstanceId(), elapsedMs);
+                    new TaskWorkflowHelper(instance).notifyTaskAction(TaskAction.CANCEL, prevStatus, prevState);
                 }
-                catch (SQLException ex) {
+                catch (IOException | SQLException ex) {
                     logger.severeException("Failed to set timing for task: " + instance.getId(), ex);
                 }
 
-                new TaskWorkflowHelper(instance).notifyTaskAction(TaskAction.CANCEL, prevStatus, prevState);
             }
         }
         timer.stopAndLogTiming("");
@@ -646,10 +629,14 @@ public class TaskServicesImpl implements TaskServices {
     }
 
     public List<String> getGroupsForTaskInstance(TaskInstance taskInstance)
-            throws DataAccessException, ServiceException {
-        if (taskInstance.isShallow())
-            new TaskWorkflowHelper(taskInstance).getTaskInstanceAdditionalInfo();
-        return taskInstance.getGroups();
+            throws ServiceException {
+        try {
+            if (taskInstance.isShallow())
+                new TaskWorkflowHelper(taskInstance).getTaskInstanceAdditionalInfo();
+            return taskInstance.getGroups();
+        } catch (IOException | DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error getting groups for task instance " + taskInstance.getId(), ex);
+        }
     }
 
     public List<TaskAction> getActions(Long instanceId, String userCuid, Query query) throws ServiceException {

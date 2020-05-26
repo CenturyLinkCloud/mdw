@@ -15,24 +15,21 @@
  */
 package com.centurylink.mdw.util;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
-
+import com.centurylink.mdw.common.translator.impl.DomDocumentTranslator;
+import com.centurylink.mdw.model.variable.Document;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
+import com.centurylink.mdw.xml.DomHelper;
 import org.apache.xmlbeans.XmlObject;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.centurylink.mdw.common.translator.impl.DomDocumentTranslator;
-import com.centurylink.mdw.model.variable.Document;
-import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.xml.DomHelper;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Facilitates xpath-based reads and updates of a document variable via
@@ -41,12 +38,6 @@ import com.centurylink.mdw.xml.DomHelper;
  */
 public class XPathHelper {
 
-    private Package pkg;
-
-    public XPathHelper(Package pkg) {
-        this.pkg = pkg;
-    }
-
     private Document documentVO;
 
     public String getType() {
@@ -54,7 +45,7 @@ public class XPathHelper {
     }
 
     public Object getObject() {
-        return documentVO.getObject(getType(), pkg);
+        return documentVO.getObject(getType(), null);
     }
 
     public XPathHelper(Document documentVO) {
@@ -67,7 +58,6 @@ public class XPathHelper {
     }
 
     public XPathHelper() {
-        // TODO Auto-generated constructor stub
     }
 
     private XPathHelper parent;
@@ -85,7 +75,7 @@ public class XPathHelper {
     }
 
     public boolean isXml() {
-        return DocumentReferenceTranslator.isXmlDocumentTranslator(pkg, getType());
+        return DocumentReferenceTranslator.isXmlDocumentTranslator(null, getType());
     }
 
     public boolean isDomDocument() {

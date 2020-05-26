@@ -3,7 +3,7 @@ package com.centurylink.mdw.service.data;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.request.ServicePath;
 import com.centurylink.mdw.service.api.MdwSwaggerCache;
@@ -71,8 +71,8 @@ public class ServicePaths implements CacheService {
 
                 // outbound paths
                 try {
-                    Map<String, List<AssetInfo>> swaggers = ServiceLocator.getAssetServices().findAssets(file ->
-                            file.getName().equals("swagger.yaml") || file.getName().equals("swagger.json")
+                    Map<String, List<AssetInfo>> swaggers = ServiceLocator.getAssetServices().findAssets(asset ->
+                            asset.getName().equals("swagger.yaml") || asset.getName().equals("swagger.json")
                     );
                     for (String pkg : swaggers.keySet()) {
                         for (AssetInfo swaggerAsset : swaggers.get(pkg)) {

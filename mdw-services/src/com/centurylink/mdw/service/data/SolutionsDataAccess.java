@@ -34,6 +34,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import org.apache.commons.lang.StringUtils;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -142,7 +143,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
         }
     }
 
-    private Map<MemberType,List<Jsonable>> getMembers0(Long solutionId) throws SQLException {
+    private Map<MemberType,List<Jsonable>> getMembers0(Long solutionId) throws SQLException, IOException {
         Map<MemberType,List<Jsonable>> members = new HashMap<MemberType,List<Jsonable>>();
         for (MemberType type : MemberType.values()) {
             List<Jsonable> membersForType = getMembers0(solutionId, type);
@@ -152,7 +153,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
         return members;
     }
 
-    private List<Jsonable> getMembers0(Long solutionId, MemberType type) throws SQLException {
+    private List<Jsonable> getMembers0(Long solutionId, MemberType type) throws SQLException, IOException {
         switch(type) {
             case MasterRequest:
               return getMasterRequestMembers0(solutionId);
@@ -201,7 +202,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
         return members;
     }
 
-    private List<Jsonable> getTaskInstanceMembers0(Long solutionId) throws SQLException {
+    private List<Jsonable> getTaskInstanceMembers0(Long solutionId) throws SQLException, IOException {
         String query = "select " + SOLUTION_MAP_COLS + ", " + TASK_INST_COLS +
                 " from SOLUTION s, SOLUTION_MAP sm, TASK_INSTANCE ti" +
             "\n where s.solution_id = ?" +
@@ -237,7 +238,8 @@ public class SolutionsDataAccess extends CommonDataAccess {
         return members;
     }
 
-    private List<Jsonable> getSolutionMembers0(Long solutionId, boolean deep) throws SQLException {
+    private List<Jsonable> getSolutionMembers0(Long solutionId, boolean deep)
+            throws SQLException, IOException {
         String query = "select " + SOLUTION_MAP_COLS +
                 " from SOLUTION_MAP sm" +
             "\n where sm.solution_id = ?" +
@@ -391,7 +393,8 @@ public class SolutionsDataAccess extends CommonDataAccess {
     }
 
 
-    private Solution buildSolution(ResultSet rs, boolean includeValues, boolean includeMembers) throws SQLException {
+    private Solution buildSolution(ResultSet rs, boolean includeValues, boolean includeMembers)
+            throws SQLException, IOException {
         Long solutionId = rs.getLong("solution_id");
         String id = rs.getString("id");
         String name = rs.getString("name");
@@ -414,7 +417,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
     /**
      * Assumes ti.* table prefix.
      */
-    protected TaskInstance buildTaskInstance(ResultSet rs) throws SQLException {
+    protected TaskInstance buildTaskInstance(ResultSet rs) throws SQLException, IOException {
         TaskInstance task = new TaskInstance();
         task.setTaskInstanceId(rs.getLong("task_instance_id"));
         task.setTaskId(rs.getLong("task_id"));

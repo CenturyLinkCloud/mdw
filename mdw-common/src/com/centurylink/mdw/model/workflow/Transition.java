@@ -17,120 +17,90 @@ package com.centurylink.mdw.model.workflow;
 
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.model.Attributes;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Yamlable;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class Transition implements Jsonable, Yamlable {
 
-    public static final String DELAY_UNIT_SECOND = "s";
-    public static final String DELAY_UNIT_MINUTE = "m";
-    public static final String DELAY_UNIT_HOUR = "h";
-
     private Long id;
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     private Long fromId;
+    public Long getFromId() {
+        return fromId;
+    }
+    public void setFromId(Long fromId) {
+        this.fromId = fromId;
+    }
+
     private Long toId;
+    public Long getToId() {
+        return toId;
+    }
+    public void setToId(Long toId) {
+        this.toId = toId;
+    }
+
     private Integer eventType;
+    public Integer getEventType() {
+        return eventType;
+    }
+    public void setEventType(Integer eventType) {
+        this.eventType = eventType;
+    }
+
     private String completionCode;
-    private List<Attribute> attributes;
+    public String getCompletionCode() {
+        return completionCode;
+    }
+    public void setCompletionCode(String completionCode) {
+        this.completionCode = completionCode;
+    }
+
     private Long processId;
+    public Long getProcessId(){
+        return this.processId;
+    }
+    public void setProcessId(Long processId){
+        this.processId = processId;
+    }
+
+    private Attributes attributes;
+    public String getAttribute(String name) {
+        return attributes == null ? null : attributes.get(name);
+    }
+    public void setAttribute(String name, String value) {
+        if (attributes == null)
+            attributes = new Attributes();
+        attributes.put(name, value);
+    }
 
     public Transition() {
     }
 
     public Transition(Long id, Long fromId, Long toId,
-        Integer eventType, String completionCode, String pValClassName, List<Attribute> pAttribues){
+        Integer eventType, String completionCode, String pValClassName, Attributes attributes) {
         this.id = id;
         this.fromId = fromId;
         this.toId = toId;
         this.eventType = eventType;
-        this.attributes = pAttribues;
+        this.attributes = attributes;
         this.completionCode = completionCode;
     }
 
     public String toString() {
         return getJson().toString(2);
-    }
-
-    public List<Attribute> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(List<Attribute> attributes) {
-        this.attributes = attributes;
-    }
-
-    public Integer getEventType() {
-        return eventType;
-    }
-
-    public void setEventType(Integer eventType) {
-        this.eventType = eventType;
-    }
-
-    public Long getFromId() {
-        return fromId;
-    }
-
-    public void setFromId(Long fromId) {
-        this.fromId = fromId;
-    }
-
-    public Long getToId() {
-        return toId;
-    }
-
-    public void setToId(Long toId) {
-        this.toId = toId;
-    }
-
-    public String getCompletionCode() {
-        return completionCode;
-    }
-
-    public void setCompletionCode(String completionCode) {
-        this.completionCode = completionCode;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setProcessId(Long processId){
-        this.processId = processId;
-    }
-
-    public Long getProcessId(){
-        return this.processId;
-    }
-
-    public String getAttribute(String name) {
-        return Attribute.findAttribute(attributes, name);
-    }
-
-    /**
-     * Set the value of a process attribute.
-     * If the value is null, the attribute is removed.
-     * If the attribute does not exist and the value is not null, the attribute
-     * is created.
-     * @param name
-     * @param value
-     */
-    public void setAttribute(String name, String value) {
-        if (attributes == null)
-            attributes = new ArrayList<Attribute>();
-        Attribute.setAttribute(attributes, name, value);
     }
 
     public boolean match(Integer eventType, String compCode) {
@@ -181,7 +151,7 @@ public class Transition implements Jsonable, Yamlable {
         else
             this.eventType = EventType.FINISH;
         if (json.has("attributes"))
-            this.attributes = Attribute.getAttributes(json.getJSONObject("attributes"));
+            this.attributes = new Attributes(json.getJSONObject("attributes"));
         setAttribute(WorkAttributeConstant.LOGICAL_ID, logicalId);
     }
 
@@ -199,7 +169,7 @@ public class Transition implements Jsonable, Yamlable {
         else
             this.eventType = EventType.FINISH;
         if (yaml.containsKey("attributes"))
-            this.attributes = Attribute.getAttributes((Map<String,Object>)yaml.get("attributes"));
+            this.attributes = new Attributes((Map<String,Object>)yaml.get("attributes"));
         setAttribute(WorkAttributeConstant.LOGICAL_ID, logicalId);
     }
 
@@ -216,7 +186,7 @@ public class Transition implements Jsonable, Yamlable {
         if (eventType != null)
             json.put("event", EventType.getEventTypeName(eventType));
         if (attributes != null && ! attributes.isEmpty())
-            json.put("attributes", Attribute.getAttributesJson(attributes));
+            json.put("attributes", attributes.clean().getJson());
         return json;
     }
 
@@ -230,9 +200,8 @@ public class Transition implements Jsonable, Yamlable {
         if (completionCode != null)
             yaml.put("resultCode", completionCode);
         if (attributes != null && ! attributes.isEmpty()) {
-            yaml.put("attributes", Attribute.getAttributesYaml(attributes));
+            yaml.put("attributes", attributes.clean());
         }
         return yaml;
     }
-
 }

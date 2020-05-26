@@ -73,11 +73,6 @@ public class Init extends Setup {
     public boolean isMaven() { return maven; }
     public void setMaven(boolean maven) { this.maven = maven; }
 
-    @Parameter(names="--cloud-foundry", description="Generate a Cloud Foundry manifest.yml file")
-    private boolean cloudFoundry;
-    public boolean isCloudFoundry() { return cloudFoundry; }
-    public void setCloudFoundry(boolean cloudFoundry) { this.cloudFoundry = cloudFoundry; }
-
     @Parameter(names="--spring-boot", description="Spring Boot artifact generation")
     private boolean springBoot;
     public boolean isSpringBoot() { return springBoot; }

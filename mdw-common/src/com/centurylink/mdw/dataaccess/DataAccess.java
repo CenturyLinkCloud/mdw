@@ -16,244 +16,159 @@
 package com.centurylink.mdw.dataaccess;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.cli.Checkpoint;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.file.*;
+import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
+import com.centurylink.mdw.dataaccess.file.WrappedBaselineData;
+import com.centurylink.mdw.git.GitDiffs;
+import com.centurylink.mdw.git.VersionControlGit;
 import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.util.DesignatedHostSslVerifier;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.SQLException;
 
 public class DataAccess {
 
-    public final static int schemaVersion60 = 6000;
-    public final static int schemaVersion61 = 6001;
-    public final static int currentSchemaVersion = schemaVersion61;
+    public final static int currentSchemaVersion = 6001;
     public static int supportedSchemaVersion = currentSchemaVersion;
-    public static boolean isPackageLevelAuthorization = true;
 
-    public static ProcessPersister getProcessPersister() throws DataAccessException {
-        return getProcessPersister(currentSchemaVersion, supportedSchemaVersion, new DatabaseAccess(null));
-    }
-
-    public static ProcessPersister getProcessPersister(int version, int supportedVersion, DatabaseAccess db)
-    throws DataAccessException {
+    static {
         File assetRoot = ApplicationContext.getAssetRoot();
-        if (assetRoot == null)
-            throw new IllegalStateException("Asset root not known");
-        return (ProcessPersister) getVcsProcessLoader(assetRoot);
-    }
-
-    public static ProcessLoader getProcessLoader(int version, int supportedVersion, DatabaseAccess db)
-    throws DataAccessException {
-        File assetRoot = ApplicationContext.getAssetRoot();
-        if (assetRoot == null)
-            throw new IllegalStateException("Asset root not known");
-        return getVcsProcessLoader(assetRoot);
-    }
-
-    public static ProcessLoader getProcessLoader(DatabaseAccess db) throws DataAccessException {
-        return getProcessLoader(currentSchemaVersion, supportedSchemaVersion, db);
-    }
-
-    public static ProcessLoader getProcessLoader() throws DataAccessException {
-        return getProcessLoader(currentSchemaVersion, supportedSchemaVersion, new DatabaseAccess(null));
-    }
-
-    public static RuntimeDataAccess getRuntimeDataAccess(DatabaseAccess db) throws DataAccessException {
-        File assetRoot = ApplicationContext.getAssetRoot();
-        if (assetRoot == null)
-            throw new IllegalStateException("Asset root not known");
-        return getVcsRuntimeDataAccess(db, assetRoot);
-    }
-
-    private static volatile ProcessLoader loaderPersisterVcs;
-    private static final Object loaderPersisterLock = new Object();
-    protected static ProcessLoader getVcsProcessLoader(File rootDir) throws DataAccessException {
-        ProcessLoader myLoaderPersisterVcs = loaderPersisterVcs;
-        if (myLoaderPersisterVcs == null) {  // needs to be always the same version
-            synchronized(loaderPersisterLock) {
-                myLoaderPersisterVcs = loaderPersisterVcs;
-                if (myLoaderPersisterVcs == null) {
-                    if (!rootDir.exists() || rootDir.list().length == 0) { // initial environment startup scenario
-                        String message;
-                        if (rootDir.isDirectory())
-                            message = "Asset location " + rootDir + " is empty.";
-                        else
-                            message = "Asset location " + rootDir + " does not exist.";
-                        String warning = "\n****************************************\n" +
-                                "** WARNING: " + message + "\n" +
-                                "** Please import the MDW base and hub packages\n" +
-                                "******************************************\n";
-                        LoggerUtil.getStandardLogger().severe(warning);
-                    }
-                    VersionControl vc = getAssetVersionControl(rootDir);
-                    loaderPersisterVcs = myLoaderPersisterVcs = new LoaderPersisterVcs("mdw", rootDir, vc, getBaselineData());
-                }
-            }
+        if (!assetRoot.exists() || assetRoot.list().length == 0) {
+            // initial environment startup scenario
+            String message;
+            if (assetRoot.isDirectory())
+                message = "Asset location " + assetRoot + " is empty.";
+            else
+                message = "Asset location " + assetRoot + " does not exist.";
+            String warning = "\n****************************************\n" +
+                    "** WARNING: " + message + "\n" +
+                    "** Please import the MDW base and hub packages\n" +
+                    "******************************************\n";
+            LoggerUtil.getStandardLogger().error(warning);
         }
-        return myLoaderPersisterVcs;
+        try {
+            getAssetVersionControl(assetRoot);
+        } catch (IOException ex) {
+            LoggerUtil.getStandardLogger().error(ex.getMessage(), ex);
+        }
     }
 
-    protected static RuntimeDataAccess getVcsRuntimeDataAccess(DatabaseAccess db, File rootDir) throws DataAccessException {
-        return new RuntimeDataAccessVcs(db, getBaselineData());
-    }
-
-    private static VersionControl assetVersionControl;
-    public synchronized static VersionControl getAssetVersionControl(File rootDir) throws DataAccessException {
+    private static VersionControlGit assetVersionControl;
+    public synchronized static VersionControlGit getAssetVersionControl(File rootDir) throws IOException {
         if (assetVersionControl == null) {
             boolean fetch = PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_FETCH, !ApplicationContext.isDevelopment());
             assetVersionControl = new VersionControlGit(fetch);
             String gitLocalPath = PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH);
             if (gitLocalPath == null) // use the asset dir as placeholder
                 gitLocalPath = rootDir.getAbsolutePath();
+
+            assetVersionControl.connect(null, "mdw", null, new File(gitLocalPath));
+            // check up-to-date
+            StandardLogger logger = LoggerUtil.getStandardLogger();
             try {
-                assetVersionControl.connect(null, "mdw", null, new File(gitLocalPath));
-                // check up-to-date
-                StandardLogger logger = LoggerUtil.getStandardLogger();
-                try {
-                    String url = PropertyManager.getProperty(PropertyNames.MDW_GIT_REMOTE_URL);
-                    String branch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
-                    String tag = branch == null ? PropertyManager.getProperty(PropertyNames.MDW_GIT_TAG) : null;
-                    if (url != null && (branch != null || tag != null)) {
-                        String user = PropertyManager.getProperty(PropertyNames.MDW_GIT_USER);
-                        String password = PropertyManager.getProperty(PropertyNames.MDW_GIT_PASSWORD);
-                        if (user != null) {
-                            VersionControlGit vcGit = (VersionControlGit) assetVersionControl;
-                            File gitLocal = new File(gitLocalPath);
-                            vcGit.connect(url, user, password, gitLocal);
+                String url = PropertyManager.getProperty(PropertyNames.MDW_GIT_REMOTE_URL);
+                String branch = PropertyManager.getProperty(PropertyNames.MDW_GIT_BRANCH);
+                String tag = branch == null ? PropertyManager.getProperty(PropertyNames.MDW_GIT_TAG) : null;
+                if (url != null && (branch != null || tag != null)) {
+                    String user = PropertyManager.getProperty(PropertyNames.MDW_GIT_USER);
+                    String password = PropertyManager.getProperty(PropertyNames.MDW_GIT_PASSWORD);
+                    if (user != null) {
+                        VersionControlGit vcGit = (VersionControlGit) assetVersionControl;
+                        File gitLocal = new File(gitLocalPath);
+                        vcGit.connect(url, user, password, gitLocal);
 
-                            String gitTrustedHost = PropertyManager.getProperty(PropertyNames.MDW_GIT_TRUSTED_HOST);
-                            if (gitTrustedHost != null)
-                                DesignatedHostSslVerifier.setupSslVerification(gitTrustedHost);
+                        String gitTrustedHost = PropertyManager.getProperty(PropertyNames.MDW_GIT_TRUSTED_HOST);
+                        if (gitTrustedHost != null)
+                            DesignatedHostSslVerifier.setupSslVerification(gitTrustedHost);
 
-                            String assetPath = vcGit.getRelativePath(rootDir);
-                            logger.info("Loading assets from path: " + assetPath);
+                        String assetPath = vcGit.getRelativePath(rootDir.toPath());
+                        logger.info("Loading assets from path: " + assetPath);
 
-                            if (!gitLocal.isDirectory()) {
-                                if (!gitLocal.mkdirs())
-                                    throw new DataAccessException("Git loc " + gitLocalPath + " does not exist and cannot be created.");
-                            }
-                            if (!vcGit.localRepoExists()) {
-                                logger.severe("**** WARNING: Git location " + gitLocalPath + " does not contain a repository.  Cloning: " + url);
-                                vcGit.cloneNoCheckout();
-                                if (PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_AUTO_CHECKOUT, true)) {
-                                    if (branch != null) {
-                                        logger.info("Performing branch checkout...");
-                                        vcGit.hardCheckout(branch);
-                                    }
-                                    else {  // tag != null
-                                        logger.info("Performing tag checkout...");
-                                        vcGit.hardTagCheckout(tag);
-                                    }
+                        if (!gitLocal.isDirectory()) {
+                            if (!gitLocal.mkdirs())
+                                throw new DataAccessException("Git loc " + gitLocalPath + " does not exist and cannot be created.");
+                        }
+                        if (!vcGit.localRepoExists()) {
+                            logger.severe("**** WARNING: Git location " + gitLocalPath + " does not contain a repository.  Cloning: " + url);
+                            vcGit.cloneNoCheckout();
+                            if (PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_AUTO_CHECKOUT, true)) {
+                                if (branch != null) {
+                                    logger.info("Performing branch checkout...");
+                                    vcGit.hardCheckout(branch);
                                 }
-                                else
-                                    logger.warn("Git Auto Checkout is set to false!  No assets will be pulled from Git...");
-                            }
-
-                            // sanity checks
-                            if (branch != null) {
-                                String gitBranch = vcGit.getBranch();
-                                if (!branch.equals(gitBranch)) {
-                                    String warning = "\n****************************************\n" +
-                                            "** WARNING: Git branch: " + gitBranch + " does not match " + PropertyNames.MDW_GIT_BRANCH + ": " + branch + "\n" +
-                                            "** Please perform an Import to sync with branch " + branch + "\n" +
-                                            "******************************************\n";
-                                    LoggerUtil.getStandardLogger().severe(warning);
-                                } else {
-                                    String localCommit = vcGit.getCommit();
-                                    if (localCommit != null) {
-                                        String remoteCommit = vcGit.getRemoteCommit(branch);
-                                        if (!localCommit.equals(remoteCommit))
-                                            LoggerUtil.getStandardLogger().severe("**** WARNING: Git commit: " + localCommit + " does not match remote HEAD commit: " + remoteCommit);
-                                    }
-
-                                    // log actual diffs at debug level
-                                    GitDiffs diffs = vcGit.getDiffs(branch, assetPath);
-                                    if (!diffs.isEmpty()) {
-                                        logger.warn("**** WARNING: Local Git repository is out-of-sync with respect to branch: " + branch
-                                                + "\n(" + gitLocal.getAbsolutePath() + ")");
-                                        logger.info("Differences:\n============\n" + diffs);
-                                    }
-                                }
-                            }
-                            else {   // Tag != null
-                                String localCommit = vcGit.getCommit();
-                                String tagCommit = vcGit.getCommitForTag(tag);
-                                if (localCommit != null && tagCommit != null && !localCommit.equals(tagCommit)) {
-                                    logger.info("Current commit " + localCommit + " does not match commit for tag " + tag + ". Performing tag checkout...");
+                                else {  // tag != null
+                                    logger.info("Performing tag checkout...");
                                     vcGit.hardTagCheckout(tag);
                                 }
-                                else if (localCommit == null)
-                                    logger.warn("Could not find local commit!");
-                                else if (tagCommit == null) {
-                                    logger.warn("Git Tag named " + tag + " was NOT found!");
+                            }
+                            else
+                                logger.warn("Git Auto Checkout is set to false!  No assets will be pulled from Git...");
+                        }
+
+                        // sanity checks
+                        if (branch != null) {
+                            String gitBranch = vcGit.getBranch();
+                            if (!branch.equals(gitBranch)) {
+                                String warning = "\n****************************************\n" +
+                                        "** WARNING: Git branch: " + gitBranch + " does not match " + PropertyNames.MDW_GIT_BRANCH + ": " + branch + "\n" +
+                                        "** Please perform an Import to sync with branch " + branch + "\n" +
+                                        "******************************************\n";
+                                LoggerUtil.getStandardLogger().severe(warning);
+                            } else {
+                                String localCommit = vcGit.getCommit();
+                                if (localCommit != null) {
+                                    String remoteCommit = vcGit.getRemoteCommit(branch);
+                                    if (!localCommit.equals(remoteCommit))
+                                        LoggerUtil.getStandardLogger().severe("**** WARNING: Git commit: " + localCommit + " does not match remote HEAD commit: " + remoteCommit);
+                                }
+
+                                // log actual diffs at debug level
+                                GitDiffs diffs = vcGit.getDiffs(branch, assetPath);
+                                if (!diffs.isEmpty()) {
+                                    logger.warn("**** WARNING: Local Git repository is out-of-sync with respect to branch: " + branch
+                                            + "\n(" + gitLocal.getAbsolutePath() + ")");
+                                    logger.info("Differences:\n============\n" + diffs);
                                 }
                             }
                         }
-                        else {
-                            logger.severe("**** WARNING: Not verifying Git asset sync due to missing property " + PropertyNames.MDW_GIT_USER + " (use anonymous for public repos)");
+                        else {   // Tag != null
+                            String localCommit = vcGit.getCommit();
+                            String tagCommit = vcGit.getCommitForTag(tag);
+                            if (localCommit != null && tagCommit != null && !localCommit.equals(tagCommit)) {
+                                logger.info("Current commit " + localCommit + " does not match commit for tag " + tag + ". Performing tag checkout...");
+                                vcGit.hardTagCheckout(tag);
+                            }
+                            else if (localCommit == null)
+                                logger.warn("Could not find local commit!");
+                            else if (tagCommit == null) {
+                                logger.warn("Git Tag named " + tag + " was NOT found!");
+                            }
                         }
                     }
-                }
-                catch (Exception ex) {
-                    logger.severeException("Error during Git up-to-date check.", ex);
-                }
-
-                // allow initial startup with no asset root
-                if (!rootDir.exists()) {
-                    if (!rootDir.mkdirs())
-                        throw new DataAccessException("Asset root: " + rootDir + " does not exist and cannot be created.");
+                    else {
+                        logger.severe("**** WARNING: Not verifying Git asset sync due to missing property " + PropertyNames.MDW_GIT_USER + " (use anonymous for public repos)");
+                    }
                 }
             }
-            catch (IOException ex) {
-                throw new DataAccessException(ex.getMessage(), ex);
+            catch (Exception ex) {
+                logger.severeException("Error during Git up-to-date check.", ex);
+            }
+
+            // allow initial startup with no asset root
+            if (!rootDir.exists()) {
+                if (!rootDir.mkdirs())
+                    throw new FileNotFoundException("Asset root: " + rootDir + " does not exist and cannot be created.");
             }
         }
         return assetVersionControl;
     }
 
-    public static void updateAssetRefs() throws DataAccessException {
-        if (PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_REF_ENABLED, false)) {
-            StandardLogger logger = LoggerUtil.getStandardLogger();
-            // asset ref autopopulation disabled by default for dev envs
-            boolean autopop = PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_REF_AUTOPOP, !ApplicationContext.isDevelopment());
-            if (autopop && assetVersionControl != null && !PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_AUTO_PULL, false)) {
-                // Automatically update ASSET_REF DB table in case application doesn't do an Import - safety measure
-                File assetLoc = ApplicationContext.getAssetRoot();
-                VersionControlGit vcGit = (VersionControlGit) assetVersionControl;
-                try (DbAccess dbAccess = new DbAccess()) {
-                    String ref = vcGit.getCommit();
-                    if (ref != null) {  // avoid attempting update for local-only resources
-                        logger.info("Auto-populating ASSET_REF table...");
-                        Checkpoint cp = new Checkpoint(assetLoc, vcGit, vcGit.getCommit(), dbAccess.getConnection());
-                        cp.updateRefs();
-                    }
-                    else
-                        logger.info("ASSET_REF table not auto-populated during startup due to: null Git commit");
-                }
-                catch (SQLException e) {
-                    throw new DataAccessException(e.getErrorCode(), e.getMessage(), e);
-                }
-                catch (IOException e) {
-                    throw new DataAccessException(e.getMessage(), e);
-                }
-            }
-            else {
-                String message = "";
-                if (assetVersionControl == null) message = " (AssetVersionControl is null)";
-                if ("true".equals(PropertyManager.getProperty(PropertyNames.MDW_GIT_AUTO_PULL))) message = message.length() == 0 ? " (mdw.git.auto.pull=true)" : ", (mdw.git.auto.pull=true";
-                logger.info("ASSET_REF table not auto-populated during startup. " + message);
-            }
-        }
-    }
-
-    public static BaselineData getBaselineData() throws DataAccessException {
+    public static BaselineData getBaselineData() throws IOException {
         try {
             return new WrappedBaselineData(new MdwBaselineData()) {
                 protected BaselineData getOverrideBaselineData() {
@@ -262,15 +177,7 @@ public class DataAccess {
             };
         }
         catch (Exception ex) {
-            throw new DataAccessException(ex.getMessage(), ex);
+            throw new IOException(ex.getMessage(), ex);
         }
     }
-
-    /**
-     * TODO differentiate version 6
-     */
-    public static int[] getDatabaseSchemaVersion(DatabaseAccess db) throws DataAccessException {
-        return new int[] {schemaVersion60, schemaVersion61};
-    }
-
 }

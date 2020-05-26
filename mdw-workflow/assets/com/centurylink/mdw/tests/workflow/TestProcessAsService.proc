@@ -1,0 +1,253 @@
+activities:
+- id: A7
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=26,y=280,w=60,h=40
+  transitions:
+  - id: T21
+    to: A13
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=116,ly=300,type=Elbow,xs=90&143,ys=300&300
+- id: A1
+  name: Count > 100?
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptEvaluator
+  attributes:
+    WORK_DISPLAY_INFO: x=704,y=392,w=90,h=47
+    SCRIPT: Groovy
+    Expression: 'count > 99 ?  ''TRUE'' : ''FALSE'''
+  transitions:
+  - id: T10
+    to: A3
+    event: FINISH
+    resultCode: 'TRUE'
+    attributes:
+      TRANSITION_DELAY: '0'
+      TRANSITION_RETRY_COUNT: '0'
+      TRANSITION_DISPLAY_INFO: lx=856,ly=363,type=ElbowH,xs=798&896,ys=415&160
+  - id: T11
+    to: A9
+    event: FINISH
+    resultCode: 'FALSE'
+    attributes:
+      TRANSITION_DELAY: '0'
+      TRANSITION_RETRY_COUNT: '200'
+      TRANSITION_DISPLAY_INFO: lx=749,ly=461,type=Elbow,xs=749&749,ys=443&483
+- id: A2
+  name: Display Response
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=687,y=268,w=100,h=60
+    SCRIPT: Groovy
+    Rule: println response
+  transitions:
+  - id: T7
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=666,ly=261,type=Elbow,xs=791&896,ys=298&160
+- id: A12
+  name: Call a web service
+  implementor: com.centurylink.mdw.workflow.adapter.soap.DocumentWebServiceAdapter
+  attributes:
+    PostScriptLang: Groovy
+    PreScriptLang: Groovy
+    REQUEST_VARIABLE: req
+    RESPONSE_VARIABLE: response
+    DO_LOGGING: 'True'
+    SERVICE: invokeWebService
+    WORK_DISPLAY_INFO: x=564,y=272,w=100,h=60
+    WSDL: '#{props[''mdw.services.url'']}/SOAP/Employee.wsdl'
+  transitions:
+  - id: T6
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=660,ly=293,type=Elbow,xs=668&683,ys=300&300
+- id: A10
+  name: count = 0
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=432,y=391,w=100,h=60
+    SCRIPT: Groovy
+    Rule: |-
+      /*document response;
+       & $response = "LoadTestResponse";
+       $response.Status = "OK";
+       $count = 0;
+       */
+      import javax.xml.parsers.DocumentBuilder;
+      import javax.xml.parsers.DocumentBuilderFactory;
+      import org.w3c.dom.Document;
+      import org.w3c.dom.Element;
+
+      DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+      DocumentBuilder builder = dbf.newDocumentBuilder();
+
+      Document response = builder.newDocument();
+      Element element = response.createElement("LoadTestResponse");
+      response.appendChild(element);
+
+      Element itemElement = response.createElement("Status");
+      itemElement.appendChild(response.createTextNode('OK'));
+      element.appendChild(itemElement);
+
+      count=0
+  transitions:
+  - id: T9
+    to: A1
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=622,ly=415,type=Elbow,xs=536&700,ys=415&415
+- id: A8
+  name: Set up request
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=435,y=272,w=100,h=60
+    SCRIPT: Groovy
+    Rule: "req = '''<GetEmployee>\r\n  <workstationId>dxoakes</workstationId>\r\n</GetEmployee>'''"
+    Output Documents: req
+  transitions:
+  - id: T5
+    to: A12
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=552,ly=302,type=ElbowH,xs=539&560,ys=302&302
+- id: A9
+  name: count = count + 1
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=699,y=487,w=100,h=60
+    SCRIPT: Groovy
+    Rule: |
+      count = count + 1;
+  transitions:
+  - id: T12
+    to: A1
+    event: FINISH
+    attributes:
+      TRANSITION_DELAY: '0'
+      TRANSITION_RETRY_COUNT: '200'
+      TRANSITION_DISPLAY_INFO: lx=749,ly=413,type=ElbowH,xs=695&616&616&700,ys=504&504&416&416
+- id: A3
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    DoNotNotifyCaller: 'false'
+    WORK_DISPLAY_INFO: x=900,y=140,w=60,h=40
+- id: A6
+  name: Get OrderId
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=483,y=26,w=100,h=60
+    SCRIPT: Groovy
+    Rule: |-
+      import groovy.util.XmlParser
+
+      def orderDoc = new XmlParser().parseText(order)
+      def orderId = orderDoc.orderId.text()
+      response = "<orderId>" + orderId + "</orderId>"
+    Output Documents: response
+  transitions:
+  - id: T16
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DELAY: '0'
+      TRANSITION_RETRY_COUNT: '0'
+      TRANSITION_DISPLAY_INFO: lx=727,ly=107,type=ElbowH,xs=587&896,ys=56&160
+- id: A4
+  name: XSLT transformation
+  implementor: com.centurylink.mdw.workflow.activity.transform.TransformActivity
+  attributes:
+    SCRIPT: XSLT
+    Output Documents: response
+    Transform Language: GPath
+    WORK_DISPLAY_INFO: x=320,y=544,w=190,h=57
+    Rule: "<xsl:stylesheet version=\"1.0\" \n   xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"\n   xmlns=\"http://www.cramer.com/centurylink/srpf\"\n   xmlns:s=\"http://www.cramer.com/centurylink/srpf\"\n   xmlns:bim=\"http://www.centurylink.com/XMLSchema/BIM\"\n   xmlns:q=\"http://mdw.centurylink.com/XMLSchema\">\n\n<xsl:output method=\"html\" indent=\"yes\" omit-xml-declaration=\"yes\"/>\n\n<xsl:template match=\"/\">\n  <html>\n   <body>\n     <h2>SeRT Order\n <xsl:value-of select='s:OrderRetrieval/s:RequestType'/>\n     </h2>\n     <table>\n       <tr><th>Field</th><th>Value</th></tr>\n       <tr><td>Customer Name</td>\n    <td><xsl:value-of select=\n   's:OrderRetrieval/s:OrderDetails/s:Customer/s:CustomerFullName'/>\n           </td></tr>\n     </table>\n   </body>\n  </html>\n</xsl:template>\n\n</xsl:stylesheet>\n\n"
+    Input Documents: inputxml
+  transitions:
+  - id: T14
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DELAY: '0'
+      TRANSITION_RETRY_COUNT: '0'
+      TRANSITION_DISPLAY_INFO: lx=748,ly=137,type=ElbowH,xs=514&846&846&896,ys=569&569&160&160
+- id: A13
+  name: case?
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptEvaluator
+  attributes:
+    WORK_DISPLAY_INFO: x=147,y=266,w=76,h=68
+    SCRIPT: Groovy
+    Expression: processCase
+  transitions:
+  - id: T17
+    to: A6
+    event: FINISH
+    resultCode: GetOrder
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=397,ly=68,type=Elbow,xs=227&479,ys=300&56
+  - id: T18
+    to: A8
+    event: FINISH
+    resultCode: Adapter
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=365,ly=310,type=Elbow,xs=227&431,ys=302&302
+  - id: T19
+    to: A10
+    event: FINISH
+    resultCode: LoadTest
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=364,ly=388,type=Elbow,xs=227&428,ys=300&421
+  - id: T20
+    to: A4
+    event: FINISH
+    resultCode: XSLT
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=362,ly=508,type=Elbow,xs=185&415,ys=338&540
+  - id: T22
+    to: A14
+    event: FINISH
+    resultCode: SyntaxError
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=392,ly=230,type=Elbow,xs=227&544,ys=300&166
+- id: A14
+  name: Syntax Error
+  implementor: com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity
+  attributes:
+    Java: "package com.centurylink.mdw.tests.workflow;\r\n\r\nimport java.util.Map;\r\n\r\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\r\n\r\npublic class SyntaxError_A14 implements JavaExecutor {\r\n  \r\n    public void initialize(ActivityRuntimeContext context) throws MdwJavaException {\r\n    }\r\n\r\n    public Object execute(Map<String, Object> variables) throws JavaExecutionException {\r\n        this is not java\r\n    }\r\n\r\n}\r\n"
+    WORK_DISPLAY_INFO: x=548,y=136,w=100,h=60
+  transitions:
+  - id: T23
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=774,ly=160,type=Elbow,xs=652&896,ys=160&160
+variables:
+  count:
+    type: java.lang.Integer
+    category: LOCAL
+  inputxml:
+    type: org.apache.xmlbeans.XmlObject
+    category: INPUT
+  order:
+    type: com.centurylink.mdw.model.StringDocument
+    category: INPUT
+  processCase:
+    type: java.lang.String
+    category: INPUT
+  req:
+    type: com.centurylink.mdw.model.StringDocument
+    category: LOCAL
+  response:
+    type: org.w3c.dom.Document
+    category: OUTPUT
+attributes:
+  NodeStyle: BoxIcon
+  START_TRANSITION_ID: '2331845'
+  Transition with no Label: Matches Any Return Code
+  Response to Invoker: When Terminate
+  WORK_DISPLAY_INFO: x=48,y=37,w=248,h=27
+  PROCESS_VISIBILITY: SERVICE

@@ -1,7 +1,6 @@
 package com.centurylink.mdw.python;
 
 import com.centurylink.mdw.annotations.Activity;
-import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity;
@@ -12,7 +11,6 @@ import com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity;
 public class ScriptActivity extends ScriptExecutorActivity {
 
     protected String getLanguage() {
-        return Asset.PYTHON;
+        return "Python";
     }
-
 }

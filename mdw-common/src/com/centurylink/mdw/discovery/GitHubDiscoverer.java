@@ -45,7 +45,6 @@ public class GitHubDiscoverer extends GitDiscoverer {
     public List<String> getBranches(int max) throws IOException {
         if (max <= 0 || max > 100)
             max = 100;
-        // CenturylinkCloud/mdw/branches
         String url = apiBase + "/" + repoPath + "/branches?per_page=" + max;
         return getArrayValues(url,"name");
     }
@@ -54,13 +53,11 @@ public class GitHubDiscoverer extends GitDiscoverer {
     public List<String> getTags(int max) throws IOException {
         if (max <= 0 || max > 100)
             max = 100;
-        // CenturylinkCloud/mdw/tags
         String url = apiBase + "/" + repoPath + "/tags?per_page=" + max;
         return getArrayValues(url,"name");
     }
 
     public JSONObject getFileInfo(String path, String ref) throws IOException {
-        // CenturylinkCloud/mdw/contents/mdw/project.yaml?ref=6.1.15-SNAPSHOT
         String url = apiBase + "/" + repoPath + "/contents/" + URLEncoder.encode(path, "utf-8") + "?ref=" + ref;
         HttpHelper http = getHttpHelper(url);
         String info = http.get();
@@ -78,7 +75,6 @@ public class GitHubDiscoverer extends GitDiscoverer {
             if (path.equals("/"))
                 throw new UnsupportedOperationException("No recursive from root path");
             String sha = getSha(path, ref);
-            // CenturylinkCloud/mdw/git/trees/5a186a67616c90861eb694b470a735fc7f486e87?recursive=true
             String url = apiBase + "/" + repoPath + "/git/trees/" + sha + "?ref=" + ref + "&recursive=true";
             HttpHelper http = getHttpHelper(url);
             String treeInfo = http.get();
@@ -87,7 +83,6 @@ public class GitHubDiscoverer extends GitDiscoverer {
             return new JSONObject(treeInfo).getJSONArray("tree");
         }
         else {
-            // CenturylinkCloud/mdw/contents/mdw-workflow?ref=6.1.15-SNAPSHOT
             String url = apiBase + "/" + repoPath + "/contents/" + URLEncoder.encode(path, "utf-8") + "?ref=" + ref;
             HttpHelper http = getHttpHelper(url);
             String info = http.get();
@@ -98,7 +93,6 @@ public class GitHubDiscoverer extends GitDiscoverer {
     }
 
     private String getSha(String path, String ref) throws IOException {
-        // CenturylinkCloud/mdw/contents/mdw-workflow?ref=6.1.15-SNAPSHOT
         int lastSlash = path.lastIndexOf('/');
         String parentPath;
         if (lastSlash == -1)

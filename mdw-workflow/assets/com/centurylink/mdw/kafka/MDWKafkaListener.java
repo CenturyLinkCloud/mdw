@@ -32,7 +32,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -183,7 +183,7 @@ public class MDWKafkaListener {
             }
 
             // This is so that all dependent class from kafka-clients jar are found during consumer creation
-            ClassLoader cl = ApplicationContext.setContextCloudClassLoader(PackageCache.getPackage(MDW_KAFKA_PKG));
+            ClassLoader cl = ApplicationContext.setContextPackageClassLoader(PackageCache.getPackage(MDW_KAFKA_PKG));
 
             consumer = new KafkaConsumer<>(initParameters);
             consumer.subscribe(topics);
@@ -285,7 +285,7 @@ public class MDWKafkaListener {
             /* WITHENGINE */metaInfo.put(Listener.METAINFO_REQUEST_ID, record.key());
             /* WITHENGINE */metaInfo.put("Topic", record.topic());
             /* WITHENGINE */ListenerHelper helper = new ListenerHelper();
-            /* WITHENGINE */String response = helper.processEvent(message, metaInfo);
+            /* WITHENGINE */String response = helper.processRequest(message, metaInfo);
 
             if (logger.isDebugEnabled())
             {

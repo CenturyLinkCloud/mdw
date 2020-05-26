@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.model.workflow;
 
+import com.centurylink.mdw.model.Attributes;
 import com.centurylink.mdw.model.Jsonable;
 
 import java.util.Map;
@@ -27,7 +28,7 @@ public interface RuntimeContext {
 
     String getMasterRequestId();
 
-    Map<String,String> getAttributes();
+    Attributes getAttributes();
 
     Map<String,Object> getVariables();
 

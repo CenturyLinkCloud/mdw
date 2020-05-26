@@ -25,6 +25,7 @@ import java.util.*;
 /**
  * Reads and writes yaml configuration settings as if they were properties.
  * Filename (minus extension) is the default property prefix.
+ * See https://centurylinkcloud.github.io/mdw/docs/guides/configuration/
  */
 public class YamlProperties {
 
@@ -57,30 +58,6 @@ public class YamlProperties {
         root = loader.getRequiredMap("", loader.getTop(), "");
     }
 
-    /**
-     * Examples:
-     *
-     * (in mdw.yaml):
-     * <pre>
-     *   # structured
-     *   database:
-     *     driver: org.mariadb.jdbc.Driver
-     *   # flat
-     *   hub.url: http://localhost:8080/mdw
-     *   # mixed
-     *   git:
-     *     remote.url: https://github.com/CenturyLinkCloud/mdw.git
-     * </pre>
-     *
-     * <code>
-     * getString("mdw.database.driver")
-     * getString("mdw.hub.url")
-     * getString("mdw.git.remote.url")
-     * </code>
-     *
-     * @param name
-     * @return
-     */
     public String getString(String name) {
         return decryptValue((String)get(name, PropType.string));
     }

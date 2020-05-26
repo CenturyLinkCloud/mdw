@@ -14,13 +14,7 @@ import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.impl.DefaultProducer;
 import org.w3c.dom.Element;
 
-import com.centurylink.mdw.camel.CxfNotifyHandler;
-import com.centurylink.mdw.camel.CxfProcessLaunchHandler;
-import com.centurylink.mdw.camel.DefaultNotifyHandler;
-import com.centurylink.mdw.camel.NotifyHandler;
-import com.centurylink.mdw.camel.DefaultProcessLaunchHandler;
-import com.centurylink.mdw.camel.ProcessLaunchHandler;
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.translator.VariableTranslator;

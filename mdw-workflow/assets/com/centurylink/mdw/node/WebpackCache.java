@@ -20,10 +20,10 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Status;
-import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.file.ZipHelper;
@@ -68,7 +68,7 @@ public class WebpackCache implements PreloadableCache {
 
             try {
                 // also unzip any custom node_modules
-                Map<String, List<AssetInfo>> zipAssets = ServiceLocator.getAssetServices().getAssetsOfType("zip");
+                Map<String, List<AssetInfo>> zipAssets = ServiceLocator.getAssetServices().getAssetsWithExtension("zip");
                 for (String pkg : zipAssets.keySet()) {
                     for (AssetInfo zipAsset : zipAssets.get(pkg)) {
                         if (zipAsset.getName().equals("node_modules.zip") && !pkg.equals(NODE_PACKAGE)) {
@@ -96,7 +96,7 @@ public class WebpackCache implements PreloadableCache {
                 if (PackageCache.getPackage("com.centurylink.mdw.staging") != null)
                     jsxAssets.add(assetServices.getAsset("com.centurylink.mdw.staging/Main.jsx"));
                 // add all Index.jsx assets
-                for (List<AssetInfo> assets : assetServices.findAssets(file -> file.getName().equals("Index.jsx")).values()) {
+                for (List<AssetInfo> assets : assetServices.findAssets(asset -> asset.getName().equals("Index.jsx")).values()) {
                     jsxAssets.addAll(assets);
                 }
                 // precompile if not dev or not previously compiled

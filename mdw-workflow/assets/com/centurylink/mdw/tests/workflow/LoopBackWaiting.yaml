@@ -1,5 +1,5 @@
 process: # 10290
-  name: MDWTestLoopBackWaiting
+  name: TestLoopBackWaiting
   instance: 1
   activity: # 2 "2017-01-12 12:54:26"
     name: Start

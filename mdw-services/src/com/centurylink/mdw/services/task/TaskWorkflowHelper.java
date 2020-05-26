@@ -19,7 +19,7 @@ import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.cache.CachingException;
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.StrategyException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
@@ -31,7 +31,6 @@ import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
@@ -77,6 +76,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -93,7 +93,7 @@ public class TaskWorkflowHelper {
         this.taskInstance = taskInstance;
     }
 
-    TaskWorkflowHelper(Long taskInstanceId) throws DataAccessException {
+    TaskWorkflowHelper(Long taskInstanceId) throws DataAccessException, IOException {
         this.taskInstance = getTaskInstance(taskInstanceId);
     }
 
@@ -101,7 +101,8 @@ public class TaskWorkflowHelper {
      * Convenience method for below.
      */
     static TaskInstance createTaskInstance(Long taskId, String masterRequestId, Long procInstId,
-            String secOwner, Long secOwnerId, String title, String comments) throws ServiceException, DataAccessException {
+            String secOwner, Long secOwnerId, String title, String comments)
+            throws ServiceException, DataAccessException, IOException {
         return createTaskInstance(taskId, masterRequestId, procInstId, secOwner, secOwnerId, title, comments, 0, null, null);
     }
 
@@ -135,11 +136,11 @@ public class TaskWorkflowHelper {
     static TaskInstance createTaskInstance(Long taskId, String masterRequestId, Long processInstanceId,
                 String secondaryOwner, Long secondaryOwnerId, String title, String comments,
                 int dueInSeconds, Map<String,String> indexes, String assignee)
-        throws ServiceException, DataAccessException {
+        throws ServiceException, DataAccessException, IOException {
         TaskTemplate task = TaskTemplateCache.getTaskTemplate(taskId);
         String label = task.getLabel();
-        Package taskPkg = PackageCache.getTaskTemplatePackage(taskId);
-        if (taskPkg != null && !taskPkg.isDefaultPackage())
+        Package taskPkg = PackageCache.getPackage(task.getPackageName());
+        if (taskPkg != null)
             label = taskPkg.getLabel() + "/" + label;
         Instant due = null;
         dueInSeconds = dueInSeconds > 0 ? dueInSeconds : task.getSlaSeconds();
@@ -225,7 +226,7 @@ public class TaskWorkflowHelper {
      */
     static TaskInstance createTaskInstance(Long taskId, String masterOwnerId,
             String title, String comment, Instant due, Long userId, Long secondaryOwner)
-    throws ServiceException, DataAccessException {
+    throws ServiceException, DataAccessException, IOException {
         CodeTimer timer = new CodeTimer("createTaskInstance()", true);
         TaskTemplate task = TaskTemplateCache.getTaskTemplate(taskId);
         TaskInstance ti = createTaskInstance(taskId,  masterOwnerId, OwnerType.USER, userId,
@@ -288,8 +289,7 @@ public class TaskWorkflowHelper {
         }
     }
 
-
-    static TaskInstance getTaskInstance(Long taskInstanceId) throws DataAccessException {
+    static TaskInstance getTaskInstance(Long taskInstanceId) throws DataAccessException, IOException {
         TaskInstance taskInstance = new TaskDataAccess().getTaskInstance(taskInstanceId);
         if (taskInstance == null)
             return null;
@@ -315,7 +315,7 @@ public class TaskWorkflowHelper {
         return taskInstance;
     }
 
-    void setIndexes(TaskRuntimeContext runtimeContext) throws DataAccessException, ServiceException {
+    void setIndexes(TaskRuntimeContext runtimeContext) throws DataAccessException, IOException {
         TaskIndexProvider indexProvider = getIndexProvider(runtimeContext);
         if (indexProvider != null) {
             Map<String,String> indexes = indexProvider.collect(runtimeContext);
@@ -329,7 +329,7 @@ public class TaskWorkflowHelper {
      * The method should only be called in summary (or summary-and-detail) task manager.
      */
     void updateDue(Instant due, String cuid, String comment)
-    throws ServiceException, DataAccessException {
+    throws ServiceException, DataAccessException, IOException {
         boolean hasOldSlaInstance;
         EventServices eventManager = ServiceLocator.getEventServices();
         EventInstance event = eventManager.getEventInstance(ScheduledEvent.SPECIAL_EVENT_PREFIX + "TaskDueDate." + taskInstance.getId());
@@ -366,8 +366,8 @@ public class TaskWorkflowHelper {
         new TaskDataAccess().setTaskInstancePriority(taskInstance.getTaskInstanceId(), priority);
     }
 
-    private TaskIndexProvider getIndexProvider(TaskRuntimeContext runtimeContext) throws DataAccessException {
-        String indexProviderClass = runtimeContext.getTaskAttribute(TaskAttributeConstant.INDEX_PROVIDER);
+    private TaskIndexProvider getIndexProvider(TaskRuntimeContext runtimeContext) throws IOException {
+        String indexProviderClass = runtimeContext.getTaskAttributes().get(TaskAttributeConstant.INDEX_PROVIDER);
         if (indexProviderClass == null) {
             return TaskTemplateCache.getTaskTemplate(runtimeContext.getTaskId()).isAutoformTask() ?
                     new AutoFormTaskIndexProvider() : new CustomTaskIndexProvider();
@@ -385,15 +385,9 @@ public class TaskWorkflowHelper {
         }
     }
 
-
-    void performAction(String action, Long userId, Long assigneeId, String comment,
-            String destination, boolean notifyEngine) throws ServiceException, DataAccessException {
-        performAction(action, userId, assigneeId, comment, destination, notifyEngine, true);
-    }
-
     void performAction(String action, Long userId, Long assigneeId, String comment,
             String destination, boolean notifyEngine, boolean allowResumeEndpoint)
-            throws ServiceException, DataAccessException {
+            throws ServiceException, DataAccessException, IOException {
 
         if (logger.isInfoEnabled())
             logger.info("task action '" + action + "' on instance " + taskInstance.getId());
@@ -489,7 +483,7 @@ public class TaskWorkflowHelper {
         }
     }
 
-    List<SubTask> getSubtaskList(TaskRuntimeContext runtimeContext) throws ServiceException {
+    List<SubTask> getSubtaskList(TaskRuntimeContext runtimeContext) throws ServiceException, IOException {
         String subtaskStrategyAttr = getTemplate().getAttribute(TaskAttributeConstant.SUBTASK_STRATEGY);
         if (StringUtils.isBlank(subtaskStrategyAttr)) {
             return null;
@@ -513,8 +507,9 @@ public class TaskWorkflowHelper {
     }
 
     void createSubtasks(List<SubTask> subtasks, TaskRuntimeContext masterTaskContext)
-            throws ServiceException, DataAccessException {
+            throws ServiceException, DataAccessException, IOException {
         for (SubTask subtask : subtasks) {
+            // TODO using schemas field logicalId to store subtask asset path
             TaskTemplate subtaskTemplate = TaskTemplateCache.getTaskTemplate(subtask.getLogicalId());
             if (subtaskTemplate == null)
                 throw new ServiceException("Task Template '" + subtask.getLogicalId() + "' does not exist");
@@ -530,7 +525,7 @@ public class TaskWorkflowHelper {
         return new TaskDataAccess().getSubtaskInstances(masterTaskInstanceId);
     }
 
-    void resume(String action) throws ServiceException {
+    void resume(String action) throws ServiceException, IOException {
         // resume through engine
         if (getTemplate().isAutoformTask())
             resumeAutoForm(action);
@@ -645,7 +640,7 @@ public class TaskWorkflowHelper {
 
         WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
         ProcessInstance proc = workflowServices.getProcess(taskInstance.getOwnerId());
-        Package pkg = PackageCache.getProcessPackage(proc.getProcessId());
+        Package pkg = PackageCache.getPackage(proc.getPackageName());
         EventServices eventMgr = ServiceLocator.getEventServices();
         return eventMgr.createDocument(type, OwnerType.TASK_INSTANCE, taskInstance.getTaskInstanceId(), value, pkg);
     }
@@ -746,7 +741,7 @@ public class TaskWorkflowHelper {
      * processing they can override the default strategy implementation to catch StrategyExceptions.
      */
     List<String> determineWorkgroups(Map<String,String> indexes)
-    throws ServiceException {
+    throws ServiceException, IOException {
         TaskTemplate taskTemplate = getTemplate();
         String routingStrategyAttr = taskTemplate.getAttribute(TaskAttributeConstant.ROUTING_STRATEGY);
         if (StringUtils.isBlank(routingStrategyAttr)) {
@@ -767,14 +762,16 @@ public class TaskWorkflowHelper {
         }
     }
 
-    public TaskTemplate getTemplate() {
+    public TaskTemplate getTemplate() throws IOException {
         return TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
     }
 
     private static void populateStrategyParams(ParameterizedStrategy strategy,
             TaskTemplate template, Long processInstanceId, Map<String, String> indexes) throws ServiceException {
-        for (Attribute attr : template.getAttributes()) {
-            strategy.setParameter(attr.getName(), attr.getValue());
+        if (template.getAttributes() != null) {
+            for (String name : template.getAttributes().keySet()) {
+                strategy.setParameter(name, template.getAttributes().get(name));
+            }
         }
         ProcessRuntimeContext context = ServiceLocator.getWorkflowServices().getContext(processInstanceId);
         for (String name : context.getVariables().keySet()) {
@@ -784,7 +781,7 @@ public class TaskWorkflowHelper {
 
     // TODO: handle non-standard status changes
     public void notifyTaskAction(String action, Integer previousStatus, Integer previousState)
-    throws ServiceException, DataAccessException {
+    throws ServiceException, DataAccessException, IOException {
         CodeTimer timer = new CodeTimer("TaskManager.notifyStatusChange()", true);
 
         try {
@@ -812,9 +809,6 @@ public class TaskWorkflowHelper {
         }
         catch (ObserverException ex) {
             // do not rethrow; observer problems should not prevent task actions
-            logger.severeException(ex.getMessage(), ex);
-        }
-        catch (StrategyException ex) {
             logger.severeException(ex.getMessage(), ex);
         }
         timer.stopAndLogTiming("");
@@ -904,12 +898,12 @@ public class TaskWorkflowHelper {
      * assignee user name, due date, groups, master request id, etc.
      */
     void getTaskInstanceAdditionalInfo()
-    throws DataAccessException, ServiceException {
+    throws IOException, DataAccessException, ServiceException {
         new TaskDataAccess().getTaskInstanceAdditionalInfoGeneral(taskInstance);
         taskInstance.setTaskInstanceUrl(getTaskInstanceUrl());
     }
 
-    public String getTaskInstanceUrl() throws ServiceException {
+    public String getTaskInstanceUrl() throws ServiceException, IOException {
         // check for custom page
         TaskTemplate template = getTemplate();
         if (template != null && template.isHasCustomPage()) {
@@ -935,7 +929,7 @@ public class TaskWorkflowHelper {
         return baseUrl + "#/tasks/" + taskInstance.getTaskInstanceId();
     }
 
-    public TaskRuntimeContext getContext() throws ServiceException {
+    public TaskRuntimeContext getContext() throws ServiceException, IOException {
         User assignee = null;
         if (taskInstance.getAssigneeCuid() != null) {
             try {
@@ -962,7 +956,7 @@ public class TaskWorkflowHelper {
         }
     }
 
-    public AutoAssignStrategy getAutoAssignStrategy() throws StrategyException, ServiceException {
+    public AutoAssignStrategy getAutoAssignStrategy() throws IOException, ServiceException {
         String autoAssignAttr = getTemplate().getAttribute(TaskAttributeConstant.AUTO_ASSIGN);
         AutoAssignStrategy strategy = null;
         if (StringUtils.isBlank(autoAssignAttr))
@@ -984,7 +978,7 @@ public class TaskWorkflowHelper {
     }
 
     void assign(Long userId)
-    throws ServiceException, DataAccessException {
+    throws IOException, DataAccessException {
         if (isAssignable()) {
             taskInstance.setStatusCode(TaskStatus.STATUS_ASSIGNED);
             taskInstance.setAssigneeId(userId);
@@ -1045,8 +1039,7 @@ public class TaskWorkflowHelper {
         }
     }
 
-    void release()
-    throws DataAccessException {
+    void release() throws IOException, DataAccessException {
         taskInstance.setStatusCode(TaskStatus.STATUS_OPEN);
         taskInstance.setAssigneeId(null);
         Map<String,Object> changes = new HashMap<String,Object>();
@@ -1094,7 +1087,7 @@ public class TaskWorkflowHelper {
         new TaskDataAccess().updateTaskInstance(taskInstance.getTaskInstanceId(), changes, false);
     }
 
-    void close(Long userId, String comment) throws ServiceException, DataAccessException {
+    void close(Long userId, String comment) throws ServiceException, DataAccessException, IOException {
         close(TaskAction.CLOSE, comment);
         EventServices eventServices = ServiceLocator.getEventServices();
         if (getTemplate().isAutoformTask())
@@ -1115,7 +1108,7 @@ public class TaskWorkflowHelper {
     }
 
     private void forward(String destination, String comment)
-    throws ServiceException, DataAccessException {
+    throws ServiceException, DataAccessException, IOException {
         List<String> prevWorkgroups = taskInstance.getWorkgroups();
         if (prevWorkgroups == null || prevWorkgroups.isEmpty()) {
             prevWorkgroups = getTemplate().getWorkgroups();
@@ -1162,9 +1155,6 @@ public class TaskWorkflowHelper {
             // do not rethrow; observer problems should not prevent task actions
             logger.severeException(ex.getMessage(), ex);
         }
-        catch (StrategyException ex) {
-            logger.severeException(ex.getMessage(), ex);
-        }
     }
 
     void close(String action, String comment) throws ServiceException, DataAccessException {
@@ -1206,11 +1196,11 @@ public class TaskWorkflowHelper {
         try {
             Long elapsedMs = dataAccess.getDatabaseTime() - Date.from(taskInstance.getStart()).getTime();
             dataAccess.setElapsedTime(OwnerType.TASK_INSTANCE, taskInstance.getTaskInstanceId(), elapsedMs);
+            notifyTaskAction(TaskAction.CANCEL, prevStatus, prevState);
         }
-        catch (SQLException ex) {
+        catch (IOException | SQLException ex) {
             logger.severeException("Failed to set timing for task: " + taskInstance.getId(), ex);
         }
-        notifyTaskAction(TaskAction.CANCEL, prevStatus, prevState);
     }
 
 
@@ -1260,8 +1250,8 @@ public class TaskWorkflowHelper {
                 }
 
                 Process processVO = null;
-                if (processInstance.getProcessInstDefId() > 0L)
-                    processVO = ProcessCache.getProcessInstanceDefiniton(processInstance.getProcessId(), processInstance.getProcessInstDefId());
+                if (processInstance.getInstanceDefinitionId() > 0L)
+                    processVO = ProcessCache.getInstanceDefinition(processInstance.getProcessId(), processInstance.getInstanceDefinitionId());
                 if (processVO == null)
                     processVO = ProcessCache.getProcess(processInstance.getProcessId());
                 if (processInstance.isEmbedded())
@@ -1319,8 +1309,8 @@ public class TaskWorkflowHelper {
                 Long processInstanceId = activityInstance.getProcessInstanceId();
                 ProcessInstance processInstance = ServiceLocator.getWorkflowServices().getProcess(processInstanceId);
                 Process processVO = null;
-                if (processInstance.getProcessInstDefId() > 0L)
-                    processVO = ProcessCache.getProcessInstanceDefiniton(processInstance.getProcessId(), processInstance.getProcessInstDefId());
+                if (processInstance.getInstanceDefinitionId() > 0L)
+                    processVO = ProcessCache.getInstanceDefinition(processInstance.getProcessId(), processInstance.getInstanceDefinitionId());
                 if (processVO == null)
                     processVO = ProcessCache.getProcess(processInstance.getProcessId());
                 if (processInstance.isEmbedded())

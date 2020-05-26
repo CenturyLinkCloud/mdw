@@ -1,5 +1,5 @@
 process: # 13652
-  name: MDWTestSuppsEmbedded
+  name: TestSuppsEmbedded
   instance: 1
   activity: # 13 "2016-02-22 13:19:17"
     name: Start

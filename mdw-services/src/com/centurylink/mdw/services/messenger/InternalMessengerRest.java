@@ -15,11 +15,6 @@
  */
 package com.centurylink.mdw.services.messenger;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Date;
-import java.util.HashMap;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.event.InternalEvent;
@@ -31,17 +26,19 @@ import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.Date;
+import java.util.HashMap;
+
 public class InternalMessengerRest extends InternalMessenger {
 
-    private String serviceContext;
-
-    public InternalMessengerRest(String serviceContext) {
-        this.serviceContext = serviceContext;
+    public InternalMessengerRest() {
     }
 
     private void sendMessageSub(InternalEvent msg, String msgid) throws IOException {
         HttpHelper httpHelper = new HttpHelper(new URL(ApplicationContext.getLocalServiceAccessUrl()));
-        HashMap<String,String> headers = new HashMap<String,String>();
+        HashMap<String,String> headers = new HashMap<>();
         headers.put("MDWInternalMessageId", msgid);
         httpHelper.setHeaders(headers);
         httpHelper.post(msg.toXml());
@@ -52,7 +49,8 @@ public class InternalMessengerRest extends InternalMessenger {
     {
         try {
             String msgid = addMessage(msg, edao);
-            if (msgid==null) return;    // cached
+            if (msgid == null)
+                return; // cached
             sendMessageSub(msg, msgid);
         } catch (Exception e) {
             throw new ProcessException(-1, "Failed to send internal event", e);
@@ -62,7 +60,7 @@ public class InternalMessengerRest extends InternalMessenger {
     public void sendDelayedMessage(InternalEvent msg, int delaySeconds, String msgid, boolean isUpdate,
             EngineDataAccess edao) throws ProcessException
     {
-        if (delaySeconds<=0) {
+        if (delaySeconds <= 0) {
             try {
                 addMessageNoCaching(msg, edao, msgid);
                 sendMessageSub(msg, msgid);
@@ -81,19 +79,18 @@ public class InternalMessengerRest extends InternalMessenger {
         }
     }
 
-    public void broadcastMessage(String msg) throws ProcessException {
-        for (Server server : ApplicationContext.getServerList().getServers()) {
-            String serviceUrl = "http://" + server + serviceContext + "/Services/REST";
-            try {
-                HttpHelper httpHelper = new HttpHelper(new URL(serviceUrl));
-                HashMap<String,String> headers = new HashMap<String,String>();
-                headers.put("MDWBroadcast", "true");
-                httpHelper.setHeaders(headers);
-                httpHelper.post(msg);
-            } catch (Exception e) {
-                StandardLogger logger = LoggerUtil.getStandardLogger();
-                logger.severeException("Failed to broadcast to server " + server, e);
-            }
+    public void broadcastMessage(String msg) {
+        try {
+            Server server = ApplicationContext.getServer();
+            String serviceUrl = "http://" + server + "/Services/REST";
+            HttpHelper httpHelper = new HttpHelper(new URL(serviceUrl));
+            HashMap<String,String> headers = new HashMap<>();
+            headers.put("MDWBroadcast", "true");
+            httpHelper.setHeaders(headers);
+            httpHelper.post(msg);
+        } catch (Exception ex) {
+            StandardLogger logger = LoggerUtil.getStandardLogger();
+            logger.severeException("Failed to broadcast", ex);
         }
     }
 }

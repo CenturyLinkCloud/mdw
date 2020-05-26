@@ -17,9 +17,6 @@ mdw.git.auto.pull=git/auto.pull
 mdw.temp.dir=temp.dir
 mdw.attachments.dir=attachments.dir
 
-# ServerList implements YamlPropertyTranslator
-mdw.server.list=[com.centurylink.mdw.model.system.ServerList]
-
 mdw.hub.url=hub.url
 mdw.services.url=services.url
 mdw.discovery.url=discovery.url
@@ -112,13 +109,6 @@ mdw.translator.xmlbeans.save.options=translator/xmlbeans.save.options
 
 mdw.test.results.location=test/results.location
 mdw.function.tests.summary.file=test/summary.file
-
-mdw.requestrouting.server.list=[com.centurylink.mdw.model.system.ServerList]
-mdw.requestrouting.enabled=requestrouting/enabled
-mdw.requestrouting.https.enabled=requestrouting/https.enabled
-mdw.requestrouting.default.strategy=requestrouting/default.strategy
-mdw.requestrouting.active.server.interval=requestrouting/active.server.interval
-mdw.requestrouting.timeout=requestrouting/timeout
 
 mdw.application.name=app/id
 MDWFramework.ApplicationDetails-ApplicationName=app/id

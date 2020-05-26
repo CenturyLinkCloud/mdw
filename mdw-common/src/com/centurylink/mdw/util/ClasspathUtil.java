@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.centurylink.mdw.util.file.MdwIgnore;
+import com.centurylink.mdw.file.MdwIgnore;
 
 /**
  * Contains utility methods for validating the CLASSPATH of a runtime
@@ -88,7 +88,8 @@ public class ClasspathUtil {
         }
         for (File file : directory.listFiles()) {
             if (file.isDirectory()) {
-                MdwIgnore mdwIgnore = honorMdwIgnore ? new MdwIgnore(directory) : null;
+                // TODO mdwignore
+                MdwIgnore mdwIgnore = null; // honorMdwIgnore ? new MdwIgnore(directory) : null;
                 if (mdwIgnore == null || !mdwIgnore.isIgnore(file)) {
                     addJarFilesRecursive(jarFiles, file, honorMdwIgnore);
                 }

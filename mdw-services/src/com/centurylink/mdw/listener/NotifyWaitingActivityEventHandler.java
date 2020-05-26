@@ -25,6 +25,11 @@ import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.listener.Listener;
 
+/**
+ * @deprecated
+ * use {@link com.centurylink.mdw.services.request.ProcessNotifyHandler}
+ */
+@Deprecated
 public class NotifyWaitingActivityEventHandler extends ExternalEventHandlerBase {
 
     public String handleEventMessage(

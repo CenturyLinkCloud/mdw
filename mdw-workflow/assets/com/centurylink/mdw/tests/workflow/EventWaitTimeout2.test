@@ -1,6 +1,6 @@
 package com.centurylink.mdw.tests.workflow
 
-start process("MDWTestEventWaitTimeout")
+start process("TestEventWaitTimeout")
 sleep 20
 send message("REST") {
     payload = '''<ser:ActionRequest xmlns:ser="http://mdw.centurylink.com/services">

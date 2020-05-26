@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.adapter;
 
-import com.centurylink.mdw.model.attribute.Attribute;
 
 public class SimulationResponse {
 
@@ -23,15 +22,8 @@ public class SimulationResponse {
     private String returnCode;
     private Integer chance;
     private String response;
-    private Attribute attr;
-    
-    public SimulationResponse(Attribute attr) {
-        this(attr.getValue());
-        this.attr = attr;
-    }
 
     public SimulationResponse(String value) {
-        attr = null;
         int firstDelim = value.indexOf(',');
         int secondDelim = (firstDelim>=0)?value.indexOf(',', firstDelim+1):-1;
         if (secondDelim>0) {
@@ -49,22 +41,20 @@ public class SimulationResponse {
         }
         selected = false;
     }
-    
+
     public SimulationResponse(String returnCode, int chance, String response) {
         this.returnCode = returnCode;
         this.chance = chance;
         this.response = response;
         selected = false;
-        attr = null;
     }
-        
-    private void updateAttr() {
-        attr.setValue(
-                (returnCode!=null?returnCode:"")
-                +','
-                +(chance!=null?Integer.toString(chance):"0")
-                +','
-                +(response!=null?response:""));
+
+    private String getAttributeValue() {
+        return (returnCode!=null?returnCode:"")
+                + ','
+                + (chance!=null?Integer.toString(chance):"0")
+                + ','
+                + (response!=null?response:"");
     }
 
     public Boolean getSelected() {
@@ -81,7 +71,6 @@ public class SimulationResponse {
 
     public void setReturnCode(String returnCode) {
         this.returnCode = returnCode;
-        this.updateAttr();
     }
 
     public Integer getChance() {
@@ -90,7 +79,6 @@ public class SimulationResponse {
 
     public void setChance(Integer chance) {
         this.chance = chance;
-        this.updateAttr();
     }
 
     public String getResponse() {
@@ -99,15 +87,5 @@ public class SimulationResponse {
 
     public void setResponse(String response) {
         this.response = response;
-        this.updateAttr();
-    }
-
-    public Attribute getAttribute() {
-        return attr;
-    }
-
-    public void setAttribute(Attribute attr) {
-        this.attr = attr;
-        this.updateAttr();
     }
 }

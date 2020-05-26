@@ -32,11 +32,12 @@ permalink: /docs/help/
   <li><a href='InvokeSubProcessActivity.html'>Invoke SubProcess Activity</a></li>
   <li><a href='InvokeMultipleSubprocesses.html'>Invoke Multiple Subprocesses</a></li>
   <li><a href='JmsAdapter.html'>JMS Adapter Activity</a></li>
-  <li><a href='listener.html'>Listeners and Event Handlers</a></li>
+  <li><a href='listener.html'>Listeners</a></li>
   <li><a href='MDWWebServiceAdapter.html'>MDW Web Service Adapter Activity</a></li>
   <li><a href='MicroserviceOrchestrator.html'>Microservice Orchestrator</a></li>
   <li><a href='ProcessFinishActivity.html'>Process Finish</a></li> 
-  <li><a href='ProcessStartActivity.html'>Process Start</a></li> 
+  <li><a href='ProcessStartActivity.html'>Process Start</a></li>
+  <li><a href='handlers.html'>Request Handlers</a></li>
   <li><a href='RestfulAdapter.html'>REST Adapter Activity</a></li>
   <li><a href='KafkaAdapter.html'>Kafka Adapter Activity</a></li>
   <li><a href='scriptActivity.html'>Script Activity</a></li>       

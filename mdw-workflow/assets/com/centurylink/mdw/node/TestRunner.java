@@ -15,8 +15,9 @@
  */
 package com.centurylink.mdw.node;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.test.TestCase;
@@ -26,6 +27,7 @@ import com.centurylink.mdw.test.TestExecConfig;
 import com.eclipsesource.v8.*;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -91,7 +93,8 @@ public class TestRunner {
         nodeJS = NodeJS.createNodeJS();
 
         V8Object testObj = new V8Object(nodeJS.getRuntime());
-        testObj.add("file", testCase.getAsset().getFile().getAbsolutePath());
+        File file = new File(ApplicationContext.getAssetRoot() + "/" + testCase.getPackage().replace('.', '/') + "/" + testCase.getAsset().getName());
+        testObj.add("file", file.getAbsolutePath());
         V8Array valueFiles = new V8Array(nodeJS.getRuntime());
         String valueFile = "localhost.env";
         if (config.getPostmanEnv() != null) {

@@ -24,17 +24,16 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
 import com.centurylink.mdw.common.translator.impl.JsonableTranslator;
 import com.centurylink.mdw.config.PropertyException;
-import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.adapter.AdapterException;
+import com.centurylink.mdw.adapter.ConnectionException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.Response;
-import com.centurylink.mdw.model.attribute.Attribute;
-import com.centurylink.mdw.model.event.AdapterStubRequest;
-import com.centurylink.mdw.model.event.AdapterStubResponse;
+import com.centurylink.mdw.model.request.Response;
+import com.centurylink.mdw.adapter.AdapterStubRequest;
+import com.centurylink.mdw.adapter.AdapterStubResponse;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.request.Request;
@@ -212,7 +211,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
                 if (className.contains("/"))
                     className = className.replace('/', '.'); // asset path
                 try {
-                    Class<?> responseClass = getPackage().getCloudClassLoader().loadClass(className);
+                    Class<?> responseClass = getPackage().getClassLoader().loadClass(className);
                     // TODO: handle other types (eg yaml)
                     if (Jsonable.class.isAssignableFrom(responseClass)) {
                         Constructor<?> ctor = responseClass.getConstructor(JSONObject.class);
@@ -617,10 +616,10 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         if (resp != null)
             return new Response(resp);
 
-        List<SimulationResponse> responses = new ArrayList<SimulationResponse>();
-        for (Attribute attr : this.getAttributes()) {
-            if (attr.getName().startsWith(WorkAttributeConstant.SIMULATION_RESPONSE)) {
-                SimulationResponse r = new SimulationResponse(attr.getValue());
+        List<SimulationResponse> responses = new ArrayList<>();
+        for (String name : getAttributes().keySet()) {
+            if (name.startsWith(WorkAttributeConstant.SIMULATION_RESPONSE)) {
+                SimulationResponse r = new SimulationResponse(getAttributes().get(name));
                 responses.add(r);
             }
         }

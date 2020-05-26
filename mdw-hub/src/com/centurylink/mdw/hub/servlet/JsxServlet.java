@@ -18,7 +18,7 @@ package com.centurylink.mdw.hub.servlet;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;

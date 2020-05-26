@@ -26,6 +26,7 @@ public interface StandardLogger
     default void error(String msg) {
         severe(msg);
     }
+    @Deprecated
     void severe(String msg);
 
     void debug(String msg);
@@ -37,26 +38,31 @@ public interface StandardLogger
     default void info(String msg, Throwable t) {
         infoException(msg, t);
     }
+    @Deprecated
     void infoException(String msg, Throwable t);
 
     default void warn(String msg, Throwable t) {
         warnException(msg, t);
     }
+    @Deprecated
     void warnException(String msg, Throwable t);
 
     default void error(String msg, Throwable t) {
         severeException(msg, t);
     }
+    @Deprecated
     void severeException(String msg, Throwable t);
 
     default void debug(String msg, Throwable t) {
         debugException(msg, t);
     }
+    @Deprecated
     void debugException(String msg, Throwable t);
 
     default void trace(String msg, Throwable t) {
         traceException(msg, t);
     }
+    @Deprecated
     void traceException(String msg, Throwable t);
 
     boolean isInfoEnabled();
@@ -70,8 +76,16 @@ public interface StandardLogger
 
     void info(String tag, String message);
     void warn(String tag, String message);
+    @Deprecated
     void exception(String tag, String message, Throwable e);
+    default void error(String tag, String message, Throwable e) {
+        exception(tag, message, e);
+    }
+    @Deprecated
     void severe(String tag, String message);
+    default void error(String tag, String message) {
+        severe(tag, message);
+    }
     void debug(String tag, String message);
     void trace(String tag, String message);
 

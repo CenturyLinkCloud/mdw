@@ -18,9 +18,9 @@ package com.centurylink.mdw.workflow.adapter.http;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.model.Response;
+import com.centurylink.mdw.adapter.AdapterException;
+import com.centurylink.mdw.adapter.ConnectionException;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.service.data.ServicePaths;
@@ -134,7 +134,7 @@ public class HttpServiceAdapter extends TextAdapterActivity {
             return connectTimeout;
 
         }
-       
+
         catch (PropertyException ex) {
             throw new ActivityException(-1, ex.getMessage(), ex);
         }

@@ -17,7 +17,7 @@ package com.centurylink.mdw.boot.servlet;
 
 import com.centurylink.mdw.boot.MdwStarter;
 import com.centurylink.mdw.common.service.WebSocketMessenger;
-import com.centurylink.mdw.container.NamingProvider;
+import com.centurylink.mdw.container.ContextProvider;
 import com.centurylink.mdw.hub.MdwMain;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -39,7 +39,7 @@ public class StartupListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent contextEvent) {
         ServletContext servletContext = contextEvent.getServletContext();
         mdwMain = new MdwMain();
-        String container = NamingProvider.TOMCAT; // TODO
+        String container = "Tomcat"; // TODO
         ServerContainer serverContainer = (ServerContainer)servletContext.getAttribute("javax.websocket.server.ServerContainer");
         try {
             serverContainer.addEndpoint(WebSocketMessenger.class);

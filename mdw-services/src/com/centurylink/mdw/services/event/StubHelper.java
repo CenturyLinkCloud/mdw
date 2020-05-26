@@ -17,12 +17,12 @@ package com.centurylink.mdw.services.event;
 
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.adapter.AdapterException;
+import com.centurylink.mdw.adapter.ConnectionException;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.Response;
-import com.centurylink.mdw.model.event.AdapterStubResponse;
+import com.centurylink.mdw.model.request.Response;
+import com.centurylink.mdw.adapter.AdapterStubResponse;
 import com.centurylink.mdw.model.workflow.ActivityStubResponse;
 import com.centurylink.mdw.soccom.SoccomClient;
 import org.json.JSONObject;

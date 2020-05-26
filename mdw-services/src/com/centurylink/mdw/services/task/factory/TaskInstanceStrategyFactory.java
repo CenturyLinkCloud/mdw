@@ -15,7 +15,7 @@
  */
 package com.centurylink.mdw.services.task.factory;
 
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.StrategyException;
 import com.centurylink.mdw.common.service.RegisteredService;
 import com.centurylink.mdw.model.workflow.Package;
@@ -153,13 +153,12 @@ public class TaskInstanceStrategyFactory {
         return (AutoAssignStrategy) factory.getStrategyInstance(AutoAssignStrategy.class, className, packageVO);
     }
 
-    public Object getStrategyInstance(Class<? extends RegisteredService> strategyInterface, String strategyClassName, Package packageVO) throws StrategyException {
+    public Object getStrategyInstance(Class<? extends RegisteredService> strategyInterface, String strategyClassName, Package pkg) throws StrategyException {
         try {
             TaskServiceRegistry registry = TaskServiceRegistry.getInstance();
-            // cloud mode
-            Object strategy = registry.getDynamicStrategy(packageVO, strategyInterface, strategyClassName);
+            Object strategy = registry.getDynamicStrategy(pkg, strategyInterface, strategyClassName);
             if (strategy == null) {
-                strategy = packageVO.getClassLoader().loadClass(strategyClassName).newInstance();
+                strategy = pkg.getClass().getClassLoader().loadClass(strategyClassName).newInstance();
             }
             return strategy;
         }
@@ -200,8 +199,7 @@ public class TaskInstanceStrategyFactory {
         try {
             EventServices eventManager = ServiceLocator.getEventServices();
             Process process = eventManager.findProcessByProcessInstanceId(processInstanceId);
-            Package packageVO = PackageCache.getProcessPackage(process.getId());
-            return packageVO;
+            return PackageCache.getPackage(process.getPackageName());
         }
         catch (Exception ex) {
             return null;

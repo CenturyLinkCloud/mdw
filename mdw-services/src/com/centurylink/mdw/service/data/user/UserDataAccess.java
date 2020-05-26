@@ -19,7 +19,6 @@ import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.User;
@@ -921,13 +920,7 @@ public class UserDataAccess extends CommonDataAccess {
             db.runUpdate(deleteQuery, userId);
 
             if (attributes != null && !attributes.isEmpty()) {
-                List<Attribute> attrs = new ArrayList<Attribute>();
-                for (String name : attributes.keySet()) {
-                    String value = attributes.get(name);
-                    if (value != null && !value.isEmpty())
-                        attrs.add(new Attribute(name, value));
-                }
-                addAttributes0(OwnerType.USER, userId, attrs);
+                addAttributes0(OwnerType.USER, userId, attributes);
             }
             db.commit();
         }
@@ -952,13 +945,7 @@ public class UserDataAccess extends CommonDataAccess {
             db.runUpdate(deleteQuery, groupId);
 
             if (attributes != null && !attributes.isEmpty()) {
-                List<Attribute> attrs = new ArrayList<Attribute>();
-                for (String name : attributes.keySet()) {
-                    String value = attributes.get(name);
-                    if (value != null && !value.isEmpty())
-                        attrs.add(new Attribute(name, value));
-                }
-                addAttributes0(OwnerType.USER_GROUP, groupId, attrs);
+                addAttributes0(OwnerType.USER_GROUP, groupId, attributes);
             }
             db.commit();
         }

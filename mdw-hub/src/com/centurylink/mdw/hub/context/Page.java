@@ -15,22 +15,22 @@
  */
 package com.centurylink.mdw.hub.context;
 
+import com.centurylink.mdw.model.asset.api.AssetInfo;
+import com.centurylink.mdw.model.workflow.PackageMeta;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import com.centurylink.mdw.dataaccess.file.PackageDir;
-import com.centurylink.mdw.model.asset.AssetInfo;
 
 /**
  * Represents a custom UI page to be loaded.
  */
 public class Page {
 
-    private Mdw mdw;
+    private final Mdw mdw;
     public Mdw getMdw() { return mdw; }
 
-    private String path;
+    private final String path;
     public String getPath() { return path; }
 
     public String getRelPath() {
@@ -40,7 +40,8 @@ public class Page {
     private AssetInfo asset;
     public AssetInfo getAsset() {
         if (asset == null) {
-            asset = new AssetInfo(mdw.getAssetRoot(), path);
+            File file = new File(mdw.getAssetRoot() + "/" + path);
+            asset = new AssetInfo(file.getName(), file, 0, "0");
         }
         return asset;
     }
@@ -62,13 +63,14 @@ public class Page {
     private AssetInfo templateAsset;
     public AssetInfo getTemplateAsset() {
         if (templateAsset == null) {
-            templateAsset = new AssetInfo(mdw.getAssetRoot(), template);
+            File file = new File(mdw.getAssetRoot() + "/" + template);
+            templateAsset = new AssetInfo(file.getName(), file, 0, "0");
         }
         return templateAsset;
     }
 
     public boolean exists() {
-        return getAsset().exists();
+        return getAsset().getFile().exists();
     }
 
     public File getFile() {
@@ -101,7 +103,7 @@ public class Page {
         Path rootPath = Paths.get(mdw.getAssetRoot().getPath()).normalize();
         Path pkgPath = Paths.get(getAsset().getFile().getPath()).normalize();
         while (pkgPath != null && pkgPath.startsWith(rootPath)) {
-            if (new File(pkgPath + "/" + PackageDir.PACKAGE_JSON_PATH).exists() || new File(pkgPath + "/" + PackageDir.PACKAGE_YAML_PATH).exists() ) {
+            if (new File(pkgPath + "/" + PackageMeta.PACKAGE_YAML_PATH).exists() ) {
                 Page p = new Page(mdw, "/" + rootPath.relativize(pkgPath).toString().replace('\\', '/') + "/" + name);
                 if (p.exists())
                     return p;

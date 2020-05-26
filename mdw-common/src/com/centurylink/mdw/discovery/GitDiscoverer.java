@@ -1,9 +1,11 @@
 package com.centurylink.mdw.discovery;
 
-import com.centurylink.mdw.model.PackageMeta;
+import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.project.ProjectMeta;
+import com.centurylink.mdw.model.system.MdwVersion;
+import com.centurylink.mdw.model.workflow.PackageMeta;
 import com.centurylink.mdw.util.HttpHelper;
-import com.centurylink.mdw.util.file.Packages;
+import com.centurylink.mdw.file.Packages;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -128,14 +130,14 @@ public abstract class GitDiscoverer implements Discoverer {
                     if (packageYaml == null)
                         throw new IOException("not found: " + yamlPath);
                     String base64 = packageYaml.getString("content");
-                    pkgInfo = new PackageMeta(Base64.getMimeDecoder().decode(base64));
+                    pkgInfo = new PackageMeta(Yamlable.fromString(new String(Base64.getMimeDecoder().decode(base64))));
                     if (MDW_GIT.equals(repoUrl.toString()) && FRUGAL_MDW_REQUESTS)
-                        mdwVersion = pkgInfo.getVersion();
+                        mdwVersion = pkgInfo.getVersion().toString();
                 }
                 else {
                     // avoid so many requests (TODO: icons)
                     pkgInfo = new PackageMeta(pkg);
-                    pkgInfo.setVersion(mdwVersion);
+                    pkgInfo.setVersion(new MdwVersion(mdwVersion));
                 }
                 packageInfo.put(pkg, pkgInfo);
             }
@@ -152,7 +154,7 @@ public abstract class GitDiscoverer implements Discoverer {
         JSONObject packageYaml = getFileInfo(yamlPath, getRef());
         if (packageYaml != null) {
             String base64 = packageYaml.getString("content");
-            PackageMeta pkgInfo = new PackageMeta(Base64.getMimeDecoder().decode(base64));
+            PackageMeta pkgInfo = new PackageMeta(Yamlable.fromString(new String(Base64.getMimeDecoder().decode(base64))));
             if (version.equals(pkgInfo.getVersion()))
                 return pkgInfo;
         }

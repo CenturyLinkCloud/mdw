@@ -33,14 +33,14 @@ public interface MessageProducer {
      * @param delaySeconds
      * @throws JMSException
      */
-    public void sendMessage(String requestMessage, String queueName, String correlationId,
+    void sendMessage(String requestMessage, String queueName, String correlationId,
             final Queue replyQueue, int delaySeconds, int deliveryMode) throws JMSException;
 
 
-    public void sendMessage(String requestMessage, String queueName, String correlationId,
+    void sendMessage(String requestMessage, String queueName, String correlationId,
             final Queue replyQueue) throws JMSException;
 
-    public void sendMessage(final String requestMessage, final String correlationId,
+    void sendMessage(final String requestMessage, final String correlationId,
             final Queue replyQueue) throws JMSException;
 
     /**
@@ -49,7 +49,7 @@ public interface MessageProducer {
      * @param dest
      * @param requestMessage
      */
-    public void broadcastMessageToTopic(String dest, String requestMessage);
+    void broadcastMessageToTopic(String dest, String requestMessage);
 
     // Overloaded methods follow
 
@@ -59,7 +59,7 @@ public interface MessageProducer {
      * @param correlationId
      * @throws JMSException
      */
-    public void sendMessage(String message, String queueName, String correlationId)
+    void sendMessage(String message, String queueName, String correlationId)
             throws JMSException;
 
     /**
@@ -67,20 +67,20 @@ public interface MessageProducer {
      * @param queueName
      * @param correlationId
      * @param delaySeconds
-     * @param nonPersistent
+     * @param deliveryMode
      * @throws JMSException
      */
-    public void sendMessage(String message, String queueName, String correlationId,
+    void sendMessage(String message, String queueName, String correlationId,
             int delaySeconds, int deliveryMode) throws JMSException;
 
     /**
-     * @param xml
+     * @param message
      * @param queueName
      * @param correlationId
      * @param delaySeconds
      * @throws JMSException
      */
-    public void sendMessage(String message, String queueName, String correlationId, int delaySeconds)
+    void sendMessage(String message, String queueName, String correlationId, int delaySeconds)
             throws JMSException;
 
     /**
@@ -88,23 +88,15 @@ public interface MessageProducer {
      * @param correlationId
      * @throws JMSException
      */
-    public void sendMessage(String message, String correlationId) throws JMSException;
+    void sendMessage(String message, String correlationId) throws JMSException;
 
     /**
      * @param message
      * @param queue
      * @param correlationId
      * @throws JMSException
-     * @throws AmqpException
      */
-    public void sendMessage(String message, Queue queue, String correlationId)
+    void sendMessage(String message, Queue queue, String correlationId)
             throws JMSException;
-
-
-    /**
-     * @param queueName
-     * @return
-     */
-    public String getExchange(String queueName);
 
 }

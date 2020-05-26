@@ -27,27 +27,27 @@ public abstract class DocumentReferenceTranslator extends VariableTranslator {
     }
 
     public final String toString(Object object) throws TranslationException {
-        return ((DocumentReference)object).toString();
+        return object.toString();
     }
 
     /**
      * toString converts DocumentReference to string,
      * whereas this method converts the real object to string
-     * @param pObject
+     * @param obj
      * @return
      * @throws TranslationException
      */
-    public abstract String realToString(Object pObject)
+    public abstract String realToString(Object obj)
     throws TranslationException;
 
     /**
      * toObject converts String to DocumentReference
      * whereas this methods converts the string to real object
-     * @param pStr
+     * @param str
      * @return
      * @throws TranslationException
      */
-    public abstract Object realToObject(String pStr)
+    public abstract Object realToObject(String str)
     throws TranslationException;
 
     /**

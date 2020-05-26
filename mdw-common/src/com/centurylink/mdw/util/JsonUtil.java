@@ -22,6 +22,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -71,5 +75,17 @@ public class JsonUtil {
             jsonArray.put(jsonable.getJson());
         }
         return new JsonArray(jsonArray);
+    }
+
+    public static boolean isJson(File file) throws IOException {
+        if (!file.isFile())
+            return false;
+        try (FileInputStream fis = new FileInputStream(file);
+             InputStreamReader reader = new InputStreamReader(fis, "UTF-8")) {
+            char[] chars = new char[1];
+            if (reader.read(chars) == -1)
+                return false;
+            return chars[0] == '{';
+        }
     }
 }

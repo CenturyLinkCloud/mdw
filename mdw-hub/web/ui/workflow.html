@@ -1,7 +1,7 @@
 <div class="mdw-workflow">
   <div>
     <div class="mdw-workflow-zoom">
-      <a href="" title="Zoom In"><span class="glyphicon glyphicon-zoom-out"></span></a>
+      <a href="" title="Zoom Out"><span class="glyphicon glyphicon-zoom-out"></span></a>
       <input type="range" min="20" max="200" value="100">
       <a href="" title="Zoom In"><span class="glyphicon glyphicon-zoom-in"></span></a>
       <a href="" title="Close" class="mdw-warn mdw-close" style="visibility:hidden">
@@ -53,14 +53,14 @@
       <div class="mdw-heading-actions">
         <a class="btn" ng-if="toolbox.isOpen()" ng-click="closeToolbox()">
           <span class="glyphicon glyphicon-minus"></span>
-        </a> 
+        </a>
         <a class="btn" ng-if="toolbox && !toolbox.isOpen()" ng-click="openToolbox()">
           <span class="glyphicon glyphicon-plus"></span>
         </a>
       </div>
     </div>
     <ul>
-      <li id="{{impl.implementorClass}}" ng-repeat="impl in toolbox.getImplementors()" 
+      <li id="{{impl.implementorClass}}" ng-repeat="impl in toolbox.getImplementors()"
         title="{{impl.implementorClass}}" tabIndex="{{1000+$index}}">
         <div class="mdw-toolbox-icon">
           <img ng-src="{{impl.iconUrl}}" draggable="false"></img>
@@ -84,10 +84,10 @@
         <div class="mdw-heading-actions">
           <a class="btn mdw-inspector-btn" ng-click="initInspector()">
             <span class="glyphicon glyphicon-minus"></span>
-          </a> 
+          </a>
           <a class="btn mdw-inspector-btn" ng-click="maxInspector()">
             <span class="glyphicon glyphicon-unchecked"></span>
-          </a> 
+          </a>
           <a class="btn mdw-inspector-btn" ng-click="closeInspector()">
             <span class="glyphicon glyphicon-remove"></span>
           </a>
@@ -132,21 +132,21 @@
             </div>
           </div>
           <div class="mdw-resource-content" ng-if="drilledValue">
-            <pre><code class="mdw-code" 
+            <pre><code class="mdw-code"
               ng-bind-html="drilledValue.value | highlight:drilledValue.language | unsafe"></code></pre>
           </div>
         </div>
         <!-- drilled-in value -->
         <div class="mdw-inspector-values" ng-if="drilledValue">
           <div class="mdw-resource-content">
-            <pre><code class="mdw-code" 
+            <pre><code class="mdw-code"
               ng-bind-html="drilledValue.full | highlight:drilledValue.language | unsafe"></code></pre>
           </div>
         </div>
         <!-- design section -->
         <div class="mdw-inspector-values" ng-if="!editing && !drilledValue && activeTab._template && (editable || activeTabName != 'Documentation')">
-          <div ng-repeat="widget in configurator.getWidgets()" 
-            ng-if="widget.type != 'table' && widget.type != 'mapping' && widget.type != 'editor'" 
+          <div ng-repeat="widget in configurator.getWidgets()"
+            ng-if="widget.type != 'table' && widget.type != 'mapping' && widget.type != 'editor'"
             class="mdw-widget" style="height:{{widget.height}}px;">
             <div class="mdw-widget-label">
               {{widget.label}}<span class="mdw-pre">{{widget.pad}}</span>
@@ -154,7 +154,7 @@
             <div class="mdw-widget-value" ng-include="'ui/widgets/' + widget.type + '.html'">
             </div>
           </div>
-          <div ng-repeat="tblWidget in configurator.getWidgets()" 
+          <div ng-repeat="tblWidget in configurator.getWidgets()"
             ng-if="tblWidget.type == 'table' || tblWidget.type == 'mapping'" class="mdw-widget">
             <div class="mdw-widget-value" ng-include="'ui/widgets/' + tblWidget.type + '.html'">
             </div>
@@ -166,4 +166,4 @@
       </div>
     </div>
   </div>
-</div>  
+</div>

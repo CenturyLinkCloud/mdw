@@ -26,7 +26,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.services.rest.RestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -166,7 +166,7 @@ public class ResourceReaderExtension extends ServletReaderExtension implements R
     }
 
     /**
-     * Implemented to allow loading of custom types using CloudClassLoader.
+     * Implemented to allow loading of custom types using PackageClassLoader.
      */
     @Override
     public void applyImplicitParameters(ReaderContext context, Operation operation, Method method) {
@@ -206,7 +206,7 @@ public class ResourceReaderExtension extends ServletReaderExtension implements R
             return Class.forName(type);
         }
         catch (ClassNotFoundException cnfe) {
-            // use CloudClassLoader
+            // use package classloader
             int lastDot = type.lastIndexOf('.');
             if (lastDot > 0) {
                 String pkgName = type.substring(0, lastDot);
@@ -214,7 +214,7 @@ public class ResourceReaderExtension extends ServletReaderExtension implements R
                 if (pkg != null) {
                     try {
                         logger.debug("Loading type: " + type + " using " + pkg.getName() + "'s ClassLoader");
-                        return pkg.getCloudClassLoader().loadClass(type);
+                        return pkg.getClassLoader().loadClass(type);
                     }
                     catch (ClassNotFoundException cnfe2) {
                         logger.severeException(String.format("Failed to resolve '%s' into class", type), cnfe);

@@ -1,4 +1,0 @@
-{
-  "handlerClass": "com.centurylink.mdw.listener.ExternalNotifyWaitingActivityEventHandler?EventName={//Name}&EventMessage={//Message}",
-  "path": "MDWEventNotification"
-}

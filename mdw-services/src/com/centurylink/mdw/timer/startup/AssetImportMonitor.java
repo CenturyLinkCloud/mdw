@@ -22,7 +22,7 @@ import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DbAccess;
-import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.git.VersionControlGit;
 import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.model.system.SystemMessage.Level;
 import com.centurylink.mdw.services.AssetServices;
@@ -62,7 +62,6 @@ public class AssetImportMonitor implements StartupService {
             monitor = this;
             if (enabled) {
                 thread = new Thread() {
-                    @Override
                     public void run() {
                         this.setName("AssetImportMonitor-thread");
                         monitor.start();
@@ -205,10 +204,10 @@ public class AssetImportMonitor implements StartupService {
         importer.setAssetLoc(assetDir.getPath());
         importer.setConfigLoc(PropertyManager.getConfigLocation());
         importer.setGitRoot(gitRoot);
-        importer.importAssetsFromGit(PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_REF_ENABLED, false));
+        importer.importAssetsFromGit();
         SystemMessages.bulletinOff(bulletin, "Asset import completed");
         gitHardResetOverride = false;   // Import successful, so reset back to use gitHardReset property
         bulletin = null;
-        CacheRegistration.getInstance().refreshCaches(null);
+        CacheRegistration.getInstance().refreshCaches();
     }
 }

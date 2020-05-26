@@ -1,0 +1,45 @@
+<div class="row">
+  <div class="col-md-2 mdw-sidebar" ng-if="!isFullView()" ng-include="'layout/nav.html'"></div>
+  <div class="col-md-10">
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">Content Handlers</div>
+      </div>
+      <ul class="mdw-list">
+        <li ng-repeat="contentHandler in contentHandlers">
+          <div class="mdw-item">
+            {{contentHandler.path}} →
+          </div>
+          <div ng-if="contentHandler.assetPath">
+            <a class="mdw-item-link" href="#/asset/{{contentHandler.assetPath}}">
+              {{contentHandler.assetPath}}
+            </a>
+          </div>
+          <div class="mdw-sub-item" ng-if="!contentHandler.assetPath">
+            {{contentHandler.handlerClass}}
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="panel panel-default mdw-panel">
+      <div class="panel-heading mdw-heading">
+        <div class="mdw-heading-label">Path Handlers</div>
+      </div>
+      <ul class="mdw-list">
+        <li ng-repeat="pathHandler in pathHandlers">
+          <div class="mdw-item">
+            {{pathHandler.path}} →
+          </div>
+          <div ng-if="pathHandler.assetPath">
+            <a class="mdw-item-link" href="#/asset/{{pathHandler.assetPath}}">
+              {{pathHandler.assetPath}}
+            </a>
+          </div>
+          <div class="mdw-sub-item" ng-if="!pathHandler.assetPath">
+            {{pathHandler.handlerClass}}
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

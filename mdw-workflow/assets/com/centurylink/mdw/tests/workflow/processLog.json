@@ -147,7 +147,7 @@
     {
       "activityInstanceId": ${~\\d*},
       "level": "DEBUG",
-      "message": "Dynamic Java ClassLoader: class com.centurylink.mdw.cloud.CloudClassLoader:com.centurylink.mdw.tests.workflow",
+      "message": "Dynamic Java ClassLoader: class com.centurylink.mdw.pkg.PackageClassLoader:com.centurylink.mdw.tests.workflow",
       "thread": "${~.*}",
       "when": "${~.*}"
     },
@@ -285,7 +285,7 @@
     {
       "activityInstanceId": ${~\\d*},
       "level": "ERROR",
-      "message": "java.lang.Exception: context.logError()\n\\tat ActivityLoggingv0_2_Kotlin_6.<init>(Unknown Source)\n\\tat sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)\n\\tat sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:${~.*}",
+      "message": "java.lang.Exception: context.logError()\n\\tat ActivityLoggingv0_3_Kotlin_6.<init>(Unknown Source)\n\\tat sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)\n\\tat sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:${~.*}",
       "thread": "${~.*}",
       "when": "${~.*}"
     },

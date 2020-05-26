@@ -26,7 +26,7 @@ import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.request.RequestAggregate;
 import com.centurylink.mdw.model.request.RequestList;
 import com.centurylink.mdw.model.request.ServicePath;
-import com.centurylink.mdw.service.data.RequestDataAccess;
+import com.centurylink.mdw.service.data.request.RequestDataAccess;
 import com.centurylink.mdw.service.data.ServicePaths;
 import com.centurylink.mdw.services.RequestServices;
 import com.centurylink.mdw.util.timer.CodeTimer;

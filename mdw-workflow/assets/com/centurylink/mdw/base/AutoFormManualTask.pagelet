@@ -1,55 +1,286 @@
-<PAGELET>
-  <TEXT NAME="name" LABEL="Task Name" VW="300"/>
-  <TEXT NAME="logicalId" LABEL="Logical ID" VW="300"/>
-  <DROPDOWN NAME="category" LABEL="Category" SOURCE="TaskCategory" VW="250"/>
-  <TEXT NAME="description" LABEL="Description" MULTILINE="true"/>
-  <HYPERLINK URL="help/taskTemplates.html">Task Template Help</HYPERLINK>
-  <DATETIME NAME="TaskSLA" LABEL="Task Due In" UNITS="Hours,Days" UNITS_ATTR="TaskSLA_UNITS" />
-  <DATETIME NAME="ALERT_INTERVAL" LABEL="Alert Interval" UNITS="Hours,Days" UNITS_ATTR="ALERT_INTERVAL_UNITS" />
-  <DROPDOWN NAME="PriorityStrategy" LABEL="Prioritization Strategy" VW="250">
-    <OPTION PARAMETER="Priority">Specified</OPTION>
-    <OPTION PARAMETER="Prioritization Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
-  </DROPDOWN>
-  <HYPERLINK URL="help/taskSLA.html">SLA Help</HYPERLINK>
-  <DROPDOWN NAME="SubTaskStrategy" LABEL="SubTask Strategy" VW="250">
-    <OPTION PARAMETER="SubTask Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
-  </DROPDOWN>
-  <BOOLEAN NAME="SubtasksCompleteMaster" LABEL="Auto-Complete Master Task" /> 
-  <LIST NAME="Groups" SOURCE="UserGroup" SECTION="Workgroups"/>
-  <DROPDOWN NAME="RoutingStrategy" LABEL="Routing Strategy" VW="250" SECTION="Workgroups">
-    <OPTION PARAMETER="Routing Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
-  </DROPDOWN>
-  <DROPDOWN NAME="AutoAssign" LABEL="Auto-Assign Strategy" VW="250" SECTION="Workgroups">
-    <OPTION>Round Robin</OPTION>
-    <OPTION>Shortest Queue</OPTION>
-    <OPTION PARAMETER="Auto Assign Rules" SOURCE="RuleSets" TYPE="DROOLS,EXCEL_2007">Rules-Based</OPTION>
-    <OPTION PARAMETER="AssigneeVar">Process Variable</OPTION>    
-  </DROPDOWN>
-  <TABLE NAME="Notices" MODIFYONLY="true" DEFAULT="$DefaultNotices" SECTION="Notices">
-    <TEXT LABEL="Outcome" READONLY="true" VW="150"/>
-    <DROPDOWN LABEL="Template" SOURCE="RuleSets" TYPE="JSON,TEXT,MARKDOWN,HTML" VW="350"/>
-    <DROPDOWN LABEL="Version" SOURCE="AssetVersion" VW="100"/>
-    <TEXT LABEL="Notifier Class(es)"/>
-  </TABLE>
-  <HYPERLINK URL="help/taskNotices.html" SECTION="Notices">Task Notices Help</HYPERLINK>
-  <NOTE SECTION="Recipients" VH="65">Overrides task workgroups for notices.</NOTE>  
-  <LIST NAME="NoticeGroups" LABEL="Notice Groups" SOURCE="UserGroup" SECTION="Recipients"/>
-  <TEXT LABEL="Recipient(s) Expression" NAME="RecipientVar" VW="410" SECTION="Recipients"/>
-  <LIST NAME="CCGroups" LABEL="CC Recipient Groups" SOURCE="UserGroup" SECTION="CC Recipients"/>
-  <TEXT LABEL="Task Index Provider" NAME="IndexProvider" DEFAULT="com.centurylink.mdw.services.task.AutoFormTaskIndexProvider" SECTION="Variables"/>  
-  <TABLE NAME="Variables" SECTION="Variables">
-    <TEXT LABEL="Variable" DEFAULT="${new.expression}" VW="200"/>
-    <TEXT LABEL="Label" VW="200"/>
-    <DROPDOWN LABEL="Display" VW="120">
-      <OPTION>Not Displayed</OPTION>
-      <OPTION>Optional</OPTION>
-      <OPTION>Required</OPTION>
-      <OPTION>Read Only</OPTION>
-      <OPTION>Hidden</OPTION>
-    </DROPDOWN>
-    <TEXT LABEL="Sequence" VW="70"/>
-    <TEXT LABEL="Index Key" VW="150"/>
-  </TABLE>
-  <HYPERLINK URL="help/taskIndexes.html" SECTION="Variables">Task Indexes Help</HYPERLINK>
-  <TEXT NAME="FormName" READONLY="true" LABEL="Layout" DEFAULT="Autoform" VW="300"/>
-</PAGELET>
+{"widgets": [
+  {
+    "label": "Task Name",
+    "name": "name",
+    "type": "text",
+    "vw": "300"
+  },
+  {
+    "label": "Logical ID",
+    "name": "logicalId",
+    "type": "text",
+    "vw": "300"
+  },
+  {
+    "label": "Category",
+    "name": "category",
+    "source": "TaskCategory",
+    "type": "dropdown",
+    "vw": "250"
+  },
+  {
+    "label": "Description",
+    "multiline": "true",
+    "name": "description",
+    "type": "text"
+  },
+  {
+    "name": "Task Template Help",
+    "type": "link",
+    "url": "help/taskTemplates.html"
+  },
+  {
+    "label": "Task Due In",
+    "name": "TaskSLA",
+    "type": "datetime",
+    "units": "Hours,Days",
+    "units_attr": "TaskSLA_UNITS"
+  },
+  {
+    "label": "Alert Interval",
+    "name": "ALERT_INTERVAL",
+    "type": "datetime",
+    "units": "Hours,Days",
+    "units_attr": "ALERT_INTERVAL_UNITS"
+  },
+  {
+    "label": "Prioritization Strategy",
+    "name": "PriorityStrategy",
+    "options": [
+      "Specified",
+      "Rules-Based"
+    ],
+    "type": "dropdown",
+    "vw": "250",
+    "widgets": [
+      {
+        "label": "Priority",
+        "name": "Priority",
+        "parameter": "Priority",
+        "parentValue": "Specified",
+        "type": "text",
+        "vw": "100"
+      },
+      {
+        "label": "Prioritization Rules",
+        "name": "Prioritization Rules",
+        "parameter": "Prioritization Rules",
+        "parentValue": "Rules-Based",
+        "source": "drl,xlsx",
+        "type": "asset"
+      }
+    ]
+  },
+  {
+    "name": "SLA Help",
+    "type": "link",
+    "url": "help/taskSLA.html"
+  },
+  {
+    "label": "SubTask Strategy",
+    "name": "SubTaskStrategy",
+    "options": ["Rules-Based"],
+    "type": "dropdown",
+    "vw": "250",
+    "widgets": [{
+      "label": "SubTask Rules",
+      "name": "SubTask Rules",
+      "parameter": "SubTask Rules",
+      "parentValue": "Rules-Based",
+      "source": "drl,xlsx",
+      "type": "asset"
+    }]
+  },
+  {
+    "label": "Auto-Complete Master Task",
+    "name": "SubtasksCompleteMaster",
+    "type": "checkbox"
+  },
+  {
+    "name": "Groups",
+    "section": "Workgroups",
+    "source": "UserGroup",
+    "type": "picklist"
+  },
+  {
+    "label": "Routing Strategy",
+    "name": "RoutingStrategy",
+    "options": ["Rules-Based"],
+    "section": "Workgroups",
+    "type": "dropdown",
+    "vw": "250",
+    "widgets": [{
+      "label": "Routing Rules",
+      "name": "Routing Rules",
+      "parameter": "Routing Rules",
+      "parentValue": "Rules-Based",
+      "source": "drl,xlsx",
+      "type": "asset"
+    }]
+  },
+  {
+    "label": "Auto-Assign Strategy",
+    "name": "AutoAssign",
+    "options": [
+      "Round Robin",
+      "Shortest Queue",
+      "Rules-Based",
+      "Process Variable"
+    ],
+    "section": "Workgroups",
+    "type": "dropdown",
+    "vw": "250",
+    "widgets": [
+      {
+        "label": "Auto Assign Rules",
+        "name": "Auto Assign Rules",
+        "parameter": "Auto Assign Rules",
+        "parentValue": "Rules-Based",
+        "source": "drl,xlsx",
+        "type": "asset"
+      },
+      {
+        "label": "AssigneeVar",
+        "name": "AssigneeVar",
+        "parameter": "AssigneeVar",
+        "parentValue": "Process Variable",
+        "type": "text",
+        "vw": "100"
+      }
+    ]
+  },
+  {
+    "default": "$DefaultNotices",
+    "modifyonly": "true",
+    "name": "Notices",
+    "section": "Notices",
+    "type": "table",
+    "widgets": [
+      {
+        "label": "Outcome",
+        "name": "Outcome",
+        "readonly": "true",
+        "type": "text",
+        "vw": "150"
+      },
+      {
+        "label": "Template",
+        "name": "Template",
+        "source": "json,txt,md,html",
+        "type": "asset",
+        "vw": "350"
+      },
+      {
+        "label": "Version",
+        "name": "Version",
+        "source": "AssetVersion",
+        "type": "dropdown",
+        "vw": "100"
+      },
+      {
+        "label": "Notifier Class(es)",
+        "name": "Notifier Class(es)",
+        "type": "text"
+      }
+    ]
+  },
+  {
+    "name": "Task Notices Help",
+    "section": "Notices",
+    "type": "link",
+    "url": "help/taskNotices.html"
+  },
+  {
+    "name": "Overrides task workgroups for notices.",
+    "section": "Recipients",
+    "type": "note",
+    "vh": "65"
+  },
+  {
+    "label": "Notice Groups",
+    "name": "NoticeGroups",
+    "section": "Recipients",
+    "source": "UserGroup",
+    "type": "picklist"
+  },
+  {
+    "label": "Recipient(s) Expression",
+    "name": "RecipientVar",
+    "section": "Recipients",
+    "type": "text",
+    "vw": "410"
+  },
+  {
+    "label": "CC Recipient Groups",
+    "name": "CCGroups",
+    "section": "CC Recipients",
+    "source": "UserGroup",
+    "type": "picklist"
+  },
+  {
+    "default": "com.centurylink.mdw.services.task.AutoFormTaskIndexProvider",
+    "label": "Task Index Provider",
+    "name": "IndexProvider",
+    "section": "Variables",
+    "type": "text"
+  },
+  {
+    "name": "Variables",
+    "section": "Variables",
+    "type": "table",
+    "widgets": [
+      {
+        "default": "${new.expression}",
+        "label": "Variable",
+        "name": "Variable",
+        "type": "text",
+        "vw": "200"
+      },
+      {
+        "label": "Label",
+        "name": "Label",
+        "type": "text",
+        "vw": "200"
+      },
+      {
+        "label": "Display",
+        "name": "Display",
+        "options": [
+          "Not Displayed",
+          "Optional",
+          "Required",
+          "Read Only",
+          "Hidden"
+        ],
+        "type": "dropdown",
+        "vw": "120"
+      },
+      {
+        "label": "Sequence",
+        "name": "Sequence",
+        "type": "text",
+        "vw": "70"
+      },
+      {
+        "label": "Index Key",
+        "name": "Index Key",
+        "type": "text",
+        "vw": "150"
+      }
+    ]
+  },
+  {
+    "name": "Task Indexes Help",
+    "section": "Variables",
+    "type": "link",
+    "url": "help/taskIndexes.html"
+  },
+  {
+    "default": "Autoform",
+    "label": "Layout",
+    "name": "FormName",
+    "readonly": "true",
+    "type": "text",
+    "vw": "300"
+  }
+]}

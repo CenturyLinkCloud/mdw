@@ -23,8 +23,8 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.adapter.AdapterException;
+import com.centurylink.mdw.adapter.ConnectionException;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.test.MockRuntimeContext;
 

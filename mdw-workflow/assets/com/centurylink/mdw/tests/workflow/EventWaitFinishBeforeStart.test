@@ -4,7 +4,7 @@ send message("REST") {
     payload = "<Signal>${masterRequestId}</Signal>"
 }
 
-start process("MDWTestSuppsEmbedded") {
+start process("TestSuppsEmbedded") {
     variables = [testCase: "finish-resume-on-wait"]
 }
 

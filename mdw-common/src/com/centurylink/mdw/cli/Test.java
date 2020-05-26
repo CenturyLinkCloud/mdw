@@ -32,8 +32,6 @@ import java.util.*;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
-
-
 @Parameters(commandNames="test", commandDescription="Run Automated Test(s)", separators="=")
 public class Test extends Setup {
     private static final String PATH = "/com/centurylink/mdw/testing/AutomatedTests";

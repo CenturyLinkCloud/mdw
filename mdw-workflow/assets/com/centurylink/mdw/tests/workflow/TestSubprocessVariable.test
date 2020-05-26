@@ -1,16 +1,16 @@
 package com.centurylink.mdw.tests.workflow
 
-start process("com.centurylink.mdw.tests.workflow/MDWTestMainProcess") {
+start process("com.centurylink.mdw.tests.workflow/TestMainProcess") {
     variables = [processCase: "SingleSubProcess", N: 7]
 }
-wait process("com.centurylink.mdw.tests.workflow/MDWTestMainProcess") {
+wait process("com.centurylink.mdw.tests.workflow/TestMainProcess") {
     timeout = 180
 }
 
-def instances = load processes("MDWTestMainProcess", "MDWTestSubProcess")
+def instances = load processes("TestMainProcess", "TestSubProcess")
 instances.each {
     println "found process: ${it.processName}"
-    if (it.processName == 'MDWTestSubProcess') {
+    if (it.processName == 'TestSubProcess') {
         def root = new groovy.util.XmlSlurper().parseText(it.variable['testxml']);
         assert root.name() == 'ROOT'
         assert root.MINUTES.text() == '2'

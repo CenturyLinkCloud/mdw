@@ -36,7 +36,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.connector.adapter.AdapterException;
+import com.centurylink.mdw.adapter.AdapterException;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;

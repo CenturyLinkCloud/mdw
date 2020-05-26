@@ -16,8 +16,8 @@
 package com.centurylink.mdw.dataaccess;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.cache.impl.AssetCache;
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.service.MdwServiceRegistry;
 import com.centurylink.mdw.container.EmbeddedDb;
 import com.centurylink.mdw.container.EmbeddedDbExtension;
@@ -47,7 +47,7 @@ public class EmbeddedDataAccess {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private EmbeddedDb embeddedDb;
-    private ClassLoader cloudClassLoader;
+    private ClassLoader packageClassLoader;
     private Thread shutdownHook;
 
     private boolean extensionsNeedInitialization;
@@ -58,8 +58,8 @@ public class EmbeddedDataAccess {
             Package pkg = PackageCache.getPackage(EmbeddedDb.DB_ASSET_PACKAGE);
             if (pkg == null)
                 throw new DataAccessException("Missing required asset package: " + EmbeddedDb.DB_ASSET_PACKAGE);
-            cloudClassLoader = pkg.getCloudClassLoader();
-            embeddedDb = cloudClassLoader.loadClass(embeddedDbClass).asSubclass(EmbeddedDb.class).newInstance();
+            packageClassLoader = pkg.getClassLoader();
+            embeddedDb = packageClassLoader.loadClass(embeddedDbClass).asSubclass(EmbeddedDb.class).newInstance();
             embeddedDb.init(url, user, password, assetLoc, baseLoc, dataLoc);
         }
         catch (Exception ex) {
@@ -142,7 +142,7 @@ public class EmbeddedDataAccess {
                             if (source.indexOf('/') == -1)
                                 assetPath = ext.getClass().getPackage().getName() + "/" + source;
                             logger.info("Sourcing asset sql script: " + assetPath);
-                            String contents = AssetCache.getAsset(assetPath).getStringContent();
+                            String contents = AssetCache.getAsset(assetPath).getText();
                             embeddedDb.source(contents);
                         }
                     }

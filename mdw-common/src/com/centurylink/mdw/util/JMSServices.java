@@ -15,38 +15,21 @@
  */
 package com.centurylink.mdw.util;
 
-import java.util.Hashtable;
-import java.util.Map;
-
-import javax.jms.DeliveryMode;
-import javax.jms.JMSException;
-import javax.jms.MessageConsumer;
-import javax.jms.Queue;
-import javax.jms.QueueConnection;
-import javax.jms.QueueConnectionFactory;
-import javax.jms.QueueSender;
-import javax.jms.QueueSession;
-import javax.jms.Session;
-import javax.jms.TextMessage;
-import javax.jms.Topic;
-import javax.jms.TopicConnection;
-import javax.jms.TopicConnectionFactory;
-import javax.jms.TopicPublisher;
-import javax.jms.TopicSession;
-import javax.naming.NamingException;
-
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.container.ContextProvider;
 import com.centurylink.mdw.container.JmsProvider;
-import com.centurylink.mdw.container.NamingProvider;
 import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+
+import javax.jms.*;
+import javax.naming.NamingException;
+import java.util.Hashtable;
+import java.util.Map;
 
 public class JMSServices {
 
-    public static final String ERROR_CODE_TIMEOUT = "jmsTimout";
     public static final String THIS_SERVER = "THIS_SERVER";
 
     private static JMSServices instance;
@@ -56,13 +39,13 @@ public class JMSServices {
     private Map<String, TopicConnectionFactory> topicConnFactoryCache;
 
     private StandardLogger logger;
-    private NamingProvider namingProvider;
+    private ContextProvider contextProvider;
     private JmsProvider jmsProvider;
 
     private MessageProducer mdwMessageProducer;
 
-    private JMSServices(NamingProvider namingProvider, JmsProvider jmsProvider) {
-        this.namingProvider = namingProvider;
+    private JMSServices(ContextProvider contextProvider, JmsProvider jmsProvider) {
+        this.contextProvider = contextProvider;
         this.jmsProvider = jmsProvider;
         logger = LoggerUtil.getStandardLogger();
         queueCache = new Hashtable<>();
@@ -89,17 +72,17 @@ public class JMSServices {
 
     public static JMSServices getInstance() {
         if (instance == null)
-            instance = new JMSServices(ApplicationContext.getNamingProvider(),
+            instance = new JMSServices(ApplicationContext.getContextProvider(),
                     ApplicationContext.getJmsProvider());
         return instance;
     }
 
     public boolean initialized() {
-        return namingProvider != null;
+        return contextProvider != null;
     }
 
-    public void initialize(NamingProvider namingProvider, JmsProvider jmsProvider) {
-        this.namingProvider = namingProvider;
+    public void initialize(ContextProvider contextProvider, JmsProvider jmsProvider) {
+        this.contextProvider = contextProvider;
         this.jmsProvider = jmsProvider;
     }
 
@@ -198,7 +181,7 @@ public class JMSServices {
                 .get(contextUrl == null ? THIS_SERVER : contextUrl);
         if (factory == null) {
             try {
-                factory = jmsProvider.getQueueConnectionFactory(namingProvider, contextUrl);
+                factory = jmsProvider.getQueueConnectionFactory(contextProvider, contextUrl);
                 if (contextUrl == null)
                     queueConnFactoryCache.put(THIS_SERVER, factory);
                 else
@@ -222,8 +205,8 @@ public class JMSServices {
         Queue queue = queueCache.get(commonName);
         if (queue == null) {
             try {
-                String name = namingProvider.qualifyJmsQueueName(commonName);
-                queue = jmsProvider.getQueue(session, namingProvider, name);
+                String name = contextProvider.qualifyJmsQueueName(commonName);
+                queue = jmsProvider.getQueue(session, contextProvider, name);
                 if (queue != null)
                     queueCache.put(commonName, queue);
             }
@@ -247,12 +230,12 @@ public class JMSServices {
         try {
             String jndiName;
             if (contextUrl == null) {
-                jndiName = namingProvider.qualifyJmsQueueName(queueName);
+                jndiName = contextProvider.qualifyJmsQueueName(queueName);
             }
             else {
                 jndiName = queueName; // don't qualify remote queue names
             }
-            return (Queue) namingProvider.lookup(contextUrl, jndiName, Queue.class);
+            return (Queue) contextProvider.lookup(contextUrl, jndiName, Queue.class);
         }
         catch (Exception ex) {
             throw new ServiceLocatorException(-1, ex.getMessage(), ex);
@@ -265,7 +248,7 @@ public class JMSServices {
                 .get(contextUrl == null ? THIS_SERVER : contextUrl);
         if (factory == null) {
             try {
-                factory = jmsProvider.getTopicConnectionFactory(namingProvider, contextUrl);
+                factory = jmsProvider.getTopicConnectionFactory(contextProvider, contextUrl);
                 if (contextUrl == null)
                     topicConnFactoryCache.put(THIS_SERVER, factory);
                 else
@@ -280,8 +263,8 @@ public class JMSServices {
 
     public Topic getTopic(String commonName) throws ServiceLocatorException {
         try {
-            String jndiName = namingProvider.qualifyJmsTopicName(commonName);
-            return (Topic) namingProvider.lookup(null, jndiName, Topic.class);
+            String jndiName = contextProvider.qualifyJmsTopicName(commonName);
+            return (Topic) contextProvider.lookup(null, jndiName, Topic.class);
         }
         catch (Exception ex) {
             throw new ServiceLocatorException(-1, ex.getMessage(), ex);
@@ -292,7 +275,7 @@ public class JMSServices {
      * Sends the passed in text message to a local topic
      *
      * @param topicName topic name.
-     * @param pMessage message.
+     * @param textMessage message.
      * @param delaySeconds delay in seconds.
      * @throws ServiceLocatorException
      */

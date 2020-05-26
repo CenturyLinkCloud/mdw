@@ -1,5 +1,5 @@
 process: # 13677
-  name: MDWTestMainProcess
+  name: TestMainProcess
   instance: 1
   activity: # 6 "2016-02-22 15:33:49"
     name: Process Start

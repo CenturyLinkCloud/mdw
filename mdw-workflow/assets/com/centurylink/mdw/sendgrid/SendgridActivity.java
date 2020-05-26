@@ -21,7 +21,7 @@ import java.util.List;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.NotificationActivity;
 import com.centurylink.mdw.annotations.Activity;
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -49,11 +49,10 @@ public class SendgridActivity extends DefaultActivityImpl {
             throw new ActivityException("Missing attribute: " + WorkAttributeConstant.NOTICE_TEMPLATE);
         String templateVersion = getAttributeValue(WorkAttributeConstant.NOTICE_TEMPLATE + "_assetVersion");
         AssetVersionSpec spec = new AssetVersionSpec(templateName, templateVersion == null ? "0" : templateVersion);
-        Asset template = AssetCache.getAsset(spec);
-        if (template == null)
-            throw new ActivityException("No template asset found: " + spec);
-
         try {
+            Asset template = AssetCache.getAsset(spec);
+            if (template == null)
+                throw new IOException("No template asset found: " + spec);
             send(template, context);
         }
         catch (MdwException | IOException ex) {
@@ -65,9 +64,8 @@ public class SendgridActivity extends DefaultActivityImpl {
         return null;
     }
 
-    protected void send(Asset template, ActivityRuntimeContext context)
-    throws ActivityException, MdwException, IOException {
-        if (template.getLanguage().equals(Asset.HTML) || template.getLanguage().equals(Asset.TEXT)) {
+    protected void send(Asset template, ActivityRuntimeContext context) throws MdwException, IOException {
+        if ("html".equals(template.getExtension()) || "txt".equals(template.getExtension())) {
             String fromEmail = getAttributeValueSmart(WorkAttributeConstant.NOTICE_FROM);
             if (fromEmail == null)
                 throw new ActivityException("Missing attribute: " + WorkAttributeConstant.NOTICE_FROM);
@@ -97,9 +95,9 @@ public class SendgridActivity extends DefaultActivityImpl {
                 throw new ActivityException(ex.getMessage(), ex);
             }
         }
-        else if (template.getLanguage().equals(Asset.JSON)) {
+        else if ("json".equals(template.getExtension())) {
             // Caller has built the message json themselves; simply apply substitutions.
-            new Sender(context.evaluateToString(template.getStringContent())).send();
+            new Sender(context.evaluateToString(template.getText())).send();
         }
         else {
             throw new ActivityException("Unsupported template format: " + template);

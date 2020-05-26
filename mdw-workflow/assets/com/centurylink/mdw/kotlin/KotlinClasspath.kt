@@ -17,24 +17,24 @@ package com.centurylink.mdw.kotlin
 
 import java.io.File
 import com.centurylink.mdw.app.ApplicationContext
-import com.centurylink.mdw.cache.impl.PackageCache
-import com.centurylink.mdw.cloud.CloudClasspath
+import com.centurylink.mdw.cache.asset.PackageCache
+import com.centurylink.mdw.pkg.PackageClasspath
 
 const val CLASSES_PATH = "kotlin/classes"
 const val KOTLIN_PACKAGE = "com.centurylink.mdw.kotlin"
 
 class KotlinClasspath {
-    
+
     val asFiles: List<File> by lazy {
         var files = mutableListOf<File>()
         files.add(File(ApplicationContext.getTempDirectory() + "/" + CLASSES_PATH));
         val kotlinPackage = PackageCache.getPackage(KOTLIN_PACKAGE)
-        val cloudClasspath = CloudClasspath(kotlinPackage.getCloudClassLoader())
+        val cloudClasspath = PackageClasspath(kotlinPackage.getClassLoader())
         cloudClasspath.read()
         files.addAll(cloudClasspath.getFiles())
         files
     }
-    
+
     val asString: String by lazy {
         asFiles.joinToString(File.pathSeparator)
     }

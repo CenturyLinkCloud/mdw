@@ -56,8 +56,6 @@ public interface OwnerType {
     String LISTENER_REQUEST_META = "LISTENER_REQUEST_META"; // owner ID is the document ID of the LISTENER_REQUEST
     String LISTENER_RESPONSE_META = "LISTENER_RESPONSE_META"; // owner ID is the document ID of the LISTENER_RESPONSE
 
-    String PACKAGE = "PACKAGE";
-
     String DOCUMENT = "DOCUMENT";
     String ERROR = "ERROR";
     String SLA = "SLA";

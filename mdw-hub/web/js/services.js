@@ -54,7 +54,7 @@ servicesMod.controller('ServicesController', ['$scope', 'mdw', 'ServiceApis', 'A
   });
 }]);
 
-servicesMod.controller('ServiceController', ['$scope', '$routeParams', '$sce', '$window', 'mdw', 'ServiceApis', 'Assets', 'Asset', 
+servicesMod.controller('ServiceController', ['$scope', '$routeParams', '$sce', '$window', 'mdw', 'ServiceApis', 'Assets', 'Asset',
                                               function($scope, $routeParams, $sce, $window, mdw, ServiceApis, Assets, Asset) {
 
   // api path is actual service path
@@ -65,7 +65,7 @@ servicesMod.controller('ServiceController', ['$scope', '$routeParams', '$sce', '
     $scope.serviceApi.jsonContent = serviceDef.raw;
     ServiceApis.get({servicePath: $routeParams.servicePath, ext: '.yaml' }, function(serviceDef) {
       $scope.serviceApi.yamlContent = serviceDef.raw;
-      
+
       // populate the serviceApi sample assets
       $scope.serviceApi.samplePackageName = null;
       $scope.serviceApi.sampleAssets = [];
@@ -73,7 +73,7 @@ servicesMod.controller('ServiceController', ['$scope', '$routeParams', '$sce', '
         var pkgs = pkgList.packages;
         pkgs.forEach(function(pkg) {
           if (pkg.name.endsWith('api.samples')) {
-            if (pkg.name == 'com.centurylink.mdw.services.api.samples' || 
+            if (pkg.name == 'com.centurylink.mdw.services.api.samples' ||
                   $scope.serviceApi.servicePath.startsWith(pkg.name.substring(0, pkg.name.length - 12))) {
               console.log('finding api samples in: ' + pkg.name);
               Assets.get({packageName: pkg.name},
@@ -94,7 +94,7 @@ servicesMod.controller('ServiceController', ['$scope', '$routeParams', '$sce', '
       });
     });
   });
-  
+
   $scope.selectSample = function(sampleAssetName) {
     if (sampleAssetName) {
       $scope.serviceApi.selectedSampleName = sampleAssetName;
@@ -104,7 +104,7 @@ servicesMod.controller('ServiceController', ['$scope', '$routeParams', '$sce', '
         if ($scope.serviceApi.selectedSampleLang === 'json')
           $scope.serviceApi.selectedSampleLang = 'js'; // allow comments
       }
-      
+
       $scope.serviceApi.selectedSample = Asset.get({
         packageName: $scope.serviceApi.samplePackageName,
         assetName: sampleAssetName
@@ -112,15 +112,15 @@ servicesMod.controller('ServiceController', ['$scope', '$routeParams', '$sce', '
     }
     else {
       $scope.serviceApi.selectedSample = null;
-    }    
-  };  
+    }
+  };
 }]);
 
-servicesMod.controller('CombinedServiceController', ['$scope', '$routeParams', '$sce', 'mdw', 'ServiceApis', 
+servicesMod.controller('CombinedServiceController', ['$scope', '$routeParams', '$sce', 'mdw', 'ServiceApis',
                                                       function($scope, $routeParams, $sce, mdw, ServiceApis) {
- 
+
  $scope.serviceApi = ServiceApis.get({servicePath: 'swagger', ext: '.json'}, function success(serviceDef) {
-   
+
    var path = 'swagger';
    $scope.serviceApi.servicePath = 'swagger';
    $scope.serviceApi.jsonContent = serviceDef.raw;
@@ -149,5 +149,20 @@ servicesMod.factory('ServiceApis', ['$resource', 'mdw', function($resource, mdw)
         return serviceDef;
       }
     }
+  });
+}]);
+
+servicesMod.controller('HandlersController', ['$scope', '$http', 'mdw', 'uiUtil',
+                                             function($scope, $http, mdw, uiUtil) {
+  var sortFunction = function(handler1, handler2) {
+    return handler1.path.localeCompare(handler2);
+  };
+  $http.get(mdw.roots.services + '/services/Handlers?app=mdw-admin').then(function(response) {
+    $scope.pathHandlers = response.data.handlers.filter(function(handler) {
+      return !handler.contentRouting;
+    }).sort(sortFunction);
+    $scope.contentHandlers = response.data.handlers.filter(function(handler) {
+      return handler.contentRouting;
+    }).sort(sortFunction);
   });
 }]);

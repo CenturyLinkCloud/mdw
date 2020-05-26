@@ -1,0 +1,16 @@
+package com.centurylink.mdw.tests.code
+
+response = post http("api/REST/test/KtGeneralHandler") {
+    headers = [
+            "Content-Type": "application/json",
+            "custom-header": "my-custom-value"
+    ]
+    payload = """{
+  "testCase": "kotlinGeneral",
+  "name": "MDW",
+}"""
+}
+assert response.code == 201
+verify response {
+    expected = '{"greeting": "Hello, MDW"}'
+}

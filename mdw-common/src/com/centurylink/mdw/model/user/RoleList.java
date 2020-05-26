@@ -45,11 +45,6 @@ public class RoleList implements Jsonable, InstanceList<Role> {
             for (int i = 0; i < roleList.length(); i++)
                 roles.add(new Role((JSONObject)roleList.get(i)));
         }
-        else if (jsonObj.has("allRoles")) {  // designer compatibility
-            JSONArray roleList = jsonObj.getJSONArray("allRoles");
-            for (int i = 0; i < roleList.length(); i++)
-                roles.add(new Role((JSONObject)roleList.get(i)));
-        }
     }
 
     private Date retrieveDate;

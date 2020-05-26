@@ -15,8 +15,10 @@
  */
 package com.centurylink.mdw.test;
 
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.AssetPath;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.util.DateHelper;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,7 +53,7 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
         this.asset = asset;
     }
 
-    private AssetInfo asset;
+    private final AssetInfo asset;
     public AssetInfo getAsset() { return asset; }
 
     /**
@@ -93,7 +95,7 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
         return asset.getName();
     }
 
-    private String pkg;
+    private final String pkg;
     public String getPackage() { return pkg; }
 
     public String getPath() {
@@ -135,8 +137,11 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
     public String getExecuteLog() { return executeLog; }
     public void setExecuteLog(String executeLog) { this.executeLog = executeLog; }
 
-    public TestCase(File assetRoot, String pkg, JSONObject json) throws JSONException {
-        this.asset = new AssetInfo(assetRoot, pkg + "/" + json.getString("name"));
+    public TestCase(String pkg, JSONObject json) throws JSONException {
+        String name = json.getString("name");
+        AssetPath assetPath = new AssetPath(pkg + "/" + name);
+        File file = new File(ApplicationContext.getAssetRoot() + "/" + assetPath.toPath());
+        this.asset = new AssetInfo(name, file, 0, "0");
         this.pkg = pkg;
         if (json.has("start"))
             this.start = DateHelper.serviceStringToDate(json.getString("start"));
@@ -213,16 +218,10 @@ public class TestCase implements Jsonable, Comparable<TestCase> {
     }
 
     private byte[] read(File file) throws IOException {
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(file);
+        try (FileInputStream fis = new FileInputStream(file)) {
             byte[] bytes = new byte[(int) file.length()];
             fis.read(bytes);
             return bytes;
-        }
-        finally {
-            if (fis != null)
-                fis.close();
         }
     }
 }

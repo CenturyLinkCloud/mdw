@@ -54,7 +54,7 @@ public class YamlTranslator extends DocumentReferenceTranslator implements XmlDo
                 Yaml yaml = new Yaml(new Constructor() {
                     protected Class<?> getClassForName(String name) throws ClassNotFoundException {
                         try {
-                            return getPackage().getCloudClassLoader().loadClass(name);
+                            return getPackage().getClassLoader().loadClass(name);
                         }
                         catch (Exception ex) {
                             throw new ClassNotFoundException(name, ex);

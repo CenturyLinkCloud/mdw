@@ -1,7 +1,7 @@
 package com.centurylink.mdw.python;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.model.asset.Asset;
 import org.apache.commons.lang3.ArrayUtils;
 import org.python.core.Py;
@@ -9,6 +9,7 @@ import org.python.core.PySystemState;
 import org.python.jsr223.PyScriptEngineFactory;
 
 import javax.script.*;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,13 +24,18 @@ public class PythonRunner {
             Py.setSystemState(engineSys);
             scriptEngine = new PyScriptEngineFactory().getScriptEngine();
             // custom module finder for assets
-            Asset finderAsset = AssetCache.getAsset("com.centurylink.mdw.python/ModuleFinder.py");
-            Map<String,Object> values = new HashMap<>();
-            values.put("assetRoot", assetRoot);
-            Bindings bindings = new SimpleBindings(values);
-            ScriptContext scriptContext = new SimpleScriptContext();
-            scriptContext.setBindings(bindings, ScriptContext.ENGINE_SCOPE);
-            scriptEngine.eval(finderAsset.getStringContent(), scriptContext);
+            String assetPath = "com.centurylink.mdw.python/ModuleFinder.py";
+            try {
+                Asset finderAsset = AssetCache.getAsset(assetPath);
+                Map<String, Object> values = new HashMap<>();
+                values.put("assetRoot", assetRoot);
+                Bindings bindings = new SimpleBindings(values);
+                ScriptContext scriptContext = new SimpleScriptContext();
+                scriptContext.setBindings(bindings, ScriptContext.ENGINE_SCOPE);
+                scriptEngine.eval(finderAsset.getText(), scriptContext);
+            } catch (IOException ex) {
+                throw new ScriptException(ex);
+            }
         }
         return scriptEngine;
     }

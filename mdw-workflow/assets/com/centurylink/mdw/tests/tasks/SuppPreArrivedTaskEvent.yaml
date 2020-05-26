@@ -1,5 +1,5 @@
 process: # 13829
-  name: MDWTestSuppsEmbedded
+  name: TestSuppsEmbedded
   instance: 1
   activity: # 13 "2016-02-23 18:19:35"
     name: Start
@@ -18,7 +18,7 @@ process: # 13829
     name: testCase
     value: task-wait
 process: # 13830
-  name: MDWTestSuppsEmbedded Correction Handler
+  name: TestSuppsEmbedded Correction Handler
   instance: 1
   activity: # 20 "2016-02-23 18:19:42"
     name: Start

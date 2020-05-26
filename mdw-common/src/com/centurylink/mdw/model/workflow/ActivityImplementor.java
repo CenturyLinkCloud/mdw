@@ -15,15 +15,13 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import javax.swing.ImageIcon;
-
 import com.centurylink.mdw.activity.types.*;
+import com.centurylink.mdw.annotations.Activity;
+import com.centurylink.mdw.model.Jsonable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.annotations.Activity;
-import com.centurylink.mdw.model.Jsonable;
-
+import javax.swing.*;
 import java.util.function.Supplier;
 
 public class ActivityImplementor implements Comparable<ActivityImplementor>, Jsonable {
@@ -56,10 +54,6 @@ public class ActivityImplementor implements Comparable<ActivityImplementor>, Jso
     private String implementorClass;
     public String getImplementorClass() { return implementorClass; }
     public void setImplementorClass(String implClass) { this.implementorClass = implClass; }
-    @Deprecated
-    public String getImplementorClassName() {
-        return getImplementorClass();
-    }
 
     private String packageName;
     public String getPackageName() { return packageName; }
@@ -68,10 +62,6 @@ public class ActivityImplementor implements Comparable<ActivityImplementor>, Jso
     private String category = GeneralActivity.class.getName();
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
-    @Deprecated
-    public String getBaseClassName() {
-        return getCategory();
-    }
 
     private String label;
     public String getLabel() { return label; }
@@ -80,10 +70,6 @@ public class ActivityImplementor implements Comparable<ActivityImplementor>, Jso
     private String icon = "shape:activity";
     public String getIcon() { return icon; }
     public void setIcon(String icon) { this.icon = icon; }
-    @Deprecated
-    public String getIconName() {
-        return getIcon();
-    }
 
     private ImageIcon imageIcon;
     public ImageIcon getImageIcon() { return imageIcon; }
@@ -92,10 +78,6 @@ public class ActivityImplementor implements Comparable<ActivityImplementor>, Jso
     private String pagelet;
     public String getPagelet() { return pagelet; }
     public void setPagelet(String pagelet) { this.pagelet = pagelet; }
-    @Deprecated
-    public String getAttributeDescription() {
-        return getPagelet();
-    }
 
     private boolean hidden;
     public boolean isHidden() { return hidden; }
@@ -163,7 +145,7 @@ public class ActivityImplementor implements Comparable<ActivityImplementor>, Jso
     }
 
     /**
-     * Parse old-style (non-annotation) .impl assets.
+     * Parse .impl file.  Used only for built-in activities in META-INF.
      */
     public ActivityImplementor(JSONObject json) throws JSONException {
         this.implementorClass = json.getString("implementorClass");

@@ -28,7 +28,6 @@ import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.WorkflowServices;
-import com.centurylink.mdw.services.workflow.RoundRobinScheduledJob;
 import com.centurylink.mdw.util.CallURL;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -56,9 +55,8 @@ timer.task:
  * The query used to identify stuck activities will perform a full table scan, so
  * consider creating an index on ACTIVITY_INSTANCE table if it is causing performance issues.
  */
-//scheduledjob annotation is added and this is moved to the base package . values are read from the property file.
 @ScheduledJob(value="StuckActivities", schedule="${props['mdw.StuckActivities.job.scheduler']}", enabled="${props['mdw.StuckActivities.job.enabled']}", defaultEnabled= false, isExclusive=true)
-public class StuckActivities extends RoundRobinScheduledJob implements com.centurylink.mdw.model.monitor.ScheduledJob  {
+public class StuckActivities implements com.centurylink.mdw.model.monitor.ScheduledJob  {
 
     private static boolean running = false;
     private static StandardLogger logger = LoggerUtil.getStandardLogger();

@@ -21,7 +21,6 @@ import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
@@ -102,20 +101,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
      * @return a table of event specifications
      */
     public List<String[]> getWaitEventSpecs() {
-        String attVal = this.getAttributeValue(WorkAttributeConstant.WAIT_EVENT_NAMES);
-        return Attribute.parseTable(attVal, ',', ';', 3);
-    }
-
-    protected void logMessage(String responseData) {
-        try {
-            // TODO this duplicates the data in document table. Any better solution?
-            // this information is needed to display in designer only
-            // same is true for GeneralManualTaskActivity
-            this.createDocument(String.class.getName(), responseData,
-                    OwnerType.ADAPTER_RESPONSE, getActivityInstanceId());
-        } catch (Exception ex) {
-            getLogger().severeException("Failed to log message", ex);
-        }
+        return getAttributes().getTable(WorkAttributeConstant.WAIT_EVENT_NAMES, ',', ';', 3);
     }
 
     public boolean needSuspend() {

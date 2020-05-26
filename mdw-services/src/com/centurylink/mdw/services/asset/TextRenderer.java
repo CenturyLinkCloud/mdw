@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 
 /**
  * Renders HTML or Markdown to plain text.

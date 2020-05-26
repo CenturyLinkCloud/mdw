@@ -4,7 +4,7 @@ send message("REST") {
     payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"
 }
 sleep 10
-start process("com.centurylink.mdw.tests.workflow/MDWTestSuppsEmbedded") {
+start process("com.centurylink.mdw.tests.workflow/TestSuppsEmbedded") {
     variables = [testCase: "task-wait"]
 }
 sleep 60

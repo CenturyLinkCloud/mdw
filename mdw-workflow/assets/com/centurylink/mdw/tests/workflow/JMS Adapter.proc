@@ -20,14 +20,14 @@ activities:
   name: "Synchronous Cloud\r\nJMS Request"
   implementor: com.centurylink.mdw.workflow.adapter.jms.JmsAdapter
   attributes:
-    DO_LOGGING: 'True'
     PostScriptLang: Groovy
     PreScriptLang: Groovy
-    Queue Name: com.centurylink.mdw.external.event.queue
     REQUEST_VARIABLE: request
     RESPONSE_VARIABLE: syncResponse
+    DO_LOGGING: 'True'
     WORK_DISPLAY_INFO: x=403,y=10,w=125,h=72
     Wait for response?: 'True'
+    Queue Name: com.centurylink.mdw.external.event.queue
   transitions:
   - id: T16
     to: A12
@@ -38,9 +38,9 @@ activities:
   name: Synchronous?
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptEvaluator
   attributes:
-    Expression: mode
-    SCRIPT: Groovy
     WORK_DISPLAY_INFO: x=147,y=284,w=95,h=74
+    SCRIPT: Groovy
+    Expression: mode
   transitions:
   - id: T7
     to: A6
@@ -58,9 +58,9 @@ activities:
   name: Platform?
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptEvaluator
   attributes:
-    Expression: platform
-    SCRIPT: Groovy
     WORK_DISPLAY_INFO: x=428,y=118,w=95,h=74
+    SCRIPT: Groovy
+    Expression: platform
   transitions:
   - id: T6
     to: A3
@@ -78,15 +78,15 @@ activities:
   name: "Synchronous OSGi\r\nJMS Request"
   implementor: com.centurylink.mdw.workflow.adapter.jms.JmsAdapter
   attributes:
-    DO_LOGGING: 'True'
-    JNDI Server URL: mdw-activemq
     PostScriptLang: Groovy
     PreScriptLang: Groovy
-    Queue Name: com.centurylink.mdw.external.event.queue
     REQUEST_VARIABLE: request
     RESPONSE_VARIABLE: syncResponse
+    DO_LOGGING: 'True'
+    JNDI Server URL: mdw-activemq
     WORK_DISPLAY_INFO: x=411,y=221,w=129,h=70
     Wait for response?: 'True'
+    Queue Name: com.centurylink.mdw.external.event.queue
   transitions:
   - id: T17
     to: A12
@@ -97,14 +97,14 @@ activities:
   name: "Asynchronous Cloud\r\nJMS Request"
   implementor: com.centurylink.mdw.workflow.adapter.jms.JmsAdapter
   attributes:
-    DO_LOGGING: 'True'
     PostScriptLang: Groovy
     PreScriptLang: Groovy
-    Queue Name: com.centurylink.mdw.external.event.queue
     REQUEST_VARIABLE: request
     RESPONSE_VARIABLE: syncResponse
+    DO_LOGGING: 'True'
     WORK_DISPLAY_INFO: x=413,y=385,w=125,h=72
     Wait for response?: 'False'
+    Queue Name: com.centurylink.mdw.external.event.queue
   transitions:
   - id: T14
     to: A2
@@ -115,9 +115,9 @@ activities:
   name: Platform?
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptEvaluator
   attributes:
-    Expression: platform
-    SCRIPT: Groovy
     WORK_DISPLAY_INFO: x=433,y=500,w=95,h=74
+    SCRIPT: Groovy
+    Expression: platform
   transitions:
   - id: T11
     to: A8
@@ -135,15 +135,15 @@ activities:
   name: "Asynchronous OSGi\r\nJMS Request"
   implementor: com.centurylink.mdw.workflow.adapter.jms.JmsAdapter
   attributes:
-    DO_LOGGING: 'True'
-    JNDI Server URL: mdw-activemq
     PostScriptLang: Groovy
     PreScriptLang: Groovy
-    Queue Name: com.centurylink.mdw.external.event.queue
     REQUEST_VARIABLE: request
     RESPONSE_VARIABLE: syncResponse
+    DO_LOGGING: 'True'
+    JNDI Server URL: mdw-activemq
     WORK_DISPLAY_INFO: x=411,y=602,w=129,h=70
     Wait for response?: 'False'
+    Queue Name: com.centurylink.mdw.external.event.queue
   transitions:
   - id: T15
     to: A2
@@ -155,9 +155,9 @@ activities:
   description: For synchronous calls, grabs the jmsmessage Id from the <RequestId> field in the MDWStatusMessage reponse, to help match with expected results
   implementor: com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity
   attributes:
-    DESCRIPTION: For synchronous calls, grabs the jmsmessage Id from the <RequestId> field in the MDWStatusMessage reponse, to help match with expected results
     Java: "/**\n * Copyright (c) 2014 CenturyLink, Inc. All Rights Reserved.\n */\r\n\r\npackage com.centurylink.mdw.tests.workflow;\r\n\r\nimport java.util.Map;\r\n\nimport com.centurylink.mdw.bpm.MDWStatusMessageDocument;\nimport com.centurylink.mdw.java.JavaExecutionException;\r\nimport com.centurylink.mdw.java.JavaExecutor;\r\nimport com.centurylink.mdw.java.MdwJavaException;\r\nimport com.centurylink.mdw.model.workflow.ActivityRuntimeContext;\r\n\r\n/**\r\n * Dynamic Java executor.\r\n */\r\npublic class SetResponseJMSMessageId_A12 implements JavaExecutor\r\n{\r\n\r\n  public void initialize(ActivityRuntimeContext context) throws MdwJavaException\r\n  {\r\n    // TODO Auto-generated method stub\r\n  }\r\n\r\n  public Object execute(Map<String,Object> variables) throws JavaExecutionException\r\n  {\n    System.out.println(variables.get(\"syncResponse\"));\r\n    MDWStatusMessageDocument doc = (MDWStatusMessageDocument)variables.get(\"syncResponse\");\n    if (doc !=null) {\n      variables.put(\"jmsMessageId\", doc.getMDWStatusMessage().getRequestID());\n    }\n    return null;\n  }\r\n\r\n}\r\n"
     WORK_DISPLAY_INFO: x=769,y=57,w=100,h=73
+    DESCRIPTION: For synchronous calls, grabs the jmsmessage Id from the <RequestId> field in the MDWStatusMessage reponse, to help match with expected results
   transitions:
   - id: T18
     to: A2
@@ -186,5 +186,5 @@ variables:
 attributes:
   ArrowStyle: ArrowEnd
   NodeStyle: BoxIcon
-  PROCESS_VISIBILITY: PUBLIC
   WORK_DISPLAY_INFO: x=26,y=31,w=115,h=27
+  PROCESS_VISIBILITY: PUBLIC

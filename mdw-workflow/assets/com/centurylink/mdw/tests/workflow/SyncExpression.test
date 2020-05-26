@@ -1,6 +1,6 @@
 package com.centurylink.mdw.tests.workflow
 
-start process("MDWTestMainProcess") {
+start process("TestMainProcess") {
     variables = [ processCase: "Sync with custom expr"]
 }
 wait process

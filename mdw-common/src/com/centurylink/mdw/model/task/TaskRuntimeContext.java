@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.model.task;
 
+import com.centurylink.mdw.model.Attributes;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
@@ -36,8 +37,8 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
     private TaskTemplate taskTemplate;
     public TaskTemplate getTaskTemplate() { return taskTemplate; }
 
-    public String getTaskAttribute(String name) {
-        return taskTemplate.getAttribute(name);
+    public Attributes getTaskAttributes() {
+        return taskTemplate.getAttributes() == null ? new Attributes() : taskTemplate.getAttributes();
     }
 
     private TaskInstance taskInstance;
@@ -136,6 +137,6 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
     }
 
     public String getAttribute(String name) {
-        return getTaskAttribute(name);
+        return getTaskAttributes().get(name);
     }
 }

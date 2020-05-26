@@ -18,10 +18,9 @@ package com.centurylink.mdw.workflow.adapter.rest;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.annotations.Activity;
-import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.model.Response;
-import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.adapter.AdapterException;
+import com.centurylink.mdw.adapter.ConnectionException;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.util.HttpAltConnection;
 import com.centurylink.mdw.util.HttpConnection;
 import com.centurylink.mdw.util.HttpHelper;
@@ -98,14 +97,14 @@ public class MultiRestServiceAdapter extends RestServiceAdapter {
      * @throws ActivityException
      */
     protected List<String> getEndpointUris() throws AdapterException {
-        List<String> urlmap = new ArrayList<String>();
+        List<String> urlmap = new ArrayList<>();
         try {
             String map = getAttributeValue(ENDPOINT_URI);
             List<String[]> urlmaparray;
-            if (map==null)
-                urlmaparray = new ArrayList<String[]>();
+            if (map == null)
+                urlmaparray = new ArrayList<>();
                 else
-                    urlmaparray = Attribute.parseTable(map, ',', ';', 1);
+                    urlmaparray = getAttributes().getTable(ENDPOINT_URI, ',', ';', 1);
 
             for (String[] entry : urlmaparray)
                 urlmap.add(getValueSmart(entry[0], ""));

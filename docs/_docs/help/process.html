@@ -6,23 +6,23 @@
 <body>
 <h1>Processes</h1>
 
-<p>In MDW, a process is used to model a business process, which consists of a number of (automated or manual) 
-work items or steps, called activities and they are performed in a designated sequence. A process is a collection 
-of activities and transitions between those activities and is mathematically and graphically represented as 
+<p>In MDW, a process is used to model a business process, which consists of a number of (automated or manual)
+work items or steps, called activities and they are performed in a designated sequence. A process is a collection
+of activities and transitions between those activities and is mathematically and graphically represented as
 a (typically acyclic) directed graph.
 </p><P>
-The process flows through one or more out-bound transitions to start other activities that depend on the completion 
+The process flows through one or more out-bound transitions to start other activities that depend on the completion
 of the first.  A process can invoke another process through a subprocess activity.
 </p><P>
-One of the benefits of a defined business process is that it can be applied repeatedly to many data instances. 
-We use the terms process definition vs. process instance to differentiate between the template that describes 
+One of the benefits of a defined business process is that it can be applied repeatedly to many data instances.
+We use the terms process definition vs. process instance to differentiate between the template that describes
 the process and a particular execution of that process. As an example:
 </p>
 <ul>
   <li>Transition with no Label: This describes how transitions without a label is used.
       <ul>
         <li>Acts as Default: if the completion code does not match
-        	labels of any outgoing transitions, the transitions 
+        	labels of any outgoing transitions, the transitions
         	without labels are then traversed. The transitions
         	are also traversed when the completion code is null.</li>
         <li>Matches Null Return Code: with this option,
@@ -33,7 +33,7 @@ the process and a particular execution of that process. As an example:
      </ul></li>
   <li>Process Type: Regular or Service. See below for description
   	of service processes.</li>
-  <li>Transition Retry Count Default: the value can be 
+  <li>Transition Retry Count Default: the value can be
   		either "Retry unlimited" (allowing unlimited retries),
   		or "Retry not allowed" (allowing no retries).
   		Note that this attribute only sets the default
@@ -48,10 +48,10 @@ the process and a particular execution of that process. As an example:
 </ul>
 
 <h2>Service Processes</h2>
-<p>Typically, a process is started asynchronously (fire-and-forget), which means the originator 
-does not wait for the completion of the process. However, it is often desired for applications to 
-create a workflow process to provide <em>services</em>, which return a synchronous response to the 
-requester in real-time. To allow a synchronous process</em>, MDW uses the term <em>Service Process</em>. 
+<p>Typically, a process is started asynchronously (fire-and-forget), which means the originator
+does not wait for the completion of the process. However, it is often desired for applications to
+create a workflow process to provide <em>services</em>, which return a synchronous response to the
+requester in real-time. To allow a synchronous process</em>, MDW uses the term <em>Service Process</em>.
 
 <p>The service process is executed in a single thread without using the internal
 JMS messages. This is to allow the response be captured and sent back
@@ -64,7 +64,7 @@ the requirement that they are executed in a single thread.</p>
    <li>Parallel branching, namely all transitions out of an activity must be mutually exclusive.</li>
    <li>Activities can suspend (wait for timer, external event, manual response, etc).
    		This means that the <em>timer wait, event wait, sub process invocation, manual tasks are not allowed</em>.
-   		Adaptor activities are allowed, but you cannot get responses from asynchronous adaptors, as that will require 
+   		Adaptor activities are allowed, but you cannot get responses from asynchronous adaptors, as that will require
    		event wait activities. As a result,	fall-out subprocesses and fall-out tasks are not allowed.</li>
    <li>The process should define an output (or input/output) variable named "response" and set its
         value, which is used to return as a response. The variable is typically
@@ -76,7 +76,7 @@ the requirement that they are executed in a single thread.</p>
 <ul>
     <li>For main service process that is started from event handlers using API call
     	to the method <code>ProcessEngineDriver.invokeService()</code>,
-    	if the <code>performance_level</code> argument is passed 
+    	if the <code>performance_level</code> argument is passed
 		in with a non-zero value, then this performance level is used.</li>
 	<li>For a service process started as a subprocess of another service process,
 		its performance level is inherited from the parent process.</li>
@@ -89,7 +89,7 @@ the requirement that they are executed in a single thread.</p>
 <table style="width:85%">
   <tr>
     <th>Performance Level</th>
-    <th>Description</th> 
+    <th>Description</th>
   </tr>
   <tr>
     <td>0</td>
@@ -101,7 +101,7 @@ the requirement that they are executed in a single thread.</p>
   </tr>
   <tr>
     <td>3</td>
-    <td>All process, activity, transition and variable instances as well as documents are persisted in a database, but variable instances and documents 
+    <td>All process, activity, transition and variable instances as well as documents are persisted in a database, but variable instances and documents
         are cached for each engine processing session to speed up the read access.</td>
   </tr>
   <tr>
@@ -112,7 +112,7 @@ the requirement that they are executed in a single thread.</p>
   <tr>
     <td>9</td>
     <td>All process, activity, transition and	variable instances as well as documents are stored in memory cache only. No database
-  		  persistence is used. For service processes, one memory cache is used for each top level invocation to a service process; 
+  		  persistence is used. For service processes, one memory cache is used for each top level invocation to a service process;
   		  for regular processes, a shared memory cache is used for all executions at this performance level.</td>
   </tr>
 </table>
@@ -128,6 +128,24 @@ performance levels are used. The following two properties are used to specify de
     	performance level for regular processes. When the property is not defined,
     	the hard coded default of 3 is used.</li>
   </ul>
- 
+
+<p>more</p>
+<p>more</p>
+<p>more</p>
+<p>more</p>
+<p>more</p>
+<p>more</p>
+<p>more</p>
+<p>more</p>
+<p>more</p>
+<p>more</p>
+<p>more</p>
+<p>more</p>
+<p>more</p>
+
+<a name="requestPathRegistration"></a><h2>Request Path Registration</h2>
+A REST request path can be registered to automatically invoke a service process and bind <code>request</code>
+and <code>response</code> variables.  Use the Request configurator tab in MDW Studio or MDWHub to do this.
+
 </body>
 </html>

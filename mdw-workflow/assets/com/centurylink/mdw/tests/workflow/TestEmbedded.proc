@@ -1,0 +1,379 @@
+activities:
+- id: A13
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=27,y=328,w=60,h=40
+  transitions:
+  - id: T1
+    to: A5
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=374,ly=892,type=Elbow,xs=59&59,ys=372&537
+- id: A10
+  name: update case value
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=554,y=320,w=100,h=60
+    Rule: $case = "good";
+  transitions:
+  - id: T7
+    to: A7
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=755,ly=445,type=Elbow,xs=658&847,ys=350&482
+- id: A3
+  name: Set Variable in Main
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=462,y=200,w=100,h=60
+    SCRIPT: Groovy
+    Rule: |
+      SetInMain = "Hello";
+
+      return "ERROR:";
+  transitions:
+  - id: T2
+    to: A7
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=685,ly=323,type=Elbow,xs=566&847,ys=230&482
+- id: A7
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=851,y=462,w=60,h=40
+- id: A15
+  name: Wait for 3 min
+  implementor: com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity
+  attributes:
+    STATUS_AFTER_EVENT: Hold
+    $+Id: '26997'
+    WAIT_EVENT_NAMES: NonTaskAction-{$MasterRequestID},CORRECT,true
+    TIMER_WAIT: '3'
+    WORK_DISPLAY_INFO: x=357,y=299,w=100,h=60
+    Unit: Minutes
+  transitions:
+  - id: T5
+    to: A10
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=518,ly=337,type=Elbow,xs=461&550,ys=339&339
+- id: A1
+  name: Manual task with event wait
+  implementor: com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity
+  attributes:
+    STATUS_AFTER_EVENT: Cancelled
+    WAIT_EVENT_NAMES: NonTaskAction-{$MasterRequestID},CORRECT,true
+    WORK_DISPLAY_INFO: x=354,y=676,w=100,h=60
+    TASK_PAGELET: com.centurylink.mdw.base/CustomManualTask.pagelet
+    TASK_TEMPLATE: com.centurylink.mdw.tests.workflow/TestEmbedded.task
+    TASK_TEMPLATE_assetVersion: '[0.1,1)'
+  transitions:
+  - id: T15
+    to: A7
+    event: FINISH
+    attributes:
+      TRANSITION_DELAY: '0'
+      TRANSITION_RETRY_COUNT: '0'
+      TRANSITION_DISPLAY_INFO: lx=760,ly=465,type=ElbowH,xs=458&633&633&847,ys=709&709&506&506
+- id: A12
+  name: Sync arm1
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=352,y=476,w=100,h=60
+    Rule: print("Hello");
+  transitions:
+  - id: T11
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=478,ly=529,type=Elbow,xs=456&494,ys=530&530
+- id: A4
+  name: set up arg table
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=286,y=870,w=100,h=60
+    SCRIPT: Groovy
+    Rule: "table launcher \n    with argument, result, retcode\n    option key=argument;\nvariable index;\ndo $index = 0;\ndo new (1, \"\", \"START\") in $launcher;\ndo new (2, \"\", \"START\") in $launcher;\ndo new (3, \"\", \"START\") in $launcher;\n"
+    Output Documents: launcher
+  transitions:
+  - id: T20
+    to: A11
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=412,ly=901,type=Elbow,xs=390&433,ys=901&901
+- id: A14
+  name: timer wait - keep waiting
+  implementor: com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity
+  attributes:
+    STATUS_AFTER_EVENT: Waiting
+    WAIT_EVENT_NAMES: NonTaskAction-{$MasterRequestID},CORRECT,true
+    TIMER_WAIT: '2'
+    WORK_DISPLAY_INFO: x=352,y=776,w=100,h=60
+    Unit: Minutes
+  transitions:
+  - id: T17
+    to: A7
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=651,ly=644,type=Elbow,xs=456&847,ys=806&482
+- id: A8
+  name: sum up
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=680,y=878,w=100,h=60
+    Rule: |-
+      table launcher;
+
+      do $case = 0;
+
+      foreach row in $launcher
+      if row.retcode == "FINISH"
+      then $case = $case + row.result;
+  transitions:
+  - id: T21
+    to: A7
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=805,ly=690,type=Elbow,xs=730&881,ys=874&506
+- id: A11
+  name: 3 subproceses
+  implementor: com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity
+  attributes:
+    STATUS_AFTER_EVENT: Hold
+    ParameterTable: launcher
+    processversion: '1005'
+    synchronous: 'TRUE'
+    processname: TestSubProcess
+    WAIT_EVENT_NAMES: NonTaskAction-{$MasterRequestID},CORRECT,true
+    DELAY_BETWEEN: '5'
+    WORK_DISPLAY_INFO: x=437,y=873,w=100,h=60
+    ReturnCodeColumn: retcode
+    KeyColumn: argument
+  transitions:
+  - id: T19
+    to: A8
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=643,ly=749,type=Elbow,xs=541&676,ys=905&905
+- id: A9
+  name: Wait for some event
+  implementor: com.centurylink.mdw.workflow.activity.event.EventWaitActivity
+  attributes:
+    WAIT_EVENT_NAMES: NonTaskAction-{$MasterRequestID},Hold::CORRECT,true;Signal-{$MasterRequestID},,false
+    STATUS_AFTER_TIMEOUT: Cancelled
+    WORK_DISPLAY_INFO: x=359,y=386,w=100,h=60
+  transitions:
+  - id: T6
+    to: A10
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=504,ly=391,type=Elbow,xs=463&550,ys=416&350
+- id: A2
+  name: Synch with Wait
+  implementor: com.centurylink.mdw.workflow.activity.sync.SynchronizationActivity
+  attributes:
+    STATUS_AFTER_EVENT: Hold
+    $+Id: '27875'
+    Sync Expression: Sync_arm1 && sync_arm2_delay_2_min_
+    Synced Activities: |-
+      Sync arm1#sync arm2
+      (delay 2 min)
+    WAIT_EVENT_NAMES: NonTaskAction-{$MasterRequestID},CORRECT,true
+    WORK_DISPLAY_INFO: x=498,y=524,w=100,h=60
+  transitions:
+  - id: T13
+    to: A7
+    event: FINISH
+    attributes:
+      TRANSITION_DELAY: '0'
+      TRANSITION_RETRY_COUNT: '0'
+      TRANSITION_DISPLAY_INFO: lx=720,ly=499,type=ElbowH,xs=602&847,ys=554&482
+- id: A5
+  name: which case?
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptEvaluator
+  attributes:
+    WORK_DISPLAY_INFO: x=32,y=541,w=60,h=40
+    SCRIPT: Groovy
+    Expression: testCase
+  transitions:
+  - id: T3
+    to: A3
+    event: FINISH
+    resultCode: set-parameter-value
+    attributes:
+      TRANSITION_DELAY: '0'
+      TRANSITION_RETRY_COUNT: '0'
+      TRANSITION_DISPLAY_INFO: lx=296,ly=247,type=ElbowH,xs=96&458,ys=561&230
+  - id: T4
+    to: A15
+    event: FINISH
+    resultCode: correct-resume-on-hold
+    attributes:
+      TRANSITION_DELAY: '0'
+      TRANSITION_RETRY_COUNT: '0'
+      TRANSITION_DISPLAY_INFO: lx=176,ly=289,type=ElbowH,xs=96&353,ys=561&329
+  - id: T8
+    to: A9
+    event: FINISH
+    resultCode: correct-resume-on-wait
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=141,ly=386,type=Elbow,xs=96&355,ys=561&416
+  - id: T9
+    to: A12
+    event: FINISH
+    resultCode: sync-wait
+    attributes:
+      TRANSITION_DELAY: '0'
+      TRANSITION_RETRY_COUNT: '0'
+      TRANSITION_DISPLAY_INFO: lx=283,ly=505,type=ElbowH,xs=96&202&202&348,ys=562&562&526&526
+  - id: T14
+    to: A1
+    event: FINISH
+    resultCode: task-wait
+    attributes:
+      TRANSITION_DELAY: '0'
+      TRANSITION_RETRY_COUNT: '0'
+      TRANSITION_DISPLAY_INFO: lx=254,ly=681,type=ElbowH,xs=96&202&202&350,ys=562&562&708&708
+  - id: T16
+    to: A14
+    event: FINISH
+    resultCode: timer-wait-keep-waiting
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=197,ly=776,type=Elbow,xs=96&348,ys=561&806
+  - id: T18
+    to: A4
+    event: FINISH
+    resultCode: subproc-hold
+    attributes:
+      TRANSITION_DELAY: '0'
+      TRANSITION_RETRY_COUNT: '0'
+      TRANSITION_DISPLAY_INFO: lx=124,ly=879,type=ElbowH,xs=96&220&220&282,ys=571&571&909&909
+  - id: T26
+    to: A22
+    event: FINISH
+    resultCode: sync-wait
+    attributes:
+      TRANSITION_DELAY: '2'
+      TRANSITION_DISPLAY_INFO: lx=294,ly=598,type=Elbow,xs=96&368,ys=561&629
+- id: A22
+  name: "sync arm2\r\n(delay 2 min)"
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=372,y=599,w=100,h=60
+    SCRIPT: Groovy
+    Rule: SetInMain = "Ah hah!";
+  transitions:
+  - id: T27
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=486,ly=592,type=Elbow,xs=476&494,ys=629&554
+subprocesses:
+- id: P2
+  name: Exception Handler
+  activities:
+  - id: A17
+    name: Start
+    implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+    attributes:
+      WORK_DISPLAY_INFO: x=709,y=78,w=60,h=40
+    transitions:
+    - id: T22
+      to: A18
+      event: FINISH
+      attributes:
+        TRANSITION_DISPLAY_INFO: lx=787,ly=98,type=Elbow,xs=773&822,ys=98&98
+  - id: A18
+    name: Set Variable in Embedded
+    implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+    attributes:
+      WORK_DISPLAY_INFO: x=826,y=72,w=100,h=60
+      SCRIPT: Groovy
+      Rule: SetInEmbedded = SetInMain + ", World!";
+    transitions:
+    - id: T23
+      to: A16
+      event: FINISH
+      attributes:
+        TRANSITION_DISPLAY_INFO: lx=968,ly=101,type=Elbow,xs=930&978,ys=101&101
+  - id: A16
+    name: Stop
+    implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+    attributes:
+      WORK_DISPLAY_INFO: x=982,y=81,w=60,h=40
+  variables:
+    EmbeddedSubProcessTaskAction:
+      type: java.lang.String
+      category: LOCAL
+  attributes:
+    START_TRANSITION_ID: '2327578'
+    WORK_DISPLAY_INFO: x=709,y=45,w=333,h=105
+    ENTRY_TRANSITION_ID: '2327617'
+    PROCESS_VISIBILITY: EMBEDDED
+    EMBEDDED_PROCESS_TYPE: Exception Handler
+- id: P3
+  name: Correction Handler
+  activities:
+  - id: A20
+    name: Start
+    implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+    attributes:
+      WORK_DISPLAY_INFO: x=295,y=80,w=60,h=40
+    transitions:
+    - id: T24
+      to: A19
+      event: FINISH
+      attributes:
+        TRANSITION_DISPLAY_INFO: lx=441,ly=92,type=Elbow,xs=359&420,ys=100&100
+  - id: A21
+    name: Stop
+    implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+    attributes:
+      WORK_DISPLAY_INFO: x=617,y=80,w=60,h=40
+  - id: A19
+    name: wait 1 min
+    implementor: com.centurylink.mdw.workflow.activity.timer.TimerWaitActivity
+    attributes:
+      TIMER_WAIT: '1'
+      WORK_DISPLAY_INFO: x=424,y=71,w=100,h=60
+      Unit: Minutes
+    transitions:
+    - id: T25
+      to: A21
+      event: FINISH
+      attributes:
+        TRANSITION_DISPLAY_INFO: lx=573,ly=100,type=Elbow,xs=528&613,ys=100&100
+  variables:
+    EmbeddedSubProcessTaskAction:
+      type: java.lang.String
+      category: LOCAL
+  attributes:
+    START_TRANSITION_ID: '2327569'
+    WORK_DISPLAY_INFO: x=255,y=40,w=440,h=120
+    ENTRY_TRANSITION_ID: '2327616'
+    PROCESS_VISIBILITY: EMBEDDED
+    EMBEDDED_PROCESS_TYPE: Correction Handler
+variables:
+  SetInEmbedded:
+    type: java.lang.String
+    category: LOCAL
+  SetInMain:
+    type: java.lang.String
+    category: LOCAL
+  launcher:
+    type: com.qwest.mbeng.MbengTableArray
+    category: LOCAL
+  testCase:
+    type: java.lang.String
+    category: INPUT
+attributes:
+  CORRECT_TRANSITION_ID: '157825'
+  NodeStyle: BoxIcon
+  START_TRANSITION_ID: '2327615'
+  Transition with no Label: Acts as Default
+  ArrowStyle: ArrowEnd
+  WORK_DISPLAY_INFO: x=34,y=46,w=182,h=27
+  PROCESS_VISIBILITY: PUBLIC
+  ERROR_TRANSITION_ID: '157824'

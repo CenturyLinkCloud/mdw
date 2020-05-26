@@ -16,7 +16,7 @@
 package com.centurylink.mdw.slack;
 
 import com.centurylink.mdw.annotations.RegisteredService;
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
@@ -91,7 +91,7 @@ public class TaskNotifier extends TemplatedNotifier {
         Asset template = AssetCache.getAsset(getTemplateSpec());
         if (template == null)
             throw new IOException("Missing template: " + getTemplateSpec());
-        String message = context.evaluateToString(template.getStringContent());
+        String message = context.evaluateToString(template.getText());
         return new JsonObject(message);
 
         // TODO: re-enable two-way slack interaction

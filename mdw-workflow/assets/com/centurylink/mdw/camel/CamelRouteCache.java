@@ -19,7 +19,7 @@ import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -31,12 +31,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.naming.NamingException;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.*;
 
 @RegisteredService(CacheService.class)
 public class CamelRouteCache implements PreloadableCache, CamelContextAware {
 
-    private static final String[] LANGUAGES = new String[] {Asset.CAMEL_ROUTE};
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static volatile Map<String,RoutesDefinitionRuleSet> routesMap = Collections.synchronizedMap(new TreeMap<String,RoutesDefinitionRuleSet>());
     private static String[] preLoaded;
@@ -201,8 +201,13 @@ public class CamelRouteCache implements PreloadableCache, CamelContextAware {
         if (camelContext == null)
             throw new CachingException("Cannot access CamelContext");
 
-        Asset ruleSet = getRuleSet(key);
-        if (ruleSet == null)
+        Asset asset = null;
+        try {
+            getAsset(key);
+        } catch (IOException ex) {
+            throw new CachingException("Error loading rule set: '" + key.name + "'", ex);
+        }
+        if (asset == null)
             throw new CachingException("No rule set found for: '" + key.name + "'");
 
         String appendToUri = "/" + (key.name == null ? key.routeVersionSpec.getQualifiedName() : key.name);
@@ -210,29 +215,29 @@ public class CamelRouteCache implements PreloadableCache, CamelContextAware {
             appendToUri += "?" + key.modifier;
 
         // TODO better expression
-        String subst = ruleSet.getStringContent().replaceAll("mdw:workflow/this", "mdw:workflow" + appendToUri);
-        if (subst.equals(ruleSet.getStringContent()))
-            subst = ruleSet.getStringContent().replaceAll("mdw:workflow", "mdw:workflow" + appendToUri);
-        ruleSet = new Asset(ruleSet);  // create a copy
-        ruleSet.setStringContent(subst);
+        String subst = asset.getText().replaceAll("mdw:workflow/this", "mdw:workflow" + appendToUri);
+        if (subst.equals(asset.getText()))
+            subst = asset.getText().replaceAll("mdw:workflow", "mdw:workflow" + appendToUri);
+
+        asset.setText(subst);
 
         if (logger.isDebugEnabled())
-            logger.debug("Loading substituted camel routes " + ruleSet.getDescription() + ":\n" + ruleSet.getStringContent() + "\n================================");
+            logger.debug("Loading substituted camel routes " + asset.getLabel() + ":\n" + asset.getText() + "\n================================");
 
-        String format = ruleSet.getLanguage();
+        String extension = asset.getExtension();
 
         CamelContext localCamelContext = camelContext;
 
-        if (format.equals(Asset.CAMEL_ROUTE)) {
+        if (extension.equals("camel")) {
             // Spring DSL Camel Route
-            logger.info("Loading Camel Route '" + ruleSet.getLabel() + "' with CamelContext: " + localCamelContext);
+            logger.info("Loading Camel Route '" + asset.getLabel() + "' with CamelContext: " + localCamelContext);
             try {
-                ByteArrayInputStream inStream = new ByteArrayInputStream(ruleSet.getRawContent());
+                ByteArrayInputStream inStream = new ByteArrayInputStream(asset.getContent());
                 RoutesDefinition routesDefinition = localCamelContext.loadRoutesDefinition(inStream);
                 if (localCamelContext.hasComponent("mdw") == null)
                     localCamelContext.addComponent("mdw", new MdwComponent());
                 localCamelContext.addRouteDefinitions(routesDefinition.getRoutes());
-                return new RoutesDefinitionRuleSet(routesDefinition, ruleSet);
+                return new RoutesDefinitionRuleSet(routesDefinition, asset);
             }
             catch (Exception ex) {
                 logger.severeException(ex.getMessage(), ex);
@@ -240,10 +245,10 @@ public class CamelRouteCache implements PreloadableCache, CamelContextAware {
             }
         }
 
-        throw new CachingException("Unsupported ruleSet language: " + format);
+        throw new CachingException("Unsupported asset extension: " + extension);
     }
 
-    public static Asset getRuleSet(Key key) {
+    public static Asset getAsset(Key key) throws IOException {
         Asset ruleSet = null;
         if (key.routeVersionSpec != null) {
             ruleSet = AssetCache.getAsset(key.routeVersionSpec);
@@ -252,7 +257,7 @@ public class CamelRouteCache implements PreloadableCache, CamelContextAware {
             return ruleSet;
 
         String ruleSetName = key.name == null ? key.routeVersionSpec.getQualifiedName() : key.name;
-        return AssetCache.getAsset(ruleSetName, LANGUAGES);
+        return AssetCache.getAsset(ruleSetName);
     }
 
     /**

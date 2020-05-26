@@ -17,7 +17,6 @@ package com.centurylink.mdw.services.task;
 
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 import com.centurylink.mdw.observer.task.TaskIndexProvider;
@@ -37,9 +36,8 @@ public class AutoFormTaskIndexProvider implements TaskIndexProvider {
     public Map<String,String> collect(TaskRuntimeContext runtimeContext) {
 
         Map<String,String> indexes = null;
-        String varAttr = runtimeContext.getTaskAttribute(TaskAttributeConstant.VARIABLES);
-        if (!StringUtils.isBlank(varAttr)) {
-            List<String[]> parsed = Attribute.parseTable(varAttr, ',', ';', 5);
+        if (runtimeContext.getTaskAttributes().containsKey(TaskAttributeConstant.VARIABLES)) {
+            List<String[]> parsed = runtimeContext.getTaskAttributes().getTable(TaskAttributeConstant.VARIABLES, ',', ';', 5);
             for (String[] one : parsed) {
                 String varName = one[0];
                 String displayOption = one[2];

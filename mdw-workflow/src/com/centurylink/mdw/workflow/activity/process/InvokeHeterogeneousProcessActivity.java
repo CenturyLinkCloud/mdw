@@ -31,7 +31,6 @@ import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.variable.DocumentReference;
@@ -133,12 +132,16 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
         super.updateDocumentContent(docref, str, getParameterType(plan_varname));
     }
 
-    private Process getSubProcessVO(String logicalProcName) throws Exception {
-        String map = getAttributeValue(WorkAttributeConstant.PROCESS_MAP);
+    private Process getSubprocess(String logicalProcName) throws Exception {
         List<String[]> procmap;
-        if (map==null) procmap = new ArrayList<String[]>();
-        else procmap = Attribute.parseTable(map, ',', ';', 3);
-        for (int i=0; i<procmap.size(); i++) {
+        if (getAttributes().containsKey(WorkAttributeConstant.PROCESS_MAP)) {
+            procmap = getAttributes().getTable(WorkAttributeConstant.PROCESS_MAP, ',', ';', 3);
+        }
+        else {
+            procmap = new ArrayList<>();
+        }
+
+        for (int i = 0; i < procmap.size(); i++) {
             if (procmap.get(i)[0].equals(logicalProcName)) {
                 String subproc_name = procmap.get(i)[1];
                 String v = procmap.get(i)[2];
@@ -198,7 +201,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             throws Exception {
         try {
             // prepare variable bindings
-            Process process = getSubProcessVO(piplan.getLogicalProcessName());
+            Process process = getSubprocess(piplan.getLogicalProcessName());
             if (process == null)
                 throw new Exception("Cannot find process with logical name " + piplan.getLogicalProcessName());
             List<Variable> childVars = process.getVariables();
@@ -234,15 +237,14 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
      * Subclass may override this method to obtain variable binding in other ways.
      *
      * @param childVars variables defined for the child process
-     * @param prMgr process manager remote EJB handle
-     * @param varMgr variable manager remote EJB handle
+     * @param subprocInstance subprocess instance
+     * @param passDocumentContent whether to pass string content
      * @return a map (name-value pairs) of variable bindings
      * @throws Exception various types of exceptions
      */
-    private Map<String,String> createVariableBindings(List<Variable> childVars, SubprocessInstance piplan,
-            boolean passDocumentContent)
-            throws Exception {
-        Map<String,String> parameters = new HashMap<String,String>();
+    private Map<String,String> createVariableBindings(List<Variable> childVars,
+            SubprocessInstance subprocInstance, boolean passDocumentContent) throws Exception {
+        Map<String,String> parameters = new HashMap<>();
 
         String vn, v;
         for (int k=0; k<childVars.size(); k++) {
@@ -256,7 +258,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
                 VariableInstance varinst = getVariableInstance(VariableConstants.MASTER_DOCUMENT);
                 v = varinst==null?null:varinst.getStringValue();
             } else {
-                Parameter p = this.getParameterBinding(piplan, vn);
+                Parameter p = this.getParameterBinding(subprocInstance, vn);
                 v = evaluateBindingValue(childVar, p==null?null:p.getStringValue());
             }
             if (v!=null && v.length()>0) {
@@ -383,7 +385,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             String logicalProcName = piplan.getLogicalProcessName();
             try {
                 logger.info("New thread for executing service subprocess in parallel - " + logicalProcName);
-                Process process = getSubProcessVO(logicalProcName);
+                Process process = getSubprocess(logicalProcName);
                 if (process == null)
                     throw new Exception("Cannot find process with logical name " + logicalProcName);
                 engineDriver = new ProcessEngineDriver();

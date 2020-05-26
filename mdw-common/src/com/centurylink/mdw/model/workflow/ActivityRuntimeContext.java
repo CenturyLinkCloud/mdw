@@ -15,8 +15,8 @@
  */
 package com.centurylink.mdw.model.workflow;
 
+import com.centurylink.mdw.model.Attributes;
 import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.util.JsonUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.sun.el.ValueExpressionLiteral;
@@ -45,15 +45,8 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
         return getActivityInstanceId();
     }
 
-    private Map<String,String> attributes;
-    public Map<String,String> getAttributes() {
-        if (attributes == null) {
-            attributes = new HashMap<>();
-            for (Attribute attribute : activity.getAttributes()) {
-                attributes.put(attribute.getName(), attribute.getValue());
-            }
-        }
-        return attributes;
+    public Attributes getAttributes() {
+        return activity.getAttributes() == null ? new Attributes() : activity.getAttributes();
     }
 
     public String getAttribute(String name) {

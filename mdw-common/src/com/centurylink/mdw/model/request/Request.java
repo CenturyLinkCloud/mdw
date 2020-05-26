@@ -16,7 +16,6 @@
 package com.centurylink.mdw.model.request;
 
 import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.util.DateHelper;
 import org.json.JSONException;
 import org.json.JSONObject;

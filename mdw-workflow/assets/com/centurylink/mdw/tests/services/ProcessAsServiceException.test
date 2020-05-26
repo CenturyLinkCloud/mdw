@@ -4,12 +4,15 @@ send message {
     payload = '''<mdw:ActionRequest xmlns:mdw="http://mdw.centurylink.com/services">
   <Action Name="RegressionTest">
     <Parameter name="MasterRequestId">${masterRequestId}</Parameter>
-    <Parameter name="ProcessName">com.centurylink.mdw.tests.workflow/MDWTestProcessAsService</Parameter>
+    <Parameter name="ProcessName">com.centurylink.mdw.tests.workflow/TestProcessAsService</Parameter>
     <Parameter name="processCase">SyntaxError</Parameter>
   </Action>
 </mdw:ActionRequest>'''
 }
 verify response {
-    expected = '''<bpm:MDWStatusMessage xmlns:bpm="http://mdw.centurylink.com/bpm"><StatusCode>-1</StatusCode><bpm:StatusMessage>com.centurylink.mdw.activity.ActivityException: Compilation errors in Dynamic Java. See compiler output in log for details.</bpm:StatusMessage></bpm:MDWStatusMessage>'''
+    expected = '''<bpm:MDWStatusMessage xmlns:bpm="http://mdw.centurylink.com/bpm">
+<StatusCode>500</StatusCode>
+<bpm:StatusMessage>Compilation errors in Dynamic Java. See compiler output in log for details.</bpm:StatusMessage>
+</bpm:MDWStatusMessage>'''
 }
-verify process("com.centurylink.mdw.tests.workflow/MDWTestProcessAsService")
+verify process("com.centurylink.mdw.tests.workflow/TestProcessAsService")

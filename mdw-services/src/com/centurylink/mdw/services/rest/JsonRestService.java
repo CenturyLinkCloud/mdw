@@ -29,7 +29,7 @@ import com.centurylink.mdw.service.data.process.ProcessCache;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.service.JsonService;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;

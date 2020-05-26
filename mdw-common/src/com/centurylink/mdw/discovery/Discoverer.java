@@ -1,6 +1,6 @@
 package com.centurylink.mdw.discovery;
 
-import com.centurylink.mdw.model.PackageMeta;
+import com.centurylink.mdw.model.workflow.PackageMeta;
 
 import java.io.IOException;
 import java.util.List;

@@ -19,7 +19,7 @@ import ch.vorburger.mariadb4j.DB;
 import ch.vorburger.mariadb4j.DBConfiguration;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import ch.vorburger.mariadb4j.Util;
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.container.EmbeddedDb;
@@ -261,7 +261,7 @@ public class MariaDBEmbeddedDb implements EmbeddedDb {
                 }
             }
         }
-        catch (ClassNotFoundException ex) {
+        catch (IOException | ClassNotFoundException ex) {
             throw new SQLException("Cannot locate JDBC driver class", ex);
         }
         finally {
@@ -274,8 +274,8 @@ public class MariaDBEmbeddedDb implements EmbeddedDb {
         }
     };
 
-    protected String getAssetContent(String asset) {
-        return AssetCache.getAsset(EmbeddedDb.DB_ASSET_PACKAGE + "/" + asset).getStringContent();
+    protected String getAssetContent(String asset) throws IOException {
+        return AssetCache.getAsset(EmbeddedDb.DB_ASSET_PACKAGE + "/" + asset).getText();
     }
 
     public void source(String contents) throws SQLException {

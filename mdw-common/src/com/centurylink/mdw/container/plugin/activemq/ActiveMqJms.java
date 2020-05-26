@@ -26,6 +26,7 @@ import javax.jms.Topic;
 import javax.jms.TopicConnectionFactory;
 import javax.naming.NamingException;
 
+import com.centurylink.mdw.container.ContextProvider;
 import org.apache.activemq.ScheduledMessage;
 import org.apache.activemq.command.ActiveMQTopic;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jms.connection.DelegatingConnectionFactory;
 
 import com.centurylink.mdw.container.JmsProvider;
-import com.centurylink.mdw.container.NamingProvider;
 import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -50,7 +50,7 @@ public class ActiveMqJms implements JmsProvider {
         return getQueueConnectionFactory(null, null);
     }
 
-    public QueueConnectionFactory getQueueConnectionFactory(NamingProvider namingProvider, String name) throws JMSException, NamingException {
+    public QueueConnectionFactory getQueueConnectionFactory(ContextProvider contextProvider, String name) throws JMSException, NamingException {
         ConnectionFactory connectionFactory = retrieveConnectionFactory(name);
         if (connectionFactory instanceof QueueConnectionFactory) {
             return (QueueConnectionFactory) connectionFactory;
@@ -62,7 +62,7 @@ public class ActiveMqJms implements JmsProvider {
         }
     }
 
-    public TopicConnectionFactory getTopicConnectionFactory(NamingProvider namingProvider, String name) throws JMSException, NamingException {
+    public TopicConnectionFactory getTopicConnectionFactory(ContextProvider contextProvider, String name) throws JMSException, NamingException {
         ConnectionFactory connectionFactory = retrieveConnectionFactory(name);
         if (connectionFactory instanceof TopicConnectionFactory) {
             return (TopicConnectionFactory) connectionFactory;
@@ -78,7 +78,7 @@ public class ActiveMqJms implements JmsProvider {
         return new ActiveMQTopic(name);
     }
 
-    public Queue getQueue(Session session, NamingProvider namingProvider, String name) throws JMSException {
+    public Queue getQueue(Session session, ContextProvider contextProvider, String name) throws JMSException {
         return session.createQueue(name);
     }
 

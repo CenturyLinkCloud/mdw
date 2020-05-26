@@ -18,17 +18,11 @@ package com.centurylink.mdw.workflow.activity;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.SuspendableActivity;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.workflow.WorkStatus;
-import com.centurylink.mdw.services.ProcessException;
-import com.centurylink.mdw.util.ServiceLocatorException;
-import org.apache.commons.lang.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -44,10 +38,7 @@ import java.util.List;
 public abstract class AbstractWait extends DefaultActivityImpl implements SuspendableActivity {
 
     public List<String[]> getWaitEventSpecs() {
-        String attVal = getAttributeValue(WorkAttributeConstant.WAIT_EVENT_NAMES);
-        if (attVal == null)
-            return new ArrayList<>();
-        return Attribute.parseTable(attVal, ',', ';', 3);
+        return getAttributes().getTable(WorkAttributeConstant.WAIT_EVENT_NAMES, ',', ';', 3);
     }
 
     /**
@@ -65,7 +56,7 @@ public abstract class AbstractWait extends DefaultActivityImpl implements Suspen
      */
     protected EventWaitInstance registerWaitEvents(boolean reregister, boolean suppressNotify)
     throws ActivityException {
-        List<String[]> eventSpecs = this.getWaitEventSpecs();
+        List<String[]> eventSpecs = getWaitEventSpecs();
         if (eventSpecs.isEmpty())
             return null;
         String[] eventNames = new String[eventSpecs.size()];

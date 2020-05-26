@@ -79,7 +79,7 @@
             "id": ${~\\d+},
             "name": "SmartProcessChild",
             "packageName": "com.centurylink.mdw.tests.workflow",
-            "version": "2.11"
+            "version": "${~2\\.?\\d+}"
           },
           "processInstance": {
             "end": "${~.*}",
@@ -228,7 +228,7 @@
               "id": ${~\\d+},
               "name": "SmartProcessParent",
               "packageName": "com.centurylink.mdw.tests.workflow",
-              "version": "0.19"
+              "version": "${~0\\.?\\d+}"
             },
             "processInstance": {
               "end": "${~.*}",

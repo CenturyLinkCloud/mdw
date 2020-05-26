@@ -29,10 +29,10 @@ import com.centurylink.mdw.translator.TranslationException;
 public class StringStringMapTranslator extends DocumentReferenceTranslator {
 
     @Override
-    public Object realToObject(String json) throws TranslationException {
+    public Object realToObject(String str) throws TranslationException {
         try {
             Map<String,String> stringMap = new HashMap<>();
-            JSONObject jsonObject = new JsonObject(json);
+            JSONObject jsonObject = new JsonObject(str);
             String[] stringNames = JSONObject.getNames(jsonObject);
             if (stringNames != null) {
                 for (int i = 0; i < stringNames.length; i++) {
@@ -47,8 +47,8 @@ public class StringStringMapTranslator extends DocumentReferenceTranslator {
     }
 
     @SuppressWarnings("unchecked")
-    public String realToString(Object object) throws TranslationException {
-        Map<String,String> stringMap = (Map<String,String>)object;
+    public String realToString(Object obj) throws TranslationException {
+        Map<String,String> stringMap = (Map<String,String>) obj;
         JSONObject jsonObject = new JsonObject();
         Iterator<String> it = stringMap.keySet().iterator();
         try {

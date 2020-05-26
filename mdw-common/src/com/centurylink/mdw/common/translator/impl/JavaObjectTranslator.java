@@ -51,8 +51,8 @@ public class JavaObjectTranslator extends DocumentReferenceTranslator {
                             return CompiledJavaCache.getResourceClass(desc.getName(), getClass().getClassLoader(), getPackage());
                         }
                         catch (ClassNotFoundException ex){
-                            if (getPackage()  != null && getPackage().getCloudClassLoader() != null)
-                                return getPackage().getCloudClassLoader().loadClass(desc.getName());
+                            if (getPackage()  != null && getPackage().getClassLoader() != null)
+                                return getPackage().getClassLoader().loadClass(desc.getName());
                             else
                                 throw ex;
                         }
@@ -76,15 +76,15 @@ public class JavaObjectTranslator extends DocumentReferenceTranslator {
         }
     }
 
-    public String realToString(Object object) throws TranslationException {
-        if (!(object instanceof Serializable))
-            throw new TranslationException("Object must implement java.io.Serializable: " + object.getClass());
+    public String realToString(Object obj) throws TranslationException {
+        if (!(obj instanceof Serializable))
+            throw new TranslationException("Object must implement java.io.Serializable: " + obj.getClass());
 
         ObjectOutputStream oos = null;
         try {
           ByteArrayOutputStream baos = new ByteArrayOutputStream();
           oos = new ObjectOutputStream(baos);
-          oos.writeObject(object);
+          oos.writeObject(obj);
           return encodeBase64(baos.toByteArray());
         }
         catch (IOException ex) {

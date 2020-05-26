@@ -10,7 +10,7 @@ import javax.naming.NamingException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.CamelContextFactoryBean;
 
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;

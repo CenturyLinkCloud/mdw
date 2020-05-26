@@ -16,7 +16,7 @@
 package com.centurylink.mdw.services.process;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -45,6 +45,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
 import org.apache.commons.lang.StringUtils;
 
 import javax.transaction.SystemException;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -68,22 +69,23 @@ public class ProcessExecutor implements RetryableTransaction {
         this.engineImpl = engineImpl;
     }
 
-    ///////////////////////////////////////
-    // methods about process instances
-    ///////////////////////////////////////
-
     public ProcessInstance createProcessInstance(Long processId, String ownerType,
             Long ownerId, String secondaryOwnerType, Long secondaryOwnerId,
             String masterRequestId, Map<String,String> parameters)
     throws ProcessException, DataAccessException {
 
         String label = null, template = null;
-        Process process = ProcessCache.getProcess(processId);
+        Process process = null;
+        try {
+            process = ProcessCache.getProcess(processId);
+        } catch (IOException ex) {
+            throw new ProcessException("Cannot load process " + processId, ex);
+        }
         if (process != null) {
             String pkgName = process.getPackageName();
-            if (StringUtils.isBlank(pkgName)) { // This should never happen, but just in case
-                Package pkg = PackageCache.getProcessPackage(processId);
-                if (pkg != null && !pkg.isDefaultPackage())
+            if (StringUtils.isBlank(pkgName)) { // should never happen, but just in case
+                Package pkg = PackageCache.getPackage(process.getPackageName());
+                if (pkg != null)
                     pkgName = pkg.getName();
             }
             if (process.getName().startsWith("$") && parameters.containsKey(process.getName())) {
@@ -151,13 +153,14 @@ public class ProcessExecutor implements RetryableTransaction {
         try {
             transaction = startTransaction();
             engineImpl.startProcessInstance(processInst, delay);
-        } catch (MdwException e) {
+        } catch (ProcessException e) {
             if (canRetryTransaction(e)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
                 ((ProcessExecutor)getTransactionRetrier()).startProcessInstance(processInst, delay);
             }
-            else
+            else {
                 throw e;
+            }
         } finally {
             stopTransaction(transaction);
         }
@@ -667,35 +670,35 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
-    public void createTransitionInstances(ProcessInstance processInstanceVO,
+    public void createTransitionInstances(ProcessInstance processInstance,
             List<Transition> transitions, Long fromActivityInstanceId)
-          throws ProcessException, DataAccessException{
+          throws ProcessException, DataAccessException, IOException {
         TransactionWrapper transaction=null;
         try {
             transaction = startTransaction();
-            engineImpl.createTransitionInstances(processInstanceVO, transitions, fromActivityInstanceId);
+            engineImpl.createTransitionInstances(processInstance, transitions, fromActivityInstanceId);
         } finally {
             stopTransaction(transaction);
         }
     }
 
-    public void determineCompletedTransitions(Long pProcInstId, List<Transition> transitions)
+    public void determineCompletedTransitions(Long processInstanceId, List<Transition> transitions)
        throws DataAccessException {
-        TransactionWrapper transaction=null;
+        TransactionWrapper transaction = null;
         try {
             transaction = startTransaction();
-            engineImpl.getDataAccess().determineCompletedTransitions(pProcInstId, transitions);
+            engineImpl.getDataAccess().determineCompletedTransitions(processInstanceId, transitions);
         } catch (DataAccessException e) {
             if (canRetryTransaction(e)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                ((ProcessExecutor)getTransactionRetrier()).determineCompletedTransitions(pProcInstId, transitions);
+                ((ProcessExecutor)getTransactionRetrier()).determineCompletedTransitions(processInstanceId, transitions);
             }
             else
                 throw e;
         } catch (SQLException e) {
             if (canRetryTransaction(e)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                ((ProcessExecutor)getTransactionRetrier()).determineCompletedTransitions(pProcInstId, transitions);
+                ((ProcessExecutor)getTransactionRetrier()).determineCompletedTransitions(processInstanceId, transitions);
             }
             else
                 throw new DataAccessException(0, "Failed to determine completed transitions", e);

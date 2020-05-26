@@ -50,7 +50,7 @@ import org.w3c.dom.NodeList;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.listener.ListenerHelper;
@@ -86,27 +86,27 @@ public class SoapServlet extends ServiceServlet {
 
         if (request.getServletPath().endsWith(RPC_SERVICE_PATH)
                 || RPC_SERVICE_PATH.equals(request.getPathInfo())) {
-            Asset rpcWsdlAsset = AssetCache.getAsset(Package.MDW + "/MdwRpcWebService.wsdl", Asset.WSDL);
+            Asset rpcWsdlAsset = AssetCache.getAsset(Package.MDW + "/MdwRpcWebService.wsdl");
             response.setContentType("text/xml");
-            response.getWriter().print(substituteRuntimeWsdl(rpcWsdlAsset.getStringContent()));
+            response.getWriter().print(substituteRuntimeWsdl(rpcWsdlAsset.getText()));
         }
         else if (request.getPathInfo() == null || request.getPathInfo().equalsIgnoreCase("mdw.wsdl")) {
             // forward to general wsdl
             RequestDispatcher requestDispatcher = request.getRequestDispatcher("/mdw.wsdl");
             requestDispatcher.forward(request, response);
         }
-        else if (request.getPathInfo().toUpperCase().endsWith(Asset.WSDL)) {
+        else if (request.getPathInfo().toUpperCase().endsWith("WSDL")) {
             String wsdlAsset = request.getPathInfo().substring(1);
-            Asset asset = AssetCache.getAsset(wsdlAsset, Asset.WSDL);
+            Asset asset = AssetCache.getAsset(wsdlAsset);
             if (asset == null) {
                 // try trimming file extension
                 wsdlAsset = wsdlAsset.substring(0, wsdlAsset.length() - 5);
-                asset = AssetCache.getAsset(wsdlAsset, Asset.WSDL);
+                asset = AssetCache.getAsset(wsdlAsset);
             }
             if (asset == null) {
                 // try with lowercase extension
                 wsdlAsset = wsdlAsset + ".wsdl";
-                asset = AssetCache.getAsset(wsdlAsset, Asset.WSDL);
+                asset = AssetCache.getAsset(wsdlAsset);
             }
             if (asset == null) {
                 String message = "No WSDL resource found: " + request.getPathInfo().substring(1);
@@ -116,7 +116,7 @@ public class SoapServlet extends ServiceServlet {
             }
             else {
                 response.setContentType("text/xml");
-                response.getWriter().print(substituteRuntimeWsdl(asset.getStringContent()));
+                response.getWriter().print(substituteRuntimeWsdl(asset.getText()));
             }
         }
         else {
@@ -217,7 +217,7 @@ public class SoapServlet extends ServiceServlet {
 
             try {
                authenticate(request, metaInfo, requestXml);
-               String handlerResponse = helper.processEvent(requestXml, metaInfo);
+               String handlerResponse = helper.processRequest(requestXml, metaInfo);
 
                try {
                    // standard response indicates a potential problem

@@ -18,7 +18,6 @@ package com.centurylink.mdw.workflow.activity.transform;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.ScriptActivity;
 import com.centurylink.mdw.annotations.Activity;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
@@ -83,7 +82,7 @@ public class TransformActivity extends ScriptExecutorActivity {
             if (StringUtils.isBlank(outputDocument)) {
                 throw new ActivityException("Output document has not been specified.");
             }
-            setOutputDocuments(Attribute.parseList(outputDocument).toArray(new String[0]));
+            setOutputDocuments(getAttributes().getList(OUTPUTDOCS).toArray(new String[0]));
 
             if (transformLanguage.equals(GPATH)) {
                 executeGPath();

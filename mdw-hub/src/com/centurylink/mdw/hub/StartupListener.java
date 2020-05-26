@@ -15,17 +15,15 @@
  */
 package com.centurylink.mdw.hub;
 
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.common.service.WebSocketMessenger;
+import com.centurylink.mdw.services.util.InitialRequest;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import javax.websocket.server.ServerContainer;
-
-import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.common.service.WebSocketMessenger;
-import com.centurylink.mdw.container.NamingProvider;
-import com.centurylink.mdw.services.cache.CacheRegistration;
-import com.centurylink.mdw.services.util.InitialRequest;
 
 @WebListener
 public class StartupListener implements ServletContextListener {
@@ -36,7 +34,7 @@ public class StartupListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent contextEvent) {
         ServletContext servletContext = contextEvent.getServletContext();
         mdwMain = new MdwMain();
-        String container = NamingProvider.TOMCAT; // TODO
+        String container = "Tomcat"; // TODO
         if (ApplicationContext.isSpringBoot()) {
             ServerContainer serverContainer = (ServerContainer)servletContext.getAttribute("javax.websocket.server.ServerContainer");
             try {

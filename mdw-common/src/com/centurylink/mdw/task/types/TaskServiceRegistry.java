@@ -62,33 +62,10 @@ public class TaskServiceRegistry extends ServiceRegistry {
         return null;
     }
 
-    /**
-     * Cloud mode
-     * @param packageVO
-     * @param strategyInterface
-     * @param strategyClassName
-     * @return
-     */
     public Object getDynamicStrategy(Package packageVO, Class<? extends RegisteredService> strategyInterface, String strategyClassName) {
         return super.getDynamicService(packageVO, strategyInterface, strategyClassName);
     }
 
-    public TaskNotifier getNotifier(String className) {
-        for (TaskNotifier notifier : super.getServices(TaskNotifier.class)) {
-            if (className.equals(notifier.getClass().getName()))
-                return notifier;
-        }
-        return null;
-    }
-
-
-    /**
-     * Cloud mode
-     * @param packageVO
-     * @param class1
-     * @param notifierClassName
-     * @return
-     */
     public TaskNotifier getDynamicNotifier(Package packageVO, String className) {
         return super.getDynamicService(packageVO, TaskNotifier.class, className);
     }

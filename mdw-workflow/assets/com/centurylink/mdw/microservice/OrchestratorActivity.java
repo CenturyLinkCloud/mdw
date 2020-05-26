@@ -1,17 +1,7 @@
 package com.centurylink.mdw.microservice;
 
-import java.sql.SQLException;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.centurylink.mdw.activity.types.InvokeProcessActivity;
-import com.centurylink.mdw.annotations.Activity;
-import org.apache.xmlbeans.XmlException;
-
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
@@ -34,6 +24,15 @@ import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.process.InvokeProcessActivityBase;
+import org.apache.xmlbeans.XmlException;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Microservice orchestrator adapter activity.
@@ -125,7 +124,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
     }
 
     /**
-     * You'd need a custom .impl asset to set this through designer.
+     * You'd need a custom .impl asset to set this through Studio or Hub.
      * To view instances in MDWHub you'd also need to customize inspector-tabs.js.
      */
     protected String getServicePlanVariableName() {
@@ -143,7 +142,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
     }
 
     /**
-     * You'd need a custom .impl asset to set this through designer
+     * You'd need a custom .impl asset to set this through Studio or Hub
      */
     protected String getServiceSummaryVariableName() {
         return getAttribute("serviceSummaryVariable", "serviceSummary");
@@ -160,13 +159,13 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
                 throw new ActivityException("Subflow not found: " + service.getSubflow());
             return process;
         }
-        catch (DataAccessException ex) {
+        catch (IOException ex) {
             throw new ActivityException(ex.getMessage(), ex);
         }
     }
 
     protected ProcessInstance createProcessInstance(int index, Microservice service)
-            throws ActivityException, DataAccessException, ProcessException {
+            throws ActivityException, DataAccessException, ProcessException, IOException {
         Process process = getSubflow(service);
         // create bindings
         List<Variable> childVars = process.getVariables();
@@ -263,7 +262,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
     }
 
     protected void executeServiceSubflowsInSequence(ServicePlan servicePlan) throws ActivityException {
-        List<ProcessInstance> procInstList = new ArrayList<ProcessInstance>();
+        List<ProcessInstance> procInstList = new ArrayList<>();
         ServiceSummary summary = getServiceSummary(true);
         ServiceSummary currentSummary = summary.findCurrent(getActivityInstanceId());
         try {
@@ -288,7 +287,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
                 }
             }
         }
-        catch (ProcessException | DataAccessException ex) {
+        catch (ProcessException | DataAccessException | IOException ex) {
             throw new ActivityException(ex.getMessage(), ex);
         }
         finally {

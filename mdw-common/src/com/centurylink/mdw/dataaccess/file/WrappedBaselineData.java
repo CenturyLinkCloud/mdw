@@ -18,7 +18,7 @@ package com.centurylink.mdw.dataaccess.file;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.cache.impl.VariableTypeCache;
+import com.centurylink.mdw.cache.asset.VariableTypeCache;
 import com.centurylink.mdw.dataaccess.BaselineData;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.task.TaskCategory;

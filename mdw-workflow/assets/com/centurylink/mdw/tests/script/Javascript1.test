@@ -1,6 +1,6 @@
 package com.centurylink.mdw.tests.script
 
-start process("MDWTestJavaScript") {
+start process("TestJavaScript") {
     variables = [ inputString: "Such_a_thing", inputInt: 32 ]
 }
 wait process

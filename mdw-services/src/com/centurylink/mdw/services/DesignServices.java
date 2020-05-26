@@ -8,6 +8,7 @@ import com.centurylink.mdw.model.workflow.ActivityList;
 import com.centurylink.mdw.model.workflow.Linked;
 import com.centurylink.mdw.model.workflow.Process;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -17,7 +18,7 @@ public interface DesignServices {
 
     List<Process> getProcessDefinitions(Query query) throws ServiceException;
     Process getProcessDefinition(String assetPath, Query query) throws ServiceException;
-    Process getProcessDefinition(Long id) throws ServiceException;
+    Process getProcessDefinition(Long id) throws ServiceException, IOException;
 
     ActivityList getActivityDefinitions(Query query) throws ServiceException;
 

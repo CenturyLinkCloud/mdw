@@ -3,7 +3,7 @@ package com.centurylink.mdw.service.rest;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.listener.ListenerHelper;
 import com.centurylink.mdw.model.Request;
-import com.centurylink.mdw.model.Response;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.services.rest.JsonRestService;
@@ -48,7 +48,7 @@ public class Invoke extends JsonRestService {
         if (request.getOperation() != null)
             meta.put(Listener.METAINFO_HTTP_METHOD, request.getOperation());
 
-        String output = new ListenerHelper().processEvent(request.getContent(), meta);
+        String output = new ListenerHelper().processRequest(request.getContent(), meta);
 
         Response response = new Response(output);
         String status = meta.get(Listener.METAINFO_HTTP_STATUS_CODE);

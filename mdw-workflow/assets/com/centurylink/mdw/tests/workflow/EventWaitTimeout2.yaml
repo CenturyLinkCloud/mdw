@@ -1,5 +1,5 @@
 process: # 13659
-  name: MDWTestEventWaitTimeout
+  name: TestEventWaitTimeout
   instance: 1
   activity: # 2 "2016-02-22 13:47:56"
     name: Start

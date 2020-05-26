@@ -19,9 +19,10 @@ import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.dataaccess.DataAccess;
+import com.centurylink.mdw.dataaccess.BaselineData;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
+import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 import com.centurylink.mdw.model.task.*;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.Workgroup;
@@ -31,6 +32,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import org.apache.commons.lang.StringUtils;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -84,8 +86,7 @@ public class TaskDataAccess extends CommonDataAccess {
      * Returns with state=Invalid for task instance exists whose definition no longer exists (can happen
      * if previous task definitions were not archived properly).
      */
-    private TaskInstance getTaskInstanceSub(ResultSet rs, boolean isVOversion) throws SQLException {
-
+    private TaskInstance getTaskInstanceSub(ResultSet rs, boolean isVOversion) throws SQLException, IOException {
         TaskInstance task = new TaskInstance();
         task.setTaskInstanceId(rs.getLong("TASK_INSTANCE_ID"));
         task.setTaskId(rs.getLong("TASK_ID"));
@@ -378,12 +379,12 @@ public class TaskDataAccess extends CommonDataAccess {
         }
     }
 
-    public List<TaskStatus> getAllTaskStatuses() throws DataAccessException {
-        return DataAccess.getBaselineData().getAllTaskStatuses();
+    public List<TaskStatus> getAllTaskStatuses() {
+        return new MdwBaselineData().getAllTaskStatuses();
     }
 
-    public List<TaskState> getAllTaskStates() throws DataAccessException {
-        return DataAccess.getBaselineData().getAllTaskStates();
+    public List<TaskState> getAllTaskStates() {
+        return new MdwBaselineData().getAllTaskStates();
     }
 
     // new task instance group mapping
@@ -639,7 +640,12 @@ public class TaskDataAccess extends CommonDataAccess {
             List<TaskInstance> taskInstances = new ArrayList<TaskInstance>();
             rs = db.runSelect(sql.toString());
             while (rs.next()) {
-                TaskInstance taskInst = getTaskInstanceSub(rs, true);
+                TaskInstance taskInst = null;
+                try {
+                    taskInst = getTaskInstanceSub(rs, true);
+                } catch (IOException ex) {
+                    logger.error(ex.getMessage(), ex);
+                }
                 if (taskInst != null) {
                     if (taskInst.getAssigneeCuid() != null) {
                         try {
@@ -862,7 +868,7 @@ public class TaskDataAccess extends CommonDataAccess {
         return null;
     }
 
-    protected Long getTaskStateCode(String stateName) throws DataAccessException {
+    protected Long getTaskStateCode(String stateName) {
         if (stateName != null) {
             for (TaskState taskState : getAllTaskStates()) {
                 if (stateName.equals(taskState.getName())) {
@@ -873,69 +879,15 @@ public class TaskDataAccess extends CommonDataAccess {
         return null;
     }
 
-    public List<Long> findTaskInstance(Long taskId, String masterRequestId)
-            throws DataAccessException {
-        try {
-            db.openConnection();
-            String query = "select ti.TASK_INSTANCE_ID" +
-                    " from TASK_INSTANCE ti, PROCESS_INSTANCE pi" +
-                    " where ti.TASK_INSTANCE_OWNER_ID = pi.PROCESS_INSTANCE_ID and" +
-                    "   pi.MASTER_REQUEST_ID = ? and" +
-                    "   ti.TASK_ID = ?" +
-                    " order by ti.TASK_INSTANCE_ID desc";
-            Object[] args = new Object[2];
-            args[0] = masterRequestId;
-            args[1] = taskId;
-            ResultSet rs = db.runSelect(query, args);
-            List<Long> ret = new ArrayList<Long>();
-            while (rs.next()) {
-                ret.add(rs.getLong(1));
-            }
-            return ret;
-        } catch (Exception e) {
-            throw new DataAccessException(0,"failed to find task instance", e);
-        } finally {
-            db.closeConnection();
-        }
-    }
-
-    public String getCategoryCode(int categoryId) throws DataAccessException {
-        return DataAccess.getBaselineData().getTaskCategoryCodes().get(categoryId);
-    }
-
-    protected Long getCategoryId(String categoryNameOrCode) throws DataAccessException {
+    protected Long getCategoryId(String categoryNameOrCode) {
         if (categoryNameOrCode != null) {
-            for (TaskCategory taskCategory : DataAccess.getBaselineData().getTaskCategories().values()) {
+            BaselineData baselineData = new MdwBaselineData();
+            for (TaskCategory taskCategory : baselineData.getTaskCategories().values()) {
                 if (categoryNameOrCode.equals(taskCategory.getName()) || categoryNameOrCode.equals(taskCategory.getCode())) {
                     return taskCategory.getId();
                 }
             }
         }
         return null;
-    }
-
-    /**
-     * Useful for inferring task name and version without template.
-     */
-    public String getLatestTaskInstanceComments(Long taskId) throws DataAccessException {
-        StringBuilder query = new StringBuilder();
-        query.append("select task_instance_id, comments from TASK_INSTANCE\n");
-        query.append("where task_instance_id = (select max(task_instance_id) from TASK_INSTANCE ");
-        query.append("where task_id = ? and comments is not null)");
-
-        try {
-            db.openConnection();
-            ResultSet rs = db.runSelect(query.toString(), taskId);
-            if (rs.next())
-                return rs.getString("comments");
-            else
-                return null;
-        }
-        catch (Exception ex) {
-            throw new DataAccessException(-1, ex.getMessage(), ex);
-        }
-        finally {
-            db.closeConnection();
-        }
     }
 }

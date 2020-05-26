@@ -17,7 +17,7 @@ package com.centurylink.mdw.services.workflow;
 
 import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.app.Templates;
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
@@ -26,18 +26,12 @@ import com.centurylink.mdw.common.translator.impl.YamlTranslator;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.RuntimeDataAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
-import com.centurylink.mdw.dataaccess.reports.AggregateDataAccess;
 import com.centurylink.mdw.model.*;
-import com.centurylink.mdw.model.asset.AssetHeader;
-import com.centurylink.mdw.model.asset.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.listener.Listener;
@@ -73,6 +67,7 @@ import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.TranslationException;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
+import com.centurylink.mdw.util.JsonUtil;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.ActivityLog;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -97,12 +92,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private WorkflowDataAccess getWorkflowDao() {
+    private WorkflowDataAccess getWorkflowDataAccess() {
         return new WorkflowDataAccess();
-    }
-
-    protected RuntimeDataAccess getRuntimeDataAccess() throws DataAccessException {
-        return DataAccess.getRuntimeDataAccess(new DatabaseAccess(null));
     }
 
     protected ProcessAggregation getProcessAggregation() {
@@ -114,7 +105,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public Map<String,String> getAttributes(String ownerType, Long ownerId) throws ServiceException {
         try {
-            return getWorkflowDao().getAttributes(ownerType, ownerId);
+            return getWorkflowDataAccess().getAttributes(ownerType, ownerId);
         }
         catch (SQLException ex) {
             throw new ServiceException("Failed to load attributes for " + ownerType + "/" + ownerId, ex);
@@ -123,7 +114,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public void setAttributes(String ownerType, Long ownerId, Map<String,String> attributes) throws ServiceException {
         try {
-            getWorkflowDao().setAttributes(ownerType, ownerId, attributes);
+            getWorkflowDataAccess().setAttributes(ownerType, ownerId, attributes);
         }
         catch (Exception ex) {
             throw new ServiceException("Failed to set attributes for " + ownerType + "/" + ownerId, ex);
@@ -139,7 +130,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             for (Map.Entry<String, String> attribute : attributes.entrySet()) {
                 String attributeName = attribute.getKey();
                 String attributeValue = attribute.getValue();
-                getWorkflowDao().setAttribute(ownerType, ownerId, attributeName, attributeValue);
+                getWorkflowDataAccess().setAttribute(ownerType, ownerId, attributeName, attributeValue);
             }
         }
         catch (SQLException ex) {
@@ -312,7 +303,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     public ActivityList getActivities(Query query) throws ServiceException {
         try {
             CodeTimer timer = new CodeTimer(true);
-            ActivityList activityList = getWorkflowDao().getActivityInstances(query);
+            ActivityList activityList = getWorkflowDataAccess().getActivityInstances(query);
             timer.logTimingAndContinue("getWorkflowDao().getActivityInstances()");
             activityList = populateActivities(activityList, query);
             timer.stopAndLogTiming("populateActivities()");
@@ -329,8 +320,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public ProcessInstance getProcess(Long instanceId, boolean withSubprocs) throws ServiceException {
         try {
-            RuntimeDataAccess runtimeDataAccess = getRuntimeDataAccess();
-            ProcessInstance process = runtimeDataAccess.getProcessInstanceAll(instanceId);
+            WorkflowDataAccess dataAccess = getWorkflowDataAccess();
+            ProcessInstance process = dataAccess.getProcessInstanceAll(instanceId);
             if (process == null)
                 throw new ServiceException(ServiceException.NOT_FOUND, "Process instance not found: " + instanceId);
             if (withSubprocs) {
@@ -339,12 +330,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 criteria.put("owner", OwnerType.MAIN_PROCESS_INSTANCE);
                 criteria.put("ownerId", process.getId().toString());
                 criteria.put("processId", process.getProcessId().toString());
-                ProcessList subprocList = runtimeDataAccess.getProcessInstanceList(criteria, 0, Query.MAX_ALL,
+                ProcessList subprocList = dataAccess.getProcessInstanceList(criteria, 0, Query.MAX_ALL,
                         "order by process_instance_id");
                 if (subprocList != null && subprocList.getItems() != null && subprocList.getItems().size() > 0) {
                     List<ProcessInstance> subprocs = new ArrayList<>();
                     for (ProcessInstance subproc : subprocList.getItems()) {
-                        ProcessInstance fullsub = runtimeDataAccess.getProcessInstance(subproc.getId());
+                        ProcessInstance fullsub = dataAccess.getProcessInstance(subproc.getId());
                         fullsub.setProcessId(Long.parseLong(subproc.getComment()));
                         subprocs.add(fullsub);
                     }
@@ -362,7 +353,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     @Override
     public ActivityLog getProcessLog(Long processInstanceId, boolean withActivities) throws ServiceException {
         try {
-            return getWorkflowDao().getProcessLog(processInstanceId, withActivities);
+            return getWorkflowDataAccess().getProcessLog(processInstanceId, withActivities);
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
@@ -372,7 +363,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     @Override
     public ActivityLog getProcessLog(Long processInstanceId, Long[] activityInstanceIds) throws ServiceException {
         try {
-            return getWorkflowDao().getProcessLog(processInstanceId, activityInstanceIds);
+            return getWorkflowDataAccess().getProcessLog(processInstanceId, activityInstanceIds);
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
@@ -475,14 +466,18 @@ public class WorkflowServicesImpl implements WorkflowServices {
         if (instance.isEmbedded() && embeddedVars)
             instance.setVariables(getProcess(instance.getOwnerId()).getVariables());
         Process process = null;
-        if (instance.getProcessInstDefId() > 0L)
-            process = ProcessCache.getProcessInstanceDefiniton(instance.getProcessId(), instance.getProcessInstDefId());
-        if (process == null)
-            process = ProcessCache.getProcess(instance.getProcessId());
-        Package pkg = PackageCache.getProcessPackage(instance.getProcessId());
+        if (instance.getInstanceDefinitionId() > 0L)
+            process = ProcessCache.getInstanceDefinition(instance.getProcessId(), instance.getInstanceDefinitionId());
         if (process == null) {
-            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found for id: " +
-                    instance.getProcessId());
+            try {
+                process = ProcessCache.getProcess(instance.getProcessId());
+            } catch (IOException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error loading process id " + instance.getProcessId(), ex);
+            }
+        }
+        Package pkg = PackageCache.getPackage(process.getPackageName());
+        if (process == null) {
+            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found for id: " + instance.getProcessId());
         }
 
         Map<String,Object> vars = new HashMap<>();
@@ -492,7 +487,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                     Object value = var.getData();
                     if (value instanceof DocumentReference) {
                         try {
-                            Document docVO = getWorkflowDao().getDocument(((DocumentReference)value).getDocumentId());
+                            Document docVO = getWorkflowDataAccess().getDocument(((DocumentReference)value).getDocumentId());
                             value = docVO == null ? null : docVO.getObject(var.getType(), pkg);
                             vars.put(var.getName(), value);
                         }
@@ -516,7 +511,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public long getProcessCount(Query query) throws ServiceException {
         try {
-            return getWorkflowDao().getProcessInstanceCount(query);
+            return getWorkflowDataAccess().getProcessInstanceCount(query);
         }
         catch (DataAccessException ex) {
             throw new ServiceException(500, "Error retrieving process instance count for query: " + query, ex);
@@ -529,26 +524,21 @@ public class WorkflowServicesImpl implements WorkflowServices {
             String procDefSpec = query.getFilter("definition"); // in form of AssetVersionSpec
             if (procDefSpec != null) {
                 AssetVersionSpec spec = AssetVersionSpec.parse(procDefSpec);
-                if (spec.getName().endsWith(".proc"))
+                if (spec.getName().endsWith(".proc")) {
                     spec = new AssetVersionSpec(spec.getPackageName(),
                             spec.getName().substring(0, spec.getName().length() - 5), spec.getVersion());
-                if (spec.isRange()) {
-                    List<Process> procDefs = ProcessCache.getProcessesSmart(spec);
-                    String[] procIds = new String[procDefs.size()];
-                    for (int i = 0; i < procDefs.size(); i++)
-                        procIds[i] = procDefs.get(i).getId().toString();
-                    query.setArrayFilter("processIds", procIds);
                 }
-                else {
+                try {
                     Process procDef = ProcessCache.getProcessSmart(spec);
                     if (procDef == null) {
-                        throw new ServiceException(ServiceException.NOT_FOUND,
-                                "Process definition not found for spec: " + procDefSpec);
+                        throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found for spec: " + procDefSpec);
                     }
                     query.setFilter("processId", procDef.getId());
+                } catch (IOException ex) {
+                    throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
                 }
             }
-            return getWorkflowDao().getProcessInstances(query);
+            return getWorkflowDataAccess().getProcessInstances(query);
         }
         catch (DataAccessException ex) {
             throw new ServiceException(500, "Error retrieving process instance for query: " + query, ex);
@@ -585,9 +575,9 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public Document getDocument(Long id) throws ServiceException {
         try {
-            if (!getWorkflowDao().isDocument(id))
+            if (!getWorkflowDataAccess().isDocument(id))
                 throw new ServiceException(ServiceException.NOT_FOUND, "Document not found: " + id);
-            return getWorkflowDao().getDocument(id);
+            return getWorkflowDataAccess().getDocument(id);
         }
         catch (Exception ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error retrieving document: " + id, ex);
@@ -597,7 +587,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     @Override
     public ActivityInstance getActivity(Long instanceId) throws ServiceException {
         try {
-            ActivityInstance activityInstance = getWorkflowDao().getActivityInstance(instanceId);
+            ActivityInstance activityInstance = getWorkflowDataAccess().getActivityInstance(instanceId);
             if (activityInstance == null)
                 throw new ServiceException(ServiceException.NOT_FOUND, "Activity instance not found: " + instanceId);
             return activityInstance;
@@ -610,7 +600,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     @Override
     public ActivityLog getActivityLog(Long activityInstanceId) throws ServiceException {
         try {
-            return getWorkflowDao().getActivityLog(activityInstanceId);
+            return getWorkflowDataAccess().getActivityLog(activityInstanceId);
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
@@ -678,37 +668,20 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     /**
-     * Fills in process header info, consulting latest instance comment if necessary.
+     * Fills in process header info from definition.
      */
-    protected List<ProcessAggregate> populateProcesses(List<ProcessAggregate> processAggregates)
-            throws DataAccessException {
-        AggregateDataAccess dataAccess = null;
+    protected List<ProcessAggregate> populateProcesses(List<ProcessAggregate> processAggregates) {
         for (ProcessAggregate pc : processAggregates) {
-            Process process = ProcessCache.getProcess(pc.getId());
-            if (process == null) {
-                logger.severe("Missing definition for process id: " + pc.getId());
-                pc.setDefinitionMissing(true);
-                // may have been deleted -- infer from comments
-                if (dataAccess == null)
-                    dataAccess = getProcessAggregation();
-                CodeTimer timer = new CodeTimer(true);
-                String comments = getWorkflowDao().getLatestProcessInstanceComments(pc.getId());
-                timer.stopAndLogTiming("getLatestProcessInstanceComments()");
-                if (comments != null) {
-                    AssetHeader assetHeader = new AssetHeader(comments);
-                    pc.setName(assetHeader.getName());
-                    pc.setVersion(assetHeader.getVersion());
-                    pc.setPackageName(assetHeader.getPackageName());
-                }
-                else {
-                    logger.severe("Unable to infer process name for: " + pc.getId());
-                    pc.setName("Unknown (" + pc.getId() + ")");
-                }
-            }
-            else {
+            try {
+                Process process = ProcessCache.getProcess(pc.getId());
+                if (process == null)
+                    throw new IOException("Missing definition for process id: " + pc.getId());
                 pc.setName(process.getName());
                 pc.setVersion(AssetVersion.formatVersion(process.getVersion()));
                 pc.setPackageName(process.getPackageName());
+            } catch (IOException ex) {
+                pc.setName("Unknown");
+                logger.error(ex.getMessage(), ex);
             }
         }
         return processAggregates;
@@ -735,52 +708,32 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     /**
-     * Fills in process header info, consulting latest instance comment if necessary.
-     * @param query
+     * Fills in activity header info from process definition
      */
-    protected ActivityList populateActivities(ActivityList activityList, Query query) throws DataAccessException {
-        AggregateDataAccess dataAccess = null;
+    protected ActivityList populateActivities(ActivityList activityList, Query query) {
         List<ActivityInstance> aList = activityList.getActivities();
         ArrayList<ActivityInstance> matchActivities = new ArrayList<>();
         String activityName = query.getFilter("activityName");
         for (ActivityInstance activityInstance : aList) {
-            Process process = ProcessCache.getProcess(activityInstance.getProcessId());
-            if (process == null) {
-                logger.severe("Missing definition for process id: " + activityInstance.getProcessId());
-                activityInstance.setDefinitionMissing(true);
-                // may have been deleted -- infer from comments
-                if (dataAccess == null)
-                    dataAccess = getActivityAggregation();
-                CodeTimer timer = new CodeTimer(true);
-                String comments = getWorkflowDao().getLatestProcessInstanceComments(activityInstance.getProcessId());
-                timer.stopAndLogTiming("getLatestProcessInstanceComments()");
-                if (comments != null) {
-                    AssetHeader assetHeader = new AssetHeader(comments);
-                    activityInstance.setProcessName(assetHeader.getName());
-                    activityInstance.setProcessVersion(assetHeader.getVersion());
-                    activityInstance.setPackageName(assetHeader.getPackageName());
-                }
-                else {
-                    logger.severe("Unable to infer process name for: " + activityInstance.getProcessId());
-                    activityInstance.setProcessName("Unknown (" + activityInstance.getProcessId() + ")");
-                }
-                activityInstance.setName("Unknown (" + activityInstance.getDefinitionId() + ")");
-            }
-            else {
+            try {
+                Process process = ProcessCache.getProcess(activityInstance.getProcessId());
+                if (process == null)
+                    throw new IOException("Missing definition for process id: " + activityInstance.getProcessId());
                 String logicalId = activityInstance.getDefinitionId();
                 Activity actdef = process.getActivity(logicalId);
-                if (actdef != null) {
-                    if (activityName != null && activityName.equals(actdef.getProcessName() + 'v' + process.getVersionString() + ':' + logicalId)) {
-                        matchActivities.add(activityInstance);
-                    }
-                    activityInstance.setName(actdef.getName().replaceAll("\\r", "").replace('\n', ' '));
+                if (actdef == null)
+                    throw new IOException("Missing activity for process  " + activityInstance.getProcessId() + ": " + logicalId);
+                if (activityName != null && activityName.equals(actdef.getProcessName() + 'v' + process.getVersionString() + ':' + logicalId)) {
+                    matchActivities.add(activityInstance);
                 }
-                else {
-                    activityInstance.setName("Unknown (" + activityInstance.getDefinitionId() + ")");
-                }
+                activityInstance.setName(actdef.getName().replaceAll("\\r", "").replace('\n', ' '));
                 activityInstance.setProcessName(process.getName());
                 activityInstance.setProcessVersion(AssetVersion.formatVersion(process.getVersion()));
                 activityInstance.setPackageName(process.getPackageName());
+            }
+            catch (IOException ex) {
+                logger.error(ex.getMessage(), ex);
+                activityInstance.setName("Unknown (" + activityInstance.getDefinitionId() + ")");
             }
         }
         if (activityName != null)
@@ -792,51 +745,28 @@ public class WorkflowServicesImpl implements WorkflowServices {
     }
 
     /**
-     * Fills in process header info, consulting latest instance comment if necessary.
+     * Fills in process header info from process definition.
      */
-    protected List<ActivityAggregate> populateActivities(List<ActivityAggregate> activityCounts)
-            throws DataAccessException {
-        AggregateDataAccess dataAccess = null;
+    protected List<ActivityAggregate> populateActivities(List<ActivityAggregate> activityCounts) {
         for (ActivityAggregate ac : activityCounts) {
-            Process process = ProcessCache.getProcess(ac.getProcessId());
-            if (process == null) {
-                logger.severe("Missing definition for process id: " + ac.getProcessId());
-                ac.setDefinitionMissing(true);
-                // may have been deleted -- infer from comments
-                if (dataAccess == null)
-                    dataAccess = getActivityAggregation();
-                CodeTimer timer = new CodeTimer(true);
-                String comments = getWorkflowDao().getLatestProcessInstanceComments(ac.getProcessId());
-                timer.stopAndLogTiming("getLatestProcessInstanceComments()");
-                if (comments != null) {
-                    AssetHeader assetHeader = new AssetHeader(comments);
-                    ac.setProcessName(assetHeader.getName());
-                    ac.setActivityName(ac.getDefinitionId());
-                    ac.setName(ac.getProcessName() + ": " + ac.getActivityName());
-                    ac.setVersion(assetHeader.getVersion());
-                    ac.setPackageName(assetHeader.getPackageName());
-                }
-                else {
-                    logger.severe("Unable to infer process name for: " + ac.getProcessId());
-                    ac.setProcessName("Unknown (" + ac.getProcessId() + ")");
-                }
-            }
-            else {
+            try {
+                Process process = ProcessCache.getProcess(ac.getProcessId());
+                if (process == null)
+                    throw new IOException("Missing definition for process id: " + ac.getProcessId());
                 ac.setProcessName(process.getName());
                 ac.setVersion(AssetVersion.formatVersion(process.getVersion()));
                 ac.setPackageName(process.getPackageName());
                 String logicalId = ac.getDefinitionId();
                 Activity actdef = process.getActivity(logicalId);
-                if (actdef != null) {
-                    String actName = actdef.getName().replaceAll("\\r", "").replace('\n', ' ');
-                    ac.setActivityName(actName);
-                    ac.setProcessName(actdef.getProcessName()); // in case subproc
-                    ac.setName(ac.getProcessName() + ": " + ac.getActivityName());
-                }
-                else {
-                    ac.setName("Unknown (" + ac.getDefinitionId() + ")");
-                }
-
+                if (actdef == null)
+                    throw new IOException("Missing activity: " + logicalId);
+                String actName = actdef.getName().replaceAll("\\r", "").replace('\n', ' ');
+                ac.setActivityName(actName);
+                ac.setProcessName(actdef.getProcessName()); // in case subproc
+                ac.setName(ac.getProcessName() + ": " + ac.getActivityName());
+            } catch (IOException ex) {
+                logger.error(ex.getMessage(), ex);
+                ac.setName("Unknown (" + ac.getDefinitionId() + ")");
             }
         }
         return activityCounts;
@@ -931,8 +861,8 @@ public class WorkflowServicesImpl implements WorkflowServices {
         try {
             Long docId = 0L;
             String request = null;
-            Process processVO = ProcessCache.getProcess(processName, 0);
-            Package pkg = PackageCache.getProcessPackage(processVO.getId());
+            Process process = ProcessCache.getProcess(processName);
+            Package pkg = PackageCache.getPackage(process.getPackageName());
             if (masterRequest != null) {
                 String docType = getDocType(masterRequest);
                 EventServices eventMgr = ServiceLocator.getEventServices();
@@ -943,21 +873,21 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 headers.put(Listener.METAINFO_DOCUMENT_ID, docId.toString());
             }
 
-            Map<String,String> stringParams = translateParameters(processVO, parameters);
+            Map<String,String> stringParams = translateParameters(process, parameters);
 
             String responseVarName = "response";  // currently not configurable
 
             ProcessEngineDriver engineDriver = new ProcessEngineDriver();
-            String resp = engineDriver.invokeService(processVO.getId(), OwnerType.DOCUMENT, docId, masterRequestId,
+            String resp = engineDriver.invokeService(process.getId(), OwnerType.DOCUMENT, docId, masterRequestId,
                     request, stringParams, responseVarName, headers);
             Object response = resp;
             if (resp != null) {
-                Variable var = processVO.getVariable(responseVarName);
+                Variable var = process.getVariable(responseVarName);
                 if (var != null && var.isOutput() && !var.isString()) {
                     response = VariableTranslator.realToObject(pkg, var.getType(), resp);
                 }
             }
-            Variable responseHeadersVar = processVO.getVariable("responseHeaders");
+            Variable responseHeadersVar = process.getVariable("responseHeaders");
             if (responseHeaders != null && responseHeadersVar != null && responseHeadersVar.getType().equals(
                     "java.util.Map<String,String>")) {
                 ProcessInstance processInstance = getMasterProcess(masterRequestId);
@@ -1067,7 +997,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
         else {
             try {
                 VariableInstance varInst = context.getProcessInstance().getVariable(varName);
-                WorkflowDataAccess workflowDataAccess = getWorkflowDao();
+                WorkflowDataAccess workflowDataAccess = getWorkflowDataAccess();
                 if (varInst == null) {
                     varInst = new VariableInstance();
                     varInst.setName(varName);
@@ -1125,7 +1055,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             if (value == null || value.equals("")) {
                 try {
                     // TODO: delete doc content also
-                    getWorkflowDao().deleteVariable(varInst);
+                    getWorkflowDataAccess().deleteVariable(varInst);
                 }
                 catch (SQLException ex) {
                     throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error deleting "
@@ -1159,14 +1089,17 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public ProcessRun runProcess(ProcessRun runRequest) throws ServiceException, JSONException {
+    public ProcessRun runProcess(ProcessRun runRequest) throws ServiceException {
         Long definitionId = runRequest.getDefinitionId();
         if (definitionId == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing definitionId");
-        Process proc = ServiceLocator.getDesignServices().getProcessDefinition(definitionId);
-        if (proc == null) {
-            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found for id: " +
-                    definitionId);
+        Process proc;
+        try {
+            proc = ServiceLocator.getDesignServices().getProcessDefinition(definitionId);
+            if (proc == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Process not found for id: " + definitionId);
+        } catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error loading process " + definitionId, ex);
         }
 
         ProcessRun actualRun = new ProcessRun(runRequest.getJson());  // clone
@@ -1254,13 +1187,12 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 if (val instanceof String)
                     translated = (String)val;
                 else {
-                    Package pkg = PackageCache.getProcessPackage(process.getId());
+                    Package pkg = PackageCache.getPackage(process.getPackageName());
                     if (VariableTranslator.isDocumentReferenceVariable(pkg, vo.getType())) {
                         translated = VariableTranslator.realToString(pkg, vo.getType(), val);
                     }
                     else {
-                        translated = VariableTranslator.toString(PackageCache.getProcessPackage(process.getId()),
-                                vo.getType(), val);
+                        translated = VariableTranslator.toString(pkg, vo.getType(), val);
                     }
                 }
                 stringParams.put(key, translated);
@@ -1300,7 +1232,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     @SuppressWarnings("deprecation")
     public String getDocumentStringValue(Long id) throws ServiceException {
         try {
-            Document doc = getWorkflowDao().getDocument(id);
+            Document doc = getWorkflowDataAccess().getDocument(id);
             if (doc.getDocumentType() == null)
                 throw new ServiceException(ServiceException.INTERNAL_ERROR, "Unable to determine document type.");
 
@@ -1353,17 +1285,23 @@ public class WorkflowServicesImpl implements WorkflowServices {
                 VariableInstance varInstInf = eventMgr.getVariableInstance(doc.getOwnerId());
                 Long procInstId = varInstInf.getProcessInstanceId();
                 ProcessInstance procInstVO = eventMgr.getProcessInstance(procInstId);
-                if (procInstVO != null)
-                    return PackageCache.getProcessPackage(procInstVO.getProcessId());
+                if (procInstVO != null) {
+                    Process process = ProcessCache.getProcess(procInstVO.getProcessId());
+                    return PackageCache.getPackage(process.getPackageName());
+                }
             }
             else if (doc.getOwnerType().equals(OwnerType.PROCESS_INSTANCE)) {
                 Long procInstId = doc.getOwnerId();
                 ProcessInstance procInst = eventMgr.getProcessInstance(procInstId);
-                if (procInst != null)
-                    return PackageCache.getProcessPackage(procInst.getProcessId());
+                if (procInst != null) {
+                    Process process = ProcessCache.getProcess(procInst.getProcessId());
+                    return PackageCache.getPackage(process.getPackageName());
+                }
             }
-            else if (doc.getOwnerType().equals("Designer")) { // test case, etc
-                return PackageCache.getProcessPackage(doc.getOwnerId());
+            else { // test case, etc
+                Process process = ProcessCache.getProcess(doc.getOwnerId());
+                if (process != null)
+                    return PackageCache.getPackage(process.getName());
             }
             return null;
         }
@@ -1372,16 +1310,20 @@ public class WorkflowServicesImpl implements WorkflowServices {
         }
     }
 
-    public void createProcess(String assetPath, Query query) throws ServiceException, IOException {
+    public void createProcess(String assetPath, Query query) throws ServiceException {
         if (!assetPath.endsWith(".proc"))
             assetPath += ".proc";
         String template = query.getFilter("template");
         if (template == null)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Missing param: template");
-        byte[] content = Templates.getBytes("assets/" + template + ".proc");
-        if (content == null)
-            throw new ServiceException(ServiceException.NOT_FOUND, "Template not found: " + template);
-        ServiceLocator.getAssetServices().createAsset(assetPath, content);
+        try {
+            byte[] content = Templates.getBytes("assets/" + template + ".proc");
+            if (content == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Template not found: " + template);
+            ServiceLocator.getAssetServices().createAsset(assetPath, content);
+        } catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error creating " + assetPath, ex);
+        }
     }
 
     public Process getInstanceDefinition(String assetPath, Long instanceId) throws ServiceException {
@@ -1389,10 +1331,11 @@ public class WorkflowServicesImpl implements WorkflowServices {
         try {
             dataAccess.getDatabaseAccess().openConnection();
             ProcessInstance procInst = dataAccess.getProcessInstance(instanceId); // We need the processID
-            if (procInst.getProcessInstDefId() > 0L) {
-                Process process = ProcessCache.getProcessInstanceDefiniton(procInst.getProcessId(),
-                        procInst.getProcessInstDefId());
-                if (process.getQualifiedName().equals(assetPath) || (process.getQualifiedName() + ".proc").equals(assetPath)) // Make sure instanceId is for requested assetPath
+            if (procInst.getInstanceDefinitionId() > 0L) {
+                Process process = ProcessCache.getInstanceDefinition(procInst.getProcessId(),
+                        procInst.getInstanceDefinitionId());
+                // make sure instanceId is for requested assetPath
+                if (process.getPath().equals(assetPath))
                     return process;
             }
             return null;
@@ -1417,13 +1360,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
         EngineDataAccessDB dataAccess = new EngineDataAccessDB();
         try {
-            boolean isYaml = !LoaderPersisterVcs.isJson(processAsset.getFile());
+            boolean isYaml = !JsonUtil.isJson(processAsset.getFile());
 
             EventServices eventServices = ServiceLocator.getEventServices();
             dataAccess.getDatabaseAccess().openConnection();
             ProcessInstance procInst = dataAccess.getProcessInstance(instanceId);
             String content = isYaml ? Yamlable.toString(process,2) : process.getJson().toString(2);
-            long docId = procInst.getProcessInstDefId();
+            long docId = procInst.getInstanceDefinitionId();
             if (docId == 0L) {
                 docId = eventServices.createDocument(isYaml ? Yaml.class.getName() : JSONObject.class.getName(), OwnerType.PROCESS_INSTANCE_DEF,
                         instanceId, content, PackageCache.getPackage(process.getPackageName()));
@@ -1479,7 +1422,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     public Linked<ProcessInstance> getCallHierearchy(Long processInstanceId) throws ServiceException {
         try {
-            return getRuntimeDataAccess().getProcessInstanceCallHierarchy(processInstanceId);
+            return getWorkflowDataAccess().getProcessInstanceCallHierarchy(processInstanceId);
         }
         catch (DataAccessException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
@@ -1497,9 +1440,13 @@ public class WorkflowServicesImpl implements WorkflowServices {
             }
             ProcessList masterProcessList = getProcesses(query);
             for (ProcessInstance masterProcessInstance : masterProcessList.getProcesses()) {
-                Process masterProcess = ProcessCache.getProcess(masterProcessInstance.getProcessId());
-                Milestone milestone = new MilestoneFactory(masterProcess).createMilestone(masterProcessInstance);
-                milestonesList.getMilestones().add(milestone);
+                try {
+                    Process masterProcess = ProcessCache.getProcess(masterProcessInstance.getProcessId());
+                    Milestone milestone = new MilestoneFactory(masterProcess).createMilestone(masterProcessInstance);
+                    milestonesList.getMilestones().add(milestone);
+                } catch (IOException ex) {
+                    throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+                }
             }
             milestonesList.setTotal(masterProcessList.getTotal());
         }
@@ -1524,40 +1471,44 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     private Linked<Milestone> getMilestones(ProcessInstance masterProcessInstance, boolean future)
             throws ServiceException {
-        Process masterProcess = ProcessCache.getProcess(masterProcessInstance.getProcessId());
-        // retrieve full
-        ProcessInstance processInstance = getProcess(masterProcessInstance.getId());
+        try {
+            Process masterProcess = ProcessCache.getProcess(masterProcessInstance.getProcessId());
+            // retrieve full
+            ProcessInstance processInstance = getProcess(masterProcessInstance.getId());
 
-        Linked<ActivityInstance> endToEndActivities = getActivityHierarchy(processInstance);
-        Linked<ProcessInstance> parentInstance = getCallHierearchy(masterProcessInstance.getId());
-        Activity masterStartActivity = masterProcess.getStartActivity();
-        ActivityInstance masterStartInstance =
-                processInstance.getActivities(masterStartActivity.getLogicalId()).get(0);
-        // TODO: ability to define top label (from runtime expression)
-        String label = masterProcessInstance.getMasterRequestId();
-        Milestone startMilestone = new MilestoneFactory(masterProcess).createMilestone(masterProcessInstance,
-                masterStartInstance, label);
-        Linked<Milestone> masterMilestones = new Linked<>(startMilestone);
-        addMilestones(masterMilestones, endToEndActivities, parentInstance);
-        if (future && HierarchyCache.hasMilestones(masterProcess.getId())) {
-            for (Linked<Milestone> end : masterMilestones.getEnds()) {
-                Process endProcess = ProcessCache.getProcess(end.get().getProcess().getQualifiedName());
-                Linked<Milestone> milestonesDef = HierarchyCache.getMilestones(endProcess.getId());
-                Linked<Milestone> futureMilestone = milestonesDef.find(m -> {
-                    return m.getActivity().getId().equals(end.get().getActivity().getId()) &&
-                            m.getProcess().getQualifiedName().equals(end.get().getProcess().getQualifiedName());
-                });
-                if (futureMilestone != null) {
-                    end.setChildren(futureMilestone.getChildren());
-                    futureMilestone.setParent(end);
+            Linked<ActivityInstance> endToEndActivities = getActivityHierarchy(processInstance);
+            Linked<ProcessInstance> parentInstance = getCallHierearchy(masterProcessInstance.getId());
+            Activity masterStartActivity = masterProcess.getStartActivity();
+            ActivityInstance masterStartInstance =
+                    processInstance.getActivities(masterStartActivity.getLogicalId()).get(0);
+            // TODO: ability to define top label (from runtime expression)
+            String label = masterProcessInstance.getMasterRequestId();
+            Milestone startMilestone = new MilestoneFactory(masterProcess).createMilestone(masterProcessInstance,
+                    masterStartInstance, label);
+            Linked<Milestone> masterMilestones = new Linked<>(startMilestone);
+            addMilestones(masterMilestones, endToEndActivities, parentInstance);
+            if (future && HierarchyCache.hasMilestones(masterProcess.getId())) {
+                for (Linked<Milestone> end : masterMilestones.getEnds()) {
+                    Process endProcess = ProcessCache.getProcess(end.get().getProcess().getPath());
+                    Linked<Milestone> milestonesDef = HierarchyCache.getMilestones(endProcess.getId());
+                    Linked<Milestone> futureMilestone = milestonesDef.find(m -> {
+                        return m.getActivity().getId().equals(end.get().getActivity().getId()) &&
+                                m.getProcess().getPath().equals(end.get().getProcess().getPath());
+                    });
+                    if (futureMilestone != null) {
+                        end.setChildren(futureMilestone.getChildren());
+                        futureMilestone.setParent(end);
+                    }
                 }
             }
+            return masterMilestones;
+        } catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error loading milestones for " + masterProcessInstance.getId(), ex);
         }
-        return masterMilestones;
     }
 
-    public void addMilestones(Linked<Milestone> parent, Linked<ActivityInstance> start,
-            Linked<ProcessInstance> instanceHierarchy) throws ServiceException {
+    private void addMilestones(Linked<Milestone> parent, Linked<ActivityInstance> start,
+            Linked<ProcessInstance> instanceHierarchy) throws ServiceException, IOException {
         ActivityInstance activityInstance = start.get();
         ProcessInstance processInstance = instanceHierarchy.
                 find(new ProcessInstance(activityInstance.getProcessInstanceId())).get();
@@ -1595,24 +1546,24 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     @Override
     public Linked<ActivityInstance> getActivityHierarchy(ProcessInstance processInstance) throws ServiceException {
-        Process process = ProcessCache.getProcess(processInstance.getProcessId());
-        if (process == null)
-            throw new ServiceException("Process not found: " + processInstance.getComment() );
-
-        Linked<ActivityInstance> endToEndActivities = processInstance.getLinkedActivities(process);
-        Linked<ProcessInstance> instanceHierarchy = getCallHierearchy(processInstance.getId());
         try {
+            Process process = ProcessCache.getProcess(processInstance.getProcessId());
+            if (process == null)
+                throw new ServiceException("Process not found: " + processInstance.getComment() );
+
+            Linked<ActivityInstance> endToEndActivities = processInstance.getLinkedActivities(process);
+            Linked<ProcessInstance> instanceHierarchy = getCallHierearchy(processInstance.getId());
             ScopedActivityInstance scoped = new ScopedActivityInstance(instanceHierarchy, endToEndActivities);
             addSubprocessActivities(scoped, null);
             return endToEndActivities;
         }
-        catch (DataAccessException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        catch (DataAccessException | IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error loading activity hierarchy for " + processInstance.getId(), ex);
         }
     }
 
     private void addSubprocessActivities(ScopedActivityInstance start, List<ScopedActivityInstance> downstreams)
-            throws ServiceException, DataAccessException {
+            throws ServiceException, DataAccessException, IOException {
 
         List<ScopedActivityInstance> furtherDowns = downstreams;
 
@@ -1672,8 +1623,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
     /**
      * Finds subprocess instances by consulting relevant process hierarchy (excludes ignored).
      */
-    private List<Linked<ProcessInstance>> getInvoked(ScopedActivityInstance scopedInstance, Activity activity)
-            throws DataAccessException {
+    private List<Linked<ProcessInstance>> getInvoked(ScopedActivityInstance scopedInstance, Activity activity) {
         List<Linked<ProcessInstance>> invoked = new ArrayList<>();
         for (Linked<ProcessInstance> subprocess : scopedInstance.findInvoked(activity, ProcessCache.getProcesses(true))) {
             if (!isIgnored(subprocess.get()))

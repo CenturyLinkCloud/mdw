@@ -39,6 +39,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.ws.rs.Path;
+import java.io.IOException;
 import java.text.ParseException;
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -296,9 +297,13 @@ public class Activities extends JsonRestService implements JsonExportable {
         Process process = ProcessCache.getProcess(assetPath);
         if (process == null)
             throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + assetPath);
-        Linked<Activity> hierarchy = HierarchyCache.getActivityHierarchy(process.getId());
-        if (hierarchy == null)
-            throw new ServiceException(ServiceException.NOT_FOUND, "Activities not found: " + process.getId());
-        return hierarchy.getJson(2);
+        try {
+            Linked<Activity> hierarchy = HierarchyCache.getActivityHierarchy(process.getId());
+            if (hierarchy == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Activities not found: " + process.getId());
+            return hierarchy.getJson(2);
+        } catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error loading hierarchy for " + assetPath, ex);
+        }
     }
 }

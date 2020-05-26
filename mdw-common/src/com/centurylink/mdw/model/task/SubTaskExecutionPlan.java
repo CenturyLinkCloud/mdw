@@ -27,7 +27,7 @@ import com.centurylink.mdw.task.SubTaskPlanDocument.SubTaskPlan;
  */
 public class SubTaskExecutionPlan {
 
-    private List<Subtask> subtasks = new ArrayList<Subtask>();
+    private List<Subtask> subtasks = new ArrayList<>();
     public List<Subtask> getSubtasks() { return subtasks; }
     public void setSubtasks(List<Subtask> subtasks) { this.subtasks = subtasks; }
 
@@ -37,23 +37,24 @@ public class SubTaskExecutionPlan {
         if (subtasks != null) {
             for (Subtask subtask : subtasks) {
                 SubTask subTask = plan.addNewSubTask();
-                subTask.setLogicalId(subtask.getLogicalId());
-                if (subtask.count != null)
-                    subTask.setCount(subtask.count);
+                // TODO using logical id schema field to store template path
+                subTask.setLogicalId(subtask.getTemplatePath());
+                if (subtask.getCount() != null)
+                    subTask.setCount(subtask.getCount());
             }
         }
         return doc;
     }
 
     public void fromDocument(SubTaskPlanDocument doc) {
-        subtasks = new ArrayList<Subtask>();
+        subtasks = new ArrayList<>();
         SubTaskPlan plan = doc.getSubTaskPlan();
         if (plan != null) {
             List<SubTask> subTasks = plan.getSubTaskList();
             if (subTasks != null) {
                 for (SubTask subTask : subTasks) {
                     Subtask subtask = new Subtask();
-                    subtask.setLogicalId(subTask.getLogicalId());
+                    subtask.setTemplatePath(subTask.getLogicalId());
                     subtask.setCount(subTask.getCount());
                     subtasks.add(subtask);
                 }

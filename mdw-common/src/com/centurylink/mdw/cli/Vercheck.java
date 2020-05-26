@@ -17,10 +17,10 @@ package com.centurylink.mdw.cli;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.centurylink.mdw.dataaccess.VersionControl;
-import com.centurylink.mdw.dataaccess.file.GitDiffs;
-import com.centurylink.mdw.model.asset.AssetInfo;
-import com.centurylink.mdw.util.file.VersionProperties;
+import com.centurylink.mdw.git.GitDiffs;
+import com.centurylink.mdw.git.VersionControlGit;
+import com.centurylink.mdw.model.asset.ContentTypes;
+import com.centurylink.mdw.file.VersionProperties;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -170,7 +170,7 @@ public class Vercheck extends Setup {
             getOut().println("Comparing content vs branch " + branch + " (" + commit + ")");
         }
         Map<String,Properties> gitVersions = new HashMap<>();
-        VersionControl versionControl = git.getVersionControl();
+        VersionControlGit versionControl = git.getVersionControl();
         Method readFromCommit = versionControl.getClass().getMethod("readFromCommit", String.class, String.class);
         int i = 0;
         for (String path : assetFiles.keySet()) {
@@ -377,7 +377,7 @@ public class Vercheck extends Setup {
         }
 
         boolean isBinary() {
-            return AssetInfo.isBinary(getExtension());
+            return ContentTypes.isBinary(getExtension());
         }
 
         String getExtension() {

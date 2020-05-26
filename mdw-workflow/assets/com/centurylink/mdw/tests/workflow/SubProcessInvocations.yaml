@@ -28,7 +28,7 @@ process: # 205355
     result: RegularNoDocsSync
   activity: # 13 "2017-09-21 11:08:10"
     name: |
-      Invoke Regular Subprocess 
+      Invoke Regular Subprocess
       Sync no Doc Binding
     status: Completed
   activity: # 2 "2017-09-21 11:08:13"
@@ -73,7 +73,7 @@ process: # 205352
     result: RegularWithDocsSync
   activity: # 9 "2017-09-21 11:08:05"
     name: |
-      Invoke Regular Subprocess 
+      Invoke Regular Subprocess
       Sync with Doc Binding
     status: Completed
   activity: # 2 "2017-09-21 11:08:08"
@@ -100,7 +100,7 @@ process: # 205350
     result: ServiceNoDocsSync
   activity: # 10 "2017-09-21 11:08:01"
     name: |
-      Invoke Service Subprocess 
+      Invoke Service Subprocess
       Sync no Doc Binding
     status: Completed
   activity: # 2 "2017-09-21 11:08:04"
@@ -127,7 +127,7 @@ process: # 205348
     result: ServiceWithDocsSync
   activity: # 3 "2017-09-21 11:07:57"
     name: |
-      Invoke Service Subprocess 
+      Invoke Service Subprocess
       Sync with Doc Binding
     status: Completed
   activity: # 2 "2017-09-21 11:08:00"
@@ -244,7 +244,7 @@ process: # 205335
     result: RegularNoDocsAsync
   activity: # 14 "2017-09-21 11:07:36"
     name: |
-      Invoke Regular Subprocess 
+      Invoke Regular Subprocess
       Async no Doc Binding
     status: Completed
   activity: # 2 "2017-09-21 11:07:36"
@@ -289,7 +289,7 @@ process: # 205332
     result: RegularWithDocsAsync
   activity: # 12 "2017-09-21 11:07:32"
     name: |
-      Invoke Regular Subprocess 
+      Invoke Regular Subprocess
       Async with Doc Binding
     status: Completed
   activity: # 2 "2017-09-21 11:07:32"
@@ -316,7 +316,7 @@ process: # 205330
     result: ServiceNoDocsAsync
   activity: # 11 "2017-09-21 11:07:28"
     name: |
-      Invoke Service Subprocess 
+      Invoke Service Subprocess
       Async no Doc Binding
     status: Completed
   activity: # 2 "2017-09-21 11:07:28"
@@ -343,7 +343,7 @@ process: # 205328
     result: ServiceWithDocsAsync
   activity: # 8 "2017-09-21 11:07:24"
     name: |
-      Invoke Service Subprocess 
+      Invoke Service Subprocess
       Async with Doc Binding
     status: Completed
   activity: # 2 "2017-09-21 11:07:24"
@@ -370,7 +370,7 @@ process: # 205326
     result: ServiceWithDocsAsync
   activity: # 8 "2017-09-21 11:07:19"
     name: |
-      Invoke Service Subprocess 
+      Invoke Service Subprocess
       Async with Doc Binding
     status: Completed
   activity: # 2 "2017-09-21 11:07:20"
@@ -397,10 +397,10 @@ process: # 205363
     result: RegularNoDocsSync
   activity: # 13 "2017-09-21 11:08:38"
     name: |
-      Invoke Regular Subprocess 
+      Invoke Regular Subprocess
       Sync no Doc Binding
     status: Completed
-    result: com.centurylink.mdw.activity.ActivityException: Invalid attempt to synchrounously launch Non-Service sub process from a Service process...
+    result: com.centurylink.mdw.activity.ActivityException: Invalid attempt to synchronously launch Non-Service sub process from a Service process...
   activity: # 2 "2017-09-21 11:08:38"
     name: Stop
     status: Completed
@@ -425,10 +425,10 @@ process: # 205361
     result: RegularWithDocsSync
   activity: # 9 "2017-09-21 11:08:32"
     name: |
-      Invoke Regular Subprocess 
+      Invoke Regular Subprocess
       Sync with Doc Binding
     status: Completed
-    result: com.centurylink.mdw.activity.ActivityException: Invalid attempt to synchrounously launch Non-Service sub process from a Service process...
+    result: com.centurylink.mdw.activity.ActivityException: Invalid attempt to synchronously launch Non-Service sub process from a Service process...
   activity: # 2 "2017-09-21 11:08:32"
     name: Stop
     status: Completed
@@ -471,7 +471,7 @@ process: # 205359
     result: ServiceNoDocsSync
   activity: # 10 "2017-09-21 11:08:21"
     name: |
-      Invoke Service Subprocess 
+      Invoke Service Subprocess
       Sync no Doc Binding
     status: Completed
   activity: # 2 "2017-09-21 11:08:25"
@@ -516,7 +516,7 @@ process: # 205357
     result: ServiceWithDocsSync
   activity: # 3 "2017-09-21 11:08:11"
     name: |
-      Invoke Service Subprocess 
+      Invoke Service Subprocess
       Sync with Doc Binding
     status: Completed
   activity: # 2 "2017-09-21 11:08:14"
@@ -597,7 +597,7 @@ process: # 205345
     result: RegularNoDocsAsync
   activity: # 14 "2017-09-21 11:07:49"
     name: |
-      Invoke Regular Subprocess 
+      Invoke Regular Subprocess
       Async no Doc Binding
     status: Completed
   activity: # 2 "2017-09-21 11:07:49"
@@ -624,7 +624,7 @@ process: # 205343
     result: RegularWithDocsAsync
   activity: # 12 "2017-09-21 11:07:46"
     name: |
-      Invoke Regular Subprocess 
+      Invoke Regular Subprocess
       Async with Doc Binding
     status: Completed
   activity: # 2 "2017-09-21 11:07:47"
@@ -687,7 +687,7 @@ process: # 205340
     result: ServiceNoDocsAsync
   activity: # 11 "2017-09-21 11:07:42"
     name: |
-      Invoke Service Subprocess 
+      Invoke Service Subprocess
       Async no Doc Binding
     status: Completed
   activity: # 2 "2017-09-21 11:07:42"
@@ -732,7 +732,7 @@ process: # 205337
     result: ServiceWithDocsAsync
   activity: # 8 "2017-09-21 11:07:38"
     name: |
-      Invoke Service Subprocess 
+      Invoke Service Subprocess
       Async with Doc Binding
     status: Completed
   activity: # 2 "2017-09-21 11:07:38"

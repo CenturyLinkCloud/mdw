@@ -15,12 +15,8 @@
  */
 package com.centurylink.mdw.sendgrid;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
 import com.centurylink.mdw.annotations.RegisteredService;
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
@@ -34,6 +30,10 @@ import com.centurylink.mdw.services.user.ContextEmailRecipients;
 import com.centurylink.mdw.util.ParseException;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @RegisteredService(com.centurylink.mdw.observer.task.TaskNotifier.class)
 public class TaskNotifier extends TemplatedNotifier {
@@ -51,13 +51,13 @@ public class TaskNotifier extends TemplatedNotifier {
             return;
         }
 
-        this.context = context;
-        this.template = AssetCache.getAsset(getTemplateSpec());
-        if (template == null)
-            throw new ObserverException("Template asset not found: " + getTemplateSpec());
-
         try {
-            if (template.getLanguage().equals(Asset.HTML) || template.getLanguage().equals(Asset.TEXT)) {
+            this.context = context;
+            template = AssetCache.getAsset(getTemplateSpec());
+            if (template == null)
+                throw new ObserverException("Template asset not found: " + getTemplateSpec());
+
+            if ("html".equals(template.getExtension()) || "txt".equals(template.getExtension())) {
 
                 List<String> recipients = getRecipients(outcome);
                 List<String> ccRecipients = getCcRecipients(outcome);
@@ -74,9 +74,9 @@ public class TaskNotifier extends TemplatedNotifier {
                     new Sender(email).send();
                 }
             }
-            else if (template.getLanguage().equals(Asset.JSON)) {
+            else if ("json".equals(template.getExtension())) {
                 // Caller has built the message json themselves; simply apply substitutions.
-                new Sender(context.evaluateToString(template.getStringContent())).send();
+                new Sender(context.evaluateToString(template.getText())).send();
             }
             else {
                 throw new ObserverException("Unsupported template format: " + template);

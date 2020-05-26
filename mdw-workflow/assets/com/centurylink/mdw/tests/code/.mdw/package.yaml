@@ -1,0 +1,8 @@
+schemaVersion: '6.1'
+name: com.centurylink.mdw.tests.code
+version: 6.1.36-SNAPSHOT
+
+dependencies:
+  - com.centurylink.mdw.base v6.1.36-SNAPSHOT
+  - com.centurylink.mdw.kotlin v6.1.36-SNAPSHOT
+  - com.centurylink.mdw.testing v6.1.36-SNAPSHOT

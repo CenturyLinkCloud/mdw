@@ -72,7 +72,7 @@ routesSvc.factory('routes', function() {
         path: '/packages/:packageName',
         templateUrl: 'assets/package.html',
         controller: 'PackageController'
-      },    
+      },
       {
         path: '/asset/:packageName/:assetName',
         templateUrl: 'assets/asset.html',
@@ -92,7 +92,7 @@ routesSvc.factory('routes', function() {
         path: '/edit/:packageName/:assetName',
         templateUrl: 'edit/editor.html',
         controller: 'EditorController'
-      },      
+      },
       {
         path: '/edit/:packageName/:assetName/:instanceId',
         templateUrl: 'edit/editor.html',
@@ -112,12 +112,12 @@ routesSvc.factory('routes', function() {
         path: '/tests/:packageName/:testCaseName',
         templateUrl: 'testing/test.html',
         controller: 'TestController'
-      },      
+      },
       {
         path: '/tests/:packageName/:testCaseName/:itemName',
         templateUrl: 'testing/test.html',
         controller: 'TestController'
-      },      
+      },
       {
         path: '/tasks',
         templateUrl: 'tasks/tasks.html',
@@ -256,7 +256,7 @@ routesSvc.factory('routes', function() {
       {
         path: '/solutions',
         templateUrl: 'solutions/solutions.html',
-        controller: 'SolutionsController'        
+        controller: 'SolutionsController'
       },
       {
         path: '/solutions/:solutionId',
@@ -282,6 +282,11 @@ routesSvc.factory('routes', function() {
         path: '/serviceRequests',
         templateUrl: 'requests/requests.html',
         controller: 'RequestsController'
+      },
+      {
+        path: '/requestHandlers',
+        templateUrl: 'service/handlers.html?',
+        controller: 'HandlersController'
       },
       {
         path: '/service/masterRequests/:masterRequestId',

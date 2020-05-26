@@ -3,7 +3,7 @@ package com.centurylink.mdw.msteams;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.NotificationActivity;
 import com.centurylink.mdw.annotations.Activity;
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
@@ -67,9 +67,13 @@ public class MsTeamsActivity extends DefaultActivityImpl implements Notification
         String messageAsset = getRequiredAttribute(MESSAGE);
         String assetVersion = getAttribute(MESSAGE + "_assetVersion");
         AssetVersionSpec assetSpec = new AssetVersionSpec(messageAsset, assetVersion == null ? "0" : assetVersion);
-        Asset asset = AssetCache.getAsset(messageAsset);
-        if (asset == null)
-            throw new ActivityException("Asset not found: " + assetSpec);
-        return new JsonObject(getRuntimeContext().evaluateToString(asset.getStringContent()));
+        try {
+            Asset asset = AssetCache.getAsset(messageAsset);
+            if (asset == null)
+                throw new ActivityException("Asset not found: " + assetSpec);
+            return new JsonObject(getRuntimeContext().evaluateToString(asset.getText()));
+        } catch (IOException ex) {
+            throw new ActivityException(-1, "Error loading " + assetSpec, ex);
+        }
     }
 }

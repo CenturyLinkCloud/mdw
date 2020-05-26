@@ -16,7 +16,6 @@
 package com.centurylink.mdw.services.user;
 
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.model.workflow.RuntimeContext;
 import com.centurylink.mdw.service.data.user.UserGroupCache;
@@ -42,12 +41,10 @@ public class ContextEmailRecipients {
     throws DataAccessException, ParseException {
         List<String> recipients = new ArrayList<>();
         if (workgroupsAttr != null) {
-            String workgroups = context.getAttribute(workgroupsAttr);
-            if (workgroups != null && !workgroups.isEmpty()) {
-                for (String groupEmail : getGroupEmails(Attribute.parseList(workgroups))) {
-                    if (!recipients.contains(groupEmail))
-                        recipients.add(groupEmail);
-                }
+            List<String> groupList = context.getAttributes().getList(workgroupsAttr);
+            for (String groupEmail : groupList) {
+                if (!recipients.contains(groupEmail))
+                    recipients.add(groupEmail);
             }
         }
         if (expressionAttr != null) {

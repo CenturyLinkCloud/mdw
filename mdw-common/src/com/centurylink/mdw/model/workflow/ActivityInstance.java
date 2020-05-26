@@ -16,7 +16,6 @@
 package com.centurylink.mdw.model.workflow;
 
 import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.StatusCode;
 import com.centurylink.mdw.util.DateHelper;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -89,10 +88,6 @@ public class ActivityInstance implements Jsonable, Linkable {
     private Long processInstanceId;
     public Long getProcessInstanceId() { return processInstanceId;}
     public void setProcessInstanceId(Long processInstanceId) { this.processInstanceId = processInstanceId; }
-
-    private boolean definitionMissing;
-    public boolean isDefinitionMissing() { return definitionMissing; }
-    public void setDefinitionMissing(boolean defMissing) { this.definitionMissing = defMissing; }
 
     private String processVersion;
     public String getProcessVersion() { return processVersion; }

@@ -21,9 +21,9 @@ activities:
   name: "Test\r\nCase?"
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptEvaluator
   attributes:
-    Expression: '#{testCase}'
-    SCRIPT: javax.el
     WORK_DISPLAY_INFO: x=181,y=138,w=89,h=46
+    SCRIPT: javax.el
+    Expression: '#{testCase}'
   transitions:
   - id: T3
     to: A11
@@ -41,8 +41,10 @@ activities:
   name: Create Plan
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
   attributes:
-    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java","Plan Created"],["false","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["false","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
+    SCRIPT: Groovy
     Output Documents: executionPlan
+    Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java","Plan Created"],["false","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["false","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
+    WORK_DISPLAY_INFO: x=358,y=210,w=100,h=60
     Rule: |
       import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument
       import com.centurylink.mdw.bpm.ParameterDocument.Parameter
@@ -74,8 +76,6 @@ activities:
        param.setName(name);
        param.setStringValue(value);
       }
-    SCRIPT: Groovy
-    WORK_DISPLAY_INFO: x=358,y=210,w=100,h=60
   transitions:
   - id: T10
     to: A10
@@ -87,9 +87,9 @@ activities:
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
   attributes:
     Monitors: '[["true","Milestone","com.centurylink.mdw.milestones/ActivityMilestone.java","Output Assigned"],["false","Test Cases","com.centurylink.mdw.testing/TestCaseActivityMonitor.java",""],["false","Zipkin Activity","com.centurylink.mdw.zipkin/TraceActivityMonitor.java",""]]'
-    Rule: "import com.centurylink.mdw.bpm.ParameterDocument.Parameter\r\nimport com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance\r\n\r\nSubprocessInstance subprocinst = executionPlan.getProcessExecutionPlan().getSubprocessInstanceList().get(0);\r\nmultipleSubprocName = getParameter(subprocinst, \"procName\");\r\nmultipleSubprocVer = getParameter(subprocinst, \"procVer\");\r\nsubprocinst = executionPlan.getProcessExecutionPlan().getSubprocessInstanceList().get(2);\r\nmultipleSubprocName2 = getParameter(subprocinst, \"procName\");\r\nmultipleSubprocVer2 = getParameter(subprocinst, \"procVer\");\r\n\r\nprotected String getParameter(SubprocessInstance subprocinst, String name) {\r\n if (subprocinst.getParameterList()==null) return null;\r\n for (Parameter p : subprocinst.getParameterList()) {\r\n  if (p.getName().equals(name)) return p.getStringValue();\r\n }\r\n return null;\r\n}"
-    SCRIPT: Groovy
     WORK_DISPLAY_INFO: x=535,y=337,w=100,h=60
+    SCRIPT: Groovy
+    Rule: "import com.centurylink.mdw.bpm.ParameterDocument.Parameter\r\nimport com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance\r\n\r\nSubprocessInstance subprocinst = executionPlan.getProcessExecutionPlan().getSubprocessInstanceList().get(0);\r\nmultipleSubprocName = getParameter(subprocinst, \"procName\");\r\nmultipleSubprocVer = getParameter(subprocinst, \"procVer\");\r\nsubprocinst = executionPlan.getProcessExecutionPlan().getSubprocessInstanceList().get(2);\r\nmultipleSubprocName2 = getParameter(subprocinst, \"procName\");\r\nmultipleSubprocVer2 = getParameter(subprocinst, \"procVer\");\r\n\r\nprotected String getParameter(SubprocessInstance subprocinst, String name) {\r\n if (subprocinst.getParameterList()==null) return null;\r\n for (Parameter p : subprocinst.getParameterList()) {\r\n  if (p.getName().equals(name)) return p.getStringValue();\r\n }\r\n return null;\r\n}"
   transitions:
   - id: T8
     to: A2
@@ -100,11 +100,11 @@ activities:
   name: Invoke Multiple
   implementor: com.centurylink.mdw.workflow.activity.process.InvokeHeterogeneousProcessActivity
   attributes:
-    DELAY_BETWEEN: '1'
-    Execution Plan: executionPlan
-    WORK_DISPLAY_INFO: x=355,y=332,w=109,h=65
-    processmap: '[["SmartProcessChild","com.centurylink.mdw.tests.workflow/SmartProcessChild.proc","[2.4,3)"],["SmartProcessChild2","com.centurylink.mdw.tests.workflow/SmartProcessChild2.proc","[0.4,1)"]]'
     synchronous: 'true'
+    processmap: '[["SmartProcessChild","com.centurylink.mdw.tests.workflow/SmartProcessChild.proc","[2.4,3)"],["SmartProcessChild2","com.centurylink.mdw.tests.workflow/SmartProcessChild2.proc","[0.4,1)"]]'
+    Execution Plan: executionPlan
+    DELAY_BETWEEN: '1'
+    WORK_DISPLAY_INFO: x=355,y=332,w=109,h=65
   transitions:
   - id: T11
     to: A9
@@ -115,11 +115,11 @@ activities:
   name: Invoke Single
   implementor: com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity
   attributes:
-    WORK_DISPLAY_INFO: x=382,y=61,w=100,h=60
-    processname: com.centurylink.mdw.tests.workflow/SmartProcessChild.proc
+    variables: '{"procVer":"${singleSubprocVer}","inputVar":"${testCaseJson.name}","procName":"${singleSubprocName}"}'
     processversion: '[2.4,3)'
     synchronous: 'true'
-    variables: '{"procVer":"${singleSubprocVer}","inputVar":"${testCaseJson.name}","procName":"${singleSubprocName}"}'
+    processname: com.centurylink.mdw.tests.workflow/SmartProcessChild.proc
+    WORK_DISPLAY_INFO: x=382,y=61,w=100,h=60
   transitions:
   - id: T12
     to: A2
@@ -166,6 +166,5 @@ variables:
 attributes:
   ArrowStyle: ArrowEnd
   NodeStyle: BoxIcon
-  PROCESS_VISIBILITY: PUBLIC
-  PerformanceLevel: '0'
   WORK_DISPLAY_INFO: x=50,y=56,w=184,h=27
+  PROCESS_VISIBILITY: PUBLIC

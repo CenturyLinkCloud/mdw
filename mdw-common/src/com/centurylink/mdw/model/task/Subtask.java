@@ -21,12 +21,14 @@ import java.math.BigInteger;
  * Execution plan subprocess.
  */
 public class Subtask {
-    String logicalId;
-    public String getLogicalId() { return logicalId; }
-    public void setLogicalId(String id) { this.logicalId = id; }
+    /**
+     * Template asset path.
+     */
+    private String templatePath;
+    public String getTemplatePath() { return templatePath; }
+    public void setTemplatePath(String templatePath) { this.templatePath = templatePath; }
 
-    BigInteger count;
+    private BigInteger count;
     public BigInteger getCount() { return count; }
     public void setCount(BigInteger count) { this.count = count; }
-
 }

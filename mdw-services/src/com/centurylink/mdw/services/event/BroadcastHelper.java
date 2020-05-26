@@ -60,12 +60,16 @@ public class BroadcastHelper  {
                 new CacheRegistration().refreshCaches();
             }
         } else if (action.equals("INVALIDATE_EVENT")) {
-            String eventName = json.getString("EVENT_NAME");
-            String thisServer = ApplicationContext.getServer().toString();
-            String fromServer = json.getString("FROM");
-            if (!thisServer.equals(fromServer)) {
-                ScheduledEventQueue queue = ScheduledEventQueue.getSingleton();
-                queue.invalidate(eventName);
+            try {
+                String eventName = json.getString("EVENT_NAME");
+                String thisServer = ApplicationContext.getServer().toString();
+                String fromServer = json.getString("FROM");
+                if (!thisServer.equals(fromServer)) {
+                    ScheduledEventQueue queue = ScheduledEventQueue.getSingleton();
+                    queue.invalidate(eventName);
+                }
+            } catch (Exception ex) {
+                throw new MdwException(ex.getMessage(), ex);
             }
         } else throw new MdwException("Unknown ACTION");
 

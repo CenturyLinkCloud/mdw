@@ -18,9 +18,7 @@ package com.centurylink.mdw.adapter;
 import java.util.Map;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.model.Response;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.request.Request;
 
 /**

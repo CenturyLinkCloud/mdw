@@ -1,9 +1,9 @@
 package com.centurylink.mdw.tests.workflow
 
-start process("MDWTestLoopBackWaiting") {
+start process("TestLoopBackWaiting") {
     variables = [n: 1]
 }
-wait process("MDWTestLoopBackWaiting") {
+wait process("TestLoopBackWaiting") {
     timeout = 300
 }
 verify process

@@ -15,43 +15,7 @@
  */
 package com.centurylink.mdw.email;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
-import javax.mail.Address;
-import javax.mail.Authenticator;
-import javax.mail.BodyPart;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
-import javax.mail.SendFailedException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.model.JsonObject;
@@ -59,6 +23,22 @@ import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.workflow.RuntimeContext;
 import com.centurylink.mdw.util.ExpressionUtil;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.*;
 
 /**
  * Sends an e-mail via JavaMail/SMTP based on a template asset.
@@ -348,19 +328,25 @@ public class TemplatedEmail {
                 DataSource imageDataSource = null;
                 URL url = Thread.currentThread().getContextClassLoader().getResource(imageFile);
                 if (url == null) {
-                    final Asset imageAsset = AssetCache.getAsset(imageFile, "IMAGE_" + imageFile.substring(imageFile.lastIndexOf('.') + 1).toUpperCase());
+                    Asset imageAsset = null;
+                    try {
+                        imageAsset = AssetCache.getAsset(imageFile);
+                    } catch (IOException ex) {
+                        throw new MessagingException("Error loading image: " + imageFile);
+                    }
                     if (imageAsset == null)
                         throw new MessagingException("Image not found: " + imageFile);
+                    final Asset finalImage = imageAsset;
                     imageDataSource = new DataSource(){
                         public String getContentType() {
-                            return imageAsset.getContentType();
+                            return finalImage.getContentType();
                         }
                         public InputStream getInputStream() throws IOException {
-                            byte[] bytes = imageAsset.getContent();
+                            byte[] bytes = finalImage.getContent();
                             return new ByteArrayInputStream(bytes);
                         }
                         public String getName() {
-                            return imageAsset.getName();
+                            return finalImage.getName();
                         }
                         public OutputStream getOutputStream() throws IOException {
                             return null;
@@ -394,11 +380,15 @@ public class TemplatedEmail {
 
     public Asset getTemplate() throws MessagingException {
         if (templateAssetVerSpec != null && templateAssetVerSpec.getName() != null) {
-            Asset template = AssetCache.getAsset(templateAssetVerSpec);
-            if (template != null)
-                return template;
-            else
-                throw new MessagingException("Unable to load e-mail template: " + templateAssetVerSpec);
+            try {
+                Asset template = AssetCache.getAsset(templateAssetVerSpec);
+                if (template != null)
+                    return template;
+                else
+                    throw new MessagingException("Unable to load e-mail template: " + templateAssetVerSpec);
+            } catch (IOException ex) {
+                throw new MessagingException("Error loading " + templateAssetVerSpec, ex);
+            }
         }
         else {
             throw new MessagingException("No template specified for e-mail message: " + getSubject());
@@ -407,12 +397,12 @@ public class TemplatedEmail {
 
     public String getTemplateBody() throws MessagingException {
         Asset template = getTemplate();
-        return template.getStringContent();
+        return template.getText();
     }
 
     public String getBody() throws MessagingException {
         Asset template = getTemplate();
-        String body = template.getStringContent();
+        String body = template.getText();
         body = substitute(body); // calling just to populate images
         if (runtimeContext != null) {
             body = runtimeContext.evaluateToString(body);

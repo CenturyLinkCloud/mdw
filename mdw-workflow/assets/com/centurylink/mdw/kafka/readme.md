@@ -13,7 +13,7 @@ The MDW Kafka Adapter Activity provides the ability to send messages on Kafka to
 ## Setup
 
 After importing this package, to enable Kafaka Listener(Consumer) and Adapter(Producer) capability, you can set the Adapter as shown in the pictures below
-First you create two process variables (name can be anything but they needs to be of java.lang.Object type)
+First you create two process variables (name can be anything but they need to be of java.lang.Object type)
 
 ```
 producerProperties
@@ -75,7 +75,7 @@ Here is a simple example of how to configure a Kafka Listener named "AppKafkaLis
 mdw.listener.kafka.AppKafkaListener1.bootstrap.servers=<host>:<port>
 mdw.listener.kafka.AppKafkaListener1.topics=Topic1,Topic2
 mdw.listener.kafka.AppKafkaListener1.group.id=Topics1and2Group
-mdw.listener.kafka.AppKafkaListener1.xmlWrapper=MyAppKafkaHandler
+mdw.listener.kafka.AppKafkaListener1.xmlWrapper=MyKafkaHandler
 ```
 
 The above configuration will create a single Kafka consumer that will listen for 2 topics, auto-commit messages using the consumer's default settings, and use StringDeserializer class provided in the kafka-clients.jar for the Key and Value for all Kafka records it consumes.  The "xmlWrapper" property will wrap all incoming messages into an XML message having a root node of "\<MyKafkaHandler\>", which will allow you to then create/register an External Event Handler that will be used to process all messages whose root nodes are "\<MyKafkaHandler\>".  If you do not specify a "group.id" property, MDW will use a default value matching that of the listener name (i.e. in above example, if the group.id property were missing, the group.id would be "AppKafkaListener1".   If you do not specify the "topics" property, the listener will register to listen for a topic that matches the name of the listener (i.e. in above example, the topic would be "AppKafkaListener1" if the property were missing).

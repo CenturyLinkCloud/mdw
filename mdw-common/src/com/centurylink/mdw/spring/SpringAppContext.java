@@ -15,33 +15,32 @@
  */
 package com.centurylink.mdw.spring;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
+import com.centurylink.mdw.activity.types.GeneralActivity;
+import com.centurylink.mdw.cache.CacheService;
+import com.centurylink.mdw.cache.asset.AssetCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
+import com.centurylink.mdw.dataaccess.BaselineData;
+import com.centurylink.mdw.dataaccess.file.CombinedBaselineData;
+import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.request.RequestHandler;
+import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.variable.VariableTranslator;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
-import com.centurylink.mdw.activity.types.GeneralActivity;
-import com.centurylink.mdw.cache.CacheService;
-import com.centurylink.mdw.cache.impl.AssetCache;
-import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.dataaccess.BaselineData;
-import com.centurylink.mdw.dataaccess.file.CombinedBaselineData;
-import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
-import com.centurylink.mdw.event.EventHandler;
-import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.util.file.FileHelper;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.variable.VariableTranslator;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Currently only used in Tomcat.  Allows injection through Spring workflow assets.
@@ -79,7 +78,7 @@ public class SpringAppContext implements CacheService {
     public void shutDown() {
         if (packageContexts != null) {
             synchronized (pkgContextLock) {
-                for (MdwCloudAppContext appContext : packageContexts.values())
+                for (MdwPackageAppContext appContext : packageContexts.values())
                     shutDown(appContext);
             }
         }
@@ -89,7 +88,7 @@ public class SpringAppContext implements CacheService {
         }
     }
 
-    private void shutDown(MdwCloudAppContext pkgContext) {
+    private void shutDown(MdwPackageAppContext pkgContext) {
         pkgContext.close();
     }
 
@@ -105,7 +104,7 @@ public class SpringAppContext implements CacheService {
         return springAppContext;
     }
 
-    private static Map<String,MdwCloudAppContext> packageContexts;
+    private static Map<String, MdwPackageAppContext> packageContexts;
 
     public ApplicationContext getApplicationContext(Package pkg) throws IOException {
         ApplicationContext appContext = getApplicationContext();
@@ -115,7 +114,7 @@ public class SpringAppContext implements CacheService {
                     packageContexts = loadPackageContexts(appContext);
                 }
             }
-            MdwCloudAppContext pkgContext = packageContexts.get(pkg.getName());
+            MdwPackageAppContext pkgContext = packageContexts.get(pkg.getName());
             if (pkgContext != null)
                 appContext = pkgContext;
         }
@@ -129,16 +128,16 @@ public class SpringAppContext implements CacheService {
         }
     }
 
-    public Map<String,MdwCloudAppContext> loadPackageContexts(ApplicationContext parent) throws IOException {
-        Map<String,MdwCloudAppContext> contexts = new HashMap<String,MdwCloudAppContext>();
-        for (Asset springAsset : AssetCache.getAssets(Asset.SPRING)) {
+    public Map<String, MdwPackageAppContext> loadPackageContexts(ApplicationContext parent) throws IOException {
+        Map<String, MdwPackageAppContext> contexts = new HashMap<>();
+        for (Asset springAsset : AssetCache.getAssets("spring")) {
             try {
-                Package pkg = PackageCache.getAssetPackage(springAsset.getId());
+                Package pkg = PackageCache.getPackage(springAsset.getPackageName());
                 if (pkg != null) {
-                    String url = MdwCloudAppContext.MDW_SPRING_URL_PREFIX + pkg.getName() + "/" + springAsset.getName();
+                    String url = MdwPackageAppContext.MDW_SPRING_URL_PREFIX + pkg.getName() + "/" + springAsset.getName();
                     logger.info("Loading Spring asset: " + url + " from " + pkg.getLabel());
-                    MdwCloudAppContext pkgContext = new MdwCloudAppContext(url, parent);
-                    pkgContext.setClassLoader(pkg.getCloudClassLoader());
+                    MdwPackageAppContext pkgContext = new MdwPackageAppContext(url, parent);
+                    pkgContext.setClassLoader(pkg.getClassLoader());
                     pkgContext.refresh();
                     contexts.put(pkg.getName(), pkgContext);  // we only support one Spring asset per package
                 }
@@ -311,7 +310,7 @@ public class SpringAppContext implements CacheService {
             if (pkg == null)
                 implClass = Class.forName(type).asSubclass(GeneralActivity.class);
             else
-                implClass = pkg.getCloudClassLoader().loadClass(type).asSubclass(GeneralActivity.class);
+                implClass = pkg.getClassLoader().loadClass(type).asSubclass(GeneralActivity.class);
             for (String beanName : getApplicationContext(pkg).getBeanNamesForType(implClass)) {
                 if (getApplicationContext(pkg).isSingleton(beanName))
                     throw new IllegalArgumentException("Bean declaration for injected activity '" + beanName + "' must have scope=\"prototype\"");
@@ -331,18 +330,18 @@ public class SpringAppContext implements CacheService {
         }
     }
 
-    public EventHandler getEventHandler(String type, Package pkg) throws IOException, ClassNotFoundException {
+    public RequestHandler getRequestHandler(String type, Package pkg) throws IOException, ClassNotFoundException {
         String key = pkg == null ? "SpringRootContext" : pkg.toString();
         Map<String, Boolean> set = undefinedEventBeans.get(key);
         if (set != null && set.get(type) != null)
             return null;
 
         try {
-            Class<? extends EventHandler> implClass;
+            Class<? extends RequestHandler> implClass;
             if (pkg == null)
-                implClass = Class.forName(type).asSubclass(EventHandler.class);
+                implClass = Class.forName(type).asSubclass(RequestHandler.class);
             else
-                implClass = pkg.getCloudClassLoader().loadClass(type).asSubclass(EventHandler.class);
+                implClass = pkg.getClassLoader().loadClass(type).asSubclass(RequestHandler.class);
             for (String beanName : getApplicationContext(pkg).getBeanNamesForType(implClass)) {
                 if (getApplicationContext(pkg).isSingleton(beanName))
                     throw new IllegalArgumentException("Bean declaration for injected event handler '" + beanName + "' must have scope=\"prototype\"");
@@ -373,7 +372,7 @@ public class SpringAppContext implements CacheService {
               if (pkg == null)
                   implClass = Class.forName(type).asSubclass(VariableTranslator.class);
               else
-                  implClass = pkg.getCloudClassLoader().loadClass(type).asSubclass(VariableTranslator.class);
+                  implClass = pkg.getClassLoader().loadClass(type).asSubclass(VariableTranslator.class);
             return getApplicationContext(pkg).getBean(implClass);
         }
         catch (NoSuchBeanDefinitionException ex) {
@@ -398,7 +397,7 @@ public class SpringAppContext implements CacheService {
     public void clearCache() {
         synchronized (pkgContextLock) {
             if (packageContexts != null) {
-                for (MdwCloudAppContext appContext : packageContexts.values())
+                for (MdwPackageAppContext appContext : packageContexts.values())
                     shutDown(appContext);
             }
             packageContexts = null;

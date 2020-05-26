@@ -1,0 +1,87 @@
+activities:
+- id: A2
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=144,y=76,w=60,h=40
+  transitions:
+  - id: T3
+    to: A4
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=199,ly=185,type=Straight,xs=174&226,ys=116&259
+- id: A3
+  name: Loop Back
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=498,y=281,w=100,h=60
+    SCRIPT: Groovy
+    Rule: return "BACK"
+    RETURN_CODE: comp
+  transitions:
+  - id: T7
+    to: A4
+    event: FINISH
+    resultCode: BACK
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=382,ly=328,type=Curve,xs=494&350&280,ys=292&331&323
+- id: A1
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=146,y=431,w=60,h=40
+- id: A4
+  name: Loop Control
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    SCRIPT: Groovy
+    RETURN_CODE: comp
+    Expression: |-
+      N = N + 1;
+      if (N==3) {
+          comp = "TEMP";
+      } else if (N>5) {
+          comp = "DONE";
+      } else {
+          comp = "RETRY";
+      }
+    WORK_DISPLAY_INFO: x=176,y=259,w=100,h=60
+    Rule: |-
+      n++
+      if (n == 3)
+          return "TEMP"
+      else if (n > 5)
+          return "DONE"
+      else
+          return "BACK"
+  transitions:
+  - id: T4
+    to: A1
+    event: FINISH
+    resultCode: DONE
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=201,ly=375,type=Straight,xs=226&176,ys=319&431
+  - id: T5
+    to: A4
+    event: FINISH
+    resultCode: BACK
+    attributes:
+      TRANSITION_DELAY: '1'
+      TRANSITION_RETRY_COUNT: '3'
+      TRANSITION_DISPLAY_INFO: lx=242,ly=149,type=Curve,xs=226&247,ys=289&176
+  - id: T6
+    to: A3
+    event: FINISH
+    resultCode: TEMP
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=374,ly=205,type=Curve,xs=280&365&494,ys=255&230&277
+variables:
+  n:
+    type: java.lang.Integer
+    category: INPUT
+attributes:
+  NodeStyle: BoxIcon
+  WORK_DISPLAY_INFO: x=27,y=26,w=239,h=27
+  START_TRANSITION_ID: '2325804'
+  PROCESS_VISIBILITY: PUBLIC
+  ERROR_PROCESS_ID: '262002'

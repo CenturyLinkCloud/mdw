@@ -2,17 +2,17 @@ package com.centurylink.mdw.service.data.process;
 
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,7 +60,7 @@ public class HierarchyCache implements CacheService {
     /**
      * Descending milestones starting with the specified process.
      */
-    public static Linked<Milestone> getMilestones(Long processId) {
+    public static Linked<Milestone> getMilestones(Long processId) throws IOException {
         Linked<Milestone> processMilestones;
         Map<Long,Linked<Milestone>> milestoneMap = milestones;
         if (milestoneMap.containsKey(processId)) {
@@ -80,7 +80,7 @@ public class HierarchyCache implements CacheService {
         return processMilestones;
     }
 
-    private static Linked<Milestone> loadMilestones(Long processId) {
+    private static Linked<Milestone> loadMilestones(Long processId) throws IOException {
         if (PackageCache.getPackage(MILESTONES_PACKAGE) == null)
             return null; // don't bother and save some time
         Process process = ProcessCache.getProcess(processId);
@@ -96,7 +96,7 @@ public class HierarchyCache implements CacheService {
         return null;
     }
 
-    private static void addMilestones(Linked<Milestone> head, Linked<Activity> start) {
+    private static void addMilestones(Linked<Milestone> head, Linked<Activity> start) throws IOException {
         Activity activity = start.get();
         Process process = ProcessCache.getProcess(activity.getProcessId());
         Milestone milestone = new MilestoneFactory(process).getMilestone(activity);
@@ -118,12 +118,13 @@ public class HierarchyCache implements CacheService {
         }
     }
 
-    public static Linked<Activity> getActivityHierarchy(Long processId) {
+    public static Linked<Activity> getActivityHierarchy(Long processId) throws IOException {
         Linked<Activity> hierarchy;
-    Map<Long,Linked<Activity>> endToEndMap = activityHierarchies;
+        Map<Long,Linked<Activity>> endToEndMap = activityHierarchies;
         if (endToEndMap.containsKey(processId)) {
             hierarchy = endToEndMap.get(processId);
-        } else {
+        }
+        else {
             synchronized (HierarchyCache.class) {
                 endToEndMap = activityHierarchies;
                 if (endToEndMap.containsKey(processId)) {
@@ -139,22 +140,17 @@ public class HierarchyCache implements CacheService {
 
     private static int MAX_DEPTH;
 
-    private static Linked<Activity> loadActivityHierarchy(Long processId) {
+    private static Linked<Activity> loadActivityHierarchy(Long processId) throws IOException {
         if (PackageCache.getPackage(MILESTONES_PACKAGE) == null)
             return null; // don't bother and save some time
         MAX_DEPTH = PropertyManager.getIntegerProperty(PropertyNames.MDW_MILESTONE_MAX_DEPTH, 7500);
         Process process = ProcessCache.getProcess(processId);
         if (process != null) {
             Linked<Process> hierarchy = getHierarchy(processId).get(0);
-            try {
-                Linked<Activity> endToEndActivities = process.getLinkedActivities();
-                ScopedActivity scoped = new ScopedActivity(hierarchy, endToEndActivities);
-                addSubprocessActivities(scoped, null);
-                return endToEndActivities;
-            }
-            catch (DataAccessException ex) {
-                throw new CachingException(ex.getMessage(), ex);
-            }
+            Linked<Activity> endToEndActivities = process.getLinkedActivities();
+            ScopedActivity scoped = new ScopedActivity(hierarchy, endToEndActivities);
+            addSubprocessActivities(scoped, null);
+            return endToEndActivities;
         }
         return null;
     }
@@ -163,7 +159,7 @@ public class HierarchyCache implements CacheService {
      * Activities are scoped to avoid process invocation circularity.
      */
     private static void addSubprocessActivities(ScopedActivity start, List<ScopedActivity> downstreams)
-            throws DataAccessException {
+            throws IOException {
 
         if (start.depth() > MAX_DEPTH)
             return;
@@ -215,8 +211,7 @@ public class HierarchyCache implements CacheService {
     /**
      * Omits invoked subflows that would cause circularity by consulting relevant process hierarchy.
      */
-    private static List<Linked<Process>> getInvoked(ScopedActivity scopedActivity)
-            throws DataAccessException {
+    private static List<Linked<Process>> getInvoked(ScopedActivity scopedActivity) {
         List<Linked<Process>> invoked = new ArrayList<>();
         for (Linked<Process> subprocess : scopedActivity.findInvoked(ProcessCache.getProcesses(false))) {
             if (!isIgnored(subprocess.get()))
@@ -241,26 +236,22 @@ public class HierarchyCache implements CacheService {
 
     private static List<Long> loadMilestoned() {
         List<Long> milestoned = new ArrayList<>();
-        try {
-            if (PackageCache.getPackage(MILESTONES_PACKAGE) != null) {
-                for (Process process : ProcessCache.getProcesses(false)) {
-                    try {
-                        List<Linked<Process>> hierarchyList = getHierarchy(process.getId());
-                        if (!hierarchyList.isEmpty()) {
-                            if (hasMilestones(hierarchyList.get(0))) {
-                                milestoned.add(process.getId());
-                            }
+        if (PackageCache.getPackage(MILESTONES_PACKAGE) != null) {
+            for (Process process : ProcessCache.getProcesses(false)) {
+                try {
+                    List<Linked<Process>> hierarchyList = getHierarchy(process.getId());
+                    if (!hierarchyList.isEmpty()) {
+                        if (hasMilestones(hierarchyList.get(0))) {
+                            milestoned.add(process.getId());
                         }
                     }
-                    catch (CachingException ex) {
-                        logger.error("Cannot check milestones for process " + process.getLabel(), ex);
-                    }
+                }
+                catch (CachingException ex) {
+                    logger.error("Cannot check milestones for process " + process.getLabel(), ex);
                 }
             }
-            return milestoned;
-        } catch (DataAccessException ex) {
-            throw new CachingException(ex.getMessage(), ex);
         }
+        return milestoned;
     }
 
     public static boolean hasMilestones(Long processId) {

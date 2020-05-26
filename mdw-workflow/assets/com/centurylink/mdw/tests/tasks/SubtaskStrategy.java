@@ -22,10 +22,10 @@ public class SubtaskStrategy implements SubTaskStrategy {
     public String getSubTaskPlan(TaskRuntimeContext masterTaskContext) throws StrategyException {
         List<Subtask> subtasks = new ArrayList<>();
         Subtask subtaskA = new Subtask();
-        subtaskA.setLogicalId("subtaskA");
+        subtaskA.setTemplatePath("com.centurylink.mdw.tests.tasks/subtaskA.task");
         subtasks.add(subtaskA);
         Subtask subtaskB = new Subtask();
-        subtaskB.setLogicalId("subtaskB");
+        subtaskB.setTemplatePath("com.centurylink.mdw.tests.tasks/subtaskB.task");
         subtasks.add(subtaskB);
         SubTaskExecutionPlan subTaskexecPlan = new SubTaskExecutionPlan();
         subTaskexecPlan.setSubtasks(subtasks);

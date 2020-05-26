@@ -1,5 +1,5 @@
 process: # 13657
-  name: MDWTestSuppsEmbedded
+  name: TestSuppsEmbedded
   instance: 1
   activity: # 13 "2016-02-22 13:44:22"
     name: Start
@@ -18,7 +18,7 @@ process: # 13657
     name: testCase
     value: correct-waiting-on-wait
 process: # 13658
-  name: MDWTestSuppsEmbedded Correction Handler
+  name: TestSuppsEmbedded Correction Handler
   instance: 1
   activity: # 20 "2016-02-22 13:44:22"
     name: Start

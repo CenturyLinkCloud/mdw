@@ -22,6 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.ws.rs.Path;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 
@@ -86,25 +87,34 @@ public class MilestonesApi extends JsonRestService {
         }
 
         for (Long milestonedProcId : HierarchyCache.getMilestoned()) {
-            Process process = ProcessCache.getProcess(milestonedProcId);
-            if (find == null || process.getName().toLowerCase().startsWith(find)) {
-                JSONObject jsonProcess = new JsonObject();
-                jsonProcess.put("packageName", process.getPackageName());
-                jsonProcess.put("processId", process.getId());
-                jsonProcess.put("name", process.getName());
-                jsonProcess.put("version", process.getVersionString());
-                jsonProcesses.put(jsonProcess);
+            try {
+                Process process = ProcessCache.getProcess(milestonedProcId);
+                if (find == null || process.getName().toLowerCase().startsWith(find)) {
+                    JSONObject jsonProcess = new JsonObject();
+                    jsonProcess.put("packageName", process.getPackageName());
+                    jsonProcess.put("processId", process.getId());
+                    jsonProcess.put("name", process.getName());
+                    jsonProcess.put("version", process.getVersionString());
+                    jsonProcesses.put(jsonProcess);
+                }
+            } catch (IOException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error loading process " + milestonedProcId, ex);
             }
         }
+
         return new JsonArray(jsonProcesses);
     }
 
     @Path("/definitions/{processId}")
     public JSONObject getDefinition(Long processId) throws ServiceException {
-        Linked<Milestone> milestones = HierarchyCache.getMilestones(processId);
-        if (milestones == null)
-            throw new ServiceException(ServiceException.NOT_FOUND, "Milestones not found: " + processId);
-        return milestones.getJson();
+        try {
+            Linked<Milestone> milestones = HierarchyCache.getMilestones(processId);
+            if (milestones == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Milestones not found: " + processId);
+            return milestones.getJson();
+        } catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error loading milestones for " + processId, ex);
+        }
     }
 
     @Path("/definitions/{package}/{process}")

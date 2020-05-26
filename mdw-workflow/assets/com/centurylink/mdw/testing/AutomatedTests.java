@@ -15,17 +15,6 @@
  */
 package com.centurylink.mdw.testing;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.Path;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.model.JsonObject;
@@ -39,7 +28,6 @@ import com.centurylink.mdw.test.TestCase;
 import com.centurylink.mdw.test.TestCaseItem;
 import com.centurylink.mdw.test.TestCaseList;
 import com.centurylink.mdw.test.TestExecConfig;
-
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
@@ -47,6 +35,14 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.Path;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Path("/AutomatedTests")
 @Api("Automated tests support")
@@ -106,14 +102,14 @@ public class AutomatedTests extends JsonRestService {
     public JSONObject post(String path, JSONObject content, Map<String,String> headers)
             throws ServiceException, JSONException {
         // results file must be cross-mounted in multiserver envs
-            TestingServices testingServices = ServiceLocator.getTestingServices();
-            TestExecConfig config = testingServices.getTestExecConfig();
-            String user = getAuthUser(headers);
-            String[] segments = getSegments(path);
-            if ("cancel".equals(segments[5])) {
-                testingServices.cancelTestExecution(user);
-            }
-            else if ("unit".equals(segments[5])) {
+        TestingServices testingServices = ServiceLocator.getTestingServices();
+        TestExecConfig config = testingServices.getTestExecConfig();
+        String user = getAuthUser(headers);
+        String[] segments = getSegments(path);
+        if ("cancel".equals(segments[5])) {
+            testingServices.cancelTestExecution(user);
+        }
+        else if ("unit".equals(segments[5])) {
             if (content == null)
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Missing body");
             String testName = null;
@@ -161,7 +157,7 @@ public class AutomatedTests extends JsonRestService {
                     if (singleCase != null)
                         testingServices.executeCase(singleCase, user, config);
                     else
-                        testingServices.executeCases(new TestCaseList(ApplicationContext.getAssetRoot(), content), user, config);
+                        testingServices.executeCases(new TestCaseList(content), user, config);
                 }
             }
             catch (IOException ex) {

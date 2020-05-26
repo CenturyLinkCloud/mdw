@@ -39,7 +39,7 @@ public class TestCompare {
         BufferedReader expectedReader = null;
         BufferedReader actualReader = null;
         try {
-            String expectedContent = expected.getStringContent();
+            String expectedContent = expected.getText();
             if (preFilter != null)
                 expectedContent = preFilter.apply(expectedContent);
             expectedReader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(expectedContent.getBytes())));

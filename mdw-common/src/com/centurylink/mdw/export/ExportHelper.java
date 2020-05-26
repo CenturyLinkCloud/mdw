@@ -16,9 +16,9 @@
 package com.centurylink.mdw.export;
 
 import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.model.Attributes;
 import com.centurylink.mdw.model.asset.Pagelet;
 import com.centurylink.mdw.model.asset.Pagelet.Widget;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
@@ -61,9 +61,9 @@ public abstract class ExportHelper {
     /**
      * Empty except excluded attributes.
      */
-    public boolean isEmpty(List<Attribute> attributes) {
-        for (Attribute attribute : attributes) {
-            if (!isExcludeAttribute(attribute.getName(), attribute.getValue()))
+    public boolean isEmpty(Attributes attributes) {
+        for (String name : attributes.keySet()) {
+            if (!isExcludeAttribute(name, attributes.get(name)))
                 return false;
         }
         return true;
@@ -118,9 +118,9 @@ public abstract class ExportHelper {
         return project.getActivityImplementors().get(activity.getImplementor());
     }
 
-    protected String getAttributeLabel(Activity activity, Attribute attribute) throws IOException {
-        String label = attribute.getName();
-        Widget widget = getWidget(activity, attribute.getName());
+    protected String getAttributeLabel(Activity activity, String name) throws IOException {
+        String label = name;
+        Widget widget = getWidget(activity, name);
         if (widget != null && "edit".equals(widget.getType())) {
             label = widget.getName().equals("Java") ? "Java" : activity.getAttribute("Language");
             if (label == null)
@@ -135,19 +135,19 @@ public abstract class ExportHelper {
         return label;
     }
 
-    protected Table getTable(Activity activity, Attribute attribute) throws IOException {
-        Widget widget = getWidget(activity, attribute.getName());
+    protected Table getTable(Activity activity, Attributes attributes, String attributeName) throws IOException {
+        Widget widget = getWidget(activity, attributeName);
         List<String> cols = new ArrayList<>();
         List<String[]> rows = new ArrayList<>();
         if (widget != null && "mapping".equals(widget.getType())) {
             cols = Arrays.asList(new String[]{"Variable", "Binding Expression"});
-            Map<String,String> map = Attribute.parseMap(attribute.getValue());
+            Map<String,String> map = attributes.getMap(attributeName);
             for (String key : map.keySet()) {
                 rows.add(new String[]{key, map.get(key)});
             }
         }
         else {
-            if (WorkAttributeConstant.MONITORS.equals(attribute.getName())) {
+            if (WorkAttributeConstant.MONITORS.equals(attributeName)) {
                 cols = Arrays.asList(new String[]{"Enabled", "Name", "Implementation", "Options"});
             }
             else if (widget != null) {
@@ -155,7 +155,7 @@ public abstract class ExportHelper {
                 for (Widget tableWidget : widget.getWidgets())
                     cols.add(tableWidget.getName());
             }
-            rows = Attribute.parseTable(attribute.getValue(), ',', ';', cols.size());
+            rows = attributes.getTable(attributeName, ',', ';', cols.size());
         }
         String[][] values = new String[cols.size()][rows.size()];
         for (int i = 0; i < cols.size(); i++) {
@@ -166,18 +166,18 @@ public abstract class ExportHelper {
         return new Table(cols.toArray(new String[0]), values);
     }
 
-    protected boolean isTabular(Activity activity, Attribute attribute) throws IOException {
-        if (WorkAttributeConstant.MONITORS.equals(attribute.getName()))
+    protected boolean isTabular(Activity activity, String attributeName) throws IOException {
+        if (WorkAttributeConstant.MONITORS.equals(attributeName))
             return true;
-        Widget widget = getWidget(activity, attribute.getName());
+        Widget widget = getWidget(activity, attributeName);
         if (widget != null) {
             return "table".equals(widget.getType()) || "mapping".equals(widget.getType());
         }
         return false;
     }
 
-    protected boolean isCode(Activity activity, Attribute attribute) throws IOException {
-        Widget widget = getWidget(activity, attribute.getName());
+    protected boolean isCode(Activity activity, String attributeName) throws IOException {
+        Widget widget = getWidget(activity, attributeName);
         if (widget != null) {
             return "edit".equals(widget.getType());
         }

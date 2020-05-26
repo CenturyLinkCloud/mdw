@@ -15,18 +15,14 @@
  */
 package com.centurylink.mdw.kotlin;
 
-import java.util.Map;
+import com.centurylink.mdw.annotations.Parameter;
+import com.centurylink.mdw.annotations.RegisteredService;
+import com.centurylink.mdw.script.ExecutionException;
+import com.centurylink.mdw.script.ScriptEvaluator;
 
 import javax.script.ScriptException;
 import javax.script.SimpleBindings;
-
-import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.annotations.Parameter;
-import com.centurylink.mdw.annotations.RegisteredService;
-import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
-import com.centurylink.mdw.script.ExecutionException;
-import com.centurylink.mdw.script.ScriptEvaluator;
-import com.centurylink.mdw.services.process.ActivityLogger;
+import java.util.Map;
 
 @RegisteredService(value=ScriptEvaluator.class,
 parameters={@Parameter(name="language", value="Kotlin Script")})

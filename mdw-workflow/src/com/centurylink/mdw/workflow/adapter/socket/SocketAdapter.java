@@ -18,8 +18,8 @@ package com.centurylink.mdw.workflow.adapter.socket;
 import java.util.Map;
 import java.util.Properties;
 
-import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.adapter.AdapterException;
+import com.centurylink.mdw.adapter.ConnectionException;
 import com.centurylink.mdw.soccom.SoccomClient;
 import com.centurylink.mdw.soccom.SoccomException;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;

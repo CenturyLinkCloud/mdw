@@ -15,18 +15,14 @@
  */
 package com.centurylink.mdw.spring;
 
+import com.centurylink.mdw.cache.asset.AssetCache;
+import com.centurylink.mdw.model.asset.Asset;
+import org.springframework.core.io.AbstractResource;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.springframework.core.io.AbstractResource;
-
-import com.centurylink.mdw.cache.impl.AssetCache;
-import com.centurylink.mdw.model.asset.Asset;
-
-/**
- * TODO: move to mdw-services
- */
 public class WorkflowAssetSpringResource extends AbstractResource {
 
     private String assetPath;
@@ -35,28 +31,36 @@ public class WorkflowAssetSpringResource extends AbstractResource {
         this.assetPath = assetPath;
     }
 
-    public Asset getAsset() {
-        return AssetCache.getAsset(assetPath, Asset.SPRING);
+    public Asset getAsset() throws IOException {
+        return AssetCache.getAsset(assetPath);
     }
 
     @Override
     public String getDescription() {
-        return getAsset().getLabel();
+        try {
+            return getAsset().getLabel();
+        } catch (IOException ex) {
+            return ex.getMessage();
+        }
     }
 
     @Override
     public InputStream getInputStream() throws IOException {
-        return new ByteArrayInputStream(getAsset().getStringContent().getBytes());
+        return new ByteArrayInputStream(getAsset().getText().getBytes());
     }
 
     @Override
     public boolean exists() {
-        return getAsset() != null;
+        try {
+            return getAsset() != null;
+        } catch (IOException ex) {
+            return false;
+        }
     }
 
     @Override
     public long contentLength() throws IOException {
-        return getAsset().getStringContent().length();
+        return getAsset().getText().length();
     }
 
     private long lastModified;

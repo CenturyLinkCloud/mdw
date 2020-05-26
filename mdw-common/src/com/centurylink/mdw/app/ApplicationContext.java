@@ -15,25 +15,22 @@
  */
 package com.centurylink.mdw.app;
 
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.config.YamlPropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.container.ContextProvider;
 import com.centurylink.mdw.container.DataSourceProvider;
 import com.centurylink.mdw.container.JmsProvider;
-import com.centurylink.mdw.container.NamingProvider;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.container.plugin.CommonThreadPool;
 import com.centurylink.mdw.container.plugin.MdwDataSource;
 import com.centurylink.mdw.container.plugin.tomcat.TomcatDataSource;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.system.Server;
-import com.centurylink.mdw.model.system.ServerList;
 import com.centurylink.mdw.startup.StartupException;
 import com.centurylink.mdw.util.ClasspathUtil;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.yaml.YamlLoader;
 import org.apache.commons.lang.StringUtils;
 
 import javax.management.MBeanServer;
@@ -47,7 +44,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.Date;
-import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -55,7 +51,7 @@ import java.util.zip.ZipEntry;
 
 public class ApplicationContext {
 
-    private static NamingProvider namingProvider;
+    private static ContextProvider contextProvider;
     private static DataSourceProvider dataSourceProvider;
     private static JmsProvider jmsProvider;
     private static ThreadPoolProvider threadPoolProvider;
@@ -64,17 +60,17 @@ public class ApplicationContext {
     private static String appVersion = "Unknown";
     private static String mdwVersion;
     private static String mdwBuildTimestamp;
-    private static String serverHost;
     private static StandardLogger logger;
     private static String containerName = "";
 
-    public static NamingProvider getNamingProvider() {
-        return namingProvider;
+    public static ContextProvider getContextProvider() {
+        return contextProvider;
     }
 
     public static JmsProvider getJmsProvider() {
         return jmsProvider;
     }
+    @SuppressWarnings("unused")
     public void setJmsProvider(JmsProvider provider) {
         jmsProvider = provider;
     }
@@ -100,26 +96,22 @@ public class ApplicationContext {
         }
     }
 
-    private static boolean startedUp;
-    public static boolean isStartedUp() { return startedUp; }
-
     private static Date startupTime;
     public static Date getStartupTime() { return startupTime; }
 
     /**
      * Gets invoked when the server comes up
      */
-    public static void onStartup(String container, Object containerContext) {
+    public static void onStartup(String container) {
         try {
-            startedUp = false;
             logger = LoggerUtil.getStandardLogger();
             containerName = container;
 
             // use reflection to avoid build-time dependencies
             String pluginPackage = MdwDataSource.class.getPackage().getName() + "." + containerName.toLowerCase();
-            String namingProviderClass = pluginPackage + "." + containerName + "Naming";
-            namingProvider = Class.forName(namingProviderClass).asSubclass(NamingProvider.class).newInstance();
-            logger.info("Naming Provider: " + namingProvider.getClass().getName());
+            String contextProviderClass = pluginPackage + "." + containerName + "Context";
+            contextProvider = Class.forName(contextProviderClass).asSubclass(ContextProvider.class).newInstance();
+            logger.info("Container Context Provider: " + contextProvider.getClass().getName());
 
             String ds = PropertyManager.getProperty(PropertyNames.MDW_CONTAINER_DATASOURCE_PROVIDER);
             if (ds == null)
@@ -138,9 +130,9 @@ public class ApplicationContext {
             if (jms == null)
                 jms = PropertyManager.getProperty("mdw.container.jms_provider"); // compatibility
             if (StringUtils.isBlank(jms))
-                jms = JmsProvider.ACTIVEMQ;
+                jms = "ActiveMQ"; // TODO
 
-            if (JmsProvider.ACTIVEMQ.equals(jms)) {
+            if ("ActiveMQ".equals(jms)) {
                 if (jmsProvider == null) {
                     // use below to avoid build time dependency
                     jmsProvider = Class.forName("com.centurylink.mdw.container.plugin.activemq.ActiveMqJms").asSubclass(JmsProvider.class).newInstance();
@@ -169,7 +161,6 @@ public class ApplicationContext {
             }
             logger.info("Thread Pool Provider: " + threadPoolProvider.getClass().getName());
 
-            startedUp = true;
             startupTime = new Date();
         }
         catch (Exception ex) {
@@ -177,26 +168,6 @@ public class ApplicationContext {
         }
     }
 
-    /**
-     * Verifies a class
-     * @param className class name.
-     * @return boolean status
-     */
-    public static boolean verifyClass(String className){
-        try {
-            Class<?> cl = Class.forName(className);
-            cl.newInstance();
-            return true;
-        }
-        catch (Exception ex) {
-          logger.severeException("ApplicationContext: verifyClass(): General Exception occurred: " + ex.getMessage(), ex);
-          return false;
-        }
-    }
-
-    /**
-     * Returns the application name
-     */
     public static String getAppId() {
         if (appId != null)
             return appId;
@@ -208,54 +179,18 @@ public class ApplicationContext {
         return appId;
     }
 
-    public static String getServerHost() {
-        if (serverHost == null) {
-            try {
-                // unravel cloud deployment host name
-                String localIp = InetAddress.getLocalHost().getHostAddress();
-                for (Server server : getServerList().getServers()) {
-                    String host = server.getHost();
-                    if (host.equals("localhost")) {
-                        serverHost = host;
-                    }
-                    else if (host.indexOf('.') < 0) {
-                        // encourage fully-qualified domain names
-                        logger.severe("*** WARNING *** Use qualified host names in " + PropertyNames.MDW_SERVER_LIST);
-                    }
-                    for (InetAddress address : InetAddress.getAllByName(host)) {
-                        if (address.getHostAddress().equals(localIp)) {
-                            serverHost = host;
-                        }
-                    }
-                }
-                if (serverHost == null) {
-                    // fall back to the hostname as known locally
-                    serverHost = InetAddress.getLocalHost().getHostName();
-                }
-            }
-            catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
-            }
+    private static Server server;
+    public static Server getServer() throws Exception {
+        if (server == null) {
+            String host = InetAddress.getLocalHost().getHostName();
+            int port = getContextProvider().getServerPort();
+            server = new Server(host, port);
         }
-
-        return serverHost;
-    }
-
-    private static int serverPort = -1;
-    public static int getServerPort() {
-        if (serverPort == -1) {
-            try {
-                serverPort = getNamingProvider().getServerPort();
-            }
-            catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
-            }
-        }
-        return serverPort;
+        return server;
     }
 
     /**
-     * Returns the application version read from Spring Boot jar manifest
+     * Application version read from Spring Boot jar manifest
      */
     public static String getAppVersion() {
         return appVersion;
@@ -266,7 +201,7 @@ public class ApplicationContext {
     }
 
     /**
-     * Returns the MDW version read from mdw-common.jar's manifest file
+     * MDW version read from mdw-common.jar's manifest file
      */
     public static String getMdwVersion() {
         if (mdwVersion != null)
@@ -360,10 +295,6 @@ public class ApplicationContext {
         return mdwBuildTimestamp == null ? "" : mdwBuildTimestamp;
     }
 
-    public static void setMdwBuildTimestamp(String timestamp) {
-        mdwBuildTimestamp = timestamp;
-    }
-
     /**
      * Returns the web services URL
      */
@@ -381,10 +312,15 @@ public class ApplicationContext {
     public static String getLocalServiceAccessUrl() {
         if (localServiceAccessUrl == null) {
             localServiceAccessUrl = "http://localhost";
-            if (getServerPort() > 0)
-                localServiceAccessUrl += ":" + getServerPort();
-            if (!getServicesContextRoot().isEmpty())
-                localServiceAccessUrl += "/" + getServicesContextRoot();
+            try {
+                if (getServer().getPort() > 0)
+                    localServiceAccessUrl += ":" + getServer().getPort();
+                if (!getServicesContextRoot().isEmpty())
+                    localServiceAccessUrl += "/" + getServicesContextRoot();
+            }
+            catch (Exception ex) {
+                logger.severeException(ex.getMessage(), ex);
+            }
         }
         return localServiceAccessUrl;
     }
@@ -392,7 +328,12 @@ public class ApplicationContext {
     public static String getMdwHubUrl() {
         String url = PropertyManager.getProperty(PropertyNames.MDW_HUB_URL);
         if (StringUtils.isBlank(url) || url.startsWith("@")) {
-            url = "http://" + getServer() + "/mdw";
+            try {
+                url = "http://" + getServer() + "/mdw";
+            }
+            catch (Exception ex) {
+                logger.severeException(ex.getMessage(), ex);
+            }
         }
         if (url.endsWith("/"))
             url = url.substring(0, url.length()-1);
@@ -428,10 +369,6 @@ public class ApplicationContext {
 
     public static String getServicesContextRoot() {
         return getContextRoot(getServicesUrl());
-    }
-
-    public static Server getServer() {
-        return new Server(getServerHost(), getServerPort());
     }
 
     public static String getTempDirectory() {
@@ -498,10 +435,6 @@ public class ApplicationContext {
             return serviceUser;
     }
 
-    public static boolean isCloudFoundry() {
-         return System.getenv("VCAP_APPLICATION") != null;
-    }
-
     private static Boolean springBoot = null;
     public static boolean isSpringBoot() {
         if (springBoot == null) {
@@ -526,54 +459,9 @@ public class ApplicationContext {
         deployPath = path;
     }
 
-    private static ServerList serverList;
-    public static ServerList getServerList() {
-        if (serverList == null) {
-            if (PropertyManager.isYaml()) {
-                YamlLoader loader = ((YamlPropertyManager) PropertyManager.getInstance())
-                        .getLoader(PropertyNames.MDW_SERVERS);
-                if (loader != null) {
-                    serverList = new ServerList(loader.getMap(PropertyNames.MDW_SERVERS, loader.getTop()));
-                }
-            }
-            else {
-                List<String> hostPorts = PropertyManager.getListProperty(PropertyNames.MDW_SERVER_LIST);
-                if (hostPorts != null)
-                    serverList = new ServerList(hostPorts);
-            }
-            if (serverList == null)
-                serverList = new ServerList();
-        }
-        return serverList;
-    }
-
-    private static ServerList routingServerList;
-    public static ServerList getRoutingServerList() {
-        if (routingServerList == null) {
-            if (PropertyManager.isYaml()) {
-                YamlLoader loader = ((YamlPropertyManager) PropertyManager.getInstance())
-                        .getLoader(PropertyNames.MDW_ROUTING_SERVERS);
-                if (loader != null) {
-                    routingServerList = new ServerList(loader.getMap(PropertyNames.MDW_ROUTING_SERVERS, loader.getTop()));
-                }
-            }
-            else {
-                List<String> hostPorts = PropertyManager.getListProperty(PropertyNames.MDW_ROUTING_SERVER_LIST);
-                if (hostPorts != null)
-                    routingServerList = new ServerList(hostPorts);
-            }
-            if (routingServerList == null)
-                routingServerList = new ServerList();
-        }
-        return routingServerList;
-    }
-
     private static ClassLoader defaultClassLoader = ApplicationContext.class.getClassLoader();
-    public static ClassLoader setContextCloudClassLoader() {
-        return setContextCloudClassLoader(null);
-    }
 
-    public static ClassLoader setContextCloudClassLoader(com.centurylink.mdw.model.workflow.Package pkg) {
+    public static ClassLoader setContextPackageClassLoader(com.centurylink.mdw.model.workflow.Package pkg) {
         ClassLoader originalCL = null;
         try {
             if (pkg == null)
@@ -581,7 +469,7 @@ public class ApplicationContext {
 
             if (pkg != null) {
                 originalCL = Thread.currentThread().getContextClassLoader();
-                Thread.currentThread().setContextClassLoader(pkg.getCloudClassLoader());
+                Thread.currentThread().setContextClassLoader(pkg.getClassLoader());
             }
         }
         catch (Throwable ex) {

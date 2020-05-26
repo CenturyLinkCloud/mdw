@@ -20,8 +20,7 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.asset.AssetPackageList;
+import com.centurylink.mdw.model.asset.api.AssetPackageList;
 import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.user.Role;
@@ -130,13 +129,13 @@ public class Workflow extends JsonRestService {
                         json.put("archived", true);
                 }
                 else {
-                    process = ProcessCache.getProcess(segments[1] + "/" + segments[2], 0);
+                    process = ProcessCache.getProcess(segments[1] + "/" + segments[2]);
                 }
                 json.put("id", process.getId());
                 json.put("name", process.getName());
                 json.put("package", process.getPackageName());
                 json.put("version", process.getVersionString());
-                Process latest = ProcessCache.getProcess(process.getQualifiedName());
+                Process latest = ProcessCache.getProcess(process.getPath());
                 if (latest != null) {  // not deleted
                     if (HierarchyCache.hasMilestones(latest.getId())) {
                         json.put("hasMilestones", true);
@@ -154,6 +153,8 @@ public class Workflow extends JsonRestService {
                     }
                     if (segments.length == 5 || !segments[3].startsWith("v")) {
                         instanceId = Long.parseLong(segments.length == 5 ? segments[4] : segments[3]);
+                        if (!assetPath.endsWith(".proc"))
+                            assetPath += ".proc";
                         process = workflowServices.getInstanceDefinition(assetPath, instanceId);
                         if (process == null)
                             instanceId = null;  // to indicate instance override below
@@ -181,7 +182,7 @@ public class Workflow extends JsonRestService {
                     AssetVersionSpec startPageSpec = AssetVersionSpec.parse(assetSpec);
                     json.put("startPageUrl", new CustomPageLookup(startPageSpec, null).getUrl());
                 }
-                Process latest = ProcessCache.getProcess(process.getQualifiedName());
+                Process latest = ProcessCache.getProcess(process.getPath());
                 if (latest != null) {  // not deleted
                     if (HierarchyCache.hasMilestones(latest.getId())) {
                         json.put("hasMilestones", true);

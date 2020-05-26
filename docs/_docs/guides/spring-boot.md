@@ -131,7 +131,7 @@ title: Spring Boot
   bootJar {
       // Exclude assets from packaging to avoid NoClassDefFoundErrors
       // (do not overlap packages between src/main/java and assets).
-      def assetPackages = com.centurylink.mdw.util.file.Packages(file(assetLoc))
+      def assetPackages = com.centurylink.mdw.file.Packages(file(assetLoc))
       exclude {
           assetPackages.isAssetOutput(it.relativePath.toString())
       }

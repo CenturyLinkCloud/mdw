@@ -1,0 +1,71 @@
+description: Renamed from e:\workspaces\mdw\mdw-workflow\assets\com\centurylink\mdw\tests\ParentProc.proc
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=35,y=86,w=60,h=40
+  transitions:
+  - id: T1
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=139,ly=88,type=Elbow,xs=99&161,ys=106&106
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    DoNotNotifyCaller: 'false'
+    WORK_DISPLAY_INFO: x=463,y=90,w=60,h=40
+- id: A3
+  name: "Invoke\r\nJaxbDocument"
+  implementor: com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity
+  attributes:
+    variables: actionRequest=$actionRequest;assetDefinedJaxb=$assetDefinedJaxbIn
+    processversion: '[0.8,1)'
+    synchronous: 'TRUE'
+    processname: com.centurylink.mdw.tests.code/JaxbDocument
+    WORK_DISPLAY_INFO: x=165,y=74,w=101,h=70
+  transitions:
+  - id: T2
+    to: A4
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=299,ly=86,type=Elbow,xs=270&320,ys=109&109
+- id: A4
+  name: "Pull\r\nValues"
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=324,y=73,w=106,h=71
+    SCRIPT: Groovy
+    Rule: "import com.centurylink.mdw.common.service.types.Parameter;\r\n\r\noptionalElement = assetDefinedJaxbIn.getOptionalElement()\r\noptionalAttr = assetDefinedJaxbIn.getOptionalAttribute()\r\nactionName = actionRequest.getAction().getName()\r\ninsertedParam = null\r\nfor (Parameter param : actionRequest.getAction().getParameter()) {\r\n    if (param.getName().equals('insertedParam'))\r\n        insertedParam = param.getValue()\r\n}"
+  transitions:
+  - id: T3
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=443,ly=110,type=Elbow,xs=434&459,ys=110&110
+variables:
+  actionName:
+    type: java.lang.String
+    category: LOCAL
+  actionRequest:
+    type: javax.xml.bind.JAXBElement
+    category: INPUT
+  assetDefinedJaxbIn:
+    type: javax.xml.bind.JAXBElement
+    category: INPUT
+  insertedParam:
+    type: java.lang.String
+    category: LOCAL
+  optionalAttr:
+    type: java.lang.String
+    category: LOCAL
+  optionalElement:
+    type: java.lang.String
+    category: LOCAL
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  WORK_DISPLAY_INFO: x=27,y=21,w=207,h=27
+  PROCESS_VISIBILITY: PUBLIC

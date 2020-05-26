@@ -20,9 +20,8 @@ import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyException;
-import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.adapter.AdapterException;
+import com.centurylink.mdw.adapter.ConnectionException;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
@@ -143,7 +142,7 @@ public class LdapAdapter extends ObjectAdapterActivity {
     protected void handleAdapterSuccess(Object response) throws ActivityException, AdapterException {
 
         NamingEnumeration<SearchResult> results = (NamingEnumeration<SearchResult>) response;
-        Map<String,String> bindings = Attribute.parseMap(getAttributeValue(BINDINGS));
+        Map<String,String> bindings = getAttributes().getMap(BINDINGS);
         ldapResults = new HashMap<>();
 
         try {

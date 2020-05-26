@@ -15,7 +15,7 @@
  */
 package com.centurylink.mdw.kotlin
 
-import com.centurylink.mdw.cache.impl.PackageCache
+import com.centurylink.mdw.cache.asset.PackageCache
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.common.repl.InvokeWrapper
@@ -50,7 +50,7 @@ open class KotlinScriptEngine(
 ) : AbstractScriptEngine(), ScriptEngine {
 
     val logger = LoggerUtil.getStandardLogger()
-    
+
     override fun getFactory(): ScriptEngineFactory = kotlinFactory
 
     val scriptCompiler: ScriptCompiler by lazy {
@@ -63,7 +63,7 @@ open class KotlinScriptEngine(
     val scriptEvaluator: ScriptEvaluator by lazy {
         ScriptEvaluator(
                 templateClasspath,
-                PackageCache.getPackage(KOTLIN_PACKAGE).getCloudClassLoader(),
+                PackageCache.getPackage(KOTLIN_PACKAGE).getClassLoader(),
                 getScriptArgs(getContext(), scriptArgsTypes))
     }
 

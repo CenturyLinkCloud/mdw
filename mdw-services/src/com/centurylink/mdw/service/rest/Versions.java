@@ -3,7 +3,7 @@ package com.centurylink.mdw.service.rest;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.JsonList;
-import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.services.ServiceLocator;

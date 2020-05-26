@@ -20,12 +20,12 @@ activities:
   implementor: com.centurylink.mdw.workflow.adapter.rest.RestServiceAdapter
   attributes:
     EndpointUri: ${props['mdw.services.url']}/api/Users/${appUser}
-    HttpMethod: GET
     PostScriptLang: Groovy
-    PreScript: runtimeContext.logDebug("Executing " + runtimeContext.getActivity().getName())
     PreScriptLang: Groovy
+    PreScript: runtimeContext.logDebug("Executing " + runtimeContext.getActivity().getName())
     RESPONSE_VARIABLE: appUserResponse
     WORK_DISPLAY_INFO: x=244,y=160,w=129,h=62
+    HttpMethod: GET
   transitions:
   - id: T2
     to: A2
@@ -42,6 +42,5 @@ variables:
 attributes:
   ArrowStyle: ArrowEnd
   NodeStyle: BoxIcon
-  PROCESS_VISIBILITY: PUBLIC
-  PerformanceLevel: '0'
   WORK_DISPLAY_INFO: x=50,y=50,w=0,h=0
+  PROCESS_VISIBILITY: PUBLIC

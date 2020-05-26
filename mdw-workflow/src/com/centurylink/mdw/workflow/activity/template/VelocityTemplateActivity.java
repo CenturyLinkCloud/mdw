@@ -16,12 +16,10 @@
 package com.centurylink.mdw.workflow.activity.template;
 
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.annotations.Activity;
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.file.FileHelper;
@@ -33,6 +31,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.exception.ParseErrorException;
 
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.List;
@@ -96,16 +95,16 @@ public class VelocityTemplateActivity extends DefaultActivityImpl {
     protected void mergeTemplate() throws ActivityException {
         try {
             String temp = getAttributeValue(OUTPUTDOCS);
-            setOutputDocuments(temp == null ? new String[0] : Attribute.parseList(temp).toArray(new String[0]));
+            setOutputDocuments(getAttributes().containsKey(OUTPUTDOCS) ? getAttributes().getList(OUTPUTDOCS).toArray(new String[0]) : new String[0]);
 
             // get the template from the cache
-            Asset templateVO = getTemplate(templateName);
+            Asset template = getTemplate(templateName);
 
             // Get the template text from the AssetVO Object
-            String templateContent = templateVO.getStringContent();
+            String templateContent = template.getText();
 
             if (isLogDebugEnabled()) {
-                logDebug(templateVO.getDescription() + " Contains:\n" + templateContent);
+                logDebug(template.getLabel() + " Contains:\n" + templateContent);
             }
 
             VelocityContext context = createVelocityContext();
@@ -138,13 +137,15 @@ public class VelocityTemplateActivity extends DefaultActivityImpl {
     }
 
     protected Asset getTemplate(String name) throws ActivityException {
-        Asset template = null;
-
-        template = AssetCache.getAsset(name, Asset.VELOCITY);
-        if (template == null)
-          throw new ActivityException("Unable to load velocity template '" + name + "'");
-        else
-          return template;
+        try {
+            Asset template = AssetCache.getAsset(name);
+            if (template == null)
+                throw new ActivityException("Unable to load velocity template '" + name + "'");
+            else
+                return template;
+        } catch (IOException ex) {
+            throw new ActivityException(-1, "Error loading template " + name, ex);
+        }
     }
 
     protected void executeScript(String script) throws ActivityException {

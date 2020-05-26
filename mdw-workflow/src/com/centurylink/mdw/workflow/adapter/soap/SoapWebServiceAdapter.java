@@ -37,11 +37,11 @@ import org.w3c.dom.Node;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.config.PropertyException;
-import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.model.Response;
+import com.centurylink.mdw.adapter.AdapterException;
+import com.centurylink.mdw.adapter.ConnectionException;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.StringDocument;
-import com.centurylink.mdw.model.event.AdapterStubRequest;
+import com.centurylink.mdw.adapter.AdapterStubRequest;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.translator.VariableTranslator;

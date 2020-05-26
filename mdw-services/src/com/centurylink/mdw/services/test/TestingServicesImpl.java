@@ -15,6 +15,25 @@
  */
 package com.centurylink.mdw.services.test;
 
+import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
+import com.centurylink.mdw.model.asset.api.PackageAssets;
+import com.centurylink.mdw.services.AssetServices;
+import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.services.TestingServices;
+import com.centurylink.mdw.services.asset.AssetServicesImpl;
+import com.centurylink.mdw.test.*;
+import com.centurylink.mdw.util.file.FileHelper;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,54 +43,26 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.file.PackageDir;
-import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.asset.AssetInfo;
-import com.centurylink.mdw.model.asset.PackageAssets;
-import com.centurylink.mdw.services.AssetServices;
-import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.services.TestingServices;
-import com.centurylink.mdw.services.asset.AssetServicesImpl;
-import com.centurylink.mdw.test.PackageTests;
-import com.centurylink.mdw.test.TestCase;
-import com.centurylink.mdw.test.TestCaseItem;
-import com.centurylink.mdw.test.TestCaseList;
-import com.centurylink.mdw.test.TestExecConfig;
-import com.centurylink.mdw.util.file.FileHelper;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
-
 public class TestingServicesImpl implements TestingServices {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private AssetServices assetServices;
+    private final AssetServices assetServices;
 
     public TestingServicesImpl() {
         assetServices = new AssetServicesImpl();
     }
 
     public TestCaseList getTestCases() throws ServiceException {
-        return getTestCases(new String[] { Asset.getFileExtension(Asset.TEST).substring(1),
-                Asset.getFileExtension(Asset.POSTMAN).substring(1) });
+        return getTestCases(new String[] { "test", "postman" });
     }
 
-    public TestCaseList getTestCaseList(TestCase testCase) throws ServiceException {
+    public TestCaseList getTestCaseList(TestCase testCase) {
         AssetServices assetServices = ServiceLocator.getAssetServices();
-        PackageDir pkgDir = assetServices.getPackage(testCase.getPackage());
-        PackageTests pkgTests = new PackageTests(pkgDir);
-        List<PackageTests> packageTests = new ArrayList<PackageTests>();
+        PackageTests pkgTests = new PackageTests(testCase.getPackage());
+        List<PackageTests> packageTests = new ArrayList<>();
         packageTests.add(pkgTests);
-        List<TestCase> testCases = new ArrayList<TestCase>();
+        List<TestCase> testCases = new ArrayList<>();
         testCases.add(testCase);
         pkgTests.setTestCases(testCases);
         TestCaseList testCaseList = new TestCaseList(assetServices.getAssetRoot());
@@ -80,18 +71,18 @@ public class TestingServicesImpl implements TestingServices {
         return testCaseList;
     }
 
-    public TestCaseList getTestCases(String[] formats) throws ServiceException {
+    public TestCaseList getTestCases(String[] extensions) throws ServiceException {
         TestCaseList testCaseList = new TestCaseList(assetServices.getAssetRoot());
-        testCaseList.setPackageTests(new ArrayList<PackageTests>());
-        List<TestCase> allTests = new ArrayList<TestCase>();
-        Map<String,List<AssetInfo>> pkgAssets = assetServices.getAssetsOfTypes(formats);
+        testCaseList.setPackageTests(new ArrayList<>());
+        List<TestCase> allTests = new ArrayList<>();
+        Map<String,List<AssetInfo>> pkgAssets = assetServices.getAssetsWithExtensions(extensions);
         for (String pkgName : pkgAssets.keySet()) {
             List<AssetInfo> assets = pkgAssets.get(pkgName);
-            PackageTests pkgTests = new PackageTests(assetServices.getPackage(pkgName));
-            pkgTests.setTestCases(new ArrayList<TestCase>());
+            PackageTests pkgTests = new PackageTests(pkgName);
+            pkgTests.setTestCases(new ArrayList<>());
             for (AssetInfo asset : assets) {
                 TestCase testCase = new TestCase(pkgName, asset);
-                if (testCase.getAsset().isFormat(Asset.POSTMAN)) {
+                if (testCase.getAsset().getExtension().equals("postman")) {
                     try {
                         String json = new String(FileHelper.read(testCase.file()));
                         JSONObject coll = new JSONObject(json);
@@ -187,13 +178,12 @@ public class TestingServicesImpl implements TestingServices {
             }
             if (item != null) {
                 PackageAssets pkgAssets = assetServices.getAssets(pkg);
-                String yamlExt = Asset.getFileExtension(Asset.YAML);
                 File resultsDir = getTestResultsDir();
                 String rootName = item.getName().replace('/', '_');
                 if (meth != null)
                     rootName = meth + '_' + rootName;
                 for (AssetInfo pkgAsset : pkgAssets.getAssets()) {
-                    if (pkgAsset.getName().endsWith(yamlExt) && pkgAsset.getRootName().equals(rootName)) {
+                    if ("yaml".equals(pkgAsset.getExtension()) && pkgAsset.getRootName().equals(rootName)) {
                         item.setExpected(pkg + "/" + pkgAsset.getName());
                         if (resultsDir != null) {
                             if (new File(resultsDir + "/" + pkg + "/" + pkgAsset.getName()).isFile())
@@ -251,11 +241,10 @@ public class TestingServicesImpl implements TestingServices {
         String rootName = testCaseAsset.getRootName();
         TestCase testCase = new TestCase(pkg, testCaseAsset);
         PackageAssets pkgAssets = assetServices.getAssets(pkg, false);
-        String yamlExt = Asset.getFileExtension(Asset.YAML);
         File resultsDir = getTestResultsDir();
         // TODO: support specified (non-convention) expected results
         for (AssetInfo pkgAsset : pkgAssets.getAssets()) {
-            if (pkgAsset.getName().endsWith(yamlExt) && rootName.equals(pkgAsset.getRootName())) {
+            if ("yaml".equals(pkgAsset.getExtension()) && rootName.equals(pkgAsset.getRootName())) {
                 testCase.setExpected(pkg + "/" + pkgAsset.getName());
                 if (resultsDir != null) {
                     if (new File(resultsDir + "/" + pkg + "/" + pkgAsset.getName()).isFile())
@@ -270,7 +259,7 @@ public class TestingServicesImpl implements TestingServices {
 
     private void processResultsFile(File resultsFile, List<TestCase> testCases) throws Exception {
         String jsonString = new String(Files.readAllBytes(resultsFile.toPath()));
-        TestCaseList testCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JsonObject(jsonString));
+        TestCaseList testCaseList = new TestCaseList(new JsonObject(jsonString));
         for (TestCase testCase : testCases) {
             TestCase caseFromFile = testCaseList.getTestCase(testCase.getPath());
             if (caseFromFile != null) {
@@ -281,7 +270,7 @@ public class TestingServicesImpl implements TestingServices {
 
     private void processResultsFile(File resultsFile, final TestCase testCase) throws Exception {
         String jsonString = new String(Files.readAllBytes(resultsFile.toPath()));
-        TestCaseList testCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JsonObject(jsonString));
+        TestCaseList testCaseList = new TestCaseList(new JsonObject(jsonString));
         TestCase caseFromFile = testCaseList.getTestCase(testCase.getPath());
         if (caseFromFile != null) {
             addInfo(testCase, caseFromFile);
@@ -343,7 +332,7 @@ public class TestingServicesImpl implements TestingServices {
 
     public JSONObject getTestResultsJson() throws ServiceException, JSONException {
         try {
-            File file = getTestResultsFile(Asset.getFileExtension(Asset.TEST).substring(1));
+            File file = getTestResultsFile("test");
             if (!file.isFile())
                 throw new ServiceException(ServiceException.NOT_FOUND, "Results file not found: " + file);
             else if (!file.getName().endsWith(".json"))
@@ -360,7 +349,7 @@ public class TestingServicesImpl implements TestingServices {
         if (resultsDir == null)
             return null;
         String summaryFile = null;
-        if (format == null || Asset.getFileExtension(Asset.TEST).equals("." + format) || Asset.getFileExtension(Asset.POSTMAN).equals("." + format)) {
+        if (format == null || "test".equals(format) || "postman".equals(format)) {
             summaryFile = PropertyManager.getProperty(PropertyNames.MDW_TEST_SUMMARY_FILE);
             if (summaryFile == null)
                 summaryFile = "mdw-function-test-results.json";
@@ -376,10 +365,6 @@ public class TestingServicesImpl implements TestingServices {
 
     private static TestRunner testRunner;
     public void executeCases(TestCaseList testCaseList, String user, TestExecConfig config) throws ServiceException, IOException {
-        for (TestCase testCase : testCaseList.getTestCases()) {
-            if (testCase.getName().endsWith(Asset.getFileExtension(Asset.FEATURE)))
-                throw new ServiceException(ServiceException.BAD_REQUEST, "Cucumber test cases currently not supported: " + testCase.getPath());
-        }
         if (testRunner == null) {
             testRunner = new TestRunner();
         }

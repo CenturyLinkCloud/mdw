@@ -21,8 +21,8 @@ import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
-import com.centurylink.mdw.cache.impl.AssetCache;
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
@@ -46,8 +46,6 @@ import java.util.*;
 
 @RegisteredService(CacheService.class)
 public class DroolsKnowledgeBaseCache implements PreloadableCache  {
-
-    private static final String[] LANGUAGES = new String[] {Asset.DROOLS, Asset.EXCEL, Asset.EXCEL_2007, Asset.GUIDED};
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static volatile Map<String,KnowledgeBaseAsset> kbaseMap = Collections.synchronizedMap(new TreeMap<String,KnowledgeBaseAsset>());
@@ -178,35 +176,35 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
         }
 
         String rules = null;
-        String format = asset.getLanguage();
+        String extension = asset.getExtension();
         String name = asset.getName();
 
-        if (format.equals(Asset.EXCEL) || format.equals(Asset.EXCEL_2007) || format.equals(Asset.CSV)) {
+        if (extension.equals("xls") || extension.equals("xlsx") || extension.equals("csv")) {
             // decision table XLS, XLSX or CSV
             byte[] decodeBytes = asset.getContent();
 
             // modifier for decision table must be worksheet name
             DecisionTableProvider dtProvider = new DecisionTableProvider();
             if (key.modifier == null)
-                rules = dtProvider.loadFromInputStream(new ByteArrayInputStream(decodeBytes), format);
+                rules = dtProvider.loadFromInputStream(new ByteArrayInputStream(decodeBytes), extension);
             else
-                rules = dtProvider.loadFromInputStream(new ByteArrayInputStream(decodeBytes), format, key.modifier);
+                rules = dtProvider.loadFromInputStream(new ByteArrayInputStream(decodeBytes), extension, key.modifier);
 
             if (Compatibility.hasCodeSubstitutions())
                 rules = doCompatibilityCodeSubstitutions(asset.getLabel(), rules);
             if (logger.isDebugEnabled())
-                logger.debug("Converted rule for " + asset.getDescription() + ":\n" + rules + "\n================================");
+                logger.debug("Converted rule for " + asset.getLabel() + ":\n" + rules + "\n================================");
 
             name = name.substring(0, name.lastIndexOf('.')) + ".drl";
         }
-        else if (format.equals(Asset.DROOLS) || format.equals(Asset.GUIDED)) {
+        else if (extension.equals("drl") || extension.equals("brl")) {
             // drools DRL or BRL
-            rules = asset.getStringContent();
+            rules = asset.getText();
             if (Compatibility.hasCodeSubstitutions())
                 rules = doCompatibilityCodeSubstitutions(asset.getLabel(), rules);
         }
         else {
-            throw new CachingException("Unsupported rules format '" + format + "' for " + asset.getDescription());
+            throw new CachingException("Unsupported rules extension '" + extension + "' for " + asset.getLabel());
         }
 
         KieServices kieServices = KieServices.Factory.get();
@@ -219,9 +217,9 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
         KieBuilder kieBuilder = kieServices.newKieBuilder(kfs, key.loader).buildAll();
         Results results = kieBuilder.getResults();
         if(results.hasMessages(Message.Level.ERROR)) {
-            if (format.equals(Asset.EXCEL) || format.equals(Asset.EXCEL_2007)) {
+            if (extension.equals("xls") || extension.equals("xlsx")) {
                 // log the converted rules
-                logger.severe("Converted rule for " + asset.getDescription() + ":\n" + rules + "\n================================");
+                logger.severe("Converted rule for " + asset.getLabel() + ":\n" + rules + "\n================================");
             }
             throw new CachingException("Error parsing knowledge base from rules for " + asset.getLabel() + "\n" + results.getMessages());
         }
@@ -245,7 +243,7 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
             }
             else {
                 Package thisPkg = PackageCache.getPackage(DroolsKnowledgeBaseCache.class.getPackage().getName());
-                properties.load(thisPkg.getCloudClassLoader().getResourceAsStream("drools.packagebuilder.conf"));
+                properties.load(thisPkg.getClassLoader().getResourceAsStream("drools.packagebuilder.conf"));
             }
             for (Object key : properties.keySet())
                 System.setProperty(key.toString(), (String)properties.get(key));
@@ -253,7 +251,7 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
         return properties;
     }
 
-    public static Asset getAsset(Key key) {
+    public static Asset getAsset(Key key) throws IOException {
         Asset asset = null;
 
         if (key.drlVersionSpec != null) {
@@ -263,8 +261,7 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
             return asset;
 
         String assetName = key.name == null ? key.drlVersionSpec.getQualifiedName() : key.name;
-
-        return AssetCache.getAsset(assetName, LANGUAGES);
+        return AssetCache.getAsset(assetName);
     }
 
 

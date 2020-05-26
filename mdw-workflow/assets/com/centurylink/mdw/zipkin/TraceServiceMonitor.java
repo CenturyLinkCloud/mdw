@@ -8,7 +8,7 @@ import brave.http.HttpTracing;
 import brave.propagation.TraceContext;
 import com.centurylink.mdw.annotations.Monitor;
 import com.centurylink.mdw.common.MdwException;
-import com.centurylink.mdw.model.Response;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.monitor.ServiceMonitor;
 

@@ -230,17 +230,17 @@ public class ProcessInstance implements Jsonable, Linkable {
                 comment = null;
             else
                 comment = origComment.split("\\|")[0];
-            processInstanceDefId = Long.parseLong(origComment.split("\\|")[2]);
+            instanceDefinitionId = Long.parseLong(origComment.split("\\|")[2]);
         }
         return comment;
     }
     public void setComment(String s) { comment = s; }
 
-    private long processInstanceDefId = 0L;
-    public long getProcessInstDefId() {
-        if (processInstanceDefId == 0L)
+    private long instanceDefinitionId = 0L;
+    public long getInstanceDefinitionId() {
+        if (instanceDefinitionId == 0L)
             getComment();  // This parses the comment for instance definition
-        return processInstanceDefId;
+        return instanceDefinitionId;
     }
 
     private List<ActivityInstance> activities;
@@ -317,8 +317,8 @@ public class ProcessInstance implements Jsonable, Linkable {
         JSONObject json = create();
         // summary info (for ProcessLists)
         json.put("id", this.id);
-        if (getProcessInstDefId() > 0L)
-            json.put("instanceDefinitionId", getProcessInstDefId());
+        if (getInstanceDefinitionId() > 0L)
+            json.put("instanceDefinitionId", getInstanceDefinitionId());
         if (masterRequestId != null)
             json.put("masterRequestId", masterRequestId);
         if (solutionId != null)

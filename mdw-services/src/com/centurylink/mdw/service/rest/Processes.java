@@ -52,6 +52,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.ws.rs.Path;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
@@ -136,13 +137,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                         return log.getJson();
                     }
                     else {
-                        JSONObject json;
-                        if (query.getBooleanFilter("shallow"))
-                            json = ServiceLocator.getProcessServices().getInstanceShallow(id).getJson();
-                        else if (query.getBooleanFilter("nosubs"))
-                            json = workflowServices.getProcess(id).getJson();
-                        else
-                            json = getProcess(id).getJson();
+                        JSONObject json = getProcess(id).getJson();
                         json.put("retrieveDate", DateHelper.serviceDateToString(DatabaseAccess.getDbDate()));
                         return json;
                     }
@@ -203,24 +198,6 @@ public class Processes extends JsonRestService implements JsonExportable {
                     if (callHierarchyFor != -1) {
                         Linked<ProcessInstance> linkedInstance = ServiceLocator.getWorkflowServices().getCallHierearchy(callHierarchyFor);
                         return linkedInstance.getJson(1);
-                    }
-                    else if ("designer".equals(query.getFilter("mdw-app"))) {
-                        // designer compatibility service
-                        try {
-                            Map<String,String> criteria = getCriteria(headers);
-                            Map<String,String> variables = getParameters(headers);
-                            variables = getVariables(variables);
-
-                            int pageIndex = headers.get("pageIndex") == null ? 0 : Integer.parseInt(headers.get("pageIndex"));
-                            int pageSize = headers.get("pageSize") == null ? 0 : Integer.parseInt(headers.get("pageSize"));
-                            String orderBy = headers.get("orderBy");
-
-                            ProcessList procList = ServiceLocator.getProcessServices().getInstances(criteria, variables, pageIndex, pageSize, orderBy);
-                            return procList.getJson();
-                        }
-                        catch (Exception ex) {
-                            throw new ServiceException(ex.getMessage(), ex);
-                        }
                     }
                     else {
                         // general process instance list query
@@ -368,7 +345,7 @@ public class Processes extends JsonRestService implements JsonExportable {
                 }
                 else {
                     String procPath = segments[2] + "/" + segments[3];
-                    proc = ProcessCache.getProcess(procPath, 0);
+                    proc = ProcessCache.getProcess(procPath);
                     if (proc == null)
                         throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + procPath);
                 }
@@ -527,10 +504,14 @@ public class Processes extends JsonRestService implements JsonExportable {
 
     @Path("/run/{definitionId}")
     public ProcessRun getProcessRun(Long definitionId, String authUser) throws ServiceException {
-        Process definition = getDesignServices().getProcessDefinition(definitionId);
-        if (definition == null)
-            throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + definitionId);
-        return getProcessRun(definition, authUser);
+        try {
+            Process definition = getDesignServices().getProcessDefinition(definitionId);
+            if (definition == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Process definition not found: " + definitionId);
+            return getProcessRun(definition, authUser);
+        } catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error loading process " + definitionId, ex);
+        }
     }
 
     @Path("/run/{package}/{process}")

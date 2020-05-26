@@ -4,7 +4,6 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DbAccess;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.InternalEvent;
@@ -102,7 +101,7 @@ public class FallbackProcessor {
     public Map<String,String> getEvents() throws ServiceException {
         if (events == null) {
             events = new HashMap<>();
-            List<String[]> eventSpecs = Attribute.parseTable(activity.getAttribute(eventNamesAttribute), ',', ';', 3);
+            List<String[]> eventSpecs = activity.getAttributes().getTable(eventNamesAttribute, ',', ';', 3);
             ProcessRuntimeContext runtimeContext = getWorkflowServices().getContext(activityInstance.getProcessInstanceId());
             for (String[] eventSpec : eventSpecs) {
                 String eventName = runtimeContext.evaluateToString(eventSpec[0]);

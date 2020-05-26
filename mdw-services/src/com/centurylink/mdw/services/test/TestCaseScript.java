@@ -19,7 +19,7 @@ import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
@@ -129,7 +129,7 @@ public abstract class TestCaseScript extends Script {
         Asset asset = asset(assetPath);
         if (asset == null)
             throw new TestException("API test case asset not found: " + assetPath);
-        TestCase apiTestCase = new TestCase(asset.getPackageName(), new AssetInfo(asset.file()));
+        TestCase apiTestCase = new TestCase(asset.getPackageName(), new AssetInfo(asset.getName()));
         try {
             String itemPath = asset.getPackageName() + "/" + asset.getName() + "/"
                     + target.substring(dotPostmanSlash + 9).replace('/', '~');
@@ -327,14 +327,13 @@ public abstract class TestCaseScript extends Script {
      */
     public Asset getDefaultExpectedResults() throws TestException {
         String testAssetName = getTestCaseRun().getTestCase().getName();
-        String resultsAssetName = testAssetName.substring(0, testAssetName.lastIndexOf('.')) + Asset.getFileExtension(Asset.YAML);
+        String resultsAssetName = testAssetName.substring(0, testAssetName.lastIndexOf('.')) + ".yaml";
         if (getTestCaseRun().isCreateReplace()) {
             // asset will be created
-            Asset expectedResults = new Asset();
-            expectedResults.setName(resultsAssetName);
             String testAssetFile = getTestCaseRun().getTestCase().getAsset().getFile().toString();
-            File file = new File(testAssetFile.substring(0, testAssetFile.lastIndexOf('.')) + Asset.getFileExtension(Asset.YAML));
-            expectedResults.setRawFile(file);
+            File file = new File(testAssetFile.substring(0, testAssetFile.lastIndexOf('.')) + ".yaml");
+            Asset expectedResults = new Asset(getTestCaseRun().getTestCase().getPackage(), file.getName(), 1, file);
+            expectedResults.setFile(file);
             return expectedResults;
         }
         else {
@@ -359,7 +358,7 @@ public abstract class TestCaseScript extends Script {
 
     public TestCaseResponse send(Asset asset) throws TestException {
         syncMasterRequestId();
-        return send(message(asset.getStringContent()));
+        return send(message(asset.getText()));
     }
 
     public TestCaseResponse send(TestCaseMessage message) throws TestException {
@@ -663,7 +662,7 @@ public abstract class TestCaseScript extends Script {
 
     @Deprecated
     public File file(String name) throws TestException {
-        return asset(name).getRawFile();
+        return asset(name).getFile();
     }
 
     public Asset asset(String path) throws TestException {
@@ -708,7 +707,7 @@ public abstract class TestCaseScript extends Script {
     }
 
     public boolean isHasTestingPackage() throws TestException {
-        return asset("com.centurylink.mdw.testing/readme.md").getRawFile().exists();
+        return asset("com.centurylink.mdw.testing/readme.md").getFile().exists();
     }
 
     public void logLine(String message) {

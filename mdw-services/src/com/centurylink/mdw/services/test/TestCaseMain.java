@@ -37,7 +37,7 @@ import com.centurylink.mdw.util.HttpHelper;
 
 public class TestCaseMain {
     /**
-     * Execute a test case in standalone mode (for Designer debug).
+     * Execute a test case in standalone mode (for client debug).
      * Takes a single argument: testCasePath.
      * TODO: Refactor when implementing Gradle test run task.
      */

@@ -20,8 +20,8 @@ import java.util.Map;
 import org.json.JSONException;
 
 import com.centurylink.mdw.activity.types.AdapterActivity;
-import com.centurylink.mdw.model.event.AdapterStubRequest;
-import com.centurylink.mdw.model.event.AdapterStubResponse;
+import com.centurylink.mdw.adapter.AdapterStubRequest;
+import com.centurylink.mdw.adapter.AdapterStubResponse;
 import com.centurylink.mdw.model.workflow.ActivityStubRequest;
 import com.centurylink.mdw.model.workflow.ActivityStubResponse;
 import com.centurylink.mdw.services.test.StubServer.Stubber;

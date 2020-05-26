@@ -4,7 +4,7 @@ send message {
     payload = '''<ser:ActionRequest xmlns:ser="http://mdw.centurylink.com/services">
   <Action Name="RegressionTest">
     <Parameter name="MasterRequestId">${masterRequestId}</Parameter>
-    <Parameter name="ProcessName">com.centurylink.mdw.tests.workflow/MDWTestProcessAsService</Parameter>
+    <Parameter name="ProcessName">com.centurylink.mdw.tests.workflow/TestProcessAsService</Parameter>
     <Parameter name="processCase">GetOrder</Parameter>
     <Parameter name="PerformanceLevel">5</Parameter>
     <Parameter name="order"><![CDATA[<order>
@@ -18,4 +18,4 @@ send message {
 verify response {
     expected = "<orderId>X000002</orderId>"
 }
-verify process("com.centurylink.mdw.tests.workflow/MDWTestProcessAsService")
+verify process("com.centurylink.mdw.tests.workflow/TestProcessAsService")

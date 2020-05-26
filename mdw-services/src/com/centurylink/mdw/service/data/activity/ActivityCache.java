@@ -17,13 +17,13 @@ package com.centurylink.mdw.service.data.activity;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.cache.CacheService;
-import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,14 +38,14 @@ public class ActivityCache implements CacheService {
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
     private static Map<String,List<Activity>> activities = new HashMap<>();
 
-    public static List<Activity> getActivities(String implementor) throws DataAccessException {
+    public static List<Activity> getActivities(String implementor) throws IOException {
         return getActivities(implementor, false);
     }
 
     /**
      * Find activities in process defs with the specified implementor class.
      */
-    public static List<Activity> getActivities(String implementor, boolean withArchived) throws DataAccessException {
+    public static List<Activity> getActivities(String implementor, boolean withArchived) throws IOException {
         synchronized (ActivityCache.class) {
             List<Activity> matchingActivities = activities.get(implementor);
             if (matchingActivities == null) {
@@ -56,7 +56,7 @@ public class ActivityCache implements CacheService {
         }
     }
 
-    private static List<Activity> loadActivities(String implementor, boolean withArchived) throws DataAccessException {
+    private static List<Activity> loadActivities(String implementor, boolean withArchived) throws IOException {
         List<Activity> loadedActivities = new ArrayList<>();
         long before = System.currentTimeMillis();
         List<Process> processes = ProcessCache.getProcesses(withArchived);

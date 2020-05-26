@@ -22,7 +22,6 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.workflow.WorkStatus;
-import com.centurylink.mdw.services.workflow.RoundRobinScheduledJob;
 import com.centurylink.mdw.timer.cleanup.ScriptRunner;
 import com.centurylink.mdw.util.CallURL;
 import com.centurylink.mdw.util.file.FileHelper;
@@ -31,33 +30,17 @@ import com.centurylink.mdw.util.log.StandardLogger;
 
 import java.io.*;
 import java.sql.*;
-import java.util.Properties;
 
 /**
  * This script cleans up old database entries from tables that are older than a specified time
  * Make sure appropriate db package is imported and Cleanup-Runtime.sql is there.
- * Add following to mdw.yaml
- timer.task:
- ProcessCleanup: # run every 15 min
- TimerClass: com.centurylink.mdw.timer.cleanup.ProcessCleanup
- Schedule: 0,15,30,45 * * * *    # to run daily at 2:30 am use : Schedule: 30 2 * * ? *
- RuntimeCleanupScript: Cleanup-Runtime.sql
- ProcessExpirationAgeInDays: 225 #How old process instance should be to be a candidate for deleting
- MaximumProcessExpiration: 1  #How many process instances to be deleted in each run
- ExternalEventExpirationAgeInDays: 225
- CommitInterval: 1000
- * if you need to make change in above properties then first delete the db entry by identifying the row using
- * this sql:  select * from event_instance where event_name like '%ScheduledJob%'
- * Then re-start the server/instance for new clean-up properties to be effective.
+ * See the MDW configuration guide (search for cleanupscheduler):
+ * https://centurylinkcloud.github.io/mdw/docs/guides/configuration/
  */
-//Moved this class to base package to enable the process clean up to delete the data from DB
-//added the @scheduledjob to enable it by default
 @ScheduledJob(value="ProcessCleanup", schedule="${props['mdw.cleanup.job.cleanupscheduler']}", enabled="${props['mdw.cleanup.job.enabled']}", defaultEnabled= false, isExclusive=true)
-public class ProcessCleanup extends RoundRobinScheduledJob implements com.centurylink.mdw.model.monitor.ScheduledJob  {
+public class ProcessCleanup implements com.centurylink.mdw.model.monitor.ScheduledJob  {
 
     private StandardLogger logger;
-
-
 
     /**
      * Default Constructor
@@ -83,14 +66,13 @@ public class ProcessCleanup extends RoundRobinScheduledJob implements com.centur
         if (PropertyManager.isYaml())
         {
             try {
-                Properties cleanupTaskProperties = PropertyManager.getInstance().getProperties(PropertyNames.MDW_TIMER_TASK);
                 processExpirationDays = PropertyManager.getIntegerProperty("mdw.cleanup.job.ProcessExpirationAgeInDays", 180);
-                    maxProcesses = PropertyManager.getIntegerProperty("mdw.cleanup.job.maxProcesses", 0);
-                    eventExpirationDays = PropertyManager.getIntegerProperty("mdw.cleanup.job.eventExpirationDays", 180);
-                    commitInterval = PropertyManager.getIntegerProperty("mdw.cleanup.job.commitInterval", 10000);
-                    cleanupScript = PropertyManager.getProperty("mdw.cleanup.job.RuntimeCleanupScript","Cleanup-Runtime.sql" );
+                maxProcesses = PropertyManager.getIntegerProperty("mdw.cleanup.job.maxProcesses", 0);
+                eventExpirationDays = PropertyManager.getIntegerProperty("mdw.cleanup.job.eventExpirationDays", 180);
+                commitInterval = PropertyManager.getIntegerProperty("mdw.cleanup.job.commitInterval", 10000);
+                cleanupScript = PropertyManager.getProperty("mdw.cleanup.job.RuntimeCleanupScript","Cleanup-Runtime.sql" );
             } catch (PropertyException e) {
-                logger.info("ProcessCleanup.run() : Properties not found" + e.getMessage());
+                logger.error(e.getMessage(), e);
             }
         }
         else {

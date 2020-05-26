@@ -21,9 +21,9 @@ activities:
     Valid?
   implementor: com.centurylink.mdw.workflow.activity.validate.SwaggerValidatorActivity
   attributes:
+    WORK_DISPLAY_INFO: x=228,y=117,w=111,h=74
     Strict: 'true'
     Validate: '["Body"]'
-    WORK_DISPLAY_INFO: x=228,y=117,w=111,h=74
   transitions:
   - id: T2
     to: A2
@@ -56,10 +56,10 @@ variables:
     type: java.util.Map<String,String>
     category: OUTPUT
 attributes:
-  ArrowStyle: ArrowEnd
   NodeStyle: BoxIcon
-  PROCESS_VISIBILITY: SERVICE
-  WORK_DISPLAY_INFO: x=50,y=38,w=69,h=27
   requestMethod: POST
   requestParameters: '[["person","Body","true","Person","com.centurylink.mdw.tests.workflow/Person.java"]]'
+  ArrowStyle: ArrowEnd
+  WORK_DISPLAY_INFO: x=50,y=38,w=69,h=27
+  PROCESS_VISIBILITY: SERVICE
   requestPath: Person

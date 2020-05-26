@@ -18,10 +18,10 @@ package com.centurylink.mdw.service.rest;
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.app.Templates;
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.model.asset.Pagelet;
 import com.centurylink.mdw.model.asset.Pagelet.Widget;
 import com.centurylink.mdw.model.asset.PrePostWidgetProvider;
@@ -110,7 +110,7 @@ public class Implementors extends JsonRestService {
                         Asset pageletAsset = AssetCache.getAsset(pageletAssetPath);
                         if (pageletAsset == null)
                             throw new FileNotFoundException("No pagelet asset: " + pageletAssetPath);
-                        pageletStr = pageletAsset.getStringContent();
+                        pageletStr = pageletAsset.getText();
                     }
                     Pagelet pagelet = new Pagelet(impl.getCategory(), pageletStr);
                     pagelet.addWidgetProvider(new PrePostWidgetProvider());

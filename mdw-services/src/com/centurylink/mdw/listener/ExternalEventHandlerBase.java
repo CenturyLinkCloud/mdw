@@ -15,41 +15,36 @@
  */
 package com.centurylink.mdw.listener;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.xmlbeans.XmlObject;
-
 import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.cache.impl.AssetCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.event.ExternalEventHandler;
-import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.event.EventInstance;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.variable.DocumentReference;
-import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.process.ProcessCache;
-import com.centurylink.mdw.services.EventServices;
-import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
+import com.centurylink.mdw.services.request.Acknowledgement;
+import com.centurylink.mdw.services.request.BaseHandler;
+import com.centurylink.mdw.services.request.ErrorResponse;
 import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.xml.XmlPath;
+import org.apache.xmlbeans.XmlObject;
+
+import java.io.IOException;
+import java.util.Map;
 
 /**
- * This class provides API functions for external event handlers.
- * All external event handlers should extend this base class if they need to access
- * framework components.
+ * @deprecated
+ * extend {@link com.centurylink.mdw.services.request.BaseHandler}
  */
-public abstract class ExternalEventHandlerBase implements ExternalEventHandler {
+public abstract class ExternalEventHandlerBase extends BaseHandler implements ExternalEventHandler {
 
     protected static StandardLogger logger = LoggerUtil.getStandardLogger();
 
@@ -66,7 +61,7 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler {
      * @throws Exception The most common exception is that no process exists for the given name.
      */
     protected Long getProcessId(String procname) throws Exception {
-        Process proc = ProcessCache.getProcess(procname, 0);
+        Process proc = ProcessCache.getProcess(procname);
         if (proc == null)
             throw new DataAccessException(0, "Cannot find process with name "
                     + procname + ", version 0");
@@ -79,7 +74,7 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler {
      * @param processId Process definition ID
      * @return memory representation of the process definition
      */
-    protected Process getProcessDefinition(Long processId) {
+    protected Process getProcessDefinition(Long processId) throws IOException {
         return ProcessCache.getProcess(processId);
     }
 
@@ -87,67 +82,9 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler {
     public Package getPackage() { return pkg; }
     public void setPackage(Package pkg) { this.pkg = pkg; }
 
-    /**
-     * This method is used to start a regular process.
-     * You should use invokeProcessAsService for invoking service processes.
-     * Documents must be passed as DocumentReferences.
-     * @see {@link #invokeProcess(Long, Long, String, Map<String,String>)}
-     *
-     * @param processId Process definition ID of the process
-     * @param eventInstId The ID of the external message triggering the handler
-     * @param masterRequestId Master request ID to be assigned to the process instance
-     * @param parameters Input parameter bindings for the process instance to be created
-     * @param headers request headers
-     */
-    protected Long launchProcess(Long processId, Long eventInstId, String masterRequestId,
-            Map<String,Object> parameters, Map<String,String> headers) throws Exception {
-        Map<String,String> stringParams = translateParameters(processId, parameters);
-        ProcessEngineDriver driver = new ProcessEngineDriver();
-        return driver.startProcess(processId, masterRequestId, OwnerType.DOCUMENT, eventInstId, stringParams, headers);
-    }
-
-    protected Long launchProcess(Long processId, Long eventInstId, String masterRequestId,
+    protected Long launchProcess(Long processId, Long requestId, String masterRequestId,
             Map<String,Object> parameters) throws Exception {
-        return launchProcess(processId, eventInstId, masterRequestId, parameters, (Map<String,String>)null);
-    }
-
-    /**
-     * This method is used to wake up existing process instances.
-     *
-     * @param eventName this is used to search for which process instances to inform
-     * @param eventInstId ID of the external event instance
-     * @param params parameters to be passed along with the RESUME message to the
-     *      waiting activity instances.
-     *      Important note: if the event may arrive before event wait registration,
-     *      you should not attempt to use this field, as the data is not recorded in EVENT_LOG.
-     * @param recordInEventLog when true, the event is logged in EVENT_LOG. You will
-     *      need to set it to true if the event may arrive before event wait registration.
-     *      When it is true, you should not attempt to use the parameters params,
-     *      as those are not available when the event arrives prior to event wait registration.
-     *      The alternative is to use external event table to record the message,
-     *      and use that message to populate variable instances in the activity to be resumed.
-     *
-     * @return Can be EventWaitInstance.RESUME_STATUS_SUCCESS,
-     *      EventWaitInstance.RESUME_STATUS_PARTIAL_SUCCESS,
-     *      EventWaitInstance.RESUME_STATUS_NO_WAITERS,
-     *      or EventWaitInstance.RESUME_STATUS_FAILURE
-     */
-    protected Integer notifyProcesses(String eventName, Long eventInstId,
-            String message, int delay)
-    {
-        Integer status;
-        try {
-            EventServices eventManager = ServiceLocator.getEventServices();
-            status = eventManager.notifyProcess(
-                    eventName,
-                    eventInstId,            // document ID
-                    message,
-                    delay);
-        } catch (Exception e) {
-            logger.severeException(e.getMessage(), e);
-            status = EventInstance.RESUME_STATUS_FAILURE;
-        }
-        return status;
+        return launchProcess(processId, requestId, masterRequestId, parameters, (Map<String,String>)null);
     }
 
     /**
@@ -171,9 +108,8 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler {
      *    c. use 3.
      * For additional information, see javadoc for ProcessEngineDriver:invokeService
      *
-     * @param process the process definition. You can use {@link #getProcessDefinition(Long)}
-     *      to retrieve the process definition from a process ID.
-     * @param eventInstId external event instance ID
+     * @param processId the process definition id.
+     * @param requestId external event instance ID
      * @param masterRequestId master request ID
      * @param masterRequest the request content
      * @param parameters Input parameter bindings for the process instance to be created
@@ -182,12 +118,12 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler {
      * @param headers requestHeaders
      * @return response message, which is obtained from the response variable
      */
-    protected String invokeServiceProcess(Long processId, Long eventInstId, String masterRequestId,
+    protected String invokeServiceProcess(Long processId, Long requestId, String masterRequestId,
             String masterRequest, Map<String,Object> parameters, String responseVarName,
             int performanceLevel, Map<String,String> headers) throws Exception {
-        Map<String,String> stringParams = translateParameters(processId, parameters);
+        Map<String,String> stringParams = translateInputValues(processId, parameters);
         ProcessEngineDriver engineDriver = new ProcessEngineDriver();
-        return engineDriver.invokeService(processId, OwnerType.DOCUMENT, eventInstId, masterRequestId,
+        return engineDriver.invokeService(processId, OwnerType.DOCUMENT, requestId, masterRequestId,
                 masterRequest, stringParams, responseVarName, performanceLevel, null, null, headers);
     }
 
@@ -201,9 +137,9 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler {
         return invokeServiceProcess(processId, eventInstId, masterRequestId, masterRequest, parameters, responseVarName, perfLevel, null);
     }
 
-    protected String invokeServiceProcess(Long processId, Long eventInstId, String masterRequestId,
+    protected String invokeServiceProcess(Long processId, Long requestId, String masterRequestId,
             String masterRequest, Map<String,Object> parameters, String responseVarName) throws Exception {
-        return invokeServiceProcess(processId, eventInstId, masterRequestId, masterRequest, parameters, responseVarName, 0, null);
+        return invokeServiceProcess(processId, requestId, masterRequestId, masterRequest, parameters, responseVarName, 0, null);
     }
 
     /**
@@ -221,13 +157,14 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler {
      * @return
      */
     protected String createResponseMessage(Exception e, String request, Object msgdoc, Map<String,String> metaInfo) {
-        ListenerHelper helper = new ListenerHelper();
+        Response response;
         if (e instanceof ServiceException)
-            return helper.createErrorResponse(request, metaInfo, (ServiceException)e).getContent();
+            response = new ErrorResponse(request, metaInfo, (ServiceException)e);
         else if (e != null)
-            return helper.createErrorResponse(request, metaInfo, new ServiceException(ServiceException.INTERNAL_ERROR, e.getMessage())).getContent();
+            response = new ErrorResponse(request, metaInfo, new ServiceException(ServiceException.INTERNAL_ERROR, e.getMessage()));
         else
-            return helper.createAckResponse(request, metaInfo);
+            response = new Acknowledgement(request, metaInfo);
+        return response.getContent();
     }
 
     /**
@@ -304,45 +241,6 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler {
         helper.updateDocumentContent(docref, doc, type, getPackage());
     }
 
-    /**
-     * Converts input params to Map<String,String> needed by the runtime engine.
-     * Values in the parameter map must not be null.
-     */
-    protected Map<String,String> translateParameters(Long processId, Map<String,Object> parameters)
-    throws EventHandlerException {
-        Map<String,String> stringParams = new HashMap<String,String>();
-        if (parameters != null) {
-            Process process = getProcessDefinition(processId);
-            for (String key : parameters.keySet()) {
-                Object val = parameters.get(key);
-                Variable vo = process.getVariable(key);
-                if (vo == null)
-                  throw new EventHandlerException("Variable '" + key + "' not found for process: " + process.getName() + " v" + process.getVersionString() + "(id=" + processId + ")");
-
-                if (val instanceof String) {
-                    stringParams.put(key, (String)val);
-                }
-                else {
-                    com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(getPackage(), vo.getType());
-                    if (translator instanceof DocumentReferenceTranslator) {
-                        DocumentReferenceTranslator docTranslator = (DocumentReferenceTranslator)translator;
-                        String docStr = docTranslator.realToString(val);
-                        stringParams.put(key, docStr);
-                    }
-                    else {
-                        stringParams.put(key, translator.toString(val));
-                    }
-                }
-            }
-        }
-        return stringParams;
-    }
-
-    public Asset getResource(String name, String language, int version)
-        throws DataAccessException {
-        return AssetCache.getAsset(name, language, version);
-    }
-
     public String marshalJaxb(Object jaxbObject, Package pkg) throws Exception {
           return getJaxbTranslator(pkg).realToString(jaxbObject);
     }
@@ -355,5 +253,4 @@ public abstract class ExternalEventHandlerBase implements ExternalEventHandler {
     protected DocumentReferenceTranslator getJaxbTranslator(Package pkg) throws Exception {
         return (DocumentReferenceTranslator)SpringAppContext.getInstance().getVariableTranslator(JAXB_TRANSLATOR_CLASS, pkg);
     }
-
 }

@@ -1,11 +1,11 @@
 package com.centurylink.mdw.services;
 
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.dataaccess.file.GitProgressMonitor;
-import com.centurylink.mdw.dataaccess.file.VersionControlGit;
-import com.centurylink.mdw.model.asset.AssetInfo;
-import com.centurylink.mdw.model.asset.PackageList;
-import com.centurylink.mdw.model.asset.StagingArea;
+import com.centurylink.mdw.git.GitProgressMonitor;
+import com.centurylink.mdw.git.VersionControlGit;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
+import com.centurylink.mdw.model.asset.api.PackageList;
+import com.centurylink.mdw.model.asset.api.StagingArea;
 
 import java.io.File;
 import java.util.List;

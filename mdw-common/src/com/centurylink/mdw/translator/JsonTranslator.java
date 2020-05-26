@@ -21,7 +21,7 @@ import java.util.Iterator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.workflow.Package;
 /**
@@ -42,7 +42,7 @@ public interface JsonTranslator {
         Package pkg = getPackage();
         if (pkg == null)
             pkg = PackageCache.getMdwBasePackage();
-        clazz = pkg.getCloudClassLoader().loadClass(type).asSubclass(Jsonable.class);
+        clazz = pkg.getClassLoader().loadClass(type).asSubclass(Jsonable.class);
         Constructor<? extends Jsonable> ctor = clazz.getConstructor(JSONObject.class);
         Iterator<?> keys = json.keys();
         while (keys.hasNext()) {

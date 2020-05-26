@@ -16,11 +16,12 @@
 package com.centurylink.mdw.cli;
 
 import com.beust.jcommander.Parameters;
-import com.centurylink.mdw.model.PackageDependency;
-import com.centurylink.mdw.model.PackageMeta;
+import com.centurylink.mdw.model.Yamlable;
+import com.centurylink.mdw.model.workflow.PackageDependency;
+import com.centurylink.mdw.model.workflow.PackageMeta;
 import com.centurylink.mdw.model.system.BadVersionException;
 import com.centurylink.mdw.model.system.MdwVersion;
-import com.centurylink.mdw.util.file.Packages;
+import com.centurylink.mdw.file.Packages;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +32,7 @@ import java.util.List;
 @Parameters(commandNames = "dependencies", commandDescription = "Check asset package dependencies", separators="=")
 public class Dependencies extends Setup {
 
-    private List<PackageDependency> unmetDependencies = new ArrayList<>();
+    private final List<PackageDependency> unmetDependencies = new ArrayList<>();
     public List<PackageDependency> getUnmetDependencies() { return unmetDependencies; }
 
     @Override
@@ -43,7 +44,8 @@ public class Dependencies extends Setup {
         for (File pkgDir : packages.getPackageDirs()) {
             boolean pkgPrinted = false;
             File metaFile = getPackageMeta(pkgDir);
-            PackageMeta pkgMeta = new PackageMeta(Files.readAllBytes(metaFile.toPath()));
+            String meta = new String(Files.readAllBytes(metaFile.toPath()));
+            PackageMeta pkgMeta = new PackageMeta(Yamlable.fromString(meta));
             if (isDebug()) {
                 logPackage(pkgMeta.getName());
                 pkgPrinted = true;
@@ -66,8 +68,9 @@ public class Dependencies extends Setup {
                             unmet(dependency.getPackage(), dependency.getVersion(), "  ** Missing package: " + dependency.getPackage() + " **");
                             continue;
                         }
-                        PackageMeta installedPkgMeta = new PackageMeta(Files.readAllBytes(getPackageMeta(dependency.getPackage()).toPath()));
-                        MdwVersion installedVer = new MdwVersion(installedPkgMeta.getVersion());
+                        String metaContent = new String(Files.readAllBytes(getPackageMeta(dependency.getPackage()).toPath()));
+                        PackageMeta installedPkgMeta = new PackageMeta(Yamlable.fromString(metaContent));
+                        MdwVersion installedVer = installedPkgMeta.getVersion();
                         if (installedVer.compareTo(dependency.getVersion()) < 0) {
                             if (!pkgPrinted) {
                                 logPackage(pkgMeta.getName());

@@ -166,11 +166,11 @@ public class SynchronizationActivity extends AbstractWait implements com.century
      *
      * The default method does nothing.
      *
-     * The status of the activity after processing the event is configured in the designer, which
+     * The status of the activity after processing the event is configured at design time, which
      * can be either Hold or Waiting.
      *
      * When you override this method, you can optionally set different completion
-     * code from those configured in the designer by calling setReturnCode().
+     * code from those configured at design time by calling setReturnCode().
      *
      * @param messageString the entire message content of the external event (from document table)
      * @throws ActivityException

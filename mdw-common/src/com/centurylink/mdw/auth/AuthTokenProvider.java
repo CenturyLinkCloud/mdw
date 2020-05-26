@@ -20,7 +20,7 @@ import java.util.Map;
 
 public interface AuthTokenProvider {
 
-    public byte[] getToken(URL endpoint, String user, String password) throws MdwSecurityException;
-    public void setOptions(Map<String,String> options);
-    public void invalidateToken(URL endpoint, String user);
+    byte[] getToken(URL endpoint, String user, String password) throws MdwSecurityException;
+    void setOptions(Map<String,String> options);
+    void invalidateToken(URL endpoint, String user);
 }

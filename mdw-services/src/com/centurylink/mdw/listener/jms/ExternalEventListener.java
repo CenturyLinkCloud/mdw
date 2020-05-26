@@ -48,7 +48,7 @@ public class ExternalEventListener extends JmsListener {
     class ExternalEventDriver implements Runnable {
 
         TextMessage message;
-        ExternalEventDriver(TextMessage message) { this.message=message; }
+        ExternalEventDriver(TextMessage message) { this.message = message; }
         public void run() {
             QueueConnection connection = null;
             StandardLogger logger = LoggerUtil.getStandardLogger();
@@ -68,7 +68,7 @@ public class ExternalEventListener extends JmsListener {
                 if (message.getJMSReplyTo() != null)
                     metaInfo.put("ReplyTo", message.getJMSReplyTo().toString());
 
-                    resp = helper.processEvent(txt, metaInfo);
+                    resp = helper.processRequest(txt, metaInfo);
                     Queue respQueue = (Queue) message.getJMSReplyTo();
                     String correlId = message.getJMSCorrelationID();
                     if (resp != null && respQueue != null) {

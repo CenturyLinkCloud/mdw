@@ -15,14 +15,13 @@
  */
 package com.centurylink.mdw.container;
 
+import com.centurylink.mdw.cache.asset.AssetCache;
+import com.centurylink.mdw.common.service.RegisteredService;
+import com.centurylink.mdw.model.asset.Asset;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.common.service.RegisteredService;
-import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.workflow.Package;
 
 public interface EmbeddedDbExtension extends RegisteredService {
 
@@ -32,15 +31,10 @@ public interface EmbeddedDbExtension extends RegisteredService {
      * package containing this dynamic java class.
      */
     default List<String> getSqlSourceAssets() {
-        List<String> sqlSourceAssets = null;
-        Package pkg = PackageCache.getPackage(this.getClass().getPackage().getName());
-        for (Asset asset : pkg.getAssets()) {
-            if (sqlSourceAssets == null)
-                sqlSourceAssets = new ArrayList<String>();
-            if (".sql".equals(asset.getFileExtension()))
-            sqlSourceAssets.add(pkg.getName() + "/" + asset.getName());
+        List<String> sqlSourceAssets = new ArrayList<>();
+        for (Asset sqlAsset : AssetCache.getAssets("sql")) {
+            sqlSourceAssets.add(sqlAsset.getPath());
         }
-
         return sqlSourceAssets;
     }
 

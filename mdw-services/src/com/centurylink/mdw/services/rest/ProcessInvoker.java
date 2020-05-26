@@ -23,7 +23,7 @@ import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Status;
@@ -85,9 +85,9 @@ public class ProcessInvoker extends JsonRestService {
                 Parameter bodyParam = assetRequest.getBodyParameter();
                 if (bodyParam.getDataType() != null) {
                     // TODO primitive types
-                    Package processPackage = PackageCache.getProcessPackage(process.getId());
+                    Package processPackage = PackageCache.getPackage(process.getPackageName());
                     try {
-                        Class<?> bodyClass = processPackage.getCloudClassLoader().loadClass(bodyParam.getDataType());
+                        Class<?> bodyClass = processPackage.getClassLoader().loadClass(bodyParam.getDataType());
                         if (Jsonable.class.isAssignableFrom(bodyClass)) {
                             Constructor<? extends Jsonable> constructor = bodyClass.asSubclass(Jsonable.class).getConstructor(JSONObject.class);
                             requestObj = constructor.newInstance(content);

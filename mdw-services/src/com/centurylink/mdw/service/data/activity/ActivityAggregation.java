@@ -8,6 +8,7 @@ import com.centurylink.mdw.dataaccess.PreparedWhere;
 import com.centurylink.mdw.dataaccess.reports.AggregateDataAccess;
 import com.centurylink.mdw.model.workflow.*;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.*;
@@ -35,7 +36,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
             else
                 throw new ServiceException(ServiceException.BAD_REQUEST, "Unsupported filter: by=" + by);
         }
-        catch (SQLException ex) {
+        catch (SQLException | IOException ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
         finally {
@@ -84,7 +85,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
     }
 
     private List<ActivityAggregate> getTopsByCompletionTime(Query query)
-            throws DataAccessException, SQLException, ServiceException {
+            throws IOException, SQLException, ServiceException, DataAccessException {
         PreparedWhere preparedWhere = getActivityWhere(query);
         String excluded = getExcludedClause(query);
 
@@ -276,7 +277,7 @@ public class ActivityAggregation extends AggregateDataAccess<ActivityAggregate> 
         return new PreparedWhere(where.toString(), params.toArray());
     }
 
-    private String getExcludedClause(Query query) throws DataAccessException {
+    private String getExcludedClause(Query query) throws IOException {
         boolean excludeLongRunning = query.getBooleanFilter("Exclude Long-Running");
         if (excludeLongRunning) {
             List<String> excluded = new ArrayList<>();

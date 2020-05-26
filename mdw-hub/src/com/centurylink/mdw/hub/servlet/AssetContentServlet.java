@@ -23,27 +23,21 @@ import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.ProcessPersister.PersistType;
-import com.centurylink.mdw.dataaccess.file.ImporterExporterJson;
-import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
-import com.centurylink.mdw.dataaccess.file.PackageDir;
-import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.git.VersionControlGit;
 import com.centurylink.mdw.hub.servlet.asset.StagedAssetServer;
 import com.centurylink.mdw.hub.servlet.asset.StagedAssetUpdater;
 import com.centurylink.mdw.hub.servlet.asset.VersionedAssetServer;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
-import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.asset.AssetInfo;
-import com.centurylink.mdw.model.asset.AssetVersion;
+import com.centurylink.mdw.model.asset.AssetPath;
+import com.centurylink.mdw.model.asset.ContentTypes;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.model.system.SystemMessage.Level;
 import com.centurylink.mdw.model.user.*;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.user.UserAction.Entity;
-import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.AssetServices;
@@ -163,86 +157,78 @@ public class AssetContentServlet extends HttpServlet {
 
             boolean gitRemote = false;
             String render = request.getParameter("render");
-            File assetFile;
-            if (path.startsWith("Archive")) {
-                assetFile = new File(assetRoot + "/" + path);
+            AssetPath assetPath = new AssetPath(path);
+            File assetFile = new File(assetRoot + "/" + assetPath.toPath());
+            gitRemote = "true".equalsIgnoreCase(request.getParameter("gitRemote"));
+            if (!assetFile.isFile()) {
+                // check for instanceId
+                int lastSlash = path.lastIndexOf('/');
+                if (lastSlash > 0) {
+                    try {
+                        Long instanceId = Long.parseLong(path.substring(lastSlash + 1));
+                        String p = path.substring(0, lastSlash);
+                        lastSlash = p.lastIndexOf('/');
+                        String pkgName = p.substring(0, lastSlash);
+                        String assetName = p.substring(lastSlash + 1);
+                        if (assetName.endsWith(".proc")) {
+                            WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
+                            try {
+                                Process process = workflowServices.getInstanceDefinition(pkgName + "/" + assetName, instanceId);
+                                if (process == null)
+                                    throw new ServiceException(ServiceException.NOT_FOUND, "Instance definition not found: " + path);
+                                response.setContentType(process.getContentType());
+                                response.getOutputStream().print(process.getJson().toString(2));
+                            } catch (ServiceException ex) {
+                                if (ex.getCode() != ServiceException.NOT_FOUND)
+                                    logger.severeException(ex.getMessage(), ex);
+                                StatusResponse sr = new StatusResponse(ex.getCode(), ex.getMessage());
+                                response.setStatus(sr.getStatus().getCode());
+                                response.getWriter().println(sr.getJson().toString(2));
+                            }
+                            return;
+                        }
+                    }
+                    catch (NumberFormatException ex) {
+                        // not an instance path -- handle as regular asset
+                    }
+                }
+            }
+
+            boolean download = "true".equalsIgnoreCase(request.getParameter("download"));
+            if (render == null) {
+                response.setContentType(ContentTypes.getContentType(assetFile));
+                if (download) {
+                    response.setHeader("Content-Disposition", "attachment;filename=\"" + assetFile.getName() + "\"");
+                    response.setContentType("application/octet-stream");
+                }
             }
             else {
-                AssetInfo asset = new AssetInfo(assetRoot, path);
-                gitRemote = "true".equalsIgnoreCase(request.getParameter("gitRemote"));
-                assetFile = asset.getFile();
-                if (!assetFile.isFile()) {
-                    // check for instanceId
-                    int lastSlash = path.lastIndexOf('/');
-                    if (lastSlash > 0) {
-                        try {
-                            Long instanceId = Long.parseLong(path.substring(lastSlash + 1));
-                            String p = path.substring(0, lastSlash);
-                            lastSlash = p.lastIndexOf('/');
-                            String pkgName = p.substring(0, lastSlash);
-                            String assetName = p.substring(lastSlash + 1);
-                            if (assetName.endsWith(".proc")) {
-                                WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-                                try {
-                                    Process process = workflowServices.getInstanceDefinition(pkgName + "/" + assetName, instanceId);
-                                    if (process == null)
-                                        throw new ServiceException(ServiceException.NOT_FOUND, "Instance definition not found: " + path);
-                                    response.setContentType(process.getContentType());
-                                    response.getOutputStream().print(process.getJson().toString(2));
-                                } catch (ServiceException ex) {
-                                    if (ex.getCode() != ServiceException.NOT_FOUND)
-                                        logger.severeException(ex.getMessage(), ex);
-                                    StatusResponse sr = new StatusResponse(ex.getCode(), ex.getMessage());
-                                    response.setStatus(sr.getStatus().getCode());
-                                    response.getWriter().println(sr.getJson().toString(2));
-                                }
-                                return;
-                            }
-                        }
-                        catch (NumberFormatException ex) {
-                            // not an instance path -- handle as regular asset
-                        }
+                try {
+                    Renderer renderer = ServiceLocator.getAssetServices().getRenderer(path, render);
+                    if (renderer == null)
+                        throw new RenderingException(ServiceException.NOT_FOUND, "Renderer not found: " + render);
+                    Map<String,String> options = new HashMap<>();
+                    Enumeration<String> paramNames = request.getParameterNames();
+                    while (paramNames.hasMoreElements()) {
+                        String paramName = paramNames.nextElement();
+                        options.put(paramName, request.getParameter(paramName));
                     }
-                }
-
-                boolean download = "true".equalsIgnoreCase(request.getParameter("download"));
-                if (render == null) {
-                    response.setContentType(asset.getContentType());
                     if (download) {
-                        response.setHeader("Content-Disposition", "attachment;filename=\"" + asset.getFile().getName() + "\"");
+                        response.setHeader("Content-Disposition", "attachment;filename=\"" + renderer.getFileName() + "\"");
                         response.setContentType("application/octet-stream");
                     }
-                }
-                else {
-                    try {
-                        Renderer renderer = ServiceLocator.getAssetServices().getRenderer(path, render.toUpperCase());
-                        if (renderer == null)
-                            throw new RenderingException(ServiceException.NOT_FOUND, "Renderer not found: " + render);
-                        Map<String,String> options = new HashMap<>();
-                        Enumeration<String> paramNames = request.getParameterNames();
-                        while (paramNames.hasMoreElements()) {
-                            String paramName = paramNames.nextElement();
-                            options.put(paramName, request.getParameter(paramName));
-                        }
-                        if (download) {
-                            response.setHeader("Content-Disposition", "attachment;filename=\"" + renderer.getFileName() + "\"");
-                            response.setContentType("application/octet-stream");
-                        }
-                        else {
-                            String contentType = Asset.getContentType(render.toUpperCase());
-                            if (contentType != null)
-                                response.setContentType(contentType);
-                        }
-                        response.getOutputStream().write(renderer.render(options));
+                    else {
+                        response.setContentType(ContentTypes.getContentType(render));
                     }
-                    catch (ServiceException ex) {
-                        logger.severeException(ex.getMessage(), ex);
-                        StatusResponse sr = new StatusResponse(ex.getCode(), ex.getMessage());
-                        response.setStatus(sr.getStatus().getCode());
-                        response.getWriter().println(sr.getJson().toString(2));
-                    }
-                    return;
+                    response.getOutputStream().write(renderer.render(options));
                 }
+                catch (ServiceException ex) {
+                    logger.severeException(ex.getMessage(), ex);
+                    StatusResponse sr = new StatusResponse(ex.getCode(), ex.getMessage());
+                    response.setStatus(sr.getStatus().getCode());
+                    response.getWriter().println(sr.getJson().toString(2));
+                }
+                return;
             }
 
             InputStream in = null;
@@ -253,8 +239,8 @@ public class AssetContentServlet extends HttpServlet {
                     if (branch == null)
                         throw new PropertyException("Missing required property: " + PropertyNames.MDW_GIT_BRANCH);
                     AssetServices assetServices = ServiceLocator.getAssetServices();
-                    VersionControlGit vcGit = (VersionControlGit) assetServices.getVersionControl();
-                    String gitPath = vcGit.getRelativePath(assetFile);
+                    VersionControlGit vcGit = assetServices.getVersionControl();
+                    String gitPath = vcGit.getRelativePath(assetFile.toPath());
                     in = vcGit.getRemoteContentStream(branch, gitPath);
                     if (in == null)
                         throw new IOException("Git remote not found: " + gitPath);
@@ -300,10 +286,9 @@ public class AssetContentServlet extends HttpServlet {
         String path = request.getPathInfo().substring(1);
         Bulletin bulletin = null;
         try {
-            LoaderPersisterVcs persisterVcs = (LoaderPersisterVcs) DataAccess.getProcessPersister();
             AssetServices assetServices = ServiceLocator.getAssetServices();
             try {
-                VersionControlGit vcs = (VersionControlGit) assetServices.getVersionControl();
+                VersionControlGit vcs = assetServices.getVersionControl();
                 if ("packages".equals(path)) {
                     if (stagingCuid != null) {
                         new StatusResponder(response).writeResponse(new StatusResponse(Status.NOT_FOUND));
@@ -312,46 +297,23 @@ public class AssetContentServlet extends HttpServlet {
                     authorizeForUpdate(request.getSession(), Action.Import, Entity.Package, "Package zip", false);
                     String contentType = request.getContentType();
                     boolean isZip = "application/zip".equals(contentType);
-                    if (!isZip && !"application/json".equals(contentType))
-                        throw new ServiceException(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE,
-                                "Unsupported content: " + contentType);
+                    if (!isZip)
+                        throw new ServiceException(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE, "Unsupported content: " + contentType);
                     File tempDir = new File(ApplicationContext.getTempDirectory());
-                    String fileExt = isZip ? ".zip" : ".json";
                     File tempFile = new File(tempDir + "/packageImport_"
-                            + DateHelper.filenameDateToString(new Date()) + fileExt);
+                            + DateHelper.filenameDateToString(new Date()) + ".zip");
                     logger.info("Saving package import temporary file: " + tempFile);
                     FileHelper.writeToFile(request.getInputStream(), tempFile);
                     ProgressMonitor progressMonitor = new LoggerProgressMonitor(logger);
-                    if (isZip) {
-                        progressMonitor.start("Unzipping " + tempFile + " into: " + assetRoot);
-                        logger.info("Unzipping " + tempFile + " into: " + assetRoot);
-                        ZipHelper.unzip(tempFile, assetRoot, null, null, true);
-                    }
-                    else {
-                        progressMonitor.start("Importing " + tempFile + " into: " + assetRoot);
-                        logger.info("Importing " + tempFile + " into: " + assetRoot);
-                        ImporterExporterJson importer = new ImporterExporterJson();
-                        String packageJson = new String(FileHelper.read(tempFile));
-                        List<Package> packages = importer.importPackages(packageJson);
-                        for (Package pkg : packages) {
-                            PackageDir pkgDir = persisterVcs
-                                    .getTopLevelPackageDir(pkg.getName());
-                            if (pkgDir == null) {
-                                // new pkg
-                                pkgDir = new PackageDir(persisterVcs.getStorageDir(), pkg,
-                                        persisterVcs.getVersionControl());
-                                pkgDir.setYaml(true);
-                            }
-                            persisterVcs.save(pkg, pkgDir, true);
-                            pkgDir.parse(); // sync
-                        }
-                    }
+                    progressMonitor.start("Unzipping " + tempFile + " into: " + assetRoot);
+                    logger.info("Unzipping " + tempFile + " into: " + assetRoot);
+                    ZipHelper.unzip(tempFile, assetRoot, null, null, true);
                     bulletin = null;
                     Thread thread = new Thread() {
                         @Override
                         public void run() {
                             this.setName("AssetPackagesCacheRefresh-thread");
-                            CacheRegistration.getInstance().refreshCaches(null);
+                            CacheRegistration.getInstance().refreshCaches();
                         }
                     };
                     thread.start();
@@ -380,18 +342,10 @@ public class AssetContentServlet extends HttpServlet {
                         return;
                     }
 
-                    // If not Development, asset change will have to be committed, so check if on latest commit
-                    if (!isInstance && !ApplicationContext.isDevelopment() && vcs.getCommit() != null && !vcs.getCommit().equals(vcs.getRemoteCommit(vcs.getBranch()))) {
-                        throw new ServiceException(ServiceException.NOT_ALLOWED, "Asset save was NOT performed - local commit out of sync with remote");
-                    }
-
                     int firstSlash = path.indexOf('/');
                     if (firstSlash == -1 || firstSlash > path.length() - 2)
                         throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + path);
                     String pkgName = path.substring(0, firstSlash);
-                    Package pkg = persisterVcs.getPackage(pkgName);
-                    if (pkg == null)
-                        throw new ServiceException(ServiceException.NOT_FOUND, "Package not found: " + pkgName);
                     if (isInstance) {
                         int lastSlash = path.lastIndexOf('/');
                         String assetName = path.substring(firstSlash + 1, lastSlash);
@@ -404,7 +358,7 @@ public class AssetContentServlet extends HttpServlet {
                                 process.setPackageName(pkgName);
                                 logger.info("Saving asset instance " + pkgName + "/" + assetName + ": " + instanceId);
                                 WorkflowServices workflowServices = ServiceLocator.getWorkflowServices();
-                                workflowServices.saveInstanceDefinition(pkg + "/" + assetName, instanceId, process);
+                                workflowServices.saveInstanceDefinition(pkgName + "/" + assetName, instanceId, process);
                             }
                             else {
                                 throw new ServiceException(ServiceException.NOT_IMPLEMENTED, "Unsupported asset type: " + assetName);
@@ -415,69 +369,8 @@ public class AssetContentServlet extends HttpServlet {
                         }
                     }
                     else {
-                        String assetName = path.substring(firstSlash + 1);
-                        String version = request.getParameter("version");
-                        boolean verChange = false;
-                        Asset asset = null;
-                        PackageDir pkgDir = persisterVcs.getTopLevelPackageDir(pkgName);
-
-                        if (assetName.endsWith(".proc")) {
-                            asset = persisterVcs.getProcessBase(
-                                    pkgName + "/" + assetName.substring(0, assetName.length() - 5), 0);
-                        } else if (assetName.endsWith(".task")) {
-                            asset = persisterVcs.loadTaskTemplate(pkgDir, pkgDir.getAssetFile(new File(
-                                    assetRoot + "/" + pkgName.replace('.', '/') + "/" + assetName)));
-                        } else {
-                            asset = persisterVcs.getAsset(pkg.getId(), assetName);
-                        }
-
-                        if (asset == null)
-                            throw new ServiceException(ServiceException.NOT_FOUND, "Asset not found: " + pkgName + "/" + assetName);
-
-                        if (version == null)
-                            version = asset.getVersionString();
-
-                        byte[] content = readContent(request);
-                        logger.info("Saving asset: " + pkgName + "/" + assetName + " v" + version);
-
-                        int ver = asset.getVersion();
-
-                        if (asset instanceof Process) {
-                            asset = Process.fromString(new String(content));
-                            asset.setName(assetName.substring(0, assetName.length() - 5));
-                            asset.setPackageName(pkgName);
-                        } else {
-                            asset.setRawContent(content);
-                        }
-
-                        int newVer = AssetVersion.parseVersion(version);
-                        if (newVer < ver)
-                            throw new ServiceException(ServiceException.BAD_REQUEST,
-                                    "Invalid asset version: v" + version);
-
-                        asset.setVersion(newVer);
-                        if (asset instanceof Process) {
-                            persisterVcs.save((Process) asset, pkgDir);
-                            persisterVcs.updateProcess((Process) asset);
-                        } else {
-                            persisterVcs.save(asset, pkgDir);
-                            persisterVcs.updateAsset(asset);
-                        }
-
-                        if (verChange) {
-                            persisterVcs.persistPackage(pkg, PersistType.NEW_VERSION);
-                        }
-                        logger.info("Asset saved: " + path + " v" + version);
-
-                        // Refresh cache
-                        Thread thread = new Thread() {
-                            @Override
-                            public void run() {
-                                this.setName("AssetSaveCacheRefresh-thread");
-                                CacheRegistration.getInstance().refreshCaches(null);
-                            }
-                        };
-                        thread.start();
+                        response.setHeader("Allow", "GET");
+                        throw new ServiceException(ServiceException.NOT_ALLOWED, "Direct asset update not allowed");
                     }
 
                     response.getWriter().write(new StatusResponse(200, "OK").getJson().toString(2));

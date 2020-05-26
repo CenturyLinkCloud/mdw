@@ -16,7 +16,6 @@
 package com.centurylink.mdw.service.rest;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.cli.Checkpoint;
 import com.centurylink.mdw.cli.Import;
 import com.centurylink.mdw.cli.Props;
 import com.centurylink.mdw.common.service.Query;
@@ -25,8 +24,8 @@ import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DbAccess;
-import com.centurylink.mdw.dataaccess.file.VersionControlGit;
-import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.git.VersionControlGit;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.model.system.SystemMessage.Level;
 import com.centurylink.mdw.model.user.Role;
@@ -123,7 +122,7 @@ public class GitVcs extends JsonRestService {
         try {
             vcGit = getVersionControl();
             String requestPath = URLDecoder.decode(subpath, "UTF-8");
-            assetPath = vcGit.getRelativePath(new File(getRequiredProperty(PropertyNames.MDW_ASSET_LOCATION)));
+            assetPath = vcGit.getRelativePath(new File(getRequiredProperty(PropertyNames.MDW_ASSET_LOCATION)).toPath());
             branch = getRequiredProperty(PropertyNames.MDW_GIT_BRANCH);
             gitRoot = new File(getRequiredProperty(PropertyNames.MDW_GIT_LOCAL_PATH));
             logger.info("Git VCS branch: " + branch);
@@ -192,14 +191,6 @@ public class GitVcs extends JsonRestService {
                         vcGit.add(commitPaths);
                         vcGit.commit(commitPaths, comment);
                         vcGit.push();
-
-                        if (PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_REF_ENABLED, false)) {
-                            // Update ASSET_REF with new commit (will trigger automatic import in other instances)
-                            try (DbAccess dbAccess = new DbAccess()) {
-                                Checkpoint cp = new Checkpoint(ApplicationContext.getAssetRoot(), vcGit, vcGit.getCommit(), dbAccess.getConnection());
-                                cp.updateRefs();
-                            }
-                        }
                     }
                     else {
                         // probably won't implement this
@@ -223,7 +214,7 @@ public class GitVcs extends JsonRestService {
 
     protected VersionControlGit getVersionControl() throws IOException {
         AssetServices assetServices = ServiceLocator.getAssetServices();
-        return (VersionControlGit) assetServices.getVersionControl();
+        return assetServices.getVersionControl();
     }
 
     private void importAssets() {
@@ -239,13 +230,13 @@ public class GitVcs extends JsonRestService {
             PrintStream ps = new PrintStream(baos);
             gitImporter.setOut(ps);
             gitImporter.setErr(ps);
-            gitImporter.importAssetsFromGit(PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_REF_ENABLED, false));
+            gitImporter.importAssetsFromGit();
 
             // log importer and vercheck output
             logger.error(new String(baos.toByteArray()));
 
             SystemMessages.bulletinOff(bulletin, "Asset import completed");
-            CacheRegistration.getInstance().refreshCaches(null);
+            CacheRegistration.getInstance().refreshCaches();
         }
         catch (Throwable e) {
             // log importer and vercheck output

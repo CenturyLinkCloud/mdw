@@ -15,23 +15,24 @@
  */
 package com.centurylink.mdw.workflow.activity.process;
 
-import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.InvokeProcessActivity;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.event.InternalEvent;
-import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.workflow.activity.AbstractWait;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This abstract activity implementor implements the common funciton
@@ -76,13 +77,13 @@ public abstract class InvokeProcessActivityBase extends AbstractWait implements 
      *
      * The default method does nothing.
      *
-     * The status of the activity after processing the event is configured in the designer, which
+     * The status of the activity after processing the event is configured at design time, which
      * can be either Hold or Waiting.
      *
      * When you override this method, you can optionally set different completion
-     * code from those configured in the designer by calling setReturnCode().
+     * code from those configured at design time by calling setReturnCode().
      *
-     * @param messageString the entire message content of the external event (from document table)
+     * @param msg the entire message content of the external event (from document table)
      * @throws ActivityException
      */
     protected void processOtherMessage(String msg)
@@ -179,7 +180,7 @@ public abstract class InvokeProcessActivityBase extends AbstractWait implements 
     }
 
     protected Map<String,String> getOutputParameters(Long subprocInstId, Long subprocId)
-        throws SQLException, ProcessException, DataAccessException {
+        throws IOException, DataAccessException {
         Process subprocDef = ProcessCache.getProcess(subprocId);
         Map<String,String> params = null;
         for (Variable var : subprocDef.getVariables()) {
@@ -199,9 +200,14 @@ public abstract class InvokeProcessActivityBase extends AbstractWait implements 
      * TODO: Allow expressions that resolve to a version/spec.
      */
     protected Process getSubprocess(String name, String verSpec) throws DataAccessException {
-        Process match = ProcessCache.getProcessSmart(new AssetVersionSpec(name, verSpec));
-        if (match == null)
-            throw new DataAccessException("Unable to find process definition for " + name + " v" + verSpec);
-        return match;
+        try {
+            Process match = ProcessCache.getProcessSmart(new AssetVersionSpec(name, verSpec));
+            if (match == null)
+                throw new DataAccessException("Unable to find process definition for " + name + " v" + verSpec);
+            return match;
+        } catch (IOException ex) {
+            throw new DataAccessException("Cannot load " + name + " v" + verSpec, ex);
+        }
+
     }
 }

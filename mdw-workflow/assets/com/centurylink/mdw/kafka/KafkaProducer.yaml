@@ -20,7 +20,7 @@ process: # 12829
     value: ${~.*}
   variable: # 16842
     name: rcvdKafkaMessage
-    value: <MyAppKafkaHandler>${~.*}</MyAppKafkaHandler>
+    value: <MyKafkaHandler>${~.*}</MyKafkaHandler>
   variable: # 16840
     name: recordProperties
     value: {key=${~.*}, topic=testMdwInbound, partition=0}

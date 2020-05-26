@@ -1,7 +1,7 @@
 package com.centurylink.mdw.services.asset;
 
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.model.workflow.Process;
 import org.json.JSONObject;
 

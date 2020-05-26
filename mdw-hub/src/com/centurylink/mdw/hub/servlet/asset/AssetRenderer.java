@@ -1,7 +1,7 @@
 package com.centurylink.mdw.hub.servlet.asset;
 
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.ContentTypes;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.asset.Renderer;
@@ -32,12 +32,10 @@ public class AssetRenderer {
         else {
             assetServices = ServiceLocator.getAssetServices();
         }
-        Renderer renderer = assetServices.getRenderer(path, render.toUpperCase());
+        Renderer renderer = assetServices.getRenderer(path, render);
         if (renderer == null)
             throw new RenderingException(ServiceException.NOT_FOUND, "Renderer not found: " + render);
-        String contentType = Asset.getContentType(render.toUpperCase());
-        if (contentType != null)
-            servletResponse.setContentType(contentType);
+        servletResponse.setContentType(ContentTypes.getContentType(render));
         Map<String,String> options = new HashMap<>();
         Enumeration<String> paramNames = servletRequest.getParameterNames();
         while (paramNames.hasMoreElements()) {

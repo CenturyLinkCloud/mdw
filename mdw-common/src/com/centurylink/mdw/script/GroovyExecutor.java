@@ -15,21 +15,12 @@
  */
 package com.centurylink.mdw.script;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
 import com.centurylink.mdw.cache.CachingException;
-import com.centurylink.mdw.cache.impl.AssetCache;
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.translator.impl.XmlBeanWrapperTranslator;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.java.JavaNaming;
@@ -40,10 +31,17 @@ import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
-
 import groovy.lang.Binding;
 import groovy.util.GroovyScriptEngine;
 import groovy.util.XmlSlurper;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
 
@@ -197,8 +195,8 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
             initializeScriptLibraries();
             initializeDynamicJavaAssets();
             String[] rootDirs = new String[]{getRootDir()};
-            if (PackageCache.getPackage(Package.MDW + ".base").getCloudClassLoader() != null)
-                scriptEngine = new GroovyScriptEngine(rootDirs, PackageCache.getPackage(Package.MDW + ".base").getCloudClassLoader());
+            if (PackageCache.getPackage(Package.MDW + ".base").getClassLoader() != null)
+                scriptEngine = new GroovyScriptEngine(rootDirs, PackageCache.getPackage(Package.MDW + ".base").getClassLoader());
             else
                 scriptEngine = new GroovyScriptEngine(rootDirs);
             // clear the cached library versions
@@ -216,11 +214,11 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
     }
 
     private static void initializeScriptLibraries() throws DataAccessException, IOException, CachingException {
-        // write the groovy-language rule_sets into the root directory
+        // write groovy-language assets into the root directory
         logger.info("Initializing Groovy script assets...");
 
-        for (Asset groovy : AssetCache.getAssets(Asset.GROOVY)) {
-            Package pkg = PackageCache.getAssetPackage(groovy.getId());
+        for (Asset groovy : AssetCache.getAssets("groovy")) {
+            Package pkg = PackageCache.getPackage(groovy.getPackageName());
             String packageName = pkg == null ? null : JavaNaming.getValidPackageName(pkg.getName());
             File dir = createNeededDirs(packageName);
             String filename = dir + "/" + groovy.getName();
@@ -231,7 +229,7 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
             if (file.exists())
                 file.delete();
 
-            String content = groovy.getStringContent();
+            String content = groovy.getText();
             if (content != null) {
                 if (Compatibility.hasCodeSubstitutions())
                     content = doCompatibilityCodeSubstitutions(groovy.getLabel(), content);
@@ -249,8 +247,8 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
     private static void initializeDynamicJavaAssets() throws DataAccessException, IOException, CachingException {
         logger.info("Initializing Dynamic Java assets for Groovy...");
 
-        for (Asset java : AssetCache.getAssets(Asset.JAVA)) {
-            Package pkg = PackageCache.getAssetPackage(java.getId());
+        for (Asset java : AssetCache.getAssets("java")) {
+            Package pkg = PackageCache.getPackage(java.getPackageName());
             String packageName = pkg == null ? null : JavaNaming.getValidPackageName(pkg.getName());
             File dir = createNeededDirs(packageName);
             String filename = dir + "/" + java.getName();
@@ -262,7 +260,7 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
             if (file.exists())
                 file.delete();
 
-            String content = java.getStringContent();
+            String content = java.getText();
             if (content != null) {
                 if (Compatibility.hasCodeSubstitutions())
                     content = doCompatibilityCodeSubstitutions(java.getLabel(), content);

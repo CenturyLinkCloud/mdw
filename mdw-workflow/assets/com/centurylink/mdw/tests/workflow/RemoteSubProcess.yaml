@@ -1,5 +1,5 @@
 process: # 10411
-  name: MDWTestMainProcess
+  name: TestMainProcess
   instance: 1
   activity: # 6 "2017-03-13 19:22:53"
     name: Process Start
@@ -47,7 +47,7 @@ process: # 10411
           <MINUTES>2</MINUTES>
       </ROOT>
 process: # 10412
-  name: MDWTestSubProcess
+  name: TestSubProcess
   instance: 1
   activity: # 34 "2017-03-13 19:22:54"
     name: Start

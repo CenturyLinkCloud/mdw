@@ -2,7 +2,7 @@ package com.centurylink.mdw.services.asset;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.SystemServices;
 import com.centurylink.mdw.util.log.LoggerUtil;

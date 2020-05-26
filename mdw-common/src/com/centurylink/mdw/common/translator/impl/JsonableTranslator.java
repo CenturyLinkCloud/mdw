@@ -35,8 +35,8 @@ public class JsonableTranslator extends DocumentReferenceTranslator implements J
         }
     }
 
-    public String realToString(Object object) throws TranslationException {
-        Jsonable jsonable = (Jsonable) object;
+    public String realToString(Object obj) throws TranslationException {
+        Jsonable jsonable = (Jsonable) obj;
         JSONObject json = new JsonObject();
         try {
             json.put(JSONABLE_TYPE, jsonable.getClass().getName());

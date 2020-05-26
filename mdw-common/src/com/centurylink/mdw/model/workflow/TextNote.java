@@ -15,92 +15,59 @@
  */
 package com.centurylink.mdw.model.workflow;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.model.Attributes;
+import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Yamlable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.attribute.Attribute;
+import java.util.Map;
 
 public class TextNote implements Jsonable, Yamlable {
 
     private String content;
-    private String reference;
-    private List<Attribute> attributes;
-
-    public TextNote() {
-
-    }
-
-    /**
-     * @return the attributes
-     */
-    public List<Attribute> getAttributes() {
-        return attributes;
-    }
-
-    /**
-     * @param attributes the attributes to set
-     */
-    public void setAttributes(List<Attribute> attributes) {
-        this.attributes = attributes;
-    }
-
-    /**
-     * Returns the value of a process attribute.
-     * @param attrname
-     * @return the value of the attribute, or null if the attribute does not exist
-     */
-    public String getAttribute(String attrname) {
-        return Attribute.findAttribute(attributes, attrname);
-    }
-
-    /**
-     * Set the value of a process attribute.
-     * If the value is null, the attribute is removed.
-     * If the attribute does not exist and the value is not null, the attribute
-     * is created.
-     * @param attrname
-     * @param value
-     */
-    public void setAttribute(String attrname, String value) {
-        if (attributes==null) attributes = new ArrayList<Attribute>();
-        Attribute.setAttribute(attributes, attrname, value);
-    }
-
     public String getContent() {
         return content;
     }
-
     public void setContent(String content) {
         this.content = content;
     }
 
+    private String reference;
     public String getReference() {
         return reference;
     }
-
     public void setReference(String reference) {
         this.reference = reference;
+    }
+
+    private Attributes attributes;
+    public Attributes getAttributes() { return attributes; }
+    public String getAttribute(String name) {
+        return attributes == null ? null : attributes.get(name);
+    }
+    public void setAttribute(String name, String value) {
+        if (attributes == null)
+            attributes = new Attributes();
+        attributes.put(name, value);
     }
 
     public String getLogicalId() {
         return getAttribute(WorkAttributeConstant.LOGICAL_ID);
     }
-
     public void setLogicalId(String id) {
         setAttribute(WorkAttributeConstant.LOGICAL_ID, id);
+    }
+
+    public TextNote() {
+
     }
 
     public TextNote(JSONObject json) throws JSONException {
         this.content = json.getString("content");
         if (json.has("attributes"))
-            this.attributes = Attribute.getAttributes(json.getJSONObject("attributes"));
+            this.attributes = new Attributes(json.getJSONObject("attributes"));
         setLogicalId(json.getString("id"));
     }
 
@@ -108,7 +75,7 @@ public class TextNote implements Jsonable, Yamlable {
     public TextNote(Map<String,Object> yaml) {
         this.content = (String)yaml.get("content");
         if (yaml.containsKey("attributes"))
-            this.attributes = Attribute.getAttributes((Map<String,Object>)yaml.get("attributes"));
+            this.attributes = new Attributes((Map<String,Object>)yaml.get("attributes"));
         setLogicalId((String)yaml.get("id"));
     }
 
@@ -118,7 +85,7 @@ public class TextNote implements Jsonable, Yamlable {
         json.put("id", getLogicalId());
         json.put("content", content);
         if (attributes != null && !attributes.isEmpty())
-            json.put("attributes", Attribute.getAttributesJson(attributes));
+            json.put("attributes", attributes.clean().getJson());
         return json;
     }
 
@@ -128,7 +95,7 @@ public class TextNote implements Jsonable, Yamlable {
         yaml.put("id", getLogicalId());
         yaml.put("content", content);
         if (attributes != null && !attributes.isEmpty())
-            yaml.put("attributes", Attribute.getAttributesYaml(attributes));
+            yaml.put("attributes", attributes.clean());
         return yaml;
     }
 }

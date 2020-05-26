@@ -16,7 +16,7 @@
 package com.centurylink.mdw.dataaccess;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.db.DocumentDb;
@@ -243,12 +243,13 @@ public class DatabaseAccess {
         try {
             DataSource dataSource = ApplicationContext.getDataSourceProvider().getDataSource(database_name);
 
-            // Only need to load driver the first time, which creates the connection factory.  All JDBC drivers except for MariaDB are provided as assets in a package
+            // Only need to load driver the first time, which creates the connection factory.
+            // All JDBC drivers except for MariaDB are provided as assets in a package
             if (loadedDataSources.get(database_name) == null || !loadedDataSources.get(database_name).equals(dataSource)) {
                 List<com.centurylink.mdw.model.workflow.Package> pkgList = PackageCache.getPackages();
                 ClassLoader origCL = null;
                 if (pkgList != null && pkgList.size() > 0)
-                    origCL = ApplicationContext.setContextCloudClassLoader(pkgList.get(0));
+                    origCL = ApplicationContext.setContextPackageClassLoader(pkgList.get(0));
                 connection = dataSource.getConnection();
                 loadedDataSources.put(database_name, dataSource);
                 ApplicationContext.resetContextClassLoader(origCL);
@@ -630,7 +631,7 @@ public class DatabaseAccess {
         return System.currentTimeMillis() + db_time_diff;
     }
     /**
-     * The current database Date/Time.  If db_time_diff is not known (eg Designer), server time is returned.
+     * The current database Date/Time.
      */
     public static Date getDbDate() {
         return db_time_diff == null ? new Date() : new Date(getCurrentTime());

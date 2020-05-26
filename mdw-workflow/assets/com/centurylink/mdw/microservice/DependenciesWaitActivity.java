@@ -5,7 +5,6 @@ import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Status;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.workflow.WorkStatus;
@@ -81,11 +80,10 @@ public class DependenciesWaitActivity extends EventWaitActivity {
      * @return a table of microservices and expressions
      */
     public List<String[]> getMicroserviceAttributes() {
-        String attVal = getAttributeValueSmart(DEPENDENCIES);
-        if (StringUtils.isBlank(attVal))
-            attVal = this.getAttributeValue(MICROSERVICE_NAMES);
-
-        return Attribute.parseTable(attVal, ',', ';', 3);
+        if (getAttributes().containsKey(DEPENDENCIES))
+            return getAttributes().getTable(DEPENDENCIES, ',', ';', 3);
+        else
+            return getAttributes().getTable(MICROSERVICE_NAMES, ',', ';', 3);
     }
 
     public boolean dependenciesMet() throws ActivityException {
@@ -205,7 +203,7 @@ public class DependenciesWaitActivity extends EventWaitActivity {
     }
 
     /**
-     * You'd need a custom .impl asset to set this through designer
+     * You'd need a custom .impl asset to set this through Studio or Hub
      */
     protected String getServiceSummaryVariableName() {
         return getAttribute("serviceSummaryVariable", "serviceSummary");

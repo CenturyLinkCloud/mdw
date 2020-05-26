@@ -1,0 +1,17 @@
+package {{packageName}};
+
+import com.centurylink.mdw.annotations.Handler;
+import com.centurylink.mdw.model.request.Request;
+import com.centurylink.mdw.request.RequestHandler;
+import com.centurylink.mdw.services.request.ProcessRunHandler;
+
+import java.util.Map;
+
+@Handler(match=RequestHandler.Routing.Path, path="/my/endpoint/path")
+public class {{className}} extends ProcessRunHandler {
+
+    @Override
+    public String getProcess(Request request, Object message, Map<String,String> headers) {
+        return "my.package.name/MyProcess.proc";
+    }
+}

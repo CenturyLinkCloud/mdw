@@ -1,5 +1,5 @@
 process: # 10288
-  name: MDWTestMainProcess
+  name: TestMainProcess
   instance: 1
   activity: # 6 "2017-01-12 12:54:24"
     name: Process Start
@@ -21,7 +21,7 @@ process: # 10288
     name: processCase
     value: error handler delegation
 process: # 10307
-  name: MDWTestMainProcess Exception Handler
+  name: TestMainProcess Exception Handler
   instance: 1
   activity: # 29 "2017-01-12 12:55:01"
     name: Process Start
@@ -33,7 +33,7 @@ process: # 10307
     name: Process Finish
     status: Completed
 process: # 10292
-  name: MDWTestMainProcess Exception Handler
+  name: TestMainProcess Exception Handler
   instance: 2
   activity: # 29 "2017-01-12 12:54:25"
     name: Process Start
@@ -45,7 +45,7 @@ process: # 10292
     name: Process Finish
     status: Completed
 process: # 10291
-  name: MDWTestSubProcess2
+  name: TestSubProcess2
   instance: 1
   activity: # 30 "2017-01-12 12:54:25"
     name: Start

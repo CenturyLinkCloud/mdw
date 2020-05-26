@@ -1,4 +1,0 @@
-{
-  "handlerClass": "NOTIFY_PROCESS?EventName=KafkaMessage-{/MyAppKafkaHandler}",
-  "path": "MyAppKafkaHandler"
-}

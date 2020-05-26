@@ -62,7 +62,7 @@ public class ScopedActivityInstance extends Linked<ActivityInstance> {
         for (Linked<ProcessInstance> childProcess : instanceHierarchy.getChildren()) {
             for (Process subprocess : subprocesses) {
                 ProcessInstance subInst = childProcess.get();
-                if ((subInst.getPackageName() + "/" + subInst.getProcessName()).equals(subprocess.getQualifiedName()) &&
+                if ((subInst.getPackageName() + "/" + subInst.getProcessName() + ".proc").equals(subprocess.getPath()) &&
                         (subInst.getSecondaryOwner() == null || subInst.getSecondaryOwner().equals(OwnerType.ACTIVITY_INSTANCE)) &&
                         (subInst.getSecondaryOwnerId() == null || subInst.getSecondaryOwnerId().equals(get().getId()))) {
                     subprocs.add(childProcess);

@@ -21,7 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.Response;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.util.JsonUtil;
 
 public class ActivityStubResponse extends Response implements Jsonable {

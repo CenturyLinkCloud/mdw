@@ -16,7 +16,7 @@
 package com.centurylink.mdw.services.system;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.cli.Download;
 import com.centurylink.mdw.cli.Unzip;
 import com.centurylink.mdw.common.service.Query;
@@ -42,7 +42,6 @@ import java.io.*;
 import java.lang.management.*;
 import java.net.InetAddress;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -83,7 +82,7 @@ public class SystemServicesImpl implements SystemServices {
                 if (classLoader.equals(ClasspathUtil.class.getClassLoader().getClass().getName()))
                     loader = ClasspathUtil.class.getClassLoader();
                 else
-                    loader = PackageCache.getPackage(classLoader).getCloudClassLoader();
+                    loader = PackageCache.getPackage(classLoader).getClassLoader();
                 sysInfoCats.add(findClass(className, loader));
             }
         }
@@ -394,15 +393,15 @@ public class SystemServicesImpl implements SystemServices {
         systemInfos.add(new SysInfo("App ID", ApplicationContext.getAppId()));
         if (!"mdw6".equals(ApplicationContext.getAppId()))
             systemInfos.add(new SysInfo("App version", ApplicationContext.getAppVersion()));
-        systemInfos.add(new SysInfo("Server host", ApplicationContext.getServerHost()));
         try {
+            systemInfos.add(new SysInfo("Server host", ApplicationContext.getServer().getHost()));
             systemInfos.add(new SysInfo("Server hostname", InetAddress.getLocalHost().getHostName()));
+            systemInfos.add(new SysInfo("Server port", String.valueOf(ApplicationContext.getServer().getPort())));
+            systemInfos.add(new SysInfo("Server name", ApplicationContext.getServer().toString()));
         }
-        catch (UnknownHostException ex) {
+        catch (Exception ex) {
             systemInfos.add(new SysInfo("Server hostname", String.valueOf(ex)));
         }
-        systemInfos.add(new SysInfo("Server port", String.valueOf(ApplicationContext.getServerPort())));
-        systemInfos.add(new SysInfo("Server name", ApplicationContext.getServer().toString()));
         systemInfos.add(new SysInfo("Runtime env", ApplicationContext.getRuntimeEnvironment()));
         systemInfos.add(new SysInfo("Startup dir", System.getProperty("user.dir")));
         File bootJar = ApplicationContext.getBootJar();

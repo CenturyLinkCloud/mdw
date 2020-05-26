@@ -18,7 +18,7 @@ package com.centurylink.mdw.cli;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.bpmn.BpmnProcessImporter;
-import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.git.VersionControlGit;
 import com.centurylink.mdw.drawio.DrawIoProcessImporter;
 import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.workflow.Process;
@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -121,10 +120,10 @@ public class Import extends Setup {
         this.version = version;
     }
 
-    private VersionControl versionControl = null;
+    private VersionControlGit versionControl = null;
     private String branch = null;
     private Connection pooledConn = null;
-    public Import(File projectDir, VersionControl vc, String branch, boolean hardReset, Connection conn) {
+    public Import(File projectDir, VersionControlGit vc, String branch, boolean hardReset, Connection conn) {
         super(projectDir);
         versionControl = vc;
         this.branch = branch;
@@ -206,7 +205,7 @@ public class Import extends Setup {
     /**
      * This is for importing project assets from Git into an environment.
      */
-    public void importAssetsFromGit(boolean assetRefUpdate) throws IOException {
+    public void importAssetsFromGit() throws IOException {
         if (inProgress)
             throw new IOException("Asset import already in progress...");
 
@@ -231,20 +230,6 @@ public class Import extends Setup {
 
             // Perform import (Git pull)
             versionControl.hardCheckout(branch, hardReset);
-
-            // Clear cached previous asset revisions
-            versionControl.clear();
-
-            if (assetRefUpdate) {
-                // Capture new Refs in ASSET_REF after import (Git pull) and insert/update VALUE table
-                Checkpoint checkpoint = new Checkpoint(getEngineAssetRoot(), versionControl, versionControl.getCommit(), pooledConn);
-                try {
-                    checkpoint.updateRefs(true);
-                }
-                catch (SQLException ex) {
-                    throw new IOException(ex.getMessage(), ex);
-                }
-            }
         }
         catch (Throwable ex) {
             if (ex instanceof IOException)

@@ -3,8 +3,7 @@ package com.centurylink.mdw.testing;
 import com.centurylink.mdw.annotations.ScheduledJob;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
-import com.centurylink.mdw.dataaccess.file.PackageDir;
-import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TestingServices;
@@ -45,8 +44,7 @@ public class RandomTests implements com.centurylink.mdw.model.monitor.ScheduledJ
             testCaseList.setPackageTests(new ArrayList<>());
             Map<String,List<String>> randomCases = getRandomCases(50);
             for (String pkg : randomCases.keySet()) {
-                PackageDir pkgDir = new PackageDir(assetRoot, pkg);
-                PackageTests pkgTests = new PackageTests(pkgDir);
+                PackageTests pkgTests = new PackageTests(pkg);
                 testCaseList.getPackageTests().add(pkgTests);
                 List<TestCase> pkgCases = new ArrayList<>();
                 pkgTests.setTestCases(pkgCases);
@@ -69,7 +67,7 @@ public class RandomTests implements com.centurylink.mdw.model.monitor.ScheduledJ
      */
     protected Map<String, List<String>> getRandomCases(int count) throws ServiceException {
         List<String> allCases = new ArrayList<>();
-        Map<String,List<AssetInfo>> testAssets = getAssetServices().getAssetsOfType("test");
+        Map<String,List<AssetInfo>> testAssets = getAssetServices().getAssetsWithExtension("test");
         for (String pkg : testAssets.keySet()) {
             for (AssetInfo testAsset : testAssets.get(pkg)) {
                 String path = pkg + "/" + testAsset.getName();

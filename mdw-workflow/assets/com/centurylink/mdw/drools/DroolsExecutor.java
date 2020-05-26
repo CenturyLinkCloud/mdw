@@ -22,7 +22,7 @@ import org.kie.api.KieBase;
 import org.kie.api.runtime.StatelessKieSession;
 import org.kie.internal.command.CommandFactory;
 
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.rules.Operand;
@@ -43,14 +43,14 @@ public class DroolsExecutor implements RulesExecutor {
     @Override
     public Object execute(Asset rulesAsset, Operand input) throws ExecutionException {
 
-        ClassLoader cloudClassLoader = null;
+        ClassLoader packageClassLoader = null;
         if (input.getContext() != null && input.getContext().getPackage() != null)
-            cloudClassLoader = input.getContext().getPackage().getCloudClassLoader();
-        if (cloudClassLoader == null) // fall back to rules asset pkg classloader
-            cloudClassLoader = PackageCache.getPackage(rulesAsset.getPackageName()).getCloudClassLoader();
+            packageClassLoader = input.getContext().getPackage().getClassLoader();
+        if (packageClassLoader == null) // fall back to rules asset pkg classloader
+            packageClassLoader = PackageCache.getPackage(rulesAsset.getPackageName()).getClassLoader();
 
         KnowledgeBaseAsset kbAsset = DroolsKnowledgeBaseCache
-                .getKnowledgeBaseAsset(rulesAsset.getName(), null, cloudClassLoader);
+                .getKnowledgeBaseAsset(rulesAsset.getName(), null, packageClassLoader);
         if (kbAsset == null) {
             throw new ExecutionException("Cannot load KnowledgeBase asset: "
                     + rulesAsset.getPackageName() + "/" + rulesAsset.getLabel());

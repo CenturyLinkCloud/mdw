@@ -39,7 +39,6 @@ public class PropertyNames {
     public static final String MDW_DB_USERNAME = "mdw.database.username";
     @SuppressWarnings("squid:S2068")
     public static final String MDW_DB_PASSWORD = "mdw.database.password";
-    public static final String MDW_DB_VERSION_SUPPORTED = "mdw.database.version.supported";     // lowest version supported
     // If true, then will save datetime/timestamp using microsecond precision - Depends on declaring table columns correctly
     public static final String MDW_DB_MICROSECOND_PRECISION = "mdw.database.microsecond.precision";
     // for embedded db
@@ -60,9 +59,6 @@ public class PropertyNames {
     public static final int MDW_JMS_LISTENER_POLL_INTERVAL_DEFAULT = 5;
 
     // misc
-    public static final String MDW_SERVERS = "servers"; // server configuration in yaml form
-    public static final String MDW_SERVER_LIST = "mdw.server.list"; // host1:port1,host2:port2,...  Represents MDW worker instances
-    public static final String MDW_REMOTE_SERVER = "mdw.remote.server";
     public static final String MDW_ACTIVITY_ACTIVE_MAX_RETRY = "mdw.activity.active.max.retry";
     public static final String MDW_PERFORMANCE_LEVEL_SERVICE = "mdw.performance.level.service";
     public static final String MDW_PERFORMANCE_LEVEL_REGULAR = "mdw.performance.level.regular";
@@ -130,8 +126,6 @@ public class PropertyNames {
     public static final String MDW_ASSET_SYNC_INTERVAL = "mdw.asset.sync.interval";
     public static final String MDW_ASSET_SYNC_GITRESET = "mdw.asset.sync.gitreset";
     public static final String MDW_ASSET_HISTORY_DAYS = "mdw.asset.history.days";
-    public static final String MDW_ASSET_REF_ENABLED = "mdw.asset.ref.enabled";
-    public static final String MDW_ASSET_REF_AUTOPOP = "mdw.asset.ref.autopop";
     public static final String MDW_GIT_LOCAL_PATH = "mdw.git.local.path";
     public static final String MDW_GIT_REMOTE_URL = "mdw.git.remote.url";
     public static final String MDW_GIT_USER = "mdw.git.user";

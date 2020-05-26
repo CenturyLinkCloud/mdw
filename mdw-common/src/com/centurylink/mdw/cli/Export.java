@@ -20,7 +20,7 @@ import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.bpmn.BpmnProcessExporter;
 import com.centurylink.mdw.export.ProcessExporter;
 import com.centurylink.mdw.html.HtmlProcessExporter;
-import com.centurylink.mdw.image.ActivityAnnotationParser;
+import com.centurylink.mdw.cli.impls.ActivityAnnotationParser;
 import com.centurylink.mdw.image.PngProcessExporter;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
 import com.centurylink.mdw.model.workflow.Process;

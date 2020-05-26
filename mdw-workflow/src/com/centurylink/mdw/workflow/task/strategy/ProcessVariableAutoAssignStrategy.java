@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.workflow.task.strategy;
 
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
@@ -27,6 +28,8 @@ import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import org.apache.commons.lang.StringUtils;
 
+import java.io.IOException;
+
 /**
  * Assign tasks based on the CUID contained in process variable. The variable
  * name is specified as a task attribute. Expressions are also supported (eg:
@@ -37,12 +40,12 @@ import org.apache.commons.lang.StringUtils;
 public class ProcessVariableAutoAssignStrategy implements AutoAssignStrategy {
 
     public User selectAssignee(TaskInstance taskInstance) throws ObserverException {
-        TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
-        String assigneeVarSpec = taskVO.getAttribute(TaskAttributeConstant.ASSIGNEE_VAR);
-        if (StringUtils.isBlank(assigneeVarSpec))
-            throw new ObserverException("Missing task attribute: " + TaskAttributeConstant.ASSIGNEE_VAR);
-
         try {
+            TaskTemplate taskTemplate = TaskTemplateCache.getTaskTemplate(taskInstance.getTaskId());
+            String assigneeVarSpec = taskTemplate.getAttribute(TaskAttributeConstant.ASSIGNEE_VAR);
+            if (StringUtils.isBlank(assigneeVarSpec))
+                throw new ObserverException("Missing task attribute: " + TaskAttributeConstant.ASSIGNEE_VAR);
+
             TaskRuntimeContext runtimeContext = ServiceLocator.getTaskServices().getContext(taskInstance);
             String cuid;
             if (TaskRuntimeContext.isExpression(assigneeVarSpec))
@@ -52,9 +55,8 @@ public class ProcessVariableAutoAssignStrategy implements AutoAssignStrategy {
 
             return UserGroupCache.getUser(cuid);
         }
-        catch (Exception ex) {
-            throw new ObserverException(-1, "Problem auto-assigning task: " + taskInstance.getId()
-                    + " based on process variable: " + assigneeVarSpec, ex);
+        catch (IOException | ServiceException ex) {
+            throw new ObserverException(-1, "Problem auto-assigning task instance " + taskInstance.getId(), ex);
         }
     }
 }

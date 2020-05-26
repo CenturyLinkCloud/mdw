@@ -59,9 +59,6 @@ public class WorkAttributeConstant  {
      public static final String PROCESS_VERSION = "processversion";
      public static final String PROCESS_MAP = "processmap";
 
-     // the following attributes are used by designer to remember hidden links
-     public static final String START_TRANSITION_ID = "START_TRANSITION_ID";
-
      // the following attribute is only for embedded processes
      public static final String ENTRY_CODE = "ENTRY_CODE";
 

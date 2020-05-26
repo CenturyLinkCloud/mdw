@@ -23,17 +23,15 @@ import com.centurylink.mdw.bpm.ApplicationCacheDocument.ApplicationCache;
 import com.centurylink.mdw.bpm.CacheDocument.Cache;
 import com.centurylink.mdw.bpm.PropertyDocument.Property;
 import com.centurylink.mdw.cache.CacheService;
-import com.centurylink.mdw.cache.ExcludableCache;
 import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.model.system.SystemMessage.Level;
 import com.centurylink.mdw.service.data.activity.ImplementorCache;
-import com.centurylink.mdw.services.bundle.CacheRegistry;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
+import com.centurylink.mdw.services.request.HandlerCache;
 import com.centurylink.mdw.services.util.InitialRequest;
 import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.startup.StartupException;
@@ -83,6 +81,11 @@ public class CacheRegistration implements StartupService {
             ImplementorCache implementorCache = new ImplementorCache();
             implementorCache.loadCache();
             allCaches.put(ImplementorCache.class.getSimpleName(), implementorCache);
+            // handlers cache relies on kotlin from preloadDynamicCaches()
+            HandlerCache handlerCache = new HandlerCache();
+            handlerCache.loadCache();
+            allCaches.put(HandlerCache.class.getSimpleName(), handlerCache);
+            implementorCache.loadCache();
         }
         catch (Exception ex){
             String message = "Failed to load caches";
@@ -184,21 +187,16 @@ public class CacheRegistration implements StartupService {
     public void onShutdown(){
     }
 
-    public void refreshCaches() throws StartupException {
-        refreshCaches(null);
-    }
-
-    public synchronized void refreshCaches(List<String> excludedFormats) throws StartupException {
+    public synchronized void refreshCaches() throws StartupException {
         Bulletin bulletin = null;
         try {
             bulletin = SystemMessages.bulletinOn("Cache refresh in progress...");
             String propmgr = PropertyManager.class.getName();
-            if (excludedFormats == null || !excludedFormats.contains(Asset.JAVA))
-                CacheRegistry.getInstance().clearDynamicServices();
+            CacheRegistry.getInstance().clearDynamicServices();
             synchronized (allCaches) {
                 for (String cacheName : allCaches.keySet()) {
                     if (!cacheName.equals(propmgr))
-                        refreshCache(cacheName, excludedFormats);
+                        refreshCache(cacheName);
                 }
             }
             SpringAppContext.getInstance().loadPackageContexts();  // trigger dynamic context loading
@@ -215,10 +213,6 @@ public class CacheRegistration implements StartupService {
         }
     }
 
-    public void refreshCache(String cacheName) {
-        refreshCache(cacheName, null);
-    }
-
     public CacheService getCache(String name) {
         return allCaches.get(name);
     }
@@ -227,19 +221,14 @@ public class CacheRegistration implements StartupService {
      * Refreshes a particular cache by name.
      * @param cacheName the cache to refresh
      */
-    public void refreshCache(String cacheName, List<String> excludedFormats) {
+    public void refreshCache(String cacheName) {
         CacheService cache = allCaches.get(cacheName);
         if (cache != null) {
-            if (excludedFormats != null && cache instanceof ExcludableCache && excludedFormats.contains(((ExcludableCache)cache).getFormat())) {
-                logger.debug(" - omitting cache " + cacheName);
-            }
-            else {
-                logger.info(" - refresh cache " + cacheName);
-                try {
-                    cache.refreshCache();
-                } catch (Exception e) {
-                    logger.severeException("failed to refresh cache", e);
-                }
+            logger.info(" - refresh cache " + cacheName);
+            try {
+                cache.refreshCache();
+            } catch (Exception e) {
+                logger.severeException("failed to refresh cache", e);
             }
         }
     }

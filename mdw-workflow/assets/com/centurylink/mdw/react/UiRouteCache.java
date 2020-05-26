@@ -15,14 +15,17 @@
  */
 package com.centurylink.mdw.react;
 
+import com.centurylink.mdw.cache.CachingException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CacheService;
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.model.asset.Asset;
+
+import java.io.IOException;
 
 /**
  * Caches the UI route mapping from JSX asset to associated location hash route
@@ -46,12 +49,16 @@ public class UiRouteCache implements CacheService {
 
     public static synchronized void loadCache() {
         String hubOverridePackage = ApplicationContext.getHubOverridePackage();
-        Asset routesAsset = AssetCache.getAsset(hubOverridePackage + ".js/routes.json");
-        if (routesAsset == null) {
-            routesJson = new JSONArray();
-        }
-        else {
-            routesJson = new JSONArray(routesAsset.getStringContent());
+        String assetPath = hubOverridePackage + ".js/routes.json";
+        try {
+            Asset routesAsset = AssetCache.getAsset(assetPath);
+            if (routesAsset == null) {
+                routesJson = new JSONArray();
+            } else {
+                routesJson = new JSONArray(routesAsset.getText());
+            }
+        } catch (IOException ex) {
+            throw new CachingException("Error loading " + assetPath);
         }
     }
 

@@ -1,7 +1,7 @@
 package com.centurylink.mdw.services.asset;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.cache.impl.AssetHistory;
+import com.centurylink.mdw.cache.asset.AssetHistory;
 import com.centurylink.mdw.cli.Import;
 import com.centurylink.mdw.cli.Props;
 import com.centurylink.mdw.cli.Vercheck;
@@ -13,20 +13,25 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DbAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.dataaccess.file.GitBranch;
-import com.centurylink.mdw.dataaccess.file.GitDiffs.DiffType;
-import com.centurylink.mdw.dataaccess.file.GitProgressMonitor;
-import com.centurylink.mdw.dataaccess.file.VersionControlGit;
-import com.centurylink.mdw.model.asset.*;
+import com.centurylink.mdw.file.VersionProperties;
+import com.centurylink.mdw.git.GitBranch;
+import com.centurylink.mdw.git.GitDiffs.DiffType;
+import com.centurylink.mdw.git.GitProgressMonitor;
+import com.centurylink.mdw.git.VersionControlGit;
+import com.centurylink.mdw.model.asset.Asset;
+import com.centurylink.mdw.model.asset.AssetPath;
+import com.centurylink.mdw.model.asset.AssetVersion;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
+import com.centurylink.mdw.model.asset.api.PackageList;
+import com.centurylink.mdw.model.asset.api.StagingArea;
 import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.workflow.PackageMeta;
 import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.StagingServices;
 import com.centurylink.mdw.services.cache.CacheRegistration;
-import com.centurylink.mdw.util.file.Packages;
-import com.centurylink.mdw.util.file.VersionProperties;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import org.apache.commons.io.FileUtils;
@@ -50,7 +55,7 @@ public class StagingServicesImpl implements StagingServices {
     private VersionControlGit getMainVersionControl() throws ServiceException {
         try {
             AssetServices assetServices = ServiceLocator.getAssetServices();
-            return (VersionControlGit) assetServices.getVersionControl();
+            return assetServices.getVersionControl();
         }
         catch (IOException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex);
@@ -304,7 +309,7 @@ public class StagingServicesImpl implements StagingServices {
             String comment = "Package meta created on " + vcGit.getBranch() + " by " + stagingUser.getName();
             String pkgPath = getVcAssetPath() + "/" + packageName.replace('.', '/');
             List<String> commitPaths = new ArrayList<>();
-            commitPaths.add(pkgPath + "/" + Packages.META_DIR + "/" + Packages.PACKAGE_YAML);
+            commitPaths.add(pkgPath + "/" + PackageMeta.PACKAGE_YAML_PATH);
             vcGit.add(commitPaths);
             vcGit.commit(commitPaths, comment);
             vcGit.push();
@@ -337,13 +342,13 @@ public class StagingServicesImpl implements StagingServices {
             String pkgPath = getVcAssetPath() + "/" + pkgName.replace('.', '/');
             List<String> commitPaths = new ArrayList<>();
             commitPaths.add(pkgPath + "/" + AssetServices.assetName(assetPath));
-            commitPaths.add(pkgPath + "/" + Packages.META_DIR + "/" + Packages.VERSIONS);
+            commitPaths.add(pkgPath + "/" + PackageMeta.VERSIONS_PATH);
             vcGit.add(commitPaths);
             vcGit.commit(commitPaths, comment);
             vcGit.push();
 
             logger.info("Asset pushed: " + assetPath);
-            stageAssets(cuid, Arrays.asList(new String[]{assetPath}));
+            stageAssets(cuid, Arrays.asList(assetPath));
         }
         catch (ServiceException ex) {
             throw ex;
@@ -418,7 +423,7 @@ public class StagingServicesImpl implements StagingServices {
     }
 
     private AssetInfo getGhostAsset(String cuid, String assetPath) throws ServiceException {
-        AssetInfo assetInfo = new AssetInfo(getStagingDir(new File(cuid) + "/" + getVcAssetPath()), assetPath);
+        AssetInfo assetInfo = new AssetInfo(new AssetPath(assetPath).asset);
         assetInfo.setVcsDiffType(DiffType.MISSING);
         return assetInfo;
     }
@@ -493,14 +498,14 @@ public class StagingServicesImpl implements StagingServices {
                         stagedAssetFile = stagedAsset.getFile();
                     }
                     Files.copy(mainAsset.getFile().toPath(), stagedAssetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                    stagedAssetServices.updateAssetVersion(asset, mainAsset.getRevision().getVersion());
+                    stagedAssetServices.updateAssetVersion(asset, mainAsset.getVersion());
                 }
                 else {
                     getAssetServices(cuid).deleteAsset(asset);
                     stagedAssetServices.removeAssetVersion(asset);
                 }
                 commitPaths.add(pkgPath + "/" + AssetServices.assetName(asset));
-                commitPaths.add(pkgPath + "/" + Packages.META_DIR + "/" + Packages.VERSIONS);
+                commitPaths.add(pkgPath + "/" + PackageMeta.VERSIONS_PATH);
                 dataAccess.deleteValue(OwnerType.USER, cuid, asset, STAGED_ASSET);
             }
             if (!commitPaths.isEmpty()) {
@@ -522,7 +527,7 @@ public class StagingServicesImpl implements StagingServices {
         VersionControlGit vcGit = getStagingVersionControl(cuid);
         try {
             vcGit.rm(pkgPath + "/" + AssetServices.assetName(assetPath));
-            vcGit.add(pkgPath + "/" + Packages.META_DIR + "/" + Packages.VERSIONS);
+            vcGit.add(pkgPath + "/" + PackageMeta.VERSIONS_PATH);
             logger.info(assetPath + " deleted on " + vcGit.getBranch() + " by " + cuid);
             vcGit.commit(assetPath + " deleted on " + vcGit.getBranch() + " by " + cuid);
             vcGit.push();
@@ -546,10 +551,9 @@ public class StagingServicesImpl implements StagingServices {
         try {
             for (String assetPath : assets) {
                 String version = assetVersions.get(assetPath);
-                AssetVersionSpec spec = new AssetVersionSpec(assetPath, version);
-                Asset asset = AssetHistory.getAsset(spec);
+                Asset asset = AssetHistory.getAsset(assetPath, version);
                 if (asset == null)
-                   throw new ServiceException(ServiceException.NOT_FOUND, "Asset version not found: " + spec);
+                   throw new ServiceException(ServiceException.NOT_FOUND, "Asset version not found: " + assetPath + " v" + version);
                 rolledBackAssets.add(asset);
             }
         }
@@ -569,7 +573,7 @@ public class StagingServicesImpl implements StagingServices {
                 AssetInfo currentAssetInfo = assetServices.getAsset(rolledBackAsset.getPackageName() + "/" + rolledBackAsset.getName());
                 String currentVer = currentAssetInfo.getJson().getString("version");
                 int incrementedVer = AssetVersion.parseVersion(currentVer) + 1;
-                File versionsFile = new File(stagingAssetsDir + "/" + pkgSlashyPath + "/" + Packages.META_DIR + "/" + Packages.VERSIONS);
+                File versionsFile = new File(stagingAssetsDir + "/" + pkgSlashyPath + "/" + PackageMeta.VERSIONS_PATH);
                 VersionProperties versionProps = new VersionProperties(versionsFile);
                 versionProps.setProperty(rolledBackAsset.getName(), String.valueOf(incrementedVer));
                 versionProps.save();
@@ -579,7 +583,7 @@ public class StagingServicesImpl implements StagingServices {
                 List<String> commitPaths = new ArrayList<>();
                 String pkgPath = getVcAssetPath() + "/" + pkgSlashyPath;
                 commitPaths.add(pkgPath + "/" + rolledBackAsset.getName());
-                commitPaths.add(pkgPath + "/" + Packages.META_DIR + "/" + Packages.VERSIONS);
+                commitPaths.add(pkgPath + "/" + PackageMeta.VERSIONS_PATH);
                 vcGit.add(commitPaths);
                 vcGit.commit(commitPaths, comment);
                 vcGit.push();
@@ -630,9 +634,9 @@ public class StagingServicesImpl implements StagingServices {
                 importer.setAssetLoc(assetLoc);
                 importer.setConfigLoc(PropertyManager.getConfigLocation());
                 importer.setGitRoot(mainVc.getLocalDir());
-                importer.importAssetsFromGit(PropertyManager.getBooleanProperty(PropertyNames.MDW_ASSET_REF_ENABLED, false));
+                importer.importAssetsFromGit();
                 SystemMessages.bulletinOff(bulletin, "Asset import completed");
-                CacheRegistration.getInstance().refreshCaches(null);
+                CacheRegistration.getInstance().refreshCaches();
             }
             finally {
                 SystemMessages.bulletinOff(bulletin, "Asset import completed");

@@ -19,8 +19,8 @@ import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.export.ExportHelper;
 import com.centurylink.mdw.export.Table;
 import com.centurylink.mdw.image.PngProcessExporter;
+import com.centurylink.mdw.model.Attributes;
 import com.centurylink.mdw.model.asset.Pagelet.Widget;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Activity;
@@ -110,42 +110,42 @@ public class HtmlExportHelper extends ExportHelper {
 
     protected String getAttributesHtml(Activity activity) throws IOException {
         StringBuilder sb = new StringBuilder();
-        List<Attribute> attributes = activity.getAttributes();
-        List<Attribute> sortedAttributes = new ArrayList<>(attributes);
-        Collections.sort(sortedAttributes);
         sb.append("<ul>\n");
-        for (Attribute attribute : sortedAttributes) {
-            String name = attribute.getName();
-            String val = attribute.getValue();
-            if (!isExcludeAttribute(name, val)) {
-                sb.append("<li>");
-                sb.append(getAttributeLabel(activity, attribute)).append(": ");
-                sb.append(getAttributeValueHtml(activity, attribute));
-                sb.append("</li>");
+        Attributes attributes = activity.getAttributes();
+        if (attributes != null) {
+            List<String> sortedNames = new ArrayList<>(attributes.keySet());
+            Collections.sort(sortedNames);
+            for (String name : sortedNames) {
+                String val = attributes.get(name);
+                if (!isExcludeAttribute(name, val)) {
+                    sb.append("<li>");
+                    sb.append(getAttributeLabel(activity, name)).append(": ");
+                    sb.append(getAttributeValueHtml(activity, attributes, name));
+                    sb.append("</li>");
+                }
             }
         }
         sb.append("</ul>");
         return sb.toString();
     }
 
-    protected String getAttributeValueHtml(Activity activity, Attribute attribute) throws IOException {
+    protected String getAttributeValueHtml(Activity activity, Attributes attributes, String attributeName) throws IOException {
         StringBuilder sb = new StringBuilder();
-        String name = attribute.getName();
-        Widget widget = getWidget(activity, name);
-        if (widget != null || WorkAttributeConstant.MONITORS.equals(attribute.getName())) {
-            if (isTabular(activity, attribute)) {
-                Table table = getTable(activity, attribute);
+        Widget widget = getWidget(activity, attributeName);
+        if (widget != null || WorkAttributeConstant.MONITORS.equals(attributeName)) {
+            if (isTabular(activity, attributeName)) {
+                Table table = getTable(activity, attributes, attributeName);
                 sb.append("<div style='margin-top:5px'>").append(getTableHtml(table)).append("</div>");
             }
-            else if (isCode(activity, attribute)) {
-                sb.append(getCodeBoxHtml(attribute.getValue()));
+            else if (isCode(activity, attributeName)) {
+                sb.append(getCodeBoxHtml(attributes.get(attributeName)));
             }
             else {
-                sb.append(attribute.getValue());
+                sb.append(attributes.get(attributeName));
             }
         }
         else {
-            sb.append(attribute.getValue());
+            sb.append(attributes.get(attributeName));
         }
         return sb.toString();
     }

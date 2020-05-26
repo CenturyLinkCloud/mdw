@@ -21,16 +21,14 @@ import com.centurylink.mdw.activity.types.SuspendableActivity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
-import com.centurylink.mdw.cache.impl.AssetCache;
-import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.cloud.CloudClassLoader;
+import com.centurylink.mdw.cache.asset.PackageCache;
+import com.centurylink.mdw.pkg.PackageClassLoader;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.Attributes;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.variable.Document;
@@ -89,13 +87,13 @@ public abstract class BaseActivity implements GeneralActivity {
     private String returnMessage;
     private String entryCode;
     private List<VariableInstance> parameters;
-    private List<Attribute> attributes;
+    private Attributes attributes;
     private ProcessExecutor engine;
     private TrackingTimer timer;
     private String[] outputDocuments;
     private Activity activityDef;
-    private ProcessInstance processInst;
-    private ActivityInstance activityInst;
+    private ProcessInstance processInstance;
+    private ActivityInstance activityInstance;
     private ActivityRuntimeContext _runtimeContext;
     private Package pkg;
 
@@ -125,21 +123,21 @@ public abstract class BaseActivity implements GeneralActivity {
             if (timer != null)
                 timer.start("Prepare Activity");
             this.engine = engine;
-            this.processInst = pi;
+            this.processInstance = pi;
             this.activityDef = actVO;
-            this.activityInst = ai;
+            this.activityInstance = ai;
             this.workTransitionInstanceId = transInstId;
             this.parameters = parameters;
             this.attributes = actVO.getAttributes();
             this.timer = timer;
             this.entryCode = entryCode;
             try {
-                pkg = PackageCache.getProcessPackage(getMainProcessDefinition().getId());
+                pkg = PackageCache.getPackage(getMainProcessDefinition().getPackageName());
                 ActivityImplementor implementor = ImplementorCache.get(activityDef.getImplementor());
                 String category = implementor == null ? GeneralActivity.class.getName() : implementor.getCategory();
                 StandardLogger activityLogger = LoggerUtil.getStandardLogger(getClass().getName());
-                _runtimeContext = new ActivityRuntimeContext(activityLogger, pkg, getProcessDefinition(), processInst,
-                        getPerformanceLevel(), getEngine().isInService(), activityDef, category, activityInst,
+                _runtimeContext = new ActivityRuntimeContext(activityLogger, pkg, getProcessDefinition(), processInstance,
+                        getPerformanceLevel(), getEngine().isInService(), activityDef, category, activityInstance,
                         this instanceof SuspendableActivity);
                 if (!(logger instanceof ActivityLogger))
                     logger = new ActivityLogger(_runtimeContext);
@@ -174,17 +172,17 @@ public abstract class BaseActivity implements GeneralActivity {
         // InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
         engine = new ProcessExecutor(edao, null, false);
 
-        this.procDef = this.mainProcDef = runtimeContext.getProcess();
-        this.processInst = runtimeContext.getProcessInstance();
+        this.processDefinition = this.mainProcessDefinition = runtimeContext.getProcess();
+        this.processInstance = runtimeContext.getProcessInstance();
         this.pkg = runtimeContext.getPackage();
         this._runtimeContext = runtimeContext;
         this.activityDef = runtimeContext.getActivity();
-        this.activityInst = runtimeContext.getActivityInstance();
+        this.activityInstance = runtimeContext.getActivityInstance();
 
         if (runtimeContext.getAttributes() != null) {
-            attributes = new ArrayList<>();
+            attributes = new Attributes();
             for (String attrName : runtimeContext.getAttributes().keySet())
-                attributes.add(new Attribute(attrName, runtimeContext.getAttribute(attrName)));
+                attributes.put(attrName, runtimeContext.getAttribute(attrName));
         }
 
         if (runtimeContext.getVariables() != null) {
@@ -232,7 +230,7 @@ public abstract class BaseActivity implements GeneralActivity {
             }
             finally
             {
-                if (Thread.currentThread().getContextClassLoader() instanceof CloudClassLoader)
+                if (Thread.currentThread().getContextClassLoader() instanceof PackageClassLoader)
                     ApplicationContext.resetContextClassLoader();
             }
         }
@@ -266,11 +264,11 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return activity instance ID
      */
     protected Long getActivityInstanceId() {
-        return activityInst.getId();
+        return activityInstance.getId();
     }
 
     protected ActivityInstance getActivityInstance() {
-        return activityInst;
+        return activityInstance;
     }
 
     /**
@@ -280,7 +278,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return the owner type
      */
     protected String getProcessInstanceOwner() {
-        return this.processInst.getOwner();
+        return this.processInstance.getOwner();
     }
 
     /**
@@ -290,7 +288,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return the process instance owner ID.
      */
     protected Long getProcessInstanceOwnerId() {
-        return this.processInst.getOwnerId();
+        return this.processInstance.getOwnerId();
     }
 
     /**
@@ -298,7 +296,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return process instance ID
      */
     protected Long getProcessInstanceId() {
-        return processInst.getId();
+        return processInstance.getId();
     }
 
     /**
@@ -331,7 +329,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return process ID
      */
     protected Long getProcessId() {
-        return this.processInst.getProcessId();
+        return this.processInstance.getProcessId();
     }
 
 
@@ -340,7 +338,7 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return master request ID
      */
     protected String getMasterRequestId() {
-        return this.processInst.getMasterRequestId();
+        return this.processInstance.getMasterRequestId();
     }
 
     /**
@@ -392,31 +390,41 @@ public abstract class BaseActivity implements GeneralActivity {
     }
 
     protected ProcessInstance getProcessInstance() {
-        return this.processInst;
+        return this.processInstance;
     }
 
-    private Process procDef;
+    private Process processDefinition;
     protected Process getProcessDefinition() {
-        if (procDef == null) {
-            if (processInst.getProcessInstDefId() > 0L)
-                procDef = ProcessCache.getProcessInstanceDefiniton(processInst.getProcessId(), processInst.getProcessInstDefId());
-            if (procDef == null)
-                procDef = ProcessCache.getProcess(processInst.getProcessId());
-            if (processInst.isEmbedded())
-                procDef = procDef.getSubProcess(new Long(processInst.getComment()));
+        if (processDefinition == null) {
+            if (processInstance.getInstanceDefinitionId() > 0L)
+                processDefinition = ProcessCache.getInstanceDefinition(processInstance.getProcessId(), processInstance.getInstanceDefinitionId());
+            if (processDefinition == null) {
+                try {
+                    processDefinition = ProcessCache.getProcess(processInstance.getProcessId());
+                } catch (IOException ex) {
+                    logger.error("Error loading process definition for instance " + processInstance.getId(), ex);
+                }
+            }
+            if (processInstance.isEmbedded() && processDefinition != null)
+                processDefinition = processDefinition.getSubProcess(new Long(processInstance.getComment()));
         }
-        return procDef;
+        return processDefinition;
     }
 
-    private Process mainProcDef;
+    private Process mainProcessDefinition;
     protected Process getMainProcessDefinition() {
-        if (mainProcDef == null) {
-            if (processInst.getProcessInstDefId() > 0L)
-                mainProcDef = ProcessCache.getProcessInstanceDefiniton(processInst.getProcessId(), processInst.getProcessInstDefId());
-            if (mainProcDef == null)
-                mainProcDef = ProcessCache.getProcess(processInst.getProcessId());
+        if (mainProcessDefinition == null) {
+            if (processInstance.getInstanceDefinitionId() > 0L)
+                mainProcessDefinition = ProcessCache.getInstanceDefinition(processInstance.getProcessId(), processInstance.getInstanceDefinitionId());
+            if (mainProcessDefinition == null) {
+                try {
+                    mainProcessDefinition = ProcessCache.getProcess(processInstance.getProcessId());
+                } catch (IOException ex) {
+                    logger.error("Error loading main definition for process instance " + processInstance.getId(), ex);
+                }
+            }
         }
-        return mainProcDef;
+        return mainProcessDefinition;
     }
 
     /**
@@ -510,7 +518,7 @@ public abstract class BaseActivity implements GeneralActivity {
                 varInst.setData(value);
                 engine.updateVariableInstance(varInst);
             } else {
-                varInst = engine.createVariableInstance(processInst, name, value);  // This also adds it to ProcessInstance
+                varInst = engine.createVariableInstance(processInstance, name, value);  // This also adds it to ProcessInstance
                 varInstId = varInst.getInstanceId();
                 if (!parameters.contains(varInst))  // Should already be there when added to ProcessInstance
                     parameters.add(varInst);    // This adds to ProcessInstanceVO as well - do not think this ever executes
@@ -600,11 +608,7 @@ public abstract class BaseActivity implements GeneralActivity {
         return docvo==null?null:docvo.getContent(getPackage());
     }
 
-    /**
-     * Get all attributes
-     * @return all attributes of the activity
-     */
-    protected List<Attribute> getAttributes() {
+    protected Attributes getAttributes() {
         return attributes;
     }
 
@@ -614,10 +618,10 @@ public abstract class BaseActivity implements GeneralActivity {
      * @return the attribute value
      */
     protected String getAttributeValue(String name) {
-        return Attribute.findAttribute(attributes, name);
+        return attributes.get(name);
     }
 
-
+    @Deprecated
     protected String getVariableValueSmart(String name) throws PropertyException {
         return getValueSmart(name,name);
     }
@@ -659,7 +663,7 @@ public abstract class BaseActivity implements GeneralActivity {
      */
 
     protected String getAttributeValueSmart(String name) {
-        return getValueSmart(Attribute.findAttribute(attributes, name), "A:"+name);
+        return getValueSmart(attributes.get(name), "A:" + name);
     }
 
     protected String getValueSmart(String value, String tag) {
@@ -683,20 +687,6 @@ public abstract class BaseActivity implements GeneralActivity {
             value = obj == null ? null : obj.toString();
         }
         return value == null ? null : value.trim();
-    }
-
-    /**
-     * This method is the same as getAttributeValue except
-     * it expects a variable name, and when the specification
-     * is a '$' followed by variable name, it removes the '$'
-     * @param attrname attribute name
-     */
-    protected String getAttributeValueAsVariableName(String attrname) {
-        String value = Attribute.findAttribute(attributes, attrname);
-        if (value==null) return null;
-        value = value.trim();
-        if (value.startsWith("$")) return value.substring(1);
-        else return value;
     }
 
     /**
@@ -1011,10 +1001,6 @@ public abstract class BaseActivity implements GeneralActivity {
         return db;
     }
 
-    protected void closeDatabaseAccess(DatabaseAccess db) {
-        if (db!=null && (!db.isDefaultDatabase() || engine==null)) db.closeConnection();
-    }
-
     protected Package getPackage() {
         return pkg;
     }
@@ -1035,10 +1021,6 @@ public abstract class BaseActivity implements GeneralActivity {
      */
     protected String getProperty(String propertyName) {
         return PropertyManager.getProperty(propertyName);
-    }
-
-    protected Asset getAsset(String name, String language, int version) {
-        return AssetCache.getAsset(name, language, version);
     }
 
     /**
@@ -1195,8 +1177,7 @@ public abstract class BaseActivity implements GeneralActivity {
         if (getPerformanceLevel() < 9)
             _runtimeContext.setLogPersister(ActivityLogger::persist);
 
-        String temp = getAttributeValue(OUTPUTDOCS);
-        outputDocuments = temp == null ? new String[0] : Attribute.parseList(temp).toArray(new String[0]);
+        outputDocuments = attributes.containsKey(OUTPUTDOCS) ? attributes.getList(OUTPUTDOCS).toArray(new String[0]) : new String[0];
         Object retObj;
         try {
             if (Compatibility.hasCodeSubstitutions())

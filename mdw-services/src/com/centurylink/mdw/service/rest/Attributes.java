@@ -15,14 +15,6 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.Path;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.model.JsonObject;
@@ -30,18 +22,17 @@ import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.JsonUtil;
-
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.Path;
+import java.util.Map;
 
 @Path("/Attributes")
 public class Attributes extends JsonRestService {
-
-    @Override
-    public List<String> getRoles(String path) {
-        return null; // TODO: for now this is needed for Designer access
-    }
 
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {

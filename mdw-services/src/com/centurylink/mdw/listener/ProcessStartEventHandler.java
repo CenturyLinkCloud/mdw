@@ -15,26 +15,31 @@
  */
 package com.centurylink.mdw.listener;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.xmlbeans.XmlObject;
-
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.model.request.Request;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.request.RequestHandlerException;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
+import org.apache.xmlbeans.XmlObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * @deprecated
+ * use {@link com.centurylink.mdw.services.request.ProcessRunHandler}
+ */
+@Deprecated
 public class ProcessStartEventHandler extends ExternalEventHandlerBase {
-
-    protected static String PROP_SINGLE_TRANSACTION = "singleTransaction";
 
     public ProcessStartEventHandler() {
     }
@@ -44,16 +49,16 @@ public class ProcessStartEventHandler extends ExternalEventHandlerBase {
         try {
             Long eventInstId = new Long(metaInfo.get(Listener.METAINFO_DOCUMENT_ID));
             String processName = metaInfo.get(Listener.METAINFO_PROCESS_NAME);
-            if (processName==null)
+            if (processName == null)
                 throw new EventHandlerException("START_PROCESS needs ProcessName argument");
             Long processId = getProcessId(processName);
-            Package pkg = PackageCache.getProcessPackage(processId);
-            if (pkg != null && !pkg.isDefaultPackage())
+            Process process = getProcessDefinition(processId);
+            Package pkg = PackageCache.getPackage(process.getPackageName());
+            if (pkg != null)
                 setPackage(pkg); // prefer process package over default of EventHandler
             String masterRequestId = getMasterRequestId((XmlObject)msgdoc, metaInfo);
-            Process procVO = getProcessDefinition(processId);
-            String processType = procVO.getProcessType();
-            Map<String,Object> parameters = buildParameters((XmlObject)msgdoc, metaInfo, procVO);
+            String processType = process.getProcessType();
+            Map<String,Object> parameters = buildParameters((XmlObject)msgdoc, metaInfo, process);
 
             if (processType.equals(ProcessVisibilityConstant.SERVICE)) {
                 return invokeServiceProcess(processId, eventInstId, masterRequestId, message, parameters, null, 0, metaInfo);
@@ -127,7 +132,4 @@ public class ProcessStartEventHandler extends ExternalEventHandlerBase {
         else masterRequestId = this.placeHolderTranslation(masterRequestId, metaInfo, msgdoc);
         return masterRequestId;
     }
-
-
-
 }

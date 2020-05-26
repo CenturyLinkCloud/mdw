@@ -47,11 +47,6 @@ public class WorkgroupList implements Jsonable, InstanceList<Workgroup> {
             for (int i = 0; i < groupList.length(); i++)
                 groups.add(new Workgroup((JSONObject)groupList.get(i)));
         }
-        else if (jsonObj.has("allWorkgroups")) { // designer compatibility
-            JSONArray groupList = jsonObj.getJSONArray("allWorkgroups");
-            for (int i = 0; i < groupList.length(); i++)
-                groups.add(new Workgroup((JSONObject)groupList.get(i)));
-        }
     }
 
     private Date retrieveDate;

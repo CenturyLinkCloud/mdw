@@ -1,0 +1,84 @@
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=77,y=85,w=60,h=40
+  transitions:
+  - id: T1
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=197,ly=81,type=Elbow,xs=141&191,ys=105&105
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    DoNotNotifyCaller: 'false'
+    WORK_DISPLAY_INFO: x=492,y=84,w=60,h=40
+- id: A3
+  name: custom
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptEvaluator
+  attributes:
+    WORK_DISPLAY_INFO: x=195,y=85,w=60,h=40
+    SCRIPT: Groovy
+    Expression: custom
+  transitions:
+  - id: T2
+    to: A4
+    event: FINISH
+    resultCode: 'false'
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=269,ly=82,type=Elbow,xs=259&313,ys=105&105
+  - id: T3
+    to: A5
+    event: FINISH
+    resultCode: 'true'
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=259,ly=151,type=Elbow,xs=259&311,ys=105&207
+- id: A4
+  name: "autoform task\r\nfor service resume"
+  implementor: com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity
+  attributes:
+    Wait for Task: 'TRUE'
+    STATUS_AFTER_EVENT: Cancelled
+    WORK_DISPLAY_INFO: x=317,y=78,w=108,h=71
+    TASK_PAGELET: com.centurylink.mdw.base/AutoFormManualTask.pagelet
+    TASK_TEMPLATE: com.centurylink.mdw.tests.tasks/autoform task for service resume.task
+    TASK_TEMPLATE_assetVersion: '[0,1)'
+  transitions:
+  - id: T4
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=460,ly=104,type=Elbow,xs=429&488,ys=104&104
+- id: A5
+  name: "custom task for \r\nservice resume"
+  implementor: com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity
+  attributes:
+    STATUS_AFTER_EVENT: Cancelled
+    WORK_DISPLAY_INFO: x=315,y=172,w=109,h=70
+    TASK_PAGELET: com.centurylink.mdw.base/CustomManualTask.pagelet
+    TASK_TEMPLATE: com.centurylink.mdw.tests.tasks/custom task for service resume.task
+    TASK_TEMPLATE_assetVersion: '[0,1)'
+  transitions:
+  - id: T5
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: lx=458,ly=158,type=Elbow,xs=428&488,ys=207&104
+variables:
+  custom:
+    type: java.lang.Boolean
+    category: INPUT
+  inputString:
+    type: java.lang.String
+    category: INPUT
+  requiredString:
+    type: java.lang.String
+    category: LOCAL
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  WORK_DISPLAY_INFO: x=26,y=22,w=185,h=27
+  PROCESS_VISIBILITY: PUBLIC

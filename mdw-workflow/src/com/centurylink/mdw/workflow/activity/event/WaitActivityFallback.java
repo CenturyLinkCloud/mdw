@@ -32,6 +32,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 
+import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -140,7 +141,7 @@ public abstract class WaitActivityFallback implements StartupService {
                     }
                 }
             }
-        } catch (DataAccessException ex) {
+        } catch (IOException ex) {
             logger.error(ex.getMessage(), ex);
         }
     }
@@ -160,7 +161,7 @@ public abstract class WaitActivityFallback implements StartupService {
     /**
      * Returns activities from non-archived process definitions which need to be periodically processed.
      */
-    protected List<Activity> getActivities() throws DataAccessException {
+    protected List<Activity> getActivities() throws IOException {
         return ActivityCache.getActivities(getImplementor(), isIncludeArchived());
     }
 

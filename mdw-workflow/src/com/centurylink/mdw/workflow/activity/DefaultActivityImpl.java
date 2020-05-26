@@ -21,7 +21,7 @@ import com.centurylink.mdw.services.process.BaseActivity;
 
 
 /**
- * Base class that implements the Controlled Activity.
+ * Base class to implement an Activity.
  * All the controlled activities should extend this class.
  */
 public class DefaultActivityImpl extends BaseActivity  {

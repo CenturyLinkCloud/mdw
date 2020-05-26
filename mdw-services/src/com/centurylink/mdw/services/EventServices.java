@@ -31,6 +31,7 @@ import com.centurylink.mdw.services.event.ServiceHandler;
 import com.centurylink.mdw.services.event.WorkflowHandler;
 import com.centurylink.mdw.util.CallURL;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,7 @@ public interface EventServices {
             throws DataAccessException, EventException;
 
     List<EventLog> getEventLogs(String pEventName, String pEventSource,
-            String pEventOwner, Long pEventOwnerId) throws DataAccessException;
+            String pEventOwner, Long pEventOwnerId) throws ServiceException;
 
     Integer notifyProcess(String pEventName, Long pEventInstId, String message, int delay)
             throws DataAccessException, EventException;
@@ -209,7 +210,7 @@ public interface EventServices {
             throws EventException;
 
     Process findProcessByProcessInstanceId(Long processInstanceId)
-            throws DataAccessException, ProcessException;
+            throws DataAccessException, ProcessException, IOException;
 
     /**
      * Run a ScheduledJob so that there is no overlap between running instances.

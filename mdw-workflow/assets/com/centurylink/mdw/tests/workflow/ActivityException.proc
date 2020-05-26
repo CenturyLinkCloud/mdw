@@ -20,9 +20,9 @@ activities:
   name: Which Case?
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptEvaluator
   attributes:
-    Expression: processCase
-    SCRIPT: Groovy
     WORK_DISPLAY_INFO: x=153,y=245,w=98,h=68
+    SCRIPT: Groovy
+    Expression: processCase
   transitions:
   - id: T2
     to: A5
@@ -39,9 +39,9 @@ activities:
   name: Script with syntax Error
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
   attributes:
-    Rule: "$xmldata.MINUTES = \"2\";\r\n\r\n$intarraytest = \"1~1~2~3~5~8\";\r\n\r\n$maptest = \"R=red~G=green~B=blue\";\r\n\r\nsyntax error here"
-    SCRIPT: Groovy
     WORK_DISPLAY_INFO: x=136,y=112,w=133,h=59
+    SCRIPT: Groovy
+    Rule: "$xmldata.MINUTES = \"2\";\r\n\r\n$intarraytest = \"1~1~2~3~5~8\";\r\n\r\n$maptest = \"R=red~G=green~B=blue\";\r\n\r\nsyntax error here"
   transitions:
   - id: T4
     to: A2
@@ -53,9 +53,9 @@ activities:
   implementor: com.centurylink.mdw.workflow.activity.process.InvokeSubProcessActivity
   attributes:
     WORK_DISPLAY_INFO: x=403,y=249,w=176,h=65
-    processname: com.centurylink.mdw.tests.workflow/MDWTestSubProcess2
-    processversion: '[0.4,1)'
+    processversion: '[0,1)'
     synchronous: 'TRUE'
+    processname: com.centurylink.mdw.tests.workflow/TestSubProcess2.proc
   transitions:
   - id: T5
     to: A2
@@ -87,12 +87,12 @@ subprocesses:
     name: ActivityException Fallout
     implementor: com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity
     attributes:
+      Wait for Task: 'TRUE'
       STATUS_AFTER_EVENT: Cancelled
+      WORK_DISPLAY_INFO: x=688,y=51,w=100,h=60
       TASK_PAGELET: com.centurylink.mdw.base/AutoFormManualTask.pagelet
       TASK_TEMPLATE: com.centurylink.mdw.tests.workflow/activityExceptionFallout.task
       TASK_TEMPLATE_assetVersion: '[0.2,1)'
-      WORK_DISPLAY_INFO: x=688,y=51,w=100,h=60
-      Wait for Task: 'TRUE'
     transitions:
     - id: T7
       to: A10
@@ -100,9 +100,9 @@ subprocesses:
       attributes:
         TRANSITION_DISPLAY_INFO: lx=822,ly=80,type=Elbow,xs=792&853,ys=80&80
   attributes:
-    EMBEDDED_PROCESS_TYPE: Exception Handler
-    PROCESS_VISIBILITY: EMBEDDED
     WORK_DISPLAY_INFO: x=544,y=20,w=386,h=116
+    PROCESS_VISIBILITY: EMBEDDED
+    EMBEDDED_PROCESS_TYPE: Exception Handler
 variables:
   exception:
     type: java.lang.Exception
@@ -113,6 +113,5 @@ variables:
 attributes:
   ArrowStyle: ArrowEnd
   NodeStyle: BoxIcon
-  PROCESS_VISIBILITY: PUBLIC
-  PerformanceLevel: '0'
   WORK_DISPLAY_INFO: x=50,y=50,w=159,h=27
+  PROCESS_VISIBILITY: PUBLIC

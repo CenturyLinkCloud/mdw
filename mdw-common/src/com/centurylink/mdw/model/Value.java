@@ -123,7 +123,7 @@ public class Value implements Jsonable {
     }
 
     /**
-     * Maps Designer display option to Display type.
+     * Maps design-time display option to Display type.
      */
     @ApiModelProperty(hidden=true)
     public static Display getDisplay(String option) {

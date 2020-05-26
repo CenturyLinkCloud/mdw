@@ -1,9 +1,9 @@
 package com.centurylink.mdw.tests.workflow
 
-start process("MDWTestSuppsEmbedded") {
+start process("TestSuppsEmbedded") {
     variables = [testCase: "correct-waiting-on-wait"]
 }
-sleep 30
+sleep 10
 send message("REST") {
     payload = "<Signal>${masterRequestId}</Signal>"
 }

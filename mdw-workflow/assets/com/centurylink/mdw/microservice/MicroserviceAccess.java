@@ -2,7 +2,7 @@ package com.centurylink.mdw.microservice;
 
 import java.util.ArrayList;
 
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.variable.Document;

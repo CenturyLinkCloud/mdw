@@ -40,10 +40,10 @@ public class GroovyNodeTranslator extends DocumentReferenceTranslator implements
         }
     }
 
-    public String realToString(Object object) throws TranslationException {
+    public String realToString(Object obj) throws TranslationException {
         StringWriter writer = null;
         try {
-            Node node = (Node)object;
+            Node node = (Node) obj;
             writer = new StringWriter();
             new XmlNodePrinter(new PrintWriter(writer)).print(node);
             return writer.toString();

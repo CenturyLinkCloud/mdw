@@ -1,11 +1,11 @@
 {
+  "logicalId": "TestEventWaitTimeout:A7",
+  "name": "Event Wait Fallout",
   "attributes": {
-    "FormName": "Autoform",
     "IndexProvider": "com.centurylink.mdw.services.task.AutoFormTaskIndexProvider",
-    "Notices": "$DefaultNotices"
+    "Notices": "[[\"Open\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Assigned\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Completed\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Cancelled\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"In Progress\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Alert\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Jeopardy\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Forward\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"]]",
+    "FormName": "Autoform"
   },
   "category": "COM",
-  "logicalId": "MDWTestEventWaitTimeout:A7",
-  "name": "Event Wait Fallout",
   "version": "0.1"
 }

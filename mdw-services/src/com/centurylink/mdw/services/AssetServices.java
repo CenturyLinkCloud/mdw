@@ -17,13 +17,9 @@ package com.centurylink.mdw.services;
 
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.dataaccess.VersionControl;
-import com.centurylink.mdw.dataaccess.file.PackageDir;
+import com.centurylink.mdw.git.VersionControlGit;
 import com.centurylink.mdw.discovery.GitDiscoverer;
-import com.centurylink.mdw.model.asset.AssetInfo;
-import com.centurylink.mdw.model.asset.AssetPackageList;
-import com.centurylink.mdw.model.asset.PackageAssets;
-import com.centurylink.mdw.model.asset.PackageList;
+import com.centurylink.mdw.model.asset.api.*;
 import com.centurylink.mdw.services.asset.Renderer;
 import org.json.JSONObject;
 
@@ -40,7 +36,7 @@ public interface AssetServices {
 
     File getAssetRoot();
 
-    VersionControl getVersionControl() throws IOException;
+    VersionControlGit getVersionControl() throws IOException;
 
     /**
      * Returns the list of workflow packages.  Does not include archived packages.
@@ -54,9 +50,9 @@ public interface AssetServices {
     AssetPackageList getAssetPackageList(Query query) throws ServiceException;
 
     /**
-     * Return the PackageDir for a name.  Does not contain assets or VCS info.
+     * Return the PackageInfo for a name.  Does not contain assets or VCS info.
      */
-    PackageDir getPackage(String name) throws ServiceException;
+    PackageInfo getPackage(String name) throws ServiceException;
 
     /**
      * Returns the assets of a workflow package latest version.
@@ -68,16 +64,14 @@ public interface AssetServices {
      * Returns all assets for a given file extension (mapped to their package name).
      * Assets do not contain VCS info.
      */
-    Map<String,List<AssetInfo>> getAssetsOfType(String format) throws ServiceException;
+    Map<String,List<AssetInfo>> getAssetsWithExtension(String extension) throws ServiceException;
     /**
      * Returns all assets for a list of file extensions (mapped to their package name).
      * Assets do not contain VCS info.
      */
-    Map<String,List<AssetInfo>> getAssetsOfTypes(String[] formats) throws ServiceException;
-    /**
-     * Returns all assets with the specified name (without VCS info).
-     */
-    Map<String,List<AssetInfo>> findAssets(Predicate<File> predicate) throws ServiceException;
+    Map<String,List<AssetInfo>> getAssetsWithExtensions(String[] extensions) throws ServiceException;
+
+    Map<String,List<AssetInfo>> findAssets(Predicate<AssetInfo> predicate) throws ServiceException;
 
     /**
      * @param assetPath - myPackage/myAsset.ext
@@ -91,7 +85,6 @@ public interface AssetServices {
      * @param assetPath - myPackage/myAsset.ext
      */
     AssetInfo getAsset(String assetPath) throws ServiceException;
-    AssetInfo getImplAsset(String className) throws ServiceException;
 
     void createPackage(String packageName) throws ServiceException;
     void deletePackage(String packageName) throws ServiceException;
@@ -103,24 +96,18 @@ public interface AssetServices {
 
     String getDefaultTemplate(String assetExt);
 
-    List<String> getExtraPackageNames() throws ServiceException;
+    AssetInfo getImplAsset(String className) throws ServiceException;
 
     Renderer getRenderer(String assetPath, String renderTo) throws ServiceException;
 
-    List<PackageDir> getPackageDirs() throws IOException;
-
-    List<PackageDir> findPackageDirs(Predicate<File> predicate) throws IOException;
-
     JSONObject getGitBranches(String[] repoUrls) throws ServiceException;
 
-    void updateAssetVersion(String assetPath, int version) throws ServiceException;
+    void updateAssetVersion(String assetPath, String version) throws ServiceException;
     void removeAssetVersion(String assetPath) throws ServiceException;
 
     JSONObject discoverGitAssets(String repoUrl, String branch) throws ServiceException;
 
     GitDiscoverer getDiscoverer(String repoUrl) throws IOException;
-
-    String getPackage(File assetFile);
 
     static String packageName(String assetPath) throws ServiceException {
         int slash = assetPath.lastIndexOf('/');
@@ -134,5 +121,4 @@ public interface AssetServices {
             throw new ServiceException(ServiceException.BAD_REQUEST, "Bad path: " + assetPath);
         return assetPath.substring(slash + 1);
     }
-
 }

@@ -1,6 +1,6 @@
 package com.centurylink.mdw.tests.workflow
 
-start process("MDWTestSuppsEmbedded") {
+start process("TestSuppsEmbedded") {
 	variables = [testCase: "cancel-on-event"]
 }
 sleep 30
@@ -8,4 +8,4 @@ send message("REST") {
     payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"
 }
 sleep 90
-verify processes("MDWTestSuppsEmbedded", "MDWTestSuppsEmbedded Cancellation Handler")
+verify processes("TestSuppsEmbedded", "TestSuppsEmbedded Cancellation Handler")

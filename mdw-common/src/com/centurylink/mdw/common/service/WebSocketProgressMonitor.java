@@ -1,6 +1,6 @@
 package com.centurylink.mdw.common.service;
 
-import com.centurylink.mdw.dataaccess.file.GitProgressMonitor;
+import com.centurylink.mdw.git.GitProgressMonitor;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;

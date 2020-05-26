@@ -33,9 +33,9 @@ public class JsonObjectTranslator extends DocumentReferenceTranslator implements
         }
     }
 
-    public String realToString(Object object) throws TranslationException {
+    public String realToString(Object obj) throws TranslationException {
         try {
-            JSONObject jsonObject = (JSONObject)object;
+            JSONObject jsonObject = (JSONObject) obj;
             return jsonObject.toString(2);
         }
         catch (JSONException e) {

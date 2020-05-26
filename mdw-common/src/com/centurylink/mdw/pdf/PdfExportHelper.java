@@ -20,8 +20,8 @@ import com.centurylink.mdw.export.Table;
 import com.centurylink.mdw.html.HtmlExportHelper;
 import com.centurylink.mdw.image.PngProcessExporter;
 import com.centurylink.mdw.image.ProcessCanvas;
+import com.centurylink.mdw.model.Attributes;
 import com.centurylink.mdw.model.asset.Pagelet;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.project.Project;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.ActivityNodeSequencer;
@@ -179,31 +179,33 @@ public class PdfExportHelper extends HtmlExportHelper {
 
         com.lowagie.text.List list = new com.lowagie.text.List(false, false, 10);
         list.setIndentationLeft(20);
-        List<Attribute> attributes = activity.getAttributes();
-        List<Attribute> sortedAttributes = new ArrayList<>(attributes);
-        Collections.sort(sortedAttributes);
-
-        for (Attribute attribute : sortedAttributes) {
-            if (!isExcludeAttribute(attribute.getName(), attribute.getValue())) {
-                Paragraph paragraph = new Paragraph();
-                paragraph.add(new Chunk(getAttributeLabel(activity, attribute) + ": ", normalFont));
-                printAttributeValue(paragraph, activity, attribute);
-                list.add(new ListItem(paragraph));
+        Attributes attributes = activity.getAttributes();
+        if (attributes != null) {
+            List<String> sortedNames = new ArrayList<>(attributes.keySet());
+            Collections.sort(sortedNames);
+            for (String name : sortedNames) {
+                if (!isExcludeAttribute(name, attributes.get(name))) {
+                    Paragraph paragraph = new Paragraph();
+                    paragraph.add(new Chunk(getAttributeLabel(activity, name) + ": ", normalFont));
+                    printAttributeValue(paragraph, activity, attributes, name);
+                    list.add(new ListItem(paragraph));
+                }
             }
         }
+
         subsection.add(list);
     }
 
-    private void printAttributeValue(Paragraph paragraph, Activity activity,
-            Attribute attribute) throws Exception {
-        if (attribute.getValue() == null)
+    private void printAttributeValue(Paragraph paragraph, Activity activity, Attributes attributes, String attributeName)
+            throws Exception {
+        if (attributes == null || !attributes.containsKey(attributeName))
             return;
 
-        Pagelet.Widget widget = getWidget(activity, attribute.getName());
-        if (widget != null || WorkAttributeConstant.MONITORS.equals(attribute.getName())) {
-            if (isTabular(activity, attribute)) {
+        Pagelet.Widget widget = getWidget(activity, attributeName);
+        if (widget != null || WorkAttributeConstant.MONITORS.equals(attributeName)) {
+            if (isTabular(activity, attributeName)) {
                 paragraph.setIndentationLeft(30);
-                Table table = getTable(activity, attribute);
+                Table table = getTable(activity, attributes, attributeName);
                 if (table.getColumns().length == 2)
                     table.setWidths(new int[]{40, 60});
                 else if (table.getColumns().length == 3)
@@ -212,15 +214,15 @@ public class PdfExportHelper extends HtmlExportHelper {
                     table.setWidths((new int[]{20, 40, 30, 10}));
                 printTable(paragraph, table);
             }
-            else if (isCode(activity, attribute)) {
-                printCodeBox(paragraph, attribute.getValue());
+            else if (isCode(activity, attributeName)) {
+                printCodeBox(paragraph, attributes.get(attributeName));
             }
             else {
-                paragraph.add(new Chunk(attribute.getValue(), normalFont));
+                paragraph.add(new Chunk(attributes.get(attributeName), normalFont));
             }
         }
         else {
-            paragraph.add(new Chunk(attribute.getValue(), normalFont));
+            paragraph.add(new Chunk(attributes.get(attributeName), normalFont));
         }
     }
 

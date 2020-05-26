@@ -20,7 +20,7 @@ import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.BaselineData;
 import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
-import com.centurylink.mdw.model.attribute.Attribute;
+import com.centurylink.mdw.model.Attributes;
 import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Package;
@@ -60,7 +60,6 @@ public class MockRuntimeContext extends ActivityRuntimeContext {
             pkg = new Package();
             pkg.setName("com.centurylink.mdw.test");
             pkg.setVersion(new MdwVersion(0));
-            pkg.setId(0L);
         }
         return pkg;
     }
@@ -102,9 +101,8 @@ public class MockRuntimeContext extends ActivityRuntimeContext {
             activity = new Activity();
             activity.setId(0L);
             activity.setName(activityName);
-            List<Attribute> attrs = new ArrayList<Attribute>();
             for (String attrName : getAttributes().keySet())
-                attrs.add(new Attribute(attrName, getAttributes().get(attrName)));
+                activity.setAttribute(attrName, getAttributes().get(attrName));
         }
         return activity;
     }
@@ -131,11 +129,11 @@ public class MockRuntimeContext extends ActivityRuntimeContext {
         return docRefs;
     }
 
-    protected Map<String,String> attributes;
+    protected Attributes attributes;
     @Override
-    public Map<String,String> getAttributes() {
+    public Attributes getAttributes() {
         if (attributes == null)
-            attributes = new HashMap<>();
+            attributes = new Attributes();
         return attributes;
     }
 

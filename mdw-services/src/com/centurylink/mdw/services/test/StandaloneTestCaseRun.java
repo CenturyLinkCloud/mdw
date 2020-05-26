@@ -62,7 +62,7 @@ public class StandaloneTestCaseRun extends TestCaseRun {
     }
 
     /**
-     * Standalone execution for Designer and Gradle.
+     * Standalone execution for Gradle.
      */
     public void run() {
         startExecution();
@@ -188,20 +188,20 @@ public class StandaloneTestCaseRun extends TestCaseRun {
         }
         String newLine = "\n";
         if (!isCreateReplace()) {
-            if (expectedResults == null || expectedResults.getRawFile() == null || !expectedResults.getRawFile().exists()) {
+            if (expectedResults == null || expectedResults.getFile() == null || !expectedResults.getFile().exists()) {
                 throw new IOException("Expected results file not found for " + getTestCase().getPath());
             }
             else {
                 // try to determine newline chars from expectedResultsFile
-                if (expectedResults.getStringContent().contains("\r\n"))
+                if (expectedResults.getText().contains("\r\n"))
                     newLine = "\r\n";
             }
         }
         String yaml = translateToYaml(fullProcessInsts, fullActivityNameMap, mainTestProc, newLine);
         if (isCreateReplace()) {
-            getLog().println("creating expected results: " + expectedResults.getRawFile());
-            FileHelper.writeToFile(expectedResults.getRawFile().toString(), yaml, false);
-            expectedResults.setStringContent(yaml);
+            getLog().println("creating expected results: " + expectedResults.getFile());
+            FileHelper.writeToFile(expectedResults.getFile().toString(), yaml, false);
+            expectedResults.setText(yaml);
         }
         String fileName = getResultsDir() + "/" + expectedResults.getName();
         if (isVerbose())

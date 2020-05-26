@@ -1,6 +1,6 @@
 package com.centurylink.mdw.tests.tasks
 
-start process("MDWTestTaskAndEvent")
+start process("TestTaskAndEvent")
 sleep 30
 send message("REST") {
     payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"

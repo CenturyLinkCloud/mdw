@@ -25,7 +25,7 @@ import com.centurylink.mdw.auth.Authenticator;
 import com.centurylink.mdw.auth.LdapAuthenticator;
 import com.centurylink.mdw.auth.MdwSecurityException;
 import com.centurylink.mdw.cache.CacheService;
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.java.CompiledJavaCache;
@@ -291,7 +291,7 @@ public class AuthUtils {
                 if (!validated) {
                     // Authenticate using com/centurylink/mdw/central/auth service hosted in MDW Central
                     com.centurylink.mdw.model.workflow.Package pkg = PackageCache.getPackage(CTLJWTPKG);
-                    Authenticator jwtAuth = (Authenticator) CompiledJavaCache.getInstance(CTLJWTAUTH, pkg.getCloudClassLoader(), pkg);
+                    Authenticator jwtAuth = (Authenticator) CompiledJavaCache.getInstance(CTLJWTAUTH, pkg.getClassLoader(), pkg);
                     jwtAuth.authenticate(user, pass);  // This will populate JwtTokenCache with token for next time
                 }
             }

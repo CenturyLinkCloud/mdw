@@ -78,7 +78,7 @@ public class VcInfo {
 
     public static String getVersionControlClass(String provider) {
         if (provider.equalsIgnoreCase("git"))
-            return "com.centurylink.mdw.dataaccess.file.VersionControlGit";
+            return "com.centurylink.mdw.git.VersionControlGit";
         return null;
     }
 }

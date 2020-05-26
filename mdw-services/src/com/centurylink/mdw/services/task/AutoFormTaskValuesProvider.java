@@ -19,13 +19,11 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.Value.Display;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.observer.task.TaskValuesProvider;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.VariableTranslator;
-import org.apache.commons.lang.StringUtils;
 
 import javax.el.PropertyNotFoundException;
 import java.util.ArrayList;
@@ -112,10 +110,9 @@ public class AutoFormTaskValuesProvider implements TaskValuesProvider {
      * Minus runtime values.
      */
     protected List<Value> getDefinedValues(TaskRuntimeContext runtimeContext) {
-        List<Value> values = new ArrayList<Value>();
-        String varAttr = runtimeContext.getTaskAttribute(TaskAttributeConstant.VARIABLES);
-        if (!StringUtils.isBlank(varAttr)) {
-            List<String[]> parsed = Attribute.parseTable(varAttr, ',', ';', 5);
+        List<Value> values = new ArrayList<>();
+        if (runtimeContext.getTaskAttributes().containsKey(TaskAttributeConstant.VARIABLES)) {
+            List<String[]> parsed = runtimeContext.getTaskAttributes().getTable(TaskAttributeConstant.VARIABLES, ',', ';', 5);
             for (String[] one : parsed) {
                 String name = one[0];
                 Value value = new Value(name);

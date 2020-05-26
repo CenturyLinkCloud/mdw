@@ -49,10 +49,6 @@ public class ProcessAggregate implements Aggregate, Jsonable {
     public long getCount() { return count; }
     public void setCount(long count) { this.count = count; }
 
-    private boolean definitionMissing;
-    public boolean isDefinitionMissing() { return definitionMissing; }
-    public void setDefinitionMissing(boolean missing) { this.definitionMissing = missing; }
-
     public ProcessAggregate(long value) {
         this.value = value;
     }
@@ -70,8 +66,6 @@ public class ProcessAggregate implements Aggregate, Jsonable {
             version = json.getString("version");
         if (json.has("packageName"))
             packageName = json.getString("packageName");
-        if (json.has("definitionMissing"))
-            definitionMissing = json.getBoolean("definitionMissing");
     }
 
     public String getJsonName() {
@@ -91,8 +85,6 @@ public class ProcessAggregate implements Aggregate, Jsonable {
             json.put("version", version);
         if (packageName != null)
             json.put("packageName", packageName);
-        if (definitionMissing)
-            json.put("definitionMissing", true);
         return json;
     }
 }

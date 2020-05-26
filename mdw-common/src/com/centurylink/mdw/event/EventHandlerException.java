@@ -15,21 +15,20 @@
  */
 package com.centurylink.mdw.event;
 
-import com.centurylink.mdw.app.WorkflowException;
+import com.centurylink.mdw.request.RequestHandlerException;
 
-public class EventHandlerException extends WorkflowException {
-
+/**
+ * @deprecated
+ * use {@link com.centurylink.mdw.request.RequestHandlerException}
+ */
+@Deprecated
+public class EventHandlerException extends RequestHandlerException {
+    @Deprecated
     public EventHandlerException(String message){
         super(message);
     }
-
-    public EventHandlerException(int code, String message){
-        super(code, message);
-
-    }
-
-    public EventHandlerException(int code, String message, Throwable th){
-        super(code, message, th);
-
+    @Deprecated
+    public EventHandlerException(String message, Throwable th){
+        super(message, th);
     }
 }

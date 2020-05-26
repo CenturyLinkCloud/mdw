@@ -17,9 +17,6 @@ package com.centurylink.mdw.adapter;
 
 import java.util.Map;
 
-import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.connector.adapter.ConnectionException;
-
 public interface HeaderAwareAdapter {
 
     Map<String,String> getRequestHeaders();

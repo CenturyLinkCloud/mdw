@@ -18,7 +18,7 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.git.VersionControlGit;
 import com.centurylink.mdw.model.Repository;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.rest.JsonRestService;

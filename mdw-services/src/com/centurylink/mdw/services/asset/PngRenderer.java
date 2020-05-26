@@ -2,18 +2,11 @@ package com.centurylink.mdw.services.asset;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.html.HtmlExportHelper;
-import com.centurylink.mdw.image.PngProcessExporter;
-import com.centurylink.mdw.model.asset.AssetInfo;
-import com.centurylink.mdw.model.project.Data;
-import com.centurylink.mdw.model.project.Project;
-import com.centurylink.mdw.model.system.MdwVersion;
-import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.SystemServices;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;

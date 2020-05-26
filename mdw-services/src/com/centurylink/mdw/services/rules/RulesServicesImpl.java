@@ -3,9 +3,7 @@
  */
 package com.centurylink.mdw.services.rules;
 
-import java.time.Instant;
-
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.workflow.Package;
@@ -13,6 +11,8 @@ import com.centurylink.mdw.model.workflow.RuntimeContext;
 import com.centurylink.mdw.rules.Operand;
 import com.centurylink.mdw.rules.RulesExecutor;
 import com.centurylink.mdw.services.RulesServices;
+
+import java.time.Instant;
 
 public class RulesServicesImpl implements RulesServices {
 
@@ -33,7 +33,7 @@ public class RulesServicesImpl implements RulesServices {
         }
         try {
             Class<? extends RulesExecutor> executorClass = Class
-                    .forName(executor, true, pkg.getCloudClassLoader())
+                    .forName(executor, true, pkg.getClassLoader())
                     .asSubclass(RulesExecutor.class);
             RulesExecutor executorImpl = executorClass.newInstance();
 

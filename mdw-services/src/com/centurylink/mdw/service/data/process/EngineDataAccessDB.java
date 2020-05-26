@@ -15,7 +15,7 @@
  */
 package com.centurylink.mdw.service.data.process;
 
-import com.centurylink.mdw.cache.impl.VariableTypeCache;
+import com.centurylink.mdw.cache.asset.VariableTypeCache;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;

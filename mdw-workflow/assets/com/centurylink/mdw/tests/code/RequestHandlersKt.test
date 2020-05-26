@@ -1,0 +1,26 @@
+package com.centurylink.mdw.tests.code
+
+def response = post http("api/REST/test/KtProcessHandler") {
+    headers = [
+            "Content-Type": "application/json",
+            "mdw-request-id": masterRequestId
+    ]
+    payload = """{
+  "testCase": "kotlinStart",
+  "masterRequestId": "${masterRequestId}" 
+}"""
+}
+assert response.code == 200
+sleep 5
+
+response = post http("api/REST/test/KtNotifyHandler") {
+    headers = [ "Content-Type": "application/json" ]
+    payload = """{
+  "testCase": "kotlinNotify",
+  "masterRequestId": "${masterRequestId}" 
+}"""
+}
+assert response.code == 200
+
+wait process("RequestHandlers.proc")
+verify process("RequestHandlers.proc")

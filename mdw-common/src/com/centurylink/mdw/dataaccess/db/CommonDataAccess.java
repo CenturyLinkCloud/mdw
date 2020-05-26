@@ -15,13 +15,11 @@
  */
 package com.centurylink.mdw.dataaccess.db;
 
-import com.centurylink.mdw.cache.impl.VariableTypeCache;
+import com.centurylink.mdw.cache.asset.VariableTypeCache;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.DocumentDbAccess;
-import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetHeader;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.ActivityInstance;
@@ -197,54 +195,23 @@ public class CommonDataAccess {
     throws SQLException {
         try {
             db.openConnection();
-            List<Attribute> attrs = getAttributes1(ownerType, ownerId);
-            if (attrs == null)
-                return null;
-            Map<String,String> attributes = new HashMap<>();
-            for (Attribute attr : attrs)
-                attributes.put(attr.getName(), attr.getValue());
-            return attributes;
+            return getAttributes0(ownerType, ownerId);
         }
         finally {
             db.closeConnection();
         }
     }
 
-    protected List<Attribute> getAttributes0(String ownerType, Long ownerId)
+    protected Map<String,String> getAttributes0(String ownerType, Long ownerId)
     throws SQLException {
         String query = "select ATTRIBUTE_ID, ATTRIBUTE_NAME, ATTRIBUTE_VALUE from ATTRIBUTE " +
                 "where ATTRIBUTE_OWNER_ID=? and ATTRIBUTE_OWNER='" + ownerType + "'";
         ResultSet rs = db.runSelect(query, ownerId);
-        List<Attribute> attribs = new ArrayList<Attribute>();
+        Map<String,String> attribs = new HashMap<>();
         while (rs.next()) {
-            attribs.add(new Attribute(rs.getString(2), rs.getString(3)));
+            attribs.put(rs.getString(2), rs.getString(3));
         }
         return attribs;
-    }
-
-    /**
-     * Same as getAttribute1 but handles overflow values
-     * @param ownerType
-     * @param ownerId
-     * @return list of Attributes
-     */
-    protected List<Attribute> getAttributes1(String ownerType, Long ownerId)
-    throws SQLException {
-        List<Attribute> attrs = getAttributes0(ownerType, ownerId);
-        if (attrs==null) return null;
-        ResultSet rs;
-        String query = "select RULE_SET_DETAILS from RULE_SET where RULE_SET_ID=?";
-        for (Attribute attr : attrs) {
-            String v = attr.getValue();
-            if (v!=null && v.startsWith(Asset.ATTRIBUTE_OVERFLOW)) {
-                Long assetId = new Long(v.substring(Asset.ATTRIBUTE_OVERFLOW.length()+1));
-                rs = db.runSelect(query, assetId);
-                if (rs.next()) {
-                    attr.setValue(rs.getString(1));
-                }
-            }
-        }
-        return attrs;
     }
 
     public void setAttributes(String ownerType, Long ownerId, Map<String,String> attributes)
@@ -261,18 +228,9 @@ public class CommonDataAccess {
 
     public void setAttributes0(String ownerType, Long ownerId, Map<String,String> attributes)
     throws SQLException {
-        List<Attribute> attrs = null;
-        if (attributes != null && !attributes.isEmpty()) {
-            attrs = new ArrayList<>();
-            for (String name : attributes.keySet()) {
-                String value = attributes.get(name);
-                if (value != null && !value.isEmpty())
-                    attrs.add(new Attribute(name, value));
-            }
-        }
         deleteAttributes0(ownerType, ownerId);
-        if (attrs != null)
-          addAttributes0(ownerType, ownerId, attrs);
+        if (attributes != null)
+          addAttributes0(ownerType, ownerId, attributes);
     }
 
     public Long setAttribute(String ownerType, Long ownerId,
@@ -341,13 +299,7 @@ public class CommonDataAccess {
         db.runUpdate(query, ownerId);
     }
 
-    protected void deleteOverflowAttributes(String attrPrefix)
-    throws SQLException {
-        String query = "delete from RULE_SET where RULE_SET_NAME like ?";
-        db.runUpdate(query, attrPrefix);
-    }
-
-    protected void addAttributes0(String pOwner, Long pOwnerId, List<Attribute> pAttributes)
+    protected void addAttributes0(String owner, Long ownerId, Map<String,String> attributes)
     throws SQLException {
         String query = "insert into ATTRIBUTE"
             + " (attribute_id,attribute_owner,attribute_owner_id,attribute_name,attribute_value,"
@@ -356,13 +308,14 @@ public class CommonDataAccess {
             + ",?,?,?,?,"+now()+",'MDWEngine')";
         db.prepareStatement(query);
         Object[] args = new Object[4];
-        for (Attribute vo : pAttributes) {
-            String v = vo.getValue();
-            if (v==null||v.length()==0) continue;
-            args[0] = pOwner;
-            args[1] = pOwnerId;
-            args[2] = vo.getName();
-            args[3] = v;
+        for (String name : attributes.keySet()) {
+            String value = attributes.get(name);
+            if (value == null || value.trim().length() == 0)
+                continue;
+            args[0] = owner;
+            args[1] = ownerId;
+            args[2] = name;
+            args[3] = value;
             db.addToBatch(args);
         }
         db.runBatchUpdate();

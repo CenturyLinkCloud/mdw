@@ -27,7 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.app.Templates;
-import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.model.asset.Pagelet;
 import com.centurylink.mdw.model.asset.Pagelet.Widget;
 import com.centurylink.mdw.monitor.MonitorAttributes;

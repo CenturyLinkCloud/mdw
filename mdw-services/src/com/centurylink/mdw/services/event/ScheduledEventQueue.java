@@ -160,7 +160,7 @@ public class ScheduledEventQueue implements CacheService {
                 else {
                     // send message to listener to run the job
                     String jobClassAndArgs = event.getName().substring(ScheduledEvent.SCHEDULED_JOB_PREFIX.length());
-                    IntraMDWMessenger msgbroker = MessengerFactory.newIntraMDWMessenger(null);
+                    IntraMDWMessenger msgbroker = MessengerFactory.newIntraMDWMessenger();
                     String calldoc = "<_mdw_run_job>" +
                             jobClassAndArgs.replaceAll("&", "&amp;").replaceAll("<", "&lt;") +
                             "</_mdw_run_job>";
@@ -169,7 +169,7 @@ public class ScheduledEventQueue implements CacheService {
             } else {        // is scheduled external event
                 if (event.getMessage() == null || !event.getMessage().startsWith("<"))
                     throw new Exception("Scheduled external event message is null or non-XML. Event name " + event.getName());
-                IntraMDWMessenger msgbroker = MessengerFactory.newIntraMDWMessenger(null);
+                IntraMDWMessenger msgbroker = MessengerFactory.newIntraMDWMessenger();
                 msgbroker.sendMessage(event.getMessage());
             }
         } catch (Exception ex) {

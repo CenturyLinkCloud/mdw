@@ -68,7 +68,7 @@ public interface WorkflowServices {
     Map<String, String> getValues(String ownerType, String ownerId) throws ServiceException;
 
     VariableInstance getVariableInstance(long processInstanceId, String variableName) throws ServiceException;
-    
+
     /**
      * Replace <b>all</b> values for this ownerId
      *
@@ -228,9 +228,9 @@ public interface WorkflowServices {
 
     String getDocType(Object docObj);
 
-    ProcessRun runProcess(ProcessRun runRequest) throws ServiceException, JSONException;
+    ProcessRun runProcess(ProcessRun runRequest) throws ServiceException;
 
-    void createProcess(String assetPath, Query query) throws ServiceException, IOException;
+    void createProcess(String assetPath, Query query) throws ServiceException;
 
     /**
      * Retrieve process definition for a specific instance from the document table.

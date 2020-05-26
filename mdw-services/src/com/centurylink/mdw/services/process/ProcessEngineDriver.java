@@ -20,7 +20,7 @@ import com.centurylink.mdw.activity.types.StartActivity;
 import com.centurylink.mdw.activity.types.SuspendableActivity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.WorkflowException;
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
@@ -55,6 +55,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -238,7 +239,7 @@ public class ProcessEngineDriver {
     /**
      * Finds the relevant package handler for a master process instance.
      */
-    private Process getPackageHandler(ProcessInstance masterInstance, Integer eventType) {
+    private Process getPackageHandler(ProcessInstance masterInstance, Integer eventType) throws ProcessException {
         Process process = getProcessDefinition(masterInstance);
         Process handler = getPackageHandler(process.getPackageName(), eventType);
         if (handler != null && handler.getName().equals(process.getName())) {
@@ -325,8 +326,7 @@ public class ProcessEngineDriver {
         } catch (Exception e) {
             logger.error("Resume failed", e);
             lastException = e;
-            engine.resumeActivityException(procInst, actInstId,
-                    ar==null?null:ar.getActivity(), e);
+            engine.resumeActivityException(procInst, actInstId, ar == null ? null : ar.getActivity(), e);
         }
     }
 
@@ -739,7 +739,8 @@ public class ProcessEngineDriver {
     public String invokeService(Long processId, String ownerType,
             Long ownerId, String masterRequestId, String masterRequest,
             Map<String,String> parameters, String responseVarName, int performance_level,
-            String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers) throws Exception {
+            String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers)
+            throws ProcessException, DataAccessException {
         Process process = getProcessDefinition(processId);
         Package pkg = getPackage(process);
         long startMilli = System.currentTimeMillis();
@@ -784,8 +785,8 @@ public class ProcessEngineDriver {
         if (completed)
             return resp;
         if (lastException == null)
-            throw new Exception("Process instance not completed");
-        throw lastException;
+            throw new ProcessException("Process instance not completed");
+        throw new ProcessException(lastException.getMessage(), lastException);
     }
 
     /**
@@ -826,7 +827,8 @@ public class ProcessEngineDriver {
      */
     private ProcessInstance executeServiceProcess(ProcessExecutor engine, Long processId,
             String ownerType, Long ownerId, String masterRequestId, Map<String,String> parameters,
-            String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers) throws Exception {
+            String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers)
+            throws ProcessException, DataAccessException {
         Process procdef = getProcessDefinition(processId);
         Long startActivityId = procdef.getStartActivity().getId();
         if (masterRequestId == null)
@@ -941,7 +943,8 @@ public class ProcessEngineDriver {
      * @return the process instance ID
      */
     public Long startProcess(Long processId, String masterRequestId, String ownerType,
-            Long ownerId, Map<String,String> vars, Map<String,String> headers) throws Exception {
+            Long ownerId, Map<String,String> vars, Map<String,String> headers)
+            throws ProcessException, DataAccessException {
         return startProcess(processId, masterRequestId, ownerType, ownerId, vars, null, null, headers);
     }
 
@@ -954,9 +957,9 @@ public class ProcessEngineDriver {
      * @param vars Input parameter bindings for the process instance to be created
      * @return Process instance ID
      */
-    public Long startProcess(Long processId, String masterRequestId, String ownerType,
-            Long ownerId, Map<String,String> vars,
-            String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers) throws Exception {
+    public Long startProcess(Long processId, String masterRequestId, String ownerType, Long ownerId,
+            Map<String,String> vars, String secondaryOwnerType, Long secondaryOwnerId, Map<String,String> headers)
+            throws ProcessException, DataAccessException {
         Process procdef = getProcessDefinition(processId);
         int performance_level = procdef.getPerformanceLevel();
         if (performance_level <= 0)
@@ -1000,19 +1003,27 @@ public class ProcessEngineDriver {
             default_performance_level_service = DEFAULT_PERFORMANCE_LEVEL;
     }
 
-    private Process getProcessDefinition(Long processId) {
-        return ProcessCache.getProcess(processId);
+    private Process getProcessDefinition(Long processId) throws ProcessException {
+        try {
+            return ProcessCache.getProcess(processId);
+        } catch (IOException ex) {
+            throw new ProcessException("Error loading process " + processId, ex);
+        }
     }
 
-    private Process getProcessDefinition(ProcessInstance procinst) {
-        Process procdef = null;
-        if (procinst.getProcessInstDefId() > 0L)
-            procdef = ProcessCache.getProcessInstanceDefiniton(procinst.getProcessId(), procinst.getProcessInstDefId());
-        if (procdef == null)
-            procdef = ProcessCache.getProcess(procinst.getProcessId());
-        if (procinst.isEmbedded())
-            procdef = procdef.getSubProcess(new Long(procinst.getComment()));
-        return procdef;
+    private Process getProcessDefinition(ProcessInstance procinst) throws ProcessException {
+        try {
+            Process procdef = null;
+            if (procinst.getInstanceDefinitionId() > 0L)
+                procdef = ProcessCache.getInstanceDefinition(procinst.getProcessId(), procinst.getInstanceDefinitionId());
+            if (procdef == null)
+                procdef = ProcessCache.getProcess(procinst.getProcessId());
+            if (procinst.isEmbedded())
+                procdef = procdef.getSubProcess(new Long(procinst.getComment()));
+            return procdef;
+        } catch (IOException ex) {
+            throw new ProcessException("Error loading instance definition" + procinst.getId(), ex);
+        }
     }
 
     private Package getPackage(String packageName) {

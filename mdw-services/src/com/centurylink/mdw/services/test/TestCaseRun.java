@@ -16,9 +16,12 @@
 package com.centurylink.mdw.services.test;
 
 import com.centurylink.mdw.activity.types.AdapterActivity;
+import com.centurylink.mdw.adapter.AdapterStubRequest;
+import com.centurylink.mdw.adapter.AdapterStubResponse;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
@@ -26,10 +29,7 @@ import com.centurylink.mdw.config.YamlBuilder;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.asset.AssetInfo;
-import com.centurylink.mdw.model.asset.AssetVersion;
-import com.centurylink.mdw.model.event.AdapterStubRequest;
-import com.centurylink.mdw.model.event.AdapterStubResponse;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.UserTaskAction;
@@ -166,7 +166,7 @@ public class TestCaseRun implements Runnable {
     public void run() {
         startExecution();
         try {
-            if (testCase.getAsset().isFormat(Asset.POSTMAN)) {
+            if (testCase.getAsset().getExtension().equals("postman")) {
                 String runnerClass = NODE_PACKAGE + ".TestRunner";
                 Package pkg = PackageCache.getPackage(testCase.getPackage());
                 Class<?> testRunnerClass = CompiledJavaCache.getResourceClass(runnerClass, getClass().getClassLoader(), pkg);
@@ -186,7 +186,7 @@ public class TestCaseRun implements Runnable {
                 ClassLoader classLoader = this.getClass().getClassLoader();
                 Package testPkg = PackageCache.getPackage(testCase.getPackage());
                 if (testPkg != null)
-                    classLoader = testPkg.getCloudClassLoader();
+                    classLoader = testPkg.getClassLoader();
 
                 GroovyShell shell = new GroovyShell(classLoader, binding, compilerConfig);
                 Script gScript = shell.parse(groovyScript);
@@ -237,7 +237,7 @@ public class TestCaseRun implements Runnable {
             int dotTest = resFileName.lastIndexOf(".test");
             resFileName = resFileName.substring(0, dotTest);
         }
-        resFileName = resFileName + Asset.getFileExtension(Asset.YAML);
+        resFileName = resFileName + ".yaml";
         File resFile = new File(resultsDir + "/" + resFileName);
         if (resFile.isFile())
             resFile.delete();
@@ -287,15 +287,12 @@ public class TestCaseRun implements Runnable {
             query.setFilter("processId", proc.getId().toString());
             query.setDescending(true);
             List<ProcessInstance> procInstList = workflowServices.getProcesses(query).getProcesses();
-            Map<Long,String> activityNameMap = new HashMap<>();
             for (Activity act : proc.getActivities()) {
-                activityNameMap.put(act.getId(), act.getName());
                 fullActivityNameMap.put(proc.getId() + "-" + act.getId(), act.getName());
             }
             if (proc.getSubprocesses() != null) {
                 for (Process subproc : proc.getSubprocesses()) {
                     for (Activity act : subproc.getActivities()) {
-                        activityNameMap.put(act.getId(), act.getName());
                         fullActivityNameMap.put(proc.getId() + "-" + act.getId(), act.getName());
                     }
                 }
@@ -336,20 +333,20 @@ public class TestCaseRun implements Runnable {
         }
         String newLine = "\n";
         if (!isCreateReplace()) {
-            if (expectedResults == null || expectedResults.getRawFile() == null || !expectedResults.getRawFile().exists()) {
+            if (expectedResults == null || expectedResults.getFile() == null || !expectedResults.getFile().exists()) {
                 throw new IOException("Expected results file not found for " + testCase.getPath());
             }
             else {
                 // try to determine newline chars from expectedResultsFile
-                if (expectedResults.getStringContent().contains("\r\n"))
+                if (expectedResults.getText().contains("\r\n"))
                     newLine = "\r\n";
             }
         }
         String yaml = translateToYaml(fullProcessInsts, fullActivityNameMap, mainTestProc, newLine);
         if (isCreateReplace()) {
-            log.println("creating expected results: " + expectedResults.getRawFile());
-            FileHelper.writeToFile(expectedResults.getRawFile().toString(), yaml, false);
-            expectedResults.setStringContent(yaml);
+            log.println("creating expected results: " + expectedResults.getFile());
+            FileHelper.writeToFile(expectedResults.getFile().toString(), yaml, false);
+            expectedResults.setText(yaml);
         }
         String fileName = resultsDir + "/" + expectedResults.getName();
         if (isVerbose())
@@ -375,8 +372,7 @@ public class TestCaseRun implements Runnable {
                 yaml.append("process: # ").append(procInst.getId()).newLine();
                 yaml.append("  name: ").append(procName).newLine();
                 yaml.append("  instance: ").append((i + 1)).newLine();
-                LinkedList<ActivityInstance> orderedList = new LinkedList<>();
-                orderedList.addAll(procInst.getActivities());
+                LinkedList<ActivityInstance> orderedList = new LinkedList<>(procInst.getActivities());
                 if (orderById) {
                     orderedList.sort((ai1, ai2) -> (int)(ai1.getActivityId() - ai2.getActivityId()));
                 }
@@ -471,7 +467,7 @@ public class TestCaseRun implements Runnable {
 
     protected boolean verifyProcesses(Asset resultsAsset)
     throws TestException, IOException {
-        if (!resultsAsset.getRawFile().exists()) {
+        if (!resultsAsset.getFile().exists()) {
             message = "Expected results not found: " + resultsAsset;
             log.println("+++++ " + message);
             passed = false;
@@ -488,7 +484,7 @@ public class TestCaseRun implements Runnable {
             else {
                 if (isVerbose()) {
                     log.println("expected:");
-                    log.println(resultsAsset.getStringContent());
+                    log.println(resultsAsset.getText());
                     log.println("actual:");
                     log.println(actualResultsFile.getText());
                 }
@@ -532,10 +528,14 @@ public class TestCaseRun implements Runnable {
             return getProcess(path);
         try {
             String assetPath = path.indexOf('/') > 0 ? path : getTestCase().getPackage() + '/' + path;
-            AssetInfo assetInfo = ServiceLocator.getAssetServices().getAsset(assetPath);
-            return new Asset(assetInfo, assetPath.substring(0, assetPath.indexOf('/')));
+            Asset asset = AssetCache.getAsset(assetPath);
+            if (asset != null) {
+                // don't require cache refresh to make changes
+                asset.load();
+            }
+            return asset;
         }
-        catch (Exception ex) {
+        catch (IOException ex) {
             throw new TestException("Cannot load " + path, ex);
         }
     }
@@ -812,7 +812,7 @@ public class TestCaseRun implements Runnable {
                     Closure<String> completer = activityStub.getCompleter();
                     completer.setResolveStrategy(Closure.DELEGATE_FIRST);
                     completer.setDelegate(activityStub);
-                    String resultCode = null;
+                    String resultCode;
                     try {
                         resultCode = completer.call(request.getJson().toString(2));
                     }
@@ -921,6 +921,7 @@ public class TestCaseRun implements Runnable {
             return testItem.getResponse();
         }
         catch (Exception ex) {
+            ex.printStackTrace();
             throw new TestException(ex.getMessage(), ex);
         }
     }
@@ -1077,7 +1078,7 @@ public class TestCaseRun implements Runnable {
         int spaceV = target.lastIndexOf(" v");
         if (spaceV > 0) {
             try {
-                version = AssetVersion.parseVersionSpec(procPath.substring(spaceV + 2));
+                version = AssetVersionSpec.parseVersionSpec(procPath.substring(spaceV + 2));
                 procPath = target.substring(0, spaceV);
             }
             catch (NumberFormatException ex) {

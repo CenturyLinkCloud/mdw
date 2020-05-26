@@ -53,13 +53,13 @@ public class EngineLogger {
     }
 
     void error(String tag, Long processInstanceId, Long activityInstanceId, String message) {
-        logger.severe(tag, message);
+        logger.error(tag, message);
         if (performanceLevel < 9)
             ActivityLogger.persist(processInstanceId, activityInstanceId, StandardLogger.LogLevel.ERROR, message);
     }
 
     void error(String tag, Long processInstanceId, Long activityInstanceId, String message, Throwable t) {
-        logger.exception(tag, message, t);
+        logger.error(tag, message, t);
         if (performanceLevel < 9)
             ActivityLogger.persist(processInstanceId, activityInstanceId, StandardLogger.LogLevel.ERROR, message, t);
     }

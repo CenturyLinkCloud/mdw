@@ -2,7 +2,6 @@ package com.centurylink.mdw.tests.server
 
 import com.centurylink.mdw.config.YamlProperties
 import com.centurylink.mdw.model.system.Server
-import com.centurylink.mdw.yaml.YamlLoader
 
 def mdwYaml = asset('mdw.yaml').file()
 def yamlProps = new YamlProperties(mdwYaml)
@@ -37,7 +36,7 @@ for (def name : serverMap.keySet()) {
     def config = serverMap.get(host)
     def ports = config.get('ports')
     for (def port : ports) {
-        def server = new Server(host, port, config)
+        def server = new Server(host, port)
         servers.push(server.toString())
     }
 }

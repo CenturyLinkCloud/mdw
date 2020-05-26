@@ -37,13 +37,9 @@ public interface Listener {
 
     String METAINFO_PROTOCOL = "Protocol";
     String METAINFO_SERVICE_CLASS = "ServiceClass";
-    String METAINFO_START_ACTIVITY_ID = "StartActivityID";
     String METAINFO_PROCESS_NAME = "ProcessName";
     String METAINFO_EVENT_NAME = "EventName";
-    String METAINFO_EVENT_MESSAGE = "EventMessage";
     String METAINFO_EVENT_ID = "EventID";
-    String METAINFO_HEX_CORRELATION_ID = "HexadecimalCorrelationID";
-    String METAINFO_HEX_REQUEST_ID = "HexadecimalRequestID";
     String METAINFO_NO_PERSISTENCE = "NoPersistence";
     String METAINFO_NO_META_PERSISTENCE = "NoMetaPersistence";
     String METAINFO_REQUEST_PAYLOAD = "RequestPayload"; // for altering/extracting payload
@@ -53,16 +49,12 @@ public interface Listener {
     String METAINFO_ERROR_RESPONSE_VALUE = Boolean.TRUE.toString();
 
     String METAINFO_PROTOCOL_JMS = "Jms";
-    String METAINFO_PROTOCOL_WEBSERVICE = "WebService";
     String METAINFO_PROTOCOL_REST = "REST";
     String METAINFO_PROTOCOL_SOAP = "SOAP";
     String METAINFO_PROTOCOL_RMI = "Rmi";
-    String METAINFO_PROTOCOL_EMAIL = "Email";
-    String METAINFO_PROTOCOL_INTERNAL = "Internal";    // called directly
     String METAINFO_PROTOCOL_KAFKA = "Kafka";
 
     String METAINFO_REQUEST_PATH = "RequestPath";
-    String METAINFO_RESOURCE_SUBPATH = "ResourceSubPath"; // after any '/' in RequestPath
 
     String AUTHORIZATION_HEADER_NAME = "Authorization";
     String X_HUB_SIGNATURE = "x-hub-signature";
@@ -75,7 +67,6 @@ public interface Listener {
     String AUTHENTICATED_JWT = "AuthenticatedJWT";
 
     String METAINFO_DOWNLOAD_FORMAT = "DownloadFormat";
-    String METAINFO_MASTER_OP = "mdw-master-op";
     String DOWNLOAD_FORMAT_EXCEL = "xlsx";
     String DOWNLOAD_FORMAT_ZIP = "zip";
     String DOWNLOAD_FORMAT_JSON = "json";
@@ -83,7 +74,6 @@ public interface Listener {
     String DOWNLOAD_FORMAT_TEXT = "text";
     String DOWNLOAD_FORMAT_FILE = "file";
     String METAINFO_DOWNLOAD_FILE = "download-file";
-    String METAINFO_ZIP_CONTENT = "ZipContent";
     String METAINFO_REQUEST_URL = "RequestURL";
     String METAINFO_REQUEST_QUERY_STRING = "RequestQueryString";
     String METAINFO_HTTP_METHOD = "HttpMethod";
@@ -94,13 +84,10 @@ public interface Listener {
     String METAINFO_REMOTE_ADDR = "RemoteAddr";
     String METAINFO_REMOTE_HOST = "RemoteHost";
     String METAINFO_REMOTE_PORT = "RemotePort";
-    String METAINFO_REMOTE_USER = "RemoteUser";
 
     String CONTENT_TYPE_JSON = "application/json";
     String CONTENT_TYPE_XML = "text/xml";
     String CONTENT_TYPE_TEXT = "text/plain";
-    String CONTENT_TYPE_EXCEL = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    String CONTENT_TYPE_ZIP = "application/zip";
     String CONTENT_TYPE_DOWNLOAD = "application/octet-stream";
 
     String METAINFO_CLOUD_ROUTING = "cloud-routing";

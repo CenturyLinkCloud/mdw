@@ -20,7 +20,6 @@ import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.task.TaskAction;
@@ -171,8 +170,7 @@ public class AutoFormManualTaskActivity extends ManualTaskActivity {
      */
     protected String extractFormData(JSONObject datadoc)
             throws ActivityException, JSONException {
-        String varstring = getAttributeValue(TaskActivity.ATTRIBUTE_TASK_VARIABLES);
-        List<String[]> parsed = Attribute.parseTable(varstring, ',', ';', 5);
+        List<String[]> parsed = getAttributes().getTable(TaskActivity.ATTRIBUTE_TASK_VARIABLES, ',', ';', 5);
         for (String[] one : parsed) {
             String varname = one[0];
             String displayOption = one[2];

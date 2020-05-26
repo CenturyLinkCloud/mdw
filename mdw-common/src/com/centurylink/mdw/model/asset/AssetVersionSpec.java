@@ -15,12 +15,11 @@
  */
 package com.centurylink.mdw.model.asset;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import com.centurylink.mdw.model.Jsonable;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.Jsonable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AssetVersionSpec implements Jsonable {
 
@@ -88,6 +87,59 @@ public class AssetVersionSpec implements Jsonable {
     public boolean isRange() {
         return version != null && (version.indexOf('[') >= 0 || version.indexOf(',') >= 0
                 || version.indexOf(')') >= 0);
+    }
+
+    /**
+     * Either a specific version number can be specified, or a Smart Version can be specified which designates an allowable range.
+     *
+     * Smart Version Ranges
+     * This is similar to the OSGi version spec.  There are four supported syntaxes:
+     *    - A specific version -- such as 1.2 -- can be specified.
+     *    - Zero can be specified to always use the latest asset version.
+     *    - A 'half-open' range -- such as [1.2,2) -- designates an inclusive lower limit and an exclusive upper limit,
+     *      denoting version 1.2 and any version after this, up to, but not including, version 2.0.
+     *    - An 'unbounded' version range -- such as [1.2 -- which denotes version 1.2 and all later versions.
+     */
+    public boolean isMatch(AssetVersion assetVersion) {
+        if (!getPath().equals(assetVersion.getPath())) {
+            return false;
+        }
+        int intVersion = parseVersionSpec(assetVersion.getVersion());
+        if (isRange()) {
+            String versionSpec = getVersion();
+            int comma = versionSpec.indexOf(',');
+            if (comma == -1) {
+                String min = versionSpec.substring(1);
+                return parseVersionSpec(min) <= intVersion;
+            }
+            else {
+                String min = versionSpec.substring(1, comma);
+                String maxExcl = versionSpec.substring(comma + 1, versionSpec.lastIndexOf(')'));
+                return parseVersionSpec(min) <= intVersion && parseVersionSpec(maxExcl) > intVersion;
+            }
+        }
+        else {
+            return parseVersionSpec(getVersion()) == intVersion || getVersion().equals("0");
+        }
+    }
+
+    /**
+     * single digit without decimal means a major version not minor
+     */
+    public static int parseVersionSpec(String versionString) throws NumberFormatException {
+        if (versionString == null)
+            return 0;
+        int dot = versionString.indexOf('.');
+        int major, minor;
+        if (dot > 0) {
+            major = Integer.parseInt(versionString.substring(0, dot));
+            minor = Integer.parseInt(versionString.substring(dot + 1));
+        }
+        else {
+            major = Integer.parseInt(versionString);
+            minor = 0;
+        }
+        return major * 1000 + minor;
     }
 
     public String toString() {

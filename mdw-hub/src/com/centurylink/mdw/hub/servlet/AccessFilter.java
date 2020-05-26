@@ -21,7 +21,6 @@ import com.centurylink.mdw.auth.MdwSecurityException;
 import com.centurylink.mdw.hub.context.WebAppContext;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.system.Server;
 import com.centurylink.mdw.model.user.AuthenticatedUser;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -44,7 +43,7 @@ import java.util.*;
 @WebFilter(urlPatterns={"/*"})
 public class AccessFilter implements Filter {
 
-    private static String ACCESS_CONFIG_FILE = "access.yaml";
+    private static final String ACCESS_CONFIG_FILE = "access.yaml";
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private static List<InetAddress> upstreamHosts; // null means not restricted
@@ -63,7 +62,6 @@ public class AccessFilter implements Filter {
     private static boolean logHeaders;
     private static boolean logParameters;
     private static boolean logCookies;
-    private static List<InetAddress> internalHosts; // List of servers in cluster
 
     @SuppressWarnings("unchecked")
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -158,14 +156,7 @@ public class AccessFilter implements Filter {
                 logCookies = "true".equalsIgnoreCase(logCookiesStr);
             }
 
-            //Get MDW server list for IntraMessaging (service propagation)
-            internalHosts =  new ArrayList<>();
-            for (Server server : ApplicationContext.getServerList().getServers()) {
-                internalHosts.add(InetAddress.getByName(server.getHost()));
-            }
-
             WebAppContext.getMdw().setCustomPaths(yamlLoader.getList("customPaths", topMap));
-
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -286,8 +277,7 @@ public class AccessFilter implements Filter {
                     // user not authenticated
                     if (remoteHost == null)
                         remoteHost = InetAddress.getByName(request.getRemoteHost());
-                    boolean internalRequest = isIntraRequest(remoteHost);
-                    if (!isAuthExclude(path) && !internalRequest) {
+                    if (!isAuthExclude(path)) {
                         if ("ct".equals(authMethod)) {
                             // redirect to login page is performed upstream (CT web agent)
                             throw new MdwSecurityException("Authentication required");
@@ -306,15 +296,6 @@ public class AccessFilter implements Filter {
 
                             return;
                         }
-                    }
-                    else if (internalRequest) {
-                        User u = ServiceLocator.getUserServices().getUser(ApplicationContext.getServiceUser() == null ? "mdwapp" : ApplicationContext.getServiceUser());
-                        if (u != null) {
-                            user = new AuthenticatedUser(u, u.getAttributes());
-                            session.setAttribute("authenticatedUser", user);
-                        }
-                        else
-                            logger.warn("Cannot identify a valid service user for internal MDW request.  Please create mdwapp user or specify another user.");
                     }
                 }
             }
@@ -382,10 +363,6 @@ public class AccessFilter implements Filter {
                 return true;
         }
         return false;
-    }
-
-    private boolean isIntraRequest(InetAddress remoteHost) {
-        return internalHosts.contains(remoteHost);
     }
 
     public void destroy() {

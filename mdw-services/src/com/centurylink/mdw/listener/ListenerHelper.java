@@ -19,37 +19,41 @@ import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.StartActivity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.app.Compatibility;
-import com.centurylink.mdw.cache.impl.PackageCache;
-import com.centurylink.mdw.cloud.CloudClassLoader;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.event.EventHandler;
 import com.centurylink.mdw.event.EventHandlerException;
+import com.centurylink.mdw.file.Packages;
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.Response;
-import com.centurylink.mdw.model.event.ExternalEvent;
+import com.centurylink.mdw.model.asset.AssetPath;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.model.request.HandlerSpec;
 import com.centurylink.mdw.model.request.Request;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.ServiceMonitor;
+import com.centurylink.mdw.pkg.PackageClassLoader;
+import com.centurylink.mdw.request.RequestHandler;
+import com.centurylink.mdw.request.RequestHandlerException;
 import com.centurylink.mdw.service.data.ServicePaths;
-import com.centurylink.mdw.service.data.event.EventHandlerCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.service.data.user.UserGroupCache;
-import com.centurylink.mdw.service.handler.ServiceRequestHandler;
 import com.centurylink.mdw.services.EventException;
 import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.event.ServiceHandler;
+import com.centurylink.mdw.services.request.ErrorResponse;
+import com.centurylink.mdw.services.request.FallbackRequestHandler;
+import com.centurylink.mdw.services.request.HandlerCache;
+import com.centurylink.mdw.services.request.ServiceRequestHandler;
 import com.centurylink.mdw.services.rest.RestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -89,7 +93,7 @@ public class ListenerHelper {
     static final String START_PROCESS_HANDLER = "START_PROCESS";
     static final String NOTIFY_PROCESS_HANDLER = "NOTIFY_PROCESS";
 
-    private ExternalEvent findEventHandler(String request, Object requestDoc, Map<String,String> metaInfo)
+    private HandlerSpec findEventHandler(String request, Object requestDoc, Map<String,String> metaInfo)
     throws XmlException, JSONException {
         XmlObject xmlBean = null;
         String rootname = null;
@@ -99,34 +103,29 @@ public class ListenerHelper {
             rootname = XmlPath.getRootNodeName(xmlBean);
             if (rootname.startsWith("_mdw_"))
                 return null; // internal request
-            else if ("ActionRequest".equals(rootname)) {
-                String v = EventHandlerCache.regressionTestHandler.getXpath().evaluate(xmlBean);
-                if (v != null)
-                    return EventHandlerCache.regressionTestHandler;
-            }
         }
         // Check for path/topic based routing - Takes precendence over content based routing
-        List<ExternalEvent> bucket = null;
+        List<HandlerSpec> bucket = null;
         boolean isTopic = metaInfo.get(Listener.METAINFO_TOPIC) != null;   // Preliminary test (cannot be Topic if REST or SOAP)
         if (metaInfo.get(Listener.METAINFO_REQUEST_PATH) != null &&   // Means no path after context and servlet (e.g. /mdw/services, etc)
             (Listener.METAINFO_PROTOCOL_REST.equals(metaInfo.get(Listener.METAINFO_PROTOCOL)) || Listener.METAINFO_PROTOCOL_SOAP.equals(metaInfo.get(Listener.METAINFO_PROTOCOL)))) {
-            bucket = EventHandlerCache.getPathExternalEvents(metaInfo.get(Listener.METAINFO_REQUEST_PATH));
+            bucket = HandlerCache.getPathHandlers(metaInfo.get(Listener.METAINFO_REQUEST_PATH));
             isTopic = false;  // In case it was set to true above
         }
         else if (isTopic) {
-            bucket = EventHandlerCache.getPathExternalEvents(metaInfo.get(Listener.METAINFO_TOPIC));
+            bucket = HandlerCache.getPathHandlers(metaInfo.get(Listener.METAINFO_TOPIC));
         }
 
         if (bucket != null) {
-            for (ExternalEvent e : bucket) {
+            for (HandlerSpec e : bucket) {
                 if (isTopic) {
-                    if (metaInfo.get(Listener.METAINFO_TOPIC).equals(e.getMessagePattern())) {
+                    if (metaInfo.get(Listener.METAINFO_TOPIC).equals(e.getPath())) {
                         if (bucket.size() > 1)
                             logger.warn("Multiple external event handlers matched incoming request for topic " + metaInfo.get(Listener.METAINFO_TOPIC));
                         return e;
                     }
                 }
-                else if (metaInfo.get(Listener.METAINFO_REQUEST_PATH).startsWith(e.getMessagePattern())) {
+                else if (metaInfo.get(Listener.METAINFO_REQUEST_PATH).startsWith(e.getPath())) {
                     if (bucket.size() > 1)
                         logger.warn("Multiple external event handlers matched incoming request for path " + metaInfo.get(Listener.METAINFO_REQUEST_PATH));
                     return e;
@@ -134,20 +133,20 @@ public class ListenerHelper {
             }
         }
 
-        // Check legacy content based routing (XML only)
+        // Check legacy content based routing (XML only)  TODO: JSONPath
         if (xmlBean != null) {
-            bucket = EventHandlerCache.getContentExternalEvents(rootname);
+            bucket = HandlerCache.getContentHandlers(rootname);
             if (bucket != null) {
-                for (ExternalEvent e : bucket) {
+                for (HandlerSpec e : bucket) {
                         String v = e.getXpath().evaluate(xmlBean);
                         if (v != null)
                             return e;
                 }
             }
-            bucket = EventHandlerCache.getContentExternalEvents("*");
+            bucket = HandlerCache.getContentHandlers("*");
             if (bucket != null) {
-                for (ExternalEvent e : bucket) {
-                    String v = XmlPath.evaluate(xmlBean, e.getMessagePattern());
+                for (HandlerSpec e : bucket) {
+                    String v = XmlPath.evaluate(xmlBean, e.getPath());
                     if (v != null)
                         return e;
                 }
@@ -155,9 +154,9 @@ public class ListenerHelper {
         }
 
         if (isForFallbackHandler(request, metaInfo))
-            return EventHandlerCache.fallbackHandler;
+            return HandlerCache.fallbackHandler;
         else
-            return EventHandlerCache.serviceHandler;
+            return HandlerCache.serviceHandler;
     }
 
     private boolean isForFallbackHandler(String request, Map<String,String> metaInfo) {
@@ -184,7 +183,7 @@ public class ListenerHelper {
      * perform this action.  For HTTP, MDW removes this header (if it exists) from
      * every request and then populates based on session authentication or HTTP Basic/Bearer.
      */
-    private boolean isAuthorized(EventHandler handler, Map<String,String> headers)
+    private boolean isAuthorized(RequestHandler handler, Map<String,String> headers)
     throws AuthorizationException {
         // Exclude unless it is REST or SOAP (i.e. HTTP)
         if (!Listener.METAINFO_PROTOCOL_REST.equals(headers.get(Listener.METAINFO_PROTOCOL)) && !Listener.METAINFO_PROTOCOL_SOAP.equals(headers.get(Listener.METAINFO_PROTOCOL)))
@@ -209,13 +208,21 @@ public class ListenerHelper {
     }
 
     /**
+     * @deprecated use @{link #processRequest(String, Map)}
+     */
+    @Deprecated
+    public String processEvent(String request, Map<String,String> metaInfo) {
+        return processRequest(request, metaInfo);
+    }
+
+    /**
      * This method is provided to listeners to handle external messages in a
      * protocol-independent way. The method performs the following things:
      * <ul>
      * <li>It parses the request message into generic XML bean</li>
      * <li>It determines an external event handler based on their configuration
      * and the content of the message. If a matching external event handler is
-     * not found, {@link FallbackEventHandler} will be used.</li>
+     * not found, {@link com.centurylink.mdw.services.request.FallbackRequestHandler} will be used.</li>
      * <li>It logs the message in DOCUMENT table with owner type
      * LISTENER_REQUEST</li>
      * <li>It invokes the event handler.</li>
@@ -240,9 +247,9 @@ public class ListenerHelper {
      *         they can be customized more easily. If it is certain that the
      *         listeners receiving the message will never need to respond, the
      *         response message can be set to null (by external event handlers).
-     * @see FallbackEventHandler
+     * @see com.centurylink.mdw.services.request.FallbackRequestHandler
      */
-    public String processEvent(String request, Map<String,String> metaInfo) {
+    public String processRequest(String request, Map<String,String> metaInfo) {
         Response altResponse = null;
         Long eeid = 0L;
         Request requestDoc = new Request(eeid);
@@ -382,62 +389,65 @@ public class ListenerHelper {
             return response.getContent();
         }
         finally {
-            if (Thread.currentThread().getContextClassLoader() instanceof CloudClassLoader)
+            if (Thread.currentThread().getContextClassLoader() instanceof PackageClassLoader)
                 ApplicationContext.resetContextClassLoader();
         }
 
         // Parse the incoming message
         Object msgdoc = getParsedMessage(request, metaInfo);
-        EventHandler handler = null;
+        RequestHandler handler = null;
         try {
             // find event handler specification
-            ExternalEvent eventHandler = findEventHandler(request, msgdoc, metaInfo);
+            HandlerSpec handlerSpec = findEventHandler(request, msgdoc, metaInfo);
 
-            if (eventHandler == null) {
-                FallbackEventHandler defaultHandler = new FallbackEventHandler();
+            if (handlerSpec == null) {
+                FallbackRequestHandler defaultHandler = new FallbackRequestHandler();
                 if (isAuthorized(defaultHandler, metaInfo))  // Throws exception if not authorized
                     // Need authorization for incoming HTTP requests
                     return defaultHandler.handleSpecialEventMessage((XmlObject) msgdoc);
             }
 
             // parse handler specification - must before checking persistence flag
-            String clsname = parseHandlerSpec(eventHandler.getEventHandler(), metaInfo);
+            String clsname = parseHandlerSpec(handlerSpec.getHandlerClass(), metaInfo);
             metaInfo.put(Listener.METAINFO_DOCUMENT_ID, eeid.toString());
 
             // invoke event handler
             if (clsname.equals(START_PROCESS_HANDLER)) {
-                clsname = ProcessStartEventHandler.class.getName();
+                clsname = ProcessStartEventHandler.class.getName();  // compatibility
             }
             else if (clsname.equals(NOTIFY_PROCESS_HANDLER)) {
-                clsname = NotifyWaitingActivityEventHandler.class.getName();
+                clsname = NotifyWaitingActivityEventHandler.class.getName();  // compatibility
             }
 
-            if (clsname.equals(FallbackEventHandler.class.getName())) {
-                handler = new FallbackEventHandler();
+            if (clsname.equals(FallbackRequestHandler.class.getName())) {
+                handler = new FallbackRequestHandler();
             }
             else {
-                String packageName = eventHandler.getPackageName();
+                String packageName = Packages.MDW_BASE;
+                if (handlerSpec.getAssetPath() != null) {
+                    packageName = new AssetPath(handlerSpec.getAssetPath()).pkg;
+                }
                 Package pkg = PackageCache.getPackage(packageName);
                 if (pkg == null && ServiceRequestHandler.class.getName().equals(clsname)) {
                     // can happen during bootstrap scenario -- just try regular reflection
-                    handler = Class.forName(clsname).asSubclass(EventHandler.class).newInstance();
+                    handler = Class.forName(clsname).asSubclass(RequestHandler.class).newInstance();
                 }
                 else {
-                    handler = pkg.getEventHandler(clsname);
-                    if (!pkg.isDefaultPackage() && handler instanceof ExternalEventHandlerBase)
+                    handler = pkg.getRequestHandler(clsname);
+                    if (handler instanceof ExternalEventHandlerBase)
                         ((ExternalEventHandlerBase)handler).setPackage(pkg);
                 }
             }
 
             if (handler == null)
-                throw new EventHandlerException("Unable to create event handler for class: " + clsname);
+                throw new RequestHandlerException("Unable to create handler: " + clsname);
 
-            // Content based (XPATH) external event handler request - Need to authorize
-            if (!EventHandlerCache.serviceHandler.equals(eventHandler))
-                isAuthorized(handler, metaInfo);  // Throws exception if not authorized
+            // Content based (XPath, JSONPath) handler request - Need to authorize
+            if (!HandlerCache.serviceHandler.equals(handlerSpec))
+                isAuthorized(handler, metaInfo);  // throws exception if not authorized
 
             requestDoc.setContent(request);
-            Response response = handler.handleEventMessage(requestDoc, msgdoc, metaInfo);
+            Response response = handler.handleRequest(requestDoc, msgdoc, metaInfo);
 
             for (ServiceMonitor monitor : monitors) {
                 Object obj = monitor.onResponse(response, metaInfo);
@@ -453,6 +463,8 @@ public class ListenerHelper {
 
             if (response.getStatusCode() == null)
                 response.setStatusCode(getResponseCode(metaInfo));
+            else
+                metaInfo.put(Listener.METAINFO_HTTP_STATUS_CODE, response.getStatusCode().toString());
             response.setPath(ServicePaths.getInboundResponsePath(metaInfo));
             if (metaInfo.containsKey(Listener.METAINFO_DOCUMENT_ID)) {
                 metaInfo.put(Listener.METAINFO_MDW_REQUEST_ID, metaInfo.get(Listener.METAINFO_DOCUMENT_ID));
@@ -513,7 +525,7 @@ public class ListenerHelper {
             return response.getContent();
         }
         finally {
-            if (Thread.currentThread().getContextClassLoader() instanceof CloudClassLoader)
+            if (Thread.currentThread().getContextClassLoader() instanceof PackageClassLoader)
                 ApplicationContext.resetContextClassLoader();
         }
     }
@@ -632,50 +644,10 @@ public class ListenerHelper {
     }
 
     /**
-     * Create a default error message.  To customized this response use a ServiceMonitor.
+     * Create a default error message.  To customize this response use a ServiceMonitor.
      */
     public Response createErrorResponse(String req, Map<String,String> metaInfo, ServiceException ex) {
-        Request request = new Request(0L);
-        request.setContent(req);
-
-        Response response = new Response();
-        String contentType = metaInfo.get(Listener.METAINFO_CONTENT_TYPE);
-        if (contentType == null && req != null && !req.isEmpty())
-            contentType = req.trim().startsWith("{") ? Listener.CONTENT_TYPE_JSON : Listener.CONTENT_TYPE_XML;
-        if (contentType == null)
-            contentType = Listener.CONTENT_TYPE_XML; // compatibility
-
-        metaInfo.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(ex.getCode()));
-
-        StatusMessage statusMsg = new StatusMessage();
-        statusMsg.setCode(ex.getCode());
-        statusMsg.setMessage(ex.getMessage());
-        response.setStatusCode(statusMsg.getCode());
-        response.setStatusMessage(statusMsg.getMessage());
-        response.setPath(ServicePaths.getInboundResponsePath(metaInfo));
-        if (contentType.equals(Listener.CONTENT_TYPE_JSON)) {
-            response.setContent(statusMsg.getJsonString());
-        }
-        else {
-            response.setContent(statusMsg.getXml());
-        }
-        return response;
-    }
-
-    public String createAckResponse(String request, Map<String,String> metaInfo) {
-        String contentType = metaInfo.get(Listener.METAINFO_CONTENT_TYPE);
-        if (contentType == null && request != null && !request.isEmpty())
-            contentType = request.trim().startsWith("{") ? Listener.CONTENT_TYPE_JSON : Listener.CONTENT_TYPE_XML;
-        if (contentType == null)
-            contentType = Listener.CONTENT_TYPE_XML; // compatibility
-
-        StatusMessage statusMsg = new StatusMessage();
-        if (contentType.equals(Listener.CONTENT_TYPE_JSON)) {
-            return statusMsg.getJsonString();
-        }
-        else {
-            return statusMsg.getXml();
-        }
+        return new ErrorResponse(req, metaInfo, ex);
     }
 
     private Object getParsedMessage(String request, Map<String,String> metaInfo) {
@@ -754,7 +726,7 @@ public class ListenerHelper {
         }
         catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
-            throw new EventHandlerException(0, ex.getMessage(), ex);
+            throw new EventHandlerException(ex.getMessage(), ex);
         }
     }
 
@@ -808,10 +780,9 @@ public class ListenerHelper {
      * @param procname
      * @return process ID of the latest version of the process with the given
      *         name
-     * @throws Exception
      */
     public Long getProcessId(String procname) throws Exception {
-        Process proc = ProcessCache.getProcess(procname, 0);
+        Process proc = ProcessCache.getProcess(procname);
         if (proc == null)
             throw new DataAccessException(0, "Cannot find process with name "
                     + procname + ", version 0");

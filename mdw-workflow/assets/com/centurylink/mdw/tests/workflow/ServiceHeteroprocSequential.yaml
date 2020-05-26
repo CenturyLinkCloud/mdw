@@ -1,5 +1,5 @@
 process: # 10235
-  name: MDWTestHeterogeneousProcessCall
+  name: TestHeterogeneousProcessCall
   instance: 1
   activity: # 1 "2017-01-03 10:41:48"
     name: Start
@@ -69,7 +69,7 @@ process: # 10235
       <ser:ActionRequest xmlns:ser="http://mdw.centurylink.com/services">
           <Action Name="RegressionTest">
               <Parameter name="MasterRequestId">${masterRequestId}</Parameter>
-              <Parameter name="ProcessName">com.centurylink.mdw.tests.workflow/MDWTestHeterogeneousProcessCall</Parameter>
+              <Parameter name="ProcessName">com.centurylink.mdw.tests.workflow/TestHeterogeneousProcessCall</Parameter>
               <Parameter name="testcase">sequential</Parameter>
               <Parameter name="PerformanceLevel">3</Parameter>
           </Action>
@@ -90,7 +90,7 @@ process: # 10235
     name: testcase
     value: sequential
 process: # 10205
-  name: MDWTestSubProcess3
+  name: TestSubProcess3
   instance: 1
   activity: # 34 "2017-01-16 16:48:23"
     name: Start
@@ -108,7 +108,7 @@ process: # 10205
     name: result
     value: 169
 process: # 10204
-  name: MDWTestSubProcess3
+  name: TestSubProcess3
   instance: 2
   activity: # 34 "2017-01-16 16:48:23"
     name: Start
@@ -126,7 +126,7 @@ process: # 10204
     name: result
     value: 121
 process: # 10206
-  name: MDWTestSubProcess4
+  name: TestSubProcess4
   instance: 1
   activity: # 34 "2017-01-16 16:48:23"
     name: Start

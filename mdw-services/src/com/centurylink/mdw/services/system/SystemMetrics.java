@@ -59,9 +59,13 @@ public class SystemMetrics {
         period = getIntegerProperty(PropertyNames.MDW_SYSTEM_METRICS_PERIOD, 5);
         if (period > 0) {
             hostName = ApplicationContext.getHostname();
-            int port = ApplicationContext.getServerPort();
-            if (port != 0 && port != 8080)
-                hostName += "_" + port;
+            try {
+                int port = ApplicationContext.getServer().getPort();
+                if (port != 0 && port != 8080)
+                    hostName += "_" + port;
+            } catch (Exception ex) {
+                logger.error(ex.getMessage(), ex);
+            }
             // seconds worth of data to keep in memory
             int retention = getIntegerProperty(PropertyNames.MDW_SYSTEM_METRICS_RETENTION, 3600);
             datapoints = retention / period;

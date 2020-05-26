@@ -18,7 +18,7 @@ package com.centurylink.mdw.slack;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.NotificationActivity;
 import com.centurylink.mdw.annotations.Activity;
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
@@ -28,6 +28,7 @@ import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -79,10 +80,14 @@ public class SlackActivity extends DefaultActivityImpl implements NotificationAc
             messageAsset = getAttributeValueSmart("slackMessage");
         String assetVersion = getAttribute(MESSAGE + "_assetVersion");
         AssetVersionSpec assetSpec = new AssetVersionSpec(messageAsset, assetVersion == null ? "0" : assetVersion);
-        Asset asset = AssetCache.getAsset(messageAsset);
-        if (asset == null)
-            throw new ActivityException("Asset not found: " + assetSpec);
-        return new JsonObject(getRuntimeContext().evaluateToString(asset.getStringContent()));
+        try {
+            Asset asset = AssetCache.getAsset(messageAsset);
+            if (asset == null)
+                throw new ActivityException("Asset not found: " + assetSpec);
+            return new JsonObject(getRuntimeContext().evaluateToString(asset.getText()));
+        } catch (IOException ex) {
+            throw new ActivityException(-1, "Error loading " + assetSpec, ex);
+        }
     }
 
     public String getWebhookUrl() throws ActivityException {

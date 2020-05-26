@@ -1,7 +1,10 @@
 {
-  "attributes": {"Variables": "N,N,Not Displayed,0,,java.lang.String;comp,comp,Not Displayed,0,,java.lang.String"},
-  "category": "COM",
-  "logicalId": "MDWTestLoopBackWaiting:Activity6",
+  "logicalId": "TestLoopBackWaiting:Activity6",
   "name": "New Create Task and Wait",
+  "attributes": {
+    "Variables": "N,N,Not Displayed,0,,java.lang.String;comp,comp,Not Displayed,0,,java.lang.String",
+    "Notices": "[[\"Open\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Assigned\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Completed\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Cancelled\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"In Progress\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Alert\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Jeopardy\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"],[\"Forward\",\"\",\"\",\"com.centurylink.mdw.workflow.task.notifier.TaskEmailNotifier\"]]"
+  },
+  "category": "COM",
   "version": "0.1"
 }

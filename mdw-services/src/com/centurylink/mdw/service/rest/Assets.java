@@ -16,7 +16,6 @@
 package com.centurylink.mdw.service.rest;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.cache.impl.PackageCache;
 import com.centurylink.mdw.cli.Delete;
 import com.centurylink.mdw.cli.Discover;
 import com.centurylink.mdw.cli.Import;
@@ -27,19 +26,17 @@ import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.git.VersionControlGit;
 import com.centurylink.mdw.discovery.GitDiscoverer;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.asset.AssetInfo;
-import com.centurylink.mdw.model.asset.PackageAssets;
-import com.centurylink.mdw.model.asset.PackageList;
+import com.centurylink.mdw.model.asset.api.PackageAssets;
+import com.centurylink.mdw.model.asset.api.PackageList;
 import com.centurylink.mdw.model.system.Bulletin;
 import com.centurylink.mdw.model.system.SystemMessage.Level;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.user.Workgroup;
-import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.AssetServices;
 import com.centurylink.mdw.services.ServiceLocator;
@@ -50,13 +47,11 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.ws.rs.Path;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -138,11 +133,7 @@ public class Assets extends JsonRestService {
             String version = getSegment(path, 3);
 
             if (pkg == null) {
-                String find = query.getFind();
-                if (find != null) {
-                    return findAssets(find.toLowerCase()).getJson();
-                }
-                else if (query.hasFilters() && !query.getBooleanFilter("packageList")) {
+                if (query.hasFilters() && !query.getBooleanFilter("packageList")) {
                     return assetServices.getAssetPackageList(query).getJson();
                 }
                 else {
@@ -164,37 +155,6 @@ public class Assets extends JsonRestService {
         catch (Exception ex) {
             throw new ServiceException(ex.getMessage(), ex);
         }
-    }
-
-    private JsonArray findAssets(String find) throws ServiceException {
-        AssetServices assetServices = ServiceLocator.getAssetServices();
-        List<String> pkgMatches = new ArrayList<>();
-        boolean isQualified = find.indexOf('.') > 0;
-        if (isQualified) {
-            for (Package assetPkg : PackageCache.getPackages()) {
-                if (assetPkg.getName().toLowerCase().startsWith(find))
-                    pkgMatches.add(assetPkg.getName());
-            }
-        }
-        Map<String,List<AssetInfo>> assetMatches = assetServices.findAssets(f -> {
-            String assetPkg = assetServices.getPackage(f);
-            return pkgMatches.contains(assetPkg) || f.getName().toLowerCase().startsWith(find);
-        });
-        JSONArray matches = new JSONArray();
-        for (String pkgName : assetMatches.keySet()) {
-            List<AssetInfo> assetInfos = assetMatches.get(pkgName);
-            for (AssetInfo assetInfo : assetInfos) {
-                JSONObject match = assetInfo.getJson();
-                match.put("packageName", pkgName);
-                match.put("match", pkgMatches.contains(pkgName) ? pkgName + '/' + assetInfo.getName() : assetInfo.getName());
-                matches.put(match);
-            }
-        }
-        return new JsonArray(matches) {
-            public String getJsonName() {
-                return "assets";
-            }
-        };
     }
 
     /**
@@ -234,10 +194,9 @@ public class Assets extends JsonRestService {
                 SystemMessages.bulletinOff(bulletin, "Asset import completed");
                 bulletin = null;
                 Thread thread = new Thread() {
-                    @Override
                     public void run() {
                         this.setName("AssetsCacheRefresh-thread");
-                        CacheRegistration.getInstance().refreshCaches(null);
+                        CacheRegistration.getInstance().refreshCaches();
                     }
                 };
                 thread.start();
@@ -322,14 +281,9 @@ public class Assets extends JsonRestService {
             // create asset
             String asset = segments[1] + '/' + segments[2];
             if (segments[2].endsWith(".proc") && stagingCuid == null) {
-                try {
-                    if (query.getFilter("template") == null)
-                        query.setFilter("template", "new");
-                    ServiceLocator.getWorkflowServices().createProcess(asset, query);
-                }
-                catch (IOException ex) {
-                    throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
-                }
+                if (query.getFilter("template") == null)
+                    query.setFilter("template", "new");
+                ServiceLocator.getWorkflowServices().createProcess(asset, query);
             }
             else {
                 String template = query.getFilter("template");
@@ -377,7 +331,7 @@ public class Assets extends JsonRestService {
 
     public PackageList getPackages(Query query) throws ServiceException {
         String withVcsInfo = query.getFilter("withVcsInfo");
-        boolean withVcs = withVcsInfo == null ? true : Boolean.parseBoolean(withVcsInfo);
+        boolean withVcs = withVcsInfo == null || Boolean.parseBoolean(withVcsInfo);
         String stagingCuid = query.getFilter("stagingUser");
         if (stagingCuid != null) {
             return ServiceLocator.getStagingServices().getPackages(stagingCuid, withVcs);

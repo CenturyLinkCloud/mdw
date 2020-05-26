@@ -15,104 +15,47 @@
  */
 package com.centurylink.mdw.xml;
 
-//import java.util.HashMap;
-//import java.util.Map;
-
 import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlCursor.XmlBookmark;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlCursor.XmlBookmark;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 /**
- * 
- * XmlPath
- * 
- * This class wraps around name-space agnostic XPath
- * 
- * @version 1.0
+ * Namespace-agnostic XPath
  */
 public class XmlPath {
-    
+
     private String path_string; // for parsing
     private int n;      // for parsing - string length of path_string
     private int k;      // for parsing - next char position;
     private PathSegment path_seg;   // result of parsing
-    
+
     public XmlPath(String path_string) throws XmlException {
         this.path_string = path_string;
         n = path_string.length();
         k = 0;
         Token token = getNextToken();
         if (token!=null && token.kind==TokenKind.SLASH) token = getNextToken(); // ignore initial slash
-        path_seg = parse_path_segment(token);  
+        path_seg = parse_path_segment(token);
     }
-
-    /**
-     * Using XPath or XQuery.
-     * NOTE!!!! To use this code, need to include
-     * xbean_xpath.jar, saxon9.jar, saxon9-dom.jar in CLASSPATH
-     * in startWebLogic.cmd
-     * @param xmlbean xmlbean
-     * @param path path
-     * @return string
-     */
 
     public static String evaluate(XmlObject xmlbean, String path) {
         XmlCursor cursor = xmlbean.newCursor();
         String value;
-        
-// 1.2.3. use XQuery or selectPath
-//
-//        cursor.toFirstChild();
-//        String defaultNamespace = cursor.namespaceForPrefix("");
-//        String namespaceDecl = "declare default element namespace '" + defaultNamespace + "';";
-//        Map<String,String> namespaces = new HashMap<String,String>();
-//        cursor.getAllNamespaces(namespaces);
-//        for (String prefix : namespaces.keySet())
-//        {
-//            namespaceDecl += "declare namespace " + prefix + "='" + namespaces.get(prefix) + "';";
-//        }
-//  1. use XQuery
-//        XmlCursor results = cursor.execQuery(namespaceDecl + path);
-//        value = (results==null)?null:results.getTextValue();
-        
-//  2. use selectPath on XmlObject
-//        XmlObject[] result = xmlbean.selectPath(namespaceDecl + path);
-        
-//  3. use selectPath on XmlCursor   
-//        cursor.toParent();
-//        XmlOptions options = new XmlOptions();
-//        options.put(Path.PATH_DELEGATE_INTERFACE,"org.apache.xmlbeans.impl.xpath.saxon.XBeansXPath");
-//        cursor.selectPath(namespaceDecl + path, options);
-//        if (cursor.getSelectionCount()>0) {
-//            cursor.toNextSelection();
-//            value = cursor.getTextValue();
-//        } else value = null;
 
-// 4. use our own implementation
         try {
             XmlPath matcher = new XmlPath(path);
             value = matcher.evaluate_segment(cursor, matcher.path_seg);
         } catch (XmlException e) {
             value = null; // xpath syntax error - treated as no match
         }
-        
+
         cursor.dispose();
         return value;
     }
-    
+
     public String getHashBucket() {
         return path_seg.name==null?"*":path_seg.name;    // either a root element name or *
-    }
-    
-    public static String getRootNodeName(Document reqdoc) {
-        Node node = reqdoc.getFirstChild();
-        while (node!=null && node.getNodeType()!=Node.ELEMENT_NODE) {
-            node = node.getNextSibling();
-        }
-        return node==null?null:node.getNodeName();
     }
 
     public static String getRootNodeName(XmlObject xmlbean) {
@@ -120,46 +63,44 @@ public class XmlPath {
         cursor.toFirstChild();
         return cursor.getName().getLocalPart();
     }
-    
+
     public static String getRootNodeValue(XmlObject xmlbean) {
         XmlCursor cursor = xmlbean.newCursor();
         cursor.toFirstChild();
         return cursor.getTextValue();
     }
-    
-    ////// our own implementation of namespace-agnostic XPath matcher 
-    
+
     private static class Condition {
         String name;
         boolean isAttribute;
         String value;
     }
-    
+
     private static class PathSegment {
         String name;            // special case: "*" - wild card; null - recursive descent
         Condition condition;
         PathSegment rest;
         boolean isAttribute;
     }
-    
+
     enum TokenKind { NAME, AT, VALUE, EQ, LBRACKET, RBRACKET, SLASH, STAR }
-    
+
     private static class Token {
         TokenKind kind;
         int start, end;
     }
-    
+
     public String evaluate(XmlObject xmlbean) {
         XmlCursor cursor = xmlbean.newCursor();
         String value = evaluate_segment(cursor, path_seg);
         cursor.dispose();
         return value;
     }
-    
+
     private static boolean isNameChar(char ch) {
         return ch==':' || ch=='-' || ch=='_' || Character.isLetterOrDigit(ch);
     }
-    
+
     private Token getNextToken() throws XmlException {
         while (k<n && Character.isSpaceChar(path_string.charAt(k))) k++;
         if (k>=n) return null;
@@ -188,7 +129,7 @@ public class XmlPath {
         k = token.end;
         return token;
     }
-    
+
     private void getNameToken(Token token) {
         int l = k+1;
         while (l<n) {
@@ -198,7 +139,7 @@ public class XmlPath {
         }
         token.end = l;
     }
-    
+
     private void getValueToken(Token token, char delimiter) {
         int l = k+1;
         while (l<n) {
@@ -209,11 +150,11 @@ public class XmlPath {
         token.start = k;
         token.end = l+1;
     }
-    
+
     private void parseException(Token token) throws XmlException {
         throw new XmlException("Invalid XPath from character " + (token==null?k:token.start) + ": " + path_string);
     }
-    
+
     private PathSegment parse_path_segment(Token token) throws XmlException {
         PathSegment path = new PathSegment();
         if (token==null) {
@@ -260,7 +201,7 @@ public class XmlPath {
         }
         return path;
     }
-    
+
     private Token parse_condition(String path_string, PathSegment path)
             throws XmlException {
         Token token = getNextToken();
@@ -288,7 +229,7 @@ public class XmlPath {
         token = getNextToken();
         return token;
     }
-    
+
     private String evaluate_segment(XmlCursor cursor, PathSegment path) {
         String value = null;
         if (path.name==null) {
@@ -321,7 +262,7 @@ public class XmlPath {
         }
         return value;
     }
-    
+
     private String evaluate_recursive_descent(XmlCursor cursor, PathSegment path) {
         String value;
         XmlBookmark bookmark = new XmlBookmark(){};
@@ -336,7 +277,7 @@ public class XmlPath {
         cursor.toBookmark(bookmark);
         return value;
     }
-    
+
     private boolean verify_condition(XmlCursor cursor, Condition condition) {
         boolean more, found=false;
         XmlBookmark bookmark = new XmlBookmark(){};
@@ -357,22 +298,4 @@ public class XmlPath {
         cursor.toBookmark(bookmark);
         return found;
     }
-    
-    /**
-     * Test code
-     * @param args command line arguments
-     */
-    public static void main(String[] args) {
-        String xml = "<Ping xmlns:ps='http:'><G a='8'><ps:H> asf\n</ps:H></G><ps:EventName>START</ps:EventName></Ping>";
-        String path_string = "//G[H=asf]";
-        try {
-            XmlObject xmlBean = XmlObject.Factory.parse(xml);
-            XmlPath path = new XmlPath(path_string);
-            String value = path.evaluate(xmlBean);
-            System.out.println("Value=" + value);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-    
 }

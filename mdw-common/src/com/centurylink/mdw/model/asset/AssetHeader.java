@@ -16,7 +16,7 @@
 package com.centurylink.mdw.model.asset;
 
 /**
- * Asset headline info that can come from definition caches, or from parsing comment strings.
+ * Asset headline info that comes from parsing comment strings.
  */
 public class AssetHeader {
 

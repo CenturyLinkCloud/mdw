@@ -4,7 +4,8 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.hub.servlet.StatusResponder;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
-import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.ContentTypes;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.StagingServices;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -31,8 +32,7 @@ public class StagedAssetServer {
         StagingServices stagingServices = ServiceLocator.getStagingServices();
         File assetRoot = stagingServices.getStagingAssetsDir(stagingCuid);
 
-        AssetInfo asset = new AssetInfo(assetRoot, path);
-        File assetFile = asset.getFile();
+        File assetFile = new File(assetRoot + "/" + path);
         if (!assetFile.isFile()) {
             new StatusResponder(servletResponse).writeResponse(new StatusResponse(Status.NOT_FOUND));
             return;
@@ -52,11 +52,12 @@ public class StagedAssetServer {
 
         boolean download = "true".equalsIgnoreCase(servletRequest.getParameter("download"));
         if (download) {
-            servletResponse.setHeader("Content-Disposition", "attachment;filename=\"" + asset.getFile().getName() + "\"");
+            servletResponse.setHeader("Content-Disposition", "attachment;filename=\"" + assetFile.getName() + "\"");
             servletResponse.setContentType("application/octet-stream");
         }
         else {
-            servletResponse.setContentType(asset.getContentType());
+
+            servletResponse.setContentType(ContentTypes.getContentType(assetFile));
         }
 
         OutputStream out = servletResponse.getOutputStream();

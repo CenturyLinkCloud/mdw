@@ -1,17 +1,16 @@
 package com.centurylink.mdw.hub.servlet.asset;
 
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.dataaccess.file.LoaderPersisterVcs;
-import com.centurylink.mdw.dataaccess.file.VersionControlGit;
+import com.centurylink.mdw.file.VersionProperties;
+import com.centurylink.mdw.git.VersionControlGit;
 import com.centurylink.mdw.model.Yamlable;
-import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.user.User;
+import com.centurylink.mdw.model.workflow.PackageMeta;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.StagingServices;
-import com.centurylink.mdw.util.file.Packages;
-import com.centurylink.mdw.util.file.VersionProperties;
+import com.centurylink.mdw.util.JsonUtil;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.google.common.io.Files;
@@ -53,7 +52,7 @@ public class StagedAssetUpdater {
         if (!assetFile.exists())
             throw new ServiceException(ServiceException.NOT_FOUND, "Not found: " + path);
 
-        File versionsFile = new File(pkgDir.getPath() + "/" + Packages.META_DIR + "/" + Packages.VERSIONS);
+        File versionsFile = new File(pkgDir.getPath() + "/" + PackageMeta.VERSIONS_PATH);
         VersionProperties versionProps = new VersionProperties(versionsFile);
         String versionProp = versionProps.getProperty(assetName);
         if (versionProp == null)
@@ -77,7 +76,7 @@ public class StagedAssetUpdater {
                 baos.write(bytes, 0, read);
             Process process = Process.fromString(baos.toString());
             String newContent;
-            if (LoaderPersisterVcs.isJson(assetFile))
+            if (JsonUtil.isJson(assetFile))
                 newContent = process.getJson().toString(2);
             else
                 newContent = Yamlable.toString(process, 2);
@@ -101,7 +100,7 @@ public class StagedAssetUpdater {
         String pkgPath = stagingServices.getVcAssetPath() + "/" + pkgName.replace('.', '/');
         List<String> commitPaths = new ArrayList<>();
         commitPaths.add(pkgPath + "/" + assetName);
-        commitPaths.add(pkgPath + "/" + Packages.META_DIR + "/" + Packages.VERSIONS);
+        commitPaths.add(pkgPath + "/" + PackageMeta.VERSIONS_PATH);
         vcGit.add(commitPaths);
         vcGit.commit(commitPaths, comment);
         vcGit.push();

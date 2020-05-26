@@ -15,12 +15,12 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 import com.centurylink.mdw.model.*;
 import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.event.EventLog;
@@ -56,8 +56,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.time.Instant;
 import java.util.*;
-
-import static com.centurylink.mdw.constant.TaskAttributeConstant.LOGICAL_ID;
 
 @Path("/Tasks")
 @Api("Task instances")
@@ -116,7 +114,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                     // must be instance id
                     try {
                         Long instanceId = Long.parseLong(segOne);
-                        TaskInstance taskInstance = null;
+                        TaskInstance taskInstance;
                         String extra = getSegment(path, 2);
                         if (extra == null) {
                             taskInstance = taskServices.getInstance(instanceId);
@@ -281,29 +279,18 @@ public class Tasks extends JsonRestService implements JsonExportable {
         try {
             TaskServices taskServices = ServiceLocator.getTaskServices();
             if (segOne == null || segOne.equalsIgnoreCase("create")) {
-                // Create a new task
-                if (!content.has(LOGICAL_ID))
-                    throw new ServiceException(HTTP_400_BAD_REQUEST,
-                            "Missing content field: " + LOGICAL_ID);
-                String taskLogicalId = content.getString(LOGICAL_ID);
+                // TODO: create a new task (asset path should drive template)
                 // TODO: title, dueDate
                 String title = null;
                 String comments = null;
                 Instant due = null;
                 if (content.has("masterTaskInstanceId")) {
-                    // subtask instance
-                    Long masterTaskInstId = content.getLong("masterTaskInstanceId");
-                    taskServices.createSubTask(taskLogicalId, masterTaskInstId);
+                    // TODO: subtask instance
                     return null;
                 }
                 else {
-                    // top-level task instance
-                    Long taskInstanceId = taskServices.createTask(taskLogicalId,
-                            headers.get(Listener.AUTHENTICATED_USER_HEADER), title, comments, due)
-                            .getTaskInstanceId();
-                    JSONObject json = new JsonObject();
-                    json.put("taskInstanceId", taskInstanceId);
-                    return json;
+                    // TODO: top-level task instance
+                    return null;
                 }
             }
             else {
@@ -343,7 +330,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
                     // segOne must be the action
                     try {
                         UserTaskAction taskAction = new UserTaskAction(content, segOne);
-                        if (!segOne.equals(taskAction.getTaskAction().toString()))
+                        if (!segOne.equals(taskAction.getTaskAction()))
                             throw new ServiceException(HTTP_400_BAD_REQUEST,
                                     "Content/path mismatch (action): '" + taskAction.getTaskAction()
                                             + "' is not: '" + segOne + "'");
@@ -358,10 +345,6 @@ public class Tasks extends JsonRestService implements JsonExportable {
             }
         }
         catch (JSONException e) {
-            logger.severeException(e.getMessage(), e);
-            throw new ServiceException(e.getMessage(), e);
-        }
-        catch (DataAccessException e) {
             logger.severeException(e.getMessage(), e);
             throw new ServiceException(e.getMessage(), e);
         }
@@ -404,7 +387,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
             JSONObject json = new JSONObject();
             json.put("name",  entry.getKey());
             List<TaskTemplate> taskVOs = entry.getValue();
-            Package taskPkg = PackageCache.getTaskTemplatePackage(taskVOs.get(0).getId());
+            Package taskPkg = PackageCache.getPackage(taskVOs.get(0).getPackageName());
             json.put("version", taskPkg.getVersion().toString());
             JSONArray jsonTasks = new JSONArray();
             for (TaskTemplate taskVO : taskVOs) {
@@ -439,8 +422,8 @@ public class Tasks extends JsonRestService implements JsonExportable {
     }
 
     @Path("/categories")
-    public JsonArray getCategories(Query query) throws DataAccessException {
-        Map<Integer, TaskCategory> categories = DataAccess.getBaselineData().getTaskCategories();
+    public JsonArray getCategories(Query query) {
+        Map<Integer,TaskCategory> categories = new MdwBaselineData().getTaskCategories();
         List<TaskCategory> list = new ArrayList<>();
         list.addAll(categories.values());
         Collections.sort(list);

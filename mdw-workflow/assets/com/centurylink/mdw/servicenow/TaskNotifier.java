@@ -1,7 +1,7 @@
 package com.centurylink.mdw.servicenow;
 
 import com.centurylink.mdw.annotations.RegisteredService;
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.asset.Asset;
@@ -97,7 +97,7 @@ public class TaskNotifier extends TemplatedNotifier {
 
         Incident incident = new Incident();
 
-        YamlLoader loader = new YamlLoader(template.getStringContent());
+        YamlLoader loader = new YamlLoader(template.getText());
         Map<?,?> map = (Map<?,?>)loader.getTop();
         for (Object key : map.keySet()) {
             String field = key.toString();

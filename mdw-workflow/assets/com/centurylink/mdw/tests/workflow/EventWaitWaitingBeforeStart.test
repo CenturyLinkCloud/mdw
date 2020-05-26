@@ -3,13 +3,13 @@ package com.centurylink.mdw.tests.workflow
 send message("REST") {
     payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"
 }
-sleep 30
-start process("MDWTestSuppsEmbedded") {
+sleep 20
+start process("TestSuppsEmbedded") {
     variables = [ testCase: "correct-waiting-on-wait" ]
 }
 sleep 90
 send message("REST") {
     payload = "<Signal>${masterRequestId}</Signal>"
 }
-sleep 30
+sleep 20
 verify process

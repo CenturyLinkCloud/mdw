@@ -488,12 +488,11 @@ public class EngineDataAccessCache implements EngineDataAccess {
         }
     }
 
-    public synchronized VariableInstance getVariableInstance(Long varInstId)
-            throws DataAccessException, SQLException {
-        if (cache_variable==CACHE_OFF) {
+    public synchronized VariableInstance getVariableInstance(Long varInstId) throws SQLException {
+        if (cache_variable == CACHE_OFF) {
             return edadb.getVariableInstance(varInstId);
-        } else if (cache_variable==CACHE_ONLY) {
-            return null;    // TODO implement this - but may not be needed (used by designer/task manager only
+        } else if (cache_variable == CACHE_ONLY) {
+            return null;
         } else {
             return edadb.getVariableInstance(varInstId);
         }

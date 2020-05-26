@@ -16,7 +16,6 @@
 package com.centurylink.mdw.kotlin;
 
 import com.centurylink.mdw.annotations.Activity;
-import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity;
@@ -27,7 +26,7 @@ import com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity;
 public class ScriptActivity extends ScriptExecutorActivity {
 
     protected String getLanguage() {
-        return Asset.KOTLIN_SCRIPT;
+        return "Kotlin Script";
     }
 
 }

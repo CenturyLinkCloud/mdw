@@ -6,7 +6,7 @@
     "Variables": "SetInEmbedded,SetInEmbedded,Not Displayed,0,,java.lang.String;SetInMain,SetInMain,Not Displayed,0,,java.lang.String;case,case,Not Displayed,0,,java.lang.String;launcher,launcher,Not Displayed,0,,com.qwest.mbeng.MbengTableArray"
   },
   "category": "ORD",
-  "logicalId": "MDWTestSuppsEmbedded:A1",
+  "logicalId": "TestSuppsEmbedded:A1",
   "name": "Supps Embedded Manual Task",
   "version": "0"
 }

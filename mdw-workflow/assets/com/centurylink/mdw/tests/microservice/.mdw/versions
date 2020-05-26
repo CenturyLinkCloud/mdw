@@ -1,7 +1,7 @@
 DEL_Group.yaml=1
 DEL_User.yaml=1
 GET_ServiceSummary.yaml=1
-GroupRequestMapper.groovy=1
+GroupRequestMapper.groovy=3
 MicroserviceApi.test=2
 MicroserviceApi.yaml=1
 MicroserviceOrchestration.proc=7

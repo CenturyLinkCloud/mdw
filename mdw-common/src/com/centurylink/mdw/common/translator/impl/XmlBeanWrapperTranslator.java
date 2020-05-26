@@ -43,8 +43,8 @@ public class XmlBeanWrapperTranslator extends DocumentReferenceTranslator implem
         }
     }
 
-    public String realToString(Object object) throws TranslationException {
-        XmlBeanWrapper xmlBeanWrapper = (XmlBeanWrapper)object;
+    public String realToString(Object obj) throws TranslationException {
+        XmlBeanWrapper xmlBeanWrapper = (XmlBeanWrapper) obj;
         return xmlBeanWrapper.getClass().getName() + "\n" + xmlBeanWrapper.getXml();
     }
 

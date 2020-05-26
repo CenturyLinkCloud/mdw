@@ -1,5 +1,5 @@
 process: # 10305
-  name: MDWTestTimerWait
+  name: TestTimerWait
   instance: 1
   activity: # 43 "2017-01-12 12:54:51"
     name: Start

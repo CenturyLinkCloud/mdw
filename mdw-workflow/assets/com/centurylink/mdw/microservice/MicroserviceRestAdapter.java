@@ -5,7 +5,7 @@ import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.Response;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.Status;
 import com.centurylink.mdw.model.StatusResponse;
 import com.centurylink.mdw.model.request.Request;
@@ -248,7 +248,7 @@ public class MicroserviceRestAdapter extends RestServiceAdapter {
     }
 
     /**
-     * You'd need a custom .impl asset to set this through designer
+     * You'd need a custom .impl asset to set this through Studio or Hub
      */
     protected String getServiceSummaryVariableName() {
         return getAttribute("serviceSummaryVariable", "serviceSummary");

@@ -19,7 +19,7 @@ import java.lang.reflect.Type;
 import java.util.EnumMap;
 import java.util.Map;
 
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.model.asset.AssetRequest;
 import com.centurylink.mdw.model.asset.AssetRequest.Parameter;
 import com.centurylink.mdw.model.asset.AssetRequest.ParameterType;
@@ -123,7 +123,7 @@ public class SwaggerWorkflowReader {
             return Class.forName(type);
         }
         catch (ClassNotFoundException cnfe) {
-            // use CloudClassLoader
+            // use package classloader
             int lastDot = type.lastIndexOf('.');
             if (lastDot > 0) {
                 String pkgName = type.substring(0, lastDot);
@@ -131,7 +131,7 @@ public class SwaggerWorkflowReader {
                 if (pkg != null) {
                     try {
                         logger.debug("Loading type: " + type + " using " + pkg.getName() + "'s ClassLoader");
-                        return pkg.getCloudClassLoader().loadClass(type);
+                        return pkg.getClassLoader().loadClass(type);
                     }
                     catch (ClassNotFoundException cnfe2) {
                         logger.severeException(String.format("Failed to resolve '%s' into class", type), cnfe);

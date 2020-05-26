@@ -1,5 +1,5 @@
 package com.centurylink.mdw.tests.workflow
 
-start process("MDWTestVariables")
+start process("TestVariables")
 wait process
 verify process

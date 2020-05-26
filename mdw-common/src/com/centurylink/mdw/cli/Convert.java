@@ -20,11 +20,11 @@ import com.beust.jcommander.Parameters;
 import com.centurylink.mdw.config.OrderedProperties;
 import com.centurylink.mdw.config.YamlBuilder;
 import com.centurylink.mdw.config.YamlProperties;
-import com.centurylink.mdw.dataaccess.AssetRevision;
 import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.asset.Pagelet;
+import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.util.file.VersionProperties;
+import com.centurylink.mdw.file.VersionProperties;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -104,7 +104,7 @@ public class Convert extends Setup  {
 
     @Override
     public Convert run(ProgressMonitor... progressMonitors) throws IOException {
-       
+
         if (isPackages()) {
             convertPackages();
         } else if (isProcesses()) {
@@ -142,8 +142,9 @@ public class Convert extends Setup  {
                 JSONObject json = new JSONObject(new String(Files.readAllBytes(Paths.get(jsonFile.getPath()))));
                 Map<String, String> vals = new HashMap<>();
                 vals.put("name", json.getString("name"));
-                int version = AssetRevision.parsePackageVersion(json.getString("version"));
-                vals.put("version", AssetRevision.formatPackageVersion(++version));
+                MdwVersion mdwVersion = new MdwVersion(json.getString("version"));
+                int version = mdwVersion.getIntVersion() + 1;
+                vals.put("version", new MdwVersion(version).toString());
                 String schemaVer = json.optString("schemaVer");
                 if (schemaVer.isEmpty() || schemaVer.startsWith("5") || schemaVer.equals("6.0")) {
                     schemaVer = "6.1";

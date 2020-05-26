@@ -27,7 +27,6 @@ import com.centurylink.mdw.services.task.TaskServicesImpl;
 import com.centurylink.mdw.services.test.TestingServicesImpl;
 import com.centurylink.mdw.services.user.UserServicesImpl;
 import com.centurylink.mdw.services.workflow.DesignServicesImpl;
-import com.centurylink.mdw.services.workflow.ProcessServicesImpl;
 import com.centurylink.mdw.services.workflow.WorkflowServicesImpl;
 
 /**
@@ -41,11 +40,6 @@ public class ServiceLocator {
 
     public static TaskServices getTaskServices() {
         return new TaskServicesImpl();
-    }
-
-    @Deprecated
-    public static ProcessServices getProcessServices() {
-        return new ProcessServicesImpl();
     }
 
     public static UserServices getUserServices() {

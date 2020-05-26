@@ -1,5 +1,5 @@
 process: # 13466
-  name: MDWTestSuppsEmbedded
+  name: TestSuppsEmbedded
   instance: 1
   activity: # 13 "2016-02-18 15:58:20"
     name: Start
@@ -16,7 +16,7 @@ process: # 13466
     name: testCase
     value: cancel-on-event
 process: # 13467
-  name: MDWTestSuppsEmbedded Cancellation Handler
+  name: TestSuppsEmbedded Cancellation Handler
   instance: 1
   activity: # 27 "2016-02-18 15:58:50"
     name: Start

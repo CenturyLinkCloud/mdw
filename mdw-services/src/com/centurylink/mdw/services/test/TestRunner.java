@@ -15,6 +15,20 @@
  */
 package com.centurylink.mdw.services.test;
 
+import com.centurylink.mdw.common.service.WebSocketMessenger;
+import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.model.JsonObject;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.services.ProcessException;
+import com.centurylink.mdw.services.messenger.InternalMessenger;
+import com.centurylink.mdw.services.messenger.MessengerFactory;
+import com.centurylink.mdw.test.*;
+import com.centurylink.mdw.test.TestCase.Status;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -22,35 +36,10 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.common.service.WebSocketMessenger;
-import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.file.PackageDir;
-import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.services.ProcessException;
-import com.centurylink.mdw.services.messenger.InternalMessenger;
-import com.centurylink.mdw.services.messenger.MessengerFactory;
-import com.centurylink.mdw.test.PackageTests;
-import com.centurylink.mdw.test.TestCase;
-import com.centurylink.mdw.test.TestCase.Status;
-import com.centurylink.mdw.test.TestCaseItem;
-import com.centurylink.mdw.test.TestCaseList;
-import com.centurylink.mdw.test.TestExecConfig;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
 
 /**
  * Test runner for in-container execution.
@@ -88,7 +77,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
                     updateResults();
                 }
                 catch (Exception ex) {
-                    logger.severeException(ex.getMessage(), ex);
+                    logger.error(ex.getMessage(), ex);
                 }
             }
 
@@ -104,8 +93,8 @@ public class TestRunner implements Runnable, MasterRequestListener {
 
     public void run() {
         threadPool = Executors.newFixedThreadPool(config.getThreads());
-        processCache = new HashMap<String,Process>();
-        testCaseStatuses = new HashMap<String,TestCase.Status>();
+        processCache = new HashMap<>();
+        testCaseStatuses = new HashMap<>();
         masterRequestRuns = new ConcurrentHashMap<>();
 
         running = true;
@@ -157,7 +146,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
             setStubServerState(false);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
         finally {
             running = false;
@@ -189,7 +178,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
     private synchronized boolean updateResults() throws JSONException, IOException {
 
         boolean allDone = true;
-        TestCaseList fullTestCaseList = null;
+        TestCaseList fullTestCaseList;
         for (TestCase testCase : testCaseList.getTestCases()) {
             boolean statusChanged = false;
             if (!isFinished(testCase.getStatus()))
@@ -234,7 +223,7 @@ public class TestRunner implements Runnable, MasterRequestListener {
             WebSocketMessenger.getInstance().send("AutomatedTests", testCaseList.getJson().toString(2));
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -242,11 +231,11 @@ public class TestRunner implements Runnable, MasterRequestListener {
         if (!resultsFile.exists())
             writeFile(resultsFile, testCaseList.getJson().toString(2).getBytes());
         String jsonString = new String(Files.readAllBytes(resultsFile.toPath()));
-        TestCaseList fullTestCaseList = new TestCaseList(ApplicationContext.getAssetRoot(), new JsonObject(jsonString));
+        TestCaseList fullTestCaseList = new TestCaseList(new JsonObject(jsonString));
         PackageTests pkgTests = fullTestCaseList.getPackageTests(exeTestCase.getPackage());
         if (pkgTests == null) {
-            pkgTests = new PackageTests(new PackageDir(ApplicationContext.getAssetRoot(), exeTestCase.getPackage()));
-            pkgTests.setTestCases(new ArrayList<TestCase>());
+            pkgTests = new PackageTests(exeTestCase.getPackage());
+            pkgTests.setTestCases(new ArrayList<>());
             fullTestCaseList.addPackageTests(pkgTests);
         }
         TestCase testCase = fullTestCaseList.getTestCase(exeTestCase.getPath());
@@ -270,12 +259,10 @@ public class TestRunner implements Runnable, MasterRequestListener {
                         item = exeItem;
                         toAdd.add(item);
                     }
-                    if (item != null) {
-                        item.setStatus(exeItem.getStatus());
-                        item.setStart(exeItem.getStart());
-                        item.setEnd(exeItem.getEnd());
-                        item.setMessage(exeItem.getMessage());
-                    }
+                    item.setStatus(exeItem.getStatus());
+                    item.setStart(exeItem.getStart());
+                    item.setEnd(exeItem.getEnd());
+                    item.setMessage(exeItem.getMessage());
                 }
                 testCase.getItems().addAll(toAdd);
             }
@@ -289,14 +276,8 @@ public class TestRunner implements Runnable, MasterRequestListener {
     private void writeFile(File file, byte[] contents) throws IOException {
         if (!file.getParentFile().exists() && !file.getParentFile().mkdirs())
             throw new IOException("Unable to create directory: " + file.getParentFile());
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(file);
+        try (FileOutputStream fos = new FileOutputStream(file)) {
             fos.write(contents);
-        }
-        finally {
-            if (fos != null)
-                fos.close();
         }
     }
 

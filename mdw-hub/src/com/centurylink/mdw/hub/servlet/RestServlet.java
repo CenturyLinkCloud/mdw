@@ -260,7 +260,7 @@ public class RestServlet extends ServiceServlet {
         }
 
         Set<String> reqHeaderKeys = new HashSet<>(metaInfo.keySet());
-        String responseString = new ListenerHelper().processEvent(requestString, metaInfo);
+        String responseString = new ListenerHelper().processRequest(requestString, metaInfo);
         populateResponseHeaders(reqHeaderKeys, metaInfo, response);
         if (metaInfo.get(Listener.METAINFO_CONTENT_TYPE) == null)
             response.setContentType("application/json");

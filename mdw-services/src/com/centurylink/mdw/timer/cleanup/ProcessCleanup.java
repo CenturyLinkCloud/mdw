@@ -34,8 +34,8 @@ import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.model.monitor.ScheduledJob;
 import com.centurylink.mdw.model.workflow.WorkStatus;
-import com.centurylink.mdw.services.workflow.RoundRobinScheduledJob;
 import com.centurylink.mdw.util.CallURL;
 import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -59,7 +59,7 @@ timer.task:
  * Then re-start the server/instance for new clean-up properties to be effective.
  */
 @Deprecated
-public class ProcessCleanup extends RoundRobinScheduledJob {
+public class ProcessCleanup implements ScheduledJob {
 
     private StandardLogger logger;
 

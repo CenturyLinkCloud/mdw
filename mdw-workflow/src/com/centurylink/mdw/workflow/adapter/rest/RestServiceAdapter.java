@@ -21,11 +21,11 @@ import com.centurylink.mdw.adapter.HeaderAwareAdapter;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.auth.AuthTokenProvider;
 import com.centurylink.mdw.config.PropertyException;
-import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.connector.adapter.ConnectionException;
-import com.centurylink.mdw.model.Response;
+import com.centurylink.mdw.adapter.AdapterException;
+import com.centurylink.mdw.adapter.ConnectionException;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.Status;
-import com.centurylink.mdw.model.event.AdapterStubRequest;
+import com.centurylink.mdw.adapter.AdapterStubRequest;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.variable.Variable;
@@ -141,7 +141,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                 }
                 else {
                     try {
-                        Class<?> clazz = getPackage().getCloudClassLoader().loadClass(providerClass);
+                        Class<?> clazz = getPackage().getClassLoader().loadClass(providerClass);
                         if (AuthTokenProvider.class.isAssignableFrom(clazz)) {
                             authProvider = clazz.newInstance();
                         }

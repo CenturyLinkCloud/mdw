@@ -20,10 +20,7 @@ import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.container.ThreadPoolProvider;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.model.Response;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventLog;
 import com.centurylink.mdw.model.event.EventType;
@@ -31,6 +28,7 @@ import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.monitor.ScheduledJob;
 import com.centurylink.mdw.model.monitor.UnscheduledEvent;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.user.UserAction.Action;
 import com.centurylink.mdw.model.variable.Document;
@@ -39,6 +37,7 @@ import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
+import com.centurylink.mdw.service.data.event.EventDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.service.data.process.ProcessCache;
@@ -55,6 +54,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
@@ -135,8 +135,8 @@ public class EventServicesImpl implements EventServices {
                 if (value != null) {
                     ProcessInstance procInst = edao.getProcessInstance(procInstId);
                     Process process = null;
-                    if (procInst.getProcessInstDefId() > 0L)
-                        process = ProcessCache.getProcessInstanceDefiniton(procInst.getProcessId(), procInst.getProcessInstDefId());
+                    if (procInst.getInstanceDefinitionId() > 0L)
+                        process = ProcessCache.getInstanceDefinition(procInst.getProcessId(), procInst.getInstanceDefinitionId());
                     if (process == null)
                         process = ProcessCache.getProcess(procInst.getProcessId());
                     Variable variable = process.getVariable(name);
@@ -155,8 +155,8 @@ public class EventServicesImpl implements EventServices {
                 }
             }
             return varInst;
-        } catch (SQLException e) {
-            throw new DataAccessException(-1, "Failed to set variable value", e);
+        } catch (SQLException | IOException e) {
+            throw new DataAccessException(-1, "Failed to set " + name + " on instance " + procInstId, e);
         } finally {
             edao.stopTransaction(transaction);
         }
@@ -373,7 +373,7 @@ public class EventServicesImpl implements EventServices {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
-            Process procdef = ProcessCache.getProcess(processName, 0);
+            Process procdef = ProcessCache.getProcess(processName);
             if (procdef==null) return null;
             transaction = edao.startTransaction();
             return edao.getProcessInstancesByMasterRequestId(masterRequestId, procdef.getId());
@@ -402,7 +402,7 @@ public class EventServicesImpl implements EventServices {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
-            Process procdef = ProcessCache.getProcess(processName, 0);
+            Process procdef = ProcessCache.getProcess(processName);
             if (procdef == null)
                 return null;
             Activity actdef = procdef.getActivity(activityLogicalId, false);
@@ -550,13 +550,13 @@ public class EventServicesImpl implements EventServices {
         }
     }
 
-    public List<EventLog> getEventLogs(String pEventName, String pEventSource,
-            String pEventOwner, Long pEventOwnerId) throws DataAccessException {
+    public List<EventLog> getEventLogs(String eventName, String eventSource,
+            String eventOwner, Long ownerId) throws ServiceException {
+        EventDataAccess dataAccess = new EventDataAccess();
         try {
-            return DataAccess.getRuntimeDataAccess(new DatabaseAccess(null))
-                    .getEventLogs(pEventName, pEventSource, pEventOwner, pEventOwnerId);
-        } catch (Exception ex) {
-            throw new DataAccessException(-1, ex.getMessage(), ex);
+            return dataAccess.getEventLogs(eventName, eventSource, eventOwner, ownerId);
+        } catch (DataAccessException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }
 
@@ -648,7 +648,7 @@ public class EventServicesImpl implements EventServices {
                             event.getScheduledTime(), null, null, 0, null);
                 }
             }     // else do nothing - may be processed by another server
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new DataAccessException(-1, "Failed to process scheduled event", e);
         } finally {
             edao.stopTransaction(transaction);
@@ -845,16 +845,16 @@ public class EventServicesImpl implements EventServices {
     }
 
     @Override
-    public Process findProcessByProcessInstanceId(Long processInstanceId) throws DataAccessException,
-            ProcessException {
+    public Process findProcessByProcessInstanceId(Long processInstanceId)
+            throws DataAccessException, ProcessException, IOException {
         ProcessInstance processInst = getProcessInstance(processInstanceId);
         if (processInst.isEmbedded()) {
             processInst = getProcessInstance(processInst.getOwnerId());
         }
         Process process = null;
         if (processInst != null) {
-            if (processInst.getProcessInstDefId() > 0L)
-                process = ProcessCache.getProcessInstanceDefiniton(processInst.getProcessId(), processInst.getProcessInstDefId());
+            if (processInst.getInstanceDefinitionId() > 0L)
+                process = ProcessCache.getInstanceDefinition(processInst.getProcessId(), processInst.getInstanceDefinitionId());
             if (process == null)
                 process = ProcessCache.getProcess(processInst.getProcessId());
         }

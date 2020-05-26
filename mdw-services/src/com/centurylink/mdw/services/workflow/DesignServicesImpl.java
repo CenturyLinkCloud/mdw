@@ -1,16 +1,19 @@
 package com.centurylink.mdw.services.workflow;
 
-import com.centurylink.mdw.cache.impl.AssetHistory;
+import com.centurylink.mdw.cache.CachingException;
+import com.centurylink.mdw.cache.asset.AssetHistory;
 import com.centurylink.mdw.cli.Hierarchy;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
-import com.centurylink.mdw.dataaccess.file.VersionControlGit;
-import com.centurylink.mdw.model.asset.*;
+import com.centurylink.mdw.git.VersionControlGit;
+import com.centurylink.mdw.model.asset.AssetVersion;
+import com.centurylink.mdw.model.asset.AssetVersionSpec;
+import com.centurylink.mdw.model.asset.CommitInfo;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.activity.ImplementorCache;
@@ -57,21 +60,25 @@ public class DesignServicesImpl implements DesignServices {
             AssetInfo stagedAsset = ServiceLocator.getStagingServices().getStagedAsset(stagingCuid, assetPath);
             if (stagedAsset != null) {
                 process = new Process();
-                process.setRawFile(stagedAsset.getFile());
+                process.setFile(stagedAsset.getFile());
             }
         } else {
-            process = ProcessCache.getProcess(processName, version);
+            try {
+                process = ProcessCache.getProcess(processName, version);
+            } catch (IOException ex) {
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error loading " + assetPath, ex);
+            }
         }
         if (forUpdate && process != null && version == 0) {
             // load from file
             try {
-                byte[] bytes = Files.readAllBytes(Paths.get(process.getRawFile().getAbsolutePath()));
+                byte[] bytes = Files.readAllBytes(Paths.get(process.getFile().getAbsolutePath()));
                 process = Process.fromString(new String(bytes));
                 process.setName(processName.substring(lastSlash + 1));
                 process.setPackageName(processName.substring(0, lastSlash));
             }
             catch (Exception ex) {
-                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error reading process: " + process.getRawFile());
+                throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error reading process: " + process.getFile());
             }
         }
         if (process == null)
@@ -81,41 +88,36 @@ public class DesignServicesImpl implements DesignServices {
     }
 
     @Override
-    public List<Process> getProcessDefinitions(Query query) throws ServiceException {
-        try {
-            String find = query.getFind();
-            if (find == null) {
-                return ProcessCache.getProcesses(true);
-            }
-            else {
-                List<Process> found = new ArrayList<>();
-                String findLower = find.toLowerCase();
-                for (Process process : ProcessCache.getProcesses(true)) {
-                    if (process.getName() != null && process.getName().toLowerCase().startsWith(findLower))
-                        found.add(process);
-                    else if (find.indexOf(".") > 0 && process.getPackageName() != null && process.getPackageName().toLowerCase().startsWith(findLower))
-                        found.add(process);
-                }
-                return found;
-            }
+    public List<Process> getProcessDefinitions(Query query) {
+        String find = query.getFind();
+        if (find == null) {
+            return ProcessCache.getProcesses(true);
         }
-        catch (DataAccessException ex) {
-            throw new ServiceException(500, ex.getMessage(), ex);
+        else {
+            List<Process> found = new ArrayList<>();
+            String findLower = find.toLowerCase();
+            for (Process process : ProcessCache.getProcesses(true)) {
+                if (process.getName() != null && process.getName().toLowerCase().startsWith(findLower))
+                    found.add(process);
+                else if (find.indexOf(".") > 0 && process.getPackageName() != null && process.getPackageName().toLowerCase().startsWith(findLower))
+                    found.add(process);
+            }
+            return found;
         }
     }
 
     @Override
-    public Process getProcessDefinition(Long id) {
+    public Process getProcessDefinition(Long id) throws IOException {
         return ProcessCache.getProcess(id);
     }
 
     @Override
     public ActivityList getActivityDefinitions(Query query) throws ServiceException {
-        try {
-            String find = query.getFind();
-            List<ActivityInstance> activityInstanceList = new ArrayList<>();
-            ActivityList found = new ActivityList(ActivityList.ACTIVITY_INSTANCES, activityInstanceList);
+        String find = query.getFind();
+        List<ActivityInstance> activityInstanceList = new ArrayList<>();
+        ActivityList found = new ActivityList(ActivityList.ACTIVITY_INSTANCES, activityInstanceList);
 
+        try {
             if (find == null) {
                 List<Process> processes = ProcessCache.getProcesses(true);
                 for (Process process : processes) {
@@ -168,8 +170,8 @@ public class DesignServicesImpl implements DesignServices {
             found.setCount(activityInstanceList.size());
             found.setTotal(activityInstanceList.size());
             return found;
-        } catch (DataAccessException ex) {
-            throw new ServiceException(500, ex.getMessage(), ex);
+        } catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error loading process for query: " + query, ex);
         }
     }
 
@@ -180,27 +182,21 @@ public class DesignServicesImpl implements DesignServices {
 
     @Override
     public ActivityImplementor getImplementor(String className) throws ServiceException {
-        ActivityImplementor implementor =  ImplementorCache.get(className);
-        if (implementor != null && implementor.getPagelet() == null) {
-            try {
-                for (ActivityImplementor impl : DataAccess.getProcessLoader().getActivityImplementors()) {
-                    if (impl.getImplementorClass().equals(implementor.getImplementorClass()))
-                        return impl; // loaded from .impl file
-                }
-            } catch (DataAccessException ex) {
-                throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage());
-            }
+        try {
+            return ImplementorCache.get(className);
         }
-        return implementor; // loaded from annotation or not found
+        catch (CachingException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
+        }
     }
 
     @Override
     public List<Linked<Process>> getProcessHierarchy(Long processId, boolean downward) throws ServiceException {
-        Process process = ProcessCache.getProcess(processId);
-        if (process == null)
-            throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + processId);
-
         try {
+            Process process = ProcessCache.getProcess(processId);
+            if (process == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Process not found: " + processId);
+
             // all must be loaded
             List<Process> processes = new ArrayList<>();
             for (Process proc : ProcessCache.getProcesses(true)) {
@@ -213,7 +209,7 @@ public class DesignServicesImpl implements DesignServices {
             hierarchy.run();
             return hierarchy.getTopLevelCallers();
         }
-        catch (DataAccessException | IOException ex) {
+        catch (IOException ex) {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Hierarchy error for " + processId, ex);
         }
     }
@@ -226,8 +222,7 @@ public class DesignServicesImpl implements DesignServices {
             AssetVersion assetVersion;
             if (currentAsset != null && version.equals(currentAsset.getJson().optString("version"))) {
                 // if current version just return asset from file system
-                JSONObject json = currentAsset.getJson();
-                assetVersion = new AssetVersion(json.optLong("id"), assetPath, version);
+                assetVersion = new AssetVersion(assetPath, version);
                 if (withCommitInfo) {
                     VersionControlGit vcGit = (VersionControlGit) assetServices.getVersionControl();
                     String assetVcPath = vcGit.getRelativePath(currentAsset.getFile().toPath());
@@ -265,15 +260,13 @@ public class DesignServicesImpl implements DesignServices {
     public List<AssetVersion> getAssetVersions(String assetPath, Query query) throws ServiceException {
         AssetInfo currentAsset = ServiceLocator.getAssetServices().getAsset(assetPath);
         String currentVersion = "";
-        Long currentId = 0L;
         if (currentAsset != null) {
             JSONObject json = currentAsset.getJson();
             currentVersion = json.optString("version");
-            currentId = json.optLong("id");
         }
         List<AssetVersion> versions = AssetHistory.getAssetVersions(assetPath);
         if (!currentVersion.isEmpty()) { // can be empty if no current version (deleted asset)
-            AssetVersion current = new AssetVersion(currentId, assetPath, currentVersion);
+            AssetVersion current = new AssetVersion(assetPath, currentVersion);
             if (!versions.contains(current))
                 versions.add(current);
         }

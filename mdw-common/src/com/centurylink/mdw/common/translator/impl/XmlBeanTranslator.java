@@ -15,14 +15,6 @@
  */
 package com.centurylink.mdw.common.translator.impl;
 
-import java.lang.reflect.Method;
-
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
@@ -30,6 +22,13 @@ import com.centurylink.mdw.translator.TranslationException;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
+import java.lang.reflect.Method;
 
 public class XmlBeanTranslator extends DocumentReferenceTranslator implements XmlDocumentTranslator {
 
@@ -43,9 +42,6 @@ public class XmlBeanTranslator extends DocumentReferenceTranslator implements Xm
      * @return XmlOptions
      */
     private static XmlOptions getXmlOptions() {
-        if (System.getProperty("runtimeEnv") == null && System.getProperty("mdw.runtime.env") == null)
-            return new XmlOptions().setSavePrettyPrint().setSavePrettyPrintIndent(2); // avoid errors when running in Designer
-
         String[] xmlOptionsProperties = new String[] { PropertyNames.MDW_TRANSLATOR_XMLBEANS_LOAD_OPTIONS,
                 PropertyNames.MDW_TRANSLATOR_XMLBEANS_SAVE_OPTIONS };
         /**
@@ -122,8 +118,8 @@ public class XmlBeanTranslator extends DocumentReferenceTranslator implements Xm
         }
     }
 
-    public String realToString(Object object) throws TranslationException {
-        XmlObject xmlBean = (XmlObject) object;
+    public String realToString(Object obj) throws TranslationException {
+        XmlObject xmlBean = (XmlObject) obj;
         XmlOptions tempOptions = new XmlOptions(xmlOptions);
         tempOptions.setSavePrettyPrint();
         return xmlBean.xmlText(tempOptions);

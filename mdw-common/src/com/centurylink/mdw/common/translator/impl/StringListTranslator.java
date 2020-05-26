@@ -27,10 +27,10 @@ import com.centurylink.mdw.translator.TranslationException;
 public class StringListTranslator extends DocumentReferenceTranslator {
 
     @Override
-    public Object realToObject(String json) throws TranslationException {
+    public Object realToObject(String str) throws TranslationException {
         try {
             List<String> stringList = new ArrayList<>();
-            JSONArray jsonArray = new JSONArray(json);
+            JSONArray jsonArray = new JSONArray(str);
             for (int i = 0; i < jsonArray.length(); i++)
               stringList.add(jsonArray.optString(i, null));
             return stringList;
@@ -41,8 +41,8 @@ public class StringListTranslator extends DocumentReferenceTranslator {
     }
 
     @SuppressWarnings("unchecked")
-    public String realToString(Object object) throws TranslationException {
-        List<String> stringList = (List<String>)object;
+    public String realToString(Object obj) throws TranslationException {
+        List<String> stringList = (List<String>) obj;
         JSONArray jsonArray = new JSONArray();
         for (String string : stringList)
             jsonArray.put(string);

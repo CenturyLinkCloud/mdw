@@ -224,14 +224,14 @@ public class InternalEvent {
     }
 
     /**
-     * create activity FINISH, ABORT, RESUME, CORRECT, ERROR and any event type that can be specified in
-     * designer configuration for events.
+     * create activity FINISH, ABORT, RESUME, CORRECT, ERROR and any event type that can be specified
+     * at design-time for an event.
      *
      * @param ai
      * @param eventType
      * @param masterRequestId
      * @param compCode
-     * @return
+     * @return internal event
      */
     public static InternalEvent createActivityNotifyMessage(ActivityInstance ai,
             Integer eventType, String masterRequestId, String compCode) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- spring config file for MDW wars deployed in tomcat -->
+<!-- spring config file for MDW deployed on tomcat -->
 <beans
     xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -9,7 +9,6 @@
                       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
                       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
-  <!-- The assumption is that the mdw.properties file is used on Tomcat as well as the system property mdw.config.location -->
   <!-- ctx:property-placeholder location="classpath:mdw.properties" /-->
   <!-- Note this id must match the id in the code -->
   <bean

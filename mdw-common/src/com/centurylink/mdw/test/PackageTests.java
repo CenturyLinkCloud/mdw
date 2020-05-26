@@ -15,46 +15,42 @@
  */
 package com.centurylink.mdw.test;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.centurylink.mdw.model.Jsonable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.dataaccess.file.PackageDir;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PackageTests implements Jsonable, Comparable<PackageTests> {
 
-    private PackageDir packageDir;
-    public PackageDir getPackageDir() { return packageDir; }
+    private final String packageName;
+    public String getPackageName() { return packageName; }
 
     private List<TestCase> testCases;
     public List<TestCase> getTestCases() { return testCases; }
     public void setTestCases(List<TestCase> testCases) { this.testCases = testCases; }
 
-    public PackageTests(PackageDir pkgDir) {
-        this.packageDir = pkgDir;
+    public PackageTests(String packageName) {
+        this.packageName = packageName;
     }
 
-    public PackageTests(File assetRoot, JSONObject json) throws JSONException {
-        String pkgName = json.getString("name");
-        this.packageDir = new PackageDir(assetRoot, pkgName);
+    public PackageTests(JSONObject json) throws JSONException {
+        packageName = json.getString("name");
         if (json.has("testCases")) {
             JSONArray tcArr = json.getJSONArray("testCases");
-            this.testCases = new ArrayList<TestCase>();
+            testCases = new ArrayList<>();
             for (int i = 0; i < tcArr.length(); i++) {
-                this.testCases.add(new TestCase(assetRoot, pkgName, tcArr.getJSONObject(i)));
+                testCases.add(new TestCase(packageName, tcArr.getJSONObject(i)));
             }
         }
     }
 
     public JSONObject getJson() throws JSONException {
         JSONObject pkg = create();
-        pkg.put("name", packageDir.getPackageName());
-        pkg.put("version", packageDir.getPackageVersion());
+        pkg.put("name", packageName);
         JSONArray testCaseArray = new JSONArray();
         if (testCases != null) {
             for (TestCase testCase : testCases)
@@ -69,6 +65,6 @@ public class PackageTests implements Jsonable, Comparable<PackageTests> {
     }
 
     public int compareTo(PackageTests other) {
-        return this.packageDir.getPackageName().compareToIgnoreCase(other.packageDir.getPackageName());
+        return this.packageName.compareToIgnoreCase(other.packageName);
     }
 }

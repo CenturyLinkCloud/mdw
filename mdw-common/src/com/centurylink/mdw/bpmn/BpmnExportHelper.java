@@ -17,7 +17,6 @@ package com.centurylink.mdw.bpmn;
 
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.constant.WorkTransitionAttributeConstant;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.Process;
@@ -49,6 +48,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Converts an MDW process definition into a BPMN2 standard xml.
@@ -589,22 +589,24 @@ public class BpmnExportHelper {
 
     private void addElements(Document doc, Element elements, List<?> attrs) {
         for (Object attr : attrs) {
-            if (attr instanceof Attribute) {
-                Attribute attribute = (Attribute) attr;
-                if (elements.getLocalName() == null
-                        || "mdw:ProcessExtensions".equals(elements.getNodeName())
-                        || (!"WORK_DISPLAY_INFO".equals(attribute.getName())
-                                && !"LOGICAL_ID".equals(attribute.getName())))
-                    elements.appendChild(getNode(doc, MDW_ATTRIBUTE, attribute.getName(),
-                            attribute.getValue()));
-            }
-            else if (attr instanceof Variable) {
+            if (attr instanceof Variable) {
                 Variable var = (Variable) attr;
                 elements.appendChild(getVariableNode(doc, "mdw:Variable", var));
             }
             else if (attr instanceof TextNote) {
                 TextNote textNote = (TextNote) attr;
                 elements.appendChild(getTextNode(doc, "mdw:TextNote", textNote));
+            }
+        }
+    }
+
+    private void addAttributes(Document doc, Element elements, Map<String,String> attrs) {
+        for (String name : attrs.keySet()) {
+            if (elements.getLocalName() == null
+                    || "mdw:ProcessExtensions".equals(elements.getNodeName())
+                    || (!"WORK_DISPLAY_INFO".equals(name)
+                    && !"LOGICAL_ID".equals(name))) {
+                elements.appendChild(getNode(doc, MDW_ATTRIBUTE, name, attrs.get(name)));
             }
         }
     }
@@ -633,7 +635,7 @@ public class BpmnExportHelper {
         Element attribute = doc.createElement(element);
         attribute.setAttribute("content", note.getContent());
         attribute.setAttribute("Reference", note.getReference());
-        addElements(doc, attribute, note.getAttributes());
+        addAttributes(doc, attribute, note.getAttributes());
         return attribute;
     }
 
@@ -651,7 +653,7 @@ public class BpmnExportHelper {
                 doc.appendChild(elements);
                 elements.appendChild(
                         getNode(doc, MDW_ATTRIBUTE, "Implementor", act.getImplementor()));
-                addElements(doc, elements, act.getAttributes());
+                addAttributes(doc, elements, act.getAttributes());
             }
             else if (obj instanceof Transition) {
                 Transition trans = (Transition) obj;
@@ -673,7 +675,7 @@ public class BpmnExportHelper {
                 Process proc = (Process) obj;
                 Element elements = doc.createElementNS(MDW_NAMESPACE, "mdw:ProcessExtensions");
                 doc.appendChild(elements);
-                addElements(doc, elements, proc.getAttributes());
+                addAttributes(doc, elements, proc.getAttributes());
                 addElements(doc, elements, proc.getVariables());
                 if (!proc.getTextNotes().isEmpty())
                     addElements(doc, elements, proc.getTextNotes());

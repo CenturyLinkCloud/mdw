@@ -23,8 +23,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.model.JsonObject;
-import com.centurylink.mdw.model.event.AdapterStubRequest;
-import com.centurylink.mdw.model.event.AdapterStubResponse;
+import com.centurylink.mdw.adapter.AdapterStubRequest;
+import com.centurylink.mdw.adapter.AdapterStubResponse;
 import com.centurylink.mdw.model.workflow.ActivityStubRequest;
 import com.centurylink.mdw.model.workflow.ActivityStubResponse;
 import com.centurylink.mdw.soccom.SoccomException;

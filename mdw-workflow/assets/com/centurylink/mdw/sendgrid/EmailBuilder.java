@@ -15,13 +15,14 @@
  */
 package com.centurylink.mdw.sendgrid;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 import com.centurylink.mdw.util.ExpressionUtil;
@@ -30,40 +31,40 @@ import com.centurylink.mdw.util.ExpressionUtil;
  * Builds the sendgrid model for a templated email.
  */
 public class EmailBuilder {
-    
+
     private Asset template;
     private ProcessRuntimeContext context;
-    
+
     public EmailBuilder(Asset template, ProcessRuntimeContext context) {
         this.template = template;
         this.context = context;
     }
-    
+
     private String from = "support@example.com";
     public EmailBuilder from(String from) {
         this.from = from;
         return this;
     }
-    
+
     private String subject = "MDW Notice";
     public EmailBuilder subject(String subject) {
         this.subject = subject;
         return this;
     }
-    
+
     private String[] to;
     public EmailBuilder to(String...to) {
         this.to = to;
         return this;
     }
-    
+
     private String[] cc;
     public EmailBuilder cc(String...cc) {
         this.cc = cc;
         return this;
     }
-    
-    public Email create() {
+
+    public Email create() throws IOException {
         // build the sendgrid model object
         Email email = new Email();
         email.setFrom(new Address(from));
@@ -90,7 +91,7 @@ public class EmailBuilder {
         Message message = new Message();
         content.add(message);
         message.setType(template.getContentType());
-        String body = template.getStringContent();
+        String body = template.getText();
         Map<String,String> images = new HashMap<>();
         body = ExpressionUtil.substituteImages(body, images);
         if (!images.isEmpty()) {
@@ -106,7 +107,7 @@ public class EmailBuilder {
                     attachment.setContent_id(cid);
                     attachment.setFilename(asset.getName());
                     attachment.setType(asset.getContentType());
-                    attachment.setContent(Base64.getEncoder().encodeToString(asset.getRawContent()));
+                    attachment.setContent(Base64.getEncoder().encodeToString(asset.getContent()));
                 }
                 else {
                     context.logWarn("Image asset not found: " + imageAsset);
@@ -115,5 +116,5 @@ public class EmailBuilder {
         }
         message.setValue(context.evaluateToString(body));
         return email;
-    }    
+    }
 }

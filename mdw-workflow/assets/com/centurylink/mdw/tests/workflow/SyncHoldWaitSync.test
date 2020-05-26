@@ -1,6 +1,6 @@
 package com.centurylink.mdw.tests.workflow
 
-start process("MDWTestEmbedded") {
+start process("TestEmbedded") {
     variables = [testCase: "sync-wait"]
 }
 sleep 30

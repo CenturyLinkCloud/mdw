@@ -20,8 +20,8 @@ import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyException;
-import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.adapter.AdapterException;
+import com.centurylink.mdw.adapter.ConnectionException;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.JMSServices;
@@ -40,8 +40,8 @@ import javax.jms.*;
 
 /**
  * New implementation of JMS Adapter which can be
- * configured through Designer and does not implement
- * ControlledAdapterActivity interface.
+ * configured at design time and does not implement
+ * AdapterActivity interface.
  */
 @Tracked(LogLevel.TRACE)
 @Activity(value="JMS Adapter", category=AdapterActivity.class, icon="com.centurylink.mdw.base/adapter.png",
@@ -111,7 +111,7 @@ public class JmsAdapter extends ObjectAdapterActivity {
 
                 boolean replyIsTemporaryQueue = false;
                 if (responseQueueName != null && responseQueueName.length() > 0) {
-                    replyQueue = (Queue) ApplicationContext.getNamingProvider().lookup(null,
+                    replyQueue = (Queue) ApplicationContext.getContextProvider().lookup(null,
                             responseQueueName, Queue.class);
                     // msg.setJMSReplyTo(replyQueue);
                 }
@@ -169,7 +169,7 @@ public class JmsAdapter extends ObjectAdapterActivity {
                     msg = qSession.createTextMessage((String) requestData);
                     String responseQueueName = this.getAttributeValueSmart(RESPONSE_QUEUE_NAME);
                     if (responseQueueName != null && responseQueueName.length() > 0) {
-                        replyQueue = (Queue) ApplicationContext.getNamingProvider().lookup(null, responseQueueName, Queue.class);
+                        replyQueue = (Queue) ApplicationContext.getContextProvider().lookup(null, responseQueueName, Queue.class);
                         msg.setJMSReplyTo(replyQueue);
                     } else if (this.isSynchronous()) {
                         replyQueue = qSession.createTemporaryQueue();

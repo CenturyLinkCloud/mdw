@@ -18,7 +18,7 @@ package com.centurylink.mdw.drools;
 import org.kie.api.KieBase;
 
 import com.centurylink.mdw.cache.CachingException;
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.StrategyException;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.observer.task.ParameterizedStrategy;
@@ -63,8 +63,8 @@ public abstract class RulesBasedStrategy extends ParameterizedStrategy {
     }
     /**
      * <p>
-     * By default returns the package CloudClassloader
-     * The knowledge based name is of the format "packageName/assetName", e.g "com.centurylink.mdw.test/TestDroolsRules.drl"
+     * By default returns the package Classloader
+     * The knowledge base name is of the format "packageName/assetName", e.g "com.centurylink.mdw.test/TestDroolsRules.drl"
      * If an application needs a different class loader for Strategies then this method should be overridden
      * </p>
      * @return Class Loader used for Knowledge based strategies
@@ -81,17 +81,17 @@ public abstract class RulesBasedStrategy extends ParameterizedStrategy {
         // Get the package Name
         String kbNameStr = kbName.toString();
         int lastSlash = kbNameStr.lastIndexOf('/');
-        String pkg = lastSlash == -1 ? null : kbNameStr.substring(0, lastSlash) ;
+        String pkgName = lastSlash == -1 ? null : kbNameStr.substring(0, lastSlash) ;
 
         try {
-            Package pkgVO = PackageCache.getPackage(pkg);
-            if (pkgVO == null)
+            Package pkg = PackageCache.getPackage(pkgName);
+            if (pkg == null)
                 throw new StrategyException("Unable to get package name from strategy: " + kbAttributeName +" value="+kbNameStr);
             // return the cloud class loader by default, unless the bundle spec is set
-            return pkgVO.getClassLoader();
+            return pkg.getClass().getClassLoader();
         }
         catch (CachingException ex) {
-            throw new StrategyException("Error getting strategy package: " + pkg, ex);
+            throw new StrategyException("Error getting strategy package: " + pkgName, ex);
         }
     }
 

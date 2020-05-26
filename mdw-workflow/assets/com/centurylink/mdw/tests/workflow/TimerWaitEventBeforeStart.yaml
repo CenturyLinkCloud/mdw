@@ -1,5 +1,5 @@
 process: # 10225
-  name: MDWTestEmbedded
+  name: TestEmbedded
   instance: 1
   activity: # 13 "2017-01-03 10:22:39"
     name: Start
@@ -21,7 +21,7 @@ process: # 10225
     name: testCase
     value: correct-resume-on-hold
 process: # 10226
-  name: MDWTestEmbedded Correction Handler
+  name: TestEmbedded Correction Handler
   instance: 1
   activity: # 20 "2017-01-03 10:22:40"
     name: Start

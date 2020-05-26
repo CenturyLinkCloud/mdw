@@ -1,5 +1,5 @@
 process: # 10276
-  name: MDWTestEmbedded
+  name: TestEmbedded
   instance: 1
   activity: # 13 "2017-01-03 12:10:02"
     name: Start
@@ -29,7 +29,7 @@ process: # 10276
     name: testCase
     value: sync-wait
 process: # 10281
-  name: MDWTestEmbedded Correction Handler
+  name: TestEmbedded Correction Handler
   instance: 1
   activity: # 20 "2017-01-03 12:11:33"
     name: Start

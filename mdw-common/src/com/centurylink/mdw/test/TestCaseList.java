@@ -48,7 +48,7 @@ public class TestCaseList implements Jsonable {
     public PackageTests getPackageTests(String packageName) {
         if (packageTests != null) {
             for (PackageTests pkgTests : packageTests) {
-                if (pkgTests.getPackageDir().getPackageName().equals(packageName))
+                if (pkgTests.getPackageName().equals(packageName))
                     return pkgTests;
             }
         }
@@ -57,24 +57,22 @@ public class TestCaseList implements Jsonable {
 
     public void addPackageTests(PackageTests pkgTests) {
         if (packageTests == null) {
-            packageTests = new ArrayList<PackageTests>();
+            packageTests = new ArrayList<>();
         }
         packageTests.add(pkgTests);
     }
 
     public List<TestCase> getTestCases() {
-        List<TestCase> testCases = new ArrayList<TestCase>();
+        List<TestCase> testCases = new ArrayList<>();
         for (PackageTests pkgTestCases : getPackageTests()) {
-            for (TestCase testCase : pkgTestCases.getTestCases()) {
-                testCases.add(testCase);
-            }
+            testCases.addAll(pkgTestCases.getTestCases());
         }
         return testCases;
     }
 
     public TestCase getTestCase(String path) {
         for (PackageTests pkgTests : packageTests) {
-            if (path.startsWith(pkgTests.getPackageDir().getPackageName() + "/")) {
+            if (path.startsWith(pkgTests.getPackageName() + "/")) {
                 for (TestCase pkgTest : pkgTests.getTestCases()) {
                     if (pkgTest.getPath().equals(path))
                         return pkgTest;
@@ -86,7 +84,7 @@ public class TestCaseList implements Jsonable {
 
     public TestCase addTestCase(TestCase testCase) {
         for (PackageTests pkgTests : packageTests) {
-            if (testCase.getPath().startsWith(pkgTests.getPackageDir().getPackageName() + "/")) {
+            if (testCase.getPath().startsWith(pkgTests.getPackageName() + "/")) {
                 pkgTests.getTestCases().add(testCase);
                 return testCase;
             }
@@ -100,7 +98,7 @@ public class TestCaseList implements Jsonable {
         this.assetRoot = assetRoot;
     }
 
-    public TestCaseList(File assetRoot, JSONObject json) throws JSONException {
+    public TestCaseList(JSONObject json) throws JSONException {
         if (json.has("suite"))
             this.suite = json.getString("suite");
         if (json.has("assetRoot"))
@@ -111,9 +109,9 @@ public class TestCaseList implements Jsonable {
             this.count = json.getInt("count");
         if (json.has("packages")) {
             JSONArray pkgsArr = json.getJSONArray("packages");
-            this.packageTests = new ArrayList<PackageTests>();
+            this.packageTests = new ArrayList<>();
             for (int i = 0; i < pkgsArr.length(); i++) {
-                this.packageTests.add(new PackageTests(assetRoot, pkgsArr.getJSONObject(i)));
+                this.packageTests.add(new PackageTests(pkgsArr.getJSONObject(i)));
             }
         }
     }

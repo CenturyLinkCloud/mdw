@@ -15,16 +15,6 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.Path;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.user.Role;
@@ -33,6 +23,12 @@ import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.startup.StartupException;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.Path;
+import java.util.List;
+import java.util.Map;
 
 @Path("/WorkflowCache")
 public class WorkflowCache extends JsonRestService {
@@ -66,15 +62,7 @@ public class WorkflowCache extends JsonRestService {
             String singleCacheName = getSegment(path, 1);
 
             if (singleCacheName == null) {
-                List<String> excludeFormats = null;
-                if (content.has("excludeFormats")) {
-                    excludeFormats = new ArrayList<>();
-                    JSONArray jsonArr = content.getJSONArray("excludeFormats");
-                    for (int i = 0; i < jsonArr.length(); i++) {
-                        excludeFormats.add(jsonArr.getString(i));
-                    }
-                }
-                CacheRegistration.getInstance().refreshCaches(excludeFormats);
+                CacheRegistration.getInstance().refreshCaches();
             }
             else {
                 new CacheRegistration().refreshCache(singleCacheName);

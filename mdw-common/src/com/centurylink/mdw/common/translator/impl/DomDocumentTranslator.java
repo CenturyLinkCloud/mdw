@@ -25,18 +25,18 @@ import com.centurylink.mdw.xml.DomHelper;
 
 public class DomDocumentTranslator extends DocumentReferenceTranslator implements XmlDocumentTranslator {
 
-    public Object realToObject(String xml) throws TranslationException {
+    public Object realToObject(String str) throws TranslationException {
         try {
-            return DomHelper.toDomDocument(xml);
+            return DomHelper.toDomDocument(str);
         } catch (Exception e) {
             throw new TranslationException(e.getMessage(), e);
         }
     }
 
-    public String realToString(Object object) throws TranslationException {
+    public String realToString(Object obj) throws TranslationException {
 
         try {
-            Document document = (Document)object;
+            Document document = (Document) obj;
             return DomHelper.toXml(document);
         } catch (Exception e) {
             throw new TranslationException(e.getMessage(), e);

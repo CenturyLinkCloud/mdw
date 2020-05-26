@@ -15,11 +15,11 @@
  */
 package com.centurylink.mdw.services.task.factory;
 
-import com.centurylink.mdw.cache.impl.PackageCache;
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.StrategyException;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
+import com.centurylink.mdw.model.Attributes;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.task.TaskTemplate;
 import com.centurylink.mdw.model.workflow.Activity;
 import com.centurylink.mdw.model.workflow.Package;
@@ -35,6 +35,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import org.apache.commons.lang.StringUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -57,12 +58,12 @@ public class TaskInstanceNotifierFactory {
      * @param outcome
      * @return the registered notifier or null if not found
      */
-    public List<String> getNotifierSpecs(Long taskId, String outcome) throws ObserverException {
-        TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(taskId);
-        if (taskVO != null) {
-            String noticesAttr = taskVO.getAttribute(TaskAttributeConstant.NOTICES);
+    public List<String> getNotifierSpecs(Long taskId, String outcome) throws IOException {
+        TaskTemplate taskTemplate = TaskTemplateCache.getTaskTemplate(taskId);
+        if (taskTemplate != null) {
+            String noticesAttr = taskTemplate.getAttribute(TaskAttributeConstant.NOTICES);
             if (!StringUtils.isBlank(noticesAttr) && !"$DefaultNotices".equals(noticesAttr)) {
-                return parseNoticiesAttr(noticesAttr, outcome);
+                return parseNoticesAttr(taskTemplate.getAttributes(), TaskAttributeConstant.NOTICES, outcome);
             }
         }
         return null;
@@ -80,10 +81,10 @@ public class TaskInstanceNotifierFactory {
         String noticesAttr = null;
         EventServices eventManager = ServiceLocator.getEventServices();
         try {
+            TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(taskId);
             if (processInstanceId != null) {
                 Process process = eventManager.findProcessByProcessInstanceId(processInstanceId);
                 if (process != null && process.getActivities() != null) {
-                    TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(taskId);
                     // for compatibility with notifiers registered on activities
                     for (Activity activity : process.getActivities()) {
                         if (taskVO.getLogicalId().equals(activity.getAttribute(TaskAttributeConstant.TASK_LOGICAL_ID))) {
@@ -94,8 +95,8 @@ public class TaskInstanceNotifierFactory {
                 }
             }
             if (!StringUtils.isBlank(noticesAttr)) {
-                return parseNoticiesAttr(noticesAttr, outcome);
-              }
+                return parseNoticesAttr(taskVO.getAttributes(), TaskAttributeConstant.NOTICES, outcome);
+            }
             return getNotifierSpecs(taskId, outcome);
         } catch (Exception ex) {
             logger.severeException(ex.getMessage(), ex);
@@ -105,18 +106,17 @@ public class TaskInstanceNotifierFactory {
 
     /**
      * To parse notices attribute
-     * @param noticesAttr
-     * @return
      */
-    private List<String> parseNoticiesAttr(String noticesAttr, String outcome) {
-        List<String> notifiers = new ArrayList<String>();
+    private List<String> parseNoticesAttr(Attributes attributes, String attributeName, String outcome) {
+        String noticesAttr = attributes.get(attributeName);
+        List<String> notifiers = new ArrayList<>();
         int columnCount = 4;
         int colon = noticesAttr.indexOf(";");
         if (colon != -1) {
             columnCount = delimiterColumnCount(noticesAttr.substring(0, colon), ",", "\\,") + 1;
         }
         int notifierClassColIndex = columnCount > 3 ? 3 : 2;
-        List<String[]> rows = Attribute.parseTable(noticesAttr, ',', ';', columnCount);
+        List<String[]> rows = attributes.getTable(noticesAttr, ',', ';', columnCount);
         for (String[] row : rows) {
             if (!StringUtils.isBlank(row[1]) && row[0].equals(outcome)) {
                 StringTokenizer st = new StringTokenizer(row[notifierClassColIndex], ",");
@@ -136,26 +136,12 @@ public class TaskInstanceNotifierFactory {
         return notifiers;
     }
 
-    public List<TaskNotifier> getNotifiers(Long taskId, String outcome) throws ObserverException {
+    public List<TaskNotifier> getNotifiers(Long taskId, String outcome) throws IOException {
         List<TaskNotifier> notifiers = new ArrayList<TaskNotifier>();
         List<String> notifierSpecs = getNotifierSpecs(taskId, outcome);
         if (notifierSpecs != null && !notifierSpecs.isEmpty()) {
             for (String notifierSpec : notifierSpecs) {
                 TaskNotifier notifier = getNotifier(notifierSpec, null);
-                if (notifier != null)
-                    notifiers.add(notifier);
-            }
-        }
-        return notifiers;
-    }
-
-    public List<TaskNotifier> getNotifiers(Long taskId, Long processInstanceId, String outcome) throws ObserverException {
-        if (processInstanceId == null) return getNotifiers(taskId, outcome);
-        List<TaskNotifier> notifiers = new ArrayList<TaskNotifier>();
-        List<String> notifierSpecs = getNotifierSpecs(taskId, processInstanceId, outcome);
-        if (notifierSpecs != null && !notifierSpecs.isEmpty()) {
-            for (String notifierSpec : notifierSpecs) {
-                TaskNotifier notifier = getNotifier(notifierSpec, processInstanceId);
                 if (notifier != null)
                     notifiers.add(notifier);
             }
@@ -175,7 +161,7 @@ public class TaskInstanceNotifierFactory {
             if (processInstanceId != null) {
                 EventServices eventManager = ServiceLocator.getEventServices();
                 Process process = eventManager.findProcessByProcessInstanceId(processInstanceId);
-                packageVO = PackageCache.getProcessPackage(process.getId());
+                packageVO = PackageCache.getPackage(process.getPackageName());
             }
             notifier = getNotifierInstance(getNotifierClassName(className), packageVO);
             if (notifier instanceof TemplatedNotifier) {
@@ -191,14 +177,13 @@ public class TaskInstanceNotifierFactory {
         }
     }
 
-    public TaskNotifier getNotifierInstance(String notifierClassName, Package packageVO)
+    public TaskNotifier getNotifierInstance(String notifierClassName, Package pkg)
     throws StrategyException {
         try {
             TaskServiceRegistry registry = TaskServiceRegistry.getInstance();
-            // Cloud mode
-            TaskNotifier notifier = registry.getDynamicNotifier(packageVO, notifierClassName);
+            TaskNotifier notifier = registry.getDynamicNotifier(pkg, notifierClassName);
             if (notifier == null) {
-                return packageVO.getClassLoader().loadClass(notifierClassName).asSubclass(TaskNotifier.class).newInstance();
+                return pkg.getClass().getClassLoader().loadClass(notifierClassName).asSubclass(TaskNotifier.class).newInstance();
             }
             return notifier;
         }

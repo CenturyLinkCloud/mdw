@@ -1,5 +1,5 @@
 process: # 10272
-  name: MDWTestEmbedded
+  name: TestEmbedded
   instance: 1
   activity: # 13 "2017-01-03 12:04:33"
     name: Start
@@ -24,7 +24,7 @@ process: # 10272
     name: testCase
     value: set-parameter-value
 process: # 10274
-  name: MDWTestEmbedded Exception Handler
+  name: TestEmbedded Exception Handler
   instance: 1
   activity: # 17 "2017-01-03 12:04:34"
     name: Start

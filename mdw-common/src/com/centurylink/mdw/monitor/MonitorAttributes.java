@@ -18,7 +18,7 @@ package com.centurylink.mdw.monitor;
 import org.json.JSONArray;
 
 import com.centurylink.mdw.annotations.Monitor;
-import com.centurylink.mdw.model.asset.AssetInfo;
+import com.centurylink.mdw.model.asset.api.AssetInfo;
 
 public class MonitorAttributes {
 

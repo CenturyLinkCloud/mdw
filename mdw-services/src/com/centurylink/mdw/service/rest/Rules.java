@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.service.rest;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ import javax.ws.rs.Path;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Jsonable;
@@ -124,14 +125,17 @@ public class Rules extends JsonRestService {
         if (pathSegments.length != 3)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
         String assetPath = pathSegments[1] + "/" + pathSegments[2];
-        Asset asset = null;
-        if (assetPath.endsWith(".drl") || assetPath.endsWith(".xlsx")) {
-            asset = AssetCache.getAsset(assetPath);
-        }
-        else {
-            asset = AssetCache.getAsset(assetPath + ".drl");
-            if (asset == null)
-                asset = AssetCache.getAsset(assetPath + ".xlsx");
+        Asset asset;
+        try {
+            if (assetPath.endsWith(".drl") || assetPath.endsWith(".xlsx")) {
+                asset = AssetCache.getAsset(assetPath);
+            } else {
+                asset = AssetCache.getAsset(assetPath + ".drl");
+                if (asset == null)
+                    asset = AssetCache.getAsset(assetPath + ".xlsx");
+            }
+        } catch (IOException ex) {
+            throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error loading " + assetPath, ex);
         }
 
         if (asset == null)

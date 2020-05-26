@@ -20,12 +20,10 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
-import com.centurylink.mdw.cache.impl.AssetCache;
-import com.centurylink.mdw.dataaccess.file.PackageDir;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.java.CompilationException;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.startup.StartupException;
-import com.centurylink.mdw.util.file.MdwIgnore;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import org.jetbrains.kotlin.cli.common.ExitCode;
@@ -172,9 +170,10 @@ public class KotlinAccess implements CacheService, PreloadableCache {
                     if (result.equals(FileVisitResult.CONTINUE)) {
                         File file = dir.toFile();
                         if (file.isDirectory() && file.getParentFile() != null) {
-                            MdwIgnore ignore = new MdwIgnore(file.getParentFile());
-                            if (ignore.isIgnore(file))
-                                result = FileVisitResult.SKIP_SUBTREE;
+                            // TODO mdwignore
+//                            MdwIgnore ignore = new MdwIgnore(file.getParentFile());
+//                            if (ignore.isIgnore(file))
+//                                result = FileVisitResult.SKIP_SUBTREE;
                         }
                     }
                     return result;
@@ -217,7 +216,7 @@ public class KotlinAccess implements CacheService, PreloadableCache {
             if (newestSourceFile == null || source.lastModified() > newestSourceFile.lastModified())
                 newestSourceFile = source;
         }
-        for (Asset jar : AssetCache.getJarAssets()) {
+        for (Asset jar : AssetCache.getAssets("jar")) {
             if (newestSourceFile == null || jar.file().lastModified() > newestSourceFile.lastModified())
                 newestSourceFile = jar.file();
         }

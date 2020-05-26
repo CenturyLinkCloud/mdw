@@ -106,9 +106,14 @@ public class System extends JsonRestService implements JsonExportable {
     @Override
     public String getExportName() {
         String name = ApplicationContext.getHostname();
-        int port = ApplicationContext.getServerPort();
-        if (port != 0 && port != 8080)
-            name += "_" + port;
+        try {
+            int port = ApplicationContext.getServer().getPort();
+            if (port != 0 && port != 8080)
+                name += "_" + port;
+        }
+        catch (Exception ex) {
+            logger.error(ex.getMessage(), ex);
+        }
         return name;
     }
 

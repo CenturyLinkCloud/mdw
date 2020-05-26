@@ -16,9 +16,9 @@
 package com.centurylink.mdw.model.workflow;
 
 import com.centurylink.mdw.constant.WorkAttributeConstant;
+import com.centurylink.mdw.model.Attributes;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.Yamlable;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.project.Data;
 import com.centurylink.mdw.monitor.MonitorAttributes;
 import org.json.JSONException;
@@ -72,22 +72,15 @@ public class Activity implements Comparable<Activity>, Jsonable, Yamlable, Linka
         this.implementor = implementor;
     }
 
-    private List<Attribute> attributes;
-    public List<Attribute> getAttributes() {
-        return attributes;
-    }
-    public void setAttributes(List<Attribute> attributes) {
-        this.attributes = attributes;
-    }
-
+    private Attributes attributes;
+    public Attributes getAttributes() { return attributes; }
     public String getAttribute(String name) {
-        return Attribute.findAttribute(attributes, name);
+        return attributes == null ? null : attributes.get(name);
     }
-
     public void setAttribute(String name, String value) {
         if (attributes == null)
-            attributes = new ArrayList<>();
-        Attribute.setAttribute(attributes, name, value);
+            attributes = new Attributes();
+        attributes.put(name, value);
     }
 
     public int compareTo(Activity other) {
@@ -113,7 +106,7 @@ public class Activity implements Comparable<Activity>, Jsonable, Yamlable, Linka
         if (json.has("description"))
             setDescription(json.getString("description"));
         if (json.has("attributes"))
-            this.attributes = Attribute.getAttributes(json.getJSONObject("attributes"));
+            this.attributes = new Attributes(json.getJSONObject("attributes"));
         setAttribute(WorkAttributeConstant.LOGICAL_ID, logicalId);
     }
 
@@ -131,7 +124,7 @@ public class Activity implements Comparable<Activity>, Jsonable, Yamlable, Linka
         if (yaml.containsKey("description"))
             setDescription((String)yaml.get("description"));
         if (yaml.containsKey("attributes"))
-            this.attributes = Attribute.getAttributes((Map<String,Object>)yaml.get("attributes"));
+            this.attributes = new Attributes((Map<String,Object>)yaml.get("attributes"));
         setAttribute(WorkAttributeConstant.LOGICAL_ID, logicalId);
     }
 
@@ -142,8 +135,9 @@ public class Activity implements Comparable<Activity>, Jsonable, Yamlable, Linka
         json.put("id", getLogicalId());
         json.put("description", getDescription());
         json.put("implementor", getImplementor());
-        if (attributes != null && !attributes.isEmpty())
-            json.put("attributes", Attribute.getAttributesJson(attributes));
+        if (attributes != null && !attributes.isEmpty()) {
+            json.put("attributes", attributes.clean().getJson());
+        }
         return json;
     }
 
@@ -156,7 +150,7 @@ public class Activity implements Comparable<Activity>, Jsonable, Yamlable, Linka
             yaml.put("description", getDescription());
         yaml.put("implementor", getImplementor());
         if (attributes != null && !attributes.isEmpty()) {
-            yaml.put("attributes", Attribute.getAttributesYaml(attributes));
+            yaml.put("attributes", attributes.clean());
         }
         return yaml;
     }
@@ -283,24 +277,19 @@ public class Activity implements Comparable<Activity>, Jsonable, Yamlable, Linka
     public boolean invokesSubprocess(Process subproc) {
         String procName = getAttribute(WorkAttributeConstant.PROCESS_NAME);
         if (procName != null) {
-            if (procName.endsWith(".proc"))
-                procName = procName.substring(0, procName.length() - 5);
-            if (procName.equals(subproc.getQualifiedName())) {
+            if (procName.equals(subproc.getPath())) {
                 String verSpec = getAttribute(WorkAttributeConstant.PROCESS_VERSION);
                 if (subproc.meetsVersionSpec(verSpec))
                     return true;
             }
         }
         else {
-            String procMap = getAttribute(WorkAttributeConstant.PROCESS_MAP);
-            if (procMap != null) {
-                List<String[]> procmap = Attribute.parseTable(procMap, ',', ';', 3);
+            if (attributes != null && attributes.containsKey(WorkAttributeConstant.PROCESS_MAP)) {
+                List<String[]> procmap = attributes.getTable(WorkAttributeConstant.PROCESS_MAP, ',', ';', 3);
                 for (String[] strings : procmap) {
                     String nameSpec = strings[1];
                     if (nameSpec != null) {
-                        if (nameSpec.endsWith(".proc"))
-                            nameSpec = nameSpec.substring(0, nameSpec.length() - 5);
-                        if (nameSpec.equals(subproc.getQualifiedName())) {
+                        if (nameSpec.equals(subproc.getPath())) {
                             String verSpec = strings[2];
                             if (subproc.meetsVersionSpec(verSpec))
                                 return true;
@@ -327,17 +316,14 @@ public class Activity implements Comparable<Activity>, Jsonable, Yamlable, Linka
                 invoked.add(latestMatch);
         }
         else {
-            String procMap = getAttribute(WorkAttributeConstant.PROCESS_MAP);
-            if (procMap != null) {
-                List<String[]> procmap = Attribute.parseTable(procMap, ',', ';', 3);
+            if (attributes != null && attributes.containsKey(WorkAttributeConstant.PROCESS_MAP)) {
+                List<String[]> procmap = attributes.getTable(WorkAttributeConstant.PROCESS_MAP, ',', ';', 3);
                 for (int i = 0; i < procmap.size(); i++) {
                     String nameSpec = procmap.get(i)[1];
                     if (nameSpec != null) {
                         Process latestMatch = null;
                         for (Process process : processes) {
-                            if (nameSpec.endsWith(".proc"))
-                                nameSpec = nameSpec.substring(0, nameSpec.length() - 5);
-                            if (nameSpec.equals(process.getQualifiedName()) &&
+                            if (nameSpec.equals(process.getPath()) &&
                                     (latestMatch == null || latestMatch.getVersion() < process.getVersion())) {
                                 latestMatch = process;
                             }

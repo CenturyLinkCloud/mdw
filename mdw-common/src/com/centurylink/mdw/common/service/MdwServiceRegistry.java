@@ -56,7 +56,6 @@ public class MdwServiceRegistry extends ServiceRegistry {
     }
 
     public ScheduledJob getScheduledJob(String className) {
-        // Cloud mode
         ScheduledJob dynamicScheduledJob = getDynamicService(null, ScheduledJob.class, className);
         if (dynamicScheduledJob != null)
             return dynamicScheduledJob;

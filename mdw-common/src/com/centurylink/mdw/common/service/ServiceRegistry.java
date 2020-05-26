@@ -56,7 +56,7 @@ public class ServiceRegistry {
         if (dynamicServices.containsKey(serviceInterface.getName())
                 && dynamicServices.get(serviceInterface.getName()).contains(className)) {
             try {
-                ClassLoader parentClassLoader = pkg == null ? getClass().getClassLoader() : pkg.getClassLoader();
+                ClassLoader parentClassLoader = pkg == null ? getClass().getClassLoader() : pkg.getClass().getClassLoader();
                 Class<?> clazz = CompiledJavaCache.getClassFromAssetName(parentClassLoader, className);
                 if (clazz == null)
                     return null;

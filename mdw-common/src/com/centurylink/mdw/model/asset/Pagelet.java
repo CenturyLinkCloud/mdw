@@ -52,7 +52,7 @@ public class Pagelet implements Jsonable {
 
     private String implCategory;
 
-    private List<Widget> widgets = new ArrayList<Widget>();
+    private List<Widget> widgets = new ArrayList<>();
     public void addWidget(Widget widget) {
         widgets.add(widget);
     }
@@ -256,7 +256,7 @@ public class Pagelet implements Jsonable {
                     String exts = "";
                     String[] formats = format.split(",");
                     for (int i = 0; i < formats.length; i++) {
-                        String ext = Asset.getFileExtension(formats[i]);
+                        String ext = formats[i];
                         if (ext != null) {
                             if (exts.length() > 0)
                                 exts += ",";

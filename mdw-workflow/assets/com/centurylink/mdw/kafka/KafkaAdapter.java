@@ -19,8 +19,8 @@ import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.AdapterActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.adapter.AdapterException;
+import com.centurylink.mdw.adapter.ConnectionException;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
@@ -78,7 +78,7 @@ public class KafkaAdapter extends TextAdapterActivity {
         synchronized(producerMap) {
             if (producerMap.get(bootstrap_servers) == null)
             {
-                ClassLoader cl = ApplicationContext.setContextCloudClassLoader(getPackage());
+                ClassLoader cl = ApplicationContext.setContextPackageClassLoader(getPackage());
                 kafkaProducer =  new KafkaProducer<>(producerProps);
                 producerMap.put(bootstrap_servers, kafkaProducer);
                 ApplicationContext.resetContextClassLoader(cl);

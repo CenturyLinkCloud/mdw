@@ -85,7 +85,7 @@ public class RMIListenerImpl implements RMIListener {
             if (logger.isDebugEnabled())
                 logger.debug("RMIListener receives: " + message);
             ListenerHelper helper = new ListenerHelper();
-            String response = helper.processEvent(message, buildMetaInfo(meta));
+            String response = helper.processRequest(message, buildMetaInfo(meta));
             if (response!=null && logger.isDebugEnabled())
                 logger.debug("RMIListener replies: " + response);
             return response;

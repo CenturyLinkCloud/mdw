@@ -17,13 +17,14 @@ package com.centurylink.mdw.cli;
 
 import com.beust.jcommander.Parameter;
 import com.centurylink.mdw.config.YamlProperties;
-import com.centurylink.mdw.image.Implementors;
+import com.centurylink.mdw.cli.impls.Implementors;
 import com.centurylink.mdw.model.Yamlable;
 import com.centurylink.mdw.model.project.Data;
 import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
+import com.centurylink.mdw.model.workflow.PackageMeta;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.util.file.Packages;
+import com.centurylink.mdw.file.Packages;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -636,7 +637,7 @@ public abstract class Setup implements Operation {
     }
 
     public File getPackageMeta(File packageDir) {
-        return new File(packageDir + "/" + Packages.META_DIR + "/" + Packages.PACKAGE_YAML);
+        return new File(packageDir + "/" + PackageMeta.PACKAGE_YAML_PATH);
     }
     public File getPackageMeta(String packageName) throws IOException {
         return getPackageMeta(getPackageDir(packageName));
@@ -831,7 +832,7 @@ public abstract class Setup implements Operation {
         @Override
         public Map<String,ActivityImplementor> getActivityImplementors() throws IOException {
             Implementors implementors = new Implementors(getAssetRoot());
-            // add built-in implementors
+            // add built-in implementors (exported to old-style .impl files during build)
             File implsDir = getImplsDir();
             List<Path> implFiles = new ArrayList<>();
             if (implsDir.isDirectory()) {

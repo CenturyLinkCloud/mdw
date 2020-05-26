@@ -18,7 +18,7 @@ package com.centurylink.mdw.cli;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.centurylink.mdw.dataaccess.VersionControl;
+import com.centurylink.mdw.git.VersionControlGit;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -90,15 +90,15 @@ public class Git implements Operation {
         return this;
     }
 
-    private Class<? extends VersionControl> vcClass;
-    private VersionControl versionControl;
-    VersionControl getVersionControl() { return versionControl; }
+    private Class<? extends VersionControlGit> vcClass;
+    private VersionControlGit versionControl;
+    VersionControlGit getVersionControl() { return versionControl; }
 
     private void invokeVersionControl()
             throws ReflectiveOperationException, IOException {
         if (vcClass == null) {
             String vcClassName = VcInfo.getVersionControlClass("git");
-            vcClass = Class.forName(vcClassName).asSubclass(VersionControl.class);
+            vcClass = Class.forName(vcClassName).asSubclass(VersionControlGit.class);
             versionControl = vcClass.newInstance();
             if (!command.equals("git")) {
                 versionControl.connect(vcInfo.getUrl(), vcInfo.getUser(), vcInfo.getPassword(), vcInfo.getLocalDir());

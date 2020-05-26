@@ -1,6 +1,6 @@
 package com.centurylink.mdw.tests.workflow
 
-start process("com.centurylink.mdw.tests.workflow/MDWTestTimerWait") {
+start process("com.centurylink.mdw.tests.workflow/TestTimerWait") {
     variables = [testCase: "wait"]
 }
 sleep 20

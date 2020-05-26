@@ -17,10 +17,10 @@ package com.centurylink.mdw.model.task;
 
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.constant.TaskAttributeConstant;
+import com.centurylink.mdw.model.Attributes;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersion;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.Variable;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
@@ -39,47 +39,54 @@ public class TaskTemplate extends Asset implements Jsonable {
     private static final char ROW_DELIMITER = ';';
     public static final String AUTOFORM = "Autoform";
 
-    private String taskName;
-    private Long taskId;
-    private Integer taskTypeId;
-    private String taskCategory;
-    private List<Variable> variables;
-    private String logicalId;
-
-    public TaskTemplate() {
-        setLanguage(TASK);
-    }
-
-    public Integer getTaskTypeId(){
-        return this.taskTypeId;
-    }
-
-    public void setTaskTypeId(Integer pType){
-        this.taskTypeId = pType;
-    }
     public Long getTaskId() {
-        return taskId;
+        return getId();
     }
-    public void setTaskId(Long taskId) {
-        this.taskId = taskId;
-    }
-    public String getLogicalId() {
-        return logicalId;
-    }
-    public void setLogicalId(String logicalId) {
-        this.logicalId = logicalId;
-    }
+
+    private String taskName;
     public String getTaskName() {
         return taskName;
     }
     public void setTaskName(String taskName) {
         this.taskName = taskName;
     }
+
+    private String taskCategory;
     public String getTaskCategory() {
         return taskCategory;
     }
     public void setTaskCategory(String category) {
         this.taskCategory = category;
+    }
+
+    private List<Variable> variables;
+    public List<Variable> getVariables() {
+        return variables;
+    }
+    public void setVariables(List<Variable> variables) {
+        this.variables = variables;
+    }
+
+    private String logicalId;
+    public String getLogicalId() {
+        return logicalId;
+    }
+    public void setLogicalId(String logicalId) {
+        this.logicalId = logicalId;
+    }
+
+    private Attributes attributes;
+    public Attributes getAttributes() { return attributes; }
+    public String getAttribute(String name) {
+        return attributes == null ? null : attributes.get(name);
+    }
+    public void setAttribute(String name, String value) {
+        if (attributes == null)
+            attributes = new Attributes();
+        attributes.put(name, value);
+    }
+
+    public TaskTemplate() {
     }
 
     public List<String> getWorkgroups() {
@@ -102,12 +109,7 @@ public class TaskTemplate extends Asset implements Jsonable {
     }
 
     private List<String> getGroups(String groupAttributeName) {
-      List<String> groups = new ArrayList<>();
-      String groupsString = this.getAttribute(groupAttributeName);
-      if (groupsString != null && groupsString.length() > 0) {
-          return Attribute.parseList(groupsString);
-      }
-      return groups;
+        return attributes == null ? new ArrayList<>() : attributes.getList(groupAttributeName);
     }
 
     public void setWorkgroups(List<String> workgroups) {
@@ -126,13 +128,6 @@ public class TaskTemplate extends Asset implements Jsonable {
             }
             this.setAttribute(TaskAttributeConstant.GROUPS, sb.toString());
         }
-    }
-
-    public List<Variable> getVariables() {
-        return variables;
-    }
-    public void setVariables(List<Variable> pVars) {
-        this.variables = pVars;
     }
 
     public String getComment() {
@@ -235,7 +230,8 @@ public class TaskTemplate extends Asset implements Jsonable {
     }
 
     private static Variable findVariable(List<Variable> list, Variable var) {
-        if (list==null) return null;
+        if (list == null)
+            return null;
         for (Variable one : list) {
             if (var.getName().equals(one.getName())) return one;
         }
@@ -246,44 +242,45 @@ public class TaskTemplate extends Asset implements Jsonable {
         setAttribute(TaskAttributeConstant.GROUPS, str);
     }
 
-    public void setVariablesFromString(String str, List<Variable> processVariables) {
+    public void setVariablesFromAttribute(String name, List<Variable> processVariables) {
         variables = new ArrayList<>();
-        if (str == null) return;
-        List<String[]> parsed = Attribute.parseTable(str, FIELD_DELIMITER, ROW_DELIMITER, 6);
-        for (String[] one : parsed) {
-            if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED)) continue;
-            Variable taskVar = new Variable();
-            taskVar.setName(one[0]);
-            Variable var = findVariable(processVariables, taskVar);
-            if (var!=null) taskVar.setType(var.getType());
-            if (one[3].isEmpty())
-                taskVar.setDisplaySequence(0);
-            else
-                taskVar.setDisplaySequence(new Integer(one[3]));
-            if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_READONLY)) {
-                taskVar.setDisplayMode(Variable.DATA_READONLY);
-            } else if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_OPTIONAL)) {
-                taskVar.setDisplayMode(Variable.DATA_OPTIONAL);
-            } else if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_HIDDEN)) {
-                taskVar.setDisplayMode(Variable.DATA_HIDDEN);
-            } else {
-                taskVar.setDisplayMode(Variable.DATA_REQUIRED);
+        if (attributes != null && attributes.containsKey(name)) {
+            List<String[]> parsed = attributes.getTable(name, FIELD_DELIMITER, ROW_DELIMITER, 6);
+            for (String[] one : parsed) {
+                if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_NOTDISPLAYED)) continue;
+                Variable taskVar = new Variable();
+                taskVar.setName(one[0]);
+                Variable var = findVariable(processVariables, taskVar);
+                if (var!=null) taskVar.setType(var.getType());
+                if (one[3].isEmpty())
+                    taskVar.setDisplaySequence(0);
+                else
+                    taskVar.setDisplaySequence(new Integer(one[3]));
+                if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_READONLY)) {
+                    taskVar.setDisplayMode(Variable.DATA_READONLY);
+                } else if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_OPTIONAL)) {
+                    taskVar.setDisplayMode(Variable.DATA_OPTIONAL);
+                } else if (one[2].equals(TaskActivity.VARIABLE_DISPLAY_HIDDEN)) {
+                    taskVar.setDisplayMode(Variable.DATA_HIDDEN);
+                } else {
+                    taskVar.setDisplayMode(Variable.DATA_REQUIRED);
+                }
+                if (var!=null) taskVar.setId(var.getId());
+                taskVar.setLabel(one[1]);
+                taskVar.setDescription(one[4]);        // reused as index key
+                if (StringUtils.isBlank(taskVar.getType())) {  // should have been set based on proc var type
+                    if (StringUtils.isBlank(one[5])) taskVar.setType(String.class.getName());
+                    else taskVar.setType(one[5]);
+                }
+                int i, n = variables.size();
+                for (i=0; i<n; i++) {
+                    Variable next = variables.get(i);
+                    if (taskVar.getDisplaySequence() < next.getDisplaySequence())
+                        break;
+                }
+                if (i<n) variables.add(i, taskVar);
+                else variables.add(taskVar);
             }
-            if (var!=null) taskVar.setId(var.getId());
-            taskVar.setLabel(one[1]);
-            taskVar.setDescription(one[4]);        // reused as index key
-            if (StringUtils.isBlank(taskVar.getType())) {  // should have been set based on proc var type
-                if (StringUtils.isBlank(one[5])) taskVar.setType(String.class.getName());
-                else taskVar.setType(one[5]);
-            }
-            int i, n = variables.size();
-            for (i=0; i<n; i++) {
-                Variable next = variables.get(i);
-                if (taskVar.getDisplaySequence() < next.getDisplaySequence())
-                    break;
-            }
-            if (i<n) variables.add(i, taskVar);
-            else variables.add(taskVar);
         }
     }
 
@@ -297,19 +294,12 @@ public class TaskTemplate extends Asset implements Jsonable {
         if (!(other instanceof TaskTemplate))
           return false;
 
-        return getTaskId().equals(((TaskTemplate)other).getTaskId());
+        return getId().equals(((TaskTemplate)other).getId());
     }
 
     @Override
     public int hashCode() {
-        return getTaskId().hashCode();
-    }
-
-    public Long getId() {
-        if (super.getId() == null)
-            return getTaskId();
-        else
-            return super.getId();
+        return getId().hashCode();
     }
 
     public String getName() {
@@ -330,17 +320,14 @@ public class TaskTemplate extends Asset implements Jsonable {
         this.logicalId = json.getString("logicalId");
         this.taskName = json.getString("name");
         this.setVersion(AssetVersion.parseVersion(json.getString("version")));
-        this.setLanguage(Asset.TASK);
-        this.setTaskTypeId(TaskType.TASK_TYPE_TEMPLATE);
         if (json.has("category"))
             this.taskCategory = json.getString("category");
         if (json.has("description"))
             this.setComment(json.getString("description"));
-        if (json.has("attributes"))
-            this.setAttributes(Attribute.getAttributes(json.getJSONObject("attributes")));
-        String vars = getAttribute(TaskAttributeConstant.VARIABLES);
-        if (vars != null)
-            setVariablesFromString(vars, null);
+        if (json.has("attributes")) {
+            this.attributes = new Attributes(json.getJSONObject("attributes"));
+            setVariablesFromAttribute(TaskAttributeConstant.VARIABLES, null);
+        }
         String groups = getAttribute(TaskAttributeConstant.GROUPS);
         if (groups != null)
             setUserGroupsFromString(groups);
@@ -356,8 +343,8 @@ public class TaskTemplate extends Asset implements Jsonable {
             json.put("category", taskCategory);
         if (getComment() != null)
             json.put("description", getComment());
-        if (getAttributes() != null)
-            json.put("attributes", Attribute.getAttributesJson(getAttributes()));
+        if (attributes != null)
+            json.put("attributes", attributes.getJson());
 
         return json;
     }

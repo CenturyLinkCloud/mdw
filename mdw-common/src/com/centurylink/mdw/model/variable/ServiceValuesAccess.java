@@ -52,7 +52,7 @@ public class ServiceValuesAccess {
     /**
      * Most usages do not provide a way to set the REQUEST_VARIABLE attribute.
      * For these cases, a custom .impl asset would be needed to configure through
-     * Designer or MDWHub.
+     * Studio or MDWHub.
      */
     public String getRequestVariableName() {
         return context.getAttribute(REQUEST_VARIABLE, "request");
@@ -66,7 +66,7 @@ public class ServiceValuesAccess {
     /**
      * Most usages do not provide a way to set the REQUEST_HEADERS_VARIABLE attribute.
      * For these cases, a custom .impl asset would be needed to configure through
-     * Designer or MDWHub.
+     * Studio or MDWHub.
      */
     public String getRequestHeadersVariableName() {
         return context.getAttribute(REQUEST_HEADERS_VARIABLE, "requestHeaders");
@@ -79,7 +79,7 @@ public class ServiceValuesAccess {
     /**
      * Most usages do not provide a way to set the RESPONSE_VARIABLE attribute.
      * For these cases, a custom .impl asset would be needed to configure through
-     * Designer or MDWHub.
+     * Studio or MDWHub.
      */
     public String getResponseVariableName() {
         return context.getAttribute(RESPONSE_VARIABLE, "response");
@@ -93,7 +93,7 @@ public class ServiceValuesAccess {
     /**
      * Most usages do not provide a way to set the RESPONSE_HEADERS_VARIABLE attribute.
      * For these cases, a custom .impl asset would be needed to configure through
-     * Designer or MDWHub.
+     * Studio or MDWHub.
      */
     public String getResponseHeadersVariableName() {
         return context.getAttribute(RESPONSE_HEADERS_VARIABLE, "responseHeaders");

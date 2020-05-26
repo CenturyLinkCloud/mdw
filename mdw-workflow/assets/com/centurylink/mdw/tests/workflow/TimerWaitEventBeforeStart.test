@@ -5,7 +5,7 @@ send message("REST") {
     payload = "<NonTaskAction>${masterRequestId}</NonTaskAction>"
 }
 sleep 30
-start process("MDWTestEmbedded") {
+start process("TestEmbedded") {
     variables = [testCase: "correct-resume-on-hold"]
 }
 wait process {

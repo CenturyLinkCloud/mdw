@@ -1,0 +1,46 @@
+package com.centurylink.mdw.tests.multiver
+
+// *** instance 1: unmodified ***
+start process("InstanceEdit") {
+    variables = [weather: "stormy"]
+}
+sleep 3
+load process
+def pauseActivity = masterProcessInstance.getActivities("A3").get(0)
+// trigger the pause activity to proceed
+response = post http("api/Activities/${pauseActivity.id}/Proceed") {
+    payload = "{}"
+}
+assert response.code == 200
+sleep 3
+
+// *** instance 2: updated ***
+start process("InstanceEdit") {
+    variables = [weather: "mild"]
+}
+sleep 3
+load process
+def instanceId = masterProcessInstance.id
+// retrieve the process def
+def path = "com.centurylink.mdw.tests.multiver/InstanceEdit"
+response = get http("api/Workflow/${path}/${instanceId}?forUpdate=true")
+// update instance def
+println("Updating instance: ${instanceId}")
+def updated = response.content.replace("cloudy", "sunny")
+response = put http("asset/${path}.proc/${instanceId}?root=%2Fmdw") {
+    payload = updated
+}
+assert response.code == 200
+pauseActivity = masterProcessInstance.getActivities("A3").get(0)
+// trigger the pause activity to proceed
+response = post http("api/Activities/${pauseActivity.id}/Proceed") {
+    payload = "{}"
+}
+sleep 10
+verify processes(
+        "com.centurylink.mdw.tests.multiver/InstanceEdit"
+)
+
+
+
+

@@ -19,7 +19,7 @@ import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.NotificationActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -93,7 +93,7 @@ public class EmailNotificationActivity extends DefaultActivityImpl implements No
                 templatedEmail.setFromAddress(fromAddress);
                 templatedEmail.setSubject(subject);
                 templatedEmail.setTemplateAssetVerSpec(spec);
-                templatedEmail.setHtml(template.getLanguage().equals(Asset.HTML));
+                templatedEmail.setHtml("html".equals(template.getExtension()));
                 templatedEmail.setAttachments(getAttachments());
                 templatedEmail.setRecipients(recipAddresses.toArray(new Address[0]));
                 templatedEmail.setCcRecipients(ccAddresses.toArray(new Address[0]));

@@ -16,7 +16,7 @@
 package com.centurylink.mdw.hub;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.cache.impl.AssetHistory;
+import com.centurylink.mdw.cache.asset.AssetHistory;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.JMSDestinationNames;
 import com.centurylink.mdw.constant.PropertyNames;
@@ -75,7 +75,7 @@ public class MdwMain {
 
             // initialize ApplicationContext
             logger.info("Initialize " + ApplicationContext.class.getName());
-            ApplicationContext.onStartup(container, null);
+            ApplicationContext.onStartup(container);
 
             // initialize db access and set database time
             try {
@@ -85,16 +85,10 @@ public class MdwMain {
                 // set db time difference so that later call does not go to db
                 long dbtime = db.getDatabaseTime();
                 System.out.println("Database time: " + DateHelper.dateToString(new Date(dbtime)));
-
-                DataAccess.updateAssetRefs();
             }
             catch (Exception e) {
                 throw new StartupException("Failed to connect through database connection pool", e);
             }
-
-            String v = PropertyManager.getProperty(PropertyNames.MDW_DB_VERSION_SUPPORTED);
-            if (v != null)
-                DataAccess.supportedSchemaVersion = Integer.parseInt(v);
 
             logger.info("Initialize " + CacheRegistration.class.getName());
             (new CacheRegistration()).onStartup();
@@ -109,7 +103,7 @@ public class MdwMain {
             logger.info("Initialize " + RMIListener.class.getName());
             try {
                 listener = new RMIListenerImpl(threadPool);
-                ApplicationContext.getNamingProvider().bind(RMIListener.JNDI_NAME, listener);
+                ApplicationContext.getContextProvider().bind(RMIListener.JNDI_NAME, listener);
             }
             catch (Exception e) {
                 throw new StartupException("Failed to start RMI listener", e);
@@ -203,7 +197,7 @@ public class MdwMain {
             SpringAppContext.getInstance().shutDown();
 
             try {
-                ApplicationContext.getNamingProvider().unbind(RMIListener.JNDI_NAME);
+                ApplicationContext.getContextProvider().unbind(RMIListener.JNDI_NAME);
             }
             catch (Exception ignored) {
                 // container plug-in is not even initialized

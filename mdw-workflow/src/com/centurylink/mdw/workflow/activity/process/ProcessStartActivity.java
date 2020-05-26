@@ -18,7 +18,6 @@ package com.centurylink.mdw.workflow.activity.process;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.StartActivity;
 import com.centurylink.mdw.annotations.Activity;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
@@ -45,10 +44,9 @@ public class ProcessStartActivity extends DefaultActivityImpl implements StartAc
 
     @Override
     public void execute() throws ActivityException {
-        String parameters_spec = this.getAttributeValue(PARAMETERS);
         try {
-            if (parameters_spec != null) {
-                Map<String, String> parameters = Attribute.parseMap(parameters_spec);
+            if (getAttributes().containsKey(PARAMETERS)) {
+                Map<String,String> parameters = getAttributes().getMap(PARAMETERS);
                 for (String key : parameters.keySet()) {
                     String one = parameters.get(key);
                     if (valueIsJavaExpression(one)) {

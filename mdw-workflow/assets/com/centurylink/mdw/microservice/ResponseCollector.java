@@ -3,14 +3,12 @@ package com.centurylink.mdw.microservice;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.model.variable.ServiceValuesAccess;
 import org.json.JSONObject;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
@@ -41,7 +39,7 @@ public class ResponseCollector extends DefaultActivityImpl {
         if (consolidator == null)
             throw new ActivityException("Missing attribute: " + CONSOLIDATOR);
         try {
-            Class<? extends Consolidator> consolidatorClass = getPackage().getCloudClassLoader()
+            Class<? extends Consolidator> consolidatorClass = getPackage().getClassLoader()
                     .loadClass(consolidator).asSubclass(Consolidator.class);
             return consolidatorClass.newInstance();
         }
@@ -72,7 +70,7 @@ public class ResponseCollector extends DefaultActivityImpl {
             responseHeaders = new HashMap<>();
         responseHeaders.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(combined.getFirst()));
         setVariableValue(serviceValues.getResponseHeadersVariableName(),responseHeaders);
-        
+
         setVariableValue(serviceValues.getResponseVariableName(), combined.getSecond().toString(2));
     }
 

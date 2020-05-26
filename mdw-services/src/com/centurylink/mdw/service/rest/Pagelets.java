@@ -15,16 +15,7 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.Path;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.Pagelet;
@@ -34,9 +25,15 @@ import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.rest.JsonRestService;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import javax.ws.rs.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Path("/Pagelets")
 @Api("Pagelet assets")
@@ -68,10 +65,10 @@ public class Pagelets extends JsonRestService {
         if (segments.length != 3)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Invalid path: " + path);
         String assetPath = segments[1] + '/' + segments[2];
-        Asset asset = AssetCache.getAsset(assetPath);
-        if (asset == null)
-            throw new ServiceException(ServiceException.NOT_FOUND, "Pagelet not found: " + assetPath);
         try {
+            Asset asset = AssetCache.getAsset(assetPath);
+            if (asset == null)
+                throw new ServiceException(ServiceException.NOT_FOUND, "Pagelet not found: " + assetPath);
             return new Pagelet(new String(asset.getContent())).getJson();
         }
         catch (Exception ex) {

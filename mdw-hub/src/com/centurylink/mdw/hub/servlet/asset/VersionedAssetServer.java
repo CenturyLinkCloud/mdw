@@ -1,9 +1,8 @@
 package com.centurylink.mdw.hub.servlet.asset;
 
-import com.centurylink.mdw.cache.impl.AssetHistory;
+import com.centurylink.mdw.cache.asset.AssetHistory;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.asset.Asset;
-import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 
@@ -30,10 +29,9 @@ public class VersionedAssetServer {
      * Old versions are retrieved from history.
      */
     public void serveAsset(String path, String version) throws IOException, ServiceException {
-        AssetVersionSpec spec = new AssetVersionSpec(path, version);
-        Asset asset = AssetHistory.getAsset(spec);
+        Asset asset = AssetHistory.getAsset(path, version);
         if (asset == null)
-            throw new ServiceException(ServiceException.NOT_FOUND, "Asset not found: " + spec);
+            throw new ServiceException(ServiceException.NOT_FOUND, "Asset not found: " + path + " v" + version);
         if ("true".equalsIgnoreCase(servletRequest.getParameter("download"))) {
             String filename = path.substring(path.indexOf("/") + 1);
             servletResponse.setHeader("Content-Disposition", "attachment;filename=\"" + filename + "\"");

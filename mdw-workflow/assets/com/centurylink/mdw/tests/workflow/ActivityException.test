@@ -25,4 +25,4 @@ action task("Activity Exception Fallout") {
 }
 wait process
 verify processes("com.centurylink.mdw.tests.workflow/ActivityException",
-                 "com.centurylink.mdw.tests.workflow/MDWTestSubProcess2")
+                 "com.centurylink.mdw.tests.workflow/TestSubProcess2")

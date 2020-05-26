@@ -21,16 +21,15 @@ import com.centurylink.mdw.adapter.AdapterInvocationError;
 import com.centurylink.mdw.adapter.HeaderAwareAdapter;
 import com.centurylink.mdw.adapter.SimulationResponse;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.connector.adapter.AdapterException;
-import com.centurylink.mdw.connector.adapter.ConnectionException;
+import com.centurylink.mdw.adapter.AdapterException;
+import com.centurylink.mdw.adapter.ConnectionException;
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.model.Response;
-import com.centurylink.mdw.model.attribute.Attribute;
-import com.centurylink.mdw.model.event.AdapterStubRequest;
-import com.centurylink.mdw.model.event.AdapterStubResponse;
+import com.centurylink.mdw.model.request.Response;
+import com.centurylink.mdw.adapter.AdapterStubRequest;
+import com.centurylink.mdw.adapter.AdapterStubResponse;
 import com.centurylink.mdw.model.request.Request;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
@@ -46,7 +45,6 @@ import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.*;
 
 /**
@@ -395,9 +393,9 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl
         }
 
         List<SimulationResponse> responses = new ArrayList<>();
-        for (Attribute attr : this.getAttributes()) {
-            if (attr.getName().startsWith(WorkAttributeConstant.SIMULATION_RESPONSE)) {
-                SimulationResponse r = new SimulationResponse(attr.getValue());
+        for (String name : getAttributes().keySet()) {
+            if (name.startsWith(WorkAttributeConstant.SIMULATION_RESPONSE)) {
+                SimulationResponse r = new SimulationResponse(getAttributes().get(name));
                 responses.add(r);
             }
         }

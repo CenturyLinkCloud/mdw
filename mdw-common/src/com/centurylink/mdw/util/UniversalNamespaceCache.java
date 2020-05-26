@@ -15,28 +15,22 @@
  */
 package com.centurylink.mdw.util;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import org.w3c.dom.*;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
-
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class UniversalNamespaceCache implements NamespaceContext {
     protected static StandardLogger logger = LoggerUtil.getStandardLogger();
 
     private static final String DEFAULT_NS = "DEFAULT";
-    private Map<String, String> prefix2Uri = new HashMap<String, String>();
-    private Map<String, String> uri2Prefix = new HashMap<String, String>();
+    private Map<String, String> prefix2Uri = new HashMap<>();
+    private Map<String, String> uri2Prefix = new HashMap<>();
 
     /**
      * This constructor parses the document and stores all namespaces it can

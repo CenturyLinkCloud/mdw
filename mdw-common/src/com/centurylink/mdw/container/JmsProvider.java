@@ -26,19 +26,16 @@ import javax.naming.NamingException;
 
 public interface JmsProvider {
 
-    String ACTIVEMQ = "ActiveMQ";
-    String NONE = "none";
-
-    public QueueConnectionFactory getQueueConnectionFactory(NamingProvider namingProvider, String contextUrl)
+    QueueConnectionFactory getQueueConnectionFactory(ContextProvider contextProvider, String contextUrl)
     throws JMSException, NamingException;
 
-    public TopicConnectionFactory getTopicConnectionFactory(NamingProvider namingProvider, String contextUrl)
+    TopicConnectionFactory getTopicConnectionFactory(ContextProvider contextProvider, String contextUrl)
     throws JMSException, NamingException;
 
-    public Queue getQueue(Session session, NamingProvider namingProvider, String name)
+    Queue getQueue(Session session, ContextProvider contextProvider, String name)
     throws JMSException,NamingException;
 
-    public void setMessageDelay(QueueSender sender, Message message, long delaySeconds)
+    void setMessageDelay(QueueSender sender, Message message, long delaySeconds)
     throws JMSException;
 
 }

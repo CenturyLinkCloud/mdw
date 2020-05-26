@@ -1,0 +1,40 @@
+process: # 1376
+  name: InstanceEdit
+  instance: 1
+  activity: # 1 "2020-05-14 11:08:05.509"
+    name: Start
+    status: Completed
+  activity: # 3 "2020-05-14 11:08:05.526"
+    name: Pause
+    status: Cancelled
+  activity: # 4 "2020-05-14 11:08:06.315"
+    name: |
+      Weather
+      Update
+    status: Completed
+  activity: # 2 "2020-05-14 11:08:06.538"
+    name: Stop
+    status: Completed
+  variable: # 3991
+    name: weather
+    value: sunny
+process: # 1375
+  name: InstanceEdit
+  instance: 2
+  activity: # 1 "2020-05-14 11:07:59.509"
+    name: Start
+    status: Completed
+  activity: # 3 "2020-05-14 11:07:59.523"
+    name: Pause
+    status: Cancelled
+  activity: # 4 "2020-05-14 11:08:00.204"
+    name: |
+      Weather
+      Update
+    status: Completed
+  activity: # 2 "2020-05-14 11:08:00.222"
+    name: Stop
+    status: Completed
+  variable: # 3990
+    name: weather
+    value: cloudy

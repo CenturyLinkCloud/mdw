@@ -28,24 +28,24 @@ import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.process.ProcessExecutor;
 
 public abstract class InternalMessenger {
-    
+
     public static final int CACHE_OFF = 0;
     public static final int CACHE_ON = 1;
     public static final int CACHE_ONLY = 2;
-    
+
     private Queue<InternalEvent> messageQueue;
     private int cacheOption;
-    
+
     public InternalMessenger() {
         this.cacheOption = CACHE_OFF;
         messageQueue = null;
     }
-    
+
     /**
-     * 
+     *
      * @param msg
      * @return null if the message is cached; message ID if not cached
-     * @throws SQLException 
+     * @throws SQLException
      */
     protected String addMessage(InternalEvent msg, EngineDataAccess edao) throws SQLException {
         if (cacheOption==CACHE_ONLY) {
@@ -67,7 +67,7 @@ public abstract class InternalMessenger {
             return msgid;
         }
     }
-    
+
     /*
      * for InternalMessengerJms short delay only
      */
@@ -84,32 +84,35 @@ public abstract class InternalMessenger {
         this.cacheOption = v;
         if (messageQueue==null) messageQueue = new LinkedList<InternalEvent>();
     }
-    
+
     abstract public void sendMessage(InternalEvent msg, EngineDataAccess edao)
     throws ProcessException;
 
-    abstract public void sendDelayedMessage(InternalEvent msg, int delaySeconds, 
+    abstract public void sendDelayedMessage(InternalEvent msg, int delaySeconds,
             String msgid, boolean isUpdate, EngineDataAccess edao)
     throws ProcessException;
-    
+
     abstract public void broadcastMessage(String msg)
     throws ProcessException;
-    
+
     public InternalEvent getNextMessageFromQueue(ProcessExecutor engine)
     throws DataAccessException {
-        if (messageQueue==null) return null;
+        if (messageQueue == null)
+            return null;
         synchronized (messageQueue) {
-            if (messageQueue.isEmpty()) return null;
+            if (messageQueue.isEmpty())
+                return null;
             InternalEvent nextMessage = messageQueue.remove();
-            while (nextMessage!=null) {
+            while (nextMessage != null) {
                 String msgid = nextMessage.getMessageId();
-                if (msgid==null || engine.deleteInternalEvent(msgid)) break;
+                if (msgid == null || engine.deleteInternalEvent(msgid))
+                    break;
                 nextMessage = messageQueue.remove();
             }
             return nextMessage;
         }
     }
-    
+
     private String generateMessageId(InternalEvent msg) throws SQLException {
         // ServerName:serverStartTime:memory_sequence_number
         String msgid;
@@ -120,7 +123,7 @@ public abstract class InternalMessenger {
                 // 1. EventManagerBean:launchProcess
                 // 2. InvokeSubProcess.execute (only when calling asynchronously)
             } else {
-                msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + "process." + msg.getWorkInstanceId() + "." + msg.getEventType();                
+                msgid = ScheduledEvent.INTERNAL_EVENT_PREFIX + "process." + msg.getWorkInstanceId() + "." + msg.getEventType();
             }
         } else {
             if (msg.getEventType().equals(EventType.START)) {
@@ -132,5 +135,5 @@ public abstract class InternalMessenger {
         }
         return msgid;
     }
-    
+
 }

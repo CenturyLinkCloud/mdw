@@ -154,11 +154,15 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                         evMsg.setParameters(validParams);    // TODO this can be large!
                         engine.sendDelayedInternalEvent(evMsg, 0, msgid, false);
                     }
-                    else // Trying to call a any sub process async when parent is service process and documents are cache-only / not visible to child
-                        throw new ActivityException("Invalid attempt to asynchrounously launch sub process from a Service process running at performance level 5 or greater with Document variable bindings");
+                    else {
+                        // Trying to call a any sub process async when parent is service process and documents are cache-only / not visible to child
+                        throw new ActivityException("Invalid attempt to asynchronously launch sub process from a Service process running at performance level 5 or greater with Document variable bindings");
+                    }
                 }
-                else  // Trying to call a non-service sub process sync when parent is service process - Regular proc could hold up/delay parent service process with event waits or manual task activities
-                    throw new ActivityException("Invalid attempt to synchrounously launch Non-Service sub process from a Service process");
+                else  {
+                    // Trying to call a non-service sub process sync when parent is service process - Regular proc could hold up/delay parent service process with event waits or manual task activities
+                    throw new ActivityException("Invalid attempt to synchronously launch Non-Service sub process from a Service process");
+                }
             }
             else {  // Current process is Non-service (regular)
                 if (subprocIsService && isSynchronousCall() && !getProcessDefinition().isService() && (engine.getPerformanceLevel() < 9 || !passingByReference)) {

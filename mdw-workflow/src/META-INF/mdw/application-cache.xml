@@ -4,16 +4,13 @@
     <Property Name="ClassName">com.centurylink.mdw.service.data.task.TaskTemplateCache</Property>
   </Cache>
   <Cache Name="VariableTypeCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.cache.impl.VariableTypeCache</Property>
-  </Cache>
-  <Cache Name="EventHandlerCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.service.data.event.EventHandlerCache</Property>
+    <Property Name="ClassName">com.centurylink.mdw.cache.asset.VariableTypeCache</Property>
   </Cache>
   <Cache Name="AssetCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.cache.impl.AssetCache</Property>
+    <Property Name="ClassName">com.centurylink.mdw.cache.asset.AssetCache</Property>
   </Cache>
   <Cache Name="PackageCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.cache.impl.PackageCache</Property>
+    <Property Name="ClassName">com.centurylink.mdw.cache.asset.PackageCache</Property>
   </Cache>
   <Cache Name="CompiledJavaCache" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.java.CompiledJavaCache</Property>
@@ -33,10 +30,7 @@
     <Property Name="ClassName">com.centurylink.mdw.service.api.MdwSwaggerCache</Property>
   </Cache>
   <Cache Name="AssetHistory" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.cache.impl.AssetHistory</Property>
-  </Cache>
-  <Cache Name="AssetRefCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.cache.impl.AssetRefCache</Property>
+    <Property Name="ClassName">com.centurylink.mdw.cache.asset.AssetHistory</Property>
   </Cache>
   <Cache Name="AllowableTaskActions" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.services.task.AllowableTaskActions</Property>

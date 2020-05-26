@@ -17,7 +17,7 @@ package com.centurylink.mdw.workflow.activity.transform;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.annotations.Activity;
-import com.centurylink.mdw.cache.impl.AssetCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.common.translator.impl.DomDocumentTranslator;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
@@ -58,8 +58,8 @@ public class CrossmapActivity extends DefaultActivityImpl {
             Asset mapperScript = AssetCache.getAsset(spec);
             if (mapperScript == null)
                 throw new ActivityException("Cannot load mapping script: " + spec);
-            if (!Asset.GROOVY.equals(mapperScript.getLanguage()))
-                throw new ActivityException("Unsupported mapper language: " + mapperScript.getLanguage());
+            if (!"groovy".equals(mapperScript.getExtension()))
+                throw new ActivityException("Unsupported mapper extension: " + mapperScript.getExtension());
 
             // input
             String inputAttr = getAttributeValueSmart(INPUT);
@@ -104,7 +104,7 @@ public class CrossmapActivity extends DefaultActivityImpl {
             else
                 throw new ActivityException("Unsupported output variable type: " + outputVar.getType());
 
-            runScript(mapperScript.getStringContent(), slurper, builder);
+            runScript(mapperScript.getText(), slurper, builder);
 
             if (outputTrans instanceof DomDocumentTranslator) {
                 Object output = ((DomDocumentTranslator)outputTrans).fromDomNode(DomHelper.toDomDocument(builder.getString()));
@@ -135,7 +135,7 @@ public class CrossmapActivity extends DefaultActivityImpl {
         binding.setVariable("runtimeContext", getRuntimeContext());
         binding.setVariable(slurper.getName(), slurper.getInput());
         binding.setVariable(builder.getName(), builder);
-        GroovyShell shell = new GroovyShell(getPackage().getCloudClassLoader(), binding, compilerConfig);
+        GroovyShell shell = new GroovyShell(getPackage().getClassLoader(), binding, compilerConfig);
         Script gScript = shell.parse(mapperScript);
         gScript.run();
     }

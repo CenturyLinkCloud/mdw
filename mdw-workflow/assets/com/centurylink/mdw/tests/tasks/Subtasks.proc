@@ -20,12 +20,12 @@ activities:
   name: Master Task
   implementor: com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity
   attributes:
+    Wait for Task: 'TRUE'
     STATUS_AFTER_EVENT: Cancelled
+    WORK_DISPLAY_INFO: x=274,y=72,w=100,h=60
     TASK_PAGELET: com.centurylink.mdw.base/AutoFormManualTask.pagelet
     TASK_TEMPLATE: com.centurylink.mdw.tests.tasks/masterTaskForSubtasks.task
     TASK_TEMPLATE_assetVersion: '[0.3,1)'
-    WORK_DISPLAY_INFO: x=274,y=72,w=100,h=60
-    Wait for Task: 'TRUE'
   transitions:
   - id: T2
     to: A2
@@ -36,23 +36,23 @@ activities:
   name: Subtask A
   implementor: com.centurylink.mdw.workflow.activity.task.AutoFormManualTaskActivity
   attributes:
+    Wait for Task: 'TRUE'
     STATUS_AFTER_EVENT: Cancelled
+    WORK_DISPLAY_INFO: x=273,y=150,w=100,h=60
     TASK_PAGELET: com.centurylink.mdw.base/AutoFormManualTask.pagelet
     TASK_TEMPLATE: com.centurylink.mdw.tests.tasks/subtaskA.task
     TASK_TEMPLATE_assetVersion: '[0.1,1)'
-    WORK_DISPLAY_INFO: x=273,y=150,w=100,h=60
-    Wait for Task: 'TRUE'
 - id: A6
   name: Subtask B
   implementor: com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity
   attributes:
     STATUS_AFTER_EVENT: Cancelled
+    WORK_DISPLAY_INFO: x=274,y=232,w=100,h=60
     TASK_PAGELET: com.centurylink.mdw.base/CustomManualTask.pagelet
     TASK_TEMPLATE: com.centurylink.mdw.tests.tasks/subtaskB.task
     TASK_TEMPLATE_assetVersion: '[0.1,1)'
-    WORK_DISPLAY_INFO: x=274,y=232,w=100,h=60
 attributes:
   ArrowStyle: ArrowEnd
   NodeStyle: BoxIcon
-  PROCESS_VISIBILITY: PUBLIC
   WORK_DISPLAY_INFO: x=40,y=26,w=84,h=27
+  PROCESS_VISIBILITY: PUBLIC

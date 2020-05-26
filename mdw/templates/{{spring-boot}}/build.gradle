@@ -1,4 +1,4 @@
-import com.centurylink.mdw.util.file.Packages
+import com.centurylink.mdw.file.Packages
 
 buildscript {
     repositories {

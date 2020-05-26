@@ -3,23 +3,21 @@
  */
 package com.centurylink.mdw.camel;
 
-import java.util.Map;
-
-import org.apache.camel.Message;
-import org.apache.camel.component.cxf.CxfPayload;
-import org.w3c.dom.Node;
-
-import com.centurylink.mdw.camel.MdwCamelException;
-import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.common.service.types.Status;
+import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.listener.ExternalEventHandlerBase;
 import com.centurylink.mdw.model.StringDocument;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.xml.DomHelper;
+import org.apache.camel.Message;
+import org.apache.camel.component.cxf.CxfPayload;
+import org.w3c.dom.Node;
+
+import java.util.Map;
 
 /**
  * Default process launch handler implementation.  Can be extended to customize parsing of the request
@@ -31,9 +29,9 @@ public class DefaultProcessLaunchHandler extends ExternalEventHandlerBase implem
         return request.getHeader(Listener.METAINFO_MDW_REQUEST_ID, String.class);
     }
 
-    public Process getProcess(Message request) throws MdwCamelException {
+    public Process getProcess(Message request) {
         String processName = request.getHeader(Listener.METAINFO_PROCESS_NAME, String.class);
-        return ProcessCache.getProcess(processName, 0);
+        return ProcessCache.getProcess(processName);
     }
 
     public String getRequestDocumentType(Message request) throws MdwCamelException {

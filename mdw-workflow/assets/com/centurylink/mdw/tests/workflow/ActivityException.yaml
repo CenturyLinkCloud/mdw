@@ -37,16 +37,16 @@ process: # 14209
             "statusCode": 2
           },
           "category": "com.centurylink.mdw.activity.types.GeneralActivity",
-          "process": "com.centurylink.mdw.tests.workflow/MDWTestSubProcess2",
+          "process": "com.centurylink.mdw.tests.workflow/TestSubProcess2",
           "processInstance": {
-            "comments": "${~com\\.centurylink\\.mdw\\.tests\\.workflow/MDWTestSubProcess2 v\\d.\\d.*}",
+            "comments": "${~com\\.centurylink\\.mdw\\.tests\\.workflow/TestSubProcess2 v\\d.\\d.*}",
             "id": ${~\\d*},
             "masterRequestId": "${masterRequestId}",
             "owner": "PROCESS_INSTANCE",
             "ownerId": ${~\\d*},
             "packageName": "com.centurylink.mdw.tests.workflow",
             "processId": ${~\\d*},
-            "processName": "MDWTestSubProcess2",
+            "processName": "TestSubProcess2",
             "secondaryOwner": "ACTIVITY_INSTANCE",
             "secondaryOwnerId": ${~\\d*},
             "startDate": "${~.*}",
@@ -170,7 +170,7 @@ process: # 14211
     name: Stop
     status: Completed
 process: # 14210
-  name: MDWTestSubProcess2
+  name: TestSubProcess2
   instance: 1
   activity: # 30 "2016-06-27 17:59:24"
     name: Start

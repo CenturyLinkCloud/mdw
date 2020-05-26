@@ -15,19 +15,18 @@
  */
 package com.centurylink.mdw.common.service;
 
+import com.centurylink.mdw.monitor.MonitorRegistry;
+import com.centurylink.mdw.script.ExecutorRegistry;
+import com.centurylink.mdw.task.types.TaskServiceRegistry;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.centurylink.mdw.monitor.MonitorRegistry;
-import com.centurylink.mdw.provider.ProviderRegistry;
-import com.centurylink.mdw.script.ExecutorRegistry;
-import com.centurylink.mdw.task.types.TaskServiceRegistry;
-
 public class DynamicJavaServiceRegistry {
 
-    private static Map<String,Set<String>> registeredServices = new HashMap<String,Set<String>>();
+    private static final Map<String,Set<String>> registeredServices = new HashMap<>();
 
     public static void addRegisteredService(String serviceInterface, String className) {
         if (TaskServiceRegistry.taskServices.contains(serviceInterface)) {
@@ -38,9 +37,6 @@ public class DynamicJavaServiceRegistry {
         }
         else if (MonitorRegistry.monitorServices.contains(serviceInterface)) {
             MonitorRegistry.getInstance().addDynamicService(serviceInterface, className);
-        }
-        else if (ProviderRegistry.providerServices.contains(serviceInterface)) {
-            ProviderRegistry.getInstance().addDynamicProvider(serviceInterface, className);
         }
         else if (ExecutorRegistry.scriptServices.contains(serviceInterface)) {
             ExecutorRegistry.getInstance().addDynamicService(serviceInterface, className);
@@ -66,7 +62,6 @@ public class DynamicJavaServiceRegistry {
         MdwServiceRegistry.getInstance().clearDynamicServices();
         MonitorRegistry.getInstance().clearDynamicServices();
         registeredServices.clear();
-        ProviderRegistry.getInstance().clearDynamicProviders();
     }
 
     public static Set<String> getRegisteredServices(String serviceInterface) {

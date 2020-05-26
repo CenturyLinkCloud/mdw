@@ -18,8 +18,8 @@ package com.centurylink.mdw.model.workflow;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
 import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.model.Attributes;
 import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.attribute.Attribute;
 import com.centurylink.mdw.model.variable.*;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.util.JsonUtil;
@@ -89,14 +89,8 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
     public String getAppId() { return ApplicationContext.getAppId(); }
 
     private Map<String,String> attributes;
-    public Map<String,String> getAttributes() {
-        if (attributes == null) {
-            attributes = new HashMap<>();
-            for (Attribute attribute : process.getAttributes()) {
-                attributes.put(attribute.getName(), attribute.getValue());
-            }
-        }
-        return attributes;
+    public Attributes getAttributes() {
+        return process.getAttributes() == null ? new Attributes() : process.getAttributes();
     }
 
     public String getAttribute(String name) {
@@ -183,7 +177,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
     }
 
     public void logError(String message) {
-        logger.severe(logtag(), message);
+        logger.error(logtag(), message);
         if (logPersister != null)
             logPersister.persist(getProcessInstanceId(), getInstanceId(), StandardLogger.LogLevel.ERROR, message);
     }
@@ -193,7 +187,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
     }
 
     public void logError(String msg, Throwable t) {
-        logger.exception(logtag(), msg, t);
+        logger.error(logtag(), msg, t);
         if (logPersister != null)
             logPersister.persist(getProcessInstanceId(), getInstanceId(), StandardLogger.LogLevel.ERROR, msg, t);
     }

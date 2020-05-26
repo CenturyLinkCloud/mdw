@@ -20,7 +20,7 @@ import java.net.URL;
 import java.util.HashMap;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.connector.adapter.AdapterException;
+import com.centurylink.mdw.adapter.AdapterException;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.util.HttpHelper;
 

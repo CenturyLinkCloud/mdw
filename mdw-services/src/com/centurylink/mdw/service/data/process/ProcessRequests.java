@@ -15,9 +15,7 @@
  */
 package com.centurylink.mdw.service.data.process;
 
-import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
-import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.asset.AssetRequest;
 import com.centurylink.mdw.model.asset.RequestKey;
 import com.centurylink.mdw.model.workflow.Process;
@@ -63,63 +61,58 @@ public class ProcessRequests implements PreloadableCache {
     public void loadCache() {
         synchronized(ProcessRequests.class) {
             requests.clear();
-            try {
-                Map<RequestKey,List<AssetRequest>> conflicting = new TreeMap<>();
-                for (Process process : ProcessCache.getProcesses(false)) {
-                    String packageName = process.getPackageName();
-                    String processName = process.getName();
-                    try {
-                        Path assetPath = Paths.get(process.file().getPath());
-                        String contents = new String(Files.readAllBytes(assetPath));
-                        if (contents.indexOf("requestPath") > 0) {
-                            process = Process.fromString(contents);
-                            process.setPackageName(packageName);
-                            process.setName(processName);
+            Map<RequestKey,List<AssetRequest>> conflicting = new TreeMap<>();
+            for (Process process : ProcessCache.getProcesses(false)) {
+                String packageName = process.getPackageName();
+                String processName = process.getName();
+                try {
+                    Path assetPath = Paths.get(process.file().getPath());
+                    String contents = new String(Files.readAllBytes(assetPath));
+                    if (contents.indexOf("requestPath") > 0) {
+                        process = Process.fromString(contents);
+                        process.setPackageName(packageName);
+                        process.setName(processName);
 
-                            AssetRequest assetRequest = process.getRequest();
-                            if (assetRequest != null) {
-                                String path = assetRequest.getPath();
-                                if (!path.startsWith("/"))
-                                    path = "/" + path;
-                                String servicePath = packageName.replace('.', '/') + path;
-                                RequestKey requestKey = new RequestKey(assetRequest.getMethod(), servicePath);
-                                AssetRequest existing = requests.get(requestKey);
-                                if (existing == null) {
-                                    requests.put(requestKey, assetRequest);
+                        AssetRequest assetRequest = process.getRequest();
+                        if (assetRequest != null) {
+                            String path = assetRequest.getPath();
+                            if (!path.startsWith("/"))
+                                path = "/" + path;
+                            String servicePath = packageName.replace('.', '/') + path;
+                            RequestKey requestKey = new RequestKey(assetRequest.getMethod(), servicePath);
+                            AssetRequest existing = requests.get(requestKey);
+                            if (existing == null) {
+                                requests.put(requestKey, assetRequest);
+                            }
+                            else {
+                                List<AssetRequest> conflicts = conflicting.get(requestKey);
+                                if (conflicts == null) {
+                                    conflicts = new ArrayList<>();
+                                    conflicts.add(existing);
+                                    conflicting.put(requestKey, conflicts);
                                 }
-                                else {
-                                    List<AssetRequest> conflicts = conflicting.get(requestKey);
-                                    if (conflicts == null) {
-                                        conflicts = new ArrayList<>();
-                                        conflicts.add(existing);
-                                        conflicting.put(requestKey, conflicts);
-                                    }
-                                    conflicts.add(assetRequest);
-                                }
+                                conflicts.add(assetRequest);
                             }
                         }
                     }
-                    catch (Exception ex) {
-                        logger.severeException("Error loading process request: " + packageName + "/" + processName, ex);
-                    }
                 }
-                if (!conflicting.isEmpty()) {
-                    StringBuilder msg = new StringBuilder();
-                    msg.append("\n**************************************************\n");
-                    msg.append("** WARNING: Conflicting process request mappings:\n");
-                    for(RequestKey requestKey : conflicting.keySet()) {
-                        for (AssetRequest assetRequest : conflicting.get(requestKey)) {
-                            msg.append("** ").append(requestKey).append(" -> ").append(assetRequest.getAsset()).append("\n");
-                        }
-                        msg.append("**\n");
-                    }
-                    msg.append("** (No mappings registered where there are conflicts.)\n");
-                    msg.append("\n**************************************************\n");
-                    logger.severe(msg.toString());
+                catch (Exception ex) {
+                    logger.severeException("Error loading process request: " + packageName + "/" + processName, ex);
                 }
             }
-            catch (DataAccessException ex) {
-                throw new CachingException(ex.getMessage(), ex);
+            if (!conflicting.isEmpty()) {
+                StringBuilder msg = new StringBuilder();
+                msg.append("\n**************************************************\n");
+                msg.append("** WARNING: Conflicting process request mappings:\n");
+                for(RequestKey requestKey : conflicting.keySet()) {
+                    for (AssetRequest assetRequest : conflicting.get(requestKey)) {
+                        msg.append("** ").append(requestKey).append(" -> ").append(assetRequest.getAsset()).append("\n");
+                    }
+                    msg.append("**\n");
+                }
+                msg.append("** (No mappings registered where there are conflicts.)\n");
+                msg.append("\n**************************************************\n");
+                logger.severe(msg.toString());
             }
         }
     }

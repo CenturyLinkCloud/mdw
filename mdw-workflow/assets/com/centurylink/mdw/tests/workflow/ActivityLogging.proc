@@ -45,12 +45,12 @@ activities:
   name: Groovy
   implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
   attributes:
+    WORK_DISPLAY_INFO: x=458,y=98,w=104,h=62
+    SCRIPT: Groovy
     Rule: |
       runtimeContext.logInfo("context.logInfo()");
       runtimeContext.logDebug("context.logDebug()");
       runtimeContext.logError("context.logError()", new Exception("context.logError()"));
-    SCRIPT: Groovy
-    WORK_DISPLAY_INFO: x=458,y=98,w=104,h=62
   transitions:
   - id: T4
     to: A6
@@ -61,12 +61,12 @@ activities:
   name: Kotlin
   implementor: com.centurylink.mdw.kotlin.ScriptActivity
   attributes:
+    WORK_DISPLAY_INFO: x=611,y=101,w=100,h=60
+    SCRIPT: Kotlin Script
     Rule: |
       runtimeContext.logInfo("context.logInfo()");
       runtimeContext.logDebug("context.logDebug()");
       runtimeContext.logError("context.logError()", Exception("context.logError()"));
-    SCRIPT: Kotlin Script
-    WORK_DISPLAY_INFO: x=611,y=101,w=100,h=60
   transitions:
   - id: T5
     to: A2
@@ -76,5 +76,5 @@ activities:
 attributes:
   ArrowStyle: ArrowEnd
   NodeStyle: BoxIcon
-  PROCESS_VISIBILITY: PUBLIC
   WORK_DISPLAY_INFO: x=31,y=28,w=149,h=26
+  PROCESS_VISIBILITY: PUBLIC
