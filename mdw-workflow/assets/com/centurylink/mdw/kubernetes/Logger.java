@@ -77,7 +77,7 @@ class Logger {
                 }
             }
             catch (IOException ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
             finally {
                 shutdown();
@@ -101,7 +101,7 @@ class Logger {
             }
         }
         catch (IOException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
         logger.info("Logger shutdown: " + this);
     }

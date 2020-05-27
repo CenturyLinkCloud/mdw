@@ -74,7 +74,7 @@ public class MdwAuthenticator implements Authenticator {
                 throw new IOException("User authentication failed with response:" + responseJson);
         }
         catch (IOException ex) {
-            logger.severeException("Failed to authenticate " + user + " for " + appId + " via " + authUrl, ex);
+            logger.error("Failed to authenticate " + user + " for " + appId + " via " + authUrl, ex);
             throw new AuthenticationException("Authentication failure");
         }
         return accessToken;

@@ -68,7 +68,7 @@ public class ProcessStartEventHandler extends ExternalEventHandlerBase {
                 return createResponseMessage(null, null, msgdoc, metaInfo);
             }
         } catch (Exception e) {
-            logger.severeException(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             return createResponseMessage(e, null, msgdoc, metaInfo);
         }
     }
@@ -104,7 +104,7 @@ public class ProcessStartEventHandler extends ExternalEventHandlerBase {
                 }
 
             } catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
                 return null;
             }
         }

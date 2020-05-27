@@ -87,7 +87,7 @@ public class AssetContentServlet extends HttpServlet {
             authorizeForView(request.getSession(), path, stagingCuid);
         }
         catch (AuthorizationException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             new StatusResponder(response).writeResponse(new StatusResponse(ex.getCode(), ex.getMessage()));
             return;
         }
@@ -115,7 +115,7 @@ public class AssetContentServlet extends HttpServlet {
                     ZipHelper.writeZipWith(assetRoot, response.getOutputStream(), includes, includeSubPkgs);
                 }
                 catch (Exception ex) {
-                    logger.severeException(ex.getMessage(), ex);
+                    logger.error(ex.getMessage(), ex);
                 }
                 return;
             }
@@ -180,7 +180,7 @@ public class AssetContentServlet extends HttpServlet {
                                 response.getOutputStream().print(process.getJson().toString(2));
                             } catch (ServiceException ex) {
                                 if (ex.getCode() != ServiceException.NOT_FOUND)
-                                    logger.severeException(ex.getMessage(), ex);
+                                    logger.error(ex.getMessage(), ex);
                                 StatusResponse sr = new StatusResponse(ex.getCode(), ex.getMessage());
                                 response.setStatus(sr.getStatus().getCode());
                                 response.getWriter().println(sr.getJson().toString(2));
@@ -223,7 +223,7 @@ public class AssetContentServlet extends HttpServlet {
                     response.getOutputStream().write(renderer.render(options));
                 }
                 catch (ServiceException ex) {
-                    logger.severeException(ex.getMessage(), ex);
+                    logger.error(ex.getMessage(), ex);
                     StatusResponse sr = new StatusResponse(ex.getCode(), ex.getMessage());
                     response.setStatus(sr.getStatus().getCode());
                     response.getWriter().println(sr.getJson().toString(2));
@@ -261,7 +261,7 @@ public class AssetContentServlet extends HttpServlet {
                     out.write(bytes, 0, read);
             }
             catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
             finally {
                 if (in != null)
@@ -377,7 +377,7 @@ public class AssetContentServlet extends HttpServlet {
                 }
             }
             catch (ServiceException ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
                 SystemMessages.bulletinOff(bulletin, Level.Error, "Asset import failed: " + ex.getMessage());
                 response.getWriter().write(ex.getStatusResponse().getJson().toString(2));
                 StatusResponse sr = new StatusResponse(ex.getCode(), ex.getMessage());
@@ -386,7 +386,7 @@ public class AssetContentServlet extends HttpServlet {
             }
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             SystemMessages.bulletinOff(bulletin, Level.Error, "Asset import failed: " + ex.getMessage());
             StatusResponse sr = new StatusResponse(Status.INTERNAL_SERVER_ERROR, ex.getMessage());
             response.setStatus(sr.getStatus().getCode());

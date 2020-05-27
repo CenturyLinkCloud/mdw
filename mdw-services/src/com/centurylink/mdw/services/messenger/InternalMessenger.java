@@ -42,13 +42,10 @@ public abstract class InternalMessenger {
     }
 
     /**
-     *
-     * @param msg
      * @return null if the message is cached; message ID if not cached
-     * @throws SQLException
      */
     protected String addMessage(InternalEvent msg, EngineDataAccess edao) throws SQLException {
-        if (cacheOption==CACHE_ONLY) {
+        if (cacheOption == CACHE_ONLY) {
             synchronized (messageQueue) {
                 messageQueue.add(msg);
             }

@@ -65,7 +65,7 @@ public class ServiceRegistry {
                 return drs;
             }
             catch (Exception ex) {
-                logger.severeException("Failed to get the dynamic registered service : " + className +" \n " + ex.getMessage(), ex);
+                logger.error("Failed to get the dynamic registered service : " + className +" \n " + ex.getMessage(), ex);
             }
         }
         return null;
@@ -98,7 +98,7 @@ public class ServiceRegistry {
                         dynServices.add(serviceInterface.cast(rs));
                     }
                 } catch (Exception ex) {
-                    logger.severeException("Failed to get Dynamic Java service : " + serviceClassName + " (removing from registry)", ex);
+                    logger.error("Failed to get Dynamic Java service : " + serviceClassName + " (removing from registry)", ex);
                     deregister.add(serviceClassName);
                 }
             }
@@ -120,7 +120,7 @@ public class ServiceRegistry {
                         dynServiceClasses.add(serviceInterface.getClass().cast(clazz));
                     }
                 } catch (Exception ex) {
-                    logger.severeException("Failed to get Dynamic Java service class: " + serviceClassName + " (removing from registry)", ex);
+                    logger.error("Failed to get Dynamic Java service class: " + serviceClassName + " (removing from registry)", ex);
                     deregister.add(serviceClassName);
                 }
             }

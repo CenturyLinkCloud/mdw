@@ -140,7 +140,7 @@ public class PackageClassLoader extends ClassLoader {
             }
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(),  ex);
+            logger.error(ex.getMessage(),  ex);
         }
 
         if (b == null || b.length ==  0) {
@@ -277,7 +277,7 @@ public class PackageClassLoader extends ClassLoader {
                 b = findInFileSystem(path);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(),  ex);
+            logger.error(ex.getMessage(),  ex);
         }
         found = b != null;
         classesFound.put(name, found ? b : new byte[0]);
@@ -300,7 +300,7 @@ public class PackageClassLoader extends ClassLoader {
                 b = findInFileSystem(name);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(),  ex);
+            logger.error(ex.getMessage(),  ex);
         }
 
         if (b == null)
@@ -341,7 +341,7 @@ public class PackageClassLoader extends ClassLoader {
                         }
                     }
                     catch (Exception ex) {
-                        logger.severeException("Error loading resource: " + name, ex);
+                        logger.error("Error loading resource: " + name, ex);
                     }
                 }
             }
@@ -369,7 +369,7 @@ public class PackageClassLoader extends ClassLoader {
                     }
                 }
                 catch (Exception ex) {
-                    logger.severeException("Error loading resource: " + name, ex);
+                    logger.error("Error loading resource: " + name, ex);
                 }
             }
         }
@@ -395,7 +395,7 @@ public class PackageClassLoader extends ClassLoader {
         if (logger.isMdwDebugEnabled()) {
             logger.mdwDebug("Loaded class: '" + name + "' from package classloader with parent: " + getParent());
             if (logger.isTraceEnabled())
-                logger.traceException("Stack trace: ", new Exception("ClassLoader stack trace"));
+                logger.trace("Stack trace: ", new Exception("ClassLoader stack trace"));
         }
         return loaded;
     }

@@ -144,7 +144,7 @@ public class SpringAppContext implements CacheService {
             }
             catch (Exception ex) {
                 // do not let this prevent other package contexts from loading
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
         return contexts;
@@ -245,7 +245,7 @@ public class SpringAppContext implements CacheService {
             }
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return null;
         }
     }

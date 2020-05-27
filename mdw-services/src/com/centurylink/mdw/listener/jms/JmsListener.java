@@ -109,7 +109,7 @@ public abstract class JmsListener  {
                         logger.info(this.getClass().getName() + " interrupted.");
                     }
                     catch (Throwable th) {
-                        logger.severeException("JMS Listener Error: " + queueName + " (" + JmsListener.this.hashCode() + ")", th);
+                        logger.error("JMS Listener Error: " + queueName + " (" + JmsListener.this.hashCode() + ")", th);
                     }
                 }
             }
@@ -133,7 +133,7 @@ public abstract class JmsListener  {
                             else {
                                 String msg = "JMS listener " + name + " (" + queueName + ") has no thread available";
                                 // make this stand out
-                                logger.severeException(msg, new Exception(msg));
+                                logger.error(msg, new Exception(msg));
                                 logger.info(threadPool.currentStatus());
                                 Thread.sleep(pollInterval*1000L);  // Will try to process same message after waking up
                             }
@@ -143,14 +143,14 @@ public abstract class JmsListener  {
                         logger.info(this.getClass().getName() + " interrupted.");
                     }
                     catch (Throwable th) {
-                        logger.severeException("JMS Listener Error: " + queueName + " (" + JmsListener.this.hashCode() + ")", th);
+                        logger.error("JMS Listener Error: " + queueName + " (" + JmsListener.this.hashCode() + ")", th);
                     }
                 }
             }
             logger.info("JMS listener " + name + " (" + queueName + ") is terminated");
         }
         catch (Exception ex) {
-            logger.severeException("JMS listener " + name + " (" + queueName + ") terminated due to exception " + ex.getMessage(), ex);
+            logger.error("JMS listener " + name + " (" + queueName + ") terminated due to exception " + ex.getMessage(), ex);
         }
         finally {
             try {
@@ -164,7 +164,7 @@ public abstract class JmsListener  {
                     connection.close();
             }
             catch (JMSException ex) {
-                logger.severeException("JMS listener " + name + " error closing resources " + ex.getMessage(), ex);
+                logger.error("JMS listener " + name + " error closing resources " + ex.getMessage(), ex);
             }
         }
     }
@@ -190,7 +190,7 @@ public abstract class JmsListener  {
             }
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
 
         daemonThread.interrupt();

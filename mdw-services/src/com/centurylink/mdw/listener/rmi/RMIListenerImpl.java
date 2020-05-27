@@ -68,7 +68,7 @@ public class RMIListenerImpl implements RMIListener {
                     throw new JMSException("No thread available to send internal message");
             }
             catch (JMSException e) {
-                logger.severeException("Failed to send Internal Message ", e);
+                logger.error("Failed to send Internal Message ", e);
             }
              return null;
         } else if (message.startsWith(BROADCAST_MARKER)) {
@@ -78,7 +78,7 @@ public class RMIListenerImpl implements RMIListener {
                 helper.processBroadcastMessage(message);
                 logger.info("Received and processed broadcast: " + message);
             } catch (Exception e) {
-                logger.severeException("Failed to process broadcast", e);
+                logger.error("Failed to process broadcast", e);
             }
             return null;
         } else {

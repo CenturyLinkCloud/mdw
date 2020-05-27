@@ -120,14 +120,14 @@ public abstract class ManualTaskActivity extends AbstractWait implements TaskAct
                     ServiceLocator.getTaskServices().cancelTaskForActivity(getActivityInstanceId());
                 }
                 catch (Exception ex) {
-                    logger.severeException("Failed to cancel task instance - process moves on", ex);
+                    logger.error("Failed to cancel task instance - process moves on", ex);
                 }
             } else if (actInstStatus.equals(WorkStatus.STATUS_WAITING)) {
                 try {
                     getEngine().createEventWaitInstance(getProcessInstanceId(), getActivityInstanceId(), getWaitEvent(), null, true, true);
                 }
                 catch (Exception ex) {
-                    logger.severeException("Failed to re-register task action listening", ex);
+                    logger.error("Failed to re-register task action listening", ex);
                 }
                 // unsolicited event listening is already registered by handleEventCompletionCode
             }

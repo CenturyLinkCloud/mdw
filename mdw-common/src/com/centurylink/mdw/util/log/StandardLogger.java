@@ -17,7 +17,7 @@ package com.centurylink.mdw.util.log;
 
 public interface StandardLogger
 {
-    enum LogLevel { INFO, WARN, DEBUG, ERROR, TRACE };
+    enum LogLevel { INFO, WARN, DEBUG, ERROR, TRACE }
 
     void info(String msg);
 

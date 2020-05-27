@@ -493,8 +493,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
                         }
                         catch (TranslationException ex) {
                             // parse error on one doc should not prevent other vars from populating
-                            logger.severeException("Error translating " + var.getName() + " for process instance " +
-                                    instanceId, ex);
+                            logger.error("Error translating " + var.getName() + " for process instance " + instanceId, ex);
                         }
                     }
                     else {
@@ -968,7 +967,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
             throw ex;
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);  // TODO why not throw?
+            logger.error(ex.getMessage(), ex);  // TODO why not throw?
             return EventInstance.RESUME_STATUS_FAILURE;
         }
     }

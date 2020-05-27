@@ -78,7 +78,7 @@ public class AppSummary extends JsonRestService {
                 }
             }
             catch (IOException ex) {
-                logger.severeException(ex.getMessage(),  ex);
+                logger.error(ex.getMessage(),  ex);
             }
         }
 

@@ -27,16 +27,16 @@ import com.centurylink.mdw.util.log.StandardLogger;
 
 
 public class JavaScriptExecutor implements ScriptExecutor, ScriptEvaluator {
-    
+
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-  
+
     private String name;
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-    
+
     public Object execute(String script, Map<String,Object> bindings)
     throws ExecutionException {
-      
+
         try {
             ScriptEngineManager factory = new ScriptEngineManager();
             ScriptEngine engine = factory.getEngineByName("JavaScript");
@@ -45,7 +45,7 @@ public class JavaScriptExecutor implements ScriptExecutor, ScriptEvaluator {
             for (String bindName : bindings.keySet()) {
                 engine.put(bindName, bindings.get(bindName));
             }
-           
+
            Object retObj = null;
            try {
                retObj = engine.eval(script);
@@ -58,14 +58,14 @@ public class JavaScriptExecutor implements ScriptExecutor, ScriptEvaluator {
                        retObj = ((Invocable)engine).invokeFunction("f");
                    }
                    catch (NoSuchMethodException ex2) {
-                       logger.severeException(ex2.getMessage(), ex2);
+                       logger.error(ex2.getMessage(), ex2);
                    }
                }
                else {
                    throw ex;
                }
            }
-            
+
            for (String bindName : bindings.keySet()) {
                Object jsVarValue = engine.get(bindName);
                if (jsVarValue instanceof java.lang.Double) {
@@ -75,7 +75,7 @@ public class JavaScriptExecutor implements ScriptExecutor, ScriptEvaluator {
                }
                bindings.put(bindName, jsVarValue);
            }
-           
+
            return retObj;
         }
         catch (ScriptException ex) {
@@ -93,16 +93,16 @@ public class JavaScriptExecutor implements ScriptExecutor, ScriptEvaluator {
             for (String bindName : bindings.keySet()) {
                 engine.put(bindName, bindings.get(bindName));
             }
-           
+
            return engine.eval(expression);
         }
         catch (ScriptException ex) {
             throw new ExecutionException("Error executing JavaScript: " + ex.getMessage(), ex);
         }
     }
-    
+
     public static void initialize() {
         // TODO support preInit for ScriptEngine
     }
-    
+
 }

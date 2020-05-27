@@ -642,26 +642,26 @@ public class ProcessEngineDriver {
                 } else if (event.getEventType().equals(EventType.DELAY)) {
                     handleDelay(engine, event, procInst);
                 } else {
-                    Process processVO = getProcessDefinition(procInst);
-                    procInst.setProcessName(processVO.getName());
-                    List<Transition> workTransitionVOs = processVO.getTransitions(event.getWorkId(),
+                    Process process = getProcessDefinition(procInst);
+                    procInst.setProcessName(process.getName());
+                    List<Transition> transition = process.getTransitions(event.getWorkId(),
                             event.getEventType(), event.getCompletionCode());
-                    if (workTransitionVOs != null && !workTransitionVOs.isEmpty()) {
-                        engine.createTransitionInstances(procInst, workTransitionVOs,
-                                event.isProcess()?null:event.getWorkInstanceId());
+                    if (transition != null && !transition.isEmpty()) {
+                        engine.createTransitionInstances(procInst, transition,
+                                event.isProcess() ? null : event.getWorkInstanceId());
                     } else if (event.getEventType().equals(EventType.FINISH)) {
                             // do nothing
                     } else if (event.getEventType().equals(EventType.ERROR)) {
-                        if (!processVO.isEmbeddedExceptionHandler()) {
+                        if (!process.isEmbeddedExceptionHandler()) {
                             engine.updateProcessInstanceStatus(procInst.getId(), WorkStatus.STATUS_WAITING);
-                            handleInheritedEvent(engine, procInst, processVO, event, EventType.ERROR);
+                            handleInheritedEvent(engine, procInst, process, event, EventType.ERROR);
                         } else {
                             logger.info("Error occurred inside an error handler!!!");
                         }
                     } else if (event.getEventType().equals(EventType.CORRECT)) {
-                        handleInheritedEvent(engine, procInst, processVO, event, EventType.CORRECT);
+                        handleInheritedEvent(engine, procInst, process, event, EventType.CORRECT);
                     } else if (event.getEventType().equals(EventType.ABORT)) {
-                        handleInheritedEvent(engine, procInst, processVO, event, EventType.ABORT);
+                        handleInheritedEvent(engine, procInst, process, event, EventType.ABORT);
                     }
                 }
             }

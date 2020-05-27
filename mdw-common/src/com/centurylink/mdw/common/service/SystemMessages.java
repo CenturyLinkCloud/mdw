@@ -59,7 +59,7 @@ public class SystemMessages {
             return bulletin;
         }
         catch (IOException ex) {
-            logger.warnException("Unable to publish to websocket", ex);
+            logger.warn("Unable to publish to websocket", ex);
             return null;
         }
     }
@@ -88,7 +88,7 @@ public class SystemMessages {
             WebSocketMessenger.getInstance().send("SystemMessage", bulletin.off(message).getJson().toString());
         }
         catch (IOException ex) {
-            logger.warnException("Unable to publish to websocket", ex);
+            logger.warn("Unable to publish to websocket", ex);
         }
     }
 

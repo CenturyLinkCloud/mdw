@@ -165,7 +165,7 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
             return getScriptEngine().run(name + ".groovy", binding);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new ExecutionException("Error executing Groovy script: '" + name + "'\n" + ex.toString(), ex);
         }
     }
@@ -295,7 +295,7 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
             return getScriptEngine().getGroovyClassLoader();
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return null;
         }
     }

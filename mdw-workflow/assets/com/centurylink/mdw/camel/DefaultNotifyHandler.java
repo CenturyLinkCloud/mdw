@@ -51,7 +51,7 @@ public class DefaultNotifyHandler extends ExternalEventHandlerBase implements No
             return getResponse(0, "Success");
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return getResponse(1, ex.toString());
         }
     }
@@ -64,7 +64,7 @@ public class DefaultNotifyHandler extends ExternalEventHandlerBase implements No
             return marshalJaxb(status, null);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return ex.toString();  // what else can we do
         }
     }
@@ -81,7 +81,7 @@ public class DefaultNotifyHandler extends ExternalEventHandlerBase implements No
                     delay = 300;
             }
             catch (Exception ex) {
-                logger.severe("Activity resume delay spec is not an integer");
+                logger.error("Activity resume delay spec is not an integer");
             }
         }
         return delay;

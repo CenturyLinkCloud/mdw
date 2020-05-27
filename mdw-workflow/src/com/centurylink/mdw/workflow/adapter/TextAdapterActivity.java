@@ -84,10 +84,10 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
             timeout_s = this.getAttributeValueSmart(PROP_TIMEOUT);
             timeout = timeout_s==null?-1:Integer.parseInt(timeout_s);
         } catch (NumberFormatException e) {
-            logger.severeException("Cannot parse timeout value " + timeout_s, e);
+            logger.error("Cannot parse timeout value " + timeout_s, e);
             timeout = -1;
         } catch (PropertyException e) {
-            logger.severeException("Cannot read timeout attribute " + PROP_TIMEOUT, e);
+            logger.error("Cannot read timeout attribute " + PROP_TIMEOUT, e);
             timeout = -1;
         }
         return timeout;
@@ -446,7 +446,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
      */
     protected void handleException(Throwable errorCause)
     throws ActivityException {
-        logger.severeException(getAdapterInvocationErrorMessage(), errorCause);
+        logger.error(getAdapterInvocationErrorMessage(), errorCause);
         int max_tries = this.getMaxTries();
         int count = countTries();
         boolean isRetryEnabled = isRetryable(errorCause);
@@ -499,7 +499,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
             }
         }
         catch (Exception e) {
-            logger.severeException(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         }
 
         return ex instanceof IOException;
@@ -540,7 +540,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
 
             return docRef.getDocumentId();
         } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return null;
         }
     }

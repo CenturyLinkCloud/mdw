@@ -35,7 +35,7 @@ public class DbConnectionsMetric  implements SystemMetric {
             }
             catch (Exception ex) {
                 exception = ex;
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
 

@@ -350,18 +350,18 @@ public class ListenerHelper {
             }
         }
         catch (ServiceException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             Response response = createErrorResponse(request, metaInfo, ex);
             try {
                 createResponseMeta(metaInfo, reqMetaInfo, createResponseDocument(response, eeid), requestTime);
             }
             catch (Throwable e) {
-                logger.severeException("Failed to persist response", e);
+                logger.error("Failed to persist response", e);
             }
             return response.getContent();
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             Response response = null;
             for (ServiceMonitor monitor : monitors) {
                 Object obj = monitor.onError(ex, metaInfo);
@@ -384,7 +384,7 @@ public class ListenerHelper {
                 createResponseMeta(metaInfo, reqMetaInfo, createResponseDocument(response, eeid), requestTime);
             }
             catch (Throwable e) {
-                logger.severeException("Failed to persist response", e);
+                logger.error("Failed to persist response", e);
             }
             return response.getContent();
         }
@@ -484,18 +484,18 @@ public class ListenerHelper {
             return response.getContent();
         }
         catch (ServiceException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             Response response = createErrorResponse(request, metaInfo, ex);
             try {
                 createResponseMeta(metaInfo, reqMetaInfo, createResponseDocument(response, eeid), requestTime);
             }
             catch (Throwable e) {
-                logger.severeException("Failed to persist response", e);
+                logger.error("Failed to persist response", e);
             }
             return response.getContent();
         }
         catch (Exception e) {
-            logger.severeException("Exception in ListenerHelper.processEvent()", e);
+            logger.error("Exception in ListenerHelper.processEvent()", e);
             Response response = null;
             for (ServiceMonitor monitor : monitors) {
                 Object obj = monitor.onError(e, metaInfo);
@@ -520,7 +520,7 @@ public class ListenerHelper {
                 createResponseMeta(metaInfo, reqMetaInfo, createResponseDocument(response, eeid), requestTime);
             }
             catch (Throwable ex) {
-                logger.severeException("Failed to persist response", ex);
+                logger.error("Failed to persist response", ex);
             }
             return response.getContent();
         }
@@ -661,7 +661,7 @@ public class ListenerHelper {
             }
             catch (JSONException e) {
                 // Just log
-                logger.severeException(e.getMessage(), e);
+                logger.error(e.getMessage(), e);
             }
         }
         else {
@@ -679,7 +679,7 @@ public class ListenerHelper {
             return xmlBean;
         }
         catch (XmlException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             timer.stopAndLogTiming("unparseable");
             return null;
         }
@@ -725,7 +725,7 @@ public class ListenerHelper {
             return new DocumentReference(docId);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new EventHandlerException(ex.getMessage(), ex);
         }
     }
@@ -737,7 +737,7 @@ public class ListenerHelper {
             eventMgr.updateDocumentContent(docref.getDocumentId(), doc, type, pkg);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
         }
     }

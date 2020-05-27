@@ -177,7 +177,7 @@ public class CommonDataAccess {
                     transaction.getTransaction().setRollbackOnly();
                 } catch (Exception e) {
                     StandardLogger logger = LoggerUtil.getStandardLogger();
-                    logger.severeException("Fail to rollback", e);
+                    logger.error("Fail to rollback", e);
                 }
             }
         }

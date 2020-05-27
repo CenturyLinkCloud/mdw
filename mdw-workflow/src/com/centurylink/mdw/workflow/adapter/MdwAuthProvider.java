@@ -55,7 +55,7 @@ public class MdwAuthProvider implements AuthTokenProvider {
 
     protected String invokeAuth(String user, String password) throws MdwSecurityException {
         if (options == null || options.get("appId") == null) {
-            logger.severe("Missing AppId value for MdwAuthenticator");
+            logger.error("Missing AppId value for MdwAuthenticator");
             return null;
         }
         String token = new MdwAuthenticator(options.get("appId")).doAuthentication(user, password);

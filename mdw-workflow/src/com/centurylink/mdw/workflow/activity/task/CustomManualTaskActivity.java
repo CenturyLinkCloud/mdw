@@ -73,7 +73,7 @@ public class CustomManualTaskActivity extends ManualTaskActivity implements Susp
             }
         }
         catch (Exception ex) {
-            getLogger().severeException(ex.getMessage(), ex);
+            getLogger().error(ex.getMessage(), ex);
             throw new ActivityException(-1, ex.getMessage(), ex);
         }
     }

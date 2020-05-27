@@ -46,7 +46,7 @@ public class CamelWorkflowHandler extends CamelHandler implements WorkflowHandle
             return exchange.getOut().getBody(String.class);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new EventException(ex.getMessage(), ex);
         }
     }

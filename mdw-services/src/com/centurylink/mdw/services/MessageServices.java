@@ -89,7 +89,7 @@ public class MessageServices {
                 String msg = worker + " has no thread available for event: " + eventName
                         + " message:\n" + eventMessage;
                 // make this stand out
-                logger.warnException(msg, new Exception(msg));
+                logger.warn(msg, new Exception(msg));
                 logger.info(thread_pool.currentStatus());
                 return false;
             }

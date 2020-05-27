@@ -237,7 +237,7 @@ public class MDWKafkaListener {
                                 else {
                                     String msg = "MDWKafka listener " + ThreadPoolProvider.WORKER_LISTENER + " has no thread available";
                                     // make this stand out
-                                    logger.severeException(msg, new Exception(msg));
+                                    logger.error(msg, new Exception(msg));
                                     logger.info(thread_pool.currentStatus());
                                     Thread.sleep(poll_timeout);  // Will try to process same request after waking up
                                 }
@@ -256,7 +256,7 @@ public class MDWKafkaListener {
             consumer.close();
         }
         catch (Exception e) {
-            logger.severeException(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         }
         finally {
             if (consumer != null) consumer.close();  // Cleanup consumer resources
@@ -294,7 +294,7 @@ public class MDWKafkaListener {
             }
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 

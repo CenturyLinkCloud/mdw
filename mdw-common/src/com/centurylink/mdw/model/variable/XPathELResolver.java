@@ -62,7 +62,7 @@ public class XPathELResolver extends ELResolver {
                     return value;
                 }
                 catch (Exception ex) {
-                    logger.severeException(ex.getMessage(), ex);
+                    logger.error(ex.getMessage(), ex);
                     throw new ELException(ex.getMessage(), ex);
                 }
             }

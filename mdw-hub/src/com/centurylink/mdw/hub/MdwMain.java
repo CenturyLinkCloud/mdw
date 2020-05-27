@@ -152,7 +152,7 @@ public class MdwMain {
         catch (Exception e) {
             e.printStackTrace();
             if (logger != null)
-                logger.severeException(e.getMessage(), e);
+                logger.error(e.getMessage(), e);
             System.out.println("Starting up MDW failed, shut down now - " + e.getMessage());
             shutdown();
         }

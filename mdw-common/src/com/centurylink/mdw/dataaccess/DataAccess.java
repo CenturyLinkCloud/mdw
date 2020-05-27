@@ -91,7 +91,7 @@ public class DataAccess {
                                 throw new DataAccessException("Git loc " + gitLocalPath + " does not exist and cannot be created.");
                         }
                         if (!vcGit.localRepoExists()) {
-                            logger.severe("**** WARNING: Git location " + gitLocalPath + " does not contain a repository.  Cloning: " + url);
+                            logger.error("**** WARNING: Git location " + gitLocalPath + " does not contain a repository.  Cloning: " + url);
                             vcGit.cloneNoCheckout();
                             if (PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_AUTO_CHECKOUT, true)) {
                                 if (branch != null) {
@@ -115,13 +115,13 @@ public class DataAccess {
                                         "** WARNING: Git branch: " + gitBranch + " does not match " + PropertyNames.MDW_GIT_BRANCH + ": " + branch + "\n" +
                                         "** Please perform an Import to sync with branch " + branch + "\n" +
                                         "******************************************\n";
-                                LoggerUtil.getStandardLogger().severe(warning);
+                                LoggerUtil.getStandardLogger().error(warning);
                             } else {
                                 String localCommit = vcGit.getCommit();
                                 if (localCommit != null) {
                                     String remoteCommit = vcGit.getRemoteCommit(branch);
                                     if (!localCommit.equals(remoteCommit))
-                                        LoggerUtil.getStandardLogger().severe("**** WARNING: Git commit: " + localCommit + " does not match remote HEAD commit: " + remoteCommit);
+                                        LoggerUtil.getStandardLogger().error("**** WARNING: Git commit: " + localCommit + " does not match remote HEAD commit: " + remoteCommit);
                                 }
 
                                 // log actual diffs at debug level
@@ -148,12 +148,12 @@ public class DataAccess {
                         }
                     }
                     else {
-                        logger.severe("**** WARNING: Not verifying Git asset sync due to missing property " + PropertyNames.MDW_GIT_USER + " (use anonymous for public repos)");
+                        logger.error("**** WARNING: Not verifying Git asset sync due to missing property " + PropertyNames.MDW_GIT_USER + " (use anonymous for public repos)");
                     }
                 }
             }
             catch (Exception ex) {
-                logger.severeException("Error during Git up-to-date check.", ex);
+                logger.error("Error during Git up-to-date check.", ex);
             }
 
             // allow initial startup with no asset root

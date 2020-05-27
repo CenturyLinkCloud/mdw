@@ -173,7 +173,7 @@ public class FilePanelService extends JsonRestService {
                         dirs.add(new Dir(file, getExcludes(), false));
                     }
                     catch (IOException ex) {
-                        logger.severeException(ex.getMessage(), ex);
+                        logger.error(ex.getMessage(), ex);
                     }
                 }
                 else {

@@ -326,7 +326,7 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
             soapAction = getAttributeValueSmart(SOAP_ACTION);
         }
         catch (PropertyException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
 
         if (soapAction == null) {

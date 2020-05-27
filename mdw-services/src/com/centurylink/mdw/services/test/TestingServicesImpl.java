@@ -103,7 +103,7 @@ public class TestingServicesImpl implements TestingServices {
                         }
                     }
                     catch (Exception ex) {
-                        logger.severeException(ex.getMessage(), ex);
+                        logger.error(ex.getMessage(), ex);
                     }
                 }
                 pkgTests.getTestCases().add(testCase);
@@ -218,7 +218,7 @@ public class TestingServicesImpl implements TestingServices {
             }
         }
         catch (Exception ex) {
-            logger.severeException("Unable to get status info for testCases", ex);
+            logger.error("Unable to get status info for testCases", ex);
         }
         return -1;
     }
@@ -231,7 +231,7 @@ public class TestingServicesImpl implements TestingServices {
             }
         }
         catch (Exception ex) {
-            logger.severeException("Unable to get status info for testCase: " + testCase.getName(), ex);
+            logger.error("Unable to get status info for testCase: " + testCase.getName(), ex);
         }
     }
 

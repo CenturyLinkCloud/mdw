@@ -97,7 +97,7 @@ public class ProcessRequests implements PreloadableCache {
                     }
                 }
                 catch (Exception ex) {
-                    logger.severeException("Error loading process request: " + packageName + "/" + processName, ex);
+                    logger.error("Error loading process request: " + packageName + "/" + processName, ex);
                 }
             }
             if (!conflicting.isEmpty()) {
@@ -112,7 +112,7 @@ public class ProcessRequests implements PreloadableCache {
                 }
                 msg.append("** (No mappings registered where there are conflicts.)\n");
                 msg.append("\n**************************************************\n");
-                logger.severe(msg.toString());
+                logger.error(msg.toString());
             }
         }
     }

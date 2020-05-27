@@ -443,7 +443,7 @@ public class SolutionsDataAccess extends CommonDataAccess {
         TaskTemplate taskVO = TaskTemplateCache.getTaskTemplate(task.getTaskId());
         if (taskVO == null) {
             String ref = rs.getString("task_instance_referred_as");
-            logger.severe("ERROR: Task instance ID " + task.getTaskInstanceId() + " missing task definition (" + ref + ").");
+            logger.error("ERROR: Task instance ID " + task.getTaskInstanceId() + " missing task definition (" + ref + ").");
             task.setTaskName(ref);
             task.setInvalid(true);
         }
@@ -456,13 +456,13 @@ public class SolutionsDataAccess extends CommonDataAccess {
             if (task.getAssigneeId() != 0L) {
                 User user = UserGroupCache.getUser(task.getAssigneeId());
                 if (user == null)
-                    logger.severe("ERROR: Cannot find user for id: " + task.getAssigneeId());
+                    logger.error("ERROR: Cannot find user for id: " + task.getAssigneeId());
                 else
                     task.setAssigneeCuid(user.getCuid());
             }
         }
         catch (CachingException ex) {
-            logger.severeException(ex.getMessage(),  ex);
+            logger.error(ex.getMessage(),  ex);
         }
         return task;
     }

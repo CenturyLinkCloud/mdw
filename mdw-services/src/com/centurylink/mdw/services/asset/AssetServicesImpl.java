@@ -435,7 +435,7 @@ public class AssetServicesImpl implements AssetServices {
             }
         }
         catch (Exception ex) {
-            logger.severeException("Unable to retrieve Git information for asset packages", ex);
+            logger.error("Unable to retrieve Git information for asset packages", ex);
         }
         finally {
             timer.stopAndLogTiming(null);

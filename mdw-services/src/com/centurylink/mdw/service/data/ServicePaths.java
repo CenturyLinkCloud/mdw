@@ -100,7 +100,7 @@ public class ServicePaths implements CacheService {
                         }
                     }
                 } catch (ServiceException | IOException ex) {
-                    logger.severeException(ex.getMessage(), ex);
+                    logger.error(ex.getMessage(), ex);
                 }
             } else {
                 logger.info("ServicePaths cache disabled");

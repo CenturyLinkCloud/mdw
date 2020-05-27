@@ -152,7 +152,7 @@ public class AutoFormManualTaskActivity extends ManualTaskActivity {
             }
         } catch (Exception e) {
             String errmsg = "Failed to parse task completion message";
-            logger.severeException(errmsg, e);
+            logger.error(errmsg, e);
             throw new ActivityException(-1, errmsg, e);
         }
     }

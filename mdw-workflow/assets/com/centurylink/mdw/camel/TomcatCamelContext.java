@@ -36,7 +36,7 @@ public class TomcatCamelContext {
                 }
             }
             catch (IOException e) {
-                logger.severeException(e.getMessage(), e);
+                logger.error(e.getMessage(), e);
             }
             if (factoryBean != null)
                 camelContext = factoryBean.getContext(true);
@@ -63,7 +63,7 @@ public class TomcatCamelContext {
             this.camelContext.stop();
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 

@@ -217,7 +217,7 @@ public class ResourceReaderExtension extends ServletReaderExtension implements R
                         return pkg.getClassLoader().loadClass(type);
                     }
                     catch (ClassNotFoundException cnfe2) {
-                        logger.severeException(String.format("Failed to resolve '%s' into class", type), cnfe);
+                        logger.error(String.format("Failed to resolve '%s' into class", type), cnfe);
                     }
                 }
             }

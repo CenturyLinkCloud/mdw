@@ -76,7 +76,7 @@ public class ScheduledEventQueue implements CacheService {
         }
         catch (Exception ex) {
             eventQueue = null;
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -115,7 +115,7 @@ public class ScheduledEventQueue implements CacheService {
             if (e.getCause() instanceof SQLRecoverableException) {
                 eventQueue = null;
             }
-            logger.severeException("Failed to process scheduled event " + event.getName(), e);
+            logger.error("Failed to process scheduled event " + event.getName(), e);
         }
     }
 
@@ -173,7 +173,7 @@ public class ScheduledEventQueue implements CacheService {
                 msgbroker.sendMessage(event.getMessage());
             }
         } catch (Exception ex) {
-            logger.severeException("Failed to process scheduled event " + event.getName(), ex);
+            logger.error("Failed to process scheduled event " + event.getName(), ex);
         }
         Date nextDate;
         if (event.isScheduledJob()) {
@@ -264,9 +264,9 @@ public class ScheduledEventQueue implements CacheService {
             if (e.getCode() == DataAccessException.INTEGRITY_CONSTRAINT_VIOLATION)
                 logger.info("To schedule the event but it is already scheduled: " + event.getName());
             else
-                logger.severeException("Failed to schedule event " + name, e);
+                logger.error("Failed to schedule event " + name, e);
         } catch (Exception e) {
-            logger.severeException("Failed to schedule event " + name, e);
+            logger.error("Failed to schedule event " + name, e);
         }
     }
 
@@ -296,7 +296,7 @@ public class ScheduledEventQueue implements CacheService {
             logger.info("Reschedules event " + event.getName() + " at "
                     + DateHelper.dateToString(event.getScheduledTime()) + " (database time)");
         } catch (Exception e) {
-            logger.severeException("Failed to reschedule event " + name, e);
+            logger.error("Failed to reschedule event " + name, e);
         }
     }
 
@@ -388,7 +388,7 @@ public class ScheduledEventQueue implements CacheService {
             InternalMessenger messenger = MessengerFactory.newInternalMessenger();
             messenger.broadcastMessage(json.toString());
         } catch (Exception e) {
-            logger.severeException("Failed to publish event invalidation message", e);
+            logger.error("Failed to publish event invalidation message", e);
         }
     }
 
@@ -414,7 +414,7 @@ public class ScheduledEventQueue implements CacheService {
                     nextDate = calculateNextDate(schedule, nextDate);
                 }
             } catch (Exception e) {
-                logger.severeException("Failed to calculated next run time", e);
+                logger.error("Failed to calculated next run time", e);
                 nextDate = null;
             }
         }

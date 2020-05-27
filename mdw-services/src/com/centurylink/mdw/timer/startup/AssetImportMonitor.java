@@ -185,7 +185,7 @@ public class AssetImportMonitor implements StartupService {
             }
         }
         catch (Exception e) {
-            logger.severeException(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             SystemMessages.bulletinOff(bulletin, Level.Error, "Asset import failed: " + ((e.getMessage() == null && e.getCause() != null) ? e.getCause().getMessage() : e.getMessage()));
             // Check if we need to try next time with a hard reset
             Throwable ex = e instanceof IOException && e.getCause() != null ? e.getCause() : e;

@@ -80,7 +80,7 @@ public class WebpackCache implements PreloadableCache {
             }
             catch (Exception ex) {
                 // but don't let any exceptions stop main processing
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
 
             if (PackageCache.getPackage("com.centurylink.mdw.react") != null) {
@@ -110,7 +110,7 @@ public class WebpackCache implements PreloadableCache {
 
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -223,7 +223,7 @@ public class WebpackCache implements PreloadableCache {
                     doCompile(asset, source, target);
                 }
                 catch (Exception ex) {
-                    logger.severeException(ex.getMessage(), ex);
+                    logger.error(ex.getMessage(), ex);
                 }
             }).start();
         }

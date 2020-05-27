@@ -104,7 +104,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
                         templatedEmail.sendEmail();
                     }
                     catch (MessagingException ex) {
-                        logger.severeException(ex.getMessage(), ex);  // do not rethrow
+                        logger.error(ex.getMessage(), ex);  // do not rethrow
                     }
                 }
                 if (ccRecipients != null) {
@@ -118,7 +118,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
                             templatedEmail.sendEmail();
                         }
                         catch (MessagingException ex) {
-                            logger.severeException(ex.getMessage(), ex);  // do not rethrow
+                            logger.error(ex.getMessage(), ex);  // do not rethrow
                         }
                     }
                 }
@@ -133,7 +133,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
                         templatedEmail.sendEmail();
                     }
                     catch (MessagingException ex) {
-                        logger.severeException(ex.getMessage(), ex);  // do not rethrow
+                        logger.error(ex.getMessage(), ex);  // do not rethrow
                     }
                 }
                 else {
@@ -142,7 +142,7 @@ public class TaskEmailNotifier extends TemplatedNotifier {
             }
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new ObserverException(-1, ex.getMessage(), ex);
         }
     }

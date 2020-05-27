@@ -356,7 +356,7 @@ public class SystemServicesImpl implements SystemServices {
 
             }
             catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
 
@@ -465,7 +465,7 @@ public class SystemServicesImpl implements SystemServices {
         }
         catch (Exception ex) {
             // don't let runtime exceptions prevent page display
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             dbInfos.add(new SysInfo("Error", String.valueOf(ex)));
         }
         finally {
@@ -488,7 +488,7 @@ public class SystemServicesImpl implements SystemServices {
             }
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
 
         return new SysInfoCategory("Database Details", dbInfos);
@@ -545,13 +545,13 @@ public class SystemServicesImpl implements SystemServices {
                         mdwPropInfos.add(new SysInfo(propName, "********"));
                 }
                 catch (Exception ex) {
-                    logger.severeException(ex.getMessage(), ex);
+                    logger.error(ex.getMessage(), ex);
                     mdwPropInfos.add(new SysInfo("Error", String.valueOf(ex)));
                 }
             }
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             mdwPropInfos.add(new SysInfo("Error", String.valueOf(ex)));
         }
 

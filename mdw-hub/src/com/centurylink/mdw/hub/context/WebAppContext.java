@@ -91,7 +91,7 @@ public class WebAppContext {
                     mdw.setCustomRoutes(routes.toString());
             }
             catch (ReflectiveOperationException ex) {
-                LoggerUtil.getStandardLogger().severeException(ex.getMessage(), ex);
+                LoggerUtil.getStandardLogger().error(ex.getMessage(), ex);
             }
         }
         return mdw;
@@ -143,7 +143,7 @@ public class WebAppContext {
             return addedArr.toString(2);
         }
         catch (Exception ex) {
-            LoggerUtil.getStandardLogger().severeException(ex.getMessage(), ex);
+            LoggerUtil.getStandardLogger().error(ex.getMessage(), ex);
             return str;
         }
     }

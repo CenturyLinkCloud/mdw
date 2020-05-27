@@ -64,7 +64,7 @@ public class CacheRegistry extends ServiceRegistry {
             try {
                 provider.refreshCache();
             } catch (Exception ex) {
-                logger.severeException("Failed to refresh cache: " + name, ex);
+                logger.error("Failed to refresh cache: " + name, ex);
             }
         }
     }

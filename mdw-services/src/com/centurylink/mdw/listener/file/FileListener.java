@@ -85,7 +85,7 @@ public abstract class FileListener {
                     processFile(file);
                 }
                 catch (Exception ex) {
-                    _logger.severeException(ex.getMessage(), ex);
+                    _logger.error(ex.getMessage(), ex);
                 }
             }
 

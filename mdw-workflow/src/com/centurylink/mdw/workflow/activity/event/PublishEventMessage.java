@@ -38,7 +38,7 @@ public class PublishEventMessage extends DefaultActivityImpl {
             signal(getEventName(), getEventMessage(), getEventDelay());
         }
         catch (Exception ex) {
-            getLogger().severeException(ex.getMessage(), ex);
+            getLogger().error(ex.getMessage(), ex);
             throw new ActivityException(-1, "Failed to publish event message", ex);
         }
     }

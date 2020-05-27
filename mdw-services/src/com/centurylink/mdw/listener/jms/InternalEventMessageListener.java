@@ -50,9 +50,7 @@ public class InternalEventMessageListener implements javax.jms.MessageListener{
             ProcessEngineDriver driver = new ProcessEngineDriver();
             driver.processEvents(messageId, txt);
         } catch (Throwable e) { // only possible when failed to get ProcessManager ejb
-            logger.severeException(logtag + "process exception " + e.getMessage(), e);
+            logger.error(logtag + "process exception " + e.getMessage(), e);
         }
-
     }
-
 }

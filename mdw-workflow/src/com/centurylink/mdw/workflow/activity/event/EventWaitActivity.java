@@ -186,7 +186,7 @@ public class EventWaitActivity extends AbstractWait implements com.centurylink.m
             }
         }
         catch (Exception ex) {
-            getLogger().severeException(ex.getMessage(), ex);
+            getLogger().error(ex.getMessage(), ex);
         }
     }
 

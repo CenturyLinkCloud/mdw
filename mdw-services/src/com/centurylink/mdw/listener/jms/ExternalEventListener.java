@@ -93,14 +93,14 @@ public class ExternalEventListener extends JmsListener {
 
             }
             catch (Throwable ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
             finally {
                 if (connection != null) {
                     try {
                         connection.close();
                     } catch (JMSException e) {
-                        logger.severeException(e.getMessage(), e);
+                        logger.error(e.getMessage(), e);
                     }
                 }
             }

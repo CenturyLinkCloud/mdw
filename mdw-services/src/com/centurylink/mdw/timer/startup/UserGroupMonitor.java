@@ -96,7 +96,7 @@ public class UserGroupMonitor implements StartupService {
             }
         }
         catch (Exception e) {
-            logger.severeException(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
         }
         finally {
             if (!_terminating) this.start();  // Restart if a failure occurred, besides instance is shutting down

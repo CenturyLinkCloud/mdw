@@ -95,7 +95,7 @@ public class CamelRouteCache implements PreloadableCache, CamelContextAware {
                 }
             }
             catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
         return routesRuleSet;
@@ -123,7 +123,7 @@ public class CamelRouteCache implements PreloadableCache, CamelContextAware {
                 }
             }
             catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
         return routesRuleSet;
@@ -150,7 +150,7 @@ public class CamelRouteCache implements PreloadableCache, CamelContextAware {
                     camelContext.removeRouteDefinitions(rdrs.getRoutesDefinition().getRoutes());
                 }
                 catch (Exception ex) {
-                    logger.severeException(ex.getMessage(), ex);
+                    logger.error(ex.getMessage(), ex);
                 }
             }
             routesMap.clear();
@@ -240,7 +240,7 @@ public class CamelRouteCache implements PreloadableCache, CamelContextAware {
                 return new RoutesDefinitionRuleSet(routesDefinition, asset);
             }
             catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
                 throw new CachingException(ex.getMessage(), ex);
             }
         }

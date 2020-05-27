@@ -433,7 +433,7 @@ public class UserGroupCache implements PreloadableCache {
             }
         }
         catch (Exception e) {
-            logger.severeException("Exception attempting to update last user group change timestamp in Values table", e);
+            logger.error("Exception attempting to update last user group change timestamp in Values table", e);
         }
     }
 }

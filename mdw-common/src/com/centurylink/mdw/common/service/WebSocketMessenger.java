@@ -80,7 +80,7 @@ public class WebSocketMessenger {
                 logger.warn(t.getMessage());
         }
         else {
-            logger.severeException(t.getMessage(), t);
+            logger.error(t.getMessage(), t);
         }
     }
 
@@ -103,7 +103,7 @@ public class WebSocketMessenger {
                session.getBasicRemote().sendText(bulletin.getJson().toString());
            }
            catch (IOException ex) {
-               logger.severeException(ex.getMessage(), ex);
+               logger.error(ex.getMessage(), ex);
            }
        }
     }

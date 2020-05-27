@@ -672,14 +672,14 @@ public class EventServicesImpl implements EventServices {
                 }
             }
         } catch (Exception e) {
-            logger.severeException("Failed to process unscheduled event " + eventName, e);
+            logger.error("Failed to process unscheduled event " + eventName, e);
             // do not rollback - that may cause the event being processed again and again
             processed = false;
         } finally {
             try {
                 edao.stopTransaction(transaction);
             } catch (DataAccessException e) {
-                logger.severeException("Failed to process unscheduled event " + eventName, e);
+                logger.error("Failed to process unscheduled event " + eventName, e);
                 // do not rollback - that may cause the event being processed again and again
                 processed = false;
             }
@@ -697,7 +697,7 @@ public class EventServicesImpl implements EventServices {
                 if (!thread_pool.execute(ThreadPoolProvider.WORKER_SCHEDULER, one.getName(), command)) {
                     String msg = ThreadPoolProvider.WORKER_SCHEDULER + " has no thread available for Unscheduled event: " + one.getName() + " message:\n" + one.getMessage();
                     // make this stand out
-                    logger.warnException(msg, new Exception(msg));
+                    logger.warn(msg, new Exception(msg));
                     logger.info(thread_pool.currentStatus());
                     returnList.add(one);
                 }
@@ -884,7 +884,7 @@ public class EventServicesImpl implements EventServices {
                 completeScheduledJob(eventName, status);
             }
             catch (DataAccessException ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         });
     }

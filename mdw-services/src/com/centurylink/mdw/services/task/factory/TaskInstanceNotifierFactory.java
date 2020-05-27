@@ -99,7 +99,7 @@ public class TaskInstanceNotifierFactory {
             }
             return getNotifierSpecs(taskId, outcome);
         } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return null;
         }
     }
@@ -172,7 +172,7 @@ public class TaskInstanceNotifierFactory {
         }
         catch (Exception ex) {
             // don't disrupt processing; just log exception
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return null;
         }
     }

@@ -85,7 +85,7 @@ public class MDWKafkaListenerRegistration implements StartupService {
                 }
             }
         } catch (PropertyException e) {
-            logger.severeException("Failed to load Kafka properties", e);
+            logger.error("Failed to load Kafka properties", e);
         }
     }
 
@@ -104,7 +104,7 @@ public class MDWKafkaListenerRegistration implements StartupService {
             return !listenerProps.isEmpty();
         }
         catch (PropertyException ex){
-            LoggerUtil.getStandardLogger().severeException(ex.getMessage(), ex);
+            LoggerUtil.getStandardLogger().error(ex.getMessage(), ex);
             return false;
         }
     }

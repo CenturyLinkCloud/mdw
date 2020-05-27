@@ -109,7 +109,7 @@ public class TaskHandler implements ActionHandler, EventHandler {
                     ServiceLocator.getCollaborationServices().createComment(comment);
                 }
                 catch(Exception ex) {
-                    logger.severeException(ex.getMessage(), ex);
+                    logger.error(ex.getMessage(), ex);
                 }
             }).start();
 
@@ -157,7 +157,7 @@ public class TaskHandler implements ActionHandler, EventHandler {
                     ServiceLocator.getTaskServices().updateIndexes(instanceId, indexes);
                 }
                 catch (Exception ex) {
-                    logger.severeException("Error updating indexes for task " + instanceId + ": " + ex, ex);
+                    logger.error("Error updating indexes for task " + instanceId + ": " + ex, ex);
                 }
             }).start();
         }
@@ -182,7 +182,7 @@ public class TaskHandler implements ActionHandler, EventHandler {
                     }
                 }
                 catch (Exception ex) {
-                    logger.severeException(ex.getMessage(), ex);
+                    logger.error(ex.getMessage(), ex);
                 }
             }).start();
         }

@@ -62,7 +62,7 @@ public class ScriptEvaluator extends AbstractEvaluator  {
             return obj;
         }
         catch (ExecutionException ex) {
-            getLogger().severeException(ex.getMessage(), ex);
+            getLogger().error(ex.getMessage(), ex);
             throw new ActivityException(-1, ex.getMessage(), ex);
         }
     }

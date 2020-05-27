@@ -59,7 +59,7 @@ public class RoundRobinAutoAssignStrategy implements AutoAssignStrategy {
             return assignee;
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new ObserverException(-1, ex.getMessage(), ex);
         }
     }

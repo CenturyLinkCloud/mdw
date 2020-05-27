@@ -159,7 +159,7 @@ public class AccessFilter implements Filter {
             WebAppContext.getMdw().setCustomPaths(yamlLoader.getList("customPaths", topMap));
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new ServletException(ex.getMessage(), ex);
         }
     }
@@ -327,7 +327,7 @@ public class AccessFilter implements Filter {
                 logger.info(" ** - response (" + path + "): " + (System.currentTimeMillis() - start) + " ms");
         }
         catch (Throwable t) {
-            logger.severeException("Error accessing " + request.getRequestURL() + ": " + t.getMessage() , t);
+            logger.error("Error accessing " + request.getRequestURL() + ": " + t.getMessage() , t);
             request.setAttribute("error", t);
             request.getRequestDispatcher("/500").forward(request, response);
         }

@@ -93,7 +93,7 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
                 kbaseMap.put(key.toString(), knowledgeBaseAsset);
             }
             catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
         return knowledgeBaseAsset;
@@ -110,7 +110,7 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
                 kbaseMap.put(key.toString(), knowledgeBaseAsset);
             }
             catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
         return knowledgeBaseAsset;
@@ -219,7 +219,7 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
         if(results.hasMessages(Message.Level.ERROR)) {
             if (extension.equals("xls") || extension.equals("xlsx")) {
                 // log the converted rules
-                logger.severe("Converted rule for " + asset.getLabel() + ":\n" + rules + "\n================================");
+                logger.error("Converted rule for " + asset.getLabel() + ":\n" + rules + "\n================================");
             }
             throw new CachingException("Error parsing knowledge base from rules for " + asset.getLabel() + "\n" + results.getMessages());
         }

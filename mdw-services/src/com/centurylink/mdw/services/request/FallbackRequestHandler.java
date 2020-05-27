@@ -87,7 +87,7 @@ public class FallbackRequestHandler implements RequestHandler {
             } else {
                 msg = "No request handler has been configured for message";
                 code = ListenerHelper.RETURN_STATUS_NO_HANDLER;
-                logger.severe(msg + ": " + message);
+                logger.error(msg + ": " + message);
             }
         }
         StatusMessage statusMessage = new StatusMessage(code, msg);
@@ -167,7 +167,7 @@ public class FallbackRequestHandler implements RequestHandler {
                 }
             }
             catch (Exception ex) {
-                logger.severeException("Failed to create instance for scheduled job " + className, ex);
+                logger.error("Failed to create instance for scheduled job " + className, ex);
             }
             // else exception already logged
             response = "OK";    // not used
@@ -185,7 +185,7 @@ public class FallbackRequestHandler implements RequestHandler {
                     response = obj.toString();
                 } else response = doc.getContent(getPackage(doc));
             } catch (Exception e) {
-                logger.severeException(e.getMessage(), e);
+                logger.error(e.getMessage(), e);
                 response = "ERROR: " + e.getClass().getName() + " - " + e.getMessage();
             }
         } else if (rootNodeName.equals("_mdw_task_sla")) {

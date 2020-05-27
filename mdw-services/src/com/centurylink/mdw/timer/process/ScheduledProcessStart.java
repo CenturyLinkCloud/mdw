@@ -59,8 +59,7 @@ public class ScheduledProcessStart extends ExternalEventHandlerBase
             logger.info("[ScheduledProcessStart] Started " + processName
                     + " Process Instance ID = " + procInstId);
         } catch (Exception ex) {
-            logger.severeException("[ScheduledProcessStart] Error in starting "
-                    + processName, ex);
+            logger.error("[ScheduledProcessStart] Error in starting " + processName, ex);
         }
     }
 

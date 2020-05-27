@@ -97,7 +97,7 @@ public class SynchronizationActivity extends AbstractWait implements com.century
             return yes;
         }
         catch (Exception ex) {
-            getLogger().severeException(ex.getMessage(), ex);
+            getLogger().error(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
         }
     }

@@ -195,7 +195,7 @@ public class TaskWorkflowHelper {
             }
             catch (CachingException e)
             {
-              logger.severeException(e.getMessage(), e);
+              logger.error(e.getMessage(), e);
             }
         }
 
@@ -380,7 +380,7 @@ public class TaskWorkflowHelper {
 
             TaskIndexProvider provider = TaskServiceRegistry.getInstance().getIndexProvider(runtimeContext.getPackage(), indexProviderClass);
             if (provider == null)
-                logger.severe("ERROR: cannot create TaskIndexProvider: " + indexProviderClass);
+                logger.error("ERROR: cannot create TaskIndexProvider: " + indexProviderClass);
             return provider;
         }
     }
@@ -413,7 +413,7 @@ public class TaskWorkflowHelper {
                     assigneeCuid = user.getCuid();
             }
             catch (CachingException ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
         else if (action.equalsIgnoreCase(TaskAction.RELEASE)) {
@@ -589,7 +589,7 @@ public class TaskWorkflowHelper {
             notifyProcess(eventName, docId, jsonMeta.toString(2), delay);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new ServiceException(ex.getMessage(), ex);
         }
     }
@@ -622,7 +622,7 @@ public class TaskWorkflowHelper {
             notifyProcess(correlationId, docId, actionRequestDoc.xmlText(), delay);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new ServiceException(ex.getMessage(), ex);
         }
     }
@@ -672,7 +672,7 @@ public class TaskWorkflowHelper {
         }
       }
       catch (Exception ex) {
-        logger.severeException(ex.getMessage(), ex);
+        logger.error(ex.getMessage(), ex);
       }
       return activityInstanceId;
     }
@@ -797,7 +797,7 @@ public class TaskWorkflowHelper {
                 if (strategy != null) {
                     User assignee = strategy.selectAssignee(taskInstance);
                     if (assignee == null)
-                        logger.severe("No users found for auto-assignment of task instance ID: " + taskInstance.getTaskInstanceId());
+                        logger.error("No users found for auto-assignment of task instance ID: " + taskInstance.getTaskInstanceId());
                     else
                     {
                       taskInstance.setAssigneeId(assignee.getId());
@@ -809,7 +809,7 @@ public class TaskWorkflowHelper {
         }
         catch (ObserverException ex) {
             // do not rethrow; observer problems should not prevent task actions
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
         timer.stopAndLogTiming("");
     }
@@ -884,11 +884,11 @@ public class TaskWorkflowHelper {
                 }
                 catch (Exception ex) {
                     // don't let one notifier failure prevent others from processing
-                    logger.severeException(ex.getMessage(), ex);
+                    logger.error(ex.getMessage(), ex);
                 }
             }
         } catch (Exception ex) {
-            logger.severeException("Failed to send email notification for task instance "
+            logger.error("Failed to send email notification for task instance "
                     + taskInstance.getTaskInstanceId(), ex);
         }
     }
@@ -1029,7 +1029,7 @@ public class TaskWorkflowHelper {
                         }
                     }
                     catch (Exception ex) {
-                        logger.severeException(ex.getMessage(), ex);
+                        logger.error(ex.getMessage(), ex);
                     }
                 }
             }
@@ -1074,7 +1074,7 @@ public class TaskWorkflowHelper {
                     }
                 }
                 catch (Exception ex) {
-                    logger.severeException(ex.getMessage(), ex);
+                    logger.error(ex.getMessage(), ex);
                 }
             }
         }
@@ -1103,7 +1103,7 @@ public class TaskWorkflowHelper {
                     StandardLogger.LogLevel.INFO, "Task closed by " + user.getCuid() + (comment == null ? "" : (": " + comment)));
         }
         catch (SQLException ex) {
-            logger.severeException("Error updating activity instance " + taskActivityInstance.getId(), ex);
+            logger.error("Error updating activity instance " + taskActivityInstance.getId(), ex);
         }
     }
 
@@ -1133,7 +1133,7 @@ public class TaskWorkflowHelper {
                 }
             }
         } catch (CachingException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
         dataAccess.setTaskInstanceGroups(taskInstance.getTaskInstanceId(),destWorkgroups );
         taskInstance.setWorkgroups(Arrays.asList(destWorkgroups));
@@ -1146,14 +1146,14 @@ public class TaskWorkflowHelper {
             if (strategy != null) {
                 User assignee = strategy.selectAssignee(taskInstance);
                 if (assignee == null)
-                    logger.severe("No users found for auto-assignment of task instance ID: " + taskInstance.getId());
+                    logger.error("No users found for auto-assignment of task instance ID: " + taskInstance.getId());
                 else
                     performAction(TaskAction.ASSIGN, assignee.getId(), assignee.getId(), "Auto-assigned", null, false, false);
             }
         }
         catch (ObserverException ex) {
             // do not rethrow; observer problems should not prevent task actions
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -1174,7 +1174,7 @@ public class TaskWorkflowHelper {
             dataAccess.setElapsedTime(OwnerType.TASK_INSTANCE, taskInstance.getTaskInstanceId(), elapsedMs);
         }
         catch (SQLException ex) {
-            logger.severeException("Failed to set timing for task: " + taskInstance.getId(), ex);
+            logger.error("Failed to set timing for task: " + taskInstance.getId(), ex);
         }
         taskInstance.setStatusCode(newStatus);
     }
@@ -1199,7 +1199,7 @@ public class TaskWorkflowHelper {
             notifyTaskAction(TaskAction.CANCEL, prevStatus, prevState);
         }
         catch (IOException | SQLException ex) {
-            logger.severeException("Failed to set timing for task: " + taskInstance.getId(), ex);
+            logger.error("Failed to set timing for task: " + taskInstance.getId(), ex);
         }
     }
 
@@ -1283,7 +1283,7 @@ public class TaskWorkflowHelper {
             }
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
         timer.stopAndLogTiming("");
         return filteredTaskActions;
@@ -1331,7 +1331,7 @@ public class TaskWorkflowHelper {
             }
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
         timer.stopAndLogTiming("");
         return dynamicTaskActions;

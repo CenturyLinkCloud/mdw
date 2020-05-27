@@ -51,7 +51,7 @@ public class CamelRouteAdapter extends ObjectAdapterActivity {
             return !Boolean.parseBoolean(asyncAttr);
         }
         catch (PropertyException ex) {
-            getLogger().severeException(ex.getMessage(), ex);
+            getLogger().error(ex.getMessage(), ex);
         }
         return true;
     }
@@ -110,7 +110,7 @@ public class CamelRouteAdapter extends ObjectAdapterActivity {
             return handler.invoke(request, headers);
         }
         catch (Exception ex) {
-            getLogger().severeException(ex.getMessage(), ex);
+            getLogger().error(ex.getMessage(), ex);
             throw new AdapterException(-1, ex.getMessage(), ex);
         }
     }

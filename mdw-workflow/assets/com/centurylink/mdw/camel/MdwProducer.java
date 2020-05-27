@@ -61,7 +61,7 @@ public class MdwProducer extends DefaultProducer {
 
         }
         catch (Throwable t) {
-            logger.severeException(t.getMessage(), t);
+            logger.error(t.getMessage(), t);
             exchange.setException(t);
         }
 
@@ -141,7 +141,7 @@ public class MdwProducer extends DefaultProducer {
             return launchHandler.invoke(process.getId(), docId, masterRequestId, request, parameters);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             // request.getExchange().setException(ex);
             return launchHandler.getResponse(-1, ex.toString());
         }
@@ -190,7 +190,7 @@ public class MdwProducer extends DefaultProducer {
             return notifyHandler.notify(eventId, docId, request, delay);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             // request.getExchange().setException(ex);
             return notifyHandler.getResponse(-1, ex.toString());
         }

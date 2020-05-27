@@ -103,7 +103,7 @@ public class AllowableTaskActions implements PreloadableCache {
                 else {
                     File standardTaskActions = new File(assetLoc + "/com/centurylink/mdw/task/mdw-task-actions.xml");
                     if (!standardTaskActions.isFile()) {
-                        logger.severe("*** Standard task actions file does not exist: " + standardTaskActions + " ***");
+                        logger.error("*** Standard task actions file does not exist: " + standardTaskActions + " ***");
                         taskActions = createEmptyTaskActions();
                     }
                     else {

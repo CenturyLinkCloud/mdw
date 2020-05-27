@@ -35,15 +35,15 @@ import com.centurylink.mdw.util.log.StandardLogger;
 public class SyncExpressionEvaluator {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-    
+
     private Map<String,String> idToEscapedName;
-    
+
     private String[] syncedActivityIds;
     public String[] getSyncedActivityIds() { return syncedActivityIds; }
-    
+
     private String syncExpression;
     public String getSyncExpression() { return syncExpression; }
-    
+
     /**
      * Creates a sync expression involving the specified activities.
      * @param syncedActivityIds the logical IDs of activities involved in the sync
@@ -91,17 +91,17 @@ public class SyncExpressionEvaluator {
                     jc.getVars().put(variableInstance.getName(), variableInstance.getData());
                 }
             }
-            
+
             // evaluate the expression
             Boolean b = (Boolean) e.evaluate(jc);
             return b.booleanValue();
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new SynchronizationException(ex.getMessage(), ex);
         }
     }
-    
+
     /**
      * Create the default sync expression based on the synced activity logical IDs.
      * @param syncedActivityNames
@@ -116,5 +116,5 @@ public class SyncExpressionEvaluator {
         }
         return syncExpression;
     }
-    
+
 }

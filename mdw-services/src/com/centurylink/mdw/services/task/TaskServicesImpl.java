@@ -596,7 +596,7 @@ public class TaskServicesImpl implements TaskServices {
                     new TaskWorkflowHelper(instance).notifyTaskAction(TaskAction.CANCEL, prevStatus, prevState);
                 }
                 catch (IOException | SQLException ex) {
-                    logger.severeException("Failed to set timing for task: " + instance.getId(), ex);
+                    logger.error("Failed to set timing for task: " + instance.getId(), ex);
                 }
 
             }

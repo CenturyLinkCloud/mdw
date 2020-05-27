@@ -154,7 +154,7 @@ public abstract class RestService {
             ServiceLocator.getUserServices().auditLog(userAction);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -212,7 +212,7 @@ public abstract class RestService {
                     params.put(URLDecoder.decode(pair.substring(0, idx), "UTF-8"), URLDecoder.decode(pair.substring(idx + 1), "UTF-8"));
                 }
                 catch (UnsupportedEncodingException ex) { // as if UTF-8 is going to be unsupported
-                    logger.severeException(ex.getMessage(), ex);
+                    logger.error(ex.getMessage(), ex);
                 }
             }
         }

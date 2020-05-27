@@ -92,11 +92,11 @@ public class TransformActivity extends ScriptExecutorActivity {
             }
         }
         catch (ActivityException ex) {
-            getLogger().severeException(ex.getMessage(), ex);
+            getLogger().error(ex.getMessage(), ex);
             throw ex;
         }
         catch (Exception ex) {
-            getLogger().severeException(ex.getMessage(), ex);
+            getLogger().error(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
         }
     }
@@ -194,7 +194,7 @@ public class TransformActivity extends ScriptExecutorActivity {
                 }
             }
             catch (Exception ex) {
-                getLogger().severeException(ex.getMessage(), ex);
+                getLogger().error(ex.getMessage(), ex);
                 throw new ActivityException(ex.getMessage(), ex);
             }
         }
@@ -213,7 +213,7 @@ public class TransformActivity extends ScriptExecutorActivity {
                 super.setVariableValue(varName, varType, doc);
             }
             catch (Exception ex) {
-                getLogger().severeException(ex.getMessage(), ex);
+                getLogger().error(ex.getMessage(), ex);
                 throw new ActivityException(ex.getMessage(), ex);
             }
         }

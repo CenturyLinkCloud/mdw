@@ -110,7 +110,7 @@ public class SoapServlet extends ServiceServlet {
             }
             if (asset == null) {
                 String message = "No WSDL resource found: " + request.getPathInfo().substring(1);
-                logger.severe(message);
+                logger.error(message);
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 response.getWriter().print(message);
             }
@@ -121,7 +121,7 @@ public class SoapServlet extends ServiceServlet {
         }
         else {
             ServletException ex = new ServletException("HTTP GET not supported for URL: " + request.getRequestURL());
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw ex;
         }
     }
@@ -252,17 +252,17 @@ public class SoapServlet extends ServiceServlet {
                }
             }
             catch (ServiceException ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
                 responseString = createSoapFaultResponse(soapVersion, String.valueOf(ex.getCode()), ex.getMessage());
             }
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             try {
                 responseString = createSoapFaultResponse(soapVersion, null, ex.getMessage());
             }
             catch (Exception tex) {
-                logger.severeException(tex.getMessage(), tex);
+                logger.error(tex.getMessage(), tex);
             }
         }
 

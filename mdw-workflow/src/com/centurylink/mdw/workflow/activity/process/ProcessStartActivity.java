@@ -63,7 +63,7 @@ public class ProcessStartActivity extends DefaultActivityImpl implements StartAc
             }
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 }

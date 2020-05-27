@@ -170,7 +170,7 @@ public abstract class InvokeProcessActivityBase extends AbstractWait implements 
                             v = obj == null ? null : obj.toString();
                         }
                     } catch (Exception e) {
-                        logger.warnException("Failed to evaluate the expression '" + v + "'", e);
+                        logger.warn("Failed to evaluate the expression '" + v + "'", e);
                         // treat v as it is
                     }
                 }

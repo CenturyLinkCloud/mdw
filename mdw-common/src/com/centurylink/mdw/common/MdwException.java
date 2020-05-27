@@ -136,7 +136,7 @@ public class MdwException extends Exception implements Jsonable {
                 cause = jsonable.toThrowable();
             }
             catch (Exception ex) {
-                logger.severeException("Cannot instantiate throwable: " + jsonable.getThrowable(), ex);
+                logger.error("Cannot instantiate throwable: " + jsonable.getThrowable(), ex);
             }
         }
         return cause;

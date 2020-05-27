@@ -129,7 +129,7 @@ public class KotlinAccess implements CacheService, PreloadableCache {
                 ExitCode exitCode = new K2JVMCompiler().exec(System.out, args.toArray(new String[0]));
                 if (exitCode.getCode() != 0) {
                     CompilationException ex = new CompilationException("Kotlin compiler error: " + exitCode);
-                    logger.severeException(ex.getMessage(), ex);
+                    logger.error(ex.getMessage(), ex);
                 }
                 else if (logger.isDebugEnabled()) {
                     logger.debug("Kotlin compilation result: " + exitCode);

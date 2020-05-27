@@ -137,7 +137,7 @@ open class KotlinScriptEngine(
                     }
                     catch (e: InvocationTargetException) {
 						if (logger.isMdwDebugEnabled) {
-							logger.severeException(e.message, e)
+							logger.error(e.message, e)
 						}
                         if (e.cause is Throwable) {
                             val th = e.cause as Throwable

@@ -62,12 +62,12 @@ public class OfflineMonitorTrigger<T extends RuntimeContext> {
             while (count < maxRetries && !threadPool.execute(ThreadPoolProvider.WORKER_MONITOR, monitor.getClass().getSimpleName(), command)) {
                     String msg = ThreadPoolProvider.WORKER_MONITOR + " has no thread available for Offline Monitor " + monitor.getClass().getName();
                     // make this stand out
-                    logger.warnException(msg, new Exception(msg));
+                    logger.warn(msg, new Exception(msg));
                     logger.info(threadPool.currentStatus());
                     count++;
             }
             if (count == maxRetries)
-                logger.severe("Unable to launch monitor thread after " + count + " attempts");
+                logger.error("Unable to launch monitor thread after " + count + " attempts");
         }
     }
 
@@ -82,7 +82,7 @@ public class OfflineMonitorTrigger<T extends RuntimeContext> {
                         taskNotifier.sendNotice((TaskRuntimeContext)runtimeContext, event, outcome);
                     }
                     catch (ObserverException ex) {
-                        logger.severeException(ex.getMessage(), ex);
+                        logger.error(ex.getMessage(), ex);
                     }
                 }
                 else {
@@ -93,12 +93,12 @@ public class OfflineMonitorTrigger<T extends RuntimeContext> {
             while (count < maxRetries && !threadPool.execute(ThreadPoolProvider.WORKER_MONITOR, monitor.getClass().getSimpleName(), command)) {
                     String msg = ThreadPoolProvider.WORKER_MONITOR + " has no thread available for Offline Monitor " + monitor.getClass().getName();
                     // make this stand out
-                    logger.warnException(msg, new Exception(msg));
+                    logger.warn(msg, new Exception(msg));
                     logger.info(threadPool.currentStatus());
                     count++;
             }
             if (count == maxRetries)
-                logger.severe("Unable to launch monitor thread after " + count + " attempts");
+                logger.error("Unable to launch monitor thread after " + count + " attempts");
         }
     }
 }

@@ -74,9 +74,9 @@ public class ConfigurationEventListener extends JmsListener {
                 }
             }
             catch (JMSException ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             } catch (Exception e) {
-                logger.severeException("Failed to process broadcast message", e);
+                logger.error("Failed to process broadcast message", e);
             }
         }
 

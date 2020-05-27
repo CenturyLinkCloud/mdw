@@ -332,7 +332,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
                 try {
                     String msg = ThreadPoolProvider.WORKER_ENGINE + " has no thread available to launch heterogeneous process in parallel";
                     // make this stand out
-                    logger.warnException(msg, new Exception(msg));
+                    logger.warn(msg, new Exception(msg));
                     logger.info(thread_pool.currentStatus());
                     Thread.sleep(poll_interval*1000L);
                 }

@@ -427,7 +427,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
             return headers;
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return null;
         }
     }

@@ -85,7 +85,7 @@ public class ScheduledJobs extends JsonRestService {
             throw ex;
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }

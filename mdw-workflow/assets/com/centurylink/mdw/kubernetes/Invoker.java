@@ -30,7 +30,7 @@ public class Invoker {
             DesignatedHostSslVerifier.setupSslVerification(Context.INTERNAL_HOST);
         }
         catch (Exception ex) {
-            logger.severeException("Error initializing SSL; invocations are unlikely to succeed", ex);
+            logger.error("Error initializing SSL; invocations are unlikely to succeed", ex);
         }
     }
 

@@ -141,7 +141,7 @@ public class AuthUtils {
             }
         }
         catch (Exception ex) {
-            logger.severeException("Secret key authentication failure", ex);
+            logger.error("Secret key authentication failure", ex);
             return false;
         }
         return false;
@@ -195,7 +195,7 @@ public class AuthUtils {
             realToken = (String)compiledAssetGetter.invoke(appTokenCacheInstance, appId);
         }
         catch (Exception ex) {
-            logger.severeException("Exception trying to retreieve App token from cache", ex);
+            logger.error("Exception trying to retreieve App token from cache", ex);
         }
 
         // If the provided token doesn't match real token for specified appId, fail authentication
@@ -232,7 +232,7 @@ public class AuthUtils {
         catch (Throwable ex) {
             if (!ApplicationContext.isDevelopment()) {
                 headers.put(Listener.AUTHENTICATION_FAILED, "Authentication failed for JWT '" + authHeader + "' " + ex.getMessage());
-                logger.severeException("Authentication failed for JWT '"+authHeader+"' " + ex.getMessage(), ex);
+                logger.error("Authentication failed for JWT '"+authHeader+"' " + ex.getMessage(), ex);
             }
             return false;
         }
@@ -278,7 +278,7 @@ public class AuthUtils {
                     token = (String)compiledAssetGetter.invoke(jwtTokenCacheInstance, user, pass);
                 }
                 catch (Exception ex) {
-                    logger.severeException("Exception trying to retreieve App token from cache", ex);
+                    logger.error("Exception trying to retreieve App token from cache", ex);
                 }
                 boolean validated = false;
                 if (!StringUtils.isBlank(token)) { // Use token if this user was already validated
@@ -307,7 +307,7 @@ public class AuthUtils {
         catch (Exception ex) {
             if (!ApplicationContext.isDevelopment()) {
                 headers.put(Listener.AUTHENTICATION_FAILED, "Authentication failed for '"+user+"'. "+ex.getMessage());
-                logger.severeException("Authentication failed for user '"+user+"'. " + ex.getMessage(), ex);
+                logger.error("Authentication failed for user '"+user+"'. " + ex.getMessage(), ex);
             }
             return false;
         }
@@ -363,7 +363,7 @@ public class AuthUtils {
         if (tempVerifier == null) {
             String appToken = System.getenv(MDW_APP_TOKEN);
             if (StringUtils.isBlank(appToken))
-                logger.severe("Exception processing incoming message using MDW Auth token - Missing System environment variable " + MDW_APP_TOKEN);
+                logger.error("Exception processing incoming message using MDW Auth token - Missing System environment variable " + MDW_APP_TOKEN);
             else {
                 try {
                     maxAge = PropertyManager.getIntegerProperty(PropertyNames.MDW_AUTH_TOKEN_MAX_AGE, 0) * 1000L;  // MDW default is token never expires
@@ -374,7 +374,7 @@ public class AuthUtils {
                             .build(); //Reusable verifier instance
                 }
                 catch (IllegalArgumentException | UnsupportedEncodingException e) {
-                    logger.severeException("Exception processing incoming message using MDW Auth token", e);
+                    logger.error("Exception processing incoming message using MDW Auth token", e);
                 }
             }
         }
@@ -437,7 +437,7 @@ public class AuthUtils {
             props = customProviders.get(getCustomProviderGroupName(issuer));
 
             if (props == null) {
-                logger.severe("Exception creating Custom JWT Verifier for " + issuer + " - Missing 'key' Property");
+                logger.error("Exception creating Custom JWT Verifier for " + issuer + " - Missing 'key' Property");
                 return null;
             }
 
@@ -445,7 +445,7 @@ public class AuthUtils {
             if (StringUtils.isBlank(algorithmName) || (!StringUtils.isBlank(propAlg) && !algorithmName.equals(propAlg))) {
                 String message = "Exception creating Custom JWT Verifier - ";
                 message = StringUtils.isBlank(algorithmName) ? "Missing 'alg' claim in JWT" : ("Mismatch algorithm with specified Property for " + issuer);
-                logger.severe(message);
+                logger.error(message);
                 return null;
             }
             String customProvider = getCustomProviderGroupName(issuer);
@@ -456,12 +456,12 @@ public class AuthUtils {
                 if (!algorithmName.startsWith("HS")) {  // Only allow use of Key in MDW properties for asymmetric algorithms
                     key = props.getProperty(PropertyNames.MDW_JWT_KEY);
                     if (StringUtils.isBlank(key)) {
-                        logger.severe("Exception creating Custom JWT Verifier for " + issuer + " - Missing 'key' Property");
+                        logger.error("Exception creating Custom JWT Verifier for " + issuer + " - Missing 'key' Property");
                         return null;
                     }
                 }
                 else {
-                    logger.severe("Could not find properties for JWT issuer " + issuer);
+                    logger.error("Could not find properties for JWT issuer " + issuer);
                     return null;
                 }
             }
@@ -486,7 +486,7 @@ public class AuthUtils {
                     algorithm = (Algorithm)algMethod.invoke(Algorithm.none(), pubKey, null);
                 }
                 else {
-                    logger.severe("Exception creating Custom JWT Verifier - Unsupported Algorithm: " + algorithmName);
+                    logger.error("Exception creating Custom JWT Verifier - Unsupported Algorithm: " + algorithmName);
                     return null;
                 }
 
@@ -499,7 +499,7 @@ public class AuthUtils {
                 verifierCustom.put(issuer, tempVerifier);
             }
             catch (IllegalArgumentException | NoSuchAlgorithmException | NoSuchMethodException | SecurityException | IllegalAccessException | InvocationTargetException | InvalidKeySpecException e) {
-                logger.severeException("Exception creating Custom JWT Verifier for " + issuer, e);
+                logger.error("Exception creating Custom JWT Verifier for " + issuer, e);
             }
         }
         return tempVerifier;

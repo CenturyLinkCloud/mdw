@@ -72,7 +72,7 @@ public class Pagelets extends JsonRestService {
             return new Pagelet(new String(asset.getContent())).getJson();
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
         }
     }

@@ -228,10 +228,10 @@ public class JmsAdapter extends ObjectAdapterActivity {
             timeout = timeout_s==null?30:Integer.parseInt(timeout_s);
             if (timeout<0) timeout = 30;
         } catch (NumberFormatException e) {
-            getLogger().severeException("Cannot parse timeout value " + timeout_s, e);
+            getLogger().error("Cannot parse timeout value " + timeout_s, e);
             timeout = 30;
         } catch (PropertyException e) {
-            getLogger().severeException("Cannot read timeout attribute " + TIMEOUT, e);
+            getLogger().error("Cannot read timeout attribute " + TIMEOUT, e);
             timeout = 30;
         }
         return timeout;
@@ -272,7 +272,7 @@ public class JmsAdapter extends ObjectAdapterActivity {
             qConnection.start();
             queue = jmsServices.getQueue(qSession, queue_name);
         } catch (Exception e) {
-            getLogger().severeException("Exception in JmsAdapter.openConnection()" , e);
+            getLogger().error("Exception in JmsAdapter.openConnection()" , e);
             throw new ConnectionException(ConnectionException.CONNECTION_DOWN, "Exception in invoking JmsAdapter" , e);
 
         }

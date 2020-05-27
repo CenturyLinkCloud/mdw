@@ -654,7 +654,7 @@ public class TaskDataAccess extends CommonDataAccess {
                             taskInst.setAssignee(user.getName());
                         }
                         catch (CachingException ex) {
-                            logger.severeException("Cannot find assignee: " + taskInst.getAssigneeCuid(), ex);
+                            logger.error("Cannot find assignee: " + taskInst.getAssigneeCuid(), ex);
                         }
                     }
                     String taskName = query.getFilter("name");
@@ -714,7 +714,7 @@ public class TaskDataAccess extends CommonDataAccess {
                 }
                 catch (CachingException ex) {
                     // just log this
-                    logger.severeException("Failed to lookup workgroup: " + workgroups[i], ex);
+                    logger.error("Failed to lookup workgroup: " + workgroups[i], ex);
                 }
             }
             where.append(")\n");

@@ -80,7 +80,7 @@ public class TemplateServlet extends HttpServlet {
                 return;
             }
             catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         }

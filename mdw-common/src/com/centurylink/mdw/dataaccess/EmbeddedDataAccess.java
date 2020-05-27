@@ -75,7 +75,7 @@ public class EmbeddedDataAccess {
 
         if (ApplicationContext.isDevelopment() && embeddedDb.checkRunning()) {
             // only checked in development (otherwise let db startup file due to locked resources)
-            logger.severe("\n***WARNING***\nEmbedded DB appears to be running already.  This can happen due to an unclean previous shutdown.\n***WARNING***");
+            logger.error("\n***WARNING***\nEmbedded DB appears to be running already.  This can happen due to an unclean previous shutdown.\n***WARNING***");
             return;
         }
 

@@ -374,7 +374,7 @@ public abstract class BaseActivity implements GeneralActivity {
             }
             engine.setProcessInstanceCompletionCode(getProcessInstanceId(), code);
         } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new ActivityException(0, ex.getMessage(),ex);
         }
     }
@@ -524,7 +524,7 @@ public abstract class BaseActivity implements GeneralActivity {
                     parameters.add(varInst);    // This adds to ProcessInstanceVO as well - do not think this ever executes
             }
         } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new ActivityException(0, ex.getMessage(),ex);
         }
         return varInstId;
@@ -560,7 +560,7 @@ public abstract class BaseActivity implements GeneralActivity {
                 varInstId = varInst.getInstanceId();
             }
         } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new ActivityException(0, ex.getMessage(),ex);
         }
         return varInstId;
@@ -602,7 +602,7 @@ public abstract class BaseActivity implements GeneralActivity {
         try {
             docvo = engine.getDocument(docref, false);
         } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
         }
         return docvo==null?null:docvo.getContent(getPackage());
@@ -800,7 +800,7 @@ public abstract class BaseActivity implements GeneralActivity {
                 return o == null ? "" : o.toString();
             }
             catch (ExecutionException ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
                 return "";
             }
         }
@@ -937,7 +937,7 @@ public abstract class BaseActivity implements GeneralActivity {
 
             docref = engine.createDocument(docType, ownerType, ownerId, statusCode, statusMessage, path, document);
         } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
         }
         return docref;
@@ -958,7 +958,7 @@ public abstract class BaseActivity implements GeneralActivity {
             }
             engine.updateDocumentContent(docref, document, type, getPackage());
         } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
         }
     }
@@ -977,7 +977,7 @@ public abstract class BaseActivity implements GeneralActivity {
         try {
             engine.updateDocumentInfo(docref, documentType, ownerType, ownerId, statusCode, statusMessage);
         } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
         }
     }

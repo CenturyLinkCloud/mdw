@@ -55,14 +55,14 @@ public abstract class LoadBalancedScheduledJob implements ScheduledJob {
             httpHelper.setHeaders(hdrs);
             String response = httpHelper.post(json.toString());
             if (httpHelper.getResponseCode() != 200) {
-                logger.severe("Response Status message from instance "+ remoteHostPort +" ScheduledJob."+this.getClass().getName()+" : "+ response);
+                logger.error("Response Status message from instance "+ remoteHostPort +" ScheduledJob."+this.getClass().getName()+" : "+ response);
             }
         }
         catch (IOException ex) {
             isSuccess = false; // instance is offline
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
         return isSuccess;
     }

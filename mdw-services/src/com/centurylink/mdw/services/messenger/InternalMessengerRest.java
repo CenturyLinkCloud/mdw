@@ -90,7 +90,7 @@ public class InternalMessengerRest extends InternalMessenger {
             httpHelper.post(msg);
         } catch (Exception ex) {
             StandardLogger logger = LoggerUtil.getStandardLogger();
-            logger.severeException("Failed to broadcast", ex);
+            logger.error("Failed to broadcast", ex);
         }
     }
 }

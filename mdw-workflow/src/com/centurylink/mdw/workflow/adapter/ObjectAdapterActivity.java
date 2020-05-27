@@ -247,7 +247,7 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl
      */
     protected void handleAdapterInvocationError(Throwable errorCause)
         throws ActivityException {
-        logger.severeException(getAdapterInvocationErrorMessage(), errorCause);
+        logger.error(getAdapterInvocationErrorMessage(), errorCause);
         boolean isErrorRetryable;
         int errorCode;
         if (errorCause instanceof AdapterException) {
@@ -301,7 +301,7 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl
             request.setId(docRef.getDocumentId());
             return docRef.getDocumentId();
         } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return null;
         }
     }
@@ -321,7 +321,7 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl
 
             return docref.getDocumentId();
         } catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return null;
         }
     }

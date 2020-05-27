@@ -345,7 +345,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
             }
         }
         catch (JSONException e) {
-            logger.severeException(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             throw new ServiceException(e.getMessage(), e);
         }
     }

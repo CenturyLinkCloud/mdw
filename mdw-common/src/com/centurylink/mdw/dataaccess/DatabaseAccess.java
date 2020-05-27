@@ -152,7 +152,7 @@ public class DatabaseAccess {
                 checkAndStartEmbeddedDb();
             }
             catch (SQLException ex) {
-                LoggerUtil.getStandardLogger().severeException("Failed to start embedded DB: " + INTERNAL_DATA_SOURCE, ex);
+                LoggerUtil.getStandardLogger().error("Failed to start embedded DB: " + INTERNAL_DATA_SOURCE, ex);
             }
         }
     }
@@ -227,7 +227,7 @@ public class DatabaseAccess {
                 }
             }
             catch (Exception ex) {
-                logger.severeException("Failed to check/upgrade db: " + ex.getMessage(), ex);
+                logger.error("Failed to check/upgrade db: " + ex.getMessage(), ex);
             }
             finally {
                 checkUpgradePerformed = true;
@@ -370,7 +370,7 @@ public class DatabaseAccess {
             }
             catch (Exception e) {
                 if (retriesRemaining-- > 0) {
-                    LoggerUtil.getStandardLogger().infoException("SQL Exception occured on query: " + query + "\nRetrying...\n", e);
+                    LoggerUtil.getStandardLogger().info("SQL Exception occured on query: " + query + "\nRetrying...\n", e);
                     try {
                         Thread.sleep(retryInterval); // short delay before retry
                     } catch (InterruptedException e1) {

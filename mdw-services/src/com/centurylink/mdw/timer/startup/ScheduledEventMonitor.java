@@ -53,7 +53,7 @@ public class ScheduledEventMonitor extends TimerTask {
             }
         }
         catch (Throwable t) {
-            logger.severeException(t.getMessage(), t);
+            logger.error(t.getMessage(), t);
         }
     }
 

@@ -183,7 +183,7 @@ public class KafkaAdapter extends TextAdapterActivity {
             return properties;
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return properties;
         }
     }
@@ -209,7 +209,7 @@ public class KafkaAdapter extends TextAdapterActivity {
             return properties;
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return properties;
         }
     }
@@ -281,7 +281,7 @@ public class KafkaAdapter extends TextAdapterActivity {
         @Override
         public void onCompletion(RecordMetadata recordMetadata, Exception e) {
             if (e != null) {
-                logger.severeException("Error while producing message to topic :" + recordMetadata + e.getMessage(), e);
+                logger.error("Error while producing message to topic :" + recordMetadata + e.getMessage(), e);
             } else {
                 String message = String.format("sent message to topic:%s partition:%s  offset:%s", recordMetadata.topic(), recordMetadata.partition(), recordMetadata.offset());
                 logger.mdwDebug(message);

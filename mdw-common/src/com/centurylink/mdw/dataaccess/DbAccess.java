@@ -83,7 +83,7 @@ public class DbAccess implements AutoCloseable {
             return subst;
         }
         catch (Throwable t) {
-            logger.severeException(t.getMessage(), t);
+            logger.error(t.getMessage(), t);
             return sql;
         }
     }

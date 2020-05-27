@@ -281,7 +281,7 @@ public class ProcessCleanup implements com.centurylink.mdw.model.monitor.Schedul
             if (null == logger)
                 System.out.println(printMsg);
             else
-                logger.severeException(printMsg, e);
+                logger.error(printMsg, e);
             e.printStackTrace();
         }
         finally {

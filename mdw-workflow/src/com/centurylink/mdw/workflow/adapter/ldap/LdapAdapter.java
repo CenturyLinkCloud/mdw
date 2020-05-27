@@ -91,7 +91,7 @@ public class LdapAdapter extends ObjectAdapterActivity {
             dirContext.close();
         }
         catch (Exception ex) {
-            getLogger().severeException(ex.getMessage(), ex);
+            getLogger().error(ex.getMessage(), ex);
         }
     }
 

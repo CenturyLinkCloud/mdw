@@ -122,7 +122,7 @@ public class RestServlet extends ServiceServlet {
             }
         }
         catch (ServiceException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             response.setStatus(ex.getCode());
             response.getWriter().println(createErrorResponseMessage(request, metaInfo, ex));
         }
@@ -149,7 +149,7 @@ public class RestServlet extends ServiceServlet {
             response.getOutputStream().print(responseString);
         }
         catch (ServiceException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             response.setStatus(ex.getCode());
             response.getWriter().println(createErrorResponseMessage(request, metaInfo, ex));
         }
@@ -169,7 +169,7 @@ public class RestServlet extends ServiceServlet {
             response.getOutputStream().print(responseString);
         }
         catch (ServiceException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             response.setStatus(ex.getCode());
             response.getWriter().println(createErrorResponseMessage(request, metaInfo, ex));
         }
@@ -190,7 +190,7 @@ public class RestServlet extends ServiceServlet {
             response.getOutputStream().print(responseString);
         }
         catch (ServiceException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             response.setStatus(ex.getCode());
             response.getWriter().println(createErrorResponseMessage(request, metaInfo, ex));
         }
@@ -209,7 +209,7 @@ public class RestServlet extends ServiceServlet {
             response.getOutputStream().print(responseString);
         }
         catch (ServiceException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             response.setStatus(ex.getCode());
             response.getWriter().println(createErrorResponseMessage(request, metaInfo, ex));
         }

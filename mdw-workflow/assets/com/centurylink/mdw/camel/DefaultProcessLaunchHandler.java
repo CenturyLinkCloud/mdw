@@ -93,7 +93,7 @@ public class DefaultProcessLaunchHandler extends ExternalEventHandlerBase implem
             return marshalJaxb(status, null);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return ex.toString();  // what else can we do
         }
     }

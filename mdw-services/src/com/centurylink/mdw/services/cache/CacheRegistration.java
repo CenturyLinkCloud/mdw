@@ -89,7 +89,7 @@ public class CacheRegistration implements StartupService {
         }
         catch (Exception ex){
             String message = "Failed to load caches";
-            logger.severeException(message, ex);
+            logger.error(message, ex);
             throw new StartupException(message, ex);
         }
     }
@@ -145,7 +145,7 @@ public class CacheRegistration implements StartupService {
                     preloadableCache.loadCache();
                 }
                 catch (Exception ex) {
-                    logger.severeException("Failed to preload " + dynamicCacheService.getClass(), ex);
+                    logger.error("Failed to preload " + dynamicCacheService.getClass(), ex);
                 }
             }
             synchronized(allCaches) {
@@ -164,7 +164,7 @@ public class CacheRegistration implements StartupService {
             return cache;
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return null;
         }
     }
@@ -205,7 +205,7 @@ public class CacheRegistration implements StartupService {
 
         } catch (Exception ex) {
             String message = "Failed to load caches";
-            logger.severeException(message, ex);
+            logger.error(message, ex);
             if (bulletin != null) {
                 SystemMessages.bulletinOff(bulletin, Level.Error, "Cache refresh failed");
             }
@@ -228,7 +228,7 @@ public class CacheRegistration implements StartupService {
             try {
                 cache.refreshCache();
             } catch (Exception e) {
-                logger.severeException("failed to refresh cache", e);
+                logger.error("failed to refresh cache", e);
             }
         }
     }
@@ -282,7 +282,7 @@ public class CacheRegistration implements StartupService {
             if (!StringUtils.isBlank(cacheNames)) json.put("CACHE_NAMES", cacheNames);
             messenger.broadcastMessage(json.toString());
         } catch (Exception e) {
-            logger.severeException("Failed to publish cashe refresh message", e);
+            logger.error("Failed to publish cashe refresh message", e);
         }
     }
 

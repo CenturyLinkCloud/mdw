@@ -57,10 +57,10 @@ public class JMSServices {
         }
         catch (NoSuchBeanDefinitionException ex) {
             if (logger.isMdwDebugEnabled())
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 

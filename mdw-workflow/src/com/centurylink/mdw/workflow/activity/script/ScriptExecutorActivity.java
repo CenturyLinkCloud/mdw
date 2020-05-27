@@ -51,7 +51,7 @@ public class ScriptExecutorActivity extends DefaultActivityImpl implements Scrip
             throw ex;
         }
         catch (Exception ex) {
-            getLogger().severeException(ex.getMessage(), ex);
+            getLogger().error(ex.getMessage(), ex);
             throw new ActivityException(-1, ex.getMessage(), ex);
         }
     }

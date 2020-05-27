@@ -98,10 +98,8 @@ public class XmlBeanTranslator extends DocumentReferenceTranslator implements Xm
                 }
                 catch (Exception ex) {
                     // Just log it
-                    logger.severeException("Unable to set XMLOption " + opt + " due to " + ex.getMessage(), ex);
-
+                    logger.error("Unable to set XMLOption " + opt + " due to " + ex.getMessage(), ex);
                 }
-
             }
         }
         return xmlOptions;

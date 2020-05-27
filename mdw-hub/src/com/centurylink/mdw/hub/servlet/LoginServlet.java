@@ -125,7 +125,7 @@ public class LoginServlet extends HttpServlet {
 
                 }
                 catch (Exception ex) {
-                    logger.severeException(ex.getMessage(), ex);
+                    logger.error(ex.getMessage(), ex);
                     if (ex instanceof AuthenticationException) {
                         request.getSession().setAttribute(MDW_AUTH_MSG, AUTHENTICATION_FAILED_MSG);
                     }

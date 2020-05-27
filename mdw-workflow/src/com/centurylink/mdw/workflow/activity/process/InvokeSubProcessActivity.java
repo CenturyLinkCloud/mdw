@@ -67,7 +67,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
 
     private boolean isSynchronousCall() {
         String v = getAttributeValue(SYNCHRONOUS);
-        return (v==null || v.equalsIgnoreCase("TRUE"));
+        return (v == null || v.equalsIgnoreCase("TRUE"));
     }
 
     /**
@@ -202,7 +202,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
         } catch (ActivityException ex) {
             throw ex;
         }catch(Exception ex){
-            logger.severeException("Exception in InvokeSubProcessActivity", ex);
+            logger.error("Exception in InvokeSubProcessActivity", ex);
             throw new ActivityException(-1, "Exception in InvokeSubProcessActivity", ex);
         }
 
@@ -226,7 +226,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
         } catch (ActivityException ex) {
             throw ex;
         }catch(Exception ex){
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new ActivityException(-1, ex.getMessage(), ex);
         }
     }
@@ -316,7 +316,7 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
             } catch (ProcessException e) {
                 //This shouldn't happen as Engine has to be in memory only mode and Process Exception
                 //can get thrown only if a DB call is being made
-                logger.severe("InvokeSubprocess->getRootProcessOwner() -> Supposedly unreachable code");
+                logger.error("InvokeSubprocess->getRootProcessOwner() -> Supposedly unreachable code");
             }
             if (null == pi) {
                 //This means that the pi is not present in cache and can be found in DB
@@ -324,8 +324,8 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                 if (null != pi)
                     return getRootProcessOwner(pi.getOwnerId(), pi.getOwner());
                 else {
-                    //Shouldn't happen as pi has to be there either in memory or in DB
-                    logger.severe("getRootProcessOwner-> pi not found in DB for:" + ownerId);
+                    // Shouldn't happen as pi has to be there either in memory or in DB
+                    logger.error("getRootProcessOwner-> pi not found in DB for:" + ownerId);
                     return new Object[]{new Long(0), OwnerType.DOCUMENT};
                 }
             } else {
@@ -346,8 +346,8 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
         try {
             transaction = edao.startTransaction();
             return edao.getProcessInstance(procInstId);
-        } catch (SQLException e) {
-            logger.severe("InvokeSubProcessActivity -> Failed to load process instance for " + procInstId);
+        } catch (SQLException ex) {
+            logger.error("InvokeSubProcessActivity -> Failed to load process instance for " + procInstId);
             return null;
         } finally {
             edao.stopTransaction(transaction);

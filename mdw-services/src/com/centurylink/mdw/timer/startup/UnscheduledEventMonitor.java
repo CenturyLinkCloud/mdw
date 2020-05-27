@@ -49,7 +49,7 @@ public class UnscheduledEventMonitor  extends TimerTask {
                 return;
             int minAge = PropertyManager.getIntegerProperty(PropertyNames.UNSCHEDULED_EVENTS_MIN_AGE, 3600);
             if (minAge < 300) {
-                logger.severe(PropertyNames.UNSCHEDULED_EVENTS_MIN_AGE + " cannot be less than 300 (5 minutes)");
+                logger.error(PropertyNames.UNSCHEDULED_EVENTS_MIN_AGE + " cannot be less than 300 (5 minutes)");
                 minAge = 300;
             }
 
@@ -62,7 +62,7 @@ public class UnscheduledEventMonitor  extends TimerTask {
                 logger.log(LogLevel.INFO, "Processing " + count + " unscheduled events at " + new Date(DatabaseAccess.getCurrentTime()));
         }
         catch (Throwable t) {
-            logger.severeException(t.getMessage(), t);
+            logger.error(t.getMessage(), t);
         }
     }
 

@@ -189,7 +189,7 @@ public class SimpleLogger extends AbstractStandardLoggerBase {
             warn(message);
             break;
           case ERROR:
-            severe(message);
+            error(message);
             break;
       }
     }

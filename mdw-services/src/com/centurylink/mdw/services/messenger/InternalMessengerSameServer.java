@@ -76,7 +76,7 @@ public class InternalMessengerSameServer extends InternalMessenger {
             broadcastHelper.processBroadcastMessage(msg);
         } catch (Exception e) {
             StandardLogger logger = LoggerUtil.getStandardLogger();
-            logger.severeException("Failed to process broadcast", e);
+            logger.error("Failed to process broadcast", e);
         }
     }
 }

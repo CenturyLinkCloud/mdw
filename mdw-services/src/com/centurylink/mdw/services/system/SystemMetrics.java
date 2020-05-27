@@ -123,7 +123,7 @@ public class SystemMetrics {
                         // log any remaining in-memory datapoints
                         doOutput(systemMetrics.get(name), true);
                     } catch (IOException ex) {
-                        logger.severeException(ex.getMessage(), ex);
+                        logger.error(ex.getMessage(), ex);
                     }
                 }
             }
@@ -151,7 +151,7 @@ public class SystemMetrics {
             WebSocketMessenger.getInstance().send("/System/metrics/" + systemMetric.getName(),
                     dataList.getJson(300).toString()); // TODO param
         } catch (IOException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 

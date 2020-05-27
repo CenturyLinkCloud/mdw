@@ -301,7 +301,7 @@ public class ProcessCleanup implements ScheduledJob {
             if (null == logger)
                 System.out.println(printMsg);
             else
-                logger.severeException(printMsg, e);
+                logger.error(printMsg, e);
             e.printStackTrace();
         }
         finally {

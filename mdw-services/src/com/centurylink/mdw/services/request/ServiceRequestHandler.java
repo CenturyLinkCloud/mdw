@@ -122,7 +122,7 @@ public class ServiceRequestHandler implements RequestHandler {
             }
         }
         catch (ServiceException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             if (ex.getCode() > 0)
                 headers.put(Listener.METAINFO_HTTP_STATUS_CODE, String.valueOf(ex.getCode()));
             else
@@ -130,7 +130,7 @@ public class ServiceRequestHandler implements RequestHandler {
             return createResponse(ex.getCode(), ex.getMessage(), format);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             if (service instanceof RestService) {
                 headers.put(Listener.METAINFO_HTTP_STATUS_CODE, "500");
                 return createResponse(Status.INTERNAL_ERROR.getCode(), ex.getMessage(), format);

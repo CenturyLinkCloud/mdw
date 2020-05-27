@@ -241,7 +241,7 @@ public class GitVcs extends JsonRestService {
         catch (Throwable e) {
             // log importer and vercheck output
             logger.error(new String(baos.toByteArray()));
-            logger.severeException("Exception during asset import", e);
+            logger.error("Exception during asset import", e);
             SystemMessages.bulletinOff(bulletin, Level.Error, "Asset import failed: " + e.getMessage());
         }
     }

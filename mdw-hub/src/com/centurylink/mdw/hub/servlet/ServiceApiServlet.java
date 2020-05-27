@@ -92,11 +92,11 @@ public class ServiceApiServlet extends HttpServlet {
                 }
                 Path nullPath = swagger.getPaths() == null ? null : swagger.getPaths().get(null);
                 if (nullPath != null) {
-                    logger.severe("WARNING: Swagger spec null path: ");
+                    logger.error("WARNING: Swagger spec null path: ");
                     for (HttpMethod meth : nullPath.getOperationMap().keySet()) {
                         Operation op = nullPath.getOperationMap().get(meth);
                         String info = (op.getSummary() == null ? "" : op.getSummary()) + op.getDescription();
-                        logger.severe("  - " + meth + ": " + info);
+                        logger.error("  - " + meth + ": " + info);
                     }
                     swagger.getPaths().remove(null);
                 }
@@ -121,7 +121,7 @@ public class ServiceApiServlet extends HttpServlet {
             }
             catch (Exception ex) {
                 String msg = "Swagger generation failure for : " + pathInfo;
-                logger.severeException(msg, ex);
+                logger.error(msg, ex);
                 StatusResponse sr = new StatusResponse(Status.NOT_IMPLEMENTED, msg);
                 response.setStatus(sr.getStatus().getCode());
                 response.getWriter().println(sr.getJson().toString(2));

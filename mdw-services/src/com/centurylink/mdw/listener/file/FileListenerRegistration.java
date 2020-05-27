@@ -56,7 +56,7 @@ public class FileListenerRegistration implements StartupService {
         }
         catch (Exception ex) {
             ex.printStackTrace();
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new StartupException(ex.getMessage());
         }
     }
@@ -105,7 +105,7 @@ public class FileListenerRegistration implements StartupService {
             return !listenerProps.isEmpty();
         }
         catch (PropertyException ex){
-            LoggerUtil.getStandardLogger().severeException(ex.getMessage(), ex);
+            LoggerUtil.getStandardLogger().error(ex.getMessage(), ex);
             return false;
         }
     }

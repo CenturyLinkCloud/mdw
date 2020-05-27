@@ -101,14 +101,14 @@ public class JsxServlet extends HttpServlet {
             }
         }
         catch (ServiceException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             if (ex.getCode() > 0) {
                 response.setStatus(ex.getCode());
                 response.getWriter().println(ex.getMessage());
             }
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 

@@ -87,15 +87,15 @@ public class AttachmentServlet extends HttpServlet {
             }
         }
         catch (NumberFormatException ex) {
-            logger.severeException("Bad attachment request: " + path, ex);
+            logger.error("Bad attachment request: " + path, ex);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
         catch (ServiceException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             response.setStatus(ex.getCode());
         }
         catch (Exception ex) {
-            logger.severeException("Attachment request error: " + path, ex);
+            logger.error("Attachment request error: " + path, ex);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
@@ -118,15 +118,15 @@ public class AttachmentServlet extends HttpServlet {
             }
         }
         catch (NumberFormatException ex) {
-            logger.severeException("Bad attachment create request: " + path, ex);
+            logger.error("Bad attachment create request: " + path, ex);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
         catch (ServiceException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             response.setStatus(ex.getCode());
         }
         catch (Exception ex) {
-            logger.severeException("Attachment create request error: " + path, ex);
+            logger.error("Attachment create request error: " + path, ex);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
@@ -142,15 +142,15 @@ public class AttachmentServlet extends HttpServlet {
             attachmentFile.delete();
         }
         catch (NumberFormatException ex) {
-            logger.severeException("Bad attachment delete request: " + path, ex);
+            logger.error("Bad attachment delete request: " + path, ex);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
         catch (ServiceException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             response.setStatus(ex.getCode());
         }
         catch (Exception ex) {
-            logger.severeException("Attachment delete request error: " + path, ex);
+            logger.error("Attachment delete request error: " + path, ex);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }

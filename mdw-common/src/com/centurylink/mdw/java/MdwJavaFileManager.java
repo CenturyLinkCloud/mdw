@@ -62,7 +62,7 @@ public class MdwJavaFileManager <M extends JavaFileManager> extends ForwardingJa
             return jfo;
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             throw new IOException(ex.getMessage(), ex);
         }
     }

@@ -36,7 +36,7 @@ public class InternalEventDriver implements Runnable {
             ProcessEngineDriver driver = new ProcessEngineDriver();
             driver.processEvents(messageId, eventMessage);
         } catch (Throwable e) {    // only possible when failed to get ProcessManager ejb
-            logger.severeException(logtag + "process exception " + e.getMessage(), e);
+            logger.error(logtag + "process exception " + e.getMessage(), e);
         }
     }
 

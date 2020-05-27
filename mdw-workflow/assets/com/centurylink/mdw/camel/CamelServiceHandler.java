@@ -50,7 +50,7 @@ public class CamelServiceHandler extends CamelHandler implements ServiceHandler 
             return exchange.getOut().getBody(String.class);
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
 
             // build the response as a string for now as this is fastest
             if (request == null || request.isEmpty() || ListenerHelper.isJson(request)) {

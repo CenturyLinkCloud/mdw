@@ -99,7 +99,7 @@ public class ActiveMqJms implements JmsProvider {
                 return (ConnectionFactory)SpringAppContext.getInstance().getBean(name);
             }
             catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
                 throw new JMSException("JMS ConnectionFactory not found: " + name);
             }
         }

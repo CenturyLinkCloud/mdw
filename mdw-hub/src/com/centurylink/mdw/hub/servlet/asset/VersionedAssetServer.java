@@ -42,7 +42,7 @@ public class VersionedAssetServer {
             out.write(asset.getContent());
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 }

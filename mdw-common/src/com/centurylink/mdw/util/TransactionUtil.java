@@ -48,7 +48,7 @@ public class TransactionUtil {
         }
         catch (Exception ex) {
             StandardLogger logger = LoggerUtil.getStandardLogger();
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return null;
         }
     }
@@ -64,7 +64,7 @@ public class TransactionUtil {
             transMgr = (TransactionManager)txMgr;
         } catch (Exception ex) {
             StandardLogger logger = LoggerUtil.getStandardLogger();
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
         return transMgr;
     }

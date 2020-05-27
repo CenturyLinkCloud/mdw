@@ -94,7 +94,7 @@ public class ProcessInvoker extends JsonRestService {
                         }
                     }
                     catch (ClassNotFoundException ex) {
-                        logger.severeException("No class found for dataType: " + bodyParam.getDataType(), ex);
+                        logger.error("No class found for dataType: " + bodyParam.getDataType(), ex);
                     }
                     catch (ReflectiveOperationException ex) {
                         throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);

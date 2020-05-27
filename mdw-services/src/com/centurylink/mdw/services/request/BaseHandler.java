@@ -85,7 +85,7 @@ public abstract class BaseHandler implements RequestHandler {
             EventServices eventManager = ServiceLocator.getEventServices();
             status = eventManager.notifyProcess(eventName, requestId, message, delay);
         } catch (Exception e) {
-            logger.severeException(e.getMessage(), e);
+            logger.error(e.getMessage(), e);
             status = EventInstance.RESUME_STATUS_FAILURE;
         }
         return status;

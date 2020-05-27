@@ -39,7 +39,7 @@ public class Startup implements StartupService {
             }
         }
         catch (IOException ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             onShutdown();
         }
     }

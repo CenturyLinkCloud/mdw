@@ -91,7 +91,7 @@ public class ApplicationContext {
         try {
             return dataSourceProvider.getDataSource(DatabaseAccess.MDW_DATA_SOURCE);
         } catch (NamingException e) {
-            logger.severeException("Failed to get MDWDataSource", e);
+            logger.error("Failed to get MDWDataSource", e);
             return null;
         }
     }
@@ -319,7 +319,7 @@ public class ApplicationContext {
                     localServiceAccessUrl += "/" + getServicesContextRoot();
             }
             catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
         return localServiceAccessUrl;
@@ -332,7 +332,7 @@ public class ApplicationContext {
                 url = "http://" + getServer() + "/mdw";
             }
             catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
         if (url.endsWith("/"))
@@ -473,7 +473,7 @@ public class ApplicationContext {
             }
         }
         catch (Throwable ex) {
-            logger.warnException("Problem loading packages or no Packages were found when trying to set ContextClassLoader", ex);
+            logger.warn("Problem loading packages or no Packages were found when trying to set ContextClassLoader", ex);
         }
         return originalCL;
     }
@@ -595,7 +595,7 @@ public class ApplicationContext {
                 hostname = InetAddress.getLocalHost().getHostName();
             }
             catch (Exception ex) {
-                logger.severeException(ex.getMessage(), ex);
+                logger.error(ex.getMessage(), ex);
             }
         }
         return hostname;

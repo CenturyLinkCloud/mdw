@@ -39,7 +39,7 @@ public class InitialRequest {
             // no need to wait for response
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
         }
     }
 }
