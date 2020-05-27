@@ -16,7 +16,6 @@
 package com.centurylink.mdw.model.workflow;
 
 import com.centurylink.mdw.activity.types.GeneralActivity;
-import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.request.RequestHandler;
 import com.centurylink.mdw.java.CompiledJavaCache;
 import com.centurylink.mdw.java.MdwJavaException;
@@ -76,32 +75,30 @@ public class Package implements Comparable<Package> {
         catch (ClassNotFoundException ex) {
             // not located as dynamic java
         }
-        String implClass = Compatibility.getActivityImplementor(className);
-        GeneralActivity injected = SpringAppContext.getInstance().getActivityImplementor(implClass, this);
+        GeneralActivity injected = SpringAppContext.getInstance().getActivityImplementor(className, this);
         if (injected != null)
             return injected;
-        if (getClassLoader().hasClass(implClass))
-          return getClassLoader().loadClass(implClass).asSubclass(GeneralActivity.class).newInstance();
-        return Package.class.getClassLoader().loadClass(implClass).asSubclass(GeneralActivity.class).newInstance();
+        if (getClassLoader().hasClass(className))
+          return getClassLoader().loadClass(className).asSubclass(GeneralActivity.class).newInstance();
+        return Package.class.getClassLoader().loadClass(className).asSubclass(GeneralActivity.class).newInstance();
     }
 
-    public RequestHandler getRequestHandler(String classname)
+    public RequestHandler getRequestHandler(String className)
     throws ReflectiveOperationException, IOException, MdwJavaException {
         // try dynamic java first (preferred in case patch override is needed)
         try {
             ClassLoader parentLoader = getClassLoader();
-            return (RequestHandler) CompiledJavaCache.getInstance(classname, parentLoader, this);
+            return (RequestHandler) CompiledJavaCache.getInstance(className, parentLoader, this);
         }
         catch (ClassNotFoundException ex) {
             // not located as dynamic java
         }
-        String handlerClass = Compatibility.getEventHandler(classname);
-        RequestHandler injected = SpringAppContext.getInstance().getRequestHandler(handlerClass, this);
+        RequestHandler injected = SpringAppContext.getInstance().getRequestHandler(className, this);
         if (injected != null)
             return injected;
-        if (getClassLoader().hasClass(handlerClass))
-          return getClassLoader().loadClass(handlerClass).asSubclass(RequestHandler.class).newInstance();
-        return Package.class.getClassLoader().loadClass(handlerClass).asSubclass(RequestHandler.class).newInstance();
+        if (getClassLoader().hasClass(className))
+          return getClassLoader().loadClass(className).asSubclass(RequestHandler.class).newInstance();
+        return Package.class.getClassLoader().loadClass(className).asSubclass(RequestHandler.class).newInstance();
     }
 
     @Override

@@ -15,16 +15,14 @@
  */
 package com.centurylink.mdw.common.translator.impl;
 
-import java.lang.reflect.Constructor;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
-import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.TranslationException;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.xml.XmlBeanWrapper;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
+import java.lang.reflect.Constructor;
 
 public class XmlBeanWrapperTranslator extends DocumentReferenceTranslator implements XmlDocumentTranslator {
 
@@ -32,8 +30,6 @@ public class XmlBeanWrapperTranslator extends DocumentReferenceTranslator implem
         try {
             int xmlIdx = str.indexOf('<');
             String type = str.substring(0, xmlIdx).trim();
-            if (Compatibility.hasCodeSubstitutions())
-                type = Compatibility.getInstance().performCodeSubstitutions(type).getOutput();
             String xml = str.substring(xmlIdx);
             Class<?> wrapperClass = Class.forName(type);
             Constructor<?> constructor = wrapperClass.getConstructor(new Class[]{String.class});

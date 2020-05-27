@@ -16,8 +16,6 @@
 package com.centurylink.mdw.drools;
 
 import com.centurylink.mdw.annotations.RegisteredService;
-import com.centurylink.mdw.app.Compatibility;
-import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
@@ -190,8 +188,6 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
             else
                 rules = dtProvider.loadFromInputStream(new ByteArrayInputStream(decodeBytes), extension, key.modifier);
 
-            if (Compatibility.hasCodeSubstitutions())
-                rules = doCompatibilityCodeSubstitutions(asset.getLabel(), rules);
             if (logger.isDebugEnabled())
                 logger.debug("Converted rule for " + asset.getLabel() + ":\n" + rules + "\n================================");
 
@@ -200,8 +196,6 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
         else if (extension.equals("drl") || extension.equals("brl")) {
             // drools DRL or BRL
             rules = asset.getText();
-            if (Compatibility.hasCodeSubstitutions())
-                rules = doCompatibilityCodeSubstitutions(asset.getLabel(), rules);
         }
         else {
             throw new CachingException("Unsupported rules extension '" + extension + "' for " + asset.getLabel());
@@ -316,18 +310,5 @@ public class DroolsKnowledgeBaseCache implements PreloadableCache  {
                 key += "#" + loader;
             return key;
         }
-    }
-
-    protected static String doCompatibilityCodeSubstitutions(String label, String in) throws IOException {
-        SubstitutionResult substitutionResult = Compatibility.getInstance().performCodeSubstitutions(in);
-        if (!substitutionResult.isEmpty()) {
-            logger.warn("Compatibility substitutions applied for Drools asset " + label + " (details logged at debug level).");
-            if (logger.isDebugEnabled())
-                logger.debug("Compatibility substitutions for " + label + ":\n" + substitutionResult.getDetails());
-            if (logger.isMdwDebugEnabled())
-                logger.mdwDebug("Substitution output for " + label + ":\n" + substitutionResult.getOutput());
-            return substitutionResult.getOutput();
-        }
-        return in;
     }
 }

@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.model.event;
 
-import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.EventMessageDocument;
 import com.centurylink.mdw.bpm.EventMessageDocument.EventMessage;
 import com.centurylink.mdw.bpm.EventParametersDocument.EventParameters;
@@ -64,7 +63,7 @@ public class InternalEvent {
 
     public InternalEvent(String xmlMessage) throws XmlException {
         this();
-        EventMessageDocument messageEventDoc = EventMessageDocument.Factory.parse(xmlMessage, Compatibility.namespaceOptions());
+        EventMessageDocument messageEventDoc = EventMessageDocument.Factory.parse(xmlMessage);
         fromEventMessageDocument(messageEventDoc);
     }
 
@@ -74,12 +73,14 @@ public class InternalEvent {
         eventType = EventType.getEventTypeFromName(aMsg.getEventType().toString());
         workId = aMsg.getWorkId();
         transitionInstanceId = aMsg.getWorkTransitionInstanceId();
-        if (transitionInstanceId.longValue()==0L) transitionInstanceId = null;
+        if (transitionInstanceId == 0L)
+            transitionInstanceId = null;
         ownerId = aMsg.getWorkOwnerId();
         ownerType = aMsg.getWorkOwnerType();
         masterRequestId = aMsg.getMasterRequestId();
         workInstanceId = aMsg.getWorkInstanceId();
-        if (workInstanceId.longValue()==0L) workInstanceId = null;
+        if (workInstanceId == 0L)
+            workInstanceId = null;
         secondaryOwnerType = aMsg.getSecondaryWorkOwnerType();
         if (secondaryOwnerType!=null) secondaryOwnerId = aMsg.getSecondaryWorkOwnerId();
         completionCode = aMsg.getWorkCompletionCode();
@@ -97,13 +98,13 @@ public class InternalEvent {
 
     /**
      * Method that creates the event params based on the passed in Map
-     * @param pParams
+     * @param params
      * @return EventParameters
      */
-    private EventParameters createEventParameters(Map<String,String> pParams){
+    private EventParameters createEventParameters(Map<String,String> params){
         EventParameters evParams = EventParameters.Factory.newInstance();
-        for (String name : pParams.keySet()) {
-             String val = pParams.get(name);
+        for (String name : params.keySet()) {
+             String val = params.get(name);
              if(val == null){
                  continue;
              }

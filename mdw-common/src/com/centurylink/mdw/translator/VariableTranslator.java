@@ -15,22 +15,15 @@
  */
 package com.centurylink.mdw.translator;
 
-import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.cache.asset.VariableTypeCache;
-import com.centurylink.mdw.dataaccess.VariableTypes;
 import com.centurylink.mdw.model.variable.VariableType;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.spring.SpringAppContext;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.List;
-
 public abstract class VariableTranslator implements com.centurylink.mdw.variable.VariableTranslator {
 
     protected static String EMPTY_STRING = "<EMPTY>";
-    protected static String  ARRAY_DELIMETER = "~";
-
-    private static final List<VariableType> mdwVariableTypes = new VariableTypes().getVariableTypes();
 
     private Package pkg;
     public Package getPackage() { return pkg; }
@@ -59,19 +52,19 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
     * @param type type
     * @return Translator
     */
-    public static final com.centurylink.mdw.variable.VariableTranslator getTranslator(Package packageVO, String type) {
+    public static com.centurylink.mdw.variable.VariableTranslator getTranslator(Package pkg, String type) {
         com.centurylink.mdw.variable.VariableTranslator trans = null;
         try {
-            VariableType vo = VariableTypeCache.getVariableTypeVO(Compatibility.getVariableType(type));
-            if (vo == null)
+            VariableType variableType = VariableTypeCache.getVariableTypeVO(type);
+            if (variableType == null)
                 return null;
 
                 com.centurylink.mdw.variable.VariableTranslator injected
-                    = SpringAppContext.getInstance().getVariableTranslator(vo.getTranslatorClass(), packageVO);
+                    = SpringAppContext.getInstance().getVariableTranslator(variableType.getTranslatorClass(), pkg);
                 if (injected != null)
                     trans = injected;
                 if (trans == null) {
-                    Class<?> cl = Class.forName(vo.getTranslatorClass());
+                    Class<?> cl = Class.forName(variableType.getTranslatorClass());
                     trans = (VariableTranslator)cl.newInstance();
             }
         } catch (Throwable th) {
@@ -79,11 +72,11 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
             trans = null;
         }
         if (trans != null)
-            trans.setPackage(packageVO);
+            trans.setPackage(pkg);
         return trans;
     }
 
-    public static final com.centurylink.mdw.variable.VariableTranslator getTranslator(String type) {
+    public static com.centurylink.mdw.variable.VariableTranslator getTranslator(String type) {
         return getTranslator(null, type);
     }
 

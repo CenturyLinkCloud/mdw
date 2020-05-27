@@ -19,7 +19,6 @@ import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.InvokeProcessActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.ParameterDocument.Parameter;
 import com.centurylink.mdw.bpm.ProcessExecutionPlanDocument;
 import com.centurylink.mdw.bpm.SubprocessInstanceDocument.SubprocessInstance;
@@ -111,7 +110,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             Variable docVar = getProcessDefinition().getVariable(plan_varname);
             XmlDocumentTranslator docRefTrans = (XmlDocumentTranslator)VariableTranslator.getTranslator(getPackage(), docVar.getType());
             Document doc = docRefTrans.toDomDocument(binding);
-            return ProcessExecutionPlanDocument.Factory.parse(doc, Compatibility.namespaceOptions());
+            return ProcessExecutionPlanDocument.Factory.parse(doc);
         }
     }
 

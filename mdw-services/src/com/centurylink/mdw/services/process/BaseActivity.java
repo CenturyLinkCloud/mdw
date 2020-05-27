@@ -19,10 +19,7 @@ import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.activity.types.SuspendableActivity;
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.app.Compatibility;
-import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
 import com.centurylink.mdw.cache.asset.PackageCache;
-import com.centurylink.mdw.pkg.PackageClassLoader;
 import com.centurylink.mdw.config.PropertyException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.OwnerType;
@@ -42,6 +39,7 @@ import com.centurylink.mdw.model.workflow.WorkStatus.InternalLogMessage;
 import com.centurylink.mdw.monitor.ActivityMonitor;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.monitor.OfflineMonitor;
+import com.centurylink.mdw.pkg.PackageClassLoader;
 import com.centurylink.mdw.script.*;
 import com.centurylink.mdw.service.data.activity.ImplementorCache;
 import com.centurylink.mdw.service.data.process.EngineDataAccess;
@@ -1180,9 +1178,6 @@ public abstract class BaseActivity implements GeneralActivity {
         outputDocuments = attributes.containsKey(OUTPUTDOCS) ? attributes.getList(OUTPUTDOCS).toArray(new String[0]) : new String[0];
         Object retObj;
         try {
-            if (Compatibility.hasCodeSubstitutions())
-                script = doCompatibilityCodeSubstitutions(script);
-
             Process process = getMainProcessDefinition();
             List<Variable> vars = process.getVariables();
             Map<String,Object> bindings = new HashMap<>();
@@ -1375,20 +1370,6 @@ public abstract class BaseActivity implements GeneralActivity {
         } catch (DataAccessException e) {
             throw new ActivityException(0, e.getMessage(), e);
         }
-    }
-
-    protected String doCompatibilityCodeSubstitutions(String in) throws IOException {
-        SubstitutionResult substitutionResult = Compatibility.getInstance().performCodeSubstitutions(in);
-        if (!substitutionResult.isEmpty()) {
-            logwarn("Compatibility substitutions applied for code in activity " + getActivityName()
-                    + " (details logged at debug level). Please update the code for this activity as otherwise these substitutions are applied on every execution.");
-            if (isLogDebugEnabled())
-                logdebug("Compatibility substitutions for " + getActivityName() + ":\n" + substitutionResult.getDetails());
-            if (logger.isMdwDebugEnabled())
-                logger.mdwDebug("Substitution output for " + getActivityName() + ":\n" + substitutionResult.getOutput());
-            return substitutionResult.getOutput();
-        }
-        return in;
     }
 
     protected boolean isDisabled() throws ActivityException {

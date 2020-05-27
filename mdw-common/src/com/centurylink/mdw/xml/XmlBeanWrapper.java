@@ -37,8 +37,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 
-import com.centurylink.mdw.app.Compatibility;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -90,8 +88,8 @@ public abstract class XmlBeanWrapper implements Serializable {
     }
 
     @ApiModelProperty(hidden=true)
-    public XmlOptions getXmlLoadOptions()  throws XmlException {
-        return Compatibility.namespaceOptions();
+    public XmlOptions getXmlLoadOptions() throws XmlException {
+        return new XmlOptions();
     }
 
     @ApiModelProperty(hidden=true)
@@ -113,7 +111,7 @@ public abstract class XmlBeanWrapper implements Serializable {
     }
 
     public void fromXml(String xml) throws XmlException {
-        _xmlBean = XmlObject.Factory.parse(xml, getXmlLoadOptions());
+        _xmlBean = XmlObject.Factory.parse(xml, new XmlOptions());
     }
 
     /**

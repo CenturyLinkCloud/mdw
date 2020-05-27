@@ -17,7 +17,6 @@ package com.centurylink.mdw.services.task;
 
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.StrategyException;
@@ -495,7 +494,7 @@ public class TaskWorkflowHelper {
                 if (strategy instanceof ParameterizedStrategy) {
                     populateStrategyParams((ParameterizedStrategy)strategy, getTemplate(), taskInstance.getOwnerId(), null);
                 }
-                XmlOptions xmlOpts = Compatibility.namespaceOptions().setDocumentType(SubTaskPlanDocument.type);
+                XmlOptions xmlOpts = new XmlOptions().setDocumentType(SubTaskPlanDocument.type);
                 SubTaskPlanDocument subTaskPlanDoc = SubTaskPlanDocument.Factory.parse(strategy.getSubTaskPlan(runtimeContext), xmlOpts);
                 SubTaskPlan plan = subTaskPlanDoc.getSubTaskPlan();
                 return plan.getSubTaskList();

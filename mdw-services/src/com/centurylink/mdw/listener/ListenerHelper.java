@@ -18,7 +18,6 @@ package com.centurylink.mdw.listener;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.StartActivity;
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.service.AuthorizationException;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -62,6 +61,7 @@ import com.centurylink.mdw.xml.XmlPath;
 import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -674,7 +674,7 @@ public class ListenerHelper {
     private XmlObject parseXmlBean(String request) {
         CodeTimer timer = new CodeTimer("ListenerHelper.parseXmlBean()", true);
         try {
-            XmlObject xmlBean = XmlObject.Factory.parse(request, Compatibility.namespaceOptions());
+            XmlObject xmlBean = XmlObject.Factory.parse(request, new XmlOptions());
             timer.stopAndLogTiming("");
             return xmlBean;
         }

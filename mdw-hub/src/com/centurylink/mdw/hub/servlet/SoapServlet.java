@@ -47,7 +47,6 @@ import org.apache.xmlbeans.XmlException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument;
 import com.centurylink.mdw.bpm.MDWStatusMessageDocument.MDWStatusMessage;
 import com.centurylink.mdw.cache.asset.AssetCache;
@@ -221,8 +220,7 @@ public class SoapServlet extends ServiceServlet {
 
                try {
                    // standard response indicates a potential problem
-                   MDWStatusMessageDocument responseDoc = MDWStatusMessageDocument.Factory
-                           .parse(handlerResponse, Compatibility.namespaceOptions());
+                   MDWStatusMessageDocument responseDoc = MDWStatusMessageDocument.Factory.parse(handlerResponse);
                    MDWStatusMessage responseMsg = responseDoc.getMDWStatusMessage();
                    if ("SUCCESS".equals(responseMsg.getStatusMessage()))
                        responseString = createSoapResponse(soapVersion, handlerResponse);
@@ -397,15 +395,6 @@ public class SoapServlet extends ServiceServlet {
      * Allow version specific factory passed in to support SOAP 1.1 and 1.2
      * <b>Important</b> Faults are treated differently for 1.1 and 1.2 For 1.2
      * you can't use the elementName otherwise it throws an exception
-     *
-     * @see http://docs.oracle.com/cd/E19159-01/819-3669/bnbip/index.html
-     *
-     * @param factory
-     * @param code
-     * @param message
-     * @return Xml fault string
-     * @throws SOAPException
-     * @throws TransformerException
      */
     protected String createSoapFaultResponse(String soapVersion, String code, String message)
             throws SOAPException, TransformerException {

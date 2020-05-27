@@ -17,7 +17,6 @@ package com.centurylink.mdw.services.cache;
 
 import com.centurylink.mdw.annotations.Parameter;
 import com.centurylink.mdw.annotations.RegisteredService;
-import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.ApplicationCacheDocument;
 import com.centurylink.mdw.bpm.ApplicationCacheDocument.ApplicationCache;
 import com.centurylink.mdw.bpm.CacheDocument.Cache;
@@ -41,6 +40,7 @@ import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlOptions;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -240,7 +240,7 @@ public class CacheRegistration implements StartupService {
         Map<String,Properties> retProps = new LinkedHashMap<String,Properties>();
         List<String> tempList;
         try (InputStream stream = FileHelper.openConfigurationFile(APPLICATION_CACHE_FILE_NAME)) {
-            appCacheDoc = ApplicationCacheDocument.Factory.parse(stream, Compatibility.namespaceOptions());
+            appCacheDoc = ApplicationCacheDocument.Factory.parse(stream, new XmlOptions());
             ApplicationCache appCache = appCacheDoc.getApplicationCache();
             for (Cache cache : appCache.getCacheList()) {
                 Properties cacheProps = new Properties();

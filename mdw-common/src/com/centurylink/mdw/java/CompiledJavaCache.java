@@ -19,8 +19,6 @@ import com.centurylink.mdw.annotations.Monitor;
 import com.centurylink.mdw.annotations.RegisteredService;
 import com.centurylink.mdw.annotations.ScheduledJob;
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.app.Compatibility;
-import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.cache.asset.AssetCache;
@@ -188,8 +186,6 @@ public class CompiledJavaCache implements PreloadableCache {
         Class<?> clazz = cache ? compiledCache.get(className) : null;
        if (clazz == null) {
             try {
-                if (Compatibility.hasCodeSubstitutions())
-                    javaCode = doCompatibilityCodeSubstitutions(className, javaCode);
                 compileJavaCode(parentLoader, currentPackage, className, javaCode);
                 clazz = DynamicJavaClassLoader.getInstance(parentLoader, currentPackage, cache).loadClass(className);
             }
@@ -213,10 +209,6 @@ public class CompiledJavaCache implements PreloadableCache {
     public static List<Class<?>> compileClasses(ClassLoader parentLoader, Package currentPackage, Map<String,String> javaSources, boolean cache)
     throws ClassNotFoundException, IOException, MdwJavaException {
         try {
-            for (String className : javaSources.keySet()) {
-                if (Compatibility.hasCodeSubstitutions())
-                    javaSources.put(className, doCompatibilityCodeSubstitutions(className, javaSources.get(className)));
-            }
             return compileJava(parentLoader, currentPackage, javaSources, cache);
         }
         catch (ClassNotFoundException | MdwJavaException | IOException ex) {
@@ -488,7 +480,6 @@ public class CompiledJavaCache implements PreloadableCache {
 
             String javaCode = javaSource.getText();
             if (javaCode != null) {
-                javaCode = doCompatibilityCodeSubstitutions(packageName + "." + className, javaCode);
                 try (FileWriter writer = new FileWriter(file)) {
                     writer.write(javaCode);
                 }
@@ -599,8 +590,6 @@ public class CompiledJavaCache implements PreloadableCache {
                             Asset javaAsset = AssetCache.getJavaAsset(name);
                             if (javaAsset != null) {
                                 String javaCode = javaAsset.getText();
-                                if (Compatibility.hasCodeSubstitutions())
-                                    javaCode = doCompatibilityCodeSubstitutions(name, javaCode);
                                 compileJavaCode(getParent(), pkg, name, javaCode);
                                 jfo = MdwJavaFileManager.getJavaFileObject(name);
                             }
@@ -686,19 +675,6 @@ public class CompiledJavaCache implements PreloadableCache {
             }
             return lock;
         }
-    }
-
-    protected static String doCompatibilityCodeSubstitutions(String label, String in) throws IOException {
-        SubstitutionResult substitutionResult = Compatibility.getInstance().performCodeSubstitutions(in);
-        if (!substitutionResult.isEmpty()) {
-            logger.warn("Compatibility substitutions applied for Java asset " + label + " (details logged at debug level).");
-            if (logger.isDebugEnabled())
-                logger.debug("Compatibility substitutions for " + label + ":\n" + substitutionResult.getDetails());
-            if (logger.isMdwDebugEnabled())
-                logger.mdwDebug("Substitution output for " + label + ":\n" + substitutionResult.getOutput());
-            return substitutionResult.getOutput();
-        }
-        return in;
     }
 
     /**

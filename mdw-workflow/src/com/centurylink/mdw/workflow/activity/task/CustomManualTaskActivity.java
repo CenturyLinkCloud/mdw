@@ -19,7 +19,6 @@ import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.SuspendableActivity;
 import com.centurylink.mdw.activity.types.TaskActivity;
 import com.centurylink.mdw.annotations.Activity;
-import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.model.event.EventType;
 import com.centurylink.mdw.model.event.EventWaitInstance;
 import com.centurylink.mdw.model.task.TaskAction;
@@ -86,11 +85,10 @@ public class CustomManualTaskActivity extends ManualTaskActivity implements Susp
     protected void processTaskAction(String messageString) throws ActivityException {
         ActionRequestDocument message;
         try {
-            message = ActionRequestDocument.Factory.parse(messageString,
-                    Compatibility.namespaceOptions());
+            message = ActionRequestDocument.Factory.parse(messageString);
         }
         catch (XmlException e) {
-            throw new ActivityException(-1, e.getMessage(), e);
+            throw new ActivityException(e.getMessage(), e);
         }
         String compCode = null;
         String taskAction = TaskAction.COMPLETE;

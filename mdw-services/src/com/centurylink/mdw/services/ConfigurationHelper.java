@@ -15,10 +15,10 @@
  */
 package com.centurylink.mdw.services;
 
-import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.bpm.ApplicationCacheDocument;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.util.log.LoggerUtil;
+import org.apache.xmlbeans.XmlOptions;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -33,7 +33,7 @@ public class ConfigurationHelper implements Serializable {
 
     public static boolean applyConfigChange(String fileName, String contents, boolean react) throws Exception {
         if (APPLICATION_CACHE.equals(fileName)) {
-            ApplicationCacheDocument.Factory.parse(contents, Compatibility.namespaceOptions());
+            ApplicationCacheDocument.Factory.parse(contents, new XmlOptions());
         }
 
         String filepath = System.getProperty("mdw.config.location") + "/" + fileName;

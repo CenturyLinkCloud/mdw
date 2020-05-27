@@ -15,7 +15,6 @@
  */
 package com.centurylink.mdw.services.request;
 
-import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.service.MdwServiceRegistry;
 import com.centurylink.mdw.common.service.ServiceException;
@@ -152,7 +151,6 @@ public class FallbackRequestHandler implements RequestHandler {
                     }
                 }
                 else {
-                    className = Compatibility.getEventHandler(className);
                     aTimerTask = Class.forName(className).newInstance();
                     if (aTimerTask instanceof ScheduledJob) {
                         if (aTimerTask instanceof LoadBalancedScheduledJob) {

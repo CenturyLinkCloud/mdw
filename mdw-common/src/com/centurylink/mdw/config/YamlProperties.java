@@ -196,7 +196,7 @@ public class YamlProperties {
      * compatibility mapping file configurations.map.
      */
     public static YamlBuilder translate(String prefix, Properties properties, Properties map)
-    throws IOException, ReflectiveOperationException {
+    throws ReflectiveOperationException {
 
         // map translators to ruleProps
         Map<YamlPropertyTranslator,Map<String,Object>> translators = new LinkedHashMap<>();

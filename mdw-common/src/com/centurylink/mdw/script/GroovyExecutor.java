@@ -16,8 +16,6 @@
 package com.centurylink.mdw.script;
 
 import com.centurylink.mdw.app.ApplicationContext;
-import com.centurylink.mdw.app.Compatibility;
-import com.centurylink.mdw.app.Compatibility.SubstitutionResult;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.cache.asset.PackageCache;
@@ -231,8 +229,6 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
 
             String content = groovy.getText();
             if (content != null) {
-                if (Compatibility.hasCodeSubstitutions())
-                    content = doCompatibilityCodeSubstitutions(groovy.getLabel(), content);
                 try (FileWriter writer = new FileWriter(file)) {
                     writer.write(content);
                 }
@@ -262,8 +258,6 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
 
             String content = java.getText();
             if (content != null) {
-                if (Compatibility.hasCodeSubstitutions())
-                    content = doCompatibilityCodeSubstitutions(java.getLabel(), content);
                 try (FileWriter writer = new FileWriter(file)) {
                     writer.write(content);
                 }
@@ -299,18 +293,4 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
             return null;
         }
     }
-
-    protected static String doCompatibilityCodeSubstitutions(String label, String in) throws IOException {
-        SubstitutionResult substitutionResult = Compatibility.getInstance().performCodeSubstitutions(in);
-        if (!substitutionResult.isEmpty()) {
-            logger.warn("Compatibility substitutions applied for Groovy asset " + label + " (details logged at debug level).");
-            if (logger.isDebugEnabled())
-                logger.debug("Compatibility substitutions for " + label + ":\n" + substitutionResult.getDetails());
-            if (logger.isMdwDebugEnabled())
-                logger.mdwDebug("Substitution output for " + label + ":\n" + substitutionResult.getOutput());
-            return substitutionResult.getOutput();
-        }
-        return in;
-    }
-
 }
