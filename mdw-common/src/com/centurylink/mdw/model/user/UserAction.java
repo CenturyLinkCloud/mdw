@@ -97,7 +97,7 @@ public class UserAction implements Serializable, Comparable<UserAction>, Jsonabl
         Attachment,
         Message,
         Solution,
-        BaseData,
+        TaskRefData,
         Value,
         ValueHolder,
         Request,

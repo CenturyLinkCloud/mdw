@@ -12,6 +12,7 @@ title: MDW Knowledge Transfer Sessions
   - [Dashboard](#dashboard)
   - [Autotests](#autotests)
   - [Milestones](#milestones)
+  - [Manual Tasks](#manual-tasks)
   - [CLI](#cli)
   - [MDW Studio](#mdw-studio)
   - [Build and Environments](#build-and-env)

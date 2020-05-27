@@ -19,7 +19,6 @@ import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
@@ -108,7 +107,7 @@ public class TaskTemplateCache implements PreloadableCache {
     public static List<TaskTemplate> getTaskTemplatesForCategory(int categoryId) throws DataAccessException {
 
         TaskCategory taskCategory = null;
-        for (TaskCategory category : new MdwBaselineData().getTaskCategories().values()) {
+        for (TaskCategory category : TaskDataAccess.getTaskRefData().getCategories().values()) {
             if (category.getId().longValue() == categoryId) {
                 taskCategory = category;
                 break;

@@ -64,8 +64,8 @@
 
   <!-- Baseline Data -->
   <bean
-      id="mdwBaselineData"
-      class="com.centurylink.mdw.dataaccess.file.MdwBaselineData" />
+      id="mdwTaskRefData"
+      class="com.centurylink.mdw.dataaccess.task.MdwTaskRefData" />
 
   <!-- jaxb marshaller/unmarshaller pooling -->
   <bean

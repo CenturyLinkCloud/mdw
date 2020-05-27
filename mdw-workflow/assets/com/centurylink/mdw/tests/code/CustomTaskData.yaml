@@ -1,0 +1,14 @@
+process: # 1793
+  name: CustomTaskData
+  instance: 1
+  activity: # 1 "2020-05-27 12:20:05.508"
+    name: Start
+    status: Completed
+  activity: # 4 "2020-05-27 12:20:05.531"
+    name: |
+      Custom
+      Category Task
+    status: Completed
+  activity: # 2 "2020-05-27 12:20:25.564"
+    name: Stop
+    status: Completed

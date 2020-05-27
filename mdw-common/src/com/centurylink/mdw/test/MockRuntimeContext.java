@@ -18,8 +18,7 @@ package com.centurylink.mdw.test;
 import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.dataaccess.BaselineData;
-import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
+import com.centurylink.mdw.dataaccess.VariableTypes;
 import com.centurylink.mdw.model.Attributes;
 import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.variable.Variable;
@@ -37,13 +36,6 @@ import java.util.*;
 public class MockRuntimeContext extends ActivityRuntimeContext {
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd-HHmmssSSS");
-
-    private BaselineData baselineData;
-    private BaselineData getBaselineData() {
-        if (baselineData == null)
-            baselineData = new MdwBaselineData();
-        return baselineData;
-    }
 
     protected String masterRequestId;
     @Override
@@ -72,11 +64,11 @@ public class MockRuntimeContext extends ActivityRuntimeContext {
             process.setName("TestProcess");
             process.setVersion(0);
             process.setId(0L);
-            List<Variable> processVars = new ArrayList<Variable>();
+            List<Variable> processVars = new ArrayList<>();
             Map<String,Object> vars = getVariables();
             if (vars != null) {
                 for (String varName : vars.keySet()) {
-                    processVars.add(new Variable(varName, getBaselineData().getVariableType(vars.get(varName))));
+                    processVars.add(new Variable(varName, new VariableTypes().getVariableType(vars.get(varName))));
                 }
             }
             process.setVariables(processVars);
@@ -149,13 +141,8 @@ public class MockRuntimeContext extends ActivityRuntimeContext {
     }
 
     public MockRuntimeContext(String activityName) {
-        this(activityName, null);
-    }
-
-    public MockRuntimeContext(String activityName, BaselineData baselineData) {
         super(null, null, null, null, 0, false, null, GeneralActivity.class.getName(), null, false);
         this.activityName = activityName;
-        this.baselineData = baselineData;
         PropertyManager.initializeMockPropertyManager();
     }
 

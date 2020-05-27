@@ -19,9 +19,9 @@ import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.cache.asset.PackageCache;
-import com.centurylink.mdw.dataaccess.BaselineData;
-import com.centurylink.mdw.dataaccess.file.CombinedBaselineData;
-import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
+import com.centurylink.mdw.dataaccess.task.CombinedTaskRefData;
+import com.centurylink.mdw.dataaccess.task.MdwTaskRefData;
+import com.centurylink.mdw.dataaccess.task.TaskRefData;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.request.RequestHandler;
@@ -250,51 +250,49 @@ public class SpringAppContext implements CacheService {
         }
     }
 
-
-
     /**
-     * Prefers any non-MDW BaselineData implementation.
+     * Prefers any non-MDW TaskRefData implementation.
      */
-    public BaselineData getBaselineData() {
+    public TaskRefData getTaskRefData() {
         try {
-            List<BaselineData> baselineDatas = new ArrayList<BaselineData>();
-            Map<String,? extends BaselineData> beans = getApplicationContext().getBeansOfType(BaselineData.class);
+            List<TaskRefData> taskRefDatas = new ArrayList<TaskRefData>();
+            Map<String,? extends TaskRefData> beans = getApplicationContext().getBeansOfType(TaskRefData.class);
             if (beans != null)
-                baselineDatas.addAll(beans.values());
+                taskRefDatas.addAll(beans.values());
 
             synchronized (pkgContextLock) {
                 if (packageContexts == null)
                     packageContexts = loadPackageContexts(getApplicationContext());
 
                 for (ApplicationContext pkgContext : packageContexts.values()) {
-                    beans = pkgContext.getBeansOfType(BaselineData.class);
+                    beans = pkgContext.getBeansOfType(TaskRefData.class);
                     if (beans != null)
-                        baselineDatas.addAll(beans.values());
+                        taskRefDatas.addAll(beans.values());
                 }
             }
 
-            BaselineData mdwBaselineData = null;
-            BaselineData injectedBaselineData = null;
-            for (BaselineData baselineData : baselineDatas) {
-                String className = baselineData.getClass().getName();
-                logger.mdwDebug("Found BaselineData: " + className);
-                if (className.equals(MdwBaselineData.class.getName()))
-                    mdwBaselineData = baselineData;
+            TaskRefData mdwTaskRefData = null;
+            TaskRefData injectedTaskRefData = null;
+            for (TaskRefData taskRefData : taskRefDatas) {
+                String className = taskRefData.getClass().getName();
+                logger.mdwDebug("Found TaskRefData: " + className);
+                if (className.equals(MdwTaskRefData.class.getName()))
+                    mdwTaskRefData = taskRefData;
                 else
-                    injectedBaselineData = baselineData;
+                    injectedTaskRefData = taskRefData;
             }
-            if (baselineDatas.size() > 2) {
-                List<BaselineData> injectedBaselineDatas = new ArrayList<>();
-                for (BaselineData bd : baselineDatas) {
-                    if (bd != mdwBaselineData)
-                        injectedBaselineDatas.add(bd);
+            if (taskRefDatas.size() > 2) {
+                List<TaskRefData> injectedTaskRefDatas = new ArrayList<>();
+                for (TaskRefData bd : taskRefDatas) {
+                    if (bd != mdwTaskRefData)
+                        injectedTaskRefDatas.add(bd);
                 }
-                injectedBaselineData = new CombinedBaselineData(injectedBaselineDatas);
+                injectedTaskRefData = new CombinedTaskRefData(injectedTaskRefDatas);
             }
-            return injectedBaselineData == null ? mdwBaselineData : injectedBaselineData;
+            return injectedTaskRefData == null ? mdwTaskRefData : injectedTaskRefData;
         }
         catch (Exception ex) {
-            logger.severeException(ex.getMessage(), ex);
+            logger.error(ex.getMessage(), ex);
             return null;
         }
     }

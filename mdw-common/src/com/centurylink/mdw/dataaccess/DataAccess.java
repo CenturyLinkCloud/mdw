@@ -18,11 +18,8 @@ package com.centurylink.mdw.dataaccess;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
-import com.centurylink.mdw.dataaccess.file.WrappedBaselineData;
 import com.centurylink.mdw.git.GitDiffs;
 import com.centurylink.mdw.git.VersionControlGit;
-import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.util.DesignatedHostSslVerifier;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -166,18 +163,5 @@ public class DataAccess {
             }
         }
         return assetVersionControl;
-    }
-
-    public static BaselineData getBaselineData() throws IOException {
-        try {
-            return new WrappedBaselineData(new MdwBaselineData()) {
-                protected BaselineData getOverrideBaselineData() {
-                    return SpringAppContext.getInstance().getBaselineData();
-                }
-            };
-        }
-        catch (Exception ex) {
-            throw new IOException(ex.getMessage(), ex);
-        }
     }
 }

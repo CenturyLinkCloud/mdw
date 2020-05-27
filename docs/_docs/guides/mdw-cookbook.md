@@ -562,7 +562,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
     [Categories.java on GitHub](https://github.com/CenturyLinkCloud/mdw-demo/blob/master/assets/com/centurylink/mdw/demo/bugs/Categories.java).
     The important thing to note about this code is this:
     ```java
-    public class Categories extends MdwBaselineData {
+    public class Categories extends MdwTaskRefData {
         private List<TaskCategory> bugCategories;
   
         public Categories() {
@@ -571,7 +571,7 @@ is available to clone in its completed state from the [mdw-demo repository](http
         }
     ....    
     ```     
-    We extend [MdwBaselineData](../../javadoc/com/centurylink/mdw/dataaccess/file/MdwBaselineData.html), which provides the entry-point 
+    We extend [MdwTaskRefData](../../javadoc/com/centurylink/mdw/dataaccess/task/MdwTaskRefData.html), which provides the entry-point 
     for us to designate our own values for certain reference data in MDW.  In the Categories constructor, we're building our own list
     of TaskCategories to include along with the MDW built-in ones.
 

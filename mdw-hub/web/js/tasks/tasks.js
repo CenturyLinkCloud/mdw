@@ -20,13 +20,13 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
       taskFilter = {};
     return taskFilter;
   };
-  
+
   $scope.setFilter = function(taskFilter) {
     if (taskFilter) {
       sessionStorage.setItem('taskFilter', JSON.stringify(taskFilter));
     }
   };
-  
+
   $scope.defaultFilter = {
     workgroups: '[My Workgroups]',
     status: '[Active]',
@@ -94,7 +94,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
     window.location = mdw.roots.hub + '#/tasks';
     return;
   }
-  
+
   $scope.model = {};
   $scope.model.taskList = {};
   var tasksFilter = sessionStorage.getItem('taskFilter');
@@ -109,7 +109,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
     if ($scope.model.taskFilter.masterRequestId)
       $scope.model.taskFilter.masterRequestId = null;
   }
-  
+
   $scope.taskAdvisories = ['[Not Invalid]'].concat(TASK_ADVISORIES);
 
   // preselected taskSpec
@@ -119,20 +119,20 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   else {
     sessionStorage.removeItem('taskSpec');
   }
-  
+
   // retrieve TaskCategories
-  $http.get(mdw.roots.services + '/services/BaseData/TaskCategories' + '?app=mdw-admin')
+  $http.get(mdw.roots.services + '/services/TaskRefData/Categories' + '?app=mdw-admin')
     .then(function(response) {
       $scope.taskCategories = response.data;
     });
-  
+
   $scope.getIndexFilters = function() {
     if ($scope.model.taskFilter.indexes) {
       // translate param string to object
       return util.toValuesObject($scope.model.taskFilter.indexes);
     }
   };
-  
+
   $scope.setIndexFilter = function(key, value) {
     if (key) {
       if (value || value === '') {
@@ -148,7 +148,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
       }
     }
   };
-  
+
   $scope.removeIndexFilter = function(key) {
     if ($scope.model.taskFilter.indexes) {
       var indexesObject = util.toValuesObject($scope.model.taskFilter.indexes);
@@ -156,8 +156,8 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
       $scope.model.taskFilter.indexes = util.toParamString(indexesObject);
     }
   };
-  
-  
+
+
   $scope.$on('page-retrieved', function(event, taskList) {
     $mdwUi.clearMessage();
 
@@ -172,17 +172,17 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
       sessionStorage.removeItem('taskSpec');
     }
     sessionStorage.setItem('taskFilter', JSON.stringify($scope.model.taskFilter));
-    
+
     // retrieve TaskActions
     $http.get(mdw.roots.hub + '/services/Tasks/bulkActions?app=mdw-admin&myTasks=' + ($scope.model.taskFilter.assignee == '[My Tasks]'))
       .then(function(response) {
         $scope.taskActions = response.data;
       });
   });
-  
+
   // must match actions wrap width in tasks.html
   // TODO: cleaner approach with calculation
-  $scope.wrapWidth = '1425px'; 
+  $scope.wrapWidth = '1425px';
   $scope.getAssigneePopPlace = function() {
     var minWidth = $scope.wrapWidth;
     if (minWidth && !$window.matchMedia('(min-width: ' + minWidth + ')').matches)
@@ -190,7 +190,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
     else
       return 'left';
   };
-  
+
   $scope.performAssign = function(assignee) {
     $scope.performAction('Assign', assignee.cuid);
   };
@@ -226,15 +226,15 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
         instanceIds.push(task.id);
       });
       var taskAction = {
-          taskAction: action, 
-          user: $scope.authUser.id, 
+          taskAction: action,
+          user: $scope.authUser.id,
           taskInstanceIds: instanceIds,
           assignee: assignee
       };
       if (comment) {
         taskAction.comment = comment;
       }
-      
+
       TaskAction.action({action: action}, taskAction, function(data) {
         if (data.status.code >= 300) {
           $scope.model.taskList.reload(function(taskList) {
@@ -254,7 +254,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
       mdw.messages = 'Please select task(s) to perform action on.';
     }
   };
-  
+
   $scope.updateOnActionError = function(message, prevSelInstIds, taskList) {
     mdw.messages = message;
     // find problem instance id if available
@@ -300,12 +300,12 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
   };
   $scope.typeaheadUserSelect = function() {
     $scope.model.taskFilter.assignee = $scope.model.typeaheadUser.cuid;
-  }; 
+  };
   $scope.setAssigneeFilter = function(assignee) {
     $scope.model.typeaheadUser = {name: assignee};
     $scope.model.taskFilter.assignee = assignee;
-  };  
-  
+  };
+
   // instanceId, masterRequestId, taskName, packageName
   $scope.findTypeaheadMatches = function(typed) {
     return $http.get(mdw.roots.services + '/services/Tasks' + '?app=mdw-admin&find=' + typed).then(function(response) {
@@ -345,7 +345,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
     $scope.clearTypeaheadFilters();
     sessionStorage.removeItem('taskSpec');
   };
-  
+
   $scope.typeaheadSelect = function() {
     $scope.clearTypeaheadFilters();
     $scope.model.taskFilter.status = null;
@@ -357,7 +357,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
     else
       $scope.model.taskFilter[$scope.model.typeaheadMatchSelection.type] = $scope.model.typeaheadMatchSelection.value;
   };
-  
+
   // creating a new task
   $scope.create = false;
   $scope.setCreate = function(create) {
@@ -365,7 +365,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
     if (!create)
       $scope.model.newTaskTemplate = null;
   };
-  
+
   $scope.model.newTaskTemplate = null;
 
   $scope.findTaskTemplate = function(typed) {
@@ -383,7 +383,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
       }
     });
   };
-  
+
   $scope.save = function() {
     console.log('creating task: ' + $scope.model.newTaskTemplate.logicalId);
     var createAction = {
@@ -401,7 +401,7 @@ tasksMod.controller('TasksController', ['$scope', '$window', '$http', '$location
           console.log('  new task instanceId: ' + instanceId);
           $location.path('/tasks/' + instanceId);
         }
-      }, 
+      },
       function(error) {
         $scope.task.message = error.data.status.message;
       });

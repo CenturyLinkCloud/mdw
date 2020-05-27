@@ -19,7 +19,7 @@ import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
+import com.centurylink.mdw.dataaccess.VariableTypes;
 import com.centurylink.mdw.model.variable.VariableType;
 
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class VariableTypeCache implements PreloadableCache {
 
     public void loadCache() throws CachingException {
         try {
-            List<VariableType> types = new MdwBaselineData().getVariableTypes();
+            List<VariableType> types = new VariableTypes().getVariableTypes();
             loadCache(types);
         } catch(Exception ex){
             throw new CachingException(ex.getMessage(), ex);

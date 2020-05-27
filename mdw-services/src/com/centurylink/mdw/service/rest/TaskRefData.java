@@ -15,31 +15,27 @@
  */
 package com.centurylink.mdw.service.rest;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.Path;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.dataaccess.BaselineData;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.model.JsonArray;
 import com.centurylink.mdw.model.task.TaskCategory;
 import com.centurylink.mdw.model.user.Role;
 import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.user.Workgroup;
-import com.centurylink.mdw.model.variable.VariableType;
+import com.centurylink.mdw.service.data.task.TaskDataAccess;
 import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.rest.JsonRestService;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-@Path("/BaseData")
-public class BaseData extends JsonRestService {
+import javax.ws.rs.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+@Path("/TaskRefData")
+public class TaskRefData extends JsonRestService {
 
     @Override
     public List<String> getRoles(String path, String method) {
@@ -59,11 +55,11 @@ public class BaseData extends JsonRestService {
 
     @Override
     protected Entity getEntity(String path, Object content, Map<String,String> headers) {
-        return Entity.BaseData;
+        return Entity.TaskRefData;
     }
 
     /**
-     * Retrieve variableTypes or taskCategories.
+     * Retrieve taskCategories.
      */
     @Override
     @Path("/{dataType}")
@@ -72,17 +68,9 @@ public class BaseData extends JsonRestService {
         if (dataType == null)
             throw new ServiceException("Missing path segment: {dataType}");
         try {
-            BaselineData baselineData = DataAccess.getBaselineData();
-            if (dataType.equals("VariableTypes")) {
-                List<VariableType> variableTypes = baselineData.getVariableTypes();
-                JSONArray jsonArray = new JSONArray();
-                for (VariableType variableType : variableTypes)
-                    jsonArray.put(variableType.getJson());
-                return new JsonArray(jsonArray).getJson();
-            }
-            else if (dataType.equals("TaskCategories")) {
-                List<TaskCategory> taskCats = new ArrayList<TaskCategory>();
-                taskCats.addAll(baselineData.getTaskCategories().values());
+            com.centurylink.mdw.dataaccess.task.TaskRefData taskRefData = TaskDataAccess.getTaskRefData();
+            if (dataType.equals("Categories")) {
+                List<TaskCategory> taskCats = new ArrayList<>(taskRefData.getCategories().values());
                 Collections.sort(taskCats);
                 JSONArray jsonArray = new JSONArray();
                 for (TaskCategory taskCat : taskCats)

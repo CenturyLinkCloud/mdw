@@ -13,40 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.dataaccess;
-
-import java.util.List;
-import java.util.Map;
+package com.centurylink.mdw.dataaccess.task;
 
 import com.centurylink.mdw.model.task.TaskCategory;
 import com.centurylink.mdw.model.task.TaskState;
 import com.centurylink.mdw.model.task.TaskStatus;
-import com.centurylink.mdw.model.variable.VariableType;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Injectable reference data.
  */
-public interface BaselineData {
-    public List<VariableType> getVariableTypes();
-    public String getVariableType(Object value);
-
-    /**
-     * Default workgroups before additional user-added ones.
-     */
-    public List<String> getWorkgroups();
-
-    /**
-     * Default user roles before additional user-added ones.
-     */
-    public List<String> getUserRoles();
-
+public interface TaskRefData {
     // TODO get rid of codes
-    public Map<Integer,String> getTaskCategoryCodes();
-    public Map<Integer,TaskCategory> getTaskCategories();
+    Map<Integer,String> getCategoryCodes();
+    Map<Integer,TaskCategory> getCategories();
 
-    public Map<Integer,TaskState> getTaskStates();
-    public List<TaskState> getAllTaskStates();
+    Map<Integer,TaskState> getStates();
+    List<TaskState> getAllStates();
 
-    public Map<Integer,TaskStatus> getTaskStatuses();
-    public List<TaskStatus> getAllTaskStatuses();
+    Map<Integer,TaskStatus> getStatuses();
+    List<TaskStatus> getAllStatuses();
 }

@@ -3,37 +3,25 @@ activities:
   name: Start
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
   attributes:
-    WORK_DISPLAY_INFO: x=64,y=123,w=60,h=40
+    WORK_DISPLAY_INFO: x=60,y=130,w=60,h=40
   transitions:
-  - id: T1
-    to: A3
+  - id: T4
+    to: A4
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: lx=190,ly=91,type=Elbow,xs=128&201,ys=143&143
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=180,ly=150,xs=124&236,ys=150&150
 - id: A2
   name: Stop
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
   attributes:
     DoNotNotifyCaller: 'false'
-    WORK_DISPLAY_INFO: x=570,y=121,w=60,h=40
-- id: A3
-  name: "Assign\r\nLocal Float"
-  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
-  attributes:
-    WORK_DISPLAY_INFO: x=205,y=104,w=99,h=74
-    Rule: localFloat = 3.1416f
-  transitions:
-  - id: T2
-    to: A4
-    event: FINISH
-    attributes:
-      TRANSITION_DISPLAY_INFO: lx=349,ly=142,type=Elbow,xs=308&393,ys=142&142
+    WORK_DISPLAY_INFO: x=450,y=130,w=60,h=40
 - id: A4
   name: "Custom\r\nCategory Task"
   implementor: com.centurylink.mdw.workflow.activity.task.CustomManualTaskActivity
   attributes:
     STATUS_AFTER_EVENT: Cancelled
-    WORK_DISPLAY_INFO: x=397,y=106,w=99,h=72
+    WORK_DISPLAY_INFO: x=240,y=120,w=100,h=70
     TASK_PAGELET: com.centurylink.mdw.base/CustomManualTask.pagelet
     TASK_TEMPLATE: com.centurylink.mdw.tests.code/customCategoryTask.task
     TASK_TEMPLATE_assetVersion: '[0.1,1)'
@@ -42,17 +30,7 @@ activities:
     to: A2
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: lx=533,ly=141,type=Elbow,xs=500&566,ys=141&141
-variables:
-  assignedFloat:
-    type: java.lang.Float
-    category: LOCAL
-  inputFloat:
-    type: java.lang.Float
-    category: INPUT
-  localFloat:
-    type: java.lang.Float
-    category: LOCAL
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=395,ly=150,xs=344&446,ys=150&150
 attributes:
   ArrowStyle: ArrowEnd
   NodeStyle: BoxIcon

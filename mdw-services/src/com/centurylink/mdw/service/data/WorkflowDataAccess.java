@@ -22,8 +22,8 @@ import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.DbAccess;
+import com.centurylink.mdw.dataaccess.VariableTypes;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 import com.centurylink.mdw.model.asset.AssetHeader;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.variable.VariableInstance;
@@ -1120,7 +1120,7 @@ public class WorkflowDataAccess extends CommonDataAccess {
             sqlBuff.append("\n").append(orderBy);
     }
 
-    private final List<VariableType> variableTypes = new MdwBaselineData().getVariableTypes();
+    private final List<VariableType> variableTypes = new VariableTypes().getVariableTypes();
 
     protected String getVariableType(Long id) {
         if (variableTypes == null) {

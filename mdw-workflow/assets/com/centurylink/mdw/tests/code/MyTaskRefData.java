@@ -15,35 +15,30 @@
  */
 package com.centurylink.mdw.tests.code;
 
+import com.centurylink.mdw.dataaccess.task.MdwTaskRefData;
+import com.centurylink.mdw.model.task.TaskCategory;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.centurylink.mdw.model.task.TaskCategory;
-import com.centurylink.mdw.model.variable.VariableType;
-import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
-
 /**
- * Custom BaselineData implementation.
+ * Custom TaskRefData implementation.
  */
-public class MyBaselineData extends MdwBaselineData {
+public class MyTaskRefData extends MdwTaskRefData {
     private List<TaskCategory> myTaskCategories;
-    private List<VariableType> myVariableTypes;
 
-    public MyBaselineData() {
-        myTaskCategories = new ArrayList<TaskCategory>();
+    public MyTaskRefData() {
+        myTaskCategories = new ArrayList<>();
         myTaskCategories.add(new TaskCategory(101L, "PLN", "Planning"));
         myTaskCategories.add(new TaskCategory(102L, "CON", "Construction"));
-
-        myVariableTypes = new ArrayList<VariableType>();
-        myVariableTypes.add(new VariableType(501L, "java.lang.Float", "com.centurylink.mdw.tests.code.MyFloatTranslator"));
     }
 
     private Map<Integer,TaskCategory> taskCategories;
     @Override
-    public Map<Integer,TaskCategory> getTaskCategories() {
+    public Map<Integer,TaskCategory> getCategories() {
         if (taskCategories == null) {
-            taskCategories = super.getTaskCategories();
+            taskCategories = super.getCategories();
             for (TaskCategory myTaskCategory : myTaskCategories)
                 taskCategories.put(myTaskCategory.getId().intValue(), myTaskCategory);
         }
@@ -52,25 +47,12 @@ public class MyBaselineData extends MdwBaselineData {
 
     private Map<Integer,String> taskCategoryCodes;
     @Override
-    public Map<Integer,String> getTaskCategoryCodes() {
+    public Map<Integer,String> getCategoryCodes() {
         if (taskCategoryCodes == null) {
-            taskCategoryCodes = super.getTaskCategoryCodes();
+            taskCategoryCodes = super.getCategoryCodes();
             for (TaskCategory myTaskCategory : myTaskCategories)
                 taskCategoryCodes.put(myTaskCategory.getId().intValue(), myTaskCategory.getCode());
         }
         return taskCategoryCodes;
     }
-
-    private List<VariableType> variableTypes;
-    @Override
-    public List<VariableType> getVariableTypes() {
-        if (variableTypes == null) {
-            variableTypes = super.getVariableTypes();
-            for (VariableType myVariableType : myVariableTypes)
-                variableTypes.add(myVariableType);
-        }
-        return variableTypes;
-    }
-
-
 }

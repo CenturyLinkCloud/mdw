@@ -17,7 +17,7 @@ package com.centurylink.mdw.translator;
 
 import com.centurylink.mdw.app.Compatibility;
 import com.centurylink.mdw.cache.asset.VariableTypeCache;
-import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
+import com.centurylink.mdw.dataaccess.VariableTypes;
 import com.centurylink.mdw.model.variable.VariableType;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.spring.SpringAppContext;
@@ -30,7 +30,7 @@ public abstract class VariableTranslator implements com.centurylink.mdw.variable
     protected static String EMPTY_STRING = "<EMPTY>";
     protected static String  ARRAY_DELIMETER = "~";
 
-    private static final List<VariableType> mdwVariableTypes = new MdwBaselineData().getVariableTypes();
+    private static final List<VariableType> mdwVariableTypes = new VariableTypes().getVariableTypes();
 
     private Package pkg;
     public Package getPackage() { return pkg; }

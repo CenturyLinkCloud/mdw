@@ -20,7 +20,6 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.service.types.StatusMessage;
 import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
 import com.centurylink.mdw.model.*;
 import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.event.EventLog;
@@ -32,6 +31,7 @@ import com.centurylink.mdw.model.user.UserAction.Entity;
 import com.centurylink.mdw.model.user.UserList;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.ProcessInstance;
+import com.centurylink.mdw.service.data.task.TaskDataAccess;
 import com.centurylink.mdw.service.data.user.UserGroupCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
@@ -423,7 +423,7 @@ public class Tasks extends JsonRestService implements JsonExportable {
 
     @Path("/categories")
     public JsonArray getCategories(Query query) {
-        Map<Integer,TaskCategory> categories = new MdwBaselineData().getTaskCategories();
+        Map<Integer,TaskCategory> categories = TaskDataAccess.getTaskRefData().getCategories();
         List<TaskCategory> list = new ArrayList<>();
         list.addAll(categories.values());
         Collections.sort(list);

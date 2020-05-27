@@ -6,7 +6,7 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
   <!-- custom baseline data -->
-  <bean id="myBaselineData" class="com.centurylink.mdw.tests.code.MyBaselineData" />
+  <bean id="myTaskRefData" class="com.centurylink.mdw.tests.code.MyTaskRefData" />
 
   <!-- jaxb marshaller/unmarshaller pooling -->
   <bean id="myJaxbTranslator" class="com.centurylink.mdw.jaxb.JaxbElementTranslator">

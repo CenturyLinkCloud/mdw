@@ -1,0 +1,28 @@
+package com.centurylink.mdw.tests.code
+
+import groovy.json.JsonSlurper
+
+// confirm that Planning category is in ref data
+def response = get http("api/TaskRefData/Categories")
+assert response.code == 200
+def categories = new JsonSlurper().parseText(response.content)
+def pln = categories.find { it.code == 'PLN' }
+assert pln != null
+assert pln.name == 'Planning'
+
+start process("CustomTaskData")
+sleep 10
+
+response = get http("api/Tasks?masterRequestId=${masterRequestId}")
+def taskInstance = new JsonSlurper().parseText(response.content).tasks[0]
+assert taskInstance.category == 'Planning'
+
+action task("Custom Category Task") {
+    outcome = "Claim"
+}
+sleep 10
+action task("Custom Category Task") {
+    outcome = "Complete"
+}
+wait process
+verify process

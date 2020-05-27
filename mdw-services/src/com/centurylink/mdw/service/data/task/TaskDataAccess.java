@@ -19,14 +19,14 @@ import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.dataaccess.BaselineData;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
-import com.centurylink.mdw.dataaccess.file.MdwBaselineData;
+import com.centurylink.mdw.dataaccess.task.TaskRefData;
 import com.centurylink.mdw.model.task.*;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.user.Workgroup;
 import com.centurylink.mdw.service.data.user.UserGroupCache;
+import com.centurylink.mdw.spring.SpringAppContext;
 import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -118,11 +118,10 @@ public class TaskDataAccess extends CommonDataAccess {
             task.setInvalid(true);
             return task;
         }
-        task.setCategoryCode(template.getTaskCategory());
-        task.setTaskName(template.getTaskName());
         if (task.getTaskName() == null) {
             task.setTaskName(template.getTaskName());
         }
+        task.setCategory(getCategory(template.getTaskCategory()));
         task.setTitle(rs.getString("TASK_TITLE"));
         if (isVOversion) {
             task.setAssigneeCuid(rs.getString("CUID"));
@@ -380,11 +379,11 @@ public class TaskDataAccess extends CommonDataAccess {
     }
 
     public List<TaskStatus> getAllTaskStatuses() {
-        return new MdwBaselineData().getAllTaskStatuses();
+        return getTaskRefData().getAllStatuses();
     }
 
     public List<TaskState> getAllTaskStates() {
-        return new MdwBaselineData().getAllTaskStates();
+        return getTaskRefData().getAllStates();
     }
 
     // new task instance group mapping
@@ -637,7 +636,7 @@ public class TaskDataAccess extends CommonDataAccess {
             if(logger.isDebugEnabled())
                 logger.mdwDebug("queryTaskInstances() Query-->"+query) ;
 
-            List<TaskInstance> taskInstances = new ArrayList<TaskInstance>();
+            List<TaskInstance> taskInstances = new ArrayList<>();
             rs = db.runSelect(sql.toString());
             while (rs.next()) {
                 TaskInstance taskInst = null;
@@ -880,14 +879,24 @@ public class TaskDataAccess extends CommonDataAccess {
     }
 
     protected Long getCategoryId(String categoryNameOrCode) {
-        if (categoryNameOrCode != null) {
-            BaselineData baselineData = new MdwBaselineData();
-            for (TaskCategory taskCategory : baselineData.getTaskCategories().values()) {
-                if (categoryNameOrCode.equals(taskCategory.getName()) || categoryNameOrCode.equals(taskCategory.getCode())) {
-                    return taskCategory.getId();
-                }
+        for (TaskCategory taskCategory : getTaskRefData().getCategories().values()) {
+            if (categoryNameOrCode.equals(taskCategory.getName()) || categoryNameOrCode.equals(taskCategory.getCode())) {
+                return taskCategory.getId();
             }
         }
         return null;
+    }
+
+    protected String getCategory(String code) {
+        for (TaskCategory taskCategory : getTaskRefData().getCategories().values()) {
+            if (code.equals(taskCategory.getName()) || code.equals(taskCategory.getCode())) {
+                return taskCategory.getName();
+            }
+        }
+        return null;
+    }
+
+    public static TaskRefData getTaskRefData() {
+        return SpringAppContext.getInstance().getTaskRefData();
     }
 }
