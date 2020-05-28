@@ -2,10 +2,13 @@ package com.centurylink.mdw.service.data.activity;
 
 import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.annotations.Activity;
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.PreloadableCache;
+import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
+import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.api.AssetInfo;
 import com.centurylink.mdw.model.project.Data;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
@@ -15,9 +18,11 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import org.json.JSONObject;
 import org.reflections.Reflections;
 
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -76,6 +81,12 @@ public class ImplementorCache implements PreloadableCache {
                 }
             }
 
+            // old-style (declared in .impl files)
+            List<ActivityImplementor> impls = loadLegacyImplementors();
+            for (ActivityImplementor impl : impls) {
+                implementors.put(impl.getImplementorClass(), impl);
+            }
+
             implementors.put(Data.Implementors.DUMMY_ACTIVITY, new ActivityImplementor(Data.Implementors.DUMMY_ACTIVITY,
                     GeneralActivity.class.getName(), "Dummy Activity", "shape:activity", "{}"));
         }
@@ -109,4 +120,24 @@ public class ImplementorCache implements PreloadableCache {
         return null;
     }
 
+    // TODO: this compatibility will be removed soon
+    private List<ActivityImplementor> loadLegacyImplementors() {
+        List<ActivityImplementor> impls = new ArrayList<>();
+        for (Asset asset : AssetCache.getAssets("impl")) {
+            try {
+                JSONObject json = new JSONObject(new String(asset.getContent()));
+                ActivityImplementor impl = new ActivityImplementor(json);
+                impl.setId(asset.getId());
+                impl.setPackageName(asset.getPackageName());
+                impls.add(impl);
+            } catch (Exception ex) {
+                logger.error("Failed to parse handler: " + asset.getPath(), ex);
+            }
+            logger.warn("*** Found .impl asset: " + asset.getPath());
+            logger.warn("*** Support for .impl assets will be removed soon.");
+            logger.warn("*** Consult the docs on how to convert to annotated form: "
+                    + ApplicationContext.getDocsUrl() + "/help/implementor.html");
+        }
+        return impls;
+    }
 }

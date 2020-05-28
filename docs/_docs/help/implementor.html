@@ -168,5 +168,14 @@
 </p>
 <img style="width:1024px" src="images/inspectorLog.png" />
 <img style="width:1024px" src="images/activityLog.png" />
+
+<h2>Old-style .impl Assets</h2>
+Previously MDW used .impl assets to register activity implementors.  This type of asset is now deprecated and replaced
+by the annotation mechanism described above.  The <a href="../getting-started/cli/">CLI</a> provides
+a <code>convert</code> command that can create an annotated Java asset from a .impl asset:
+<pre>
+  mdw convert --input=assets/com/example/activities/MyOldActivity.impl
+</pre>
+
 </body>
 </html>
