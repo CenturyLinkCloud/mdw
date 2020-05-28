@@ -15,8 +15,6 @@
  */
 package com.centurylink.mdw.container;
 
-import java.rmi.Remote;
-
 import javax.naming.NamingException;
 
 /**
@@ -29,14 +27,8 @@ public interface ContextProvider {
     // standard JavaEE resource names
     String JAVA_TRANSACTION_MANAGER = "javax.transaction.TransactionManager";
 
-    String qualifyJmsQueueName(String name);
-    String qualifyJmsTopicName(String name);
-
     String getTransactionManagerName();
     int getServerPort() throws Exception;
 
     Object lookup(String hostPort, String name, Class<?> cls) throws NamingException;
-    void bind(String name, Remote object) throws NamingException;
-    void unbind(String name) throws NamingException;
-
 }

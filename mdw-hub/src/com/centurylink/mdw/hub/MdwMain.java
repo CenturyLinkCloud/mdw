@@ -19,16 +19,12 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.asset.AssetHistory;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.JMSDestinationNames;
-import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.container.ThreadPoolProvider;
-import com.centurylink.mdw.dataaccess.DataAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.listener.jms.ConfigurationEventListener;
 import com.centurylink.mdw.listener.jms.ExternalEventListener;
 import com.centurylink.mdw.listener.jms.InternalEventListener;
-import com.centurylink.mdw.listener.rmi.RMIListenerImpl;
 import com.centurylink.mdw.listeners.startup.StartupRegistry;
-import com.centurylink.mdw.model.listener.RMIListener;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.spring.SpringAppContext;
@@ -54,7 +50,6 @@ public class MdwMain {
     private static ExternalEventListener intraMdwEventListener;
     private static ExternalEventListener externalEventListener;
     private static ConfigurationEventListener configurationEventListener;
-    private static RMIListener listener;    // do not remove - need to keep reference to prevent GC
 
     public void startup(String container, String deployPath, String contextPath) {
 
@@ -98,16 +93,7 @@ public class MdwMain {
             threadPool = ApplicationContext.getThreadPoolProvider();
             threadPool.start();
 
-            MessengerFactory.init(contextPath);
-
-            logger.info("Initialize " + RMIListener.class.getName());
-            try {
-                listener = new RMIListenerImpl(threadPool);
-                ApplicationContext.getContextProvider().bind(RMIListener.JNDI_NAME, listener);
-            }
-            catch (Exception e) {
-                throw new StartupException("Failed to start RMI listener", e);
-            }
+            MessengerFactory.init();
 
             if (MessengerFactory.internalMessageUsingJms()) {
                 internalEventListener = new InternalEventListener(threadPool);
@@ -195,13 +181,6 @@ public class MdwMain {
             }
 
             SpringAppContext.getInstance().shutDown();
-
-            try {
-                ApplicationContext.getContextProvider().unbind(RMIListener.JNDI_NAME);
-            }
-            catch (Exception ignored) {
-                // container plug-in is not even initialized
-            }
 
             // deregisters JDBC driver, which prevents Tomcat 7 from complaining about memory leaks wrto this class
             Enumeration<Driver> drivers = DriverManager.getDrivers();

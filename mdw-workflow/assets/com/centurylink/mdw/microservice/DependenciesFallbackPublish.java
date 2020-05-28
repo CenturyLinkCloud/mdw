@@ -34,7 +34,6 @@ import com.centurylink.mdw.workflow.activity.event.FallbackProcessor;
 import com.centurylink.mdw.workflow.activity.event.WaitActivityFallback;
 
 import javax.jms.JMSException;
-import javax.naming.NamingException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 @RegisteredService(value=StartupService.class)
@@ -78,7 +77,7 @@ public class DependenciesFallbackPublish extends WaitActivityFallback {
                     logger.info(logMsg);
                     ActivityLogger.persist(activityInstance.getProcessInstanceId(), activityInstance.getId(), StandardLogger.LogLevel.INFO, logMsg, null);
                 }
-                catch (NamingException | JMSException | ServiceLocatorException nex) {
+                catch (JMSException | ServiceLocatorException nex) {
                     throw new ServiceException(ServiceException.INTERNAL_ERROR, nex);
                 }
             }

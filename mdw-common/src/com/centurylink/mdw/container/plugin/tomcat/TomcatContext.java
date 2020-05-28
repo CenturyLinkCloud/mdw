@@ -41,14 +41,6 @@ public class TomcatContext implements ContextProvider {
             useMdwTransactionManager = true;
     }
 
-    public String qualifyJmsQueueName(String name) {
-        return name;  // no qualification necessary
-    }
-
-    public String qualifyJmsTopicName(String name) {
-        return name; // no qualification necessary
-    }
-
     public String getTransactionManagerName() {
         return JAVA_TRANSACTION_MANAGER;
     }
@@ -111,10 +103,5 @@ public class TomcatContext implements ContextProvider {
             ne.initCause(e);
             throw ne;
         }
-    }
-
-    public void bind(String name, Remote object) throws NamingException {
-    }
-    public void unbind(String name) throws NamingException {
     }
 }

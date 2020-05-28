@@ -18,23 +18,24 @@ package com.centurylink.mdw.services.event;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.config.PropertyManager;
+import com.centurylink.mdw.constant.JMSDestinationNames;
 import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.event.EventInstance;
-import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.MessageServices;
+import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
-import com.centurylink.mdw.services.messenger.IntraMDWMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.util.DateHelper;
+import com.centurylink.mdw.util.JMSServices;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -48,7 +49,6 @@ public class ScheduledEventQueue implements CacheService {
 
     private static ScheduledEventQueue singleton = null;
 
-    private static final boolean processInternalEventInThisJVM = true;
     private static long inMemoryRange = 24*3600*1000L;    // one day
 
     private PriorityQueue<ScheduledEvent> eventQueue;
@@ -143,14 +143,9 @@ public class ScheduledEventQueue implements CacheService {
             logger.info("EventScheduler processes event " + eventName);
             if (event.isInternalEvent()) {
                 // long-delayed internal events, for timer/event wait activities
-                if (processInternalEventInThisJVM) {
-                    if (!MessageServices.getInstance().sendInternalMessageCheck(ThreadPoolProvider.WORKER_SCHEDULER,
-                            null, event.getName(), event.getMessage())) {
-                        return false;  // Don't remove event from DB since it couldn't be processed (no thread available)
-                    }
-                } else {
-                    InternalMessenger msgbroker = MessengerFactory.newInternalMessenger();
-                    msgbroker.sendMessage(new InternalEvent(event.getMessage()), edao);
+                if (!MessageServices.getInstance().sendInternalMessageCheck(ThreadPoolProvider.WORKER_SCHEDULER,
+                        null, event.getName(), event.getMessage())) {
+                    return false;  // Don't remove event from DB since it couldn't be processed (no thread available)
                 }
             } else if (event.isScheduledJob()) {
                 if (EventInstance.STATUS_SCHEDULED_JOB_RUNNING.equals(event.getStatus())) {
@@ -160,17 +155,26 @@ public class ScheduledEventQueue implements CacheService {
                 else {
                     // send message to listener to run the job
                     String jobClassAndArgs = event.getName().substring(ScheduledEvent.SCHEDULED_JOB_PREFIX.length());
-                    IntraMDWMessenger msgbroker = MessengerFactory.newIntraMDWMessenger();
                     String calldoc = "<_mdw_run_job>" +
                             jobClassAndArgs.replaceAll("&", "&amp;").replaceAll("<", "&lt;") +
                             "</_mdw_run_job>";
-                    msgbroker.sendMessage(calldoc);
+                    try {
+                        JMSServices.getInstance().sendTextMessage(null,
+                                JMSDestinationNames.INTRA_MDW_EVENT_HANDLER_QUEUE, calldoc, 0, null);
+                    } catch (Exception ex) {
+                        throw new ProcessException(-1, ex.getMessage(), ex);
+                    }
                 }
-            } else {        // is scheduled external event
+            } else {
+                // is scheduled external event
                 if (event.getMessage() == null || !event.getMessage().startsWith("<"))
                     throw new Exception("Scheduled external event message is null or non-XML. Event name " + event.getName());
-                IntraMDWMessenger msgbroker = MessengerFactory.newIntraMDWMessenger();
-                msgbroker.sendMessage(event.getMessage());
+                try {
+                    JMSServices.getInstance().sendTextMessage(null,
+                            JMSDestinationNames.INTRA_MDW_EVENT_HANDLER_QUEUE, event.getMessage(), 0, null);
+                } catch (Exception ex) {
+                    throw new ProcessException(-1, ex.getMessage(), ex);
+                }
             }
         } catch (Exception ex) {
             logger.error("Failed to process scheduled event " + event.getName(), ex);

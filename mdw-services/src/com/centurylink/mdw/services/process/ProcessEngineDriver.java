@@ -567,8 +567,8 @@ public class ProcessEngineDriver {
 
             // c. create engine
             EngineDataAccess edao = EngineDataAccessCache.getInstance(false, perfLevel);
-            InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
-            ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
+            InternalMessenger messenger = MessengerFactory.newInternalMessenger();
+            ProcessExecutor engine = new ProcessExecutor(edao, messenger, false);
             if (msgid != null) {
                 boolean success = engine.deleteInternalEvent(msgid);
                 if (!success) {
@@ -588,14 +588,14 @@ public class ProcessEngineDriver {
                 }
             }
             if (perfLevel >= 9)
-                msgBroker.setCacheOption(InternalMessenger.CACHE_ONLY);
+                messenger.setCacheOption(InternalMessenger.CACHE_ONLY);
             else if (perfLevel >= 3)
-                msgBroker.setCacheOption(InternalMessenger.CACHE_ON);
+                messenger.setCacheOption(InternalMessenger.CACHE_ON);
             // d. process event(s)
             if (perfLevel >= 3) {
                 // TODO cache proc inst
                 processEvent(engine, event, procInst);
-                while ((event = msgBroker.getNextMessageFromQueue(engine)) != null) {
+                while ((event = messenger.getNextMessageFromQueue(engine)) != null) {
                     procInst = this.findProcessInstance(engine, event);
                     processEvent(engine, event, procInst);
                 }
@@ -851,10 +851,10 @@ public class ProcessEngineDriver {
         // setProcessInstanceStatus will really set to STATUS_IN_PROGRESS - hint to set START_DT as well
         InternalEvent event = InternalEvent.createActivityStartMessage(startActivityId,
                 mainProcessInst.getId(), 0L, masterRequestId, EventType.EVENTNAME_START);
-        InternalMessenger msgBroker = engine.getInternalMessenger();
+        InternalMessenger messenger = engine.getInternalMessenger();
         lastException = null;
         processEvent(engine, event, mainProcessInst);
-        while ((event = msgBroker.getNextMessageFromQueue(engine)) != null) {
+        while ((event = messenger.getNextMessageFromQueue(engine)) != null) {
             ProcessInstance procInst = findProcessInstance(engine, event);
             processEvent(engine, event, procInst);
         }
@@ -965,13 +965,13 @@ public class ProcessEngineDriver {
             perfLevel = defaultPerformanceLevelRegular;
         EngineDataAccess edao = EngineDataAccessCache.getInstance(false, perfLevel);
         engineLogger.setPerformanceLevel(perfLevel);
-        InternalMessenger msgBroker = MessengerFactory.newInternalMessenger();
+        InternalMessenger messenger = MessengerFactory.newInternalMessenger();
         // do not set internal messenger with cache options, as this engine does not process it directly - Unless PL 9
         if (perfLevel >= 9)
-            msgBroker.setCacheOption(InternalMessenger.CACHE_ONLY);
+            messenger.setCacheOption(InternalMessenger.CACHE_ONLY);
         if (masterRequestId == null)
             masterRequestId = genMasterRequestId();
-        ProcessExecutor engine = new ProcessExecutor(edao, msgBroker, false);
+        ProcessExecutor engine = new ProcessExecutor(edao, messenger, false);
         ProcessInstance processInst = engine.createProcessInstance(processId,
                 ownerType, ownerId, secondaryOwnerType, secondaryOwnerId,
                 masterRequestId, vars);

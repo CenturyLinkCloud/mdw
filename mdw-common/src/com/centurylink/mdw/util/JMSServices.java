@@ -34,9 +34,9 @@ public class JMSServices {
 
     private static JMSServices instance;
 
-    private Map<String, Queue> queueCache;
-    private Map<String, QueueConnectionFactory> queueConnFactoryCache;
-    private Map<String, TopicConnectionFactory> topicConnFactoryCache;
+    private Map<String,Queue> queueCache;
+    private Map<String,QueueConnectionFactory> queueConnFactoryCache;
+    private Map<String,TopicConnectionFactory> topicConnFactoryCache;
 
     private StandardLogger logger;
     private ContextProvider contextProvider;
@@ -64,12 +64,6 @@ public class JMSServices {
         }
     }
 
-    public void clearCached() {
-        queueCache = new Hashtable<>();
-        queueConnFactoryCache = new Hashtable<>();
-        topicConnFactoryCache = new Hashtable<>();
-    }
-
     public static JMSServices getInstance() {
         if (instance == null)
             instance = new JMSServices(ApplicationContext.getContextProvider(),
@@ -89,43 +83,31 @@ public class JMSServices {
     /**
      * Sends a JMS text message to a local queue.
      *
-     * @param queueName
-     *            local queues are based on logical queue names
-     * @param message
-     *            the message string
-     * @param delaySeconds
-     *            0 for immediate
-     * @throws ServiceLocatorException ServiceLocatorException.
+     * @param queueName local queues are based on logical queue names
+     * @param message the message string
+     * @param delaySeconds 0 for immediate
      */
     public void sendTextMessage(String queueName, String message, int delaySeconds)
-            throws NamingException, JMSException, ServiceLocatorException {
+            throws JMSException, ServiceLocatorException {
         sendTextMessage(null, queueName, message, delaySeconds, null);
     }
 
     /**
      * Sends a JMS text message.
      *
-     * @param contextUrl
-     *            null for local queues
-     * @param queueName
-     *            local queues are based on logical queue names
-     * @param message
-     *            the message string
-     * @param delaySeconds
-     *            0 for immediate
-     * @throws ServiceLocatorException ServiceLocatorException.
+     * @param contextUrl  null for local queues
+     * @param queueName local queues are based on logical queue names
+     * @param message the message string
+     * @param delaySeconds  0 for immediate
      */
-    public void sendTextMessage(String contextUrl, String queueName, String message,
-            int delaySeconds, String correlationId)
-            throws NamingException, JMSException, ServiceLocatorException {
+    public void sendTextMessage(String contextUrl, String queueName, String message, int delaySeconds, String correlationId)
+            throws JMSException, ServiceLocatorException {
         if (logger.isDebugEnabled())
             logger.debug("Send JMS message: " + message);
         if (mdwMessageProducer != null) {
             if (logger.isDebugEnabled())
-                logger.debug("Send JMS message: queue " + queueName + " corrId " + correlationId
-                        + " delay " + delaySeconds);
-            mdwMessageProducer.sendMessage(message, queueName, correlationId, delaySeconds,
-                    DeliveryMode.NON_PERSISTENT);
+                logger.debug("Send JMS message: queue " + queueName + " corrId " + correlationId + " delay " + delaySeconds);
+            mdwMessageProducer.sendMessage(message, queueName, correlationId, delaySeconds, DeliveryMode.NON_PERSISTENT);
         }
         else {
             QueueConnection connection = null;
@@ -155,16 +137,9 @@ public class JMSServices {
 
                 connection.start();
                 if (contextUrl == null)
-                    sender.send(textMessage, DeliveryMode.NON_PERSISTENT, sender.getPriority(),
-                            sender.getTimeToLive());
+                    sender.send(textMessage, DeliveryMode.NON_PERSISTENT, sender.getPriority(), sender.getTimeToLive());
                 else
                     sender.send(textMessage);
-// }
-// catch(ServiceLocatorException ex) {
-// logger.severeException(ex.getMessage(), ex);
-// JMSException jmsEx = new JMSException(ex.getMessage());
-// jmsEx.setLinkedException(ex);
-// throw jmsEx;
             }
             finally {
                 closeResources(connection, session, sender);
@@ -197,18 +172,15 @@ public class JMSServices {
     /**
      * Uses the container-specific qualifier to look up a JMS queue.
      *
-     * @param commonName
-     *            the vendor-neutral logical queue name
-     * @return javax.jms.Queue
+     * @param name the provider-independent logical queue name
      */
-    public Queue getQueue(Session session, String commonName) throws ServiceLocatorException {
-        Queue queue = queueCache.get(commonName);
+    public Queue getQueue(Session session, String name) throws ServiceLocatorException {
+        Queue queue = queueCache.get(name);
         if (queue == null) {
             try {
-                String name = contextProvider.qualifyJmsQueueName(commonName);
                 queue = jmsProvider.getQueue(session, contextProvider, name);
                 if (queue != null)
-                    queueCache.put(commonName, queue);
+                    queueCache.put(name, queue);
             }
             catch (Exception ex) {
                 throw new ServiceLocatorException(-1, ex.getMessage(), ex);
@@ -220,22 +192,12 @@ public class JMSServices {
     /**
      * Looks up and returns a JMS queue.
      *
-     * @param queueName
-     *            remote queue name
-     * @param contextUrl
-     *            the context url (or null for local)
-     * @return javax.jms.Queue
+     * @param queueName remote queue name
+     * @param contextUrl  the context url (or null for local)
      */
     public Queue getQueue(String contextUrl, String queueName) throws ServiceLocatorException {
         try {
-            String jndiName;
-            if (contextUrl == null) {
-                jndiName = contextProvider.qualifyJmsQueueName(queueName);
-            }
-            else {
-                jndiName = queueName; // don't qualify remote queue names
-            }
-            return (Queue) contextProvider.lookup(contextUrl, jndiName, Queue.class);
+            return (Queue) contextProvider.lookup(contextUrl, queueName, Queue.class);
         }
         catch (Exception ex) {
             throw new ServiceLocatorException(-1, ex.getMessage(), ex);
@@ -244,8 +206,7 @@ public class JMSServices {
 
     public TopicConnectionFactory getTopicConnectionFactory(String contextUrl)
             throws ServiceLocatorException {
-        TopicConnectionFactory factory =  topicConnFactoryCache
-                .get(contextUrl == null ? THIS_SERVER : contextUrl);
+        TopicConnectionFactory factory =  topicConnFactoryCache.get(contextUrl == null ? THIS_SERVER : contextUrl);
         if (factory == null) {
             try {
                 factory = jmsProvider.getTopicConnectionFactory(contextProvider, contextUrl);
@@ -261,10 +222,9 @@ public class JMSServices {
         return factory;
     }
 
-    public Topic getTopic(String commonName) throws ServiceLocatorException {
+    public Topic getTopic(String name) throws ServiceLocatorException {
         try {
-            String jndiName = contextProvider.qualifyJmsTopicName(commonName);
-            return (Topic) contextProvider.lookup(null, jndiName, Topic.class);
+            return (Topic) contextProvider.lookup(null, name, Topic.class);
         }
         catch (Exception ex) {
             throw new ServiceLocatorException(-1, ex.getMessage(), ex);
@@ -277,10 +237,9 @@ public class JMSServices {
      * @param topicName topic name.
      * @param textMessage message.
      * @param delaySeconds delay in seconds.
-     * @throws ServiceLocatorException
      */
     public void broadcastTextMessage(String topicName, String textMessage, int delaySeconds)
-            throws NamingException, JMSException, ServiceLocatorException {
+            throws JMSException, ServiceLocatorException {
         if (mdwMessageProducer != null) {
             mdwMessageProducer.broadcastMessageToTopic(topicName, textMessage);
         }
@@ -290,10 +249,6 @@ public class JMSServices {
             TopicSession tSession = null;
             TopicPublisher tPublisher = null;
             try {
-                // if (logger.isDebugEnabled()) logger.debug("broadcast JMS
-                // message: " +
-                // textMessage);
-                // cannot log above - causing recursive broadcasting
                 tFactory = getTopicConnectionFactory(null);
                 tConnection = tFactory.createTopicConnection();
                 tSession = tConnection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -301,28 +256,14 @@ public class JMSServices {
                 tPublisher = tSession.createPublisher(topic);
 
                 // TODO: platform-independent delay
-                // WLMessageProducer wlMessageProducer =
-                // (WLMessageProducer)tPublisher;
-                // long delayInMilliSec = 0;
-                // if(pMinDelay > 0){
-                // delayInMilliSec = delaySeconds*1000;
-                // }
-                // wlMessageProducer.setTimeToDeliver(delayInMilliSec);
                 TextMessage message = tSession.createTextMessage();
                 tConnection.start();
 
                 message.setText(textMessage);
-                tPublisher.publish(message, DeliveryMode.PERSISTENT,
-                        TextMessage.DEFAULT_DELIVERY_MODE, TextMessage.DEFAULT_TIME_TO_LIVE);
-                // }catch(ServiceLocatorException ex){
-                // ex.printStackTrace();
-                // never log exception here!!! infinite loop when publishing log
-                // messages
-                // throw new JMSException(ex.getMessage());
+                tPublisher.publish(message, DeliveryMode.PERSISTENT, TextMessage.DEFAULT_DELIVERY_MODE, TextMessage.DEFAULT_TIME_TO_LIVE);
             }
             finally {
                 closeResources(tConnection, tSession, tPublisher);
-
             }
         }
     }
@@ -402,15 +343,8 @@ public class JMSServices {
                 return textMessage.getText();
             }
         }
-// catch(ServiceLocatorException ex) {
-// ex.printStackTrace(); // cannot use logger for chicken-egg issue
-// JMSException jmsEx = new JMSException(ex.getMessage());
-// jmsEx.setLinkedException(ex);
-// throw jmsEx;
-// }
         finally {
             closeResources(connection, session, sender);
         }
     }
-
 }
