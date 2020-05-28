@@ -178,6 +178,7 @@ task cliJar(type: Jar) {
         include "com/centurylink/mdw/model/Yamlable.class"
         include "com/centurylink/mdw/model/PackageMeta.class"
         include "com/centurylink/mdw/model/PackageDependency.class"
+        include "com/centurylink/mdw/util/file/Packages.class"
         include "com/centurylink/mdw/bpmn/*.class"
         include "com/centurylink/mdw/export/*.class"
         include "com/centurylink/mdw/procimport/*.class"
