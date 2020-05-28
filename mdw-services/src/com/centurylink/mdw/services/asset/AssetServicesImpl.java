@@ -21,7 +21,7 @@ import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.DataAccess;
+import com.centurylink.mdw.git.VersionControlAccess;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.git.GitDiffs;
 import com.centurylink.mdw.git.GitDiffs.DiffType;
@@ -117,7 +117,7 @@ public class AssetServicesImpl implements AssetServices {
     private VersionControlGit versionControl; // only set for non-standard vcs location
     public VersionControlGit getVersionControl() throws IOException  {
         if (versionControl == null) {
-            return DataAccess.getAssetVersionControl(assetRoot);
+            return VersionControlAccess.getVersionControl(assetRoot);
         }
         else {
             return versionControl;
@@ -485,7 +485,7 @@ public class AssetServicesImpl implements AssetServices {
             throw new ServiceException(ServiceException.INTERNAL_ERROR, "Cannot create meta dir: " + metaDir.getAbsolutePath());
 
         PackageMeta pkgMeta = new PackageMeta(packageName);
-        pkgMeta.setSchemaVersion(AssetVersion.formatVersion(DataAccess.currentSchemaVersion));
+        pkgMeta.setSchemaVersion(AssetVersion.formatVersion(VersionControlAccess.currentSchemaVersion));
         pkgMeta.setVersion(new MdwVersion(1));
         try {
             String pkgYaml = Yamlable.toString(pkgMeta, 2);

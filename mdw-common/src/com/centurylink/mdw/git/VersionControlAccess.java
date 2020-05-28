@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.dataaccess;
+package com.centurylink.mdw.git;
 
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.git.GitDiffs;
-import com.centurylink.mdw.git.VersionControlGit;
 import com.centurylink.mdw.util.DesignatedHostSslVerifier;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -28,10 +26,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class DataAccess {
+public class VersionControlAccess {
 
     public final static int currentSchemaVersion = 6001;
-    public static int supportedSchemaVersion = currentSchemaVersion;
 
     static {
         File assetRoot = ApplicationContext.getAssetRoot();
@@ -49,22 +46,23 @@ public class DataAccess {
             LoggerUtil.getStandardLogger().error(warning);
         }
         try {
-            getAssetVersionControl(assetRoot);
+            getVersionControl(assetRoot);
         } catch (IOException ex) {
             LoggerUtil.getStandardLogger().error(ex.getMessage(), ex);
         }
     }
 
-    private static VersionControlGit assetVersionControl;
-    public synchronized static VersionControlGit getAssetVersionControl(File rootDir) throws IOException {
-        if (assetVersionControl == null) {
+    private static VersionControlGit versionControl;
+    public synchronized static VersionControlGit getVersionControl(File rootDir)
+            throws IOException {
+        if (versionControl == null) {
             boolean fetch = PropertyManager.getBooleanProperty(PropertyNames.MDW_GIT_FETCH, !ApplicationContext.isDevelopment());
-            assetVersionControl = new VersionControlGit(fetch);
+            versionControl = new VersionControlGit(fetch);
             String gitLocalPath = PropertyManager.getProperty(PropertyNames.MDW_GIT_LOCAL_PATH);
             if (gitLocalPath == null) // use the asset dir as placeholder
                 gitLocalPath = rootDir.getAbsolutePath();
 
-            assetVersionControl.connect(null, "mdw", null, new File(gitLocalPath));
+            versionControl.connect(null, "mdw", null, new File(gitLocalPath));
             // check up-to-date
             StandardLogger logger = LoggerUtil.getStandardLogger();
             try {
@@ -75,7 +73,7 @@ public class DataAccess {
                     String user = PropertyManager.getProperty(PropertyNames.MDW_GIT_USER);
                     String password = PropertyManager.getProperty(PropertyNames.MDW_GIT_PASSWORD);
                     if (user != null) {
-                        VersionControlGit vcGit = (VersionControlGit) assetVersionControl;
+                        VersionControlGit vcGit = (VersionControlGit) versionControl;
                         File gitLocal = new File(gitLocalPath);
                         vcGit.connect(url, user, password, gitLocal);
 
@@ -88,7 +86,7 @@ public class DataAccess {
 
                         if (!gitLocal.isDirectory()) {
                             if (!gitLocal.mkdirs())
-                                throw new DataAccessException("Git loc " + gitLocalPath + " does not exist and cannot be created.");
+                                throw new IOException("Git loc " + gitLocalPath + " does not exist and cannot be created.");
                         }
                         if (!vcGit.localRepoExists()) {
                             logger.error("**** WARNING: Git location " + gitLocalPath + " does not contain a repository.  Cloning: " + url);
@@ -162,6 +160,6 @@ public class DataAccess {
                     throw new FileNotFoundException("Asset root: " + rootDir + " does not exist and cannot be created.");
             }
         }
-        return assetVersionControl;
+        return versionControl;
     }
 }

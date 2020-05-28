@@ -5,7 +5,7 @@ import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
-import com.centurylink.mdw.dataaccess.DataAccess;
+import com.centurylink.mdw.git.VersionControlAccess;
 import com.centurylink.mdw.git.VersionControlGit;
 import com.centurylink.mdw.model.asset.*;
 import com.centurylink.mdw.model.workflow.Package;
@@ -173,7 +173,10 @@ public class AssetHistory implements CacheService {
     }
 
     private static VersionControlGit getVersionControl() throws IOException {
-        return DataAccess.getAssetVersionControl(ApplicationContext.getAssetRoot());
+        VersionControlGit versionControl = VersionControlAccess.getVersionControl(ApplicationContext.getAssetRoot());
+        if (!versionControl.localRepoExists())
+            throw new IOException("Git repository not found for asset history: " + versionControl.getLocalDir());
+        return versionControl;
     }
 
     static Asset loadAsset(AssetVersion assetVersion) throws IOException {
