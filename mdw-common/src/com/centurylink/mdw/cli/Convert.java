@@ -26,6 +26,7 @@ import com.centurylink.mdw.model.asset.AssetPath;
 import com.centurylink.mdw.model.asset.Pagelet;
 import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.util.file.Packages;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -128,7 +129,8 @@ public class Convert extends Setup  {
     protected void convertPackages() throws IOException {
 
         getOut().println("Converting packages:");
-        Map<String,File> packageDirs = getPackageDirs();
+        // use old-school Packages to find JSON packages
+        Map<String,File> packageDirs = new Packages(getAssetRoot());
         for (String packageName : packageDirs.keySet()) {
             getOut().println("  " + packageName);
             File packageDir = packageDirs.get(packageName);
