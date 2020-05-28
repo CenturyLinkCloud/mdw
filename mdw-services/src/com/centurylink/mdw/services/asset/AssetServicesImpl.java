@@ -131,6 +131,7 @@ public class AssetServicesImpl implements AssetServices {
             pkgList.setPackageInfos(findPackages());
             if (withVcsInfo)
                 addVersionControlInfo(pkgList);
+            pkgList.sort(); // in case ghost packages are added
             return pkgList;
         }
         catch (Exception ex) {
@@ -411,7 +412,7 @@ public class AssetServicesImpl implements AssetServices {
                     if (missingDiff.startsWith(pkgVcPath + "/") && !missingDiff.startsWith(pkgVcPath + "/" + PackageMeta.META_DIR)) {
                         PackageInfo pkgInfo = new PackageInfo(pkg);
                         pkgInfo.setVcsDiffType(pkgDiffType);
-                        AssetInfo asset = getGhostAsset(pkgInfo, new AssetPath(pkg + "/"));
+                        AssetInfo asset = getGhostAsset(pkgInfo, new AssetPath(pkg + "/" + missingDiff.substring(pkgVcPath.length() + 1)));
                         if (asset != null)
                             pkgAssets.getAssets().add(asset);
                     }
