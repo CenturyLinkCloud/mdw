@@ -79,7 +79,8 @@ public abstract class InternalMessenger {
 
     public void setCacheOption(int v) {
         this.cacheOption = v;
-        if (messageQueue==null) messageQueue = new LinkedList<InternalEvent>();
+        if (messageQueue == null)
+            messageQueue = new LinkedList<InternalEvent>();
     }
 
     abstract public void sendMessage(InternalEvent msg, EngineDataAccess edao)

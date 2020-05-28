@@ -48,23 +48,27 @@ public class EngineDataAccessCache implements EngineDataAccess {
     private Map<Long,ActivityInstance> activityInstCache;
     private Map<String,EventInstance> eventInstCache;
 
-    private int performance_level;
-    private int cache_process;
-    private int cache_activity_transition;        // only support CACHE_OFF and CACHE_ONLY
-    private int cache_variable;
-    private int cache_document;
-    private int cache_event;                    // only support CACHE_OFF and CACHE_ONLY
+    private int performanceLevel;
+    private int cacheProcess;
+    private int cacheActivityTransition;        // only support CACHE_OFF and CACHE_ONLY
+    private int cacheVariable;
+    private int cacheDocument;
+    private int cacheEvent;                    // only support CACHE_OFF and CACHE_ONLY
 
     private static long next_id = 1000;
 
-    private EngineDataAccessCache(boolean forServiceProcess, int performance_level) {
-        this.performance_level = performance_level;
-        this.setCacheFlags(forServiceProcess, performance_level);
-        if (cache_process!=CACHE_OFF) procInstCache = new HashMap<Long,ProcessInstance>();
-        if (cache_document!=CACHE_OFF) documentCache = new HashMap<Long,Document>();
-        if (cache_activity_transition==CACHE_ONLY) activityInstCache = new HashMap<Long,ActivityInstance>();
-        if (cache_event==CACHE_ONLY) eventInstCache = new HashMap<String,EventInstance>();
-        if (cache_process!=CACHE_ONLY || cache_document!=CACHE_ONLY && cache_event!=CACHE_ONLY)
+    private EngineDataAccessCache(boolean forServiceProcess, int performanceLevel) {
+        this.performanceLevel = performanceLevel;
+        setCacheFlags(forServiceProcess, performanceLevel);
+        if (cacheProcess != CACHE_OFF)
+            procInstCache = new HashMap<>();
+        if (cacheDocument != CACHE_OFF)
+            documentCache = new HashMap<>();
+        if (cacheActivityTransition == CACHE_ONLY)
+            activityInstCache = new HashMap<>();
+        if (cacheEvent == CACHE_ONLY)
+            eventInstCache = new HashMap<>();
+        if (cacheProcess != CACHE_ONLY || cacheDocument != CACHE_ONLY && cacheEvent != CACHE_ONLY)
             edadb = new EngineDataAccessDB();
     }
 
@@ -84,7 +88,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public int getPerformanceLevel() {
-        return performance_level;
+        return performanceLevel;
     }
 
     public Document loadDocument(Long documentId, boolean forUpdate) throws DataAccessException, SQLException {
@@ -113,9 +117,9 @@ public class EngineDataAccessCache implements EngineDataAccess {
 
     public synchronized Document getDocument(Long documentId, boolean forUpdate) throws SQLException {
         Document docvo = null;
-        if (cache_document==CACHE_OFF) {
+        if (cacheDocument ==CACHE_OFF) {
             docvo = edadb.getDocument(documentId, forUpdate);
-        } else if (cache_document==CACHE_ONLY) {
+        } else if (cacheDocument ==CACHE_ONLY) {
             docvo = documentCache.get(documentId);
             if (docvo == null) {  // Could be a pass-by-reference document from non-cache-only parent process
                 try {
@@ -149,9 +153,9 @@ public class EngineDataAccessCache implements EngineDataAccess {
      * @throws DataAccessException
      */
     public synchronized void updateDocumentContent(Long docid, String content) throws SQLException {
-        if (cache_document==CACHE_OFF) {
+        if (cacheDocument ==CACHE_OFF) {
             edadb.updateDocumentContent(docid, content);
-        } else if (cache_document==CACHE_ONLY) {
+        } else if (cacheDocument ==CACHE_ONLY) {
             Document docvo = documentCache.get(docid);
             if (docvo!=null) docvo.setContent(content);
         } else {
@@ -168,9 +172,9 @@ public class EngineDataAccessCache implements EngineDataAccess {
      * @throws SQLException
      */
     public synchronized void updateDocumentInfo(Document docvo) throws SQLException {
-        if (cache_document==CACHE_OFF) {
+        if (cacheDocument ==CACHE_OFF) {
             edadb.updateDocumentInfo(docvo);
-        } else if (cache_document==CACHE_ONLY) {
+        } else if (cacheDocument ==CACHE_ONLY) {
             Document docvo0 = documentCache.get(docvo.getDocumentId());
             docvo0.setDocumentType(docvo.getDocumentType());
             docvo0.setOwnerId(docvo.getOwnerId());
@@ -189,9 +193,9 @@ public class EngineDataAccessCache implements EngineDataAccess {
     public synchronized ProcessInstance getProcessInstance(Long processInstId)
             throws SQLException {
         ProcessInstance pi = null;
-        if (cache_process==CACHE_OFF) {
+        if (cacheProcess ==CACHE_OFF) {
             pi = edadb.getProcessInstance(processInstId);
-        } else if (cache_process==CACHE_ONLY) {
+        } else if (cacheProcess ==CACHE_ONLY) {
             pi = procInstCache.get(processInstId);
         } else {
             pi = procInstCache.get(processInstId);
@@ -204,9 +208,9 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public synchronized Long createProcessInstance(ProcessInstance procinst) throws SQLException {
-        if (cache_process==CACHE_OFF) {
+        if (cacheProcess ==CACHE_OFF) {
             edadb.createProcessInstance(procinst);
-        } else if (cache_process==CACHE_ONLY) {
+        } else if (cacheProcess ==CACHE_ONLY) {
             procinst.setId(getNextInternalId());
             procInstCache.put(procinst.getId(), procinst);
         } else {
@@ -219,9 +223,9 @@ public class EngineDataAccessCache implements EngineDataAccess {
 
     public synchronized Long createVariableInstance(VariableInstance var, Long processInstId)
             throws SQLException {
-        if (cache_variable==CACHE_OFF) {
+        if (cacheVariable ==CACHE_OFF) {
             edadb.createVariableInstance(var, processInstId);
-        } else if (cache_variable==CACHE_ONLY) {
+        } else if (cacheVariable ==CACHE_ONLY) {
             var.setInstanceId(getNextInternalId());
             ProcessInstance pi = procInstCache.get(processInstId);
             VariableInstance var0 = pi.getVariable(var.getName());
@@ -246,9 +250,9 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public synchronized void updateVariableInstance(VariableInstance var) throws SQLException {
-        if (cache_variable==CACHE_OFF) {
+        if (cacheVariable ==CACHE_OFF) {
             edadb.updateVariableInstance(var);
-        } else if (cache_variable==CACHE_ONLY) {
+        } else if (cacheVariable ==CACHE_ONLY) {
             // updated already
         } else {
             edadb.updateVariableInstance(var);
@@ -260,9 +264,9 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public synchronized Long createDocument(Document docvo, Package pkg) throws SQLException {
-        if (cache_document==CACHE_OFF) {
+        if (cacheDocument ==CACHE_OFF) {
             edadb.createDocument(docvo, pkg);
-        } else if (cache_document==CACHE_ONLY) {
+        } else if (cacheDocument ==CACHE_ONLY) {
             docvo.setDocumentId(getNextInternalId());
             documentCache.put(docvo.getDocumentId(), docvo);
         } else {
@@ -277,7 +281,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public synchronized Long createTransitionInstance(TransitionInstance vo) throws SQLException {
-        if (cache_activity_transition==CACHE_ONLY) {
+        if (cacheActivityTransition ==CACHE_ONLY) {
             vo.setTransitionInstanceID(getNextInternalId());
         } else {
             edadb.createTransitionInstance(vo);
@@ -286,7 +290,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public synchronized void completeTransitionInstance(Long transInstId, Long actInstId) throws SQLException {
-        if (cache_activity_transition==CACHE_ONLY) {
+        if (cacheActivityTransition ==CACHE_ONLY) {
             // no cache for transition instance
         } else {
             edadb.completeTransitionInstance(transInstId, actInstId);
@@ -294,7 +298,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public synchronized Long createActivityInstance(ActivityInstance vo) throws SQLException {
-        if (cache_activity_transition==CACHE_ONLY) {
+        if (cacheActivityTransition ==CACHE_ONLY) {
             vo.setId(getNextInternalId());
             activityInstCache.put(vo.getId(), vo);
         } else {
@@ -309,7 +313,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
     public synchronized void setActivityInstanceStatus(ActivityInstance actInst,
             Integer status, String statusMessage)
             throws SQLException {
-        if (cache_activity_transition == CACHE_ONLY) {
+        if (cacheActivityTransition == CACHE_ONLY) {
             actInst.setStatusCode(status);
             actInst.setMessage(statusMessage);
         } else {
@@ -318,9 +322,9 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public synchronized void setProcessInstanceStatus(Long processInstId, Integer status) throws SQLException {
-        if (cache_process==CACHE_OFF) {
+        if (cacheProcess ==CACHE_OFF) {
             edadb.setProcessInstanceStatus(processInstId, status);
-        } else if (cache_process==CACHE_ONLY) {
+        } else if (cacheProcess ==CACHE_ONLY) {
             ProcessInstance pi = procInstCache.get(processInstId);
             if (status.equals(WorkStatus.STATUS_PENDING_PROCESS)) {
                 status = WorkStatus.STATUS_IN_PROGRESS;
@@ -336,10 +340,10 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public synchronized void setProcessCompletionTime(ProcessInstance pi) throws SQLException {
-        if (cache_process == CACHE_OFF) {
+        if (cacheProcess == CACHE_OFF) {
             edadb.setProcessCompletionTime(pi);
         }
-        else if (cache_process == CACHE_ONLY) {
+        else if (cacheProcess == CACHE_ONLY) {
             ProcessInstance cachepi = procInstCache.get(pi.getId());
             cachepi.setCompletionTime(pi.getCompletionTime());
         }
@@ -352,14 +356,14 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public synchronized void setActivityCompletionTime(ActivityInstance ai) throws SQLException {
-        if (cache_process != CACHE_ONLY) {
+        if (cacheProcess != CACHE_ONLY) {
             edadb.setActivityCompletionTime(ai);
         }
     }
 
     public synchronized void cancelTransitionInstances(Long procInstId, String comment,
             Long transId) throws SQLException {
-        if (cache_activity_transition==CACHE_ONLY) {
+        if (cacheActivityTransition ==CACHE_ONLY) {
             // TODO what to do with this?
         } else {
             edadb.cancelTransitionInstances(procInstId, comment, transId);
@@ -368,7 +372,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
 
     public synchronized int countTransitionInstances(Long pProcInstId, Long pWorkTransId)
             throws SQLException {
-        if (cache_activity_transition==CACHE_ONLY) {
+        if (cacheActivityTransition ==CACHE_ONLY) {
             return 0;    // TODO check if this is okay
         } else {
             return edadb.countTransitionInstances(pProcInstId, pWorkTransId);
@@ -377,7 +381,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
 
     public int countActivityInstances(Long procInstId, Long activityId)
             throws SQLException {
-        if (cache_activity_transition==CACHE_ONLY) {
+        if (cacheActivityTransition ==CACHE_ONLY) {
             int count = 0;
             List<ActivityInstance> actInstances = new ArrayList<>();
             for (ActivityInstance actInst : activityInstCache.values()) {
@@ -401,7 +405,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
 
     public synchronized void determineCompletedTransitions(Long pProcInstId,
             List<Transition> transitions) throws SQLException {
-        if (cache_activity_transition==CACHE_ONLY) {
+        if (cacheActivityTransition ==CACHE_ONLY) {
             // TODO - how to implement this?
         } else {
             edadb.determineCompletedTransitions(pProcInstId, transitions);
@@ -411,7 +415,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
     public synchronized ActivityInstance getActivityInstance(Long actInstId)
             throws DataAccessException, SQLException {
         ActivityInstance actInst;
-        if (cache_activity_transition==CACHE_ONLY) {
+        if (cacheActivityTransition ==CACHE_ONLY) {
             actInst = activityInstCache.get(actInstId);
         } else {
             actInst = edadb.getActivityInstance(actInstId);
@@ -423,7 +427,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
             Long procInstId, boolean activeOnly, boolean isSynchActivity)
             throws SQLException {
         List<ActivityInstance> ret;
-        if (cache_activity_transition==CACHE_ONLY) {
+        if (cacheActivityTransition ==CACHE_ONLY) {
             ret = new ArrayList<ActivityInstance>();
             for (ActivityInstance actInst : activityInstCache.values()) {
                 if (!actInst.getActivityId().equals(actId)) continue;
@@ -444,9 +448,9 @@ public class EngineDataAccessCache implements EngineDataAccess {
 
     public synchronized List<ProcessInstance> getChildProcessInstances(Long procInstId)
             throws SQLException {
-        if (cache_process==CACHE_OFF) {
+        if (cacheProcess ==CACHE_OFF) {
             return edadb.getChildProcessInstances(procInstId);
-        } else if (cache_process==CACHE_ONLY) {
+        } else if (cacheProcess ==CACHE_ONLY) {
             return new ArrayList<ProcessInstance>();    // TODO implement this
         } else {
             return edadb.getChildProcessInstances(procInstId);
@@ -457,9 +461,9 @@ public class EngineDataAccessCache implements EngineDataAccess {
             Long processInstanceId) throws DataAccessException, SQLException {
         ProcessInstance pi = null;
         List<VariableInstance> vars = null;
-        if (cache_variable==CACHE_OFF) {
+        if (cacheVariable ==CACHE_OFF) {
             vars = edadb.getProcessInstanceVariables(processInstanceId);
-        } else if (cache_variable==CACHE_ONLY) {
+        } else if (cacheVariable ==CACHE_ONLY) {
             pi = procInstCache.get(processInstanceId);
             vars = pi.getVariables();
         } else {
@@ -479,9 +483,9 @@ public class EngineDataAccessCache implements EngineDataAccess {
 
     public synchronized List<ProcessInstance> getProcessInstances(Long procId,
             String ownerType, Long ownerId) throws SQLException {
-        if (cache_process==CACHE_OFF) {
+        if (cacheProcess ==CACHE_OFF) {
             return edadb.getProcessInstances(procId, ownerType, ownerId);
-        } else if (cache_process==CACHE_ONLY) {
+        } else if (cacheProcess ==CACHE_ONLY) {
             return new ArrayList<ProcessInstance>();    // TODO implement this, but this may not be needed
         } else {
             return edadb.getProcessInstances(procId, ownerType, ownerId);
@@ -489,9 +493,9 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public synchronized VariableInstance getVariableInstance(Long varInstId) throws SQLException {
-        if (cache_variable == CACHE_OFF) {
+        if (cacheVariable == CACHE_OFF) {
             return edadb.getVariableInstance(varInstId);
-        } else if (cache_variable == CACHE_ONLY) {
+        } else if (cacheVariable == CACHE_ONLY) {
             return null;
         } else {
             return edadb.getVariableInstance(varInstId);
@@ -501,9 +505,9 @@ public class EngineDataAccessCache implements EngineDataAccess {
     public synchronized VariableInstance getVariableInstance(Long procInstId,
             String varname) throws SQLException {
         VariableInstance var = null;
-        if (cache_variable==CACHE_OFF) {
+        if (cacheVariable ==CACHE_OFF) {
             var = edadb.getVariableInstance(procInstId, varname);
-        } else if (cache_variable==CACHE_ONLY) {
+        } else if (cacheVariable ==CACHE_ONLY) {
             ProcessInstance pi = procInstCache.get(procInstId);
             var = pi.getVariable(varname);
         } else {
@@ -516,7 +520,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public synchronized Integer lockActivityInstance(Long actInstId) throws SQLException {
-        if (cache_activity_transition==CACHE_ONLY) {
+        if (cacheActivityTransition ==CACHE_ONLY) {
             ActivityInstance actInst = activityInstCache.get(actInstId);
             return actInst.getStatusCode();
         } else {
@@ -525,9 +529,9 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public synchronized Integer lockProcessInstance(Long procInstId) throws SQLException {
-        if (cache_process==CACHE_OFF) {
+        if (cacheProcess ==CACHE_OFF) {
             return edadb.lockProcessInstance(procInstId);
-        } else if (cache_process==CACHE_ONLY) {
+        } else if (cacheProcess ==CACHE_ONLY) {
             ProcessInstance procInst = procInstCache.get(procInstId);
             return procInst.getStatusCode();
         } else {
@@ -544,7 +548,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public synchronized EventInstance lockEventInstance(String eventName) throws SQLException {
-        if (cache_event==CACHE_ONLY) {
+        if (cacheEvent ==CACHE_ONLY) {
             return eventInstCache.get(eventName);
         } else {
             return edadb.lockEventInstance(eventName);
@@ -554,7 +558,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
     public synchronized Long recordEventLog(String name, String category,
             String subCategory, String source, String ownerType, Long ownerId,
             String user, String modUser, String comments) throws SQLException {
-        if (cache_event==CACHE_ONLY) {
+        if (cacheEvent ==CACHE_ONLY) {
             return null;
         } else {
             return edadb.recordEventLog(name, category, subCategory,
@@ -564,7 +568,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
 
     public synchronized List<EventWaitInstance> recordEventArrive(String eventName, Long documentId)
             throws SQLException {
-        if (cache_event == CACHE_ONLY) {
+        if (cacheEvent == CACHE_ONLY) {
             EventInstance eventInst = eventInstCache.get(eventName);
             if (eventInst == null) {
                 eventInst = new EventInstance();
@@ -600,7 +604,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
     public synchronized Long recordEventWait(String eventName, boolean multipleRecepients,
             int preserveSeconds, Long actInstId, String compCode)
             throws SQLException {
-        if (cache_event==CACHE_ONLY) {
+        if (cacheEvent ==CACHE_ONLY) {
             EventInstance eventInst = eventInstCache.get(eventName);
             Long documentId;
             if (eventInst==null) {
@@ -656,7 +660,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
 
     public synchronized void removeEventWaitForActivityInstance(Long activityInstanceId, String reason)
             throws SQLException {
-        if (cache_event==CACHE_ONLY) {
+        if (cacheEvent ==CACHE_ONLY) {
             for (String eventName : eventInstCache.keySet()) {
                 EventInstance eventInst = eventInstCache.get(eventName);
                 for (EventWaitInstance ewi : eventInst.getWaiters()) {
@@ -670,7 +674,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
 
     public synchronized void removeEventWaitForProcessInstance(Long processInstanceId)
             throws SQLException {
-        if (cache_event==CACHE_ONLY) {
+        if (cacheEvent ==CACHE_ONLY) {
             // TODO implement this
         } else {
             edadb.removeEventWaitForProcessInstance(processInstanceId);
@@ -678,9 +682,9 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public synchronized void setProcessInstanceStartTime(Long processInstanceId) throws SQLException {
-        if (cache_process == CACHE_OFF) {
+        if (cacheProcess == CACHE_OFF) {
             edadb.setProcessInstanceStartTime(processInstanceId);
-        } else if (cache_process == CACHE_ONLY) {
+        } else if (cacheProcess == CACHE_ONLY) {
             ProcessInstance processInstance = procInstCache.get(processInstanceId);
             processInstance.setStartDate(new Date());
         } else {
@@ -693,9 +697,9 @@ public class EngineDataAccessCache implements EngineDataAccess {
 
     public synchronized void setProcessInstanceCompletionCode(Long procInstId,
             String completionCode) throws SQLException {
-        if (cache_process==CACHE_OFF) {
+        if (cacheProcess ==CACHE_OFF) {
             edadb.setProcessInstanceCompletionCode(procInstId, completionCode);
-        } else if (cache_process==CACHE_ONLY) {
+        } else if (cacheProcess ==CACHE_ONLY) {
             ProcessInstance procInst = procInstCache.get(procInstId);
             procInst.setCompletionCode(completionCode);
         } else {
@@ -707,7 +711,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
 
     public synchronized void updateActivityInstanceEndTime(Long actInstId, Date endtime)
             throws SQLException {
-        if (cache_activity_transition==CACHE_ONLY) {
+        if (cacheActivityTransition ==CACHE_ONLY) {
             ActivityInstance actInst = activityInstCache.get(actInstId);
             actInst.setEndDate(new Date());
         } else {
@@ -717,47 +721,47 @@ public class EngineDataAccessCache implements EngineDataAccess {
 
 
 
-    private void setCacheFlags(boolean forServiceProcess, int performance_level) {
-        if (performance_level>=7) {
-            this.cache_activity_transition = CACHE_ONLY;
-            this.cache_variable = CACHE_ONLY;
-            this.cache_document = CACHE_ONLY;
-            this.cache_event = CACHE_ONLY;
-        } else if (performance_level>=5) {    // for regular processes, 3 and 5 are the same
-            this.cache_activity_transition = CACHE_OFF;
-            this.cache_variable = forServiceProcess?CACHE_ONLY:CACHE_ON;
-            this.cache_document = forServiceProcess?CACHE_ONLY:CACHE_ON;
+    private void setCacheFlags(boolean forServiceProcess, int performanceLevel) {
+        if (performanceLevel >= 7) {
+            this.cacheActivityTransition = CACHE_ONLY;
+            this.cacheVariable = CACHE_ONLY;
+            this.cacheDocument = CACHE_ONLY;
+            this.cacheEvent = CACHE_ONLY;
+        } else if (performanceLevel >= 5) {    // for regular processes, 3 and 5 are the same
+            this.cacheActivityTransition = CACHE_OFF;
+            this.cacheVariable = forServiceProcess?CACHE_ONLY:CACHE_ON;
+            this.cacheDocument = forServiceProcess?CACHE_ONLY:CACHE_ON;
             // this.cache_event = forServiceProcess?CACHE_ONLY:CACHE_OFF;
-            this.cache_event = CACHE_OFF;
-        } else if (performance_level>=3) {
-            this.cache_activity_transition = CACHE_OFF;
-            this.cache_variable = CACHE_ON;
-            this.cache_document = CACHE_ON;
+            this.cacheEvent = CACHE_OFF;
+        } else if (performanceLevel >= 3) {
+            this.cacheActivityTransition = CACHE_OFF;
+            this.cacheVariable = CACHE_ON;
+            this.cacheDocument = CACHE_ON;
             // this.cache_event = forServiceProcess?CACHE_ONLY:CACHE_OFF;
-            this.cache_event = CACHE_OFF;
+            this.cacheEvent = CACHE_OFF;
         } else {
-            this.cache_activity_transition = CACHE_OFF;
-            this.cache_variable = CACHE_OFF;
-            this.cache_document = CACHE_OFF;
-            this.cache_event = CACHE_OFF;
+            this.cacheActivityTransition = CACHE_OFF;
+            this.cacheVariable = CACHE_OFF;
+            this.cacheDocument = CACHE_OFF;
+            this.cacheEvent = CACHE_OFF;
         }
-        if (cache_activity_transition==CACHE_OFF && cache_variable==CACHE_OFF)
-            cache_process = CACHE_OFF;
-        else if (cache_activity_transition==CACHE_ONLY && cache_variable==CACHE_ONLY)
-            cache_process = CACHE_ONLY;
-        else cache_process = CACHE_ON;
+        if (cacheActivityTransition == CACHE_OFF && cacheVariable == CACHE_OFF)
+            cacheProcess = CACHE_OFF;
+        else if (cacheActivityTransition == CACHE_ONLY && cacheVariable == CACHE_ONLY)
+            cacheProcess = CACHE_ONLY;
+        else cacheProcess = CACHE_ON;
     }
 
-    public static EngineDataAccessCache getInstance(boolean forServiceProcess, int performance_level) {
+    public static EngineDataAccessCache getInstance(boolean forServiceProcess, int performanceLevel) {
         EngineDataAccessCache edac;
         if (forServiceProcess) {
-            edac = new EngineDataAccessCache(forServiceProcess, performance_level);
+            edac = new EngineDataAccessCache(forServiceProcess, performanceLevel);
         } else {
-            if (performance_level>=9) {
+            if (performanceLevel>=9) {
                 if (memoryOnlyInstance == null)
-                    memoryOnlyInstance = new EngineDataAccessCache(forServiceProcess, performance_level);
+                    memoryOnlyInstance = new EngineDataAccessCache(forServiceProcess, performanceLevel);
                 edac = memoryOnlyInstance;
-            } else edac = new EngineDataAccessCache(forServiceProcess, performance_level);
+            } else edac = new EngineDataAccessCache(forServiceProcess, performanceLevel);
         }
         return edac;
     }
@@ -772,7 +776,7 @@ public class EngineDataAccessCache implements EngineDataAccess {
     }
 
     public Long getRequestCompletionTime(String ownerType, Long ownerId) throws SQLException {
-        return edadb == null || cache_document == CACHE_ONLY ? null : edadb.getRequestCompletionTime(ownerType, ownerId);
+        return edadb == null || cacheDocument == CACHE_ONLY ? null : edadb.getRequestCompletionTime(ownerType, ownerId);
     }
 
     public void setElapsedTime(String ownerType, Long instanceId, Long elapsedTime) throws SQLException {

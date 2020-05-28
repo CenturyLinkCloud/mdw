@@ -8,7 +8,7 @@ import org.json.JSONObject;
 
 import java.util.*;
 
-public class Attributes extends HashMap<String,String> implements Jsonable {
+public class Attributes extends TreeMap<String,String> implements Jsonable {
 
     public Attributes() {
     }
