@@ -60,27 +60,28 @@ public class TimerTaskRegistration implements StartupService {
             String v = PropertyManager.getProperty(PropertyNames.MDW_CONTAINER_MESSENGER);
             int period_default = (v == null || "jms".equalsIgnoreCase(v)) ? 60 : 5;
             int delay = PropertyManager.getIntegerProperty(PropertyNames.MDW_TIMER_INITIAL_DELAY, 180);
+            int period = PropertyManager.getIntegerProperty(PropertyNames.MDW_TIMER_CHECK_INTERVAL, period_default);
             int unschedDelay = PropertyManager.getIntegerProperty(PropertyNames.UNSCHEDULED_EVENTS_CHECK_DELAY, 180);
             int unschedPeriod = PropertyManager.getIntegerProperty(PropertyNames.UNSCHEDULED_EVENTS_CHECK_INTERVAL, 300);
-            int period = PropertyManager.getIntegerProperty(PropertyNames.MDW_TIMER_CHECK_INTERVAL, period_default);
-            Map<String, Properties> timers = getAllScheduledEvents();
+            Map<String,Properties> timers = getAllScheduledEvents();
 
             ScheduledEventMonitor scheduler = new ScheduledEventMonitor();
             Timer aTimer = new Timer(SCHEDULED_JOB);
-            aTimer.schedule(scheduler, delay*1000L, period*1000L);
+            aTimer.schedule(scheduler, delay * 1000L, period * 1000L);
             _timers.add(aTimer);
 
 
             UnscheduledEventMonitor unscheduledEventMonitor = new UnscheduledEventMonitor();
             Timer unscheduledTimer = new Timer(UNSCHEDULED_EVENTS);
-            unscheduledTimer.schedule(unscheduledEventMonitor, unschedDelay*1000L, unschedPeriod*1000L);
+            unscheduledTimer.schedule(unscheduledEventMonitor, unschedDelay * 1000L, unschedPeriod * 1000L);
             _timers.add(unscheduledTimer);
 
             for (String name : timers.keySet()) {
                 Properties timerProps = timers.get(name);
                 String schedule = timerProps.getProperty(PROPERTY_SCHEDULE);
                 String clsnameAndArgs = timerProps.getProperty(PROPERTY_TIMER_CLASS);
-                if (schedule==null || schedule.trim().length()==0) continue;
+                if (schedule==null || schedule.trim().length()==0)
+                    continue;
                 ScheduledEventQueue queue = ScheduledEventQueue.getSingleton();
                 queue.scheduleCronJob(ScheduledEvent.SCHEDULED_JOB_PREFIX + clsnameAndArgs, schedule);
             }

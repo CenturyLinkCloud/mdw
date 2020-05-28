@@ -19,9 +19,6 @@ import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.event.EventLog;
-import com.centurylink.mdw.model.monitor.ScheduledEvent;
-import com.centurylink.mdw.model.monitor.ScheduledJob;
-import com.centurylink.mdw.model.monitor.UnscheduledEvent;
 import com.centurylink.mdw.model.user.UserAction;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Package;
@@ -29,7 +26,6 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.services.event.ServiceHandler;
 import com.centurylink.mdw.services.event.WorkflowHandler;
-import com.centurylink.mdw.util.CallURL;
 
 import java.io.IOException;
 import java.util.Date;
@@ -144,29 +140,6 @@ public interface EventServices {
     List<ProcessInstance> getProcessInstances(String masterRequestId, String processName)
             throws ProcessException, DataAccessException;
 
-    /**
-     * Load all internal event and scheduled jobs before cutoff time.
-     * If cutoff time is null, load only unscheduled events
-     */
-    List<ScheduledEvent> getScheduledEventList(Date cutoffTime)
-            throws DataAccessException;
-
-    /**
-     * Load all internal events older than the specified time up to a max of batchSize.
-     */
-    List<UnscheduledEvent> getUnscheduledEventList(Date olderThan, int batchSize)
-            throws DataAccessException;
-
-    void offerScheduledEvent(ScheduledEvent event)
-            throws DataAccessException;
-
-    void processScheduledEvent(String eventName, Date now)
-            throws DataAccessException;
-
-    boolean processUnscheduledEvent(String eventName);
-
-    List<UnscheduledEvent> processInternalEvents(List<UnscheduledEvent> eventList);
-
     void updateEventInstance(String eventName,
             Long documentId, Integer status, Date consumeDate, String auxdata, String reference, int preserveSeconds)
             throws DataAccessException;
@@ -212,16 +185,4 @@ public interface EventServices {
     Process findProcessByProcessInstanceId(Long processInstanceId)
             throws DataAccessException, ProcessException, IOException;
 
-    /**
-     * Run a ScheduledJob so that there is no overlap between running instances.
-     * For example, if scheduled to run every hour and the 2:00 o'clock execution
-     * is still running at 3:00, the 3:00 o'clock execution will be skipped and the
-     * next event is rescheduled to occur at 4:00.
-     */
-    void runScheduledJobExclusively(ScheduledJob job, CallURL params) throws DataAccessException;
-
-    /**
-     * Update scheduled job to non-running status.
-     */
-    void completeScheduledJob(String eventName, Integer status) throws DataAccessException;
 }

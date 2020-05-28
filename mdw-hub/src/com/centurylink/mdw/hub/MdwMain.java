@@ -47,7 +47,6 @@ public class MdwMain {
 
     private static ThreadPoolProvider threadPool;
     private static InternalEventListener internalEventListener;
-    private static ExternalEventListener intraMdwEventListener;
     private static ExternalEventListener externalEventListener;
     private static ConfigurationEventListener configurationEventListener;
 
@@ -101,9 +100,6 @@ public class MdwMain {
             }
 
             if (ApplicationContext.getJmsProvider() != null) {
-                intraMdwEventListener = new ExternalEventListener(JMSDestinationNames.INTRA_MDW_EVENT_HANDLER_QUEUE, threadPool);
-                intraMdwEventListener.start();
-
                 externalEventListener = new ExternalEventListener(JMSDestinationNames.EXTERNAL_EVENT_HANDLER_QUEUE, threadPool);
                 externalEventListener.start();
 
@@ -167,10 +163,8 @@ public class MdwMain {
 
             if (configurationEventListener != null)
                 configurationEventListener.stop();
-                if (externalEventListener != null)
+            if (externalEventListener != null)
                 externalEventListener.stop();
-            if (intraMdwEventListener != null)
-                intraMdwEventListener.stop();
             if (internalEventListener != null )
                 internalEventListener.stop();
 

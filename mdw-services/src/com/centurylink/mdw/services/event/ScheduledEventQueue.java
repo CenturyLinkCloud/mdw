@@ -26,6 +26,7 @@ import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
+import com.centurylink.mdw.model.monitor.ScheduledJob;
 import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.MessageServices;
@@ -34,6 +35,7 @@ import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
+import com.centurylink.mdw.util.CallURL;
 import com.centurylink.mdw.util.DateHelper;
 import com.centurylink.mdw.util.JMSServices;
 import com.centurylink.mdw.util.TransactionWrapper;
@@ -42,6 +44,7 @@ import com.centurylink.mdw.util.log.StandardLogger;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.SQLRecoverableException;
 import java.util.*;
 
@@ -66,8 +69,7 @@ public class ScheduledEventQueue implements CacheService {
     private synchronized void loadScheduledEvents() {
         eventQueue = new PriorityQueue<>();
         try {
-            EventServices eventManager = ServiceLocator.getEventServices();
-            List<ScheduledEvent> eventlist = eventManager.getScheduledEventList(cutoffTime);
+            List<ScheduledEvent> eventlist = getScheduledEventList(cutoffTime);
             for (ScheduledEvent event: eventlist) {
                 logger.info("Previously scheduled event " + event.getName() + " at "
                         + DateHelper.dateToString(event.getScheduledTime()) + " (database time)");
@@ -77,6 +79,23 @@ public class ScheduledEventQueue implements CacheService {
         catch (Exception ex) {
             eventQueue = null;
             logger.error(ex.getMessage(), ex);
+        }
+    }
+
+    /**
+     * Load all internal event and scheduled jobs before cutoff time.
+     * If cutoff time is null, load only unscheduled events
+     */
+    private List<ScheduledEvent> getScheduledEventList(Date cutoffTime) throws DataAccessException {
+        TransactionWrapper transaction = null;
+        EngineDataAccessDB edao = new EngineDataAccessDB();
+        try {
+            transaction = edao.startTransaction();
+            return edao.getScheduledEventList(cutoffTime);
+        } catch (SQLException e) {
+            throw new DataAccessException(-1, "Failed to get scheduled event list", e);
+        } finally {
+            edao.stopTransaction(transaction);
         }
     }
 
@@ -109,8 +128,7 @@ public class ScheduledEventQueue implements CacheService {
      */
     public void processEvent(ScheduledEvent event, Date now) {
         try {
-            EventServices eventManager = ServiceLocator.getEventServices();
-            eventManager.processScheduledEvent(event.getName(), now);
+            processScheduledEvent(event.getName(), now);
         } catch (Exception e) {
             if (e.getCause() instanceof SQLRecoverableException) {
                 eventQueue = null;
@@ -119,14 +137,42 @@ public class ScheduledEventQueue implements CacheService {
         }
     }
 
+    public void processScheduledEvent(String eventName, Date now) throws DataAccessException {
+        TransactionWrapper transaction = null;
+        EngineDataAccessDB edao = new EngineDataAccessDB();
+        try {
+            transaction = edao.startTransaction();
+            ScheduledEvent event = edao.lockScheduledEvent(eventName);
+            Date currentScheduledTime = event == null ? null : event.getScheduledTime();
+            ScheduledEventQueue queue = ScheduledEventQueue.getSingleton();
+            boolean processed = queue.processEvent(eventName, event, now);
+            if (event != null && processed)  {
+                if (event.isScheduledJob()) {
+                    edao.recordScheduledJobHistory(event.getName(), currentScheduledTime,
+                            ApplicationContext.getServer().toString());
+                }
+                if (event.getScheduledTime() == null) {
+                    edao.deleteEventInstance(event.getName());
+                }
+                else {
+                    edao.updateEventInstance(event.getName(), null, null,
+                            event.getScheduledTime(), null, null, 0, null);
+                }
+            }     // else do nothing - may be processed by another server
+        } catch (Exception e) {
+            throw new DataAccessException(-1, "Failed to process scheduled event", e);
+        } finally {
+            edao.stopTransaction(transaction);
+        }
+    }
+
     /**
      * Processes the event and reschedules with the next data.
      * @param eventName the scheduled event name.
      * @param event the scheduled event.
      * @param now the current time
-     * @param edao engine data access
      */
-    public boolean processEvent(String eventName, ScheduledEvent event, Date now, EngineDataAccessDB edao) {
+    public boolean processEvent(String eventName, ScheduledEvent event, Date now) {
         // when this is called, the database has locked the event, or it is null
         // lock and remove in database, and refresh the copy
         if (event == null) {
@@ -134,8 +180,7 @@ public class ScheduledEventQueue implements CacheService {
             return false;
         }
         if (event.getScheduledTime().compareTo(now) > 0) {
-            logger.debug("Event has already been rescheduled: " + eventName + " at " +
-                    event.getScheduledTime().toString());
+            logger.debug("Event has already been rescheduled: " + eventName + " at " + event.getScheduledTime().toString());
             eventQueue.offer(event);
             return false;
         }
@@ -149,8 +194,7 @@ public class ScheduledEventQueue implements CacheService {
                 }
             } else if (event.isScheduledJob()) {
                 if (EventInstance.STATUS_SCHEDULED_JOB_RUNNING.equals(event.getStatus())) {
-                    logger.error("Scheduled job still in progress, so execution skipped at " +
-                            DateHelper.dateToString(now) + ": " + event.getName());
+                    logger.error("Scheduled job still in progress, so execution skipped at " + DateHelper.dateToString(now) + ": " + event.getName());
                 }
                 else {
                     // send message to listener to run the job
@@ -160,7 +204,7 @@ public class ScheduledEventQueue implements CacheService {
                             "</_mdw_run_job>";
                     try {
                         JMSServices.getInstance().sendTextMessage(null,
-                                JMSDestinationNames.INTRA_MDW_EVENT_HANDLER_QUEUE, calldoc, 0, null);
+                                JMSDestinationNames.EXTERNAL_EVENT_HANDLER_QUEUE, calldoc, 0, null);
                     } catch (Exception ex) {
                         throw new ProcessException(-1, ex.getMessage(), ex);
                     }
@@ -171,7 +215,7 @@ public class ScheduledEventQueue implements CacheService {
                     throw new Exception("Scheduled external event message is null or non-XML. Event name " + event.getName());
                 try {
                     JMSServices.getInstance().sendTextMessage(null,
-                            JMSDestinationNames.INTRA_MDW_EVENT_HANDLER_QUEUE, event.getMessage(), 0, null);
+                            JMSDestinationNames.EXTERNAL_EVENT_HANDLER_QUEUE, event.getMessage(), 0, null);
                 } catch (Exception ex) {
                     throw new ProcessException(-1, ex.getMessage(), ex);
                 }
@@ -255,8 +299,7 @@ public class ScheduledEventQueue implements CacheService {
         event.setMessage(message);
         event.setReference(reference);
         try {
-            EventServices eventManager = ServiceLocator.getEventServices();
-            eventManager.offerScheduledEvent(event);
+            offerScheduledEvent(event);
             if (time != null) {
                 eventQueue.offer(event);
                 logger.info("Schedules event " + event.getName() + " at "
@@ -271,6 +314,59 @@ public class ScheduledEventQueue implements CacheService {
                 logger.error("Failed to schedule event " + name, e);
         } catch (Exception e) {
             logger.error("Failed to schedule event " + name, e);
+        }
+    }
+
+    /**
+     * Run a ScheduledJob so that there is no overlap between running instances.
+     * For example, if scheduled to run every hour and the 2:00 o'clock execution
+     * is still running at 3:00, the 3:00 o'clock execution will be skipped and the
+     * next event is rescheduled to occur at 4:00.
+     */
+    public void runScheduledJobExclusively(ScheduledJob job, CallURL params) throws DataAccessException {
+        String eventName = ScheduledEvent.SCHEDULED_JOB_PREFIX + params;
+        TransactionWrapper transaction = null;
+        EngineDataAccessDB edao = new EngineDataAccessDB();
+        try {
+            transaction = edao.startTransaction();
+            ScheduledEvent event = edao.lockScheduledEvent(eventName);
+            if (event == null) {
+                logger.error("ScheduledJob not found: " + eventName);
+            } else
+                edao.updateEventInstance(event.getName(), null, EventInstance.STATUS_SCHEDULED_JOB_RUNNING,
+                        event.getScheduledTime(), null, null, 0, null);
+        } catch (SQLException e) {
+            throw new DataAccessException(-1, "Failed to update scheduled job", e);
+        } finally {
+            edao.stopTransaction(transaction);
+        }
+        job.run(params, (Integer status) -> {
+            try {
+                completeScheduledJob(eventName);
+            }
+            catch (DataAccessException ex) {
+                logger.error(ex.getMessage(), ex);
+            }
+        });
+    }
+
+    /**
+     * Update scheduled job to non-running status.
+     */
+    public void completeScheduledJob(String eventName) throws DataAccessException {
+        TransactionWrapper transaction = null;
+        EngineDataAccessDB edao = new EngineDataAccessDB();
+        try {
+            transaction = edao.startTransaction();
+            ScheduledEvent event = edao.lockScheduledEvent(eventName);
+            if (event != null) {
+                edao.updateEventInstance(event.getName(), null, EventInstance.STATUS_SCHEDULED_JOB,
+                        event.getScheduledTime(), null, null, 0, null);
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(-1, "Failed to complete scheduled job", e);
+        } finally {
+            edao.stopTransaction(transaction);
         }
     }
 
@@ -550,6 +646,33 @@ public class ScheduledEventQueue implements CacheService {
         return cal.getTime();
     }
 
+    public void offerScheduledEvent(ScheduledEvent event)
+            throws DataAccessException {
+        TransactionWrapper transaction = null;
+        EngineDataAccessDB edao = new EngineDataAccessDB();
+        try {
+            transaction = edao.startTransaction();
+            edao.offerScheduledEvent(event);
+        } catch (SQLIntegrityConstraintViolationException e) {
+            throw new DataAccessException(DataAccessException.INTEGRITY_CONSTRAINT_VIOLATION,
+                    "The event is already scheduled", e);
+        } catch (SQLException e) {
+            if (e.getSQLState().equals("23000")) {
+                throw new DataAccessException(DataAccessException.INTEGRITY_CONSTRAINT_VIOLATION,
+                        "The event is already scheduled", e);
+                // for unknown reason (may be because of different Oracle driver - ojdbc14),
+                // when running under Tomcat, contraint violation does not throw SQLIntegrityConstraintViolationException
+                // 23000 is ANSI/SQL standard SQL State for constraint violation
+                // Alternatively, we can use e.getErrorCode()==1 for Oracle (ORA-00001)
+                // or e.getErrorCode()==1062 for MySQL
+            } else {
+                throw new DataAccessException(-1, "Failed to create scheduled event", e);
+            }
+        } finally {
+            edao.stopTransaction(transaction);
+        }
+    }
+
     private class CronField {
         int increment;
         boolean ignore;    // ?
@@ -589,4 +712,5 @@ public class ScheduledEventQueue implements CacheService {
             return -1;
         }
     }
+
 }

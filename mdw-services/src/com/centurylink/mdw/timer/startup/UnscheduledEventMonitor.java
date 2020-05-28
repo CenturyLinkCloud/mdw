@@ -15,20 +15,26 @@
  */
 package com.centurylink.mdw.timer.startup;
 
-import java.util.Date;
-import java.util.List;
-import java.util.TimerTask;
-
+import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.PropertyNames;
+import com.centurylink.mdw.container.ThreadPoolProvider;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
+import com.centurylink.mdw.model.event.EventInstance;
 import com.centurylink.mdw.model.monitor.UnscheduledEvent;
-import com.centurylink.mdw.services.EventServices;
-import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
+import com.centurylink.mdw.services.process.InternalEventDriver;
+import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.TimerTask;
 
 /**
  * The timer task that monitors MDW unscheduled events.
@@ -69,10 +75,45 @@ public class UnscheduledEventMonitor  extends TimerTask {
     private int processUnscheduledEvents(Date olderThan, int max) throws DataAccessException {
         // load a batch of unscheduled events
         hasRun = true;
-        EventServices eventManager = ServiceLocator.getEventServices();
-        List<UnscheduledEvent> unscheduledEvents = eventManager.getUnscheduledEventList(olderThan, max);
-        List<UnscheduledEvent> leftover = eventManager.processInternalEvents(unscheduledEvents);
-        // ConnectionPoolRegistration.processUnscheduledEvents(unscheduledEvents);
+        List<UnscheduledEvent> unscheduledEvents = getUnscheduledEventList(olderThan, max);
+        List<UnscheduledEvent> leftover = processInternalEvents(unscheduledEvents);
         return unscheduledEvents.size() - leftover.size();
+    }
+
+    /**
+     * Load all internal events older than the specified time up to a max of batchSize.
+     */
+    public List<UnscheduledEvent> getUnscheduledEventList(Date olderThan, int batchSize) throws DataAccessException {
+        TransactionWrapper transaction = null;
+        EngineDataAccessDB edao = new EngineDataAccessDB();
+        try {
+            transaction = edao.startTransaction();
+            return edao.getUnscheduledEventList(olderThan, batchSize);
+        } catch (SQLException e) {
+            throw new DataAccessException(-1, "Failed to get unscheduled event list", e);
+        } finally {
+            edao.stopTransaction(transaction);
+        }
+    }
+
+
+    public List<UnscheduledEvent> processInternalEvents(List<UnscheduledEvent> eventList) {
+        List<UnscheduledEvent> returnList = new ArrayList<>();
+        ThreadPoolProvider thread_pool = ApplicationContext.getThreadPoolProvider();
+        for (UnscheduledEvent one : eventList) {
+            if (EventInstance.ACTIVE_INTERNAL_EVENT.equals(one.getReference())) {
+                InternalEventDriver command = new InternalEventDriver(one.getName(), one.getMessage());
+                if (!thread_pool.execute(ThreadPoolProvider.WORKER_SCHEDULER, one.getName(), command)) {
+                    String msg = ThreadPoolProvider.WORKER_SCHEDULER + " has no thread available for Unscheduled event: " + one.getName() + " message:\n" + one.getMessage();
+                    // make this stand out
+                    logger.warn(msg, new Exception(msg));
+                    logger.info(thread_pool.currentStatus());
+                    returnList.add(one);
+                }
+            }
+            else
+                returnList.add(one);
+        }
+        return returnList;
     }
 }

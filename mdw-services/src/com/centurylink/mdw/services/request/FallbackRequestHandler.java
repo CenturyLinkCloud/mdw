@@ -35,6 +35,7 @@ import com.centurylink.mdw.services.EventServices;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.cache.CacheRegistration;
+import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
 import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.CallURL;
@@ -137,8 +138,7 @@ public class FallbackRequestHandler implements RequestHandler {
                         }
                         else {
                             if (exclusive) {
-                                EventServices eventServices = ServiceLocator.getEventServices();
-                                eventServices.runScheduledJobExclusively(job, url);
+                                ScheduledEventQueue.getSingleton().runScheduledJobExclusively(job, url);
                             }
                             else {
                                 // don't care when or if completed
