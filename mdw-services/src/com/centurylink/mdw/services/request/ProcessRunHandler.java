@@ -15,8 +15,6 @@ import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.request.RequestHandlerException;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.translator.VariableTranslator;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -89,10 +87,8 @@ public abstract class ProcessRunHandler extends BaseHandler {
             if (requestVar != null && requestVar.getVariableCategory() == 1) {
                 values = new HashMap<>();
                 String varType = requestVar.getType();
-                com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(pkg, varType);
-                if (translator instanceof DocumentReferenceTranslator) {
-                    DocumentReferenceTranslator docTranslator = (DocumentReferenceTranslator) translator;
-                    Object document = docTranslator.realToObject(request.getContent());
+                if (pkg.getTranslator(varType).isDocumentReferenceVariable()) {
+                    Object document = pkg.getObjectValue(varType, request.getContent(), true);
                     String path = headers.get(Listener.METAINFO_REQUEST_PATH);
                     Long requestId = new Long(headers.get(Listener.METAINFO_DOCUMENT_ID));
                     Long docId = ServiceLocator.getEventServices().createDocument(varType, OwnerType.DOCUMENT, requestId, document, pkg, path);

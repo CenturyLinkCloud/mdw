@@ -26,7 +26,7 @@ import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.script.*;
 import com.centurylink.mdw.translator.JsonTranslator;
-import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.variable.VariableTranslator;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 import com.centurylink.mdw.xml.DomHelper;
 import groovy.lang.Binding;
@@ -68,8 +68,7 @@ public class CrossmapActivity extends DefaultActivityImpl {
             Variable inputVar = runtimeContext.getProcess().getVariable(inputAttr);
             if (inputVar == null)
                 throw new ActivityException("Input variable not defined: " + inputAttr);
-            com.centurylink.mdw.variable.VariableTranslator inputTrans
-              = VariableTranslator.getTranslator(getPackage(), inputVar.getType());
+            VariableTranslator inputTrans = getPackage().getTranslator(inputVar.getType());
             Object inputObj = getVariableValue(inputAttr);
             if (inputObj == null)
                 throw new ActivityException("Input variable is null: " + inputAttr);
@@ -94,8 +93,7 @@ public class CrossmapActivity extends DefaultActivityImpl {
             Variable outputVar = runtimeContext.getProcess().getVariable(outputAttr);
             if (outputVar == null)
                 throw new ActivityException("Output variable not defined: " + outputVar);
-            com.centurylink.mdw.variable.VariableTranslator outputTrans
-                = VariableTranslator.getTranslator(getPackage(), outputVar.getType());
+            VariableTranslator outputTrans = getPackage().getTranslator(outputVar.getType());
             Builder builder;
             if (outputTrans instanceof DomDocumentTranslator)
                 builder = new XmlBuilder(outputVar.getName());

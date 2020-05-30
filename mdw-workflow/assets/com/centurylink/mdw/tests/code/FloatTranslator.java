@@ -13,13 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.centurylink.mdw.translator;
+package com.centurylink.mdw.tests.code;
 
-/**
- * The interface needs to be implemented if it is desired
- * to translate objects
- */
+import com.centurylink.mdw.common.translator.impl.BaseTranslator;
+import com.centurylink.mdw.translator.TranslationException;
 
-public interface Translator {
+public class FloatTranslator extends BaseTranslator {
+    public String toString(Object obj) throws TranslationException {
+        return obj.toString();
+    }
 
+    @Override
+    public Object toObject(String str) throws TranslationException {
+        return new Float(str);
+    }
 }

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import com.centurylink.mdw.common.service.ServiceException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -101,7 +102,7 @@ public class StubServer extends SoccomServer {
 
     @Override
     protected void requestProc(String threadId, String msgId, byte[] msg, int msgSize,
-            OutputStream out) throws IOException, SoccomException {
+            OutputStream out) throws IOException {
         String request = new String(msg, 0, msgSize);
         try {
             JSONObject json = new JsonObject(request);

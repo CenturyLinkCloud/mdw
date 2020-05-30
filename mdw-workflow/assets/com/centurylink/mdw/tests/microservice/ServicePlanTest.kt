@@ -11,7 +11,7 @@ class ServicePlanTest {
 
     init {
         runtimeContext.properties["mdw.services.url"] = "http://localhost:8080/mdw"
-        runtimeContext.variables["greeting"] = "hello"
+        runtimeContext.values["greeting"] = "hello"
         runtimeContext.docRefs["request"] = "DOCUMENT:12345"
     }
 

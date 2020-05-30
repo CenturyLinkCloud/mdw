@@ -20,7 +20,6 @@ import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.process.InvokeProcessActivityBase;
@@ -191,8 +190,7 @@ public class OrchestratorActivity extends InvokeProcessActivityBase {
                 if (value != null) {
                     String stringValue = String.valueOf(value);
                     if (passDocumentContent) {
-                        if (VariableTranslator.isDocumentReferenceVariable(getPackage(),
-                                childVar.getType()) && stringValue.startsWith("DOCUMENT:")) {
+                        if (getPackage().getTranslator(childVar.getType()).isDocumentReferenceVariable() && stringValue.startsWith("DOCUMENT:")) {
                             stringValue = getDocumentContent(new DocumentReference(stringValue));
                         }
                     }

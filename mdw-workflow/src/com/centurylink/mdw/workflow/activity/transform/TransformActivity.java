@@ -20,9 +20,9 @@ import com.centurylink.mdw.activity.types.ScriptActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
+import com.centurylink.mdw.variable.VariableTranslator;
 import com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -146,7 +146,7 @@ public class TransformActivity extends ScriptExecutorActivity {
           throw new ActivityException("Input document variable not found: " + inputDocument);
         String inputVarName = inputVar.getName();
         String inputVarType = inputVar.getType();
-        com.centurylink.mdw.variable.VariableTranslator inTranslator = VariableTranslator.getTranslator(getPackage(), inputVarType);
+        VariableTranslator inTranslator = getPackage().getTranslator(inputVarType);
         if (inTranslator instanceof DocumentReferenceTranslator) {
             DocumentReferenceTranslator docRefTranslator = (DocumentReferenceTranslator) inTranslator;
             String input = docRefTranslator.realToString(getVariableValue(inputVarName));
@@ -159,7 +159,7 @@ public class TransformActivity extends ScriptExecutorActivity {
         Variable outputVar = getMainProcessDefinition().getVariable(getOutputDocuments()[0]);
         String outputVarName = outputVar.getName();
         String outputVarType = outputVar.getType();
-        com.centurylink.mdw.variable.VariableTranslator outTranslator = VariableTranslator.getTranslator(getPackage(), outputVarType);
+        VariableTranslator outTranslator = getPackage().getTranslator(outputVarType);
         if (!isOutputDocument(outputVarName))
           throw new ActivityException("Output document is not writable: " + outputVarName);
         if (outTranslator instanceof DocumentReferenceTranslator) {
@@ -173,8 +173,8 @@ public class TransformActivity extends ScriptExecutorActivity {
     }
 
     private Object getGPathParamValue(String varName, String varType) throws ActivityException {
-        Object value = super.getVariableValue(varName);
-        com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(getPackage(), varType);
+        Object value = getValue(varName);
+        VariableTranslator translator = getPackage().getTranslator(varType);
         if (translator instanceof DocumentReferenceTranslator) {
             try {
                 DocumentReferenceTranslator docRefTranslator = (DocumentReferenceTranslator) translator;
@@ -204,7 +204,7 @@ public class TransformActivity extends ScriptExecutorActivity {
 
     private void setGPathParamValue(String varName, String varType, Object value) throws ActivityException {
         if (isOutputDocument(varName)) {
-            com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(getPackage(), varType);
+            VariableTranslator translator = getPackage().getTranslator(varType);
             DocumentReferenceTranslator docRefTranslator = (DocumentReferenceTranslator) translator;
             try {
                 if (value instanceof Node)

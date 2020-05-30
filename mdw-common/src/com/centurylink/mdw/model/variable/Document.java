@@ -15,124 +15,126 @@
  */
 package com.centurylink.mdw.model.variable;
 
+import com.centurylink.mdw.cache.asset.PackageCache;
+import com.centurylink.mdw.model.workflow.Package;
+
 import java.io.Serializable;
 import java.util.Date;
 
-import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.translator.VariableTranslator;
-
 public class Document implements Serializable {
 
-    private Long documentId;
+    private String type;
+    public String getType() {
+        return type;
+    }
+    public void setType(String type) {
+        this.type = type;
+    }
+    @Deprecated
+    public String getDocumentType() { return type; }
+
+    private Long id;
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+    @Deprecated
+    public Long getDocumentId() { return id; }
+
     private Date createDate;
-    private Date modifyDate;
-    private String documentType;
-    private String ownerType;
-    private Long ownerId;
-    private Integer statusCode;
-    private String statusMessage;
-    private String path;
-    private String content;        // content in string format
-    private Object object;        // content in object format
-
-    public Object getObject(String type, Package pkg) {
-        if (type==null || type.equals(documentType)) {
-            if (object==null && content!=null) {
-                object = VariableTranslator.realToObject(pkg, documentType, content);
-            }
-        } else {
-            if (content!=null) {
-                documentType = type;
-                object = VariableTranslator.realToObject(pkg, documentType, content);
-            } else if (object!=null) {
-                content = VariableTranslator.realToString(pkg, documentType, object);
-                documentType = type;
-                object = VariableTranslator.realToObject(pkg, documentType, content);
-            }
-        }
-        return object;
-    }
-
-    /**
-     * This is deprecated, need to use setObject(Object object, String type)
-     */
-    public void setObject(Object object) {
-        setObject(object, null);
-    }
-    public void setObject(Object object, String type) {
-        this.object = object;
-        if (type!=null) documentType = type;
-        content = null;
-    }
-    public Long getDocumentId() {
-        return documentId;
-    }
-    public void setDocumentId(Long documentId) {
-        this.documentId = documentId;
-    }
     public Date getCreateDate() {
         return createDate;
     }
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
+
+    private Date modifyDate;
     public Date getModifyDate() {
         return modifyDate;
     }
     public void setModifyDate(Date modifyDate) {
         this.modifyDate = modifyDate;
     }
-    public String getDocumentType() {
-        return documentType;
-    }
-    public void setDocumentType(String documentType) {
-        this.documentType = documentType;
-    }
+
+    private String ownerType;
     public String getOwnerType() {
         return ownerType;
     }
     public void setOwnerType(String ownerType) {
         this.ownerType = ownerType;
     }
+
+    private Long ownerId;
     public Long getOwnerId() {
         return ownerId;
     }
     public void setOwnerId(Long ownerId) {
         this.ownerId = ownerId;
     }
+
+    private Integer statusCode;
     public Integer getStatusCode() {
         return statusCode;
     }
     public void setStatusCode(Integer code) {
         this.statusCode = code;
     }
+
+    private String statusMessage;
     public String getStatusMessage() {
         return statusMessage;
     }
     public void setStatusMessage(String message) { this.statusMessage = message; }
+
+    private String path;
     public String getPath() { return path; }
     public void setPath(String path) { this.path = path; }
 
+    private String content; // string content
+    public String getContent(Package pkg) {
+        if (content == null && object != null) {
+            if (pkg == null)
+                pkg = PackageCache.getMdwBasePackage();
+            content = pkg.getStringValue(type, object, true);
+        }
+        return content;
+    }
     @Deprecated
     public String getContent() {
         return getContent(null);
-    }
-    public String getContent(Package pkg) {
-        if (content==null && object!=null) {
-            content = VariableTranslator.realToString(pkg, documentType, object);
-        }
-        return content;
     }
     public void setContent(String content) {
         this.content = content;
         object = null;
     }
 
-    /**
-     * Forces reserialization from object.
-     */
-    public void clearStringContent() {
-        this.content = null;
+    private Object object;  // object content
+    public Object getObject(String type, Package pkg) {
+        if (pkg == null)
+            pkg = PackageCache.getMdwBasePackage();
+        if (type == null || type.equals(this.type)) {
+            if (object == null && content != null) {
+                object = pkg.getObjectValue(this.type, content, true);
+            }
+        } else {
+            if (content != null) {
+                this.type = type;
+                object = pkg.getObjectValue(this.type, content, true);
+            } else if (object != null) {
+                content = pkg.getStringValue(this.type, object, true);
+                this.type = type;
+                object = pkg.getStringValue(this.type, content, true);
+            }
+        }
+        return object;
     }
-
+    public void setObject(Object object, String type) {
+        this.object = object;
+        if (type != null)
+            this.type = type;
+        content = null;
+    }
 }

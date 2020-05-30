@@ -15,17 +15,17 @@
  */
 package com.centurylink.mdw.sync;
 
-import java.util.List;
-import java.util.Map;
-
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
 import org.apache.commons.jexl.Expression;
 import org.apache.commons.jexl.ExpressionFactory;
 import org.apache.commons.jexl.JexlContext;
 import org.apache.commons.jexl.JexlHelper;
 
-import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Synchronization expressions use <a href="http://commons.apache.org/jexl/reference/syntax.html">Java Expression Language syntax</a>.
@@ -36,7 +36,7 @@ public class SyncExpressionEvaluator {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
 
-    private Map<String,String> idToEscapedName;
+    private Package pkg;
 
     private String[] syncedActivityIds;
     public String[] getSyncedActivityIds() { return syncedActivityIds; }
@@ -44,12 +44,16 @@ public class SyncExpressionEvaluator {
     private String syncExpression;
     public String getSyncExpression() { return syncExpression; }
 
+    private Map<String,String> idToEscapedName;
+
     /**
      * Creates a sync expression involving the specified activities.
+     * @param pkg workflow package
      * @param syncedActivityIds the logical IDs of activities involved in the sync
      * @param syncExpression exampleFormat: <pre>A38 && (A12 || A18)</pre>
      */
-    public SyncExpressionEvaluator(String[] syncedActivityIds, String syncExpression, Map<String,String> idToEscapedName) {
+    public SyncExpressionEvaluator(Package pkg, String[] syncedActivityIds,
+            String syncExpression, Map<String,String> idToEscapedName) {
         this.syncedActivityIds = syncedActivityIds;
         this.idToEscapedName = idToEscapedName;
         if (syncExpression == null || syncExpression.trim().length() == 0)
@@ -88,7 +92,7 @@ public class SyncExpressionEvaluator {
             if (variableInstances != null) {
                 // set the variables
                 for (VariableInstance variableInstance : variableInstances) {
-                    jc.getVars().put(variableInstance.getName(), variableInstance.getData());
+                    jc.getVars().put(variableInstance.getName(), variableInstance.getData(pkg));
                 }
             }
 
@@ -104,8 +108,6 @@ public class SyncExpressionEvaluator {
 
     /**
      * Create the default sync expression based on the synced activity logical IDs.
-     * @param syncedActivityNames
-     * @return the default sync expression
      */
     public String getDefaultSyncExpression() {
         String syncExpression = "";

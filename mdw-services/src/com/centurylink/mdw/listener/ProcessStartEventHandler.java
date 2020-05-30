@@ -20,15 +20,11 @@ import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.event.EventHandlerException;
 import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.request.Request;
-import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.request.RequestHandlerException;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.translator.VariableTranslator;
 import org.apache.xmlbeans.XmlObject;
 
 import java.util.HashMap;
@@ -92,7 +88,7 @@ public class ProcessStartEventHandler extends ExternalEventHandlerBase {
 
             String vartype = requestVO.getType();
             try {
-                com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(getPackage(), vartype);
+                com.centurylink.mdw.variable.VariableTranslator translator = getPackage().getTranslator(vartype);
                 if (translator instanceof DocumentReferenceTranslator) {
                     DocumentReferenceTranslator docTranslator = (DocumentReferenceTranslator)translator;;
                     Object document = docTranslator.realToObject(msgdoc.xmlText());

@@ -24,18 +24,19 @@ import org.json.JSONObject;
 import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.model.workflow.Package;
+
 /**
  * Provides a default implementation for extracting a Jsonable.
  */
 public interface JsonTranslator {
 
-    public JSONObject toJson(Object obj) throws TranslationException;
+    JSONObject toJson(Object obj) throws TranslationException;
 
-    public Object fromJson(JSONObject json) throws TranslationException;
+    Object fromJson(JSONObject json) throws TranslationException;
 
-    public Package getPackage();
+    Package getPackage();
 
-    public static final String JSONABLE_TYPE = "_type";
+    String JSONABLE_TYPE = "_type";
     default Object createJsonable(JSONObject json) throws Exception {
         String type = json.getString(JSONABLE_TYPE);
         Class<? extends Jsonable> clazz;

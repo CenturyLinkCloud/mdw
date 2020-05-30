@@ -3,32 +3,30 @@
  */
 package com.centurylink.mdw.camel;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.centurylink.mdw.cache.asset.PackageCache;
+import com.centurylink.mdw.constant.OwnerType;
+import com.centurylink.mdw.dataaccess.DataAccessException;
+import com.centurylink.mdw.java.CompiledJavaCache;
+import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.services.EventServices;
+import com.centurylink.mdw.services.ServiceLocator;
+import com.centurylink.mdw.util.log.LoggerUtil;
+import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.xml.DomHelper;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.impl.DefaultProducer;
 import org.w3c.dom.Element;
 
-import com.centurylink.mdw.cache.asset.PackageCache;
-import com.centurylink.mdw.constant.OwnerType;
-import com.centurylink.mdw.dataaccess.DataAccessException;
-import com.centurylink.mdw.translator.VariableTranslator;
-import com.centurylink.mdw.util.log.LoggerUtil;
-import com.centurylink.mdw.util.log.StandardLogger;
-import com.centurylink.mdw.java.CompiledJavaCache;
-import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.model.workflow.Process;
-import com.centurylink.mdw.model.variable.DocumentReference;
-import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.services.EventServices;
-import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.xml.DomHelper;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MdwProducer extends DefaultProducer {
 
@@ -127,7 +125,7 @@ public class MdwProducer extends DefaultProducer {
             if (requestVarName != null) {
                 Variable requestVar = process.getVariable(requestVarName);
                 if (requestVar != null) {
-                    if (!VariableTranslator.isDocumentReferenceVariable(pkg, requestVar.getType()))
+                    if (!pkg.getTranslator(requestVar.getType()).isDocumentReferenceVariable())
                         throw new MdwCamelException("Process variable 'request' for process '" + process.getName() + "' must be Document type");
                     Integer varCat = requestVar.getVariableCategory();
                     if (varCat.intValue() != Variable.CAT_INPUT && varCat.intValue() != Variable.CAT_INOUT)

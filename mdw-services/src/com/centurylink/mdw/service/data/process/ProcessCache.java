@@ -207,7 +207,7 @@ public class ProcessCache implements CacheService {
                 Document instanceDoc = new WorkflowDataAccess().getDocument(instanceDefinitionId);
                 String content = instanceDoc.getContent(null);
                 Process process = null;
-                if (Jsonable.class.getName().equals(instanceDoc.getDocumentType())) {
+                if (Jsonable.class.getName().equals(instanceDoc.getType())) {
                     // compatibility for previously-saved instances
                     JsonObject json = new JsonObject(content);
                     for (String key : json.keySet()) {

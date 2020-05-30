@@ -15,13 +15,13 @@
  */
 package com.centurylink.mdw.model.variable;
 
-import java.io.Serializable;
-
+import com.centurylink.mdw.model.Jsonable;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.translator.VariableTranslator;
+import java.io.Serializable;
 
 /**
  * Represent a variable instance with its runtime value.
@@ -29,12 +29,47 @@ import com.centurylink.mdw.translator.VariableTranslator;
 public class VariableInstance implements Jsonable, Serializable, Comparable<VariableInstance>
 {
     private String name;
-    private String value;
-    transient private Object data;
+    public void setName(String name){
+        this.name = name;
+    }
+    public String getName(){
+        return this.name;
+    }
+
     private String type;
-    private Long instanceId;
+    public String getType(){
+        return this.type;
+    }
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    private Long id;
+    public Long getId(){
+        return this.id;
+    }
+    public void setId(Long id){
+        this.id = id;
+    }
+    @Deprecated
+    public Long getInstanceId() { return id; }
+
     private Long variableId;
+    public Long getVariableId(){
+        return this.variableId;
+    }
+    public void setVariableId(Long variableId){
+        this.variableId = variableId;
+    }
+
     private Long processInstanceId;
+    public void setProcessInstanceId(Long processInstanceId) {
+        this.processInstanceId = processInstanceId;
+    }
+    public Long getProcessInstanceId() {
+        return this.processInstanceId;
+    }
+
 
     public VariableInstance() {
     }
@@ -46,7 +81,7 @@ public class VariableInstance implements Jsonable, Serializable, Comparable<Vari
 
     public VariableInstance(JSONObject json) throws JSONException {
         if (json.has("id"))
-            instanceId = json.getLong("id");
+            id = json.getLong("id");
         if (json.has("variableId"))
             variableId = json.getLong("variableId");
         if (json.has("name"))
@@ -57,91 +92,42 @@ public class VariableInstance implements Jsonable, Serializable, Comparable<Vari
             type = json.getString("type");
     }
 
-    public void setName(String name){
-        this.name = name;
+    private String value;
+    public String getStringValue(Package pkg) {
+        if (value != null)
+            return value;
+        if (data == null)
+            return null;
+        value = pkg.getStringValue(type, data);
+        return value;
     }
-
-    public String getName(){
-        return this.name;
-    }
-
     public void setStringValue(String value){
         this.value = value;
         this.data = null;
     }
 
-    public String getStringValue() {
-        if (value != null)
-            return this.value;
-        if (data == null)
+    transient private Object data;
+    public Object getData(Package pkg) {
+        if (data != null)
+            return this.data;
+        if (value == null)
             return null;
-        value = VariableTranslator.toString(type, data);
-        return value;
+        data = pkg.getObjectValue(type, value);
+        return data;
     }
-
     public void setData(Object data) {
         this.data = data;
         this.value = null;
     }
 
-    public Object getData() {
+    public boolean isDocument(Package pkg) {
         if (data != null)
-            return this.data;
+            return data instanceof DocumentReference;
         if (value == null)
-            return null;
-        data = VariableTranslator.toObject(type, value);
-        return data;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getType(){
-        return this.type;
-    }
-    public void setInstanceId(Long instanceId){
-        this.instanceId = instanceId;
-    }
-
-    public Long getInstanceId(){
-        return this.instanceId;
-    }
-
-    public void setVariableId(Long variableId){
-        this.variableId = variableId;
-    }
-
-    public Long getVariableId(){
-        return this.variableId;
-    }
-
-    public Long getProcessInstanceId() {
-        return this.processInstanceId;
-    }
-
-    public void setProcessInstanceId(Long processInstanceId) {
-        this.processInstanceId = processInstanceId;
-    }
-
-    public String toString(){
-        StringBuffer sb = new StringBuffer("");
-        sb.append(" name: ");
-        sb.append(this.name);
-        sb.append(", value: ");
-        sb.append(getStringValue());
-        return sb.toString();
-    }
-
-    public int compareTo(VariableInstance other) {
-      return getName().compareTo(other.getName());
-    }
-
-    public boolean isDocument() {
-        if (data!=null) return data instanceof DocumentReference;
-        if (value==null) return false;
-        if (!value.startsWith("DOCUMENT:")) return false;
-        return VariableTranslator.isDocumentReferenceVariable(null, this.type);
+            return false;
+        if (!value.startsWith("DOCUMENT:"))
+            return false;
+        return pkg.getTranslator(type) instanceof DocumentReferenceTranslator;
     }
 
     public Long getDocumentId() {
@@ -155,14 +141,18 @@ public class VariableInstance implements Jsonable, Serializable, Comparable<Vari
         return null;
     }
 
+    public int compareTo(VariableInstance other) {
+      return getName().compareTo(other.getName());
+    }
+
     public String getJsonName() {
         return "VariableInstance";
     }
 
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
-        if (instanceId != null)
-            json.put("id", instanceId);
+        if (id != null)
+            json.put("id", id);
         if (variableId != null)
             json.put("variableId", variableId);
         if (name != null)

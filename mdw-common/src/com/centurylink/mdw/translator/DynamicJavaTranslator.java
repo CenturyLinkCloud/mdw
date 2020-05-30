@@ -22,11 +22,9 @@ import java.io.ObjectInputStream;
 import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
 
 public class DynamicJavaTranslator extends JavaObjectTranslator {
-    @Override
-    protected Object realToObject(String str, boolean tryProviders) throws TranslationException {
 
-        if (tryProviders)
-            return super.realToObject(str, tryProviders);
+    @Override
+    public Object realToObject(String str) throws TranslationException {
 
         ObjectInputStream ois = null;
         try {

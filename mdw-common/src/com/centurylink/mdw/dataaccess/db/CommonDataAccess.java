@@ -15,17 +15,15 @@
  */
 package com.centurylink.mdw.dataaccess.db;
 
-import com.centurylink.mdw.cache.asset.VariableTypeCache;
+import com.centurylink.mdw.cache.VariableTypeCache;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.DocumentDbAccess;
 import com.centurylink.mdw.model.asset.AssetHeader;
 import com.centurylink.mdw.model.variable.Document;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.workflow.ActivityInstance;
-import com.centurylink.mdw.model.workflow.ProcessInstance;
-import com.centurylink.mdw.model.workflow.WorkStatus;
-import com.centurylink.mdw.model.workflow.WorkStatuses;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.util.TransactionUtil;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -420,15 +418,15 @@ public class CommonDataAccess {
         ResultSet rs = db.runSelect(query, documentId);
         if (rs.next()) {
             Document vo = new Document();
-            vo.setDocumentId(documentId);
+            vo.setId(documentId);
             vo.setCreateDate(rs.getTimestamp("CREATE_DT"));
             vo.setModifyDate(rs.getTimestamp("MODIFY_DT"));
-            vo.setDocumentType(rs.getString("DOCUMENT_TYPE"));
+            vo.setType(rs.getString("DOCUMENT_TYPE"));
             vo.setOwnerType(rs.getString("OWNER_TYPE"));
             vo.setOwnerId(rs.getLong("OWNER_ID"));
             boolean foundInDocDb = false;
             if (documentDbAccess.hasDocumentDb()) {
-                String docDbContent = documentDbAccess.getDocumentContent(vo.getOwnerType(), vo.getDocumentId());
+                String docDbContent = documentDbAccess.getDocumentContent(vo.getOwnerType(), vo.getId());
                 if (docDbContent != null) {
                     vo.setContent(docDbContent);
                     foundInDocDb = true;
@@ -713,10 +711,11 @@ public class CommonDataAccess {
         }
     }
 
-    public Long createVariable(Long processInstanceId, VariableInstance variableInstance) throws SQLException {
+    public Long createVariable(Long processInstanceId, VariableInstance variableInstance, Package pkg)
+            throws SQLException {
         try {
             db.openConnection();
-            Long varInstId = createVariable0(processInstanceId, variableInstance);
+            Long varInstId = createVariable0(processInstanceId, variableInstance, pkg);
             db.commit();
             return varInstId;
         }
@@ -725,30 +724,31 @@ public class CommonDataAccess {
         }
     }
 
-    protected Long createVariable0(Long processInstanceId, VariableInstance variableInstance) throws SQLException {
+    protected Long createVariable0(Long processInstanceId, VariableInstance variableInstance, Package pkg)
+            throws SQLException {
         Long varInstId = db.isMySQL() ? null : getNextId("VARIABLE_INST_ID_SEQ");
         String query = "insert into VARIABLE_INSTANCE " +
             "(VARIABLE_INST_ID, VARIABLE_ID, PROCESS_INST_ID, VARIABLE_VALUE, VARIABLE_NAME, VARIABLE_TYPE_ID, " +
-            "CREATE_DT, CREATE_USR) values (?, ?, ?, ?, ?, ?, "+nowPrecision()+",'MDWEngine')";
+            "CREATE_DT, CREATE_USR) values (?, ?, ?, ?, ?, ?, " + nowPrecision() + ",'MDWEngine')";
         Object[] args = new Object[6];
         args[0] = varInstId;
         args[1] = variableInstance.getVariableId();
         args[2] = processInstanceId;
-        args[3] = variableInstance.getStringValue();
+        args[3] = variableInstance.getStringValue(pkg);
         args[4] = variableInstance.getName();
-        args[5] = VariableTypeCache.getTypeId(variableInstance.getType());
+        args[5] = VariableTypeCache.getVariableType(variableInstance.getType()).getId();
         if (db.isMySQL())
             varInstId = db.runInsertReturnId(query, args);
         else
             db.runUpdate(query, args);
-        variableInstance.setInstanceId(varInstId);
+        variableInstance.setId(varInstId);
         return varInstId;
     }
 
-    public void updateVariable(VariableInstance variableInstance) throws SQLException {
+    public void updateVariable(VariableInstance variableInstance, Package pkg) throws SQLException {
         try {
             db.openConnection();
-            updateVariable0(variableInstance);
+            updateVariable0(variableInstance, pkg);
             db.commit();
         }
         finally {
@@ -756,11 +756,11 @@ public class CommonDataAccess {
         }
     }
 
-    protected void updateVariable0(VariableInstance variableInstance) throws SQLException {
+    protected void updateVariable0(VariableInstance variableInstance, Package pkg) throws SQLException {
         String query = "update VARIABLE_INSTANCE set VARIABLE_VALUE=?, MOD_DT=" + nowPrecision() + " where VARIABLE_INST_ID=?";
         Object[] args = new Object[2];
-        args[0] = variableInstance.getStringValue();
-        args[1] = variableInstance.getInstanceId();
+        args[0] = variableInstance.getStringValue(pkg);
+        args[1] = variableInstance.getId();
         db.runUpdate(query, args);
     }
 
@@ -777,7 +777,7 @@ public class CommonDataAccess {
 
     protected void deleteVariable0(VariableInstance variableInstance) throws SQLException {
         String query = "delete from VARIABLE_INSTANCE where VARIABLE_INST_ID=?";
-        db.runUpdate(query, variableInstance.getInstanceId());
+        db.runUpdate(query, variableInstance.getId());
     }
 
     public void setElapsedTime(String ownerType, Long instanceId, Long elapsedTime) throws SQLException {

@@ -8,8 +8,7 @@ import java.lang.annotation.*;
 public @interface Variable {
 
     /**
-     * Value corresponds to the variable type.
+     * Variable type.
      */
-    String value();
-
+    String type();
 }

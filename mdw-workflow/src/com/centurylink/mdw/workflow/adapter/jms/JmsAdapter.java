@@ -17,13 +17,12 @@ package com.centurylink.mdw.workflow.adapter.jms;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.AdapterActivity;
+import com.centurylink.mdw.adapter.AdapterException;
+import com.centurylink.mdw.adapter.ConnectionException;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.config.PropertyException;
-import com.centurylink.mdw.adapter.AdapterException;
-import com.centurylink.mdw.adapter.ConnectionException;
 import com.centurylink.mdw.model.variable.DocumentReference;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.JMSServices;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
@@ -287,21 +286,22 @@ public class JmsAdapter extends ObjectAdapterActivity {
      *   <li>It invokes the variable translator to convert the value into a string
      *      and then return the string value.</li>
      * </ul>
-     * The method will through exception if the variable is not bound,
-     * or the value is not bound to a DocumentReference or String.
+     * @throws ActivityException if the variable is not bound, or the value is not a DocumentReference or String
      */
     @Override
     protected Object getRequestData() throws ActivityException {
         Object request = super.getRequestData();
-        if (request==null) throw new ActivityException("Request data is null");
-        if (request instanceof DocumentReference) request = getDocumentContent((DocumentReference)request);
-        if (request instanceof String) return request;
-        else if (request instanceof Document) return
-            VariableTranslator.realToString(getPackage(), Document.class.getName(), request);
-        else if (request instanceof XmlObject) return ((XmlObject)request).xmlText();
-        else throw new ActivityException(
-                "Cannot handle request of type " + request.getClass().getName());
+        if (request == null)
+            throw new ActivityException("Request data is null");
+        if (request instanceof DocumentReference)
+            request = getDocumentContent((DocumentReference)request);
+        if (request instanceof String)
+            return request;
+        else if (request instanceof Document)
+            return getPackage().getStringValue(Document.class.getName(), request, true);
+        else if (request instanceof XmlObject)
+            return ((XmlObject)request).xmlText();
+        else
+            throw new ActivityException("Cannot handle request of type " + request.getClass().getName());
     }
-
-
 }

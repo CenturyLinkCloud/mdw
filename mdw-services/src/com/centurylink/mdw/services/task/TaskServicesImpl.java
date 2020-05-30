@@ -294,7 +294,7 @@ public class TaskServicesImpl implements TaskServices {
                 newValues.put(rootVar, runtimeContext.evaluate("#{" + rootVar + "}"));
             }
             else {
-                newValues.put(name, runtimeContext.getVariables().get(name));
+                newValues.put(name, runtimeContext.getValues().get(name));
             }
         }
         for (String name : newValues.keySet()) {

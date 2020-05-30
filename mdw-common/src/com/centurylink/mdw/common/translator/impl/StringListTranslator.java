@@ -48,5 +48,4 @@ public class StringListTranslator extends DocumentReferenceTranslator {
             jsonArray.put(string);
         return jsonArray.toString();
     }
-
 }

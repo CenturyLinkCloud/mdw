@@ -41,7 +41,6 @@ import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
 import com.centurylink.mdw.services.process.ProcessExecutor;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
@@ -108,7 +107,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
             return (ProcessExecutionPlanDocument)((XmlObject)binding).changeType(ProcessExecutionPlanDocument.type);
         } else {
             Variable docVar = getProcessDefinition().getVariable(plan_varname);
-            XmlDocumentTranslator docRefTrans = (XmlDocumentTranslator)VariableTranslator.getTranslator(getPackage(), docVar.getType());
+            XmlDocumentTranslator docRefTrans = (XmlDocumentTranslator)getPackage().getTranslator(docVar.getType());
             Document doc = docRefTrans.toDomDocument(binding);
             return ProcessExecutionPlanDocument.Factory.parse(doc);
         }
@@ -121,7 +120,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
         String varType = getProcessDefinition().getVariable(plan_varname).getType();
         String str;
         if (Yaml.class.getName().equals(varType))  { // TODO better way that supports other types like JSONObject and Jsonable
-            DocumentReferenceTranslator translator = (DocumentReferenceTranslator) VariableTranslator.getTranslator(getPackage(), varType);
+            DocumentReferenceTranslator translator = (DocumentReferenceTranslator)getPackage().getTranslator(varType);
             Object obj = ((XmlDocumentTranslator)translator).fromDomNode(process_plan.getDomNode());
             str = translator.realToString(obj);
         }
@@ -231,8 +230,8 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
     /**
      * This method returns variable bindings to be passed into subprocess.
      * The method uses the attribute "variables" values as a mapping.
-     * The binding of each variable is an expression in the Magic Box rule language.
-     * Example bindings: "var1=12*12;var2=$parent_var.LIST.LN"
+     * The binding of each variable is an expression.
+     * Example: "myVar=${greeterVar.greeting}"
      * Subclass may override this method to obtain variable binding in other ways.
      *
      * @param childVars variables defined for the child process
@@ -246,23 +245,24 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
         Map<String,String> parameters = new HashMap<>();
 
         String vn, v;
-        for (int k=0; k<childVars.size(); k++) {
+        for (int k= 0; k < childVars.size(); k++) {
             Variable childVar = childVars.get(k);
-            if (!allowInput(childVar)) continue;
+            if (!allowInput(childVar))
+                continue;
             vn = childVar.getName();
             if (vn.equals(VariableConstants.REQUEST)) {
                 VariableInstance varinst = getVariableInstance(VariableConstants.REQUEST);
-                v = varinst==null?null:varinst.getStringValue();
+                v = varinst == null ? null : varinst.getStringValue(getPackage());
             } else if (vn.equals(VariableConstants.MASTER_DOCUMENT)) {
                 VariableInstance varinst = getVariableInstance(VariableConstants.MASTER_DOCUMENT);
-                v = varinst==null?null:varinst.getStringValue();
+                v = varinst == null ? null : varinst.getStringValue(getPackage());
             } else {
                 Parameter p = this.getParameterBinding(subprocInstance, vn);
-                v = evaluateBindingValue(childVar, p==null?null:p.getStringValue());
+                v = evaluateBindingValue(childVar, p == null ? null : p.getStringValue());
             }
             if (v!=null && v.length()>0) {
                 if (passDocumentContent) {
-                    if (VariableTranslator.isDocumentReferenceVariable(getPackage(), childVar.getType())
+                    if (getPackage().getTranslator(childVar.getType()).isDocumentReferenceVariable()
                             && v.startsWith("DOCUMENT:")) {
                         v = super.getDocumentContent(new DocumentReference(v));
                     }
@@ -422,12 +422,15 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
         } else if (binding.startsWith("$")) {
             String varname = binding.substring(1).trim();
             Variable var = procdef.getVariable(varname);
-            if (var!=null) {
+            if (var != null) {
                 Object value0;
-                if (passDocContent && VariableTranslator.isDocumentReferenceVariable(getPackage(), var.getType())) {
-                    if (StringUtils.isBlank(value)) value0 = null;
-                    else if (value.startsWith("DOCUMENT:"))
-                        value0 = VariableTranslator.toObject(var.getType(), value);
+                if (passDocContent && getPackage().getTranslator(var.getType()).isDocumentReferenceVariable()) {
+                    if (StringUtils.isBlank(value)) {
+                        value0 = null;
+                    }
+                    else if (value.startsWith("DOCUMENT:")) {
+                        value0 = getPackage().getObjectValue(var.getType(), value);
+                    }
                     else {
                         synchronized(outputVariableUpdated) {
                             if (outputVariableUpdated.get(varname))
@@ -442,7 +445,7 @@ public class InvokeHeterogeneousProcessActivity extends InvokeProcessActivityBas
                      // check map for variable, not allowed multiple children to update same docs
                     }
                 } else {
-                    value0 = VariableTranslator.toObject(var.getType(), value);
+                    value0 = getPackage().getObjectValue(var.getType(), value);
                 }
 
                 this.setParameterValue(varname, value0);

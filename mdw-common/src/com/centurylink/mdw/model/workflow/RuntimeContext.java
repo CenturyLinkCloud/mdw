@@ -30,7 +30,7 @@ public interface RuntimeContext {
 
     Attributes getAttributes();
 
-    Map<String,Object> getVariables();
+    Map<String,Object> getValues();
 
     Long getProcessId();
 

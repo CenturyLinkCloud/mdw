@@ -17,20 +17,14 @@ package com.centurylink.mdw.workflow.adapter;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.AdapterActivity;
-import com.centurylink.mdw.adapter.AdapterInvocationError;
-import com.centurylink.mdw.adapter.HeaderAwareAdapter;
-import com.centurylink.mdw.adapter.SimulationResponse;
+import com.centurylink.mdw.adapter.*;
 import com.centurylink.mdw.common.service.ServiceException;
-import com.centurylink.mdw.adapter.AdapterException;
-import com.centurylink.mdw.adapter.ConnectionException;
 import com.centurylink.mdw.constant.ActivityResultCodeConstant;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.ProcessVisibilityConstant;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.model.request.Response;
-import com.centurylink.mdw.adapter.AdapterStubRequest;
-import com.centurylink.mdw.adapter.AdapterStubResponse;
 import com.centurylink.mdw.model.request.Request;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.model.workflow.Process;
@@ -38,7 +32,6 @@ import com.centurylink.mdw.monitor.AdapterMonitor;
 import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.services.event.StubHelper;
 import com.centurylink.mdw.translator.TranslationException;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
@@ -164,28 +157,32 @@ public abstract class ObjectAdapterActivity extends DefaultActivityImpl
      *
      * The default method does nothing if the response is null,
      * or set the response to the variable specified in RESPONSE_VARIABLE attribute.
-     * @param pResponse, from the external system
+     * @param response, from the external system
      * @throws ActivityException thrown when the handler itself has system problems
      * @throws AdapterException thrown when the external system responded but
      *      the response needs to be handled as an error (for retry or fail the activity)
      * @throws TranslationException if the response cannot be translated correctly. This
      *      is a RuntimeException
      */
-    protected void handleAdapterSuccess(Object pResponse)
+    protected void handleAdapterSuccess(Object response)
         throws ActivityException,ConnectionException,AdapterException {
-        if (pResponse==null) return;
-        String varname = this.getAttributeValue(RESPONSE_VARIABLE);
-        if (varname==null) return;
-        String vartype = this.getParameterType(varname);
-        if (VariableTranslator.isDocumentReferenceVariable(getPackage(), vartype) && !(pResponse instanceof DocumentReference)) {
-            if (pResponse instanceof String) {
-                Object doc = VariableTranslator.realToObject(getPackage(), vartype, (String)pResponse);
+        if (response == null)
+            return;
+        String varname = getAttributeValue(RESPONSE_VARIABLE);
+        if (varname == null)
+            return;
+        String vartype = getParameterType(varname);
+        if (getPackage().getTranslator(vartype).isDocumentReferenceVariable() && !(response instanceof DocumentReference)) {
+            if (response instanceof String) {
+                Object doc = getPackage().getObjectValue(vartype, (String)response, true);
                 setParameterValueAsDocument(varname, vartype, doc);
             }
             else {
-                setParameterValueAsDocument(varname, vartype, pResponse);
+                setParameterValueAsDocument(varname, vartype, response);
             }
-        } else setParameterValue(varname, pResponse);
+        } else {
+            setParameterValue(varname, response);
+        }
     }
 
     /**

@@ -160,5 +160,4 @@ public class YamlTranslator extends DocumentReferenceTranslator implements XmlDo
             }
         };
     }
-
 }

@@ -15,19 +15,18 @@
  */
 package com.centurylink.mdw.model.variable;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONObject;
-
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.model.listener.Listener;
 import com.centurylink.mdw.model.workflow.ProcessRuntimeContext;
 import com.centurylink.mdw.translator.JsonTranslator;
 import com.centurylink.mdw.translator.TranslationException;
-import com.centurylink.mdw.translator.VariableTranslator;
+import com.centurylink.mdw.variable.VariableTranslator;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Shared attributes with standardized default naming.
@@ -46,7 +45,7 @@ public class ServiceValuesAccess {
     }
 
     public Object getRequest() {
-        return context.getVariables().get(getRequestVariableName());
+        return context.getValues().get(getRequestVariableName());
     }
 
     /**
@@ -60,7 +59,7 @@ public class ServiceValuesAccess {
 
     @SuppressWarnings("unchecked")
     public Map<String,String> getRequestHeaders() {
-        return (Map<String,String>)context.getVariables().get(getRequestHeadersVariableName());
+        return (Map<String,String>)context.getValues().get(getRequestHeadersVariableName());
     }
 
     /**
@@ -73,7 +72,7 @@ public class ServiceValuesAccess {
     }
 
     public Object getResponse() {
-        return context.getVariables().get(getResponseVariableName());
+        return context.getValues().get(getResponseVariableName());
     }
 
     /**
@@ -87,7 +86,7 @@ public class ServiceValuesAccess {
 
     @SuppressWarnings("unchecked")
     public Map<String,String> getResponseHeaders() {
-        return (Map<String,String>)context.getVariables().get(getResponseHeadersVariableName());
+        return (Map<String,String>)context.getValues().get(getResponseHeadersVariableName());
     }
 
     /**
@@ -145,8 +144,7 @@ public class ServiceValuesAccess {
         if (objectValue == null)
             return null;
         Variable variable = context.getProcess().getVariable(variableName);
-        com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator
-                .getTranslator(context.getPackage(), variable.getType());
+        VariableTranslator translator = context.getPackage().getTranslator(variable.getType());
         if (translator instanceof JsonTranslator) {
             return ((JsonTranslator)translator).toJson(objectValue);
         }
@@ -162,8 +160,7 @@ public class ServiceValuesAccess {
         if (json == null)
             return null;
         Variable variable = context.getProcess().getVariable(variableName);
-        com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator
-                .getTranslator(context.getPackage(), variable.getType());
+        VariableTranslator translator = context.getPackage().getTranslator(variable.getType());
         if (translator instanceof JsonTranslator) {
             return ((JsonTranslator)translator).fromJson(json);
         }

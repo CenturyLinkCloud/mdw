@@ -1,5 +1,6 @@
 package com.centurylink.mdw.services.request;
 
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
@@ -15,9 +16,10 @@ import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
+import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.variable.VariableTranslator;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -101,6 +103,8 @@ public abstract class BaseHandler implements RequestHandler {
         if (values != null) {
             try {
                 Process process = ProcessCache.getProcess(processId);
+                if (process == null)
+                    throw new ProcessException("Process not found: " + processId);
                 for (String key : values.keySet()) {
                     Object val = values.get(key);
                     Variable variable = process.getVariable(key);
@@ -109,8 +113,12 @@ public abstract class BaseHandler implements RequestHandler {
 
                     if (val instanceof String) {
                         stringValues.put(key, (String) val);
-                    } else {
-                        com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(variable.getType());
+                    }
+                    else {
+                        Package pkg = PackageCache.getPackage(process.getPackageName());
+                        if (pkg == null)
+                            throw new ProcessException("Package not found: " + pkg);
+                        VariableTranslator translator = pkg.getTranslator(variable.getType());
                         if (translator instanceof DocumentReferenceTranslator) {
                             DocumentReferenceTranslator docTranslator = (DocumentReferenceTranslator) translator;
                             String docStr = docTranslator.realToString(val);

@@ -68,10 +68,10 @@ public class MicroserviceAccess {
         if (var == null)
             return null;
         else {
-            if (((ServiceSummary) runtimeContext.getVariables().get(variableName)).findParent(runtimeContext.getProcessInstanceId()) != null)
-                return ((ServiceSummary) runtimeContext.getVariables().get(variableName)).findParent(runtimeContext.getProcessInstanceId());
+            if (((ServiceSummary) runtimeContext.getValues().get(variableName)).findParent(runtimeContext.getProcessInstanceId()) != null)
+                return ((ServiceSummary) runtimeContext.getValues().get(variableName)).findParent(runtimeContext.getProcessInstanceId());
             else
-                return (ServiceSummary) runtimeContext.getVariables().get(variableName);
+                return (ServiceSummary) runtimeContext.getValues().get(variableName);
         }
     }
 

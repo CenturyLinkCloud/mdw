@@ -24,6 +24,7 @@ import org.w3c.dom.Node;
 
 import java.lang.reflect.Constructor;
 
+@Deprecated
 public class XmlBeanWrapperTranslator extends DocumentReferenceTranslator implements XmlDocumentTranslator {
 
     public Object realToObject(String str) throws TranslationException {

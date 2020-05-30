@@ -35,7 +35,6 @@ import com.centurylink.mdw.service.data.process.EngineDataAccessDB;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
 import com.centurylink.mdw.services.process.ProcessExecutor;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
@@ -86,7 +85,8 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
             throws Exception {
         Map<String,String> validParams = new HashMap<String,String>();
         String map = getAttributeValue(VARIABLES);
-        if (map==null) map = "";
+        if (map == null)
+            map = "";
         String vn, v;
         for (Variable childVar : childVars) {
             if (!allowInput(childVar)) continue;
@@ -94,10 +94,10 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
             v = getMapValue(map, vn, ';');
             if (vn.equals(VariableConstants.REQUEST)) {
                 VariableInstance varinst = getVariableInstance(VariableConstants.REQUEST);
-                v = varinst==null?null:varinst.getStringValue();
+                v = varinst == null ? null : varinst.getStringValue(getPackage());
             } else if (vn.equals(VariableConstants.MASTER_DOCUMENT)) {
                 VariableInstance varinst = getVariableInstance(VariableConstants.MASTER_DOCUMENT);
-                v = varinst==null?null:varinst.getStringValue();
+                v = varinst == null ? null : varinst.getStringValue(getPackage());
             } else {
                 v = evaluateBindingValue(childVar, v);
             }
@@ -248,17 +248,20 @@ public class InvokeSubProcessActivity extends InvokeProcessActivityBase {
                         throw new ActivityException("Bound variable: '" + para + "' not found in process definition " + procdef.getLabel());
                     String varvalue = params.get(varname);
                     Object value;
-                    if (passDocContent && VariableTranslator.isDocumentReferenceVariable(getPackage(), var.getType())) {
-                        if (StringUtils.isBlank(varvalue)) value = null;
-                        else if (varvalue.startsWith("DOCUMENT:"))
-                            value = VariableTranslator.toObject(var.getType(), varvalue);
+                    if (passDocContent && getPackage().getTranslator(var.getType()).isDocumentReferenceVariable()) {
+                        if (StringUtils.isBlank(varvalue)) {
+                            value = null;
+                        }
+                        else if (varvalue.startsWith("DOCUMENT:")) {
+                            value = getPackage().getObjectValue(var.getType(), varvalue);
+                        }
                         else {
                             DocumentReference docref = super.createDocument(var.getType(),
                                     varvalue, OwnerType.PROCESS_INSTANCE, this.getProcessInstanceId());
                             value = new DocumentReference(docref.getDocumentId());
                         }
                     } else {
-                        value = VariableTranslator.toObject(var.getType(), varvalue);
+                        value = getPackage().getObjectValue(var.getType(), varvalue);
                     }
 
                     this.setParameterValue(para, value);

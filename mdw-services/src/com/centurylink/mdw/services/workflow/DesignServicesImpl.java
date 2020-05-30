@@ -10,6 +10,7 @@ import com.centurylink.mdw.constant.PropertyNames;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.git.VersionControlGit;
+import com.centurylink.mdw.model.asset.AssetPath;
 import com.centurylink.mdw.model.asset.AssetVersion;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.asset.CommitInfo;
@@ -44,14 +45,11 @@ public class DesignServicesImpl implements DesignServices {
         int lastSlash = assetPath.lastIndexOf('/');
         if (lastSlash <= 0)
             throw new ServiceException(ServiceException.BAD_REQUEST, "Bad asset path: " + assetPath);
-        String processName = assetPath; //.substring(lastSlash + 1);
-        if (assetPath.endsWith(".proc"))
-            processName = processName.substring(0, processName.length() - ".proc".length());
 
         int version = query == null ? 0 : query.getIntFilter("version");
         if (version < 0)
             version = 0;
-        boolean forUpdate = query == null ? false : query.getBooleanFilter("forUpdate");
+        boolean forUpdate = query != null && query.getBooleanFilter("forUpdate");
         String stagingCuid = query == null ? null : query.getFilter("stagingUser");
         Process process = null;
         if (stagingCuid != null) {
@@ -64,7 +62,7 @@ public class DesignServicesImpl implements DesignServices {
             }
         } else {
             try {
-                process = ProcessCache.getProcess(processName, version);
+                process = ProcessCache.getProcess(assetPath, version);
             } catch (IOException ex) {
                 throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error loading " + assetPath, ex);
             }
@@ -74,8 +72,9 @@ public class DesignServicesImpl implements DesignServices {
             try {
                 byte[] bytes = Files.readAllBytes(Paths.get(process.getFile().getAbsolutePath()));
                 process = Process.fromString(new String(bytes));
-                process.setName(processName.substring(lastSlash + 1));
-                process.setPackageName(processName.substring(0, lastSlash));
+                AssetPath procPath = new AssetPath(assetPath);
+                process.setName(procPath.rootName());
+                process.setPackageName(procPath.pkg);
             }
             catch (Exception ex) {
                 throw new ServiceException(ServiceException.INTERNAL_ERROR, "Error reading process: " + process.getFile());

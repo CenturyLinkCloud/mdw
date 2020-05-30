@@ -15,7 +15,7 @@
  */
 package com.centurylink.mdw.service.data.process;
 
-import com.centurylink.mdw.cache.asset.VariableTypeCache;
+import com.centurylink.mdw.cache.VariableTypeCache;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
@@ -60,7 +60,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         return new Long(rs.getString(1));
     }
 
-    public Long createVariableInstance(VariableInstance var, Long procInstId) throws SQLException {
+    public Long createVariableInstance(VariableInstance var, Long procInstId, Package pkg) throws SQLException {
         Long varInstId = db.isMySQL()?null:this.getNextId("VARIABLE_INST_ID_SEQ");
         String query = "insert into VARIABLE_INSTANCE " +
                 "(VARIABLE_INST_ID, VARIABLE_ID, PROCESS_INST_ID, VARIABLE_VALUE, VARIABLE_NAME, VARIABLE_TYPE_ID, " +
@@ -69,21 +69,20 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         args[0] = varInstId;
         args[1] = var.getVariableId();
         args[2] = procInstId;
-        args[3] = var.getStringValue();
+        args[3] = var.getStringValue(pkg);
         args[4] = var.getName();
-        args[5] = VariableTypeCache.getTypeId(var.getType());
+        args[5] = VariableTypeCache.getVariableType(var.getType()).getId();
         if (db.isMySQL()) varInstId = db.runInsertReturnId(query, args);
         else db.runUpdate(query, args);
-        var.setInstanceId(varInstId);
+        var.setId(varInstId);
         return varInstId;
     }
 
-    public void updateVariableInstance(VariableInstance var) throws SQLException {
-//        db.openConnection();
+    public void updateVariableInstance(VariableInstance var, Package pkg) throws SQLException {
         String query = "update VARIABLE_INSTANCE set VARIABLE_VALUE=?, MOD_DT="+nowPrecision()+" where VARIABLE_INST_ID=?";
         Object[] args = new Object[2];
-        args[0] = var.getStringValue();
-        args[1] = var.getInstanceId();
+        args[0] = var.getStringValue(pkg);
+        args[1] = var.getId();
         db.runUpdate(query, args);
     }
 
@@ -94,10 +93,10 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         ResultSet rs = db.runSelect(query, varInstId);
         if (!rs.next()) return null;
         VariableInstance var = new VariableInstance();
-        var.setInstanceId(varInstId);
+        var.setId(varInstId);
         var.setStringValue(rs.getString(1));
         var.setName(rs.getString(2));
-        var.setType(VariableTypeCache.getTypeName(rs.getLong(3)));
+        var.setType(VariableTypeCache.getVariableType(rs.getInt(3)).getName());
         var.setProcessInstanceId(rs.getLong(4));
         return var;
     }
@@ -112,10 +111,10 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         ResultSet rs = db.runSelect(query, args);
         if (rs.next()) {
             VariableInstance var = new VariableInstance();
-            var.setInstanceId(rs.getLong(1));
+            var.setId(rs.getLong(1));
             var.setStringValue(rs.getString(2));
             var.setName(varname);
-            var.setType(VariableTypeCache.getTypeName(rs.getLong(3)));
+            var.setType(VariableTypeCache.getVariableType(rs.getInt(3)).getName());
             var.setProcessInstanceId(procInstId);
             return var;
         } else {
@@ -262,7 +261,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
                 "values (?, " + nowPrecision() + ", ?, ?, ?, ?, ?, ?)";
         Object[] args = new Object[7];
         args[0] = docId;
-        args[1] = doc.getDocumentType();
+        args[1] = doc.getType();
         args[2] = doc.getOwnerType();
         args[3] = doc.getOwnerId();
         args[4] = doc.getStatusCode();
@@ -275,7 +274,7 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
             db.runUpdate(query, args);
         else
             db.runUpdate(query, String.valueOf(args));
-        doc.setDocumentId(docId);
+        doc.setId(docId);
 
         String content = doc.getContent(pkg);
         if (content == null || "".equals(content))
@@ -320,12 +319,12 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
     public void updateDocumentInfo(Document docvo) throws SQLException {
         String query = "update DOCUMENT set DOCUMENT_TYPE=?, OWNER_TYPE=?, OWNER_ID=?, STATUS_CODE=?, STATUS_MESSAGE=? where DOCUMENT_ID=?";
         Object[] args = new Object[6];
-        args[0] = docvo.getDocumentType();
+        args[0] = docvo.getType();
         args[1] = docvo.getOwnerType();
         args[2] = docvo.getOwnerId();
         args[3] = docvo.getStatusCode();
         args[4] = docvo.getStatusMessage();
-        args[5] = docvo.getDocumentId();
+        args[5] = docvo.getId();
         db.runUpdate(query, args);
     }
 
@@ -803,17 +802,18 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         ResultSet rs = db.runSelect(query, processInstanceId);
         while (rs.next()) {
             VariableInstance data = new VariableInstance();
-            data.setInstanceId(rs.getLong(1));
+            data.setId(rs.getLong(1));
             data.setStringValue(rs.getString(2));
             data.setName(rs.getString(3));
-            data.setType(VariableTypeCache.getTypeName(rs.getLong(4)));
-            if (data.getName()==null) {
-                if (oldVarInsts==null) oldVarInsts = new HashMap<Long,VariableInstance>();
-                oldVarInsts.put(data.getInstanceId(), data);;
+            data.setType(VariableTypeCache.getVariableType(rs.getInt(4)).getName());
+            if (data.getName() == null) {
+                if (oldVarInsts == null)
+                    oldVarInsts = new HashMap<>();
+                oldVarInsts.put(data.getId(), data);;
             }
             variableDataList.add(data);
         }
-        if (oldVarInsts!=null) {
+        if (oldVarInsts != null) {
             StringBuffer sb = new StringBuffer();
             sb.append("select vi.VARIABLE_INST_ID, v.VARIABLE_NAME, vt.VARIABLE_TYPE_NAME ");
             sb.append("from VARIABLE_INSTANCE vi, VARIABLE v, VARIABLE_TYPE vt ");

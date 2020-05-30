@@ -62,7 +62,7 @@ public class TaskRuntimeContext extends ProcessRuntimeContext {
 
     public TaskRuntimeContext(StandardLogger logger, ProcessRuntimeContext processContext, TaskTemplate template, TaskInstance taskInstance, User assignee) {
         this(logger, processContext.getPackage(), processContext.getProcess(),
-                processContext.getProcessInstance(), processContext.getVariables(), template, taskInstance, assignee);
+                processContext.getProcessInstance(), processContext.getValues(), template, taskInstance, assignee);
     }
 
 

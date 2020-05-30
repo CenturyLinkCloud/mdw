@@ -91,7 +91,7 @@ public class SynchronizationActivity extends AbstractWait implements com.century
                         completedActivities.add(syncedActivityIds[i]);
                 }
                 SyncExpressionEvaluator syncExpressionEval =
-                    new SyncExpressionEvaluator(syncedActivityIds, syncExpression, idToEscapedName);
+                    new SyncExpressionEvaluator(getPackage(), syncedActivityIds, syncExpression, idToEscapedName);
                 yes = syncExpressionEval.evaluate(completedActivities, getParameters());
             }
             return yes;

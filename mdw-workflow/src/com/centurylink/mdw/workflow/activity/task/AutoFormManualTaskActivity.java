@@ -26,7 +26,6 @@ import com.centurylink.mdw.model.task.TaskAction;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.workflow.WorkStatus;
 import com.centurylink.mdw.services.ServiceLocator;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.CallURL;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
@@ -190,12 +189,12 @@ public class AutoFormManualTaskActivity extends ManualTaskActivity {
         // w/o above, hit oracle constraints that variable value must not be null
         // shall we consider removing that constraint? and shall we check
         // if the variable should be updated?
-        String pType = this.getParameterType(datapath);
-        if (pType == null)
+        String type = this.getParameterType(datapath);
+        if (type == null)
             return; // ignore data that is not a variable
-        if (VariableTranslator.isDocumentReferenceVariable(getPackage(), pType))
-            this.setParameterValueAsDocument(datapath, pType, value);
+        if (getPackage().getTranslator(type).isDocumentReferenceVariable())
+            setParameterValueAsDocument(datapath, type, value);
         else
-            this.setParameterValue(datapath, value);
+            setParameterValue(datapath, value);
     }
 }

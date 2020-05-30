@@ -15,41 +15,33 @@
  */
 package com.centurylink.mdw.workflow.adapter.soap;
 
+import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.adapter.AdapterException;
+import com.centurylink.mdw.adapter.AdapterStubRequest;
+import com.centurylink.mdw.adapter.ConnectionException;
+import com.centurylink.mdw.config.PropertyException;
+import com.centurylink.mdw.model.StringDocument;
+import com.centurylink.mdw.model.listener.Listener;
+import com.centurylink.mdw.model.request.Request;
+import com.centurylink.mdw.model.request.Response;
+import com.centurylink.mdw.model.variable.DocumentReference;
+import com.centurylink.mdw.translator.XmlDocumentTranslator;
+import com.centurylink.mdw.util.HttpConnection;
+import com.centurylink.mdw.util.HttpHelper;
+import com.centurylink.mdw.variable.VariableTranslator;
+import com.centurylink.mdw.workflow.adapter.http.HttpServiceAdapter;
+import com.centurylink.mdw.xml.DomHelper;
+import org.json.JSONObject;
+import org.w3c.dom.Node;
+
+import javax.xml.soap.*;
+import javax.xml.transform.TransformerException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.Name;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.soap.SOAPHeader;
-import javax.xml.soap.SOAPHeaderElement;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.transform.TransformerException;
-
-import com.centurylink.mdw.model.request.Request;
-import org.json.JSONObject;
-import org.w3c.dom.Node;
-
-import com.centurylink.mdw.activity.ActivityException;
-import com.centurylink.mdw.config.PropertyException;
-import com.centurylink.mdw.adapter.AdapterException;
-import com.centurylink.mdw.adapter.ConnectionException;
-import com.centurylink.mdw.model.request.Response;
-import com.centurylink.mdw.model.StringDocument;
-import com.centurylink.mdw.adapter.AdapterStubRequest;
-import com.centurylink.mdw.model.listener.Listener;
-import com.centurylink.mdw.model.variable.DocumentReference;
-import com.centurylink.mdw.translator.VariableTranslator;
-import com.centurylink.mdw.translator.XmlDocumentTranslator;
-import com.centurylink.mdw.util.HttpConnection;
-import com.centurylink.mdw.util.HttpHelper;
-import com.centurylink.mdw.workflow.adapter.http.HttpServiceAdapter;
-import com.centurylink.mdw.xml.DomHelper;
 
 abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
 
@@ -212,17 +204,17 @@ abstract public class SoapWebServiceAdapter extends HttpServiceAdapter {
                 throw new AdapterException("Missing attribute: " + RESPONSE_VARIABLE);
             String responseVarType = getParameterType(responseVarName);
 
-            if (!VariableTranslator.isDocumentReferenceVariable(getPackage(), responseVarType))
+            VariableTranslator translator = getPackage().getTranslator(responseVarType);
+            if (!translator.isDocumentReferenceVariable())
                 throw new AdapterException("Response variable must be a DocumentReference: " + responseVarName);
 
             if (responseVarType.equals(StringDocument.class.getName())) {
                 setParameterValueAsDocument(responseVarName, responseVarType, responseXml);
             }
             else {
-                com.centurylink.mdw.variable.VariableTranslator varTrans = VariableTranslator.getTranslator(getPackage(), responseVarType);
-                if (!(varTrans instanceof XmlDocumentTranslator))
+                if (!(translator instanceof XmlDocumentTranslator))
                     throw new AdapterException("Unsupported response variable type: " + responseVarType + " (must implement XmlDocumentTranslator)");
-                XmlDocumentTranslator xmlDocTrans = (XmlDocumentTranslator) varTrans;
+                XmlDocumentTranslator xmlDocTrans = (XmlDocumentTranslator) translator;
                 Object responseObj = xmlDocTrans.fromDomNode(childElem);
                 setParameterValueAsDocument(responseVarName, responseVarType, responseObj);
             }

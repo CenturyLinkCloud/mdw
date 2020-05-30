@@ -15,9 +15,7 @@
  */
 package com.centurylink.mdw.common.translator.impl;
 
-import com.centurylink.mdw.translator.VariableTranslator;
-
-public class StringTranslator extends VariableTranslator {
+public class StringTranslator extends BaseTranslator {
 
     public Object toObject(String str){
         return str;

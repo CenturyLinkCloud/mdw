@@ -43,7 +43,7 @@ public class RuntimeContextAdapter implements RuntimeContext {
     }
 
     @Override
-    public Map<String,Object> getVariables() {
+    public Map<String,Object> getValues() {
         return null;
     }
 

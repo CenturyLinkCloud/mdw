@@ -82,6 +82,14 @@ public class Asset implements Comparable<Asset> {
             return null;
     }
 
+    public String getRootName() {
+        int lastDot =  name.lastIndexOf('.');
+        if (lastDot > 0)
+            return name.substring(0, lastDot);
+        else
+            return name;
+    }
+
     public String getContentType() {
         return ContentTypes.getContentType(getExtension());
     }

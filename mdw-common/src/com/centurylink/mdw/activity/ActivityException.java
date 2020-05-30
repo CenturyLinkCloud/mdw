@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.activity;
 
+import com.centurylink.mdw.common.service.ServiceException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,7 +49,7 @@ public class ActivityException extends WorkflowException {
     public ActivityRuntimeContext getRuntimeContext() { return runtimeContext; }
     public void setRuntimeContext(ActivityRuntimeContext context) { this.runtimeContext = context; }
 
-    public ActivityException(JSONObject json) throws JSONException {
+    public ActivityException(JSONObject json) throws ServiceException {
         super(json);
         if (json.has("runtimeContext"))
             this.runtimeContext = new ActivityRuntimeContext(json.getJSONObject("runtimeContext"));

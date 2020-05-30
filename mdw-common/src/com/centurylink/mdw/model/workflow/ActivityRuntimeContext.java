@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.model.workflow;
 
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Attributes;
 import com.centurylink.mdw.model.Jsonable;
 import com.centurylink.mdw.util.JsonUtil;
@@ -101,7 +102,7 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
         return valueExpressionMap;
     }
 
-    public ActivityRuntimeContext(JSONObject json) throws JSONException {
+    public ActivityRuntimeContext(JSONObject json) throws ServiceException {
         super(null,null, null, null, 0, false, json.has("variables") ? new HashMap<>() : null);
         String procPath = json.getString("process");
         int slash = procPath.indexOf("/");
@@ -125,7 +126,7 @@ public class ActivityRuntimeContext extends ProcessRuntimeContext implements Jso
             Map<String,String> varMap = JsonUtil.getMap(json.getJSONObject("variables"));
             for (String name : varMap.keySet()) {
                 String val = varMap.get(name);
-                getVariables().put(name, getValueForString(name, val));
+                getValues().put(name, getValueForString(name, val));
             }
         }
     }

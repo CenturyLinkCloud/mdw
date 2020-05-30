@@ -23,6 +23,7 @@ import com.centurylink.mdw.bpm.CacheDocument.Cache;
 import com.centurylink.mdw.bpm.PropertyDocument.Property;
 import com.centurylink.mdw.cache.CacheService;
 import com.centurylink.mdw.cache.PreloadableCache;
+import com.centurylink.mdw.cache.VariableTypeCache;
 import com.centurylink.mdw.common.service.SystemMessages;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.JsonObject;
@@ -54,9 +55,8 @@ import java.util.*;
 public class CacheRegistration implements StartupService {
 
     private static final String APPLICATION_CACHE_FILE_NAME = "application-cache.xml";
-    // following 2 lines cannot be initialized in onStartup() - too late
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-    private static Map<String,CacheService> allCaches = new LinkedHashMap<>();
+    private static final Map<String,CacheService> allCaches = new LinkedHashMap<>();
 
     private static CacheRegistration instance;
     public static synchronized CacheRegistration getInstance() {
@@ -69,23 +69,22 @@ public class CacheRegistration implements StartupService {
     /**
      * Method that gets invoked when the server comes up
      * Load all the cache objects when the server starts
-     *
-     * @throws StartupException
      */
     public void onStartup() {
         try {
             preloadCaches();
             SpringAppContext.getInstance().loadPackageContexts();  // trigger dynamic context loading
             preloadDynamicCaches();
-            // implementor cache relies on kotlin from preloadDynamicCaches()
+            // implementor, handler and variableType caches rely on kotlin from preloadDynamicCaches()
             ImplementorCache implementorCache = new ImplementorCache();
             implementorCache.loadCache();
             allCaches.put(ImplementorCache.class.getSimpleName(), implementorCache);
-            // handlers cache relies on kotlin from preloadDynamicCaches()
             HandlerCache handlerCache = new HandlerCache();
             handlerCache.loadCache();
             allCaches.put(HandlerCache.class.getSimpleName(), handlerCache);
-            implementorCache.loadCache();
+            VariableTypeCache variableTypeCache = new VariableTypeCache();
+            variableTypeCache.loadCache();
+            allCaches.put(VariableTypeCache.class.getSimpleName(), variableTypeCache);
         }
         catch (Exception ex){
             String message = "Failed to load caches";
@@ -95,10 +94,7 @@ public class CacheRegistration implements StartupService {
     }
 
     /**
-     * Method that gets invoked when the server comes up
      * Load all the cache objects when the server starts
-     * @throws Exception
-     * @throws StartupException
      */
     private void preloadCaches() throws IOException, XmlException {
         Map<String,Properties> caches = getPreloadCacheSpecs();

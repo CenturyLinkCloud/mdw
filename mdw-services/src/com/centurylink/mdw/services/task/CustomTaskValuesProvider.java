@@ -15,41 +15,28 @@
  */
 package com.centurylink.mdw.services.task;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.el.PropertyNotFoundException;
-
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.model.Value;
 import com.centurylink.mdw.model.Value.Display;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.observer.task.TaskValuesProvider;
-import com.centurylink.mdw.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.translator.VariableTranslator;
+
+import javax.el.PropertyNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CustomTaskValuesProvider implements TaskValuesProvider {
 
     @Override
     public Map<String,Value> collect(TaskRuntimeContext runtimeContext) {
-        Map<String,Value> values = new HashMap<String,Value>();
+        Map<String,Value> values = new HashMap<>();
 
         for (Value value : getDefinedValues(runtimeContext)) {
             if (!Display.Hidden.equals(value.getDisplay())) {
-                com.centurylink.mdw.variable.VariableTranslator vt = VariableTranslator.getTranslator(runtimeContext.getPackage(), value.getType());
-                if (VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), value.getType())) {
-                    Object docVal = runtimeContext.getVariables().get(value.getName());
-                    if (docVal != null)
-                      value.setValue(((DocumentReferenceTranslator)vt).realToString(docVal));
-                }
-                else {
-                    Object obj = runtimeContext.getVariables().get(value.getName());
-                    if (obj != null)
-                        value.setValue(vt.toString(obj));
-                }
+                value.setValue(runtimeContext.getPackage().getStringValue(value.getType(), runtimeContext.getValues().get(value.getName()), true));
                 values.put(value.getName(), value);
             }
         }
@@ -83,22 +70,14 @@ public class CustomTaskValuesProvider implements TaskValuesProvider {
                 }
                 else {
                     String type = var.getType();
-                    com.centurylink.mdw.variable.VariableTranslator vt = VariableTranslator.getTranslator(runtimeContext.getPackage(), type);
-                    if (VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), type)) {
-                        Object newValue = ((DocumentReferenceTranslator)vt).realToObject(values.get(name));
-                        runtimeContext.getVariables().put(name, newValue);
-                    }
-                    else {
-                        Object newValue = vt.toObject(values.get(name));
-                        runtimeContext.getVariables().put(name, newValue);
-                    }
+                    runtimeContext.getValues().put(name, runtimeContext.getPackage().getObjectValue(type, values.get(name), true));
                 }
             }
         }
     }
 
     protected List<Value> getDefinedValues(TaskRuntimeContext runtimeContext) {
-        List<Value> values = new ArrayList<Value>();
+        List<Value> values = new ArrayList<>();
         for (Variable var : runtimeContext.getProcess().getVariables()) {
             values.add(var.toValue());
         }

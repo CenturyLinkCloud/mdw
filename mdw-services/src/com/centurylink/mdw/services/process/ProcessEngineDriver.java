@@ -47,7 +47,6 @@ import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.TransactionUtil;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
@@ -120,34 +119,34 @@ public class ProcessEngineDriver {
     /**
      * Handles an event for a process or activity
      */
-    private void handleInheritedEvent(ProcessExecutor engine, ProcessInstance processInstVO,
-            Process processVO, InternalEvent messageDoc, Integer eventType)
+    private void handleInheritedEvent(ProcessExecutor engine, ProcessInstance processInstance, Process process,
+            InternalEvent messageDoc, Integer eventType)
       throws ProcessException {
         try {
             if (logger.isInfoEnabled()) {
                 if (messageDoc.isProcess())  {
                     // Process SLA (Delay handler)
                     String msg =  "Inherited Event - type=" + eventType + ", compcode=" + messageDoc.getCompletionCode();
-                    engineLogger.info(processVO.getId(), processInstVO.getId(), processInstVO.getMasterRequestId(), msg);
+                    engineLogger.info(process.getId(), processInstance.getId(), processInstance.getMasterRequestId(), msg);
                 }
                 else {
-                    String tag = EngineLogger.logtag(processVO.getId(), processInstVO.getId(), messageDoc.getWorkId(), messageDoc.getWorkInstanceId());
+                    String tag = EngineLogger.logtag(process.getId(), processInstance.getId(), messageDoc.getWorkId(), messageDoc.getWorkInstanceId());
                     String msg = "Inherited Event - type=" + eventType + ", compcode=" + messageDoc.getCompletionCode();
-                    engineLogger.info(tag, processInstVO.getId(), null, msg);
+                    engineLogger.info(tag, processInstance.getId(), null, msg);
                 }
             }
-            engine.notifyMonitors(processInstVO, InternalLogMessage.PROCESS_ERROR);
+            engine.notifyMonitors(processInstance, InternalLogMessage.PROCESS_ERROR);
             String compCode = messageDoc.getCompletionCode();
-            ProcessInstance originatingInstance = processInstVO;
-            Process embeddedHandlerProc = processVO.findSubprocess(eventType, compCode);
-            while (embeddedHandlerProc == null && processInstVO.getOwner().equals(OwnerType.PROCESS_INSTANCE)) {
-                processInstVO = engine.getProcessInstance(processInstVO.getOwnerId());
-                processVO = getProcessDefinition(processInstVO);
-                embeddedHandlerProc = processVO.findSubprocess(eventType, compCode);
+            ProcessInstance originatingInstance = processInstance;
+            Process embeddedHandlerProc = process.findSubprocess(eventType, compCode);
+            while (embeddedHandlerProc == null && processInstance.getOwner().equals(OwnerType.PROCESS_INSTANCE)) {
+                processInstance = engine.getProcessInstance(processInstance.getOwnerId());
+                process = getProcessDefinition(processInstance);
+                embeddedHandlerProc = process.findSubprocess(eventType, compCode);
             }
 
             if (embeddedHandlerProc != null) {
-                if (isRecursiveCall(originatingInstance, processVO, embeddedHandlerProc.getId())) {
+                if (isRecursiveCall(originatingInstance, process, embeddedHandlerProc.getId())) {
                     logger.warn("Invoking embedded process recursively - not allowed: " + embeddedHandlerProc.getName());
                 }
                 else {
@@ -161,13 +160,13 @@ public class ProcessEngineDriver {
                                 secondaryOwnerType = OwnerType.ACTIVITY_INSTANCE;
                             }
                             // Update the Process Variable "exception" with the exception handler's triggering Activity exception
-                            if (processVO.getVariable("exception") != null &&
+                            if (process.getVariable("exception") != null &&
                                     messageDoc.getSecondaryOwnerId() != null && messageDoc.getSecondaryOwnerId() > 0) {
-                                VariableInstance exceptionVar = processInstVO.getVariable("exception");
+                                VariableInstance exceptionVar = processInstance.getVariable("exception");
                                 if (exceptionVar == null)
-                                    engine.createVariableInstance(processInstVO, "exception", new DocumentReference(messageDoc.getSecondaryOwnerId()));
+                                    engine.createVariableInstance(processInstance, "exception", new DocumentReference(messageDoc.getSecondaryOwnerId()));
                                 else
-                                    engine.updateVariableInstance(exceptionVar);
+                                    engine.updateVariableInstance(exceptionVar, getPackage(process));
                             }
                         }
                         else {
@@ -189,8 +188,8 @@ public class ProcessEngineDriver {
                     }
                     String ownerType = OwnerType.MAIN_PROCESS_INSTANCE;
                     ProcessInstance procInst = engine.createProcessInstance(
-                            embeddedHandlerProc.getId(), ownerType, processInstVO.getId(),
-                            secondaryOwnerType, secondaryOwnerId, processInstVO.getMasterRequestId(), null);
+                            embeddedHandlerProc.getId(), ownerType, processInstance.getId(),
+                            secondaryOwnerType, secondaryOwnerId, processInstance.getMasterRequestId(), null);
                     engine.startProcessInstance(procInst, 0);
                 }
             }
@@ -199,7 +198,7 @@ public class ProcessEngineDriver {
                 Process packageHandlerProc = null;
                 // TODO ugly test to avoid dup errors for service subproc invokes
                 if (messageDoc.getStatusMessage() == null || !messageDoc.getStatusMessage().startsWith("com.centurylink.mdw.activity.ActivityException: At least one subprocess is not completed\n"))
-                    packageHandlerProc = getPackageHandler(processInstVO, eventType);
+                    packageHandlerProc = getPackageHandler(processInstance, eventType);
                 if (packageHandlerProc != null) {
                     Map<String,String> params = new HashMap<>();
                     Variable exVar = packageHandlerProc.getVariable("exception");
@@ -222,7 +221,7 @@ public class ProcessEngineDriver {
                 }
                 else if (eventType.equals(EventType.ABORT)) {
                     // abort the root process instance
-                    InternalEvent event = InternalEvent.createProcessAbortMessage(processInstVO.getId());
+                    InternalEvent event = InternalEvent.createProcessAbortMessage(processInstance.getId());
                     engine.abortProcessInstance(event);
                 }
                 else {
@@ -694,8 +693,8 @@ public class ProcessEngineDriver {
             } else {
                 Document docvo = new Document();
                 docvo.setContent(content);
-                docvo.setDocumentId(docid);
-                docvo.setDocumentType(type);
+                docvo.setId(docid);
+                docvo.setType(type);
                 engine.addDocumentToCache(docvo);
             }
         }
@@ -766,7 +765,7 @@ public class ProcessEngineDriver {
                             if (docVO != null) {
                                 String docContent = docVO.getContent(pkg);
                                 if (docContent != null)
-                                    addDocumentToCache(engine, docRef.getDocumentId(), docVO.getDocumentType(), docContent);
+                                    addDocumentToCache(engine, docRef.getDocumentId(), docVO.getType(), docContent);
                             }
                         }
                     }
@@ -778,10 +777,10 @@ public class ProcessEngineDriver {
         boolean completed = mainProcessInst.getStatusCode().equals(WorkStatus.STATUS_COMPLETED);
         if (headers != null)
             headers.put(Listener.METAINFO_MDW_PROCESS_INSTANCE_ID, mainProcessInst.getId().toString());
-        String resp = completed ? engine.getSynchronousProcessResponse(mainProcessInst.getId(), responseVarName):null;
+        String resp = completed ? engine.getSynchronousProcessResponse(mainProcessInst.getId(), responseVarName, pkg) : null;
         long stopMilli = System.currentTimeMillis();
         logger.info("Synchronous process executed in " +
-                ((stopMilli-startMilli)/1000.0) + " seconds at performance level " + performanceLevel);
+                ((stopMilli - startMilli) / 1000.0) + " seconds at performance level " + performanceLevel);
         if (completed)
             return resp;
         if (lastException == null)
@@ -882,13 +881,14 @@ public class ProcessEngineDriver {
     private void bindRequestVariable(Process procdef,
             Long reqdocId, ProcessExecutor engine, ProcessInstance pi)
     throws DataAccessException {
-        Variable requestVO = procdef.getVariable(VariableConstants.REQUEST);
-        if (requestVO==null) return;
-        int cat = requestVO.getVariableCategory();
-        String vartype = requestVO.getType();
+        Variable requestVar = procdef.getVariable(VariableConstants.REQUEST);
+        if (requestVar == null)
+            return;
+        int cat = requestVar.getVariableCategory();
+        String vartype = requestVar.getType();
         if (cat != Variable.CAT_INPUT && cat != Variable.CAT_INOUT)
             return;
-        if (!VariableTranslator.isDocumentReferenceVariable(getPackage(procdef), vartype))
+        if (!getPackage(procdef).getTranslator(vartype).isDocumentReferenceVariable())
             return;
         List<VariableInstance> viList = pi.getVariables();
         if (viList != null) {

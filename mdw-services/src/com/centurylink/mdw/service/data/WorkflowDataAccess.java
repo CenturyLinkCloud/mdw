@@ -15,19 +15,17 @@
  */
 package com.centurylink.mdw.service.data;
 
+import com.centurylink.mdw.cache.VariableTypeCache;
 import com.centurylink.mdw.cache.asset.PackageCache;
-import com.centurylink.mdw.cache.asset.VariableTypeCache;
 import com.centurylink.mdw.common.service.Query;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.DbAccess;
-import com.centurylink.mdw.dataaccess.VariableTypes;
 import com.centurylink.mdw.dataaccess.db.CommonDataAccess;
 import com.centurylink.mdw.model.asset.AssetHeader;
 import com.centurylink.mdw.model.asset.AssetVersionSpec;
 import com.centurylink.mdw.model.variable.VariableInstance;
-import com.centurylink.mdw.model.variable.VariableType;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
@@ -683,11 +681,11 @@ public class WorkflowDataAccess extends CommonDataAccess {
             rs = db.runSelect(query, procInstId);
             while (rs.next()) {
                 VariableInstance data = new VariableInstance();
-                data.setInstanceId(rs.getLong(1));
+                data.setId(rs.getLong(1));
                 data.setVariableId(rs.getLong(2));
                 data.setStringValue(rs.getString(3));
                 data.setName(rs.getString(4));
-                data.setType(getVariableType(rs.getLong(5)));
+                data.setType(VariableTypeCache.getVariableType(rs.getInt(5)).getName());
                 variableDataList.add(data);
             }
             procInstInfo.setVariables(variableDataList);
@@ -875,10 +873,10 @@ public class WorkflowDataAccess extends CommonDataAccess {
             for (String varName : variableCriteria.keySet()) {
                 String varValue = variableCriteria.get(varName);
                 boolean isDate = varName.startsWith("DATE:");
-                Long variableTypeId = null;
+                Integer variableTypeId = null;
                 if (isDate) {
                     varName = varName.substring(5);
-                    variableTypeId = VariableTypeCache.getTypeId("java.util.Date");
+                    variableTypeId = VariableTypeCache.getVariableType("java.util.Date").getId();
                 }
 
                 sqlBuff.append("\n and exists (select vi.variable_inst_id from VARIABLE_INSTANCE vi")
@@ -1118,21 +1116,5 @@ public class WorkflowDataAccess extends CommonDataAccess {
 
         if (orderBy != null)
             sqlBuff.append("\n").append(orderBy);
-    }
-
-    private final List<VariableType> variableTypes = new VariableTypes().getVariableTypes();
-
-    protected String getVariableType(Long id) {
-        if (variableTypes == null) {
-            return VariableTypeCache.getTypeName(id);
-        }
-        else {
-            for (VariableType variableType : variableTypes) {
-                if (variableType.getVariableTypeId().longValue() == id.longValue())
-                    return variableType.getVariableType();
-            }
-            // If didn't find the type, look in cache
-            return VariableTypeCache.getTypeName(id);
-        }
     }
 }

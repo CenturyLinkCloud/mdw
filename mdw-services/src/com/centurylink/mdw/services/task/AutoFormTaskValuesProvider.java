@@ -22,8 +22,6 @@ import com.centurylink.mdw.model.Value.Display;
 import com.centurylink.mdw.model.task.TaskRuntimeContext;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.observer.task.TaskValuesProvider;
-import com.centurylink.mdw.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.translator.VariableTranslator;
 
 import javax.el.PropertyNotFoundException;
 import java.util.ArrayList;
@@ -34,7 +32,7 @@ import java.util.Map;
 public class AutoFormTaskValuesProvider implements TaskValuesProvider {
 
     public Map<String,Value> collect(TaskRuntimeContext runtimeContext) {
-        Map<String,Value> values = new HashMap<String,Value>();
+        Map<String,Value> values = new HashMap<>();
 
         for (Value value : getDefinedValues(runtimeContext)) {
             if (value.getDisplay() != null) {
@@ -46,17 +44,8 @@ public class AutoFormTaskValuesProvider implements TaskValuesProvider {
                 else {
                     Variable var = runtimeContext.getProcess().getVariable(value.getName());
                     if (var != null) {
-                        com.centurylink.mdw.variable.VariableTranslator vt = VariableTranslator.getTranslator(runtimeContext.getPackage(), value.getType());
-                        if (VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), value.getType())) {
-                            Object docVal = runtimeContext.getVariables().get(value.getName());
-                            if (docVal != null)
-                              value.setValue(((DocumentReferenceTranslator)vt).realToString(docVal));
-                        }
-                        else {
-                            Object obj = runtimeContext.getVariables().get(value.getName());
-                            if (obj != null)
-                                value.setValue(vt.toString(obj));
-                        }
+                        value.setValue(runtimeContext.getPackage().getStringValue(value.getType(),
+                                runtimeContext.getValues().get(value.getName()), true));
                     }
                 }
                 values.put(value.getName(), value);
@@ -67,7 +56,7 @@ public class AutoFormTaskValuesProvider implements TaskValuesProvider {
 
     public void apply(TaskRuntimeContext runtimeContext, Map<String,String> values) throws ServiceException {
         List<Value> definedValues = getDefinedValues(runtimeContext);
-        List<String> readOnly = new ArrayList<String>();
+        List<String> readOnly = new ArrayList<>();
         for (Value v : definedValues) {
             if (v.getDisplay() == Display.ReadOnly)
                 readOnly.add(v.getName());
@@ -92,15 +81,7 @@ public class AutoFormTaskValuesProvider implements TaskValuesProvider {
                 }
                 else {
                     String type = var.getType();
-                    com.centurylink.mdw.variable.VariableTranslator vt = VariableTranslator.getTranslator(runtimeContext.getPackage(), type);
-                    if (VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), type)) {
-                        Object newValue = ((DocumentReferenceTranslator)vt).realToObject(values.get(name));
-                        runtimeContext.getVariables().put(name, newValue);
-                    }
-                    else {
-                        Object newValue = vt.toObject(values.get(name));
-                        runtimeContext.getVariables().put(name, newValue);
-                    }
+                    runtimeContext.getValues().put(name, runtimeContext.getPackage().getObjectValue(type, values.get(name), true));
                 }
             }
         }

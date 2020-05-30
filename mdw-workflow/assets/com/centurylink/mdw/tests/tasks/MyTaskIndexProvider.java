@@ -28,7 +28,7 @@ public class MyTaskIndexProvider implements TaskIndexProvider {
     public Map<String,String> collect(TaskRuntimeContext runtimeContext) {
 
         Map<String,String> indexes = new HashMap<String,String>();
-        Map<String,Object> variables = runtimeContext.getVariables();
+        Map<String,Object> variables = runtimeContext.getValues();
         TaskJaxb taskJaxb = (TaskJaxb) variables.get("jaxbVar");
         indexes.put("MyAttributeTwo", taskJaxb.getAttributeTwo());
         indexes.put("MyElementOne", taskJaxb.getElementOne());

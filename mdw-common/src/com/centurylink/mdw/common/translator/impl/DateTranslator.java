@@ -15,17 +15,15 @@
  */
 package com.centurylink.mdw.common.translator.impl;
 
-import java.text.DateFormat;
+import com.centurylink.mdw.translator.TranslationException;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 
-import com.centurylink.mdw.translator.TranslationException;
-import com.centurylink.mdw.translator.VariableTranslator;
-
-public class DateTranslator extends VariableTranslator {
+public class DateTranslator extends BaseTranslator {
 
     private static final String dateFormat = "EEE MMM dd HH:mm:ss zzz yyyy";
 

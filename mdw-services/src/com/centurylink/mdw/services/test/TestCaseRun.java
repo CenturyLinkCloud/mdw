@@ -39,6 +39,7 @@ import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.service.data.ServicePaths;
+import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.ServiceLocator;
 import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.WorkflowServices;
@@ -359,7 +360,8 @@ public class TestCaseRun implements Runnable {
     }
 
     protected String translateToYaml(Map<String,List<ProcessInstance>> processInstances,
-            Map<String,String> activityNames, TestCaseProcess mainTestProc, String newLineChars) {
+            Map<String,String> activityNames, TestCaseProcess mainTestProc, String newLineChars)
+            throws IOException {
 
         boolean orderById = mainTestProc.isResultsById();
 
@@ -369,6 +371,8 @@ public class TestCaseRun implements Runnable {
             List<ProcessInstance> procInsts = processInstances.get(procName);
             for (int i = 0; i < procInsts.size(); i++) {
                 ProcessInstance procInst = procInsts.get(i);
+                Package pkg = PackageCache.getPackage(ProcessCache.getProcess(procInst.getProcessId()).getPackageName());
+                procInst.setPackageName(pkg.getName());
                 yaml.append("process: # ").append(procInst.getId()).newLine();
                 yaml.append("  name: ").append(procName).newLine();
                 yaml.append("  instance: ").append((i + 1)).newLine();
@@ -391,20 +395,20 @@ public class TestCaseRun implements Runnable {
                 }
                 for (VariableInstance var : procInst.getVariables()) {
                     if (mainTestProc.getExcludeVariables() == null || !mainTestProc.getExcludeVariables().contains(var.getName())) {
-                        yaml.append("  variable: # ").append(var.getInstanceId()).newLine();
+                        yaml.append("  variable: # ").append(var.getId()).newLine();
                         yaml.append("    name: ").append(var.getName()).newLine();
                         yaml.append("    value: ");
                         try {
                             var.setProcessInstanceId(procInst.getId());
-                            String val = getStringValue(var);
-                            if (var.isDocument())
+                            String val = getStringValue(var, pkg);
+                            if (var.isDocument(pkg))
                                 procInst.getVariable().put(var.getName(), val); // pre-populate document values
                             yaml.appendMulti("      ", val).newLine();
                         }
                         catch (Throwable t) {
-                            log.println("Failed to translate variable instance: " + var.getInstanceId() + " to string with the following exception");
+                            log.println("Failed to translate variable instance: " + var.getId() + " to string with the following exception");
                             t.printStackTrace(log);
-                            yaml.append(" \"").append(var.getStringValue()).append("\"").newLine();
+                            yaml.append(" \"").append(var.getStringValue(pkg)).append("\"").newLine();
                         }
                     }
                 }
@@ -413,9 +417,9 @@ public class TestCaseRun implements Runnable {
         return yaml.toString();
     }
 
-    protected String getStringValue(VariableInstance var) throws TestException {
-        String val = var.getStringValue();
-        if (var.isDocument()) {
+    protected String getStringValue(VariableInstance var, Package pkg) throws TestException {
+        String val = var.getStringValue(pkg);
+        if (var.isDocument(pkg)) {
             try {
                 val = workflowServices.getDocumentStringValue(new DocumentReference(val).getDocumentId());
             }

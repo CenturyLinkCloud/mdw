@@ -15,15 +15,15 @@
  */
 package com.centurylink.mdw.util;
 
+import com.centurylink.mdw.common.MdwException;
+import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.workflow.Package;
+import org.apache.commons.beanutils.PropertyUtilsBean;
+
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.beanutils.PropertyUtilsBean;
-
-import com.centurylink.mdw.common.MdwException;
-import com.centurylink.mdw.model.variable.VariableInstance;
 
 public class ExpressionUtil {
 
@@ -50,7 +50,7 @@ public class ExpressionUtil {
      * Substitutes dynamic values for expressions in the input string.
      * @param input raw input string
      * @param model object containing the values to substitute
-     * @param map of images to populate based on special ${image:*.gif} syntax
+     * @param imageMap of images to populate based on special ${image:*.gif} syntax
      * @return string with values substituted
      */
     public static String substitute(String input, Object model, Map<String,String> imageMap, boolean lenient)
@@ -103,7 +103,7 @@ public class ExpressionUtil {
      * @param variables variable instances to use in substitutions
      * @return string with values substituted
      */
-    public static String substitute(String input, List<VariableInstance> variables)
+    public static String substitute(String input, List<VariableInstance> variables, Package pkg)
     throws MdwException {
         StringBuffer substituted = new StringBuffer(input.length());
         try {
@@ -112,7 +112,7 @@ public class ExpressionUtil {
             while (matcher.find()) {
                 String match = matcher.group();
                 substituted.append(input.substring(index, matcher.start()));
-                Object value = getVariableValue(match.substring(2, match.length() - 1), variables);
+                Object value = getVariableValue(match.substring(2, match.length() - 1), variables, pkg);
                 if (value != null)
                     substituted.append(value);
                 index = matcher.end();
@@ -125,10 +125,10 @@ public class ExpressionUtil {
         }
     }
 
-    private static Object getVariableValue(String name, List<VariableInstance> variables) {
+    private static Object getVariableValue(String name, List<VariableInstance> variables, Package pkg) {
         for (int i = 0; i < variables.size(); i++) {
             if (name.equalsIgnoreCase(variables.get(i).getName())) {
-                return variables.get(i).getData();
+                return variables.get(i).getData(pkg);
             }
         }
         return null;

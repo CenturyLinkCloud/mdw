@@ -167,7 +167,6 @@ public class HandlerCache implements PreloadableCache {
     }
 
     /**
-     * This purposefully only finds asset-based handlers.
      * TODO: Supplier-driven handlers (mdw-spring-boot AnnotationsScanner).
      */
     private HandlerSpec getAnnotatedHandler(Package pkg, AssetInfo assetInfo) {
@@ -190,7 +189,6 @@ public class HandlerCache implements PreloadableCache {
         }
         return null;
     }
-
 
     // TODO: this compatibility will be removed soon
     private List<HandlerSpec> loadEvthHandlerSpecs() {

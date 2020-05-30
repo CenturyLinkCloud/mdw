@@ -733,15 +733,15 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
-    public void updateVariableInstance(VariableInstance variableInstance) throws DataAccessException {
+    public void updateVariableInstance(VariableInstance variableInstance, Package pkg) throws DataAccessException {
         TransactionWrapper transaction = null;
         try {
             transaction = startTransaction();
-            engineImpl.getDataAccess().updateVariableInstance(variableInstance);
+            engineImpl.getDataAccess().updateVariableInstance(variableInstance, pkg);
         } catch (DataAccessException ex) {
             if (canRetryTransaction(ex)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                ((ProcessExecutor)getTransactionRetrier()).updateVariableInstance(variableInstance);
+                ((ProcessExecutor)getTransactionRetrier()).updateVariableInstance(variableInstance, pkg);
             }
             else {
                 throw ex;
@@ -749,7 +749,7 @@ public class ProcessExecutor implements RetryableTransaction {
         } catch (SQLException ex) {
             if (canRetryTransaction(ex)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                ((ProcessExecutor)getTransactionRetrier()).updateVariableInstance(variableInstance);
+                ((ProcessExecutor)getTransactionRetrier()).updateVariableInstance(variableInstance, pkg);
             }
             else {
                 throw new DataAccessException("Failed to update variable instance", ex);
@@ -1046,15 +1046,16 @@ public class ProcessExecutor implements RetryableTransaction {
         }
     }
 
-    public String getSynchronousProcessResponse(Long procInstId, String varName) throws DataAccessException {
+    public String getSynchronousProcessResponse(Long procInstId, String varName, Package pkg)
+            throws DataAccessException {
         TransactionWrapper transaction = null;
         try {
             transaction = startTransaction();
-            return engineImpl.getServiceProcessResponse(procInstId, varName);
+            return engineImpl.getServiceProcessResponse(procInstId, varName, pkg);
         } catch (Exception ex) {
             if (canRetryTransaction(ex)) {
                 transaction = (TransactionWrapper)initTransactionRetry(transaction);
-                return ((ProcessExecutor)getTransactionRetrier()).getSynchronousProcessResponse(procInstId, varName);
+                return ((ProcessExecutor)getTransactionRetrier()).getSynchronousProcessResponse(procInstId, varName, pkg);
             }
             else {
                 throw new DataAccessException("Failed to get value for variable " + varName, ex);

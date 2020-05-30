@@ -65,7 +65,6 @@ import com.centurylink.mdw.task.SubTask;
 import com.centurylink.mdw.task.SubTaskPlanDocument;
 import com.centurylink.mdw.task.SubTaskPlanDocument.SubTaskPlan;
 import com.centurylink.mdw.task.types.TaskServiceRegistry;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -773,8 +772,8 @@ public class TaskWorkflowHelper {
             }
         }
         ProcessRuntimeContext context = ServiceLocator.getWorkflowServices().getContext(processInstanceId);
-        for (String name : context.getVariables().keySet()) {
-            strategy.setParameter(name, context.getVariables().get(name));
+        for (String name : context.getValues().keySet()) {
+            strategy.setParameter(name, context.getValues().get(name));
         }
     }
 
@@ -1001,7 +1000,7 @@ public class TaskWorkflowHelper {
                         if (TaskRuntimeContext.isExpression(assigneeVarSpec))
                             prevCuid = runtimeContext.evaluateToString(assigneeVarSpec);
                         else {
-                            Object varVal = runtimeContext.getVariables().get(assigneeVarSpec);
+                            Object varVal = runtimeContext.getValues().get(assigneeVarSpec);
                             prevCuid = varVal == null ? null : varVal.toString();
                         }
 
@@ -1014,7 +1013,7 @@ public class TaskWorkflowHelper {
                                 String rootVar = assigneeVarSpec.substring(2, assigneeVarSpec.indexOf('.'));
                                 Variable doc = runtimeContext.getProcess().getVariable(rootVar);
                                 VariableInstance varInst = runtimeContext.getProcessInstance().getVariable(rootVar);
-                                String stringValue = VariableTranslator.realToString(runtimeContext.getPackage(), doc.getType(), runtimeContext.evaluate("#{" + rootVar + "}"));
+                                String stringValue = runtimeContext.getPackage().getStringValue(doc.getType(), runtimeContext.evaluate("${" + rootVar + "}"), true);
                                 if (varInst == null) {
                                     workflowServices.createDocument(runtimeContext, rootVar, stringValue);
                                 }
@@ -1060,7 +1059,7 @@ public class TaskWorkflowHelper {
                         String rootVar = assigneeVarSpec.substring(2, assigneeVarSpec.indexOf('.'));
                         Variable doc = runtimeContext.getProcess().getVariable(rootVar);
                         VariableInstance varInst = runtimeContext.getProcessInstance().getVariable(rootVar);
-                        String stringValue = VariableTranslator.realToString(runtimeContext.getPackage(), doc.getType(), runtimeContext.evaluate("#{" + rootVar + "}"));
+                        String stringValue = runtimeContext.getPackage().getStringValue(doc.getType(), runtimeContext.evaluate("${" + rootVar + "}"), true);
                         if (varInst == null) {
                             workflowServices.createDocument(runtimeContext, rootVar, stringValue);
                         }

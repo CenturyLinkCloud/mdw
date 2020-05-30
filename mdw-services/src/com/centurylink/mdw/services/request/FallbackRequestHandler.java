@@ -37,7 +37,6 @@ import com.centurylink.mdw.services.TaskServices;
 import com.centurylink.mdw.services.cache.CacheRegistration;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.messenger.MessengerFactory;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.CallURL;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -179,7 +178,7 @@ public class FallbackRequestHandler implements RequestHandler {
             try {
                 Document doc = ServiceLocator.getWorkflowServices().getDocument(new Long(documentId));
                 if (type.equals(Object.class.getName())) {
-                    Object obj = VariableTranslator.realToObject(getPackage(doc), "java.lang.Object", doc.getContent(getPackage(doc)));
+                    Object obj = getPackage(doc).getObjectValue("java.lang.Object", doc.getContent(getPackage(doc)), true);
                     response = obj.toString();
                 } else response = doc.getContent(getPackage(doc));
             } catch (Exception e) {

@@ -15,9 +15,6 @@
  */
 package com.centurylink.mdw.testing;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.centurylink.mdw.annotations.Monitor;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
@@ -26,7 +23,9 @@ import com.centurylink.mdw.model.workflow.ActivityStubResponse;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.monitor.ActivityMonitor;
 import com.centurylink.mdw.services.event.StubHelper;
-import com.centurylink.mdw.translator.VariableTranslator;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Monitor(value="Test Cases", category=ActivityMonitor.class, defaultEnabled=true)
 public class TestCaseActivityMonitor implements ActivityMonitor {
@@ -83,12 +82,7 @@ public class TestCaseActivityMonitor implements ActivityMonitor {
                             Variable variable = process.getVariable(name);
                             if (variable == null)
                                 throw new IllegalStateException("Variable: " + name + " not defined for process: " + process.getQualifiedLabel());
-                            boolean isDoc = VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), variable.getType());
-                            Object value;
-                            if (isDoc)
-                                value = VariableTranslator.realToObject(runtimeContext.getPackage(), variable.getType(), strValue);
-                            else
-                                value = VariableTranslator.toObject(variable.getType(), strValue);
+                            Object value = runtimeContext.getPackage().getObjectValue(variable.getType(), strValue, true);
                             updates.put(name,  value);
                         }
                     }

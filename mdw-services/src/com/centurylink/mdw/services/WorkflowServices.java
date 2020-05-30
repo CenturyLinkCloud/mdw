@@ -28,9 +28,7 @@ import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.util.log.ActivityLog;
-import org.json.JSONException;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -205,11 +203,9 @@ public interface WorkflowServices {
     Integer notify(Package runtimePackage, String eventName, Object eventMessage, int delay) throws ServiceException;
 
     void setVariable(Long processInstanceId, String varName, Object value) throws ServiceException;
-
     void setVariable(ProcessRuntimeContext context, String varName, Object value) throws ServiceException;
 
     void setVariables(Long processInstanceId, Map<String, Object> values) throws ServiceException;
-
     void setVariables(ProcessRuntimeContext context, Map<String, Object> values) throws ServiceException;
 
     void setDocumentValue(ProcessRuntimeContext context, String varName, Object value) throws ServiceException;

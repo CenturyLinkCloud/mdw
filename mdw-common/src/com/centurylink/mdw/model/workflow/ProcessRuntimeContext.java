@@ -16,6 +16,7 @@
 package com.centurylink.mdw.model.workflow;
 
 import com.centurylink.mdw.app.ApplicationContext;
+import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.model.Attributes;
@@ -64,8 +65,16 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
     /**
      * Purposely separate from processInstance.getVariables().
      */
-    private Map<String,Object> variables;
-    public Map<String,Object> getVariables() { return variables; }
+    private Map<String,Object> values;
+    public Map<String,Object> getValues() { return values; }
+
+    /**
+     * @deprecated use {@link #getValues()}
+     */
+    @Deprecated
+    public Map<String,Object> getVariables() {
+        return getValues();
+    }
 
     /**
      * For read-only access.
@@ -75,8 +84,8 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
             @Override
             public String get(Object varName) {
                 VariableInstance varInst = processInstance.getVariable((String)varName);
-                if (varInst != null && varInst.getData() instanceof DocumentReference)
-                    return varInst.getData().toString();
+                if (varInst != null && varInst.getData(getPackage()) instanceof DocumentReference)
+                    return varInst.getData(getPackage()).toString();
                 return null;
             }
         };
@@ -122,10 +131,10 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         this.processInstance = processInstance;
         this.performanceLevel = performanceLevel;
         this.inService = inService;
-        this.variables = new HashMap<>();
+        this.values = new HashMap<>();
     }
 
-    public ProcessRuntimeContext(StandardLogger logger, Package pkg, Process process, ProcessInstance processInstance, int performanceLevel, boolean inService, Map<String,Object> variables) {
+    public ProcessRuntimeContext(StandardLogger logger, Package pkg, Process process, ProcessInstance processInstance, int performanceLevel, boolean inService, Map<String,Object> values) {
         if (logger == null)
             this.logger = LoggerUtil.getStandardLogger();
         else
@@ -135,7 +144,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         this.processInstance = processInstance;
         this.performanceLevel = performanceLevel;
         this.inService = inService;
-        this.variables = variables;
+        this.values = values;
     }
 
     public String getProperty(String name) {
@@ -259,7 +268,6 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
                     }
                 }
             };
-            elResolver.add(new XPathELResolver());
             elResolver.add(new MapELResolver());
             elResolver.add(new ListELResolver());
             elResolver.add(new ArrayELResolver());
@@ -309,11 +317,11 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
             valueExpressionMap.put("mdwHubUrl", new ValueExpressionLiteral(ApplicationContext.getMdwHubUrl(), String.class));
             valueExpressionMap.put("processInstanceId", new ValueExpressionLiteral(this.getProcessInstanceId(), String.class));
             valueExpressionMap.put("processName", new ValueExpressionLiteral(this.process.getName(), String.class));
-            valueExpressionMap.put("variables", new ValueExpressionLiteral(this.getVariables() , Object.class));
+            valueExpressionMap.put("variables", new ValueExpressionLiteral(this.getValues() , Object.class));
             valueExpressionMap.put("props", new ValueExpressionLiteral(this.getPropertyAccessorMap(), Map.class));
             valueExpressionMap.put("env", new ValueExpressionLiteral(this.getEnvironmentAccessorMap(), Map.class));
 
-            Map<String,Object> variables = getVariables();
+            Map<String,Object> variables = getValues();
             if (variables != null) {
                 for (String varName : variables.keySet()) {
                     valueExpressionMap.put(varName, new ValueExpressionLiteral(variables.get(varName), Object.class));
@@ -380,15 +388,15 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         if (isExpression(key))
             return evaluate(key);
         else
-            return getVariables().get(key);
+            return getValues().get(key);
     }
 
-    public String getValueAsString(String key) {
+    public String getValueAsString(String key) throws ServiceException {
         if (isExpression(key)) {
             return evaluateToString(key);
         }
         else {
-            Object obj = getVariables().get(key);
+            Object obj = getValues().get(key);
             Variable var = getProcess().getVariable(key);
             if (var == null)
                 throw new IllegalArgumentException("Variable not defined: " + key);
@@ -396,27 +404,33 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
                 return "";
             if (obj instanceof Date)
                 return ((Date)obj).toInstant().toString();  // dates always resolve to ISO time
-            VariableTranslator translator = com.centurylink.mdw.translator.VariableTranslator
-                    .getTranslator(getPackage(), var.getType());
-            if (translator instanceof JavaObjectTranslator)
-                return obj.toString();
-            else if (translator instanceof DocumentReferenceTranslator)
-                return ((DocumentReferenceTranslator)translator).realToString(obj);
-            else
-                return translator.toString(obj);
+            try {
+                VariableTranslator translator = getPackage().getTranslator(var.getType());
+                if (translator instanceof JavaObjectTranslator)
+                    return obj.toString();
+                else if (translator instanceof DocumentReferenceTranslator)
+                    return ((DocumentReferenceTranslator) translator).realToString(obj);
+                else
+                    return translator.toString(obj);
+            } catch (Exception ex) {
+                throw new ServiceException(ex.getMessage(), ex);
+            }
         }
     }
 
-    public Object getValueForString(String varName, String strVal) {
+    public Object getValueForString(String varName, String strVal) throws ServiceException {
         Variable var = getProcess().getVariable(varName);
         if (var == null)
             throw new IllegalArgumentException("Variable not defined: " + varName);
-        VariableTranslator translator = com.centurylink.mdw.translator.VariableTranslator
-                .getTranslator(getPackage(), var.getType());
-        if (translator instanceof DocumentReferenceTranslator)
-            return ((DocumentReferenceTranslator)translator).realToObject(strVal);
-        else
-            return translator.toObject(strVal);
+        try {
+            VariableTranslator translator = getPackage().getTranslator(var.getType());
+            if (translator instanceof DocumentReferenceTranslator)
+                return ((DocumentReferenceTranslator)translator).realToObject(strVal);
+            else
+                return translator.toObject(strVal);
+        } catch (Exception ex) {
+            throw new ServiceException(ex.getMessage(), ex);
+        }
     }
 
     private ServiceValuesAccess serviceValues;
@@ -426,7 +440,7 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         return serviceValues;
     }
 
-    public ProcessRuntimeContext(JSONObject json) throws JSONException {
+    public ProcessRuntimeContext(JSONObject json) throws ServiceException {
         String procPath = json.getString("process");
         int slash = procPath.indexOf("/");
         if (slash > 0) {
@@ -442,11 +456,11 @@ public class ProcessRuntimeContext extends ELContext implements RuntimeContext, 
         }
         this.processInstance = new ProcessInstance(json.getJSONObject("processInstance"));
         if (json.has("variables")) {
-            variables = new HashMap<>();
+            values = new HashMap<>();
             Map<String,String> varMap = JsonUtil.getMap(json.getJSONObject("variables"));
             for (String name : varMap.keySet()) {
                 String val = varMap.get(name);
-                getVariables().put(name, getValueForString(name, val));
+                getValues().put(name, getValueForString(name, val));
             }
         }
     }

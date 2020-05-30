@@ -32,13 +32,13 @@ import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.ServicePaths;
 import com.centurylink.mdw.translator.JsonTranslator;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.util.HttpAltConnection;
 import com.centurylink.mdw.util.HttpConnection;
 import com.centurylink.mdw.util.HttpHelper;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
+import com.centurylink.mdw.variable.VariableTranslator;
 import com.centurylink.mdw.workflow.adapter.http.BasicAuthProvider;
 import com.centurylink.mdw.workflow.adapter.http.HttpServiceAdapter;
 import org.json.JSONObject;
@@ -370,7 +370,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                     throw new ActivityException("Headers variable '" + headersVar + "' is not defined for process " + processVO.getLabel());
                 if (!variableVO.getType().startsWith("java.util.Map"))
                     throw new ActivityException("Headers variable '" + headersVar + "' must be of type java.util.Map");
-                Object headersObj = getVariableValue(headersVar);
+                Object headersObj = getValue(headersVar);
                 if (headersObj != null) {
                     isHeadersPresent = true;
                     headers = new HashMap<>();
@@ -391,8 +391,7 @@ public class RestServiceAdapter extends HttpServiceAdapter implements HeaderAwar
                     if (reqVariable == null)
                         throw new ActivityException("Request variable '" + reqVariable + "' is not defined for process " + process.getLabel());
                     String contentType;
-                    com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator
-                            .getTranslator(reqVariable.getType());
+                    VariableTranslator translator = getPackage().getTranslator(reqVariable.getType());
                     if (translator instanceof XmlDocumentTranslator)
                         contentType = "text/xml";
                     else if (translator instanceof JsonTranslator)

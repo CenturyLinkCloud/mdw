@@ -15,6 +15,7 @@
  */
 package com.centurylink.mdw.model.workflow;
 
+import com.centurylink.mdw.cache.asset.PackageCache;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.JsonObject;
@@ -295,7 +296,7 @@ public class ProcessInstance implements Jsonable, Linkable {
         if (varMap == null) {
             varMap = new HashMap<>();
             for (VariableInstance var : getVariables())
-                varMap.put(var.getName(), var.getData());
+                varMap.put(var.getName(), var.getData(PackageCache.getPackage(getPackageName())));
         }
         return varMap;
     }

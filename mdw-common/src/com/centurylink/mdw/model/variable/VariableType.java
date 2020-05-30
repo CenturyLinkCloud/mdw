@@ -15,51 +15,46 @@
  */
 package com.centurylink.mdw.model.variable;
 
-import java.io.Serializable;
-
+import com.centurylink.mdw.model.Jsonable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.centurylink.mdw.model.Jsonable;
+public class VariableType implements Jsonable {
 
-public class VariableType implements Serializable, Jsonable {
+    private final String name;
+    public String getName() { return name; }
 
-    private Long variableTypeId;
-    private String variableType;
-    private String translatorClass;
+    private final String translatorClass;
+    public String getTranslatorClass() { return translatorClass; }
 
-    public VariableType(Long variableTypeId, String variableType, String translatorClass){
-        this.variableTypeId = variableTypeId;
-        this.variableType = variableType;
+    /**
+     * Unfortunately VARIABLE_INSTANCE keys on this int ID.
+     */
+    @Deprecated
+    private Integer id;
+    public Integer getId() {
+        return id == null ? name.hashCode() : id;
+    }
+
+    public VariableType(String name, String translatorClass) {
+        this(name, translatorClass, null);
+    }
+
+    public VariableType(String name, String translatorClass, Integer id) {
+        this.name = name;
         this.translatorClass = translatorClass;
+        this.id = id;
     }
 
-    public VariableType(JSONObject json) throws JSONException {
-        this.variableTypeId = json.getLong("id");
-        this.variableType = json.getString("name");
+    public VariableType(JSONObject json) {
+        this.name = json.getString("name");
         this.translatorClass = json.getString("translator");
-    }
-
-    public Long getVariableTypeId(){
-        return this.variableTypeId;
-    }
-
-    public String getVariableType(){
-        return this.variableType;
-    }
-    public void setVariableType(String type) {
-        this.variableType = type;
-    }
-
-    public String getTranslatorClass(){
-        return this.translatorClass;
-    }
-    public void setTranslatorClass(String className){
-       this.translatorClass = className;
+        if (json.has("id"))
+            this.id = json.getInt("id");
     }
 
     public boolean isJavaObjectType() {
-        return Object.class.getName().equals(variableType)
+        return Object.class.getName().equals(name)
                 || (translatorClass != null && translatorClass.endsWith("JavaObjectTranslator"));
     }
 
@@ -68,55 +63,27 @@ public class VariableType implements Serializable, Jsonable {
     public boolean isUpdateable() { return updateable; }
     public void setUpdateable(boolean updateable) { this.updateable = updateable; }
 
+    @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        buffer.append("VariableTypeVO[");
-        buffer.append("translatorClass = ").append(translatorClass);
-        buffer.append(" variableType = ").append(variableType);
-        buffer.append(" variableTypeId = ").append(variableTypeId);
-        buffer.append("]");
-        return buffer.toString();
+        return name + ": " + translatorClass;
     }
 
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((variableType == null) ? 0 : variableType.hashCode());
-        return result;
+        return toString().hashCode();
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        VariableType other = (VariableType) obj;
-        if (variableType == null) {
-            if (other.variableType != null)
-                return false;
-        }
-        else if (!variableType.equals(other.variableType))
-            return false;
-        return true;
+        return obj instanceof VariableType && obj.toString().equals(toString());
     }
 
     @Override
     public JSONObject getJson() throws JSONException {
         JSONObject json = create();
-        json.put("name", variableType);
-        json.put("id", variableTypeId);
+        json.put("name", name);
         json.put("translator", translatorClass);
+        json.put("id", getId());
         return json;
     }
 

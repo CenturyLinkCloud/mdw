@@ -25,6 +25,7 @@ import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
+import com.centurylink.mdw.request.RequestHandlerException;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.process.ProcessEngineDriver;
 import com.centurylink.mdw.services.request.Acknowledgement;
@@ -232,7 +233,11 @@ public abstract class ExternalEventHandlerBase extends BaseHandler implements Ex
             String ownerType, Long ownerId, Long processInstanceId, String searchKey1, String searchKey2)
     throws EventHandlerException {
         ListenerHelper helper = new ListenerHelper();
-        return helper.createDocument(docType, document, getPackage(), ownerType, ownerId);
+        try {
+            return helper.createDocument(docType, document, getPackage(), ownerType, ownerId);
+        } catch (RequestHandlerException ex) {
+            throw new EventHandlerException(ex.getMessage(), ex);
+        }
     }
 
     protected void updateDocumentContent(DocumentReference docref, Object doc, String type)

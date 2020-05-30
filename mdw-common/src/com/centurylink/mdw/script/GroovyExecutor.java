@@ -19,19 +19,15 @@ import com.centurylink.mdw.app.ApplicationContext;
 import com.centurylink.mdw.cache.CachingException;
 import com.centurylink.mdw.cache.asset.AssetCache;
 import com.centurylink.mdw.cache.asset.PackageCache;
-import com.centurylink.mdw.common.translator.impl.XmlBeanWrapperTranslator;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.java.JavaNaming;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.workflow.Package;
-import com.centurylink.mdw.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.timer.CodeTimer;
 import groovy.lang.Binding;
 import groovy.util.GroovyScriptEngine;
-import groovy.util.XmlSlurper;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -91,19 +87,7 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
         binding = new Binding();
 
         for (String bindName : bindings.keySet()) {
-            Object value = bindings.get(bindName);
-            DocumentReferenceTranslator docRefTranslator = getDocRefTranslator(value);
-            if (docRefTranslator != null) {
-                try {
-                    if (!(docRefTranslator instanceof XmlBeanWrapperTranslator)) {
-                        value = new XmlSlurper().parseText(docRefTranslator.realToString(value));
-                    }
-                }
-                catch (Exception ex) {
-                    throw new ExecutionException("Cannot parse document content: '" + bindName + "'", ex);
-                }
-            }
-            binding.setVariable(bindName, value);
+            binding.setVariable(bindName, bindings.get(bindName));
         }
 
         return runScript(expression);
@@ -166,23 +150,6 @@ public class GroovyExecutor implements ScriptExecutor, ScriptEvaluator {
             logger.error(ex.getMessage(), ex);
             throw new ExecutionException("Error executing Groovy script: '" + name + "'\n" + ex.toString(), ex);
         }
-    }
-
-    /**
-     * Special handling is only for XML doc types.  TODO: More general.
-     */
-    private DocumentReferenceTranslator getDocRefTranslator(Object value) {
-
-        if (value instanceof org.apache.xmlbeans.XmlObject)
-            return (DocumentReferenceTranslator) VariableTranslator.getTranslator(org.apache.xmlbeans.XmlObject.class.getName());
-        else if (value instanceof org.w3c.dom.Document)
-            return (DocumentReferenceTranslator) VariableTranslator.getTranslator(org.w3c.dom.Document.class.getName());
-        else if (value instanceof com.centurylink.mdw.xml.XmlBeanWrapper)
-            return (DocumentReferenceTranslator) VariableTranslator.getTranslator(com.centurylink.mdw.xml.XmlBeanWrapper.class.getName());
-        else if (value instanceof groovy.util.Node)
-            return (DocumentReferenceTranslator) VariableTranslator.getTranslator(groovy.util.Node.class.getName());
-        else
-          return null;
     }
 
     private static GroovyScriptEngine scriptEngine;

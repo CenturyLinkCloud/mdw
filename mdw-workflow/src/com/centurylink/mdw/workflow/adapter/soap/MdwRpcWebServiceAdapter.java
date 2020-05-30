@@ -38,7 +38,6 @@ import org.w3c.dom.NodeList;
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.adapter.AdapterException;
 import com.centurylink.mdw.model.variable.Variable;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.translator.XmlDocumentTranslator;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
@@ -78,7 +77,7 @@ public class MdwRpcWebServiceAdapter extends SoapWebServiceAdapter {
             }
             else {
                 Variable reqVar = getProcessDefinition().getVariable(getAttributeValue(REQUEST_VARIABLE));
-                XmlDocumentTranslator docRefTrans = (XmlDocumentTranslator)VariableTranslator.getTranslator(getPackage(), reqVar.getType());
+                XmlDocumentTranslator docRefTrans = (XmlDocumentTranslator)getPackage().getTranslator(reqVar.getType());
                 requestDoc = docRefTrans.toDomDocument(requestObj);
             }
 

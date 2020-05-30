@@ -25,12 +25,10 @@ import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.service.data.process.ProcessCache;
-import com.centurylink.mdw.services.ProcessException;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.workflow.activity.AbstractWait;
 
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -145,23 +143,21 @@ public abstract class InvokeProcessActivityBase extends AbstractWait implements 
     }
 
     protected boolean allowInput(Variable childVar) {
-        int varCat = childVar.getVariableCategory().intValue();
-        if (varCat==Variable.CAT_INPUT || varCat==Variable.CAT_INOUT
-                || varCat==Variable.CAT_STATIC) return true;
-        else return false;
+        int varCat = childVar.getVariableCategory();
+        return varCat == Variable.CAT_INPUT || varCat == Variable.CAT_INOUT || varCat == Variable.CAT_STATIC;
     }
 
     protected String evaluateBindingValue(Variable childVar, String v) {
         if (v != null && v.length() > 0) {
             int varCat = childVar.getVariableCategory().intValue();
-            if (varCat!=Variable.CAT_STATIC) {
+            if (varCat != Variable.CAT_STATIC) {
                 if (valueIsVariable(v)) {
-                    VariableInstance varinst = this.getVariableInstance(v.substring(1));
-                    v = varinst==null?null:varinst.getStringValue();
+                    VariableInstance varinst = getVariableInstance(v.substring(1));
+                    v = varinst == null ? null : varinst.getStringValue(getPackage());
                 }
                 else if (v.startsWith("${") && v.endsWith("}") && v.indexOf('.') == -1 && v.indexOf('[') == -1) {
-                    VariableInstance varinst = this.getVariableInstance(v.substring(2, v.length() - 1));
-                    v = varinst==null?null:varinst.getStringValue();
+                    VariableInstance varinst = getVariableInstance(v.substring(2, v.length() - 1));
+                    v = varinst == null ? null : varinst.getStringValue(getPackage());
                 }
                 else {
                     try {
@@ -184,12 +180,12 @@ public abstract class InvokeProcessActivityBase extends AbstractWait implements 
         Process subprocDef = ProcessCache.getProcess(subprocId);
         Map<String,String> params = null;
         for (Variable var : subprocDef.getVariables()) {
-            if (var.getVariableCategory().intValue()==Variable.CAT_OUTPUT
-                    || var.getVariableCategory().intValue()==Variable.CAT_INOUT) {
-                VariableInstance vio = getEngine().getVariableInstance(subprocInstId, var.getName());
-                if (vio!=null) {
-                    if (params==null) params = new HashMap<String,String>();
-                    params.put(var.getName(), vio.getStringValue());
+            if (var.getVariableCategory() == Variable.CAT_OUTPUT || var.getVariableCategory() == Variable.CAT_INOUT) {
+                VariableInstance vi = getEngine().getVariableInstance(subprocInstId, var.getName());
+                if (vi != null) {
+                    if (params == null)
+                        params = new HashMap<>();
+                    params.put(var.getName(), vi.getStringValue(getPackage()));
                 }
             }
         }

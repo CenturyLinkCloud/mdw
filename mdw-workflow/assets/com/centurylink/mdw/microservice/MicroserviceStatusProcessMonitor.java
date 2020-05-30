@@ -21,11 +21,11 @@ public class MicroserviceStatusProcessMonitor implements ProcessMonitor {
     public Map<String,Object> onFinish(ProcessRuntimeContext context) {
         String serviceSummaryVarName = "serviceSummary";
         // First check that we have a serviceSummary process variable with a microservice instance for this process
-        ServiceSummary summary = (ServiceSummary) context.getVariables().get(serviceSummaryVarName);
+        ServiceSummary summary = (ServiceSummary) context.getValues().get(serviceSummaryVarName);
         if (summary == null) { // Maybe under a different name?
             for (VariableInstance varInst : context.getProcessInstance().getVariables()) {
                 if (Jsonable.class.getName().equals(varInst.getType())) {
-                    Jsonable jsonable = (Jsonable) context.getVariables().get(varInst.getName());
+                    Jsonable jsonable = (Jsonable) context.getValues().get(varInst.getName());
                     if (ServiceSummary.class.isAssignableFrom(jsonable.getClass())) {
                         serviceSummaryVarName = varInst.getName();
                         summary = (ServiceSummary) jsonable;
@@ -61,7 +61,7 @@ public class MicroserviceStatusProcessMonitor implements ProcessMonitor {
                             summary = (ServiceSummary)docVo.getObject(varInst.getType(), context.getPackage());
                             summary.getMicroservice(microserviceName, context.getProcessInstanceId()).setStatus(WorkStatus.STATUSNAME_COMPLETED);
                             docVo.setObject(summary, varInst.getType());
-                            db.updateDocumentContent(docVo.getDocumentId(), docVo.getContent(context.getPackage()));
+                            db.updateDocumentContent(docVo.getId(), docVo.getContent(context.getPackage()));
                             context.logInfo("Updated status for microservice " + microserviceName);
                             WorkflowServices wfs = ServiceLocator.getWorkflowServices();
                             wfs.notify("service-summary-update-" + context.getMasterRequestId(), null, 2);

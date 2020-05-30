@@ -35,7 +35,7 @@ public class DocumentDbAccess {
         if (documentDb != null) {
             String content = doc.getContent(pkg);
             if (content != null)
-                documentDb.createDocument(doc.getOwnerType(), doc.getDocumentId(), content);
+                documentDb.createDocument(doc.getOwnerType(), doc.getId(), content);
         }
     }
 
@@ -53,10 +53,10 @@ public class DocumentDbAccess {
 
     public void updateDocumentDbOwnerType(Document doc, String newOwnerType) {
         if (documentDb != null) {
-            String content = documentDb.getDocumentContent(doc.getOwnerType(), doc.getDocumentId());
+            String content = documentDb.getDocumentContent(doc.getOwnerType(), doc.getId());
             if (content != null) {
-                documentDb.deleteDocument(doc.getOwnerType(), doc.getDocumentId());
-                documentDb.createDocument(newOwnerType, doc.getDocumentId(), content);
+                documentDb.deleteDocument(doc.getOwnerType(), doc.getId());
+                documentDb.createDocument(newOwnerType, doc.getId(), content);
             }
         }
     }

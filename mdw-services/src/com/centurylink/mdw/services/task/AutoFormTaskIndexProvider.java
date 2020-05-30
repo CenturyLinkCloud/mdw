@@ -49,7 +49,7 @@ public class AutoFormTaskIndexProvider implements TaskIndexProvider {
                     if (ProcessRuntimeContext.isExpression(varName))
                         value = runtimeContext.evaluateToString(varName);
                     else
-                        value = runtimeContext.getVariables().get(varName);
+                        value = runtimeContext.getValues().get(varName);
                     if (value != null)
                         indexes.put(indexKey, value.toString());
                 }

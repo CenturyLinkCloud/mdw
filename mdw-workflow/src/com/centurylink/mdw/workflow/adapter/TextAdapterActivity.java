@@ -17,26 +17,20 @@ package com.centurylink.mdw.workflow.adapter;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.AdapterActivity;
-import com.centurylink.mdw.adapter.AdapterInvocationError;
-import com.centurylink.mdw.adapter.SimulationResponse;
-import com.centurylink.mdw.adapter.TextAdapter;
+import com.centurylink.mdw.adapter.*;
 import com.centurylink.mdw.common.service.ServiceException;
 import com.centurylink.mdw.common.translator.impl.JavaObjectTranslator;
 import com.centurylink.mdw.common.translator.impl.JsonableTranslator;
 import com.centurylink.mdw.config.PropertyException;
-import com.centurylink.mdw.adapter.AdapterException;
-import com.centurylink.mdw.adapter.ConnectionException;
 import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.model.JsonObject;
 import com.centurylink.mdw.model.Jsonable;
-import com.centurylink.mdw.model.request.Response;
-import com.centurylink.mdw.adapter.AdapterStubRequest;
-import com.centurylink.mdw.adapter.AdapterStubResponse;
 import com.centurylink.mdw.model.event.InternalEvent;
 import com.centurylink.mdw.model.monitor.ScheduledEvent;
 import com.centurylink.mdw.model.request.Request;
+import com.centurylink.mdw.model.request.Response;
 import com.centurylink.mdw.model.variable.DocumentReference;
 import com.centurylink.mdw.model.variable.VariableInstance;
 import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
@@ -45,11 +39,11 @@ import com.centurylink.mdw.monitor.MonitorRegistry;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.event.StubHelper;
 import com.centurylink.mdw.translator.DocumentReferenceTranslator;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.DateHelper;
 import com.centurylink.mdw.util.JsonUtil;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
+import com.centurylink.mdw.variable.VariableTranslator;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 import org.apache.commons.lang.StringUtils;
 import org.json.JSONObject;
@@ -134,7 +128,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         }
         else {
             VariableInstance varInst = getVariableInstance(varname);
-            com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(getPackage(), varInst.getType());
+            VariableTranslator translator = getPackage().getTranslator(varInst.getType());
             if (translator != null) {
                 if (translator instanceof JavaObjectTranslator)
                     return request.toString();
@@ -202,7 +196,7 @@ implements AdapterActivity, AdapterInvocationError, TextAdapter {
         if (varname == null)
             return;
         String vartype = getParameterType(varname);
-        com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(getPackage(), vartype);
+        VariableTranslator translator = getPackage().getTranslator(vartype);
         if (translator instanceof DocumentReferenceTranslator) {
             Object responseObj = response;
             String coerceToType = getAttribute(RESPONSE_TYPE);

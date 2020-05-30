@@ -26,6 +26,7 @@ import com.centurylink.mdw.model.event.Event;
 import com.centurylink.mdw.model.task.TaskInstance;
 import com.centurylink.mdw.model.task.UserTaskAction;
 import com.centurylink.mdw.model.variable.VariableInstance;
+import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
 import com.centurylink.mdw.task.types.TaskList;
@@ -214,8 +215,8 @@ public class StandaloneTestCaseRun extends TestCaseRun {
     }
 
     @Override
-    protected String getStringValue(VariableInstance var) throws TestException {
-        String val = var.getStringValue();
+    protected String getStringValue(VariableInstance var, Package pkg) throws TestException {
+        String val = var.getStringValue(pkg);
         if (val != null && val.startsWith("DOCUMENT:")) {
             try {
                 HttpHelper httpHelper = getHttpHelper("GET", "services/Processes/" + var.getProcessInstanceId() + "/values/" + var.getName());

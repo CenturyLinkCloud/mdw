@@ -32,8 +32,6 @@ import java.util.List;
 
 public interface EngineDataAccess {
 
-    /////// Process methods
-
     Long createProcessInstance(ProcessInstance procinst)
     throws DataAccessException,SQLException;
 
@@ -67,8 +65,6 @@ public interface EngineDataAccess {
     List<ProcessInstance> getProcessInstancesByMasterRequestId(String masterRequestId)
     throws SQLException;
 
-    /////// activity methods
-
     ActivityInstance getActivityInstance(Long actInstId)
     throws DataAccessException,SQLException;
 
@@ -91,8 +87,6 @@ public interface EngineDataAccess {
     Integer lockActivityInstance(Long actInstId)
     throws SQLException;
 
-    /////// transition methods
-
     Long createTransitionInstance(TransitionInstance vo)
     throws DataAccessException,SQLException;
 
@@ -108,9 +102,7 @@ public interface EngineDataAccess {
     void determineCompletedTransitions(Long pProcInstId, List<Transition> transitions)
     throws SQLException;
 
-    /////// variables
-
-    Long createVariableInstance(VariableInstance var, Long processInstId)
+    Long createVariableInstance(VariableInstance var, Long processInstId, Package pkg)
     throws DataAccessException,SQLException;
 
     VariableInstance getVariableInstance(Long varInstId)
@@ -119,13 +111,11 @@ public interface EngineDataAccess {
     VariableInstance getVariableInstance(Long procInstId, String varname)
     throws SQLException;
 
-    void updateVariableInstance(VariableInstance var)
+    void updateVariableInstance(VariableInstance var, Package pkg)
     throws DataAccessException,SQLException;
 
     List<VariableInstance> getProcessInstanceVariables(Long processInstanceId)
     throws DataAccessException,SQLException;
-
-    /////// documents
 
     /**
      * Always goes to the database.
@@ -154,8 +144,6 @@ public interface EngineDataAccess {
     void setElapsedTime(String ownerType, Long instanceId, Long elapsedTime)
     throws SQLException;
 
-    /////// events
-
     void removeEventWaitForActivityInstance(Long activityInstanceId, String reason)
     throws SQLException;
 
@@ -181,8 +169,6 @@ public interface EngineDataAccess {
 
     EventInstance lockEventInstance(String eventName)
     throws SQLException;
-
-    /////// transaction
 
     TransactionWrapper startTransaction()
     throws DataAccessException;

@@ -47,7 +47,6 @@ import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.*;
 import com.centurylink.mdw.services.event.ScheduledEventQueue;
 import com.centurylink.mdw.services.messenger.InternalMessenger;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
@@ -117,7 +116,7 @@ class ProcessExecutorImpl {
     }
 
     VariableInstance createVariableInstance(ProcessInstance processInstance, String variableName, Object value)
-            throws SQLException,DataAccessException {
+            throws SQLException, DataAccessException {
         Process process = getMainProcessDefinition(processInstance);
         Variable variable = process.getVariable(variableName);
         if (variable == null) {
@@ -132,9 +131,9 @@ class ProcessExecutorImpl {
         else
             variableInstance.setData(value);
         if (processInstance.isEmbedded() || (!processInstance.getProcessId().equals(process.getId()) && processInstance.getInstanceDefinitionId() <= 0))
-            edao.createVariableInstance(variableInstance, processInstance.getOwnerId());
+            edao.createVariableInstance(variableInstance, processInstance.getOwnerId(), getPackage(process));
         else
-            edao.createVariableInstance(variableInstance, processInstance.getId());
+            edao.createVariableInstance(variableInstance, processInstance.getId(), getPackage(process));
         return variableInstance;
     }
 
@@ -158,14 +157,14 @@ class ProcessExecutorImpl {
                 doc.setContent((String)document);
             else
                 doc.setObject(document, type);
-            doc.setDocumentType(type);
+            doc.setType(type);
             doc.setOwnerType(ownerType);
             doc.setOwnerId(ownerId);
             doc.setStatusCode(statusCode);
             doc.setStatusMessage(statusMessage);
             doc.setPath(path);
             edao.createDocument(doc);
-            docRef = new DocumentReference(doc.getDocumentId());
+            docRef = new DocumentReference(doc.getId());
         } catch (Exception ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
@@ -196,7 +195,7 @@ class ProcessExecutorImpl {
                 docvo.setContent((String)doc);
             else
                 docvo.setObject(doc, type);
-            edao.updateDocumentContent(docvo.getDocumentId(), docvo.getContent(pkg));
+            edao.updateDocumentContent(docvo.getId(), docvo.getContent(pkg));
         } catch (SQLException ex) {
             throw new DataAccessException(ex.getMessage(), ex);
         }
@@ -222,7 +221,7 @@ class ProcessExecutorImpl {
             var.setType(variable.getType());
             String value = eventParams.get(varName);
             if (value != null && value.length() > 0) {
-                if (VariableTranslator.isDocumentReferenceVariable(getPackage(process), var.getType())) {
+                if (getPackage(process).getTranslator(var.getType()).isDocumentReferenceVariable()) {
                     if (value.startsWith("DOCUMENT:")) {
                         var.setStringValue(value);
                     }
@@ -305,10 +304,11 @@ class ProcessExecutorImpl {
         Process process = getProcessDefinition(pi);
         pi.setVariables(convertParameters(parameters, process, pi.getId()));
         for (VariableInstance vi : pi.getVariables()) {
-            edao.createVariableInstance(vi, pi.getId());
-            if (vi.isDocument()) {
-                DocumentReference docRef = new DocumentReference(vi.getStringValue());
-                updateDocumentInfo(docRef, vi.getType(), OwnerType.VARIABLE_INSTANCE, vi.getInstanceId(), null, null);
+            Package pkg = getPackage(process);
+            edao.createVariableInstance(vi, pi.getId(), pkg);
+            if (vi.isDocument(pkg)) {
+                DocumentReference docRef = new DocumentReference(vi.getStringValue(getPackage(process)));
+                updateDocumentInfo(docRef, vi.getType(), OwnerType.VARIABLE_INSTANCE, vi.getId(), null, null);
             }
         }
     }
@@ -318,8 +318,8 @@ class ProcessExecutorImpl {
         try {
             boolean dirty = false;
             Document doc = edao.getDocument(docRef.getDocumentId(), false);
-            if (documentType != null && !documentType.equalsIgnoreCase(doc.getDocumentType())) {
-                doc.setDocumentType(documentType);
+            if (documentType != null && !documentType.equalsIgnoreCase(doc.getType())) {
+                doc.setType(documentType);
                 dirty = true;
             }
             if (ownerId != null && !ownerId.equals(doc.getOwnerId())) {
@@ -358,7 +358,7 @@ class ProcessExecutorImpl {
         }
     }
 
-    String getServiceProcessResponse(Long procInstId, String varName) throws DataAccessException {
+    String getServiceProcessResponse(Long procInstId, String varName, Package pkg) throws DataAccessException {
         try {
             VariableInstance varInst;
             if (varName == null) {
@@ -370,13 +370,13 @@ class ProcessExecutorImpl {
             } else {
                 varInst = getDataAccess().getVariableInstance(procInstId, varName);
             }
-            if (varInst==null)
+            if (varInst == null)
                 return null;
-            if (varInst.isDocument()) {
-                Document docvo = getDocument((DocumentReference)varInst.getData(), false);
-                return docvo.getContent(null);
+            if (varInst.isDocument(pkg)) {
+                Document docvo = getDocument((DocumentReference)varInst.getData(pkg), false);
+                return docvo.getContent(pkg);
             } else {
-                return varInst.getStringValue();
+                return varInst.getStringValue(pkg);
             }
         } catch (SQLException ex) {
             throw new DataAccessException("Failed to get value for variable " + varName, ex);
@@ -546,7 +546,7 @@ class ProcessExecutorImpl {
         Package pkg = getPackage(getMainProcessDefinition(processInstance));
         Map<String,Object> vars = new HashMap<>();
         for (VariableInstance vi : processInstance.getVariables())
-            vars.put(vi.getName(), vi.getData());
+            vars.put(vi.getName(), vi.getData(pkg));
         return new ProcessRuntimeContext(null, pkg, process, processInstance,
                 getDataAccess().getPerformanceLevel(), isInService(), vars).evaluate(expression);
     }
@@ -1464,22 +1464,21 @@ class ProcessExecutorImpl {
     Map<String, String> getOutputParameters(Long procInstId, Long procId)
             throws IOException, SQLException, DataAccessException {
         Process subprocDef = ProcessCache.getProcess(procId);
-        Map<String, String> params = new HashMap<>();
+        Package pkg = getPackage(subprocDef);
+        Map<String,String> params = new HashMap<>();
         boolean passDocContent = (isInService() && getDataAccess().getPerformanceLevel() >= 5) || getDataAccess().getPerformanceLevel() >= 9 ;  // DHO  (if not serviceProc then lvl9)
         for (Variable var : subprocDef.getVariables()) {
             if (var.getVariableCategory() == Variable.CAT_OUTPUT
                     || var.getVariableCategory() == Variable.CAT_INOUT) {
-                VariableInstance vio = getDataAccess()
-                        .getVariableInstance(procInstId,
-                                var.getName());
-                if (vio != null) {
-                    if (passDocContent && vio.isDocument()) {
-                        Document docvo = getDocument((DocumentReference)vio.getData(), false);
+                VariableInstance vi = getDataAccess().getVariableInstance(procInstId, var.getName());
+                if (vi != null) {
+                    if (passDocContent && vi.isDocument(pkg)) {
+                        Document docvo = getDocument((DocumentReference)vi.getData(pkg), false);
                         if (docvo != null)
                             params.put(var.getName(), docvo.getContent(getPackage(subprocDef)));
                     }
                     else {
-                        params.put(var.getName(), vio.getStringValue());
+                        params.put(var.getName(), vi.getStringValue(pkg));
                     }
                 }
             }
@@ -1839,7 +1838,7 @@ class ProcessExecutorImpl {
             Map<String,Object> vars = new HashMap<>();
             if (processInstance.getVariables() != null) {
                 for (VariableInstance var : processInstance.getVariables()) {
-                    Object value = var.getData();
+                    Object value = var.getData(pkg);
                     if (value instanceof DocumentReference) {
                         try {
                             Document docVO = getDocument((DocumentReference) value, false);
@@ -1874,12 +1873,10 @@ class ProcessExecutorImpl {
                                         throw new ProcessException("Process '" + process.getQualifiedLabel() + "' has no such input variable defined: " + varName);
                                     if (processInstance.getVariable(varName) != null)
                                         throw new ProcessException("Process '" + process.getQualifiedLabel() + "' input variable already populated: " + varName);
-                                    if (VariableTranslator.isDocumentReferenceVariable(runtimeContext.getPackage(), varVO.getType())) {
-                                        DocumentReference docRef = createDocument(varVO.getType(), OwnerType.VARIABLE_INSTANCE, 0L,
-                                                updated.get(varName));
+                                    if (runtimeContext.getPackage().getTranslator(varVO.getType()).isDocumentReferenceVariable()) {
+                                        DocumentReference docRef = createDocument(varVO.getType(), OwnerType.VARIABLE_INSTANCE, 0L, updated.get(varName));
                                         VariableInstance varInst = createVariableInstance(processInstance, varName, docRef);
-                                        updateDocumentInfo(docRef, process.getVariable(varInst.getName()).getType(), OwnerType.VARIABLE_INSTANCE,
-                                                varInst.getInstanceId(), null, null);
+                                        updateDocumentInfo(docRef, process.getVariable(varInst.getName()).getType(), OwnerType.VARIABLE_INSTANCE, varInst.getId(), null, null);
                                         processInstance.getVariables().add(varInst);
                                     }
                                     else {
@@ -1942,12 +1939,12 @@ class ProcessExecutorImpl {
                     if (activityImpl != null)
                         runtimeContext.getVariables().put(var.getName(), activityImpl.getVariableValue(var.getName()));
                     else if (processInst.getVariable(var.getName()) != null) {
-                        Object value = processInst.getVariable(var.getName()).getData();
+                        Object value = processInst.getVariable(var.getName()).getData(pkg);
                         if (value instanceof DocumentReference) {
                             Document doc = getDocument((DocumentReference)value, false);
                             value = doc == null ? null : doc.getObject(var.getType(), pkg);
                         }
-                        runtimeContext.getVariables().put(var.getName(), processInst.getVariable(var.getName()).getData());
+                        runtimeContext.getVariables().put(var.getName(), processInst.getVariable(var.getName()).getData(pkg));
                     }
                 }
                 catch (ActivityException | DataAccessException ex) {
@@ -1990,7 +1987,7 @@ class ProcessExecutorImpl {
             } catch (SQLException ignored) {}
 
             for (VariableInstance var : processInst.getVariables()) {
-                Object value = var.getData();
+                Object value = var.getData(pkg);
                 if (value instanceof DocumentReference) {
                     try {
                         Document docVO = getDocument((DocumentReference) value, false);
@@ -2010,10 +2007,7 @@ class ProcessExecutorImpl {
     }
 
     private Package getPackage(Process process) {
-        if (process.getPackageName() == null)
-            return null;
-        else
-            return PackageCache.getPackage(process.getPackageName());
+        return PackageCache.getPackage(process.getPackageName());
     }
 
     private GeneralActivity getActivityInstance(Package pkg, String implClass) throws Exception {

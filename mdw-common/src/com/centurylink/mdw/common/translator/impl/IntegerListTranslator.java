@@ -48,5 +48,4 @@ public class IntegerListTranslator extends DocumentReferenceTranslator {
             jsonArray.put(integer);
         return jsonArray.toString();
     }
-
 }

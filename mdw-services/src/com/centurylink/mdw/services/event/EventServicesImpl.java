@@ -110,7 +110,8 @@ public class EventServicesImpl implements EventServices {
      * This does not take care of checking for embedded processes.
      * For document variables, the value must be DocumentReference, not the document content
      */
-    public VariableInstance setVariableInstance(Long procInstId, String name, Object value)
+    @Override
+    public VariableInstance setVariableInstance(Long procInstId, String name, Object value, Package pkg)
             throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
@@ -122,7 +123,7 @@ public class EventServicesImpl implements EventServices {
                     varInst.setStringValue((String)value);
                 else
                     varInst.setData(value);
-                edao.updateVariableInstance(varInst);
+                edao.updateVariableInstance(varInst, pkg);
             } else {
                 if (value != null) {
                     ProcessInstance procInst = edao.getProcessInstance(procInstId);
@@ -143,7 +144,7 @@ public class EventServicesImpl implements EventServices {
                     if (value instanceof String) varInst.setStringValue((String)value);
                     else varInst.setData(value);
 
-                    edao.createVariableInstance(varInst, procInstId);
+                    edao.createVariableInstance(varInst, procInstId, pkg);
                 }
             }
             return varInst;
@@ -471,7 +472,7 @@ public class EventServicesImpl implements EventServices {
             Document docvo = edao.getDocument(docid, false);
             if (doc instanceof String) docvo.setContent((String)doc);
             else docvo.setObject(doc, type);
-            edao.updateDocumentContent(docvo.getDocumentId(), docvo.getContent(pkg));
+            edao.updateDocumentContent(docvo.getId(), docvo.getContent(pkg));
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to update document content", e);
         } finally {
@@ -487,7 +488,7 @@ public class EventServicesImpl implements EventServices {
             transaction = edao.startTransaction();
             Document docvo = edao.getDocument(docid, false);
             if (documentType != null)
-                docvo.setDocumentType(documentType);
+                docvo.setType(documentType);
             if (ownerType != null) {
                 if (!ownerType.equalsIgnoreCase(docvo.getOwnerType()))
                     edao.getDocumentDbAccess().updateDocumentDbOwnerType(docvo, ownerType);
@@ -530,7 +531,7 @@ public class EventServicesImpl implements EventServices {
                 docvo.setContent((String)doc);
             else
                 docvo.setObject(doc, type);
-            docvo.setDocumentType(type);
+            docvo.setType(type);
             docvo.setOwnerType(ownerType);
             docvo.setOwnerId(ownerId);
             docvo.setPath(path);

@@ -37,7 +37,6 @@ import com.centurylink.mdw.services.process.ProcessEngineDriver;
 import com.centurylink.mdw.services.request.BaseHandler;
 import com.centurylink.mdw.task.types.TaskList;
 import com.centurylink.mdw.test.TestException;
-import com.centurylink.mdw.translator.VariableTranslator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.xmlbeans.XmlObject;
 import org.json.JSONObject;
@@ -49,7 +48,7 @@ import java.util.Map;
 
 /**
  * This is used as an old-school action endpoint by a number of test cases.
- * TODO: it would be good to rework this
+ * TODO: it would be good to remove or rework this
  */
 @Handler(match= RequestHandler.Routing.Content, path="ActionRequest/Action[@Name=RegressionTest]")
 public class TestHandler extends BaseHandler {
@@ -212,7 +211,7 @@ public class TestHandler extends BaseHandler {
         VariableInstance varinst = eventMgr.getVariableInstance(procInstList.get(0).getId(), varname);
         if (varinst == null)
             return "";
-        return varinst.getStringValue();
+        return varinst.getStringValue(PackageCache.getPackage(ProcessCache.getProcess(processName).getPackageName()));
     }
 
     private String translatePlaceHolder(String eventName, ActionRequestDocument xmlbean, EventServices eventMgr)
@@ -331,24 +330,24 @@ public class TestHandler extends BaseHandler {
                     if (pname.startsWith("formdata.")) {
                         String varname = pname.substring(9);
                         VariableInstance var = eventManager.getVariableInstance(procInstId, varname);
+                        Package pkg = PackageCache.getPackage(procdef.getPackageName());
                         if (var == null) {
                             Variable vardef = procdef.getVariable(varname);
                             if (vardef == null)
                                 throw new RequestHandlerException("The variable is not defined: " + varname);
-                            Package pkg = PackageCache.getPackage(procdef.getPackageName());
-                            if (VariableTranslator.isDocumentReferenceVariable(pkg, vardef.getType())) {
+                            if (pkg.getTranslator(vardef.getType()).isDocumentReferenceVariable()) {
                                 Long docid = eventManager.createDocument(vardef.getType(),
                                         OwnerType.PROCESS_INSTANCE, procInstId, param.getStringValue(), pkg);
-                                eventManager.setVariableInstance(procInstId, varname, new DocumentReference(docid));
+                                eventManager.setVariableInstance(procInstId, varname, new DocumentReference(docid), pkg);
                             } else {
-                                eventManager.setVariableInstance(procInstId, varname, param.getStringValue());
+                                eventManager.setVariableInstance(procInstId, varname, param.getStringValue(), pkg);
                             }
                         } else {
-                            if (var.isDocument()) {
-                                DocumentReference docref = (DocumentReference)var.getData();
+                            if (var.isDocument(pkg)) {
+                                DocumentReference docref = (DocumentReference)var.getData(pkg);
                                 eventManager.updateDocumentContent(docref.getDocumentId(), param.getStringValue(), var.getType(), null);
                             } else {
-                                eventManager.setVariableInstance(procInstId, varname, param.getStringValue());
+                                eventManager.setVariableInstance(procInstId, varname, param.getStringValue(), pkg);
                             }
                         }
                     }

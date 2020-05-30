@@ -51,7 +51,7 @@ public class ProcessVariableAutoAssignStrategy implements AutoAssignStrategy {
             if (TaskRuntimeContext.isExpression(assigneeVarSpec))
                 cuid = runtimeContext.evaluateToString(assigneeVarSpec);
             else
-                cuid = runtimeContext.getVariables().get(assigneeVarSpec).toString();
+                cuid = runtimeContext.getValues().get(assigneeVarSpec).toString();
 
             return UserGroupCache.getUser(cuid);
         }

@@ -16,13 +16,26 @@
 package com.centurylink.mdw.variable;
 
 import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.translator.TranslationException;
 
 public interface VariableTranslator {
 
-    public void setPackage(Package pkg);
-    
-    public abstract String toString(Object pObject) throws TranslationException;
+    String EMPTY_STRING = "<EMPTY>";
 
-    public abstract Object toObject(String pStr) throws TranslationException;
+    /**
+     * Serialize the given object to a string value
+     */
+    String toString(Object obj) throws TranslationException;
+
+    /**
+     * Deserialize an object from the given string
+     */
+    Object toObject(String str) throws TranslationException;
+
+    Package getPackage();
+
+    default boolean isDocumentReferenceVariable() {
+        return this instanceof DocumentReferenceTranslator;
+    }
 }

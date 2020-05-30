@@ -18,10 +18,11 @@ package com.centurylink.mdw.test;
 import com.centurylink.mdw.activity.types.GeneralActivity;
 import com.centurylink.mdw.config.PropertyManager;
 import com.centurylink.mdw.constant.WorkAttributeConstant;
-import com.centurylink.mdw.dataaccess.VariableTypes;
+import com.centurylink.mdw.dataaccess.MdwVariableTypes;
 import com.centurylink.mdw.model.Attributes;
 import com.centurylink.mdw.model.system.MdwVersion;
 import com.centurylink.mdw.model.variable.Variable;
+import com.centurylink.mdw.model.variable.VariableType;
 import com.centurylink.mdw.model.workflow.Package;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.model.workflow.*;
@@ -65,16 +66,30 @@ public class MockRuntimeContext extends ActivityRuntimeContext {
             process.setVersion(0);
             process.setId(0L);
             List<Variable> processVars = new ArrayList<>();
-            Map<String,Object> vars = getVariables();
+            Map<String,Object> vars = getValues();
             if (vars != null) {
                 for (String varName : vars.keySet()) {
-                    processVars.add(new Variable(varName, new VariableTypes().getVariableType(vars.get(varName))));
+                    processVars.add(new Variable(varName, getVariableType(vars.get(varName))));
                 }
             }
             process.setVariables(processVars);
         }
         return process;
     }
+
+    public String getVariableType(Object value) {
+        for (VariableType varType : new MdwVariableTypes().getVariableTypes()) {
+            try {
+                if (!varType.isJavaObjectType() && (Class.forName(varType.getName()).isInstance(value)))
+                    return varType.getName();
+            }
+            catch (Exception ex) {
+                return Object.class.getName();
+            }
+        }
+        return null;
+    }
+
 
     protected ProcessInstance processInstance;
     @Override
@@ -108,7 +123,7 @@ public class MockRuntimeContext extends ActivityRuntimeContext {
 
     protected Map<String,Object> variables;
     @Override
-    public Map<String,Object> getVariables() {
+    public Map<String,Object> getValues() {
         if (variables == null)
             variables = new HashMap<>();
         return variables;

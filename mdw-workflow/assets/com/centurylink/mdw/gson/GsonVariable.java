@@ -9,7 +9,7 @@ import com.centurylink.mdw.translator.TranslationException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-@Variable("com.google.gson.JsonElement")
+@Variable(type="com.google.gson.JsonElement")
 public class GsonVariable extends DocumentReferenceTranslator implements JsonTranslator {
 
     public Object realToObject(String str) throws TranslationException {

@@ -46,7 +46,6 @@ import com.centurylink.mdw.service.data.process.EngineDataAccess;
 import com.centurylink.mdw.service.data.process.EngineDataAccessCache;
 import com.centurylink.mdw.service.data.process.ProcessCache;
 import com.centurylink.mdw.services.OfflineMonitorTrigger;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.TransactionWrapper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
@@ -101,7 +100,7 @@ public abstract class BaseActivity implements GeneralActivity {
     public ActivityRuntimeContext getRuntimeContext() throws ActivityException {
         for (VariableInstance var : getParameters()) {
             try {
-                _runtimeContext.getVariables().put(var.getName(), getVariableValue(var.getName()));
+                _runtimeContext.getValues().put(var.getName(), getVariableValue(var.getName()));
             }
             catch (ActivityException ex) {
                 logger.error("Error populating " + var.getName(), ex);
@@ -141,7 +140,7 @@ public abstract class BaseActivity implements GeneralActivity {
                     logger = new ActivityLogger(_runtimeContext);
                 for (VariableInstance var : getParameters()) {
                     try {
-                        _runtimeContext.getVariables().put(var.getName(), getVariableValue(var.getName()));
+                        _runtimeContext.getValues().put(var.getName(), getVariableValue(var.getName()));
                     }
                     catch (ActivityException ex) {
                         logger.error("Error populating " + var.getName(), ex);
@@ -183,10 +182,10 @@ public abstract class BaseActivity implements GeneralActivity {
                 attributes.put(attrName, runtimeContext.getAttribute(attrName));
         }
 
-        if (runtimeContext.getVariables() != null) {
+        if (runtimeContext.getValues() != null) {
             parameters = new ArrayList<>();
-            for (String varName : runtimeContext.getVariables().keySet())
-                parameters.add(new VariableInstance(varName, runtimeContext.getVariables().get(varName)));
+            for (String varName : runtimeContext.getValues().keySet())
+                parameters.add(new VariableInstance(varName, runtimeContext.getValues().get(varName)));
         }
     }
 
@@ -198,13 +197,6 @@ public abstract class BaseActivity implements GeneralActivity {
         // TODO consider funneling all client runtime info access
     }
 
-    /**
-     * Given a variable name, return the variable instance associated
-     * with the process instance.
-     *
-     * @param pName name of the variable
-     * @return variable instance object
-     */
     protected VariableInstance getVariableInstance(String pName) {
         for (int i = 0; i < parameters.size(); i++) {
             if (pName.equalsIgnoreCase(parameters.get(i).getName())) {
@@ -426,20 +418,21 @@ public abstract class BaseActivity implements GeneralActivity {
     }
 
     /**
-     * Return the value of the variable instance with the given
-     * name. Despite the name of the method, the method works for
-     * all variables, not just parameters of the process instances.
-     * @param name the variable name
-     * @return the variable value
+     * @deprecated use {@link #getValue(String)}
      */
+    @Deprecated
     protected Object getParameterValue(String name) {
         VariableInstance var = getVariableInstance(name);
-        return var == null ? null : var.getData();
+        return var == null ? null : var.getData(getPackage());
     }
 
+    /**
+     * @deprecated {@link #getValue(String)}
+     */
+    @Deprecated
     protected String getParameterStringValue(String name) {
         VariableInstance var = getVariableInstance(name);
-        return var == null ? null : var.getStringValue();
+        return var == null ? null : var.getStringValue(getPackage());
     }
 
     /**
@@ -452,7 +445,7 @@ public abstract class BaseActivity implements GeneralActivity {
     protected Long getParameterId(String name) {
         for (int i = 0; i < parameters.size(); i++) {
             if (name.equalsIgnoreCase(parameters.get(i).getName())) {
-                return parameters.get(i).getInstanceId();
+                return parameters.get(i).getId();
             }
         }
         return null;
@@ -481,16 +474,14 @@ public abstract class BaseActivity implements GeneralActivity {
     }
 
     /**
-     * Returns all variable instances (a.k.a. parameters).
-     * Note that the method does not return instances of variables
-     * that have not been instantiated (assigned a value).
-     *
-     * @return an array of variable instances.
+     * @deprecated {@link #getValues()}
      */
+    @Deprecated
     protected List<VariableInstance> getParameters() {
         return parameters;
     }
 
+    @Deprecated
     protected void setParameterValues(Map<String,Object> map)
             throws ActivityException {
         for (String name : map.keySet()) {
@@ -512,12 +503,12 @@ public abstract class BaseActivity implements GeneralActivity {
         try {
             VariableInstance varInst = this.getVariableInstance(name);
             if (varInst != null) {
-                varInstId = varInst.getInstanceId();
+                varInstId = varInst.getId();
                 varInst.setData(value);
-                engine.updateVariableInstance(varInst);
+                engine.updateVariableInstance(varInst, getPackage());
             } else {
                 varInst = engine.createVariableInstance(processInstance, name, value);  // This also adds it to ProcessInstance
-                varInstId = varInst.getInstanceId();
+                varInstId = varInst.getId();
                 if (!parameters.contains(varInst))  // Should already be there when added to ProcessInstance
                     parameters.add(varInst);    // This adds to ProcessInstanceVO as well - do not think this ever executes
             }
@@ -548,14 +539,14 @@ public abstract class BaseActivity implements GeneralActivity {
         try {
             VariableInstance varInst = engine.getVariableInstance(processInstId, name);
             if (varInst != null) {
-                varInstId = varInst.getInstanceId();
+                varInstId = varInst.getId();
                 if (value instanceof String) varInst.setStringValue((String)value);
                 else varInst.setData(value);
-                engine.updateVariableInstance(varInst);
+                engine.updateVariableInstance(varInst, getPackage());
             } else {
                 ProcessInstance procInst = engine.getProcessInstance(processInstId);
                 varInst = engine.createVariableInstance(procInst, name, value);
-                varInstId = varInst.getInstanceId();
+                varInstId = varInst.getId();
             }
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
@@ -664,6 +655,10 @@ public abstract class BaseActivity implements GeneralActivity {
         return getValueSmart(attributes.get(name), "A:" + name);
     }
 
+    /**
+     * @deprecated {@link #getValue(String)}
+     */
+    @Deprecated
     protected String getValueSmart(String value, String tag) {
 
         if (value==null) return null;
@@ -886,8 +881,9 @@ public abstract class BaseActivity implements GeneralActivity {
         Document docvo;
         try {
             docvo = engine.getDocument(docref, true);
-            // deserialize here (why?)
-            docvo.setObject(VariableTranslator.realToObject(getPackage(), type, docvo.getContent(getPackage())));
+            // deserialize here (TODO why?)
+            Object obj = getPackage().getObjectValue(type, docvo.getContent(getPackage()), true);
+            docvo.setObject(obj, type);
         } catch (Exception ex) {
             logexception("Error retrieving " + docref, ex);
             throw new ActivityException("Error retrieving " + docref, ex);
@@ -926,19 +922,16 @@ public abstract class BaseActivity implements GeneralActivity {
 
     protected DocumentReference createDocument(String docType, Object document, String ownerType,
             Long ownerId, Integer statusCode, String statusMessage, String path) throws ActivityException {
-        DocumentReference docref;
         try {
             if (!(document instanceof String)) {
-                // do the serialization here to take advantage of version aware translator providers
-                document = VariableTranslator.realToString(getPackage(), docType, document);
+                // do serialization here TODO: left over from package-aware translator providers
+                document = getPackage().getStringValue(docType, document, true);
             }
-
-            docref = engine.createDocument(docType, ownerType, ownerId, statusCode, statusMessage, path, document);
+            return engine.createDocument(docType, ownerType, ownerId, statusCode, statusMessage, path, document);
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
             throw new ActivityException(ex.getMessage(), ex);
         }
-        return docref;
     }
 
     /**
@@ -951,8 +944,8 @@ public abstract class BaseActivity implements GeneralActivity {
             throws ActivityException {
         try {
             if (!(document instanceof String)) {
-                // serialize here to support package aware translator providers
-                document = VariableTranslator.realToString(getPackage(), type, document);
+                // serialize here TODO: leftover support for package aware translator providers
+                document = getPackage().getStringValue(type, document, true);
             }
             engine.updateDocumentContent(docref, document, type, getPackage());
         } catch (Exception ex) {
@@ -1230,16 +1223,14 @@ public abstract class BaseActivity implements GeneralActivity {
     }
 
     /**
-     * Convenience method that returns a variable value, dereferencing doc types.
-     * Note: to update a document value it must be included in getOutputDocuments().
-     * @param varName variable name
-     * @return the variable value
+     * @deprecated {@link #getValue(String)}
      */
+    @Deprecated
     protected Object getVariableValue(String varName) throws ActivityException {
         VariableInstance var = getVariableInstance(varName);
         if (var == null) return null;
-        Object value = var.getData();
-        if (var.isDocument()) {
+        Object value = var.getData(getPackage());
+        if (var.isDocument(pkg)) {
             DocumentReference docref = (DocumentReference)value;
             if (isOutputDocument(varName))
                 value = getDocumentForUpdate(docref, var.getType());
@@ -1253,16 +1244,15 @@ public abstract class BaseActivity implements GeneralActivity {
      * Convenience method to set variable value regardless of type.
      */
     protected void setVariableValue(String varName, Object value) throws ActivityException {
-        Variable varVO = getProcessDefinition().getVariable(varName);
-        if (varVO == null)
+        Variable variable = getProcessDefinition().getVariable(varName);
+        if (variable == null)
             throw new ActivityException("No such variable defined for process: " + varName);
-        String varType = varVO.getType();
-        if (VariableTranslator.isDocumentReferenceVariable(getPackage(), varType))
+        String varType = variable.getType();
+        if (getPackage().getTranslator(varType).isDocumentReferenceVariable())
             setParameterValueAsDocument(varName, varType, value);
         else
             setParameterValue(varName, value);
     }
-
 
     /**
      * Convenience method that sets a variable value, including document content.
@@ -1276,7 +1266,7 @@ public abstract class BaseActivity implements GeneralActivity {
     protected void setVariableValue(String varName, String varType, Object value) throws ActivityException {
         if (value == null)
             return;
-        if (VariableTranslator.isDocumentReferenceVariable(pkg, varType)) {
+        if (pkg.getTranslator(varType).isDocumentReferenceVariable()) {
             try {
                 boolean isOutputDoc = isOutputDocument(varName);
                 boolean doUpdate = isOutputDoc;
@@ -1334,23 +1324,23 @@ public abstract class BaseActivity implements GeneralActivity {
         if (docRef == null)
             return newValue != null;
 
-        Document docVO = getEngine().loadDocument(docRef, false);
+        Document doc = getEngine().loadDocument(docRef, false);
 
-        if (docVO == null || docVO.getContent(getPackage()) == null)
+        if (doc == null || doc.getContent(getPackage()) == null)
             return newValue != null;
 
         if (newValue == null)
             return true;  // we already know old value is not null
 
-        String oldString = docVO.getContent(getPackage());
-        Object oldObject = VariableTranslator.realToObject(getPackage(), docVO.getDocumentType(), oldString);
+        String oldString = doc.getContent(getPackage());
+        Object oldObject = getPackage().getObjectValue(doc.getType(), oldString, true);
 
-        if (docVO.getDocumentType().equals(Object.class.getName()))
+        if (doc.getType().equals(Object.class.getName()))
             return !newValue.equals(oldObject);
 
         // general comparison involves reserializing since round-trip results are not guaranteed
-        oldString = VariableTranslator.realToString(getPackage(), docVO.getDocumentType(), oldObject);
-        String newString = VariableTranslator.realToString(getPackage(), docVO.getDocumentType(), newValue);
+        oldString = getPackage().getStringValue(doc.getType(), oldObject, true);
+        String newString = getPackage().getStringValue(doc.getType(), newValue, true);
         return !newString.equals(oldString);
     }
 
@@ -1383,34 +1373,38 @@ public abstract class BaseActivity implements GeneralActivity {
 
     /**
      * Get a runtime value.
-     * @param spec can be a variable name or expression
+     * @param name can be a variable name or expression
      */
-    protected Object getValue(String spec) throws ActivityException {
-        if (ProcessRuntimeContext.isExpression(spec)) {
-            return getRuntimeContext().evaluate(spec);
+    protected Object getValue(String name) throws ActivityException {
+        if (ProcessRuntimeContext.isExpression(name)) {
+            return getRuntimeContext().evaluate(name);
         }
         else {
-            return getVariableValue(spec);
+            return getVariableValue(name);
         }
+    }
+
+    protected Map<String,Object> getValues() {
+        return _runtimeContext.getValues();
     }
 
     /**
      * Set a runtime value.
-     * @param spec can be a variable name or expression
+     * @param name can be a variable name or expression
      * @param value the value to set
      */
-    protected void setValue(String spec, Object value) throws ActivityException {
-        if (ProcessRuntimeContext.isExpression(spec)) {
+    protected void setValue(String name, Object value) throws ActivityException {
+        if (ProcessRuntimeContext.isExpression(name)) {
             // create or update document variable referenced by expression
             ActivityRuntimeContext runtimeContext = getRuntimeContext();
-            runtimeContext.set(spec, value);
-            String rootVar = spec.substring(2, spec.indexOf('.'));
+            runtimeContext.set(name, value);
+            String rootVar = name.substring(2, name.indexOf('.'));
             Variable doc = runtimeContext.getProcess().getVariable(rootVar);
-            String stringValue = VariableTranslator.realToString(runtimeContext.getPackage(), doc.getType(), runtimeContext.evaluate("#{" + rootVar + "}"));
+            String stringValue = runtimeContext.getPackage().getStringValue(doc.getType(), runtimeContext.evaluate("${" + rootVar + "}"));
             setParameterValueAsDocument(rootVar, doc.getType(), stringValue);
         }
         else {
-            setVariableValue(spec, value);
+            setVariableValue(name, value);
         }
     }
 

@@ -3,9 +3,6 @@
   <Cache Name="TaskTemplateCache" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.service.data.task.TaskTemplateCache</Property>
   </Cache>
-  <Cache Name="VariableTypeCache" Type="ReadOnly">
-    <Property Name="ClassName">com.centurylink.mdw.cache.asset.VariableTypeCache</Property>
-  </Cache>
   <Cache Name="AssetCache" Type="ReadOnly">
     <Property Name="ClassName">com.centurylink.mdw.cache.asset.AssetCache</Property>
   </Cache>

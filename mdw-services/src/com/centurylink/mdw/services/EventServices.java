@@ -69,7 +69,7 @@ public interface EventServices {
      * the parent process instance id when looking for variables for embedded process
      *
      */
-    VariableInstance setVariableInstance(Long procInstId, String name, Object value)
+    VariableInstance setVariableInstance(Long procInstId, String name, Object value, Package pkg)
             throws DataAccessException;
 
     void updateDocumentContent(Long docid, Object doc, String type, Package pkg)

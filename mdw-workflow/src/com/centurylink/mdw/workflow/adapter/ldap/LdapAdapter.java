@@ -17,19 +17,19 @@ package com.centurylink.mdw.workflow.adapter.ldap;
 
 import com.centurylink.mdw.activity.ActivityException;
 import com.centurylink.mdw.activity.types.AdapterActivity;
+import com.centurylink.mdw.adapter.AdapterException;
+import com.centurylink.mdw.adapter.ConnectionException;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.common.MdwException;
 import com.centurylink.mdw.config.PropertyException;
-import com.centurylink.mdw.adapter.AdapterException;
-import com.centurylink.mdw.adapter.ConnectionException;
 import com.centurylink.mdw.model.user.User;
 import com.centurylink.mdw.model.variable.Variable;
 import com.centurylink.mdw.model.workflow.Process;
 import com.centurylink.mdw.translator.JsonTranslator;
-import com.centurylink.mdw.translator.VariableTranslator;
 import com.centurylink.mdw.util.ExpressionUtil;
 import com.centurylink.mdw.util.log.StandardLogger.LogLevel;
 import com.centurylink.mdw.util.timer.Tracked;
+import com.centurylink.mdw.variable.VariableTranslator;
 import com.centurylink.mdw.workflow.adapter.ObjectAdapterActivity;
 
 import javax.naming.Context;
@@ -175,8 +175,8 @@ public class LdapAdapter extends ObjectAdapterActivity {
                 Variable varVO = processVO.getVariable(varName);
                 String varType = varVO.getType();
 
-                if (VariableTranslator.isDocumentReferenceVariable(getPackage(), varVO.getType())) {
-                    com.centurylink.mdw.variable.VariableTranslator translator = VariableTranslator.getTranslator(getPackage(), varVO.getType());
+                VariableTranslator translator = getPackage().getTranslator(varVO.getType());
+                if (translator.isDocumentReferenceVariable()) {
                     if (translator instanceof JsonTranslator) {
                         if (getParameterValue(varName) == null) {
                             userJsonVar = varVO;

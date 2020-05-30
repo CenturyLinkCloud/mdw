@@ -30,6 +30,7 @@ import groovy.util.Node;
 import groovy.util.XmlNodePrinter;
 import groovy.util.XmlParser;
 
+@Deprecated
 public class GroovyNodeTranslator extends DocumentReferenceTranslator implements XmlDocumentTranslator {
 
     public Object realToObject(String str) throws TranslationException {
@@ -77,5 +78,4 @@ public class GroovyNodeTranslator extends DocumentReferenceTranslator implements
             throw new TranslationException(ex.getMessage(), ex);
         }
     }
-
 }
