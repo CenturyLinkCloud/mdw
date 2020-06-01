@@ -1,0 +1,10 @@
+package com.centurylink.mdw.tests.code
+
+start process("CustomVariableTypes") {
+    variables = [
+            myFloat: 1.1f,
+            myString: "Hello"
+    ]
+}
+wait process
+verify process

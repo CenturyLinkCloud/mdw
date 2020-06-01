@@ -39,61 +39,6 @@ public class Data {
         );
     }
 
-    public Map<String,String> getDocumentTypes() throws IOException {
-        Map<String,String> documentTypes = project.readDataMap("data.document.types");
-        if (documentTypes == null)
-            documentTypes = DEFAULT_DOCUMENT_TYPES;
-        return documentTypes;
-    }
-    public static final Map<String,String> DEFAULT_DOCUMENT_TYPES;
-    static {
-        DEFAULT_DOCUMENT_TYPES = new HashMap<String, String>() {{
-            put("org.w3c.dom.Document", "xml");
-            put("org.apache.xmlbeans.XmlObject", "xml");
-            put("java.lang.Object", "java");
-            put("org.json.JSONObject", "json");
-            put("groovy.util.Node", "xml");
-            put("com.centurylink.mdw.xml.XmlBeanWrapper", "xml");
-            put("com.centurylink.mdw.model.StringDocument", "text");
-            put("com.centurylink.mdw.model.HTMLDocument", "html");
-            put("javax.xml.bind.JAXBElement", "xml");
-            put("org.apache.camel.component.cxf.CxfPayload", "xml");
-            put("com.centurylink.mdw.common.service.Jsonable", "json");
-            put("com.centurylink.mdw.model.Jsonable", "json");
-            put("org.yaml.snakeyaml.Yaml", "yaml");
-            put("java.lang.Exception", "json");
-            put("java.util.List<Integer>", "json");
-            put("java.util.List<Long>", "json");
-            put("java.util.List<String>", "json");
-            put("java.util.Map<String,String>", "json");
-        }};
-    }
-
-    public List<String> getBinaryAssetExts() throws IOException {
-        List<String> binaryAssetExts = project.readDataList("data.binary.asset.exts");
-        if (binaryAssetExts == null)
-            binaryAssetExts = DEFAULT_BINARY_ASSET_EXTS;
-        return binaryAssetExts;
-    }
-    public static final List<String> DEFAULT_BINARY_ASSET_EXTS;
-    static {
-        DEFAULT_BINARY_ASSET_EXTS = Arrays.asList(
-                "png",
-                "jpg",
-                "gif",
-                "svg",
-                "xlsx",
-                "docx",
-                "class",
-                "jar",
-                "zip",
-                "eot",
-                "ttf",
-                "woff",
-                "woff2"
-        );
-    }
-
     public Map<String,String> getTaskCategories() throws IOException {
         Map<String,String> taskCategories = project.readDataMap("data.task.categories");
         if (taskCategories == null)
@@ -145,11 +90,35 @@ public class Data {
         }
     }
 
+    public List<String> getBinaryAssetExts() throws IOException {
+        List<String> binaryAssetExts = project.readDataList("data.binary.asset.exts");
+        if (binaryAssetExts == null)
+            binaryAssetExts = DEFAULT_BINARY_ASSET_EXTS;
+        return binaryAssetExts;
+    }
+    public static final List<String> DEFAULT_BINARY_ASSET_EXTS;
+    static {
+        DEFAULT_BINARY_ASSET_EXTS = Arrays.asList(
+                "png",
+                "jpg",
+                "gif",
+                "svg",
+                "xlsx",
+                "docx",
+                "class",
+                "jar",
+                "zip",
+                "eot",
+                "ttf",
+                "woff",
+                "woff2"
+        );
+    }
+
     public static class Implementors {
         public static final String START_IMPL = "com.centurylink.mdw.workflow.activity.process.ProcessStartActivity";
         public static final String STOP_IMPL = "com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity";
         public static final String PAUSE_IMPL = "com.centurylink.mdw.base.PauseActivity";
-        public static final String DYNAMIC_JAVA = "com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity";
         public static final String DUMMY_ACTIVITY = "com.centurylink.mdw.workflow.activity.DefaultActivityImpl";
 
         public static final List<ActivityImplementor> PSEUDO_IMPLEMENTORS = new ArrayList<>();

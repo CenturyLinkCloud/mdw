@@ -1,0 +1,78 @@
+activities:
+- id: A1
+  name: Start
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=70,y=140,w=60,h=40
+  transitions:
+  - id: T1
+    to: A3
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=175,ly=160,xs=134&216,ys=160&160
+- id: A2
+  name: Stop
+  implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
+  attributes:
+    WORK_DISPLAY_INFO: x=630,y=140,w=60,h=40
+- id: A3
+  name: |-
+    Set
+    Value
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    Rule: |
+      myDouble = 100.1d
+    SCRIPT: Groovy
+    WORK_DISPLAY_INFO: x=220,y=120,w=100,h=80
+  transitions:
+  - id: T2
+    to: A4
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=375,ly=160,xs=324&426,ys=160&160
+- id: A4
+  name: |-
+    Update
+    Values
+  implementor: com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity
+  attributes:
+    ClassName: CustomVariableTypes_A4
+    Java: |
+      package com.centurylink.mdw.tests.code;
+
+      import com.centurylink.mdw.java.JavaExecutionException;
+      import com.centurylink.mdw.java.JavaExecutor;
+
+      import java.util.Map;
+
+      public class CustomVariableTypes_A4 implements JavaExecutor {
+          public Object execute(Map<String,Object> variables) throws JavaExecutionException  {
+              variables.put("myFloat", ((Float)variables.get("myFloat")) * 15);
+              variables.put("myString", (variables.get("myString") + ", MDW"));
+              variables.put("myDouble", ((Double)variables.get("myDouble")) * 12);
+              return null;
+          }
+      }
+    WORK_DISPLAY_INFO: x=430,y=120,w=100,h=80
+  transitions:
+  - id: T3
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=580,ly=160,xs=534&626,ys=160&160
+variables:
+  myDouble:
+    type: java.lang.Double
+    category: LOCAL
+  myFloat:
+    type: java.lang.Float
+    category: INPUT
+  myString:
+    type: java.lang.String
+    category: INPUT
+attributes:
+  ArrowStyle: ArrowEnd
+  NodeStyle: BoxIcon
+  PROCESS_VISIBILITY: PUBLIC
+  WORK_DISPLAY_INFO: x=42,y=33,w=197,h=26

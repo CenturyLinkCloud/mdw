@@ -116,7 +116,7 @@ public class ActivityImplementor implements Comparable<ActivityImplementor>, Jso
     }
 
     public boolean isJava() {
-        return implementorClass.equals("com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity");
+        return JavaActivity.class.getName().equals(category);
     }
 
     public boolean isScript() {

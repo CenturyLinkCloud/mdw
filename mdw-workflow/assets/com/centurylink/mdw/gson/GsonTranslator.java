@@ -10,7 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 @Variable(type="com.google.gson.JsonElement")
-public class GsonVariable extends DocumentReferenceTranslator implements JsonTranslator {
+public class GsonTranslator extends DocumentReferenceTranslator implements JsonTranslator {
 
     public Object realToObject(String str) throws TranslationException {
         try {

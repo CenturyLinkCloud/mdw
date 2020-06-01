@@ -728,7 +728,7 @@ public class CommonDataAccess {
             throws SQLException {
         Long varInstId = db.isMySQL() ? null : getNextId("VARIABLE_INST_ID_SEQ");
         String query = "insert into VARIABLE_INSTANCE " +
-            "(VARIABLE_INST_ID, VARIABLE_ID, PROCESS_INST_ID, VARIABLE_VALUE, VARIABLE_NAME, VARIABLE_TYPE_ID, " +
+            "(VARIABLE_INST_ID, VARIABLE_ID, PROCESS_INST_ID, VARIABLE_VALUE, VARIABLE_NAME, VARIABLE_TYPE, " +
             "CREATE_DT, CREATE_USR) values (?, ?, ?, ?, ?, ?, " + nowPrecision() + ",'MDWEngine')";
         Object[] args = new Object[6];
         args[0] = varInstId;
@@ -736,7 +736,7 @@ public class CommonDataAccess {
         args[2] = processInstanceId;
         args[3] = variableInstance.getStringValue(pkg);
         args[4] = variableInstance.getName();
-        args[5] = VariableTypeCache.getVariableType(variableInstance.getType()).getId();
+        args[5] = variableInstance.getType();
         if (db.isMySQL())
             varInstId = db.runInsertReturnId(query, args);
         else

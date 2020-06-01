@@ -7,11 +7,14 @@ import com.centurylink.mdw.dataaccess.MdwVariableTypes;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.variable.VariableType;
 import com.centurylink.mdw.model.workflow.Package;
+import com.centurylink.mdw.translator.DocumentReferenceTranslator;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import com.centurylink.mdw.variable.VariableTranslator;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Cache for variable types
@@ -19,7 +22,8 @@ import java.util.HashMap;
 public class VariableTypeCache implements PreloadableCache {
 
     private static StandardLogger logger = LoggerUtil.getStandardLogger();
-    private static HashMap<String,VariableType> variableTypes = new HashMap<>();
+    private static HashMap<String,VariableType> variableTypes = new LinkedHashMap<>();
+    public static Map<String,VariableType> getVariableTypes() { return variableTypes; }
 
     public void loadCache() throws CachingException {
         load();
@@ -37,9 +41,10 @@ public class VariableTypeCache implements PreloadableCache {
         return variableTypes.get(typeName);
     }
 
+    @Deprecated
     public static VariableType getVariableType(Integer typeId) {
         for (VariableType varType : variableTypes.values()) {
-            if (varType.getId().equals(typeId))
+            if (varType.getId() != null && varType.getId().equals(typeId))
                 return varType;
         }
         return null;
@@ -64,6 +69,9 @@ public class VariableTypeCache implements PreloadableCache {
                 myVariableTypes.put(variableType.getName(), variableType);
             }
         }
+        for (VariableType deprecatedType : new MdwVariableTypes().getDeprecatedTypes()) {
+            myVariableTypes.put(deprecatedType.getName(), deprecatedType);
+        }
         variableTypes = myVariableTypes;
     }
 
@@ -78,7 +86,8 @@ public class VariableTypeCache implements PreloadableCache {
             if (asset.getText().contains("@Variable")) {
                 VariableTranslator translator = pkg.getVariableTranslator(translatorClass);
                 Variable annotation = translator.getClass().getAnnotation(Variable.class);
-                return new VariableType(annotation.type(), translatorClass);
+                return new VariableType(annotation.type(), translatorClass,
+                        DocumentReferenceTranslator.class.isAssignableFrom(translator.getClass()));
             }
         }
         catch (Throwable t) {

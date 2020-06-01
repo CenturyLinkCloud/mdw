@@ -16,6 +16,7 @@
 package com.centurylink.mdw.workflow.activity.java;
 
 import com.centurylink.mdw.activity.ActivityException;
+import com.centurylink.mdw.activity.types.JavaActivity;
 import com.centurylink.mdw.annotations.Activity;
 import com.centurylink.mdw.java.*;
 import com.centurylink.mdw.model.variable.Variable;
@@ -32,9 +33,9 @@ import java.util.List;
 import java.util.Map;
 
 @Tracked(LogLevel.TRACE)
-@Activity(value="Dynamic Java", icon="com.centurylink.mdw.base/java.png",
+@Activity(value="Dynamic Java", category=JavaActivity.class, icon="com.centurylink.mdw.base/java.png",
         pagelet="com.centurylink.mdw.base/dynamicJava.pagelet")
-public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJavaImplementor {
+public class DynamicJavaActivity extends DefaultActivityImpl implements JavaActivity {
 
     public static final String JAVA_CODE = "Java";
     public static final String CLASS_NAME = "ClassName";
@@ -85,8 +86,8 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
             Process process = getMainProcessDefinition();
             List<Variable> variables = process.getVariables();
             Map<String,Object> bindings = new HashMap<>();
-            for (Variable varVO: variables) {
-                bindings.put(varVO.getName(), getVariableValue(varVO.getName()));
+            for (Variable variable: variables) {
+                bindings.put(variable.getName(), getValue(variable.getName()));
             }
 
             Object result = getExecutorInstance().execute(bindings);
@@ -131,7 +132,7 @@ public class DynamicJavaActivity extends DefaultActivityImpl implements DynamicJ
         return executorInstance;
     }
 
-    private String getClassName() {
+    protected String getClassName() {
         String packageName = getPackageName();
 
         String className = getAttributeValue(CLASS_NAME);

@@ -16,6 +16,7 @@
 package com.centurylink.mdw.model.project;
 
 import com.centurylink.mdw.model.system.MdwVersion;
+import com.centurylink.mdw.model.variable.VariableType;
 import com.centurylink.mdw.model.workflow.ActivityImplementor;
 
 import java.io.File;
@@ -47,7 +48,17 @@ public interface Project {
         return null;
     }
 
+    /**
+     * Map of implClass to implementor.
+     */
     default Map<String,ActivityImplementor> getActivityImplementors() throws IOException {
+        return null;
+    }
+
+    /**
+     * Map of typeName to variable type.
+     */
+    default Map<String,VariableType> getVariableTypes() throws IOException {
         return null;
     }
 }

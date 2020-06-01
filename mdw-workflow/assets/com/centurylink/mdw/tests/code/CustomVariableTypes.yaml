@@ -1,0 +1,28 @@
+process: # 2311
+  name: CustomVariableTypes
+  instance: 1
+  activity: # 1 "2020-06-01 16:51:51.008"
+    name: Start
+    status: Completed
+  activity: # 3 "2020-06-01 16:51:51.030"
+    name: |
+      Set
+      Value
+    status: Completed
+  activity: # 4 "2020-06-01 16:51:51.050"
+    name: |
+      Update
+      Values
+    status: Completed
+  activity: # 2 "2020-06-01 16:51:51.339"
+    name: Stop
+    status: Completed
+  variable: # 6103
+    name: myDouble
+    value: 1201.1999999999998
+  variable: # 6102
+    name: myFloat
+    value: 16.5
+  variable: # 6101
+    name: myString
+    value: Hello, MDW

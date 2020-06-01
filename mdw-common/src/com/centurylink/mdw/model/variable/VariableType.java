@@ -27,30 +27,34 @@ public class VariableType implements Jsonable {
     private final String translatorClass;
     public String getTranslatorClass() { return translatorClass; }
 
+    private final boolean document;
+    public boolean isDocument() { return document; }
+
     /**
-     * Unfortunately VARIABLE_INSTANCE keys on this int ID.
+     * Unfortunately VARIABLE_INSTANCE keys on this int ID for inflights.
      */
     @Deprecated
     private Integer id;
     public Integer getId() {
-        return id == null ? name.hashCode() : id;
+        return id;
     }
 
-    public VariableType(String name, String translatorClass) {
-        this(name, translatorClass, null);
-    }
-
-    public VariableType(String name, String translatorClass, Integer id) {
+    public VariableType(String name, String translatorClass, boolean document) {
         this.name = name;
         this.translatorClass = translatorClass;
+        this.document = document;
+    }
+
+    @Deprecated
+    public VariableType(String name, String translatorClass, boolean document, Integer id) {
+        this(name, translatorClass, document);
         this.id = id;
     }
 
     public VariableType(JSONObject json) {
         this.name = json.getString("name");
         this.translatorClass = json.getString("translator");
-        if (json.has("id"))
-            this.id = json.getInt("id");
+        this.document = json.optBoolean("document", false);
     }
 
     public boolean isJavaObjectType() {
@@ -83,7 +87,8 @@ public class VariableType implements Jsonable {
         JSONObject json = create();
         json.put("name", name);
         json.put("translator", translatorClass);
-        json.put("id", getId());
+        if (isDocument())
+            json.put("document", true);
         return json;
     }
 

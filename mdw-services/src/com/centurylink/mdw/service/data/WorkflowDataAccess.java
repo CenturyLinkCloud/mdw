@@ -676,17 +676,20 @@ public class WorkflowDataAccess extends CommonDataAccess {
             }
             procInstInfo.setTransitions(workTransInstanceList);
             List<VariableInstance> variableDataList = new ArrayList<VariableInstance>();
-            query = "select VARIABLE_INST_ID, VARIABLE_ID, VARIABLE_VALUE, VARIABLE_NAME, VARIABLE_TYPE_ID " +
+            query = "select VARIABLE_INST_ID, VARIABLE_ID, VARIABLE_VALUE, VARIABLE_NAME, VARIABLE_TYPE_ID, VARIABLE_TYPE " +
                     "from VARIABLE_INSTANCE where PROCESS_INST_ID=? order by lower(VARIABLE_NAME)";
             rs = db.runSelect(query, procInstId);
             while (rs.next()) {
-                VariableInstance data = new VariableInstance();
-                data.setId(rs.getLong(1));
-                data.setVariableId(rs.getLong(2));
-                data.setStringValue(rs.getString(3));
-                data.setName(rs.getString(4));
-                data.setType(VariableTypeCache.getVariableType(rs.getInt(5)).getName());
-                variableDataList.add(data);
+                VariableInstance variableInstance = new VariableInstance();
+                variableInstance.setId(rs.getLong(1));
+                variableInstance.setVariableId(rs.getLong(2));
+                variableInstance.setStringValue(rs.getString(3));
+                variableInstance.setName(rs.getString(4));
+                String variableType = rs.getString(6);
+                if (variableType == null || variableType.isEmpty())
+                    variableType = VariableTypeCache.getVariableType(rs.getInt(5)).getName();
+                variableInstance.setType(variableType);
+                variableDataList.add(variableInstance);
             }
             procInstInfo.setVariables(variableDataList);
             return procInstInfo;
@@ -873,23 +876,23 @@ public class WorkflowDataAccess extends CommonDataAccess {
             for (String varName : variableCriteria.keySet()) {
                 String varValue = variableCriteria.get(varName);
                 boolean isDate = varName.startsWith("DATE:");
-                Integer variableTypeId = null;
+                String variableType = null;
                 if (isDate) {
                     varName = varName.substring(5);
-                    variableTypeId = VariableTypeCache.getVariableType("java.util.Date").getId();
+                    variableType = "java.util.Date";
                 }
 
                 sqlBuff.append("\n and exists (select vi.variable_inst_id from VARIABLE_INSTANCE vi")
                         .append(" where vi.process_inst_id = pi.process_instance_id")
                         .append(" and vi.variable_name = '" + varName + "'");
 
-                if (isDate && variableTypeId != null) {
-                    sqlBuff.append(" and vi.VARIABLE_TYPE_ID = " + variableTypeId); // date var type
+                if (isDate) {
+                    sqlBuff.append(" and vi.VARIABLE_TYPE = '" + variableType + "'"); // date var type
                     if (db.isMySQL())
                         sqlBuff.append("\n and (select concat(substr(ivi.VARIABLE_VALUE, 5, 7), substr(ivi.VARIABLE_VALUE, 25))");
                     else
                         sqlBuff.append("\n and (select substr(ivi.VARIABLE_VALUE, 5, 7) || substr(ivi.VARIABLE_VALUE, 25)");
-                    sqlBuff.append("\n     from VARIABLE_INSTANCE ivi  where ivi.variable_type_id = " + variableTypeId);
+                    sqlBuff.append("\n     from VARIABLE_INSTANCE ivi  where ivi.variable_type = '" + variableType + "'");
                     sqlBuff.append("\n     and ivi.variable_inst_id = vi.variable_inst_id");
                     sqlBuff.append("\n     and ivi.variable_name = '" + varName + "') = '"+ varValue + "') ");
                 }
