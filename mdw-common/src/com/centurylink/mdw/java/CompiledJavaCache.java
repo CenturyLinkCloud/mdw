@@ -615,7 +615,8 @@ public class CompiledJavaCache implements PreloadableCache {
                     cl = pkg.getClassLoader().directFindClass(name);
             }
             if (cl == null) {
-                if (!classicLoading) classesNotFound.putIfAbsent(name, true);
+                if (!classicLoading)
+                    classesNotFound.putIfAbsent(name, true);
                 // don't log: can happen when trying multiple bundles to resolve a class
                 throw new ClassNotFoundException(cnfeMsg(name));
             } else if (cache) {

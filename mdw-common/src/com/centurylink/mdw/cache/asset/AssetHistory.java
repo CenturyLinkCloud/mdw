@@ -137,7 +137,7 @@ public class AssetHistory implements CacheService {
                         }
                         else {
                             VersionProperties verProps = new VersionProperties(new ByteArrayInputStream(verPropContents));
-                            List<String> commitPkgAssets = vcGit.getAssetsForCommit(commit.getCommit(), vcGit.getRelativePath(new File(pkgPath).toPath()));
+                            List<String> commitPkgAssets = vcGit.getAssetsAtCommit(commit.getCommit(), vcGit.getRelativePath(new File(pkgPath).toPath()));
                             for (String assetName : verProps.stringPropertyNames()) {
                                 String assetPath = pkg.getName() + "/" + assetName;
                                 if (commitPkgAssets.contains(assetName)) {

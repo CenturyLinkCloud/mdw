@@ -570,7 +570,7 @@ public class VersionControlGit {
     /**
      * Find package assets that are present at the specified commit.
      */
-    public List<String> getAssetsForCommit(String commitId, String packagePath) throws Exception {
+    public List<String> getAssetsAtCommit(String commitId, String packagePath) throws Exception {
         try (RevWalk revWalk = new RevWalk(localRepo)) {
             RevCommit commit = revWalk.parseCommit(ObjectId.fromString(commitId));
             // use commit's tree to find the path
