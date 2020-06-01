@@ -123,7 +123,7 @@ process: # 10203
             "startDate": "${today} ${~\\d\\d:\\d\\d:\\d\\d}",
             "statusCode": 2
           },
-          "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+          "category": "com.centurylink.mdw.activity.types.JavaActivity",
           "process": "com.centurylink.mdw.tests.services/ServiceSub",
           "processInstance": {
             "comments": "${~.*}",
@@ -337,7 +337,7 @@ process: # 10039
             },
             statusCode: 2
           }]
-        
+
       }
   variable: # 10123
     name: testCase

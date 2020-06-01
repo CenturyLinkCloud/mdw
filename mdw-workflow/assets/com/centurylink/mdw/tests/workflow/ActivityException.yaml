@@ -36,7 +36,7 @@ process: # 14209
             "startDate": "${today} ${~.*}",
             "statusCode": 2
           },
-          "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+          "category": "com.centurylink.mdw.activity.types.JavaActivity",
           "process": "com.centurylink.mdw.tests.workflow/TestSubProcess2",
           "processInstance": {
             "comments": "${~com\\.centurylink\\.mdw\\.tests\\.workflow/TestSubProcess2 v\\d.\\d.*}",

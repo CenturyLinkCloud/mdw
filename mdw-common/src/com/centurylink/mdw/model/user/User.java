@@ -156,7 +156,7 @@ public class User implements Serializable, Comparable<User>, Jsonable {
     public String[] getGroupNames() {
         if (workgroups == null)
             return new String[0];
-        List<String> groupList = new ArrayList<String>();
+        List<String> groupList = new ArrayList<>();
         for (Workgroup group : workgroups) {
             if (!group.getName().equals(Workgroup.COMMON_GROUP))
               groupList.add(group.getName());

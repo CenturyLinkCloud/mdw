@@ -146,7 +146,7 @@ process: # 10655
             "startDate": "${~.*}",
             "statusCode": 2
           },
-          "category": "com.centurylink.mdw.activity.types.GeneralActivity",
+          "category": "com.centurylink.mdw.activity.types.JavaActivity",
           "process": "com.centurylink.mdw.tests.services/ServiceSub",
           "processInstance": {
             "comments": "com.centurylink.mdw.tests.services/ServiceSub v0.6",
