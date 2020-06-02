@@ -88,8 +88,7 @@ public class ClasspathUtil {
         }
         for (File file : directory.listFiles()) {
             if (file.isDirectory()) {
-                // TODO mdwignore
-                MdwIgnore mdwIgnore = null; // honorMdwIgnore ? new MdwIgnore(directory) : null;
+                MdwIgnore mdwIgnore = honorMdwIgnore ? new MdwIgnore(directory) : null;
                 if (mdwIgnore == null || !mdwIgnore.isIgnore(file)) {
                     addJarFilesRecursive(jarFiles, file, honorMdwIgnore);
                 }

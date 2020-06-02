@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * Currently only supports a straight dir/file list (no wildcards or subpaths).
- * https://github.com/codemix/gitignore-parser
+ * TODO: proper ignore pattern processing (like .gitignore)
  */
 public class MdwIgnore {
 

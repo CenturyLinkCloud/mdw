@@ -49,17 +49,18 @@ public class PackageFinder {
         return pkgMeta;
     }
 
-    // TODO .mdwignore instead of hard-coded node_modules
     public List<File> findMetaFiles() throws IOException {
         List<File> metaFiles = new ArrayList<>();
         Files.walkFileTree(assetRoot, EnumSet.of(FileVisitOption.FOLLOW_LINKS), Integer.MAX_VALUE,
                 new SimpleFileVisitor<Path>() {
                     @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                        if (dir.getFileName().toString().equals("node_modules"))
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                        if (new MdwIgnore(dir.toFile().getParentFile()).isIgnore(dir.toFile())) {
                             return FileVisitResult.SKIP_SUBTREE;
-                        else
+                        }
+                        else {
                             return FileVisitResult.CONTINUE;
+                        }
                     }
                     @Override
                     public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {

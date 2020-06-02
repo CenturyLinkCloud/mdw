@@ -16,6 +16,7 @@
 package com.centurylink.mdw.cache.asset;
 
 import com.centurylink.mdw.cache.CacheService;
+import com.centurylink.mdw.file.MdwIgnore;
 import com.centurylink.mdw.file.VersionProperties;
 import com.centurylink.mdw.model.asset.Asset;
 import com.centurylink.mdw.model.asset.AssetVersion;
@@ -33,7 +34,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 public class AssetCache implements CacheService {
 
@@ -175,14 +175,6 @@ public class AssetCache implements CacheService {
         return assets;
     }
 
-    public static List<Asset> getPackageAssets(String packageName) {
-        return getAssets(false)
-                .stream()
-                .filter(asset -> asset.getPackageName().equals(packageName))
-                .collect(Collectors.toList());
-    }
-
-
     public static synchronized List<Asset> getAssets(boolean withArchived) {
         if (withArchived) {
             if (allAssets == null) {
@@ -235,16 +227,18 @@ public class AssetCache implements CacheService {
         return latestAssets;
     }
 
-    // TODO honor .mdwignore
     private static List<Asset> findAssets() throws IOException {
         List<Asset> assets = new ArrayList<>();
         for (Package pkg : PackageCache.getPackages()) {
             File pkgDir = pkg.getDirectory();
             File verFile = new File(pkgDir + "/" + PackageMeta.META_DIR + "/" + PackageMeta.VERSIONS);
             VersionProperties verProps = new VersionProperties(verFile);
+            MdwIgnore mdwIgnore = new MdwIgnore(pkgDir);
             for (File assetFile : pkgDir.listFiles()) {
-                int version = verProps.getVersion(assetFile.getName());
-                assets.add(new Asset(pkg.getName(), assetFile.getName(), version, assetFile));
+                if (!mdwIgnore.isIgnore(assetFile)) {
+                    int version = verProps.getVersion(assetFile.getName());
+                    assets.add(new Asset(pkg.getName(), assetFile.getName(), version, assetFile));
+                }
             }
         }
         Collections.sort(assets);

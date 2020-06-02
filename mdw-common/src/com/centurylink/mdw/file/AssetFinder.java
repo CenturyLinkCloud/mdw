@@ -14,10 +14,13 @@ public class AssetFinder {
 
     private final String packageName;
     private final Path packagePath;
+    private final MdwIgnore mdwIgnore;
 
-    public AssetFinder(Path assetRoot, String packageName) {
+    public AssetFinder(Path assetRoot, String packageName) throws IOException {
         this.packageName = packageName;
-        this.packagePath = new File(assetRoot + "/" + packageName.replace('.', '/')).toPath();
+        File packageDir = new File(assetRoot + "/" + packageName.replace('.', '/'));
+        this.packagePath = packageDir.toPath();
+        this.mdwIgnore = new MdwIgnore(packageDir);
     }
 
     private VersionProperties versionProperties;
@@ -27,7 +30,6 @@ public class AssetFinder {
         return versionProperties;
     }
 
-    // TODO .mdwignore instead of hard-coded .DS_Store
     public Map<File,AssetVersion> findAssets() throws IOException {
         Map<File,AssetVersion> assets = new HashMap<>();
         File[] packageFiles = packagePath.toFile().listFiles();
@@ -35,7 +37,7 @@ public class AssetFinder {
             throw new IOException("Bad package path: " + packagePath);
 
         for (File file : packageFiles) {
-            if (file.isFile() && !".DS_Store".equals(file.getName())) {
+            if (file.isFile() && !mdwIgnore.isIgnore(file)) {
                 int version = getVersionProperties().getVersion(file.getName());
                 assets.put(file, new AssetVersion(packageName + "/" + file.getName(), version));
             }
@@ -52,5 +54,4 @@ public class AssetFinder {
         }
         return null;
     }
-
 }
