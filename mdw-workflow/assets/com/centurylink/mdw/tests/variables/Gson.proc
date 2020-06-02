@@ -3,20 +3,20 @@ activities:
   name: Start
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
   attributes:
-    WORK_DISPLAY_INFO: x=60,y=260,w=60,h=40
+    WORK_DISPLAY_INFO: x=70,y=150,w=60,h=40
   transitions:
   - id: T1
     to: A2
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: lx=300,ly=280,type=Elbow,xs=124&476,ys=280&280
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=310,ly=170,xs=134&486,ys=170&170
 - id: A2
   name: Stop
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
   attributes:
-    WORK_DISPLAY_INFO: x=480,y=260,w=60,h=40
+    WORK_DISPLAY_INFO: x=490,y=150,w=60,h=40
 attributes:
   ArrowStyle: ArrowEnd
   NodeStyle: BoxIcon
   PROCESS_VISIBILITY: PUBLIC
-  WORK_DISPLAY_INFO: x=50,y=50,w=0,h=0
+  WORK_DISPLAY_INFO: x=41,y=40,w=172,h=26

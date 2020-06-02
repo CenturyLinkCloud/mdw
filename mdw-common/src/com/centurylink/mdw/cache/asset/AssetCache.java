@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class AssetCache implements CacheService {
 
@@ -173,6 +174,13 @@ public class AssetCache implements CacheService {
             }
         }
         return assets;
+    }
+
+    public static List<Asset> getPackageAssets(String packageName) {
+        return getAssets(false)
+                .stream()
+                .filter(asset -> asset.getPackageName().equals(packageName))
+                .collect(Collectors.toList());
     }
 
     public static synchronized List<Asset> getAssets(boolean withArchived) {

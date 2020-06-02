@@ -1,0 +1,11 @@
+package com.centurylink.mdw.tests.variables
+
+start process("Jsonable.proc") {
+    variables = [
+            input: '''{
+  "name": "Everest",
+  "elevation": 29029,
+  "country": "Nepal"
+}'''
+    ]
+}

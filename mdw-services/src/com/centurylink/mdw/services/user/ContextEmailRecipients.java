@@ -42,7 +42,7 @@ public class ContextEmailRecipients {
         List<String> recipients = new ArrayList<>();
         if (workgroupsAttr != null) {
             List<String> groupList = context.getAttributes().getList(workgroupsAttr);
-            for (String groupEmail : groupList) {
+            for (String groupEmail : getGroupEmails(groupList)) {
                 if (!recipients.contains(groupEmail))
                     recipients.add(groupEmail);
             }

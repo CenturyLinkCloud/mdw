@@ -5,7 +5,7 @@ import com.centurylink.mdw.model.workflow.ActivityRuntimeContext;
 import com.centurylink.mdw.workflow.activity.DefaultActivityImpl;
 import com.centurylink.mdw.annotations.Activity;
 
-@Activity(value="Java Invader", icon="com.centurylink.mdw.tests.cloud/invader.png",
+@Activity(value="Java Invader", icon="com.centurylink.mdw.tests.code/invader.png",
     pagelet="com.centurylink.mdw.tests.code/JavaInvader.pagelet")
 public class JavaInvader extends DefaultActivityImpl {
 

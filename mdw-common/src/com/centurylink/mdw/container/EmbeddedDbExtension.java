@@ -32,8 +32,10 @@ public interface EmbeddedDbExtension extends RegisteredService {
      */
     default List<String> getSqlSourceAssets() {
         List<String> sqlSourceAssets = new ArrayList<>();
-        for (Asset sqlAsset : AssetCache.getAssets("sql")) {
-            sqlSourceAssets.add(sqlAsset.getPath());
+        for (Asset pkgAsset : AssetCache.getPackageAssets(getClass().getPackage().getName())) {
+            if ("sql".equals(pkgAsset.getExtension())) {
+                sqlSourceAssets.add(pkgAsset.getPath());
+            }
         }
         return sqlSourceAssets;
     }

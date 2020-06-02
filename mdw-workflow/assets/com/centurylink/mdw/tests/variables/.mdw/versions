@@ -1,1 +1,4 @@
-GsonVariableType.proc=1
+Gson.proc=1
+Jsonable.proc=1
+Jsonable.test=1
+Mountain.java=1
