@@ -31,7 +31,6 @@ import com.centurylink.mdw.util.file.FileHelper;
 import com.centurylink.mdw.util.log.LoggerUtil;
 import com.centurylink.mdw.util.log.StandardLogger;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -210,7 +209,7 @@ public class TestingServicesImpl implements TestingServices {
     private long addStatusInfo(List<TestCase> testCases) {
         try {
             if (!testCases.isEmpty()) {
-                File resultsFile = getTestResultsFile(testCases.get(0).getAsset().getExtension());
+                File resultsFile = getTestResultsFile();
                 if (resultsFile != null && resultsFile.isFile()) {
                     processResultsFile(resultsFile, testCases);
                     return resultsFile.lastModified();
@@ -225,7 +224,7 @@ public class TestingServicesImpl implements TestingServices {
 
     private void addStatusInfo(TestCase testCase) {
         try {
-            File resultsFile = getTestResultsFile(testCase.getAsset().getExtension());
+            File resultsFile = getTestResultsFile();
             if (resultsFile != null && resultsFile.isFile()) {
                 processResultsFile(resultsFile, testCase);
             }
@@ -330,32 +329,15 @@ public class TestingServicesImpl implements TestingServices {
         return resultsDir;
     }
 
-    public JSONObject getTestResultsJson() throws ServiceException, JSONException {
-        try {
-            File file = getTestResultsFile("test");
-            if (!file.isFile())
-                throw new ServiceException(ServiceException.NOT_FOUND, "Results file not found: " + file);
-            else if (!file.getName().endsWith(".json"))
-                throw new ServiceException(ServiceException.NOT_IMPLEMENTED, "Results file must be JSON: " + file);
-            return new JsonObject(new String(FileHelper.read(file)));
-        }
-        catch (IOException ex) {
-            throw new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage(), ex);
-        }
-    }
-
-    public File getTestResultsFile(String format) throws IOException {
+    public File getTestResultsFile() throws IOException {
         File resultsDir = getTestResultsDir();
         if (resultsDir == null)
             return null;
-        String summaryFile = null;
-        if (format == null || "test".equals(format) || "postman".equals(format)) {
-            summaryFile = PropertyManager.getProperty(PropertyNames.MDW_TEST_SUMMARY_FILE);
-            if (summaryFile == null)
-                summaryFile = "mdw-function-test-results.json";
-        }
+        String summaryFile = PropertyManager.getProperty(PropertyNames.MDW_TEST_SUMMARY_FILE);
+        if (summaryFile == null)
+            summaryFile = "mdw-function-test-results.json";
 
-        return summaryFile == null ? null : new File(resultsDir + "/" + summaryFile);
+        return new File(resultsDir + "/" + summaryFile);
     }
 
     public void executeCase(TestCase testCase, String user, TestExecConfig config) throws ServiceException, IOException {
@@ -372,7 +354,7 @@ public class TestingServicesImpl implements TestingServices {
              throw new ServiceException(ServiceException.FORBIDDEN, "Automated tests already running");
         }
 
-        testRunner.init(testCaseList, user, getTestResultsFile(null), config);
+        testRunner.init(testCaseList, user, getTestResultsFile(), config);
         new Thread(testRunner).start();
     }
 

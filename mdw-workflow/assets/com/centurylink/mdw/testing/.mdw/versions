@@ -1,6 +1,7 @@
 AdapterStubbingMonitor.java=2
 AutomatedTests.java=24
 RandomTests.java=7
+StartupCleaner.java=1
 TestCaseActivityMonitor.java=12
 function-test-results.xsl=2
 load-test-results.xsl=1

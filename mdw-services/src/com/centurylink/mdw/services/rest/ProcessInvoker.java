@@ -127,7 +127,8 @@ public class ProcessInvoker extends JsonRestService {
             Map<String,Object> inputVariables = new HashMap<>();
             if (requestVar != null && requestObj != null)
                 inputVariables.put(requestVar.getName(), requestObj);
-            inputVariables.put("requestHeaders", headers);
+            if (process.getVariable("requestHeaders") != null)
+                inputVariables.put("requestHeaders", headers);
             launchProcess(assetRequest.getAsset(), masterRequestId, inputVariables, headers);
             return new StatusResponse(Status.ACCEPTED).getJson();
         }

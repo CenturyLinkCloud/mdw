@@ -32,5 +32,5 @@ attributes:
   WORK_DISPLAY_INFO: x=44,y=39,w=84,h=26
   requestMethod: POST
   requestParameters: '[["mountain","Body","true","","com.centurylink.mdw.tests.variables/Mountain.java"]]'
-  requestPath: mountain
+  requestPath: Jsonable
   requestSummary: Because it's there

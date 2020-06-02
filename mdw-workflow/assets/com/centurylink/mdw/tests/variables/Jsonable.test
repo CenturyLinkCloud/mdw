@@ -1,11 +1,9 @@
 package com.centurylink.mdw.tests.variables
 
-start process("Jsonable.proc") {
-    variables = [
-            input: '''{
+def response = post http("api/com/centurylink/mdw/tests/variables/Jsonable") {
+    payload = '''{
   "name": "Everest",
   "elevation": 29029,
   "country": "Nepal"
 }'''
-    ]
 }

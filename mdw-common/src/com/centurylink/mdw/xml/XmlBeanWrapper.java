@@ -41,6 +41,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(value="XmlBeanWrapper")
+@Deprecated
 public abstract class XmlBeanWrapper implements Serializable {
 
     private XmlObject _xmlBean;

@@ -78,7 +78,7 @@ public class TestCaseMain {
         TestingServices testingServices = ServiceLocator.getTestingServices();
         TestCase testCase = testingServices.getTestCase(testCasePath);
 
-        File resultsFile = testingServices.getTestResultsFile(null);
+        File resultsFile = testingServices.getTestResultsFile();
 
         try (LogMessageMonitor monitor = new LogMessageMonitor()) {
             monitor.start(true);

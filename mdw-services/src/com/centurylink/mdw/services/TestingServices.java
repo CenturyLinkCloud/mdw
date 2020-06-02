@@ -55,8 +55,7 @@ public interface TestingServices {
      * @throws IOException if the results dir does not exist and cannot be created
      */
     File getTestResultsDir() throws IOException;
-
-    File getTestResultsFile(String format) throws IOException;
+    File getTestResultsFile() throws IOException;
 
     /**
      * Asynchronously executes a single test.  Call getTestCase() for status.
@@ -76,6 +75,4 @@ public interface TestingServices {
 
     TestExecConfig getTestExecConfig() throws ServiceException;
     void setTestExecConfig(TestExecConfig config) throws ServiceException;
-
-    JSONObject getTestResultsJson() throws ServiceException, JSONException;
 }

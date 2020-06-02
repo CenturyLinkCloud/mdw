@@ -1170,7 +1170,7 @@ public class WorkflowServicesImpl implements WorkflowServices {
 
     private Map<String,String> translateParameters(Process process, Map<String,Object> parameters)
             throws ProcessException {
-        Map<String,String> stringParams = new HashMap<String,String>();
+        Map<String,String> stringParams = new HashMap<>();
         if (parameters != null) {
             for (String key : parameters.keySet()) {
                 Object val = parameters.get(key);
