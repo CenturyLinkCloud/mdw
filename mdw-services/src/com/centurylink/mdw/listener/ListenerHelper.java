@@ -116,18 +116,18 @@ public class ListenerHelper {
         }
 
         if (bucket != null) {
-            for (HandlerSpec e : bucket) {
+            for (HandlerSpec handlerSpec : bucket) {
                 if (isTopic) {
-                    if (metaInfo.get(Listener.METAINFO_TOPIC).equals(e.getPath())) {
+                    if (metaInfo.get(Listener.METAINFO_TOPIC).equals(handlerSpec.getPath())) {
                         if (bucket.size() > 1)
                             logger.warn("Multiple external event handlers matched incoming request for topic " + metaInfo.get(Listener.METAINFO_TOPIC));
-                        return e;
+                        return handlerSpec;
                     }
                 }
-                else if (metaInfo.get(Listener.METAINFO_REQUEST_PATH).startsWith(e.getPath())) {
+                else if (metaInfo.get(Listener.METAINFO_REQUEST_PATH).startsWith(handlerSpec.getPath())) {
                     if (bucket.size() > 1)
                         logger.warn("Multiple external event handlers matched incoming request for path " + metaInfo.get(Listener.METAINFO_REQUEST_PATH));
-                    return e;
+                    return handlerSpec;
                 }
             }
         }
@@ -250,8 +250,8 @@ public class ListenerHelper {
      */
     public String processRequest(String request, Map<String,String> metaInfo) {
         Response altResponse = null;
-        Long eeid = 0L;
-        Request requestDoc = new Request(eeid);
+        Long requestId = 0L;
+        Request requestDoc = new Request(requestId);
         Set<String> reqMetaInfo = new HashSet<>(metaInfo.keySet());
         long requestTime = System.currentTimeMillis();
 
@@ -264,13 +264,13 @@ public class ListenerHelper {
             }
 
             if (persistMessage(metaInfo)) {
-                eeid = createRequestDocument(request, 0L, metaInfo.get(Listener.METAINFO_REQUEST_PATH));
-                requestDoc.setId(eeid);
+                requestId = createRequestDocument(request, 0L, metaInfo.get(Listener.METAINFO_REQUEST_PATH));
+                requestDoc.setId(requestId);
             }
 
             // persist meta even if no request doc
             if (persistMeta(metaInfo))
-                requestDoc.setMeta(createRequestMetaDocument(metaInfo, reqMetaInfo, eeid));
+                requestDoc.setMeta(createRequestMetaDocument(metaInfo, reqMetaInfo, requestId));
 
             // log request-id so that it can easily be located
             if (logger.isInfoEnabled()) {
@@ -280,15 +280,15 @@ public class ListenerHelper {
                     reqMsg.append(method).append(" request ");
                 else
                     reqMsg.append("Request ");
-                if (eeid > 0)
-                    reqMsg.append(eeid).append(" ");
+                if (requestId > 0)
+                    reqMsg.append(requestId).append(" ");
                 String protocol = metaInfo.get(Listener.METAINFO_PROTOCOL);
                 if (protocol != null)
                     reqMsg.append("over ").append(protocol).append(" ");
                 String path = metaInfo.get(Listener.METAINFO_REQUEST_PATH);
                 if (path != null)
                     reqMsg.append("on path '").append(path).append("'");
-                if (eeid > 0 && !"AppSummary".equals(path)) // don't log health/ping
+                if (requestId > 0 && !"AppSummary".equals(path)) // don't log health/ping
                     logger.info("", reqMsg.toString());
                 else
                     logger.mdwDebug(reqMsg.toString());
@@ -309,7 +309,7 @@ public class ListenerHelper {
                     altResponse.setPath(ServicePaths.getInboundResponsePath(metaInfo));
 
                     if (persistMessage(metaInfo)) {
-                        Long ownerId = createResponseDocument(altResponse, eeid);
+                        Long ownerId = createResponseDocument(altResponse, requestId);
                         if (persistMeta(metaInfo)) {
                             altResponse.setMeta(createResponseMeta(metaInfo, reqMetaInfo, ownerId, requestTime));
                         }
@@ -335,14 +335,14 @@ public class ListenerHelper {
                 response.setPath(ServicePaths.getInboundResponsePath(metaInfo));
 
                 if (persistMessage(metaInfo) && !StringUtils.isBlank(response.getContent())) {
-                    Long ownerId = createResponseDocument(response, eeid);
+                    Long ownerId = createResponseDocument(response, requestId);
                     if (persistMeta(metaInfo)) {
                         response.setMeta(createResponseMeta(metaInfo, reqMetaInfo, ownerId, requestTime));
                     }
                 }
 
-                if (logger.isDebugEnabled() && eeid > 0 && !Listener.isHealthCheck(metaInfo)) {
-                    logger.debug("", "<< Request " + eeid + " processed: " + (System.currentTimeMillis() - requestTime) + " ms");
+                if (logger.isDebugEnabled() && requestId > 0 && !Listener.isHealthCheck(metaInfo)) {
+                    logger.debug("", "<< Request " + requestId + " processed: " + (System.currentTimeMillis() - requestTime) + " ms");
                 }
 
                 return response.getContent();
@@ -352,7 +352,7 @@ public class ListenerHelper {
             logger.error(ex.getMessage(), ex);
             Response response = createErrorResponse(request, metaInfo, ex);
             try {
-                createResponseMeta(metaInfo, reqMetaInfo, createResponseDocument(response, eeid), requestTime);
+                createResponseMeta(metaInfo, reqMetaInfo, createResponseDocument(response, requestId), requestTime);
             }
             catch (Throwable e) {
                 logger.error("Failed to persist response", e);
@@ -380,7 +380,7 @@ public class ListenerHelper {
                 response = createErrorResponse(request, metaInfo, new ServiceException(ServiceException.INTERNAL_ERROR, ex.getMessage()));
 
             try {
-                createResponseMeta(metaInfo, reqMetaInfo, createResponseDocument(response, eeid), requestTime);
+                createResponseMeta(metaInfo, reqMetaInfo, createResponseDocument(response, requestId), requestTime);
             }
             catch (Throwable e) {
                 logger.error("Failed to persist response", e);
@@ -408,7 +408,7 @@ public class ListenerHelper {
 
             // parse handler specification - must before checking persistence flag
             String clsname = parseHandlerSpec(handlerSpec.getHandlerClass(), metaInfo);
-            metaInfo.put(Listener.METAINFO_DOCUMENT_ID, eeid.toString());
+            metaInfo.put(Listener.METAINFO_DOCUMENT_ID, requestId.toString());
 
             // invoke event handler
             if (clsname.equals(START_PROCESS_HANDLER)) {
@@ -471,13 +471,13 @@ public class ListenerHelper {
             }
 
             if (persistMessage(metaInfo) && !StringUtils.isBlank(response.getContent())) {
-                Long ownerId = createResponseDocument(response, eeid);
+                Long ownerId = createResponseDocument(response, requestId);
                 if (persistMeta(metaInfo))
                     response.setMeta(createResponseMeta(metaInfo, reqMetaInfo, ownerId, requestTime));
             }
 
-            if (logger.isDebugEnabled() && eeid > 0 && !Listener.isHealthCheck(metaInfo)) {
-                logger.debug("", "<< Request " + eeid + " processed: " + (System.currentTimeMillis() - requestTime) + " ms");
+            if (logger.isDebugEnabled() && requestId > 0 && !Listener.isHealthCheck(metaInfo)) {
+                logger.debug("", "<< Request " + requestId + " processed: " + (System.currentTimeMillis() - requestTime) + " ms");
             }
 
             return response.getContent();
@@ -486,7 +486,7 @@ public class ListenerHelper {
             logger.error(ex.getMessage(), ex);
             Response response = createErrorResponse(request, metaInfo, ex);
             try {
-                createResponseMeta(metaInfo, reqMetaInfo, createResponseDocument(response, eeid), requestTime);
+                createResponseMeta(metaInfo, reqMetaInfo, createResponseDocument(response, requestId), requestTime);
             }
             catch (Throwable e) {
                 logger.error("Failed to persist response", e);
@@ -516,7 +516,7 @@ public class ListenerHelper {
                 response.setStatusCode(getResponseCode(metaInfo));
             response.setPath(ServicePaths.getInboundResponsePath(metaInfo));
             try {
-                createResponseMeta(metaInfo, reqMetaInfo, createResponseDocument(response, eeid), requestTime);
+                createResponseMeta(metaInfo, reqMetaInfo, createResponseDocument(response, requestId), requestTime);
             }
             catch (Throwable ex) {
                 logger.error("Failed to persist response", ex);

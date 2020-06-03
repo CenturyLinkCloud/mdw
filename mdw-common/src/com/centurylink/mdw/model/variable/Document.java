@@ -23,6 +23,9 @@ import java.util.Date;
 
 public class Document implements Serializable {
 
+    /**
+     * Actual runtime type
+     */
     private String type;
     public String getType() {
         return type;
@@ -32,6 +35,18 @@ public class Document implements Serializable {
     }
     @Deprecated
     public String getDocumentType() { return type; }
+
+    /**
+     * Declared variable type for translating
+     * (falls back to document type)
+     */
+    private String variableType;
+    public String getVariableType() {
+        return variableType == null ? type : variableType;
+    }
+    public void setVariableType(String variableType) {
+        this.variableType = variableType;
+    }
 
     private Long id;
     public Long getId() {

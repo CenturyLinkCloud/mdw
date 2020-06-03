@@ -3,18 +3,73 @@ activities:
   name: Start
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessStartActivity
   attributes:
-    WORK_DISPLAY_INFO: x=70,y=120,w=60,h=40
+    WORK_DISPLAY_INFO: x=70,y=130,w=60,h=40
   transitions:
   - id: T1
-    to: A2
+    to: A4
     event: FINISH
     attributes:
-      TRANSITION_DISPLAY_INFO: type=Elbow,lx=310,ly=140,xs=134&486,ys=140&140
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=160,ly=150,xs=134&186,ys=150&150
 - id: A2
   name: Stop
   implementor: com.centurylink.mdw.workflow.activity.process.ProcessFinishActivity
   attributes:
-    WORK_DISPLAY_INFO: x=490,y=120,w=60,h=40
+    WORK_DISPLAY_INFO: x=790,y=130,w=60,h=40
+- id: A4
+  name: Create/Update
+  implementor: com.centurylink.mdw.workflow.activity.script.ScriptExecutorActivity
+  attributes:
+    Output Documents: '["input","local","request"]'
+    Rule: |+
+      import com.centurylink.mdw.tests.variables.Mountain
+
+      if (testCase == null)
+          testCase = "Process Request"
+      if (request != null) {
+          request.elevation = request.elevation - 1 // rising sea level
+      }
+      if (input != null) {
+          input.elevation = input.elevation - 1
+      }
+      local = new Mountain("Fuji", 12389, "Japan")
+
+
+    SCRIPT: Groovy
+    WORK_DISPLAY_INFO: x=190,y=110,w=120,h=80
+  transitions:
+  - id: T2
+    to: A5
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=350,ly=150,xs=314&386,ys=150&150
+- id: A5
+  name: Wait Here
+  implementor: com.centurylink.mdw.workflow.activity.event.EventWaitActivity
+  attributes:
+    SLA_DISPLAY_UNITS: Hours
+    STATUS_AFTER_TIMEOUT: Cancelled
+    WAIT_EVENT_NAMES: '[["Wait-${masterRequestId}",""]]'
+    WORK_DISPLAY_INFO: x=390,y=110,w=120,h=80
+  transitions:
+  - id: T3
+    to: A6
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=550,ly=150,xs=514&586,ys=150&150
+- id: A6
+  name: Further Updates
+  implementor: com.centurylink.mdw.workflow.activity.java.DynamicJavaActivity
+  attributes:
+    ClassName: Jsonable_A6
+    Java: "package com.centurylink.mdw.tests.variables;\n\nimport com.centurylink.mdw.java.JavaExecutionException;\nimport com.centurylink.mdw.java.JavaExecutor;\n\nimport java.util.Map;\n\npublic class Jsonable_A6 implements JavaExecutor {\n\n    public Object execute(Map<String,Object> variables) throws JavaExecutionException  {\n        Mountain request = (Mountain)variables.get(\"request\");\n        if (request != null) {\n            request.setElevation(request.getElevation() - 1);\n        }\n        Mountain input = (Mountain)variables.get(\"input\");\n        if (input != null) {\n            input.setElevation(input.getElevation() - 1);\n        }\n        Mountain local = (Mountain)variables.get(\"local\");\n        if (local != null) {\n            local.setElevation(local.getElevation() - 1);\n        }\n        \n        return null;\n    }\n}\n"
+    Output Documents: '["input","local","request"]'
+    WORK_DISPLAY_INFO: x=590,y=110,w=120,h=80
+  transitions:
+  - id: T4
+    to: A2
+    event: FINISH
+    attributes:
+      TRANSITION_DISPLAY_INFO: type=Elbow,lx=750,ly=150,xs=714&786,ys=150&150
 variables:
   input:
     type: com.centurylink.mdw.model.Jsonable
@@ -24,6 +79,9 @@ variables:
     category: LOCAL
   request:
     type: com.centurylink.mdw.model.Jsonable
+    category: INPUT
+  testCase:
+    type: java.lang.String
     category: INPUT
 attributes:
   ArrowStyle: ArrowEnd

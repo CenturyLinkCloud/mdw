@@ -463,16 +463,18 @@ public class EventServicesImpl implements EventServices {
         return wti;
     }
 
-    public void updateDocumentContent(Long docid, Object doc, String type, Package pkg)
+    public void updateDocumentContent(Long docId, Object docObj, String type, Package pkg)
             throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
-            Document docvo = edao.getDocument(docid, false);
-            if (doc instanceof String) docvo.setContent((String)doc);
-            else docvo.setObject(doc, type);
-            edao.updateDocumentContent(docvo.getId(), docvo.getContent(pkg));
+            Document doc = edao.getDocument(docId, false);
+            if (docObj instanceof String)
+                doc.setContent((String)docObj);
+            else
+                doc.setObject(docObj, type);
+            edao.updateDocumentContent(doc.getId(), doc.getContent(pkg));
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to update document content", e);
         } finally {
@@ -511,31 +513,31 @@ public class EventServicesImpl implements EventServices {
         return createDocument(type, ownerType, ownerId, doc, pkg, null);
     }
 
-    public Long createDocument(String type, String ownerType, Long ownerId, Object doc, Package pkg, String path)
+    public Long createDocument(String type, String ownerType, Long ownerId, Object docObj, Package pkg, String path)
             throws DataAccessException {
         TransactionWrapper transaction = null;
         EngineDataAccessDB edao = new EngineDataAccessDB();
         try {
             transaction = edao.startTransaction();
-            Document docvo = new Document();
-            if (doc instanceof Response) {
-                Response response = (Response)doc;
+            Document doc = new Document();
+            if (docObj instanceof Response) {
+                Response response = (Response)docObj;
                 String statusMsg = response.getStatusMessage() != null ? response.getStatusMessage() : "";
-                docvo.setStatusCode(response.getStatusCode());
-                docvo.setStatusMessage(statusMsg.length() > 1000 ? statusMsg.substring(0, 1000) : statusMsg);
+                doc.setStatusCode(response.getStatusCode());
+                doc.setStatusMessage(statusMsg.length() > 1000 ? statusMsg.substring(0, 1000) : statusMsg);
                 if (path == null)
                     path = response.getPath();
-                docvo.setContent(((Response)doc).getContent());
+                doc.setContent(((Response)docObj).getContent());
             }
-            else if (doc instanceof String)
-                docvo.setContent((String)doc);
+            else if (docObj instanceof String)
+                doc.setContent((String)docObj);
             else
-                docvo.setObject(doc, type);
-            docvo.setType(type);
-            docvo.setOwnerType(ownerType);
-            docvo.setOwnerId(ownerId);
-            docvo.setPath(path);
-            return edao.createDocument(docvo, pkg);
+                doc.setObject(docObj, type);
+            doc.setType(type);
+            doc.setOwnerType(ownerType);
+            doc.setOwnerId(ownerId);
+            doc.setPath(path);
+            return edao.createDocument(doc, pkg);
         } catch (SQLException e) {
             throw new DataAccessException(-1, "Failed to create document", e);
         } finally {

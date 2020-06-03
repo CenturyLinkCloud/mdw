@@ -168,24 +168,23 @@ public class EngineDataAccessCache implements EngineDataAccess {
     /**
      * Update document information (everything but document content itself).
      * The method will update only the arguments that have non-null values.
-     * @param docvo
-     * @throws SQLException
+     * @param doc
      */
-    public synchronized void updateDocumentInfo(Document docvo) throws SQLException {
+    public synchronized void updateDocumentInfo(Document doc) throws SQLException {
         if (cacheDocument == CACHE_OFF) {
-            edadb.updateDocumentInfo(docvo);
+            edadb.updateDocumentInfo(doc);
         } else if (cacheDocument == CACHE_ONLY) {
-            Document docvo0 = documentCache.get(docvo.getId());
-            docvo0.setType(docvo.getType());
-            docvo0.setOwnerId(docvo.getOwnerId());
-            docvo0.setOwnerType(docvo.getOwnerType());
+            Document doc0 = documentCache.get(doc.getId());
+            doc0.setType(doc.getType());
+            doc0.setOwnerId(doc.getOwnerId());
+            doc0.setOwnerType(doc.getOwnerType());
         } else {
-            edadb.updateDocumentInfo(docvo);
-            Document docvo0 = documentCache.get(docvo.getId());
-            if (docvo0!=docvo) {
-                docvo0.setType(docvo.getType());
-                docvo0.setOwnerId(docvo.getOwnerId());
-                docvo0.setOwnerType(docvo.getOwnerType());
+            edadb.updateDocumentInfo(doc);
+            Document doc0 = documentCache.get(doc.getId());
+            if (doc0 != doc) {
+                doc0.setType(doc.getType());
+                doc0.setOwnerId(doc.getOwnerId());
+                doc0.setOwnerType(doc.getOwnerType());
             }
         }
     }

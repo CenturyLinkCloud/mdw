@@ -20,4 +20,10 @@ public class Mountain implements Jsonable {
     public Mountain(JSONObject json) {
         bind(json);
     }
+
+    public Mountain(String name, int elevation, String country) {
+        this.name = name;
+        this.elevation = elevation;
+        this.country = country;
+    }
 }

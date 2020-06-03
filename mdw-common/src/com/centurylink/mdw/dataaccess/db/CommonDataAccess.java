@@ -15,7 +15,7 @@
  */
 package com.centurylink.mdw.dataaccess.db;
 
-import com.centurylink.mdw.cache.VariableTypeCache;
+import com.centurylink.mdw.constant.OwnerType;
 import com.centurylink.mdw.dataaccess.DataAccessException;
 import com.centurylink.mdw.dataaccess.DatabaseAccess;
 import com.centurylink.mdw.dataaccess.DocumentDbAccess;
@@ -414,21 +414,30 @@ public class CommonDataAccess {
     public Document loadDocument(Long documentId, boolean forUpdate)
             throws SQLException {
         String query = "select CREATE_DT, MODIFY_DT, DOCUMENT_TYPE, OWNER_TYPE, OWNER_ID " +
-            "from DOCUMENT where DOCUMENT_ID = ?" + (forUpdate ? " for update" : "");
+                "from DOCUMENT where DOCUMENT_ID = ?" + (forUpdate ? " for update" : "");
         ResultSet rs = db.runSelect(query, documentId);
         if (rs.next()) {
-            Document vo = new Document();
-            vo.setId(documentId);
-            vo.setCreateDate(rs.getTimestamp("CREATE_DT"));
-            vo.setModifyDate(rs.getTimestamp("MODIFY_DT"));
-            vo.setType(rs.getString("DOCUMENT_TYPE"));
-            vo.setOwnerType(rs.getString("OWNER_TYPE"));
-            vo.setOwnerId(rs.getLong("OWNER_ID"));
+            Document doc = new Document();
+            doc.setId(documentId);
+            doc.setCreateDate(rs.getTimestamp("CREATE_DT"));
+            doc.setModifyDate(rs.getTimestamp("MODIFY_DT"));
+            doc.setOwnerType(rs.getString("OWNER_TYPE"));
+            doc.setOwnerId(rs.getLong("OWNER_ID"));
+            doc.setType(rs.getString("DOCUMENT_TYPE"));
+            if (OwnerType.VARIABLE_INSTANCE.equals(doc.getOwnerType())) {
+                query = "select VARIABLE_TYPE from VARIABLE_INSTANCE where VARIABLE_INST_ID = ?";
+                rs = db.runSelect(query, doc.getOwnerId());
+                if (rs.next()) {
+                    String variableType = rs.getString(1);
+                    if (variableType != null && !variableType.isEmpty())
+                        doc.setVariableType(variableType);
+                }
+            }
             boolean foundInDocDb = false;
             if (documentDbAccess.hasDocumentDb()) {
-                String docDbContent = documentDbAccess.getDocumentContent(vo.getOwnerType(), vo.getId());
+                String docDbContent = documentDbAccess.getDocumentContent(doc.getOwnerType(), doc.getId());
                 if (docDbContent != null) {
-                    vo.setContent(docDbContent);
+                    doc.setContent(docDbContent);
                     foundInDocDb = true;
                 }
             }
@@ -436,9 +445,9 @@ public class CommonDataAccess {
                 query = "select CONTENT from DOCUMENT_CONTENT where DOCUMENT_ID = ?";
                 rs = db.runSelect(query, documentId);
                 if (rs.next())
-                    vo.setContent(rs.getString("CONTENT"));
+                    doc.setContent(rs.getString("CONTENT"));
             }
-            return vo;
+            return doc;
         }
         else {
             throw new SQLException("Document with ID " + documentId + " does not exist");

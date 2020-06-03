@@ -691,11 +691,11 @@ public class ProcessEngineDriver {
                     // should never happen, as this is cache only
                 }
             } else {
-                Document docvo = new Document();
-                docvo.setContent(content);
-                docvo.setId(docid);
-                docvo.setType(type);
-                engine.addDocumentToCache(docvo);
+                Document doc = new Document();
+                doc.setContent(content);
+                doc.setId(docid);
+                doc.setType(type);
+                engine.addDocumentToCache(doc);
             }
         }
     }
@@ -761,11 +761,11 @@ public class ProcessEngineDriver {
                     if (value != null && value.startsWith("DOCUMENT:")) {
                         DocumentReference docRef = new DocumentReference(parameters.get(key));
                         if (!docRef.getDocumentId().equals(ownerId)) {
-                            Document docVO = engine.loadDocument(docRef, false);
-                            if (docVO != null) {
-                                String docContent = docVO.getContent(pkg);
+                            Document doc = engine.loadDocument(docRef, false);
+                            if (doc != null) {
+                                String docContent = doc.getContent(pkg);
                                 if (docContent != null)
-                                    addDocumentToCache(engine, docRef.getDocumentId(), docVO.getType(), docContent);
+                                    addDocumentToCache(engine, docRef.getDocumentId(), doc.getType(), docContent);
                             }
                         }
                     }

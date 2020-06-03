@@ -24,9 +24,9 @@ import com.centurylink.mdw.xml.DomHelper;
 
 public interface XmlDocumentTranslator extends JsonTranslator {
 
-    public Document toDomDocument(Object obj) throws TranslationException;
+    Document toDomDocument(Object obj) throws TranslationException;
 
-    public Object fromDomNode(Node domNode) throws TranslationException;
+    Object fromDomNode(Node domNode) throws TranslationException;
 
     @Override
     default JSONObject toJson(Object obj) throws TranslationException {
@@ -43,7 +43,7 @@ public interface XmlDocumentTranslator extends JsonTranslator {
         catch (Exception ex) {
             throw new TranslationException(ex.getMessage(), ex);
         }
-    };
+    }
 
     @Override
     default Object fromJson(JSONObject json) throws TranslationException {
@@ -59,6 +59,5 @@ public interface XmlDocumentTranslator extends JsonTranslator {
         catch (Exception ex) {
             throw new TranslationException(ex.getMessage(), ex);
         }
-    };
-
+    }
 }

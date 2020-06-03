@@ -322,15 +322,15 @@ public class EngineDataAccessDB extends CommonDataAccess implements EngineDataAc
         }
     }
 
-    public void updateDocumentInfo(Document docvo) throws SQLException {
+    public void updateDocumentInfo(Document doc) throws SQLException {
         String query = "update DOCUMENT set DOCUMENT_TYPE=?, OWNER_TYPE=?, OWNER_ID=?, STATUS_CODE=?, STATUS_MESSAGE=? where DOCUMENT_ID=?";
         Object[] args = new Object[6];
-        args[0] = docvo.getType();
-        args[1] = docvo.getOwnerType();
-        args[2] = docvo.getOwnerId();
-        args[3] = docvo.getStatusCode();
-        args[4] = docvo.getStatusMessage();
-        args[5] = docvo.getId();
+        args[0] = doc.getType();
+        args[1] = doc.getOwnerType();
+        args[2] = doc.getOwnerId();
+        args[3] = doc.getStatusCode();
+        args[4] = doc.getStatusMessage();
+        args[5] = doc.getId();
         db.runUpdate(query, args);
     }
 
