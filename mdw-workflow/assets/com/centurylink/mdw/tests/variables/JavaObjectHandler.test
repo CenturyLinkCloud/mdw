@@ -1,0 +1,18 @@
+package com.centurylink.mdw.tests.variables
+
+// no request variable declared (payload ignored)
+def response = post http("api/REST/variablesTest/JavaObject") {
+    headers = [
+            "Content-Type": "application/json",
+            "mdw-request-id": masterRequestId
+    ]
+    payload = """{
+  "_type": "com.centurylink.mdw.tests.variables.Mountain",
+  "mountain": {
+    "name": "Kilimanjaro",
+    "elevation": 19341,
+    "country": "Tanzania"
+  } 
+}"""
+}
+assert response.code == 200

@@ -1,0 +1,5 @@
+package com.centurylink.mdw.tests.variables
+
+start process("JavaObject.proc") {
+    variables = [testCase: "Input Variable"]
+}

@@ -3,7 +3,11 @@ package com.centurylink.mdw.tests.variables;
 import com.centurylink.mdw.model.Jsonable;
 import org.json.JSONObject;
 
-public class Mountain implements Jsonable {
+import java.io.Serializable;
+
+public class Mountain implements Jsonable, Serializable {
+
+    public static final long serialVersionUID = 3;  // match asset version
 
     private String name;
     public String getName() { return name; }
@@ -25,5 +29,10 @@ public class Mountain implements Jsonable {
         this.name = name;
         this.elevation = elevation;
         this.country = country;
+    }
+
+    @Override
+    public String toString() {
+        return name + ", " + elevation + " ft, " + country;
     }
 }

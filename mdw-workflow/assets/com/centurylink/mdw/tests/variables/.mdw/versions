@@ -1,7 +1,11 @@
 Gson.proc=1
+JavaObject.proc=1
+JavaObject.test=1
+JavaObjectHandler.test=1
+JavaRequestHandler.java=1
 Jsonable.proc=3
 JsonableHandler.test=1
 JsonableInput.test=1
 JsonableRequest.test=1
 JsonableRequestHandler.java=1
-Mountain.java=2
+Mountain.java=3
